@@ -1,6 +1,8 @@
 = ORKG Backend Prototype
 Manuel Prinz <manuel.prinz@tib.eu>
 
+:icons: font
+
 This repository contains a backend prototype for the ORKG based on the Spring Framework.
 It is written in Kotlin as a proof-of-concept and for experimenting with a possible architecture and technologies.
 
@@ -13,12 +15,16 @@ To build and run the prototype, type:
 This will start a server running on http://localhost:8080.
 The only available REST resource (for now) is http://localhost:8080/api/articles/.
 
+This also requires a Blazegraph server running on http://localhost:8889/bigdata/.
+It expects the SumSur ontology to be loaded into the triple-store.
+See the `orkg-backend` and `orkg-ontology`repository for instructions.
+
 == Features
 
 Not much, to be honest. Particularly,
 
 * a single REST resource, and
-* a repository that gives dummy values with the intent to implement a web client using the API.
+* a repository that queries a Blazegraph server using SPARQL.
 
 An implementation of the `ArticleRepository` for Blazegraph is underway.
 One for Neo4j will follow.
@@ -27,7 +33,9 @@ One for Neo4j will follow.
 == TODOs
 
 - [ ] Add tests!
-- [ ] Add connector to Blazegraph and Neo4j
+- [x] Add connector to Blazegraph (SPARQL)
+- [ ] Add connector to Blazegraph (native)
+- [ ] Add connector to Neo4j
 - [ ] Add proper documentation
 - [ ] Add CI configuration
 - [ ] Perform write operations in the repository

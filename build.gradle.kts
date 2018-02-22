@@ -17,6 +17,7 @@ dependencies {
     compile(kotlin("stdlib-jdk8", kotlinVersion))
     //compile(kotlin("reflect", kotlinVersion))
     compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.eclipse.rdf4j:rdf4j-repository-sparql:2.2.4")
 
     testCompile("org.jetbrains.spek:spek-api:1.1.5") {
         exclude(group = "org.jetbrains.kotlin")

@@ -8,7 +8,6 @@ import java.net.URI
 
 
 @Repository
-@Primary
 class InMemoryArticleRepository : ArticleRepository {
     override fun findAll(): Collection<Article> {
         return listOf(

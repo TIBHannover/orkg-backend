@@ -1,0 +1,33 @@
+= ORKG Backend Prototype
+Manuel Prinz <manuel.prinz@tib.eu>
+
+This repository contains a backend prototype for the ORKG based on the Spring Framework.
+It is written in Kotlin as a proof-of-concept and for experimenting with a possible architecture and technologies.
+
+== Building and running
+
+To build and run the prototype, type:
+
+    ./gradlew bootRun
+
+This will start a server running on http://localhost:8080.
+The only available REST resource (for now) is http://localhost:8080/api/articles/.
+
+== Features
+
+Not much, to be honest. Particularly,
+
+* a single REST resource, and
+* a repository that gives dummy values with the intent to implement a web client using the API.
+
+An implementation of the `ArticleRepository` for Blazegraph is underway.
+One for Neo4j will follow.
+(The idea is to explore how to implement vendor-independent data models and a clean architecture.)
+
+== TODOs
+
+- [ ] Add tests!
+- [ ] Add connector to Blazegraph and Neo4j
+- [ ] Add proper documentation
+- [ ] Add CI configuration
+- [ ] Perform write operations in the repository

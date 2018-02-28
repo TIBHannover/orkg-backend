@@ -19,7 +19,9 @@ This also requires a Blazegraph server running on http://localhost:8889/bigdata/
 It expects the SumSur ontology to be loaded into the triple-store.
 See the `orkg-backend` and `orkg-ontology`repository for instructions.
 
-== Building Docker images
+== Docker images
+
+=== Building the images
 
 To build all Docker images (that contain the service dependencies), run:
 
@@ -32,6 +34,37 @@ If you want to build only specific images, either
 . go to a `docker/IMAGE` directory and call `../../gradlew docker` there,
 
 where `IMAGE` is the name of a sub-directory under `docker/`.
+
+=== Running the images
+
+The easiest way to start Docker containers from the images is via https://docs.docker.com/compose/[Docker Compose].
+After installing it, run:
+
+    docker-compose -f docker/IMAGE/docker-compose.yml up -d
+
+where `IMAGE` is the name of a sub-directory under `docker/`.
+
+The images will provide the following end-points:
+
+[cols=2*,options=header]
+|===
+|Image
+|End-points
+
+|`orkg/blazegraph-dev`
+|http://localhost:8889/bigdata/
+
+|`orkg/neo4j-dev`
+| http://localhost:7474/browser/ +
+bolt://localhost:7687
+
+|===
+
+=== Uploading data
+
+In order to be useful, you need to import data into Blazegraph.
+This has to be done manually.
+Download the file `SemSur_3-labels.owl` from the https://git.tib.eu/orkg/orkg-ontology[`orkg-ontology` repository] and upload it to Blazegraph using the http://localhost:8889/bigdata/#update["Update" tab].
 
 == Features
 

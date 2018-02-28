@@ -1,0 +1,5 @@
+image: azul/zulu-openjdk-debian:8
+
+build:
+  script:
+    - ./gradlew build

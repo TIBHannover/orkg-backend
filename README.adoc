@@ -17,7 +17,7 @@ The only available REST resource (for now) is http://localhost:8080/api/articles
 
 This also requires a Blazegraph server running on http://localhost:8889/bigdata/.
 It expects the SumSur ontology to be loaded into the triple-store.
-See the `orkg-backend` and `orkg-ontology`repository for instructions.
+See the instructions below.
 
 == Docker images
 

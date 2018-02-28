@@ -3,8 +3,8 @@ Manuel Prinz <manuel.prinz@tib.eu>
 
 :icons: font
 
-This repository contains a backend prototype for the ORKG based on the Spring Framework.
-It is written in Kotlin as a proof-of-concept and for experimenting with a possible architecture and technologies.
+This repository contains a backend prototype for the ORKG based on the https://spring.io/[Spring Framework].
+It is written in https://kotlinlang.org/[Kotlin] as a proof-of-concept and for experimenting with a possible architecture and technologies.
 
 == Building and running
 

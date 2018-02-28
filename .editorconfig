@@ -10,5 +10,6 @@ indent_size = 4
 [*.bat]
 end_of_line = crlf
 
-[*.xml]
+[*.{xml,yml,yaml}]
+indent_style = space
 indent_size = 2

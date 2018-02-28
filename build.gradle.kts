@@ -1,3 +1,4 @@
+import org.asciidoctor.gradle.AsciidoctorTask
 import org.gradle.kotlin.dsl.kotlin
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -11,6 +12,7 @@ plugins {
     kotlin("jvm") version "1.2.21"
     kotlin("plugin.spring") version "1.2.21"
     id("org.springframework.boot") version "1.5.10.RELEASE"
+    id("org.asciidoctor.convert") version "1.5.3"
 }
 
 dependencies {
@@ -29,6 +31,10 @@ dependencies {
     testCompile("org.springframework.boot:spring-boot-starter-test")
 }
 
+asciidoctorj {
+    version = "1.5.6" // AsciiDoctor (Ruby!) version
+}
+
 allprojects {
     repositories {
         jcenter()
@@ -38,5 +44,28 @@ allprojects {
 tasks {
     withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
+    }
+
+    "asciidoctor"(AsciidoctorTask::class) {
+        //outputs.upToDateWhen { false }
+        backends("html5")
+
+        options(mapOf("doctype" to "book"))
+
+        attributes(
+            mapOf(
+                "source-highlighter" to "coderay",
+                "coderay-linenums-mode" to "table",
+                "toc" to "left",
+                "icons" to "font",
+                "linkattrs" to "true",
+                "encoding" to "utf-8"
+            )
+        )
+
+        sources(delegateClosureOf<PatternSet> {
+            exclude("parts/**")
+            include("*.adoc")
+        })
     }
 }

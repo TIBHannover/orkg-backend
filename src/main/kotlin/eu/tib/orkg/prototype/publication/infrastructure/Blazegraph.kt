@@ -1,7 +1,7 @@
-package eu.tib.prinzm.orkg.prototype.publication.infrastructure
+package eu.tib.orkg.prototype.publication.infrastructure
 
-import eu.tib.prinzm.orkg.prototype.publication.domain.model.Article
-import eu.tib.prinzm.orkg.prototype.publication.domain.model.ArticleRepository
+import eu.tib.orkg.prototype.publication.domain.model.Article
+import eu.tib.orkg.prototype.publication.domain.model.ArticleRepository
 import org.eclipse.rdf4j.query.BindingSet
 import org.eclipse.rdf4j.query.QueryLanguage
 import org.eclipse.rdf4j.query.QueryResults
@@ -48,7 +48,10 @@ class BlazegraphSparqlArticleRepository :
         }
     }
 
-    fun String.toArticle() = Article(URI(this))
+    fun String.toArticle() =
+        Article(
+            URI(this)
+        )
 
     object Queries {
         const val ALL_ARTICLES = """

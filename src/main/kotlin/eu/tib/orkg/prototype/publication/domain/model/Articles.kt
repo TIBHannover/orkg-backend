@@ -1,4 +1,4 @@
-package eu.tib.prinzm.orkg.prototype.publication.domain.model
+package eu.tib.orkg.prototype.publication.domain.model
 
 import java.net.URI
 

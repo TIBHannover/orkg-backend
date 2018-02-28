@@ -1,4 +1,4 @@
-package eu.tib.prinzm.orkg.prototype
+package eu.tib.orkg.prototype
 
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication

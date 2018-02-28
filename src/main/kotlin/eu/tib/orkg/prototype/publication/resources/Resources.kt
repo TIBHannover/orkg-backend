@@ -1,6 +1,6 @@
-package eu.tib.prinzm.orkg.prototype.publication.resources
+package eu.tib.orkg.prototype.publication.resources
 
-import eu.tib.prinzm.orkg.prototype.publication.domain.model.ArticleRepository
+import eu.tib.orkg.prototype.publication.domain.model.ArticleRepository
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController

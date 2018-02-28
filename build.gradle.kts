@@ -2,7 +2,7 @@ import org.gradle.kotlin.dsl.kotlin
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-group = "eu.tib.prinzm"
+group = "eu.tib"
 version = "0.0.1-SNAPSHOT"
 
 val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java).kotlinPluginVersion

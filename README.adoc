@@ -73,7 +73,7 @@ Not much, to be honest. Particularly,
 * a single REST resource, and
 * a repository that queries a Blazegraph server using SPARQL.
 
-An implementation of the `ArticleRepository` for Blazegraph is underway.
+An implementation of the `ArticleRepository` for Blazegraph is done.
 One for Neo4j will follow.
 (The idea is to explore how to implement vendor-independent data models and a clean architecture.)
 

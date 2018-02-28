@@ -1,0 +1,6 @@
+version: '2'
+services:
+  blazegraph:
+    image: orkg/blazegraph-dev
+    ports:
+      - "8889:8080" # HTTP

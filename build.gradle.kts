@@ -29,8 +29,10 @@ dependencies {
     testCompile("org.springframework.boot:spring-boot-starter-test")
 }
 
-repositories {
-    jcenter()
+allprojects {
+    repositories {
+        jcenter()
+    }
 }
 
 tasks {

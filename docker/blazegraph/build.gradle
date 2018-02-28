@@ -1,0 +1,7 @@
+plugins {
+    id "com.palantir.docker" version "0.19.2"
+}
+
+docker {
+    name = "orkg/blazegraph-dev"
+}

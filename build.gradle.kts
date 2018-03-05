@@ -13,6 +13,7 @@ plugins {
     kotlin("plugin.spring") version "1.2.21"
     id("org.springframework.boot") version "1.5.10.RELEASE"
     id("org.asciidoctor.convert") version "1.5.3"
+    id("com.palantir.docker") version "0.19.2"
 }
 
 dependencies {

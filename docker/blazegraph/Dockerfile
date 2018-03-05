@@ -48,4 +48,8 @@ RUN \
   ) && \
   rm -rf /tmp/bigdata
 
+# Listen on all adresses, so that containers can be linked /
+# found on the same network.
+ENV JETTY_HOST '0.0.0.0'
+
 USER jetty

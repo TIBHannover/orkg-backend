@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+
+  prototype:
+    image: orkg/prototype
+    ports:
+      - '8000:8000'
+    networks:
+      - backend
+    depends_on:
+      - blazegraph
+
+  blazegraph:
+    image: orkg/blazegraph-dev
+    ports:
+      - '8889:8080'
+    networks:
+      - backend
+
+networks:
+  backend:

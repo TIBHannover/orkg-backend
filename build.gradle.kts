@@ -69,4 +69,16 @@ tasks {
             include("*.adoc")
         })
     }
+
+    docker {
+        dependsOn(tasks["build"])
+        name = "orkg/prototype"
+        buildArgs(
+            mapOf(
+                "PROJECT_NAME" to project.name,
+                "VERSION" to "$version"
+            )
+        )
+        files(tasks["jar"].outputs)
+    }
 }

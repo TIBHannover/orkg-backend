@@ -14,8 +14,8 @@ To build and run the prototype, type:
 
     ./gradlew bootRun
 
-This will start a server running on http://localhost:8080.
-The only available REST resource (for now) is http://localhost:8080/api/articles/.
+This will start a server running on http://localhost:8000.
+The only available REST resource (for now) is http://localhost:8000/api/articles/.
 
 This also requires a Blazegraph server running on http://localhost:8889/bigdata/.
 It expects the SumSur ontology to be loaded into the triple-store.

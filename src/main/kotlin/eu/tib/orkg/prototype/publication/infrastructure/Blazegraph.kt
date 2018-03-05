@@ -20,7 +20,7 @@ class BlazegraphSparqlArticleRepository :
     ArticleRepository {
 
     private val repo: SPARQLRepository =
-        SPARQLRepository("http://localhost:8889/bigdata/sparql").apply {
+        SPARQLRepository("http://blazegraph:8080/bigdata/sparql").apply {
             initialize()
         }
 

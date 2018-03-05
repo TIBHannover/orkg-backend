@@ -8,6 +8,8 @@ It is written in https://kotlinlang.org/[Kotlin] as a proof-of-concept and for e
 
 == Building and running
 
+=== Stand-alone application
+
 To build and run the prototype, type:
 
     ./gradlew bootRun
@@ -19,7 +21,41 @@ This also requires a Blazegraph server running on http://localhost:8889/bigdata/
 It expects the SumSur ontology to be loaded into the triple-store.
 See the instructions below.
 
+=== Building a Docker image
+
+The application can also run as a Docker container.
+To build the image(s), run:
+
+    ./gradlew docker
+
+This will build the application and create the Docker image.
+The application can be run via https://docs.docker.com/compose/[Docker Compose].
+After installing it, run:
+
+    docker-compose up -d
+
+This will start the application image and all dependent containers.
+It will take care of linking all containers so the services can see each other.
+You can start and connect all services yourself but this is not recommended.
+
+The application can be accessed via http://localhost:8000/.
+The other services can be accessed via the URLs described in the table "<<endpoints>>".
+
+To diagnose problems, check the logs with:
+
+    docker-compose logs -f
+
+WARNING: The following steps will destroy all data you saved to the database!
+
+To restart from scratch, run:
+
+    docker-compose stop
+    docker-compose rm
+
 == Docker images
+
+NOTE: This section is only relevant if you want to work with some of the components in isolation.
+      Please refer to the section <<Building a Docker image>> if you want to run the application via Docker.
 
 === Building the images
 
@@ -44,8 +80,12 @@ After installing it, run:
 
 where `IMAGE` is the name of a sub-directory under `docker/`.
 
+=== Image end-points
+
 The images will provide the following end-points:
 
+.Images and their default end-points
+[[endpoints]]
 [cols=2*,options=header]
 |===
 |Image

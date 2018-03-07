@@ -62,9 +62,40 @@ bolt://localhost:7687
 
 === Uploading data
 
+==== Uploading to Blazegraph
+
 In order to be useful, you need to import data into Blazegraph.
 This has to be done manually.
 Download the file `SemSur_3-labels.owl` from the https://git.tib.eu/orkg/orkg-ontology[`orkg-ontology` repository] and upload it to Blazegraph using the http://localhost:8889/bigdata/#update["Update" tab].
+
+==== Uploading to Neo4j
+
+The following assumes that a directory exists in the container
+as `/data` and contains a file named `SemSur_3.owl`.
+If the container is started via Docker Compose, a volume is
+created and mounted for you automatically.
+To copy the ontology into that volume, run:
+
+  docker cp ~/Downloads/SemSur_3.owl neo4j_neo4j_1:/data
+
+NOTE: As long as the volume is not deleted manually, the
+      file will still be present even after re-creating the
+      container.
+
+To upload the SemSur data into Neo4j with the `semantics`
+extension you have to create an index first and then simply
+import the data directly from the OWL file:
+
+  CREATE INDEX ON :Resource(uri)
+  CALL semantics.importRDF("file:///data/SemSur_3.owl","RDF/XML", { shortenUrls: false })
+
+WARNING: The following will destroy all your data!
+
+If bad things and you want to reset the database, you can
+either re-create the Docker container or execute the following
+Cypher query:
+
+  MATCH (n) DETACH DELETE n
 
 == Features
 

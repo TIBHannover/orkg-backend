@@ -11,15 +11,21 @@ val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java).kotlinPlu
 plugins {
     kotlin("jvm") version "1.2.30"
     kotlin("plugin.spring") version "1.2.30"
-    id("org.springframework.boot") version "1.5.10.RELEASE"
+    id("org.springframework.boot") version "2.0.0.RELEASE"
     id("org.asciidoctor.convert") version "1.5.3"
+}
+
+apply {
+    plugin("io.spring.dependency-management")
 }
 
 dependencies {
     compile(kotlin("stdlib-jdk8", kotlinVersion))
-    //compile(kotlin("reflect", kotlinVersion))
+    compile(kotlin("reflect", kotlinVersion))
     compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-data-neo4j")
     compile("org.eclipse.rdf4j:rdf4j-repository-sparql:2.2.4")
+    compile("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     testCompile("org.jetbrains.spek:spek-api:1.1.5") {
         exclude(group = "org.jetbrains.kotlin")

@@ -83,11 +83,26 @@ NOTE: As long as the volume is not deleted manually, the
       container.
 
 To upload the SemSur data into Neo4j with the `semantics`
-extension you have to create an index first and then simply
-import the data directly from the OWL file:
+extension several steps need to be performed:
+
+1. In the Neo4j web interface, create an index on the `uri` property of
+   nodes with the `Resource` label:
 
   CREATE INDEX ON :Resource(uri)
-  CALL semantics.importRDF("file:///data/SemSur_3.owl","RDF/XML", { shortenUrls: false })
+
+2. Neo4j is used with RDF prefixes. These need to be communicated to the
+   `semantics` extension via a special node. You can create the Cypher
+   query to create it from your ontology file by using the helper script
+   `scripts/NamespacesToNeoSemantics.kts`.footnote:[This needs
+     https://github.com/holgerbrandl/kscript[kscript] to be installed.
+     This can be done easily by http://sdkman.io/[SDKMAN].]
+   Copy the output to the Neo4j web interface.
+
+3. Import the ontology (data) via the Neo4j web interface:
+
+  CALL semantics.importRDF("file:///data/SemSur_3.owl", "RDF/XML", { shortenUrls: true })
+
+===== If something goes wrong…
 
 WARNING: The following will destroy all your data!
 

@@ -43,26 +43,23 @@ class BlazegraphSparqlArticleRepository :
             }
 
             return results.map {
-                it.getValue(names[0]).stringValue()
-                    .toArticle()
+                Article(
+                    uri = URI(it.getValue(names[0]).stringValue()),
+                    title = it.getValue(names[1])?.stringValue() ?: ""
+                )
             }
         }
     }
-
-    fun String.toArticle() =
-        Article(
-            URI(this)
-        )
 
     object Queries {
         const val ALL_ARTICLES = """
             prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
             prefix swrc: <http://swrc.ontoware.org/ontology#>
 
-            select ?article
+            select ?uri ?title
             where {
-                ?article rdf:type swrc:Article ;
-
+                ?uri rdf:type swrc:Article .
+                OPTIONAL { ?uri swrc:title ?title . }
             }
             """
     }

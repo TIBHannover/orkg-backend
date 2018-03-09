@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.publication.domain.model.ArticleRepository
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
 import org.neo4j.ogm.annotation.NodeEntity
+import org.neo4j.ogm.annotation.Property
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Profile
 import org.springframework.data.neo4j.annotation.Query
@@ -25,6 +26,9 @@ class Neo4jArticle {
     var id: Long? = null
 
     var uri: String? = null
+
+    @Property(name = "swrc__title")
+    var title: String = ""
 }
 
 interface Neo4jArticleRepository :
@@ -43,7 +47,7 @@ class Neo4jArticleRepositoryWrapper : ArticleRepository {
     override fun findAll(): Collection<Article> {
         val results = repository.findAll()
         results?.let {
-            return results.map { Article(URI(it.uri)) }
+            return results.map { Article(URI(it.uri), it.title) }
         }
         return setOf()
     }

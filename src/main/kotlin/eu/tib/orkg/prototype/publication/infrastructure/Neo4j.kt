@@ -6,6 +6,7 @@ import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
 import org.neo4j.ogm.annotation.NodeEntity
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Profile
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.stereotype.Repository
@@ -33,6 +34,7 @@ interface Neo4jArticleRepository :
 }
 
 @Repository
+@Profile("neo4j")
 class Neo4jArticleRepositoryWrapper : ArticleRepository {
 
     @Autowired

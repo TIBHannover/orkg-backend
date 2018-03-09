@@ -3,11 +3,13 @@ package eu.tib.orkg.prototype.publication.infrastructure
 import eu.tib.orkg.prototype.publication.domain.model.Article
 import eu.tib.orkg.prototype.publication.domain.model.ArticleRepository
 import org.springframework.context.annotation.Primary
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Repository
 import java.net.URI
 
 
 @Repository
+@Profile("demo")
 class InMemoryArticleRepository :
     ArticleRepository {
     override fun findAll(): Collection<Article> {

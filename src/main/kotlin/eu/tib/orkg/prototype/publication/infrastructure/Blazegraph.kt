@@ -7,15 +7,16 @@ import org.eclipse.rdf4j.query.QueryLanguage
 import org.eclipse.rdf4j.query.QueryResults
 import org.eclipse.rdf4j.repository.sparql.SPARQLRepository
 import org.springframework.context.annotation.Primary
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Repository
 import java.net.URI
 
 
-@Repository
-@Primary
 /**
  * **THIS IS NOT PRODUCTION READY! DO NOT USE!**
  */
+@Repository
+@Profile("blazegraph")
 class BlazegraphSparqlArticleRepository :
     ArticleRepository {
 

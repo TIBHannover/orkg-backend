@@ -62,9 +62,55 @@ bolt://localhost:7687
 
 === Uploading data
 
+==== Uploading to Blazegraph
+
 In order to be useful, you need to import data into Blazegraph.
 This has to be done manually.
 Download the file `SemSur_3-labels.owl` from the https://git.tib.eu/orkg/orkg-ontology[`orkg-ontology` repository] and upload it to Blazegraph using the http://localhost:8889/bigdata/#update["Update" tab].
+
+==== Uploading to Neo4j
+
+The following assumes that a directory exists in the container
+as `/data` and contains a file named `SemSur_3.owl`.
+If the container is started via Docker Compose, a volume is
+created and mounted for you automatically.
+To copy the ontology into that volume, run:
+
+  docker cp ~/Downloads/SemSur_3.owl neo4j_neo4j_1:/data
+
+NOTE: As long as the volume is not deleted manually, the
+      file will still be present even after re-creating the
+      container.
+
+To upload the SemSur data into Neo4j with the `semantics`
+extension several steps need to be performed:
+
+1. In the Neo4j web interface, create an index on the `uri` property of
+   nodes with the `Resource` label:
+
+  CREATE INDEX ON :Resource(uri)
+
+2. Neo4j is used with RDF prefixes. These need to be communicated to the
+   `semantics` extension via a special node. You can create the Cypher
+   query to create it from your ontology file by using the helper script
+   `scripts/NamespacesToNeoSemantics.kts`.footnote:[This needs
+     https://github.com/holgerbrandl/kscript[kscript] to be installed.
+     This can be done easily by http://sdkman.io/[SDKMAN].]
+   Copy the output to the Neo4j web interface.
+
+3. Import the ontology (data) via the Neo4j web interface:
+
+  CALL semantics.importRDF("file:///data/SemSur_3.owl", "RDF/XML", { shortenUrls: true })
+
+===== If something goes wrong…
+
+WARNING: The following will destroy all your data!
+
+If bad things and you want to reset the database, you can
+either re-create the Docker container or execute the following
+Cypher query:
+
+  MATCH (n) DETACH DELETE n
 
 == Features
 

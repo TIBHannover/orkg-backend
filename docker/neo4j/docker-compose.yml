@@ -8,3 +8,8 @@ services:
     environment:
       - NEO4J_AUTH=none
       - NEO4J_dbms_unmanagedExtensionClasses=semantics.extension=/rdf
+    volumes:
+      - 'data-neo4j:/data'
+
+volumes:
+  data-neo4j:

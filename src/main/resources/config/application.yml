@@ -1,0 +1,11 @@
+spring:
+  profiles:
+   active: neo4j
+---
+spring:
+  profiles: neo4j
+  data:
+    neo4j:
+      uri: 'bolt://localhost:7687'
+      #username:
+      #password:

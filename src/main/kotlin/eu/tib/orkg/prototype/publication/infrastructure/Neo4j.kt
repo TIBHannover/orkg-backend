@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.publication.domain.model.Article
 import eu.tib.orkg.prototype.publication.domain.model.ArticleRepository
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
+import org.neo4j.ogm.annotation.Index
 import org.neo4j.ogm.annotation.NodeEntity
 import org.neo4j.ogm.annotation.Property
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,6 +26,7 @@ class Neo4jArticle {
     @GeneratedValue
     var id: Long? = null
 
+    @Index
     var uri: String? = null
 
     @Property(name = "swrc__title")

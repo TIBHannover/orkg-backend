@@ -13,6 +13,7 @@ plugins {
     kotlin("plugin.spring") version "1.2.30"
     id("org.springframework.boot") version "2.0.0.RELEASE"
     id("org.asciidoctor.convert") version "1.5.3"
+    id("com.palantir.docker") version "0.19.2"
 }
 
 apply {
@@ -73,5 +74,17 @@ tasks {
             exclude("parts/**")
             include("*.adoc")
         })
+    }
+
+    docker {
+        dependsOn(tasks["build"])
+        name = "orkg/prototype"
+        buildArgs(
+            mapOf(
+                "PROJECT_NAME" to project.name,
+                "VERSION" to "$version"
+            )
+        )
+        files(tasks["jar"].outputs)
     }
 }

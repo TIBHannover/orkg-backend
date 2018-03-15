@@ -76,7 +76,7 @@ where `IMAGE` is the name of a sub-directory under `docker/`.
 The easiest way to start Docker containers from the images is via https://docs.docker.com/compose/[Docker Compose].
 After installing it, run:
 
-    docker-compose -f docker/blazegraph/docker-compose.yml up -d
+    docker-compose -f docker/IMAGE/docker-compose.yml up -d
 
 where `IMAGE` is the name of a sub-directory under `docker/`.
 

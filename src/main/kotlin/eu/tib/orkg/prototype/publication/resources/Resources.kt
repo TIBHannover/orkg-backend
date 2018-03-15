@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.publication.resources
 
 import eu.tib.orkg.prototype.publication.domain.model.ArticleRepository
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/articles")
+@CrossOrigin(origins = ["*"])
 class ArticleController(
     val articleRepository: ArticleRepository
 ) {

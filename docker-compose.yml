@@ -18,5 +18,21 @@ services:
     networks:
       - backend
 
+  neo4j:
+    image: orkg/neo4j-dev
+    ports:
+      - '7474:7474' # HTTP
+      - '7687:7687' # BOLT
+    environment:
+      - NEO4J_AUTH=none
+      - NEO4J_dbms_unmanagedExtensionClasses=semantics.extension=/rdf
+    networks:
+      - backend
+    volumes:
+      - 'neo4j-data:/data'
+
 networks:
   backend:
+
+volumes:
+  neo4j-data:

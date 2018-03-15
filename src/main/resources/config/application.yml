@@ -8,6 +8,6 @@ spring:
   profiles: neo4j
   data:
     neo4j:
-      uri: 'bolt://localhost:7687'
+      uri: 'bolt://neo4j:7687'
       #username:
       #password:

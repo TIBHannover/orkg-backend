@@ -8,6 +8,12 @@ version = "0.0.1-SNAPSHOT"
 
 val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java).kotlinPluginVersion
 
+buildscript {
+    dependencies {
+        classpath("org.junit.platform:junit-platform-gradle-plugin:1.1.0")
+    }
+}
+
 plugins {
     kotlin("jvm") version "1.2.30"
     kotlin("plugin.spring") version "1.2.30"
@@ -18,6 +24,7 @@ plugins {
 
 apply {
     plugin("io.spring.dependency-management")
+    plugin("org.junit.platform.gradle.plugin")
 }
 
 dependencies {
@@ -28,7 +35,11 @@ dependencies {
     compile("org.eclipse.rdf4j:rdf4j-repository-sparql:2.2.4")
     compile("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile("org.springframework.boot:spring-boot-starter-test") {
+        exclude(group = "junit", module = "junit")
+    }
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.0.0")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0")
 }
 
 asciidoctorj {

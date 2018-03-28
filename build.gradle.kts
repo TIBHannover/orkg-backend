@@ -28,13 +28,6 @@ dependencies {
     compile("org.eclipse.rdf4j:rdf4j-repository-sparql:2.2.4")
     compile("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    testCompile("org.jetbrains.spek:spek-api:1.1.5") {
-        exclude(group = "org.jetbrains.kotlin")
-    }
-    testRuntime("org.jetbrains.spek:spek-junit-platform-engine:1.1.5") {
-        exclude(group = "org.jetbrains.kotlin")
-        exclude(group = "org.junit.platform")
-    }
     testCompile("org.springframework.boot:spring-boot-starter-test")
 }
 

@@ -18,7 +18,7 @@ class PredicateIdSpec {
         fun shouldAcceptLowerCaseAlphaNumericCharacters() {
             val subjectId = PredicateId("Pc0ffee")
 
-            assertThat(subjectId.value).isEqualTo("Pc0ffee")
+            assertThat(subjectId.toString()).isEqualTo("Pc0ffee")
         }
 
         @Test

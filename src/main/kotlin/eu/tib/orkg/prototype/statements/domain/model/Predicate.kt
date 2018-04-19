@@ -5,8 +5,7 @@ import eu.tib.orkg.prototype.core.Entity
 import java.time.LocalDateTime
 
 data class Predicate(
-    override val id: PredicateId,
+    val id: PredicateId,
     val userId: UserId,
     val createdAt: LocalDateTime
-) :
-    Entity<PredicateId>(id)
+)

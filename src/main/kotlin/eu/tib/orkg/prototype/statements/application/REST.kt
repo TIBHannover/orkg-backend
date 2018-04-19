@@ -1,8 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.statements.domain.model.Statement
-import eu.tib.orkg.prototype.statements.infrastructure.Neo4jEntity
-import eu.tib.orkg.prototype.statements.infrastructure.Neo4jEntityRepository
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -11,17 +9,15 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/entities")
-class EntityController(
-    val repository: Neo4jEntityRepository
-) {
+class EntityController {
     @PostMapping("/")
     fun add() {
-        repository.save(Neo4jEntity())
+        TODO()
     }
 
     @GetMapping("/")
-    fun findAll(): MutableIterable<Neo4jEntity>? {
-        return repository.findAll()
+    fun findAll() {
+        TODO()
     }
 }
 

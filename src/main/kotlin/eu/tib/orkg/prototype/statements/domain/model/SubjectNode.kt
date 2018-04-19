@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.authentication.domain.model.UserId
 import java.time.LocalDateTime
 
 data class SubjectNode(
-    val id: SubjectId,
+    val id: ResourceId,
     val userId: UserId,
     val createdAt: LocalDateTime
 )

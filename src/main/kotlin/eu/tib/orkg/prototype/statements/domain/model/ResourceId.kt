@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-data class SubjectId(private val value: String) {
+data class ResourceId(private val value: String) {
     init {
         require(value.isNotEmpty()) { "Value cannot be empty" }
         require(value.isNotBlank()) { "Value cannot be blank" }

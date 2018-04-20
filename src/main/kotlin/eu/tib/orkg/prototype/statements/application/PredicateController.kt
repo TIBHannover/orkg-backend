@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -21,7 +22,15 @@ class PredicateController(private val repository: PredicateRepository) {
             .orElseThrow { ResourceNotFound() }
 
     @GetMapping("/")
-    fun findAll(): Iterable<PredicateId> = repository.findAll()
+    fun findByLabel(
+        @RequestParam(
+            "q",
+            required = false
+        ) searchString: String?
+    ) = if (searchString == null)
+        repository.findAll()
+    else
+        repository.findByLabel(searchString)
 
     @PostMapping("/")
     fun add(@RequestBody predicate: Predicate): Unit =

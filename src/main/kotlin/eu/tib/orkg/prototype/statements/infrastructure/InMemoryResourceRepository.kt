@@ -8,7 +8,6 @@ import java.util.*
 
 @Repository
 class InMemoryResourceRepository : ResourceRepository {
-
     private val resources = mutableMapOf<ResourceId, Resource>()
 
     override fun findById(id: ResourceId): Optional<Resource> {
@@ -19,8 +18,13 @@ class InMemoryResourceRepository : ResourceRepository {
             Optional.empty()
     }
 
-    override fun findAll(): Iterable<ResourceId> =
-        resources.keys.toSet()
+    override fun findAll(): Iterable<Resource> =
+        resources.values.toSet()
+
+    override fun findByLabel(searchString: String) =
+        resources.filter {
+            it.value.label.contains(searchString, true)
+        }.values.toSet()
 
     override fun add(resource: Resource) {
         resources[resource.id] = resource

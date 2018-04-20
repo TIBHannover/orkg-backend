@@ -8,7 +8,6 @@ import java.util.*
 
 @Repository
 class InMemoryPredicateRepository : PredicateRepository {
-
     private val predicates = mutableMapOf<PredicateId, Predicate>()
 
     override fun findById(id: PredicateId): Optional<Predicate> {
@@ -19,9 +18,13 @@ class InMemoryPredicateRepository : PredicateRepository {
         return Optional.empty()
     }
 
-    override fun findAll(): Iterable<PredicateId> {
-        return predicates.keys.toSet()
-    }
+    override fun findAll(): Iterable<Predicate> =
+        predicates.values.toSet()
+
+    override fun findByLabel(searchString: String): Iterable<Predicate> =
+        predicates.filter {
+            it.value.label.contains(searchString, true)
+        }.values.toSet()
 
     override fun add(predicate: Predicate) {
         predicates[predicate.id] = predicate

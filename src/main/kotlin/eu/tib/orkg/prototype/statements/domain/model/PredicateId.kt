@@ -1,5 +1,12 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import eu.tib.orkg.prototype.statements.application.json.PredicateIdDeserializer
+import eu.tib.orkg.prototype.statements.application.json.PredicateIdSerializer
+
+@JsonDeserialize(using = PredicateIdDeserializer::class)
+@JsonSerialize(using = PredicateIdSerializer::class)
 data class PredicateId(private val value: String) {
     init {
         require(value.isNotEmpty()) { "Value cannot be empty" }

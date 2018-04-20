@@ -1,5 +1,12 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import eu.tib.orkg.prototype.statements.application.json.ResourceIdDeserializer
+import eu.tib.orkg.prototype.statements.application.json.ResourceIdSerializer
+
+@JsonDeserialize(using = ResourceIdDeserializer::class)
+@JsonSerialize(using = ResourceIdSerializer::class)
 data class ResourceId(private val value: String) {
     init {
         require(value.isNotEmpty()) { "Value cannot be empty" }

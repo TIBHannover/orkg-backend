@@ -20,7 +20,7 @@ class StatementController(private val repository: StatementRepository) {
     }
 
     @PostMapping("/")
-    fun add(@RequestBody body: Statement) {
-        repository.add(body)
+    fun add(@RequestBody statement: Statement) {
+        repository.add(statement)
     }
 }

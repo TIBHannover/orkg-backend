@@ -1,11 +1,14 @@
 package eu.tib.orkg.prototype
 
+import eu.tib.orkg.prototype.statements.domain.model.Object
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateRepository
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceRepository
+import eu.tib.orkg.prototype.statements.domain.model.Statement
+import eu.tib.orkg.prototype.statements.domain.model.StatementRepository
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.stereotype.Component
@@ -13,86 +16,131 @@ import org.springframework.stereotype.Component
 @Component
 class ExampleData(
     private val resourceRepository: ResourceRepository,
-    private val predicateRepository: PredicateRepository
+    private val predicateRepository: PredicateRepository,
+    private val statementRepository: StatementRepository
 ) : ApplicationRunner {
 
     override fun run(args: ApplicationArguments?) {
         //
         // Resources
         //
+        val caseStudies = ResourceId("89AB")
+        val designOfOntologies = ResourceId("789a")
+        val fermatsLastTheorem = ResourceId("3456")
+        val grubersDesign = ResourceId("b0b0b0")
+        val knowledgeEngineering = ResourceId("6789")
+        val mathProof = ResourceId("1234")
+        val modularityTheorem = ResourceId("2345")
+        val ontoDesignCriteria = ResourceId("5678")
+        val tanimaConj = ResourceId("4567")
+        val wilesProof = ResourceId("0a0a0a")
+
         resourceRepository.add(
             Resource(
-                ResourceId("1234"),
-                "Mathematical proof"
+                wilesProof,
+                "Wiles's proof of Fermat's last theorem"
             )
         )
         resourceRepository.add(
-            Resource(
-                ResourceId("2345"),
-                "Modularity theorem"
-            )
+            Resource(mathProof, "Mathematical proof")
+        )
+        resourceRepository.add(
+            Resource(modularityTheorem, "Modularity theorem")
         )
         resourceRepository.add(
             Resource(
-                ResourceId("3456"),
+                fermatsLastTheorem,
                 "Fermat's last theorem (conjecture)"
             )
         )
         resourceRepository.add(
-            Resource(
-                ResourceId("4567"),
-                "Taniyama-Shimura-Weil conjecture"
-            )
+            Resource(tanimaConj, "Taniyama-Shimura-Weil conjecture")
         )
         resourceRepository.add(
             Resource(
-                ResourceId("5678"),
+                ontoDesignCriteria,
                 "Design criteria for ontologies"
             )
         )
         resourceRepository.add(
-            Resource(
-                ResourceId("6789"),
-                "Knowledge Engineering"
-            )
+            Resource(knowledgeEngineering, "Knowledge Engineering")
         )
         resourceRepository.add(
-            Resource(
-                ResourceId("789a"),
-                "Design of ontologies"
-            )
+            Resource(designOfOntologies, "Design of ontologies")
         )
         resourceRepository.add(
-            Resource(
-                ResourceId("89AB"),
-                "Case studies"
-            )
+            Resource(caseStudies, "Case studies")
         )
+
         //
         // Predicates
         //
-        predicateRepository.add(
-            Predicate(
-                PredicateId("P123"),
-                "addresses"
+        val addresses = PredicateId("P123")
+        val employs = PredicateId("Pabc")
+        val yields = PredicateId("P234")
+
+        predicateRepository.add(Predicate(addresses, "addresses"))
+        predicateRepository.add(Predicate(yields, "yields"))
+        predicateRepository.add(Predicate(employs, "employs"))
+
+        //
+        // Statements
+        //
+        statementRepository.add(
+            Statement(
+                wilesProof,
+                employs,
+                Object.Resource(mathProof)
             )
         )
-        predicateRepository.add(
-            Predicate(
-                PredicateId("P234"),
-                "yields"
+        statementRepository.add(
+            Statement(
+                wilesProof,
+                addresses,
+                Object.Resource(tanimaConj)
             )
         )
-        predicateRepository.add(
-            Predicate(
-                PredicateId("Pabc"),
-                "employs"
+        statementRepository.add(
+            Statement(
+                wilesProof,
+                addresses,
+                Object.Resource(fermatsLastTheorem)
             )
         )
-        predicateRepository.add(
-            Predicate(
-                PredicateId("PDEF"),
-                "addresses"
+        statementRepository.add(
+            Statement(
+                wilesProof,
+                yields,
+                Object.Resource(modularityTheorem)
+            )
+        )
+
+        statementRepository.add(
+            Statement(
+                grubersDesign,
+                employs,
+                Object.Resource(caseStudies)
+            )
+        )
+        statementRepository.add(
+            Statement(
+                grubersDesign,
+                addresses,
+                Object.Resource(designOfOntologies)
+            )
+        )
+        statementRepository.add(
+            Statement(
+                grubersDesign,
+                addresses,
+                Object.Resource(knowledgeEngineering)
+            )
+        )
+        statementRepository.add(
+            Statement(
+                grubersDesign,
+                yields,
+                Object.Resource(ontoDesignCriteria)
             )
         )
     }

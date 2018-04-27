@@ -9,8 +9,8 @@ version = "0.0.1-SNAPSHOT"
 val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java).kotlinPluginVersion
 
 plugins {
-    kotlin("jvm") version "1.2.30"
-    kotlin("plugin.spring") version "1.2.30"
+    kotlin("jvm") version "1.2.40"
+    kotlin("plugin.spring") version "1.2.40"
     id("org.springframework.boot") version "2.0.0.RELEASE"
     id("org.asciidoctor.convert") version "1.5.3"
     id("com.palantir.docker") version "0.19.2"

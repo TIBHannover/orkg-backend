@@ -17,7 +17,7 @@ sealed class Object {
     data class Resource(
         val id: ResourceId
     ) : Object()
-    
+
     data class Literal(
         val value: String,
         val type: String = "string"

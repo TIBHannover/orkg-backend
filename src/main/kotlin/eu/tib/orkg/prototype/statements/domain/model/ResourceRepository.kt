@@ -8,7 +8,7 @@ interface ResourceRepository {
 
     fun findAll(): Iterable<Resource>
 
-    fun findByLabel(searchString: String) : Iterable<Resource>
+    fun findByLabel(searchString: String): Iterable<Resource>
 
     fun add(resource: Resource)
 }

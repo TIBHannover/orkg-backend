@@ -11,4 +11,6 @@ interface PredicateRepository {
     fun findByLabel(searchString: String): Iterable<Predicate>
 
     fun add(predicate: Predicate)
+
+    fun nextIdentity(): PredicateId
 }

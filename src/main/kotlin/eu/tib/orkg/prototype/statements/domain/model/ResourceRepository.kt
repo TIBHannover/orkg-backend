@@ -11,4 +11,6 @@ interface ResourceRepository {
     fun findByLabel(searchString: String): Iterable<Resource>
 
     fun add(resource: Resource)
+
+    fun nextIdentity(): ResourceId
 }

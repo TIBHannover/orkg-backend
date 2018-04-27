@@ -9,6 +9,7 @@ import java.util.*
 @Repository
 class InMemoryPredicateRepository : PredicateRepository {
     private val predicates = mutableMapOf<PredicateId, Predicate>()
+    private var counter = 0L
 
     override fun findById(id: PredicateId): Optional<Predicate> {
         val predicate = predicates[id]
@@ -28,5 +29,10 @@ class InMemoryPredicateRepository : PredicateRepository {
 
     override fun add(predicate: Predicate) {
         predicates[predicate.id] = predicate
+    }
+
+    override fun nextIdentity(): PredicateId {
+        counter++
+        return PredicateId("P$counter")
     }
 }

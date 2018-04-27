@@ -9,6 +9,7 @@ import java.util.*
 @Repository
 class InMemoryResourceRepository : ResourceRepository {
     private val resources = mutableMapOf<ResourceId, Resource>()
+    private var counter = 0L
 
     override fun findById(id: ResourceId): Optional<Resource> {
         val resourceFound = resources[id]
@@ -28,5 +29,10 @@ class InMemoryResourceRepository : ResourceRepository {
 
     override fun add(resource: Resource) {
         resources[resource.id] = resource
+    }
+
+    override fun nextIdentity(): ResourceId {
+        counter++
+        return ResourceId("$counter")
     }
 }

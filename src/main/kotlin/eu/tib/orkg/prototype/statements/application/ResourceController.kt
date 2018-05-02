@@ -35,5 +35,14 @@ class ResourceController(private val repository: ResourceRepository) {
         repository.findByLabel(searchString)
 
     @PostMapping("/")
-    fun add(@RequestBody resource: Resource) = repository.add(resource)
+    fun add(@RequestBody resource: Resource): Resource {
+        val (id, resourceWithId) = if (resource.id == null) {
+            val id = repository.nextIdentity()
+            Pair(id, resource.copy(id = id))
+        } else {
+            Pair(resource.id, resource)
+        }
+        repository.add(resourceWithId)
+        return repository.findById(id).get()
+    }
 }

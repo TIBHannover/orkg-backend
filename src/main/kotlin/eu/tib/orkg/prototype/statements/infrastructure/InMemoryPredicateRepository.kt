@@ -28,7 +28,8 @@ class InMemoryPredicateRepository : PredicateRepository {
         }.values.toSet()
 
     override fun add(predicate: Predicate) {
-        predicates[predicate.id] = predicate
+        if (predicate.id != null)
+            predicates[predicate.id] = predicate
     }
 
     override fun nextIdentity(): PredicateId {

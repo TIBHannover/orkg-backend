@@ -35,6 +35,14 @@ class PredicateController(private val repository: PredicateRepository) {
         repository.findByLabel(searchString)
 
     @PostMapping("/")
-    fun add(@RequestBody predicate: Predicate): Unit =
-        repository.add(predicate)
+    fun add(@RequestBody predicate: Predicate): Predicate {
+        val (id, predicateWithId) = if (predicate.id == null) {
+            val id = repository.nextIdentity()
+            Pair(id, predicate.copy(id = id))
+        } else {
+            Pair(predicate.id, predicate)
+        }
+        repository.add(predicateWithId)
+        return repository.findById(id).get()
+    }
 }

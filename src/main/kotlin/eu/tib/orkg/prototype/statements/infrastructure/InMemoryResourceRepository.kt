@@ -28,7 +28,8 @@ class InMemoryResourceRepository : ResourceRepository {
         }.values.toSet()
 
     override fun add(resource: Resource) {
-        resources[resource.id] = resource
+        if (resource.id != null)
+            resources[resource.id] = resource
     }
 
     override fun nextIdentity(): ResourceId {

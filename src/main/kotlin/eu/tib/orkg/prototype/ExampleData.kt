@@ -36,6 +36,9 @@ class ExampleData(
         val wilesProof = ResourceId("0a0a0a")
 
         resourceRepository.add(
+            Resource(grubersDesign, "Gruber's design of ontologies")
+        )
+        resourceRepository.add(
             Resource(
                 wilesProof,
                 "Wiles's proof of Fermat's last theorem"

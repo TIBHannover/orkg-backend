@@ -6,7 +6,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 group = "eu.tib"
 version = "0.0.1-SNAPSHOT"
 
-val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java).kotlinPluginVersion
+val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java)
+    .kotlinPluginVersion
 
 buildscript {
     dependencies {
@@ -38,9 +39,15 @@ dependencies {
     testCompile("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "junit", module = "junit")
     }
+    testCompile("org.springframework.restdocs:spring-restdocs-mockmvc:2.0.1.RELEASE")
     testCompile("org.junit.jupiter:junit-jupiter-api:5.0.0")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0")
+
+    asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.1.RELEASE")
 }
+
+val snippetsDir = file("build/generated-snippets")
+
 
 asciidoctorj {
     version = "1.5.6" // AsciiDoctor (Ruby!) version
@@ -57,7 +64,14 @@ tasks {
         kotlinOptions.jvmTarget = "1.8"
     }
 
+    "test" {
+        outputs.dir(snippetsDir)
+    }
+
     "asciidoctor"(AsciidoctorTask::class) {
+        inputs.dir(snippetsDir)
+        dependsOn("test")
+
         //outputs.upToDateWhen { false }
         backends("html5")
 
@@ -77,6 +91,7 @@ tasks {
         sources(delegateClosureOf<PatternSet> {
             exclude("parts/**")
             include("*.adoc")
+            include("api-doc/*.adoc")
         })
     }
 

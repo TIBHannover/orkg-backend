@@ -1,0 +1,58 @@
+= ORKG REST API Documentation
+:toc: right
+
+== Overview
+
+TBD
+
+////
+=== Current version
+=== Schema
+=== Authentication
+=== Parameters
+=== Root endpoint
+=== Client errors
+=== HTTP redirects
+=== HTTP verbs
+=== Hypermedia
+=== Pagination
+=== Conditional requests
+=== Cross origin resource sharing
+////
+
+== Statements
+
+=== Introduction to statements
+
+TDB
+
+=== Authentication
+
+You can read statements anonymously.
+
+
+=== List statements
+
+Statements can be listed by performing a `GET` request:
+
+operation::statements[snippets='curl-request,response-body']
+
+== Resources
+
+=== List resources
+
+Statements can be listed by performing a `GET` request:
+
+operation::resources[snippets='curl-request,response-body']
+
+== Predicates
+
+Predicates consist of an ID and a label (for presentation).
+IDs always start with "P", followed by a number.
+
+
+=== List predicates
+
+Predicates can be listed by performing a `GET` request:
+
+operation::predicates[snippets='curl-request,response-body']

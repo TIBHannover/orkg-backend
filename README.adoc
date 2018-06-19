@@ -130,14 +130,3 @@ bolt://localhost:7687
 In order to be useful, you need to import data into Blazegraph.
 This has to be done manually.
 Download the file `SemSur_3-labels.owl` from the https://git.tib.eu/orkg/orkg-ontology[`orkg-ontology` repository] and upload it to Blazegraph using the http://localhost:8889/bigdata/#update["Update" tab].
-
-== Features
-
-Not much, to be honest. Particularly,
-
-* a single REST resource, and
-* a repository that queries a Blazegraph server using SPARQL.
-
-An implementation of the `ArticleRepository` for Blazegraph is done.
-One for Neo4j will follow.
-(The idea is to explore how to implement vendor-independent data models and a clean architecture.)

@@ -8,20 +8,36 @@ It is written in https://kotlinlang.org/[Kotlin] as a proof-of-concept and for e
 
 == Building and running
 
+=== Prerequisites
+
+The prototype can be run stand-alone.
+However, it needs other services in order to start properly.
+Services are managed via https://www.docker.com/community-edition[Docker (CE)] and https://docs.docker.com/compose/[Docker Compose].
+Please follow the respective installation instructions for your operating system or distribution.
+
 === Stand-alone application
+
+NOTE: Running the application stand-alone is mostly for development purposes.
+      It still needs Neo4j configured and running.
+      If you want to test the application, please refer to the section <<Building a Docker image>> below.
+      Alternatively, build the necessary images yourself by following the advice in the section <<Docker images>> (not recommended).
 
 To build and run the prototype, type:
 
     ./gradlew bootRun
 
 This will start a server running on http://localhost:8000.
-The only available REST resource (for now) is http://localhost:8000/api/articles/.
+
+The REST entry-point is http://localhost:8000/api/.
 
 This also requires a Blazegraph server running on http://localhost:8889/bigdata/.
 It expects the SumSur ontology to be loaded into the triple-store.
 See the instructions below.
 
 === Building a Docker image
+
+NOTE: The following commands assume that you added your user to the `docker` group https://docs.docker.com/install/linux/linux-postinstall/[as suggested in the documentation].
+      If you did not do so, you have to prefix all commands with `sudo`.
 
 The application can also run as a Docker container.
 To build the image(s), run:
@@ -86,15 +102,22 @@ The images will provide the following end-points:
 
 .Images and their default end-points
 [[endpoints]]
-[cols=2*,options=header]
+[cols=3*,options=header]
 |===
 |Image
+|Container name
 |End-points
 
+|`orkg/prototype`
+|`orkgprototype_prototype_1`
+|http://localhost:8000/api/ (REST API)
+
 |`orkg/blazegraph-dev`
+|`orkgprototype_blazegraph_1`
 |http://localhost:8889/bigdata/
 
 |`orkg/neo4j-dev`
+|`orkgprototype_neo4j_1`
 | http://localhost:7474/browser/ +
 bolt://localhost:7687
 
@@ -107,58 +130,3 @@ bolt://localhost:7687
 In order to be useful, you need to import data into Blazegraph.
 This has to be done manually.
 Download the file `SemSur_3-labels.owl` from the https://git.tib.eu/orkg/orkg-ontology[`orkg-ontology` repository] and upload it to Blazegraph using the http://localhost:8889/bigdata/#update["Update" tab].
-
-==== Uploading to Neo4j
-
-The following assumes that a directory exists in the container
-as `/data` and contains a file named `SemSur_3.owl`.
-If the container is started via Docker Compose, a volume is
-created and mounted for you automatically.
-To copy the ontology into that volume, run:
-
-  docker cp ~/Downloads/SemSur_3.owl neo4j_neo4j_1:/data
-
-NOTE: As long as the volume is not deleted manually, the
-      file will still be present even after re-creating the
-      container.
-
-To upload the SemSur data into Neo4j with the `semantics`
-extension several steps need to be performed:
-
-1. In the Neo4j web interface, create an index on the `uri` property of
-   nodes with the `Resource` label:
-
-  CREATE INDEX ON :Resource(uri)
-
-2. Neo4j is used with RDF prefixes. These need to be communicated to the
-   `semantics` extension via a special node. You can create the Cypher
-   query to create it from your ontology file by using the helper script
-   `scripts/NamespacesToNeoSemantics.kts`.footnote:[This needs
-     https://github.com/holgerbrandl/kscript[kscript] to be installed.
-     This can be done easily by http://sdkman.io/[SDKMAN].]
-   Copy the output to the Neo4j web interface.
-
-3. Import the ontology (data) via the Neo4j web interface:
-
-  CALL semantics.importRDF("file:///data/SemSur_3.owl", "RDF/XML", { shortenUrls: true })
-
-===== If something goes wrong…
-
-WARNING: The following will destroy all your data!
-
-If bad things and you want to reset the database, you can
-either re-create the Docker container or execute the following
-Cypher query:
-
-  MATCH (n) DETACH DELETE n
-
-== Features
-
-Not much, to be honest. Particularly,
-
-* a single REST resource, and
-* a repository that queries a Blazegraph server using SPARQL.
-
-An implementation of the `ArticleRepository` for Blazegraph is done.
-One for Neo4j will follow.
-(The idea is to explore how to implement vendor-independent data models and a clean architecture.)

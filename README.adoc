@@ -30,10 +30,6 @@ This will start a server running on http://localhost:8000.
 
 The REST entry-point is http://localhost:8000/api/.
 
-This also requires a Blazegraph server running on http://localhost:8889/bigdata/.
-It expects the SumSur ontology to be loaded into the triple-store.
-See the instructions below.
-
 === Building a Docker image
 
 NOTE: The following commands assume that you added your user to the `docker` group https://docs.docker.com/install/linux/linux-postinstall/[as suggested in the documentation].

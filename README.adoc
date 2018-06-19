@@ -102,15 +102,18 @@ The images will provide the following end-points:
 
 .Images and their default end-points
 [[endpoints]]
-[cols=2*,options=header]
+[cols=3*,options=header]
 |===
 |Image
+|Container name
 |End-points
 
 |`orkg/blazegraph-dev`
+|`orkgprototype_blazegraph_1`
 |http://localhost:8889/bigdata/
 
 |`orkg/neo4j-dev`
+|`orkgprototype_neo4j_1`
 | http://localhost:7474/browser/ +
 bolt://localhost:7687
 

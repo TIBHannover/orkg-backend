@@ -108,6 +108,10 @@ The images will provide the following end-points:
 |Container name
 |End-points
 
+|`orkg/prototype`
+|`orkgprototype_prototype_1`
+|http://localhost:8000/api/ (REST API)
+
 |`orkg/blazegraph-dev`
 |`orkgprototype_blazegraph_1`
 |http://localhost:8889/bigdata/

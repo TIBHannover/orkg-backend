@@ -23,6 +23,9 @@ See the instructions below.
 
 === Building a Docker image
 
+NOTE: The following commands assume that you added your user to the `docker` group https://docs.docker.com/install/linux/linux-postinstall/[as suggested in the documentation].
+      If you did not do so, you have to prefix all commands with `sudo`.
+
 The application can also run as a Docker container.
 To build the image(s), run:
 

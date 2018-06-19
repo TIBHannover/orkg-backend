@@ -17,6 +17,11 @@ Please follow the respective installation instructions for your operating system
 
 === Stand-alone application
 
+NOTE: Running the application stand-alone is mostly for development purposes.
+      It still needs Neo4j configured and running.
+      If you want to test the application, please refer to the section <<Building a Docker image>> below.
+      Alternatively, build the necessary images yourself by following the advice in the section <<Docker images>> (not recommended).
+
 To build and run the prototype, type:
 
     ./gradlew bootRun

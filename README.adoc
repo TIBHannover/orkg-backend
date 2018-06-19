@@ -122,11 +122,3 @@ The images will provide the following end-points:
 bolt://localhost:7687
 
 |===
-
-=== Uploading data
-
-==== Uploading to Blazegraph
-
-In order to be useful, you need to import data into Blazegraph.
-This has to be done manually.
-Download the file `SemSur_3-labels.owl` from the https://git.tib.eu/orkg/orkg-ontology[`orkg-ontology` repository] and upload it to Blazegraph using the http://localhost:8889/bigdata/#update["Update" tab].

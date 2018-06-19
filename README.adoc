@@ -30,10 +30,6 @@ This will start a server running on http://localhost:8000.
 
 The REST entry-point is http://localhost:8000/api/.
 
-This also requires a Blazegraph server running on http://localhost:8889/bigdata/.
-It expects the SumSur ontology to be loaded into the triple-store.
-See the instructions below.
-
 === Building a Docker image
 
 NOTE: The following commands assume that you added your user to the `docker` group https://docs.docker.com/install/linux/linux-postinstall/[as suggested in the documentation].
@@ -112,21 +108,9 @@ The images will provide the following end-points:
 |`orkgprototype_prototype_1`
 |http://localhost:8000/api/ (REST API)
 
-|`orkg/blazegraph-dev`
-|`orkgprototype_blazegraph_1`
-|http://localhost:8889/bigdata/
-
 |`orkg/neo4j-dev`
 |`orkgprototype_neo4j_1`
 | http://localhost:7474/browser/ +
 bolt://localhost:7687
 
 |===
-
-=== Uploading data
-
-==== Uploading to Blazegraph
-
-In order to be useful, you need to import data into Blazegraph.
-This has to be done manually.
-Download the file `SemSur_3-labels.owl` from the https://git.tib.eu/orkg/orkg-ontology[`orkg-ontology` repository] and upload it to Blazegraph using the http://localhost:8889/bigdata/#update["Update" tab].

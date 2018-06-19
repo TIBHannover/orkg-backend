@@ -9,14 +9,7 @@ services:
     networks:
       - backend
     depends_on:
-      - blazegraph
-
-  blazegraph:
-    image: orkg/blazegraph-dev
-    ports:
-      - '8889:8080'
-    networks:
-      - backend
+      - neo4j
 
   neo4j:
     image: orkg/neo4j-dev

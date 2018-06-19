@@ -8,6 +8,13 @@ It is written in https://kotlinlang.org/[Kotlin] as a proof-of-concept and for e
 
 == Building and running
 
+=== Prerequisites
+
+The prototype can be run stand-alone.
+However, it needs other services in order to start properly.
+Services are managed via https://www.docker.com/community-edition[Docker (CE)] and https://docs.docker.com/compose/[Docker Compose].
+Please follow the respective installation instructions for your operating system or distribution.
+
 === Stand-alone application
 
 To build and run the prototype, type:

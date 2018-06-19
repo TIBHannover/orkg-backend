@@ -112,10 +112,6 @@ The images will provide the following end-points:
 |`orkgprototype_prototype_1`
 |http://localhost:8000/api/ (REST API)
 
-|`orkg/blazegraph-dev`
-|`orkgprototype_blazegraph_1`
-|http://localhost:8889/bigdata/
-
 |`orkg/neo4j-dev`
 |`orkgprototype_neo4j_1`
 | http://localhost:7474/browser/ +

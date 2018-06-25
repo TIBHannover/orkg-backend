@@ -43,11 +43,11 @@ Objects can also be a literal value.
 Resources and predicates are identifiable by an ID, whereas literals are
  not since they represent a value.
 
-=== List statements
+=== Listing statements
 
-Statements can be listed by performing a `GET` request:
+A `GET` request lists all the statements:
 
-operation::statements[snippets='curl-request,response-body']
+operation::statement-controller-test-index[snippets='curl-request,response-body']
 
 == Resources
 

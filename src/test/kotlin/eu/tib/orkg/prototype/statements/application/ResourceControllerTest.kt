@@ -26,8 +26,8 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun index() {
-        repository.add(Resource(ResourceId("1"), "knows"))
-        repository.add(Resource(ResourceId("2"), "is a"))
+        repository.add(Resource(ResourceId("1"), "research contribution"))
+        repository.add(Resource(ResourceId("2"), "programming language"))
 
         mockMvc
             .perform(

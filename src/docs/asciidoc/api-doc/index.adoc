@@ -72,12 +72,23 @@ operation::resource-controller-test-add[snippets='response-fields']
 
 == Predicates
 
-Predicates consist of an ID and a label (for presentation).
+Predicates represent edges (relationships between nodes) in the
+ knowledge graph.
+They consist of an ID and a label (for presentation).
 IDs always start with "P", followed by a number.
 
+=== Listing predicates
 
-=== List predicates
+A `GET` request lists all predicates:
 
-Predicates can be listed by performing a `GET` request:
+operation::predicate-controller-test-index[snippets='curl-request,response-body']
 
-operation::predicates[snippets='curl-request,response-body']
+=== Creating predicates
+
+A `POST` request creates a new predicate with a given label.
+
+operation::predicate-controller-test-add[snippets='request-fields,curl-request,response-body']
+
+The response body consists of the following fields:
+
+operation::predicate-controller-test-add[snippets='response-fields']

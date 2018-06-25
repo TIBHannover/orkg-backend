@@ -6,6 +6,7 @@
 
 :orkg: Open Research Knowledge Graph
 
+[[overview]]
 == Overview
 
 This document describes the REST API of the {orkg}.
@@ -19,6 +20,8 @@ This document describes the REST API of the {orkg}.
 === Client errors
 === HTTP redirects
 ////
+
+[[overview-http-verbs]]
 === HTTP verbs
 
 The {orkg} REST API tries to adhere as closely as possible to standard
@@ -46,6 +49,7 @@ The verbs `PATCH`, `PUT`, and `DELETE` are (currently) unsupported.
 |===
 ////
 
+[[overview-http-status-codes]]
 === HTTP status codes
 The {orkg} REST API tries to adhere as closely as possible to standard
  HTTP and REST conventions in its use of HTTP status codes.
@@ -79,9 +83,8 @@ In a `POST` request, the response will contain an entity describing or containin
 === Cross origin resource sharing
 ////
 
+[[statements]]
 == Statements
-
-=== Introduction to statements
 
 A statement represents a kind of sentence in the knowledge graph,
  similar to RDF triples.
@@ -97,23 +100,27 @@ Objects can also be a literal value.
 Resources and predicates are identifiable by an ID, whereas literals are
  not since they represent a value.
 
+[[statements-list]]
 === Listing statements
 
 A `GET` request lists all the statements:
 
 operation::statement-controller-test-index[snippets='curl-request,response-body']
 
+[[resources]]
 == Resources
 
 Resources represent nodes in the knowledge graph.
 They can appear in the subject or object position in <<Statements,statements>>.
 
+[[resources-list]]
 === Listing resources
 
 A `GET` request lists all resources:
 
 operation::resource-controller-test-index[snippets='curl-request,response-body']
 
+[[resources-create]]
 === Creating resources
 
 A `POST` request creates a new resource with a given label.
@@ -124,6 +131,7 @@ The response body consists of the following fields:
 
 operation::resource-controller-test-add[snippets='response-fields']
 
+[[predicates]]
 == Predicates
 
 Predicates represent edges (relationships between nodes) in the
@@ -131,12 +139,14 @@ Predicates represent edges (relationships between nodes) in the
 They consist of an ID and a label (for presentation).
 IDs always start with "P", followed by a number.
 
+[[predicates-list]]
 === Listing predicates
 
 A `GET` request lists all predicates:
 
 operation::predicate-controller-test-index[snippets='curl-request,response-body']
 
+[[predicates-create]]
 === Creating predicates
 
 A `POST` request creates a new predicate with a given label.

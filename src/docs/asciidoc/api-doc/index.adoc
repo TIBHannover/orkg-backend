@@ -118,7 +118,7 @@ operation::resource-controller-test-index[snippets='curl-request,response-body']
 
 A `POST` request creates a new resource with a given label.
 
-operation::resource-controller-test-add[snippets='request-fields,curl-request,response-body']
+operation::resource-controller-test-add[snippets='request-fields,curl-request,http-response']
 
 The response body consists of the following fields:
 
@@ -141,7 +141,7 @@ operation::predicate-controller-test-index[snippets='curl-request,response-body'
 
 A `POST` request creates a new predicate with a given label.
 
-operation::predicate-controller-test-add[snippets='request-fields,curl-request,response-body']
+operation::predicate-controller-test-add[snippets='request-fields,curl-request,http-response']
 
 The response body consists of the following fields:
 

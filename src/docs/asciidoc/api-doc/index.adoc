@@ -1,9 +1,14 @@
 = ORKG REST API Documentation
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
 :toc: right
+
+:orkg: Open Research Knowledge Graph
 
 == Overview
 
-TBD
+This document describes the REST API of the {orkg}.
 
 ////
 === Current version
@@ -24,12 +29,19 @@ TBD
 
 === Introduction to statements
 
-TDB
+A statement represents a kind of sentence in the knowledge graph,
+ similar to RDF triples.
+Similar to a real sentence, it is a tuple of a subject, a predicate, and
+ a object.
 
-=== Authentication
+Subjects and objects represent nodes in the graph are formed from a
+ <<Resources,resource>>.
+Objects can also be a literal value.
 
-You can read statements anonymously.
+<<Predicates>> represent edges (relationships) in the graph.
 
+Resources and predicates are identifiable by an ID, whereas literals are
+ not since they represent a value.
 
 === List statements
 
@@ -39,11 +51,24 @@ operation::statements[snippets='curl-request,response-body']
 
 == Resources
 
-=== List resources
+Resources represent nodes in the knowledge graph.
+They can appear in the subject or object position in <<Statements,statements>>.
 
-Statements can be listed by performing a `GET` request:
+=== Listing resources
 
-operation::resources[snippets='curl-request,response-body']
+A `GET` request lists all resources:
+
+operation::resource-controller-test-index[snippets='curl-request,response-body']
+
+=== Creating resources
+
+A `POST` request creates a new resource with a given label.
+
+operation::resource-controller-test-add[snippets='request-fields,curl-request,response-body']
+
+The response body consists of the following fields:
+
+operation::resource-controller-test-add[snippets='response-fields']
 
 == Predicates
 

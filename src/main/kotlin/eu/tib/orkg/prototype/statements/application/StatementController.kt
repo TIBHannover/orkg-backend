@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.Statement
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepository
@@ -24,6 +25,10 @@ class StatementController(private val repository: StatementRepository) {
     @GetMapping("/subject/{resourceId}")
     fun findByResource(@PathVariable resourceId: ResourceId) =
         repository.findBySubject(resourceId)
+
+    @GetMapping("/predicate/{predicateId}")
+    fun findByPredicate(@PathVariable predicateId: PredicateId) =
+        repository.findByPredicate(predicateId)
 
     @PostMapping("/")
     fun add(@RequestBody statement: Statement) {

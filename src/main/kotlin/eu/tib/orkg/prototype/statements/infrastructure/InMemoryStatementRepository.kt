@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.infrastructure
 
+import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.Statement
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepository
@@ -17,6 +18,9 @@ class InMemoryStatementRepository : StatementRepository {
 
     override fun findBySubject(resourceId: ResourceId) =
         statements.filter { it.subject == resourceId }
+
+    override fun findByPredicate(predicateId: PredicateId) =
+        statements.filter { it.predicate == predicateId }
 
     override fun add(statement: Statement) {
         statements.add(statement)

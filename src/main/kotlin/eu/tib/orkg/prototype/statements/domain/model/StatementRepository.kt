@@ -6,5 +6,7 @@ interface StatementRepository {
 
     fun findBySubject(resourceId: ResourceId): Iterable<Statement>
 
+    fun findByPredicate(predicateId: PredicateId): Iterable<Statement>
+
     fun add(statement: Statement)
 }

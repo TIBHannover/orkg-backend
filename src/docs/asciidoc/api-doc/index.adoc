@@ -112,6 +112,13 @@ A `GET` request lists all the statements with a given subject:
 
 operation::statement-controller-test-lookup-by-subject[snippets='curl-request,response-body']
 
+[[statements-lookup-by-predicate]]
+=== Lookup statements by predicate
+
+A `GET` request lists all the statements with a given predicate:
+
+operation::statement-controller-test-lookup-by-predicate[snippets='curl-request,response-body']
+
 [[resources]]
 == Resources
 

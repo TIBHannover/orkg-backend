@@ -1,7 +1,5 @@
 = ORKG REST API Documentation
 :doctype: book
-:icons: font
-:source-highlighter: highlightjs
 :toc: right
 
 :orkg: Open Research Knowledge Graph

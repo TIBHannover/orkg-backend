@@ -79,7 +79,7 @@ tasks {
 
         attributes(
             mapOf(
-                "source-highlighter" to "coderay",
+                "source-highlighter" to "highlightjs",
                 "coderay-linenums-mode" to "table",
                 "toc" to "left",
                 "icons" to "font",

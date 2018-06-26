@@ -129,6 +129,13 @@ The response body consists of the following fields:
 
 operation::resource-controller-test-add[snippets='response-fields']
 
+[[resources-fetch]]
+=== Fetching a resource
+
+A `GET` request provides information about a resource.
+
+operation::resource-controller-test-fetch[snippets='curl-request,response-body']
+
 [[predicates]]
 == Predicates
 
@@ -154,3 +161,10 @@ operation::predicate-controller-test-add[snippets='request-fields,curl-request,h
 The response body consists of the following fields:
 
 operation::predicate-controller-test-add[snippets='response-fields']
+
+[[predicates-fetch]]
+=== Fetching a predicate
+
+A `GET` request provides information about a predicate.
+
+operation::predicate-controller-test-fetch[snippets='curl-request,response-body']

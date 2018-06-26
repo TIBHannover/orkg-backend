@@ -48,6 +48,28 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    fun fetch() {
+        repository.add(Resource(ResourceId("1"), "research contribution"))
+
+        mockMvc
+            .perform(
+                get("/api/statements/resources/1")
+                    .accept(APPLICATION_JSON)
+                    .contentType(APPLICATION_JSON)
+            )
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    snippet,
+                    responseFields(
+                        fieldWithPath("id").description("The resource ID"),
+                        fieldWithPath("label").description("The resource label")
+                    )
+                )
+            )
+    }
+
+    @Test
     fun add() {
         val resource = mapOf("label" to "foo")
 

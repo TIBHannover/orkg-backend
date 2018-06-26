@@ -47,6 +47,28 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    fun fetch() {
+        repository.add(Predicate(PredicateId("P123"), "has name"))
+
+        mockMvc
+            .perform(
+                get("/api/statements/predicates/P123")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    snippet,
+                    responseFields(
+                        fieldWithPath("id").description("The predicate ID"),
+                        fieldWithPath("label").description("The predicate label")
+                    )
+                )
+            )
+    }
+
+    @Test
     fun add() {
         val resource = mapOf("label" to "knows")
 

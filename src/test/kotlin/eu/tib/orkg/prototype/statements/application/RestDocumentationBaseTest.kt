@@ -59,9 +59,4 @@ abstract class RestDocumentationBaseTest {
             .alwaysDo<StandaloneMockMvcBuilder>(document)
             .build()
     }
-
-    fun getRequestTo(endpoint: String) =
-        mockMvc
-            .perform(get(endpoint).contentType(MediaType.APPLICATION_JSON))
-            .andExpect(MockMvcResultMatchers.status().isOk)
 }

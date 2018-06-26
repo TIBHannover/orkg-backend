@@ -1,0 +1,198 @@
+= ORKG REST API Documentation
+:doctype: book
+:toc: right
+
+:orkg: Open Research Knowledge Graph
+
+[[overview]]
+== Overview
+
+This document describes the REST API of the {orkg}.
+
+////
+=== Current version
+=== Schema
+=== Authentication
+=== Parameters
+=== Root endpoint
+=== Client errors
+=== HTTP redirects
+////
+
+[[overview-http-verbs]]
+=== HTTP verbs
+
+The {orkg} REST API tries to adhere as closely as possible to standard
+ HTTP and REST conventions in its use of HTTP verbs.
+|===
+| Verb | Usage
+
+| `GET`
+| Used to retrieve a resource
+
+| `POST`
+| Used to create a new resource
+|===
+
+The verbs `PATCH`, `PUT`, and `DELETE` are (currently) unsupported.
+////
+| `PATCH`
+| Used to update an existing resource, including partial updates
+
+| `PUT`
+| Used to update an existing resource, full updates only
+
+| `DELETE`
+| Used to delete an existing resource
+|===
+////
+
+[[overview-http-status-codes]]
+=== HTTP status codes
+The {orkg} REST API tries to adhere as closely as possible to standard
+ HTTP and REST conventions in its use of HTTP status codes.
+
+|===
+| Status code | Usage
+
+| `200 OK`
+| Standard response for successful HTTP requests.
+The actual response will depend on the request method used.
+In a `GET` request, the response will contain an entity corresponding to the requested resource.
+In a `POST` request, the response will contain an entity describing or containing the result of the action.
+
+| `201 Created`
+| The request has been fulfilled and resulted in a new resource being created.
+
+| `204 No Content`
+| The server successfully processed the request, but is not returning any content.
+
+| `400 Bad Request`
+| The server cannot or will not process the request due to something that is perceived to be a client error (e.g., malformed request syntax, invalid request message framing, or deceptive request routing).
+
+| `404 Not Found`
+| The requested resource could not be found but may be available again in the future. Subsequent requests by the client are permissible.
+|===
+
+////
+=== Hypermedia
+=== Pagination
+=== Conditional requests
+=== Cross origin resource sharing
+////
+
+[[statements]]
+== Statements
+
+A statement represents a kind of sentence in the knowledge graph,
+ similar to RDF triples.
+Similar to a real sentence, it is a tuple of a subject, a predicate, and
+ a object.
+
+Subjects and objects represent nodes in the graph are formed from a
+ <<Resources,resource>>.
+Objects can also be a literal value.
+
+<<Predicates>> represent edges (relationships) in the graph.
+
+Resources and predicates are identifiable by an ID, whereas literals are
+ not since they represent a value.
+
+[[statements-list]]
+=== Listing statements
+
+A `GET` request lists all the statements:
+
+operation::statement-controller-test-index[snippets='curl-request,http-response']
+
+[[statements-lookup-by-subject]]
+=== Lookup statements by subject
+
+A `GET` request lists all the statements with a given subject:
+
+operation::statement-controller-test-lookup-by-subject[snippets='curl-request,http-response']
+
+[[statements-lookup-by-predicate]]
+=== Lookup statements by predicate
+
+A `GET` request lists all the statements with a given predicate:
+
+operation::statement-controller-test-lookup-by-predicate[snippets='curl-request,http-response']
+
+[[resources]]
+== Resources
+
+Resources represent nodes in the knowledge graph.
+They can appear in the subject or object position in <<Statements,statements>>.
+
+[[resources-list]]
+=== Listing resources
+
+A `GET` request lists all resources:
+
+operation::resource-controller-test-index[snippets='curl-request,http-response']
+
+[[resources-create]]
+=== Creating resources
+
+A `POST` request creates a new resource with a given label.
+
+operation::resource-controller-test-add[snippets='request-fields,curl-request,http-response']
+
+The response body consists of the following fields:
+
+operation::resource-controller-test-add[snippets='response-fields']
+
+[[resources-fetch]]
+=== Fetching a resource
+
+A `GET` request provides information about a resource.
+
+operation::resource-controller-test-fetch[snippets='curl-request,http-response']
+
+[[resources-lookup]]
+=== Lookup a resource by label
+
+Resources can be looked up by label by providing a search fragment.
+
+operation::resource-controller-test-lookup[snippets='curl-request,http-response']
+
+[[predicates]]
+== Predicates
+
+Predicates represent edges (relationships between nodes) in the
+ knowledge graph.
+They consist of an ID and a label (for presentation).
+IDs always start with "P", followed by a number.
+
+[[predicates-list]]
+=== Listing predicates
+
+A `GET` request lists all predicates:
+
+operation::predicate-controller-test-index[snippets='curl-request,http-response']
+
+[[predicates-create]]
+=== Creating predicates
+
+A `POST` request creates a new predicate with a given label.
+
+operation::predicate-controller-test-add[snippets='request-fields,curl-request,http-response']
+
+The response body consists of the following fields:
+
+operation::predicate-controller-test-add[snippets='response-fields']
+
+[[predicates-fetch]]
+=== Fetching a predicate
+
+A `GET` request provides information about a predicate.
+
+operation::predicate-controller-test-fetch[snippets='curl-request,http-response']
+
+[[predicates-lookup]]
+=== Lookup a predicate by label
+
+Predicates can be looked up by label by providing a search fragment.
+
+operation::predicate-controller-test-lookup[snippets='curl-request,http-response']

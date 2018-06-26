@@ -30,8 +30,20 @@ cache:
 
 stages:
   - build
+  - deploy
 
 build:
   stage: build
   script:
     - ./gradlew build
+
+pages:
+  stage: deploy
+  script:
+    - ./gradlew asciidoctor
+    - mkdir -p .public
+    - cp -r build/asciidoc/html5/api-doc .public
+    - mv .public public
+  artifacts:
+    paths:
+      - public

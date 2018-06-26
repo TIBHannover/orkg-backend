@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/statements/predicates/")
+@RequestMapping("/api/predicates/")
 @CrossOrigin(origins = ["*"])
 class PredicateController(private val repository: PredicateRepository) {
 

@@ -33,7 +33,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
         mockMvc
             .perform(
-                get("/api/statements/resources/")
+                get("/api/resources/")
                     .accept(APPLICATION_JSON)
                     .contentType(APPLICATION_JSON)
             )
@@ -57,7 +57,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
         mockMvc
             .perform(
-                get("/api/statements/resources/?q=research")
+                get("/api/resources/?q=research")
                     .accept(APPLICATION_JSON)
                     .contentType(APPLICATION_JSON)
             )
@@ -82,7 +82,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
         mockMvc
             .perform(
-                get("/api/statements/resources/1")
+                get("/api/resources/1")
                     .accept(APPLICATION_JSON)
                     .contentType(APPLICATION_JSON)
             )
@@ -104,7 +104,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
         mockMvc
             .perform(
-                post("/api/statements/resources/")
+                post("/api/resources/")
                     .contentType(APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(resource))
             )

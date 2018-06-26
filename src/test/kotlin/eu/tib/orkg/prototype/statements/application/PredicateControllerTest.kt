@@ -32,7 +32,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
 
         mockMvc
             .perform(
-                get("/api/statements/predicates/")
+                get("/api/predicates/")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
             )
@@ -54,7 +54,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
 
         mockMvc
             .perform(
-                get("/api/statements/predicates/P123")
+                get("/api/predicates/P123")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
             )
@@ -78,7 +78,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
 
         mockMvc
             .perform(
-                get("/api/statements/predicates/?q=name")
+                get("/api/predicates/?q=name")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
             )
@@ -103,7 +103,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
 
         mockMvc
             .perform(
-                post("/api/statements/predicates/")
+                post("/api/predicates/")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(resource))
             )

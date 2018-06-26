@@ -103,21 +103,21 @@ Resources and predicates are identifiable by an ID, whereas literals are
 
 A `GET` request lists all the statements:
 
-operation::statement-controller-test-index[snippets='curl-request,response-body']
+operation::statement-controller-test-index[snippets='curl-request,http-response']
 
 [[statements-lookup-by-subject]]
 === Lookup statements by subject
 
 A `GET` request lists all the statements with a given subject:
 
-operation::statement-controller-test-lookup-by-subject[snippets='curl-request,response-body']
+operation::statement-controller-test-lookup-by-subject[snippets='curl-request,http-response']
 
 [[statements-lookup-by-predicate]]
 === Lookup statements by predicate
 
 A `GET` request lists all the statements with a given predicate:
 
-operation::statement-controller-test-lookup-by-predicate[snippets='curl-request,response-body']
+operation::statement-controller-test-lookup-by-predicate[snippets='curl-request,http-response']
 
 [[resources]]
 == Resources
@@ -130,7 +130,7 @@ They can appear in the subject or object position in <<Statements,statements>>.
 
 A `GET` request lists all resources:
 
-operation::resource-controller-test-index[snippets='curl-request,response-body']
+operation::resource-controller-test-index[snippets='curl-request,http-response']
 
 [[resources-create]]
 === Creating resources
@@ -148,14 +148,14 @@ operation::resource-controller-test-add[snippets='response-fields']
 
 A `GET` request provides information about a resource.
 
-operation::resource-controller-test-fetch[snippets='curl-request,response-body']
+operation::resource-controller-test-fetch[snippets='curl-request,http-response']
 
 [[resources-lookup]]
 === Lookup a resource by label
 
 Resources can be looked up by label by providing a search fragment.
 
-operation::resource-controller-test-lookup[snippets='curl-request,response-body']
+operation::resource-controller-test-lookup[snippets='curl-request,http-response']
 
 [[predicates]]
 == Predicates
@@ -170,7 +170,7 @@ IDs always start with "P", followed by a number.
 
 A `GET` request lists all predicates:
 
-operation::predicate-controller-test-index[snippets='curl-request,response-body']
+operation::predicate-controller-test-index[snippets='curl-request,http-response']
 
 [[predicates-create]]
 === Creating predicates
@@ -188,11 +188,11 @@ operation::predicate-controller-test-add[snippets='response-fields']
 
 A `GET` request provides information about a predicate.
 
-operation::predicate-controller-test-fetch[snippets='curl-request,response-body']
+operation::predicate-controller-test-fetch[snippets='curl-request,http-response']
 
 [[predicates-lookup]]
 === Lookup a predicate by label
 
 Predicates can be looked up by label by providing a search fragment.
 
-operation::predicate-controller-test-lookup[snippets='curl-request,response-body']
+operation::predicate-controller-test-lookup[snippets='curl-request,http-response']

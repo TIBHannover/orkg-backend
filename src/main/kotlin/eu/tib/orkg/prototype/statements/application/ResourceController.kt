@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/statements/resources")
+@RequestMapping("/api/statements/resources/")
 @CrossOrigin(origins = ["*"])
 class ResourceController(private val repository: ResourceRepository) {
 

@@ -11,6 +11,8 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -63,6 +65,33 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                     responseFields(
                         fieldWithPath("id").description("The predicate ID"),
                         fieldWithPath("label").description("The predicate label")
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun lookup() {
+        repository.add(Predicate(PredicateId("P123"), "has name"))
+        repository.add(Predicate(PredicateId("P345"), "gave name to"))
+        repository.add(Predicate(PredicateId("P987"), "knows"))
+
+        mockMvc
+            .perform(
+                get("/api/statements/predicates/?q=name")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    snippet,
+                    requestParameters(
+                        parameterWithName("q").description("A search term that must be contained in the label")
+                    ),
+                    responseFields(
+                        fieldWithPath("[].id").description("The predicate ID"),
+                        fieldWithPath("[].label").description("The predicate label")
                     )
                 )
             )

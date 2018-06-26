@@ -11,6 +11,8 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -39,6 +41,33 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
+                    responseFields(
+                        fieldWithPath("[].id").description("The resource ID"),
+                        fieldWithPath("[].label").description("The resource label")
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun lookup() {
+        repository.add(Resource(ResourceId("1"), "research contribution"))
+        repository.add(Resource(ResourceId("2"), "programming language"))
+        repository.add(Resource(ResourceId("3"), "research topic"))
+
+        mockMvc
+            .perform(
+                get("/api/statements/resources/?q=research")
+                    .accept(APPLICATION_JSON)
+                    .contentType(APPLICATION_JSON)
+            )
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    snippet,
+                    requestParameters(
+                        parameterWithName("q").description("A search term that must be contained in the label")
+                    ),
                     responseFields(
                         fieldWithPath("[].id").description("The resource ID"),
                         fieldWithPath("[].label").description("The resource label")

@@ -136,6 +136,13 @@ A `GET` request provides information about a resource.
 
 operation::resource-controller-test-fetch[snippets='curl-request,response-body']
 
+[[resources-lookup]]
+=== Lookup a resource by label
+
+Resources can be looked up by label by providing a search fragment.
+
+operation::resource-controller-test-lookup[snippets='curl-request,response-body']
+
 [[predicates]]
 == Predicates
 
@@ -168,3 +175,10 @@ operation::predicate-controller-test-add[snippets='response-fields']
 A `GET` request provides information about a predicate.
 
 operation::predicate-controller-test-fetch[snippets='curl-request,response-body']
+
+[[predicates-lookup]]
+=== Lookup a predicate by label
+
+Predicates can be looked up by label by providing a search fragment.
+
+operation::predicate-controller-test-lookup[snippets='curl-request,response-body']

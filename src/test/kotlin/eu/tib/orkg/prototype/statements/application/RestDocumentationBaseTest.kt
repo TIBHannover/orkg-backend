@@ -52,6 +52,9 @@ abstract class RestDocumentationBaseTest {
         mockMvc = standaloneSetup(createController())
             .apply<StandaloneMockMvcBuilder>(
                 documentationConfiguration(restDocumentation)
+                    .operationPreprocessors()
+                    .withRequestDefaults(prettyPrint())
+                    .withResponseDefaults(prettyPrint())
             )
             .alwaysDo<StandaloneMockMvcBuilder>(document)
             .build()

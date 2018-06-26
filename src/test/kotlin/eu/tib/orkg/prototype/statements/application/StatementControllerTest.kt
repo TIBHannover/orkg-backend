@@ -65,4 +65,46 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                 )
             )
     }
+
+    @Test
+    fun lookupBySubject() {
+        repository.add(
+            Statement(
+                ResourceId("123"),
+                PredicateId("P576"),
+                Object.Resource(ResourceId("789"))
+            )
+        )
+        repository.add(
+            Statement(
+                ResourceId("123"),
+                PredicateId("P432"),
+                Object.Resource(ResourceId("633"))
+            )
+        )
+
+        mockMvc
+            .perform(
+                get("/api/statements/subject/123")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    snippet,
+                    responseFields(
+                        fieldWithPath("[].subject").description(
+                            "The resource ID"
+                        ),
+                        fieldWithPath("[].predicate").description(
+                            "The predicate ID"
+                        ),
+                        subsectionWithPath("[].object").description(
+                            "The type of object"
+                        )
+                    )
+                )
+            )
+    }
 }

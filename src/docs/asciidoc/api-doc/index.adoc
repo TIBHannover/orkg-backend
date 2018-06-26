@@ -105,6 +105,13 @@ A `GET` request lists all the statements:
 
 operation::statement-controller-test-index[snippets='curl-request,response-body']
 
+[[statements-lookup-by-subject]]
+=== Lookup statements by subject
+
+A `GET` request lists all the statements with a given subject:
+
+operation::statement-controller-test-lookup-by-subject[snippets='curl-request,response-body']
+
 [[resources]]
 == Resources
 

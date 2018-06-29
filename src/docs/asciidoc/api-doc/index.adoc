@@ -136,6 +136,10 @@ operation::resource-controller-test-index[snippets='curl-request,http-response']
 === Creating resources
 
 A `POST` request creates a new resource with a given label.
+The response will be `201 Created` when successful.
+The resource can be retrieved by following the URI in the `Location` header field.
+
+NOTE: The created resource is returned in the body for convenience. This might be subject to change.
 
 operation::resource-controller-test-add[snippets='request-fields,curl-request,http-response']
 
@@ -176,6 +180,10 @@ operation::predicate-controller-test-index[snippets='curl-request,http-response'
 === Creating predicates
 
 A `POST` request creates a new predicate with a given label.
+The response will be `201 Created` when successful.
+The predicate can be retrieved by following the URI in the `Location` header field.
+
+NOTE: The created predicate is returned in the body for convenience. This might be subject to change.
 
 operation::predicate-controller-test-add[snippets='request-fields,curl-request,http-response']
 

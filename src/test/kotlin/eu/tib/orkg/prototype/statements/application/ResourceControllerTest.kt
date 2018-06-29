@@ -7,6 +7,8 @@ import eu.tib.orkg.prototype.statements.infrastructure.InMemoryResourceRepositor
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
@@ -114,6 +116,9 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                     snippet,
                     requestFields(
                         fieldWithPath("label").description("The resource label")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("Location to the created resource")
                     ),
                     responseFields(
                         fieldWithPath("id").description("The resource ID"),

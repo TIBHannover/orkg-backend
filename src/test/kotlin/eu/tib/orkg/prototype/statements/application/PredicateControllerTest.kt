@@ -7,6 +7,8 @@ import eu.tib.orkg.prototype.statements.infrastructure.InMemoryPredicateReposito
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
@@ -113,6 +115,9 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                     snippet,
                     requestFields(
                         fieldWithPath("label").description("The predicate label")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("Location to the created resource")
                     ),
                     responseFields(
                         fieldWithPath("id").description("The predicate ID"),

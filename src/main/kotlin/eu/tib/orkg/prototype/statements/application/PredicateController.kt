@@ -3,8 +3,9 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateRepository
-import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.*
+import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.*
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/predicates/")
@@ -39,7 +41,7 @@ class PredicateController(private val repository: PredicateRepository) {
 
     @PostMapping("/")
     @ResponseStatus(CREATED)
-    fun add(@RequestBody predicate: Predicate): Predicate {
+    fun add(@RequestBody predicate: Predicate, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Predicate> {
         val (id, predicateWithId) = if (predicate.id == null) {
             val id = repository.nextIdentity()
             Pair(id, predicate.copy(id = id))
@@ -47,6 +49,12 @@ class PredicateController(private val repository: PredicateRepository) {
             Pair(predicate.id, predicate)
         }
         repository.add(predicateWithId)
-        return repository.findById(id).get()
+
+        val location = uriComponentsBuilder
+            .path("api/predicates/{id}")
+            .buildAndExpand(id)
+            .toUri()
+
+        return created(location).body(repository.findById(id).get())
     }
 }

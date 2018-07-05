@@ -119,6 +119,22 @@ A `GET` request lists all the statements with a given predicate:
 
 operation::statement-controller-test-lookup-by-predicate[snippets='curl-request,http-response']
 
+[[statements-create]]
+=== Creating statements
+A `POST` request creates a new statement.
+The response will be `201 Created` when successful.
+The statement can be retrieved by following the URI in the `Location` header field.
+
+NOTE: The created statement is returned in the body for convenience. This might be subject to change.
+
+Creating statements can be done by submitting three IDs via `POST`:
+
+operation::statement-controller-test-add-with-resource[snippets='path-parameters,curl-request,http-response']
+
+//The response body consists of the following fields:
+
+//operation::statement-controller-test-add-with-resource[snippets='response-fields']
+
 [[resources]]
 == Resources
 

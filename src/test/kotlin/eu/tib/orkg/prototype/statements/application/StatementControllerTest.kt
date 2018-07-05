@@ -9,10 +9,15 @@ import eu.tib.orkg.prototype.statements.infrastructure.InMemoryStatementReposito
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -145,6 +150,33 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                         subsectionWithPath("[].object").description(
                             "The type of object"
                         )
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun addWithResource() {
+        mockMvc.perform(
+            post(
+                "/api/statements/{subject}/{predicate}/{object}",
+                "123",
+                "P234",
+                "345"
+            )
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isCreated)
+            .andDo(
+                document(
+                    snippet,
+                    pathParameters(
+                        parameterWithName("subject").description("The resource ID describing the subject"),
+                        parameterWithName("predicate").description("The predicate ID describing the predicate"),
+                        parameterWithName("object").description("The resource ID describing the object")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("Location to the created statement")
                     )
                 )
             )

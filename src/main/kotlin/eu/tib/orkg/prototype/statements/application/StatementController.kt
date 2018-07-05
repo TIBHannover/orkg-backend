@@ -1,16 +1,22 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.domain.model.Object
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.Statement
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepository
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.ResponseEntity.created
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/statements")
@@ -31,7 +37,32 @@ class StatementController(private val repository: StatementRepository) {
         repository.findByPredicate(predicateId)
 
     @PostMapping("/")
-    fun add(@RequestBody statement: Statement) {
+    fun add(@RequestBody statement: Statement) =
         repository.add(statement)
+
+    @PostMapping("/{subjectId}/{predicateId}/{objectId}")
+    @ResponseStatus(CREATED)
+    fun createWithObjectResource(
+        @PathVariable subjectId: ResourceId,
+        @PathVariable predicateId: PredicateId,
+        @PathVariable objectId: ResourceId,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): HttpEntity<Statement> {
+        val statement = Statement(
+            subjectId,
+            predicateId,
+            Object.Resource(objectId)
+        )
+
+        // TODO: should error if parts not found?
+        repository.add(statement)
+
+        // TODO: proper location
+        val location = uriComponentsBuilder
+            .path("api/statements/")
+            .build()
+            .toUri()
+
+        return created(location).body(statement)
     }
 }

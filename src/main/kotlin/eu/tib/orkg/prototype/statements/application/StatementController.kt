@@ -65,4 +65,30 @@ class StatementController(private val repository: StatementRepository) {
 
         return created(location).body(statement)
     }
+
+    @PostMapping("/{subjectId}/{predicateId}")
+    @ResponseStatus(CREATED)
+    fun createWithObjectLiteral(
+        @PathVariable subjectId: ResourceId,
+        @PathVariable predicateId: PredicateId,
+        @RequestBody `object`: Object.Literal,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): HttpEntity<Statement> {
+        val statement = Statement(
+            subjectId,
+            predicateId,
+            `object`
+        )
+
+        // TODO: should error if parts not found?
+        repository.add(statement)
+
+        // TODO: proper location
+        val location = uriComponentsBuilder
+            .path("api/statements/")
+            .build()
+            .toUri()
+
+        return created(location).body(statement)
+    }
 }

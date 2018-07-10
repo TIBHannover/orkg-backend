@@ -19,7 +19,8 @@ sealed class Object {
     ) : Object()
 
     data class Literal(
-        val value: String,
-        val type: String = "string"
+        val value: String
+        // TODO: "type" is reserved by the serializer. needs solution.
+        //var datatype: String? = "string"
     ) : Object()
 }

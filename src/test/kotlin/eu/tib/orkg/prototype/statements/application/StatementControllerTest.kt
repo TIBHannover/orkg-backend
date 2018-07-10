@@ -14,6 +14,7 @@ import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
@@ -174,6 +175,40 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                         parameterWithName("subject").description("The resource ID describing the subject"),
                         parameterWithName("predicate").description("The predicate ID describing the predicate"),
                         parameterWithName("object").description("The resource ID describing the object")
+                    ),
+                    responseHeaders(
+                        headerWithName("Location").description("Location to the created statement")
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun addWithLiteral() {
+        val value = mapOf(
+            "value" to "some value",
+            "type" to "literal"
+        )
+        mockMvc.perform(
+            post(
+                "/api/statements/{subject}/{predicate}",
+                "123",
+                "P234"
+            )
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(value))
+        )
+            .andExpect(status().isCreated)
+            .andDo(
+                document(
+                    snippet,
+                    pathParameters(
+                        parameterWithName("subject").description("The resource ID describing the subject"),
+                        parameterWithName("predicate").description("The predicate ID describing the predicate")
+                    ),
+                    requestFields(
+                        fieldWithPath("value").description("The literal value"),
+                        fieldWithPath("type").description("The type of object. Must be \"literal\".")
                     ),
                     responseHeaders(
                         headerWithName("Location").description("Location to the created statement")

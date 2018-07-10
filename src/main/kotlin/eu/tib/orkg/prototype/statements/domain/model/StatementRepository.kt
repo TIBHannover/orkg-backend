@@ -9,4 +9,6 @@ interface StatementRepository {
     fun findByPredicate(predicateId: PredicateId): Iterable<Statement>
 
     fun add(statement: Statement)
+
+    fun nextIdentity(): Long
 }

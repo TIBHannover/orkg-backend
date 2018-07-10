@@ -98,6 +98,9 @@ Objects can also be a literal value.
 Resources and predicates are identifiable by an ID, whereas literals are
  not since they represent a value.
 
+Statements can also be referenced by their IDs.
+This allows to store and retrieve provenance information about them.
+
 [[statements-list]]
 === Listing statements
 

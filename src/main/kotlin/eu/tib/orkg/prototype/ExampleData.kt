@@ -91,6 +91,7 @@ class ExampleData(
         //
         statementRepository.add(
             Statement(
+                statementRepository.nextIdentity(),
                 wilesProof,
                 employs,
                 Object.Resource(mathProof)
@@ -98,6 +99,7 @@ class ExampleData(
         )
         statementRepository.add(
             Statement(
+                statementRepository.nextIdentity(),
                 wilesProof,
                 addresses,
                 Object.Resource(tanimaConj)
@@ -105,6 +107,7 @@ class ExampleData(
         )
         statementRepository.add(
             Statement(
+                statementRepository.nextIdentity(),
                 wilesProof,
                 addresses,
                 Object.Resource(fermatsLastTheorem)
@@ -112,6 +115,7 @@ class ExampleData(
         )
         statementRepository.add(
             Statement(
+                statementRepository.nextIdentity(),
                 wilesProof,
                 yields,
                 Object.Resource(modularityTheorem)
@@ -120,6 +124,7 @@ class ExampleData(
 
         statementRepository.add(
             Statement(
+                statementRepository.nextIdentity(),
                 grubersDesign,
                 employs,
                 Object.Resource(caseStudies)
@@ -127,6 +132,7 @@ class ExampleData(
         )
         statementRepository.add(
             Statement(
+                statementRepository.nextIdentity(),
                 grubersDesign,
                 addresses,
                 Object.Resource(designOfOntologies)
@@ -134,6 +140,7 @@ class ExampleData(
         )
         statementRepository.add(
             Statement(
+                statementRepository.nextIdentity(),
                 grubersDesign,
                 addresses,
                 Object.Resource(knowledgeEngineering)
@@ -141,6 +148,7 @@ class ExampleData(
         )
         statementRepository.add(
             Statement(
+                statementRepository.nextIdentity(),
                 grubersDesign,
                 yields,
                 Object.Resource(ontoDesignCriteria)

@@ -49,18 +49,18 @@ class StatementController(private val repository: StatementRepository) {
         uriComponentsBuilder: UriComponentsBuilder
     ): HttpEntity<Statement> {
         val statement = Statement(
-            subjectId,
-            predicateId,
-            Object.Resource(objectId)
+            statementId = repository.nextIdentity(),
+            subject = subjectId,
+            predicate = predicateId,
+            `object` = Object.Resource(objectId)
         )
 
         // TODO: should error if parts not found?
         repository.add(statement)
 
-        // TODO: proper location
         val location = uriComponentsBuilder
-            .path("api/statements/")
-            .build()
+            .path("api/statements/{id}")
+            .buildAndExpand(statement.statementId)
             .toUri()
 
         return created(location).body(statement)
@@ -75,18 +75,18 @@ class StatementController(private val repository: StatementRepository) {
         uriComponentsBuilder: UriComponentsBuilder
     ): HttpEntity<Statement> {
         val statement = Statement(
-            subjectId,
-            predicateId,
-            `object`
+            statementId = repository.nextIdentity(),
+            subject = subjectId,
+            predicate = predicateId,
+            `object` = `object`
         )
 
         // TODO: should error if parts not found?
         repository.add(statement)
 
-        // TODO: proper location
         val location = uriComponentsBuilder
-            .path("api/statements/")
-            .build()
+            .path("api/statements/{id}")
+            .buildAndExpand(statement.statementId)
             .toUri()
 
         return created(location).body(statement)

@@ -34,6 +34,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
     fun index() {
         repository.add(
             Statement(
+                repository.nextIdentity(),
                 ResourceId("123"),
                 PredicateId("P576"),
                 Object.Resource(ResourceId("789"))
@@ -41,6 +42,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         )
         repository.add(
             Statement(
+                repository.nextIdentity(),
                 ResourceId("123"),
                 PredicateId("P432"),
                 Object.Resource(ResourceId("633"))
@@ -58,6 +60,9 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     responseFields(
+                        fieldWithPath("[].statementId").description(
+                            "The statement ID"
+                        ),
                         fieldWithPath("[].subject").description(
                             "The resource ID"
                         ),
@@ -76,6 +81,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
     fun lookupBySubject() {
         repository.add(
             Statement(
+                repository.nextIdentity(),
                 ResourceId("123"),
                 PredicateId("P576"),
                 Object.Resource(ResourceId("789"))
@@ -83,6 +89,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         )
         repository.add(
             Statement(
+                repository.nextIdentity(),
                 ResourceId("123"),
                 PredicateId("P432"),
                 Object.Resource(ResourceId("633"))
@@ -100,6 +107,9 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     responseFields(
+                        fieldWithPath("[].statementId").description(
+                            "The statement ID"
+                        ),
                         fieldWithPath("[].subject").description(
                             "The resource ID"
                         ),
@@ -118,6 +128,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
     fun lookupByPredicate() {
         repository.add(
             Statement(
+                repository.nextIdentity(),
                 ResourceId("123"),
                 PredicateId("P576"),
                 Object.Resource(ResourceId("789"))
@@ -125,6 +136,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         )
         repository.add(
             Statement(
+                repository.nextIdentity(),
                 ResourceId("345"),
                 PredicateId("P576"),
                 Object.Resource(ResourceId("633"))
@@ -142,6 +154,9 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     responseFields(
+                        fieldWithPath("[].statementId").description(
+                            "The statement ID"
+                        ),
                         fieldWithPath("[].subject").description(
                             "The resource ID"
                         ),

@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository
 class InMemoryStatementRepository : StatementRepository {
     private val statements = mutableSetOf<Statement>()
 
+    private var counter: Long = 0
+
     override fun findAll(): Iterable<Statement> {
         return statements.toSet()
     }
@@ -25,4 +27,6 @@ class InMemoryStatementRepository : StatementRepository {
     override fun add(statement: Statement) {
         statements.add(statement)
     }
+
+    override fun nextIdentity(): Long = ++counter
 }

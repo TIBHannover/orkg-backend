@@ -18,6 +18,9 @@ class InMemoryStatementRepository : StatementRepository {
         return statements.toSet()
     }
 
+    override fun findById(statementId: Long): Statement =
+        statements.first { it.statementId == statementId }
+
     override fun findBySubject(resourceId: ResourceId) =
         statements.filter { it.subject == resourceId }
 

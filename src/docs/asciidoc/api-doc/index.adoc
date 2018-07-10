@@ -108,6 +108,13 @@ A `GET` request lists all the statements:
 
 operation::statement-controller-test-index[snippets='curl-request,http-response']
 
+[[statements-fetch]]
+=== Fetching a statement
+
+A `GET` request provides information about a statement.
+
+operation::statement-controller-test-fetch[snippets='curl-request,http-response']
+
 [[statements-lookup-by-subject]]
 === Lookup statements by subject
 

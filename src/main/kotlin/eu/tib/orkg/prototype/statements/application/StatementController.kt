@@ -28,6 +28,10 @@ class StatementController(private val repository: StatementRepository) {
         return repository.findAll()
     }
 
+    @GetMapping("/{statementId}")
+    fun findById(@PathVariable statementId: Long) =
+        repository.findById(statementId)
+
     @GetMapping("/subject/{resourceId}")
     fun findByResource(@PathVariable resourceId: ResourceId) =
         repository.findBySubject(resourceId)

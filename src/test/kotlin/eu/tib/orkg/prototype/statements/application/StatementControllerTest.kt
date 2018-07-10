@@ -78,6 +78,53 @@ class StatementControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    fun fetch() {
+        repository.add(
+            Statement(
+                1,
+                ResourceId("123"),
+                PredicateId("P576"),
+                Object.Resource(ResourceId("789"))
+            )
+        )
+        repository.add(
+            Statement(
+                2,
+                ResourceId("123"),
+                PredicateId("P432"),
+                Object.Resource(ResourceId("633"))
+            )
+        )
+
+        mockMvc
+            .perform(
+                get("/api/statements/2")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    snippet,
+                    responseFields(
+                        fieldWithPath("statementId").description(
+                            "The statement ID"
+                        ),
+                        fieldWithPath("subject").description(
+                            "The resource ID"
+                        ),
+                        fieldWithPath("predicate").description(
+                            "The predicate ID"
+                        ),
+                        subsectionWithPath("object").description(
+                            "The type of object"
+                        )
+                    )
+                )
+            )
+    }
+
+    @Test
     fun lookupBySubject() {
         repository.add(
             Statement(

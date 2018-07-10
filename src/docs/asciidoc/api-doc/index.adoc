@@ -108,27 +108,6 @@ A `GET` request lists all the statements:
 
 operation::statement-controller-test-index[snippets='curl-request,http-response']
 
-[[statements-fetch]]
-=== Fetching a statement
-
-A `GET` request provides information about a statement.
-
-operation::statement-controller-test-fetch[snippets='curl-request,http-response']
-
-[[statements-lookup-by-subject]]
-=== Lookup statements by subject
-
-A `GET` request lists all the statements with a given subject:
-
-operation::statement-controller-test-lookup-by-subject[snippets='curl-request,http-response']
-
-[[statements-lookup-by-predicate]]
-=== Lookup statements by predicate
-
-A `GET` request lists all the statements with a given predicate:
-
-operation::statement-controller-test-lookup-by-predicate[snippets='curl-request,http-response']
-
 [[statements-create]]
 === Creating statements
 A `POST` request creates a new statement.
@@ -155,6 +134,27 @@ operation::statement-controller-test-add-with-resource[snippets='path-parameters
 Create a statement by submitting two IDs and a value in the body via `POST`:
 
 operation::statement-controller-test-add-with-literal[snippets='path-parameters,request-fields,curl-request,http-response']
+
+[[statements-fetch]]
+=== Fetching a statement
+
+A `GET` request provides information about a statement.
+
+operation::statement-controller-test-fetch[snippets='curl-request,http-response']
+
+[[statements-lookup-by-subject]]
+=== Lookup statements by subject
+
+A `GET` request lists all the statements with a given subject:
+
+operation::statement-controller-test-lookup-by-subject[snippets='curl-request,http-response']
+
+[[statements-lookup-by-predicate]]
+=== Lookup statements by predicate
+
+A `GET` request lists all the statements with a given predicate:
+
+operation::statement-controller-test-lookup-by-predicate[snippets='curl-request,http-response']
 
 [[resources]]
 == Resources

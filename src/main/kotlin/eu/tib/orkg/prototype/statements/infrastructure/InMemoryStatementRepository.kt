@@ -6,15 +6,22 @@ import eu.tib.orkg.prototype.statements.domain.model.Statement
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepository
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Repository
+import java.util.*
 
 @Repository
 @Primary
 class InMemoryStatementRepository : StatementRepository {
-    private val statements = mutableSetOf<Statement>()
+    private val statements: MutableSet<Statement> =
+        TreeSet()
+
+    private var counter: Long = 0
 
     override fun findAll(): Iterable<Statement> {
         return statements.toSet()
     }
+
+    override fun findById(statementId: Long): Statement =
+        statements.first { it.statementId == statementId }
 
     override fun findBySubject(resourceId: ResourceId) =
         statements.filter { it.subject == resourceId }
@@ -25,4 +32,6 @@ class InMemoryStatementRepository : StatementRepository {
     override fun add(statement: Statement) {
         statements.add(statement)
     }
+
+    override fun nextIdentity(): Long = ++counter
 }

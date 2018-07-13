@@ -13,13 +13,30 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
     Type(value = Object.Resource::class, name = "resource"),
     Type(value = Object.Literal::class, name = "literal")
 )
-sealed class Object {
+sealed class Object : Comparable<Object> {
     data class Resource(
         val id: ResourceId
-    ) : Object()
+    ) : Object() {
+        override fun compareTo(other: Object): Int {
+            // Literals are always sorted below resources
+            return when (other) {
+                is Resource -> id.compareTo(other.id)
+                is Literal -> -1
+            }
+        }
+    }
 
     data class Literal(
-        val value: String,
-        val type: String = "string"
-    ) : Object()
+        val value: String
+        // TODO: "type" is reserved by the serializer. needs solution.
+        //var datatype: String? = "string"
+    ) : Object() {
+        override fun compareTo(other: Object): Int {
+            // Resources are always sorted before resources
+            return when (other) {
+                is Resource -> 1
+                is Literal -> value.compareTo(other.value)
+            }
+        }
+    }
 }

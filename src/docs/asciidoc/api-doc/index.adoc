@@ -98,12 +98,49 @@ Objects can also be a literal value.
 Resources and predicates are identifiable by an ID, whereas literals are
  not since they represent a value.
 
+Statements can also be referenced by their IDs.
+This allows to store and retrieve provenance information about them.
+
 [[statements-list]]
 === Listing statements
 
 A `GET` request lists all the statements:
 
 operation::statement-controller-test-index[snippets='curl-request,http-response']
+
+[[statements-create]]
+=== Creating statements
+A `POST` request creates a new statement.
+The response will be `201 Created` when successful.
+The statement can be retrieved by following the URI in the `Location` header field.
+
+NOTE: The created statement is returned in the body for convenience. This might be subject to change.
+
+Creating statements can be done in two ways:
+
+1. For objects of type resource, send three IDs.
+2. For objects of type literal, send two IDs and the literal value in the body.
+
+[[statements-create-objects-resource]]
+==== Creating statements with resource objects
+
+Create a statement by submitting three IDs via `POST`:
+
+operation::statement-controller-test-add-with-resource[snippets='path-parameters,curl-request,http-response']
+
+[[statements-create-objects-literal]]
+==== Creating statements with literal objects
+
+Create a statement by submitting two IDs and a value in the body via `POST`:
+
+operation::statement-controller-test-add-with-literal[snippets='path-parameters,request-fields,curl-request,http-response']
+
+[[statements-fetch]]
+=== Fetching a statement
+
+A `GET` request provides information about a statement.
+
+operation::statement-controller-test-fetch[snippets='curl-request,http-response']
 
 [[statements-lookup-by-subject]]
 === Lookup statements by subject

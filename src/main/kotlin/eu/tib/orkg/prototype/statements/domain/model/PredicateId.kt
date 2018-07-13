@@ -7,7 +7,8 @@ import eu.tib.orkg.prototype.statements.application.json.PredicateIdSerializer
 
 @JsonDeserialize(using = PredicateIdDeserializer::class)
 @JsonSerialize(using = PredicateIdSerializer::class)
-data class PredicateId(private val value: String) {
+data class PredicateId(private val value: String) :
+    Comparable<PredicateId> {
     init {
         require(value.isNotEmpty()) { "Value cannot be empty" }
         require(value.isNotBlank()) { "Value cannot be blank" }
@@ -22,4 +23,7 @@ data class PredicateId(private val value: String) {
     private fun String.isAlphaNumericAfterPrefix(): Boolean {
         return this.matches("""^P([0-9a-fA-F])+$""".toRegex())
     }
+
+    override fun compareTo(other: PredicateId) =
+        value.compareTo(other.value)
 }

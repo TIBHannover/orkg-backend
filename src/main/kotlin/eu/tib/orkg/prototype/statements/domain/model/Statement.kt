@@ -1,11 +1,15 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import java.time.LocalDateTime
+
 data class Statement(
     val statementId: Long? = null,
     val subject: ResourceId,
     val predicate: PredicateId,
     val `object`: Object
 ) : Comparable<Statement> {
+    val created: LocalDateTime = LocalDateTime.now()
+
     override fun compareTo(other: Statement): Int {
         return when {
             subject < other.subject -> -1

@@ -44,7 +44,8 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                     snippet,
                     responseFields(
                         fieldWithPath("[].id").description("The predicate ID"),
-                        fieldWithPath("[].label").description("The predicate label")
+                        fieldWithPath("[].label").description("The predicate label"),
+                        fieldWithPath("[].created").ignored()
                     )
                 )
             )
@@ -66,7 +67,8 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                     snippet,
                     responseFields(
                         fieldWithPath("id").description("The predicate ID"),
-                        fieldWithPath("label").description("The predicate label")
+                        fieldWithPath("label").description("The predicate label"),
+                        fieldWithPath("created").ignored()
                     )
                 )
             )
@@ -93,7 +95,8 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                     ),
                     responseFields(
                         fieldWithPath("[].id").description("The predicate ID"),
-                        fieldWithPath("[].label").description("The predicate label")
+                        fieldWithPath("[].label").description("The predicate label"),
+                        fieldWithPath("[].created").ignored()
                     )
                 )
             )
@@ -121,7 +124,8 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                     ),
                     responseFields(
                         fieldWithPath("id").description("The predicate ID"),
-                        fieldWithPath("label").description("The predicate label")
+                        fieldWithPath("label").description("The predicate label"),
+                        fieldWithPath("created").ignored()
                     )
                 )
             )

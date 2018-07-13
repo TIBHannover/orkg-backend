@@ -45,7 +45,8 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                     snippet,
                     responseFields(
                         fieldWithPath("[].id").description("The resource ID"),
-                        fieldWithPath("[].label").description("The resource label")
+                        fieldWithPath("[].label").description("The resource label"),
+                        fieldWithPath("[].created").ignored()
                     )
                 )
             )
@@ -72,7 +73,8 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                     ),
                     responseFields(
                         fieldWithPath("[].id").description("The resource ID"),
-                        fieldWithPath("[].label").description("The resource label")
+                        fieldWithPath("[].label").description("The resource label"),
+                        fieldWithPath("[].created").ignored()
                     )
                 )
             )
@@ -94,7 +96,8 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                     snippet,
                     responseFields(
                         fieldWithPath("id").description("The resource ID"),
-                        fieldWithPath("label").description("The resource label")
+                        fieldWithPath("label").description("The resource label"),
+                        fieldWithPath("created").ignored()
                     )
                 )
             )
@@ -122,7 +125,8 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                     ),
                     responseFields(
                         fieldWithPath("id").description("The resource ID"),
-                        fieldWithPath("label").description("The resource label")
+                        fieldWithPath("label").description("The resource label"),
+                        fieldWithPath("created").ignored()
                     )
                 )
             )

@@ -71,7 +71,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                         ),
                         subsectionWithPath("[].object").description(
                             "The type of object"
-                        )
+                        ),
+                        fieldWithPath("[].created").ignored()
                     )
                 )
             )
@@ -118,7 +119,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                         ),
                         subsectionWithPath("object").description(
                             "The type of object"
-                        )
+                        ),
+                        fieldWithPath("created").ignored()
                     )
                 )
             )
@@ -165,7 +167,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                         ),
                         subsectionWithPath("[].object").description(
                             "The type of object"
-                        )
+                        ),
+                        fieldWithPath("[].created").ignored()
                     )
                 )
             )
@@ -212,7 +215,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                         ),
                         subsectionWithPath("[].object").description(
                             "The type of object"
-                        )
+                        ),
+                        fieldWithPath("[].created").ignored()
                     )
                 )
             )

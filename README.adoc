@@ -114,3 +114,7 @@ The images will provide the following end-points:
 bolt://localhost:7687
 
 |===
+
+=== REST API documentation
+
+The documentation can be found here http://orkg.git.tib.eu/orkg-prototype/api-doc/. Note that it is currently only accessible from within the TIB network (i.e., also not accessible via Eduroam).

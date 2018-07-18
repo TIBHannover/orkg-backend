@@ -1,0 +1,2 @@
+# Work-around for missing symlink "/usr/bin/python"
+ansible_python_interpreter: /usr/bin/python3

@@ -1,0 +1,10 @@
+# Ansible Playbook for the ORKG
+
+## Installation
+
+Besides Ansible itself, roles need to be installed:
+
+[source,bash]
+----
+ansible-galaxy install -r requirements.yml
+----

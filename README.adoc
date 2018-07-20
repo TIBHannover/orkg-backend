@@ -2,6 +2,7 @@
 Manuel Prinz <manuel.prinz@tib.eu>
 
 :icons: font
+:apidoc_url: http://orkg.git.tib.eu/orkg-prototype/api-doc/
 
 This repository contains a backend prototype for the ORKG based on the https://spring.io/[Spring Framework].
 It is written in https://kotlinlang.org/[Kotlin] as a proof-of-concept and for experimenting with a possible architecture and technologies.
@@ -114,3 +115,9 @@ The images will provide the following end-points:
 bolt://localhost:7687
 
 |===
+
+=== REST API documentation
+
+The documentation can be found at {apidoc_url}.
+
+NOTE: The documentation is currently only accessible from within the TIB network (i.e., also not accessible via Eduroam).

@@ -61,6 +61,8 @@ deploy_develop:
   environment:
     name: develop
     url: http://orkg01.develop.labs.tib.eu:8080/orkg-prototype/
+  only:
+    - master
 
 pages:
   stage: deploy

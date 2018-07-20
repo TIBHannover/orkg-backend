@@ -36,6 +36,23 @@ build:
   stage: build
   script:
     - ./gradlew build
+  artifacts:
+    paths:
+      - build/libs/orkg-*.war
+
+deploy_develop:
+  stage: deploy
+  script:
+    - echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" > /etc/apt/sources.list.d/ansible.list
+    - apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
+    - apt update
+    - apt -y install ansible
+    # Fix permission. No idea why they are different from those in Git.
+    - chmod 0755 ansible
+    - cd ansible && ansible-playbook site.yml
+  environment:
+    name: develop
+    url: http://orkg01.develop.labs.tib.eu:8080/orkg-prototype/
 
 pages:
   stage: deploy

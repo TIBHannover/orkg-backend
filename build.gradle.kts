@@ -21,6 +21,7 @@ plugins {
     id("org.springframework.boot") version "2.0.0.RELEASE"
     id("org.asciidoctor.convert") version "1.5.3"
     id("com.palantir.docker") version "0.19.2"
+    war
 }
 
 apply {
@@ -35,6 +36,8 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-data-neo4j")
     compile("org.eclipse.rdf4j:rdf4j-repository-sparql:2.2.4")
     compile("com.fasterxml.jackson.module:jackson-module-kotlin")
+    // Add Tomcat as "provided" runtime so that we can deploy as WAR
+    providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 
     testCompile("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "junit", module = "junit")

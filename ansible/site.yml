@@ -1,0 +1,26 @@
+---
+- hosts: devel
+  remote_user: orkg
+
+  vars:
+    project_name:    orkg-prototype
+    project_version: 0.0.1-SNAPSHOT
+    war_file:        '{{project_name}}-{{project_version}}.war'
+    tomcat_bin: /tib/app/orkg/bin/tomcat
+
+    #environment:
+    #  JAVA_HOME: /tib/app/orkg/java
+
+  tasks:
+
+    - name: Copy artifact
+      copy:
+        src:  '../build/libs/{{ project_name }}-{{ project_version }}.war'
+        dest: '~'
+        mode: '0600'
+
+    - name: Undeploy old artifact
+      shell: '{{ tomcat_bin | quote }} undeploy {{ project_name }} {{ war_file }}'
+
+    - name: Deploy new artifact
+      shell: '{{ tomcat_bin | quote }} deploy {{ project_name }} {{ war_file }}'

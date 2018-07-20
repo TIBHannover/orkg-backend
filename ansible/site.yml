@@ -2,9 +2,6 @@
 - hosts: devel
   remote_user: orkg
 
-  #roles:
-  #  - Comcast.sdkman
-
   vars:
     project_name:    orkg-prototype
     project_version: 0.0.1-SNAPSHOT

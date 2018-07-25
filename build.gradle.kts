@@ -18,7 +18,7 @@ buildscript {
 plugins {
     kotlin("jvm") version "1.2.51"
     kotlin("plugin.spring") version "1.2.51"
-    id("org.springframework.boot") version "2.0.0.RELEASE"
+    id("org.springframework.boot") version "2.0.3.RELEASE"
     id("org.asciidoctor.convert") version "1.5.3"
     id("com.palantir.docker") version "0.19.2"
     war
@@ -42,11 +42,11 @@ dependencies {
     testCompile("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "junit", module = "junit")
     }
-    testCompile("org.springframework.restdocs:spring-restdocs-mockmvc:2.0.1.RELEASE")
+    testCompile("org.springframework.restdocs:spring-restdocs-mockmvc:2.0.2.RELEASE")
     testCompile("org.junit.jupiter:junit-jupiter-api:5.0.0")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0")
 
-    asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.1.RELEASE")
+    asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.2.RELEASE")
 }
 
 val snippetsDir = file("build/generated-snippets")

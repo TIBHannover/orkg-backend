@@ -43,8 +43,8 @@ dependencies {
         exclude(group = "junit", module = "junit")
     }
     testCompile("org.springframework.restdocs:spring-restdocs-mockmvc:2.0.2.RELEASE")
-    testCompile("org.junit.jupiter:junit-jupiter-api:5.0.0")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0")
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.3.1")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.3.1")
 
     asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.2.RELEASE")
 }

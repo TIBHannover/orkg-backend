@@ -9,12 +9,6 @@ version = "0.0.1-SNAPSHOT"
 val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java)
     .kotlinPluginVersion
 
-buildscript {
-    dependencies {
-        classpath("org.junit.platform:junit-platform-gradle-plugin:1.1.0")
-    }
-}
-
 plugins {
     kotlin("jvm") version "1.2.71"
     kotlin("plugin.spring") version "1.2.71"
@@ -26,10 +20,11 @@ plugins {
 
 apply {
     plugin("io.spring.dependency-management")
-    plugin("org.junit.platform.gradle.plugin")
 }
 
 dependencies {
+    implementation("org.junit:junit-bom:5.3.1")
+
     compile(kotlin("stdlib-jdk8", kotlinVersion))
     compile(kotlin("reflect", kotlinVersion))
     compile("org.springframework.boot:spring-boot-starter-web")
@@ -43,8 +38,9 @@ dependencies {
         exclude(group = "junit", module = "junit")
     }
     testCompile("org.springframework.restdocs:spring-restdocs-mockmvc:2.0.2.RELEASE")
-    testCompile("org.junit.jupiter:junit-jupiter-api:5.3.1")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.3.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine")
+    testRuntime("org.neo4j:neo4j-ogm-test:+")
 
     asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.2.RELEASE")
 }
@@ -67,7 +63,9 @@ tasks {
         kotlinOptions.jvmTarget = "1.8"
     }
 
-    "test" {
+    withType<Test> {
+        useJUnitPlatform()
+
         outputs.dir(snippetsDir)
     }
 

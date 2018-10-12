@@ -11,9 +11,11 @@ import eu.tib.orkg.prototype.statements.domain.model.Statement
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepository
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
+import org.springframework.context.annotation.*
 import org.springframework.stereotype.Component
 
 @Component
+@Profile("development")
 class ExampleData(
     private val resourceRepository: ResourceRepository,
     private val predicateRepository: PredicateRepository,

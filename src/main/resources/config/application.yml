@@ -2,12 +2,26 @@ server:
   port: 8000
 spring:
   profiles:
-   active: neo4j
+    active: development
 ---
 spring:
-  profiles: neo4j
+  profiles: development
+  data:
+    neo4j:
+      uri: 'bolt://localhost:7687'
+      #auto-index: validate
+---
+spring:
+  profiles: production
   data:
     neo4j:
       uri: 'bolt://neo4j:7687'
       #username:
       #password:
+---
+spring:
+  profiles: testing
+  data:
+    neo4j:
+      embedded:
+        enabled: true

@@ -64,6 +64,8 @@ tasks {
     }
 
     withType<Test> {
+        systemProperty("spring.profiles.active", "testing")
+
         useJUnitPlatform()
 
         outputs.dir(snippetsDir)

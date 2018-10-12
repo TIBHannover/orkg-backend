@@ -1,26 +1,21 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import eu.tib.orkg.prototype.statements.application.json.ResourceIdDeserializer
-import eu.tib.orkg.prototype.statements.application.json.ResourceIdSerializer
+import com.fasterxml.jackson.databind.annotation.*
+import eu.tib.orkg.prototype.statements.application.json.*
 
 @JsonDeserialize(using = ResourceIdDeserializer::class)
 @JsonSerialize(using = ResourceIdSerializer::class)
-data class ResourceId(private val value: String) :
+data class ResourceId(private val value: Long) :
     Comparable<ResourceId> {
+
     init {
-        require(value.isNotEmpty()) { "Value cannot be empty" }
-        require(value.isNotBlank()) { "Value cannot be blank" }
-        require(value.isAlphaNumeric()) { "Value needs to be alpha-numeric" }
+        require(value > 0) { "Value must be greater than zero" }
     }
 
-    override fun toString(): String {
-        return value
-    }
+    @Deprecated("IDs of type String are no longer supported. Use Long instead.")
+    constructor(value: String) : this(value.toLong(16))
 
-    private fun String.isAlphaNumeric() =
-        this.matches("""^[0-9a-fA-F]+$""".toRegex())
+    override fun toString() = "$value"
 
     override fun compareTo(other: ResourceId) =
         value.compareTo(other.value)

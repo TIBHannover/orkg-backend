@@ -1,5 +1,5 @@
 FROM azul/zulu-openjdk-alpine
-MAINTAINER Manuel Prinz <manuel.prinz@tib.eu>
+LABEL maintainer="Manuel Prinz <manuel.prinz@tib.eu>"
 
 ARG PROJECT_NAME
 ARG VERSION

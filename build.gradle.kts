@@ -126,6 +126,6 @@ tasks {
                 "VERSION" to "$version"
             )
         )
-        files(tasks["jar"].outputs)
+        files(tasks["war"].outputs)
     }
 }

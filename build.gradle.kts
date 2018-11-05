@@ -9,6 +9,9 @@ version = "0.0.1-SNAPSHOT"
 val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java)
     .kotlinPluginVersion
 
+val neo4jVersion = "3.3.+"
+val neo4jOgmVersion = "3.1.+"
+
 plugins {
     kotlin("jvm") version "1.2.71"
     kotlin("plugin.spring") version "1.2.71"
@@ -28,7 +31,13 @@ dependencies {
     compile(kotlin("stdlib-jdk8", kotlinVersion))
     compile(kotlin("reflect", kotlinVersion))
     compile("org.springframework.boot:spring-boot-starter-web")
-    compile("org.springframework.boot:spring-boot-starter-data-neo4j")
+    compile("org.springframework.boot:spring-boot-starter-data-neo4j") {
+        exclude(module = "neo4j-ogm-http-driver")
+    }
+    implementation("org.springframework.data:spring-data-neo4j:5.0.1.RELEASE")
+    implementation("org.neo4j:neo4j-ogm-core:$neo4jOgmVersion")
+    implementation("org.neo4j:neo4j-ogm-api:$neo4jOgmVersion")
+    implementation("org.neo4j:neo4j-ogm-bolt-driver:$neo4jOgmVersion")
     compile("org.eclipse.rdf4j:rdf4j-repository-sparql:2.2.4")
     compile("com.fasterxml.jackson.module:jackson-module-kotlin")
     // Add Tomcat as "provided" runtime so that we can deploy as WAR
@@ -40,7 +49,9 @@ dependencies {
     testCompile("org.springframework.restdocs:spring-restdocs-mockmvc:2.0.2.RELEASE")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.junit.jupiter:junit-jupiter-engine")
-    testRuntime("org.neo4j:neo4j-ogm-test:+")
+    testImplementation("org.neo4j:neo4j-ogm-embedded-driver:$neo4jOgmVersion")
+    testImplementation("org.neo4j:neo4j:$neo4jVersion") // should match version in Dockerfile
+    //testRuntime("org.neo4j:neo4j-ogm-test:+")
 
     asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.2.RELEASE")
 }

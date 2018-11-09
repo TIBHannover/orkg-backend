@@ -7,4 +7,9 @@ interface ResourceService {
      * @return the newly created resource
      */
     fun create(label: String): Resource
+
+    /**
+     * Find all resources.
+     */
+    fun findAll(): Iterable<Resource>
 }

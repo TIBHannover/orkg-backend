@@ -16,4 +16,7 @@ class Neo4jResourceService(
         return neo4jResourceRepository.save(Neo4jResource(label = label))
             .toResource()
     }
+
+    override fun findAll() =
+        neo4jResourceRepository.findAll().map(Neo4jResource::toResource)
 }

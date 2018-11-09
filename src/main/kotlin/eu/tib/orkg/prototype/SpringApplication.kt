@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.*
 
 @SpringBootApplication
 @EnableTransactionManagement
-@EnableNeo4jRepositories("eu.tib.orkg.prototype.statements.infrastructure.neo4j")
+@EnableNeo4jRepositories("eu.tib.orkg.prototype.statements.domain.model.neo4j")
 @EntityScan("eu.tib.orkg.prototype.statements.domain.model.neo4j")
 class Application : SpringBootServletInitializer() {
     override fun configure(builder: SpringApplicationBuilder?) =

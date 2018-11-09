@@ -9,7 +9,7 @@ data class ResourceId(private val value: Long) :
     Comparable<ResourceId> {
 
     init {
-        require(value > 0) { "Value must be greater than zero" }
+        require(value >= 0) { "Value must be greater than or equal to zero" }
     }
 
     @Deprecated("IDs of type String are no longer supported. Use Long instead.")

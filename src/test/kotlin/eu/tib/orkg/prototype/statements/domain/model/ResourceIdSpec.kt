@@ -6,19 +6,11 @@ import org.junit.jupiter.api.*
 @DisplayName("A subject id")
 class ResourceIdSpec {
     @Test
-    @DisplayName("can not be zero")
-    fun canNotBeZero() {
-        assertThatIllegalArgumentException()
-            .isThrownBy { ResourceId(0) }
-            .withMessage("Value must be greater than zero")
-    }
-
-    @Test
     @DisplayName("can not be less than zero")
     fun canNotBeLessThanZero() {
         assertThatIllegalArgumentException()
             .isThrownBy { ResourceId(-1) }
-            .withMessage("Value must be greater than zero")
+            .withMessage("Value must be greater than or equal to zero")
     }
 
     @Test

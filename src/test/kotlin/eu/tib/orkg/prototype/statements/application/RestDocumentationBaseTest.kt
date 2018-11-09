@@ -3,10 +3,11 @@ package eu.tib.orkg.prototype.statements.application
 import com.fasterxml.jackson.databind.*
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.*
-import org.springframework.boot.test.autoconfigure.data.neo4j.*
+import org.springframework.boot.test.context.*
 import org.springframework.restdocs.*
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*
 import org.springframework.restdocs.operation.preprocess.Preprocessors.*
+import org.springframework.test.context.junit.jupiter.*
 import org.springframework.test.web.servlet.*
 import org.springframework.test.web.servlet.setup.*
 import org.springframework.test.web.servlet.setup.MockMvcBuilders.*
@@ -17,8 +18,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders.*
  * It initializes MockMVc with a stand-alone set-up for testing a controller
  * in isolation. Additionally, spring-restdoc will be pre-configured.
  */
-@DataNeo4jTest
-@ExtendWith(RestDocumentationExtension::class)
+@SpringBootTest
+@ExtendWith(SpringExtension::class, RestDocumentationExtension::class)
 abstract class RestDocumentationBaseTest {
 
     protected lateinit var mockMvc: MockMvc

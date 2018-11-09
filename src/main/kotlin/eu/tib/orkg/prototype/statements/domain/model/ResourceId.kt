@@ -5,7 +5,7 @@ import eu.tib.orkg.prototype.statements.application.json.*
 
 @JsonDeserialize(using = ResourceIdDeserializer::class)
 @JsonSerialize(using = ResourceIdSerializer::class)
-data class ResourceId(private val value: Long) :
+data class ResourceId(val value: Long) :
     Comparable<ResourceId> {
 
     init {

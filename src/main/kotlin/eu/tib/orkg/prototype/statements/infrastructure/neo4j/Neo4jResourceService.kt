@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.statements.domain.model.*
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.*
 import org.springframework.stereotype.*
 import org.springframework.transaction.annotation.*
+import java.util.*
 
 @Service
 @Transactional
@@ -18,6 +19,10 @@ class Neo4jResourceService(
 
     override fun findAll() =
         neo4jResourceRepository.findAll()
+            .map(Neo4jResource::toResource)
+
+    override fun findById(id: ResourceId?): Optional<Resource> =
+        neo4jResourceRepository.findById(id?.value)
             .map(Neo4jResource::toResource)
 
     override fun findAllByLabel(label: String): Iterable<Resource> =

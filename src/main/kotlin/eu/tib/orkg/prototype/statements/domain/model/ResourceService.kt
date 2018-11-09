@@ -16,6 +16,11 @@ interface ResourceService {
     fun findAll(): Iterable<Resource>
 
     /**
+     * Find a resource by its ID.
+     */
+    fun findById(id: ResourceId?): Optional<Resource>
+
+    /**
      * Find all resources matching a label.
      */
     fun findAllByLabel(label: String): Iterable<Resource>

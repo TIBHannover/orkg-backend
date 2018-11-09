@@ -81,4 +81,17 @@ class Neo4jResourceServiceTest {
 
         assertThat(result).hasSize(3)
     }
+
+    @Test
+    @DisplayName("should return resource with the same ID")
+    fun shouldReturnResourceWithTheSameId() {
+        service.create("irrelevant")
+        service.create("also irrelevant")
+        val expectedId = service.create("to be found").id
+
+        val found = service.findById(expectedId)
+
+        assertThat(found).isPresent
+        assertThat(found.get().id).isEqualTo(expectedId)
+    }
 }

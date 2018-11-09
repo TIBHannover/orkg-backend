@@ -1,5 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import java.util.*
+
 interface ResourceService {
     /**
      * Create a new resource with a given label.
@@ -12,4 +14,14 @@ interface ResourceService {
      * Find all resources.
      */
     fun findAll(): Iterable<Resource>
+
+    /**
+     * Find all resources matching a label.
+     */
+    fun findAllByLabel(label: String): Iterable<Resource>
+
+    /**
+     * Find all resources matching a label partially.
+     */
+    fun findAllByLabelContaining(part: String): Iterable<Resource>
 }

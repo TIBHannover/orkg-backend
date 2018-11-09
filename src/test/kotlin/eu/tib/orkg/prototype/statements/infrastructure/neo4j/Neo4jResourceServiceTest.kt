@@ -37,4 +37,48 @@ class Neo4jResourceServiceTest {
         assertThat(resources).hasSize(2)
         assertThat(labels).containsExactlyInAnyOrder("first", "second")
     }
+
+    @Test
+    @DisplayName("should return an empty list when label was not found")
+    fun shouldReturnEmptyListWhenNotFound() {
+        service.create("first")
+        service.create("second")
+
+        val result = service.findAllByLabel("not in the list")
+
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    @DisplayName("should return all resource that match the label (duplicates allowed)")
+    fun shouldReturnSeveralWhenSame() {
+        service.create("same")
+        service.create("same")
+        service.create("other")
+        service.create("yet another")
+
+        val result = service.findAllByLabel("same")
+
+        assertThat(result).hasSize(2)
+    }
+
+    @Test
+    @DisplayName("should not return resource containing substring")
+    fun shouldNotReturnResourceContainingSubstring() {
+        service.create("this is part of the test")
+        assertThat(service.findAllByLabel("part")).isEmpty()
+    }
+
+    @Test
+    @DisplayName("when matching label partially should return all occurrences")
+    fun whenMatchingLabelPartiallyShouldReturnAllOccurrences() {
+        service.create("first part is this")
+        service.create("this is another part")
+        service.create("part at the beginning")
+        service.create("something else")
+
+        val result = service.findAllByLabelContaining("part")
+
+        assertThat(result).hasSize(3)
+    }
 }

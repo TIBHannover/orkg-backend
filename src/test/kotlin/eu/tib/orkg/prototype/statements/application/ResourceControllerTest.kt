@@ -1,37 +1,33 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceRepository
-import eu.tib.orkg.prototype.statements.infrastructure.InMemoryResourceRepository
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
-import org.springframework.http.MediaType.APPLICATION_JSON
-import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import eu.tib.orkg.prototype.statements.domain.model.*
+import org.junit.jupiter.api.*
+import org.springframework.beans.factory.annotation.*
+import org.springframework.http.MediaType.*
+import org.springframework.restdocs.headers.HeaderDocumentation.*
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*
+import org.springframework.restdocs.payload.PayloadDocumentation.*
+import org.springframework.restdocs.request.RequestDocumentation.*
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.transaction.annotation.*
 
 @DisplayName("Resource Controller")
+@Transactional
 class ResourceControllerTest : RestDocumentationBaseTest() {
 
-    // FIXME: mock repository, to be independent of in-memory implementation
-    private val repository: ResourceRepository =
-        InMemoryResourceRepository()
+    @Autowired
+    private lateinit var controller: ResourceController
 
-    override fun createController() = ResourceController(repository)
+    @Autowired
+    private lateinit var service: ResourceService
+
+    override fun createController() = controller
 
     @Test
     fun index() {
-        repository.add(Resource(ResourceId("1"), "research contribution"))
-        repository.add(Resource(ResourceId("2"), "programming language"))
+        service.create("research contribution")
+        service.create("programming language")
 
         mockMvc
             .perform(
@@ -53,9 +49,9 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookup() {
-        repository.add(Resource(ResourceId("1"), "research contribution"))
-        repository.add(Resource(ResourceId("2"), "programming language"))
-        repository.add(Resource(ResourceId("3"), "research topic"))
+        service.create("research contribution")
+        service.create("programming language")
+        service.create("research topic")
 
         mockMvc
             .perform(
@@ -80,11 +76,11 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun fetch() {
-        repository.add(Resource(ResourceId("1"), "research contribution"))
+        val id = service.create("research contribution").id
 
         mockMvc
             .perform(
-                get("/api/resources/1")
+                get("/api/resources/$id")
                     .accept(APPLICATION_JSON)
                     .contentType(APPLICATION_JSON)
             )

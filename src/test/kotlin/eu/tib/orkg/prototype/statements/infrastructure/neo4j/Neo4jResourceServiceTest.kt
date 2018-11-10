@@ -19,13 +19,6 @@ class Neo4jResourceServiceTest {
     private lateinit var service: ResourceService
 
     @Test
-    @DisplayName("should create a new resource from label")
-    fun shouldCreateNewResourceFromLabel() {
-        val expected = Resource(ResourceId(0), "some label")
-        assertThat(service.create("some label")).isEqualTo(expected)
-    }
-
-    @Test
     @DisplayName("should find created resources")
     fun shouldFindCreatedResources() {
         service.create("first")

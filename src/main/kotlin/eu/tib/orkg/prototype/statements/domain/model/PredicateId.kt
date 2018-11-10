@@ -12,14 +12,13 @@ data class PredicateId(val value: Long) :
         require(value >= 0) { "Value must be equal to or greater than zero" }
     }
 
-    @Deprecated("IDs of type String are no longer supported. Use Long instead.")
     constructor(value: String) : this(
         if (value.startsWith("P"))
             value.substring(1).toLong()
         else throw IllegalArgumentException("Value must start with \"P\"")
     )
 
-    override fun toString() = value.toString()
+    override fun toString() = "P$value"
 
     override fun compareTo(other: PredicateId) =
         value.compareTo(other.value)

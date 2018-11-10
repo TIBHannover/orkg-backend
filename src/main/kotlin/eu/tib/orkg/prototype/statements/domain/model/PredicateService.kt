@@ -1,0 +1,30 @@
+package eu.tib.orkg.prototype.statements.domain.model
+
+import java.util.*
+
+interface PredicateService {
+    /**
+     * Create a new predicate with a given label.
+     */
+    fun create(label: String): Predicate
+
+    /**
+     * List all predicates.
+     */
+    fun findAll(): Iterable<Predicate>
+
+    /**
+     * Find a predicate by its ID.
+     */
+    fun findById(id: PredicateId?): Optional<Predicate>
+
+    /**
+     * Find all predicates matching a label.
+     */
+    fun findAllByLabel(label: String): Iterable<Predicate>
+
+    /**
+     * Find all predicates matching a label partially.
+     */
+    fun findAllByLabelContaining(part: String): Iterable<Predicate>
+}

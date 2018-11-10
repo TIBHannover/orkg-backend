@@ -44,4 +44,28 @@ class ResourceIdSpec {
         assertThat(one).isNotSameAs(clone)
         assertThat(one).isEqualTo(clone)
     }
+
+    @Test
+    @DisplayName("should convert string value to long")
+    fun shouldConvertStringValueToLong() {
+        assertThat(ResourceId("42").value).isEqualTo(42)
+    }
+
+    @Test
+    @DisplayName("should not modify long value")
+    fun shouldNotModifyLongValue() {
+        assertThat(ResourceId(42).value).isEqualTo(42)
+    }
+
+    @Test
+    @DisplayName("should represent internal value when given long")
+    fun shouldRepresentInternalValueWhenGivenLong() {
+        assertThat(ResourceId(42).toString()).isEqualTo("42")
+    }
+
+    @Test
+    @DisplayName("should represent internal value when given string")
+    fun shouldRepresentInternalValueWhenGivenString() {
+        assertThat(ResourceId("42").toString()).isEqualTo("42")
+    }
 }

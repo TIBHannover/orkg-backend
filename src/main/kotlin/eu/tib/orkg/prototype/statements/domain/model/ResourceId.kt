@@ -13,7 +13,7 @@ data class ResourceId(val value: Long) :
     }
 
     @Deprecated("IDs of type String are no longer supported. Use Long instead.")
-    constructor(value: String) : this(value.toLong(16))
+    constructor(value: String) : this(value.toLong())
 
     override fun toString() = "$value"
 

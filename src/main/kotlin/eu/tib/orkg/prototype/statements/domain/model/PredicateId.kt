@@ -1,28 +1,25 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import eu.tib.orkg.prototype.statements.application.json.PredicateIdDeserializer
-import eu.tib.orkg.prototype.statements.application.json.PredicateIdSerializer
+import com.fasterxml.jackson.databind.annotation.*
+import eu.tib.orkg.prototype.statements.application.json.*
 
 @JsonDeserialize(using = PredicateIdDeserializer::class)
 @JsonSerialize(using = PredicateIdSerializer::class)
-data class PredicateId(private val value: String) :
+data class PredicateId(val value: Long) :
     Comparable<PredicateId> {
+
     init {
-        require(value.isNotEmpty()) { "Value cannot be empty" }
-        require(value.isNotBlank()) { "Value cannot be blank" }
-        require(value.startsWith("P")) { """Value needs to start with "P"""" }
-        require(value.isAlphaNumericAfterPrefix()) { """Value starts with "P" but is not alpha-numeric afterwards""" }
+        require(value >= 0) { "Value must be equal to or greater than zero" }
     }
 
-    override fun toString(): String {
-        return value
-    }
+    @Deprecated("IDs of type String are no longer supported. Use Long instead.")
+    constructor(value: String) : this(
+        if (value.startsWith("P"))
+            value.substring(1).toLong()
+        else throw IllegalArgumentException("Value must start with \"P\"")
+    )
 
-    private fun String.isAlphaNumericAfterPrefix(): Boolean {
-        return this.matches("""^P([0-9a-fA-F])+$""".toRegex())
-    }
+    override fun toString() = value.toString()
 
     override fun compareTo(other: PredicateId) =
         value.compareTo(other.value)

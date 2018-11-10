@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.application
 import com.fasterxml.jackson.databind.*
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.*
+import org.springframework.beans.factory.annotation.*
 import org.springframework.boot.test.context.*
 import org.springframework.restdocs.*
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*
@@ -24,7 +25,8 @@ abstract class RestDocumentationBaseTest {
 
     protected lateinit var mockMvc: MockMvc
 
-    protected var objectMapper = ObjectMapper()
+    @Autowired
+    protected lateinit var objectMapper: ObjectMapper
 
     protected var document = document(
         "{class-name}-{method-name}",

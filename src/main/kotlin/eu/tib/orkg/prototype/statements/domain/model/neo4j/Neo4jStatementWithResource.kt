@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import com.fasterxml.jackson.annotation.*
 import eu.tib.orkg.prototype.statements.domain.model.*
 import org.neo4j.ogm.annotation.*
 
@@ -10,9 +11,11 @@ data class Neo4jStatementWithResource(
     var id: Long? = null
 ) {
     @StartNode
+    @JsonIgnore
     var subject: Neo4jResource? = null
 
     @EndNode
+    @JsonIgnore
     var `object`: Neo4jResource? = null
 
     @Property("predicate_id")

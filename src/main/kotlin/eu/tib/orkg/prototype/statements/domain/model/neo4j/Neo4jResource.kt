@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.statements.domain.model.*
 import org.neo4j.ogm.annotation.*
-import java.lang.IllegalStateException
 
 @NodeEntity(label = "Resource")
 data class Neo4jResource(
@@ -12,7 +11,10 @@ data class Neo4jResource(
 
     @Property("label")
     @Required
-    var label: String? = null
+    var label: String? = null,
+
+    @Relationship(type = "RELATES_TO")
+    var resources: MutableSet<Neo4jStatementAboutResource> = mutableSetOf()
 ) {
     fun toResource(): Resource {
         // Use vals to protect values from being modified.

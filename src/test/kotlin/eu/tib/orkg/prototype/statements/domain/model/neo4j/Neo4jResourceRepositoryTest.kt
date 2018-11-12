@@ -17,7 +17,7 @@ class Neo4jResourceRepositoryTest {
     private lateinit var resourceRepository: Neo4jResourceRepository
 
     @Autowired
-    private lateinit var statementRepository: Neo4jStatementAboutResourceRepository
+    private lateinit var statementRepository: Neo4jStatementWithResourceRepository
 
     @Test
     @DisplayName("should not return null for resources list if none are defined")
@@ -39,7 +39,7 @@ class Neo4jResourceRepositoryTest {
         // Act
 
         statementRepository.save(
-            Neo4jStatementAboutResource(
+            Neo4jStatementWithResource(
                 subject = sub,
                 `object` = obj,
                 predicateId = 42 // irrelevant

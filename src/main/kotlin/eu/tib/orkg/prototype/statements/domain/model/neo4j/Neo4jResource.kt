@@ -14,7 +14,7 @@ data class Neo4jResource(
     var label: String? = null,
 
     @Relationship(type = "RELATES_TO")
-    var resources: MutableSet<Neo4jStatementAboutResource> = mutableSetOf()
+    var resources: MutableSet<Neo4jStatementWithResource> = mutableSetOf()
 ) {
     fun toResource(): Resource {
         // Use vals to protect values from being modified.

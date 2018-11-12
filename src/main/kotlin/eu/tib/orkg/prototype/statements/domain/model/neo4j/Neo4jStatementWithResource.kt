@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.statements.domain.model.*
 import org.neo4j.ogm.annotation.*
 
 @RelationshipEntity(type = "RELATES_TO")
-data class Neo4jStatementAboutResource(
+data class Neo4jStatementWithResource(
     @Id
     @GeneratedValue
     var id: Long? = null

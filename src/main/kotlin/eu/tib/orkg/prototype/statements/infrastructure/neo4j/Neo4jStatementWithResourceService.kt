@@ -93,6 +93,22 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
             }
     }
 
+    override fun findAllBySubjectAndPredicate(
+        resourceId: ResourceId,
+        predicateId: PredicateId
+    ): Iterable<StatementWithResource> {
+        return neo4jStatementRepository
+            .findAllBySubjectAndPredicate(resourceId.value, predicateId.value)
+            .map {
+                StatementWithResource(
+                    it.id!!,
+                    it.subject!!.toResource(),
+                    predicateService.findById(PredicateId(it.predicateId!!)).get(),
+                    it.`object`!!.toResource()
+                )
+            }
+    }
+
     override fun findAllByPredicate(predicateId: PredicateId): Iterable<StatementWithResource> {
         return neo4jStatementRepository
             .findAllByPredicateId(predicateId.value)

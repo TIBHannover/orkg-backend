@@ -123,4 +123,26 @@ class Neo4jStatementWithResourceServiceTest {
         assertThat(service.findAllByPredicate(p1)).hasSize(3)
         assertThat(service.findAllByPredicate(p2)).hasSize(1)
     }
+
+    @Test
+    @DisplayName("should find statements by subject and predicate")
+    fun shouldFindStatementsBySubjectAndPredicate() {
+        val r1 = resourceService.create("one").id!!
+        val r2 = resourceService.create("two").id!!
+        val r3 = resourceService.create("three").id!!
+        val p1 = predicateService.create("greater than").id!!
+        val p2 = predicateService.create("less than").id!!
+
+        service.create(r1, p1, r2)
+        service.create(r1, p1, r3)
+        service.create(r1, p1, r3)
+        service.create(r3, p2, r1)
+
+        assertThat(service.findAll()).hasSize(4)
+
+        assertThat(service.findAllBySubjectAndPredicate(r1, p1)).hasSize(3)
+        assertThat(service.findAllBySubjectAndPredicate(r1, p2)).hasSize(0)
+        assertThat(service.findAllBySubjectAndPredicate(r3, p1)).hasSize(0)
+        assertThat(service.findAllBySubjectAndPredicate(r3, p2)).hasSize(1)
+    }
 }

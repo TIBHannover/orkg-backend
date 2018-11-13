@@ -11,7 +11,7 @@ data class Neo4jPredicate(
 
     @Property("label")
     @Required
-    private var label: String?
+    private var label: String? = null
 ) {
     fun toPredicate(): Predicate {
         val id = id

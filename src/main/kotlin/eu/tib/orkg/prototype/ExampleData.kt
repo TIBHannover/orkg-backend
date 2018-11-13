@@ -14,6 +14,9 @@ class ExampleData(
 ) : ApplicationRunner {
 
     override fun run(args: ApplicationArguments?) {
+        if (statementService.findAll().count() > 0)
+            return
+
         //
         // Resources
         //

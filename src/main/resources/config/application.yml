@@ -12,7 +12,7 @@ spring:
       #auto-index: validate
 ---
 spring:
-  profiles: production
+  profiles: docker
   data:
     neo4j:
       uri: 'bolt://neo4j:7687'

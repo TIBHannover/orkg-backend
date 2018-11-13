@@ -6,7 +6,7 @@ import org.springframework.context.annotation.*
 import org.springframework.stereotype.*
 
 @Component
-@Profile("development")
+@Profile("development", "docker")
 class ExampleData(
     private val resourceService: ResourceService,
     private val predicateService: PredicateService,

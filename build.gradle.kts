@@ -68,7 +68,7 @@ val snippetsDir = file("build/generated-snippets")
 
 
 asciidoctorj {
-    version = "1.5.6" // AsciiDoctor (Ruby!) version
+    version = "1.5.8" // AsciiDoctor (Ruby!) version
 }
 
 allprojects {

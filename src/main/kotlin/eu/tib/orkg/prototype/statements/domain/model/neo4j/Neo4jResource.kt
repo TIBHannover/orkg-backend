@@ -32,4 +32,7 @@ data class Neo4jResource(
 
         return Resource(ResourceId(id), label = label)
     }
+
+    fun toObject() =
+        ResourceObject(ResourceId(id!!), label = label!!)
 }

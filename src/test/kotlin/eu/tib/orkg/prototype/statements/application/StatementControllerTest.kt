@@ -1,7 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.statements.domain.model.*
-import eu.tib.orkg.prototype.statements.infrastructure.*
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.*
 import org.springframework.http.*
@@ -62,7 +61,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                         fieldWithPath("[].predicate.label").description("The label of the predicate"),
                         fieldWithPath("[].object").description("An object"),
                         fieldWithPath("[].object.id").description("The ID of the object"),
-                        fieldWithPath("[].object.label").description("The label of the object")
+                        fieldWithPath("[].object.label").description("The label of the object"),
+                        fieldWithPath("[].object._class").description("The type of the object (resource or literal).")
                     )
                 )
             )
@@ -100,7 +100,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                         fieldWithPath("predicate.label").description("The label of the predicate"),
                         fieldWithPath("object").description("An object"),
                         fieldWithPath("object.id").description("The ID of the object"),
-                        fieldWithPath("object.label").description("The label of the object")
+                        fieldWithPath("object.label").description("The label of the object"),
+                        fieldWithPath("object._class").description("The type of the object (resource or literal).")
                     )
                 )
             )
@@ -137,7 +138,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                         fieldWithPath("[].predicate.label").description("The label of the predicate"),
                         fieldWithPath("[].object").description("An object"),
                         fieldWithPath("[].object.id").description("The ID of the object"),
-                        fieldWithPath("[].object.label").description("The label of the object")
+                        fieldWithPath("[].object.label").description("The label of the object"),
+                        fieldWithPath("[].object._class").description("The type of the object (resource or literal).")
                     )
                 )
             )
@@ -175,7 +177,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                         fieldWithPath("[].predicate.label").description("The label of the predicate"),
                         fieldWithPath("[].object").description("An object"),
                         fieldWithPath("[].object.id").description("The ID of the object"),
-                        fieldWithPath("[].object.label").description("The label of the object")
+                        fieldWithPath("[].object.label").description("The label of the object"),
+                        fieldWithPath("[].object._class").description("The type of the object (resource or literal).")
                     )
                 )
             )

@@ -49,7 +49,7 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
             persistedResource.id!!,
             foundSubject.toResource(),
             foundPredicate.get(),
-            foundObject.toResource()
+            foundObject.toObject()
         )
     }
 
@@ -61,7 +61,7 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
                     it.id!!,
                     it.subject!!.toResource(),
                     predicateService.findById(PredicateId(it.predicateId!!)).get(),
-                    it.`object`!!.toResource()
+                    it.`object`!!.toObject()
                 )
             }
     }
@@ -74,7 +74,7 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
                     it.id!!,
                     it.subject!!.toResource(),
                     predicateService.findById(PredicateId(it.predicateId!!)).get(),
-                    it.`object`!!.toResource()
+                    it.`object`!!.toObject()
                 )
             }
     }
@@ -88,7 +88,7 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
                     it.id!!,
                     it.subject!!.toResource(),
                     predicateService.findById(PredicateId(it.predicateId!!)).get(),
-                    it.`object`!!.toResource()
+                    it.`object`!!.toObject()
                 )
             }
     }
@@ -104,7 +104,7 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
                     it.id!!,
                     it.subject!!.toResource(),
                     predicateService.findById(PredicateId(it.predicateId!!)).get(),
-                    it.`object`!!.toResource()
+                    it.`object`!!.toObject()
                 )
             }
     }
@@ -117,7 +117,7 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
                     it.id!!,
                     it.subject!!.toResource(),
                     predicateService.findById(PredicateId(it.predicateId!!)).get(),
-                    it.`object`!!.toResource()
+                    it.`object`!!.toObject()
                 )
             }
     }

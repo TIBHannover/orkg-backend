@@ -4,5 +4,5 @@ data class StatementWithResource(
     val id: Long,
     val subject: Resource,
     val predicate: Predicate,
-    val `object`: Resource
+    val `object`: ResourceObject
 )

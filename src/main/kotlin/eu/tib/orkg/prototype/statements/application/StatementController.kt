@@ -10,7 +10,10 @@ import org.springframework.web.util.*
 @RestController
 @RequestMapping("/api/statements")
 @CrossOrigin(origins = ["*"])
-class StatementController(private val service: StatementWithResourceService) {
+class StatementController(
+    private val service: StatementWithResourceService,
+    private val statementWithLiteralService: StatementWithLiteralService
+) {
 
     @GetMapping("/")
     fun findAll(): Iterable<StatementWithResource> {
@@ -48,6 +51,30 @@ class StatementController(private val service: StatementWithResourceService) {
     ): HttpEntity<StatementWithResource> {
         // TODO: should error if parts not found?
         val statement = service.create(subjectId, predicateId, objectId)
+
+        val location = uriComponentsBuilder
+            .path("api/statements/{id}")
+            .buildAndExpand(statement.id)
+            .toUri()
+
+        return created(location).body(statement)
+    }
+
+    @PostMapping("/{subjectId}/{predicateId}")
+    @ResponseStatus(CREATED)
+    fun createWithLiteralObject(
+        @PathVariable subjectId: ResourceId,
+        @PathVariable predicateId: PredicateId,
+        @RequestBody literalId: LiteralId,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): HttpEntity<StatementWithLiteral> {
+        // TODO: should error if parts not found?
+        val statement =
+            statementWithLiteralService.create(
+                subjectId,
+                predicateId,
+                literalId
+            )
 
         val location = uriComponentsBuilder
             .path("api/statements/{id}")

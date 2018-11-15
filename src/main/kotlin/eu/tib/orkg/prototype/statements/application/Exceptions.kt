@@ -5,3 +5,6 @@ import org.springframework.web.bind.annotation.ResponseStatus
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class ResourceNotFound : RuntimeException()
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+class LiteralNotFound : RuntimeException()

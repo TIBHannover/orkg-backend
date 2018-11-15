@@ -11,8 +11,10 @@ import org.springframework.restdocs.payload.PayloadDocumentation.*
 import org.springframework.restdocs.request.RequestDocumentation.*
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.transaction.annotation.*
 
 @DisplayName("Statement Controller")
+@Transactional
 class StatementControllerTest : RestDocumentationBaseTest() {
 
     override fun createController() = controller
@@ -25,6 +27,9 @@ class StatementControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var predicateService: PredicateService
+
+    @Autowired
+    private lateinit var literalService: LiteralService
 
     @Autowired
     private lateinit var controller: StatementController
@@ -208,6 +213,37 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                         parameterWithName("predicate").description("The predicate ID describing the predicate"),
                         parameterWithName("object").description("The resource ID describing the object")
                     ),
+                    responseHeaders(
+                        headerWithName("Location").description("Location to the created statement")
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun addWithLiteral() {
+        val r1 = resourceService.create("one")
+        val p = predicateService.create("has symbol")
+        val r2 = literalService.create("1")
+
+        mockMvc.perform(
+            post(
+                "/api/statements/{subject}/{predicate}",
+                r1.id,
+                p.id
+            )
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString("${r2.id}"))
+        )
+            .andExpect(status().isCreated)
+            .andDo(
+                document(
+                    snippet,
+                    pathParameters(
+                        parameterWithName("subject").description("The resource ID describing the subject"),
+                        parameterWithName("predicate").description("The predicate ID describing the predicate")
+                    ),
+                    requestBody(),
                     responseHeaders(
                         headerWithName("Location").description("Location to the created statement")
                     )

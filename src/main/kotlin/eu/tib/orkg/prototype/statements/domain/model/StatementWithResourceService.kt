@@ -2,9 +2,12 @@ package eu.tib.orkg.prototype.statements.domain.model
 
 import java.util.*
 
+/**
+ * A service dealing with statements that have resources in the object position.
+ */
 interface StatementWithResourceService {
     /**
-     * List all statements.
+     * List all statements with resource objects.
      */
     fun findAll(): Iterable<StatementWithResource>
 

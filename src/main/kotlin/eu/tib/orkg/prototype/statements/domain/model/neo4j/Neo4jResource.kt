@@ -22,16 +22,7 @@ data class Neo4jResource(
         this.label = label
     }
 
-    fun toResource(): Resource {
-        // Use vals to protect values from being modified.
-        val id = id
-        val label = label
-
-        if (id == null || label == null)
-            throw IllegalStateException("This should never happen!")
-
-        return Resource(ResourceId(id), label = label)
-    }
+    fun toResource() = Resource(ResourceId(id!!), label!!)
 
     fun toObject() =
         ResourceObject(ResourceId(id!!), label = label!!)

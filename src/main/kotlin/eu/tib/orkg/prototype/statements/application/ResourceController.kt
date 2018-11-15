@@ -20,14 +20,12 @@ class ResourceController(private val service: ResourceService) {
 
     @GetMapping("/")
     fun findByLabel(
-        @RequestParam(
-            "q",
-            required = false
-        ) searchString: String?
-    ) = if (searchString == null)
-        service.findAll()
-    else
-        service.findAllByLabelContaining(searchString)
+        @RequestParam("q", required = false) searchString: String?
+    ) =
+        if (searchString == null)
+            service.findAll()
+        else
+            service.findAllByLabelContaining(searchString)
 
     @PostMapping("/")
     @ResponseStatus(CREATED)

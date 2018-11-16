@@ -38,6 +38,7 @@ build:
     - ./gradlew build
   artifacts:
     paths:
+      - build/reports/
       - build/libs/orkg-*.war
 
 deploy_develop:

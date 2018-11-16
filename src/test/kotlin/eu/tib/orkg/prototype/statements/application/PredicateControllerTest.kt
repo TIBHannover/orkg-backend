@@ -1,36 +1,33 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.statements.domain.model.Predicate
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.domain.model.PredicateRepository
-import eu.tib.orkg.prototype.statements.infrastructure.InMemoryPredicateRepository
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
-import org.springframework.http.MediaType
-import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import eu.tib.orkg.prototype.statements.domain.model.*
+import org.junit.jupiter.api.*
+import org.springframework.beans.factory.annotation.*
+import org.springframework.http.*
+import org.springframework.restdocs.headers.HeaderDocumentation.*
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*
+import org.springframework.restdocs.payload.PayloadDocumentation.*
+import org.springframework.restdocs.request.RequestDocumentation.*
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.transaction.annotation.*
 
 @DisplayName("Predicate Controller")
+@Transactional
 class PredicateControllerTest : RestDocumentationBaseTest() {
 
-    private val repository: PredicateRepository =
-        InMemoryPredicateRepository()
+    @Autowired
+    private lateinit var controller: PredicateController
 
-    override fun createController() = PredicateController(repository)
+    @Autowired
+    private lateinit var service: PredicateService
+
+    override fun createController() = controller
 
     @Test
     fun index() {
-        repository.add(Predicate(PredicateId("P123"), "has name"))
-        repository.add(Predicate(PredicateId("P987"), "knows"))
+        service.create("has name")
+        service.create("knows")
 
         mockMvc
             .perform(
@@ -52,11 +49,11 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun fetch() {
-        repository.add(Predicate(PredicateId("P123"), "has name"))
+        val id = service.create("has name").id
 
         mockMvc
             .perform(
-                get("/api/predicates/P123")
+                get("/api/predicates/$id")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
             )
@@ -74,9 +71,9 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookup() {
-        repository.add(Predicate(PredicateId("P123"), "has name"))
-        repository.add(Predicate(PredicateId("P345"), "gave name to"))
-        repository.add(Predicate(PredicateId("P987"), "knows"))
+        service.create("has name")
+        service.create("gave name to")
+        service.create("knows")
 
         mockMvc
             .perform(

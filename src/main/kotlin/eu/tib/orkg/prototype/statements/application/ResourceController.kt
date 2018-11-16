@@ -1,60 +1,55 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceRepository
-import org.springframework.http.HttpStatus.CREATED
-import org.springframework.http.ResponseEntity
+import eu.tib.orkg.prototype.statements.domain.model.*
+import org.springframework.http.*
+import org.springframework.http.HttpStatus.*
 import org.springframework.http.ResponseEntity.*
-import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseStatus
-import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.util.UriComponentsBuilder
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.util.*
 
 @RestController
 @RequestMapping("/api/resources/")
 @CrossOrigin(origins = ["*"])
-class ResourceController(private val repository: ResourceRepository) {
+class ResourceController(private val service: ResourceService) {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: ResourceId): Resource =
-        repository
+        service
             .findById(id)
             .orElseThrow { ResourceNotFound() }
 
     @GetMapping("/")
     fun findByLabel(
-        @RequestParam(
-            "q",
-            required = false
-        ) searchString: String?
-    ) = if (searchString == null)
-        repository.findAll()
-    else
-        repository.findByLabel(searchString)
+        @RequestParam("q", required = false) searchString: String?
+    ) =
+        if (searchString == null)
+            service.findAll()
+        else
+            service.findAllByLabelContaining(searchString)
 
     @PostMapping("/")
     @ResponseStatus(CREATED)
     fun add(@RequestBody resource: Resource, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Resource> {
-        val (id, resourceWithId) = if (resource.id == null) {
-            val id = repository.nextIdentity()
-            Pair(id, resource.copy(id = id))
-        } else {
-            Pair(resource.id, resource)
-        }
-        repository.add(resourceWithId)
-
+        val id = service.create(resource.label).id
         val location = uriComponentsBuilder
             .path("api/resources/{id}")
             .buildAndExpand(id)
             .toUri()
 
-        return created(location).body(repository.findById(id).get())
+        return created(location).body(service.findById(id).get())
+    }
+
+    @PutMapping("/{id}")
+    fun update(
+        @PathVariable id: ResourceId, @RequestBody resource: Resource
+    ): ResponseEntity<Resource> {
+        val found = service.findById(id)
+
+        if (!found.isPresent)
+            return notFound().build()
+
+        val updatedResource = resource.copy(id = found.get().id)
+
+        return ok(service.update(updatedResource))
     }
 }

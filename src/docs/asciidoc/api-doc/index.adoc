@@ -128,13 +128,6 @@ Create a statement by submitting three IDs via `POST`:
 
 operation::statement-controller-test-add-with-resource[snippets='path-parameters,curl-request,http-response']
 
-[[statements-create-objects-literal]]
-==== Creating statements with literal objects
-
-Create a statement by submitting two IDs and a value in the body via `POST`:
-
-operation::statement-controller-test-add-with-literal[snippets='path-parameters,request-fields,curl-request,http-response']
-
 [[statements-fetch]]
 === Fetching a statement
 

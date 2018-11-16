@@ -10,4 +10,4 @@ ADD "${PROJECT_NAME}-${VERSION}.war" /app/application.war
 # use port 8080 by default and clash when starting.
 EXPOSE 8000
 
-CMD ["java", "-jar", "/app/application.war", "--server.port=8000"]
+CMD ["java", "-jar", "-Dspring.profiles.active=docker", "/app/application.war", "--server.port=8000"]

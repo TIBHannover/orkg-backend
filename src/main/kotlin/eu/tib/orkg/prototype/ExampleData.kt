@@ -1,158 +1,89 @@
 package eu.tib.orkg.prototype
 
-import eu.tib.orkg.prototype.statements.domain.model.Object
-import eu.tib.orkg.prototype.statements.domain.model.Predicate
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.domain.model.PredicateRepository
-import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceRepository
-import eu.tib.orkg.prototype.statements.domain.model.Statement
-import eu.tib.orkg.prototype.statements.domain.model.StatementRepository
-import org.springframework.boot.ApplicationArguments
-import org.springframework.boot.ApplicationRunner
-import org.springframework.stereotype.Component
+import eu.tib.orkg.prototype.statements.domain.model.*
+import org.springframework.boot.*
+import org.springframework.context.annotation.*
+import org.springframework.stereotype.*
 
 @Component
+@Profile("development", "docker")
 class ExampleData(
-    private val resourceRepository: ResourceRepository,
-    private val predicateRepository: PredicateRepository,
-    private val statementRepository: StatementRepository
+    private val resourceService: ResourceService,
+    private val predicateService: PredicateService,
+    private val statementService: StatementWithResourceService
 ) : ApplicationRunner {
 
     override fun run(args: ApplicationArguments?) {
+        if (statementService.findAll().count() > 0)
+            return
+
         //
         // Resources
         //
-        val caseStudies = ResourceId("89AB")
-        val designOfOntologies = ResourceId("789a")
-        val fermatsLastTheorem = ResourceId("3456")
-        val grubersDesign = ResourceId("b0b0b0")
-        val knowledgeEngineering = ResourceId("6789")
-        val mathProof = ResourceId("1234")
-        val modularityTheorem = ResourceId("2345")
-        val ontoDesignCriteria = ResourceId("5678")
-        val tanimaConj = ResourceId("4567")
-        val wilesProof = ResourceId("0a0a0a")
-
-        resourceRepository.add(
-            Resource(grubersDesign, "Gruber's design of ontologies")
-        )
-        resourceRepository.add(
-            Resource(
-                wilesProof,
-                "Wiles's proof of Fermat's last theorem"
-            )
-        )
-        resourceRepository.add(
-            Resource(mathProof, "Mathematical proof")
-        )
-        resourceRepository.add(
-            Resource(modularityTheorem, "Modularity theorem")
-        )
-        resourceRepository.add(
-            Resource(
-                fermatsLastTheorem,
-                "Fermat's last theorem (conjecture)"
-            )
-        )
-        resourceRepository.add(
-            Resource(tanimaConj, "Taniyama-Shimura-Weil conjecture")
-        )
-        resourceRepository.add(
-            Resource(
-                ontoDesignCriteria,
-                "Design criteria for ontologies"
-            )
-        )
-        resourceRepository.add(
-            Resource(knowledgeEngineering, "Knowledge Engineering")
-        )
-        resourceRepository.add(
-            Resource(designOfOntologies, "Design of ontologies")
-        )
-        resourceRepository.add(
-            Resource(caseStudies, "Case studies")
-        )
+        val grubersDesign =
+            resourceService.create("Gruber's design of ontologies").id!!
+        val wilesProof =
+            resourceService.create("Wiles's proof of Fermat's last theorem").id!!
+        val mathProof =
+            resourceService.create("Mathematical proof").id!!
+        val modularityTheorem =
+            resourceService.create("Modularity theorem").id!!
+        val fermatsLastTheorem =
+            resourceService.create("Fermat's last theorem (conjecture)").id!!
+        val tanimaConj =
+            resourceService.create("Taniyama-Shimura-Weil conjecture").id!!
+        val ontoDesignCriteria =
+            resourceService.create("Design criteria for ontologies").id!!
+        val knowledgeEngineering =
+            resourceService.create("Knowledge Engineering").id!!
+        val designOfOntologies =
+            resourceService.create("Design of ontologies").id!!
+        val caseStudies =
+            resourceService.create("Case studies").id!!
 
         //
         // Predicates
         //
-        val addresses = PredicateId("P123")
-        val employs = PredicateId("Pabc")
-        val yields = PredicateId("P234")
-
-        predicateRepository.add(Predicate(addresses, "addresses"))
-        predicateRepository.add(Predicate(yields, "yields"))
-        predicateRepository.add(Predicate(employs, "employs"))
+        val addresses = predicateService.create("addresses").id!!
+        val yields = predicateService.create("yields").id!!
+        val employs = predicateService.create("employs").id!!
 
         //
         // Statements
         //
-        statementRepository.add(
-            Statement(
-                statementRepository.nextIdentity(),
-                wilesProof,
-                employs,
-                Object.Resource(mathProof)
-            )
-        )
-        statementRepository.add(
-            Statement(
-                statementRepository.nextIdentity(),
-                wilesProof,
-                addresses,
-                Object.Resource(tanimaConj)
-            )
-        )
-        statementRepository.add(
-            Statement(
-                statementRepository.nextIdentity(),
-                wilesProof,
-                addresses,
-                Object.Resource(fermatsLastTheorem)
-            )
-        )
-        statementRepository.add(
-            Statement(
-                statementRepository.nextIdentity(),
-                wilesProof,
-                yields,
-                Object.Resource(modularityTheorem)
-            )
-        )
+        statementService.create(wilesProof, employs, mathProof)
+        statementService.create(wilesProof, addresses, tanimaConj)
+        statementService.create(wilesProof, addresses, fermatsLastTheorem)
+        statementService.create(wilesProof, yields, modularityTheorem)
 
-        statementRepository.add(
-            Statement(
-                statementRepository.nextIdentity(),
-                grubersDesign,
-                employs,
-                Object.Resource(caseStudies)
-            )
-        )
-        statementRepository.add(
-            Statement(
-                statementRepository.nextIdentity(),
-                grubersDesign,
-                addresses,
-                Object.Resource(designOfOntologies)
-            )
-        )
-        statementRepository.add(
-            Statement(
-                statementRepository.nextIdentity(),
-                grubersDesign,
-                addresses,
-                Object.Resource(knowledgeEngineering)
-            )
-        )
-        statementRepository.add(
-            Statement(
-                statementRepository.nextIdentity(),
-                grubersDesign,
-                yields,
-                Object.Resource(ontoDesignCriteria)
-            )
-        )
+        statementService.create(grubersDesign, employs, caseStudies)
+        statementService.create(grubersDesign, addresses, designOfOntologies)
+        statementService.create(grubersDesign, addresses, knowledgeEngineering)
+        statementService.create(grubersDesign, yields, ontoDesignCriteria)
+
+        // Predicates (for DILS)
+        predicateService.create("is a")
+        predicateService.create("refers to")
+        predicateService.create("uses")
+        predicateService.create("author")
+        predicateService.create("affiliation")
+        predicateService.create("email")
+        predicateService.create("ORCID")
+        predicateService.create("DOI")
+        predicateService.create("problem")
+        predicateService.create("solution")
+        predicateService.create("use case")
+        predicateService.create("description")
+        predicateService.create("implementation")
+        predicateService.create("has")
+        predicateService.create("has part")
+        predicateService.create("part of")
+        predicateService.create("input")
+        predicateService.create("output")
+        predicateService.create("programming language")
+        predicateService.create("environment")
+        predicateService.create("defines")
+        predicateService.create("field")
+        predicateService.create("web site")
     }
 }

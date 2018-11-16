@@ -1,24 +1,17 @@
 package eu.tib.orkg.prototype.statements.application
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.MediaType
-import org.springframework.restdocs.RestDocumentationContextProvider
-import org.springframework.restdocs.RestDocumentationExtension
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration
-import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest
-import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse
-import org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
-import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup
-import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder
+import com.fasterxml.jackson.databind.*
+import org.junit.jupiter.api.*
+import org.junit.jupiter.api.extension.*
+import org.springframework.beans.factory.annotation.*
+import org.springframework.boot.test.context.*
+import org.springframework.restdocs.*
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*
+import org.springframework.restdocs.operation.preprocess.Preprocessors.*
+import org.springframework.test.context.junit.jupiter.*
+import org.springframework.test.web.servlet.*
+import org.springframework.test.web.servlet.setup.*
+import org.springframework.test.web.servlet.setup.MockMvcBuilders.*
 
 /**
  * Base class for REST API documentation test.

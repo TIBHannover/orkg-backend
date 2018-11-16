@@ -16,13 +16,24 @@ class StatementController(
 ) {
 
     @GetMapping("/")
-    fun findAll(): Iterable<StatementWithResource> {
-        return statementWithResourceService.findAll()
+    fun findAll(): Iterable<StatementResponse> {
+        return statementWithResourceService.findAll() + statementWithLiteralService.findAll()
     }
 
     @GetMapping("/{statementId}")
-    fun findById(@PathVariable statementId: Long) =
-        statementWithResourceService.findById(statementId)
+    fun findById(@PathVariable statementId: Long): HttpEntity<StatementResponse> {
+        val foundResourceStatement =
+            statementWithResourceService.findById(statementId)
+        if (foundResourceStatement.isPresent)
+            return ok(foundResourceStatement.get())
+
+        val foundLiteralStatement =
+            statementWithLiteralService.findById(statementId)
+        if (foundLiteralStatement.isPresent)
+            return ok(foundLiteralStatement.get())
+
+        return notFound().build()
+    }
 
     @GetMapping("/subject/{resourceId}")
     fun findByResource(@PathVariable resourceId: ResourceId) =
@@ -50,7 +61,11 @@ class StatementController(
         uriComponentsBuilder: UriComponentsBuilder
     ): HttpEntity<StatementWithResource> {
         // TODO: should error if parts not found?
-        val statement = statementWithResourceService.create(subjectId, predicateId, objectId)
+        val statement = statementWithResourceService.create(
+            subjectId,
+            predicateId,
+            objectId
+        )
 
         val location = uriComponentsBuilder
             .path("api/statements/{id}")

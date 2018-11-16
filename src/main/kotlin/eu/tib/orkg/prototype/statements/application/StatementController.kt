@@ -36,12 +36,18 @@ class StatementController(
     }
 
     @GetMapping("/subject/{resourceId}")
-    fun findByResource(@PathVariable resourceId: ResourceId) =
-        statementWithResourceService.findAllBySubject(resourceId)
+    fun findByResource(@PathVariable resourceId: ResourceId): HttpEntity<Iterable<StatementResponse>> =
+        ok(
+            statementWithResourceService.findAllBySubject(resourceId) +
+                statementWithLiteralService.findAllBySubject(resourceId)
+        )
 
     @GetMapping("/predicate/{predicateId}")
-    fun findByPredicate(@PathVariable predicateId: PredicateId) =
-        statementWithResourceService.findAllByPredicate(predicateId)
+    fun findByPredicate(@PathVariable predicateId: PredicateId): HttpEntity<Iterable<StatementResponse>> =
+        ok(
+            statementWithResourceService.findAllByPredicate(predicateId) +
+                statementWithLiteralService.findAllByPredicate(predicateId)
+        )
 
     @PostMapping("/")
     // FIXME: how can we deal with that without null issues?

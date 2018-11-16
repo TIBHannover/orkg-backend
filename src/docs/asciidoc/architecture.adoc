@@ -5,4 +5,31 @@
 TODO
 
 
+== Lessons learned
+
+This section contains some notes concerning the technology that might
+not be obvious to programmers new to the project.
+
+=== Spring Boot
+
+==== Tests
+
+* Tests will not run isolated unless they are annotated with `@Transactional`.
+* Special annotations, such as `@DataNeo4jTest` are not needed. Additionally,
+  they get in the way of the tests running properly.
+* Service tests (or tests using services) need to depend on the service
+  _interface_, not the concrete implementation. Wiring will not work with
+  a concrete implementation.
+
+=== Spring Data Neo4j (SDN)
+
+* The lookup paths need to include the packages that contain the repository
+  interfaces and node entities. Other components, such as services, can be
+  places anywhere and do not need to be listed.
+* `@Relationship` properties in `@NodeEntity` classes need to be annotated
+  with `@JsonIgnore` or other annotations that prevent them from being
+  serialized. Serialization might lead to recursion and eventually blow
+  up the stack.
+
+
 include::parts/glossary.adoc[leveloffset=+1]

@@ -32,4 +32,14 @@ class Neo4jResourceService(
     override fun findAllByLabelContaining(part: String): Iterable<Resource> =
         neo4jResourceRepository.findAllByLabelContaining(part)
             .map(Neo4jResource::toResource)
+
+    override fun update(resource: Resource): Resource {
+        // already checked by service
+        val found = neo4jResourceRepository.findById(resource.id!!.value).get()
+
+        // update all the properties
+        found.label = resource.label
+
+        return neo4jResourceRepository.save(found).toResource()
+    }
 }

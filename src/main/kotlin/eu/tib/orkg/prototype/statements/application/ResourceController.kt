@@ -38,4 +38,18 @@ class ResourceController(private val service: ResourceService) {
 
         return created(location).body(service.findById(id).get())
     }
+
+    @PutMapping("/{id}")
+    fun update(
+        @PathVariable id: ResourceId, @RequestBody resource: Resource
+    ): ResponseEntity<Resource> {
+        val found = service.findById(id)
+
+        if (!found.isPresent)
+            return notFound().build()
+
+        val updatedResource = resource.copy(id = found.get().id)
+
+        return ok(service.update(updatedResource))
+    }
 }

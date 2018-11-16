@@ -29,4 +29,9 @@ interface ResourceService {
      * Find all resources matching a label partially.
      */
     fun findAllByLabelContaining(part: String): Iterable<Resource>
+
+    /**
+     * Update a resource.
+     */
+    fun update(resource: Resource): Resource
 }

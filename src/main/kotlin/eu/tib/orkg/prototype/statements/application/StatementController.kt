@@ -65,7 +65,7 @@ class StatementController(
     fun createWithLiteralObject(
         @PathVariable subjectId: ResourceId,
         @PathVariable predicateId: PredicateId,
-        @RequestBody literalId: LiteralId,
+        @RequestBody body: StatementWithLiteralRequest,
         uriComponentsBuilder: UriComponentsBuilder
     ): HttpEntity<StatementWithLiteral> {
         // TODO: should error if parts not found?
@@ -73,7 +73,7 @@ class StatementController(
             statementWithLiteralService.create(
                 subjectId,
                 predicateId,
-                literalId
+                body.`object`.id
             )
 
         val location = uriComponentsBuilder

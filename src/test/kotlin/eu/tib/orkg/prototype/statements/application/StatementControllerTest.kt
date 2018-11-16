@@ -226,6 +226,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val p = predicateService.create("has symbol")
         val r2 = literalService.create("1")
 
+        val body = mapOf("object" to mapOf("id" to r2.id))
+
         mockMvc.perform(
             post(
                 "/api/statements/{subject}/{predicate}",
@@ -233,7 +235,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                 p.id
             )
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString("${r2.id}"))
+                .content(objectMapper.writeValueAsString(body))
+                .characterEncoding("utf-8")
         )
             .andExpect(status().isCreated)
             .andDo(

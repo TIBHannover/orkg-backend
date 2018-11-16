@@ -38,4 +38,18 @@ class LiteralController(private val service: LiteralService) {
 
         return created(location).body(service.findById(id).get())
     }
+
+    @PutMapping("/{id}")
+    fun update(
+        @PathVariable id: LiteralId, @RequestBody literal: Literal
+    ): ResponseEntity<Literal> {
+        val found = service.findById(id)
+
+        if (!found.isPresent)
+            return notFound().build()
+
+        val updatedLiteral = literal.copy(id = found.get().id)
+
+        return ok(service.update(updatedLiteral))
+    }
 }

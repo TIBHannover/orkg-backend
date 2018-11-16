@@ -30,4 +30,14 @@ class Neo4jLiteralService(
     override fun findAllByLabelContaining(part: String) =
         neo4jLiteralRepository.findAllByLabelContaining(part)
             .map(Neo4jLiteral::toLiteral)
+
+    override fun update(literal: Literal): Literal {
+        // already checked by service
+        val found = neo4jLiteralRepository.findById(literal.id!!.value).get()
+
+        // update all the properties
+        found.label = literal.label
+
+        return neo4jLiteralRepository.save(found).toLiteral()
+    }
 }

@@ -29,4 +29,9 @@ interface LiteralService {
      * Find all literals matching a label partially.
      */
     fun findAllByLabelContaining(part: String): Iterable<Literal>
+
+    /**
+     * Update a literal.
+     */
+    fun update(literal: Literal): Literal
 }

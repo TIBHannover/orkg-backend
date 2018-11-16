@@ -11,31 +11,31 @@ import org.springframework.web.util.*
 @RequestMapping("/api/statements")
 @CrossOrigin(origins = ["*"])
 class StatementController(
-    private val service: StatementWithResourceService,
+    private val statementWithResourceService: StatementWithResourceService,
     private val statementWithLiteralService: StatementWithLiteralService
 ) {
 
     @GetMapping("/")
     fun findAll(): Iterable<StatementWithResource> {
-        return service.findAll()
+        return statementWithResourceService.findAll()
     }
 
     @GetMapping("/{statementId}")
     fun findById(@PathVariable statementId: Long) =
-        service.findById(statementId)
+        statementWithResourceService.findById(statementId)
 
     @GetMapping("/subject/{resourceId}")
     fun findByResource(@PathVariable resourceId: ResourceId) =
-        service.findAllBySubject(resourceId)
+        statementWithResourceService.findAllBySubject(resourceId)
 
     @GetMapping("/predicate/{predicateId}")
     fun findByPredicate(@PathVariable predicateId: PredicateId) =
-        service.findAllByPredicate(predicateId)
+        statementWithResourceService.findAllByPredicate(predicateId)
 
     @PostMapping("/")
     // FIXME: how can we deal with that without null issues?
     fun add(@RequestBody statement: StatementWithResource) =
-        service.create(
+        statementWithResourceService.create(
             statement.subject.id!!,
             statement.predicate.id!!,
             statement.`object`.id!!
@@ -50,7 +50,7 @@ class StatementController(
         uriComponentsBuilder: UriComponentsBuilder
     ): HttpEntity<StatementWithResource> {
         // TODO: should error if parts not found?
-        val statement = service.create(subjectId, predicateId, objectId)
+        val statement = statementWithResourceService.create(subjectId, predicateId, objectId)
 
         val location = uriComponentsBuilder
             .path("api/statements/{id}")

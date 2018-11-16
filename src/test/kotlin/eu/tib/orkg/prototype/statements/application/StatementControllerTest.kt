@@ -20,7 +20,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
     override fun createController() = controller
 
     @Autowired
-    private lateinit var statementService: StatementWithResourceService
+    private lateinit var statementWithResourceService: StatementWithResourceService
 
     @Autowired
     private lateinit var resourceService: ResourceService
@@ -42,9 +42,9 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val p1 = predicateService.create("blah")
         val p2 = predicateService.create("blub")
 
-        statementService.create(r1.id!!, p1.id!!, r2.id!!)
-        statementService.create(r1.id!!, p2.id!!, r3.id!!)
-        statementService.create(r1.id!!, p2.id!!, r3.id!!)
+        statementWithResourceService.create(r1.id!!, p1.id!!, r2.id!!)
+        statementWithResourceService.create(r1.id!!, p2.id!!, r3.id!!)
+        statementWithResourceService.create(r1.id!!, p2.id!!, r3.id!!)
 
         mockMvc
             .perform(
@@ -81,9 +81,10 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val p1 = predicateService.create("blah")
         val p2 = predicateService.create("blub")
 
-        val statement = statementService.create(r1.id!!, p1.id!!, r2.id!!)
-        statementService.create(r1.id!!, p1.id!!, r3.id!!)
-        statementService.create(r1.id!!, p2.id!!, r3.id!!)
+        val statement =
+            statementWithResourceService.create(r1.id!!, p1.id!!, r2.id!!)
+        statementWithResourceService.create(r1.id!!, p1.id!!, r3.id!!)
+        statementWithResourceService.create(r1.id!!, p2.id!!, r3.id!!)
 
         mockMvc
             .perform(
@@ -120,8 +121,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val p1 = predicateService.create("blah")
         val p2 = predicateService.create("blub")
 
-        statementService.create(r1.id!!, p1.id!!, r2.id!!)
-        statementService.create(r1.id!!, p2.id!!, r3.id!!)
+        statementWithResourceService.create(r1.id!!, p1.id!!, r2.id!!)
+        statementWithResourceService.create(r1.id!!, p2.id!!, r3.id!!)
 
         mockMvc
             .perform(
@@ -158,9 +159,9 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val p1 = predicateService.create("blah")
         val p2 = predicateService.create("blub")
 
-        statementService.create(r1.id!!, p1.id!!, r2.id!!)
-        statementService.create(r1.id!!, p1.id!!, r3.id!!)
-        statementService.create(r1.id!!, p2.id!!, r3.id!!)
+        statementWithResourceService.create(r1.id!!, p1.id!!, r2.id!!)
+        statementWithResourceService.create(r1.id!!, p1.id!!, r3.id!!)
+        statementWithResourceService.create(r1.id!!, p2.id!!, r3.id!!)
 
         mockMvc
             .perform(

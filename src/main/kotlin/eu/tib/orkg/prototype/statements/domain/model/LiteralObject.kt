@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.*
 )
 @JsonSubTypes(
     JsonSubTypes.Type(
-        value = ResourceObject::class,
+        value = LiteralObject::class,
         name = "literal"
     )
 )

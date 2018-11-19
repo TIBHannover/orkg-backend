@@ -59,7 +59,8 @@ build:
     # Fix permission. No idea why they are different from those in Git.
     - chmod 0755 ansible
     - (cd ansible && ansible-playbook --limit $ANSIBLE_HOST site.yml)
-    # Install documentation
+    # Build and install documentation
+    - ./gradlew asciidoctor
     - rsync -av --delete build/asciidoc/html5/api-doc/ orkg@${DEPLOY_HOST}:/tib/app/orkg/www/htdocs/orkg/doc/api/
 
 deploy to develop:

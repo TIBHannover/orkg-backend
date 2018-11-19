@@ -55,7 +55,7 @@ build:
     - echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" > /etc/apt/sources.list.d/ansible.list
     - apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
     - apt update
-    - apt -y install ansible
+    - apt -y install ansible rsync
     # Fix permission. No idea why they are different from those in Git.
     - chmod 0755 ansible
     - cd ansible && ansible-playbook --limit $ANSIBLE_HOST site.yml

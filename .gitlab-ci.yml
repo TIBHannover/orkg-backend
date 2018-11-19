@@ -59,10 +59,13 @@ build:
     # Fix permission. No idea why they are different from those in Git.
     - chmod 0755 ansible
     - cd ansible && ansible-playbook --limit $ANSIBLE_HOST site.yml
+    # Install documentation
+    - rsync -av --delete build/ orkg@${DEPLOY_HOST}:/tib/app/orkg/www/htdocs/orkg/
 
 deploy to develop:
   variables:
     ANSIBLE_HOST: devel
+    DEPLOY_HOST: orkg01.devel.labs.tib.eu
   <<: *deployment
   environment:
     name: develop
@@ -73,6 +76,7 @@ deploy to develop:
 deploy to production:
   variables:
     ANSIBLE_HOST: prod
+    DEPLOY_HOST: orkg21.labs.tib.eu
   <<: *deployment
   environment:
     name: production

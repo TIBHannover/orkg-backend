@@ -60,7 +60,7 @@ build:
     - chmod 0755 ansible
     - cd ansible && ansible-playbook --limit $ANSIBLE_HOST site.yml
     # Install documentation
-    - rsync -av --delete build/ orkg@${DEPLOY_HOST}:/tib/app/orkg/www/htdocs/orkg/
+    - rsync -av --delete build/asciidoc/html5/api-doc/ orkg@${DEPLOY_HOST}:/tib/app/orkg/www/htdocs/orkg/doc/api/
 
 deploy to develop:
   variables:

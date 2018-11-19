@@ -65,7 +65,7 @@ build:
 deploy to develop:
   variables:
     ANSIBLE_HOST: devel
-    DEPLOY_HOST: orkg01.devel.labs.tib.eu
+    DEPLOY_HOST: orkg01.develop.labs.tib.eu
   <<: *deployment
   environment:
     name: develop

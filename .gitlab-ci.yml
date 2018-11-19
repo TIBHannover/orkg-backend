@@ -41,7 +41,7 @@ build:
       - build/reports/
       - build/libs/orkg-*.war
 
-deploy_develop:
+.deploy_job: &deployment
   stage: deploy
   before_script:
     - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
@@ -58,12 +58,28 @@ deploy_develop:
     - apt -y install ansible
     # Fix permission. No idea why they are different from those in Git.
     - chmod 0755 ansible
-    - cd ansible && ansible-playbook site.yml
+    - cd ansible && ansible-playbook --limit $ANSIBLE_HOST site.yml
+
+deploy to develop:
+  variables:
+    ANSIBLE_HOST: devel
+  <<: *deployment
   environment:
     name: develop
     url: http://orkg01.develop.labs.tib.eu:8080/orkg-prototype/
   only:
     - master
+
+deploy to production:
+  variables:
+    ANSIBLE_HOST: prod
+  <<: *deployment
+  environment:
+    name: production
+    url: http://orkg21.labs.tib.eu:8080/orkg-prototype/
+  only:
+    - master
+  when: manual
 
 pages:
   stage: deploy

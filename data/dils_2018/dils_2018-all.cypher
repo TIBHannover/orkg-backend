@@ -1,7 +1,3 @@
-
-begin
-commit
-begin
 /* beginning of part 1 (nodes) */
 create (_29:`Predicate` {`label`:"addresses"})
 create (_30:`Predicate` {`label`:"is a"})
@@ -744,4 +740,3 @@ create (_100149)-[:`RELATES_TO` {`predicate_id`:31}]->(_10098)
 create (_100149)-[:`RELATES_TO` {`predicate_id`:31}]->(_10097)
 /* end of part 2 (relationships) */
 ;
-commit

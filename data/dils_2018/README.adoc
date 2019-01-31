@@ -1,0 +1,36 @@
+= Notes on the DILS Cypher dumps
+
+== Problem description
+
+Due to a bug in the code the entities created during the DILS experiment
+ did not get proper surrogate IDs.
+The IDs used in the Cypher dump (prefixed by an underscore) are internal
+ IDs in Neo4j and are _unstable_ between different instances of the
+ database.
+This means that when the data is imported into a fresh instance these
+ IDs will most likely change and get a different value.
+Because predicates are "disconnected", i.e. are stored as nodes and
+ referenced in the relationships, the original data will be inconsistent
+ at import because of a mismatch between the IDs of the nodes and the
+ ID stored in the relationship property.
+
+== Solution
+
+Luckily, the IDs are still consistent in the dumps.
+A script was created to add the missing surrogate IDs to the Cypher dump.
+It also adds the missing statement IDs.
+The new dump is consistent and will work on input into a fresh database
+ if statements are connected to predicates via the `predicate_id`
+ property present in both the relationship (representing the statement)
+ and the node (representing the Predicate).
+
+In order to by able to merge the two distinct data sets (taken on
+ different laptops) an offset of 1000 was added to avoid conflicts in IDs.
+
+The two files where merged as `dils_2018-merged.cypher` by concatenation.
+The order of statements was changed so that all nodes are created first,
+ followed by all relationships.
+
+NOTE: The original files were saved to the `original+broken` directory
+      for future reference, although it is unlikely that they provide
+      any value.

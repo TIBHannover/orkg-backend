@@ -20,12 +20,16 @@ class LiteralController(private val service: LiteralService) {
 
     @GetMapping("/")
     fun findByLabel(
-        @RequestParam("q", required = false) searchString: String?
+        @RequestParam("q", required = false) searchString: String?,
+        @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean
     ) =
         if (searchString == null)
             service.findAll()
         else
-            service.findAllByLabelContaining(searchString)
+            if (exactMatch)
+                service.findAllByLabel(searchString)
+            else
+                service.findAllByLabelContaining(searchString)
 
     @PostMapping("/")
     @ResponseStatus(CREATED)

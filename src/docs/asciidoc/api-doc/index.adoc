@@ -91,7 +91,7 @@ Similar to a real sentence, it is a tuple of a subject, a predicate, and
 
 Subjects and objects represent nodes in the graph are formed from a
  <<Resources,resource>>.
-Objects can also be a literal value.
+Objects can also be a <<Literals,literal value>>.
 
 <<Predicates>> represent edges (relationships) in the graph.
 
@@ -234,3 +234,46 @@ operation::predicate-controller-test-fetch[snippets='curl-request,http-response'
 Predicates can be looked up by label by providing a search fragment.
 
 operation::predicate-controller-test-lookup[snippets='curl-request,http-response']
+
+
+[[literals]]
+== Literals
+
+Literals represent nodes in the knowledge graph.
+They can appear in the object position in <<Statements,statements>>.
+
+[[literals-list]]
+=== Listing Literals
+
+A `GET` request lists all literals:
+
+operation::literal-controller-test-index[snippets='curl-request,http-response']
+
+[[literals-create]]
+=== Creating Literals
+
+A `POST` request creates a new literal with a given label (its value).
+The response will be `201 Created` when successful.
+The resource can be retrieved by following the URI in the `Location` header field.
+
+NOTE: The created literal is returned in the body for convenience. This might be subject to change.
+
+operation::literal-controller-test-add[snippets='request-fields,curl-request,http-response']
+
+The response body consists of the following fields:
+
+operation::literal-controller-test-add[snippets='response-fields']
+
+[[literals-fetch]]
+=== Fetching a literal
+
+A `GET` request provides information about a literal.
+
+operation::literal-controller-test-fetch[snippets='curl-request,http-response']
+
+[[literals-lookup]]
+=== Lookup a literal by label
+
+Literals can be looked up by label by providing a search fragment.
+
+operation::resource-controller-test-lookup[snippets='curl-request,http-response']

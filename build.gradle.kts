@@ -26,7 +26,7 @@ apply {
 
 dependencies {
     // BOMs
-    implementation("org.junit:junit-bom:5.3.1")
+    implementation("org.junit:junit-bom:5.4.0")
 
     //
     // Runtime

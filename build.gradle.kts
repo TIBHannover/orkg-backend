@@ -61,7 +61,7 @@ dependencies {
     //
     // Documentation
     //
-    asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.2.RELEASE")
+    asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.3.RELEASE")
 }
 
 val snippetsDir = file("build/generated-snippets")

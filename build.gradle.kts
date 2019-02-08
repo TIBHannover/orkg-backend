@@ -9,7 +9,7 @@ version = "0.0.1-SNAPSHOT"
 val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java)
     .kotlinPluginVersion
 
-val neo4jVersion = "3.3.+" // should match version in Dockerfile
+val neo4jVersion = "3.4.+" // should match version in Dockerfile
 
 plugins {
     kotlin("jvm") version "1.3.21"

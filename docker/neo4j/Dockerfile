@@ -1,6 +1,6 @@
-FROM neo4j:3.3
+FROM neo4j:3.4
 
-ENV SEMANTICS_EXT_VERSION=3.3.0.2
+ENV SEMANTICS_EXT_VERSION=3.4.0.2
 
 RUN \
   apk update && apk add curl && \

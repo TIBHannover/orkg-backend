@@ -15,7 +15,7 @@ plugins {
     kotlin("jvm") version "1.3.21"
     kotlin("plugin.spring") version "1.3.21"
     id("org.springframework.boot") version "2.1.2.RELEASE"
-    id("org.asciidoctor.convert") version "1.5.8.1"
+    id("org.asciidoctor.convert") version "1.5.9.2"
     id("com.palantir.docker") version "0.21.0"
     war
 }
@@ -66,10 +66,6 @@ dependencies {
 
 val snippetsDir = file("build/generated-snippets")
 
-
-asciidoctorj {
-    version = "1.5.8" // AsciiDoctor (Ruby!) version
-}
 
 allprojects {
     repositories {

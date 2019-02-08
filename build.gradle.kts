@@ -14,7 +14,7 @@ val neo4jVersion = "3.3.+" // should match version in Dockerfile
 plugins {
     kotlin("jvm") version "1.3.0"
     kotlin("plugin.spring") version "1.3.0"
-    id("org.springframework.boot") version "2.0.6.RELEASE"
+    id("org.springframework.boot") version "2.1.2.RELEASE"
     id("org.asciidoctor.convert") version "1.5.8.1"
     id("com.palantir.docker") version "0.20.1"
     war

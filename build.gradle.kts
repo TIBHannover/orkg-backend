@@ -38,7 +38,7 @@ dependencies {
         exclude(module = "neo4j-ogm-http-driver")
     }
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.data:spring-data-neo4j:5.0.1.RELEASE")
+    implementation("org.springframework.data:spring-data-neo4j:5.1.4.RELEASE")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.eclipse.rdf4j:rdf4j-repository-sparql:2.2.4")
     // Add Tomcat as "provided" runtime so that we can deploy as WAR

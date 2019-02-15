@@ -22,7 +22,7 @@ class Neo4jResourceService(
             .map(Neo4jResource::toResource)
 
     override fun findById(id: ResourceId?): Optional<Resource> =
-        neo4jResourceRepository.findById(id?.value)
+        neo4jResourceRepository.findByResourceId(id)
             .map(Neo4jResource::toResource)
 
     override fun findAllByLabel(label: String): Iterable<Resource> =

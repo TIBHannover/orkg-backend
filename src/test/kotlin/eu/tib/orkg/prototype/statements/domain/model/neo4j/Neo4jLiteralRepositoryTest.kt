@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import eu.tib.orkg.prototype.statements.domain.model.*
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.*
@@ -42,7 +43,7 @@ class Neo4jLiteralRepositoryTest {
             Neo4jStatementWithLiteral(
                 subject = sub,
                 `object` = obj,
-                predicateId = 42 // irrelevant
+                predicateId = PredicateId(42) // irrelevant
             )
         )
 

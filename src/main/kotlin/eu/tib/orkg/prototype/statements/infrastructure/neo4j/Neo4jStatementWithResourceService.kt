@@ -39,7 +39,7 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
 
         val persistedResource = neo4jStatementRepository.save(
             Neo4jStatementWithResource(
-                predicateId = predicate.value,
+                predicateId = predicate,
                 subject = foundSubject,
                 `object` = foundObject
             )
@@ -60,7 +60,7 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
                 StatementWithResource(
                     it.id!!,
                     it.subject!!.toResource(),
-                    predicateService.findById(PredicateId(it.predicateId!!)).get(),
+                    predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject()
                 )
             }
@@ -73,7 +73,7 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
                 StatementWithResource(
                     it.id!!,
                     it.subject!!.toResource(),
-                    predicateService.findById(PredicateId(it.predicateId!!)).get(),
+                    predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject()
                 )
             }
@@ -87,7 +87,7 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
                 StatementWithResource(
                     it.id!!,
                     it.subject!!.toResource(),
-                    predicateService.findById(PredicateId(it.predicateId!!)).get(),
+                    predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject()
                 )
             }
@@ -103,7 +103,7 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
                 StatementWithResource(
                     it.id!!,
                     it.subject!!.toResource(),
-                    predicateService.findById(PredicateId(it.predicateId!!)).get(),
+                    predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject()
                 )
             }
@@ -116,7 +116,7 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
                 StatementWithResource(
                     it.id!!,
                     it.subject!!.toResource(),
-                    predicateService.findById(PredicateId(it.predicateId!!)).get(),
+                    predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject()
                 )
             }

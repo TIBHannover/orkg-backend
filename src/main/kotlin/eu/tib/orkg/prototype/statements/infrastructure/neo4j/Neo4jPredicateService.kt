@@ -12,10 +12,12 @@ class Neo4jPredicateService(
     private val neo4jPredicateRepository: Neo4jPredicateRepository
 ) : PredicateService {
 
-    override fun create(label: String) =
-        neo4jPredicateRepository
-            .save(Neo4jPredicate(label = label))
+    override fun create(label: String): Predicate {
+        val id = neo4jPredicateRepository.nextIdentity()
+        return neo4jPredicateRepository
+            .save(Neo4jPredicate(label = label, predicateId = id))
             .toPredicate()
+    }
 
     override fun findAll() = neo4jPredicateRepository
         .findAll()
@@ -23,7 +25,7 @@ class Neo4jPredicateService(
 
     override fun findById(id: PredicateId?): Optional<Predicate> =
         neo4jPredicateRepository
-            .findById(id?.value)
+            .findByPredicateId(id)
             .map(Neo4jPredicate::toPredicate)
 
     override fun findAllByLabel(label: String) =

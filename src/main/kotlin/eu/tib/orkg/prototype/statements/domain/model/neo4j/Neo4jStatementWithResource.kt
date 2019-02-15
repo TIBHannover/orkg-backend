@@ -2,7 +2,9 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import com.fasterxml.jackson.annotation.*
 import eu.tib.orkg.prototype.statements.domain.model.*
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.*
 import org.neo4j.ogm.annotation.*
+import org.neo4j.ogm.annotation.typeconversion.*
 
 @RelationshipEntity(type = "RELATES_TO")
 data class Neo4jStatementWithResource(
@@ -20,13 +22,14 @@ data class Neo4jStatementWithResource(
 
     @Property("predicate_id")
     @Required
-    var predicateId: Long? = null
+    @Convert(PredicateIdGraphAttributeConverter::class)
+    var predicateId: PredicateId? = null
 
     constructor(
         id: Long? = null,
         subject: Neo4jResource,
         `object`: Neo4jResource,
-        predicateId: Long?
+        predicateId: PredicateId?
     ) : this(id) {
         this.subject = subject
         this.`object` = `object`
@@ -44,7 +47,7 @@ data class Neo4jStatementWithResource(
         return Statement(
             statementId = id,
             subject = ResourceId(subjectId),
-            predicate = PredicateId(predId),
+            predicate = predId,
             `object` = Object.Resource(ResourceId(objectId))
         )
     }

@@ -14,19 +14,13 @@ class ResourceIdJsonTest {
 
     @Test
     fun testDeserializeValuePassedAsString() {
-        val deserializedId = mapper.readValue<ResourceId>("\"123\"")
-        assertThat(deserializedId).isEqualTo(ResourceId(123))
-    }
-
-    @Test
-    fun testDeserializeValuePassedAsLong() {
-        val deserializedId = mapper.readValue<ResourceId>("123")
+        val deserializedId = mapper.readValue<ResourceId>("\"R123\"")
         assertThat(deserializedId).isEqualTo(ResourceId(123))
     }
 
     @Test
     fun testSerializeIdToString() {
         val serializedId = mapper.writeValueAsString(ResourceId(123))
-        assertThat(serializedId).isEqualTo("\"123\"")
+        assertThat(serializedId).isEqualTo("\"R123\"")
     }
 }

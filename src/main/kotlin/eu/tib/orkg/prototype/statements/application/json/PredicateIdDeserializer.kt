@@ -11,5 +11,5 @@ class PredicateIdDeserializer :
         p: JsonParser?,
         ctxt: DeserializationContext?
     ): PredicateId? =
-        p?.valueAsLong?.let { PredicateId(it) }
+        p?.valueAsString?.let { PredicateId(it) }
 }

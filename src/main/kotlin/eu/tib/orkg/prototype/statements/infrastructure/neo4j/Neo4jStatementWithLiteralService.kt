@@ -38,7 +38,7 @@ class Neo4jStatementWithLiteralService :
             throw IllegalArgumentException("Resource could not be found: $subject")
 
         val foundObject = neo4jLiteralRepository
-            .findById(`object`.value)
+            .findByLiteralId(`object`)
             .orElseThrow { IllegalStateException("Could not find object: $`object`") }
 
         val persistedStatement = neo4jStatementRepository.save(

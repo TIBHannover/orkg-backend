@@ -81,9 +81,9 @@ class Neo4jResourceServiceTest {
         service.create("irrelevant")
         service.create("also irrelevant")
         val expectedId = service.create("to be found").id
-
+println("expected: $expectedId")
         val found = service.findById(expectedId)
-
+println("found: $found")
         assertThat(found).isPresent
         assertThat(found.get().id).isEqualTo(expectedId)
     }

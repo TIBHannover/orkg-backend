@@ -13,7 +13,8 @@ class Neo4jResourceService(
 ) : ResourceService {
 
     override fun create(label: String): Resource {
-        return neo4jResourceRepository.save(Neo4jResource(label = label))
+        val resourceId = neo4jResourceRepository.nextIdentity()
+        return neo4jResourceRepository.save(Neo4jResource(label = label, resourceId = resourceId))
             .toResource()
     }
 
@@ -35,7 +36,7 @@ class Neo4jResourceService(
 
     override fun update(resource: Resource): Resource {
         // already checked by service
-        val found = neo4jResourceRepository.findById(resource.id!!.value).get()
+        val found = neo4jResourceRepository.findByResourceId(resource.id).get()
 
         // update all the properties
         found.label = resource.label

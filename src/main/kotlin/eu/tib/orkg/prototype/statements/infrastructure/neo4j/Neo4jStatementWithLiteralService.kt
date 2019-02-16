@@ -30,7 +30,7 @@ class Neo4jStatementWithLiteralService :
         `object`: LiteralId
     ): StatementWithLiteral {
         val foundSubject = neo4jResourceRepository
-            .findById(subject.value)
+            .findByResourceId(subject)
             .orElseThrow { IllegalStateException("Could not find subject") }
 
         val foundPredicate = predicateService.findById(predicate)
@@ -83,9 +83,9 @@ class Neo4jStatementWithLiteralService :
             }
 
     override fun findAllBySubject(resourceId: ResourceId): Iterable<StatementWithLiteral> {
-        val resource = neo4jResourceRepository.findById(resourceId.value).get()
+        val resource = neo4jResourceRepository.findByResourceId(resourceId).get()
         return neo4jStatementRepository
-            .findAllBySubject(resource.id!!)
+            .findAllBySubject(resource.resourceId!!)
             .map {
                 StatementWithLiteral(
                     it.id!!,
@@ -101,7 +101,7 @@ class Neo4jStatementWithLiteralService :
         predicateId: PredicateId
     ) =
         neo4jStatementRepository
-            .findAllBySubjectAndPredicate(resourceId.value, predicateId.value)
+            .findAllBySubjectAndPredicate(resourceId, predicateId)
             .map {
                 StatementWithLiteral(
                     it.id!!,
@@ -113,7 +113,7 @@ class Neo4jStatementWithLiteralService :
 
     override fun findAllByPredicate(predicateId: PredicateId) =
         neo4jStatementRepository
-            .findAllByPredicateId(predicateId.value)
+            .findAllByPredicateId(predicateId)
             .map {
                 StatementWithLiteral(
                     it.id!!,

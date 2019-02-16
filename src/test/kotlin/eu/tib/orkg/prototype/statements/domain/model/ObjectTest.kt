@@ -7,8 +7,8 @@ class ObjectTest {
 
     @Test
     fun objectOfResourceType_WhenDifferent_ShouldCompareById() {
-        val smaller = Object.Resource(ResourceId("1"))
-        val greater = Object.Resource(ResourceId("2"))
+        val smaller = Object.Resource(ResourceId("R1"))
+        val greater = Object.Resource(ResourceId("R2"))
 
         assertThat(smaller).isLessThan(greater)
         assertThat(greater).isGreaterThan(smaller)
@@ -16,8 +16,8 @@ class ObjectTest {
 
     @Test
     fun objectOfResourceType_WhenEqual_ShouldCompareById() {
-        val one = Object.Resource(ResourceId("1"))
-        val other = Object.Resource(ResourceId("1"))
+        val one = Object.Resource(ResourceId("R1"))
+        val other = Object.Resource(ResourceId("R1"))
 
         assertThat(one).isEqualTo(other)
     }
@@ -41,7 +41,7 @@ class ObjectTest {
 
     @Test
     fun objectOfDifferentTypes_ResourceShouldCompareLessThanLiterals() {
-        val resource: Object = Object.Resource(ResourceId("1"))
+        val resource: Object = Object.Resource(ResourceId("R1"))
         val literal: Object = Object.Literal("some value")
 
         assertThat(resource).isLessThan(literal)

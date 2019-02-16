@@ -10,7 +10,7 @@ class ResourceIdSpec {
     fun canNotBeLessThanZero() {
         assertThatIllegalArgumentException()
             .isThrownBy { ResourceId(-1) }
-            .withMessage("Value must be greater than or equal to zero")
+            .withMessage("ID must be greater than or equal to zero")
     }
 
     @Test
@@ -46,26 +46,8 @@ class ResourceIdSpec {
     }
 
     @Test
-    @DisplayName("should convert string value to long")
-    fun shouldConvertStringValueToLong() {
-        assertThat(ResourceId("42").value).isEqualTo(42)
-    }
-
-    @Test
-    @DisplayName("should not modify long value")
-    fun shouldNotModifyLongValue() {
-        assertThat(ResourceId(42).value).isEqualTo(42)
-    }
-
-    @Test
     @DisplayName("should represent internal value when given long")
     fun shouldRepresentInternalValueWhenGivenLong() {
-        assertThat(ResourceId(42).toString()).isEqualTo("42")
-    }
-
-    @Test
-    @DisplayName("should represent internal value when given string")
-    fun shouldRepresentInternalValueWhenGivenString() {
-        assertThat(ResourceId("42").toString()).isEqualTo("42")
+        assertThat(ResourceId(42).toString()).isEqualTo("R42")
     }
 }

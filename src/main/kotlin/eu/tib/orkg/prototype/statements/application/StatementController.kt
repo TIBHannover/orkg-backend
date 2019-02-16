@@ -21,7 +21,7 @@ class StatementController(
     }
 
     @GetMapping("/{statementId}")
-    fun findById(@PathVariable statementId: Long): HttpEntity<StatementResponse> {
+    fun findById(@PathVariable statementId: StatementId): HttpEntity<StatementResponse> {
         val foundResourceStatement =
             statementWithResourceService.findById(statementId)
         if (foundResourceStatement.isPresent)

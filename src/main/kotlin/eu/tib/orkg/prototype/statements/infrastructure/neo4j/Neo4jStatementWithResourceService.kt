@@ -37,8 +37,11 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
             .findByResourceId(`object`)
             .orElseThrow { IllegalStateException("Could not find object") }
 
-        val persistedResource = neo4jStatementRepository.save(
+        val id = neo4jStatementRepository.nextIdentity()
+
+        val persistedStatement = neo4jStatementRepository.save(
             Neo4jStatementWithResource(
+                statementId = id,
                 predicateId = predicate,
                 subject = foundSubject,
                 `object` = foundObject
@@ -46,7 +49,7 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
         )
 
         return StatementWithResource(
-            persistedResource.id!!,
+            persistedStatement.statementId!!,
             foundSubject.toResource(),
             foundPredicate.get(),
             foundObject.toObject()
@@ -58,7 +61,7 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
             .findAll()
             .map {
                 StatementWithResource(
-                    it.id!!,
+                    it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject()
@@ -66,12 +69,12 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
             }
     }
 
-    override fun findById(statementId: Long): Optional<StatementWithResource> {
+    override fun findById(statementId: StatementId): Optional<StatementWithResource> {
         return neo4jStatementRepository
-            .findById(statementId)
+            .findByStatementId(statementId)
             .map {
                 StatementWithResource(
-                    it.id!!,
+                    it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject()
@@ -85,7 +88,7 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
             .findAllBySubject(resource.resourceId!!)
             .map {
                 StatementWithResource(
-                    it.id!!,
+                    it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject()
@@ -101,7 +104,7 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
             .findAllBySubjectAndPredicate(resourceId, predicateId)
             .map {
                 StatementWithResource(
-                    it.id!!,
+                    it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject()
@@ -114,7 +117,7 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
             .findAllByPredicateId(predicateId)
             .map {
                 StatementWithResource(
-                    it.id!!,
+                    it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject()

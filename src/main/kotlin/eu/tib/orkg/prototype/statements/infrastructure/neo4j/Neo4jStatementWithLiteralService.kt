@@ -41,8 +41,11 @@ class Neo4jStatementWithLiteralService :
             .findByLiteralId(`object`)
             .orElseThrow { IllegalStateException("Could not find object: $`object`") }
 
+        val id = neo4jStatementRepository.nextIdentity()
+
         val persistedStatement = neo4jStatementRepository.save(
             Neo4jStatementWithLiteral(
+                statementId = id,
                 predicateId = predicate,
                 subject = foundSubject,
                 `object` = foundObject
@@ -50,7 +53,7 @@ class Neo4jStatementWithLiteralService :
         )
 
         return StatementWithLiteral(
-            persistedStatement.id!!,
+            persistedStatement.statementId!!,
             foundSubject.toResource(),
             foundPredicate.get(),
             foundObject.toObject()
@@ -62,7 +65,7 @@ class Neo4jStatementWithLiteralService :
             .findAll()
             .map {
                 StatementWithLiteral(
-                    it.id!!,
+                    it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject()
@@ -70,12 +73,12 @@ class Neo4jStatementWithLiteralService :
             }
     }
 
-    override fun findById(statementId: Long): Optional<StatementWithLiteral> =
+    override fun findById(statementId: StatementId): Optional<StatementWithLiteral> =
         neo4jStatementRepository
-            .findById(statementId)
+            .findByStatementId(statementId)
             .map {
                 StatementWithLiteral(
-                    it.id!!,
+                    it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject()
@@ -88,7 +91,7 @@ class Neo4jStatementWithLiteralService :
             .findAllBySubject(resource.resourceId!!)
             .map {
                 StatementWithLiteral(
-                    it.id!!,
+                    it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject()
@@ -104,7 +107,7 @@ class Neo4jStatementWithLiteralService :
             .findAllBySubjectAndPredicate(resourceId, predicateId)
             .map {
                 StatementWithLiteral(
-                    it.id!!,
+                    it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject()
@@ -116,7 +119,7 @@ class Neo4jStatementWithLiteralService :
             .findAllByPredicateId(predicateId)
             .map {
                 StatementWithLiteral(
-                    it.id!!,
+                    it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject()

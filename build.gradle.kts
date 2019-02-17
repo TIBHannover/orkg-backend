@@ -17,6 +17,7 @@ plugins {
     id("org.springframework.boot") version "2.1.2.RELEASE"
     id("org.asciidoctor.convert") version "1.5.9.2"
     id("com.palantir.docker") version "0.21.0"
+    jacoco
     war
 }
 
@@ -83,6 +84,13 @@ tasks {
         useJUnitPlatform()
 
         outputs.dir(snippetsDir)
+    }
+
+    "jacocoTestReport"(JacocoReport::class) {
+        reports {
+            html.isEnabled = true
+            xml.isEnabled = true
+        }
     }
 
     "asciidoctor"(AsciidoctorTask::class) {

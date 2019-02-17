@@ -8,8 +8,8 @@ class StatementTest {
     @Test
     fun orderBySubject_IfSubjectIsDifferent_ShouldSortBySubject() {
         val (smaller, greater) = createStatementsWithDifferentSubjects(
-            "111",
-            "222"
+            "R111",
+            "R222"
         )
 
         assertThat(smaller).isLessThan(greater)
@@ -19,8 +19,8 @@ class StatementTest {
     @Test
     fun orderBySubject_IfSubjectIsEqualAndPredicateDiffers_ShouldSortByPredicate() {
         val (one, other) = createStatementsWithDifferentSubjects(
-            "111",
-            "111"
+            "R111",
+            "R111"
         )
 
         assertThat(one).isEqualTo(other)
@@ -50,8 +50,8 @@ class StatementTest {
     @Test
     fun orderByObject_IfSubjectAndPredicateAreEqual_ShouldSortByObject() {
         val (smaller, greater) = createStatementsWithDifferentObjectsWithResource(
-            "333",
-            "444"
+            "R333",
+            "R444"
         )
 
         assertThat(smaller).isLessThan(greater)
@@ -65,13 +65,13 @@ class StatementTest {
             null,
             ResourceId(smallerId),
             PredicateId("P222"),
-            Object.Resource(ResourceId("333"))
+            Object.Resource(ResourceId("R333"))
         )
         val greater = Statement(
             null,
             ResourceId(greaterId),
             PredicateId("P222"),
-            Object.Resource(ResourceId("333"))
+            Object.Resource(ResourceId("R333"))
         )
         return Pair(smaller, greater)
     }
@@ -81,15 +81,15 @@ class StatementTest {
     ): Pair<Statement, Statement> {
         val smaller = Statement(
             null,
-            ResourceId("111"),
+            ResourceId("R111"),
             PredicateId(smallerId),
-            Object.Resource(ResourceId("333"))
+            Object.Resource(ResourceId("R333"))
         )
         val greater = Statement(
             null,
-            ResourceId("111"),
+            ResourceId("R111"),
             PredicateId(greaterId),
-            Object.Resource(ResourceId("333"))
+            Object.Resource(ResourceId("R333"))
         )
         return Pair(smaller, greater)
     }
@@ -99,13 +99,13 @@ class StatementTest {
     ): Pair<Statement, Statement> {
         val smaller = Statement(
             null,
-            ResourceId("111"),
+            ResourceId("R111"),
             PredicateId("P222"),
             Object.Resource(ResourceId(smallerId))
         )
         val greater = Statement(
             null,
-            ResourceId("111"),
+            ResourceId("R111"),
             PredicateId("P222"),
             Object.Resource(ResourceId(greaterId))
         )

@@ -5,17 +5,19 @@ import eu.tib.orkg.prototype.statements.application.json.*
 
 @JsonDeserialize(using = ResourceIdDeserializer::class)
 @JsonSerialize(using = ResourceIdSerializer::class)
-data class ResourceId(val value: Long) :
+data class ResourceId(val value: String) :
     Comparable<ResourceId> {
 
     init {
-        require(value >= 0) { "Value must be greater than or equal to zero" }
+        require(value.isNotBlank()) { "ID must not be blank" }
+        require(value.startsWith("R")) { "ID must start with \"R\"" }
     }
 
-    @Deprecated("IDs of type String are no longer supported. Use Long instead.")
-    constructor(value: String) : this(value.toLong())
+    constructor(value: Long) : this("R$value") {
+        require(value >= 0) { "ID must be greater than or equal to zero" }
+    }
 
-    override fun toString() = "$value"
+    override fun toString() = value
 
     override fun compareTo(other: ResourceId) =
         value.compareTo(other.value)

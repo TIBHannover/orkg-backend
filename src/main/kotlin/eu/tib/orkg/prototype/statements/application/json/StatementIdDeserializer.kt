@@ -4,12 +4,12 @@ import com.fasterxml.jackson.core.*
 import com.fasterxml.jackson.databind.*
 import eu.tib.orkg.prototype.statements.domain.model.*
 
-class PredicateIdDeserializer :
-    JsonDeserializer<PredicateId>() {
+class StatementIdDeserializer :
+    JsonDeserializer<StatementId>() {
 
     override fun deserialize(
         p: JsonParser?,
         ctxt: DeserializationContext?
-    ): PredicateId? =
-        p?.valueAsString?.let { PredicateId(it) }
+    ): StatementId? =
+        p?.valueAsString?.let { StatementId(it) }
 }

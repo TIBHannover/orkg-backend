@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import eu.tib.orkg.prototype.statements.domain.model.*
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.*
@@ -22,7 +23,7 @@ class Neo4jResourceRepositoryTest {
     @Test
     @DisplayName("should not return null for resources list if none are defined")
     fun shouldNotReturnNullForResourcesListIfNoneAreDefined() {
-        Neo4jResource(label = "irrelevant").persist()
+        Neo4jResource(label = "irrelevant", resourceId = ResourceId(1)).persist()
 
         val result = resourceRepository.findAll()
 
@@ -33,16 +34,17 @@ class Neo4jResourceRepositoryTest {
     @Test
     @DisplayName("should create connection between two resources")
     fun shouldCreateConnectionBetweenTwoResources() {
-        val sub = resourceRepository.save(Neo4jResource(label = "subject"))
-        val obj = resourceRepository.save(Neo4jResource(label = "object"))
+        val sub = resourceRepository.save(Neo4jResource(label = "subject", resourceId = ResourceId(1)))
+        val obj = resourceRepository.save(Neo4jResource(label = "object", resourceId = ResourceId(2)))
 
         // Act
 
         statementRepository.save(
             Neo4jStatementWithResource(
+                statementId = StatementId(23), // irrelevant
                 subject = sub,
                 `object` = obj,
-                predicateId = 42 // irrelevant
+                predicateId = PredicateId(42) // irrelevant
             )
         )
 

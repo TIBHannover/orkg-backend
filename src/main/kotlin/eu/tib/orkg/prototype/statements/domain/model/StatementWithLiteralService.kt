@@ -14,7 +14,7 @@ interface StatementWithLiteralService {
     /**
      * Find statement by ID.
      */
-    fun findById(statementId: Long): Optional<StatementWithLiteral>
+    fun findById(statementId: StatementId): Optional<StatementWithLiteral>
 
     /**
      * Find all statements with a given subject.

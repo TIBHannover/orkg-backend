@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import eu.tib.orkg.prototype.statements.domain.model.*
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.*
@@ -25,7 +26,7 @@ class Neo4jLiteralRepositoryTest {
     @Test
     @DisplayName("should save and retrieve statement")
     fun shouldSaveAndRetrieveStatement() {
-        Neo4jLiteral(label = "irrelevant").persist()
+        Neo4jLiteral(label = "irrelevant", literalId = LiteralId(1)).persist()
 
         val result = literalRepository.findAll()
 
@@ -35,14 +36,15 @@ class Neo4jLiteralRepositoryTest {
     @Test
     @DisplayName("should create connection between resource and literal")
     fun shouldCreateConnectionBetweenResourceAndLiteral() {
-        val sub = resourceRepository.save(Neo4jResource(label = "subject"))
-        val obj = literalRepository.save(Neo4jLiteral(label = "object"))
+        val sub = resourceRepository.save(Neo4jResource(label = "subject", resourceId = ResourceId(1)))
+        val obj = literalRepository.save(Neo4jLiteral(label = "object", literalId = LiteralId(1)))
 
         statementRepository.save(
             Neo4jStatementWithLiteral(
+                statementId = StatementId(23), // irrelevant
                 subject = sub,
                 `object` = obj,
-                predicateId = 42 // irrelevant
+                predicateId = PredicateId(42) // irrelevant
             )
         )
 

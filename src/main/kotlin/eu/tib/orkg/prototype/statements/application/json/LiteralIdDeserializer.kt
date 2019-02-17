@@ -11,7 +11,5 @@ class LiteralIdDeserializer :
         p: JsonParser?,
         ctxt: DeserializationContext?
     ): LiteralId? =
-        p?.valueAsLong?.let {
-            LiteralId(it)
-        }
+        p?.valueAsString?.let { LiteralId(it) }
 }

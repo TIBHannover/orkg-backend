@@ -30,7 +30,7 @@ class Neo4jStatementWithLiteralService :
         `object`: LiteralId
     ): StatementWithLiteral {
         val foundSubject = neo4jResourceRepository
-            .findById(subject.value)
+            .findByResourceId(subject)
             .orElseThrow { IllegalStateException("Could not find subject") }
 
         val foundPredicate = predicateService.findById(predicate)
@@ -38,19 +38,22 @@ class Neo4jStatementWithLiteralService :
             throw IllegalArgumentException("Resource could not be found: $subject")
 
         val foundObject = neo4jLiteralRepository
-            .findById(`object`.value)
+            .findByLiteralId(`object`)
             .orElseThrow { IllegalStateException("Could not find object: $`object`") }
+
+        val id = neo4jStatementRepository.nextIdentity()
 
         val persistedStatement = neo4jStatementRepository.save(
             Neo4jStatementWithLiteral(
-                predicateId = predicate.value,
+                statementId = id,
+                predicateId = predicate,
                 subject = foundSubject,
                 `object` = foundObject
             )
         )
 
         return StatementWithLiteral(
-            persistedStatement.id!!,
+            persistedStatement.statementId!!,
             foundSubject.toResource(),
             foundPredicate.get(),
             foundObject.toObject()
@@ -62,35 +65,35 @@ class Neo4jStatementWithLiteralService :
             .findAll()
             .map {
                 StatementWithLiteral(
-                    it.id!!,
+                    it.statementId!!,
                     it.subject!!.toResource(),
-                    predicateService.findById(PredicateId(it.predicateId!!)).get(),
+                    predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject()
                 )
             }
     }
 
-    override fun findById(statementId: Long): Optional<StatementWithLiteral> =
+    override fun findById(statementId: StatementId): Optional<StatementWithLiteral> =
         neo4jStatementRepository
-            .findById(statementId)
+            .findByStatementId(statementId)
             .map {
                 StatementWithLiteral(
-                    it.id!!,
+                    it.statementId!!,
                     it.subject!!.toResource(),
-                    predicateService.findById(PredicateId(it.predicateId!!)).get(),
+                    predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject()
                 )
             }
 
     override fun findAllBySubject(resourceId: ResourceId): Iterable<StatementWithLiteral> {
-        val resource = neo4jResourceRepository.findById(resourceId.value).get()
+        val resource = neo4jResourceRepository.findByResourceId(resourceId).get()
         return neo4jStatementRepository
-            .findAllBySubject(resource.id!!)
+            .findAllBySubject(resource.resourceId!!)
             .map {
                 StatementWithLiteral(
-                    it.id!!,
+                    it.statementId!!,
                     it.subject!!.toResource(),
-                    predicateService.findById(PredicateId(it.predicateId!!)).get(),
+                    predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject()
                 )
             }
@@ -101,24 +104,24 @@ class Neo4jStatementWithLiteralService :
         predicateId: PredicateId
     ) =
         neo4jStatementRepository
-            .findAllBySubjectAndPredicate(resourceId.value, predicateId.value)
+            .findAllBySubjectAndPredicate(resourceId, predicateId)
             .map {
                 StatementWithLiteral(
-                    it.id!!,
+                    it.statementId!!,
                     it.subject!!.toResource(),
-                    predicateService.findById(PredicateId(it.predicateId!!)).get(),
+                    predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject()
                 )
             }
 
     override fun findAllByPredicate(predicateId: PredicateId) =
         neo4jStatementRepository
-            .findAllByPredicateId(predicateId.value)
+            .findAllByPredicateId(predicateId)
             .map {
                 StatementWithLiteral(
-                    it.id!!,
+                    it.statementId!!,
                     it.subject!!.toResource(),
-                    predicateService.findById(PredicateId(it.predicateId!!)).get(),
+                    predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject()
                 )
             }

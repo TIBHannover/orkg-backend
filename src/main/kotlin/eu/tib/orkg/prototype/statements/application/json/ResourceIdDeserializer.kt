@@ -11,7 +11,7 @@ class ResourceIdDeserializer :
         p: JsonParser?,
         ctxt: DeserializationContext?
     ): ResourceId? =
-        p?.valueAsLong?.let {
+        p?.valueAsString?.let {
             ResourceId(it)
         }
 }

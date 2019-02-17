@@ -2,7 +2,9 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import com.fasterxml.jackson.annotation.*
 import eu.tib.orkg.prototype.statements.domain.model.*
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.*
 import org.neo4j.ogm.annotation.*
+import org.neo4j.ogm.annotation.typeconversion.*
 
 @RelationshipEntity(type = "RELATES_TO")
 data class Neo4jStatementWithResource(
@@ -18,34 +20,30 @@ data class Neo4jStatementWithResource(
     @JsonIgnore
     var `object`: Neo4jResource? = null
 
+    @Property("statement_id")
+    @Required
+    @Convert(StatementIdGraphAttributeConverter::class)
+    var statementId: StatementId? = null
+
     @Property("predicate_id")
     @Required
-    var predicateId: Long? = null
+    @Convert(PredicateIdGraphAttributeConverter::class)
+    var predicateId: PredicateId? = null
 
-    constructor(
-        id: Long? = null,
-        subject: Neo4jResource,
-        `object`: Neo4jResource,
-        predicateId: Long?
-    ) : this(id) {
+    constructor(statementId: StatementId, subject: Neo4jResource, predicateId: PredicateId, `object`: Neo4jResource) :
+        this(null) {
+        this.statementId = statementId
         this.subject = subject
-        this.`object` = `object`
         this.predicateId = predicateId
+        this.`object` = `object`
     }
 
     fun toStatement(): Statement {
-        val subjectId = subject?.id
-        val objectId = `object`?.id
-        val predId = predicateId
-
-        if (subjectId == null || predId == null || objectId == null)
-            throw IllegalStateException("This should never happen!")
-
         return Statement(
-            statementId = id,
-            subject = ResourceId(subjectId),
-            predicate = PredicateId(predId),
-            `object` = Object.Resource(ResourceId(objectId))
+            statementId = statementId,
+            subject = subject!!.resourceId!!,
+            predicate = predicateId!!,
+            `object` = Object.Resource(`object`!!.resourceId!!)
         )
     }
 }

@@ -11,16 +11,18 @@ import java.util.*
 class Neo4jLiteralService(
     private val neo4jLiteralRepository: Neo4jLiteralRepository
 ) : LiteralService {
-    override fun create(label: String) =
-        neo4jLiteralRepository
-            .save(Neo4jLiteral(label = label))
+    override fun create(label: String): Literal {
+        val literalId = neo4jLiteralRepository.nextIdentity()
+        return neo4jLiteralRepository
+            .save(Neo4jLiteral(label = label, literalId = literalId))
             .toLiteral()
+    }
 
     override fun findAll() = neo4jLiteralRepository.findAll()
         .map(Neo4jLiteral::toLiteral)
 
     override fun findById(id: LiteralId?): Optional<Literal> =
-        neo4jLiteralRepository.findById(id?.value)
+        neo4jLiteralRepository.findByLiteralId(id)
             .map(Neo4jLiteral::toLiteral)
 
     override fun findAllByLabel(label: String) =
@@ -33,7 +35,7 @@ class Neo4jLiteralService(
 
     override fun update(literal: Literal): Literal {
         // already checked by service
-        val found = neo4jLiteralRepository.findById(literal.id!!.value).get()
+        val found = neo4jLiteralRepository.findByLiteralId(literal.id).get()
 
         // update all the properties
         found.label = literal.label

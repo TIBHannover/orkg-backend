@@ -14,7 +14,7 @@ interface StatementWithResourceService {
     /**
      * Find statement by ID.
      */
-    fun findById(statementId: Long): Optional<StatementWithResource>
+    fun findById(statementId: StatementId): Optional<StatementWithResource>
 
     /**
      * Find all statements with a given subject.

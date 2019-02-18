@@ -27,15 +27,13 @@ sealed class Object : Comparable<Object> {
     }
 
     data class Literal(
-        val value: String
-        // TODO: "type" is reserved by the serializer. needs solution.
-        //var datatype: String? = "string"
+        val id: LiteralId
     ) : Object() {
         override fun compareTo(other: Object): Int {
             // Resources are always sorted before resources
             return when (other) {
                 is Resource -> 1
-                is Literal -> value.compareTo(other.value)
+                is Literal -> id.compareTo(other.id)
             }
         }
     }

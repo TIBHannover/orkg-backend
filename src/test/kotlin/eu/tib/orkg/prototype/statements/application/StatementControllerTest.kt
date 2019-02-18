@@ -8,7 +8,6 @@ import org.springframework.restdocs.headers.HeaderDocumentation.*
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post
 import org.springframework.restdocs.payload.PayloadDocumentation.*
-import org.springframework.restdocs.request.RequestDocumentation.*
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
@@ -253,26 +252,36 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val r2 = resourceService.create("two")
         val p = predicateService.create("less than")
 
+        val body = mapOf(
+            "subject_id" to r1.id,
+            "predicate_id" to p.id,
+            "object" to mapOf("id" to r2.id, "_class" to "resource")
+        )
+
         mockMvc.perform(
-            post(
-                "/api/statements/{subject}/{predicate}/{object}",
-                r1.id,
-                p.id,
-                r2.id
-            )
+            post("/api/statements/")
                 .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(body))
         )
             .andExpect(status().isCreated)
             .andDo(
                 document(
                     snippet,
-                    pathParameters(
-                        parameterWithName("subject").description("The resource ID describing the subject"),
-                        parameterWithName("predicate").description("The predicate ID describing the predicate"),
-                        parameterWithName("object").description("The resource ID describing the object")
-                    ),
                     responseHeaders(
                         headerWithName("Location").description("Location to the created statement")
+                    ),
+                    responseFields(
+                        fieldWithPath("id").description("The statement ID"),
+                        fieldWithPath("subject").description("A resource"),
+                        fieldWithPath("subject.id").description("The ID of the subject resource"),
+                        fieldWithPath("subject.label").description("The label of the subject resource"),
+                        fieldWithPath("predicate").description("A predicate"),
+                        fieldWithPath("predicate.id").description("The ID of the predicate"),
+                        fieldWithPath("predicate.label").description("The label of the predicate"),
+                        fieldWithPath("object").description("An object"),
+                        fieldWithPath("object.id").description("The ID of the object"),
+                        fieldWithPath("object.label").description("The label of the object"),
+                        fieldWithPath("object._class").description("The type of the object (resource or literal).")
                     )
                 )
             )
@@ -280,18 +289,18 @@ class StatementControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun addWithLiteral() {
-        val r1 = resourceService.create("one")
+        val r = resourceService.create("one")
         val p = predicateService.create("has symbol")
-        val r2 = literalService.create("1")
+        val l = literalService.create("1")
 
-        val body = mapOf("object" to mapOf("id" to r2.id))
+        val body = mapOf(
+            "subject_id" to r.id,
+            "predicate_id" to p.id,
+            "object" to mapOf("id" to l.id, "_class" to "literal")
+        )
 
         mockMvc.perform(
-            post(
-                "/api/statements/{subject}/{predicate}",
-                r1.id,
-                p.id
-            )
+            post("/api/statements/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(body))
                 .characterEncoding("utf-8")
@@ -300,13 +309,22 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    pathParameters(
-                        parameterWithName("subject").description("The resource ID describing the subject"),
-                        parameterWithName("predicate").description("The predicate ID describing the predicate")
-                    ),
                     requestBody(),
                     responseHeaders(
                         headerWithName("Location").description("Location to the created statement")
+                    ),
+                    responseFields(
+                        fieldWithPath("id").description("The statement ID"),
+                        fieldWithPath("subject").description("A resource"),
+                        fieldWithPath("subject.id").description("The ID of the subject resource"),
+                        fieldWithPath("subject.label").description("The label of the subject resource"),
+                        fieldWithPath("predicate").description("A predicate"),
+                        fieldWithPath("predicate.id").description("The ID of the predicate"),
+                        fieldWithPath("predicate.label").description("The label of the predicate"),
+                        fieldWithPath("object").description("An object"),
+                        fieldWithPath("object.id").description("The ID of the object"),
+                        fieldWithPath("object.label").description("The label of the object"),
+                        fieldWithPath("object._class").description("The type of the object (resource or literal).")
                     )
                 )
             )

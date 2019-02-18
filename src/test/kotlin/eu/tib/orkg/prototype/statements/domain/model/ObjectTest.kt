@@ -24,8 +24,8 @@ class ObjectTest {
 
     @Test
     fun objectOfLiteralType_WhenDifferent_ShouldCompareByValue() {
-        val smaller = Object.Literal("aaa")
-        val greater = Object.Literal("zzz")
+        val smaller = Object.Literal(LiteralId("L1"))
+        val greater = Object.Literal(LiteralId("L2"))
 
         assertThat(smaller).isLessThan(greater)
         assertThat(greater).isGreaterThan(smaller)
@@ -33,8 +33,8 @@ class ObjectTest {
 
     @Test
     fun objectOfLiteralType_WhenEqual_ShouldCompareByValue() {
-        val one = Object.Literal("same value")
-        val other = Object.Literal("same value")
+        val one = Object.Literal(LiteralId("L1"))
+        val other = Object.Literal(LiteralId("L1"))
 
         assertThat(one).isEqualTo(other)
     }
@@ -42,7 +42,7 @@ class ObjectTest {
     @Test
     fun objectOfDifferentTypes_ResourceShouldCompareLessThanLiterals() {
         val resource: Object = Object.Resource(ResourceId("R1"))
-        val literal: Object = Object.Literal("some value")
+        val literal: Object = Object.Literal(LiteralId("L1"))
 
         assertThat(resource).isLessThan(literal)
         assertThat(literal).isGreaterThan(resource)

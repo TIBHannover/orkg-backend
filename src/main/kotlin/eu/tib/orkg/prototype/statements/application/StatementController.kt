@@ -50,58 +50,27 @@ class StatementController(
         )
 
     @PostMapping("/")
-    // FIXME: how can we deal with that without null issues?
-    fun add(@RequestBody statement: StatementWithResource) =
-        statementWithResourceService.create(
-            statement.subject.id!!,
-            statement.predicate.id!!,
-            statement.`object`.id!!
-        )
-
-    @PostMapping("/{subjectId}/{predicateId}/{objectId}")
     @ResponseStatus(CREATED)
-    fun createWithObjectResource(
-        @PathVariable subjectId: ResourceId,
-        @PathVariable predicateId: PredicateId,
-        @PathVariable objectId: ResourceId,
-        uriComponentsBuilder: UriComponentsBuilder
-    ): HttpEntity<StatementWithResource> {
-        // TODO: should error if parts not found?
-        val statement = statementWithResourceService.create(
-            subjectId,
-            predicateId,
-            objectId
-        )
-
-        val location = uriComponentsBuilder
-            .path("api/statements/{id}")
-            .buildAndExpand(statement.id)
-            .toUri()
-
-        return created(location).body(statement)
-    }
-
-    @PostMapping("/{subjectId}/{predicateId}")
-    @ResponseStatus(CREATED)
-    fun createWithLiteralObject(
-        @PathVariable subjectId: ResourceId,
-        @PathVariable predicateId: PredicateId,
-        @RequestBody body: StatementWithLiteralRequest,
-        uriComponentsBuilder: UriComponentsBuilder
-    ): HttpEntity<StatementWithLiteral> {
-        // TODO: should error if parts not found?
-        val statement =
-            statementWithLiteralService.create(
-                subjectId,
-                predicateId,
-                body.`object`.id
+    fun add(@RequestBody statement: Statement, uriComponentsBuilder: UriComponentsBuilder):
+        HttpEntity<StatementResponse> {
+        val body = when (statement.`object`) {
+            is Object.Resource -> statementWithResourceService.create(
+                statement.subjectId,
+                statement.predicateId,
+                statement.`object`.id
             )
+            is Object.Literal -> statementWithLiteralService.create(
+                statement.subjectId,
+                statement.predicateId,
+                statement.`object`.id
+            )
+        }
 
         val location = uriComponentsBuilder
             .path("api/statements/{id}")
-            .buildAndExpand(statement.id)
+            .buildAndExpand(statement.statementId)
             .toUri()
 
-        return created(location).body(statement)
+        return created(location).body(body)
     }
 }

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
     include = JsonTypeInfo.As.EXTERNAL_PROPERTY,
-    property = "type"
+    property = "_class"
 )
 @JsonSubTypes(
     Type(value = Object.Resource::class, name = "resource"),
@@ -27,15 +27,13 @@ sealed class Object : Comparable<Object> {
     }
 
     data class Literal(
-        val value: String
-        // TODO: "type" is reserved by the serializer. needs solution.
-        //var datatype: String? = "string"
+        val id: LiteralId
     ) : Object() {
         override fun compareTo(other: Object): Int {
             // Resources are always sorted before resources
             return when (other) {
                 is Resource -> 1
-                is Literal -> value.compareTo(other.value)
+                is Literal -> id.compareTo(other.id)
             }
         }
     }

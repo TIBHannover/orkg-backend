@@ -41,8 +41,8 @@ data class Neo4jStatementWithResource(
     fun toStatement(): Statement {
         return Statement(
             statementId = statementId,
-            subject = subject!!.resourceId!!,
-            predicate = predicateId!!,
+            subjectId = subject!!.resourceId!!,
+            predicateId = predicateId!!,
             `object` = Object.Resource(`object`!!.resourceId!!)
         )
     }

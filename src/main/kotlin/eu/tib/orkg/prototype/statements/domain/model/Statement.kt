@@ -1,19 +1,23 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import com.fasterxml.jackson.annotation.*
+
 data class Statement(
     val statementId: StatementId? = null,
-    val subject: ResourceId,
-    val predicate: PredicateId,
+    @JsonProperty("subject_id")
+    val subjectId: ResourceId,
+    @JsonProperty("predicate_id")
+    val predicateId: PredicateId,
     val `object`: Object
 ) : Comparable<Statement> {
     override fun compareTo(other: Statement): Int {
         return when {
-            subject < other.subject -> -1
-            subject > other.subject -> 1
+            subjectId < other.subjectId -> -1
+            subjectId > other.subjectId -> 1
             else -> {
                 when {
-                    predicate < other.predicate -> -1
-                    predicate > other.predicate -> 1
+                    predicateId < other.predicateId -> -1
+                    predicateId > other.predicateId -> 1
                     else -> `object`.compareTo(other.`object`)
                 }
             }

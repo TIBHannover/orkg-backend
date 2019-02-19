@@ -26,11 +26,11 @@ class Neo4jLiteralService(
             .map(Neo4jLiteral::toLiteral)
 
     override fun findAllByLabel(label: String) =
-        neo4jLiteralRepository.findAllByLabel(label)
+        neo4jLiteralRepository.findAllByLabelMatchesRegex("(?i)^$label$") // TODO: See declaration
             .map(Neo4jLiteral::toLiteral)
 
     override fun findAllByLabelContaining(part: String) =
-        neo4jLiteralRepository.findAllByLabelContaining(part)
+        neo4jLiteralRepository.findAllByLabelMatchesRegex("(?i).*$part.*") // TODO: See declaration
             .map(Neo4jLiteral::toLiteral)
 
     override fun update(literal: Literal): Literal {

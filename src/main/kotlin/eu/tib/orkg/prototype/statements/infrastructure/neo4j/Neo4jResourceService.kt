@@ -27,11 +27,11 @@ class Neo4jResourceService(
             .map(Neo4jResource::toResource)
 
     override fun findAllByLabel(label: String): Iterable<Resource> =
-        neo4jResourceRepository.findAllByLabel(label)
+        neo4jResourceRepository.findAllByLabelMatchesRegex("(?i)^$label$") // TODO: See declaration
             .map(Neo4jResource::toResource)
 
     override fun findAllByLabelContaining(part: String): Iterable<Resource> =
-        neo4jResourceRepository.findAllByLabelContaining(part)
+        neo4jResourceRepository.findAllByLabelMatchesRegex("(?i).*$part.*") // TODO: See declaration
             .map(Neo4jResource::toResource)
 
     override fun update(resource: Resource): Resource {

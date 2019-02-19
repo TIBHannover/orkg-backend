@@ -30,11 +30,11 @@ class Neo4jPredicateService(
 
     override fun findAllByLabel(label: String) =
         neo4jPredicateRepository
-            .findAllByLabel(label)
+            .findAllByLabelMatchesRegex("(?i)^$label$") // TODO: See declaration
             .map(Neo4jPredicate::toPredicate)
 
     override fun findAllByLabelContaining(part: String) =
         neo4jPredicateRepository
-            .findAllByLabelContaining(part)
+            .findAllByLabelMatchesRegex("(?i).*$part.*") // TODO: See declaration
             .map(Neo4jPredicate::toPredicate)
 }

@@ -52,7 +52,7 @@ class Neo4jResourceRepositoryTest {
 
         // Assert
 
-        val allFound = resourceRepository.findAllByLabel("subject")
+        val allFound = resourceRepository.findAllByLabelMatchesRegex("subject") // TODO: See declaration
 
         assertThat(allFound).isNotEmpty
         assertThat(allFound).hasSize(1)

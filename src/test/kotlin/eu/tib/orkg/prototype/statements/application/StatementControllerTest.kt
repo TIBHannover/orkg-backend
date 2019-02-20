@@ -107,19 +107,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    responseFields(
-                        fieldWithPath("id").description("The statement ID"),
-                        fieldWithPath("subject").description("A resource"),
-                        fieldWithPath("subject.id").description("The ID of the subject resource"),
-                        fieldWithPath("subject.label").description("The label of the subject resource"),
-                        fieldWithPath("predicate").description("A predicate"),
-                        fieldWithPath("predicate.id").description("The ID of the predicate"),
-                        fieldWithPath("predicate.label").description("The label of the predicate"),
-                        fieldWithPath("object").description("An object"),
-                        fieldWithPath("object.id").description("The ID of the object"),
-                        fieldWithPath("object.label").description("The label of the object"),
-                        fieldWithPath("object._class").description("The type of the object (resource or literal).")
-                    )
+                    statementResponseFields()
                 )
             )
     }
@@ -152,19 +140,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    responseFields(
-                        fieldWithPath("id").description("The statement ID"),
-                        fieldWithPath("subject").description("A resource"),
-                        fieldWithPath("subject.id").description("The ID of the subject resource"),
-                        fieldWithPath("subject.label").description("The label of the subject resource"),
-                        fieldWithPath("predicate").description("A predicate"),
-                        fieldWithPath("predicate.id").description("The ID of the predicate"),
-                        fieldWithPath("predicate.label").description("The label of the predicate"),
-                        fieldWithPath("object").description("An object"),
-                        fieldWithPath("object.id").description("The ID of the object"),
-                        fieldWithPath("object.label").description("The label of the object"),
-                        fieldWithPath("object._class").description("The type of the object (resource or literal).")
-                    )
+                    statementResponseFields()
                 )
             )
     }
@@ -270,19 +246,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                     responseHeaders(
                         headerWithName("Location").description("Location to the created statement")
                     ),
-                    responseFields(
-                        fieldWithPath("id").description("The statement ID"),
-                        fieldWithPath("subject").description("A resource"),
-                        fieldWithPath("subject.id").description("The ID of the subject resource"),
-                        fieldWithPath("subject.label").description("The label of the subject resource"),
-                        fieldWithPath("predicate").description("A predicate"),
-                        fieldWithPath("predicate.id").description("The ID of the predicate"),
-                        fieldWithPath("predicate.label").description("The label of the predicate"),
-                        fieldWithPath("object").description("An object"),
-                        fieldWithPath("object.id").description("The ID of the object"),
-                        fieldWithPath("object.label").description("The label of the object"),
-                        fieldWithPath("object._class").description("The type of the object (resource or literal).")
-                    )
+                    statementResponseFields()
                 )
             )
     }
@@ -313,20 +277,23 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                     responseHeaders(
                         headerWithName("Location").description("Location to the created statement")
                     ),
-                    responseFields(
-                        fieldWithPath("id").description("The statement ID"),
-                        fieldWithPath("subject").description("A resource"),
-                        fieldWithPath("subject.id").description("The ID of the subject resource"),
-                        fieldWithPath("subject.label").description("The label of the subject resource"),
-                        fieldWithPath("predicate").description("A predicate"),
-                        fieldWithPath("predicate.id").description("The ID of the predicate"),
-                        fieldWithPath("predicate.label").description("The label of the predicate"),
-                        fieldWithPath("object").description("An object"),
-                        fieldWithPath("object.id").description("The ID of the object"),
-                        fieldWithPath("object.label").description("The label of the object"),
-                        fieldWithPath("object._class").description("The type of the object (resource or literal).")
-                    )
+                    statementResponseFields()
                 )
             )
     }
+
+    private fun statementResponseFields() =
+        responseFields(
+            fieldWithPath("id").description("The statement ID"),
+            fieldWithPath("subject").description("A resource"),
+            fieldWithPath("subject.id").description("The ID of the subject resource"),
+            fieldWithPath("subject.label").description("The label of the subject resource"),
+            fieldWithPath("predicate").description("A predicate"),
+            fieldWithPath("predicate.id").description("The ID of the predicate"),
+            fieldWithPath("predicate.label").description("The label of the predicate"),
+            fieldWithPath("object").description("An object"),
+            fieldWithPath("object.id").description("The ID of the object"),
+            fieldWithPath("object.label").description("The label of the object"),
+            fieldWithPath("object._class").description("The type of the object (resource or literal).")
+        )
 }

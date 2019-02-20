@@ -1,0 +1,6 @@
+= Utility Scripts
+This folder contains a collection scripts to perform different tasks
+
+=== PWC import
+A python file implementation to import the https://paperswithcode.com/[Papers With Code] data into the backend.
+

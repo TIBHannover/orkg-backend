@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.statements.domain.model.*
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.*
-import org.springframework.restdocs.headers.HeaderDocumentation.*
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*
 import org.springframework.restdocs.payload.PayloadDocumentation.*
 import org.springframework.restdocs.request.RequestDocumentation.*
@@ -86,23 +85,21 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
                     requestFields(
                         fieldWithPath("label").description("The resource label")
                     ),
-                    responseHeaders(
-                        headerWithName("Location").description("Location to the created resource")
-                    ),
+                    createdResponseHeaders(),
                     literalResponseFields()
                 )
             )
     }
 
-    private fun literalListResponseFields() =
-        responseFields(
-            fieldWithPath("[].id").description("The resource ID"),
-            fieldWithPath("[].label").description("The resource label")
-        )
-
     private fun literalResponseFields() =
         responseFields(
             fieldWithPath("id").description("The resource ID"),
             fieldWithPath("label").description("The resource label")
+        )
+
+    private fun literalListResponseFields() =
+        responseFields(
+            fieldWithPath("[].id").description("The resource ID"),
+            fieldWithPath("[].label").description("The resource label")
         )
 }

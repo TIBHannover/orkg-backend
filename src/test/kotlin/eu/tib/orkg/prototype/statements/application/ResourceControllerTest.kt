@@ -3,12 +3,9 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.statements.domain.model.*
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.*
-import org.springframework.http.MediaType.*
-import org.springframework.restdocs.headers.HeaderDocumentation.*
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*
 import org.springframework.restdocs.payload.PayloadDocumentation.*
 import org.springframework.restdocs.request.RequestDocumentation.*
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.transaction.annotation.*
 
@@ -88,9 +85,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                     requestFields(
                         fieldWithPath("label").description("The resource label")
                     ),
-                    responseHeaders(
-                        headerWithName("Location").description("Location to the created resource")
-                    ),
+                    createdResponseHeaders(),
                     resourceResponseFields()
                 )
             )

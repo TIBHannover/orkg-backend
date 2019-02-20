@@ -5,11 +5,15 @@ import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.*
 import org.springframework.beans.factory.annotation.*
 import org.springframework.boot.test.context.*
+import org.springframework.http.MediaType.*
 import org.springframework.restdocs.*
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post
 import org.springframework.restdocs.operation.preprocess.Preprocessors.*
 import org.springframework.test.context.junit.jupiter.*
 import org.springframework.test.web.servlet.*
+import org.springframework.test.web.servlet.request.*
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.setup.*
 import org.springframework.test.web.servlet.setup.MockMvcBuilders.*
 
@@ -52,4 +56,17 @@ abstract class RestDocumentationBaseTest {
             .alwaysDo<StandaloneMockMvcBuilder>(document)
             .build()
     }
+
+    protected fun getRequestTo(urlTemplate: String): MockHttpServletRequestBuilder =
+        get(urlTemplate)
+            .accept(APPLICATION_JSON)
+            .contentType(APPLICATION_JSON)
+            .characterEncoding("utf-8")
+
+    protected fun postRequestWithBody(url: String, body: Map<String, Any?>): MockHttpServletRequestBuilder =
+        post(url)
+            .accept(APPLICATION_JSON)
+            .contentType(APPLICATION_JSON)
+            .characterEncoding("utf-8")
+            .content(objectMapper.writeValueAsString(body))
 }

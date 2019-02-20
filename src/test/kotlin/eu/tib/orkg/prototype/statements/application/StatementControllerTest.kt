@@ -3,12 +3,9 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.statements.domain.model.*
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.*
-import org.springframework.http.MediaType.*
 import org.springframework.restdocs.headers.HeaderDocumentation.*
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post
 import org.springframework.restdocs.payload.PayloadDocumentation.*
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.transaction.annotation.*
@@ -212,19 +209,6 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                 )
             )
     }
-
-    private fun getRequestTo(urlTemplate: String) =
-        get(urlTemplate)
-            .accept(APPLICATION_JSON)
-            .contentType(APPLICATION_JSON)
-            .characterEncoding("utf-8")
-
-    private fun postRequestWithBody(url: String, body: Map<String, Any?>) =
-        post(url)
-            .accept(APPLICATION_JSON)
-            .contentType(APPLICATION_JSON)
-            .characterEncoding("utf-8")
-            .content(objectMapper.writeValueAsString(body))
 
     private fun createdResponseHeaders() =
         responseHeaders(

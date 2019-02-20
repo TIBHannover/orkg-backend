@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.statements.domain.model.*
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.*
-import org.springframework.restdocs.headers.HeaderDocumentation.*
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*
 import org.springframework.restdocs.payload.PayloadDocumentation.*
 import org.springframework.test.web.servlet.result.*
@@ -209,11 +208,6 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                 )
             )
     }
-
-    private fun createdResponseHeaders() =
-        responseHeaders(
-            headerWithName("Location").description("Location to the created statement")
-        )
 
     private fun statementResponseFields() =
         responseFields(

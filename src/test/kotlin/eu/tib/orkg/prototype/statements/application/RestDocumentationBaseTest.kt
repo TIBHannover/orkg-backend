@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.*
 import org.springframework.boot.test.context.*
 import org.springframework.http.MediaType.*
 import org.springframework.restdocs.*
+import org.springframework.restdocs.headers.*
+import org.springframework.restdocs.headers.HeaderDocumentation.*
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post
 import org.springframework.restdocs.operation.preprocess.Preprocessors.*
@@ -69,4 +71,9 @@ abstract class RestDocumentationBaseTest {
             .contentType(APPLICATION_JSON)
             .characterEncoding("utf-8")
             .content(objectMapper.writeValueAsString(body))
+
+    protected fun createdResponseHeaders(): ResponseHeadersSnippet =
+        responseHeaders(
+            headerWithName("Location").description("Location to the created statement")
+        )
 }

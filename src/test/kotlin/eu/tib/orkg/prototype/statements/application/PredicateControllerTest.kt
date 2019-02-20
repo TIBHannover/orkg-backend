@@ -3,12 +3,10 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.statements.domain.model.*
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.*
-import org.springframework.http.*
 import org.springframework.restdocs.headers.HeaderDocumentation.*
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*
 import org.springframework.restdocs.payload.PayloadDocumentation.*
 import org.springframework.restdocs.request.RequestDocumentation.*
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.transaction.annotation.*
 
@@ -35,10 +33,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    responseFields(
-                        fieldWithPath("[].id").description("The predicate ID"),
-                        fieldWithPath("[].label").description("The predicate label")
-                    )
+                    predicateListResponseFields()
                 )
             )
     }
@@ -53,10 +48,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    responseFields(
-                        fieldWithPath("id").description("The predicate ID"),
-                        fieldWithPath("label").description("The predicate label")
-                    )
+                    predicateResponseFields()
                 )
             )
     }
@@ -76,10 +68,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                     requestParameters(
                         parameterWithName("q").description("A search term that must be contained in the label")
                     ),
-                    responseFields(
-                        fieldWithPath("[].id").description("The predicate ID"),
-                        fieldWithPath("[].label").description("The predicate label")
-                    )
+                    predicateListResponseFields()
                 )
             )
     }
@@ -100,11 +89,20 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                     responseHeaders(
                         headerWithName("Location").description("Location to the created resource")
                     ),
-                    responseFields(
-                        fieldWithPath("id").description("The predicate ID"),
-                        fieldWithPath("label").description("The predicate label")
-                    )
+                    predicateResponseFields()
                 )
             )
     }
+
+    private fun predicateResponseFields() =
+        responseFields(
+            fieldWithPath("id").description("The predicate ID"),
+            fieldWithPath("label").description("The predicate label")
+        )
+
+    private fun predicateListResponseFields() =
+        responseFields(
+            fieldWithPath("[].id").description("The predicate ID"),
+            fieldWithPath("[].label").description("The predicate label")
+        )
 }

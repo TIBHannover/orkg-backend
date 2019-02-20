@@ -3,7 +3,7 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.statements.domain.model.*
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.*
-import org.springframework.http.*
+import org.springframework.http.MediaType.*
 import org.springframework.restdocs.headers.HeaderDocumentation.*
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post
@@ -53,11 +53,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         statementWithLiteralService.create(r1.id!!, pl.id!!, l1.id!!)
 
         mockMvc
-            .perform(
-                get("/api/statements/")
-                    .accept(MediaType.APPLICATION_JSON)
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
+            .perform(getRequestTo("/api/statements/"))
             .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk)
             .andDo(
@@ -85,11 +81,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         statementWithLiteralService.create(r2.id!!, pl.id!!, l1.id!!)
 
         mockMvc
-            .perform(
-                get("/api/statements/${statement.id}")
-                    .accept(MediaType.APPLICATION_JSON)
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
+            .perform(getRequestTo("/api/statements/${statement.id}"))
             .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk)
             .andDo(
@@ -117,11 +109,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             statementWithLiteralService.create(r2.id!!, pl.id!!, l1.id!!)
 
         mockMvc
-            .perform(
-                get("/api/statements/${statement.id}")
-                    .accept(MediaType.APPLICATION_JSON)
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
+            .perform(getRequestTo("/api/statements/${statement.id}"))
             .andDo(MockMvcResultHandlers.print())
             .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk)
@@ -145,11 +133,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         statementWithResourceService.create(r1.id!!, p2.id!!, r3.id!!)
 
         mockMvc
-            .perform(
-                get("/api/statements/subject/${r1.id}")
-                    .accept(MediaType.APPLICATION_JSON)
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
+            .perform(getRequestTo("/api/statements/subject/${r1.id}"))
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -172,11 +156,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         statementWithResourceService.create(r1.id!!, p2.id!!, r3.id!!)
 
         mockMvc
-            .perform(
-                get("/api/statements/predicate/${p1.id}")
-                    .accept(MediaType.APPLICATION_JSON)
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
+            .perform(getRequestTo("/api/statements/predicate/${p1.id}"))
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -198,11 +178,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             "object" to mapOf("id" to r2.id, "_class" to "resource")
         )
 
-        mockMvc.perform(
-            post("/api/statements/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(body))
-        )
+        mockMvc.perform(postRequestWithBody("/api/statements/", body))
             .andExpect(status().isCreated)
             .andDo(
                 document(
@@ -225,12 +201,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             "object" to mapOf("id" to l.id, "_class" to "literal")
         )
 
-        mockMvc.perform(
-            post("/api/statements/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(body))
-                .characterEncoding("utf-8")
-        )
+        mockMvc.perform(postRequestWithBody("/api/statements/", body))
             .andExpect(status().isCreated)
             .andDo(
                 document(
@@ -241,6 +212,19 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                 )
             )
     }
+
+    private fun getRequestTo(urlTemplate: String) =
+        get(urlTemplate)
+            .accept(APPLICATION_JSON)
+            .contentType(APPLICATION_JSON)
+            .characterEncoding("utf-8")
+
+    private fun postRequestWithBody(url: String, body: Map<String, Any?>) =
+        post(url)
+            .accept(APPLICATION_JSON)
+            .contentType(APPLICATION_JSON)
+            .characterEncoding("utf-8")
+            .content(objectMapper.writeValueAsString(body))
 
     private fun createdResponseHeaders() =
         responseHeaders(

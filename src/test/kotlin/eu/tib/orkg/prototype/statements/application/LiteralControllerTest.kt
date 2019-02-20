@@ -3,13 +3,10 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.statements.domain.model.*
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.*
-import org.springframework.http.MediaType.*
 import org.springframework.restdocs.headers.HeaderDocumentation.*
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*
 import org.springframework.restdocs.payload.PayloadDocumentation.*
 import org.springframework.restdocs.request.RequestDocumentation.*
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import org.springframework.test.web.servlet.result.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.transaction.annotation.*
 
@@ -36,10 +33,7 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    responseFields(
-                        fieldWithPath("[].id").description("The resource ID"),
-                        fieldWithPath("[].label").description("The resource label")
-                    )
+                    literalListResponseFields()
                 )
             )
     }
@@ -59,10 +53,7 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
                     requestParameters(
                         parameterWithName("q").description("A search term that must be contained in the label")
                     ),
-                    responseFields(
-                        fieldWithPath("[].id").description("The resource ID"),
-                        fieldWithPath("[].label").description("The resource label")
-                    )
+                    literalListResponseFields()
                 )
             )
     }
@@ -77,10 +68,7 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    responseFields(
-                        fieldWithPath("id").description("The resource ID"),
-                        fieldWithPath("label").description("The resource label")
-                    )
+                    literalResponseFields()
                 )
             )
     }
@@ -101,11 +89,20 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
                     responseHeaders(
                         headerWithName("Location").description("Location to the created resource")
                     ),
-                    responseFields(
-                        fieldWithPath("id").description("The resource ID"),
-                        fieldWithPath("label").description("The resource label")
-                    )
+                    literalResponseFields()
                 )
             )
     }
+
+    private fun literalListResponseFields() =
+        responseFields(
+            fieldWithPath("[].id").description("The resource ID"),
+            fieldWithPath("[].label").description("The resource label")
+        )
+
+    private fun literalResponseFields() =
+        responseFields(
+            fieldWithPath("id").description("The resource ID"),
+            fieldWithPath("label").description("The resource label")
+        )
 }

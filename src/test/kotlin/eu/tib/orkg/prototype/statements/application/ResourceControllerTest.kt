@@ -30,11 +30,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         service.create("programming language")
 
         mockMvc
-            .perform(
-                get("/api/resources/")
-                    .accept(APPLICATION_JSON)
-                    .contentType(APPLICATION_JSON)
-            )
+            .perform(getRequestTo("/api/resources/"))
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -51,11 +47,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         service.create("research topic")
 
         mockMvc
-            .perform(
-                get("/api/resources/?q=research")
-                    .accept(APPLICATION_JSON)
-                    .contentType(APPLICATION_JSON)
-            )
+            .perform(getRequestTo("/api/resources/?q=research"))
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -73,11 +65,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         val id = service.create("research contribution").id
 
         mockMvc
-            .perform(
-                get("/api/resources/$id")
-                    .accept(APPLICATION_JSON)
-                    .contentType(APPLICATION_JSON)
-            )
+            .perform(getRequestTo("/api/resources/$id"))
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -92,11 +80,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         val resource = mapOf("label" to "foo")
 
         mockMvc
-            .perform(
-                post("/api/resources/")
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(resource))
-            )
+            .perform(postRequestWithBody("/api/resources/", resource))
             .andExpect(status().isCreated)
             .andDo(
                 document(

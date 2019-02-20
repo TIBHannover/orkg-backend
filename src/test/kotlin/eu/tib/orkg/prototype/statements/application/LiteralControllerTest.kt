@@ -31,11 +31,7 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
         service.create("programming language")
 
         mockMvc
-            .perform(
-                get("/api/literals/")
-                    .accept(APPLICATION_JSON)
-                    .contentType(APPLICATION_JSON)
-            )
+            .perform(getRequestTo("/api/literals/"))
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -55,11 +51,7 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
         service.create("research topic")
 
         mockMvc
-            .perform(
-                get("/api/literals/?q=research")
-                    .accept(APPLICATION_JSON)
-                    .contentType(APPLICATION_JSON)
-            )
+            .perform(getRequestTo("/api/literals/?q=research"))
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -80,11 +72,7 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
         val id = service.create("research contribution").id
 
         mockMvc
-            .perform(
-                get("/api/literals/$id")
-                    .accept(APPLICATION_JSON)
-                    .contentType(APPLICATION_JSON)
-            )
+            .perform(getRequestTo("/api/literals/$id"))
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -102,11 +90,7 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
         val resource = mapOf("label" to "foo")
 
         mockMvc
-            .perform(
-                post("/api/literals/")
-                    .contentType(APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(resource))
-            )
+            .perform(postRequestWithBody("/api/literals/", resource))
             .andExpect(status().isCreated)
             .andDo(
                 document(

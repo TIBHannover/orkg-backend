@@ -30,11 +30,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
         service.create("knows")
 
         mockMvc
-            .perform(
-                get("/api/predicates/")
-                    .accept(MediaType.APPLICATION_JSON)
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
+            .perform(getRequestTo("/api/predicates/"))
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -52,11 +48,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
         val id = service.create("has name").id
 
         mockMvc
-            .perform(
-                get("/api/predicates/$id")
-                    .accept(MediaType.APPLICATION_JSON)
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
+            .perform(getRequestTo("/api/predicates/$id"))
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -76,11 +68,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
         service.create("knows")
 
         mockMvc
-            .perform(
-                get("/api/predicates/?q=name")
-                    .accept(MediaType.APPLICATION_JSON)
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
+            .perform(getRequestTo("/api/predicates/?q=name"))
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -101,11 +89,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
         val resource = mapOf("label" to "knows")
 
         mockMvc
-            .perform(
-                post("/api/predicates/")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(resource))
-            )
+            .perform(postRequestWithBody("/api/predicates/", resource))
             .andExpect(status().isCreated)
             .andDo(
                 document(

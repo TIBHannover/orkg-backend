@@ -207,9 +207,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    responseHeaders(
-                        headerWithName("Location").description("Location to the created statement")
-                    ),
+                    createdResponseHeaders(),
                     statementResponseFields()
                 )
             )
@@ -238,13 +236,16 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     requestBody(),
-                    responseHeaders(
-                        headerWithName("Location").description("Location to the created statement")
-                    ),
+                    createdResponseHeaders(),
                     statementResponseFields()
                 )
             )
     }
+
+    private fun createdResponseHeaders() =
+        responseHeaders(
+            headerWithName("Location").description("Location to the created statement")
+        )
 
     private fun statementResponseFields() =
         responseFields(

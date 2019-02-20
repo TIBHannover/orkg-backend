@@ -39,10 +39,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    responseFields(
-                        fieldWithPath("[].id").description("The resource ID"),
-                        fieldWithPath("[].label").description("The resource label")
-                    )
+                    resourceListResponseFields()
                 )
             )
     }
@@ -66,10 +63,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                     requestParameters(
                         parameterWithName("q").description("A search term that must be contained in the label")
                     ),
-                    responseFields(
-                        fieldWithPath("[].id").description("The resource ID"),
-                        fieldWithPath("[].label").description("The resource label")
-                    )
+                    resourceListResponseFields()
                 )
             )
     }
@@ -88,10 +82,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    responseFields(
-                        fieldWithPath("id").description("The resource ID"),
-                        fieldWithPath("label").description("The resource label")
-                    )
+                    resourceResponseFields()
                 )
             )
     }
@@ -116,11 +107,20 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                     responseHeaders(
                         headerWithName("Location").description("Location to the created resource")
                     ),
-                    responseFields(
-                        fieldWithPath("id").description("The resource ID"),
-                        fieldWithPath("label").description("The resource label")
-                    )
+                    resourceResponseFields()
                 )
             )
     }
+
+    private fun resourceResponseFields() =
+        responseFields(
+            fieldWithPath("id").description("The resource ID"),
+            fieldWithPath("label").description("The resource label")
+        )
+
+    private fun resourceListResponseFields() =
+        responseFields(
+            fieldWithPath("[].id").description("The resource ID"),
+            fieldWithPath("[].label").description("The resource label")
+        )
 }

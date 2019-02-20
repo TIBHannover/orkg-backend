@@ -206,20 +206,6 @@ def createCodeSubgraph(obj):
     createStatement(impl_id,p_repo_url,l_repo_url)
     impl_pred = createOrFindPredicate('has implementation')
     createResourceStatement(resources[title],impl_pred,impl_id)
-    #print("Implementation added for ({})".format(title))
-    
-def parseDataset(obj):
-    return 1
-    
-def parseTask(obj):
-    task = obj["task"]
-    task_description = obj["description"]
-    task_categories = obj["categories"]
-    for dataset in obj["datasets"]:
-        parseDataset(dataset)
-    
-def createEvaluationSubgraph(obj):
-    parseTask(obj)
 
 if __name__ == '__main__':
     papersWithAbstracts = readFile('papers-with-abstracts.json')
@@ -228,8 +214,6 @@ if __name__ == '__main__':
     for index, paper in enumerate(papersWithAbstracts):
         if paper['title'] is None:
             continue
-        #if index > 10000:
-        #    break
         createPaperSubgraph(paper)
         if index % 50 == 0:
             print("Paper #{} done".format(index))

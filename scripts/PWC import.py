@@ -6,6 +6,7 @@ predicates = {}
 implementations = {}
 resources = {}
 notfound = []
+tasks = {}
 
 def readFile(path):
     """
@@ -206,18 +207,51 @@ def createCodeSubgraph(obj):
     createStatement(impl_id,p_repo_url,l_repo_url)
     impl_pred = createOrFindPredicate('has implementation')
     createResourceStatement(resources[title],impl_pred,impl_id)
+    #print("Implementation added for ({})".format(title))
+    
+def findPaperInMemory(title, collection, key):
+    """
+    Find a paper json object in the in-memory json representation lists
+    
+    Returns the json dict object if found, and NoneType otherwise
+    
+    Parameters
+    ----------
+    title : string
+        the title of the paper in question
+    collection : list
+        the json list object to be searched in
+    key : str
+        the key to use to look up the title and compare it
+    """
+    for paper in collection:
+        if paper[key] == title:
+            return paper
+    return None
+    
 
 if __name__ == '__main__':
     papersWithAbstracts = readFile('papers-with-abstracts.json')
     papersWithCode = readFile('links-between-papers-and-code.json')
     evalTables = readFile('evaluation-tables.json')
+    #-------------------------------------------------
     for index, paper in enumerate(papersWithAbstracts):
         if paper['title'] is None:
             continue
+        #if index > 10000:
+        #    break
         createPaperSubgraph(paper)
         if index % 50 == 0:
             print("Paper #{} done".format(index))
+    #-------------------------------------------------
     for index, paper in enumerate(papersWithCode):
         createCodeSubgraph(paper)
         if index % 50 == 0:
             print("Implementation #{} done".format(index))
+    for node in notfound:
+        new = createResource(node)['id']
+        resources[node] = new
+        result = findPaperInMemory(node, papersWithCode, 'paper_title')
+        createCodeSubgraph(result)
+   #-------------------------------------------------
+   

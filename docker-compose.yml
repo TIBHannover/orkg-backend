@@ -19,6 +19,7 @@ services:
     environment:
       - NEO4J_AUTH=none
       - NEO4J_dbms_unmanagedExtensionClasses=semantics.extension=/rdf
+      - NEO4J_dbms_memory_heap_max__size=8G
     networks:
       - backend
     volumes:

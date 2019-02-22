@@ -202,9 +202,9 @@ def createCodeSubgraph(obj):
     else:
         impl_id = createResource("(Implementation) {}".format(title))['id']
         implementations[title] = impl_id
-    p_repo_url = createOrFindPredicate('has repo url')
-    l_repo_url = createLiteral(repo_url)['id']
-    createStatement(impl_id,p_repo_url,l_repo_url)
+        p_repo_url = createOrFindPredicate('has repo url')
+        l_repo_url = createLiteral(repo_url)['id']
+        createStatement(impl_id,p_repo_url,l_repo_url)
     impl_pred = createOrFindPredicate('has implementation')
     createResourceStatement(resources[title],impl_pred,impl_id)
     #print("Implementation added for ({})".format(title))

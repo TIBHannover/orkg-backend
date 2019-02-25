@@ -9,11 +9,12 @@ import java.util.*
 @Service
 @Transactional
 class Neo4jPredicateService(
-    private val neo4jPredicateRepository: Neo4jPredicateRepository
+    private val neo4jPredicateRepository: Neo4jPredicateRepository,
+    private val neo4jPredicateIdGenerator: Neo4jPredicateIdGenerator
 ) : PredicateService {
 
     override fun create(label: String): Predicate {
-        val id = neo4jPredicateRepository.nextIdentity()
+        val id = neo4jPredicateIdGenerator.nextIdentity()
         return neo4jPredicateRepository
             .save(Neo4jPredicate(label = label, predicateId = id))
             .toPredicate()

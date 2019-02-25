@@ -24,6 +24,9 @@ class Neo4jStatementWithLiteralService :
     @Autowired
     private lateinit var neo4jStatementRepository: Neo4jStatementWithLiteralRepository
 
+    @Autowired
+    private lateinit var neo4jStatementIdGenerator: Neo4jStatementIdGenerator
+
     override fun create(
         subject: ResourceId,
         predicate: PredicateId,
@@ -41,7 +44,7 @@ class Neo4jStatementWithLiteralService :
             .findByLiteralId(`object`)
             .orElseThrow { IllegalStateException("Could not find object: $`object`") }
 
-        val id = neo4jStatementRepository.nextIdentity()
+        val id = neo4jStatementIdGenerator.nextIdentity()
 
         val persistedStatement = neo4jStatementRepository.save(
             Neo4jStatementWithLiteral(

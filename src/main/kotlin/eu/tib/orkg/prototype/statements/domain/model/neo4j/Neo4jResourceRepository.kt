@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.statements.domain.model.*
 import org.springframework.data.neo4j.repository.*
 import java.util.*
 
-interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long>, Neo4jResourceRepositoryCustom {
+interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     override fun findAll(): Iterable<Neo4jResource>
 
     override fun findById(id: Long?): Optional<Neo4jResource>
@@ -17,15 +17,4 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long>, Neo4jR
     fun findAllByLabelMatchesRegex(label: String): Iterable<Neo4jResource>
 
     fun findAllByLabelContaining(part: String): Iterable<Neo4jResource>
-}
-
-interface Neo4jResourceRepositoryCustom : IdentityGenerator<ResourceId>
-
-class Neo4jResourceRepositoryCustomImpl : Neo4jResourceRepositoryCustom {
-    var counter = 0L
-
-    override fun nextIdentity(): ResourceId {
-        counter++
-        return ResourceId(counter)
-    }
 }

@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.statements.domain.model.*
 import org.springframework.data.neo4j.repository.*
 import java.util.*
 
-interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, Long>, Neo4jPredicateRepositoryCustom {
+interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, Long> {
     override fun findAll(): Iterable<Neo4jPredicate>
 
     override fun findById(id: Long?): Optional<Neo4jPredicate>
@@ -17,15 +17,4 @@ interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, Long>, Neo4
     fun findAllByLabelContaining(part: String): Iterable<Neo4jPredicate>
 
     fun findByPredicateId(id: PredicateId?): Optional<Neo4jPredicate>
-}
-
-interface Neo4jPredicateRepositoryCustom : IdentityGenerator<PredicateId>
-
-class Neo4jPredicateRepositoryCustomImpl : Neo4jPredicateRepositoryCustom {
-    var counter = 0L
-
-    override fun nextIdentity(): PredicateId {
-        counter++
-        return PredicateId(counter)
-    }
 }

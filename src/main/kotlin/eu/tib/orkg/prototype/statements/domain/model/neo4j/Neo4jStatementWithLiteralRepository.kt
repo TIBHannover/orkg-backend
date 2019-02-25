@@ -6,7 +6,7 @@ import org.springframework.data.neo4j.repository.*
 import java.util.*
 
 interface Neo4jStatementWithLiteralRepository :
-    Neo4jRepository<Neo4jStatementWithLiteral, Long>, Neo4jStatementWithLiteralRepositoryCustom {
+    Neo4jRepository<Neo4jStatementWithLiteral, Long> {
 
     override fun findAll(depth: Int): Iterable<Neo4jStatementWithLiteral>
 
@@ -24,15 +24,4 @@ interface Neo4jStatementWithLiteralRepository :
     ): Iterable<Neo4jStatementWithLiteral>
 
     fun findAllByPredicateId(predicateId: PredicateId): Iterable<Neo4jStatementWithLiteral>
-}
-
-interface Neo4jStatementWithLiteralRepositoryCustom : IdentityGenerator<StatementId>
-
-class Neo4jStatementWithLiteralRepositoryCustomImpl : Neo4jStatementWithLiteralRepositoryCustom {
-    var counter = 1L
-
-    override fun nextIdentity(): StatementId {
-        counter += 2
-        return StatementId(counter)
-    }
 }

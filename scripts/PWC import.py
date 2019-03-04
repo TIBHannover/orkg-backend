@@ -7,6 +7,12 @@ implementations = {}
 resources = {}
 notfound = []
 tasks = {}
+categories = {}
+evaluations = {}
+datasets = {}
+counter = 1112
+metrics = {}
+models = {}
 
 def readFile(path):
     """
@@ -121,7 +127,7 @@ def createOrFindPredicate(label):
     
     Parameters
     ----------
-    label : int
+    label : str
         The label of the predicate
     """
     if label in predicates:
@@ -202,11 +208,11 @@ def createCodeSubgraph(obj):
     else:
         impl_id = createResource("(Implementation) {}".format(title))['id']
         implementations[title] = impl_id
-        p_repo_url = createOrFindPredicate('has repo url')
-        l_repo_url = createLiteral(repo_url)['id']
-        createStatement(impl_id,p_repo_url,l_repo_url)
-    impl_pred = createOrFindPredicate('has implementation')
-    createResourceStatement(resources[title],impl_pred,impl_id)
+        impl_pred = createOrFindPredicate('has implementation')
+        createResourceStatement(resources[title],impl_pred,impl_id)
+    p_repo_url = createOrFindPredicate('has repo url')
+    l_repo_url = createLiteral(repo_url)['id']
+    createStatement(impl_id,p_repo_url,l_repo_url)
     #print("Implementation added for ({})".format(title))
     
 def findPaperInMemory(title, collection, key):
@@ -217,7 +223,7 @@ def findPaperInMemory(title, collection, key):
     
     Parameters
     ----------
-    title : string
+    title : str
         the title of the paper in question
     collection : list
         the json list object to be searched in
@@ -228,7 +234,164 @@ def findPaperInMemory(title, collection, key):
         if paper[key] == title:
             return paper
     return None
+
+def createOrFindMetric(metric):
+    """
+    Creates a new resource representing the metric used or finds it in the in-memory storage
+    (should be imporved to look up in the neo4j to avoid duplicate predicates)
     
+    Parameters
+    ----------
+    metric : str
+        The label of the predicate
+    """
+    if metric in metrics:
+        return metrics[metric]
+    else:
+        metric_id = createResource(metric)["id"]
+        metrics[metric] = metric_id
+        return metric_id
+    
+def createOrFindModel(model):
+    """
+    Creates a new resource representing the model used or finds it in the in-memory storage
+    (should be imporved to look up in the neo4j to avoid duplicate predicates)
+    
+    Parameters
+    ----------
+    model : str
+        The label of the predicate
+    """
+    if model in models:
+        return models[model]
+    else:
+        model_id = createResource(model)["id"]
+        models[model] = model_id
+        return model_id
+    
+def parseDataset(obj):
+    """
+    parses the Dataset json object and add the information into the graph
+    
+    Note: it might be called recursively
+    
+    Parameters
+    ----------
+    obj : dict
+        the json representation of the Task
+    """
+    global counter
+    dataset_name = obj["dataset"]
+    dataset_description = obj["description"]
+    if dataset_name not in datasets:
+        dataset_id = createResource(dataset_name)["id"]
+        datasets[dataset_name] = dataset_id
+        if is_not_blank(dataset_description):
+            desc_id = createLiteral(dataset_description)["id"]
+            pred_id = createOrFindPredicate("has description")
+            createStatement(dataset_id, pred_id, desc_id)
+    else:
+        dataset_id = datasets[dataset_name]
+    if "sota" not in obj:
+        return
+    sota = obj["sota"]
+    for sota_row in sota["sota_rows"]:
+        model_name = sota_row["model_name"]
+        paper = sota_row["paper_title"]
+        if paper in resources:
+            paper_id = resources[paper]
+        else:
+            paper_id = createResource(paper)["id"]
+        if paper in evaluations:
+            eval_id = evaluations[paper]
+        else:
+            eval_id = createResource("(Evaluation) {}".format(paper))['id']
+            evaluations[paper] = eval_id
+            pred_id = createOrFindPredicate("has evaluation")
+            createResourceStatement(paper_id, pred_id, eval_id)
+        for key, value in sota_row["metrics"].items():
+            res_id = createResource("Res_{}".format(counter))["id"]
+            counter+=1
+            pred_id = createOrFindPredicate("has result")
+            createResourceStatement(eval_id, pred_id, res_id)
+            metric_id = createOrFindMetric(key)
+            m_pred_id = createOrFindPredicate("has metric")
+            value_id = createLiteral(value)["id"]
+            v_pred_id = createOrFindPredicate("has value")
+            createResourceStatement(res_id, m_pred_id, metric_id)
+            createStatement(res_id, v_pred_id, value_id)
+            model_id = createOrFindModel(model_name)
+            pred_id = createOrFindPredicate("on model")
+            createResourceStatement(res_id, pred_id, model_id)
+            pred_id = createOrFindPredicate("using dataset")
+            createResourceStatement(res_id, pred_id, dataset_id)
+        
+    
+def parseTask(obj):
+    """
+    parses the Task json object and add the information into the graph
+    
+    Note: it might be called recursively
+    
+    Parameters
+    ----------
+    obj : dict
+        the json representation of the Task
+    """
+    task = obj["task"]
+    task_description = obj["description"]
+    task_categories = obj["categories"]
+    if task not in tasks:
+        task_id = createResource(task)["id"]
+        tasks[task] = task_id
+        desc_id = createLiteral(task_description)["id"]
+        pred_id = createOrFindPredicate("has description")
+        createStatement(task_id, pred_id, desc_id)
+        pred_id = createOrFindPredicate("has category")
+        for category in task_categories:
+            if category not in categories:
+                cat_id = createResource(category)["id"]
+                categories[category] = cat_id
+            else:
+                cat_id = categories[category]
+            createResourceStatement(task_id, pred_id, cat_id)
+    for dataset in obj["datasets"]:
+        # need to add link between task and dataset (I think)
+        parseDataset(dataset)
+    for subtask in obj["subtasks"]:
+        # need to add link between task and sub-task
+        parseTask(subtask)
+    
+    
+def createEvaluationSubgraph(obj):
+    """
+    Create the subgraph relating to the provided json strucutre,
+    this subgraph corresponds to one of the paperswithcode data files
+    ('evaluation-tables.json'), it creates an evaluation node
+    with all related information
+    
+    Parameters
+    ----------
+    obj : dict
+        the json representation of the evaluation of the paper
+    """
+    parseTask(obj)
+    
+def is_not_blank(string):
+    """
+    Checks if string is not empty
+    
+    print is_not_blank("")    # False
+    print is_not_blank("   ") # False
+    print is_not_blank("ok")  # True
+    print is_not_blank(None)  # False
+    
+    Parameters
+    ----------
+    string : str
+        the string to be checked
+    """
+    return bool(string and string.strip())
 
 if __name__ == '__main__':
     papersWithAbstracts = readFile('papers-with-abstracts.json')
@@ -253,5 +416,8 @@ if __name__ == '__main__':
         resources[node] = new
         result = findPaperInMemory(node, papersWithCode, 'paper_title')
         createCodeSubgraph(result)
+    for entry in evalTables:
+        createEvaluationSubgraph(entry)
    #-------------------------------------------------
    
+       

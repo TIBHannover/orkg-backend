@@ -116,6 +116,17 @@ bolt://localhost:7687
 
 |===
 
+=== Notes on the Neo4j Docker image
+
+The Neo4j Docker image includes the following extensions:
+
+* https://github.com/neo4j-contrib/neo4j-apoc-procedures[Awesome Procedures On Cypher (APOC)]
+* https://github.com/jbarrasa/neosemantics[Neo4j Semantics Extension]
+
+They are not used be the ORKG (as of now) but are very convenient during development.
+There is no need to install them when deploying the ORKG.
+Please check their specific documentation if you want to make use of them.
+
 === REST API documentation
 
 The documentation can be found at {apidoc_url}.

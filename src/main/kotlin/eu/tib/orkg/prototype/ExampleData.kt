@@ -85,5 +85,7 @@ class ExampleData(
         predicateService.create("defines")
         predicateService.create("field")
         predicateService.create("web site")
+
+        Runtime.getRuntime().exec("python /app/startup.py");
     }
 }

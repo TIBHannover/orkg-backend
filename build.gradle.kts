@@ -130,6 +130,6 @@ tasks {
                 "VERSION" to "$version"
             )
         )
-        files(tasks["war"].outputs)
+        files(tasks["war"].outputs, "scripts/startup.py", "scripts/ResearchFields.json")
     }
 }

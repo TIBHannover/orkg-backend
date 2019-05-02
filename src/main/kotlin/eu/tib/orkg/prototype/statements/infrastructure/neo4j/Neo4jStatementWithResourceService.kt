@@ -20,6 +20,9 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
     @Autowired
     private lateinit var neo4jStatementRepository: Neo4jStatementWithResourceRepository
 
+    @Autowired
+    private lateinit var neo4jStatementIdGenerator: Neo4jStatementIdGenerator
+
     override fun create(
         subject: ResourceId,
         predicate: PredicateId,
@@ -37,7 +40,7 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
             .findByResourceId(`object`)
             .orElseThrow { IllegalStateException("Could not find object") }
 
-        val id = neo4jStatementRepository.nextIdentity()
+        val id = neo4jStatementIdGenerator.nextIdentity()
 
         val persistedStatement = neo4jStatementRepository.save(
             Neo4jStatementWithResource(

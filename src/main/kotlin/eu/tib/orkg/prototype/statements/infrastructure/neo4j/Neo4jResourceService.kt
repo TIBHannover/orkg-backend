@@ -9,11 +9,12 @@ import java.util.*
 @Service
 @Transactional
 class Neo4jResourceService(
-    private val neo4jResourceRepository: Neo4jResourceRepository
+    private val neo4jResourceRepository: Neo4jResourceRepository,
+    private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator
 ) : ResourceService {
 
     override fun create(label: String): Resource {
-        val resourceId = neo4jResourceRepository.nextIdentity()
+        val resourceId = neo4jResourceIdGenerator.nextIdentity()
         return neo4jResourceRepository.save(Neo4jResource(label = label, resourceId = resourceId))
             .toResource()
     }

@@ -6,7 +6,7 @@ import org.springframework.data.neo4j.repository.*
 import java.util.*
 
 interface Neo4jStatementWithResourceRepository :
-    Neo4jRepository<Neo4jStatementWithResource, Long>, Neo4jStatementWithResourceRepositoryCustom {
+    Neo4jRepository<Neo4jStatementWithResource, Long> {
 
     override fun findAll(): Iterable<Neo4jStatementWithResource>
 
@@ -24,15 +24,4 @@ interface Neo4jStatementWithResourceRepository :
     ): Iterable<Neo4jStatementWithResource>
 
     fun findAllByPredicateId(predicateId: PredicateId): Iterable<Neo4jStatementWithResource>
-}
-
-interface Neo4jStatementWithResourceRepositoryCustom : IdentityGenerator<StatementId>
-
-class Neo4jStatementWithResourceRepositoryCustomImpl : Neo4jStatementWithResourceRepositoryCustom {
-    var counter = 0L
-
-    override fun nextIdentity(): StatementId {
-        counter += 2
-        return StatementId(counter)
-    }
 }

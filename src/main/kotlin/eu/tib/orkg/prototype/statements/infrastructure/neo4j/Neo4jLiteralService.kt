@@ -9,10 +9,11 @@ import java.util.*
 @Service
 @Transactional
 class Neo4jLiteralService(
-    private val neo4jLiteralRepository: Neo4jLiteralRepository
+    private val neo4jLiteralRepository: Neo4jLiteralRepository,
+    private val neo4jLiteralIdGenerator: Neo4jLiteralIdGenerator
 ) : LiteralService {
     override fun create(label: String): Literal {
-        val literalId = neo4jLiteralRepository.nextIdentity()
+        val literalId = neo4jLiteralIdGenerator.nextIdentity()
         return neo4jLiteralRepository
             .save(Neo4jLiteral(label = label, literalId = literalId))
             .toLiteral()

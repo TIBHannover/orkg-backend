@@ -86,6 +86,7 @@ class ExampleData(
         predicateService.create("field")
         predicateService.create("web site")
 
-        Runtime.getRuntime().exec("python /app/startup.py");
+        // TODO: Rewrite script in Kotlin for start-up
+        //Runtime.getRuntime().exec("python /app/startup.py");
     }
 }

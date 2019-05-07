@@ -7,8 +7,7 @@ import eu.tib.orkg.prototype.statements.domain.model.*
 import org.springframework.boot.*
 import org.springframework.context.annotation.*
 import org.springframework.stereotype.*
-import java.io.File
-import java.nio.file.Paths
+import java.io.InputStream
 
 
 @Component
@@ -121,10 +120,9 @@ class ExampleData(
 
 
         // Adding resources from the json file
-        val dir = Paths.get("").toAbsolutePath().toString()
         val mapper = jacksonObjectMapper()
-        val file = File("$dir/scripts/ResearchFields.json")
-        val fields = mapper.readValue<List<ResearchField>>(file)
+        val inStream: InputStream = javaClass.classLoader.getResourceAsStream("data/ResearchFields.json")
+        val fields = mapper.readValue<List<ResearchField>>(inStream)
         for (field in fields) { //TODO: make this section recursive and extract a function
             val newField = resourceService.create(field.name).id!!
             statementService.create(researchField, subfieldPredicate, newField)

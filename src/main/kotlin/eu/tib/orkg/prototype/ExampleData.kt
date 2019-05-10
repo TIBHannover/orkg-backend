@@ -1,9 +1,14 @@
 package eu.tib.orkg.prototype
 
+
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import eu.tib.orkg.prototype.statements.domain.model.*
 import org.springframework.boot.*
 import org.springframework.context.annotation.*
 import org.springframework.stereotype.*
+import java.io.InputStream
+
 
 @Component
 @Profile("development", "docker")
@@ -86,7 +91,54 @@ class ExampleData(
         predicateService.create("field")
         predicateService.create("web site")
 
-        // TODO: Rewrite script in Kotlin for start-up
-        //Runtime.getRuntime().exec("python /app/startup.py");
+        //
+        // UI startup script (Allard's)
+        //
+
+        //
+        // Predicates
+        //
+        predicateService.create("has doi")
+        predicateService.create("has author")
+        predicateService.create("has publication month")
+        predicateService.create("has publication year")
+        predicateService.create("has research field")
+        //predicateService.create("is a") // Already defined //TODO: When updated! -> make sure (is a) is present
+        predicateService.create("has contribution")
+        predicateService.create("has research problem")
+        // Demo Predicate Data
+        predicateService.create("approach")
+        predicateService.create("evaluation")
+        predicateService.create("implementation")
+        val subfieldPredicate = predicateService.create("has subfield").id!!
+
+        //
+        // Resource
+        //
+        resourceService.create("paper")
+        val researchField = resourceService.create("Research field").id!!
+
+
+        // Adding resources from the json file
+        val mapper = jacksonObjectMapper()
+        val inStream: InputStream = javaClass.classLoader.getResourceAsStream("data/ResearchFields.json")
+        val fields = mapper.readValue<List<ResearchField>>(inStream)
+        for (field in fields) { //TODO: make this section recursive and extract a function
+            val newField = resourceService.create(field.name).id!!
+            statementService.create(researchField, subfieldPredicate, newField)
+            for (subfield in field.subfields){
+                val newSubfield = resourceService.create(subfield.name).id!!
+                statementService.create(newField, subfieldPredicate, newSubfield)
+                for (subSubfield in subfield.subfields){
+                    val newSubSubfield = resourceService.create(subSubfield.name).id!!
+                    statementService.create(newSubfield, subfieldPredicate, newSubSubfield)
+                }
+            }
+        }
+
     }
 }
+
+
+data class ResearchField(val name: String, val subfields: List<ResearchField> = listOf())
+

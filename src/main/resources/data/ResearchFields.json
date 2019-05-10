@@ -1,0 +1,1061 @@
+[{
+    "name": "Life Sciences",
+    "subfields": [
+        {
+            "name": "Biochemistry, Biophysics, and Structural Biology",
+            "subfields": [
+                {
+                    "name": "Biochemistry"
+                },
+                {
+                    "name": "Biogeochemistry"
+                },
+                {
+                    "name": "Biophysics"
+                },
+                {
+                    "name": "Molecular Biology"
+                },
+                {
+                    "name": "Structural Biology"
+                }
+            ]
+        },
+        {
+            "name": "Cell and Developmental Biology",
+            "subfields": [
+                {
+                    "name": "Anatomy"
+                },
+                {
+                    "name": "Cell Biology"
+                },
+                {
+                    "name": "Developmental Biology"
+                },
+                {
+                    "name": "Cancer Biology"
+                }
+            ]
+        },
+        {
+            "name": "Ecology and Evolutionary Biology",
+            "subfields": [
+                {
+                    "name": "Behavior and Ethology"
+                },
+                {
+                    "name": "Biogeochemistry"
+                },
+                {
+                    "name": "Botany"
+                },
+                {
+                    "name": "Evolution"
+                },
+                {
+                    "name": "Population Biology"
+                },
+                {
+                    "name": "Terrestrial and Aquatic Ecology"
+                }
+            ]
+        },
+        {
+            "name": "Public Health",
+            "subfields": [
+                {
+                    "name": "Environmental Health"
+                },
+                {
+                    "name": "Epidemiology"
+                },
+                {
+                    "name": "Biostatistics"
+                }
+            ]
+        },
+        {
+            "name": "Genetics and Genomics",
+            "subfields": [
+                {
+                    "name": "Computational Biology"
+                },
+                {
+                    "name": "Genetics"
+                },
+                {
+                    "name": "Genomics"
+                },
+                {
+                    "name": "Molecular genetics"
+                }
+            ]
+        },
+        {
+            "name": "Immunology and Infectious Disease",
+            "subfields": [
+                {
+                    "name": "Immunity"
+                },
+                {
+                    "name": "Immunology of Infectious Disease"
+                },
+                {
+                    "name": "Immunopathology"
+                },
+                {
+                    "name": "Immunoprophylaxis and Therapy"
+                },
+                {
+                    "name": "Pathology"
+                },
+                {
+                    "name": "Parasitology"
+                }
+            ]
+        },
+        {
+            "name": "Biology/Integrated Biology/ Integrated Biomedical Sciences",
+            "subfields": [
+                {
+                    "name": "Biomechanics"
+                },
+                {
+                    "name": "Exercise Physiology"
+                },
+                {
+                    "name": "Motor Control"
+                },
+                {
+                    "name": "Psychology of Movement"
+                }
+            ]
+        },
+        {
+            "name": "Microbiology",
+            "subfields": [
+                {
+                    "name": "Bacteriology"
+                },
+                {
+                    "name": "Environmental Microbiology and Microbial Ecology"
+                },
+                {
+                    "name": "Microbial Physiology"
+                },
+                {
+                    "name": "Pathogenic Microbiology"
+                },
+                {
+                    "name": "Virology"
+                }
+            ]
+        },
+        {
+            "name": "Neuroscience and Neurobiology",
+            "subfields": [
+                {
+                    "name": "Behavioral Neurobiology"
+                },
+                {
+                    "name": "Cognitive Neuroscience"
+                },
+                {
+                    "name": "Computational Neuroscience"
+                },
+                {
+                    "name": "Developmental Neuroscience"
+                },
+                {
+                    "name": "Molecular and Cellular Neuroscience"
+                },
+                {
+                    "name": "Systems Neuroscience"
+                }
+            ]
+        },
+        {
+            "name": "Nursing Pharmacology, Toxicology and Environmental Health",
+            "subfields": [
+                {
+                    "name": "Environmental Health"
+                },
+                {
+                    "name": "Medicinal Chemistry and Pharmaceutics"
+                },
+                {
+                    "name": "Pharmacology"
+                },
+                {
+                    "name": "Toxicology"
+                }
+            ]
+        },
+        {
+            "name": "Physiology",
+            "subfields": [
+                {
+                    "name": "Cellular and Molecular Physiology"
+                },
+                {
+                    "name": "Comparative and Evolutionary Physiology"
+                },
+                {
+                    "name": "Endocrinology"
+                },
+                {
+                    "name": "Exercise Physiology"
+                },
+                {
+                    "name": "Systems and Integrative Physiology"
+                }
+            ]
+        },
+        {
+            "name": "Animal Sciences",
+            "subfields": [
+                {
+                    "name": "Animal Sciences"
+                },
+                {
+                    "name": "Aquaculture and Fisheries"
+                },
+                {
+                    "name": "Dairy Science"
+                },
+                {
+                    "name": "Poultry (or Avian) Science"
+                },
+                {
+                    "name": "Zoology"
+                }
+            ]
+        },
+        {
+            "name": "Entomology Food Science",
+            "subfields": [
+                {
+                    "name": "Food Processing"
+                },
+                {
+                    "name": "Food Microbiology"
+                },
+                {
+                    "name": "Food Chemistry"
+                },
+                {
+                    "name": "Food Biotechnology"
+                }
+            ]
+        },
+        {
+            "name": "Forestry and Forest Sciences",
+            "subfields": [
+                {
+                    "name": "Forest Biology"
+                },
+                {
+                    "name": "Forest Management"
+                },
+                {
+                    "name": "Wood Science and Pulp/Paper Technology"
+                }
+            ]
+        },
+        {
+            "name": "Nutrition",
+            "subfields": [
+                {
+                    "name": "Comparative Nutrition"
+                },
+                {
+                    "name": "Human and Clinical Nutrition"
+                },
+                {
+                    "name": "International and Community Nutrition"
+                },
+                {
+                    "name": "Molecular, Genetic, and Biochemical Nutrition"
+                },
+                {
+                    "name": "Nutritional Epidemiology"
+                }
+            ]
+        },
+        {
+            "name": "Plant Sciences",
+            "subfields": [
+                {
+                    "name": "Agronomy and Crop Sciences"
+                },
+                {
+                    "name": "Botany"
+                },
+                {
+                    "name": "Horticulture"
+                },
+                {
+                    "name": "Plant Biology"
+                },
+                {
+                    "name": "Plant Pathology"
+                },
+                {
+                    "name": "Plant Breeding and Genetics"
+                }
+            ]
+        },
+        {
+            "name": "Bioinformatics"
+        },
+        {
+            "name": "Biotechnology"
+        },
+        {
+            "name": "Systems Biology"
+        }
+    ]
+},
+{
+    "name": "Physical Sciences & Mathematics",
+    "subfields": [
+        {
+            "name": "Applied Mathematics",
+            "subfields": [
+                {
+                    "name": "Control Theory"
+                },
+                {
+                    "name": "Dynamic Systems"
+                },
+                {
+                    "name": "Non-linear Dynamics"
+                },
+                {
+                    "name": "Numerical Analysis and Computation"
+                },
+                {
+                    "name": "Partial Differential Equations"
+                },
+                {
+                    "name": "Ordinary Differential Equations and Applied Dynamics"
+                }
+            ]
+        },
+        {
+            "name": "Astrophysics and Astronomy",
+            "subfields": [
+                {
+                    "name": "Physical Processes"
+                },
+                {
+                    "name": "Instrumentation"
+                },
+                {
+                    "name": "The Sun and the Solar System"
+                },
+                {
+                    "name": "Stars, Interstellar Medium and the Galaxy"
+                },
+                {
+                    "name": "External Galaxies"
+                },
+                {
+                    "name": "Cosmology"
+                }
+            ]
+        },
+        {
+            "name": "Chemistry",
+            "subfields": [
+                {
+                    "name": "Analytical Chemistry"
+                },
+                {
+                    "name": "Biochemistry"
+                },
+                {
+                    "name": "Environmental Chemistry"
+                },
+                {
+                    "name": "Materials Chemistry"
+                },
+                {
+                    "name": "Medicinal-Pharmaceutical Chemistry"
+                },
+                {
+                    "name": "Inorganic Chemistry"
+                },
+                {
+                    "name": "Organic Chemistry"
+                },
+                {
+                    "name": "Physical Chemistry"
+                },
+                {
+                    "name": "Polymer Chemistry"
+                }
+            ]
+        },
+        {
+            "name": "Computer Sciences",
+            "subfields": [
+                {
+                    "name": "Artificial Intelligence/Robotics"
+                },
+                {
+                    "name": "Computer and Systems Architecture"
+                },
+                {
+                    "name": "Databases/Information Systems"
+                },
+                {
+                    "name": "Graphics/Human Computer Interfaces"
+                },
+                {
+                    "name": "Numerical Analysis/Scientific Computing"
+                },
+                {
+                    "name": "Programming Languages/Compilers"
+                },
+                {
+                    "name": "OS/Networks"
+                },
+                {
+                    "name": "Software Engineering"
+                },
+                {
+                    "name": "Theory/Algorithms"
+                }
+            ]
+        },
+        {
+            "name": "Earth Sciences",
+            "subfields": [
+                {
+                    "name": "Biogeochemistry"
+                },
+                {
+                    "name": "Cosmochemistry"
+                },
+                {
+                    "name": "Environmental Sciences"
+                },
+                {
+                    "name": "Geology"
+                },
+                {
+                    "name": "Geochemistry"
+                },
+                {
+                    "name": "Geophysics and Seismology"
+                },
+                {
+                    "name": "Glaciology"
+                },
+                {
+                    "name": "Mineral Physics"
+                },
+                {
+                    "name": "Paleobiology"
+                },
+                {
+                    "name": "Paleontology"
+                },
+                {
+                    "name": "Soil Science"
+                },
+                {
+                    "name": "Tectonics and Structure"
+                },
+                {
+                    "name": "Vulcanology"
+                }
+            ]
+        },
+        {
+            "name": "Mathematics",
+            "subfields": [
+                {
+                    "name": "Algebra"
+                },
+                {
+                    "name": "Algebraic Geometry"
+                },
+                {
+                    "name": "Analysis"
+                },
+                {
+                    "name": "Discrete Mathematics and Combinatorics"
+                },
+                {
+                    "name": "Dynamics/Dynamical Systems"
+                },
+                {
+                    "name": "Geometry and Topology"
+                },
+                {
+                    "name": "Harmonic Analysis and Representation"
+                },
+                {
+                    "name": "Logic and Foundations"
+                },
+                {
+                    "name": "Number Theory"
+                },
+                {
+                    "name": "Set Theory"
+                }
+            ]
+        },
+        {
+            "name": "Oceanography and Atmospheric Sciences and Meteorology",
+            "subfields": [
+                {
+                    "name": "Atmospheric Sciences"
+                },
+                {
+                    "name": "Climate"
+                },
+                {
+                    "name": "Fresh Water Studies"
+                },
+                {
+                    "name": "Meteorology"
+                },
+                {
+                    "name": "Oceanography"
+                }
+            ]
+        },
+        {
+            "name": "Physics",
+            "subfields": [
+                {
+                    "name": "Astronomy and Astrophysics"
+                },
+                {
+                    "name": "Atomic, Molecular and Optical Physics"
+                },
+                {
+                    "name": "Biological and Chemical Physics"
+                },
+                {
+                    "name": "Condensed Matter Physics"
+                },
+                {
+                    "name": "Cosmology, Relativity, and Gravity"
+                },
+                {
+                    "name": "Elementary Particles and Fields and String Theory"
+                },
+                {
+                    "name": "Engineering Physics"
+                },
+                {
+                    "name": "Fluid Dynamics"
+                },
+                {
+                    "name": "Non-linear Dynamics"
+                },
+                {
+                    "name": "Nuclear"
+                },
+                {
+                    "name": "Optics"
+                },
+                {
+                    "name": "Plasma and Beam Physics"
+                },
+                {
+                    "name": "Quantum Physics"
+                }
+            ]
+        },
+        {
+            "name": "Statistics and Probability",
+            "subfields": [
+                {
+                    "name": "Applied Statistics"
+                },
+                {
+                    "name": "Biostatistics"
+                },
+                {
+                    "name": "Biometry"
+                },
+                {
+                    "name": "Probability"
+                },
+                {
+                    "name": "Statistical Methodology"
+                },
+                {
+                    "name": "Statistical Theory"
+                }
+            ]
+        }
+    ]
+},
+{
+    "name": "Engineering",
+    "subfields": [
+        {
+            "name": "Aerospace Engineering",
+            "subfields": [
+{"name": "Aeronautical Vehicles"},
+{"name": "Space Vehicles"},
+{"name": "Systems Engineering and Multidisciplinary Design Optimization"},
+{"name": "Aerodynamics and Fluid Mechanics"},
+{"name": "Astrodynamics"},
+{"name": "Structures and Materials"},
+{"name": "Propulsion and Power"},
+{"name": "Navigation, Guidance, Control and Dynamics"},
+{"name": "Multi-Vehicle Systems and Air Traffic Control"}
+            ]
+        },
+        {
+            "name": "Biomedical Engineering and Bioengineering",
+            "subfields": [
+{"name": "Biological Engineering"},
+{"name": "Bioelectrical and neuroengineering"},
+{"name": "Bioimaging and biomedical optics"},
+{"name": "Biomaterials"},
+{"name": "Biomechanics and biotransport"},
+{"name": "Biomedical devices and instrumentation"},
+{"name": "Molecular, cellular, and tissue engineering"},
+{"name": "Systems and integrative engineering"}
+            ]
+        },
+        {
+            "name": "Chemical Engineering",
+            "subfields": [
+                {"name": "Biochemical and Biomolecular Engineering"},
+                {"name": "Catalysis and Reaction Engineering"},
+                {"name": "Complex Fluids"},
+                {"name": "Membrane Science"},
+                {"name": "Petroleum Engineering"},
+                {"name": "Polymer Science"},
+                {"name": "Process Control and Systems"},
+                {"name": "Thermodynamics"},
+                {"name": "Transport Phenomena"}
+                
+            ]
+        },
+        {
+            "name": "Civil and Environmental Engineering",
+            "subfields": [
+                {"name": "Civil Engineering"},
+                {"name": "Construction Engineering/management"},
+                {"name": "Environmental Engineering"},
+                {"name": "Geotechnical Engineering"},
+                {"name": "Structural Engineering"}
+            ]
+        },
+        {
+            "name": "Computer Engineering",
+            "subfields": [
+                {"name": "Computer and Systems Architecture"},
+                {"name": "Digital Circuits"},
+                {"name": "Data Storage Systems"},
+                {"name": "Digital Communications and Networking"},
+                {"name": "Hardware Systems"},
+                {"name": "Robotics"}
+            ]
+        },
+        {
+            "name": "Electrical and Computer Engineering",
+            "subfields": [
+                {"name": "Biomedical"},
+                {"name": "Computer Engineering"},
+                {"name": "Controls and Control Theory"},
+                {"name": "Electrical and Electronics"},
+                {"name": "Electromagnetics and photonics"},
+                {"name": "Electronic Devices and Semiconductor Manufacturing"},
+                {"name": "Nanotechnology fabrication"},
+                {"name": "Power and Energy"},
+                {"name": "Signal Processing"},
+                {"name": "Systems and Communications"},
+                {"name": "VLSI and circuits: Embedded/Hardware Systems"}
+            ]
+        },
+        {
+            "name": "Engineering Science and Materials (not elsewhere classified)",
+            "subfields": [
+                {"name": "Engineering Mechanics"},
+                {"name": "Dynamics/Dynamical Systems"},
+                {"name": "Non-linear Dynamics"},
+                {"name": "Mechanics of Materials"}
+            ]
+        },
+        {
+            "name": "Materials Science and Engineering",
+            "subfields": [
+                {"name": "Biology and Biomimetic Materials"},
+                {"name": "Ceramic Materials"},
+                {"name": "Metallurgy"},
+                {"name": "Polymer and Organic Materials"},
+                {"name": "Semiconductor and Optical Materials"},
+                {"name": "Structural Materials"}
+            ]
+        },
+        {
+            "name": "Mechanical Engineering",
+            "subfields": [
+                {"name": "Acoustics, Dynamics, and Controls"},
+                {"name": "Applied Mechanics"},
+                {"name": "Biomechanical Engineering"},
+                {"name": "Computer-Aided Engineering and Design"},
+                {"name": "Electro-Mechanical Systems"},
+                {"name": "Energy Systems"},
+                {"name": "Heat Transfer, Combustion"},
+                {"name": "Manufacturing"},
+                {"name": "Ocean Engineering"},
+                {"name": "Tribology"}
+            ]
+        },
+        {
+            "name": "Operations Research, Systems Engineering and Industrial Engineering",
+            "subfields": [
+                {"name": "Ergonomics"},
+                {"name": "Industrial Engineering"},
+                {"name": "Operational Research"},
+                {"name": "Systems Engineering"}
+            ]
+        },
+        {
+            "name": "Computational Engineering"
+        },
+        {
+            "name": "Information Science"
+        },
+        {
+            "name": "Nanoscience and Nanotechnology"
+        },
+        {
+            "name": "Nuclear Engineering"
+        }
+    ]
+},
+{
+    "name": "Social and Behavioral Sciences",
+    "subfields": [
+        {
+            "name": "Agricultural and Resource Economics"
+        },
+        {
+            "name": "Anthropology",
+            "subfields": [
+                {"name": "Archaeological"},
+                {"name": "Biological and Physical"},
+                {"name": "Linguistic Anthrolpology"},
+                {"name": "Social and Cultural"}
+            ]
+        },
+        {
+            "name": "Communication",
+            "subfields": [
+                {"name": "Broadcast/Video Studies"},
+                {"name": "Communication Technology and New Media"},
+                {"name": "Critical and Cultural Studies"},
+                {"name": "Gender, Race, Sexuality, and Ethnicity in Communication"},
+                {"name": "Health Communication"},
+                {"name": "International and Intercultural Communication"},
+                {"name": "Interpersonal/Small Group Communication"},
+                {"name": "Journalism Studies"},
+                {"name": "Mass Communication"},
+                {"name": "Organizational Communication"},
+                {"name": "Public Relations/Advertising"},
+                {"name": "Social Influence and Political Communication"},
+                {"name": "Speech and Rhetorical Studies"}
+            ]
+        },
+        {
+            "name": "Economics",
+            "subfields": [
+                {"name": "Behavioral Economics"},
+                {"name": "Econometrics"},
+                {"name": "Economic History"},
+                {"name": "Economic Theory"},
+                {"name": "Growth and Development"},
+                {"name": "Industrial Organization"},
+                {"name": "International Economics"},
+                {"name": "Labor Economics"},
+                {"name": "Macroeconomics"},
+                {"name": "Public Economics"}
+            ]
+        },
+        {
+            "name": "Geography",
+            "subfields": [
+                {"name": "Physical and Environmental Geography"},
+                {"name": "Human Geography"},
+                {"name": "Nature and Society Relations"},
+                {"name": "Geographic Information Sciences"}
+                
+            ]
+        },
+        {
+            "name": "Linguistics",
+            "subfields": [
+                {"name": "Anthropological Linguistics/Sociolinguistics"},
+                {"name": "Applied Linguistics"},
+                {"name": "Comparative and Historical Linguistics"},
+                {"name": "Computational Linguistics"},
+                {"name": "Discourse/Text Linguistics"},
+                {"name": "First/Second Language Acquisition"},
+                {"name": "Typological Linguistics and Linguistic Diversity"},
+                {"name": "Language Description/Documentation"},
+                {"name": "Morphology"},
+                {"name": "Phonetics/Phonology"},
+                {"name": "Psycholinguistics/Neurolinguistics"},
+                {"name": "Semantics/Pragmatics"},
+                {"name": "Syntax"}
+                
+            ]
+        },
+        {
+            "name": "Political Science",
+            "subfields": [
+                {"name": "American Politics"},
+                {"name": "Comparative Politics"},
+                {"name": "International Relations"},
+                {"name": "Models and Methods"},
+                {"name": "Political Theory"}
+            ]
+        },
+        {
+            "name": "Public Affairs, Public Policy and Public Administration",
+            "subfields": [
+                {"name": "Public Administration"},
+                {"name": "Public Affairs"},
+                {"name": "Public Policy"},
+                {"name": "Urban Studies"}
+            ]
+        },
+        {
+            "name": "Psychology (Ph.D. programs only)",
+            "subfields": [
+                {"name": "Biological Psychology"},
+                {"name": "Clinical Psychology (Ph.D. programs only)"},
+                {"name": "Cognition and Perception"},
+                {"name": "Cognitive Psychology"},
+                {"name": "Community Psychology"},
+                {"name": "Developmental Psychology"},
+                {"name": "Health Psychology"},
+                {"name": "Industrial and Organizational Psychology"},
+                {"name": "Personality and Social Contexts"},
+                {"name": "Social Psychology"}
+            ]
+        },
+        {
+            "name": "Sociology",
+            "subfields": [
+                {"name": "Demography, Population, and Ecology"},
+                {"name": "Family, Life Course, and Society"},
+                {"name": "Gender and Sexuality"},
+                {"name": "Inequality and Stratification"},
+                {"name": "Medicine and Health"},
+                {"name": "Methodologies : Quantitative, Qualitative, Comparative, and Historical"},
+                {"name": "Place and Environment"},
+                {"name": "Politics and Social Change"},
+                {"name": "Race and Ethnicity"},
+                {"name": "Regional Sociology"},
+                {"name": "Rural sociology"},
+                {"name": "Social Control, Law, Crime, and Deviance"},
+                {"name": "Social Psychology and Interaction"},
+                {"name": "Sociology of Culture"},
+                {"name": "Theory, Knowledge and Science"},
+                {"name": "Work, Economy and Organizations"},
+                {"name": "Criminology"}
+            ]
+        },
+        {
+            "name": "Criminology and Criminal Justice",
+            "subfields": [
+               
+            ]
+        },
+        {
+            "name": "Science and Technology Studies",
+            "subfields": [
+               
+            ]
+        },
+        {
+            "name": "Urban Studies and Planning",
+            "subfields": [
+               
+            ]
+        }
+    ]
+},
+{
+    "name": "Arts and Humanities",
+    "subfields": [
+        {
+            "name": "American Studies",
+            "subfields": [
+                {"name": "American Film Studies"},
+                {"name": "American Material Culture"},
+                {"name": "American Popular Culture"},
+                {"name": "Ethnic Studies"}
+            ]
+        },
+        {
+            "name": "Classics",
+            "subfields": [
+                {"name": "Ancient History (Greek and Roman through Late Antiquity)"},
+                {"name": "Ancient Philosophy"},
+                {"name": "Byzantine and Modern Greek"},
+                {"name": "Classical Archaeology and Art History"},
+                {"name": "Classical Literature and Philology"},
+                {"name": "Indo-European Linguistics and Philology"}
+            ]
+        },
+        {
+            "name": "Comparative Literature"
+        },
+        {
+            "name": "English Language and Literature",
+            "subfields": [
+                {"name": "Literature in English, British Isles"},
+                {"name": "Literature in English, Anglophone (other than British Isles and North America)"},
+                {"name": "Literature in English, North America (other than ethnic and minority)"},
+                {"name": "Literature in English, North America, ethnic and minority"},
+                {"name": "Feminist, Gender and Sexuality Studies"},
+                {"name": "Rhetoric and Composition"}
+            ]
+        },
+        {
+            "name": "French and Francophone Language and Literature",
+            "subfields": [
+                {"name": "French Linguistics"},
+                {"name": "French and Francophone Literature"}
+            ]
+        },
+        {
+            "name": "German Language and Literature",
+            "subfields": [
+                {"name": "German Linguistics"},
+                {"name": "German Literature"}
+                
+            ]
+        },
+        {
+            "name": "Language, Societies, and Cultures",
+            "subfields": [
+                {"name": "African Languages and Societies"},
+                {"name": "East Asian Languages and Societies"},
+                {"name": "European Languages and Societies (not elsewhere classified)"},
+                {"name": "Latin American Languages and Societies (not elsewhere classified"},
+                {"name": "Near Eastern Languages and Societies"},
+                {"name": "Slavic Languages and Societies"},
+                {"name": "South and Southeast Asian Languages and Societies"}
+            ]
+        },
+        {
+            "name": "History",
+            "subfields": [
+                {"name": "African"},
+                {"name": "Asian"},
+                {"name": "European"},
+                {"name": "Islamic World/Near East"},
+                {"name": "Latin American"},
+                {"name": "United States"},
+                {"name": "Cultural History"},
+                {"name": "Diplomatic History"},
+                {"name": "Gender"},
+                {"name": "History of Religion"},
+                {"name": "History of Science, Technology, and Medicine"},
+                {"name": "Intellectual History"},
+                {"name": "Legal"},
+                {"name": "Medieval History"},
+                {"name": "Military History"},
+                {"name": "Political History"},
+                {"name": "Social History"},
+                {"name": "Women’s History"}
+            ]
+        },
+        {
+            "name": "History of Art, Architecture and Archaeology",
+            "subfields": [
+                {"name": "American Art and Architecture"},
+                {"name": "Ancient, Medieval, Renaissance and Baroque Art and Architecture"},
+                {"name": "Asian Art and Architecture"},
+                {"name": "Contemporary Art"},
+                {"name": "Modern Art and Architecture"},
+                {"name": "Theory and Criticism"}
+            ]
+        },
+        {
+            "name": "Music (except performance)",
+            "subfields": [
+                {"name": "Composition"},
+                {"name": "Ethnomusicology"},
+                {"name": "Musicology"},
+                {"name": "Music Theory"}
+                
+            ]
+        },
+        {
+            "name": "Philosophy",
+            "subfields": [
+                {"name": "Continental Philosophy"},
+                {"name": "Epistemology"},
+                {"name": "Esthetics"},
+                {"name": "Ethics and Political Philosophy"},
+                {"name": "Feminist Philosophy"},
+                {"name": "History of Philosophy"},
+                {"name": "Logic and foundations of mathematics"},
+                {"name": "Metaphysics"},
+                {"name": "Philosophy of Language"},
+                {"name": "Philosophy of Mind"},
+                {"name": "Philosophy of Science"}
+            ]
+        },
+        {
+            "name": "Religion",
+            "subfields": [
+                {"name": "Biblical Studies"},
+                {"name": "Comparative Methodologies and Theories"},
+                {"name": "Ethics"},
+                {"name": "History of Religions of Western Origin"},
+                {"name": "History of Religions of Eastern Origins"},
+                {"name": "Religious Thought/Theology/Philosophy of Religion"}
+            ]
+        },
+        {
+            "name": "Spanish and Portuguese Language and Literature",
+            "subfields": [
+                {"name": "Latin American Literature"},
+                {"name": "Portuguese Literature"},
+                {"name": "Spanish Linguistics"},
+                {"name": "Spanish Literature"}
+            ]
+        },
+        {
+            "name": "Theatre and Performance Studies",
+            "subfields": [
+                {"name": "Theatre History"},
+                {"name": "Dramatic Literature, Criticism and Theory"},
+                {"name": "Performance Studies"},
+                {"name": "Playwriting"}
+            ]
+        },
+        {
+            "name": "Feminist, Gender, and Sexuality Studies"
+        },
+        {
+            "name": "Film Studies"
+        },
+        {
+            "name": "Race, Ethnicity and post-Colonial Studies"
+        },
+        {
+            "name": "Rhetoric and Composition"
+        }        
+    ]
+}
+]

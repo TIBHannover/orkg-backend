@@ -20,7 +20,7 @@ class ExampleData(
 ) : ApplicationRunner {
 
     override fun run(args: ApplicationArguments?) {
-        if (statementWithResourceService.findAll().count() > 0 || statementWithLiteralService.findAll().count() > 0)
+        if (statementsPresent())
             return
 
         //
@@ -138,6 +138,9 @@ class ExampleData(
         }
 
     }
+
+    private fun statementsPresent() =
+        statementWithResourceService.totalNumberOfStatements() > 0 || statementWithLiteralService.totalNumberOfStatements() > 0
 }
 
 

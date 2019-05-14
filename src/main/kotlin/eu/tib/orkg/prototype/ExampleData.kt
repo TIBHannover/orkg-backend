@@ -1,13 +1,12 @@
 package eu.tib.orkg.prototype
 
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
+import com.fasterxml.jackson.module.kotlin.*
 import eu.tib.orkg.prototype.statements.domain.model.*
 import org.springframework.boot.*
 import org.springframework.context.annotation.*
 import org.springframework.stereotype.*
-import java.io.InputStream
+import java.io.*
 
 
 @Component
@@ -127,10 +126,10 @@ class ExampleData(
         for (field in fields) { //TODO: make this section recursive and extract a function
             val newField = resourceService.create(field.name).id!!
             statementWithResourceService.create(researchField, subfieldPredicate, newField)
-            for (subfield in field.subfields){
+            for (subfield in field.subfields) {
                 val newSubfield = resourceService.create(subfield.name).id!!
                 statementWithResourceService.create(newField, subfieldPredicate, newSubfield)
-                for (subSubfield in subfield.subfields){
+                for (subSubfield in subfield.subfields) {
                     val newSubSubfield = resourceService.create(subSubfield.name).id!!
                     statementWithResourceService.create(newSubfield, subfieldPredicate, newSubSubfield)
                 }

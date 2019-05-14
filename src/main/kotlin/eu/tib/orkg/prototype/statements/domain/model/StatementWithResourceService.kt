@@ -39,4 +39,9 @@ interface StatementWithResourceService {
      */
     @Suppress("Reformat")
     fun create(subject: ResourceId, predicate: PredicateId, `object`: ResourceId): StatementWithResource
+
+    /**
+     * Determine the total number of statements.
+     */
+    fun totalNumberOfStatements(): Long
 }

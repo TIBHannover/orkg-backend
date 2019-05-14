@@ -128,4 +128,6 @@ class Neo4jStatementWithLiteralService :
                     it.`object`!!.toObject()
                 )
             }
+
+    override fun totalNumberOfStatements() = neo4jStatementRepository.count()
 }

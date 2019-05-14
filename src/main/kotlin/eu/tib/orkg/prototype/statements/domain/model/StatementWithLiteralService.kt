@@ -39,4 +39,9 @@ interface StatementWithLiteralService {
      */
     @Suppress("Reformat")
     fun create(subject: ResourceId, predicate: PredicateId, `object`: LiteralId): StatementWithLiteral
+
+    /**
+     * Determine the total number of statements.
+     */
+    fun totalNumberOfStatements(): Long
 }

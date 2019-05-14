@@ -127,4 +127,6 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
                 )
             }
     }
+
+    override fun totalNumberOfStatements() = neo4jStatementRepository.count()
 }

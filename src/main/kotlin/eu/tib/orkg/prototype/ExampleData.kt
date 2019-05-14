@@ -15,11 +15,12 @@ import java.io.InputStream
 class ExampleData(
     private val resourceService: ResourceService,
     private val predicateService: PredicateService,
-    private val statementWithResourceService: StatementWithResourceService
+    private val statementWithResourceService: StatementWithResourceService,
+    private val statementWithLiteralService: StatementWithLiteralService
 ) : ApplicationRunner {
 
     override fun run(args: ApplicationArguments?) {
-        if (statementWithResourceService.findAll().count() > 0)
+        if (statementWithResourceService.findAll().count() > 0 || statementWithLiteralService.findAll().count() > 0)
             return
 
         //

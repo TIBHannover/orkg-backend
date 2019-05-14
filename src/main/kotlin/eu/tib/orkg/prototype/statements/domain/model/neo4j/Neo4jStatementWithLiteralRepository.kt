@@ -14,10 +14,10 @@ interface Neo4jStatementWithLiteralRepository :
 
     fun findByStatementId(id: StatementId): Optional<Neo4jStatementWithLiteral>
 
-    @Query("MATCH (s:Resource)-[rel:HAS_VALUE_OF]->(o:Literal) WHERE s.`resource_id`={0} RETURN rel, s, o")
+    @Query("MATCH (sub:`Resource`)-[rel:`HAS_VALUE_OF`]->(obj:`Literal`) WHERE sub.`resource_id`={0} RETURN rel, sub, obj")
     fun findAllBySubject(subjectId: ResourceId): Iterable<Neo4jStatementWithLiteral>
 
-    @Query("MATCH (s:Resource)-[rel:HAS_VALUE_OF]->(o:Literal) WHERE s.`resource_id`={0} AND rel.`predicate_id`={1} RETURN rel, s, o")
+    @Query("MATCH (sub:`Resource`)-[rel:`HAS_VALUE_OF`]->(obj:`Literal`) WHERE sub.`resource_id`={0} AND rel.`predicate_id`={1} RETURN rel, sub, obj")
     fun findAllBySubjectAndPredicate(
         resourceId: ResourceId,
         predicateId: PredicateId

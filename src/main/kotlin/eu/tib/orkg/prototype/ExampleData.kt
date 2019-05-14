@@ -15,11 +15,11 @@ import java.io.InputStream
 class ExampleData(
     private val resourceService: ResourceService,
     private val predicateService: PredicateService,
-    private val statementService: StatementWithResourceService
+    private val statementWithResourceService: StatementWithResourceService
 ) : ApplicationRunner {
 
     override fun run(args: ApplicationArguments?) {
-        if (statementService.findAll().count() > 0)
+        if (statementWithResourceService.findAll().count() > 0)
             return
 
         //
@@ -56,15 +56,15 @@ class ExampleData(
         //
         // Statements
         //
-        statementService.create(wilesProof, employs, mathProof)
-        statementService.create(wilesProof, addresses, tanimaConj)
-        statementService.create(wilesProof, addresses, fermatsLastTheorem)
-        statementService.create(wilesProof, yields, modularityTheorem)
+        statementWithResourceService.create(wilesProof, employs, mathProof)
+        statementWithResourceService.create(wilesProof, addresses, tanimaConj)
+        statementWithResourceService.create(wilesProof, addresses, fermatsLastTheorem)
+        statementWithResourceService.create(wilesProof, yields, modularityTheorem)
 
-        statementService.create(grubersDesign, employs, caseStudies)
-        statementService.create(grubersDesign, addresses, designOfOntologies)
-        statementService.create(grubersDesign, addresses, knowledgeEngineering)
-        statementService.create(grubersDesign, yields, ontoDesignCriteria)
+        statementWithResourceService.create(grubersDesign, employs, caseStudies)
+        statementWithResourceService.create(grubersDesign, addresses, designOfOntologies)
+        statementWithResourceService.create(grubersDesign, addresses, knowledgeEngineering)
+        statementWithResourceService.create(grubersDesign, yields, ontoDesignCriteria)
 
         // Predicates (for DILS)
         predicateService.create("is a")
@@ -125,13 +125,13 @@ class ExampleData(
         val fields = mapper.readValue<List<ResearchField>>(inStream)
         for (field in fields) { //TODO: make this section recursive and extract a function
             val newField = resourceService.create(field.name).id!!
-            statementService.create(researchField, subfieldPredicate, newField)
+            statementWithResourceService.create(researchField, subfieldPredicate, newField)
             for (subfield in field.subfields){
                 val newSubfield = resourceService.create(subfield.name).id!!
-                statementService.create(newField, subfieldPredicate, newSubfield)
+                statementWithResourceService.create(newField, subfieldPredicate, newSubfield)
                 for (subSubfield in subfield.subfields){
                     val newSubSubfield = resourceService.create(subSubfield.name).id!!
-                    statementService.create(newSubfield, subfieldPredicate, newSubSubfield)
+                    statementWithResourceService.create(newSubfield, subfieldPredicate, newSubSubfield)
                 }
             }
         }

@@ -14,10 +14,10 @@ interface Neo4jStatementWithResourceRepository :
 
     fun findByStatementId(id: StatementId): Optional<Neo4jStatementWithResource>
 
-    @Query("MATCH (s:Resource)-[rel:RELATES_TO]->(:Resource) WHERE s.resource_id={0} RETURN rel")
+    @Query("MATCH (s:Resource)-[rel:RELATES_TO]->(o:Resource) WHERE s.resource_id={0} RETURN rel, s, o")
     fun findAllBySubject(subjectId: ResourceId): Iterable<Neo4jStatementWithResource>
 
-    @Query("MATCH (s:Resource)-[rel:RELATES_TO]->(:Resource) WHERE s.resource_id={0} AND rel.predicate_id={1} RETURN rel")
+    @Query("MATCH (s:Resource)-[rel:RELATES_TO]->(o:Resource) WHERE s.resource_id={0} AND rel.predicate_id={1} RETURN rel, s, o")
     fun findAllBySubjectAndPredicate(
         resourceId: ResourceId,
         predicateId: PredicateId

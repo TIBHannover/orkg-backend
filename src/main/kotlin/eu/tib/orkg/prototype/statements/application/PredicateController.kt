@@ -32,8 +32,8 @@ class PredicateController(private val service: PredicateService) {
 
     @PostMapping("/")
     @ResponseStatus(CREATED)
-    fun add(@RequestBody predicate: Predicate, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Predicate> {
-        val id = service.create(predicate.label).id
+    fun add(@RequestBody predicate: CreatePredicateRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Predicate> {
+        val id = service.create(predicate).id
 
         val location = uriComponentsBuilder
             .path("api/predicates/{id}")

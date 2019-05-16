@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.statements.application.*
 import eu.tib.orkg.prototype.statements.domain.model.*
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.*
@@ -17,6 +18,15 @@ class Neo4jPredicateServiceTest {
 
     @Autowired
     private lateinit var service: PredicateService
+
+    @Test
+    @DisplayName("should create predicate from request")
+    fun shouldCreatePredicateFromRequest() {
+        val resource = service.create(CreatePredicateRequest(PredicateId("someID"), "Some Concept"))
+
+        assertThat(resource.id.toString()).isEqualTo("someID")
+        assertThat(resource.label).isEqualTo("Some Concept")
+    }
 
     @Test
     @DisplayName("should find created predicates")

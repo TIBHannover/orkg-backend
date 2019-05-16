@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import eu.tib.orkg.prototype.statements.application.*
 import java.util.*
 
 interface PredicateService {
@@ -7,6 +8,11 @@ interface PredicateService {
      * Create a new predicate with a given label.
      */
     fun create(label: String): Predicate
+
+    /**
+     * Create a new predicate from a request.
+     */
+    fun create(request: CreatePredicateRequest): Predicate
 
     /**
      * List all predicates.

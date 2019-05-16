@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.statements.application.*
 import eu.tib.orkg.prototype.statements.domain.model.*
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.*
 import org.springframework.stereotype.*
@@ -17,6 +18,13 @@ class Neo4jPredicateService(
         val id = neo4jPredicateIdGenerator.nextIdentity()
         return neo4jPredicateRepository
             .save(Neo4jPredicate(label = label, predicateId = id))
+            .toPredicate()
+    }
+
+    override fun create(request: CreatePredicateRequest): Predicate {
+        val id = request.id ?: neo4jPredicateIdGenerator.nextIdentity()
+        return neo4jPredicateRepository
+            .save(Neo4jPredicate(label = request.label, predicateId = id))
             .toPredicate()
     }
 

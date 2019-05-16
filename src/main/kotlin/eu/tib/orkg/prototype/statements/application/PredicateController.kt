@@ -43,3 +43,8 @@ class PredicateController(private val service: PredicateService) {
         return created(location).body(service.findById(id).get())
     }
 }
+
+data class CreatePredicateRequest(
+    val id: PredicateId?,
+    val label: String
+)

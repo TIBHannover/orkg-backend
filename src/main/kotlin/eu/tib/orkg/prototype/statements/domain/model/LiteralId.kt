@@ -9,7 +9,6 @@ data class LiteralId(val value: String) : Comparable<LiteralId> {
 
     init {
         require(value.isNotBlank()) { "ID must not be blank" }
-        require(value.startsWith("L")) { "ID must start with \"L\"" }
     }
 
     constructor(value: Long) : this("L$value") {

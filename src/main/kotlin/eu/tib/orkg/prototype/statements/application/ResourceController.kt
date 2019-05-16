@@ -57,3 +57,8 @@ class ResourceController(private val service: ResourceService) {
         return ok(service.update(updatedResource))
     }
 }
+
+data class CreateResourceRequest(
+    val id: ResourceId?,
+    val label: String
+)

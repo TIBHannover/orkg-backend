@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.statements.application.*
 import eu.tib.orkg.prototype.statements.domain.model.*
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.*
@@ -17,6 +18,15 @@ class Neo4jResourceServiceTest {
 
     @Autowired
     private lateinit var service: ResourceService
+
+    @Test
+    @DisplayName("should create resource from request")
+    fun shouldCreateResourceFromRequest() {
+        val resource = service.create(CreateResourceRequest(ResourceId("someID"), "Some Concept"))
+
+        assertThat(resource.id.toString()).isEqualTo("someID")
+        assertThat(resource.label).isEqualTo("Some Concept")
+    }
 
     @Test
     @DisplayName("should find created resources")

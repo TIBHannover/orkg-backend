@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.statements.application.*
 import eu.tib.orkg.prototype.statements.domain.model.*
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.*
 import org.springframework.stereotype.*
@@ -17,6 +18,13 @@ class Neo4jResourceService(
         val resourceId = neo4jResourceIdGenerator.nextIdentity()
         return neo4jResourceRepository.save(Neo4jResource(label = label, resourceId = resourceId))
             .toResource()
+    }
+
+    override fun create(request: CreateResourceRequest): Resource {
+        val id = request.id ?: neo4jResourceIdGenerator.nextIdentity()
+        return neo4jResourceRepository.save(
+            Neo4jResource(label = request.label, resourceId = id)
+        ).toResource()
     }
 
     override fun findAll() =

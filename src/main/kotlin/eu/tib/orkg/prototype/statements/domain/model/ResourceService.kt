@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import eu.tib.orkg.prototype.statements.application.*
 import java.util.*
 
 interface ResourceService {
@@ -9,6 +10,11 @@ interface ResourceService {
      * @return the newly created resource
      */
     fun create(label: String): Resource
+
+    /**
+     * Create a new resource from a request.
+     */
+    fun create(request: CreateResourceRequest): Resource
 
     /**
      * Find all resources.

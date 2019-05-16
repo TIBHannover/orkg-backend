@@ -10,7 +10,6 @@ data class ResourceId(val value: String) :
 
     init {
         require(value.isNotBlank()) { "ID must not be blank" }
-        require(value.startsWith("R")) { "ID must start with \"R\"" }
     }
 
     constructor(value: Long) : this("R$value") {

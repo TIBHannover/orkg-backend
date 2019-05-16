@@ -33,8 +33,8 @@ class ResourceController(private val service: ResourceService) {
 
     @PostMapping("/")
     @ResponseStatus(CREATED)
-    fun add(@RequestBody resource: Resource, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Resource> {
-        val id = service.create(resource.label).id
+    fun add(@RequestBody resource: CreateResourceRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Resource> {
+        val id = service.create(resource).id
         val location = uriComponentsBuilder
             .path("api/resources/{id}")
             .buildAndExpand(id)
@@ -57,3 +57,8 @@ class ResourceController(private val service: ResourceService) {
         return ok(service.update(updatedResource))
     }
 }
+
+data class CreateResourceRequest(
+    val id: ResourceId?,
+    val label: String
+)

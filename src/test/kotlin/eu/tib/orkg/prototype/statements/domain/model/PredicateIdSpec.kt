@@ -5,24 +5,49 @@ import org.junit.jupiter.api.*
 
 @DisplayName("A predicate id")
 class PredicateIdSpec {
-
     @Test
-    @DisplayName("should fail if not prefixed with \"P\"")
-    fun alphaNumericCharactersButNoPrefix() {
+    @DisplayName("can not be less than zero")
+    fun canNotBeLessThanZero() {
         assertThatIllegalArgumentException()
-            .isThrownBy { PredicateId("1234") }
-            .withMessage("""Value must start with "P"""")
+            .isThrownBy { PredicateId(-1) }
+            .withMessage("ID must be greater than or equal to zero")
     }
 
     @Test
-    @DisplayName("should maintain value as long")
-    fun shouldMaintainValueAsLong() {
-        assertThat(PredicateId("P1234").value).isEqualTo(1234)
+    @DisplayName("should be greater than zero")
+    fun shouldBeGreaterThanZero() {
+        assertThatCode { PredicateId(1) }.doesNotThrowAnyException()
     }
 
     @Test
-    @DisplayName("should maintain value when passed")
-    fun shouldMaintainValueWhenPassed() {
-        assertThat(PredicateId(1234).value).isEqualTo(1234)
+    @DisplayName("should accept MAX_VALUE")
+    fun shouldAcceptMaxLong() {
+        assertThatCode { PredicateId(Long.MAX_VALUE) }.doesNotThrowAnyException()
+    }
+
+    @Test
+    @DisplayName("should be equal to another instance of the same id")
+    fun twoInstancesShouldBeEqual() {
+        val one = PredicateId(1)
+        val other = PredicateId(1)
+
+        assertThat(one).isNotSameAs(other)
+        assertThat(one).isEqualTo(other)
+    }
+
+    @Test
+    @DisplayName("should be equal to a clone of the same id")
+    fun twoClonesShouldBeEqual() {
+        val one = PredicateId(1)
+        val clone = one.copy()
+
+        assertThat(one).isNotSameAs(clone)
+        assertThat(one).isEqualTo(clone)
+    }
+
+    @Test
+    @DisplayName("should represent internal value when given long")
+    fun shouldRepresentInternalValueWhenGivenLong() {
+        assertThat(PredicateId(42).toString()).isEqualTo("P42")
     }
 }

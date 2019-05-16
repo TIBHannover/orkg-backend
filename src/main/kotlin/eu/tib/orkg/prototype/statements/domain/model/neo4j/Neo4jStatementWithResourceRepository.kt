@@ -24,4 +24,7 @@ interface Neo4jStatementWithResourceRepository :
     ): Iterable<Neo4jStatementWithResource>
 
     fun findAllByPredicateId(predicateId: PredicateId): Iterable<Neo4jStatementWithResource>
+
+    @Query("MATCH (sub:`Resource`)-[rel:`RELATES_TO`]->(obj:`Resource`) WHERE obj.`resource_id`={0} RETURN rel, sub, obj")
+    fun findAllByObject(resourceId: ResourceId): Iterable<Neo4jStatementWithResource>
 }

@@ -49,6 +49,13 @@ class StatementController(
                 statementWithLiteralService.findAllByPredicate(predicateId)
         )
 
+    @GetMapping("/object/{objectId}")
+    fun findByObject(@PathVariable objectId: String): HttpEntity<Iterable<StatementResponse>> =
+        ok(
+            statementWithResourceService.findAllByObject(ResourceId(objectId)) +
+                statementWithLiteralService.findAllByObject(LiteralId(objectId))
+        )
+
     @PostMapping("/")
     @ResponseStatus(CREATED)
     fun add(@RequestBody statement: Statement, uriComponentsBuilder: UriComponentsBuilder):

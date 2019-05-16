@@ -129,5 +129,22 @@ class Neo4jStatementWithLiteralService :
                 )
             }
 
+    override fun findAllByObject(objectId: LiteralId): Iterable<StatementWithLiteral> {
+        val literal = neo4jLiteralRepository.findByLiteralId(objectId)
+        if (literal.isPresent) {
+            return neo4jStatementRepository
+                .findAllByObject(literal.get().literalId!!)
+                .map {
+                    StatementWithLiteral(
+                        it.statementId!!,
+                        it.subject!!.toResource(),
+                        predicateService.findById(it.predicateId!!).get(),
+                        it.`object`!!.toObject()
+                    )
+                }
+        }
+        return emptyList()
+    }
+
     override fun totalNumberOfStatements() = neo4jStatementRepository.count()
 }

@@ -24,4 +24,7 @@ interface Neo4jStatementWithLiteralRepository :
     ): Iterable<Neo4jStatementWithLiteral>
 
     fun findAllByPredicateId(predicateId: PredicateId): Iterable<Neo4jStatementWithLiteral>
+
+    @Query("MATCH (sub:`Resource`)-[rel:`HAS_VALUE_OF`]->(obj:`Literal`) WHERE obj.`literal_id`={0} RETURN rel, sub, obj")
+    fun findAllByObject(objectId: LiteralId): Iterable<Neo4jStatementWithLiteral>
 }

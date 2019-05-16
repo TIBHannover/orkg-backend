@@ -27,6 +27,11 @@ interface StatementWithLiteralService {
     fun findAllByPredicate(predicateId: PredicateId): Iterable<StatementWithLiteral>
 
     /**
+     * Find all statements with a given (literal) object.
+     */
+    fun findAllByObject(objectId: LiteralId): Iterable<StatementWithLiteral>
+
+    /**
      * Find all statements with a given subject and predicate.
      */
     fun findAllBySubjectAndPredicate(

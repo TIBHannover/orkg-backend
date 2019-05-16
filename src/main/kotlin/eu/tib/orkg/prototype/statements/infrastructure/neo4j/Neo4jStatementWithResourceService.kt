@@ -128,5 +128,22 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
             }
     }
 
+    override fun findAllByObject(objectId: ResourceId): Iterable<StatementWithResource> {
+        val resource = neo4jResourceRepository.findByResourceId(objectId)
+        if (resource.isPresent) {
+            return neo4jStatementRepository
+                .findAllByObject(resource.get().resourceId!!)
+                .map {
+                    StatementWithResource(
+                        it.statementId!!,
+                        it.subject!!.toResource(),
+                        predicateService.findById(it.predicateId!!).get(),
+                        it.`object`!!.toObject()
+                    )
+                }
+        }
+        return emptyList()
+    }
+
     override fun totalNumberOfStatements() = neo4jStatementRepository.count()
 }

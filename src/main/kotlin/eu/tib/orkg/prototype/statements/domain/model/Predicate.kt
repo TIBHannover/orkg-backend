@@ -1,10 +1,9 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 data class Predicate(
     val id: PredicateId?,
-    val label: String
-) {
-    val created: LocalDateTime = LocalDateTime.now()
-}
+    val label: String,
+    val createdAt: OffsetDateTime?
+)

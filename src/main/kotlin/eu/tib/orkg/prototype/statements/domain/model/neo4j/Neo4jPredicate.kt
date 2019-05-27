@@ -24,6 +24,6 @@ data class Neo4jPredicate(
     @Required
     @Convert(PredicateIdGraphAttributeConverter::class)
     private var predicateId: PredicateId? = null
-) {
-    fun toPredicate() = Predicate(predicateId, label!!)
+) : AuditableEntity() {
+    fun toPredicate() = Predicate(predicateId, label!!, createdAt!!)
 }

@@ -99,15 +99,15 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         responseFields(
             fieldWithPath("id").description("The resource ID"),
             fieldWithPath("label").description("The resource label"),
-            fieldWithPath("classes").description("The list of classes the resource belongs to"),
-            fieldWithPath("created").ignored()
+            fieldWithPath("createdAt").description("The resource creation datetime"),
+            fieldWithPath("classes").description("The list of classes the resource belongs to")
         )
 
     private fun resourceListResponseFields() =
         responseFields(
             fieldWithPath("[].id").description("The resource ID"),
             fieldWithPath("[].label").description("The resource label"),
-            fieldWithPath("[].classes").description("The list of classes the resource belongs to"),
-            fieldWithPath("[].created").ignored()
+            fieldWithPath("[].createdAt").description("The resource creation datetime"),
+            fieldWithPath("[].classes").description("The list of classes the resource belongs to")
         )
 }

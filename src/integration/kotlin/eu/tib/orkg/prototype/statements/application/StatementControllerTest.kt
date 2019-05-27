@@ -228,6 +228,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("predicate").description("A predicate"),
             fieldWithPath("predicate.id").description("The ID of the predicate"),
             fieldWithPath("predicate.label").description("The label of the predicate"),
+            fieldWithPath("predicate.createdAt").description("The predicate creation datetime"),
             fieldWithPath("object").description("An object"),
             fieldWithPath("object.id").description("The ID of the object"),
             fieldWithPath("object.label").description("The label of the object"),
@@ -248,11 +249,12 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].predicate").description("A predicate"),
             fieldWithPath("[].predicate.id").description("The ID of the predicate"),
             fieldWithPath("[].predicate.label").description("The label of the predicate"),
-            fieldWithPath("[].object.createdAt").description("The object creation datetime"),
+            fieldWithPath("[].predicate.createdAt").description("The predicate creation datetime"),
             fieldWithPath("[].object").description("An object"),
             fieldWithPath("[].object.id").description("The ID of the object"),
             fieldWithPath("[].object.label").description("The label of the object"),
             fieldWithPath("[].object._class").description("The type of the object (resource or literal)."),
+            fieldWithPath("[].object.createdAt").description("The object creation datetime"),
             fieldWithPath("[].object.classes").description("The classes the object resource belongs to")
         )
 }

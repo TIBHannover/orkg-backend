@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.domain.model
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import java.time.OffsetDateTime
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
@@ -17,5 +18,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 data class ResourceObject(
     val id: ResourceId?,
     val label: String,
+    val createdAt: OffsetDateTime?,
     val classes: Set<ClassId> = emptySet()
 )

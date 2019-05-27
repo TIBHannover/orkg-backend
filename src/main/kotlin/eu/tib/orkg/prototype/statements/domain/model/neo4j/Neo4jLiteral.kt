@@ -19,7 +19,7 @@ data class Neo4jLiteral(
     @Id
     @GeneratedValue
     var id: Long? = null
-) {
+) : AuditableEntity() {
     @Property("label")
     @Required
     var label: String? = null
@@ -44,7 +44,7 @@ data class Neo4jLiteral(
         this.literalId = literalId
     }
 
-    fun toLiteral() = Literal(literalId, label!!)
+    fun toLiteral() = Literal(literalId, label!!, createdAt!!)
 
-    fun toObject() = LiteralObject(literalId, label!!, classes)
+    fun toObject() = LiteralObject(literalId, label!!, createdAt!!, classes)
 }

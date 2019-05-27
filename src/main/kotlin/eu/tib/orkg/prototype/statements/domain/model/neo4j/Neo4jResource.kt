@@ -20,7 +20,7 @@ data class Neo4jResource(
     @Id
     @GeneratedValue
     var id: Long? = null
-) {
+) : AuditableEntity() {
 
     @Property("label")
     @Required
@@ -52,9 +52,9 @@ data class Neo4jResource(
         this.resourceId = resourceId
     }
 
-    fun toResource() = Resource(resourceId, label!!, classes)
+    fun toResource() = Resource(resourceId, label!!, createdAt, classes)
 
-    fun toObject() = ResourceObject(resourceId, label!!, classes)
+    fun toObject() = ResourceObject(resourceId, label!!, createdAt, classes)
 
     /**
      * Assign a class to this `Resource` node.

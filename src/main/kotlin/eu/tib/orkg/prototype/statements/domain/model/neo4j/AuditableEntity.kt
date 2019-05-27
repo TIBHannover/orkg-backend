@@ -5,7 +5,7 @@ import org.springframework.data.annotation.CreatedDate
 import java.time.OffsetDateTime
 
 open class AuditableEntity(
-    @Property("created")
+    @Property("created_at")
     @CreatedDate
     var createdAt: OffsetDateTime? = null
 )

@@ -21,6 +21,17 @@ not be obvious to programmers new to the project.
   _interface_, not the concrete implementation. Wiring will not work with
   a concrete implementation.
 
+==== Logging
+
+* To log the (generated) Cypher queries, add the following snippet to `application.yml`:
++
+[source, yaml]
+----
+logging:
+  level:
+    org.neo4j.ogm.drivers: DEBUG
+----
+
 === Spring Data Neo4j (SDN)
 
 * The lookup paths need to include the packages that contain the repository

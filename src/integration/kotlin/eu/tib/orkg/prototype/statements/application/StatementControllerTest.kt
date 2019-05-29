@@ -234,7 +234,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("object.label").description("The label of the object"),
             fieldWithPath("object._class").description("The type of the object (resource or literal)."),
             fieldWithPath("object.createdAt").description("The object creation datetime"),
-            fieldWithPath("object.classes").description("The classes the object resource belongs to")
+            fieldWithPath("object.classes").description("The classes the object resource belongs to"),
+            fieldWithPath("createdAt").description("The statement creation datetime")
         )
 
     private fun statementListResponseFields() =
@@ -255,6 +256,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].object.label").description("The label of the object"),
             fieldWithPath("[].object._class").description("The type of the object (resource or literal)."),
             fieldWithPath("[].object.createdAt").description("The object creation datetime"),
-            fieldWithPath("[].object.classes").description("The classes the object resource belongs to")
+            fieldWithPath("[].object.classes").description("The classes the object resource belongs to"),
+            fieldWithPath("[].createdAt").description("The statement creation datetime")
         )
 }

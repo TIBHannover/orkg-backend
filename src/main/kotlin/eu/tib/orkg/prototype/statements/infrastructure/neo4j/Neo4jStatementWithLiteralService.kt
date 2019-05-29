@@ -69,7 +69,8 @@ class Neo4jStatementWithLiteralService :
             persistedStatement.statementId!!,
             foundSubject.toResource(),
             foundPredicate.get(),
-            foundObject.toObject()
+            foundObject.toObject(),
+            persistedStatement.createdAt!!
         )
     }
 
@@ -81,7 +82,8 @@ class Neo4jStatementWithLiteralService :
                     it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
-                    it.`object`!!.toObject()
+                    it.`object`!!.toObject(),
+                    it.createdAt!!
                 )
             }
     }
@@ -94,7 +96,8 @@ class Neo4jStatementWithLiteralService :
                     it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
-                    it.`object`!!.toObject()
+                    it.`object`!!.toObject(),
+                    it.createdAt!!
                 )
             }
 
@@ -107,7 +110,8 @@ class Neo4jStatementWithLiteralService :
                     it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
-                    it.`object`!!.toObject()
+                    it.`object`!!.toObject(),
+                    it.createdAt!!
                 )
             }
     }
@@ -123,7 +127,8 @@ class Neo4jStatementWithLiteralService :
                     it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
-                    it.`object`!!.toObject()
+                    it.`object`!!.toObject(),
+                    it.createdAt!!
                 )
             }
 
@@ -135,7 +140,8 @@ class Neo4jStatementWithLiteralService :
                     it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
-                    it.`object`!!.toObject()
+                    it.`object`!!.toObject(),
+                    it.createdAt!!
                 )
             }
 

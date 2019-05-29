@@ -21,7 +21,7 @@ data class Neo4jStatementWithResource(
     @Id
     @GeneratedValue
     var id: Long? = null
-) {
+) : AuditableEntity() {
     @StartNode
     @JsonIgnore
     var subject: Neo4jResource? = null

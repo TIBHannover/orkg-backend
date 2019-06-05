@@ -30,7 +30,6 @@ cache:
 
 stages:
   - build
-  - deploy
 
 build:
   stage: build
@@ -40,61 +39,3 @@ build:
     paths:
       - build/reports/
       - build/libs/orkg-*.war
-
-.deploy_job: &deployment
-  stage: deploy
-  before_script:
-    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-    - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-  script:
-    - echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" > /etc/apt/sources.list.d/ansible.list
-    - apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
-    - apt update
-    - apt -y install ansible rsync
-    # Fix permission. No idea why they are different from those in Git.
-    - chmod 0755 ansible
-    - (cd ansible && ansible-playbook --limit $ANSIBLE_HOST site.yml)
-    # Build and install documentation
-    - ./gradlew asciidoctor
-    - rsync -av --delete build/asciidoc/html5/api-doc/ orkg@${DEPLOY_HOST}:/tib/app/orkg/www/htdocs/orkg/doc/api/
-
-deploy to develop:
-  variables:
-    ANSIBLE_HOST: devel
-    DEPLOY_HOST: orkg01.develop.labs.tib.eu
-  <<: *deployment
-  environment:
-    name: develop
-    url: http://orkg01.develop.labs.tib.eu:8080/orkg-prototype/
-  only:
-    - master
-
-deploy to production:
-  variables:
-    ANSIBLE_HOST: prod
-    DEPLOY_HOST: orkg21.labs.tib.eu
-  <<: *deployment
-  environment:
-    name: production
-    url: http://orkg21.labs.tib.eu:8080/orkg-prototype/
-  only:
-    - master
-  when: manual
-
-pages:
-  stage: deploy
-  script:
-    - ./gradlew asciidoctor
-    - mkdir -p .public
-    - cp -r build/asciidoc/html5/api-doc .public
-    - mv .public public
-  artifacts:
-    paths:
-      - public
-  only:
-    - master

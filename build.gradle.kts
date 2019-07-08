@@ -10,6 +10,7 @@ val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java)
     .kotlinPluginVersion
 
 val neo4jVersion = "3.4.+" // should match version in Dockerfile
+val springDataNeo4jVersion = "5.1.9"
 
 plugins {
     kotlin("jvm") version "1.3.41"
@@ -39,7 +40,7 @@ dependencies {
         exclude(module = "neo4j-ogm-http-driver")
     }
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.data:spring-data-neo4j:5.1.4.RELEASE")
+    implementation("org.springframework.data:spring-data-neo4j:$springDataNeo4jVersion.RELEASE")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     // Add Tomcat as "provided" runtime so that we can deploy as WAR
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")

@@ -11,6 +11,7 @@ val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java)
 
 val neo4jVersion = "3.4.+" // should match version in Dockerfile
 val springDataNeo4jVersion = "5.1.9"
+val junitVersion = "5.5.0"
 
 plugins {
     kotlin("jvm") version "1.3.41"
@@ -28,7 +29,7 @@ apply {
 
 dependencies {
     // BOMs
-    implementation("org.junit:junit-bom:5.4.0")
+    implementation("org.junit:junit-bom:$junitVersion")
 
     //
     // Runtime

@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.domain.model
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import java.time.LocalDateTime
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
@@ -17,6 +18,8 @@ sealed class Object : Comparable<Object> {
     data class Resource(
         val id: ResourceId
     ) : Object() {
+        val created: LocalDateTime = LocalDateTime.now()
+
         override fun compareTo(other: Object): Int {
             // Literals are always sorted below resources
             return when (other) {
@@ -29,6 +32,8 @@ sealed class Object : Comparable<Object> {
     data class Literal(
         val id: LiteralId
     ) : Object() {
+        val created: LocalDateTime = LocalDateTime.now()
+
         override fun compareTo(other: Object): Int {
             // Resources are always sorted before resources
             return when (other) {

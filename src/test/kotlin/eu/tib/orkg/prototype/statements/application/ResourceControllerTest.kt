@@ -94,12 +94,14 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     private fun resourceResponseFields() =
         responseFields(
             fieldWithPath("id").description("The resource ID"),
-            fieldWithPath("label").description("The resource label")
+            fieldWithPath("label").description("The resource label"),
+            fieldWithPath("created").ignored()
         )
 
     private fun resourceListResponseFields() =
         responseFields(
             fieldWithPath("[].id").description("The resource ID"),
-            fieldWithPath("[].label").description("The resource label")
+            fieldWithPath("[].label").description("The resource label"),
+            fieldWithPath("[].created").ignored()
         )
 }

@@ -212,12 +212,15 @@ class StatementControllerTest : RestDocumentationBaseTest() {
     private fun statementResponseFields() =
         responseFields(
             fieldWithPath("id").description("The statement ID"),
+            fieldWithPath("created").ignored(),
             fieldWithPath("subject").description("A resource"),
             fieldWithPath("subject.id").description("The ID of the subject resource"),
             fieldWithPath("subject.label").description("The label of the subject resource"),
+            fieldWithPath("subject.created").ignored(),
             fieldWithPath("predicate").description("A predicate"),
             fieldWithPath("predicate.id").description("The ID of the predicate"),
             fieldWithPath("predicate.label").description("The label of the predicate"),
+            fieldWithPath("predicate.created").ignored(),
             fieldWithPath("object").description("An object"),
             fieldWithPath("object.id").description("The ID of the object"),
             fieldWithPath("object.label").description("The label of the object"),
@@ -227,12 +230,15 @@ class StatementControllerTest : RestDocumentationBaseTest() {
     private fun statementListResponseFields() =
         responseFields(
             fieldWithPath("[].id").description("The statement ID"),
+            fieldWithPath("[].created").ignored(),
             fieldWithPath("[].subject").description("A resource"),
             fieldWithPath("[].subject.id").description("The ID of the subject resource"),
             fieldWithPath("[].subject.label").description("The label of the subject resource"),
+            fieldWithPath("[].subject.created").ignored(),
             fieldWithPath("[].predicate").description("A predicate"),
             fieldWithPath("[].predicate.id").description("The ID of the predicate"),
             fieldWithPath("[].predicate.label").description("The label of the predicate"),
+            fieldWithPath("[].predicate.created").ignored(),
             fieldWithPath("[].object").description("An object"),
             fieldWithPath("[].object.id").description("The ID of the object"),
             fieldWithPath("[].object.label").description("The label of the object"),

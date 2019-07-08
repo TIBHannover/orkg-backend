@@ -18,7 +18,7 @@ plugins {
     kotlin("plugin.spring") version "1.3.41"
     id("org.springframework.boot") version "2.1.6.RELEASE"
     id("org.asciidoctor.convert") version "1.5.9.2"
-    id("com.palantir.docker") version "0.21.0"
+    id("com.palantir.docker") version "0.22.1"
     jacoco
     war
 }

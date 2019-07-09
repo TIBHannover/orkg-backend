@@ -70,7 +70,6 @@ dependencies {
 
 val snippetsDir = file("build/generated-snippets")
 
-
 allprojects {
     repositories {
         jcenter()
@@ -101,7 +100,7 @@ tasks {
         inputs.dir(snippetsDir)
         dependsOn("integrationTest")
 
-        //outputs.upToDateWhen { false }
+        // outputs.upToDateWhen { false }
         backends("html5")
 
         options(mapOf("doctype" to "book"))

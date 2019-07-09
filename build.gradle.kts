@@ -20,6 +20,7 @@ plugins {
     id("com.coditory.integration-test") version "1.0.6"
     id("org.asciidoctor.convert") version "1.5.9.2"
     id("com.palantir.docker") version "0.22.1"
+    id("com.diffplug.gradle.spotless") version "3.23.1"
     jacoco
     war
 }
@@ -134,5 +135,11 @@ tasks {
             )
         )
         files(tasks["war"].outputs)
+    }
+
+    spotless {
+        kotlin {
+            ktlint()
+        }
     }
 }

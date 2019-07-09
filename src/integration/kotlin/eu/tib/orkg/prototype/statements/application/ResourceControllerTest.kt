@@ -1,13 +1,17 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.statements.domain.model.*
-import org.junit.jupiter.api.*
-import org.springframework.beans.factory.annotation.*
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*
-import org.springframework.restdocs.payload.PayloadDocumentation.*
-import org.springframework.restdocs.request.RequestDocumentation.*
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
-import org.springframework.transaction.annotation.*
+import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.transaction.annotation.Transactional
 
 @DisplayName("Resource Controller")
 @Transactional

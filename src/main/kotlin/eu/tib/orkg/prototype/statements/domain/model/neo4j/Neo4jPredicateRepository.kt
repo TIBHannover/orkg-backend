@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
-import eu.tib.orkg.prototype.statements.domain.model.*
-import org.springframework.data.neo4j.repository.*
-import java.util.*
+import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import org.springframework.data.neo4j.repository.Neo4jRepository
+import java.util.Optional
 
 interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, Long> {
     override fun findAll(): Iterable<Neo4jPredicate>

@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-import java.util.*
+import java.util.Optional
 
 /**
  * A service dealing with statements that have resources in the object position.

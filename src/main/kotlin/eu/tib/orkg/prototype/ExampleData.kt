@@ -1,12 +1,17 @@
 package eu.tib.orkg.prototype
 
 
-import com.fasterxml.jackson.module.kotlin.*
-import eu.tib.orkg.prototype.statements.domain.model.*
-import org.springframework.boot.*
-import org.springframework.context.annotation.*
-import org.springframework.stereotype.*
-import java.io.*
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import eu.tib.orkg.prototype.statements.domain.model.PredicateService
+import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import eu.tib.orkg.prototype.statements.domain.model.StatementWithLiteralService
+import eu.tib.orkg.prototype.statements.domain.model.StatementWithResourceService
+import org.springframework.boot.ApplicationArguments
+import org.springframework.boot.ApplicationRunner
+import org.springframework.context.annotation.Profile
+import org.springframework.stereotype.Component
+import java.io.InputStream
 
 
 @Component
@@ -121,8 +126,8 @@ class ExampleData(
 
         // Adding resources from the json file
         val mapper = jacksonObjectMapper()
-        val inStream: InputStream = javaClass.classLoader.getResourceAsStream("data/ResearchFields.json")
-        val fields = mapper.readValue<List<ResearchField>>(inStream)
+        val inStream: InputStream? = javaClass.classLoader.getResourceAsStream("data/ResearchFields.json")
+        val fields = mapper.readValue<List<ResearchField>>(inStream!!)
         for (field in fields) { //TODO: make this section recursive and extract a function
             val newField = resourceService.create(field.name).id!!
             statementWithResourceService.create(researchField, subfieldPredicate, newField)

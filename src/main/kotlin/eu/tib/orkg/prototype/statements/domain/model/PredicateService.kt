@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-import eu.tib.orkg.prototype.statements.application.*
-import java.util.*
+import eu.tib.orkg.prototype.statements.application.CreatePredicateRequest
+import java.util.Optional
 
 interface PredicateService {
     /**

@@ -1,11 +1,15 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
-import eu.tib.orkg.prototype.statements.application.*
-import eu.tib.orkg.prototype.statements.domain.model.*
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.*
-import org.springframework.stereotype.*
-import org.springframework.transaction.annotation.*
-import java.util.*
+import eu.tib.orkg.prototype.statements.application.CreatePredicateRequest
+import eu.tib.orkg.prototype.statements.domain.model.Predicate
+import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.PredicateService
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jPredicate
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jPredicateIdGenerator
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jPredicateRepository
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.util.Optional
 
 @Service
 @Transactional

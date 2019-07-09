@@ -1,7 +1,9 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-import com.fasterxml.jackson.databind.annotation.*
-import eu.tib.orkg.prototype.statements.application.json.*
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import eu.tib.orkg.prototype.statements.application.json.PredicateIdDeserializer
+import eu.tib.orkg.prototype.statements.application.json.PredicateIdSerializer
 
 @JsonDeserialize(using = PredicateIdDeserializer::class)
 @JsonSerialize(using = PredicateIdSerializer::class)

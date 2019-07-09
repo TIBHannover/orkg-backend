@@ -1,11 +1,27 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.statements.domain.model.*
-import org.springframework.http.*
-import org.springframework.http.HttpStatus.*
-import org.springframework.http.ResponseEntity.*
-import org.springframework.web.bind.annotation.*
-import org.springframework.web.util.*
+import eu.tib.orkg.prototype.statements.domain.model.LiteralId
+import eu.tib.orkg.prototype.statements.domain.model.Object
+import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.Statement
+import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import eu.tib.orkg.prototype.statements.domain.model.StatementWithLiteralService
+import eu.tib.orkg.prototype.statements.domain.model.StatementWithResourceService
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.ResponseEntity.created
+import org.springframework.http.ResponseEntity.notFound
+import org.springframework.http.ResponseEntity.ok
+import org.springframework.web.bind.annotation.CrossOrigin
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/statements")

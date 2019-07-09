@@ -1,13 +1,20 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.statements.domain.model.*
-import org.junit.jupiter.api.*
-import org.springframework.beans.factory.annotation.*
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*
-import org.springframework.restdocs.payload.PayloadDocumentation.*
-import org.springframework.test.web.servlet.result.*
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
-import org.springframework.transaction.annotation.*
+import eu.tib.orkg.prototype.statements.domain.model.LiteralService
+import eu.tib.orkg.prototype.statements.domain.model.PredicateService
+import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import eu.tib.orkg.prototype.statements.domain.model.StatementWithLiteralService
+import eu.tib.orkg.prototype.statements.domain.model.StatementWithResourceService
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.requestBody
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.transaction.annotation.Transactional
 
 @DisplayName("Statement Controller")
 @Transactional

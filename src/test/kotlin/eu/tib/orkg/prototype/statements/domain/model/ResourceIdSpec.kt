@@ -1,7 +1,10 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-import org.assertj.core.api.Assertions.*
-import org.junit.jupiter.api.*
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatCode
+import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
 @DisplayName("A subject id")
 class ResourceIdSpec {

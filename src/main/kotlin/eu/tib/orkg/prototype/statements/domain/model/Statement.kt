@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-import com.fasterxml.jackson.annotation.*
+import com.fasterxml.jackson.annotation.JsonProperty
 
 data class Statement(
     val statementId: StatementId? = null,

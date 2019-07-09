@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-import java.util.*
+import java.util.Optional
 
 interface LiteralService {
     /**

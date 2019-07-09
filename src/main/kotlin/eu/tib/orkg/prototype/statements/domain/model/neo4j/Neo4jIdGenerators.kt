@@ -1,8 +1,12 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
-import eu.tib.orkg.prototype.statements.domain.model.*
-import org.springframework.beans.factory.annotation.*
-import org.springframework.stereotype.*
+import eu.tib.orkg.prototype.statements.domain.model.IdentityGenerator
+import eu.tib.orkg.prototype.statements.domain.model.LiteralId
+import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 
 // T should extend identity class?
 abstract class RepositoryBasedIdGenerator<T, C : Neo4jCounter> : IdentityGenerator<T> {

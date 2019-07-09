@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-import eu.tib.orkg.prototype.statements.application.*
-import java.time.*
+import eu.tib.orkg.prototype.statements.application.StatementResponse
+import java.time.LocalDateTime
 
 data class StatementWithLiteral(
     val id: StatementId,

@@ -1,7 +1,8 @@
 package eu.tib.orkg.prototype.core
 
-import org.assertj.core.api.Assertions.*
-import org.junit.jupiter.api.*
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 
 interface IdTest<T : Any> {
 

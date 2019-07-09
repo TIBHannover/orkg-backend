@@ -1,14 +1,17 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
-import eu.tib.orkg.prototype.statements.application.*
-import eu.tib.orkg.prototype.statements.domain.model.*
-import org.assertj.core.api.Assertions.*
-import org.junit.jupiter.api.*
-import org.junit.jupiter.api.extension.*
-import org.springframework.beans.factory.annotation.*
-import org.springframework.boot.test.context.*
-import org.springframework.test.context.junit.jupiter.*
-import org.springframework.transaction.annotation.*
+import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
+import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)
@@ -91,9 +94,9 @@ class Neo4jResourceServiceTest {
         service.create("irrelevant")
         service.create("also irrelevant")
         val expectedId = service.create("to be found").id
-println("expected: $expectedId")
+        println("expected: $expectedId")
         val found = service.findById(expectedId)
-println("found: $found")
+        println("found: $found")
         assertThat(found).isPresent
         assertThat(found.get().id).isEqualTo(expectedId)
     }

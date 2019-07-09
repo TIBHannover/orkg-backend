@@ -1,11 +1,15 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
-import eu.tib.orkg.prototype.statements.application.*
-import eu.tib.orkg.prototype.statements.domain.model.*
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.*
-import org.springframework.stereotype.*
-import org.springframework.transaction.annotation.*
-import java.util.*
+import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
+import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceIdGenerator
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceRepository
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.util.Optional
 
 @Service
 @Transactional

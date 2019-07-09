@@ -1,10 +1,20 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
-import com.fasterxml.jackson.annotation.*
-import eu.tib.orkg.prototype.statements.domain.model.*
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.*
-import org.neo4j.ogm.annotation.*
-import org.neo4j.ogm.annotation.typeconversion.*
+import com.fasterxml.jackson.annotation.JsonIgnore
+import eu.tib.orkg.prototype.statements.domain.model.Object
+import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.Statement
+import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.PredicateIdGraphAttributeConverter
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.StatementIdGraphAttributeConverter
+import org.neo4j.ogm.annotation.EndNode
+import org.neo4j.ogm.annotation.GeneratedValue
+import org.neo4j.ogm.annotation.Id
+import org.neo4j.ogm.annotation.Property
+import org.neo4j.ogm.annotation.RelationshipEntity
+import org.neo4j.ogm.annotation.Required
+import org.neo4j.ogm.annotation.StartNode
+import org.neo4j.ogm.annotation.typeconversion.Convert
 
 @RelationshipEntity(type = "RELATES_TO")
 data class Neo4jStatementWithResource(

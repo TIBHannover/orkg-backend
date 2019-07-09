@@ -1,10 +1,10 @@
 package eu.tib.orkg.prototype.statements.application.json
 
-import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.module.kotlin.*
-import eu.tib.orkg.prototype.statements.domain.model.*
-import org.assertj.core.api.Assertions.*
-import org.junit.jupiter.api.*
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 
 
 //@JsonTest

@@ -1,10 +1,14 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
-import eu.tib.orkg.prototype.statements.domain.model.*
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.*
-import org.springframework.stereotype.*
-import org.springframework.transaction.annotation.*
-import java.util.*
+import eu.tib.orkg.prototype.statements.domain.model.Literal
+import eu.tib.orkg.prototype.statements.domain.model.LiteralId
+import eu.tib.orkg.prototype.statements.domain.model.LiteralService
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteral
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteralIdGenerator
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteralRepository
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.util.Optional
 
 @Service
 @Transactional

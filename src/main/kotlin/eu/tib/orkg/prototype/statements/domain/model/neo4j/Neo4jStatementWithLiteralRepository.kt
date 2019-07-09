@@ -1,9 +1,12 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
-import eu.tib.orkg.prototype.statements.domain.model.*
-import org.springframework.data.neo4j.annotation.*
-import org.springframework.data.neo4j.repository.*
-import java.util.*
+import eu.tib.orkg.prototype.statements.domain.model.LiteralId
+import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import org.springframework.data.neo4j.annotation.Query
+import org.springframework.data.neo4j.repository.Neo4jRepository
+import java.util.Optional
 
 interface Neo4jStatementWithLiteralRepository :
     Neo4jRepository<Neo4jStatementWithLiteral, Long> {

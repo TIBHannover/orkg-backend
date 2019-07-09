@@ -1,13 +1,16 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
-import eu.tib.orkg.prototype.statements.domain.model.*
-import org.assertj.core.api.Assertions.*
-import org.junit.jupiter.api.*
-import org.junit.jupiter.api.extension.*
-import org.springframework.beans.factory.annotation.*
-import org.springframework.boot.test.context.*
-import org.springframework.test.context.junit.jupiter.*
-import org.springframework.transaction.annotation.*
+import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest
 @ExtendWith(SpringExtension::class)

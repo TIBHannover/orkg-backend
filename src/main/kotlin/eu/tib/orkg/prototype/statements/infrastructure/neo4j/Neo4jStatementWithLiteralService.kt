@@ -1,11 +1,21 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
-import eu.tib.orkg.prototype.statements.domain.model.*
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.*
-import org.springframework.beans.factory.annotation.*
-import org.springframework.stereotype.*
-import org.springframework.transaction.annotation.*
-import java.util.*
+import eu.tib.orkg.prototype.statements.domain.model.LiteralId
+import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.PredicateService
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import eu.tib.orkg.prototype.statements.domain.model.StatementWithLiteral
+import eu.tib.orkg.prototype.statements.domain.model.StatementWithLiteralService
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteralRepository
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceRepository
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementIdGenerator
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementWithLiteral
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementWithLiteralRepository
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.util.Optional
 
 @Service
 @Transactional

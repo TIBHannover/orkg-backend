@@ -1,23 +1,28 @@
 package eu.tib.orkg.prototype.statements.application
 
-import com.fasterxml.jackson.databind.*
-import org.junit.jupiter.api.*
-import org.junit.jupiter.api.extension.*
-import org.springframework.beans.factory.annotation.*
-import org.springframework.boot.test.context.*
-import org.springframework.http.MediaType.*
-import org.springframework.restdocs.*
-import org.springframework.restdocs.headers.*
-import org.springframework.restdocs.headers.HeaderDocumentation.*
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.restdocs.RestDocumentationContextProvider
+import org.springframework.restdocs.RestDocumentationExtension
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
+import org.springframework.restdocs.headers.ResponseHeadersSnippet
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post
-import org.springframework.restdocs.operation.preprocess.Preprocessors.*
-import org.springframework.test.context.junit.jupiter.*
-import org.springframework.test.web.servlet.*
-import org.springframework.test.web.servlet.request.*
+import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest
+import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse
+import org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
+import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.setup.*
-import org.springframework.test.web.servlet.setup.MockMvcBuilders.*
+import org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup
+import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder
 
 /**
  * Base class for REST API documentation test.
@@ -34,12 +39,6 @@ abstract class RestDocumentationBaseTest {
     @Autowired
     protected lateinit var objectMapper: ObjectMapper
 
-    protected var document = document(
-        "{class-name}-{method-name}",
-        preprocessRequest(prettyPrint()),
-        preprocessResponse(prettyPrint())
-    )
-
     protected val snippet = "{class-name}-{method-name}"
 
     abstract fun createController(): Any
@@ -55,7 +54,13 @@ abstract class RestDocumentationBaseTest {
                     .withRequestDefaults(prettyPrint())
                     .withResponseDefaults(prettyPrint())
             )
-            .alwaysDo<StandaloneMockMvcBuilder>(document)
+            .alwaysDo<StandaloneMockMvcBuilder>(
+                document(
+                    "{class-name}-{method-name}",
+                    preprocessRequest(prettyPrint()),
+                    preprocessResponse(prettyPrint())
+                )
+            )
             .build()
     }
 

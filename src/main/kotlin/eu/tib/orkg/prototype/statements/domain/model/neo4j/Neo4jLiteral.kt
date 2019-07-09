@@ -1,10 +1,17 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
-import com.fasterxml.jackson.annotation.*
-import eu.tib.orkg.prototype.statements.domain.model.*
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.*
-import org.neo4j.ogm.annotation.*
-import org.neo4j.ogm.annotation.typeconversion.*
+import com.fasterxml.jackson.annotation.JsonIgnore
+import eu.tib.orkg.prototype.statements.domain.model.Literal
+import eu.tib.orkg.prototype.statements.domain.model.LiteralId
+import eu.tib.orkg.prototype.statements.domain.model.LiteralObject
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.LiteralIdGraphAttributeConverter
+import org.neo4j.ogm.annotation.GeneratedValue
+import org.neo4j.ogm.annotation.Id
+import org.neo4j.ogm.annotation.NodeEntity
+import org.neo4j.ogm.annotation.Property
+import org.neo4j.ogm.annotation.Relationship
+import org.neo4j.ogm.annotation.Required
+import org.neo4j.ogm.annotation.typeconversion.Convert
 
 @NodeEntity(label = "Literal")
 data class Neo4jLiteral(

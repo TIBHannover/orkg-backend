@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping
 
-import eu.tib.orkg.prototype.statements.domain.model.*
-import org.neo4j.ogm.typeconversion.*
+import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import org.neo4j.ogm.typeconversion.AttributeConverter
 
 /**
  * Helper class to convert [PredicateId]s for use as a property in a graph.

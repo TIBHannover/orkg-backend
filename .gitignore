@@ -16,4 +16,6 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 
 ### IntelliJ IDEA / JetBrains products
-.idea/
+.idea/*
+!.idea/codeStyles
+!.idea/codeStyles/*

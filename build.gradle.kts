@@ -1,5 +1,4 @@
 import org.asciidoctor.gradle.AsciidoctorTask
-import org.gradle.kotlin.dsl.kotlin
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -139,6 +138,9 @@ tasks {
 
     spotless {
         kotlin {
+            ktlint()
+        }
+        kotlinGradle {
             ktlint()
         }
     }

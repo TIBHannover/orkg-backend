@@ -23,7 +23,10 @@ class Neo4jResourceRepositoryTest {
     @Test
     @DisplayName("should not return null for resources list if none are defined")
     fun shouldNotReturnNullForResourcesListIfNoneAreDefined() {
-        Neo4jResource(label = "irrelevant", resourceId = ResourceId(1)).persist()
+        Neo4jResource(
+            label = "irrelevant",
+            resourceId = ResourceId(1)
+        ).persist()
 
         val result = resourceRepository.findAll()
 
@@ -34,8 +37,18 @@ class Neo4jResourceRepositoryTest {
     @Test
     @DisplayName("should create connection between two resources")
     fun shouldCreateConnectionBetweenTwoResources() {
-        val sub = resourceRepository.save(Neo4jResource(label = "subject", resourceId = ResourceId(1)))
-        val obj = resourceRepository.save(Neo4jResource(label = "object", resourceId = ResourceId(2)))
+        val sub = resourceRepository.save(
+            Neo4jResource(
+                label = "subject",
+                resourceId = ResourceId(1)
+            )
+        )
+        val obj = resourceRepository.save(
+            Neo4jResource(
+                label = "object",
+                resourceId = ResourceId(2)
+            )
+        )
 
         // Act
 

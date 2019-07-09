@@ -26,7 +26,8 @@ class Neo4jLiteralRepositoryTest {
     @Test
     @DisplayName("should save and retrieve statement")
     fun shouldSaveAndRetrieveStatement() {
-        Neo4jLiteral(label = "irrelevant", literalId = LiteralId(1)).persist()
+        Neo4jLiteral(label = "irrelevant", literalId = LiteralId(1))
+            .persist()
 
         val result = literalRepository.findAll()
 
@@ -36,8 +37,18 @@ class Neo4jLiteralRepositoryTest {
     @Test
     @DisplayName("should create connection between resource and literal")
     fun shouldCreateConnectionBetweenResourceAndLiteral() {
-        val sub = resourceRepository.save(Neo4jResource(label = "subject", resourceId = ResourceId(1)))
-        val obj = literalRepository.save(Neo4jLiteral(label = "object", literalId = LiteralId(1)))
+        val sub = resourceRepository.save(
+            Neo4jResource(
+                label = "subject",
+                resourceId = ResourceId(1)
+            )
+        )
+        val obj = literalRepository.save(
+            Neo4jLiteral(
+                label = "object",
+                literalId = LiteralId(1)
+            )
+        )
 
         statementRepository.save(
             Neo4jStatementWithLiteral(

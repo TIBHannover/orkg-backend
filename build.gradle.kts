@@ -99,7 +99,7 @@ tasks {
 
     "asciidoctor"(AsciidoctorTask::class) {
         inputs.dir(snippetsDir)
-        dependsOn("test")
+        dependsOn("integrationTest")
 
         //outputs.upToDateWhen { false }
         backends("html5")

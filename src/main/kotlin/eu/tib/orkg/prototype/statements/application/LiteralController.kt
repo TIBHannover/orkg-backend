@@ -38,8 +38,7 @@ class LiteralController(private val service: LiteralService) {
     ) =
         if (searchString == null)
             service.findAll()
-        else
-            if (exactMatch)
+        else if (exactMatch)
                 service.findAllByLabel(searchString)
             else
                 service.findAllByLabelContaining(searchString)
@@ -58,7 +57,8 @@ class LiteralController(private val service: LiteralService) {
 
     @PutMapping("/{id}")
     fun update(
-        @PathVariable id: LiteralId, @RequestBody literal: Literal
+        @PathVariable id: LiteralId,
+        @RequestBody literal: Literal
     ): ResponseEntity<Literal> {
         val found = service.findById(id)
 

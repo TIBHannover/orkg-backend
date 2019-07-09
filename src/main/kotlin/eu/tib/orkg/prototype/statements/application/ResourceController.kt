@@ -38,8 +38,7 @@ class ResourceController(private val service: ResourceService) {
     ) =
         if (searchString == null)
             service.findAll()
-        else
-            if (exactMatch)
+        else if (exactMatch)
                 service.findAllByLabel(searchString)
             else
                 service.findAllByLabelContaining(searchString)
@@ -58,7 +57,8 @@ class ResourceController(private val service: ResourceService) {
 
     @PutMapping("/{id}")
     fun update(
-        @PathVariable id: ResourceId, @RequestBody resource: Resource
+        @PathVariable id: ResourceId,
+        @RequestBody resource: Resource
     ): ResponseEntity<Resource> {
         val found = service.findById(id)
 

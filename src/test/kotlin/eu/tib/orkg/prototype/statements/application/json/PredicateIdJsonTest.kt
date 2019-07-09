@@ -6,8 +6,7 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-
-//@JsonTest
+// @JsonTest
 class PredicateIdJsonTest {
 
     private val mapper: ObjectMapper = ObjectMapper()

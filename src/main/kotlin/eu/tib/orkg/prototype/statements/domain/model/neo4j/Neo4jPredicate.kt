@@ -27,4 +27,3 @@ data class Neo4jPredicate(
 ) {
     fun toPredicate() = Predicate(predicateId, label!!)
 }
-

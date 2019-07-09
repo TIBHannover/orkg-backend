@@ -34,8 +34,7 @@ class PredicateController(private val service: PredicateService) {
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean
     ) = if (searchString == null)
         service.findAll()
-    else
-        if (exactMatch)
+    else if (exactMatch)
             service.findAllByLabel(searchString)
         else
             service.findAllByLabelContaining(searchString)

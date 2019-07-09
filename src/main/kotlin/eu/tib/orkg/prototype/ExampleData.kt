@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype
 
-
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
@@ -12,7 +11,6 @@ import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import java.io.InputStream
-
 
 @Component
 @Profile("development", "docker")
@@ -108,7 +106,7 @@ class ExampleData(
         predicateService.create("has publication month")
         predicateService.create("has publication year")
         predicateService.create("has research field")
-        //predicateService.create("is a") // Already defined //TODO: When updated! -> make sure (is a) is present
+        // predicateService.create("is a") // Already defined //TODO: When updated! -> make sure (is a) is present
         predicateService.create("has contribution")
         predicateService.create("has research problem")
         // Demo Predicate Data
@@ -123,12 +121,11 @@ class ExampleData(
         resourceService.create("paper")
         val researchField = resourceService.create("Research field").id!!
 
-
         // Adding resources from the json file
         val mapper = jacksonObjectMapper()
         val inStream: InputStream? = javaClass.classLoader.getResourceAsStream("data/ResearchFields.json")
         val fields = mapper.readValue<List<ResearchField>>(inStream!!)
-        for (field in fields) { //TODO: make this section recursive and extract a function
+        for (field in fields) { // TODO: make this section recursive and extract a function
             val newField = resourceService.create(field.name).id!!
             statementWithResourceService.create(researchField, subfieldPredicate, newField)
             for (subfield in field.subfields) {
@@ -140,13 +137,10 @@ class ExampleData(
                 }
             }
         }
-
     }
 
     private fun statementsPresent() =
         statementWithResourceService.totalNumberOfStatements() > 0 || statementWithLiteralService.totalNumberOfStatements() > 0
 }
 
-
 data class ResearchField(val name: String, val subfields: List<ResearchField> = listOf())
-

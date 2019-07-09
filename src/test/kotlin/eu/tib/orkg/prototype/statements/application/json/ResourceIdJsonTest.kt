@@ -6,8 +6,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-
-//@JsonTest
+// @JsonTest
 class ResourceIdJsonTest {
 
     private val mapper: ObjectMapper = ObjectMapper()

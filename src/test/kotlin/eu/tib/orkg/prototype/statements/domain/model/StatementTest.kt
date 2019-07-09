@@ -59,7 +59,8 @@ class StatementTest {
     }
 
     private fun createStatementsWithDifferentSubjects(
-        smallerId: String, greaterId: String
+        smallerId: String,
+        greaterId: String
     ): Pair<Statement, Statement> {
         val smaller = Statement(
             null,
@@ -77,7 +78,8 @@ class StatementTest {
     }
 
     private fun createStatementsWithDifferentPredicates(
-        smallerId: String, greaterId: String
+        smallerId: String,
+        greaterId: String
     ): Pair<Statement, Statement> {
         val smaller = Statement(
             null,
@@ -95,7 +97,8 @@ class StatementTest {
     }
 
     private fun createStatementsWithDifferentObjectsWithResource(
-        smallerId: String, greaterId: String
+        smallerId: String,
+        greaterId: String
     ): Pair<Statement, Statement> {
         val smaller = Statement(
             null,

@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceObject
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ResourceIdGraphAttributeConverter
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
+import org.neo4j.ogm.annotation.Labels
 import org.neo4j.ogm.annotation.NodeEntity
 import org.neo4j.ogm.annotation.Property
 import org.neo4j.ogm.annotation.Relationship
@@ -33,6 +34,18 @@ data class Neo4jResource(
     @JsonIgnore
     var resources: MutableSet<Neo4jStatementWithResource> = mutableSetOf()
 
+    /**
+     * List of node labels. Labels other than the `Resource` label are mapped to classes.
+     */
+    @Labels
+    private var labels: MutableList<String> = mutableListOf()
+
+    /**
+     * The list of classes that this node belongs to.
+     */
+    val classes: List<String>
+        get() = labels.toList()
+
     constructor(label: String, resourceId: ResourceId) : this(null) {
         this.label = label
         this.resourceId = resourceId
@@ -41,4 +54,9 @@ data class Neo4jResource(
     fun toResource() = Resource(resourceId, label!!)
 
     fun toObject() = ResourceObject(resourceId, label!!)
+
+    /**
+     * Assign a class to this `Resource` node.
+     */
+    fun assignTo(clazz: String) = labels.add(clazz)
 }

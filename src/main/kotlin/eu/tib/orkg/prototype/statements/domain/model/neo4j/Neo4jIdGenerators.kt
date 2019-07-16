@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.IdentityGenerator
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
@@ -98,6 +99,18 @@ class Neo4jStatementIdGenerator : RepositoryBasedIdGenerator<StatementId, Neo4jS
     override fun createCounterNode() = Neo4jStatementIdCounter()
 
     override fun idFromLong(value: Long) = StatementId(value)
+
+    override fun repository() = repository
+}
+
+@Component
+class Neo4jClassIdGenerator : RepositoryBasedIdGenerator<ClassId, Neo4jClassIdCounter>() {
+    @Autowired
+    private lateinit var repository: Neo4jClassIdCounterRepository
+
+    override fun createCounterNode() = Neo4jClassIdCounter()
+
+    override fun idFromLong(value: Long) = ClassId(value)
 
     override fun repository() = repository
 }

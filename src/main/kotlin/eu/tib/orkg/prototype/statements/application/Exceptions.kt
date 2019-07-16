@@ -8,3 +8,6 @@ class ResourceNotFound : RuntimeException()
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class LiteralNotFound : RuntimeException()
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+class ClassNotFound : java.lang.RuntimeException()

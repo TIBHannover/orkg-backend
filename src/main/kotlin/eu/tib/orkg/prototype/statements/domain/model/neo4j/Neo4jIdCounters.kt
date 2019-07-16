@@ -53,3 +53,12 @@ data class Neo4jStatementIdCounter(
 ) : Neo4jCounter()
 
 interface Neo4jStatementIdCounterRepository : Neo4jIdCounterRepository<Neo4jStatementIdCounter>
+
+@NodeEntity("_ClassIdCounter")
+data class Neo4jClassIdCounter(
+    @Id
+    @GeneratedValue
+    private var id: Long? = null
+) : Neo4jCounter()
+
+interface Neo4jClassIdCounterRepository : Neo4jIdCounterRepository<Neo4jClassIdCounter>

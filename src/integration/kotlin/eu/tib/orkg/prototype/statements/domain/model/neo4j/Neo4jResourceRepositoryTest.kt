@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
@@ -79,6 +80,24 @@ class Neo4jResourceRepositoryTest {
         assertThat(found.resources).isNotEmpty
         assertThat(found.resources).hasSize(1)
         assertThat(found.resources.first().`object`?.label).isEqualTo("object")
+    }
+
+    @Test
+    fun testFindingClasses() {
+        val resourceToBeFound = Neo4jResource("tiger", ResourceId("R1")).also { it.assignTo("C0") }
+        resourceRepository.save(resourceToBeFound)
+
+        // with different class
+        resourceRepository.save(Neo4jResource("cat", ResourceId("R2")).also { it.assignTo("C99") })
+
+        // without class
+        resourceRepository.save(Neo4jResource("cat", ResourceId("R2")))
+
+        val result = resourceRepository.findAllByClass("C0")
+
+        assertThat(result).hasSize(1)
+        assertThat(result).containsExactlyInAnyOrder(resourceToBeFound)
+        assertThat(result.first().classes).containsExactlyInAnyOrder(ClassId("C0"))
     }
 
     fun Neo4jResource.persist(): Neo4jResource = resourceRepository.save(this)

@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
@@ -32,6 +33,6 @@ class Neo4jResourceTest {
 
         val persistedResource = repository.save(resource)
 
-        assertThat(persistedResource.classes).containsExactlyInAnyOrder("Foo", "Bar")
+        assertThat(persistedResource.classes).containsExactlyInAnyOrder(ClassId("Foo"), ClassId("Bar"))
     }
 }

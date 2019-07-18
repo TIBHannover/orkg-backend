@@ -37,6 +37,11 @@ interface ResourceService {
     fun findAllByLabelContaining(part: String): Iterable<Resource>
 
     /**
+     * Find all resources belonging to a given class.
+     */
+    fun findAllByClass(id: ClassId): Iterable<Resource>
+
+    /**
      * Update a resource.
      */
     fun update(resource: Resource): Resource

@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import java.util.Optional
 
@@ -17,4 +18,7 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     fun findAllByLabelMatchesRegex(label: String): Iterable<Neo4jResource>
 
     fun findAllByLabelContaining(part: String): Iterable<Neo4jResource>
+
+    @Query("""MATCH (node:`Resource`) WHERE {0} IN labels(node) RETURN node""")
+    fun findAllByClass(`class`: String): Iterable<Neo4jResource>
 }

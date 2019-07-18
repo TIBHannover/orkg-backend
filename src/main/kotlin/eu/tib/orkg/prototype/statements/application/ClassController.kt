@@ -3,6 +3,8 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
+import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -21,13 +23,20 @@ import java.net.URI
 @RestController
 @RequestMapping("/api/classes/")
 @CrossOrigin(origins = ["*"])
-class ClassController(private val service: ClassService) {
+class ClassController(private val service: ClassService, private val resourceService: ResourceService) {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: ClassId): Class =
         service
             .findById(id)
             .orElseThrow { ClassNotFound() }
+
+    @GetMapping("/{id}/resources/")
+    fun findResourcesWithClass(@PathVariable id: ClassId): Iterable<Resource> {
+        val result = resourceService.findAllByClass(id)
+        if (result.none()) throw ResourceNotFound()
+        return result
+    }
 
     @GetMapping("/")
     fun findByLabel(

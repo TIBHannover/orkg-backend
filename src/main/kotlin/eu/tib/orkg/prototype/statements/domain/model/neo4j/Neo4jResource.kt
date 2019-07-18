@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceObject
@@ -43,8 +44,8 @@ data class Neo4jResource(
     /**
      * The list of classes that this node belongs to.
      */
-    val classes: List<String>
-        get() = labels.toList()
+    val classes: Set<ClassId>
+        get() = labels.map(::ClassId).toSet()
 
     constructor(label: String, resourceId: ResourceId) : this(null) {
         this.label = label

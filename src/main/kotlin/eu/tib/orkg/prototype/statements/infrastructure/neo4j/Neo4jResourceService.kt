@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
@@ -17,7 +18,6 @@ class Neo4jResourceService(
     private val neo4jResourceRepository: Neo4jResourceRepository,
     private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator
 ) : ResourceService {
-
     override fun create(label: String): Resource {
         val resourceId = neo4jResourceIdGenerator.nextIdentity()
         return neo4jResourceRepository.save(Neo4jResource(label = label, resourceId = resourceId))
@@ -45,6 +45,10 @@ class Neo4jResourceService(
 
     override fun findAllByLabelContaining(part: String): Iterable<Resource> =
         neo4jResourceRepository.findAllByLabelMatchesRegex("(?i).*$part.*") // TODO: See declaration
+            .map(Neo4jResource::toResource)
+
+    override fun findAllByClass(id: ClassId): Iterable<Resource> =
+        neo4jResourceRepository.findAllByClass(id.toString())
             .map(Neo4jResource::toResource)
 
     override fun update(resource: Resource): Resource {

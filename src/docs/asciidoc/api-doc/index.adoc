@@ -149,6 +149,8 @@ A `GET` request lists all the statements with a given predicate:
 
 operation::statement-controller-test-lookup-by-predicate[snippets='curl-request,http-response']
 
+include::parts/classes.adoc[]
+
 [[resources]]
 == Resources
 
@@ -166,6 +168,7 @@ operation::resource-controller-test-index[snippets='curl-request,http-response']
 === Creating resources
 
 A `POST` request creates a new resource with a given label.
+An optional set of classes can be provided.
 The response will be `201 Created` when successful.
 The resource can be retrieved by following the URI in the `Location` header field.
 

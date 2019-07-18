@@ -1,0 +1,42 @@
+[[classes]]
+== Classes
+
+Classes represent concepts in the knowledge graph.
+They can be attached to <<Resources,resources>> to indicate that the resource belongs to the respective class.
+
+[[classes-list]]
+=== Listing classes
+
+A `GET` request lists all classes:
+
+operation::class-controller-test-index[snippets='curl-request,http-response']
+
+[[classes-create]]
+=== Creating classes
+
+A `POST` request creates a new class with a given label.
+An optional URI can be given to link to the class in an external ontology (RDF).
+The response will be `201 Created` when successful.
+The class can be retrieved by following the URI in the `Location` header field.
+
+NOTE: The created class is returned in the body for convenience. This might be subject to change.
+
+operation::class-controller-test-add[snippets='request-fields,curl-request,http-response']
+
+The response body consists of the following fields:
+
+operation::class-controller-test-add[snippets='response-fields']
+
+[[classes-fetch]]
+=== Fetching a class
+
+A `GET` request provides information about a class.
+
+operation::class-controller-test-fetch[snippets='curl-request,http-response']
+
+[[classes-lookup]]
+=== Lookup a class by label
+
+Classes can be looked up by label by providing a search fragment.
+
+operation::class-controller-test-lookup[snippets='curl-request,http-response']

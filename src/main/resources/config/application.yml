@@ -25,3 +25,6 @@ spring:
     neo4j:
       embedded:
         enabled: true
+logging:
+  level:
+    org.neo4j.ogm.drivers: DEBUG

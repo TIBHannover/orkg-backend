@@ -99,6 +99,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         responseFields(
             fieldWithPath("id").description("The resource ID"),
             fieldWithPath("label").description("The resource label"),
+            fieldWithPath("classes").description("The list of classes the resource belongs to"),
             fieldWithPath("created").ignored()
         )
 
@@ -106,6 +107,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         responseFields(
             fieldWithPath("[].id").description("The resource ID"),
             fieldWithPath("[].label").description("The resource label"),
+            fieldWithPath("[].classes").description("The list of classes the resource belongs to"),
             fieldWithPath("[].created").ignored()
         )
 }

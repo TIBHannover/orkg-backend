@@ -52,7 +52,7 @@ data class Neo4jResource(
         this.resourceId = resourceId
     }
 
-    fun toResource() = Resource(resourceId, label!!)
+    fun toResource() = Resource(resourceId, label!!, classes)
 
     fun toObject() = ResourceObject(resourceId, label!!)
 

@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
@@ -73,5 +74,6 @@ class ResourceController(private val service: ResourceService) {
 
 data class CreateResourceRequest(
     val id: ResourceId?,
-    val label: String
+    val label: String,
+    val classes: Set<ClassId> = emptySet()
 )

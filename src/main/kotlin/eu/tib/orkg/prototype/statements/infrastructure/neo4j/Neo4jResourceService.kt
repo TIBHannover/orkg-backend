@@ -26,9 +26,9 @@ class Neo4jResourceService(
 
     override fun create(request: CreateResourceRequest): Resource {
         val id = request.id ?: neo4jResourceIdGenerator.nextIdentity()
-        return neo4jResourceRepository.save(
-            Neo4jResource(label = request.label, resourceId = id)
-        ).toResource()
+        val resource = Neo4jResource(label = request.label, resourceId = id)
+        request.classes.forEach { resource.assignTo(it.toString()) }
+        return neo4jResourceRepository.save(resource).toResource()
     }
 
     override fun findAll() =

@@ -41,6 +41,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
         exclude(module = "neo4j-ogm-http-driver")
     }
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.data:spring-data-neo4j:$springDataNeo4jVersion.RELEASE")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

@@ -25,8 +25,20 @@ services:
     volumes:
       - 'neo4j-data:/data'
 
+  postgres:
+    image: postgres:11
+    ports:
+      - '5432:5432'
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    networks:
+      - backend
+    volumes:
+      - 'postgres-data:/var/lib/postgresql/data/pgdata'
+
 networks:
   backend:
 
 volumes:
   neo4j-data:
+  postgres-data:

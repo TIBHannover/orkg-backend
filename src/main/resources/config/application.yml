@@ -3,6 +3,9 @@ server:
 spring:
   profiles:
     active: development
+  # Get rid of "org.postgresql.jdbc.PgConnection.createClob() not implemented" error, see
+  # https://hibernate.atlassian.net/browse/HHH-12368
+  jpa.properties.hibernate.jdbc.lob.non_contextual_creation: true
 ---
 spring:
   profiles: development

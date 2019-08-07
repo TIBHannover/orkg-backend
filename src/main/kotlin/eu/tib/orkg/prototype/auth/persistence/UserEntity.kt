@@ -51,7 +51,7 @@ open class RoleEntity {
 /**
  * Decorator for user entities.
  */
-class UserPrincipal(private val userEntity: UserEntity) : UserDetails {
+data class UserPrincipal(private val userEntity: UserEntity) : UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> =
         userEntity.roles
             .map(RoleEntity::name)

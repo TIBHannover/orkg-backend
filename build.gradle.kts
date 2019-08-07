@@ -12,6 +12,7 @@ val neo4jVersion = "3.5.+" // should match version in Dockerfile
 val springDataNeo4jVersion = "5.1.9"
 val springSecurityOAuthVersion = "2.3.6"
 val junitVersion = "5.5.0"
+val testContainersVersion = "1.11.3"
 
 plugins {
     kotlin("jvm") version "1.3.41"
@@ -74,6 +75,10 @@ dependencies {
 
     testImplementation("org.neo4j:neo4j-ogm-embedded-driver")
     testImplementation("org.neo4j:neo4j:$neo4jVersion")
+    // TestContainers
+    testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
+    testImplementation("org.testcontainers:junit-jupiter:$testContainersVersion")
+    testImplementation("org.testcontainers:postgresql:$testContainersVersion")
 
     //
     // Documentation

@@ -85,6 +85,7 @@ class ResourceServerConfiguration(
     override fun configure(http: HttpSecurity) {
         http
             .authorizeRequests()
+            .antMatchers("/auth/register").permitAll()
             .anyRequest().authenticated()
             .and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

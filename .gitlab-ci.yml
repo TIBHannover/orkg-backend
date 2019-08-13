@@ -1,5 +1,14 @@
 image: azul/zulu-openjdk-debian:8
 
+# Enable Docker-in-Docker (DinD) for TestContainers
+services:
+  - docker:dind
+
+variables:
+  DOCKER_HOST: "tcp://docker:2375"
+  # Improve performance by using overlayfs
+  DOCKER_DRIVER: overlay2
+
 before_script:
   # Tell Gradle to write its files to the build directory
   - export GRADLE_USER_HOME=`pwd`/.gradle

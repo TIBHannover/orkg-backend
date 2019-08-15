@@ -32,13 +32,3 @@ spring:
       uri: 'bolt://neo4j:7687'
       #username:
       #password:
----
-spring:
-  profiles: testing
-  data:
-    neo4j:
-      embedded:
-        enabled: true
-logging:
-  level:
-    org.neo4j.ogm.drivers: DEBUG

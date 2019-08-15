@@ -7,8 +7,10 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
+import org.springframework.transaction.annotation.Transactional
 
 @DataNeo4jTest
+@Transactional
 class Neo4jResourceTest {
 
     @Autowired

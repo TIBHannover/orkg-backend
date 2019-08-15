@@ -1,0 +1,23 @@
+spring:
+  # Get rid of "org.postgresql.jdbc.PgConnection.createClob() not implemented" error, see
+  # https://hibernate.atlassian.net/browse/HHH-12368
+  jpa.properties.hibernate.jdbc.lob.non_contextual_creation: true
+  data:
+    neo4j:
+      embedded:
+        enabled: true
+  datasource:
+    # Start Postgres via TestContainers. (The hostname, port number and database name are ignored.)
+    url: 'jdbc:tc:postgresql:11://localhost/db'
+    username: postgres
+    password: postgres
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    # generate-ddl: true
+logging:
+  level:
+    org.neo4j.ogm.drivers: DEBUG

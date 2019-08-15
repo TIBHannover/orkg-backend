@@ -1,20 +1,15 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.Neo4jServiceTest
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementWithResourceService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.springframework.transaction.annotation.Transactional
 
-@SpringBootTest
-@ExtendWith(SpringExtension::class)
-@Transactional
+@Neo4jServiceTest
 class Neo4jStatementWithResourceServiceTest {
 
     @Autowired

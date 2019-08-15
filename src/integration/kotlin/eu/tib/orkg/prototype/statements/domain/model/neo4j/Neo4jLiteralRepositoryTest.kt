@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import eu.tib.orkg.prototype.Neo4jRepositoryTest
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -7,15 +8,9 @@ import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.springframework.transaction.annotation.Transactional
 
-@SpringBootTest
-@ExtendWith(SpringExtension::class)
-@Transactional
+@Neo4jRepositoryTest
 class Neo4jLiteralRepositoryTest {
 
     @Autowired

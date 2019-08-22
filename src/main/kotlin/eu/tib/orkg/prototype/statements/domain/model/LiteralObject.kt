@@ -16,5 +16,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 )
 data class LiteralObject(
     val id: LiteralId?,
-    val label: String
+    val label: String,
+    val classes: Set<ClassId> = emptySet()
 )

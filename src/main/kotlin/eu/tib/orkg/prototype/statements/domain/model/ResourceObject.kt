@@ -16,5 +16,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 )
 data class ResourceObject(
     val id: ResourceId?,
-    val label: String
+    val label: String,
+    val classes: Set<ClassId> = emptySet()
 )

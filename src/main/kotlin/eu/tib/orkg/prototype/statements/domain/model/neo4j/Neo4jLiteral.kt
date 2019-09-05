@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralObject
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.LiteralIdGraphAttributeConverter
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
 import org.neo4j.ogm.annotation.NodeEntity
@@ -32,6 +33,12 @@ data class Neo4jLiteral(
     @JsonIgnore
     var resources: MutableSet<Neo4jStatementWithLiteral> = mutableSetOf()
 
+    @JsonIgnore
+    private var labels: MutableList<String> = mutableListOf()
+
+    val classes: Set<ClassId>
+        get() = labels.map(::ClassId).toSet()
+
     constructor(label: String, literalId: LiteralId) : this(null) {
         this.label = label
         this.literalId = literalId
@@ -39,5 +46,5 @@ data class Neo4jLiteral(
 
     fun toLiteral() = Literal(literalId, label!!)
 
-    fun toObject() = LiteralObject(literalId, label!!)
+    fun toObject() = LiteralObject(literalId, label!!, classes)
 }

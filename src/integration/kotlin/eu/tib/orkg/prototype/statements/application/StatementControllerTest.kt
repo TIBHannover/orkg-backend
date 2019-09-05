@@ -232,7 +232,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("object").description("An object"),
             fieldWithPath("object.id").description("The ID of the object"),
             fieldWithPath("object.label").description("The label of the object"),
-            fieldWithPath("object._class").description("The type of the object (resource or literal).")
+            fieldWithPath("object._class").description("The type of the object (resource or literal)."),
+            fieldWithPath("object.classes").description("The classes the object resource belongs to")
         )
 
     private fun statementListResponseFields() =
@@ -251,6 +252,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].object").description("An object"),
             fieldWithPath("[].object.id").description("The ID of the object"),
             fieldWithPath("[].object.label").description("The label of the object"),
-            fieldWithPath("[].object._class").description("The type of the object (resource or literal).")
+            fieldWithPath("[].object._class").description("The type of the object (resource or literal)."),
+            fieldWithPath("[].object.classes").description("The classes the object resource belongs to")
         )
 }

@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.util.LinkedList
+import java.util.Queue
 
 
 const val ID_ISA_PREDICATE = "P3"
@@ -110,8 +112,8 @@ class PaperController(private val resourceService: ResourceService, private val 
             {
                 val contributionId = resourceService.create(it.name).id!!
                 statementWithResourceService.create(paperId, hasContributionPredicate, contributionId)
-
-                processContributionData(contributionId, it.values, tempResources, predicates)
+                val resourceQueue : Queue<Pair<PredicateId, String>> = LinkedList()
+                processContributionData(contributionId, it.values, tempResources, predicates, resourceQueue)
             }
         }
 
@@ -121,9 +123,12 @@ class PaperController(private val resourceService: ResourceService, private val 
     fun processContributionData(subject: ResourceId,
                                 data: HashMap<String, List<PaperValue>>,
                                 tempResources: HashMap<String, String>,
-                                predicates: HashMap<String, PredicateId>) {
+                                predicates: HashMap<String, PredicateId>,
+                                resourceQueue : Queue<Pair<PredicateId, String>>,
+                                recursive: Boolean =false) {
 
         for ((predicate, value) in data) {
+            println(predicate)
             val predicateId = if (predicate.startsWith("_")) {
                 predicates[predicate]
             } else {
@@ -144,11 +149,15 @@ class PaperController(private val resourceService: ResourceService, private val 
                                 // need to check if the resource id exists in the map
                                 // o/w put it in a queue and then loop over the queue somehow
                                 // the loop needs to take into account that multiple iterations on the queue might be needed
-                                val tempId = tempResources[resource.`@id`]
-                                if (tempId!!.startsWith("L")) {
-                                    statementWithLiteralService.create(subject, predicateId!!, LiteralId(tempId))
-                                } else {
-                                    statementWithResourceService.create(subject, predicateId!!, ResourceId(tempId))
+                                if (!tempResources.containsKey(resource.`@id`))
+                                    resourceQueue.add(Pair(predicateId!!, resource.`@id`))
+                                else {
+                                    val tempId = tempResources[resource.`@id`]
+                                    if (tempId!!.startsWith("L")) {
+                                        statementWithLiteralService.create(subject, predicateId!!, LiteralId(tempId))
+                                    } else {
+                                        statementWithResourceService.create(subject, predicateId!!, ResourceId(tempId))
+                                    }
                                 }
                             }
                         }
@@ -160,7 +169,7 @@ class PaperController(private val resourceService: ResourceService, private val 
                         }
                         statementWithResourceService.create(subject, predicateId!!, newResource)
                         if (resource.values != null) { // TODO: This might be extracted (or should) to the outside of when
-                            processContributionData(newResource, resource.values, tempResources, predicates)
+                            processContributionData(newResource, resource.values, tempResources, predicates, resourceQueue, true)
                         }
                     }
                     resource.text != null -> { // create new literal
@@ -171,6 +180,23 @@ class PaperController(private val resourceService: ResourceService, private val 
                         statementWithLiteralService.create(subject, predicateId!!, newLiteral)
                     }
                 }
+            }
+        }
+        //Loop until the Queue is empty
+        var limit = 50 // this is just to ensure that a user won't add an id that is not there // TODO: check for better solution
+        while(!recursive && !resourceQueue.isEmpty() && limit > 0){
+            val pair = resourceQueue.remove()
+            limit--
+            if (tempResources.containsKey(pair.second)) {
+                val tempId = tempResources[pair.second]
+                if (tempId!!.startsWith("L")) {
+                    statementWithLiteralService.create(subject, pair.first, LiteralId(tempId))
+                } else {
+                    statementWithResourceService.create(subject, pair.first, ResourceId(tempId))
+                }
+            }
+            else {
+                resourceQueue.add(pair)
             }
         }
     }

@@ -21,7 +21,6 @@ import org.springframework.web.util.UriComponentsBuilder
 import java.util.LinkedList
 import java.util.Queue
 
-
 const val ID_ISA_PREDICATE = "P3"
 const val ID_PAPER_RESOURCE = "R10"
 const val ID_DOI_PREDICATE = "P26"
@@ -34,10 +33,13 @@ const val ID_CONTRIBUTION_PREDICATE = "P31"
 @RestController
 @RequestMapping("/api/papers/")
 @CrossOrigin(origins = ["*"])
-class PaperController(private val resourceService: ResourceService, private val literalService: LiteralService,
-                      private val predicateService: PredicateService,
-                      private val statementWithLiteralService: StatementWithLiteralService,
-                      private val statementWithResourceService: StatementWithResourceService){
+class PaperController(
+    private val resourceService: ResourceService,
+    private val literalService: LiteralService,
+    private val predicateService: PredicateService,
+    private val statementWithLiteralService: StatementWithLiteralService,
+    private val statementWithResourceService: StatementWithResourceService
+) {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
@@ -56,8 +58,7 @@ class PaperController(private val resourceService: ResourceService, private val 
         val hasContributionPredicate = predicateService.findById(PredicateId(ID_CONTRIBUTION_PREDICATE)).get().id!!
 
         val predicates: HashMap<String, PredicateId> = HashMap<String, PredicateId>()
-        if (paper.predicates != null)
-        {
+        if (paper.predicates != null) {
             paper.predicates.forEach {
                 val surrogateId = it[it.keys.first()]!!
                 val predicateId = predicateService.create(it.keys.first()).id!!
@@ -71,14 +72,13 @@ class PaperController(private val resourceService: ResourceService, private val 
         statementWithResourceService.create(paperId, isAPredicate, ResourceId(ID_PAPER_RESOURCE))
 
         // paper doi
-        if (paper.paper.doi != null)
-        {
+        if (paper.paper.doi != null) {
             val paperDoi = literalService.create(paper.paper.doi).id!!
             statementWithLiteralService.create(paperId, hasDoiPredicate, paperDoi)
         }
 
         // paper authors
-        paper.paper.authors!!.forEach{
+        paper.paper.authors!!.forEach {
             val authorId = if (it.id == null) {
                 resourceService.create(it.label!!).id!!
             } else {
@@ -108,11 +108,10 @@ class PaperController(private val resourceService: ResourceService, private val 
 
         // paper contribution data
         paper.paper.contributions!!.forEach {
-            if (it.values!= null && it.values.count() > 0)
-            {
+            if (it.values != null && it.values.count() > 0) {
                 val contributionId = resourceService.create(it.name).id!!
                 statementWithResourceService.create(paperId, hasContributionPredicate, contributionId)
-                val resourceQueue : Queue<Pair<PredicateId, String>> = LinkedList()
+                val resourceQueue: Queue<Pair<PredicateId, String>> = LinkedList()
                 processContributionData(contributionId, it.values, tempResources, predicates, resourceQueue)
             }
         }
@@ -120,12 +119,14 @@ class PaperController(private val resourceService: ResourceService, private val 
         return paperObj
     }
 
-    fun processContributionData(subject: ResourceId,
-                                data: HashMap<String, List<PaperValue>>,
-                                tempResources: HashMap<String, String>,
-                                predicates: HashMap<String, PredicateId>,
-                                resourceQueue : Queue<Pair<PredicateId, String>>,
-                                recursive: Boolean =false) {
+    fun processContributionData(
+        subject: ResourceId,
+        data: HashMap<String, List<PaperValue>>,
+        tempResources: HashMap<String, String>,
+        predicates: HashMap<String, PredicateId>,
+        resourceQueue: Queue<Pair<PredicateId, String>>,
+        recursive: Boolean = false
+    ) {
 
         for ((predicate, value) in data) {
             println(predicate)
@@ -182,9 +183,9 @@ class PaperController(private val resourceService: ResourceService, private val 
                 }
             }
         }
-        //Loop until the Queue is empty
+        // Loop until the Queue is empty
         var limit = 50 // this is just to ensure that a user won't add an id that is not there // TODO: check for better solution
-        while(!recursive && !resourceQueue.isEmpty() && limit > 0){
+        while (!recursive && !resourceQueue.isEmpty() && limit > 0) {
             val pair = resourceQueue.remove()
             limit--
             if (tempResources.containsKey(pair.second)) {
@@ -194,8 +195,7 @@ class PaperController(private val resourceService: ResourceService, private val 
                 } else {
                     statementWithResourceService.create(subject, pair.first, ResourceId(tempId))
                 }
-            }
-            else {
+            } else {
                 resourceQueue.add(pair)
             }
         }
@@ -211,8 +211,8 @@ data class Paper(
     val title: String,
     val doi: String?,
     val authors: List<Author>?,
-    val publicationMonth : Int?,
-    val publicationYear : Int?,
+    val publicationMonth: Int?,
+    val publicationYear: Int?,
     val researchField: String,
     val contributions: List<Contribution>?
 )

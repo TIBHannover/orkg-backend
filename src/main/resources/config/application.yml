@@ -3,6 +3,9 @@ server:
 spring:
   profiles:
     active: development
+  # Get rid of "org.postgresql.jdbc.PgConnection.createClob() not implemented" error, see
+  # https://hibernate.atlassian.net/browse/HHH-12368
+  jpa.properties.hibernate.jdbc.lob.non_contextual_creation: true
 ---
 spring:
   profiles: development
@@ -10,6 +13,17 @@ spring:
     neo4j:
       uri: 'bolt://localhost:7687'
       #auto-index: validate
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: 'jdbc:postgresql://localhost/postgres'
+    username: postgres
+    password: postgres
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    # generate-ddl: true
 ---
 spring:
   profiles: docker
@@ -18,13 +32,3 @@ spring:
       uri: 'bolt://neo4j:7687'
       #username:
       #password:
----
-spring:
-  profiles: testing
-  data:
-    neo4j:
-      embedded:
-        enabled: true
-logging:
-  level:
-    org.neo4j.ogm.drivers: DEBUG

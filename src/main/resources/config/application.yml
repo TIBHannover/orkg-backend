@@ -32,3 +32,14 @@ spring:
       uri: 'bolt://neo4j:7687'
       #username:
       #password:
+  datasource:
+    url: 'jdbc:postgresql://postgres/postgres'
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    jpa:
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
+      hibernate:
+        ddl-auto: validate
+      show-sql: true
+      # generate-ddl: true

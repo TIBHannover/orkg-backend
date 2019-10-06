@@ -111,7 +111,7 @@ class PaperController(
             if (it.values != null && it.values.count() > 0) {
                 val contributionId = resourceService.create(it.name).id!!
                 statementWithResourceService.create(paperId, hasContributionPredicate, contributionId)
-                val resourceQueue: Queue<Pair<PredicateId, String>> = LinkedList()
+                val resourceQueue: Queue<TempResource> = LinkedList()
                 processContributionData(contributionId, it.values, tempResources, predicates, resourceQueue)
             }
         }
@@ -124,7 +124,7 @@ class PaperController(
         data: HashMap<String, List<PaperValue>>,
         tempResources: HashMap<String, String>,
         predicates: HashMap<String, PredicateId>,
-        resourceQueue: Queue<Pair<PredicateId, String>>,
+        resourceQueue: Queue<TempResource>,
         recursive: Boolean = false
     ) {
 
@@ -151,7 +151,7 @@ class PaperController(
                                 // o/w put it in a queue and then loop over the queue somehow
                                 // the loop needs to take into account that multiple iterations on the queue might be needed
                                 if (!tempResources.containsKey(resource.`@id`))
-                                    resourceQueue.add(Pair(predicateId!!, resource.`@id`))
+                                    resourceQueue.add(TempResource(subject, predicateId!!, resource.`@id`))
                                 else {
                                     val tempId = tempResources[resource.`@id`]
                                     if (tempId!!.startsWith("L")) {
@@ -186,17 +186,17 @@ class PaperController(
         // Loop until the Queue is empty
         var limit = 50 // this is just to ensure that a user won't add an id that is not there // TODO: check for better solution
         while (!recursive && !resourceQueue.isEmpty() && limit > 0) {
-            val pair = resourceQueue.remove()
+            val temp = resourceQueue.remove()
             limit--
-            if (tempResources.containsKey(pair.second)) {
-                val tempId = tempResources[pair.second]
+            if (tempResources.containsKey(temp.`object`)) {
+                val tempId = tempResources[temp.`object`]
                 if (tempId!!.startsWith("L")) {
-                    statementWithLiteralService.create(subject, pair.first, LiteralId(tempId))
+                    statementWithLiteralService.create(temp.subject, temp.predicate, LiteralId(tempId))
                 } else {
-                    statementWithResourceService.create(subject, pair.first, ResourceId(tempId))
+                    statementWithResourceService.create(temp.subject, temp.predicate, ResourceId(tempId))
                 }
             } else {
-                resourceQueue.add(pair)
+                resourceQueue.add(temp)
             }
         }
     }
@@ -233,4 +233,10 @@ data class PaperValue(
     val text: String?,
     val label: String?,
     val values: HashMap<String, List<PaperValue>>?
+)
+
+data class TempResource(
+    val subject: ResourceId,
+    val predicate: PredicateId,
+    val `object`: String
 )

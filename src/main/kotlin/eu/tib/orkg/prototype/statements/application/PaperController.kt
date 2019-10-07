@@ -65,6 +65,10 @@ class PaperController(
             }
         }
 
+        paper.paper.contributions!!.forEach {
+            checkContributionData(it.values!!, predicates)
+        }
+
         // paper title
         val paperObj = resourceService.create(paper.paper.title)
         val paperId = paperObj.id!!
@@ -106,7 +110,7 @@ class PaperController(
         val tempResources: HashMap<String, String> = HashMap()
 
         // paper contribution data
-        paper.paper.contributions!!.forEach {
+        paper.paper.contributions.forEach {
             if (it.values != null && it.values.count() > 0) {
                 val contributionId = resourceService.create(it.name).id!!
                 statementWithResourceService.create(paperId, hasContributionPredicate, contributionId)
@@ -117,15 +121,10 @@ class PaperController(
         return paperObj
     }
 
-    fun processContributionData(
-        subject: ResourceId,
+    fun checkContributionData(
         data: HashMap<String, List<PaperValue>>,
-        tempResources: HashMap<String, String>,
-        predicates: HashMap<String, PredicateId>,
-        resourceQueue: Queue<TempResource>,
-        recursive: Boolean = false
+        predicates: HashMap<String, PredicateId>
     ) {
-
         for ((predicate, value) in data) {
             val predicateId = if (predicate.startsWith("_")) {
                 predicates[predicate]
@@ -142,13 +141,49 @@ class PaperController(
                                 val id = resource.`@id`
                                 if (!literalService.findById(LiteralId(id)).isPresent)
                                     throw RuntimeException("Literal $id is not found")
-                                statementWithLiteralService.create(subject, predicateId!!, LiteralId(id))
                             }
                             resource.`@id`.startsWith("R") -> {
                                 val id = resource.`@id`
                                 if (!resourceService.findById(ResourceId(id)).isPresent)
                                     throw RuntimeException("Resource $id is not found")
-                                statementWithResourceService.create(subject, predicateId!!, ResourceId(id))
+                            }
+                        }
+                    }
+                }
+                if (resource.values != null) {
+                    checkContributionData(
+                        resource.values,
+                        predicates
+                    )
+                }
+            }
+        }
+    }
+
+    fun processContributionData(
+        subject: ResourceId,
+        data: HashMap<String, List<PaperValue>>,
+        tempResources: HashMap<String, String>,
+        predicates: HashMap<String, PredicateId>,
+        resourceQueue: Queue<TempResource>,
+        recursive: Boolean = false
+    ) {
+
+        for ((predicate, value) in data) {
+            val predicateId = if (predicate.startsWith("_")) {
+                predicates[predicate]
+            } else {
+                PredicateId(predicate)
+            }
+            for (resource in value) {
+                when {
+                    resource.`@id` != null -> { // Add an existing resource or literal
+                        when {
+                            resource.`@id`.startsWith("L") -> {
+                                statementWithLiteralService.create(subject, predicateId!!, LiteralId(resource.`@id`))
+                            }
+                            resource.`@id`.startsWith("R") -> {
+                                statementWithResourceService.create(subject, predicateId!!, ResourceId(resource.`@id`))
                             }
                             resource.`@id`.startsWith("_") -> {
                                 if (!tempResources.containsKey(resource.`@id`))
@@ -170,7 +205,7 @@ class PaperController(
                             tempResources[resource.`@temp`] = newResource.value
                         }
                         statementWithResourceService.create(subject, predicateId!!, newResource)
-                        if (resource.values != null) { // TODO: This might be extracted (or should) to the outside of when
+                        if (resource.values != null) {
                             processContributionData(newResource, resource.values, tempResources, predicates, resourceQueue, true)
                         }
                     }

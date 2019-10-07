@@ -48,7 +48,6 @@ class PaperController(
     }
 
     fun insertData(paper: CreatePaperRequest): Resource {
-        // consts
         val isAPredicate = predicateService.findById(PredicateId(ID_ISA_PREDICATE)).get().id!!
         val hasDoiPredicate = predicateService.findById(PredicateId(ID_DOI_PREDICATE)).get().id!!
         val hasAuthorPredicate = predicateService.findById(PredicateId(ID_AUTHOR_PREDICATE)).get().id!!
@@ -57,7 +56,7 @@ class PaperController(
         val researchFieldPredicate = predicateService.findById(PredicateId(ID_RESEARCH_FIELD_PREDICATE)).get().id!!
         val hasContributionPredicate = predicateService.findById(PredicateId(ID_CONTRIBUTION_PREDICATE)).get().id!!
 
-        val predicates: HashMap<String, PredicateId> = HashMap<String, PredicateId>()
+        val predicates: HashMap<String, PredicateId> = HashMap()
         if (paper.predicates != null) {
             paper.predicates.forEach {
                 val surrogateId = it[it.keys.first()]!!
@@ -115,7 +114,6 @@ class PaperController(
                 processContributionData(contributionId, it.values, tempResources, predicates, resourceQueue)
             }
         }
-
         return paperObj
     }
 
@@ -129,12 +127,13 @@ class PaperController(
     ) {
 
         for ((predicate, value) in data) {
-            println(predicate)
             val predicateId = if (predicate.startsWith("_")) {
                 predicates[predicate]
             } else {
                 PredicateId(predicate) //
             }
+            if(!predicateService.findById(predicateId).isPresent)
+                throw PredicateNotFound(predicate)
             for (resource in value) {
                 when {
                     resource.`@id` != null -> { // Add an existing resource or literal

@@ -11,3 +11,6 @@ class LiteralNotFound : RuntimeException()
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class ClassNotFound : java.lang.RuntimeException()
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+class PredicateNotFound(predicate: String) : RuntimeException("Predicate $predicate is not found")

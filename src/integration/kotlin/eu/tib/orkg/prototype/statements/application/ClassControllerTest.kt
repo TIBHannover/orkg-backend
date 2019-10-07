@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
+import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,6 +22,9 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var service: ClassService
+
+    @Autowired
+    private lateinit var resourceService: ResourceService
 
     override fun createController() = controller
 
@@ -94,6 +98,24 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             )
     }
 
+    @Test
+    fun lookupByClass() {
+        val id = service.create("research contribution").id
+        val set = listOf(id).toSet()
+        resourceService.create(CreateResourceRequest(null, "Contribution 1", set))
+        resourceService.create(CreateResourceRequest(null, "Contribution 2", set))
+
+        mockMvc
+            .perform(getRequestTo("/api/classes/$id/resources/"))
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    snippet,
+                    resourceListResponseFields()
+                )
+            )
+    }
+
     private fun classResponseFields() =
         responseFields(
             fieldWithPath("id").description("The class ID").optional(),
@@ -106,5 +128,13 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].id").description("The class ID").optional(),
             fieldWithPath("[].label").description("The class label"),
             fieldWithPath("[].uri").description("An optional URI to describe the class (RDF)").optional()
+        )
+
+    private fun resourceListResponseFields() =
+        responseFields(
+            fieldWithPath("[].id").description("The resource ID"),
+            fieldWithPath("[].label").description("The resource label"),
+            fieldWithPath("[].classes").description("The list of classes the resource belongs to"),
+            fieldWithPath("[].created").ignored()
         )
 }

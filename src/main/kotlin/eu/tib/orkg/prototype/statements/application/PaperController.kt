@@ -132,23 +132,25 @@ class PaperController(
             } else {
                 PredicateId(predicate) //
             }
-            if(!predicateService.findById(predicateId).isPresent)
+            if (!predicateService.findById(predicateId).isPresent)
                 throw PredicateNotFound(predicate)
             for (resource in value) {
                 when {
                     resource.`@id` != null -> { // Add an existing resource or literal
                         when {
                             resource.`@id`.startsWith("L") -> {
-                                statementWithLiteralService.create(subject, predicateId!!, LiteralId(resource.`@id`))
+                                val id = resource.`@id`
+                                if (!literalService.findById(LiteralId(id)).isPresent)
+                                    throw RuntimeException("Literal $id is not found")
+                                statementWithLiteralService.create(subject, predicateId!!, LiteralId(id))
                             }
                             resource.`@id`.startsWith("R") -> {
-                                statementWithResourceService.create(subject, predicateId!!, ResourceId(resource.`@id`))
+                                val id = resource.`@id`
+                                if (!resourceService.findById(ResourceId(id)).isPresent)
+                                    throw RuntimeException("Resource $id is not found")
+                                statementWithResourceService.create(subject, predicateId!!, ResourceId(id))
                             }
                             resource.`@id`.startsWith("_") -> {
-                                // TODO: Check this
-                                // need to check if the resource id exists in the map
-                                // o/w put it in a queue and then loop over the queue somehow
-                                // the loop needs to take into account that multiple iterations on the queue might be needed
                                 if (!tempResources.containsKey(resource.`@id`))
                                     resourceQueue.add(TempResource(subject, predicateId!!, resource.`@id`))
                                 else {

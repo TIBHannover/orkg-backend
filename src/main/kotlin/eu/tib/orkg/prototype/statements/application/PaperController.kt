@@ -44,7 +44,12 @@ class PaperController(
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
     fun add(@RequestBody paper: CreatePaperRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Resource> {
-        return ResponseEntity.accepted().body(insertData(paper))
+        val resource = insertData(paper)
+        val location = uriComponentsBuilder
+            .path("api/resources/")
+            .buildAndExpand(resource.id)
+            .toUri()
+        return ResponseEntity.created(location).body(resource)
     }
 
     fun insertData(paper: CreatePaperRequest): Resource {
@@ -65,7 +70,7 @@ class PaperController(
             }
         }
 
-        paper.paper.contributions!!.forEach {
+        if (paper.paper.contributions != null) paper.paper.contributions.forEach {
             checkContributionData(it.values!!, predicates)
         }
 
@@ -81,13 +86,15 @@ class PaperController(
         }
 
         // paper authors
-        paper.paper.authors!!.forEach {
-            val authorId = if (it.id == null) {
-                resourceService.create(it.label!!).id!!
-            } else {
-                ResourceId(it.id)
+        if (paper.paper.authors != null) {
+            paper.paper.authors.forEach {
+                val authorId = if (it.id == null) {
+                    resourceService.create(it.label!!).id!!
+                } else {
+                    ResourceId(it.id)
+                }
+                statementWithResourceService.create(paperId, hasAuthorPredicate, authorId)
             }
-            statementWithResourceService.create(paperId, hasAuthorPredicate, authorId)
         }
 
         // paper publication date
@@ -110,12 +117,14 @@ class PaperController(
         val tempResources: HashMap<String, String> = HashMap()
 
         // paper contribution data
-        paper.paper.contributions.forEach {
-            if (it.values != null && it.values.count() > 0) {
-                val contributionId = resourceService.create(it.name).id!!
-                statementWithResourceService.create(paperId, hasContributionPredicate, contributionId)
-                val resourceQueue: Queue<TempResource> = LinkedList()
-                processContributionData(contributionId, it.values, tempResources, predicates, resourceQueue)
+        if (paper.paper.contributions != null) {
+            paper.paper.contributions.forEach {
+                if (it.values != null && it.values.count() > 0) {
+                    val contributionId = resourceService.create(it.name).id!!
+                    statementWithResourceService.create(paperId, hasContributionPredicate, contributionId)
+                    val resourceQueue: Queue<TempResource> = LinkedList()
+                    processContributionData(contributionId, it.values, tempResources, predicates, resourceQueue)
+                }
             }
         }
         return paperObj

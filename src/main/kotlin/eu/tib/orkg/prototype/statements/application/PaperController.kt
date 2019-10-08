@@ -199,6 +199,13 @@ class PaperController(
                             }
                         }
                     }
+                    resource.text != null -> { // create new literal
+                        val newLiteral = literalService.create(resource.text).id!!
+                        if (resource.`@temp` != null) {
+                            tempResources[resource.`@temp`] = newLiteral.value
+                        }
+                        statementWithLiteralService.create(subject, predicateId!!, newLiteral)
+                    }
                     resource.label != null -> { // create new resource
                         val newResource = resourceService.create(resource.label).id!!
                         if (resource.`@temp` != null) {
@@ -209,18 +216,11 @@ class PaperController(
                             processContributionData(newResource, resource.values, tempResources, predicates, resourceQueue, true)
                         }
                     }
-                    resource.text != null -> { // create new literal
-                        val newLiteral = literalService.create(resource.text).id!!
-                        if (resource.`@temp` != null) {
-                            tempResources[resource.`@temp`] = newLiteral.value
-                        }
-                        statementWithLiteralService.create(subject, predicateId!!, newLiteral)
-                    }
                 }
             }
         }
         // Loop until the Queue is empty
-        var limit = 50 // this is just to ensure that a user won't add an id that is not there // TODO: check for better solution
+        var limit = 50 // this is just to ensure that a user won't add an id that is not there
         while (!recursive && !resourceQueue.isEmpty() && limit > 0) {
             val temp = resourceQueue.remove()
             limit--

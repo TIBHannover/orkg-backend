@@ -1,5 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -26,11 +28,13 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     @Autowired
     private lateinit var resourceService: ResourceService
 
+    @Autowired
+    private lateinit var classService: ClassService
+
     override fun createController() = controller
 
     @Test
     fun add() {
-        service.create(CreatePredicateRequest(PredicateId("P3"), "IS A"))
         service.create(CreatePredicateRequest(PredicateId("P26"), "Has DOI"))
         service.create(CreatePredicateRequest(PredicateId("P27"), "Has Author"))
         service.create(CreatePredicateRequest(PredicateId("P28"), "Has publication month"))
@@ -40,9 +44,10 @@ class PaperControllerTest : RestDocumentationBaseTest() {
         service.create(CreatePredicateRequest(PredicateId("P32"), "Has research problem"))
         service.create(CreatePredicateRequest(PredicateId("HAS_EVALUATION"), "Has evaluation"))
 
-        resourceService.create(CreateResourceRequest(ResourceId("R10"), "paper"))
         resourceService.create(CreateResourceRequest(ResourceId("R12"), "Computer Science"))
         resourceService.create(CreateResourceRequest(ResourceId("R3003"), "Question Answering over Linked Data"))
+
+        classService.create(CreateClassRequest(ClassId("Paper"), "Paper", null))
 
         val paper = mapOf(
             "paper" to mapOf(

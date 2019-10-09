@@ -2,6 +2,9 @@ package eu.tib.orkg.prototype
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import eu.tib.orkg.prototype.statements.application.CreateClassRequest
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementWithLiteralService
@@ -18,8 +21,9 @@ class ExampleData(
     private val resourceService: ResourceService,
     private val predicateService: PredicateService,
     private val statementWithResourceService: StatementWithResourceService,
-    private val statementWithLiteralService: StatementWithLiteralService
-) : ApplicationRunner {
+    private val statementWithLiteralService: StatementWithLiteralService,
+    private val classService: ClassService
+    ) : ApplicationRunner {
 
     override fun run(args: ApplicationArguments?) {
         if (statementsPresent())
@@ -106,7 +110,6 @@ class ExampleData(
         predicateService.create("has publication month")
         predicateService.create("has publication year")
         predicateService.create("has research field")
-        // predicateService.create("is a") // Already defined //TODO: When updated! -> make sure (is a) is present
         predicateService.create("has contribution")
         predicateService.create("has research problem")
         // Demo Predicate Data
@@ -114,6 +117,11 @@ class ExampleData(
         predicateService.create("evaluation")
         predicateService.create("implementation")
         val subfieldPredicate = predicateService.create("has subfield").id!!
+
+        //
+        // Class
+        //
+        classService.create(CreateClassRequest(ClassId("Paper"), "Paper", null))
 
         //
         // Resource
@@ -125,7 +133,7 @@ class ExampleData(
         val mapper = jacksonObjectMapper()
         val inStream: InputStream? = javaClass.classLoader.getResourceAsStream("data/ResearchFields.json")
         val fields = mapper.readValue<List<ResearchField>>(inStream!!)
-        for (field in fields) { // TODO: make this section recursive and extract a function
+        for (field in fields) {
             val newField = resourceService.create(field.name).id!!
             statementWithResourceService.create(researchField, subfieldPredicate, newField)
             for (subfield in field.subfields) {

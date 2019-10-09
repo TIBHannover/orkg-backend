@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
@@ -21,8 +22,6 @@ import org.springframework.web.util.UriComponentsBuilder
 import java.util.LinkedList
 import java.util.Queue
 
-const val ID_ISA_PREDICATE = "P3"
-const val ID_PAPER_RESOURCE = "R10"
 const val ID_DOI_PREDICATE = "P26"
 const val ID_AUTHOR_PREDICATE = "P27"
 const val ID_PUBDATE_MONTH_PREDICATE = "P28"
@@ -53,7 +52,6 @@ class PaperController(
     }
 
     fun insertData(paper: CreatePaperRequest): Resource {
-        val isAPredicate = predicateService.findById(PredicateId(ID_ISA_PREDICATE)).get().id!!
         val hasDoiPredicate = predicateService.findById(PredicateId(ID_DOI_PREDICATE)).get().id!!
         val hasAuthorPredicate = predicateService.findById(PredicateId(ID_AUTHOR_PREDICATE)).get().id!!
         val publicationMonthPredicate = predicateService.findById(PredicateId(ID_PUBDATE_MONTH_PREDICATE)).get().id!!
@@ -75,9 +73,8 @@ class PaperController(
         }
 
         // paper title
-        val paperObj = resourceService.create(paper.paper.title)
+        val paperObj = resourceService.create(CreateResourceRequest(null, paper.paper.title, setOf(ClassId("Paper"))))
         val paperId = paperObj.id!!
-        statementWithResourceService.create(paperId, isAPredicate, ResourceId(ID_PAPER_RESOURCE))
 
         // paper doi
         if (paper.paper.doi != null) {

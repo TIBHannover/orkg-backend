@@ -23,7 +23,7 @@ class ExampleData(
     private val statementWithResourceService: StatementWithResourceService,
     private val statementWithLiteralService: StatementWithLiteralService,
     private val classService: ClassService
-    ) : ApplicationRunner {
+) : ApplicationRunner {
 
     override fun run(args: ApplicationArguments?) {
         if (statementsPresent())

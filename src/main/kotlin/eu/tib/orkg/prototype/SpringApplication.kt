@@ -11,8 +11,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import org.springframework.web.filter.CorsFilter
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.core.Ordered;
+import org.springframework.boot.web.servlet.FilterRegistrationBean
+import org.springframework.core.Ordered
 
 @SpringBootApplication
 @EnableTransactionManagement
@@ -33,9 +33,9 @@ class Application : SpringBootServletInitializer() {
         val source = UrlBasedCorsConfigurationSource().apply {
             registerCorsConfiguration("/**", config)
         }
-        val bean = FilterRegistrationBean(CorsFilter(source));
-        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        return bean;
+        val bean = FilterRegistrationBean(CorsFilter(source))
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE)
+        return bean
     }
 }
 

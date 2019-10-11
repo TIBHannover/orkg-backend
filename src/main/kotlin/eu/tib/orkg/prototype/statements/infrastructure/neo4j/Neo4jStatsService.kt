@@ -30,6 +30,4 @@ class Neo4jStatsService(
             literalsCount, papersCount, classesCount, contributionsCount,
             fieldsCount, problemsCount, resourceStatementsCount, literalsStatementsCount)
     }
-
-
 }

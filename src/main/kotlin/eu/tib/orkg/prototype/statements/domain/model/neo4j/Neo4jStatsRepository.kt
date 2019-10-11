@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.Neo4jRepository
-import java.util.Optional
 
 interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
 

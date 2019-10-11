@@ -20,5 +20,4 @@ class StatsController(private val service: StatsService) {
     fun get(): ResponseEntity<Stats> {
         return ResponseEntity.ok(service.getStats())
     }
-
 }

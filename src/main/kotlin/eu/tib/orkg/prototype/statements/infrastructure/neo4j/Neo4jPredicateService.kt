@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jPredicate
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jPredicateIdGenerator
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jPredicateRepository
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.Optional
@@ -32,23 +33,28 @@ class Neo4jPredicateService(
             .toPredicate()
     }
 
-    override fun findAll() = neo4jPredicateRepository
-        .findAll()
-        .map(Neo4jPredicate::toPredicate)
+    override fun findAll(pageable: Pageable): Iterable<Predicate> {
+        return neo4jPredicateRepository
+            .findAll(pageable)
+            .content
+            .map(Neo4jPredicate::toPredicate)
+    }
 
     override fun findById(id: PredicateId?): Optional<Predicate> =
         neo4jPredicateRepository
             .findByPredicateId(id)
             .map(Neo4jPredicate::toPredicate)
 
-    override fun findAllByLabel(label: String) =
+    override fun findAllByLabel(label: String, pageable: Pageable) =
         neo4jPredicateRepository
-            .findAllByLabelMatchesRegex("(?i)^$label$") // TODO: See declaration
+            .findAllByLabelMatchesRegex("(?i)^$label$", pageable) // TODO: See declaration
+            .content
             .map(Neo4jPredicate::toPredicate)
 
-    override fun findAllByLabelContaining(part: String) =
+    override fun findAllByLabelContaining(part: String, pageable: Pageable) =
         neo4jPredicateRepository
-            .findAllByLabelMatchesRegex("(?i).*$part.*") // TODO: See declaration
+            .findAllByLabelMatchesRegex("(?i).*$part.*", pageable) // TODO: See declaration
+            .content
             .map(Neo4jPredicate::toPredicate)
 
     override fun update(predicate: Predicate): Predicate {

@@ -3,6 +3,9 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -32,13 +35,21 @@ class PredicateController(private val service: PredicateService) {
     @GetMapping("/")
     fun findByLabel(
         @RequestParam("q", required = false) searchString: String?,
-        @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean
-    ) = if (searchString == null)
-        service.findAll()
-    else if (exactMatch)
-            service.findAllByLabel(searchString)
-        else
-            service.findAllByLabelContaining(searchString)
+        @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
+        @RequestParam("page", required = false) page: Int?,
+        @RequestParam("items", required = false) items: Int?,
+        @RequestParam("sortBy", required = false, defaultValue = "id") sortBy: String?,
+        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+    ): Iterable<Predicate> {
+        val sort = Sort.by(sortBy)
+        val pagination: Pageable =
+            PageRequest.of(page ?: 0, items ?: 10, if (desc) { sort.descending() } else { sort })
+        return when {
+            searchString == null -> service.findAll(pagination)
+            exactMatch -> service.findAllByLabel(searchString, pagination)
+            else -> service.findAllByLabelContaining(searchString, pagination)
+        }
+    }
 
     @PostMapping("/")
     @ResponseStatus(CREATED)

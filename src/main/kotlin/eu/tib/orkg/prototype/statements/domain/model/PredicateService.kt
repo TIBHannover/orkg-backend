@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import eu.tib.orkg.prototype.statements.application.CreatePredicateRequest
+import org.springframework.data.domain.Pageable
 import java.util.Optional
 
 interface PredicateService {
@@ -17,7 +18,7 @@ interface PredicateService {
     /**
      * List all predicates.
      */
-    fun findAll(): Iterable<Predicate>
+    fun findAll(pageable: Pageable): Iterable<Predicate>
 
     /**
      * Find a predicate by its ID.
@@ -27,12 +28,12 @@ interface PredicateService {
     /**
      * Find all predicates matching a label.
      */
-    fun findAllByLabel(label: String): Iterable<Predicate>
+    fun findAllByLabel(label: String, pageable: Pageable): Iterable<Predicate>
 
     /**
      * Find all predicates matching a label partially.
      */
-    fun findAllByLabelContaining(part: String): Iterable<Predicate>
+    fun findAllByLabelContaining(part: String, pageable: Pageable): Iterable<Predicate>
 
     /**
      * Update a predicate.

@@ -5,6 +5,9 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -33,8 +36,17 @@ class ClassController(private val service: ClassService, private val resourceSer
             .orElseThrow { ClassNotFound() }
 
     @GetMapping("/{id}/resources/")
-    fun findResourcesWithClass(@PathVariable id: ClassId): Iterable<Resource> {
-        val result = resourceService.findAllByClass(id)
+    fun findResourcesWithClass(
+        @PathVariable id: ClassId,
+        @RequestParam("page", required = false) page: Int?,
+        @RequestParam("items", required = false) items: Int?,
+        @RequestParam("sortBy", required = false, defaultValue = "id") sortBy: String?,
+        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+    ): Iterable<Resource> {
+        val sort = Sort.by(sortBy)
+        val pagination: Pageable =
+            PageRequest.of(page ?: 0, items ?: 10, if (desc) { sort.descending() } else { sort })
+        val result = resourceService.findAllByClass(pagination, id)
         if (result.none()) throw ResourceNotFound()
         return result
     }

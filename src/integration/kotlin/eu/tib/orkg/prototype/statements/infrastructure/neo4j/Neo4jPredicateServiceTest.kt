@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
 
 @Neo4jServiceTest
 @DisplayName("Neo4j: Predicate service")
@@ -32,7 +33,7 @@ class Neo4jPredicateServiceTest {
         service.create("first")
         service.create("second")
 
-        val predicates = service.findAll()
+        val predicates = service.findAll(PageRequest.of(0, 10))
         val labels = predicates.map(Predicate::label)
 
         assertThat(predicates).hasSize(2)
@@ -45,9 +46,9 @@ class Neo4jPredicateServiceTest {
         service.create("first")
         service.create("second")
 
-        assertThat(service.findAll()).hasSize(2)
+        assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(2)
 
-        val result = service.findAllByLabel("not in the list")
+        val result = service.findAllByLabel("not in the list", PageRequest.of(0, 10))
 
         assertThat(result).isEmpty()
     }
@@ -60,7 +61,7 @@ class Neo4jPredicateServiceTest {
         service.create("other")
         service.create("yet another")
 
-        val result = service.findAllByLabel("same")
+        val result = service.findAllByLabel("same", PageRequest.of(0, 10))
 
         assertThat(result).hasSize(2)
     }
@@ -69,7 +70,7 @@ class Neo4jPredicateServiceTest {
     @DisplayName("should not return predicate containing substring")
     fun shouldNotReturnPredicateContainingSubstring() {
         service.create("this is part of the test")
-        assertThat(service.findAllByLabel("part")).isEmpty()
+        assertThat(service.findAllByLabel("part", PageRequest.of(0, 10))).isEmpty()
     }
 
     @Test
@@ -80,7 +81,7 @@ class Neo4jPredicateServiceTest {
         service.create("part at the beginning")
         service.create("something else")
 
-        val result = service.findAllByLabelContaining("part")
+        val result = service.findAllByLabelContaining("part", PageRequest.of(0, 10))
 
         assertThat(result).hasSize(3)
     }

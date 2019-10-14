@@ -42,16 +42,19 @@ class Neo4jResourceService(
         neo4jResourceRepository.findByResourceId(id)
             .map(Neo4jResource::toResource)
 
-    override fun findAllByLabel(label: String): Iterable<Resource> =
-        neo4jResourceRepository.findAllByLabelMatchesRegex("(?i)^$label$") // TODO: See declaration
+    override fun findAllByLabel(pageable: Pageable, label: String): Iterable<Resource> =
+        neo4jResourceRepository.findAllByLabelMatchesRegex("(?i)^$label$", pageable) // TODO: See declaration
+            .content
             .map(Neo4jResource::toResource)
 
-    override fun findAllByLabelContaining(part: String): Iterable<Resource> =
-        neo4jResourceRepository.findAllByLabelMatchesRegex("(?i).*$part.*") // TODO: See declaration
+    override fun findAllByLabelContaining(pageable: Pageable, part: String): Iterable<Resource> =
+        neo4jResourceRepository.findAllByLabelMatchesRegex("(?i).*$part.*", pageable) // TODO: See declaration
+            .content
             .map(Neo4jResource::toResource)
 
-    override fun findAllByClass(id: ClassId): Iterable<Resource> =
-        neo4jResourceRepository.findAllByClass(id.toString())
+    override fun findAllByClass(pageable: Pageable, id: ClassId): Iterable<Resource> =
+        neo4jResourceRepository.findAllByClass(id.toString(), pageable)
+            .content
             .map(Neo4jResource::toResource)
 
     override fun update(resource: Resource): Resource {

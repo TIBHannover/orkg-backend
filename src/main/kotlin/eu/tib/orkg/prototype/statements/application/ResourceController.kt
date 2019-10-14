@@ -50,9 +50,9 @@ class ResourceController(private val service: ResourceService) {
         if (searchString == null)
             return service.findAll(pagination)
         else if (exactMatch)
-            return service.findAllByLabel(searchString)
+            return service.findAllByLabel(pagination, searchString)
         else
-            return service.findAllByLabelContaining(searchString)
+            return service.findAllByLabelContaining(pagination, searchString)
     }
 
     @PostMapping("/")

@@ -4,6 +4,9 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -35,14 +38,22 @@ class ResourceController(private val service: ResourceService) {
     @GetMapping("/")
     fun findByLabel(
         @RequestParam("q", required = false) searchString: String?,
-        @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean
-    ) =
+        @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
+        @RequestParam("page", required = false) page: Int?,
+        @RequestParam("items", required = false) items: Int?,
+        @RequestParam("sortBy", required = false, defaultValue = "id") sortBy: String?,
+        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+    ): Iterable<Resource> {
+        val sort = Sort.by(sortBy)
+        val pagination: Pageable =
+            PageRequest.of(page ?: 0, items ?: 10, if (desc) { sort.descending() } else { sort })
         if (searchString == null)
-            service.findAll()
+            return service.findAll(pagination)
         else if (exactMatch)
-                service.findAllByLabel(searchString)
-            else
-                service.findAllByLabelContaining(searchString)
+            return service.findAllByLabel(searchString)
+        else
+            return service.findAllByLabelContaining(searchString)
+    }
 
     @PostMapping("/")
     @ResponseStatus(CREATED)

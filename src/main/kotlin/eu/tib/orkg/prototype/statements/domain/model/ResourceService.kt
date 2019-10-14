@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
+import org.springframework.data.domain.Pageable
 import java.util.Optional
 
 interface ResourceService {
@@ -19,7 +20,7 @@ interface ResourceService {
     /**
      * Find all resources.
      */
-    fun findAll(): Iterable<Resource>
+    fun findAll(pageable: Pageable): Iterable<Resource>
 
     /**
      * Find a resource by its ID.

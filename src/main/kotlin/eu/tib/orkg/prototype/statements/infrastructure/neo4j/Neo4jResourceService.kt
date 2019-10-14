@@ -11,6 +11,7 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceReposito
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.Optional
+import org.springframework.data.domain.Pageable
 
 @Service
 @Transactional
@@ -31,8 +32,10 @@ class Neo4jResourceService(
         return neo4jResourceRepository.save(resource).toResource()
     }
 
-    override fun findAll() =
-        neo4jResourceRepository.findAll()
+    override fun findAll(pageable: Pageable): Iterable<Resource> =
+        neo4jResourceRepository
+            .findAll(pageable)
+            .content
             .map(Neo4jResource::toResource)
 
     override fun findById(id: ResourceId?): Optional<Resource> =

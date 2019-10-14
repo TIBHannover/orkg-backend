@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
 
 @Neo4jServiceTest
 @DisplayName("Neo4: Resource service")
@@ -31,8 +32,8 @@ class Neo4jResourceServiceTest {
     fun shouldFindCreatedResources() {
         service.create("first")
         service.create("second")
-
-        val resources = service.findAll()
+        val pagination = PageRequest.of(0, 10)
+        val resources = service.findAll(pagination)
         val labels = resources.map(Resource::label)
 
         assertThat(resources).hasSize(2)
@@ -42,10 +43,11 @@ class Neo4jResourceServiceTest {
     @Test
     @DisplayName("should return an empty list when label was not found")
     fun shouldReturnEmptyListWhenNotFound() {
+        val pagination = PageRequest.of(0, 10)
         service.create("first")
         service.create("second")
 
-        val result = service.findAllByLabel("not in the list")
+        val result = service.findAllByLabel(pagination, "not in the list")
 
         assertThat(result).isEmpty()
     }
@@ -57,8 +59,9 @@ class Neo4jResourceServiceTest {
         service.create("same")
         service.create("other")
         service.create("yet another")
+        val pagination = PageRequest.of(0, 10)
 
-        val result = service.findAllByLabel("same")
+        val result = service.findAllByLabel(pagination, "same")
 
         assertThat(result).hasSize(2)
     }
@@ -66,8 +69,9 @@ class Neo4jResourceServiceTest {
     @Test
     @DisplayName("should not return resource containing substring")
     fun shouldNotReturnResourceContainingSubstring() {
+        val pagination = PageRequest.of(0, 10)
         service.create("this is part of the test")
-        assertThat(service.findAllByLabel("part")).isEmpty()
+        assertThat(service.findAllByLabel(pagination, "part")).isEmpty()
     }
 
     @Test
@@ -77,8 +81,8 @@ class Neo4jResourceServiceTest {
         service.create("this is another part")
         service.create("part at the beginning")
         service.create("something else")
-
-        val result = service.findAllByLabelContaining("part")
+        val pagination = PageRequest.of(0, 10)
+        val result = service.findAllByLabelContaining(pagination, "part")
 
         assertThat(result).hasSize(3)
     }

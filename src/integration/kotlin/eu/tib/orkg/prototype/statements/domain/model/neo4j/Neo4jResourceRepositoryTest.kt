@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
 
 @Neo4jRepositoryTest
 class Neo4jResourceRepositoryTest {
@@ -36,6 +37,8 @@ class Neo4jResourceRepositoryTest {
     @Test
     @DisplayName("should create connection between two resources")
     fun shouldCreateConnectionBetweenTwoResources() {
+        val pagination = PageRequest.of(0, 10)
+
         val sub = resourceRepository.save(
             Neo4jResource(
                 label = "subject",
@@ -64,7 +67,7 @@ class Neo4jResourceRepositoryTest {
 
         // Assert
 
-        val allFound = resourceRepository.findAllByLabelMatchesRegex("subject") // TODO: See declaration
+        val allFound = resourceRepository.findAllByLabelMatchesRegex("subject", pagination) // TODO: See declaration
 
         assertThat(allFound).isNotEmpty
         assertThat(allFound).hasSize(1)
@@ -79,6 +82,8 @@ class Neo4jResourceRepositoryTest {
 
     @Test
     fun testFindingClasses() {
+        val pagination = PageRequest.of(0, 10)
+
         val resourceToBeFound = Neo4jResource("tiger", ResourceId("R1")).also { it.assignTo("C0") }
         resourceRepository.save(resourceToBeFound)
 
@@ -88,7 +93,7 @@ class Neo4jResourceRepositoryTest {
         // without class
         resourceRepository.save(Neo4jResource("cat", ResourceId("R2")))
 
-        val result = resourceRepository.findAllByClass("C0")
+        val result = resourceRepository.findAllByClass("C0", pagination)
 
         assertThat(result).hasSize(1)
         assertThat(result).containsExactlyInAnyOrder(resourceToBeFound)

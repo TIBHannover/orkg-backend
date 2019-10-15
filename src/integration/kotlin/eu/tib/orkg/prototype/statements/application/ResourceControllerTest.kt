@@ -37,6 +37,12 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
+                    requestParameters(
+                        parameterWithName("page").description("Page number of items to fetch (default: 0)").optional(),
+                        parameterWithName("items").description("Number of items to fetch per page (default: 10)").optional(),
+                        parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
+                        parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
+                    ),
                     resourceListResponseFields()
                 )
             )
@@ -55,7 +61,8 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     requestParameters(
-                        parameterWithName("q").description("A search term that must be contained in the label")
+                        parameterWithName("q").description("A search term that must be contained in the label"),
+                        parameterWithName("exact").description("Whether it is an exact string lookup or just containment").optional()
                     ),
                     resourceListResponseFields()
                 )

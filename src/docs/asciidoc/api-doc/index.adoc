@@ -106,7 +106,9 @@ This allows to store and retrieve provenance information about them.
 
 A `GET` request lists all the statements:
 
-operation::statement-controller-test-index[snippets='curl-request,http-response']
+operation::statement-controller-test-index[snippets='request-parameters,curl-request,http-response']
+
+TIP: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>
 
 [[statements-create]]
 === Creating statements
@@ -148,14 +150,18 @@ operation::statement-controller-test-fetch[snippets='curl-request,http-response'
 
 A `GET` request lists all the statements with a given subject:
 
-operation::statement-controller-test-lookup-by-subject[snippets='curl-request,http-response']
+operation::statement-controller-test-lookup-by-subject[snippets='request-parameters,curl-request,http-response']
+
+: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>
 
 [[statements-lookup-by-predicate]]
 === Lookup statements by predicate
 
 A `GET` request lists all the statements with a given predicate:
 
-operation::statement-controller-test-lookup-by-predicate[snippets='curl-request,http-response']
+operation::statement-controller-test-lookup-by-predicate[snippets='request-parameters,curl-request,http-response']
+
+: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>
 
 include::parts/classes.adoc[]
 
@@ -170,7 +176,9 @@ They can appear in the subject or object position in <<Statements,statements>>.
 
 A `GET` request lists all resources:
 
-operation::resource-controller-test-index[snippets='curl-request,http-response']
+operation::resource-controller-test-index[snippets='request-parameters,curl-request,http-response']
+
+: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>
 
 [[resources-create]]
 === Creating resources
@@ -209,7 +217,9 @@ operation::resource-controller-test-fetch[snippets='curl-request,http-response']
 
 Resources can be looked up by label by providing a search fragment.
 
-operation::resource-controller-test-lookup[snippets='curl-request,http-response']
+operation::resource-controller-tes-lookup[snippets='request-parameters,curl-request,http-response']
+
+: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>
 
 [[predicates]]
 == Predicates
@@ -224,7 +234,9 @@ IDs always start with "P", followed by a number.
 
 A `GET` request lists all predicates:
 
-operation::predicate-controller-test-index[snippets='curl-request,http-response']
+operation::predicate-controller-test-index[snippets='request-parameters,curl-request,http-response']
+
+: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>
 
 [[predicates-create]]
 === Creating predicates
@@ -317,3 +329,30 @@ Literals can be looked up by label by providing a search fragment.
 operation::resource-controller-test-lookup[snippets='curl-request,http-response']
 
 include::parts/papers.adoc[]
+
+[[sorting-and-pagination]]
+== Sorting and Pagination
+
+For all request that lists a set of results, pagination and sorting are applied automatically.
+
+For sorting by default it is disabled. It can be enabled by specifying which key to sort on.
+
+[cols="e,m"]
+.Sorting keys allowed by the API
+[options="header"]
+|=======================
+|Key  |Description
+2+^|*For sorting resources & predicates*
+|id   | the id of the resource or predicate
+|label    | the label of the resource or the predicate
+|created    |the datetime timestamp of the creation
+2+^|*For sorting statements*
+|id   | the statement id
+|created    |the datetime timestamp of the creation
+|sub.label    |the label of the subject
+|sub.created  |the creation timestamp of the subject
+|rel.label    |the label of the predicate
+|rel.created  |the creation timestamp of the predicate
+|obj.label    |the label of the object
+|obj.created  |the creation timestamp of the object
+|=======================

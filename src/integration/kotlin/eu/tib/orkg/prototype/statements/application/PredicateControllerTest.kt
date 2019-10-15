@@ -37,6 +37,12 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
+                    requestParameters(
+                        parameterWithName("page").description("Page number of predicates to fetch (default: 0)").optional(),
+                        parameterWithName("items").description("Number of predicates to fetch per page (default: 10)").optional(),
+                        parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
+                        parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
+                    ),
                     predicateListResponseFields()
                 )
             )

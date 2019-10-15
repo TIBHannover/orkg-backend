@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
+import org.springframework.data.domain.Pageable
 import java.util.Optional
 
 /**
@@ -10,7 +11,7 @@ interface StatementWithLiteralService {
     /**
      * List all statements with literal objects.
      */
-    fun findAll(): Iterable<StatementWithLiteral>
+    fun findAll(pagination: Pageable): Iterable<StatementWithLiteral>
 
     /**
      * Find statement by ID.
@@ -20,24 +21,25 @@ interface StatementWithLiteralService {
     /**
      * Find all statements with a given subject.
      */
-    fun findAllBySubject(resourceId: ResourceId): Iterable<StatementWithLiteral>
+    fun findAllBySubject(resourceId: ResourceId, pagination: Pageable): Iterable<StatementWithLiteral>
 
     /**
      * Find all statements with a given predicate.
      */
-    fun findAllByPredicate(predicateId: PredicateId): Iterable<StatementWithLiteral>
+    fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable): Iterable<StatementWithLiteral>
 
     /**
      * Find all statements with a given (literal) object.
      */
-    fun findAllByObject(objectId: LiteralId): Iterable<StatementWithLiteral>
+    fun findAllByObject(objectId: LiteralId, pagination: Pageable): Iterable<StatementWithLiteral>
 
     /**
      * Find all statements with a given subject and predicate.
      */
     fun findAllBySubjectAndPredicate(
         resourceId: ResourceId,
-        predicateId: PredicateId
+        predicateId: PredicateId,
+        pagination: Pageable
     ): Iterable<StatementWithLiteral>
 
     /**

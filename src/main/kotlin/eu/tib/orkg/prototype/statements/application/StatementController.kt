@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.Object
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
@@ -35,8 +37,15 @@ class StatementController(
 ) {
 
     @GetMapping("/")
-    fun findAll(): Iterable<StatementResponse> {
-        return statementWithResourceService.findAll() + statementWithLiteralService.findAll()
+    fun findAll(
+        @RequestParam("page", required = false) page: Int?,
+        @RequestParam("items", required = false) items: Int?,
+        @RequestParam("sortBy", required = false) sortBy: String?,
+        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+    ): Iterable<StatementResponse> {
+        // TODO: Check if division by two is the most suitable way or specify the semantics of these endpoints as items per resource/literal
+        val pagination = createPageable(page, items, sortBy, desc)
+        return (statementWithResourceService.findAll(pagination) + statementWithLiteralService.findAll(pagination)).take(pagination.pageSize)
     }
 
     @GetMapping("/{statementId}")
@@ -55,25 +64,50 @@ class StatementController(
     }
 
     @GetMapping("/subject/{resourceId}")
-    fun findByResource(@PathVariable resourceId: ResourceId): HttpEntity<Iterable<StatementResponse>> =
-        ok(
-            statementWithResourceService.findAllBySubject(resourceId) +
-                statementWithLiteralService.findAllBySubject(resourceId)
+    fun findByResource(
+        @PathVariable resourceId: ResourceId,
+        @RequestParam("page", required = false) page: Int?,
+        @RequestParam("items", required = false) items: Int?,
+        @RequestParam("sortBy", required = false) sortBy: String?,
+        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+    ): HttpEntity<Iterable<StatementResponse>> {
+        // TODO: need better selection strategy maybe collect the result into a set and then sort it again based on user criteria and return the requested number of items
+        val pagination = createPageable(page, items, sortBy, desc)
+        return ok(
+            (statementWithResourceService.findAllBySubject(resourceId, pagination) +
+                statementWithLiteralService.findAllBySubject(resourceId, pagination)).take(pagination.pageSize)
         )
+    }
 
     @GetMapping("/predicate/{predicateId}")
-    fun findByPredicate(@PathVariable predicateId: PredicateId): HttpEntity<Iterable<StatementResponse>> =
-        ok(
-            statementWithResourceService.findAllByPredicate(predicateId) +
-                statementWithLiteralService.findAllByPredicate(predicateId)
+    fun findByPredicate(
+        @PathVariable predicateId: PredicateId,
+        @RequestParam("page", required = false) page: Int?,
+        @RequestParam("items", required = false) items: Int?,
+        @RequestParam("sortBy", required = false) sortBy: String?,
+        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+    ): HttpEntity<Iterable<StatementResponse>> {
+        val pagination = createPageable(page, items, sortBy, desc)
+        return ok(
+            (statementWithResourceService.findAllByPredicate(predicateId, pagination) +
+                statementWithLiteralService.findAllByPredicate(predicateId, pagination)).take(pagination.pageSize)
         )
+    }
 
     @GetMapping("/object/{objectId}")
-    fun findByObject(@PathVariable objectId: String): HttpEntity<Iterable<StatementResponse>> =
-        ok(
-            statementWithResourceService.findAllByObject(ResourceId(objectId)) +
-                statementWithLiteralService.findAllByObject(LiteralId(objectId))
+    fun findByObject(
+        @PathVariable objectId: String,
+        @RequestParam("page", required = false) page: Int?,
+        @RequestParam("items", required = false) items: Int?,
+        @RequestParam("sortBy", required = false) sortBy: String?,
+        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+    ): HttpEntity<Iterable<StatementResponse>> {
+        val pagination = createPageable(page, items, sortBy, desc)
+        return ok(
+            (statementWithResourceService.findAllByObject(ResourceId(objectId), pagination) +
+                statementWithLiteralService.findAllByObject(LiteralId(objectId), pagination)).take(pagination.pageSize)
         )
+    }
 
     @PostMapping("/")
     @ResponseStatus(CREATED)

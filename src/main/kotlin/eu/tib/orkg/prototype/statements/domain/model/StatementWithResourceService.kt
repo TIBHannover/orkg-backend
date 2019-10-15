@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
+import org.springframework.data.domain.Pageable
 import java.util.Optional
 
 /**
@@ -10,7 +11,7 @@ interface StatementWithResourceService {
     /**
      * List all statements with resource objects.
      */
-    fun findAll(): Iterable<StatementWithResource>
+    fun findAll(pagination: Pageable): Iterable<StatementWithResource>
 
     /**
      * Find statement by ID.
@@ -20,24 +21,25 @@ interface StatementWithResourceService {
     /**
      * Find all statements with a given subject.
      */
-    fun findAllBySubject(resourceId: ResourceId): Iterable<StatementWithResource>
+    fun findAllBySubject(resourceId: ResourceId, pagination: Pageable): Iterable<StatementWithResource>
 
     /**
      * Find all statements with a given predicate.
      */
-    fun findAllByPredicate(predicateId: PredicateId): Iterable<StatementWithResource>
+    fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable): Iterable<StatementWithResource>
 
     /**
      * Find all statements with a given (resource) object.
      */
-    fun findAllByObject(objectId: ResourceId): Iterable<StatementWithResource>
+    fun findAllByObject(objectId: ResourceId, pagination: Pageable): Iterable<StatementWithResource>
 
     /**
      * Find all statements with a given subject and predicate.
      */
     fun findAllBySubjectAndPredicate(
         resourceId: ResourceId,
-        predicateId: PredicateId
+        predicateId: PredicateId,
+        pagination: Pageable
     ): Iterable<StatementWithResource>
 
     /**

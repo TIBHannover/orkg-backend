@@ -14,6 +14,7 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementIdGener
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementWithLiteral
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementWithLiteralRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.Optional
@@ -75,9 +76,10 @@ class Neo4jStatementWithLiteralService :
         )
     }
 
-    override fun findAll(): Iterable<StatementWithLiteral> {
+    override fun findAll(pagination: Pageable): Iterable<StatementWithLiteral> {
         return neo4jStatementRepository
-            .findAll()
+            .findAll(pagination)
+            .content
             .map {
                 StatementWithLiteral(
                     it.statementId!!,
@@ -102,10 +104,11 @@ class Neo4jStatementWithLiteralService :
                 )
             }
 
-    override fun findAllBySubject(resourceId: ResourceId): Iterable<StatementWithLiteral> {
+    override fun findAllBySubject(resourceId: ResourceId, pagination: Pageable): Iterable<StatementWithLiteral> {
         val resource = neo4jResourceRepository.findByResourceId(resourceId).get()
         return neo4jStatementRepository
-            .findAllBySubject(resource.resourceId!!)
+            .findAllBySubject(resource.resourceId!!, pagination)
+            .content
             .map {
                 StatementWithLiteral(
                     it.statementId!!,
@@ -119,10 +122,12 @@ class Neo4jStatementWithLiteralService :
 
     override fun findAllBySubjectAndPredicate(
         resourceId: ResourceId,
-        predicateId: PredicateId
+        predicateId: PredicateId,
+        pagination: Pageable
     ) =
         neo4jStatementRepository
-            .findAllBySubjectAndPredicate(resourceId, predicateId)
+            .findAllBySubjectAndPredicate(resourceId, predicateId, pagination)
+            .content
             .map {
                 StatementWithLiteral(
                     it.statementId!!,
@@ -133,9 +138,10 @@ class Neo4jStatementWithLiteralService :
                 )
             }
 
-    override fun findAllByPredicate(predicateId: PredicateId) =
+    override fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable) =
         neo4jStatementRepository
-            .findAllByPredicateId(predicateId)
+            .findAllByPredicateId(predicateId, pagination)
+            .content
             .map {
                 StatementWithLiteral(
                     it.statementId!!,
@@ -146,11 +152,12 @@ class Neo4jStatementWithLiteralService :
                 )
             }
 
-    override fun findAllByObject(objectId: LiteralId): Iterable<StatementWithLiteral> {
+    override fun findAllByObject(objectId: LiteralId, pagination: Pageable): Iterable<StatementWithLiteral> {
         val literal = neo4jLiteralRepository.findByLiteralId(objectId)
         if (literal.isPresent) {
             return neo4jStatementRepository
-                .findAllByObject(literal.get().literalId!!)
+                .findAllByObject(literal.get().literalId!!, pagination)
+                .content
                 .map {
                     StatementWithLiteral(
                         it.statementId!!,

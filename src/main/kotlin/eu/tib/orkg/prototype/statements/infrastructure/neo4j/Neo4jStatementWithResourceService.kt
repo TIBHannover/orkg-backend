@@ -12,6 +12,7 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementIdGener
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementWithResource
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementWithResourceRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.Optional
@@ -69,9 +70,10 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
         )
     }
 
-    override fun findAll(): Iterable<StatementWithResource> {
+    override fun findAll(pagination: Pageable): Iterable<StatementWithResource> {
         return neo4jStatementRepository
-            .findAll()
+            .findAll(pagination)
+            .content
             .map {
                 StatementWithResource(
                     it.statementId!!,
@@ -97,10 +99,11 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
             }
     }
 
-    override fun findAllBySubject(resourceId: ResourceId): Iterable<StatementWithResource> {
+    override fun findAllBySubject(resourceId: ResourceId, pagination: Pageable): Iterable<StatementWithResource> {
         val resource = neo4jResourceRepository.findByResourceId(resourceId).get()
         return neo4jStatementRepository
-            .findAllBySubject(resource.resourceId!!)
+            .findAllBySubject(resource.resourceId!!, pagination)
+            .content
             .map {
                 StatementWithResource(
                     it.statementId!!,
@@ -114,10 +117,12 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
 
     override fun findAllBySubjectAndPredicate(
         resourceId: ResourceId,
-        predicateId: PredicateId
+        predicateId: PredicateId,
+        pagination: Pageable
     ): Iterable<StatementWithResource> {
         return neo4jStatementRepository
-            .findAllBySubjectAndPredicate(resourceId, predicateId)
+            .findAllBySubjectAndPredicate(resourceId, predicateId, pagination)
+            .content
             .map {
                 StatementWithResource(
                     it.statementId!!,
@@ -129,9 +134,10 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
             }
     }
 
-    override fun findAllByPredicate(predicateId: PredicateId): Iterable<StatementWithResource> {
+    override fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable): Iterable<StatementWithResource> {
         return neo4jStatementRepository
-            .findAllByPredicateId(predicateId)
+            .findAllByPredicateId(predicateId, pagination)
+            .content
             .map {
                 StatementWithResource(
                     it.statementId!!,
@@ -143,11 +149,12 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
             }
     }
 
-    override fun findAllByObject(objectId: ResourceId): Iterable<StatementWithResource> {
+    override fun findAllByObject(objectId: ResourceId, pagination: Pageable): Iterable<StatementWithResource> {
         val resource = neo4jResourceRepository.findByResourceId(objectId)
         if (resource.isPresent) {
             return neo4jStatementRepository
-                .findAllByObject(resource.get().resourceId!!)
+                .findAllByObject(resource.get().resourceId!!, pagination)
+                .content
                 .map {
                     StatementWithResource(
                         it.statementId!!,

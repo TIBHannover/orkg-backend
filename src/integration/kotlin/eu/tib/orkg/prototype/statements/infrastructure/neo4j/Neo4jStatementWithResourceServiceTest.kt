@@ -8,6 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
 
 @Neo4jServiceTest
 class Neo4jStatementWithResourceServiceTest {
@@ -42,6 +43,7 @@ class Neo4jStatementWithResourceServiceTest {
     @Test
     @DisplayName("should find all created statements")
     fun shouldFindAllCreatedStatements() {
+        val pagination = PageRequest.of(0, 10)
         val r1 = resourceService.create("one").id!!
         val r2 = resourceService.create("two").id!!
         val r3 = resourceService.create("three").id!!
@@ -53,7 +55,7 @@ class Neo4jStatementWithResourceServiceTest {
         service.create(r1, p1, r3)
         service.create(r3, p2, r1)
 
-        val statements = service.findAll()
+        val statements = service.findAll(pagination)
 
         assertThat(statements).hasSize(4)
     }
@@ -84,6 +86,7 @@ class Neo4jStatementWithResourceServiceTest {
     @Test
     @DisplayName("should find statements by subject")
     fun shouldFindStatementsBySubject() {
+        val pagination = PageRequest.of(0, 10)
         val r1 = resourceService.create("one").id!!
         val r2 = resourceService.create("two").id!!
         val r3 = resourceService.create("three").id!!
@@ -95,16 +98,17 @@ class Neo4jStatementWithResourceServiceTest {
         service.create(r1, p1, r3)
         service.create(r3, p2, r1)
 
-        assertThat(service.findAll()).hasSize(4)
+        assertThat(service.findAll(pagination)).hasSize(4)
 
-        assertThat(service.findAllBySubject(r1)).hasSize(3)
-        assertThat(service.findAllBySubject(r2)).hasSize(0)
-        assertThat(service.findAllBySubject(r3)).hasSize(1)
+        assertThat(service.findAllBySubject(r1, pagination)).hasSize(3)
+        assertThat(service.findAllBySubject(r2, pagination)).hasSize(0)
+        assertThat(service.findAllBySubject(r3, pagination)).hasSize(1)
     }
 
     @Test
     @DisplayName("should find statements by predicate")
     fun shouldFindStatementsByPredicate() {
+        val pagination = PageRequest.of(0, 10)
         val r1 = resourceService.create("one").id!!
         val r2 = resourceService.create("two").id!!
         val r3 = resourceService.create("three").id!!
@@ -116,15 +120,16 @@ class Neo4jStatementWithResourceServiceTest {
         service.create(r1, p1, r3)
         service.create(r3, p2, r1)
 
-        assertThat(service.findAll()).hasSize(4)
+        assertThat(service.findAll(pagination)).hasSize(4)
 
-        assertThat(service.findAllByPredicate(p1)).hasSize(3)
-        assertThat(service.findAllByPredicate(p2)).hasSize(1)
+        assertThat(service.findAllByPredicate(p1, pagination)).hasSize(3)
+        assertThat(service.findAllByPredicate(p2, pagination)).hasSize(1)
     }
 
     @Test
     @DisplayName("should find statements by subject and predicate")
     fun shouldFindStatementsBySubjectAndPredicate() {
+        val pagination = PageRequest.of(0, 10)
         val r1 = resourceService.create("one").id!!
         val r2 = resourceService.create("two").id!!
         val r3 = resourceService.create("three").id!!
@@ -136,11 +141,11 @@ class Neo4jStatementWithResourceServiceTest {
         service.create(r1, p1, r3)
         service.create(r3, p2, r1)
 
-        assertThat(service.findAll()).hasSize(4)
+        assertThat(service.findAll(pagination)).hasSize(4)
 
-        assertThat(service.findAllBySubjectAndPredicate(r1, p1)).hasSize(3)
-        assertThat(service.findAllBySubjectAndPredicate(r1, p2)).hasSize(0)
-        assertThat(service.findAllBySubjectAndPredicate(r3, p1)).hasSize(0)
-        assertThat(service.findAllBySubjectAndPredicate(r3, p2)).hasSize(1)
+        assertThat(service.findAllBySubjectAndPredicate(r1, p1, pagination)).hasSize(3)
+        assertThat(service.findAllBySubjectAndPredicate(r1, p2, pagination)).hasSize(0)
+        assertThat(service.findAllBySubjectAndPredicate(r3, p1, pagination)).hasSize(0)
+        assertThat(service.findAllBySubjectAndPredicate(r3, p2, pagination)).hasSize(1)
     }
 }

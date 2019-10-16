@@ -280,3 +280,5 @@ operation::literal-controller-test-fetch[snippets='curl-request,http-response']
 Literals can be looked up by label by providing a search fragment.
 
 operation::resource-controller-test-lookup[snippets='curl-request,http-response']
+
+include::parts/papers.adoc[]

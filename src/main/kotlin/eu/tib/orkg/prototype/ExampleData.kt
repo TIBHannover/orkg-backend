@@ -157,7 +157,8 @@ class ExampleData(
 fun createPageable(page: Int?, items: Int?, sortBy: String?, desc: Boolean): Pageable {
     val sort = if (sortBy != null) Sort.by(sortBy) else Sort.unsorted()
     var size = items ?: 10 ; if (size < 1) size = 1
-    return PageRequest.of(page ?: 0, size, if (desc) { sort.descending() } else { sort })
+    val pageNr = if (page != null) page - 1 else 0
+    return PageRequest.of(pageNr, size, if (desc) { sort.descending() } else { sort })
 }
 
 data class ResearchField(val name: String, val subfields: List<ResearchField> = listOf())

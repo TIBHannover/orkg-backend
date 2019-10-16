@@ -38,7 +38,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     requestParameters(
-                        parameterWithName("page").description("Page number of items to fetch (default: 0)").optional(),
+                        parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
                         parameterWithName("items").description("Number of items to fetch per page (default: 10)").optional(),
                         parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
                         parameterWithName("desc").description("Direction of the sorting (default: false)").optional()

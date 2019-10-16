@@ -42,9 +42,8 @@ class ClassController(private val service: ClassService, private val resourceSer
         @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
     ): Iterable<Resource> {
         val pagination = createPageable(page, items, sortBy, desc)
-        val result = resourceService.findAllByClass(pagination, id)
-        if (result.none()) throw ResourceNotFound()
-        return result
+        return resourceService.findAllByClass(pagination, id)
+        // if (result.none()) throw ResourceNotFound()
     }
 
     @GetMapping("/")

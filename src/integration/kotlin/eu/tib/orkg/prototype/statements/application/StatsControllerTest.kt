@@ -55,7 +55,6 @@ class StatsControllerTest : RestDocumentationBaseTest() {
         literalService.create("We are crazy")
         classService.create("Awesome class")
 
-
         mockMvc
             .perform(getRequestTo("/api/stats/"))
             .andExpect(status().isOk)
@@ -66,8 +65,6 @@ class StatsControllerTest : RestDocumentationBaseTest() {
                 )
             )
     }
-
-
 
     private fun statsResponseFields() =
         responseFields(
@@ -84,6 +81,4 @@ class StatsControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("literalStatements").description("The number of literal statements")
 
         )
-
-
 }

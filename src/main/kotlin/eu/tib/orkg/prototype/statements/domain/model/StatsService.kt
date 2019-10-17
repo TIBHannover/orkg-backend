@@ -4,7 +4,7 @@ interface StatsService {
     /**
      * Get stats
      *
-     * @return the newly created Class
+     * @return the stats summary
      */
     fun getStats(): Stats
 }

@@ -13,7 +13,6 @@ class Neo4jStatsService(
 ) : StatsService {
     override fun getStats(): Stats {
         val metadata = neo4jStatsRepository.getGraphMetaData()
-        val statementsCount = metadata.first()["relCount"] as Long
         val labels = metadata.first()["labels"] as Map<*, *>
         val resourcesCount = labels["Resource"] as Long
         val predicatesCount = labels["Predicate"] as Long
@@ -26,6 +25,7 @@ class Neo4jStatsService(
         val relationsTypes = metadata.first()["relTypesCount"] as Map<*, *>
         val resourceStatementsCount = relationsTypes["RELATES_TO"] as Long
         val literalsStatementsCount = relationsTypes["HAS_VALUE_OF"] as Long
+        val statementsCount = literalsStatementsCount + resourceStatementsCount
         return Stats(statementsCount, resourcesCount, predicatesCount,
             literalsCount, papersCount, classesCount, contributionsCount,
             fieldsCount, problemsCount, resourceStatementsCount, literalsStatementsCount)

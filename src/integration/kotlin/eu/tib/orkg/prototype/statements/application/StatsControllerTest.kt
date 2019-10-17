@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -38,6 +39,7 @@ class StatsControllerTest : RestDocumentationBaseTest() {
     override fun createController() = controller
 
     @Test
+    @Disabled("APOC not available in the embedded Neo4j database, see issue #85")
     fun index() {
         resourceService.create(CreateResourceRequest(ResourceId("R11"), "Research field", setOf()))
         resourceService.create("Python")

@@ -10,6 +10,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
@@ -90,6 +91,28 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                         fieldWithPath("label").description("The resource label")
                     ),
                     createdResponseHeaders(),
+                    resourceResponseFields()
+                )
+            )
+    }
+
+    @Test
+    fun edit() {
+        val resource = service.create("foo").id!!
+
+        val newLabel = "bar"
+        val update = mapOf("label" to newLabel)
+
+        mockMvc
+            .perform(putRequestWithBody("/api/resources/$resource", update))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.label").value(newLabel))
+            .andDo(
+                document(
+                    snippet,
+                    requestFields(
+                        fieldWithPath("label").description("The updated resource label")
+                    ),
                     resourceResponseFields()
                 )
             )

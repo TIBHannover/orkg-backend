@@ -14,6 +14,7 @@ import org.springframework.restdocs.headers.ResponseHeadersSnippet
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put
 import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest
 import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse
 import org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
@@ -72,6 +73,13 @@ abstract class RestDocumentationBaseTest {
 
     protected fun postRequestWithBody(url: String, body: Map<String, Any?>): MockHttpServletRequestBuilder =
         post(url)
+            .accept(APPLICATION_JSON)
+            .contentType(APPLICATION_JSON)
+            .characterEncoding("utf-8")
+            .content(objectMapper.writeValueAsString(body))
+
+    protected fun putRequestWithBody(url: String, body: Map<String, Any?>): MockHttpServletRequestBuilder =
+        put(url)
             .accept(APPLICATION_JSON)
             .contentType(APPLICATION_JSON)
             .characterEncoding("utf-8")

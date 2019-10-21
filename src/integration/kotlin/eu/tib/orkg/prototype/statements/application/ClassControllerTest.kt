@@ -13,7 +13,6 @@ import org.springframework.restdocs.request.RequestDocumentation
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
-import java.net.URI
 
 @DisplayName("Class Controller")
 @Transactional
@@ -102,7 +101,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookupByClass() {
-        val id = service.create("research contribution").id
+        val id = service.create("research contribution").id!!
         val set = listOf(id).toSet()
         resourceService.create(CreateResourceRequest(null, "Contribution 1", set))
         resourceService.create(CreateResourceRequest(null, "Contribution 2", set))
@@ -120,10 +119,10 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun edit() {
-        val `class` = service.create("foo").id
+        val `class` = service.create("foo").id!!
 
         val newLabel = "bar"
-        val resource = mapOf("label" to newLabel, "uri" to URI("http://orkg.org"))
+        val resource = mapOf("label" to newLabel)
 
         mockMvc
             .perform(putRequestWithBody("/api/classes/$`class`", resource))

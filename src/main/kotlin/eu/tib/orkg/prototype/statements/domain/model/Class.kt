@@ -5,7 +5,7 @@ import java.net.URI
 import java.time.OffsetDateTime
 
 data class Class(
-    val id: ClassId,
+    val id: ClassId?,
     val label: String,
     val uri: URI?,
     @JsonProperty("created_at")

@@ -33,4 +33,9 @@ interface PredicateService {
      * Find all predicates matching a label partially.
      */
     fun findAllByLabelContaining(part: String): Iterable<Predicate>
+
+    /**
+     * Update a predicate.
+     */
+    fun update(predicate: Predicate): Predicate
 }

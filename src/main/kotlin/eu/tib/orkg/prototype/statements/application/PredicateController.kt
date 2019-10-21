@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -50,6 +51,21 @@ class PredicateController(private val service: PredicateService) {
             .toUri()
 
         return created(location).body(service.findById(id).get())
+    }
+
+    @PutMapping("/{id}")
+    fun update(
+        @PathVariable id: PredicateId,
+        @RequestBody predicate: Predicate
+    ): ResponseEntity<Predicate> {
+        val found = service.findById(id)
+
+        if (!found.isPresent)
+            return ResponseEntity.notFound().build()
+
+        val updatedPredicate = predicate.copy(id = found.get().id)
+
+        return ResponseEntity.ok(service.update(updatedPredicate))
     }
 }
 

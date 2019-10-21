@@ -18,7 +18,7 @@ data class Neo4jPredicate(
 
     @Property("label")
     @Required
-    private var label: String? = null,
+    var label: String? = null,
 
     @Property("predicate_id")
     @Required

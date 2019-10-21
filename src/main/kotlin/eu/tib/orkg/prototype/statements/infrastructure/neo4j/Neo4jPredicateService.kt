@@ -50,4 +50,14 @@ class Neo4jPredicateService(
         neo4jPredicateRepository
             .findAllByLabelMatchesRegex("(?i).*$part.*") // TODO: See declaration
             .map(Neo4jPredicate::toPredicate)
+
+    override fun update(predicate: Predicate): Predicate {
+        // already checked by service
+        val found = neo4jPredicateRepository.findByPredicateId(predicate.id).get()
+
+        // update all the properties
+        found.label = predicate.label
+
+        return neo4jPredicateRepository.save(found).toPredicate()
+    }
 }

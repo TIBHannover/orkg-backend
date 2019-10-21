@@ -27,6 +27,16 @@ The response body consists of the following fields:
 
 operation::class-controller-test-add[snippets='response-fields']
 
+[[classes-edit]]
+=== Editing a class
+
+A `PUT` request updates a class with a new given label.
+The response will be be `200 OK` when successful.
+The class literal is returned in the body for convenience.
+
+operation::class-controller-test-edit[snippets='curl-request,http-response']
+
+
 [[classes-fetch]]
 === Fetching a class
 

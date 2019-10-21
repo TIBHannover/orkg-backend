@@ -128,6 +128,14 @@ Create a statement by submitting three IDs via `POST`:
 
 operation::statement-controller-test-add-with-resource[snippets='path-parameters,curl-request,http-response']
 
+[[statements-delete]]
+=== Deleting a statement
+Delete a statement by providing the ID of the statement via a `DELETE` call:
+
+The response will be `204 No Content` when successful.
+
+operation::statement-controller-test-delete-literal-statement[snippets='curl-request,http-response']
+
 [[statements-fetch]]
 === Fetching a statement
 
@@ -180,6 +188,15 @@ The response body consists of the following fields:
 
 operation::resource-controller-test-add[snippets='response-fields']
 
+[[resources-edit]]
+=== Editing a resource
+
+A `PUT` request updates a resource with a new given label.
+The response will be `200 OK` when successful.
+The created resource is returned in the body for convenience.
+
+operation::resource-controller-test-edit[snippets='curl-request,http-response']
+
 [[resources-fetch]]
 === Fetching a resource
 
@@ -224,6 +241,15 @@ The response body consists of the following fields:
 
 operation::predicate-controller-test-add[snippets='response-fields']
 
+[[predicates-edit]]
+=== Editing a predicate
+
+A `PUT` request updates a predicate with a new given label.
+The response will be `200 OK` when successful.
+The created predicate is returned in the body for convenience.
+
+operation::predicate-controller-test-edit[snippets='curl-request,http-response']
+
 [[predicates-fetch]]
 === Fetching a predicate
 
@@ -266,6 +292,15 @@ operation::literal-controller-test-add[snippets='request-fields,curl-request,htt
 The response body consists of the following fields:
 
 operation::literal-controller-test-add[snippets='response-fields']
+
+[[literals-edit]]
+=== Editing a literal
+
+A `PUT` request updates a literal with a new value through the label property.
+The response will be `200 OK` when successful.
+The created literal is returned in the body for convenience.
+
+operation::literal-controller-test-edit[snippets='curl-request,http-response']
 
 [[literals-fetch]]
 === Fetching a literal

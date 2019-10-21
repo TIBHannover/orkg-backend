@@ -225,6 +225,11 @@ class StatementControllerTest : RestDocumentationBaseTest() {
 
         mockMvc.perform(deleteRequest("/api/statements/${st.id}"))
             .andExpect(status().isNoContent)
+            .andDo(
+                document(
+                    snippet,
+                    requestBody())
+            )
     }
 
     @Test
@@ -236,6 +241,11 @@ class StatementControllerTest : RestDocumentationBaseTest() {
 
         mockMvc.perform(deleteRequest("/api/statements/${st.id}"))
             .andExpect(status().isNoContent)
+            .andDo(
+                document(
+                    snippet,
+                    requestBody())
+            )
     }
 
     private fun statementResponseFields() =

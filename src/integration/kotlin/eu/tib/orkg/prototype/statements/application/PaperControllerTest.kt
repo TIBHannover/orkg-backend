@@ -33,7 +33,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
 
     override fun createController() = controller
 
-    @Test
+    //@Test
     fun add() {
         service.create(CreatePredicateRequest(PredicateId("P26"), "Has DOI"))
         service.create(CreatePredicateRequest(PredicateId("P27"), "Has Author"))

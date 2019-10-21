@@ -10,10 +10,12 @@ import eu.tib.orkg.prototype.statements.domain.model.StatementWithLiteralService
 import eu.tib.orkg.prototype.statements.domain.model.StatementWithResourceService
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.CrossOrigin
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -95,5 +97,23 @@ class StatementController(
             .toUri()
 
         return created(location).body(body)
+    }
+
+    @DeleteMapping("/{id}")
+    fun delete(
+        @PathVariable id: StatementId
+    ): ResponseEntity<Unit> {
+        val foundResourceStatement = statementWithResourceService.findById(id)
+        val foundLiteralStatement = statementWithLiteralService.findById(id)
+
+        if (!foundResourceStatement.isPresent && !foundLiteralStatement.isPresent)
+            return notFound().build()
+
+        if (foundResourceStatement.isPresent)
+            statementWithResourceService.remove(foundResourceStatement.get().id)
+        else
+            statementWithLiteralService.remove(foundLiteralStatement.get().id)
+
+        return ResponseEntity.noContent().build()
     }
 }

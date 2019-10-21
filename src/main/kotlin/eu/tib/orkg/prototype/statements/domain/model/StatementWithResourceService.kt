@@ -49,4 +49,9 @@ interface StatementWithResourceService {
      * Determine the total number of statements.
      */
     fun totalNumberOfStatements(): Long
+
+    /**
+     * Removes a resource statement
+     */
+    fun remove(statementId: StatementId)
 }

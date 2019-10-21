@@ -161,4 +161,10 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
     }
 
     override fun totalNumberOfStatements() = neo4jStatementRepository.count()
+
+    override fun remove(statementId: StatementId) {
+        val toDelete = neo4jStatementRepository.findByStatementId(statementId)
+
+        neo4jStatementRepository.delete(toDelete.get())
+    }
 }

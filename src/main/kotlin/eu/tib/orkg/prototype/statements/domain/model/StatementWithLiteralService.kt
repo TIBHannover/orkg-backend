@@ -49,4 +49,9 @@ interface StatementWithLiteralService {
      * Determine the total number of statements.
      */
     fun totalNumberOfStatements(): Long
+
+    /**
+     * Removes a literal statement
+     */
+    fun remove(statementId: StatementId)
 }

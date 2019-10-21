@@ -216,6 +216,28 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             )
     }
 
+    @Test
+    fun deleteLiteralStatement() {
+        val s = resourceService.create("one")
+        val p = predicateService.create("has symbol")
+        val l = literalService.create("1")
+        val st = statementWithLiteralService.create(s.id!!, p.id!!, l.id!!)
+
+        mockMvc.perform(deleteRequest("/api/statements/${st.id}"))
+            .andExpect(status().isNoContent)
+    }
+
+    @Test
+    fun deleteResourceStatement() {
+        val s = resourceService.create("one")
+        val p = predicateService.create("has creator")
+        val r = resourceService.create("Leibniz")
+        val st = statementWithResourceService.create(s.id!!, p.id!!, r.id!!)
+
+        mockMvc.perform(deleteRequest("/api/statements/${st.id}"))
+            .andExpect(status().isNoContent)
+    }
+
     private fun statementResponseFields() =
         responseFields(
             fieldWithPath("id").description("The statement ID"),

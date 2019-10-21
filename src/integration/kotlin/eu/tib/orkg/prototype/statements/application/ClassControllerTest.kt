@@ -10,8 +10,10 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
+import java.net.URI
 
 @DisplayName("Class Controller")
 @Transactional
@@ -112,6 +114,28 @@ class ClassControllerTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     resourceListResponseFields()
+                )
+            )
+    }
+
+    @Test
+    fun edit() {
+        val `class` = service.create("foo").id
+
+        val newLabel = "bar"
+        val resource = mapOf("label" to newLabel, "uri" to URI("http://orkg.org"))
+
+        mockMvc
+            .perform(putRequestWithBody("/api/classes/$`class`", resource))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.label").value(newLabel))
+            .andDo(
+                document(
+                    snippet,
+                    requestFields(
+                        fieldWithPath("label").description("The updated class label")
+                    ),
+                    classResponseFields()
                 )
             )
     }

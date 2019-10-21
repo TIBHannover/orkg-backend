@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -60,6 +61,21 @@ class ClassController(private val service: ClassService, private val resourceSer
             .toUri()
 
         return created(location).body(service.findById(id).get())
+    }
+
+    @PutMapping("/{id}")
+    fun update(
+        @PathVariable id: ClassId,
+        @RequestBody `class`: Class
+    ): ResponseEntity<Class> {
+        val found = service.findById(id)
+
+        if (!found.isPresent)
+            return ResponseEntity.notFound().build()
+
+        val updatedClass = `class`.copy(id = found.get().id)
+
+        return ResponseEntity.ok(service.update(updatedClass))
     }
 }
 

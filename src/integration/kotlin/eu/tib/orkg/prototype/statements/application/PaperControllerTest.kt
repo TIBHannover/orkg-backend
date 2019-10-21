@@ -7,7 +7,6 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -33,7 +32,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
 
     override fun createController() = controller
 
-    //@Test
+    // @Test
     fun add() {
         service.create(CreatePredicateRequest(PredicateId("P26"), "Has DOI"))
         service.create(CreatePredicateRequest(PredicateId("P27"), "Has Author"))

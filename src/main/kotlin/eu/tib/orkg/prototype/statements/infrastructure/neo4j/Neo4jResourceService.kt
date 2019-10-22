@@ -57,6 +57,16 @@ class Neo4jResourceService(
             .content
             .map(Neo4jResource::toResource)
 
+    override fun findAllByClassAndLabel(pageable: Pageable, id: ClassId, label: String): Iterable<Resource> =
+        neo4jResourceRepository.findAllByClassAndLabel(id.toString(), label, pageable)
+            .content
+            .map(Neo4jResource::toResource)
+
+    override fun findAllByClassAndLabelContaining(pageable: Pageable, id: ClassId, part: String): Iterable<Resource> =
+        neo4jResourceRepository.findAllByClassAndLabelContaining(id.toString(), "(?i).*$part.*", pageable)
+            .content
+            .map(Neo4jResource::toResource)
+
     override fun update(resource: Resource): Resource {
         // already checked by service
         val found = neo4jResourceRepository.findByResourceId(resource.id).get()

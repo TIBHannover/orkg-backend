@@ -43,6 +43,16 @@ interface ResourceService {
     fun findAllByClass(pageable: Pageable, id: ClassId): Iterable<Resource>
 
     /**
+     * Find all resources belonging to a given class and matching a label.
+     */
+    fun findAllByClassAndLabel(pageable: Pageable, id: ClassId, label: String): Iterable<Resource>
+
+    /**
+     * Find all resources belonging to a given class and containing a label.
+     */
+    fun findAllByClassAndLabelContaining(pageable: Pageable, id: ClassId, part: String): Iterable<Resource>
+
+    /**
      * Update a resource.
      */
     fun update(resource: Resource): Resource

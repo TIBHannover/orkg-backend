@@ -39,11 +39,16 @@ class ClassController(private val service: ClassService, private val resourceSer
         @RequestParam("page", required = false) page: Int?,
         @RequestParam("items", required = false) items: Int?,
         @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean,
+        @RequestParam("q", required = false) searchString: String?,
+        @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean
     ): Iterable<Resource> {
         val pagination = createPageable(page, items, sortBy, desc)
-        return resourceService.findAllByClass(pagination, id)
-        // if (result.none()) throw ResourceNotFound()
+        return when {
+            searchString == null -> resourceService.findAllByClass(pagination, id)
+            exactMatch -> resourceService.findAllByClassAndLabel(pagination, id, searchString)
+            else -> resourceService.findAllByClassAndLabelContaining(pagination, id, searchString)
+        }
     }
 
     @GetMapping("/")

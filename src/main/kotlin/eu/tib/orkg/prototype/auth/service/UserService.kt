@@ -18,6 +18,8 @@ class UserService(
         return repository.findByEmail(email)
     }
 
+    fun findById(id: UUID): Optional<UserEntity> = repository.findById(id)
+
     fun registerUser(anEmail: String, aPassword: String) {
         val userId = UUID.randomUUID()
         val newUser = UserEntity().apply {

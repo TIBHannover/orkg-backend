@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -135,6 +136,25 @@ class ClassControllerTest : RestDocumentationBaseTest() {
                         fieldWithPath("label").description("The updated class label")
                     ),
                     classResponseFields()
+                )
+            )
+    }
+
+    fun lookupByClassAndLabel() {
+        val id = service.create("research contribution").id!!
+        val set = listOf(id).toSet()
+        resourceService.create(CreateResourceRequest(null, "Math Contribution 1", set))
+        resourceService.create(CreateResourceRequest(null, "Physics Contribution1", set))
+        resourceService.create(CreateResourceRequest(null, "Math Contribution 2", set))
+
+        mockMvc
+            .perform(getRequestTo("/api/classes/$id/resources/?q=Math"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$", hasSize<Int>(2)))
+            .andDo(
+                document(
+                    snippet,
+                    resourceListResponseFields()
                 )
             )
     }

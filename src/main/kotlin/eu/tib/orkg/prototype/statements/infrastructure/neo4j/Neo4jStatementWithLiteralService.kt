@@ -193,7 +193,8 @@ class Neo4jStatementWithLiteralService :
             found.statementId!!,
             found.subject!!.toResource(),
             predicateService.findById(found.predicateId!!).get(),
-            found.`object`!!.toObject()
+            found.`object`!!.toObject(),
+            found.createdAt!!
         )
     }
 }

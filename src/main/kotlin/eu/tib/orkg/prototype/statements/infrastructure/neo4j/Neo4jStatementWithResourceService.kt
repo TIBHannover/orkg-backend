@@ -191,7 +191,8 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
             found.statementId!!,
             found.subject!!.toResource(),
             predicateService.findById(found.predicateId!!).get(),
-            found.`object`!!.toObject()
+            found.`object`!!.toObject(),
+            found.createdAt!!
         )
     }
 }

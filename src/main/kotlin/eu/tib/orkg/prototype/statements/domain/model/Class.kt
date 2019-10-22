@@ -9,5 +9,5 @@ data class Class(
     val label: String,
     val uri: URI?,
     @JsonProperty("created_at")
-    val createdAt: OffsetDateTime
+    val createdAt: OffsetDateTime?
 )

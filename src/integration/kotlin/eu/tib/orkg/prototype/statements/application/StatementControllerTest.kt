@@ -13,6 +13,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestBody
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
@@ -245,6 +246,32 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     requestBody())
+            )
+    }
+
+    @Test
+    fun editResourceStatement() {
+        val s = resourceService.create("ORKG")
+        val p = predicateService.create("created by")
+        val o = resourceService.create("Awesome Team")
+        val st = statementWithResourceService.create(s.id!!, p.id!!, o.id!!)
+
+        val p2 = predicateService.create("with love from")
+        val o2 = resourceService.create("Hannover")
+
+        val body = mapOf(
+            "predicate_id" to p2.id!!,
+            "object_id" to o2.id!!
+        )
+        mockMvc.perform(putRequestWithBody("/api/statements/${st.id}", body))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.predicate.id").value(p2.id!!.toString()))
+            .andExpect(jsonPath("$.object.id").value(o2.id!!.toString()))
+            .andDo(
+                document(
+                    snippet,
+                    requestBody(),
+                    statementResponseFields())
             )
     }
 

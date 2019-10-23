@@ -23,7 +23,7 @@ class AuthController(
     fun registerUser(@RequestBody request: RegisterUserRequest): ResponseEntity<*> {
         val user = userService.findByEmail(request.email)
         if (user.isPresent) {
-            return ok(RegisteredUserResponse("success"))
+            return successResponse()
         }
 
         if (request.password != request.matchingPassword)
@@ -31,8 +31,10 @@ class AuthController(
 
         userService.registerUser(request.email, request.password)
 
-        return ok(RegisteredUserResponse("success"))
+        return successResponse()
     }
+
+    private fun successResponse() = ok(RegisteredUserResponse("success"))
 
     data class RegisterUserRequest(
         val email: String,

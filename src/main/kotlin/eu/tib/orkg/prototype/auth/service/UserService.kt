@@ -34,4 +34,16 @@ class UserService(
         }
         repository.save(newUser)
     }
+
+    fun updatePassword(userId: UUID, aPassword: String) {
+        val user = repository.findById(userId).orElseThrow { throw RuntimeException("No user with ID $userId") }
+        user.password = passwordEncoder.encode(aPassword)
+        repository.save(user)
+    }
+
+    fun updateName(userId: UUID, newName: String) {
+        val user = repository.findById(userId).orElseThrow { throw RuntimeException("No user with ID $userId") }
+        user.displayName = newName
+        repository.save(user)
+    }
 }

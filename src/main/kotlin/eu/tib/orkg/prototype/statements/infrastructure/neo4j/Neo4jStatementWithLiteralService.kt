@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
@@ -169,5 +170,23 @@ class Neo4jStatementWithLiteralService :
         val toDelete = neo4jStatementRepository.findByStatementId(statementId)
 
         neo4jStatementRepository.delete(toDelete.get())
+    }
+
+    override fun update(statementEditRequest: StatementEditRequest): StatementWithLiteral {
+        // already checked by service
+        val found = neo4jStatementRepository.findByStatementId(statementEditRequest.statementId!!).get()
+
+        // update all the properties
+        found.predicateId = statementEditRequest.predicateId
+        found.subject = neo4jResourceRepository.findByResourceId(statementEditRequest.subjectId).get()
+
+        neo4jStatementRepository.save(found)
+
+        return StatementWithLiteral(
+            found.statementId!!,
+            found.subject!!.toResource(),
+            predicateService.findById(found.predicateId!!).get(),
+            found.`object`!!.toObject()
+        )
     }
 }

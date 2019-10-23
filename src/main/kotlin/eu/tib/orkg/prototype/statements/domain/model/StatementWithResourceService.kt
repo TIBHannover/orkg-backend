@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import java.util.Optional
 
 /**
@@ -54,4 +55,9 @@ interface StatementWithResourceService {
      * Removes a resource statement
      */
     fun remove(statementId: StatementId)
+
+    /**
+     * updates a statement
+     */
+    fun update(statementEditRequest: StatementEditRequest): StatementWithResource
 }

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -97,6 +98,31 @@ class StatementController(
             .toUri()
 
         return created(location).body(body)
+    }
+
+    @PutMapping("/{id}")
+    fun edit(
+        @PathVariable id: StatementId,
+        @RequestBody(required = true) statementEditRequest: StatementEditRequest
+    ): ResponseEntity<StatementResponse> {
+        val foundResourceStatement = statementWithResourceService.findById(id)
+        val foundLiteralStatement = statementWithLiteralService.findById(id)
+
+        if (!foundResourceStatement.isPresent && !foundLiteralStatement.isPresent)
+            return notFound().build()
+
+        val toUpdate = statementEditRequest
+            .copy(
+                statementId = id,
+                subjectId = statementEditRequest.subjectId ?: if (foundResourceStatement.isPresent) foundResourceStatement.get().subject.id else foundLiteralStatement.get().subject.id,
+                predicateId = statementEditRequest.predicateId ?: if (foundResourceStatement.isPresent) foundResourceStatement.get().predicate.id else foundLiteralStatement.get().predicate.id,
+                objectId = statementEditRequest.objectId ?: if (foundResourceStatement.isPresent) foundResourceStatement.get().`object`.id else null
+            )
+
+        return when (foundResourceStatement.isPresent) {
+            true -> ok(statementWithResourceService.update(toUpdate))
+            false -> ok(statementWithLiteralService.update(toUpdate))
+        }
     }
 
     @DeleteMapping("/{id}")

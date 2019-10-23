@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -166,5 +167,24 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
         val toDelete = neo4jStatementRepository.findByStatementId(statementId)
 
         neo4jStatementRepository.delete(toDelete.get())
+    }
+
+    override fun update(statementEditRequest: StatementEditRequest): StatementWithResource {
+        // already checked by service
+        val found = neo4jStatementRepository.findByStatementId(statementEditRequest.statementId!!).get()
+
+        // update all the properties
+        found.predicateId = statementEditRequest.predicateId
+        found.subject = neo4jResourceRepository.findByResourceId(statementEditRequest.subjectId).get()
+        found.`object` = neo4jResourceRepository.findByResourceId(statementEditRequest.objectId).get()
+
+        neo4jStatementRepository.save(found)
+
+        return StatementWithResource(
+            found.statementId!!,
+            found.subject!!.toResource(),
+            predicateService.findById(found.predicateId!!).get(),
+            found.`object`!!.toObject()
+        )
     }
 }

@@ -38,7 +38,8 @@ class AuthController(
         val email: String,
         val password: String,
         @JsonProperty("matching_password")
-        val matchingPassword: String
+        val matchingPassword: String,
+        val name: String?
     )
 
     data class RegisteredUserResponse(

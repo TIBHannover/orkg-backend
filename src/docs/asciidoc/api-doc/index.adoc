@@ -128,7 +128,7 @@ Creating statements can be done in two ways:
 
 Create a statement by submitting three IDs via `POST`:
 
-operation::statement-controller-test-add-with-resource[snippets='path-parameters,curl-request,http-response']
+operation::statement-controller-test-add-with-resource[snippets='curl-request,http-response']
 
 [[statements-delete]]
 === Deleting a statement
@@ -217,7 +217,7 @@ operation::resource-controller-test-fetch[snippets='curl-request,http-response']
 
 Resources can be looked up by label by providing a search fragment.
 
-operation::resource-controller-tes-lookup[snippets='request-parameters,curl-request,http-response']
+operation::resource-controller-test-lookup[snippets='request-parameters,curl-request,http-response']
 
 : This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>
 

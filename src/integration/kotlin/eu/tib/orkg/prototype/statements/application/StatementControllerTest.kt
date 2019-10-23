@@ -275,6 +275,29 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             )
     }
 
+    @Test
+    fun editLiteralStatement() {
+        val s = resourceService.create("ORKG")
+        val p = predicateService.create("based in")
+        val o = literalService.create("Germany")
+        val st = statementWithLiteralService.create(s.id!!, p.id!!, o.id!!)
+
+        val p2 = predicateService.create("made with love from")
+
+        val body = mapOf(
+            "predicate_id" to p2.id!!
+        )
+        mockMvc.perform(putRequestWithBody("/api/statements/${st.id}", body))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.predicate.id").value(p2.id!!.toString()))
+            .andDo(
+                document(
+                    snippet,
+                    requestBody(),
+                    statementResponseFields())
+            )
+    }
+
     private fun statementResponseFields() =
         responseFields(
             fieldWithPath("id").description("The statement ID"),

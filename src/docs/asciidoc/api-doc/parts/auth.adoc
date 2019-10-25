@@ -1,0 +1,61 @@
+= Authentication (AuthN)
+
+Authentication is done via the OAuth2 protocol.
+An authentication token needs to be obtained and provided to protected endpoints.
+
+== Obtaining an access token
+
+A token can be obtained by sending a `POST` request to the `/oauth/token` endpoint.
+The client needs to provide its client ID and secret via basic authentication (base64-encoded).
+All request parameters need to be passed in `application/x-www-form-urlencoded`.
+The parameters are:
+
+`grant_type`:: Always `password`.
+`username`:: The email address of the user.
+`password`:: The password defined by the user.
+
+The response will contain the access token and time of invalidation.
+Obtaining a new token is only possible by re-authenticating to the API.
+
+Example:
+
+  curl -X POST --user 'orkg-client:secret' -d 'grant_type=password&username=user@example.org&password=password' http://localhost:8000/oauth/token
+
+[NOTE]
+====
+Command line users can save the token directly to a variable and use this in following requests. e.g.
+
+  export TOKEN=$(curl --silent -X POST --user 'orkg-client:secret' -d 'grant_type=password&username=user@example.org&password=password' http://localhost:8000/oauth/token | jq -r '.access_token')
+====
+
+== Using the token
+
+Tokens can be provided to the API via the `Authorization` header field with the `bearer` authentication type.
+Authorization will be performed on tokens only.
+
+Example:
+
+    curl  -H "Accept: application/json" -H "Authorization: Bearer $TOKEN" -X GET http://localhost:8000/auth/user
+
+== Obtaining user information
+
+User information can be obtained from the `/user/` endpoint via `GET` requests.
+An authentication token needs to be provided.
+
+== Changing user information
+
+User information can be changed via a `PUT` request to the `/user/` endpoint.
+An authentication token needs to be provided.
+
+To change the password, the `password` and `matching_password` keys need to be present in the body and need to contain the same values.
+
+To change the user name, the `display_name` key needs to be present in the body.
+
+== Registering a user
+
+New user accounts can be registered via a `POST` request to the `/auth/register` endpoint.
+
+The `email`, `password` and `matching_password` keys need to be provided in the request body.
+An optional `name` key can be provided to set the display name of the user (non-blank).
+
+The endpoint will return the user data of the generated user.

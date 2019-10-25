@@ -1,6 +1,8 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,6 +25,9 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var service: ResourceService
+
+    @Autowired
+    private lateinit var classService: ClassService
 
     override fun createController() = controller
 
@@ -121,6 +126,35 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                         fieldWithPath("label").description("The updated resource label")
                     ),
                     resourceResponseFields()
+                )
+            )
+    }
+
+    fun excludeByClass() {
+        val id = classService.create("research contribution").id!!
+        val set = listOf(id).toSet()
+        service.create(CreateResourceRequest(null, "Contribution 1", set))
+        service.create(CreateResourceRequest(null, "Contribution 2", set))
+
+        service.create(CreateResourceRequest(null, "Contribution 3"))
+
+        mockMvc
+            .perform(getRequestTo("/api/resources/?q=Contribution&exclude=$id"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$", hasSize<Int>(1)))
+            .andDo(
+                document(
+                    snippet,
+                    requestParameters(
+                        parameterWithName("q").description("A search term that must be contained in the label"),
+                        parameterWithName("exact").description("Whether it is an exact string lookup or just containment").optional(),
+                        parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
+                        parameterWithName("items").description("Number of items to fetch per page (default: 10)").optional(),
+                        parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
+                        parameterWithName("desc").description("Direction of the sorting (default: false)").optional(),
+                        parameterWithName("exclude").description("List of classes to exclude e.g Paper,C0,Contribution (default: not provided)").optional()
+                    ),
+                    resourceListResponseFields()
                 )
             )
     }

@@ -67,6 +67,21 @@ class Neo4jResourceService(
             .content
             .map(Neo4jResource::toResource)
 
+    override fun findAllExcludingClass(pageable: Pageable, ids: Array<ClassId>): Iterable<Resource> =
+        neo4jResourceRepository.findAllExcludingClass(ids.joinToString(), pageable)
+            .content
+            .map(Neo4jResource::toResource)
+
+    override fun findAllExcludingClassByLabel(pageable: Pageable, ids: Array<ClassId>, label: String): Iterable<Resource> =
+        neo4jResourceRepository.findAllExcludingClassByLabel(ids.joinToString(), label, pageable)
+            .content
+            .map(Neo4jResource::toResource)
+
+    override fun findAllExcludingClassByLabelContaining(pageable: Pageable, ids: Array<ClassId>, part: String): Iterable<Resource> =
+        neo4jResourceRepository.findAllExcludingClassByLabelContaining(ids.joinToString(), "(?i).*$part.*", pageable)
+            .content
+            .map(Neo4jResource::toResource)
+
     override fun update(resource: Resource): Resource {
         // already checked by service
         val found = neo4jResourceRepository.findByResourceId(resource.id).get()

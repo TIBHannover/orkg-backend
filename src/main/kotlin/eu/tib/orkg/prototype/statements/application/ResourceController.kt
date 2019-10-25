@@ -40,15 +40,22 @@ class ResourceController(private val service: ResourceService) {
         @RequestParam("page", required = false) page: Int?,
         @RequestParam("items", required = false) items: Int?,
         @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean,
+        @RequestParam("exclude", required = false, defaultValue = "") excludeClasses: Array<String>
     ): Iterable<Resource> {
         val pagination = createPageable(page, items, sortBy, desc)
-        if (searchString == null)
-            return service.findAll(pagination)
-        else if (exactMatch)
-            return service.findAllByLabel(pagination, searchString)
-        else
-            return service.findAllByLabelContaining(pagination, searchString)
+        return when {
+            excludeClasses.isNotEmpty() -> when {
+                searchString == null -> service.findAllExcludingClass(pagination, excludeClasses.map { ClassId(it) }.toTypedArray())
+                exactMatch -> service.findAllExcludingClassByLabel(pagination, excludeClasses.map { ClassId(it) }.toTypedArray(), searchString)
+                else -> service.findAllExcludingClassByLabelContaining(pagination, excludeClasses.map { ClassId(it) }.toTypedArray(), searchString)
+            }
+            else -> when {
+                searchString == null -> service.findAll(pagination)
+                exactMatch -> service.findAllByLabel(pagination, searchString)
+                else -> service.findAllByLabelContaining(pagination, searchString)
+            }
+        }
     }
 
     @PostMapping("/")

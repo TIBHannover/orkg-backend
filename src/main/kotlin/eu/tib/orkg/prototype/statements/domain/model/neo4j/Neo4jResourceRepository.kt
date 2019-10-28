@@ -38,11 +38,11 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     fun findAllByClassAndLabelContaining(`class`: String, label: String, pageable: Pageable): Slice<Neo4jResource>
 
     @Query(value = """MATCH (node:`Resource`) WHERE NOT ANY(c in {0} WHERE c IN labels(node)) WITH node, node.label AS label, node.resource_id AS id RETURN node""")
-    fun findAllExcludingClass(classes: String, pageable: Pageable): Slice<Neo4jResource>
+    fun findAllExcludingClass(classes: List<String>, pageable: Pageable): Slice<Neo4jResource>
 
     @Query(value = """MATCH (node:`Resource`) WHERE NOT ANY(c in {0} WHERE c IN labels(node)) AND node.label = {1} WITH node, node.label AS label, node.resource_id AS id RETURN node""")
-    fun findAllExcludingClassByLabel(classes: String, label: String, pageable: Pageable): Slice<Neo4jResource>
+    fun findAllExcludingClassByLabel(classes: List<String>, label: String, pageable: Pageable): Slice<Neo4jResource>
 
     @Query(value = """MATCH (node:`Resource`) WHERE NOT ANY(c in {0} WHERE c IN labels(node)) AND node.label =~ {1}  WITH node, node.label AS label, node.resource_id AS id RETURN node""")
-    fun findAllExcludingClassByLabelContaining(classes: String, label: String, pageable: Pageable): Slice<Neo4jResource>
+    fun findAllExcludingClassByLabelContaining(classes: List<String>, label: String, pageable: Pageable): Slice<Neo4jResource>
 }

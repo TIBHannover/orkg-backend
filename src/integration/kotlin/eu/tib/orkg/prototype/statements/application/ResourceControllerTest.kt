@@ -137,9 +137,12 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         service.create(CreateResourceRequest(null, "Contribution 2", set))
 
         service.create(CreateResourceRequest(null, "Contribution 3"))
+        val id2 = classService.create("research contribution").id
+        val set2 = listOf(id2).toSet()
+        service.create(CreateResourceRequest(null, "Paper Contribution 1", set2))
 
         mockMvc
-            .perform(getRequestTo("/api/resources/?q=Contribution&exclude=$id"))
+            .perform(getRequestTo("/api/resources/?q=Contribution&exclude=$id,$id2"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$", hasSize<Int>(1)))
             .andDo(

@@ -5,6 +5,8 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import eu.tib.orkg.prototype.statements.domain.model.StatementWithLiteralService
+import eu.tib.orkg.prototype.statements.domain.model.StatementWithResourceService
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -25,13 +27,35 @@ import org.springframework.web.util.UriComponentsBuilder
 @RestController
 @RequestMapping("/api/resources/")
 @CrossOrigin(origins = ["*"])
-class ResourceController(private val service: ResourceService) {
+class ResourceController(
+    private val service: ResourceService,
+    private val statementWithLiteralService: StatementWithLiteralService,
+    private val statementWithResourceService: StatementWithResourceService
+) {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: ResourceId): Resource =
         service
             .findById(id)
             .orElseThrow { ResourceNotFound() }
+
+    @GetMapping("/{id}/fork")
+    fun fork(
+        @PathVariable id: ResourceId,
+        @RequestParam("deep", required = false, defaultValue = "false") deep: Boolean
+    ): Resource {
+        val resource = service.findById(id).orElseThrow { ResourceNotFound() }
+        val newResource = service.create(CreateResourceRequest(null, resource.label, resource.classes))
+        if (!deep) {
+            statementWithLiteralService.findAllBySubject(resource.id!!).forEach { statementWithLiteralService.create(newResource.id!!, it.predicate.id!!, it.`object`.id!!) }
+            statementWithResourceService.findAllBySubject(resource.id).forEach { statementWithResourceService.create(newResource.id!!, it.predicate.id!!, it.`object`.id!!) }
+            return newResource
+        } else {
+            // statementWithLiteralService.findAllBySubject(resource.id!!).forEach { statementWithLiteralService.create(newResource.id!!, it.predicate.id!!, it.`object`.id!!) }
+            // statementWithResourceService.findAllBySubject(resource.id).forEach { statementWithResourceService.create(newResource.id!!, it.predicate.id!!, it.`object`.id!!) }
+        }
+        return newResource
+    }
 
     @GetMapping("/")
     fun findByLabel(

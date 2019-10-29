@@ -327,6 +327,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("subject.label").description("The label of the subject resource"),
             fieldWithPath("subject.created_at").description("The subject creation datetime"),
             fieldWithPath("subject.classes").description("The classes the subject resource belongs to"),
+            fieldWithPath("subject.shared").description("The number of time this resource has been shared"),
             fieldWithPath("predicate").description("A predicate"),
             fieldWithPath("predicate.id").description("The ID of the predicate"),
             fieldWithPath("predicate.label").description("The label of the predicate"),
@@ -336,7 +337,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("object.label").description("The label of the object"),
             fieldWithPath("object._class").description("The type of the object (resource or literal)."),
             fieldWithPath("object.created_at").description("The object creation datetime"),
-            fieldWithPath("object.classes").description("The classes the object resource belongs to")
+            fieldWithPath("object.classes").description("The classes the object resource belongs to"),
+            fieldWithPath("object.shared").optional().ignored()
         )
 
     private fun statementListResponseFields() =
@@ -348,6 +350,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].subject.label").description("The label of the subject resource"),
             fieldWithPath("[].subject.created_at").description("The subject creation datetime"),
             fieldWithPath("[].subject.classes").description("The classes the subject resource belongs to"),
+            fieldWithPath("[].subject.shared").description("The number of time this resource has been shared"),
             fieldWithPath("[].predicate").description("A predicate"),
             fieldWithPath("[].predicate.id").description("The ID of the predicate"),
             fieldWithPath("[].predicate.label").description("The label of the predicate"),
@@ -357,6 +360,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].object.label").description("The label of the object"),
             fieldWithPath("[].object._class").description("The type of the object (resource or literal)."),
             fieldWithPath("[].object.created_at").description("The object creation datetime"),
-            fieldWithPath("[].object.classes").description("The classes the object resource belongs to")
+            fieldWithPath("[].object.classes").description("The classes the object resource belongs to"),
+            fieldWithPath("[].object.shared").optional().ignored()
         )
 }

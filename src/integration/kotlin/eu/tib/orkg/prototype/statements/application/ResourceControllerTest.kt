@@ -168,7 +168,8 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("id").description("The resource ID"),
             fieldWithPath("label").description("The resource label"),
             fieldWithPath("created_at").description("The resource creation datetime"),
-            fieldWithPath("classes").description("The list of classes the resource belongs to")
+            fieldWithPath("classes").description("The list of classes the resource belongs to"),
+            fieldWithPath("shared").description("The number of times this resource is shared").optional()
         )
 
     private fun resourceListResponseFields() =
@@ -176,6 +177,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].id").description("The resource ID"),
             fieldWithPath("[].label").description("The resource label"),
             fieldWithPath("[].created_at").description("The resource creation datetime"),
-            fieldWithPath("[].classes").description("The list of classes the resource belongs to")
+            fieldWithPath("[].classes").description("The list of classes the resource belongs to"),
+            fieldWithPath("[].shared").description("The number of times this resource is shared").optional()
         )
 }

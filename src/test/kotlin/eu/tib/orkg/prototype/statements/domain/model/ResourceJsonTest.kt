@@ -45,12 +45,20 @@ class ResourceJsonTest {
             .containsExactlyInAnyOrder("C1", "C2", "C3")
     }
 
+    @Test
+    fun serializedResourceShouldHaveSharedProperty() {
+        assertThat(serializedResource())
+            .extractingJsonPathNumberValue("@.shared")
+            .isEqualTo(11)
+    }
+
     private fun createResource() =
         Resource(
             ResourceId(100),
             "label",
             OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3)),
-            setOf(ClassId(1), ClassId(2), ClassId(3))
+            setOf(ClassId(1), ClassId(2), ClassId(3)),
+            11
         )
 
     private fun serializedResource() = json.write(createResource())

@@ -8,5 +8,6 @@ data class Resource(
     val label: String,
     @JsonProperty("created_at")
     val createdAt: OffsetDateTime?,
-    val classes: Set<ClassId> = emptySet()
+    val classes: Set<ClassId> = emptySet(),
+    val shared: Int = 0
 )

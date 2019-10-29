@@ -56,7 +56,7 @@ data class Neo4jResource(
         this.resourceId = resourceId
     }
 
-    fun toResource() = Resource(resourceId, label!!, createdAt, classes)
+    fun toResource() = Resource(resourceId, label!!, createdAt, classes, objectOf.size)
 
     fun toObject() = ResourceObject(resourceId, label!!, createdAt, classes)
 

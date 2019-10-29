@@ -35,6 +35,10 @@ data class Neo4jResource(
     @JsonIgnore
     var resources: MutableSet<Neo4jStatementWithResource> = mutableSetOf()
 
+    @Relationship(type = "RELATES_TO", direction = Relationship.INCOMING)
+    @JsonIgnore
+    var objectOf: MutableSet<Neo4jStatementWithResource> = mutableSetOf()
+
     /**
      * List of node labels. Labels other than the `Resource` label are mapped to classes.
      */

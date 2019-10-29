@@ -35,6 +35,59 @@ class Neo4jResourceRepositoryTest {
     }
 
     @Test
+    @DisplayName("should show is shared resource")
+    fun shouldShowIsSharedResource() {
+        val sub = Neo4jResource(
+            label = "subject",
+            resourceId = ResourceId(1)
+        ).persist()
+        val sub2 = Neo4jResource(
+            label = "subject2",
+            resourceId = ResourceId(2)
+        ).persist()
+        val obj = Neo4jResource(
+            label = "object",
+            resourceId = ResourceId(3)
+        ).persist()
+        val obj2 = Neo4jResource(
+            label = "object2",
+            resourceId = ResourceId(4)
+        ).persist()
+
+        // Act
+
+        statementRepository.save(
+            Neo4jStatementWithResource(
+                statementId = StatementId(23), // irrelevant
+                subject = sub,
+                `object` = obj,
+                predicateId = PredicateId(42) // irrelevant
+            )
+        )
+
+        statementRepository.save(
+            Neo4jStatementWithResource(
+                statementId = StatementId(24), // irrelevant
+                subject = sub2,
+                `object` = obj,
+                predicateId = PredicateId(43) // irrelevant
+            )
+        )
+
+        statementRepository.save(
+            Neo4jStatementWithResource(
+                statementId = StatementId(25), // irrelevant
+                subject = obj,
+                `object` = obj2,
+                predicateId = PredicateId(44) // irrelevant
+            )
+        )
+
+        val result = resourceRepository.findByResourceId(obj.resourceId)
+        assertThat(result.get().objectOf).hasSize(2)
+    }
+
+    @Test
     @DisplayName("should create connection between two resources")
     fun shouldCreateConnectionBetweenTwoResources() {
         val pagination = PageRequest.of(0, 10)

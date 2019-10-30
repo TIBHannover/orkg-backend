@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.util.LinkedList
+import java.util.Queue
 
 @RestController
 @RequestMapping("/api/resources/")
@@ -51,8 +53,18 @@ class ResourceController(
             statementWithResourceService.findAllBySubject(resource.id).forEach { statementWithResourceService.create(newResource.id!!, it.predicate.id!!, it.`object`.id!!) }
             return newResource
         } else {
-            // statementWithLiteralService.findAllBySubject(resource.id!!).forEach { statementWithLiteralService.create(newResource.id!!, it.predicate.id!!, it.`object`.id!!) }
-            // statementWithResourceService.findAllBySubject(resource.id).forEach { statementWithResourceService.create(newResource.id!!, it.predicate.id!!, it.`object`.id!!) }
+            val queue: Queue<Pair<Resource, ResourceId>> = LinkedList()
+            queue.add(Pair(newResource, resource.id!!))
+            do {
+                val subject = queue.remove()
+                statementWithLiteralService.findAllBySubject(subject.second).forEach { statementWithLiteralService.create(subject.first.id!!, it.predicate.id!!, it.`object`.id!!) }
+                val objects = statementWithResourceService.findAllBySubject(subject.second)
+                objects.forEach {
+                    val newObject = service.create(CreateResourceRequest(null, it.`object`.label, it.`object`.classes))
+                    queue.add(Pair(newObject, it.`object`.id!!))
+                    statementWithResourceService.create(subject.first.id!!, it.predicate.id!!, newObject.id!!)
+                }
+            } while (queue.isNotEmpty())
         }
         return newResource
     }

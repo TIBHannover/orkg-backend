@@ -20,12 +20,13 @@ class UserService(
 
     fun findById(id: UUID): Optional<UserEntity> = repository.findById(id)
 
-    fun registerUser(anEmail: String, aPassword: String) {
+    fun registerUser(anEmail: String, aPassword: String, aDisplayName: String?) {
         val userId = UUID.randomUUID()
         val newUser = UserEntity().apply {
             id = userId
             email = anEmail
             password = passwordEncoder.encode(aPassword)
+            displayName = aDisplayName
             enabled = true
             roles = mutableSetOf(RoleEntity().apply {
                 name = "ROLE_USER"

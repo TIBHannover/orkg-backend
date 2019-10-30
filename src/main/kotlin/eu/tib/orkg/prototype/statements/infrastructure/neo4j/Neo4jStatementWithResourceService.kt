@@ -71,16 +71,15 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
     }
 
     override fun findAll(pagination: Pageable): Iterable<StatementWithResource> {
-        return neo4jStatementRepository
-            .findAll(pagination)
-            .content
-            .map {
-                val newObject = neo4jResourceRepository.findByResourceId(it.`object`!!.resourceId).get()
+        val statements = neo4jStatementRepository.findAll(pagination).content
+        val ids = statements.distinctBy { it.`object`!!.resourceId!! }.map { it.`object`!!.resourceId!! }
+        val counts = ids.zip(neo4jResourceRepository.getIncomingStatementsCount(ids)).toMap()
+        return statements.map {
                 StatementWithResource(
                     it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
-                    newObject.toObject(),
+                    it.`object`!!.toObject(counts[it.`object`!!.resourceId]!!.toInt()),
                     it.createdAt!!
                 )
             }
@@ -103,16 +102,15 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
 
     override fun findAllBySubject(resourceId: ResourceId, pagination: Pageable): Iterable<StatementWithResource> {
         val resource = neo4jResourceRepository.findByResourceId(resourceId).get()
-        return neo4jStatementRepository
-            .findAllBySubject(resource.resourceId!!, pagination)
-            .content
-            .map {
-                val newObject = neo4jResourceRepository.findByResourceId(it.`object`!!.resourceId).get()
+        val statements = neo4jStatementRepository.findAllBySubject(resource.resourceId!!, pagination).content
+        val ids = statements.distinctBy { it.`object`!!.resourceId!! }.map { it.`object`!!.resourceId!! }
+        val counts = ids.zip(neo4jResourceRepository.getIncomingStatementsCount(ids)).toMap()
+        return statements.map {
                 StatementWithResource(
                     it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
-                    newObject.toObject(),
+                    it.`object`!!.toObject(counts[it.`object`!!.resourceId]!!.toInt()),
                     it.createdAt!!
                 )
             }
@@ -123,32 +121,30 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
         predicateId: PredicateId,
         pagination: Pageable
     ): Iterable<StatementWithResource> {
-        return neo4jStatementRepository
-            .findAllBySubjectAndPredicate(resourceId, predicateId, pagination)
-            .content
-            .map {
-                val newObject = neo4jResourceRepository.findByResourceId(it.`object`!!.resourceId).get()
+        val statements = neo4jStatementRepository.findAllBySubjectAndPredicate(resourceId, predicateId, pagination).content
+        val ids = statements.distinctBy { it.`object`!!.resourceId!! }.map { it.`object`!!.resourceId!! }
+        val counts = ids.zip(neo4jResourceRepository.getIncomingStatementsCount(ids)).toMap()
+        return statements.map {
                 StatementWithResource(
                     it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
-                    newObject.toObject(),
+                    it.`object`!!.toObject(counts[it.`object`!!.resourceId]!!.toInt()),
                     it.createdAt!!
                 )
             }
     }
 
     override fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable): Iterable<StatementWithResource> {
-        return neo4jStatementRepository
-            .findAllByPredicateId(predicateId, pagination)
-            .content
-            .map {
-                val newObject = neo4jResourceRepository.findByResourceId(it.`object`!!.resourceId).get()
+        val statements = neo4jStatementRepository.findAllByPredicateId(predicateId, pagination).content
+        val ids = statements.distinctBy { it.`object`!!.resourceId!! }.map { it.`object`!!.resourceId!! }
+        val counts = ids.zip(neo4jResourceRepository.getIncomingStatementsCount(ids)).toMap()
+        return statements.map {
                 StatementWithResource(
                     it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
-                    newObject.toObject(),
+                    it.`object`!!.toObject(counts[it.`object`!!.resourceId]!!.toInt()),
                     it.createdAt!!
                 )
             }

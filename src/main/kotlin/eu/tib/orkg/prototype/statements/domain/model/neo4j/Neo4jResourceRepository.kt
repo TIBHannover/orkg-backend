@@ -45,4 +45,7 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
 
     @Query(value = """MATCH (node:`Resource`) WHERE NOT ANY(c in {0} WHERE c IN labels(node)) AND node.label =~ {1}  WITH node, node.label AS label, node.resource_id AS id RETURN node""")
     fun findAllExcludingClassByLabelContaining(classes: List<String>, label: String, pageable: Pageable): Slice<Neo4jResource>
+
+    @Query("""UNWIND {0} as r_id MATCH ()-[p:RELATES_TO]->(node:Resource {resource_id: r_id}) WITH r_id, COUNT(p) AS cnt RETURN cnt""")
+    fun getIncomingStatementsCount(ids: List<ResourceId>): Iterable<Long>
 }

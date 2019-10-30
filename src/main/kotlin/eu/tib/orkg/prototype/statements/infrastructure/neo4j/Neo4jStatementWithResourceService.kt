@@ -75,11 +75,12 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
             .findAll(pagination)
             .content
             .map {
+                val newObject = neo4jResourceRepository.findByResourceId(it.`object`!!.resourceId).get()
                 StatementWithResource(
                     it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
-                    it.`object`!!.toObject(),
+                    newObject.toObject(),
                     it.createdAt!!
                 )
             }
@@ -89,11 +90,12 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
         return neo4jStatementRepository
             .findByStatementId(statementId)
             .map {
+                val newObject = neo4jResourceRepository.findByResourceId(it.`object`!!.resourceId).get()
                 StatementWithResource(
                     it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
-                    it.`object`!!.toObject(),
+                    newObject.toObject(),
                     it.createdAt!!
                 )
             }
@@ -105,11 +107,12 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
             .findAllBySubject(resource.resourceId!!, pagination)
             .content
             .map {
+                val newObject = neo4jResourceRepository.findByResourceId(it.`object`!!.resourceId).get()
                 StatementWithResource(
                     it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
-                    it.`object`!!.toObject(),
+                    newObject.toObject(),
                     it.createdAt!!
                 )
             }
@@ -124,11 +127,12 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
             .findAllBySubjectAndPredicate(resourceId, predicateId, pagination)
             .content
             .map {
+                val newObject = neo4jResourceRepository.findByResourceId(it.`object`!!.resourceId).get()
                 StatementWithResource(
                     it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
-                    it.`object`!!.toObject(),
+                    newObject.toObject(),
                     it.createdAt!!
                 )
             }
@@ -139,11 +143,12 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
             .findAllByPredicateId(predicateId, pagination)
             .content
             .map {
+                val newObject = neo4jResourceRepository.findByResourceId(it.`object`!!.resourceId).get()
                 StatementWithResource(
                     it.statementId!!,
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
-                    it.`object`!!.toObject(),
+                    newObject.toObject(),
                     it.createdAt!!
                 )
             }

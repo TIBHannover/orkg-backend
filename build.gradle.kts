@@ -9,7 +9,7 @@ val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java)
     .kotlinPluginVersion
 
 val neo4jVersion = "3.5.+" // should match version in Dockerfile
-val springDataNeo4jVersion = "5.1.9"
+val springDataNeo4jVersion = "5.2.0"
 val springSecurityOAuthVersion = "2.3.6"
 val junitVersion = "5.5.0"
 val testContainersVersion = "1.11.3"
@@ -19,7 +19,7 @@ plugins {
     kotlin("plugin.spring") version "1.3.41"
     // Add no-arg annotations to @Entity, @Embeddable and @MappedSuperclass:
     kotlin("plugin.jpa") version "1.3.41"
-    id("org.springframework.boot") version "2.1.6.RELEASE"
+    id("org.springframework.boot") version "2.2.0.RELEASE"
     id("com.coditory.integration-test") version "1.0.6"
     id("org.asciidoctor.convert") version "1.5.9.2"
     id("com.palantir.docker") version "0.22.1"
@@ -48,6 +48,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
         exclude(module = "neo4j-ogm-http-driver")
     }
+    implementation("org.neo4j:neo4j-ogm-bolt-native-types")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.security.oauth:spring-security-oauth2:$springSecurityOAuthVersion.RELEASE")
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -74,6 +75,7 @@ dependencies {
     testImplementation("org.mockito:mockito-junit-jupiter")
 
     testImplementation("org.neo4j:neo4j-ogm-embedded-driver")
+    testImplementation("org.neo4j:neo4j-ogm-embedded-native-types")
     testImplementation("org.neo4j:neo4j:$neo4jVersion")
     // TestContainers
     testImplementation("org.testcontainers:testcontainers:$testContainersVersion")

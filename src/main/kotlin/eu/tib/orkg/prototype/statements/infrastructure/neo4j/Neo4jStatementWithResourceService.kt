@@ -152,7 +152,8 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
                         it.statementId!!,
                         it.subject!!.toResource(),
                         predicateService.findById(it.predicateId!!).get(),
-                        it.`object`!!.toObject()
+                        it.`object`!!.toObject(),
+                        it.createdAt!!
                     )
                 }
         }

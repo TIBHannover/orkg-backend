@@ -13,6 +13,7 @@ spring:
     neo4j:
       uri: 'bolt://localhost:7687'
       #auto-index: validate
+      use-native-types: true
   datasource:
     url: 'jdbc:postgresql://localhost/postgres'
     username: postgres
@@ -32,6 +33,7 @@ spring:
       uri: 'bolt://neo4j:7687'
       #username:
       #password:
+      use-native-types: true
   datasource:
     url: 'jdbc:postgresql://postgres/postgres'
     username: postgres

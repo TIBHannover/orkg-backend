@@ -6,6 +6,7 @@ spring:
     neo4j:
       embedded:
         enabled: true
+      use-native-types: true
   datasource:
     # Start Postgres via TestContainers. (The hostname, port number and database name are ignored.)
     url: 'jdbc:tc:postgresql:11://localhost/db'

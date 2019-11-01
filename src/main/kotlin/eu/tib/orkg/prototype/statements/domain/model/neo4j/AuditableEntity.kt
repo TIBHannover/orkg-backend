@@ -7,5 +7,5 @@ import java.time.OffsetDateTime
 open class AuditableEntity(
     @Property("created_at")
     @CreatedDate
-    var createdAt: OffsetDateTime? = null
+    var createdAt: OffsetDateTime? = OffsetDateTime.now()
 )

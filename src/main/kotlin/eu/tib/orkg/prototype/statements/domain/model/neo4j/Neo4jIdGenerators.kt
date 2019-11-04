@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import eu.tib.orkg.prototype.statements.domain.model.Block
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.IdentityGenerator
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
@@ -44,14 +45,6 @@ abstract class RepositoryBasedIdGenerator<T, C : Neo4jCounter> : IdentityGenerat
         node.counter = lower + 1_000L
         val upper = repository().save(node).counter
         return Block(lower until upper)
-    }
-
-    data class Block(private val range: LongRange) : Iterator<Long> {
-        private var counter = range.first
-
-        override fun hasNext() = counter in range
-
-        override fun next() = counter++
     }
 }
 

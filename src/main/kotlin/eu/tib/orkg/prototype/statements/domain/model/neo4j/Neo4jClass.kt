@@ -16,7 +16,7 @@ data class Neo4jClass(
     @Id
     @GeneratedValue
     var id: Long? = null
-) {
+) : AuditableEntity() {
     @Property("class_id")
     @Required
     @Convert(ClassIdGraphAttributeConverter::class)
@@ -35,6 +35,6 @@ data class Neo4jClass(
 
     fun toClass(): Class {
         val aURI: URI? = if (uri != null) URI.create(uri!!) else null
-        return Class(classId!!, label!!, aURI)
+        return Class(classId!!, label!!, aURI, createdAt!!)
     }
 }

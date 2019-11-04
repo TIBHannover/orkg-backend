@@ -120,14 +120,16 @@ class ClassControllerTest : RestDocumentationBaseTest() {
         responseFields(
             fieldWithPath("id").description("The class ID").optional(),
             fieldWithPath("label").description("The class label"),
-            fieldWithPath("uri").description("An optional URI to describe the class (RDF)").optional()
+            fieldWithPath("uri").description("An optional URI to describe the class (RDF)").optional(),
+            fieldWithPath("created_at").description("The class creation datetime")
         )
 
     private fun classListResponseFields() =
         responseFields(
             fieldWithPath("[].id").description("The class ID").optional(),
             fieldWithPath("[].label").description("The class label"),
-            fieldWithPath("[].uri").description("An optional URI to describe the class (RDF)").optional()
+            fieldWithPath("[].uri").description("An optional URI to describe the class (RDF)").optional(),
+            fieldWithPath("[].created_at").description("The class creation datetime")
         )
 
     private fun resourceListResponseFields() =

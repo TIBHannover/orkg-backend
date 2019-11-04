@@ -135,6 +135,6 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].id").description("The resource ID"),
             fieldWithPath("[].label").description("The resource label"),
             fieldWithPath("[].classes").description("The list of classes the resource belongs to"),
-            fieldWithPath("[].created").ignored()
+            fieldWithPath("[].created_at").description("The resource creation datetime")
         )
 }

@@ -87,6 +87,6 @@ class PaperControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("id").description("The paper ID"),
             fieldWithPath("label").description("The paper label"),
             fieldWithPath("classes").description("The list of classes the paper belongs to"),
-            fieldWithPath("created").ignored()
+            fieldWithPath("created_at").description("The paper creation datetime")
         )
 }

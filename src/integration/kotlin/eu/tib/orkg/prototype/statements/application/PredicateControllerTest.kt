@@ -99,13 +99,13 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
         responseFields(
             fieldWithPath("id").description("The predicate ID"),
             fieldWithPath("label").description("The predicate label"),
-            fieldWithPath("createdAt").description("The predicate creation datetime")
+            fieldWithPath("created_at").description("The predicate creation datetime")
         )
 
     private fun predicateListResponseFields() =
         responseFields(
             fieldWithPath("[].id").description("The predicate ID"),
             fieldWithPath("[].label").description("The predicate label"),
-            fieldWithPath("[].createdAt").description("The predicate creation datetime")
+            fieldWithPath("[].created_at").description("The predicate creation datetime")
         )
 }

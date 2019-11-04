@@ -219,44 +219,42 @@ class StatementControllerTest : RestDocumentationBaseTest() {
     private fun statementResponseFields() =
         responseFields(
             fieldWithPath("id").description("The statement ID"),
-            fieldWithPath("created").ignored(),
+            fieldWithPath("created_at").description("The statement creation datetime"),
             fieldWithPath("subject").description("A resource"),
             fieldWithPath("subject.id").description("The ID of the subject resource"),
             fieldWithPath("subject.label").description("The label of the subject resource"),
-            fieldWithPath("subject.createdAt").description("The subject creation datetime"),
+            fieldWithPath("subject.created_at").description("The subject creation datetime"),
             fieldWithPath("subject.classes").description("The classes the subject resource belongs to"),
             fieldWithPath("predicate").description("A predicate"),
             fieldWithPath("predicate.id").description("The ID of the predicate"),
             fieldWithPath("predicate.label").description("The label of the predicate"),
-            fieldWithPath("predicate.createdAt").description("The predicate creation datetime"),
+            fieldWithPath("predicate.created_at").description("The predicate creation datetime"),
             fieldWithPath("object").description("An object"),
             fieldWithPath("object.id").description("The ID of the object"),
             fieldWithPath("object.label").description("The label of the object"),
             fieldWithPath("object._class").description("The type of the object (resource or literal)."),
-            fieldWithPath("object.createdAt").description("The object creation datetime"),
-            fieldWithPath("object.classes").description("The classes the object resource belongs to"),
-            fieldWithPath("createdAt").description("The statement creation datetime")
+            fieldWithPath("object.created_at").description("The object creation datetime"),
+            fieldWithPath("object.classes").description("The classes the object resource belongs to")
         )
 
     private fun statementListResponseFields() =
         responseFields(
             fieldWithPath("[].id").description("The statement ID"),
-            fieldWithPath("[].created").ignored(),
+            fieldWithPath("[].created_at").description("The statement creation datetime"),
             fieldWithPath("[].subject").description("A resource"),
             fieldWithPath("[].subject.id").description("The ID of the subject resource"),
             fieldWithPath("[].subject.label").description("The label of the subject resource"),
-            fieldWithPath("[].subject.createdAt").description("The subject creation datetime"),
+            fieldWithPath("[].subject.created_at").description("The subject creation datetime"),
             fieldWithPath("[].subject.classes").description("The classes the subject resource belongs to"),
             fieldWithPath("[].predicate").description("A predicate"),
             fieldWithPath("[].predicate.id").description("The ID of the predicate"),
             fieldWithPath("[].predicate.label").description("The label of the predicate"),
-            fieldWithPath("[].predicate.createdAt").description("The predicate creation datetime"),
+            fieldWithPath("[].predicate.created_at").description("The predicate creation datetime"),
             fieldWithPath("[].object").description("An object"),
             fieldWithPath("[].object.id").description("The ID of the object"),
             fieldWithPath("[].object.label").description("The label of the object"),
             fieldWithPath("[].object._class").description("The type of the object (resource or literal)."),
-            fieldWithPath("[].object.createdAt").description("The object creation datetime"),
-            fieldWithPath("[].object.classes").description("The classes the object resource belongs to"),
-            fieldWithPath("[].createdAt").description("The statement creation datetime")
+            fieldWithPath("[].object.created_at").description("The object creation datetime"),
+            fieldWithPath("[].object.classes").description("The classes the object resource belongs to")
         )
 }

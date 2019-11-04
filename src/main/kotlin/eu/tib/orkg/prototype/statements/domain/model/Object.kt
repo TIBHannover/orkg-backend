@@ -1,9 +1,11 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
@@ -32,7 +34,8 @@ sealed class Object : Comparable<Object> {
     data class Literal(
         val id: LiteralId
     ) : Object() {
-        val created: LocalDateTime = LocalDateTime.now()
+        @JsonProperty("created_at")
+        val createdAt: OffsetDateTime = OffsetDateTime.now()
 
         override fun compareTo(other: Object): Int {
             // Resources are always sorted before resources

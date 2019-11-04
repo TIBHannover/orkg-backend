@@ -99,7 +99,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         responseFields(
             fieldWithPath("id").description("The resource ID"),
             fieldWithPath("label").description("The resource label"),
-            fieldWithPath("createdAt").description("The resource creation datetime"),
+            fieldWithPath("created_at").description("The resource creation datetime"),
             fieldWithPath("classes").description("The list of classes the resource belongs to")
         )
 
@@ -107,7 +107,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         responseFields(
             fieldWithPath("[].id").description("The resource ID"),
             fieldWithPath("[].label").description("The resource label"),
-            fieldWithPath("[].createdAt").description("The resource creation datetime"),
+            fieldWithPath("[].created_at").description("The resource creation datetime"),
             fieldWithPath("[].classes").description("The list of classes the resource belongs to")
         )
 }

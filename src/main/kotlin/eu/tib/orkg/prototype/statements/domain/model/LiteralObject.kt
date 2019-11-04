@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import java.time.OffsetDateTime
@@ -18,6 +19,7 @@ import java.time.OffsetDateTime
 data class LiteralObject(
     val id: LiteralId?,
     val label: String,
+    @JsonProperty("created_at")
     val createdAt: OffsetDateTime?,
     val classes: Set<ClassId> = emptySet()
 )

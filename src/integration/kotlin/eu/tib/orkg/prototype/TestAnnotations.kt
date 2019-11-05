@@ -1,7 +1,9 @@
 package eu.tib.orkg.prototype
 
+import eu.tib.orkg.prototype.configuration.Neo4jConfiguration
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
 import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Import
 import org.springframework.transaction.annotation.Transactional
 import kotlin.annotation.AnnotationTarget.CLASS
 
@@ -10,6 +12,7 @@ import kotlin.annotation.AnnotationTarget.CLASS
  */
 @Target(CLASS)
 @DataNeo4jTest
+@Import(Neo4jConfiguration::class)
 @Transactional
 annotation class Neo4jRepositoryTest
 
@@ -23,6 +26,7 @@ annotation class Neo4jRepositoryTest
  */
 @Target(CLASS)
 @DataNeo4jTest(useDefaultFilters = false)
+@Import(Neo4jConfiguration::class)
 @ComponentScan(
     basePackages = [
         "eu.tib.orkg.prototype.statements.domain.model.neo4j",

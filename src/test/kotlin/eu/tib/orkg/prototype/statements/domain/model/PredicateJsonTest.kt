@@ -1,0 +1,49 @@
+package eu.tib.orkg.prototype.statements.domain.model
+
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.json.JsonTest
+import org.springframework.boot.test.json.JacksonTester
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+
+/**
+ * Test the JSON serialization of a [Predicate].
+ */
+@JsonTest
+class PredicateJsonTest {
+
+    @Autowired
+    private lateinit var json: JacksonTester<Predicate>
+
+    @Test
+    fun serializedPredicateShouldHaveId() {
+        assertThat(serializedPredicate())
+            .extractingJsonPathStringValue("@.id")
+            .isEqualTo("P100")
+    }
+
+    @Test
+    fun serializedPredicateShouldHaveLabel() {
+        assertThat(serializedPredicate())
+            .extractingJsonPathStringValue("@.label")
+            .isEqualTo("label")
+    }
+
+    @Test
+    fun serializedPredicateShouldHaveCreatedTimestamp() {
+        assertThat(serializedPredicate())
+            .extractingJsonPathStringValue("@.created_at")
+            .isEqualTo("2018-12-25T05:23:42.123456789+03:00")
+    }
+
+    private fun createPredicate() =
+        Predicate(
+            PredicateId(100),
+            "label",
+            OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3))
+        )
+
+    private fun serializedPredicate() = json.write(createPredicate())
+}

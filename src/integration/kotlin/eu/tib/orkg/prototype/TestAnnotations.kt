@@ -1,9 +1,7 @@
 package eu.tib.orkg.prototype
 
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
 import org.springframework.context.annotation.ComponentScan
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.transaction.annotation.Transactional
 import kotlin.annotation.AnnotationTarget.CLASS
 
@@ -11,7 +9,6 @@ import kotlin.annotation.AnnotationTarget.CLASS
  * Annotation that helps to setup tests of Neo4j repositories.
  */
 @Target(CLASS)
-@ExtendWith(SpringExtension::class)
 @DataNeo4jTest
 @Transactional
 annotation class Neo4jRepositoryTest
@@ -25,7 +22,6 @@ annotation class Neo4jRepositoryTest
  * component scanning is extended to include the base packages containing the Neo4j service implementations.
  */
 @Target(CLASS)
-@ExtendWith(SpringExtension::class)
 @DataNeo4jTest(useDefaultFilters = false)
 @ComponentScan(
     basePackages = [

@@ -140,6 +140,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             )
     }
 
+    @Test
     fun lookupByClassAndLabel() {
         val id = service.create("research contribution").id!!
         val set = listOf(id).toSet()

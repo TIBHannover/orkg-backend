@@ -130,6 +130,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             )
     }
 
+    @Test
     fun excludeByClass() {
         val id = classService.create("research contribution").id!!
         val set = listOf(id).toSet()
@@ -137,7 +138,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         service.create(CreateResourceRequest(null, "Contribution 2", set))
 
         service.create(CreateResourceRequest(null, "Contribution 3"))
-        val id2 = classService.create("research contribution").id
+        val id2 = classService.create("research contribution").id!!
         val set2 = listOf(id2).toSet()
         service.create(CreateResourceRequest(null, "Paper Contribution 1", set2))
 

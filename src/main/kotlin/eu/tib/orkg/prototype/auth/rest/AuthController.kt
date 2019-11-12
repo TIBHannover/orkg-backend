@@ -29,7 +29,7 @@ class AuthController(
         if (request.password != request.matchingPassword)
             throw RuntimeException("Passwords do not match")
 
-        userService.registerUser(request.email, request.password, request.display_name)
+        userService.registerUser(request.email, request.password, request.displayName)
 
         return successResponse()
     }
@@ -41,7 +41,8 @@ class AuthController(
         val password: String,
         @JsonProperty("matching_password")
         val matchingPassword: String,
-        val display_name: String?
+        @JsonProperty("display_name")
+        val displayName: String?
     )
 
     data class RegisteredUserResponse(

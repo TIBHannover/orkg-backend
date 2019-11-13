@@ -55,7 +55,12 @@ data class LiteralTriple(
      */
     fun toNTripleWithPrefix(): String {
         val rPrefix = "https://orkg.org/r/"
+        val processedLiteral =
+            literal
+                ?.replace("\\", "\\\\")
+                ?.replace("\"", "\\\"")
+                ?.replace("(\\r|\\n|\\r\\n)+".toRegex(), "\\\\n")
         val pPrefix = "https://orkg.org/p/"
-        return "<$rPrefix$subjectId> <$pPrefix$predicateId> \"$literal\"^^<http://www.w3.org/2001/XMLSchema#string> ."
+        return "<$rPrefix$subjectId> <$pPrefix$predicateId> \"$processedLiteral\"^^<http://www.w3.org/2001/XMLSchema#string> ."
     }
 }

@@ -1,10 +1,15 @@
 package eu.tib.orkg.prototype.auth.rest
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.rest.AuthController.RegisterUserRequest
 import eu.tib.orkg.prototype.auth.service.UserService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentMatchers.anyString
+import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.then
+import org.mockito.internal.verification.VerificationModeFactory.times
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -15,6 +20,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
+import java.util.Optional
 
 @WebMvcTest(controllers = [AuthController::class])
 class AuthControllerTest {
@@ -115,6 +121,39 @@ class AuthControllerTest {
         mockMvc
             .perform(registrationOf(user))
             .andExpect(status().isOk)
+    }
+
+    @Test
+    fun whenRequestIsValidAndEmailDoesExist_ThenFail() {
+        val user = RegisterUserRequest(
+            email = "user@example.org",
+            password = "irrelevant",
+            matchingPassword = "irrelevant",
+            displayName = "irrelevant"
+        )
+        given(userService.findByEmail(anyString())).willReturn(Optional.of(UserEntity()))
+
+        mockMvc
+            .perform(registrationOf(user))
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun whenRequestIsValidAndEmailDoesNotExist_ThenCallRegistration() {
+        val user = RegisterUserRequest(
+            email = "user@example.org",
+            password = "irrelevant",
+            matchingPassword = "irrelevant",
+            displayName = "irrelevant"
+        )
+        given(userService.findByEmail(anyString())).willReturn(Optional.empty())
+
+        mockMvc
+            .perform(registrationOf(user))
+            .andExpect(status().isOk)
+            .andReturn()
+
+        then(userService).should(times(1)).registerUser("user@example.org", "irrelevant", "irrelevant")
     }
 
     private fun registrationOf(user: RegisterUserRequest) =

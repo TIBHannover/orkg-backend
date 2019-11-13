@@ -29,12 +29,12 @@ class UserEntityTest {
     fun testThatUniqueConstraintForIdExistsInDatabase() {
         // given a user with a given ID
         val withGivenId = UUID.fromString("5b7bec6e-d0d4-42f3-974b-3ecce9a8e44e")
-        val user = createValidUserEntity(withGivenId)
+        val user = createValidUserEntity(withGivenId, "one@example.org")
         entityManager.persistAndFlush(user)
         entityManager.clear()
 
         // when a user with the same ID is saved
-        val newUser = createValidUserEntity(withGivenId)
+        val newUser = createValidUserEntity(withGivenId, "two@example.org")
         val thrown = catchThrowable { entityManager.persistAndFlush(newUser) }
 
         // then
@@ -58,10 +58,10 @@ class UserEntityTest {
             .hasMessageContaining("ids for this class must be manually assigned before calling save():")
     }
 
-    private fun createValidUserEntity(id: UUID? = UUID.randomUUID()) =
+    private fun createValidUserEntity(id: UUID? = UUID.randomUUID(), email: String = "user@example.org") =
         UserEntity().apply {
             this.id = id
-            email = "user@example.org"
+            this.email = email
             password = "\$2a\$10\$iwPkZ6bLr35Q9xJ5bzuGIuFdzZK8WE.xiRUMTMzPEmtmioOh8ybQe" // password = "test"
         }
 }

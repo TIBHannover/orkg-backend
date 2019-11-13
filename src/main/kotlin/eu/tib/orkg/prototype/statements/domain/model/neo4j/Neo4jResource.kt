@@ -14,6 +14,7 @@ import org.neo4j.ogm.annotation.Property
 import org.neo4j.ogm.annotation.Relationship
 import org.neo4j.ogm.annotation.Required
 import org.neo4j.ogm.annotation.typeconversion.Convert
+import java.lang.StringBuilder
 
 @NodeEntity(label = "Resource")
 data class Neo4jResource(
@@ -66,4 +67,14 @@ data class Neo4jResource(
      * Assign a class to this `Resource` node.
      */
     fun assignTo(clazz: String) = labels.add(clazz)
+
+    fun toNTripleWithPrefix(): String {
+        val cPrefix = "https://orkg.org/c/"
+        val rPrefix = "https://orkg.org/r/"
+        val sb = StringBuilder()
+        sb.append("<$rPrefix$resourceId> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Resource> .\n")
+        classes.forEach { sb.append("<$rPrefix$resourceId> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <$cPrefix${it.value}> .\n") }
+        sb.append("<$rPrefix$resourceId> <http://www.w3.org/2000/01/rdf-schema#label> \"$label\"^^<http://www.w3.org/2001/XMLSchema#string> .")
+        return sb.toString()
+    }
 }

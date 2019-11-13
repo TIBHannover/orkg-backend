@@ -9,6 +9,7 @@ import org.neo4j.ogm.annotation.NodeEntity
 import org.neo4j.ogm.annotation.Property
 import org.neo4j.ogm.annotation.Required
 import org.neo4j.ogm.annotation.typeconversion.Convert
+import java.lang.StringBuilder
 import java.net.URI
 
 @NodeEntity(label = "Class")
@@ -36,5 +37,15 @@ data class Neo4jClass(
     fun toClass(): Class {
         val aURI: URI? = if (uri != null) URI.create(uri!!) else null
         return Class(classId!!, label!!, aURI, createdAt!!)
+    }
+
+    fun toNTripleWithPrefix(): String {
+        val cPrefix = "https://orkg.org/c/"
+        val sb = StringBuilder()
+        sb.append("<$cPrefix$classId> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .\n")
+        if (uri != null && !uri.isNullOrEmpty())
+            sb.append("<$cPrefix$classId> <http://www.w3.org/2002/07/owl#sameAs> <$uri> .\n")
+        sb.append("<$cPrefix$classId> <http://www.w3.org/2000/01/rdf-schema#label> \"$label\"^^<http://www.w3.org/2001/XMLSchema#string> .")
+        return sb.toString()
     }
 }

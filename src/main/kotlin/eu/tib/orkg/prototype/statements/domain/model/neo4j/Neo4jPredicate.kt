@@ -26,4 +26,11 @@ data class Neo4jPredicate(
     private var predicateId: PredicateId? = null
 ) : AuditableEntity() {
     fun toPredicate() = Predicate(predicateId, label!!, createdAt!!)
+
+    fun toNTripleWithPrefix(): String {
+        val cPrefix = "https://orkg.org/c/"
+        val pPrefix = "https://orkg.org/p/"
+        return "<$pPrefix$predicateId> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Predicate> .\n" +
+            "<$pPrefix$predicateId> <http://www.w3.org/2000/01/rdf-schema#label> \"$label\"^^<http://www.w3.org/2001/XMLSchema#string> ."
+    }
 }

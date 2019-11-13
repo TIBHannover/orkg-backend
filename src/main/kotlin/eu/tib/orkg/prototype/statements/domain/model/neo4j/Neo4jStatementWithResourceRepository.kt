@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 import org.springframework.data.neo4j.annotation.Query
+import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import java.util.Optional
 
@@ -33,4 +34,32 @@ interface Neo4jStatementWithResourceRepository :
 
     @Query("MATCH (sub:`Resource`)-[rel:`RELATES_TO`]->(obj:`Resource`) WHERE obj.`resource_id`={0} RETURN rel, sub, obj, rel.statement_id AS id")
     fun findAllByObject(resourceId: ResourceId, pagination: Pageable): Slice<Neo4jStatementWithResource>
+
+    @Query(
+        "MATCH (s:Resource)-[p:RELATES_TO]->(o:Resource) RETURN " +
+            "s.resource_id as subjectId, " +
+            "p.predicate_id as predicateId, " +
+            "o.resource_id as objectId"
+    )
+    fun listByIds(): List<IdTriple>
+}
+
+/**
+ * A projection that contains the IDs of a statement for further conversion to RDF.
+ */
+// This class needs to be in the same package, as entity scanning will not work correctly otherwise.
+@QueryResult
+data class IdTriple(
+    var subjectId: String? = null,
+    var predicateId: String? = null,
+    var objectId: String? = null
+) {
+    /**
+     * Convert the triple to a statement in NTriple format.
+     */
+    fun toNTripleWithPrefix(): String {
+        val rPrefix = "https://orkg.org/r/"
+        val pPrefix = "https://orkg.org/p/"
+        return "<$rPrefix$subjectId> <$pPrefix$predicateId> <$rPrefix$objectId> ."
+    }
 }

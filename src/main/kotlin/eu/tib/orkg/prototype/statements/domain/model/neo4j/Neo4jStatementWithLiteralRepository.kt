@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 import org.springframework.data.neo4j.annotation.Query
+import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import java.util.Optional
 
@@ -33,4 +34,28 @@ interface Neo4jStatementWithLiteralRepository :
 
     @Query("MATCH (sub:`Resource`)-[rel:`HAS_VALUE_OF`]->(obj:`Literal`) WHERE obj.`literal_id`={0} RETURN rel, sub, obj, rel.statement_id AS id")
     fun findAllByObject(objectId: LiteralId, pagination: Pageable): Slice<Neo4jStatementWithLiteral>
+
+    @Query(
+        "MATCH (s:Resource)-[p:HAS_VALUE_OF]->(o:Literal) RETURN " +
+            "s.resource_id as subjectId, " +
+            "p.predicate_id as predicateId, " +
+            "o.label as literal"
+    )
+    fun listByIds(): List<LiteralTriple>
+}
+
+@QueryResult
+data class LiteralTriple(
+    var subjectId: String? = null,
+    var predicateId: String? = null,
+    var literal: String? = null
+) {
+    /**
+     * Convert the triple to a statement in NTriple format.
+     */
+    fun toNTripleWithPrefix(): String {
+        val rPrefix = "https://orkg.org/r/"
+        val pPrefix = "https://orkg.org/p/"
+        return "<$rPrefix$subjectId> <$pPrefix$predicateId> \"$literal\"^^<http://www.w3.org/2001/XMLSchema#string> ."
+    }
 }

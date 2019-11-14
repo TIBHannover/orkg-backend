@@ -41,8 +41,10 @@ class AuthController(
 
     data class RegisterUserRequest(
         @field:Email
+        @field:NotBlank
         val email: String,
 
+        @field:Size(min = 6, message = "Please choose a more secure password. It should be longer than 6 characters.")
         @field:NotBlank
         val password: String,
 

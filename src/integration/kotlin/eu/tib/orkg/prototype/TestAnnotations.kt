@@ -39,7 +39,6 @@ annotation class Neo4jRepositoryTest
 @Transactional
 annotation class Neo4jServiceTest
 
-
 /**
  * Annotation that helps to setup tests with PostgreSQL in TestContainers.
  *

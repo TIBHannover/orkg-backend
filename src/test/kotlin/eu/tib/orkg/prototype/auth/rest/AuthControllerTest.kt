@@ -59,6 +59,23 @@ class AuthControllerTest {
     }
 
     @Test
+    fun whenEmailIsEmpty_ThenFailValidation() {
+        val user = RegisterUserRequest(
+            email = "",
+            password = "irrelevant",
+            matchingPassword = "irrelevant",
+            displayName = "irrelevant"
+        )
+
+        mockMvc
+            .perform(registrationOf(user))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("\$.status").value(400))
+            .andExpect(jsonPath("\$.errors[0].field").value("email"))
+            .andExpect(jsonPath("\$.errors[0].message").value("must not be blank"))
+    }
+
+    @Test
     fun whenPasswordIsBlank_ThenFailValidation() {
         val user = RegisterUserRequest(
             email = "user@example.org",
@@ -73,6 +90,25 @@ class AuthControllerTest {
             .andExpect(jsonPath("\$.status").value(400))
             .andExpect(jsonPath("\$.errors[0].field").value("password"))
             .andExpect(jsonPath("\$.errors[0].message").value("must not be blank"))
+            .andExpect(jsonPath("\$.errors[1].field").value("password"))
+            .andExpect(jsonPath("\$.errors[1].message").value("Please choose a more secure password. It should be longer than 6 characters."))
+    }
+
+    @Test
+    fun whenPasswordIsTooShort_ThenFailValidation() {
+        val user = RegisterUserRequest(
+            email = "user@example.org",
+            password = "abc",
+            matchingPassword = "irrelevant",
+            displayName = "irrelevant"
+        )
+
+        mockMvc
+            .perform(registrationOf(user))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("\$.status").value(400))
+            .andExpect(jsonPath("\$.errors[0].field").value("password"))
+            .andExpect(jsonPath("\$.errors[0].message").value("Please choose a more secure password. It should be longer than 6 characters."))
     }
 
     @Test

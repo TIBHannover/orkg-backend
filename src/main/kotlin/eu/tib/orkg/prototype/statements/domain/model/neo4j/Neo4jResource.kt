@@ -7,6 +7,10 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceObject
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ResourceIdGraphAttributeConverter
+import org.eclipse.rdf4j.model.Model
+import org.eclipse.rdf4j.model.util.ModelBuilder
+import org.eclipse.rdf4j.model.vocabulary.RDF
+import org.eclipse.rdf4j.model.vocabulary.RDFS
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
 import org.neo4j.ogm.annotation.Labels
@@ -37,6 +41,10 @@ data class Neo4jResource(
     @JsonIgnore
     var resources: MutableSet<Neo4jStatementWithResource> = mutableSetOf()
 
+    @Relationship(type = "RELATES_TO")
+    @JsonIgnore
+    var literals: MutableSet<Neo4jStatementWithLiteral> = mutableSetOf()
+
     @Relationship(type = "RELATES_TO", direction = Relationship.INCOMING)
     @JsonIgnore
     var objectOf: MutableSet<Neo4jStatementWithResource> = mutableSetOf()
@@ -58,7 +66,7 @@ data class Neo4jResource(
         this.resourceId = resourceId
     }
 
-    fun toResource() = Resource(resourceId, label!!, createdAt, classes, objectOf.size)
+    fun toResource() = Resource(resourceId, label!!, createdAt, classes, objectOf.size, toRdfModel())
 
     fun toObject() = ResourceObject(resourceId, label!!, createdAt, classes)
 
@@ -77,5 +85,21 @@ data class Neo4jResource(
         classes.forEach { sb.append("<$rPrefix$resourceId> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <$cPrefix${it.value}> .\n") }
         sb.append("<$rPrefix$resourceId> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label!!)}\"^^<http://www.w3.org/2001/XMLSchema#string> .")
         return sb.toString()
+    }
+
+    fun toRdfModel(): Model {
+        var builder = ModelBuilder()
+            .setNamespace("r", "http://orkg.org/orkg/vocab/resource/")
+            .setNamespace("p", "http://orkg.org/orkg/vocab/property/")
+            .setNamespace("c", "http://orkg.org/orkg/vocab/class/")
+            .setNamespace(RDF.NS)
+            .setNamespace(RDFS.NS)
+        builder = builder.subject("r:$resourceId")
+            .add(RDFS.LABEL, label)
+            .add(RDF.TYPE, "c:Resource")
+        classes.forEach { builder = builder.add(RDF.TYPE, "c:${it.value}") }
+        resources.forEach { builder = builder.add("p:${it.predicateId}", "r:${it.`object`!!.resourceId}") }
+        literals.forEach { builder = builder.add("p:${it.predicateId}", "\"${it.`object`!!.label}\"") }
+        return builder.build()
     }
 }

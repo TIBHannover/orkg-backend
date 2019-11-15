@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.http.MediaType.APPLICATION_OCTET_STREAM
 import org.springframework.restdocs.RestDocumentationContextProvider
 import org.springframework.restdocs.RestDocumentationExtension
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
@@ -70,6 +71,11 @@ abstract class RestDocumentationBaseTest {
         get(urlTemplate)
             .accept(APPLICATION_JSON)
             .contentType(APPLICATION_JSON)
+            .characterEncoding("utf-8")
+
+    protected fun getFileRequestTo(urlTemplate: String): MockHttpServletRequestBuilder =
+        get(urlTemplate)
+            .contentType(APPLICATION_OCTET_STREAM)
             .characterEncoding("utf-8")
 
     protected fun postRequestWithBody(url: String, body: Map<String, Any?>): MockHttpServletRequestBuilder =

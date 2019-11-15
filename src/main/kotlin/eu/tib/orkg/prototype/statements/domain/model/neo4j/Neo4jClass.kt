@@ -46,7 +46,7 @@ data class Neo4jClass(
     }
 
     fun toNTripleWithPrefix(): String {
-        val cPrefix = "https://orkg.org/c/"
+        val cPrefix = "http://orkg.org/orkg/vocab/class/"
         val sb = StringBuilder()
         sb.append("<$cPrefix$classId> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .\n")
         if (uri != null && !uri.isNullOrEmpty())

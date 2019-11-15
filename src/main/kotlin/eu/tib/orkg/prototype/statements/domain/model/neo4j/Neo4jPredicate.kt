@@ -33,15 +33,15 @@ data class Neo4jPredicate(
     fun toPredicate() = Predicate(predicateId, label!!, createdAt!!, toRdfModel())
 
     fun toNTripleWithPrefix(): String {
-        val cPrefix = "https://orkg.org/c/"
-        val pPrefix = "https://orkg.org/p/"
+        val cPrefix = "http://orkg.org/orkg/vocab/class/"
+        val pPrefix = "http://orkg.org/orkg/vocab/predicate/"
         return "<$pPrefix$predicateId> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Predicate> .\n" +
             "<$pPrefix$predicateId> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label!!)}\"^^<http://www.w3.org/2001/XMLSchema#string> ."
     }
 
     fun toRdfModel(): Model {
         val builder = ModelBuilder()
-            .setNamespace("p", "http://orkg.org/orkg/vocab/property/")
+            .setNamespace("p", "http://orkg.org/orkg/vocab/predicate/")
             .setNamespace("c", "http://orkg.org/orkg/vocab/class/")
             .setNamespace(RDF.NS)
             .setNamespace(RDFS.NS)

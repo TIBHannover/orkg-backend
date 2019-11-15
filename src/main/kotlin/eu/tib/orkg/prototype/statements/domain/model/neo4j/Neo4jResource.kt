@@ -78,8 +78,8 @@ data class Neo4jResource(
     fun assignTo(clazz: String) = labels.add(clazz)
 
     fun toNTripleWithPrefix(): String {
-        val cPrefix = "https://orkg.org/c/"
-        val rPrefix = "https://orkg.org/r/"
+        val cPrefix = "http://orkg.org/orkg/vocab/class/"
+        val rPrefix = "http://orkg.org/orkg/vocab/resource/"
         val sb = StringBuilder()
         sb.append("<$rPrefix$resourceId> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Resource> .\n")
         classes.forEach { sb.append("<$rPrefix$resourceId> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <$cPrefix${it.value}> .\n") }
@@ -90,7 +90,7 @@ data class Neo4jResource(
     fun toRdfModel(): Model {
         var builder = ModelBuilder()
             .setNamespace("r", "http://orkg.org/orkg/vocab/resource/")
-            .setNamespace("p", "http://orkg.org/orkg/vocab/property/")
+            .setNamespace("p", "http://orkg.org/orkg/vocab/predicate/")
             .setNamespace("c", "http://orkg.org/orkg/vocab/class/")
             .setNamespace(RDF.NS)
             .setNamespace(RDFS.NS)

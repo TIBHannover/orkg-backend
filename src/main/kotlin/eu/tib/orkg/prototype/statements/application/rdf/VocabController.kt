@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application.rdf
 
+import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import org.eclipse.rdf4j.rio.RDFFormat
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 import java.io.StringWriter
 import java.net.URI
+import java.util.Optional
 
 const val FRONTEND_URI = "http://localhost:3000"
 
@@ -23,7 +25,8 @@ const val FRONTEND_URI = "http://localhost:3000"
 @CrossOrigin(origins = ["*"])
 class VocabController(private val resourceService: ResourceService) {
 
-    @GetMapping("/resource/{id}",
+    @GetMapping(
+        "/resource/{id}",
         produces = ["text/plain", "application/n-triples", "application/rdf+xml", "text/n3", "text/turtle", "application/json", "application/turtle"]
     )
     fun resource(
@@ -31,17 +34,38 @@ class VocabController(private val resourceService: ResourceService) {
         @RequestHeader("Accept") accept: String,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<String> {
-        if (accept !in arrayOf("application/n-triples", "application/rdf+xml", "text/n3", "text/turtle", "application/json", "application/turtle"))
-            return ResponseEntity
-                .status(HttpStatus.TEMPORARY_REDIRECT)
-                .location(
-                    uriComponentsBuilder
-                        .uri(URI.create(FRONTEND_URI))
-                        .path("/resource/{id}/description")
-                        .buildAndExpand(id)
-                        .toUri()
-                ).build()
+        if (!checkAcceptHeader(accept))
+            return createRedirectResponse("resource", id.value, uriComponentsBuilder)
         val resource = resourceService.findById(id)
+        val response = getRdfSerialization(resource, accept)
+        return ResponseEntity.ok()
+            .body(response)
+    }
+
+    private fun checkAcceptHeader(acceptHeader: String): Boolean {
+        return (acceptHeader in arrayOf("application/n-triples", "application/rdf+xml", "text/n3", "text/turtle", "application/json", "application/turtle"))
+    }
+
+    private fun createRedirectResponse(
+        destination: String,
+        id: String,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<String> {
+        return ResponseEntity
+            .status(HttpStatus.TEMPORARY_REDIRECT)
+            .location(
+                uriComponentsBuilder
+                    .uri(URI.create(FRONTEND_URI))
+                    .path("/$destination/{id}")
+                    .buildAndExpand(id)
+                    .toUri()
+            ).build()
+    }
+
+    private fun getRdfSerialization(
+        resource: Optional<Resource>,
+        accept: String
+    ): String {
         val writer = StringWriter()
         if (resource.isPresent) {
             val format = when (accept) {
@@ -53,7 +77,6 @@ class VocabController(private val resourceService: ResourceService) {
             }
             Rio.write(resource.get().rdf, writer, format)
         }
-        return ResponseEntity.ok()
-            .body(writer.toString())
+        return writer.toString()
     }
 }

@@ -1,0 +1,15 @@
+[[rdf]]
+== RDF Dump
+
+The ORKG provides a dump of the entire graph in RDF, the dump is in N-Triples format.
+
+[[rdf-dump]]
+=== Getting dump
+
+A `GET` request creates a dump of the graph and returns it as file.
+The response will be `200 OK` when successful.
+As a result of the request a file will be provided with the name `dump.nt` that can be used or imported into other RDF stores.
+
+NOTE: The created paper root resource is returned in the body for convenience. This might be subject to change.
+
+operation::rdf-controller-test-index[snippets='request-fields,curl-request,http-response']

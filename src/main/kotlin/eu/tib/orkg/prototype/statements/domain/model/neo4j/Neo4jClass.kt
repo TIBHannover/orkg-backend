@@ -42,7 +42,9 @@ data class Neo4jClass(
 
     fun toClass(): Class {
         val aURI: URI? = if (uri != null) URI.create(uri!!) else null
-        return Class(classId!!, label!!, aURI, createdAt!!, toRdfModel())
+        val clazz = Class(classId!!, label!!, aURI, createdAt!!)
+        clazz.rdf = toRdfModel()
+        return clazz
     }
 
     fun toNTripleWithPrefix(): String {

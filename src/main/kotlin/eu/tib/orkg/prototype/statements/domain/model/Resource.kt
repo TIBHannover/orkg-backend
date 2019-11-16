@@ -11,7 +11,8 @@ data class Resource(
     @JsonProperty("created_at")
     val createdAt: OffsetDateTime?,
     val classes: Set<ClassId> = emptySet(),
-    val shared: Int = 0,
+    val shared: Int = 0
+) {
     @JsonIgnore
-    val rdf: Model?
-)
+    var rdf: Model? = null
+}

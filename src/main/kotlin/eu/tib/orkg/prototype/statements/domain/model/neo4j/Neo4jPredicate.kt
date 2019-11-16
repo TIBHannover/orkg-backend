@@ -30,7 +30,11 @@ data class Neo4jPredicate(
     @Convert(PredicateIdGraphAttributeConverter::class)
     private var predicateId: PredicateId? = null
 ) : AuditableEntity() {
-    fun toPredicate() = Predicate(predicateId, label!!, createdAt!!, toRdfModel())
+    fun toPredicate(): Predicate {
+        val pred = Predicate(predicateId, label!!, createdAt!!)
+        pred.rdf = toRdfModel()
+        return pred
+    }
 
     fun toNTripleWithPrefix(): String {
         val cPrefix = "http://orkg.org/orkg/vocab/class/"

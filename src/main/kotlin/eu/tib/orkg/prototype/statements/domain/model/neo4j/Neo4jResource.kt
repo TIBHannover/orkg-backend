@@ -66,7 +66,11 @@ data class Neo4jResource(
         this.resourceId = resourceId
     }
 
-    fun toResource() = Resource(resourceId, label!!, createdAt, classes, objectOf.size, toRdfModel())
+    fun toResource(): Resource {
+        val resource = Resource(resourceId, label!!, createdAt, classes, objectOf.size)
+        resource.rdf = toRdfModel()
+        return resource
+    }
 
     fun toObject() = ResourceObject(resourceId, label!!, createdAt, classes)
 

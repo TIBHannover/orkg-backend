@@ -9,7 +9,8 @@ data class Predicate(
     val id: PredicateId?,
     val label: String,
     @JsonProperty("created_at")
-    val createdAt: OffsetDateTime?,
+    val createdAt: OffsetDateTime?
+) {
     @JsonIgnore
-    val rdf: Model?
-)
+    var rdf: Model? = null
+}

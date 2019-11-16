@@ -51,8 +51,7 @@ class ClassJsonTest {
             ClassId(100),
             "label",
             URI("http://example.org/path/to/file#with-fragment"),
-            OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3)),
-            null
+            OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3))
         )
 
     private fun serializedClass() = json.write(createClass())

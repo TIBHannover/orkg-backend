@@ -25,13 +25,13 @@ class Neo4jRdfService(
 ) : RdfService {
     override fun dumpToNTriple(): String {
         // dump classes
-        var result = classesRepository.findAll().joinToString("\n", transform = Neo4jClass::toNTripleWithPrefix)
+        var result = classesRepository.findAll().joinToString("\n", transform = Neo4jClass::toNTriple)
         result += "\n"
         // dump predicates
-        result += predicateRepository.findAll().joinToString("\n", transform = Neo4jPredicate::toNTripleWithPrefix)
+        result += predicateRepository.findAll().joinToString("\n", transform = Neo4jPredicate::toNTriple)
         result += "\n"
         // dump resources
-        result += resourceRepository.findAll().joinToString("\n", transform = Neo4jResource::toNTripleWithPrefix)
+        result += resourceRepository.findAll().joinToString("\n", transform = Neo4jResource::toNTriple)
         result += "\n"
         // dump object statements
         result += resourceStatementRepository.listByIds().joinToString("\n", transform = IdTriple::toNTriple)

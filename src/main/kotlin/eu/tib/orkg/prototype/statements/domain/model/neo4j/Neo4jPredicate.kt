@@ -37,7 +37,7 @@ data class Neo4jPredicate(
         return pred
     }
 
-    fun toNTripleWithPrefix(): String {
+    fun toNTriple(): String {
         val cPrefix = "$VOCAB_URI/class/"
         val pPrefix = "$VOCAB_URI/predicate/"
         return "<$pPrefix$predicateId> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Predicate> .\n" +

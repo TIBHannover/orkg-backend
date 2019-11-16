@@ -48,7 +48,7 @@ data class Neo4jClass(
         return clazz
     }
 
-    fun toNTripleWithPrefix(): String {
+    fun toNTriple(): String {
         val cPrefix = "$VOCAB_URI/class/"
         val sb = StringBuilder()
         sb.append("<$cPrefix$classId> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .\n")

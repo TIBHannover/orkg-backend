@@ -21,8 +21,6 @@ import org.springframework.web.util.UriComponentsBuilder
 import java.io.StringWriter
 import java.net.URI
 
-const val FRONTEND_URI = "http://localhost:3000"
-
 @RestController
 @RequestMapping("/vocab")
 @CrossOrigin(origins = ["*"])

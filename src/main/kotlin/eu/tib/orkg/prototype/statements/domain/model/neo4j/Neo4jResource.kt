@@ -82,7 +82,7 @@ data class Neo4jResource(
      */
     fun assignTo(clazz: String) = labels.add(clazz)
 
-    fun toNTripleWithPrefix(): String {
+    fun toNTriple(): String {
         val cPrefix = "$VOCAB_URI/class/"
         val rPrefix = "$VOCAB_URI/resource/"
         val sb = StringBuilder()

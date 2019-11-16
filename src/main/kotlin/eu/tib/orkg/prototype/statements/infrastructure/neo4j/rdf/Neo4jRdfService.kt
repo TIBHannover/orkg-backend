@@ -34,10 +34,10 @@ class Neo4jRdfService(
         result += resourceRepository.findAll().joinToString("\n", transform = Neo4jResource::toNTripleWithPrefix)
         result += "\n"
         // dump object statements
-        result += resourceStatementRepository.listByIds().joinToString("\n", transform = IdTriple::toNTripleWithPrefix)
+        result += resourceStatementRepository.listByIds().joinToString("\n", transform = IdTriple::toNTriple)
         result += "\n"
         // dump literal statements
-        result += literalStatementRepository.listByIds().joinToString("\n", transform = LiteralTriple::toNTripleWithPrefix)
+        result += literalStatementRepository.listByIds().joinToString("\n", transform = LiteralTriple::toNTriple)
         result += "\n"
         return result
     }

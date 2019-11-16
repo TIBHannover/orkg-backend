@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import eu.tib.orkg.prototype.statements.application.rdf.VOCAB_URI
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
@@ -57,9 +58,9 @@ data class IdTriple(
     /**
      * Convert the triple to a statement in NTriple format.
      */
-    fun toNTripleWithPrefix(): String {
-        val rPrefix = "https://orkg.org/r/"
-        val pPrefix = "https://orkg.org/p/"
+    fun toNTriple(): String {
+        val rPrefix = "$VOCAB_URI/resource/"
+        val pPrefix = "$VOCAB_URI/predicate/"
         return "<$rPrefix$subjectId> <$pPrefix$predicateId> <$rPrefix$objectId> ."
     }
 }

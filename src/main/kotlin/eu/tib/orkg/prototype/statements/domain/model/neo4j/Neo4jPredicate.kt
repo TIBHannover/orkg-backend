@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.escapeLiterals
+import eu.tib.orkg.prototype.statements.application.rdf.VOCAB_URI
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.PredicateIdGraphAttributeConverter
@@ -37,16 +38,16 @@ data class Neo4jPredicate(
     }
 
     fun toNTripleWithPrefix(): String {
-        val cPrefix = "http://orkg.org/orkg/vocab/class/"
-        val pPrefix = "http://orkg.org/orkg/vocab/predicate/"
+        val cPrefix = "$VOCAB_URI/class/"
+        val pPrefix = "$VOCAB_URI/predicate/"
         return "<$pPrefix$predicateId> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Predicate> .\n" +
             "<$pPrefix$predicateId> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label!!)}\"^^<http://www.w3.org/2001/XMLSchema#string> ."
     }
 
     fun toRdfModel(): Model {
         val builder = ModelBuilder()
-            .setNamespace("p", "http://orkg.org/orkg/vocab/predicate/")
-            .setNamespace("c", "http://orkg.org/orkg/vocab/class/")
+            .setNamespace("p", "$VOCAB_URI/predicate/")
+            .setNamespace("c", "$VOCAB_URI/class/")
             .setNamespace(RDF.NS)
             .setNamespace(RDFS.NS)
             .subject("p:$predicateId")

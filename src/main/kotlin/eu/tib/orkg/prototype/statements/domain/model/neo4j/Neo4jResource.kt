@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.escapeLiterals
+import eu.tib.orkg.prototype.statements.application.rdf.VOCAB_URI
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -82,8 +83,8 @@ data class Neo4jResource(
     fun assignTo(clazz: String) = labels.add(clazz)
 
     fun toNTripleWithPrefix(): String {
-        val cPrefix = "http://orkg.org/orkg/vocab/class/"
-        val rPrefix = "http://orkg.org/orkg/vocab/resource/"
+        val cPrefix = "$VOCAB_URI/class/"
+        val rPrefix = "$VOCAB_URI/resource/"
         val sb = StringBuilder()
         sb.append("<$rPrefix$resourceId> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Resource> .\n")
         classes.forEach { sb.append("<$rPrefix$resourceId> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <$cPrefix${it.value}> .\n") }
@@ -93,9 +94,9 @@ data class Neo4jResource(
 
     fun toRdfModel(): Model {
         var builder = ModelBuilder()
-            .setNamespace("r", "http://orkg.org/orkg/vocab/resource/")
-            .setNamespace("p", "http://orkg.org/orkg/vocab/predicate/")
-            .setNamespace("c", "http://orkg.org/orkg/vocab/class/")
+            .setNamespace("r", "$VOCAB_URI/resource/")
+            .setNamespace("p", "$VOCAB_URI/predicate/")
+            .setNamespace("c", "$VOCAB_URI/class/")
             .setNamespace(RDF.NS)
             .setNamespace(RDFS.NS)
         builder = builder.subject("r:$resourceId")

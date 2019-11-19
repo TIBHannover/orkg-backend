@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
@@ -106,6 +107,17 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                     resourceResponseFields()
                 )
             )
+    }
+
+    @Test
+    fun addWithExistingIds() {
+        val resource = mapOf("label" to "bar", "id" to "Test")
+
+        service.create(CreateResourceRequest(ResourceId("Test"), "foo"))
+
+        mockMvc
+            .perform(postRequestWithBody("/api/resources/", resource))
+            .andExpect(status().isBadRequest)
     }
 
     @Test

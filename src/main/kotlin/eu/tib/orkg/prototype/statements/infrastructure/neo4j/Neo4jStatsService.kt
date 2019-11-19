@@ -19,9 +19,9 @@ class Neo4jStatsService(
         val literalsCount = labels["Literal"] as Long
         val papersCount = labels["Paper"] as Long
         val classesCount = labels["Class"] as Long
-        val contributionsCount = neo4jStatsRepository.getContributionsCount()
+        val contributionsCount = labels["Contribution"] as Long
         val fieldsCount = neo4jStatsRepository.getResearchFieldsCount()
-        val problemsCount = neo4jStatsRepository.getResearchProblemsCount()
+        val problemsCount = labels["Problem"] as Long
         val relationsTypes = metadata.first()["relTypesCount"] as Map<*, *>
         val resourceStatementsCount = relationsTypes["RELATES_TO"] as Long
         val literalsStatementsCount = relationsTypes["HAS_VALUE_OF"] as Long

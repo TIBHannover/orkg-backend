@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
@@ -28,6 +29,8 @@ const val ID_PUBDATE_MONTH_PREDICATE = "P28"
 const val ID_PUBDATE_YEAR_PREDICATE = "P29"
 const val ID_RESEARCH_FIELD_PREDICATE = "P30"
 const val ID_CONTRIBUTION_PREDICATE = "P31"
+const val ID_CONTRIBUTION_CLASS = "Contribution"
+val MAP_PREDICATE_CLASSES = mapOf("P32" to "Problem")
 
 @RestController
 @RequestMapping("/api/papers/")
@@ -37,7 +40,8 @@ class PaperController(
     private val literalService: LiteralService,
     private val predicateService: PredicateService,
     private val statementWithLiteralService: StatementWithLiteralService,
-    private val statementWithResourceService: StatementWithResourceService
+    private val statementWithResourceService: StatementWithResourceService,
+    private val classService: ClassService
 ) {
 
     @PostMapping("/")
@@ -58,6 +62,12 @@ class PaperController(
         val publicationYearPredicate = predicateService.findById(PredicateId(ID_PUBDATE_YEAR_PREDICATE)).get().id!!
         val researchFieldPredicate = predicateService.findById(PredicateId(ID_RESEARCH_FIELD_PREDICATE)).get().id!!
         val hasContributionPredicate = predicateService.findById(PredicateId(ID_CONTRIBUTION_PREDICATE)).get().id!!
+        val contClass = classService.findById(ClassId(ID_CONTRIBUTION_CLASS))
+        val contributionClass =
+            if (contClass.isPresent)
+                contClass.get().id!!
+            else
+                classService.create(CreateClassRequest(ClassId(ID_CONTRIBUTION_CLASS), ID_CONTRIBUTION_CLASS, null)).id!!
 
         val predicates: HashMap<String, PredicateId> = HashMap()
         if (paper.predicates != null) {
@@ -115,9 +125,10 @@ class PaperController(
 
         // paper contribution data
         if (paper.paper.contributions != null) {
+            val contributionClassSet = setOf(contributionClass)
             paper.paper.contributions.forEach {
                 if (it.values != null && it.values.count() > 0) {
-                    val contributionId = resourceService.create(it.name).id!!
+                    val contributionId = resourceService.create(CreateResourceRequest(null, it.name, contributionClassSet)).id!!
                     statementWithResourceService.create(paperId, hasContributionPredicate, contributionId)
                     val resourceQueue: Queue<TempResource> = LinkedList()
                     processContributionData(contributionId, it.values, tempResources, predicates, resourceQueue)
@@ -213,11 +224,15 @@ class PaperController(
                         statementWithLiteralService.create(subject, predicateId!!, newLiteral)
                     }
                     resource.label != null -> { // create new resource
-                        val newResource = resourceService.create(resource.label).id!!
+                        val resourceClass = MAP_PREDICATE_CLASSES[predicateId!!.value]?.let { ClassId(it) }
+                        val newResource = if (resourceClass != null)
+                            resourceService.create(CreateResourceRequest(null, resource.label, setOf(resourceClass))).id!!
+                        else
+                            resourceService.create(resource.label).id!!
                         if (resource.`@temp` != null) {
                             tempResources[resource.`@temp`] = newResource.value
                         }
-                        statementWithResourceService.create(subject, predicateId!!, newResource)
+                        statementWithResourceService.create(subject, predicateId, newResource)
                         if (resource.values != null) {
                             processContributionData(newResource, resource.values, tempResources, predicates, resourceQueue, true)
                         }

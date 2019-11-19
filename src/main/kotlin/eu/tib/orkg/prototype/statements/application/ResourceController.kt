@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.badRequest
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
@@ -60,7 +61,9 @@ class ResourceController(private val service: ResourceService) {
 
     @PostMapping("/")
     @ResponseStatus(CREATED)
-    fun add(@RequestBody resource: CreateResourceRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Resource> {
+    fun add(@RequestBody resource: CreateResourceRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
+        if (resource.id != null && service.findById(resource.id).isPresent)
+            return badRequest().body("Resource id <${resource.id}> already exists!")
         val id = service.create(resource).id
         val location = uriComponentsBuilder
             .path("api/resources/{id}")

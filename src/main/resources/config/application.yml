@@ -1,11 +1,15 @@
 server:
-  port: 8000
+  port: 8001
 spring:
   profiles:
     active: development
   # Get rid of "org.postgresql.jdbc.PgConnection.createClob() not implemented" error, see
   # https://hibernate.atlassian.net/browse/HHH-12368
   jpa.properties.hibernate.jdbc.lob.non_contextual_creation: true
+  rdf:
+    # Vocab prefix not used, still hard coded
+    vocab-prefix: 'http://orkg.org/orkg'
+    frontend-uri: 'http://localhost:3000'
 ---
 spring:
   profiles: development

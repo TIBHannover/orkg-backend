@@ -34,7 +34,7 @@ class VocabControllerTest : RestDocumentationBaseTest() {
         val id = resourceService.create("Resource 1").id!!
 
         mockMvc
-            .perform(getRequestTo("/vocab/resource/$id"))
+            .perform(getRequestTo("/api/vocab/resource/$id"))
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -48,7 +48,7 @@ class VocabControllerTest : RestDocumentationBaseTest() {
         val id = predicateService.create("Predicate 1").id!!
 
         mockMvc
-            .perform(getRequestTo("/vocab/predicate/$id"))
+            .perform(getRequestTo("/api/vocab/predicate/$id"))
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -62,7 +62,7 @@ class VocabControllerTest : RestDocumentationBaseTest() {
         val id = classService.create("Class 1").id!!
 
         mockMvc
-            .perform(getRequestTo("/vocab/class/$id"))
+            .perform(getRequestTo("/api/vocab/class/$id"))
             .andExpect(status().isOk)
             .andDo(
                 document(

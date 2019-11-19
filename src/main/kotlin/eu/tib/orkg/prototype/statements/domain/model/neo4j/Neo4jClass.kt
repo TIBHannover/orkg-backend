@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.escapeLiterals
-import eu.tib.orkg.prototype.statements.application.rdf.VOCAB_URI
+import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ClassIdGraphAttributeConverter
@@ -49,7 +49,7 @@ data class Neo4jClass(
     }
 
     fun toNTriple(): String {
-        val cPrefix = "$VOCAB_URI/class/"
+        val cPrefix = RdfConstants.CLASS_NS
         val sb = StringBuilder()
         sb.append("<$cPrefix$classId> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .\n")
         if (uri != null && !uri.isNullOrEmpty())
@@ -60,7 +60,7 @@ data class Neo4jClass(
 
     fun toRdfModel(): Model {
         var builder = ModelBuilder()
-            .setNamespace("c", "$VOCAB_URI/class/")
+            .setNamespace("c", RdfConstants.CLASS_NS)
             .setNamespace(RDF.NS)
             .setNamespace(RDFS.NS)
             .setNamespace(OWL.NS)

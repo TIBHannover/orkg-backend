@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.escapeLiterals
-import eu.tib.orkg.prototype.statements.application.rdf.VOCAB_URI
+import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -56,8 +56,8 @@ data class LiteralTriple(
      * Convert the triple to a statement in NTriple format.
      */
     fun toNTriple(): String {
-        val rPrefix = "$VOCAB_URI/resource/"
-        val pPrefix = "$VOCAB_URI/predicate/"
+        val rPrefix = RdfConstants.RESOURCE_NS
+        val pPrefix = RdfConstants.PREDICATE_NS
         return "<$rPrefix$subjectId> <$pPrefix$predicateId> \"${escapeLiterals(literal!!)}\"^^<http://www.w3.org/2001/XMLSchema#string> ."
     }
 }

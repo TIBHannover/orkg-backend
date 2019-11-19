@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.escapeLiterals
-import eu.tib.orkg.prototype.statements.application.rdf.VOCAB_URI
+import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -83,8 +83,8 @@ data class Neo4jResource(
     fun assignTo(clazz: String) = labels.add(clazz)
 
     fun toNTriple(): String {
-        val cPrefix = "$VOCAB_URI/class/"
-        val rPrefix = "$VOCAB_URI/resource/"
+        val cPrefix = RdfConstants.CLASS_NS
+        val rPrefix = RdfConstants.RESOURCE_NS
         val sb = StringBuilder()
         sb.append("<$rPrefix$resourceId> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Resource> .\n")
         classes.forEach { sb.append("<$rPrefix$resourceId> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <$cPrefix${it.value}> .\n") }
@@ -94,9 +94,9 @@ data class Neo4jResource(
 
     fun toRdfModel(): Model {
         var builder = ModelBuilder()
-            .setNamespace("r", "$VOCAB_URI/resource/")
-            .setNamespace("p", "$VOCAB_URI/predicate/")
-            .setNamespace("c", "$VOCAB_URI/class/")
+            .setNamespace("r", RdfConstants.RESOURCE_NS)
+            .setNamespace("p", RdfConstants.PREDICATE_NS)
+            .setNamespace("c", RdfConstants.CLASS_NS)
             .setNamespace(RDF.NS)
             .setNamespace(RDFS.NS)
         builder = builder.subject("r:$resourceId")

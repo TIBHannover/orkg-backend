@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application.rdf
 
+import eu.tib.orkg.prototype.configuration.RdfConfiguration
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
@@ -9,6 +10,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.rio.RDFFormat
 import org.eclipse.rdf4j.rio.Rio
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -22,13 +24,16 @@ import java.io.StringWriter
 import java.net.URI
 
 @RestController
-@RequestMapping("/vocab")
+@RequestMapping("/api/vocab")
 @CrossOrigin(origins = ["*"])
 class VocabController(
     private val resourceService: ResourceService,
     private val predicateService: PredicateService,
     private val classService: ClassService
 ) {
+
+    @Autowired
+    private lateinit var rdfConfiguration: RdfConfiguration
 
     @GetMapping(
         "/resource/{id}",
@@ -94,7 +99,7 @@ class VocabController(
             .status(HttpStatus.TEMPORARY_REDIRECT)
             .location(
                 uriComponentsBuilder
-                    .uri(URI.create(FRONTEND_URI))
+                    .uri(URI.create(rdfConfiguration.frontendUri!!))
                     .path("/$destination/{id}")
                     .buildAndExpand(id)
                     .toUri()

@@ -1,5 +1,5 @@
 server:
-  port: 8001
+  port: 8000
 spring:
   profiles:
     active: development
@@ -8,6 +8,7 @@ spring:
   jpa.properties.hibernate.jdbc.lob.non_contextual_creation: true
   rdf:
     # Vocab prefix not used, still hard coded
+    # might need to be copied to other profiles on deployment
     vocab-prefix: 'http://orkg.org/orkg'
     frontend-uri: 'http://localhost:3000'
 ---

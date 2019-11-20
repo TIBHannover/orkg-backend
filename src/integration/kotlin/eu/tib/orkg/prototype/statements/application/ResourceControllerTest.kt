@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
@@ -131,6 +132,29 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             .perform(putRequestWithBody("/api/resources/$resource", update))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.label").value(newLabel))
+            .andDo(
+                document(
+                    snippet,
+                    requestFields(
+                        fieldWithPath("label").description("The updated resource label")
+                    ),
+                    resourceResponseFields()
+                )
+            )
+    }
+
+    @Test
+    fun editResourceClass() {
+        classService.create("class")
+        val resource = service.create(CreateResourceRequest(null, "test", setOf(ClassId("class")))).id!!
+
+        val newClass = classService.create("clazz")
+        val update = mapOf("classes" to listOf(newClass.id!!.value))
+
+        mockMvc
+            .perform(putRequestWithBody("/api/resources/$resource", update))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.classes[0]").value(newClass.id!!.value))
             .andDo(
                 document(
                     snippet,

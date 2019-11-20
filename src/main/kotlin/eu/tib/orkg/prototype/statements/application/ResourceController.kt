@@ -76,16 +76,16 @@ class ResourceController(private val service: ResourceService) {
     @PutMapping("/{id}")
     fun update(
         @PathVariable id: ResourceId,
-        @RequestBody resource: Resource
+        @RequestBody request: UpdateResourceRequest
     ): ResponseEntity<Resource> {
         val found = service.findById(id)
 
         if (!found.isPresent)
             return notFound().build()
 
-        val updatedResource = resource.copy(id = found.get().id)
+        val updatedRequest = request.copy(id = id)
 
-        return ok(service.update(updatedResource))
+        return ok(service.update(updatedRequest))
     }
 }
 
@@ -93,4 +93,10 @@ data class CreateResourceRequest(
     val id: ResourceId?,
     val label: String,
     val classes: Set<ClassId> = emptySet()
+)
+
+data class UpdateResourceRequest(
+    val id: ResourceId?,
+    val label: String?,
+    val classes: Set<ClassId>?
 )

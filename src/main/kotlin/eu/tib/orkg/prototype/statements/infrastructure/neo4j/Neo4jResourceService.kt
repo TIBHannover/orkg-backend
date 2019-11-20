@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
+import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -82,13 +83,15 @@ class Neo4jResourceService(
             .content
             .map(Neo4jResource::toResource)
 
-    override fun update(resource: Resource): Resource {
+    override fun update(request: UpdateResourceRequest): Resource {
         // already checked by service
-        val found = neo4jResourceRepository.findByResourceId(resource.id).get()
+        val found = neo4jResourceRepository.findByResourceId(request.id).get()
 
         // update all the properties
-        found.label = resource.label
-        found.classes = resource.classes
+        if (request.label != null)
+            found.label = request.label
+        if (request.classes != null)
+            found.classes = request.classes
 
         return neo4jResourceRepository.save(found).toResource()
     }

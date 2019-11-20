@@ -154,12 +154,14 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(putRequestWithBody("/api/resources/$resource", update))
             .andExpect(status().isOk)
+            .andExpect(jsonPath("$.label").value("test"))
             .andExpect(jsonPath("$.classes[0]").value(newClass.id!!.value))
             .andDo(
                 document(
                     snippet,
                     requestFields(
-                        fieldWithPath("label").description("The updated resource label")
+                        fieldWithPath("label").type(String).description("The updated resource label").optional(),
+                        fieldWithPath("classes").description("The classes to which the resource belongs to").optional()
                     ),
                     resourceResponseFields()
                 )

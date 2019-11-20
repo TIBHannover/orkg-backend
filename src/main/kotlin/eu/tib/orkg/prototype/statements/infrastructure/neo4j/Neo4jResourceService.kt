@@ -88,6 +88,7 @@ class Neo4jResourceService(
 
         // update all the properties
         found.label = resource.label
+        found.classes = resource.classes
 
         return neo4jResourceRepository.save(found).toResource()
     }

@@ -48,8 +48,11 @@ data class Neo4jResource(
     /**
      * The list of classes that this node belongs to.
      */
-    val classes: Set<ClassId>
+    var classes: Set<ClassId>
         get() = labels.map(::ClassId).toSet()
+        set(value) {
+            labels = value.map { it.value }.toMutableList()
+        }
 
     constructor(label: String, resourceId: ResourceId) : this(null) {
         this.label = label

@@ -14,20 +14,27 @@ class Neo4jStatsService(
     override fun getStats(): Stats {
         val metadata = neo4jStatsRepository.getGraphMetaData()
         val labels = metadata.first()["labels"] as Map<*, *>
-        val resourcesCount = labels["Resource"] as Long
-        val predicatesCount = labels["Predicate"] as Long
-        val literalsCount = labels["Literal"] as Long
-        val papersCount = labels["Paper"] as Long
-        val classesCount = labels["Class"] as Long
-        val contributionsCount = labels["Contribution"] as Long
+        val resourcesCount = extractValue(labels, "Resource")
+        val predicatesCount = extractValue(labels, "Predicate")
+        val literalsCount = extractValue(labels, "Literal")
+        val papersCount = extractValue(labels, "Paper")
+        val classesCount = extractValue(labels, "Class")
+        val contributionsCount = extractValue(labels, "Contribution")
         val fieldsCount = neo4jStatsRepository.getResearchFieldsCount()
-        val problemsCount = labels["Problem"] as Long
+        val problemsCount = extractValue(labels, "Problem")
         val relationsTypes = metadata.first()["relTypesCount"] as Map<*, *>
-        val resourceStatementsCount = relationsTypes["RELATES_TO"] as Long
-        val literalsStatementsCount = relationsTypes["HAS_VALUE_OF"] as Long
+        val resourceStatementsCount = extractValue(relationsTypes, "RELATES_TO")
+        val literalsStatementsCount = extractValue(relationsTypes, "HAS_VALUE_OF")
         val statementsCount = literalsStatementsCount + resourceStatementsCount
         return Stats(statementsCount, resourcesCount, predicatesCount,
             literalsCount, papersCount, classesCount, contributionsCount,
             fieldsCount, problemsCount, resourceStatementsCount, literalsStatementsCount)
+    }
+
+    private fun extractValue(map: Map<*, *>, key: String): Long {
+        return if (map.containsKey(key))
+            map[key] as Long
+        else
+            0
     }
 }

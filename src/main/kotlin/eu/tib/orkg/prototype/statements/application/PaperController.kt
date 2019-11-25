@@ -34,6 +34,10 @@ const val ID_ORCID_PREDICATE = "HAS_ORCID"
 const val ID_AUTHOR_CLASS = "Author"
 val MAP_PREDICATE_CLASSES = mapOf("P32" to "Problem")
 
+/** Regular expression to check whether an input string is a valid ORCID id.  */
+private const val ORCID_REGEX =
+    "^\\s*(?:(?:https?://)?orcid.org/)?([0-9]{4})-?([0-9]{4})-?([0-9]{4})-?([0-9]{4})\\s*$"
+
 @RestController
 @RequestMapping("/api/papers/")
 @CrossOrigin(origins = ["*"])
@@ -96,6 +100,7 @@ class PaperController(
         }
 
         // paper authors
+        val pattern = ORCID_REGEX.toRegex()
         if (paper.paper.authors != null) {
             paper.paper.authors.forEach {
                 if (it.id == null) {
@@ -119,6 +124,10 @@ class PaperController(
                             hasAuthorPredicate,
                             author.id!!
                         )
+                        // Check if ORCID is a valid string
+                        if (!pattern.matches(it.orcid)) {
+                            throw RuntimeException("ORCID <${it.orcid}> is not valid string")
+                        }
                         // Create orcid literal
                         val orcid = literalService.create(it.orcid)
                         // Add ORCID id to the new resource

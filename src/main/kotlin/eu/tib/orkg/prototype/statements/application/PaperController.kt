@@ -30,6 +30,8 @@ const val ID_PUBDATE_YEAR_PREDICATE = "P29"
 const val ID_RESEARCH_FIELD_PREDICATE = "P30"
 const val ID_CONTRIBUTION_PREDICATE = "P31"
 const val ID_CONTRIBUTION_CLASS = "Contribution"
+const val ID_ORCID_PREDICATE = "HAS_ORCID"
+const val ID_AUTHOR_CLASS = "Author"
 val MAP_PREDICATE_CLASSES = mapOf("P32" to "Problem")
 
 @RestController
@@ -62,6 +64,7 @@ class PaperController(
         val publicationYearPredicate = predicateService.findById(PredicateId(ID_PUBDATE_YEAR_PREDICATE)).get().id!!
         val researchFieldPredicate = predicateService.findById(PredicateId(ID_RESEARCH_FIELD_PREDICATE)).get().id!!
         val hasContributionPredicate = predicateService.findById(PredicateId(ID_CONTRIBUTION_PREDICATE)).get().id!!
+        val hasOrcidPredicate = predicateService.findById(PredicateId(ID_ORCID_PREDICATE)).get().id!!
         val contClass = classService.findById(ClassId(ID_CONTRIBUTION_CLASS))
         val contributionClass =
             if (contClass.isPresent)
@@ -95,12 +98,42 @@ class PaperController(
         // paper authors
         if (paper.paper.authors != null) {
             paper.paper.authors.forEach {
-                val authorId = if (it.id == null) {
-                    resourceService.create(it.label!!).id!!
+                if (it.id == null) {
+                    if (it.label != null && it.orcid != null) {
+                        // Check if class exists, add it otherwise
+                        val authorClass = classService.findById(ClassId(ID_AUTHOR_CLASS))
+                        val authorClassId = if (authorClass.isPresent)
+                            authorClass.get().id!!
+                        else
+                            classService.create(
+                                CreateClassRequest(
+                                    ClassId(ID_AUTHOR_CLASS),
+                                    ID_AUTHOR_CLASS,
+                                    null
+                                )
+                            ).id!!
+                        // create resource
+                        val author = resourceService.create(CreateResourceRequest(null, it.label, setOf(authorClassId)))
+                        statementWithResourceService.create(
+                            paperId,
+                            hasAuthorPredicate,
+                            author.id!!
+                        )
+                        // Create orcid literal
+                        val orcid = literalService.create(it.orcid)
+                        // Add ORCID id to the new resource
+                        statementWithLiteralService.create(author.id, hasOrcidPredicate, orcid.id!!)
+                    } else {
+                        // create literal and link it
+                        statementWithLiteralService.create(
+                            paperId,
+                            hasAuthorPredicate,
+                            literalService.create(it.label!!).id!!
+                        )
+                    }
                 } else {
-                    ResourceId(it.id)
+                    statementWithResourceService.create(paperId, hasAuthorPredicate, ResourceId(it.id))
                 }
-                statementWithResourceService.create(paperId, hasAuthorPredicate, authorId)
             }
         }
 
@@ -276,7 +309,8 @@ data class Paper(
 
 data class Author(
     val id: String?,
-    val label: String?
+    val label: String?,
+    val orcid: String?
 )
 
 data class Contribution(

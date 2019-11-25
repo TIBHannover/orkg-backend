@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
@@ -102,7 +103,7 @@ class PaperController(
         // paper authors
         val pattern = ORCID_REGEX.toRegex()
         if (paper.paper.authors != null) {
-            paper.paper.authors.forEach {
+            paper.paper.authors.forEach { it ->
                 if (it.id == null) {
                     if (it.label != null && it.orcid != null) {
                         // Check if class exists, add it otherwise
@@ -117,21 +118,39 @@ class PaperController(
                                     null
                                 )
                             ).id!!
-                        // create resource
-                        val author = resourceService.create(CreateResourceRequest(null, it.label, setOf(authorClassId)))
-                        statementWithResourceService.create(
-                            paperId,
-                            hasAuthorPredicate,
-                            author.id!!
-                        )
                         // Check if ORCID is a valid string
                         if (!pattern.matches(it.orcid)) {
                             throw RuntimeException("ORCID <${it.orcid}> is not valid string")
                         }
-                        // Create orcid literal
-                        val orcid = literalService.create(it.orcid)
-                        // Add ORCID id to the new resource
-                        statementWithLiteralService.create(author.id, hasOrcidPredicate, orcid.id!!)
+                        // Check if the orcid exists in the system or not
+                        val foundOrcid = literalService.findAllByLabel(it.orcid).firstOrNull()
+                        if (foundOrcid != null) {
+                            // Link existing ORCID
+                            val authorStatement =
+                                statementWithLiteralService.findAllByObject(
+                                    foundOrcid.id!!,
+                                    createPageable(
+                                        1,
+                                        10,
+                                        null,
+                                        false
+                                    ) // TODO: Hide values by using default values for the parameters
+                                ).firstOrNull { it.predicate.id == hasOrcidPredicate }
+                                    ?: throw RuntimeException("ORCID <${it.orcid}> is not attached to any author!")
+                            statementWithResourceService.create(paperId, hasOrcidPredicate, authorStatement.subject.id!!)
+                        } else {
+                            // create resource
+                            val author = resourceService.create(CreateResourceRequest(null, it.label, setOf(authorClassId)))
+                            statementWithResourceService.create(
+                                paperId,
+                                hasAuthorPredicate,
+                                author.id!!
+                            )
+                            // Create orcid literal
+                            val orcid = literalService.create(it.orcid)
+                            // Add ORCID id to the new resource
+                            statementWithLiteralService.create(author.id, hasOrcidPredicate, orcid.id!!)
+                        }
                     } else {
                         // create literal and link it
                         statementWithLiteralService.create(

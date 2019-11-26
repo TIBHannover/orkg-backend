@@ -20,19 +20,30 @@ class BulkStatementController(
 ) {
 
     @GetMapping("/subjects")
-    fun findBySubject(
-        @RequestParam resourceIds: List<ResourceId>
+    fun findBySubjects(
+        @RequestParam("ids") resourceIds: List<ResourceId>
     ): ResponseEntity<Iterable<BulkStatementResponse>> {
         val page = 1
         val items = 99999
         val by = "id"
         val sort = false
-        return ok(resourceIds.map { BulkStatementResponse(it, statementController.findByResource(it, page, items, by, sort).body!!) })
+        return ok(resourceIds.map { BulkStatementResponse(it.value, statementController.findByResource(it, page, items, by, sort).body!!) })
+    }
+
+    @GetMapping("/objects")
+    fun findByObjects(
+        @RequestParam("ids") resourceIds: List<ResourceId>
+    ): ResponseEntity<Iterable<BulkStatementResponse>> {
+        val page = 1
+        val items = 99999
+        val by = "id"
+        val sort = false
+        return ok(resourceIds.map { BulkStatementResponse(it.value, statementController.findByObject(it.value, page, items, by, sort).body!!) })
     }
 }
 
 data class BulkStatementResponse(
     @JsonProperty("resource_id")
-    val resourceId: ResourceId,
+    val resourceId: String,
     val statements: Iterable<StatementResponse>
 )

@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.statements.application.StatementController
 import eu.tib.orkg.prototype.statements.application.StatementResponse
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.CrossOrigin
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -39,6 +41,13 @@ class BulkStatementController(
         val by = "id"
         val sort = false
         return ok(resourceIds.map { BulkStatementResponse(it.value, statementController.findByObject(it.value, page, items, by, sort).body!!) })
+    }
+
+    @DeleteMapping("/")
+    fun delete(
+        @RequestParam("ids") statementsIds: List<StatementId>
+    ) {
+        statementsIds.forEach { statementController.delete(it) }
     }
 }
 

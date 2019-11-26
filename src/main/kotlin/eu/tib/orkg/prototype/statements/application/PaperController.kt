@@ -137,7 +137,7 @@ class PaperController(
                                     ) // TODO: Hide values by using default values for the parameters
                                 ).firstOrNull { it.predicate.id == hasOrcidPredicate }
                                     ?: throw RuntimeException("ORCID <${it.orcid}> is not attached to any author!")
-                            statementWithResourceService.create(paperId, hasOrcidPredicate, authorStatement.subject.id!!)
+                            statementWithResourceService.create(paperId, hasAuthorPredicate, authorStatement.subject.id!!)
                         } else {
                             // create resource
                             val author = resourceService.create(CreateResourceRequest(null, it.label, setOf(authorClassId)))

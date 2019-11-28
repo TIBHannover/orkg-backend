@@ -37,7 +37,7 @@ class VocabController(
 
     @GetMapping(
         "/resource/{id}",
-        produces = ["text/plain", "application/n-triples", "application/rdf+xml", "text/n3", "text/turtle", "application/json", "application/turtle"]
+        produces = ["text/plain", "application/n-triples", "application/rdf+xml", "text/n3", "text/turtle", "application/json", "application/turtle", "application/trig", "application/n-quads"]
     )
     fun resource(
         @PathVariable id: ResourceId,
@@ -54,7 +54,7 @@ class VocabController(
 
     @GetMapping(
         "/predicate/{id}",
-        produces = ["text/plain", "application/n-triples", "application/rdf+xml", "text/n3", "text/turtle", "application/json", "application/turtle"]
+        produces = ["text/plain", "application/n-triples", "application/rdf+xml", "text/n3", "text/turtle", "application/json", "application/turtle", "application/trig", "application/n-quads"]
     )
     fun predicate(
         @PathVariable id: PredicateId,
@@ -71,7 +71,7 @@ class VocabController(
 
     @GetMapping(
         "/class/{id}",
-        produces = ["text/plain", "application/n-triples", "application/rdf+xml", "text/n3", "text/turtle", "application/json", "application/turtle"]
+        produces = ["text/plain", "application/n-triples", "application/rdf+xml", "text/n3", "text/turtle", "application/json", "application/turtle", "application/trig", "application/n-quads"]
     )
     fun `class`(
         @PathVariable id: ClassId,
@@ -87,7 +87,19 @@ class VocabController(
     }
 
     private fun checkAcceptHeader(acceptHeader: String): Boolean {
-        return (acceptHeader in arrayOf("application/n-triples", "application/rdf+xml", "text/n3", "text/turtle", "application/json", "application/turtle"))
+        return (acceptHeader in arrayOf(
+            "application/n-triples",
+            "application/rdf+xml",
+            "text/n3",
+            "text/turtle",
+            "application/json",
+            "application/turtle",
+            "application/trig",
+            "application/x-trig",
+            "application/n-quads",
+            "text/x-nquads",
+            "text/nquads"
+        ))
     }
 
     private fun createRedirectResponse(
@@ -116,6 +128,11 @@ class VocabController(
             "application/rdf+xml" -> RDFFormat.RDFXML
             "text/n3" -> RDFFormat.N3
             "application/json" -> RDFFormat.JSONLD
+            "application/trig" -> RDFFormat.TRIG
+            "application/x-trig" -> RDFFormat.TRIG
+            "application/n-quads" -> RDFFormat.NQUADS
+            "text/x-nquads" -> RDFFormat.NQUADS
+            "text/nquads" -> RDFFormat.NQUADS
             else -> RDFFormat.TURTLE
         }
         Rio.write(model, writer, format)

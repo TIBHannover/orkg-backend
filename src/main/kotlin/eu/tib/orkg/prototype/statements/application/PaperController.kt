@@ -122,8 +122,11 @@ class PaperController(
                         if (!pattern.matches(it.orcid)) {
                             throw RuntimeException("ORCID <${it.orcid}> is not valid string")
                         }
+                        // Remove te http://orcid.org prefix from the ORCID value
+                        val indexClean = it.orcid.lastIndexOf('/')
+                        val orcidValue = if (indexClean == -1) it.orcid else it.orcid.substring(indexClean + 1)
                         // Check if the orcid exists in the system or not
-                        val foundOrcid = literalService.findAllByLabel(it.orcid).firstOrNull()
+                        val foundOrcid = literalService.findAllByLabel(orcidValue).firstOrNull()
                         if (foundOrcid != null) {
                             // Link existing ORCID
                             val authorStatement =
@@ -136,7 +139,7 @@ class PaperController(
                                         false
                                     ) // TODO: Hide values by using default values for the parameters
                                 ).firstOrNull { it.predicate.id == hasOrcidPredicate }
-                                    ?: throw RuntimeException("ORCID <${it.orcid}> is not attached to any author!")
+                                    ?: throw RuntimeException("ORCID <$orcidValue> is not attached to any author!")
                             statementWithResourceService.create(paperId, hasAuthorPredicate, authorStatement.subject.id!!)
                         } else {
                             // create resource
@@ -147,7 +150,7 @@ class PaperController(
                                 author.id!!
                             )
                             // Create orcid literal
-                            val orcid = literalService.create(it.orcid)
+                            val orcid = literalService.create(orcidValue)
                             // Add ORCID id to the new resource
                             statementWithLiteralService.create(author.id, hasOrcidPredicate, orcid.id!!)
                         }

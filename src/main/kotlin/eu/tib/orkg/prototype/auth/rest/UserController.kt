@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.security.Principal
 import java.util.UUID
+import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Size
 
 @RestController
 @RequestMapping("/user")
@@ -44,24 +46,34 @@ class UserController(
             if (!updatedDetails.name.isNullOrBlank()) {
                 userService.updateName(id, updatedDetails.name)
             }
-            if (passwordsAreSetAndMatchIn(updatedDetails)) {
-                userService.updatePassword(id, updatedDetails.newPassword!!)
-            } else {
-                return ResponseEntity(BAD_REQUEST)
-            }
             return ok(UserDetails(currentUser))
         }
         return ResponseEntity(NOT_FOUND)
     }
 
-    private fun passwordsAreSetAndMatchIn(updatedDetails: UserDetailsUpdateRequest) =
-        !updatedDetails.newPassword.isNullOrBlank() && (updatedDetails.newPassword == updatedDetails.newMatchingPassword)
+    @PutMapping("/password")
+    fun updatePassword(@RequestBody updatedPassword: PasswordDTO, principal: Principal): ResponseEntity<Any> {
+        if (principal.name == null)
+            return ResponseEntity((UNAUTHORIZED))
+        if (!updatedPassword.hasMatchingPasswords())
+            return ResponseEntity(BAD_REQUEST)
+
+        val foundUser = userService.findById(UUID.fromString(principal.name))
+        if (foundUser.isPresent) {
+            val currentUser = foundUser.get()
+            userService.updatePassword(currentUser.id!!, updatedPassword.newPassword)
+        }
+        return ok("success")
+    }
 
     /**
      * Decorator for user data.
      * This class prevents user data from leaking by only exposing data that is relevant to the client.
      */
     data class UserDetails(private val user: UserEntity) {
+        @JsonProperty("id")
+        val id: UUID = user.id!!
+
         @JsonProperty("email")
         val email = user.email
 
@@ -72,12 +84,32 @@ class UserController(
         val created = user.created
     }
 
+    /**
+     * Data Transfer Object (DTO) for updating the user details.
+     */
     data class UserDetailsUpdateRequest(
-        @JsonProperty("password")
-        val newPassword: String?,
-        @JsonProperty("matching_password")
-        val newMatchingPassword: String?,
+        @field:Size(min = 1, max = 100)
         @JsonProperty("display_name")
         val name: String?
     )
+
+    /**
+     * Data Transfer Object (DTO) for updating the password. All fields need to be provided.
+     */
+    data class PasswordDTO(
+        @field:NotBlank
+        @JsonProperty("old_password")
+        val oldPassword: String,
+
+        @field:Size(min = 6, message = "Please choose a more secure password. It should be longer than 6 characters.")
+        @field:NotBlank
+        @JsonProperty("new_password")
+        val newPassword: String,
+
+        @field:NotBlank
+        @JsonProperty("matching_password")
+        val newMatchingPassword: String
+    ) {
+        fun hasMatchingPasswords() = newPassword == newMatchingPassword
+    }
 }

@@ -1,8 +1,10 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
+import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import eu.tib.orkg.prototype.statements.domain.model.StatementWithResourceService
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -29,6 +31,12 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var classService: ClassService
+
+    @Autowired
+    private lateinit var predicateService: PredicateService
+
+    @Autowired
+    private lateinit var statementWithResourceController: StatementWithResourceService
 
     override fun createController() = controller
 
@@ -163,6 +171,45 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                     snippet,
                     requestParameters(
                         parameterWithName("q").description("A search term that must be contained in the label"),
+                        parameterWithName("exact").description("Whether it is an exact string lookup or just containment").optional(),
+                        parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
+                        parameterWithName("items").description("Number of items to fetch per page (default: 10)").optional(),
+                        parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
+                        parameterWithName("desc").description("Direction of the sorting (default: false)").optional(),
+                        parameterWithName("exclude").description("List of classes to exclude e.g Paper,C0,Contribution (default: not provided)").optional()
+                    ),
+                    resourceListResponseFields()
+                )
+            )
+    }
+
+    @Test
+    fun testSharedIndicatorWhenResourcesWithClassExclusion() {
+        val id = classService.create("Class 1").id!!
+        val set = listOf(id).toSet()
+        service.create(CreateResourceRequest(null, "Resource 1", set))
+        service.create(CreateResourceRequest(null, "Resource 2", set))
+
+        val resId = service.create(CreateResourceRequest(null, "Resource 3")).id!!
+        val con1 = service.create(CreateResourceRequest(null, "Connection 1")).id!!
+        val con2 = service.create(CreateResourceRequest(null, "Connection 2")).id!!
+        val pred = predicateService.create("Test predicate").id!!
+        statementWithResourceController.create(con1, pred, resId)
+        statementWithResourceController.create(con2, pred, resId)
+        val id2 = classService.create("Class 2").id!!
+        val set2 = listOf(id2).toSet()
+        service.create(CreateResourceRequest(null, "Another Resource", set2))
+
+        mockMvc
+            .perform(getRequestTo("/api/resources/?q=Resource&exclude=$id"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$", hasSize<Int>(2)))
+            .andExpect(jsonPath("$[0].shared").value(2))
+            .andDo(
+                document(
+                    snippet,
+                    requestParameters(
+                        parameterWithName("q").description("A search term that must be contained in the label").optional(),
                         parameterWithName("exact").description("Whether it is an exact string lookup or just containment").optional(),
                         parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
                         parameterWithName("items").description("Number of items to fetch per page (default: 10)").optional(),

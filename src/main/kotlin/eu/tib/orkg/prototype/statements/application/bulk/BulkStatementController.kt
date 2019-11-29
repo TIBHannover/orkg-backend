@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.application.StatementResponse
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -49,8 +50,9 @@ class BulkStatementController(
     @DeleteMapping("/")
     fun delete(
         @RequestParam("ids") statementsIds: List<StatementId>
-    ) {
+    ): ResponseEntity<Unit> {
         statementsIds.forEach { statementController.delete(it) }
+        return noContent().build()
     }
 
     @PutMapping("/")

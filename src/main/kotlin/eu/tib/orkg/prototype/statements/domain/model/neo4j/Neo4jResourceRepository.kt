@@ -23,27 +23,27 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     fun findAllByLabelContaining(part: String, pageable: Pageable): Page<Neo4jResource>
 
     // TODO: limit the selection of sortBy values to (label & id) only because they are explicit in the query
-    @Query(value = """MATCH (node:`Resource`) WHERE {0} IN labels(node) WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node""",
+    @Query(value = """MATCH (node:`Resource`) WHERE {0} IN labels(node) WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATES_TO`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATES_TO`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
         countQuery = """MATCH (node:`Resource`) WHERE {0} IN labels(node) WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllByClass(`class`: String, pageable: Pageable): Page<Neo4jResource>
 
     // TODO: Check if the countQuery can be optimized or joined with the value query
-    @Query(value = """MATCH (node:`Resource`) WHERE {0} IN labels(node) AND node.label = {1} WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node""",
+    @Query(value = """MATCH (node:`Resource`) WHERE {0} IN labels(node) AND node.label = {1} WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATES_TO`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATES_TO`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
         countQuery = """MATCH (node:`Resource`) WHERE {0} IN labels(node) AND node.label = {1} WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllByClassAndLabel(`class`: String, label: String, pageable: Pageable): Slice<Neo4jResource>
 
     // TODO: move from Slice to Page object
-    @Query(value = """MATCH (node:`Resource`) WHERE {0} IN labels(node) AND node.label =~ {1}  WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node""",
+    @Query(value = """MATCH (node:`Resource`) WHERE {0} IN labels(node) AND node.label =~ {1}  WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATES_TO`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATES_TO`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
         countQuery = """MATCH (node:`Resource`) WHERE {0} IN labels(node) AND node.label =~ {1} WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllByClassAndLabelContaining(`class`: String, label: String, pageable: Pageable): Slice<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WHERE NOT ANY(c in {0} WHERE c IN labels(node)) WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node""")
+    @Query(value = """MATCH (node:`Resource`) WHERE NOT ANY(c in {0} WHERE c IN labels(node)) WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATES_TO`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATES_TO`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""")
     fun findAllExcludingClass(classes: List<String>, pageable: Pageable): Slice<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WHERE NOT ANY(c in {0} WHERE c IN labels(node)) AND node.label = {1} WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node""")
+    @Query(value = """MATCH (node:`Resource`) WHERE NOT ANY(c in {0} WHERE c IN labels(node)) AND node.label = {1} WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATES_TO`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATES_TO`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""")
     fun findAllExcludingClassByLabel(classes: List<String>, label: String, pageable: Pageable): Slice<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WHERE NOT ANY(c in {0} WHERE c IN labels(node)) AND node.label =~ {1}  WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node""")
+    @Query(value = """MATCH (node:`Resource`) WHERE NOT ANY(c in {0} WHERE c IN labels(node)) AND node.label =~ {1}  WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATES_TO`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATES_TO`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""")
     fun findAllExcludingClassByLabelContaining(classes: List<String>, label: String, pageable: Pageable): Slice<Neo4jResource>
 
     @Query("""UNWIND {0} as r_id MATCH ()-[p:RELATES_TO]->(node:Resource {resource_id: r_id}) WITH r_id, COUNT(p) AS cnt RETURN cnt""")

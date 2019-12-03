@@ -7,7 +7,9 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.Statement
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import eu.tib.orkg.prototype.statements.domain.model.StatementWithLiteral
 import eu.tib.orkg.prototype.statements.domain.model.StatementWithLiteralService
+import eu.tib.orkg.prototype.statements.domain.model.StatementWithResource
 import eu.tib.orkg.prototype.statements.domain.model.StatementWithResourceService
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus.CREATED
@@ -45,7 +47,9 @@ class StatementController(
     ): Iterable<StatementResponse> {
         // TODO: Check if division by two is the most suitable way or specify the semantics of these endpoints as items per resource/literal
         val pagination = createPageable(page, items, sortBy, desc)
-        return (statementWithResourceService.findAll(pagination) + statementWithLiteralService.findAll(pagination)).take(pagination.pageSize)
+        var results = statementWithResourceService.findAll(pagination) + statementWithLiteralService.findAll(pagination)
+        results = sortResults(results, sortBy, desc)
+        return results.take(pagination.pageSize)
     }
 
     @GetMapping("/{statementId}")
@@ -73,10 +77,11 @@ class StatementController(
     ): HttpEntity<Iterable<StatementResponse>> {
         // TODO: need better selection strategy maybe collect the result into a set and then sort it again based on user criteria and return the requested number of items
         val pagination = createPageable(page, items, sortBy, desc)
-        return ok(
-            (statementWithResourceService.findAllBySubject(resourceId, pagination) +
-                statementWithLiteralService.findAllBySubject(resourceId, pagination)).take(pagination.pageSize)
-        )
+        var results =
+            statementWithResourceService.findAllBySubject(resourceId, pagination) +
+                statementWithLiteralService.findAllBySubject(resourceId, pagination)
+        results = sortResults(results, sortBy, desc)
+        return ok(results.take(pagination.pageSize))
     }
 
     @GetMapping("/predicate/{predicateId}")
@@ -88,10 +93,11 @@ class StatementController(
         @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
     ): HttpEntity<Iterable<StatementResponse>> {
         val pagination = createPageable(page, items, sortBy, desc)
-        return ok(
-            (statementWithResourceService.findAllByPredicate(predicateId, pagination) +
-                statementWithLiteralService.findAllByPredicate(predicateId, pagination)).take(pagination.pageSize)
-        )
+        var results =
+            statementWithResourceService.findAllByPredicate(predicateId, pagination) +
+                statementWithLiteralService.findAllByPredicate(predicateId, pagination)
+        results = sortResults(results, sortBy, desc)
+        return ok(results.take(pagination.pageSize))
     }
 
     @GetMapping("/object/{objectId}")
@@ -103,10 +109,11 @@ class StatementController(
         @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
     ): HttpEntity<Iterable<StatementResponse>> {
         val pagination = createPageable(page, items, sortBy, desc)
-        return ok(
-            (statementWithResourceService.findAllByObject(ResourceId(objectId), pagination) +
-                statementWithLiteralService.findAllByObject(LiteralId(objectId), pagination)).take(pagination.pageSize)
-        )
+        var results =
+            statementWithResourceService.findAllByObject(ResourceId(objectId), pagination) +
+                statementWithLiteralService.findAllByObject(LiteralId(objectId), pagination)
+        results = sortResults(results, sortBy, desc)
+        return ok(results.take(pagination.pageSize))
     }
 
     @PostMapping("/")
@@ -175,5 +182,62 @@ class StatementController(
             statementWithLiteralService.remove(foundLiteralStatement.get().id)
 
         return ResponseEntity.noContent().build()
+    }
+
+    private fun sortResults(
+        results: List<StatementResponse>,
+        sortBy: String?,
+        desc: Boolean
+    ): List<StatementResponse> {
+        return if (desc)
+            results.sortedByDescending {
+                sorter(it, sortBy)
+            }
+        else
+            results.sortedBy {
+                sorter(it, sortBy)
+            }
+    }
+
+    private fun sorter(
+        it: StatementResponse,
+        sortBy: String?
+    ): String {
+        return if (it is StatementWithResource) {
+            if (sortBy == null)
+                it.createdAt.toString()
+            else
+                when (sortBy) {
+                    "id" -> it.id.toString()
+                    "sub.id" -> it.subject.id.toString()
+                    "sub.label" -> it.subject.label
+                    "sub.created_at" -> it.subject.createdAt.toString()
+                    "rel.id" -> it.predicate.id.toString()
+                    "rel.label" -> it.predicate.label
+                    "rel.created_at" -> it.predicate.createdAt.toString()
+                    "obj.id" -> it.`object`.id.toString()
+                    "obj.label" -> it.`object`.label
+                    "obj.created_at" -> it.`object`.createdAt.toString()
+                    else -> it.createdAt.toString()
+                }
+        } else {
+            (it as StatementWithLiteral)
+            if (sortBy == null)
+                it.createdAt.toString()
+            else
+                when (sortBy) {
+                    "id" -> it.id.toString()
+                    "sub.id" -> it.subject.id.toString()
+                    "sub.label" -> it.subject.label
+                    "sub.created_at" -> it.subject.createdAt.toString()
+                    "rel.id" -> it.predicate.id.toString()
+                    "rel.label" -> it.predicate.label
+                    "rel.created_at" -> it.predicate.createdAt.toString()
+                    "obj.id" -> it.`object`.id.toString()
+                    "obj.label" -> it.`object`.label
+                    "obj.created_at" -> it.`object`.createdAt.toString()
+                    else -> it.createdAt.toString()
+                }
+        }
     }
 }

@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
+import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import org.springframework.data.domain.Pageable
 import java.util.Optional
 
@@ -70,5 +71,5 @@ interface ResourceService {
     /**
      * Update a resource.
      */
-    fun update(resource: Resource): Resource
+    fun update(request: UpdateResourceRequest): Resource
 }

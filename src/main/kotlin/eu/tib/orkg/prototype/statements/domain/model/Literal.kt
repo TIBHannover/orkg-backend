@@ -8,4 +8,4 @@ data class Literal(
     val label: String,
     @JsonProperty("created_at")
     val createdAt: OffsetDateTime?
-)
+) : Thing()

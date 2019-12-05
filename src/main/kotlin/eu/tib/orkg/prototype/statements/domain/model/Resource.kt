@@ -10,4 +10,4 @@ data class Resource(
     val createdAt: OffsetDateTime?,
     val classes: Set<ClassId> = emptySet(),
     val shared: Int = 0
-)
+) : Thing()

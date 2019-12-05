@@ -10,4 +10,4 @@ data class Class(
     val uri: URI?,
     @JsonProperty("created_at")
     val createdAt: OffsetDateTime?
-)
+) : Thing()

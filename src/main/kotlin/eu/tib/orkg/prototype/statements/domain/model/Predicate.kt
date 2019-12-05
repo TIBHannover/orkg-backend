@@ -8,4 +8,4 @@ data class Predicate(
     val label: String,
     @JsonProperty("created_at")
     val createdAt: OffsetDateTime?
-)
+) : Thing()

@@ -27,3 +27,17 @@ data class StatementEditRequest(
     @JsonProperty("object_id")
     val objectId: ResourceId?
 )
+
+data class NewStatementEditRequest(
+    @JsonProperty("statement_id")
+    val statementId: StatementId?,
+
+    @JsonProperty("subject_id")
+    val subjectId: String?,
+
+    @JsonProperty("predicate_id")
+    val predicateId: PredicateId?,
+
+    @JsonProperty("object_id")
+    val objectId: String?
+)

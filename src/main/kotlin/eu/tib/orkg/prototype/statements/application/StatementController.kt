@@ -7,10 +7,6 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.Statement
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
-import eu.tib.orkg.prototype.statements.domain.model.StatementWithLiteral
-import eu.tib.orkg.prototype.statements.domain.model.StatementWithLiteralService
-import eu.tib.orkg.prototype.statements.domain.model.StatementWithResource
-import eu.tib.orkg.prototype.statements.domain.model.StatementWithResourceService
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity

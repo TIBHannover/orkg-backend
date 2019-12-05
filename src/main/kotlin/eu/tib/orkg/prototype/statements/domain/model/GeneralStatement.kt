@@ -22,4 +22,3 @@ data class CreateStatement(
     @JsonProperty("object_id")
     val objectId: String
 )
-

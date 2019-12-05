@@ -14,16 +14,22 @@ import org.neo4j.ogm.annotation.typeconversion.Convert
 data class Neo4jPredicate(
     @Id
     @GeneratedValue
-    private var id: Long? = null,
+    var id: Long? = null,
 
     @Property("label")
     @Required
-    var label: String? = null,
+    override var label: String? = null,
 
     @Property("predicate_id")
     @Required
     @Convert(PredicateIdGraphAttributeConverter::class)
     private var predicateId: PredicateId? = null
-) : AuditableEntity() {
+) : Neo4jThing, AuditableEntity() {
+
     fun toPredicate() = Predicate(predicateId, label!!, createdAt!!)
+
+    override val thingId: String?
+        get() = predicateId?.value
+
+    override fun toThing() = toPredicate()
 }

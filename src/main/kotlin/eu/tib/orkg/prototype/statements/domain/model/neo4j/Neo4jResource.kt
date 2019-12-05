@@ -20,24 +20,24 @@ data class Neo4jResource(
     @Id
     @GeneratedValue
     var id: Long? = null
-) : AuditableEntity() {
+) : Neo4jThing, AuditableEntity() {
 
     @Property("label")
     @Required
-    var label: String? = null
+    override var label: String? = null
 
     @Property("resource_id")
     @Required
     @Convert(ResourceIdGraphAttributeConverter::class)
     var resourceId: ResourceId? = null
 
-    @Relationship(type = "RELATES_TO")
+    @Relationship(type = "RELATED")
     @JsonIgnore
-    var resources: MutableSet<Neo4jStatementWithResource> = mutableSetOf()
+    var resources: MutableSet<Neo4jStatement> = mutableSetOf()
 
-    @Relationship(type = "RELATES_TO", direction = Relationship.INCOMING)
+    @Relationship(type = "RELATED", direction = Relationship.INCOMING)
     @JsonIgnore
-    var objectOf: MutableSet<Neo4jStatementWithResource> = mutableSetOf()
+    var objectOf: MutableSet<Neo4jStatement> = mutableSetOf()
 
     /**
      * List of node labels. Labels other than the `Resource` label are mapped to classes.
@@ -61,9 +61,14 @@ data class Neo4jResource(
 
     fun toResource() = Resource(resourceId, label!!, createdAt, classes, objectOf.size)
 
-    fun toObject() = ResourceObject(resourceId, label!!, createdAt, classes)
+    //fun toObject() = ResourceObject(resourceId, label!!, createdAt, classes)
 
-    fun toObject(shared: Int) = ResourceObject(resourceId, label!!, createdAt, classes, shared)
+    //fun toObject(shared: Int) = ResourceObject(resourceId, label!!, createdAt, classes, shared)
+
+    override val thingId: String?
+        get() = resourceId?.value
+
+    override fun toThing() = toResource()
 
     /**
      * Assign a class to this `Resource` node.

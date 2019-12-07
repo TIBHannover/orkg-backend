@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Profile
@@ -21,8 +22,7 @@ import java.io.InputStream
 class ExampleData(
     private val resourceService: ResourceService,
     private val predicateService: PredicateService,
-    private val statementWithResourceService: StatementWithResourceService,
-    private val statementWithLiteralService: StatementWithLiteralService,
+    private val statementService: StatementService,
     private val classService: ClassService
 ) : ApplicationRunner {
 
@@ -64,15 +64,14 @@ class ExampleData(
         //
         // Statements
         //
-        statementWithResourceService.create(wilesProof, employs, mathProof)
-        statementWithResourceService.create(wilesProof, addresses, tanimaConj)
-        statementWithResourceService.create(wilesProof, addresses, fermatsLastTheorem)
-        statementWithResourceService.create(wilesProof, yields, modularityTheorem)
+        statementService.create(wilesProof.value, addresses, tanimaConj.value)
+        statementService.create(wilesProof.value, addresses, fermatsLastTheorem.value)
+        statementService.create(wilesProof.value, yields, modularityTheorem.value)
 
-        statementWithResourceService.create(grubersDesign, employs, caseStudies)
-        statementWithResourceService.create(grubersDesign, addresses, designOfOntologies)
-        statementWithResourceService.create(grubersDesign, addresses, knowledgeEngineering)
-        statementWithResourceService.create(grubersDesign, yields, ontoDesignCriteria)
+        statementService.create(grubersDesign.value, employs, caseStudies.value)
+        statementService.create(grubersDesign.value, addresses, designOfOntologies.value)
+        statementService.create(grubersDesign.value, addresses, knowledgeEngineering.value)
+        statementService.create(grubersDesign.value, yields, ontoDesignCriteria.value)
 
         // Predicates (for DILS)
         predicateService.create("is a")
@@ -136,20 +135,20 @@ class ExampleData(
         val fields = mapper.readValue<List<ResearchField>>(inStream!!)
         for (field in fields) {
             val newField = resourceService.create(field.name).id!!
-            statementWithResourceService.create(researchField, subfieldPredicate, newField)
+            statementService.create(researchField.value, subfieldPredicate, newField.value)
             for (subfield in field.subfields) {
                 val newSubfield = resourceService.create(subfield.name).id!!
-                statementWithResourceService.create(newField, subfieldPredicate, newSubfield)
+                statementService.create(newField.value, subfieldPredicate, newSubfield.value)
                 for (subSubfield in subfield.subfields) {
                     val newSubSubfield = resourceService.create(subSubfield.name).id!!
-                    statementWithResourceService.create(newSubfield, subfieldPredicate, newSubSubfield)
+                    statementService.create(newSubfield.value, subfieldPredicate, newSubSubfield.value)
                 }
             }
         }
     }
 
     private fun statementsPresent() =
-        statementWithResourceService.totalNumberOfStatements() > 0 || statementWithLiteralService.totalNumberOfStatements() > 0
+        statementService.totalNumberOfStatements() > 0
 }
 
 fun createPageable(page: Int?, items: Int?, sortBy: String?, desc: Boolean): Pageable {

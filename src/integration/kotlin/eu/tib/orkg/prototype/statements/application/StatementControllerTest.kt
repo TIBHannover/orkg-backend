@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,10 +25,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
     override fun createController() = controller
 
     @Autowired
-    private lateinit var statementWithResourceService: StatementWithResourceService
-
-    @Autowired
-    private lateinit var statementWithLiteralService: StatementWithLiteralService
+    private lateinit var statementService: StatementService
 
     @Autowired
     private lateinit var resourceService: ResourceService
@@ -51,10 +49,10 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val p2 = predicateService.create("blub")
         val pl = predicateService.create("to literal")
 
-        statementWithResourceService.create(r1.id!!, p1.id!!, r2.id!!)
-        statementWithResourceService.create(r1.id!!, p2.id!!, r3.id!!)
-        statementWithResourceService.create(r1.id!!, p2.id!!, r3.id!!)
-        statementWithLiteralService.create(r1.id!!, pl.id!!, l1.id!!)
+        statementService.create(r1.id!!.value, p1.id!!, r2.id!!.value)
+        statementService.create(r1.id!!.value, p2.id!!, r3.id!!.value)
+        statementService.create(r1.id!!.value, p2.id!!, r3.id!!.value)
+        statementService.create(r1.id!!.value, pl.id!!, l1.id!!.value)
 
         mockMvc
             .perform(getRequestTo("/api/statements/"))
@@ -85,10 +83,10 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val pl = predicateService.create("to literal")
 
         val statement =
-            statementWithResourceService.create(r1.id!!, p1.id!!, r2.id!!)
-        statementWithResourceService.create(r1.id!!, p1.id!!, r3.id!!)
-        statementWithResourceService.create(r1.id!!, p2.id!!, r3.id!!)
-        statementWithLiteralService.create(r2.id!!, pl.id!!, l1.id!!)
+            statementService.create(r1.id!!.value, p1.id!!, r2.id!!.value)
+        statementService.create(r1.id!!.value, p1.id!!, r3.id!!.value)
+        statementService.create(r1.id!!.value, p2.id!!, r3.id!!.value)
+        statementService.create(r2.id!!.value, pl.id!!, l1.id!!.value)
 
         mockMvc
             .perform(getRequestTo("/api/statements/${statement.id}"))
@@ -112,11 +110,11 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val p2 = predicateService.create("blub")
         val pl = predicateService.create("to literal")
 
-        statementWithResourceService.create(r1.id!!, p1.id!!, r2.id!!)
-        statementWithResourceService.create(r1.id!!, p1.id!!, r3.id!!)
-        statementWithResourceService.create(r1.id!!, p2.id!!, r3.id!!)
+        statementService.create(r1.id!!.value, p1.id!!, r2.id!!.value)
+        statementService.create(r1.id!!.value, p1.id!!, r3.id!!.value)
+        statementService.create(r1.id!!.value, p2.id!!, r3.id!!.value)
         val statement =
-            statementWithLiteralService.create(r2.id!!, pl.id!!, l1.id!!)
+            statementService.create(r2.id!!.value, pl.id!!, l1.id!!.value)
 
         mockMvc
             .perform(getRequestTo("/api/statements/${statement.id}"))
@@ -139,8 +137,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val p1 = predicateService.create("blah")
         val p2 = predicateService.create("blub")
 
-        statementWithResourceService.create(r1.id!!, p1.id!!, r2.id!!)
-        statementWithResourceService.create(r1.id!!, p2.id!!, r3.id!!)
+        statementService.create(r1.id!!.value, p1.id!!, r2.id!!.value)
+        statementService.create(r1.id!!.value, p2.id!!, r3.id!!.value)
 
         mockMvc
             .perform(getRequestTo("/api/statements/subject/${r1.id}"))
@@ -167,9 +165,9 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val p1 = predicateService.create("blah")
         val p2 = predicateService.create("blub")
 
-        statementWithResourceService.create(r1.id!!, p1.id!!, r2.id!!)
-        statementWithResourceService.create(r1.id!!, p1.id!!, r3.id!!)
-        statementWithResourceService.create(r1.id!!, p2.id!!, r3.id!!)
+        statementService.create(r1.id!!.value, p1.id!!, r2.id!!.value)
+        statementService.create(r1.id!!.value, p1.id!!, r3.id!!.value)
+        statementService.create(r1.id!!.value, p2.id!!, r3.id!!.value)
 
         mockMvc
             .perform(getRequestTo("/api/statements/predicate/${p1.id}"))
@@ -240,7 +238,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val s = resourceService.create("one")
         val p = predicateService.create("has symbol")
         val l = literalService.create("1")
-        val st = statementWithLiteralService.create(s.id!!, p.id!!, l.id!!)
+        val st = statementService.create(s.id!!.value, p.id!!, l.id!!.value)
 
         mockMvc.perform(deleteRequest("/api/statements/${st.id}"))
             .andExpect(status().isNoContent)
@@ -256,7 +254,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val s = resourceService.create("one")
         val p = predicateService.create("has creator")
         val r = resourceService.create("Leibniz")
-        val st = statementWithResourceService.create(s.id!!, p.id!!, r.id!!)
+        val st = statementService.create(s.id!!.value, p.id!!, r.id!!.value)
 
         mockMvc.perform(deleteRequest("/api/statements/${st.id}"))
             .andExpect(status().isNoContent)
@@ -272,19 +270,19 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val s = resourceService.create("ORKG")
         val p = predicateService.create("created by")
         val o = resourceService.create("Awesome Team")
-        val st = statementWithResourceService.create(s.id!!, p.id!!, o.id!!)
+        val st = statementService.create(s.id!!.value, p.id!!, o.id!!.value)
 
         val p2 = predicateService.create("with love from")
         val o2 = resourceService.create("Hannover")
 
         val body = mapOf(
-            "predicate_id" to p2.id!!,
-            "object_id" to o2.id!!
+            "predicate_id" to p2.id!!.value,
+            "object_id" to o2.id!!.value
         )
         mockMvc.perform(putRequestWithBody("/api/statements/${st.id}", body))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.predicate.id").value(p2.id!!.toString()))
-            .andExpect(jsonPath("$.object.id").value(o2.id!!.toString()))
+            .andExpect(jsonPath("$.predicate.id").value(p2.id!!.value.toString()))
+            .andExpect(jsonPath("$.object.id").value(o2.id!!.value.toString()))
             .andDo(
                 document(
                     snippet,
@@ -298,16 +296,16 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val s = resourceService.create("ORKG")
         val p = predicateService.create("based in")
         val o = literalService.create("Germany")
-        val st = statementWithLiteralService.create(s.id!!, p.id!!, o.id!!)
+        val st = statementService.create(s.id!!.value, p.id!!, o.id!!.value)
 
         val p2 = predicateService.create("made with love from")
 
         val body = mapOf(
-            "predicate_id" to p2.id!!
+            "predicate_id" to p2.id!!.value
         )
         mockMvc.perform(putRequestWithBody("/api/statements/${st.id}", body))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.predicate.id").value(p2.id!!.toString()))
+            .andExpect(jsonPath("$.predicate.id").value(p2.id!!.value.toString()))
             .andDo(
                 document(
                     snippet,

@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
-import eu.tib.orkg.prototype.statements.application.NewStatementEditRequest
+import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
@@ -150,7 +150,7 @@ class Neo4jStatementService :
         statementRepository.delete(toDelete.get())
     }
 
-    override fun update(statementEditRequest: NewStatementEditRequest): GeneralStatement {
+    override fun update(statementEditRequest: StatementEditRequest): GeneralStatement {
         val found = statementRepository.findByStatementId(statementEditRequest.statementId!!).get()
 
         // update all the properties

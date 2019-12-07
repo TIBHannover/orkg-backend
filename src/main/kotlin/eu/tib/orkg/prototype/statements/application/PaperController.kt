@@ -266,8 +266,7 @@ class PaperController(
                                     resourceQueue.add(TempResource(subject, predicateId!!, resource.`@id`))
                                 else {
                                     val tempId = tempResources[resource.`@id`]
-                                     statementService.create(subject.value, predicateId!!, tempId!!)
-
+                                    statementService.create(subject.value, predicateId!!, tempId!!)
                                 }
                             }
                         }

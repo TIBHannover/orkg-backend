@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-import eu.tib.orkg.prototype.statements.application.NewStatementEditRequest
+import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import org.springframework.data.domain.Pageable
 import java.util.Optional
 
@@ -52,5 +52,5 @@ interface StatementService {
     /**
      * updates a statement
      */
-    fun update(statementEditRequest: NewStatementEditRequest): GeneralStatement
+    fun update(statementEditRequest: StatementEditRequest): GeneralStatement
 }

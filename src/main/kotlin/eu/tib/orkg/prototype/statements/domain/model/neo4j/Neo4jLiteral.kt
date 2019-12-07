@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
-import eu.tib.orkg.prototype.statements.domain.model.LiteralObject
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.LiteralIdGraphAttributeConverter
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import org.neo4j.ogm.annotation.GeneratedValue
@@ -40,8 +39,6 @@ data class Neo4jLiteral(
     }
 
     fun toLiteral() = Literal(literalId, label!!, createdAt!!)
-
-    //fun toObject() = LiteralObject(literalId, label!!, createdAt!!, classes)
 
     override val thingId: String?
         get() = literalId?.value

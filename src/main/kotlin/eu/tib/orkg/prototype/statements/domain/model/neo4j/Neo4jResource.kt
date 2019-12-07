@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceObject
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ResourceIdGraphAttributeConverter
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
@@ -60,10 +59,6 @@ data class Neo4jResource(
     }
 
     fun toResource() = Resource(resourceId, label!!, createdAt, classes, objectOf.size)
-
-    //fun toObject() = ResourceObject(resourceId, label!!, createdAt, classes)
-
-    //fun toObject(shared: Int) = ResourceObject(resourceId, label!!, createdAt, classes, shared)
 
     override val thingId: String?
         get() = resourceId?.value

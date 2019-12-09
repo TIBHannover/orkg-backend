@@ -195,7 +195,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val body = mapOf(
             "subject_id" to r1.id,
             "predicate_id" to p.id,
-            "object" to mapOf("id" to r2.id, "_class" to "resource")
+            "object_id" to r2.id
         )
 
         mockMvc.perform(postRequestWithBody("/api/statements/", body))
@@ -218,7 +218,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val body = mapOf(
             "subject_id" to r.id,
             "predicate_id" to p.id,
-            "object" to mapOf("id" to l.id, "_class" to "literal")
+            "object_id" to l.id
         )
 
         mockMvc.perform(postRequestWithBody("/api/statements/", body))
@@ -281,8 +281,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         )
         mockMvc.perform(putRequestWithBody("/api/statements/${st.id}", body))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.predicate.id").value(p2.id!!.value.toString()))
-            .andExpect(jsonPath("$.object.id").value(o2.id!!.value.toString()))
+            .andExpect(jsonPath("$.predicate.id").value(p2.id!!.value))
+            .andExpect(jsonPath("$.object.id").value(o2.id!!.value))
             .andDo(
                 document(
                     snippet,
@@ -305,7 +305,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         )
         mockMvc.perform(putRequestWithBody("/api/statements/${st.id}", body))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.predicate.id").value(p2.id!!.value.toString()))
+            .andExpect(jsonPath("$.predicate.id").value(p2.id!!.value))
             .andDo(
                 document(
                     snippet,
@@ -331,9 +331,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("object").description("An object"),
             fieldWithPath("object.id").description("The ID of the object"),
             fieldWithPath("object.label").description("The label of the object"),
-            fieldWithPath("object._class").description("The type of the object (resource or literal)."),
             fieldWithPath("object.created_at").description("The object creation datetime"),
-            fieldWithPath("object.classes").description("The classes the object resource belongs to"),
+            fieldWithPath("object.classes").description("The classes the object resource belongs to").optional().ignored(),
             fieldWithPath("object.shared").optional().ignored()
         )
 
@@ -354,9 +353,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].object").description("An object"),
             fieldWithPath("[].object.id").description("The ID of the object"),
             fieldWithPath("[].object.label").description("The label of the object"),
-            fieldWithPath("[].object._class").description("The type of the object (resource or literal)."),
             fieldWithPath("[].object.created_at").description("The object creation datetime"),
-            fieldWithPath("[].object.classes").description("The classes the object resource belongs to"),
+            fieldWithPath("[].object.classes").description("The classes the object resource belongs to").optional().ignored(),
             fieldWithPath("[].object.shared").optional().ignored()
         )
 }

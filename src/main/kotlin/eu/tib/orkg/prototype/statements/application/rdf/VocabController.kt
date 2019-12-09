@@ -78,8 +78,8 @@ class VocabController(
         @RequestHeader("Accept") acceptHeader: String,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<String> {
-        if (!checkAcceptHeader(acceptHeader))
-            return createRedirectResponse("class", id.value, uriComponentsBuilder)
+        // if (!checkAcceptHeader(acceptHeader))
+        //    return createRedirectResponse("class", id.value, uriComponentsBuilder)
         val clazz = classService.findById(id)
         val response = getRdfSerialization(clazz.get().rdf, acceptHeader)
         return ResponseEntity.ok()

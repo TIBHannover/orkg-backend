@@ -27,24 +27,24 @@ class BulkStatementController(
 
     @GetMapping("/subjects")
     fun findBySubjects(
-        @RequestParam("ids") resourceIds: List<ResourceId>
+        @RequestParam("ids") resourceIds: List<ResourceId>,
+        @RequestParam("page", required = false) page: Int?,
+        @RequestParam("items", required = false) items: Int?,
+        @RequestParam("sortBy", required = false) sortBy: String?,
+        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
     ): ResponseEntity<Iterable<BulkGetStatementsResponse>> {
-        val page = 1
-        val items = 99999
-        val by = "id"
-        val sort = false
-        return ok(resourceIds.map { BulkGetStatementsResponse(it.value, statementController.findByResource(it, page, items, by, sort).body!!) })
+        return ok(resourceIds.map { BulkGetStatementsResponse(it.value, statementController.findByResource(it, page, items, sortBy, desc).body!!) })
     }
 
     @GetMapping("/objects")
     fun findByObjects(
-        @RequestParam("ids") resourceIds: List<ResourceId>
+        @RequestParam("ids") resourceIds: List<ResourceId>,
+        @RequestParam("page", required = false) page: Int?,
+        @RequestParam("items", required = false) items: Int?,
+        @RequestParam("sortBy", required = false) sortBy: String?,
+        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
     ): ResponseEntity<Iterable<BulkGetStatementsResponse>> {
-        val page = 1
-        val items = 99999
-        val by = "id"
-        val sort = false
-        return ok(resourceIds.map { BulkGetStatementsResponse(it.value, statementController.findByObject(it.value, page, items, by, sort).body!!) })
+        return ok(resourceIds.map { BulkGetStatementsResponse(it.value, statementController.findByObject(it.value, page, items, sortBy, desc).body!!) })
     }
 
     @DeleteMapping("/")

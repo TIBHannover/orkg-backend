@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.auth.rest
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserService
-import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.ResponseEntity
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.security.Principal
 import java.util.UUID
+import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 
@@ -36,34 +36,36 @@ class UserController(
     }
 
     @PutMapping("/")
-    fun updateUserDetails(@RequestBody updatedDetails: UserDetailsUpdateRequest, principal: Principal): ResponseEntity<UserDetails> {
+    fun updateUserDetails(@RequestBody @Valid updatedDetails: UserDetailsUpdateRequest, principal: Principal): ResponseEntity<UserDetails> {
         if (principal.name == null)
             return ResponseEntity((UNAUTHORIZED))
         val foundUser = userService.findById(UUID.fromString(principal.name))
         if (foundUser.isPresent) {
             val currentUser = foundUser.get()
             val id = currentUser.id!!
-            if (!updatedDetails.name.isNullOrBlank()) {
-                userService.updateName(id, updatedDetails.name)
-            }
+            userService.updateName(id, updatedDetails.displayName)
             return ok(UserDetails(currentUser))
         }
         return ResponseEntity(NOT_FOUND)
     }
 
     @PutMapping("/password")
-    fun updatePassword(@RequestBody updatedPassword: PasswordDTO, principal: Principal): ResponseEntity<Any> {
+    fun updatePassword(@RequestBody @Valid updatedPassword: PasswordDTO, principal: Principal): ResponseEntity<Any> {
         if (principal.name == null)
             return ResponseEntity((UNAUTHORIZED))
         if (!updatedPassword.hasMatchingPasswords())
-            return ResponseEntity(BAD_REQUEST)
+            throw PasswordsDoNotMatch()
 
         val foundUser = userService.findById(UUID.fromString(principal.name))
         if (foundUser.isPresent) {
             val currentUser = foundUser.get()
-            userService.updatePassword(currentUser.id!!, updatedPassword.newPassword)
+            if (userService.checkPassword(currentUser.id!!, updatedPassword.oldPassword)) {
+                userService.updatePassword(currentUser.id!!, updatedPassword.newPassword)
+            } else {
+                throw CurrentPasswordInvalid()
+            }
         }
-        return ok("success")
+        return ok(UpdatedUserResponse("success"))
     }
 
     /**
@@ -84,13 +86,17 @@ class UserController(
         val created = user.created
     }
 
+    data class UpdatedUserResponse(
+        val status: String
+    )
+
     /**
      * Data Transfer Object (DTO) for updating the user details.
      */
     data class UserDetailsUpdateRequest(
         @field:Size(min = 1, max = 100)
         @JsonProperty("display_name")
-        val name: String?
+        val displayName: String
     )
 
     /**
@@ -107,7 +113,7 @@ class UserController(
         val newPassword: String,
 
         @field:NotBlank
-        @JsonProperty("matching_password")
+        @JsonProperty("new_matching_password")
         val newMatchingPassword: String
     ) {
         fun hasMatchingPasswords() = newPassword == newMatchingPassword

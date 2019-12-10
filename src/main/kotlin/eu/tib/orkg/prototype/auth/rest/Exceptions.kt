@@ -10,3 +10,5 @@ class PasswordsDoNotMatch : UserRegistrationException("The provided passwords do
 
 class UserAlreadyRegistered(email: String) :
     UserRegistrationException("A user with email $email is already registered")
+
+class CurrentPasswordInvalid : UserRegistrationException("The provided current password is not correct")

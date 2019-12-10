@@ -36,6 +36,11 @@ class UserService(
         repository.save(newUser)
     }
 
+    fun checkPassword(userId: UUID, aPassword: String): Boolean {
+        val user = repository.findById(userId).orElseThrow { throw RuntimeException("No user with ID $userId") }
+        return passwordEncoder.matches(aPassword, user.password)
+    }
+
     fun updatePassword(userId: UUID, aPassword: String) {
         val user = repository.findById(userId).orElseThrow { throw RuntimeException("No user with ID $userId") }
         user.password = passwordEncoder.encode(aPassword)

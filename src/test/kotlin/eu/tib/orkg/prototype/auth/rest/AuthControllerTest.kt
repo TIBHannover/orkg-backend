@@ -88,10 +88,8 @@ class AuthControllerTest {
             .perform(registrationOf(user))
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("\$.status").value(400))
-            .andExpect(jsonPath("\$.errors[0].field").value("password"))
-            .andExpect(jsonPath("\$.errors[0].message").value("must not be blank"))
-            .andExpect(jsonPath("\$.errors[1].field").value("password"))
-            .andExpect(jsonPath("\$.errors[1].message").value("Please choose a more secure password. It should be longer than 6 characters."))
+            .andExpect(jsonPath("$.errors[?(@.field == \"password\" && @.message == \"must not be blank\")]").exists())
+            .andExpect(jsonPath("$.errors[?(@.field == \"password\" && @.message == \"Please choose a more secure password. It should be longer than 6 characters.\")]").exists())
     }
 
     @Test

@@ -230,6 +230,11 @@ class PaperController(
                             }
                         }
                     }
+                    resource.`class` != null -> { // Check for existing classes
+                        val id = resource.`class`
+                        if (!classService.findById(ClassId(id)).isPresent)
+                            throw RuntimeException("Class $id is not found")
+                    }
                 }
                 if (resource.values != null) {
                     checkContributionData(
@@ -288,9 +293,17 @@ class PaperController(
                         statementWithLiteralService.create(subject, predicateId!!, newLiteral)
                     }
                     resource.label != null -> { // create new resource
-                        val resourceClass = MAP_PREDICATE_CLASSES[predicateId!!.value]?.let { ClassId(it) }
-                        val newResource = if (resourceClass != null)
-                            resourceService.create(CreateResourceRequest(null, resource.label, setOf(resourceClass))).id!!
+                        // Check for classes of resource
+                        val classes = mutableListOf<ClassId>()
+                        // add attached classes
+                        if (resource.`class` != null) {
+                            classes.add(ClassId(resource.`class`))
+                        }
+                        // add pre-defined classes
+                        MAP_PREDICATE_CLASSES[predicateId!!.value]?.let { ClassId(it) }?.let { classes.add(it) }
+                        // Create resource
+                        val newResource = if (classes.isNotEmpty())
+                            resourceService.create(CreateResourceRequest(null, resource.label, classes.toSet())).id!!
                         else
                             resourceService.create(resource.label).id!!
                         if (resource.`@temp` != null) {
@@ -351,6 +364,7 @@ data class Contribution(
 
 data class PaperValue(
     val `@id`: String?,
+    val `class`: String?,
     val `@temp`: String?,
     val text: String?,
     val label: String?,

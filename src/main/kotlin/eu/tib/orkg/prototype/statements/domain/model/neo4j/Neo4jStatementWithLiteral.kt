@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.PredicateIdGraphAttributeConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.StatementIdGraphAttributeConverter
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.UUIDGraphAttributeConverter
 import org.neo4j.ogm.annotation.EndNode
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
@@ -13,6 +14,7 @@ import org.neo4j.ogm.annotation.RelationshipEntity
 import org.neo4j.ogm.annotation.Required
 import org.neo4j.ogm.annotation.StartNode
 import org.neo4j.ogm.annotation.typeconversion.Convert
+import java.util.UUID
 
 @RelationshipEntity(type = "HAS_VALUE_OF")
 data class Neo4jStatementWithLiteral(
@@ -37,6 +39,10 @@ data class Neo4jStatementWithLiteral(
     @Required
     @Convert(PredicateIdGraphAttributeConverter::class)
     var predicateId: PredicateId? = null
+
+    @Property("created_by")
+    @Convert(UUIDGraphAttributeConverter::class)
+    var createdBy: UUID = UUID(0, 0)
 
     constructor(statementId: StatementId, subject: Neo4jResource, predicateId: PredicateId, `object`: Neo4jLiteral) :
         this(null) {

@@ -168,6 +168,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("id").description("The resource ID"),
             fieldWithPath("label").description("The resource label"),
             fieldWithPath("created_at").description("The resource creation datetime"),
+            fieldWithPath("created_by").description("The ID of the user that created the resource. All zeros if unknown."),
             fieldWithPath("classes").description("The list of classes the resource belongs to"),
             fieldWithPath("shared").description("The number of times this resource is shared").optional()
         )
@@ -177,6 +178,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].id").description("The resource ID"),
             fieldWithPath("[].label").description("The resource label"),
             fieldWithPath("[].created_at").description("The resource creation datetime"),
+            fieldWithPath("[].created_by").description("The ID of the user that created the resource. All zeros if unknown."),
             fieldWithPath("[].classes").description("The list of classes the resource belongs to"),
             fieldWithPath("[].shared").description("The number of times this resource is shared").optional()
         )

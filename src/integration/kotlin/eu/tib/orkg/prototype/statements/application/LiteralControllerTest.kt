@@ -122,13 +122,15 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
         responseFields(
             fieldWithPath("id").description("The resource ID"),
             fieldWithPath("label").description("The resource label"),
-            fieldWithPath("created_at").description("The resource creation datetime")
+            fieldWithPath("created_at").description("The resource creation datetime"),
+            fieldWithPath("created_by").description("The ID of the user that created the literal. All zeros if unknown.")
         )
 
     private fun literalListResponseFields() =
         responseFields(
             fieldWithPath("[].id").description("The resource ID"),
             fieldWithPath("[].label").description("The resource label"),
-            fieldWithPath("[].created_at").description("The resource creation datetime")
+            fieldWithPath("[].created_at").description("The resource creation datetime"),
+            fieldWithPath("[].created_by").description("The ID of the user that created the literal. All zeros if unknown.")
         )
 }

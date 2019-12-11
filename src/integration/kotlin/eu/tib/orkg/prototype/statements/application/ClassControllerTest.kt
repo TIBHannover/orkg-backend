@@ -165,7 +165,8 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("id").description("The class ID").optional(),
             fieldWithPath("label").description("The class label"),
             fieldWithPath("uri").description("An optional URI to describe the class (RDF)").optional(),
-            fieldWithPath("created_at").description("The class creation datetime")
+            fieldWithPath("created_at").description("The class creation datetime"),
+            fieldWithPath("created_by").description("The ID of the user that created the class. All zeros if unknown.")
         )
 
     private fun classListResponseFields() =
@@ -173,7 +174,8 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].id").description("The class ID").optional(),
             fieldWithPath("[].label").description("The class label"),
             fieldWithPath("[].uri").description("An optional URI to describe the class (RDF)").optional(),
-            fieldWithPath("[].created_at").description("The class creation datetime")
+            fieldWithPath("[].created_at").description("The class creation datetime"),
+            fieldWithPath("[].created_by").description("The ID of the user that created the class. All zeros if unknown.")
         )
 
     private fun resourceListResponseFields() =
@@ -182,6 +184,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].label").description("The resource label"),
             fieldWithPath("[].classes").description("The list of classes the resource belongs to"),
             fieldWithPath("[].created_at").description("The resource creation datetime"),
+            fieldWithPath("[].created_by").description("The ID of the user that created the class. All zeros if unknown."),
             fieldWithPath("[].shared").description("The number of times this resource is shared").optional()
         )
 }

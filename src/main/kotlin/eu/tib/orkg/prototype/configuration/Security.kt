@@ -35,7 +35,8 @@ import javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED
 @Configuration
 @EnableAuthorizationServer
 class AuthorizationServerConfiguration(
-    private val authenticationManager: AuthenticationManager
+    private val authenticationManager: AuthenticationManager,
+    private val userDetailsService: UserDetailsService
 ) : AuthorizationServerConfigurerAdapter() {
 
     override fun configure(clients: ClientDetailsServiceConfigurer) {
@@ -51,6 +52,7 @@ class AuthorizationServerConfiguration(
         endpoints
             .tokenStore(tokenStore())
             .authenticationManager(authenticationManager)
+            .userDetailsService(userDetailsService)
     }
 
     @Bean

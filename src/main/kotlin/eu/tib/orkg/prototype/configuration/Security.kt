@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.AuthenticationException
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer
@@ -63,7 +64,7 @@ class AuthorizationServerConfiguration(
 @EnableJpaRepositories("eu.tib.orkg.prototype.auth.service") // TODO: change location
 @EntityScan("eu.tib.orkg.prototype.auth.persistence")
 class ResourceServerConfiguration(
-    private val userDetailsService: OrkgUserDetailsService
+    private val userDetailsService: UserDetailsService
 ) : ResourceServerConfigurerAdapter() {
 
     // global security concerns

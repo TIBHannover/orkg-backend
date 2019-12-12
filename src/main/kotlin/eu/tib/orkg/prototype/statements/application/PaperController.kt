@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 import java.util.LinkedList
 import java.util.Queue
+import java.util.UUID
 
 const val ID_DOI_PREDICATE = "P26"
 const val ID_AUTHOR_PREDICATE = "P27"
@@ -49,7 +50,7 @@ class PaperController(
     private val statementWithLiteralService: StatementWithLiteralService,
     private val statementWithResourceService: StatementWithResourceService,
     private val classService: ClassService
-) {
+) : BaseController() {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
@@ -63,6 +64,7 @@ class PaperController(
     }
 
     fun insertData(paper: CreatePaperRequest): Resource {
+        val userId = authenticatedUserId()
         val hasDoiPredicate = predicateService.findById(PredicateId(ID_DOI_PREDICATE)).get().id!!
         val hasAuthorPredicate = predicateService.findById(PredicateId(ID_AUTHOR_PREDICATE)).get().id!!
         val publicationMonthPredicate = predicateService.findById(PredicateId(ID_PUBDATE_MONTH_PREDICATE)).get().id!!
@@ -75,13 +77,13 @@ class PaperController(
             if (contClass.isPresent)
                 contClass.get().id!!
             else
-                classService.create(CreateClassRequest(ClassId(ID_CONTRIBUTION_CLASS), ID_CONTRIBUTION_CLASS, null)).id!!
+                classService.create(userId, CreateClassRequest(ClassId(ID_CONTRIBUTION_CLASS), ID_CONTRIBUTION_CLASS, null)).id!!
 
         val predicates: HashMap<String, PredicateId> = HashMap()
         if (paper.predicates != null) {
             paper.predicates.forEach {
                 val surrogateId = it[it.keys.first()]!!
-                val predicateId = predicateService.create(it.keys.first()).id!!
+                val predicateId = predicateService.create(userId, it.keys.first()).id!!
                 predicates[surrogateId] = predicateId
             }
         }
@@ -91,13 +93,13 @@ class PaperController(
         }
 
         // paper title
-        val paperObj = resourceService.create(CreateResourceRequest(null, paper.paper.title, setOf(ClassId("Paper"))))
+        val paperObj = resourceService.create(userId, CreateResourceRequest(null, paper.paper.title, setOf(ClassId("Paper"))))
         val paperId = paperObj.id!!
 
         // paper doi
         if (paper.paper.doi != null) {
-            val paperDoi = literalService.create(paper.paper.doi).id!!
-            statementWithLiteralService.create(paperId, hasDoiPredicate, paperDoi)
+            val paperDoi = literalService.create(userId, paper.paper.doi).id!!
+            statementWithLiteralService.create(userId, paperId, hasDoiPredicate, paperDoi)
         }
 
         // paper authors
@@ -112,6 +114,7 @@ class PaperController(
                             authorClass.get().id!!
                         else
                             classService.create(
+                                userId,
                                 CreateClassRequest(
                                     ClassId(ID_AUTHOR_CLASS),
                                     ID_AUTHOR_CLASS,
@@ -140,30 +143,32 @@ class PaperController(
                                     ) // TODO: Hide values by using default values for the parameters
                                 ).firstOrNull { it.predicate.id == hasOrcidPredicate }
                                     ?: throw RuntimeException("ORCID <$orcidValue> is not attached to any author!")
-                            statementWithResourceService.create(paperId, hasAuthorPredicate, authorStatement.subject.id!!)
+                            statementWithResourceService.create(userId, paperId, hasAuthorPredicate, authorStatement.subject.id!!)
                         } else {
                             // create resource
-                            val author = resourceService.create(CreateResourceRequest(null, it.label, setOf(authorClassId)))
+                            val author = resourceService.create(userId, CreateResourceRequest(null, it.label, setOf(authorClassId)))
                             statementWithResourceService.create(
+                                userId,
                                 paperId,
                                 hasAuthorPredicate,
                                 author.id!!
                             )
                             // Create orcid literal
-                            val orcid = literalService.create(orcidValue)
+                            val orcid = literalService.create(userId, orcidValue)
                             // Add ORCID id to the new resource
-                            statementWithLiteralService.create(author.id, hasOrcidPredicate, orcid.id!!)
+                            statementWithLiteralService.create(userId, author.id, hasOrcidPredicate, orcid.id!!)
                         }
                     } else {
                         // create literal and link it
                         statementWithLiteralService.create(
+                            userId,
                             paperId,
                             hasAuthorPredicate,
-                            literalService.create(it.label!!).id!!
+                            literalService.create(userId, it.label!!).id!!
                         )
                     }
                 } else {
-                    statementWithResourceService.create(paperId, hasAuthorPredicate, ResourceId(it.id))
+                    statementWithResourceService.create(userId, paperId, hasAuthorPredicate, ResourceId(it.id))
                 }
             }
         }
@@ -171,19 +176,21 @@ class PaperController(
         // paper publication date
         if (paper.paper.publicationMonth != null)
             statementWithLiteralService.create(
+                userId,
                 paperId,
                 publicationMonthPredicate,
-                literalService.create(paper.paper.publicationMonth.toString()).id!!
+                literalService.create(userId, paper.paper.publicationMonth.toString()).id!!
             )
         if (paper.paper.publicationYear != null)
             statementWithLiteralService.create(
+                userId,
                 paperId,
                 publicationYearPredicate,
-                literalService.create(paper.paper.publicationYear.toString()).id!!
+                literalService.create(userId, paper.paper.publicationYear.toString()).id!!
             )
 
         // paper research field
-        statementWithResourceService.create(paperId, researchFieldPredicate, ResourceId(paper.paper.researchField))
+        statementWithResourceService.create(userId, paperId, researchFieldPredicate, ResourceId(paper.paper.researchField))
 
         val tempResources: HashMap<String, String> = HashMap()
 
@@ -192,10 +199,10 @@ class PaperController(
             val contributionClassSet = setOf(contributionClass)
             paper.paper.contributions.forEach {
                 if (it.values != null && it.values.count() > 0) {
-                    val contributionId = resourceService.create(CreateResourceRequest(null, it.name, contributionClassSet)).id!!
-                    statementWithResourceService.create(paperId, hasContributionPredicate, contributionId)
+                    val contributionId = resourceService.create(userId, CreateResourceRequest(null, it.name, contributionClassSet)).id!!
+                    statementWithResourceService.create(userId, paperId, hasContributionPredicate, contributionId)
                     val resourceQueue: Queue<TempResource> = LinkedList()
-                    processContributionData(contributionId, it.values, tempResources, predicates, resourceQueue)
+                    processContributionData(contributionId, it.values, tempResources, predicates, resourceQueue, userId)
                 }
             }
         }
@@ -252,6 +259,7 @@ class PaperController(
         tempResources: HashMap<String, String>,
         predicates: HashMap<String, PredicateId>,
         resourceQueue: Queue<TempResource>,
+        userId: UUID,
         recursive: Boolean = false
     ) {
 
@@ -266,10 +274,10 @@ class PaperController(
                     resource.`@id` != null -> { // Add an existing resource or literal
                         when {
                             resource.`@id`.startsWith("L") -> {
-                                statementWithLiteralService.create(subject, predicateId!!, LiteralId(resource.`@id`))
+                                statementWithLiteralService.create(userId, subject, predicateId!!, LiteralId(resource.`@id`))
                             }
                             resource.`@id`.startsWith("R") -> {
-                                statementWithResourceService.create(subject, predicateId!!, ResourceId(resource.`@id`))
+                                statementWithResourceService.create(userId, subject, predicateId!!, ResourceId(resource.`@id`))
                             }
                             resource.`@id`.startsWith("_") -> {
                                 if (!tempResources.containsKey(resource.`@id`))
@@ -277,20 +285,20 @@ class PaperController(
                                 else {
                                     val tempId = tempResources[resource.`@id`]
                                     if (tempId!!.startsWith("L")) {
-                                        statementWithLiteralService.create(subject, predicateId!!, LiteralId(tempId))
+                                        statementWithLiteralService.create(userId, subject, predicateId!!, LiteralId(tempId))
                                     } else {
-                                        statementWithResourceService.create(subject, predicateId!!, ResourceId(tempId))
+                                        statementWithResourceService.create(userId, subject, predicateId!!, ResourceId(tempId))
                                     }
                                 }
                             }
                         }
                     }
                     resource.text != null -> { // create new literal
-                        val newLiteral = literalService.create(resource.text).id!!
+                        val newLiteral = literalService.create(userId, resource.text).id!!
                         if (resource.`@temp` != null) {
                             tempResources[resource.`@temp`] = newLiteral.value
                         }
-                        statementWithLiteralService.create(subject, predicateId!!, newLiteral)
+                        statementWithLiteralService.create(userId, subject, predicateId!!, newLiteral)
                     }
                     resource.label != null -> { // create new resource
                         // Check for classes of resource
@@ -303,15 +311,15 @@ class PaperController(
                         MAP_PREDICATE_CLASSES[predicateId!!.value]?.let { ClassId(it) }?.let { classes.add(it) }
                         // Create resource
                         val newResource = if (classes.isNotEmpty())
-                            resourceService.create(CreateResourceRequest(null, resource.label, classes.toSet())).id!!
+                            resourceService.create(userId, CreateResourceRequest(null, resource.label, classes.toSet())).id!!
                         else
-                            resourceService.create(resource.label).id!!
+                            resourceService.create(userId, resource.label).id!!
                         if (resource.`@temp` != null) {
                             tempResources[resource.`@temp`] = newResource.value
                         }
-                        statementWithResourceService.create(subject, predicateId, newResource)
+                        statementWithResourceService.create(userId, subject, predicateId, newResource)
                         if (resource.values != null) {
-                            processContributionData(newResource, resource.values, tempResources, predicates, resourceQueue, true)
+                            processContributionData(newResource, resource.values, tempResources, predicates, resourceQueue, userId, true)
                         }
                     }
                 }
@@ -325,9 +333,9 @@ class PaperController(
             if (tempResources.containsKey(temp.`object`)) {
                 val tempId = tempResources[temp.`object`]
                 if (tempId!!.startsWith("L")) {
-                    statementWithLiteralService.create(temp.subject, temp.predicate, LiteralId(tempId))
+                    statementWithLiteralService.create(userId, temp.subject, temp.predicate, LiteralId(tempId))
                 } else {
-                    statementWithResourceService.create(temp.subject, temp.predicate, ResourceId(tempId))
+                    statementWithResourceService.create(userId, temp.subject, temp.predicate, ResourceId(tempId))
                 }
             } else {
                 resourceQueue.add(temp)

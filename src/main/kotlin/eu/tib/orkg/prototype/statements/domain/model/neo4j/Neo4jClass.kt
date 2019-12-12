@@ -34,9 +34,10 @@ data class Neo4jClass(
     @Convert(UUIDGraphAttributeConverter::class)
     var createdBy: UUID = UUID(0, 0)
 
-    constructor(label: String, classId: ClassId) : this(null) {
+    constructor(label: String, classId: ClassId, createdBy: UUID = UUID(0, 0)) : this(null) {
         this.label = label
         this.classId = classId
+        this.createdBy = createdBy
     }
 
     fun toClass(): Class {

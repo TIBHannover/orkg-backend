@@ -10,6 +10,7 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jClassRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.Optional
+import java.util.UUID
 
 @Service
 @Transactional
@@ -18,17 +19,21 @@ class Neo4jClassService(
     private val neo4jClassIdGenerator: Neo4jClassIdGenerator
 ) : ClassService {
 
-    override fun create(label: String): Class {
+    override fun create(label: String) = create(UUID(0, 0), label)
+
+    override fun create(userId: UUID, label: String): Class {
         val classId = neo4jClassIdGenerator.nextIdentity()
         return neo4jClassRepository
-            .save(Neo4jClass(label = label, classId = classId))
+            .save(Neo4jClass(label = label, classId = classId, createdBy = userId))
             .toClass()
     }
 
-    override fun create(request: CreateClassRequest): Class {
+    override fun create(request: CreateClassRequest) = create(UUID(0, 0), request)
+
+    override fun create(userId: UUID, request: CreateClassRequest): Class {
         val id = request.id ?: neo4jClassIdGenerator.nextIdentity()
         return neo4jClassRepository.save(
-            Neo4jClass(label = request.label, classId = id)
+            Neo4jClass(label = request.label, classId = id, createdBy = userId)
         ).toClass()
     }
 

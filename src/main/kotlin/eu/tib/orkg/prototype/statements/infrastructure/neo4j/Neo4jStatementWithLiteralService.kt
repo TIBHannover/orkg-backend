@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.Optional
+import java.util.UUID
 
 @Service
 @Transactional
@@ -39,7 +40,11 @@ class Neo4jStatementWithLiteralService :
     @Autowired
     private lateinit var neo4jStatementIdGenerator: Neo4jStatementIdGenerator
 
+    override fun create(subject: ResourceId, predicate: PredicateId, `object`: LiteralId) =
+        create(UUID(0, 0), subject, predicate, `object`)
+
     override fun create(
+        userId: UUID,
         subject: ResourceId,
         predicate: PredicateId,
         `object`: LiteralId
@@ -63,7 +68,8 @@ class Neo4jStatementWithLiteralService :
                 statementId = id,
                 predicateId = predicate,
                 subject = foundSubject,
-                `object` = foundObject
+                `object` = foundObject,
+                createdBy = userId
             )
         )
 

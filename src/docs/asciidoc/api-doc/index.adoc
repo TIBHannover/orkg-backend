@@ -81,6 +81,9 @@ In a `POST` request, the response will contain an entity describing or containin
 === Cross origin resource sharing
 ////
 
+[[authentication]]
+include::parts/auth.adoc[leveloffset=+1]
+
 [[statements]]
 == Statements
 

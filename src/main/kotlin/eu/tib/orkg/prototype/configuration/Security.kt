@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.configuration
 
-import eu.tib.orkg.prototype.auth.service.OrkgUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Bean
@@ -16,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.AuthenticationException
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer
@@ -34,7 +34,8 @@ import javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED
 @Configuration
 @EnableAuthorizationServer
 class AuthorizationServerConfiguration(
-    private val authenticationManager: AuthenticationManager
+    private val authenticationManager: AuthenticationManager,
+    private val userDetailsService: UserDetailsService
 ) : AuthorizationServerConfigurerAdapter() {
 
     override fun configure(clients: ClientDetailsServiceConfigurer) {
@@ -50,6 +51,7 @@ class AuthorizationServerConfiguration(
         endpoints
             .tokenStore(tokenStore())
             .authenticationManager(authenticationManager)
+            .userDetailsService(userDetailsService)
     }
 
     @Bean
@@ -63,7 +65,7 @@ class AuthorizationServerConfiguration(
 @EnableJpaRepositories("eu.tib.orkg.prototype.auth.service") // TODO: change location
 @EntityScan("eu.tib.orkg.prototype.auth.persistence")
 class ResourceServerConfiguration(
-    private val userDetailsService: OrkgUserDetailsService
+    private val userDetailsService: UserDetailsService
 ) : ResourceServerConfigurerAdapter() {
 
     // global security concerns

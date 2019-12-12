@@ -1,21 +1,25 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Import
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
 @DisplayName("Predicate Controller")
 @Transactional
+@Import(MockUserDetailsService::class)
 class PredicateControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
@@ -84,6 +88,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun add() {
         val resource = mapOf("label" to "knows")
 
@@ -128,13 +133,15 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
         responseFields(
             fieldWithPath("id").description("The predicate ID"),
             fieldWithPath("label").description("The predicate label"),
-            fieldWithPath("created_at").description("The predicate creation datetime")
+            fieldWithPath("created_at").description("The predicate creation datetime"),
+            fieldWithPath("created_by").description("The ID of the user that created the predicate. All zeros if unknown.")
         )
 
     private fun predicateListResponseFields() =
         responseFields(
             fieldWithPath("[].id").description("The predicate ID"),
             fieldWithPath("[].label").description("The predicate label"),
-            fieldWithPath("[].created_at").description("The predicate creation datetime")
+            fieldWithPath("[].created_at").description("The predicate creation datetime"),
+            fieldWithPath("[].created_by").description("The ID of the user that created the predicate. All zeros if unknown.")
         )
 }

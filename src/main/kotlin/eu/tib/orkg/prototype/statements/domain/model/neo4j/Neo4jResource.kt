@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceObject
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ResourceIdGraphAttributeConverter
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.UUIDGraphAttributeConverter
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
 import org.neo4j.ogm.annotation.Labels
@@ -14,6 +15,7 @@ import org.neo4j.ogm.annotation.Property
 import org.neo4j.ogm.annotation.Relationship
 import org.neo4j.ogm.annotation.Required
 import org.neo4j.ogm.annotation.typeconversion.Convert
+import java.util.UUID
 
 @NodeEntity(label = "Resource")
 data class Neo4jResource(
@@ -39,6 +41,10 @@ data class Neo4jResource(
     @JsonIgnore
     var objectOf: MutableSet<Neo4jStatementWithResource> = mutableSetOf()
 
+    @Property("created_by")
+    @Convert(UUIDGraphAttributeConverter::class)
+    var createdBy: UUID = UUID(0, 0)
+
     /**
      * List of node labels. Labels other than the `Resource` label are mapped to classes.
      */
@@ -54,16 +60,17 @@ data class Neo4jResource(
             labels = value.map { it.value }.toMutableList()
         }
 
-    constructor(label: String, resourceId: ResourceId) : this(null) {
+    constructor(label: String, resourceId: ResourceId, createdBy: UUID = UUID(0, 0)) : this(null) {
         this.label = label
         this.resourceId = resourceId
+        this.createdBy = createdBy
     }
 
-    fun toResource() = Resource(resourceId, label!!, createdAt, classes, objectOf.size)
+    fun toResource() = Resource(resourceId, label!!, createdAt, classes, objectOf.size, createdBy = createdBy)
 
-    fun toObject() = ResourceObject(resourceId, label!!, createdAt, classes)
+    fun toObject() = ResourceObject(resourceId, label!!, createdAt, classes, createdBy = createdBy)
 
-    fun toObject(shared: Int) = ResourceObject(resourceId, label!!, createdAt, classes, shared)
+    fun toObject(shared: Int) = ResourceObject(resourceId, label!!, createdAt, classes, shared, createdBy = createdBy)
 
     /**
      * Assign a class to this `Resource` node.

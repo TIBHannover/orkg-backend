@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.configuration
 
-import eu.tib.orkg.prototype.auth.service.OrkgUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Bean

@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.auth.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import eu.tib.orkg.prototype.auth.domain.model.Contributor
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserService
 import org.springframework.http.HttpStatus.NOT_FOUND
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -31,7 +33,18 @@ class UserController(
             return ResponseEntity(UNAUTHORIZED)
         val user = userService.findById(UUID.fromString(principal.name))
         if (user.isPresent)
-            return ResponseEntity.ok(UserDetails(user.get()))
+            return ok(UserDetails(user.get()))
+        return ResponseEntity(NOT_FOUND)
+    }
+
+    @GetMapping("/{id}")
+    fun lookupContributor(@PathVariable id: UUID): ResponseEntity<Contributor> {
+        println("called with: $id")
+        val contributor = userService.findById(id)
+        if (contributor.isPresent) {
+            val c = contributor.get()
+            return ok(Contributor(id = c.id!!, name = c.displayName!!))
+        }
         return ResponseEntity(NOT_FOUND)
     }
 

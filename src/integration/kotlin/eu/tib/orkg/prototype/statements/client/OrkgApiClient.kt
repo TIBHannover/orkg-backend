@@ -33,7 +33,7 @@ class OrkgApiClient(private val port: Int = 80) {
         val restTemplate = RestTemplate().apply {
             messageConverters.add(StringHttpMessageConverter())
         }
-        return restTemplate.postForObject<TokenResponse>(url, request)?.accessToken
+        return restTemplate.postForObject<TokenResponse>(url, request).accessToken
     }
 
     private fun getRequestHeaders() =

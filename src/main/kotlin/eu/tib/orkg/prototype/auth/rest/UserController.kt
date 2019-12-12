@@ -72,7 +72,7 @@ class UserController(
         val foundUser = userService.findById(UUID.fromString(principal.name))
         if (foundUser.isPresent) {
             val currentUser = foundUser.get()
-            if (userService.checkPassword(currentUser.id!!, updatedPassword.oldPassword)) {
+            if (userService.checkPassword(currentUser.id!!, updatedPassword.currentPassword)) {
                 userService.updatePassword(currentUser.id!!, updatedPassword.newPassword)
             } else {
                 throw CurrentPasswordInvalid()
@@ -117,8 +117,8 @@ class UserController(
      */
     data class PasswordDTO(
         @field:NotBlank
-        @JsonProperty("old_password")
-        val oldPassword: String,
+        @JsonProperty("current_password")
+        val currentPassword: String,
 
         @field:Size(min = 6, message = "Please choose a more secure password. It should be longer than 6 characters.")
         @field:NotBlank

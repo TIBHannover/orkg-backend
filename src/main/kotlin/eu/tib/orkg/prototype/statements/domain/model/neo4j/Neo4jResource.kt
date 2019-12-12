@@ -57,9 +57,10 @@ data class Neo4jResource(
     val classes: Set<ClassId>
         get() = labels.map(::ClassId).toSet()
 
-    constructor(label: String, resourceId: ResourceId) : this(null) {
+    constructor(label: String, resourceId: ResourceId, createdBy: UUID = UUID(0, 0)) : this(null) {
         this.label = label
         this.resourceId = resourceId
+        this.createdBy = createdBy
     }
 
     fun toResource() = Resource(resourceId, label!!, createdAt, classes, objectOf.size, createdBy = createdBy)

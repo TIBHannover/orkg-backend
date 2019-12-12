@@ -46,12 +46,19 @@ data class Neo4jStatementWithResource(
     @Convert(UUIDGraphAttributeConverter::class)
     var createdBy: UUID = UUID(0, 0)
 
-    constructor(statementId: StatementId, subject: Neo4jResource, predicateId: PredicateId, `object`: Neo4jResource) :
+    constructor(
+        statementId: StatementId,
+        subject: Neo4jResource,
+        predicateId: PredicateId,
+        `object`: Neo4jResource,
+        createdBy: UUID = UUID(0, 0)
+    ) :
         this(null) {
         this.statementId = statementId
         this.subject = subject
         this.predicateId = predicateId
         this.`object` = `object`
+        this.createdBy = createdBy
     }
 
     fun toStatement(): Statement {

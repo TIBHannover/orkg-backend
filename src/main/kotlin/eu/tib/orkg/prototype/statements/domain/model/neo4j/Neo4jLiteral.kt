@@ -1,11 +1,11 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralObject
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.LiteralIdGraphAttributeConverter
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.UUIDGraphAttributeConverter
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
@@ -45,9 +45,10 @@ data class Neo4jLiteral(
     val classes: Set<ClassId>
         get() = labels.map(::ClassId).toSet()
 
-    constructor(label: String, literalId: LiteralId) : this(null) {
+    constructor(label: String, literalId: LiteralId, createdBy: UUID = UUID(0, 0)) : this(null) {
         this.label = label
         this.literalId = literalId
+        this.createdBy = createdBy
     }
 
     fun toLiteral() = Literal(literalId, label!!, createdAt!!, createdBy = createdBy)

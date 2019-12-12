@@ -8,10 +8,11 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceIdGenerator
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceRepository
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.Optional
-import org.springframework.data.domain.Pageable
+import java.util.UUID
 
 @Service
 @Transactional
@@ -19,15 +20,20 @@ class Neo4jResourceService(
     private val neo4jResourceRepository: Neo4jResourceRepository,
     private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator
 ) : ResourceService {
-    override fun create(label: String): Resource {
+
+    override fun create(label: String) = create(UUID(0, 0), label)
+
+    override fun create(userId: UUID, label: String): Resource {
         val resourceId = neo4jResourceIdGenerator.nextIdentity()
-        return neo4jResourceRepository.save(Neo4jResource(label = label, resourceId = resourceId))
+        return neo4jResourceRepository.save(Neo4jResource(label = label, resourceId = resourceId, createdBy = userId))
             .toResource()
     }
 
-    override fun create(request: CreateResourceRequest): Resource {
+    override fun create(request: CreateResourceRequest) = create(UUID(0, 0), request)
+
+    override fun create(userId: UUID, request: CreateResourceRequest): Resource {
         val id = request.id ?: neo4jResourceIdGenerator.nextIdentity()
-        val resource = Neo4jResource(label = request.label, resourceId = id)
+        val resource = Neo4jResource(label = request.label, resourceId = id, createdBy = userId)
         request.classes.forEach { resource.assignTo(it.toString()) }
         return neo4jResourceRepository.save(resource).toResource()
     }

@@ -1,22 +1,26 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Import
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation
+import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
 @DisplayName("Class Controller")
 @Transactional
+@Import(MockUserDetailsService::class)
 class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
@@ -62,6 +66,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun add() {
         val `class` = mapOf("label" to "foo")
 

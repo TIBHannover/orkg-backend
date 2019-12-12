@@ -9,6 +9,7 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteralRepositor
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.Optional
+import java.util.UUID
 
 @Service
 @Transactional
@@ -16,10 +17,12 @@ class Neo4jLiteralService(
     private val neo4jLiteralRepository: Neo4jLiteralRepository,
     private val neo4jLiteralIdGenerator: Neo4jLiteralIdGenerator
 ) : LiteralService {
-    override fun create(label: String): Literal {
+    override fun create(label: String) = create(UUID(0, 0), label)
+
+    override fun create(userId: UUID, label: String): Literal {
         val literalId = neo4jLiteralIdGenerator.nextIdentity()
         return neo4jLiteralRepository
-            .save(Neo4jLiteral(label = label, literalId = literalId))
+            .save(Neo4jLiteral(label = label, literalId = literalId, createdBy = userId))
             .toLiteral()
     }
 

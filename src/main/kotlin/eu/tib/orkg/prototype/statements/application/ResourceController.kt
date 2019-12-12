@@ -25,7 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RestController
 @RequestMapping("/api/resources/")
 @CrossOrigin(origins = ["*"])
-class ResourceController(private val service: ResourceService) {
+class ResourceController(private val service: ResourceService) : BaseController() {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: ResourceId): Resource =
@@ -61,7 +61,8 @@ class ResourceController(private val service: ResourceService) {
     @PostMapping("/")
     @ResponseStatus(CREATED)
     fun add(@RequestBody resource: CreateResourceRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Resource> {
-        val id = service.create(resource).id
+        val userId = authenticatedUserId()
+        val id = service.create(userId, resource).id
         val location = uriComponentsBuilder
             .path("api/resources/{id}")
             .buildAndExpand(id)

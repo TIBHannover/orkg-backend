@@ -22,7 +22,7 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 @CrossOrigin(origins = ["*"])
 class UserController(
     private val userService: UserService

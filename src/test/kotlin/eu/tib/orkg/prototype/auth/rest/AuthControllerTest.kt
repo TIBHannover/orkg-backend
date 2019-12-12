@@ -191,7 +191,7 @@ class AuthControllerTest {
     }
 
     private fun registrationOf(user: RegisterUserRequest) =
-        post("/auth/register")
+        post("/api/auth/register")
             .contentType(APPLICATION_JSON)
             .characterEncoding("UTF-8")
             .content(objectMapper.writeValueAsString(user))

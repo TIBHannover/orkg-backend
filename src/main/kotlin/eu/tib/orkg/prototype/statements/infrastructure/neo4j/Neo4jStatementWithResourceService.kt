@@ -72,7 +72,8 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
             foundSubject.toResource(),
             foundPredicate.get(),
             foundObject.toObject(),
-            persistedStatement.createdAt!!
+            persistedStatement.createdAt!!,
+            createdBy = persistedStatement.createdBy
         )
     }
 

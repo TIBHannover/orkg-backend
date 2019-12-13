@@ -1,8 +1,10 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
+import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import org.springframework.data.domain.Pageable
 import java.util.Optional
+import java.util.UUID
 
 interface ResourceService {
     /**
@@ -13,9 +15,19 @@ interface ResourceService {
     fun create(label: String): Resource
 
     /**
+     * Create a new resource with a given label belonging to a given user.
+     */
+    fun create(userId: UUID, label: String): Resource
+
+    /**
      * Create a new resource from a request.
      */
     fun create(request: CreateResourceRequest): Resource
+
+    /**
+     * Create a new resource belonging to a given user.
+     */
+    fun create(userId: UUID, request: CreateResourceRequest): Resource
 
     /**
      * Find all resources.
@@ -70,5 +82,5 @@ interface ResourceService {
     /**
      * Update a resource.
      */
-    fun update(resource: Resource): Resource
+    fun update(request: UpdateResourceRequest): Resource
 }

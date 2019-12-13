@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.badRequest
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
@@ -25,7 +26,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RestController
 @RequestMapping("/api/resources/")
 @CrossOrigin(origins = ["*"])
-class ResourceController(private val service: ResourceService) {
+class ResourceController(private val service: ResourceService) : BaseController() {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: ResourceId): Resource =
@@ -60,8 +61,11 @@ class ResourceController(private val service: ResourceService) {
 
     @PostMapping("/")
     @ResponseStatus(CREATED)
-    fun add(@RequestBody resource: CreateResourceRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Resource> {
-        val id = service.create(resource).id
+    fun add(@RequestBody resource: CreateResourceRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
+        if (resource.id != null && service.findById(resource.id).isPresent)
+            return badRequest().body("Resource id <${resource.id}> already exists!")
+        val userId = authenticatedUserId()
+        val id = service.create(userId, resource).id
         val location = uriComponentsBuilder
             .path("api/resources/{id}")
             .buildAndExpand(id)
@@ -73,16 +77,16 @@ class ResourceController(private val service: ResourceService) {
     @PutMapping("/{id}")
     fun update(
         @PathVariable id: ResourceId,
-        @RequestBody resource: Resource
+        @RequestBody request: UpdateResourceRequest
     ): ResponseEntity<Resource> {
         val found = service.findById(id)
 
         if (!found.isPresent)
             return notFound().build()
 
-        val updatedResource = resource.copy(id = found.get().id)
+        val updatedRequest = request.copy(id = id)
 
-        return ok(service.update(updatedResource))
+        return ok(service.update(updatedRequest))
     }
 }
 
@@ -90,4 +94,10 @@ data class CreateResourceRequest(
     val id: ResourceId?,
     val label: String,
     val classes: Set<ClassId> = emptySet()
+)
+
+data class UpdateResourceRequest(
+    val id: ResourceId?,
+    val label: String?,
+    val classes: Set<ClassId>?
 )

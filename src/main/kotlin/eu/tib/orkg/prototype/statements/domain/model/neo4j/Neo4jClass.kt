@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ClassIdGraphAttributeConverter
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.UUIDGraphAttributeConverter
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
 import org.eclipse.rdf4j.model.vocabulary.OWL
@@ -18,6 +19,7 @@ import org.neo4j.ogm.annotation.Required
 import org.neo4j.ogm.annotation.typeconversion.Convert
 import java.lang.StringBuilder
 import java.net.URI
+import java.util.UUID
 
 @NodeEntity(label = "Class")
 data class Neo4jClass(
@@ -36,14 +38,19 @@ data class Neo4jClass(
 
     var uri: String? = null
 
-    constructor(label: String, classId: ClassId) : this(null) {
+    @Property("created_by")
+    @Convert(UUIDGraphAttributeConverter::class)
+    var createdBy: UUID = UUID(0, 0)
+
+    constructor(label: String, classId: ClassId, createdBy: UUID = UUID(0, 0)) : this(null) {
         this.label = label
         this.classId = classId
+        this.createdBy = createdBy
     }
 
     fun toClass(): Class {
         val aURI: URI? = if (uri != null) URI.create(uri!!) else null
-        val clazz = Class(classId!!, label!!, aURI, createdAt!!)
+        val clazz = Class(classId!!, label!!, aURI, createdAt!!, createdBy = createdBy)
         clazz.rdf = toRdfModel()
         return clazz
     }

@@ -9,12 +9,14 @@ import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
 import org.eclipse.rdf4j.model.vocabulary.RDF
 import org.eclipse.rdf4j.model.vocabulary.RDFS
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.UUIDGraphAttributeConverter
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
 import org.neo4j.ogm.annotation.NodeEntity
 import org.neo4j.ogm.annotation.Property
 import org.neo4j.ogm.annotation.Required
 import org.neo4j.ogm.annotation.typeconversion.Convert
+import java.util.UUID
 
 @NodeEntity(label = "Predicate")
 data class Neo4jPredicate(
@@ -29,10 +31,15 @@ data class Neo4jPredicate(
     @Property("predicate_id")
     @Required
     @Convert(PredicateIdGraphAttributeConverter::class)
-    private var predicateId: PredicateId? = null
+    private var predicateId: PredicateId? = null,
+
+    @Property("created_by")
+    @Convert(UUIDGraphAttributeConverter::class)
+    var createdBy: UUID = UUID(0, 0)
 ) : AuditableEntity() {
+
     fun toPredicate(): Predicate {
-        val pred = Predicate(predicateId, label!!, createdAt!!)
+        val pred = Predicate(predicateId, label!!, createdAt!!, createdBy = createdBy)
         pred.rdf = toRdfModel()
         return pred
     }

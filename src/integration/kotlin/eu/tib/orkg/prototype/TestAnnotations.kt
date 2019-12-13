@@ -2,6 +2,9 @@ package eu.tib.orkg.prototype
 
 import eu.tib.orkg.prototype.configuration.Neo4jConfiguration
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
 import org.springframework.transaction.annotation.Transactional
@@ -35,3 +38,13 @@ annotation class Neo4jRepositoryTest
 )
 @Transactional
 annotation class Neo4jServiceTest
+
+/**
+ * Annotation that helps to setup tests with PostgreSQL in TestContainers.
+ *
+ * Tests are transactional by default. The test database is replaced with a TestContainers Docker container that is
+ * configured via `application.yaml`.
+ */
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = NONE)
+annotation class TestContainersJpaTest

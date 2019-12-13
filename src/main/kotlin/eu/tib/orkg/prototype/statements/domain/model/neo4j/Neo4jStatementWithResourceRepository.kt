@@ -21,10 +21,10 @@ interface Neo4jStatementWithResourceRepository :
     fun findByStatementId(id: StatementId): Optional<Neo4jStatementWithResource>
 
     // TODO: Return type as Slice not Page because Slice don't need a count query which might be more efficient
-    @Query("MATCH (sub:`Resource`)-[rel:`RELATES_TO`]->(obj:`Resource`) WHERE sub.`resource_id`={0} RETURN rel, sub, obj, rel.statement_id AS id")
+    @Query("MATCH (sub:`Resource`)-[rel:`RELATES_TO`]->(obj:`Resource`) WHERE sub.`resource_id`={0} RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at")
     fun findAllBySubject(subjectId: ResourceId, pagination: Pageable): Slice<Neo4jStatementWithResource>
 
-    @Query("MATCH (sub:`Resource`)-[rel:`RELATES_TO`]->(obj:`Resource`) WHERE sub.`resource_id`={0} AND rel.predicate_id={1} RETURN rel, sub, obj, rel.statement_id AS id")
+    @Query("MATCH (sub:`Resource`)-[rel:`RELATES_TO`]->(obj:`Resource`) WHERE sub.`resource_id`={0} AND rel.predicate_id={1} RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at")
     fun findAllBySubjectAndPredicate(
         resourceId: ResourceId,
         predicateId: PredicateId,
@@ -33,7 +33,7 @@ interface Neo4jStatementWithResourceRepository :
 
     fun findAllByPredicateId(predicateId: PredicateId, pagination: Pageable): Slice<Neo4jStatementWithResource>
 
-    @Query("MATCH (sub:`Resource`)-[rel:`RELATES_TO`]->(obj:`Resource`) WHERE obj.`resource_id`={0} RETURN rel, sub, obj, rel.statement_id AS id")
+    @Query("MATCH (sub:`Resource`)-[rel:`RELATES_TO`]->(obj:`Resource`) WHERE obj.`resource_id`={0} RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at")
     fun findAllByObject(resourceId: ResourceId, pagination: Pageable): Slice<Neo4jStatementWithResource>
 
     @Query(

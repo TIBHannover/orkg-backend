@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.Optional
+import java.util.UUID
 
 @Service
 @Transactional
@@ -19,17 +20,21 @@ class Neo4jPredicateService(
     private val neo4jPredicateIdGenerator: Neo4jPredicateIdGenerator
 ) : PredicateService {
 
-    override fun create(label: String): Predicate {
+    override fun create(label: String) = create(UUID(0, 0), label)
+
+    override fun create(userId: UUID, label: String): Predicate {
         val id = neo4jPredicateIdGenerator.nextIdentity()
         return neo4jPredicateRepository
-            .save(Neo4jPredicate(label = label, predicateId = id))
+            .save(Neo4jPredicate(label = label, predicateId = id, createdBy = userId))
             .toPredicate()
     }
 
-    override fun create(request: CreatePredicateRequest): Predicate {
+    override fun create(request: CreatePredicateRequest) = create(UUID(0, 0), request)
+
+    override fun create(userId: UUID, request: CreatePredicateRequest): Predicate {
         val id = request.id ?: neo4jPredicateIdGenerator.nextIdentity()
         return neo4jPredicateRepository
-            .save(Neo4jPredicate(label = request.label, predicateId = id))
+            .save(Neo4jPredicate(label = request.label, predicateId = id, createdBy = userId))
             .toPredicate()
     }
 

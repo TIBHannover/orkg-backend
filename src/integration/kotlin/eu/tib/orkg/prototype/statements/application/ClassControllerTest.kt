@@ -1,22 +1,26 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Import
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation
+import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
 @DisplayName("Class Controller")
 @Transactional
+@Import(MockUserDetailsService::class)
 class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
@@ -62,6 +66,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun add() {
         val `class` = mapOf("label" to "foo")
 
@@ -165,7 +170,8 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("id").description("The class ID").optional(),
             fieldWithPath("label").description("The class label"),
             fieldWithPath("uri").description("An optional URI to describe the class (RDF)").optional(),
-            fieldWithPath("created_at").description("The class creation datetime")
+            fieldWithPath("created_at").description("The class creation datetime"),
+            fieldWithPath("created_by").description("The ID of the user that created the class. All zeros if unknown.")
         )
 
     private fun classListResponseFields() =
@@ -173,7 +179,8 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].id").description("The class ID").optional(),
             fieldWithPath("[].label").description("The class label"),
             fieldWithPath("[].uri").description("An optional URI to describe the class (RDF)").optional(),
-            fieldWithPath("[].created_at").description("The class creation datetime")
+            fieldWithPath("[].created_at").description("The class creation datetime"),
+            fieldWithPath("[].created_by").description("The ID of the user that created the class. All zeros if unknown.")
         )
 
     private fun resourceListResponseFields() =
@@ -182,6 +189,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].label").description("The resource label"),
             fieldWithPath("[].classes").description("The list of classes the resource belongs to"),
             fieldWithPath("[].created_at").description("The resource creation datetime"),
+            fieldWithPath("[].created_by").description("The ID of the user that created the class. All zeros if unknown."),
             fieldWithPath("[].shared").description("The number of times this resource is shared").optional()
         )
 }

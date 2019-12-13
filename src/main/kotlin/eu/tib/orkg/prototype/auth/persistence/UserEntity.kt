@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.persistence.CascadeType
+import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.Id
@@ -27,6 +28,10 @@ class UserEntity {
 
     @NotBlank
     var password: String? = null
+
+    @NotBlank
+    @Column(name = "display_name")
+    var displayName: String? = "an anonymous user"
 
     @NotNull
     var enabled: Boolean = false
@@ -60,7 +65,7 @@ data class UserPrincipal(private val userEntity: UserEntity) : UserDetails {
 
     override fun isEnabled() = userEntity.enabled
 
-    override fun getUsername() = userEntity.email
+    override fun getUsername() = userEntity.id.toString()
 
     override fun isCredentialsNonExpired() = true
 
@@ -69,4 +74,6 @@ data class UserPrincipal(private val userEntity: UserEntity) : UserDetails {
     override fun isAccountNonExpired() = true
 
     override fun isAccountNonLocked() = true
+
+    val displayName get() = userEntity.displayName!!
 }

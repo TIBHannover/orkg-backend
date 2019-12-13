@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import java.util.Optional
+import java.util.UUID
 
 interface LiteralService {
     /**
@@ -9,6 +10,13 @@ interface LiteralService {
      * @return the newly created literal
      */
     fun create(label: String): Literal
+
+    /**
+     * Create a new literal with a given label belonging to a given user.
+     *
+     * @return the newly created literal
+     */
+    fun create(userId: UUID, label: String): Literal
 
     /**
      * Find all literals.

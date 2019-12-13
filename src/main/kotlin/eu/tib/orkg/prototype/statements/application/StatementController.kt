@@ -36,7 +36,7 @@ import org.springframework.web.util.UriComponentsBuilder
 class StatementController(
     private val statementWithResourceService: StatementWithResourceService,
     private val statementWithLiteralService: StatementWithLiteralService
-) {
+) : BaseController() {
 
     @GetMapping("/")
     fun findAll(
@@ -120,13 +120,16 @@ class StatementController(
     @ResponseStatus(CREATED)
     fun add(@RequestBody statement: Statement, uriComponentsBuilder: UriComponentsBuilder):
         HttpEntity<StatementResponse> {
+        val userId = authenticatedUserId()
         val body = when (statement.`object`) {
             is Object.Resource -> statementWithResourceService.create(
+                userId,
                 statement.subjectId,
                 statement.predicateId,
                 statement.`object`.id
             )
             is Object.Literal -> statementWithLiteralService.create(
+                userId,
                 statement.subjectId,
                 statement.predicateId,
                 statement.`object`.id

@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
@@ -10,18 +11,21 @@ import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Import
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
 @DisplayName("Resource Controller")
 @Transactional
+@Import(MockUserDetailsService::class)
 class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
@@ -100,6 +104,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun add() {
         val resource = mapOf("label" to "foo")
 
@@ -253,6 +258,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("id").description("The resource ID"),
             fieldWithPath("label").description("The resource label"),
             fieldWithPath("created_at").description("The resource creation datetime"),
+            fieldWithPath("created_by").description("The ID of the user that created the resource. All zeros if unknown."),
             fieldWithPath("classes").description("The list of classes the resource belongs to"),
             fieldWithPath("shared").description("The number of times this resource is shared").optional()
         )
@@ -262,6 +268,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].id").description("The resource ID"),
             fieldWithPath("[].label").description("The resource label"),
             fieldWithPath("[].created_at").description("The resource creation datetime"),
+            fieldWithPath("[].created_by").description("The ID of the user that created the resource. All zeros if unknown."),
             fieldWithPath("[].classes").description("The list of classes the resource belongs to"),
             fieldWithPath("[].shared").description("The number of times this resource is shared").optional()
         )

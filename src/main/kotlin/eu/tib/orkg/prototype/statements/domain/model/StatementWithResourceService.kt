@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.domain.model
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import org.springframework.data.domain.Pageable
 import java.util.Optional
+import java.util.UUID
 
 /**
  * A service dealing with statements that have resources in the object position.
@@ -47,6 +48,12 @@ interface StatementWithResourceService {
      */
     @Suppress("Reformat")
     fun create(subject: ResourceId, predicate: PredicateId, `object`: ResourceId): StatementWithResource
+
+    /**
+     * Create a new statement with a resource as object belonging to a given user.
+     */
+    @Suppress("Reformat")
+    fun create(userId: UUID, subject: ResourceId, predicate: PredicateId, `object`: ResourceId): StatementWithResource
 
     /**
      * Determine the total number of statements.

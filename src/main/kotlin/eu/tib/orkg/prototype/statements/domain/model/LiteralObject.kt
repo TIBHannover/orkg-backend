@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import java.time.OffsetDateTime
+import java.util.UUID
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
@@ -21,5 +22,7 @@ data class LiteralObject(
     val label: String,
     @JsonProperty("created_at")
     val createdAt: OffsetDateTime?,
-    val classes: Set<ClassId> = emptySet()
+    val classes: Set<ClassId> = emptySet(),
+    @JsonProperty("created_by")
+    val createdBy: UUID = UUID(0, 0)
 )

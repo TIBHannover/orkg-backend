@@ -68,9 +68,8 @@ data class Neo4jResource(
 
     fun toResource() = Resource(resourceId, label!!, createdAt, classes, objectOf.size, createdBy = createdBy)
 
-    fun toObject() = ResourceObject(resourceId, label!!, createdAt, classes, createdBy = createdBy)
-
-    fun toObject(shared: Int) = ResourceObject(resourceId, label!!, createdAt, classes, shared, createdBy = createdBy)
+    fun toObject(shared: Int = 0) =
+        ResourceObject(resourceId, label!!, createdAt, classes, shared, createdBy = createdBy)
 
     /**
      * Assign a class to this `Resource` node.

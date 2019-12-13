@@ -78,7 +78,8 @@ class Neo4jStatementWithLiteralService :
             foundSubject.toResource(),
             foundPredicate.get(),
             foundObject.toObject(),
-            persistedStatement.createdAt!!
+            persistedStatement.createdAt!!,
+            createdBy = userId
         )
     }
 
@@ -92,7 +93,8 @@ class Neo4jStatementWithLiteralService :
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject(),
-                    it.createdAt!!
+                    it.createdAt!!,
+                    createdBy = it.createdBy
                 )
             }
     }
@@ -106,7 +108,8 @@ class Neo4jStatementWithLiteralService :
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject(),
-                    it.createdAt!!
+                    it.createdAt!!,
+                    createdBy = it.createdBy
                 )
             }
 
@@ -121,7 +124,8 @@ class Neo4jStatementWithLiteralService :
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject(),
-                    it.createdAt!!
+                    it.createdAt!!,
+                    createdBy = it.createdBy
                 )
             }
     }
@@ -140,7 +144,8 @@ class Neo4jStatementWithLiteralService :
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject(),
-                    it.createdAt!!
+                    it.createdAt!!,
+                    createdBy = it.createdBy
                 )
             }
 
@@ -154,7 +159,8 @@ class Neo4jStatementWithLiteralService :
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject(),
-                    it.createdAt!!
+                    it.createdAt!!,
+                    createdBy = it.createdBy
                 )
             }
 
@@ -170,7 +176,8 @@ class Neo4jStatementWithLiteralService :
                         it.subject!!.toResource(),
                         predicateService.findById(it.predicateId!!).get(),
                         it.`object`!!.toObject(),
-                        it.createdAt!!
+                        it.createdAt!!,
+                        createdBy = it.createdBy
                     )
                 }
         }
@@ -200,7 +207,8 @@ class Neo4jStatementWithLiteralService :
             found.subject!!.toResource(),
             predicateService.findById(found.predicateId!!).get(),
             found.`object`!!.toObject(),
-            found.createdAt!!
+            found.createdAt!!,
+            createdBy = found.createdBy
         )
     }
 }

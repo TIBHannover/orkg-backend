@@ -87,7 +87,8 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject(counts[it.`object`!!.resourceId]!!.toInt()),
-                    it.createdAt!!
+                    it.createdAt!!,
+                    createdBy = it.createdBy
                 )
             }
     }
@@ -102,7 +103,8 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
                     newObject.toObject(),
-                    it.createdAt!!
+                    it.createdAt!!,
+                    createdBy = it.createdBy
                 )
             }
     }
@@ -118,7 +120,8 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject(counts[it.`object`!!.resourceId]!!.toInt()),
-                    it.createdAt!!
+                    it.createdAt!!,
+                    createdBy = it.createdBy
                 )
             }
     }
@@ -137,7 +140,8 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject(counts[it.`object`!!.resourceId]!!.toInt()),
-                    it.createdAt!!
+                    it.createdAt!!,
+                    createdBy = it.createdBy
                 )
             }
     }
@@ -152,7 +156,8 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
                     it.subject!!.toResource(),
                     predicateService.findById(it.predicateId!!).get(),
                     it.`object`!!.toObject(counts[it.`object`!!.resourceId]!!.toInt()),
-                    it.createdAt!!
+                    it.createdAt!!,
+                    createdBy = it.createdBy
                 )
             }
     }
@@ -169,7 +174,8 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
                         it.subject!!.toResource(),
                         predicateService.findById(it.predicateId!!).get(),
                         it.`object`!!.toObject(),
-                        it.createdAt!!
+                        it.createdAt!!,
+                        createdBy = it.createdBy
                     )
                 }
         }
@@ -200,7 +206,8 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
             found.subject!!.toResource(),
             predicateService.findById(found.predicateId!!).get(),
             found.`object`!!.toObject(),
-            found.createdAt!!
+            found.createdAt!!,
+            createdBy = found.createdBy
         )
     }
 }

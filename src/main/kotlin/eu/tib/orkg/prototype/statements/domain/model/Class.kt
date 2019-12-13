@@ -19,4 +19,3 @@ data class Class(
     @JsonIgnore
     var rdf: Model? = null
 }
-

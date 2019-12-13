@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.boot.runApplication
@@ -16,11 +17,14 @@ class Application : SpringBootServletInitializer() {
     override fun configure(builder: SpringApplicationBuilder?) =
         builder?.sources(Application::class.java)
 
+    @Value("\${orkg.url")
+    val serverUrl: String = "http://localhost:3000"
+
     @Bean
     fun corsFilter(): FilterRegistrationBean<CorsFilter> {
         val config = CorsConfiguration().apply {
             allowCredentials = true
-            addAllowedOrigin("http://localhost:3000")
+            addAllowedOrigin(serverUrl)
             addAllowedHeader("*")
             addAllowedMethod("*")
         }

@@ -9,7 +9,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -24,7 +23,6 @@ import java.net.URI
 
 @RestController
 @RequestMapping("/api/classes/")
-@CrossOrigin(origins = ["*"])
 class ClassController(private val service: ClassService, private val resourceService: ResourceService) :
     BaseController() {
 

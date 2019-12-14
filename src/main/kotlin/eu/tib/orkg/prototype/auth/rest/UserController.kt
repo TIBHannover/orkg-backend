@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
@@ -23,7 +22,6 @@ import javax.validation.constraints.Size
 
 @RestController
 @RequestMapping("/api/user")
-@CrossOrigin(origins = ["*"])
 class UserController(
     private val userService: UserService
 ) {

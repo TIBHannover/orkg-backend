@@ -14,7 +14,6 @@ import eu.tib.orkg.prototype.statements.domain.model.StatementWithLiteralService
 import eu.tib.orkg.prototype.statements.domain.model.StatementWithResourceService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -42,7 +41,6 @@ private const val ORCID_REGEX =
 
 @RestController
 @RequestMapping("/api/papers/")
-@CrossOrigin(origins = ["*"])
 class PaperController(
     private val resourceService: ResourceService,
     private val literalService: LiteralService,

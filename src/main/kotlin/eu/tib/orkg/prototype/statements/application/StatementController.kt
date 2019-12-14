@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -32,7 +31,6 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/statements")
-@CrossOrigin(origins = ["*"])
 class StatementController(
     private val statementWithResourceService: StatementWithResourceService,
     private val statementWithLiteralService: StatementWithLiteralService

@@ -5,7 +5,6 @@ import eu.tib.orkg.prototype.auth.service.UserService
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -18,7 +17,6 @@ import javax.validation.constraints.Size
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = ["*"])
 class AuthController(
     private val userService: UserService
 ) {

@@ -4,36 +4,30 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.boot.runApplication
-import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.annotation.Bean
-import org.springframework.core.Ordered
 import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
-import org.springframework.web.filter.CorsFilter
 
 @SpringBootApplication
 class Application : SpringBootServletInitializer() {
     override fun configure(builder: SpringApplicationBuilder?) =
         builder?.sources(Application::class.java)
 
-    @Value("\${orkg.url")
-    val serverUrl: String = "http://localhost:3000"
+    @Value("\${orkg.cors.origins:*}")
+    val origins: List<String>? = null
 
     @Bean
-    fun corsFilter(): FilterRegistrationBean<CorsFilter> {
-        val config = CorsConfiguration().apply {
-            allowCredentials = true
-            addAllowedOrigin(serverUrl)
-            addAllowedHeader("*")
-            addAllowedMethod("*")
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        val configuration = CorsConfiguration().apply {
+            println("CORS: $origins")
+            allowedOrigins = origins
+            allowedMethods = listOf("OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE")
         }
-        val source = UrlBasedCorsConfigurationSource().apply {
-            registerCorsConfiguration("/**", config)
+        return UrlBasedCorsConfigurationSource().apply {
+            registerCorsConfiguration("/**", configuration)
         }
-        val bean = FilterRegistrationBean(CorsFilter(source))
-        bean.setOrder(Ordered.HIGHEST_PRECEDENCE)
-        return bean
     }
 }
 

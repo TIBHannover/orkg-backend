@@ -21,7 +21,6 @@ class Application : SpringBootServletInitializer() {
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration().apply {
-            println("CORS: $origins")
             allowedOrigins = origins
             allowedMethods = listOf("OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE")
         }

@@ -67,8 +67,6 @@ data class Neo4jResource(
 
     fun toResource() = Resource(resourceId, label!!, createdAt, classes, objectOf.size, createdBy = createdBy)
 
-    fun toObject(shared: Int = 0) =
-        ResourceObject(resourceId, label!!, createdAt, classes, shared, createdBy = createdBy)
     override val thingId: String?
         get() = resourceId?.value
 

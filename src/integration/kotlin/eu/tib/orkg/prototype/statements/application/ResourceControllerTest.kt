@@ -6,7 +6,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import eu.tib.orkg.prototype.statements.domain.model.StatementWithResourceService
+import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -41,7 +41,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     private lateinit var predicateService: PredicateService
 
     @Autowired
-    private lateinit var statementWithResourceController: StatementWithResourceService
+    private lateinit var statementController: StatementService
 
     override fun createController() = controller
 
@@ -225,8 +225,8 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         val con1 = service.create(CreateResourceRequest(null, "Connection 1")).id!!
         val con2 = service.create(CreateResourceRequest(null, "Connection 2")).id!!
         val pred = predicateService.create("Test predicate").id!!
-        statementWithResourceController.create(con1, pred, resId)
-        statementWithResourceController.create(con2, pred, resId)
+        statementController.create(con1.value, pred, resId.value)
+        statementController.create(con2.value, pred, resId.value)
         val id2 = classService.create("Class 2").id!!
         val set2 = listOf(id2).toSet()
         service.create(CreateResourceRequest(null, "Another Resource", set2))

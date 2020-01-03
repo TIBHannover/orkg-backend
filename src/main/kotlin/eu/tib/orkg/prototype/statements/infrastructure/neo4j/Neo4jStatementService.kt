@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.Optional
+import java.util.UUID
 
 @Service
 @Transactional
@@ -109,7 +110,16 @@ class Neo4jStatementService :
                 )
             }
 
-    override fun create(subject: String, predicate: PredicateId, `object`: String): GeneralStatement {
+    override fun create(subject: String, predicate: PredicateId, `object`: String) =
+        create(UUID(0, 0), subject, predicate, `object`)
+
+
+    override fun create(
+        userId: UUID,
+        subject: String,
+        predicate: PredicateId,
+        `object`: String
+    ): GeneralStatement {
         val foundSubject = thingRepository
             .findByThingId(subject)
             .orElseThrow { IllegalStateException("Could not find subject $subject") }
@@ -129,7 +139,8 @@ class Neo4jStatementService :
                 statementId = id,
                 predicateId = predicate,
                 subject = foundSubject,
-                `object` = foundObject
+                `object` = foundObject,
+                createdBy = userId
             )
         )
 
@@ -138,7 +149,8 @@ class Neo4jStatementService :
             foundSubject.toThing(),
             foundPredicate.get(),
             foundObject.toThing(),
-            persistedStatement.createdAt!!
+            persistedStatement.createdAt!!,
+            persistedStatement.createdBy
         )
     }
 

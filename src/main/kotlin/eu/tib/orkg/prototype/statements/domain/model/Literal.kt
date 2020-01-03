@@ -8,7 +8,7 @@ data class Literal(
     val id: LiteralId?,
     val label: String,
     @JsonProperty("created_at")
-    val createdAt: OffsetDateTime?
+    val createdAt: OffsetDateTime?,
     @JsonProperty("created_by")
     val createdBy: UUID = UUID(0, 0)
 ) : Thing()

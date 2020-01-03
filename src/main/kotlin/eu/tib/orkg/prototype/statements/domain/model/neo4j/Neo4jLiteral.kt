@@ -10,6 +10,7 @@ import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
 import org.neo4j.ogm.annotation.NodeEntity
 import org.neo4j.ogm.annotation.Property
+import org.neo4j.ogm.annotation.Relationship
 import org.neo4j.ogm.annotation.Required
 import org.neo4j.ogm.annotation.typeconversion.Convert
 import java.util.UUID
@@ -35,7 +36,7 @@ data class Neo4jLiteral(
 
     @Relationship(type = "HAS_VALUE_OF")
     @JsonIgnore
-    var resources: MutableSet<Neo4jStatementWithLiteral> = mutableSetOf()
+    var resources: MutableSet<Neo4jStatement> = mutableSetOf()
 
     @JsonIgnore
     private var labels: MutableList<String> = mutableListOf()
@@ -51,7 +52,6 @@ data class Neo4jLiteral(
 
     fun toLiteral() = Literal(literalId, label!!, createdAt!!, createdBy = createdBy)
 
-    //fun toObject() = LiteralObject(literalId, label!!, createdAt!!, classes, createdBy = createdBy)
     override val thingId: String?
         get() = literalId?.value
 

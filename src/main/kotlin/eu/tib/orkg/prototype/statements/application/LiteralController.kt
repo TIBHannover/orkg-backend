@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -22,8 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/literals/")
-@CrossOrigin(origins = ["*"])
-class LiteralController(private val service: LiteralService) {
+class LiteralController(private val service: LiteralService) : BaseController() {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: LiteralId): Literal =
@@ -46,7 +44,8 @@ class LiteralController(private val service: LiteralService) {
     @PostMapping("/")
     @ResponseStatus(CREATED)
     fun add(@RequestBody literal: Literal, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Literal> {
-        val id = service.create(literal.label).id
+        val userId = authenticatedUserId()
+        val id = service.create(userId, literal.label).id
         val location = uriComponentsBuilder
             .path("api/literals/{id}")
             .buildAndExpand(id)

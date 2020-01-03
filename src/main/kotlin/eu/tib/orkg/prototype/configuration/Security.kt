@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.configuration
 
-import eu.tib.orkg.prototype.auth.service.OrkgUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Bean
@@ -9,6 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
+import org.springframework.security.config.Customizer.withDefaults
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.AuthenticationException
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer
@@ -34,7 +35,8 @@ import javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED
 @Configuration
 @EnableAuthorizationServer
 class AuthorizationServerConfiguration(
-    private val authenticationManager: AuthenticationManager
+    private val authenticationManager: AuthenticationManager,
+    private val userDetailsService: UserDetailsService
 ) : AuthorizationServerConfigurerAdapter() {
 
     override fun configure(clients: ClientDetailsServiceConfigurer) {
@@ -50,6 +52,7 @@ class AuthorizationServerConfiguration(
         endpoints
             .tokenStore(tokenStore())
             .authenticationManager(authenticationManager)
+            .userDetailsService(userDetailsService)
     }
 
     @Bean
@@ -63,7 +66,7 @@ class AuthorizationServerConfiguration(
 @EnableJpaRepositories("eu.tib.orkg.prototype.auth.service") // TODO: change location
 @EntityScan("eu.tib.orkg.prototype.auth.persistence")
 class ResourceServerConfiguration(
-    private val userDetailsService: OrkgUserDetailsService
+    private val userDetailsService: UserDetailsService
 ) : ResourceServerConfigurerAdapter() {
 
     // global security concerns
@@ -88,6 +91,7 @@ class ResourceServerConfiguration(
             .antMatchers("/auth/register").permitAll()
             .anyRequest().permitAll() // TODO: require authentication once tested
             .and()
+            .cors(withDefaults())
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .csrf().disable()

@@ -81,6 +81,9 @@ In a `POST` request, the response will contain an entity describing or containin
 === Cross origin resource sharing
 ////
 
+[[authentication]]
+include::parts/auth.adoc[leveloffset=+1]
+
 [[statements]]
 == Statements
 
@@ -162,6 +165,8 @@ A `GET` request lists all the statements with a given predicate:
 operation::statement-controller-test-lookup-by-predicate[snippets='request-parameters,curl-request,http-response']
 
 : This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>
+
+include::parts/bulk-statements.adoc[]
 
 include::parts/classes.adoc[]
 
@@ -326,7 +331,7 @@ operation::literal-controller-test-fetch[snippets='curl-request,http-response']
 
 Literals can be looked up by label by providing a search fragment.
 
-operation::resource-controller-test-lookup[snippets='curl-request,http-response']
+operation::literal-controller-test-lookup[snippets='curl-request,http-response']
 
 include::parts/papers.adoc[]
 

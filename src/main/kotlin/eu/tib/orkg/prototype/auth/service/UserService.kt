@@ -18,12 +18,15 @@ class UserService(
         return repository.findByEmail(email)
     }
 
-    fun registerUser(anEmail: String, aPassword: String) {
+    fun findById(id: UUID): Optional<UserEntity> = repository.findById(id)
+
+    fun registerUser(anEmail: String, aPassword: String, aDisplayName: String?) {
         val userId = UUID.randomUUID()
         val newUser = UserEntity().apply {
             id = userId
             email = anEmail
             password = passwordEncoder.encode(aPassword)
+            displayName = aDisplayName
             enabled = true
             roles = mutableSetOf(RoleEntity().apply {
                 name = "ROLE_USER"
@@ -31,5 +34,22 @@ class UserService(
             })
         }
         repository.save(newUser)
+    }
+
+    fun checkPassword(userId: UUID, aPassword: String): Boolean {
+        val user = repository.findById(userId).orElseThrow { throw RuntimeException("No user with ID $userId") }
+        return passwordEncoder.matches(aPassword, user.password)
+    }
+
+    fun updatePassword(userId: UUID, aPassword: String) {
+        val user = repository.findById(userId).orElseThrow { throw RuntimeException("No user with ID $userId") }
+        user.password = passwordEncoder.encode(aPassword)
+        repository.save(user)
+    }
+
+    fun updateName(userId: UUID, newName: String) {
+        val user = repository.findById(userId).orElseThrow { throw RuntimeException("No user with ID $userId") }
+        user.displayName = newName
+        repository.save(user)
     }
 }

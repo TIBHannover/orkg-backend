@@ -9,7 +9,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -24,8 +23,8 @@ import java.net.URI
 
 @RestController
 @RequestMapping("/api/classes/")
-@CrossOrigin(origins = ["*"])
-class ClassController(private val service: ClassService, private val resourceService: ResourceService) {
+class ClassController(private val service: ClassService, private val resourceService: ResourceService) :
+    BaseController() {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: ClassId): Class =
@@ -66,7 +65,8 @@ class ClassController(private val service: ClassService, private val resourceSer
     @PostMapping("/")
     @ResponseStatus(CREATED)
     fun add(@RequestBody `class`: CreateClassRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Class> {
-        val id = service.create(`class`).id
+        val userId = authenticatedUserId()
+        val id = service.create(userId, `class`).id
         val location = uriComponentsBuilder
             .path("api/classes/{id}")
             .buildAndExpand(id)

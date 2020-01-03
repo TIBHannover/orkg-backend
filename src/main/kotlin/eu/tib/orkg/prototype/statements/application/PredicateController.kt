@@ -7,7 +7,6 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -21,8 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/predicates/")
-@CrossOrigin(origins = ["*"])
-class PredicateController(private val service: PredicateService) {
+class PredicateController(private val service: PredicateService) : BaseController() {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: PredicateId): Predicate =
@@ -50,7 +48,8 @@ class PredicateController(private val service: PredicateService) {
     @PostMapping("/")
     @ResponseStatus(CREATED)
     fun add(@RequestBody predicate: CreatePredicateRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Predicate> {
-        val id = service.create(predicate).id
+        val userId = authenticatedUserId()
+        val id = service.create(userId, predicate).id
 
         val location = uriComponentsBuilder
             .path("api/predicates/{id}")

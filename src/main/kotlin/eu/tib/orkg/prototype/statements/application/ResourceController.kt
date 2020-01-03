@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity.badRequest
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -25,8 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/resources/")
-@CrossOrigin(origins = ["*"])
-class ResourceController(private val service: ResourceService) {
+class ResourceController(private val service: ResourceService) : BaseController() {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: ResourceId): Resource =
@@ -64,7 +62,8 @@ class ResourceController(private val service: ResourceService) {
     fun add(@RequestBody resource: CreateResourceRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         if (resource.id != null && service.findById(resource.id).isPresent)
             return badRequest().body("Resource id <${resource.id}> already exists!")
-        val id = service.create(resource).id
+        val userId = authenticatedUserId()
+        val id = service.create(userId, resource).id
         val location = uriComponentsBuilder
             .path("api/resources/{id}")
             .buildAndExpand(id)

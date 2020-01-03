@@ -27,7 +27,7 @@ class OAuthTest {
     @Suppress("UsePropertyAccessSyntax")
     fun test() {
         // TODO: replace with API call and enable transaction management
-        userService.registerUser("user@example.org", "user")
+        userService.registerUser("user@example.org", "user", "User")
         val token = OrkgApiClient(port).getAccessToken("user@example.org", "user")
         assertThat(token).isNotNull()
     }

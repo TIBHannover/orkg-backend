@@ -13,4 +13,4 @@ data class Class(
     val createdAt: OffsetDateTime?,
     @JsonProperty("created_by")
     val createdBy: UUID = UUID(0, 0)
-): Thing()
+) : Thing()

@@ -113,7 +113,6 @@ class Neo4jStatementService :
     override fun create(subject: String, predicate: PredicateId, `object`: String) =
         create(UUID(0, 0), subject, predicate, `object`)
 
-
     override fun create(
         userId: UUID,
         subject: String,

@@ -178,10 +178,9 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statement.object").description("An object"),
             fieldWithPath("[].statement.object.id").description("The ID of the object"),
             fieldWithPath("[].statement.object.label").description("The label of the object"),
-            fieldWithPath("[].statement.object._class").description("The type of the object (resource or literal)."),
             fieldWithPath("[].statement.object.created_at").description("The object creation datetime"),
             fieldWithPath("[].statement.object.created_by").description("The ID of the user that created the object. All zeros if unknown."),
-            fieldWithPath("[].statement.object.classes").description("The classes the object resource belongs to"),
+            fieldWithPath("[].statement.object.classes").description("The classes the object resource belongs to").optional().ignored(),
             fieldWithPath("[].statement.object.shared").optional().ignored()
         )
 
@@ -206,10 +205,9 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statements.[].object").description("An object"),
             fieldWithPath("[].statements.[].object.id").description("The ID of the object"),
             fieldWithPath("[].statements.[].object.label").description("The label of the object"),
-            fieldWithPath("[].statements.[].object._class").description("The type of the object (resource or literal)."),
             fieldWithPath("[].statements.[].object.created_at").description("The object creation datetime"),
             fieldWithPath("[].statements.[].object.created_by").description("The ID of the user that created the object. All zeros if unknown."),
-            fieldWithPath("[].statements.[].object.classes").description("The classes the object resource belongs to"),
+            fieldWithPath("[].statements.[].object.classes").description("The classes the object resource belongs to").optional().ignored(),
             fieldWithPath("[].statements.[].object.shared").optional().ignored()
         )
 }

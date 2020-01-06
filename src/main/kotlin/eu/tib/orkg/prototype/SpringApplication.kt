@@ -2,13 +2,16 @@ package eu.tib.orkg.prototype
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.security.SecurityProperties
 import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.boot.runApplication
+import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.annotation.Bean
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.web.filter.CorsFilter
 
 @SpringBootApplication
 class Application : SpringBootServletInitializer() {
@@ -21,13 +24,21 @@ class Application : SpringBootServletInitializer() {
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration().apply {
-            allowedOrigins = origins
+            allowedOrigins = listOf("*")
             allowedMethods = listOf("OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE")
+            allowedHeaders = listOf("*")
+            // allowCredentials = true
         }
         return UrlBasedCorsConfigurationSource().apply {
             registerCorsConfiguration("/**", configuration)
         }
     }
+
+    @Bean
+    fun corsFilterRegistration() =
+        FilterRegistrationBean(CorsFilter(corsConfigurationSource())).apply<FilterRegistrationBean<CorsFilter>> {
+            order = SecurityProperties.DEFAULT_FILTER_ORDER
+        }
 }
 
 fun main(args: Array<String>) {

@@ -82,6 +82,23 @@ class StatementController(
         return ok(results.take(pagination.pageSize))
     }
 
+    @GetMapping("/subject/{subjectId}/predicate/{predicateId}")
+    fun findBySubjectAndPredicate(
+        @PathVariable subjectId: ResourceId,
+        @PathVariable predicateId: PredicateId,
+        @RequestParam("page", required = false) page: Int?,
+        @RequestParam("items", required = false) items: Int?,
+        @RequestParam("sortBy", required = false) sortBy: String?,
+        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+    ): HttpEntity<Iterable<StatementResponse>> {
+        val pagination = createPageable(page, items, sortBy, desc)
+        var results =
+            statementWithResourceService.findAllBySubjectAndPredicate(subjectId, predicateId, pagination) +
+                statementWithLiteralService.findAllBySubjectAndPredicate(subjectId, predicateId, pagination)
+        results = sortResults(results, sortBy, desc)
+        return ok(results.take(pagination.pageSize))
+    }
+
     @GetMapping("/predicate/{predicateId}")
     fun findByPredicate(
         @PathVariable predicateId: PredicateId,

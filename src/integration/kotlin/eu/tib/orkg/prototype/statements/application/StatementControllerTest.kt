@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementWithLiteralService
 import eu.tib.orkg.prototype.statements.domain.model.StatementWithResourceService
+import org.hamcrest.Matchers
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -151,6 +152,36 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/statements/subject/${r1.id}"))
             .andExpect(status().isOk)
+            .andDo(
+                document(
+                    snippet,
+                    requestParameters(
+                        parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
+                        parameterWithName("items").description("Number of items to fetch per page (default: 10)").optional(),
+                        parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
+                        parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
+                    ),
+                    statementListResponseFields()
+                )
+            )
+    }
+
+    @Test
+    fun lookupBySubjectAndPredicate() {
+        val r1 = resourceService.create("one")
+        val r2 = resourceService.create("two")
+        val r3 = resourceService.create("three")
+        val p1 = predicateService.create("blah")
+        val p2 = predicateService.create("blub")
+
+        statementWithResourceService.create(r1.id!!, p1.id!!, r2.id!!)
+        statementWithResourceService.create(r1.id!!, p2.id!!, r2.id!!)
+        statementWithResourceService.create(r1.id!!, p2.id!!, r3.id!!)
+
+        mockMvc
+            .perform(getRequestTo("/api/statements/subject/${r1.id}/predicate/${p1.id}"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$", Matchers.hasSize<Int>(1)))
             .andDo(
                 document(
                     snippet,

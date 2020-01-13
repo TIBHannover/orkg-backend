@@ -12,5 +12,7 @@ data class Class(
     @JsonProperty("created_at")
     val createdAt: OffsetDateTime?,
     @JsonProperty("created_by")
-    val createdBy: UUID = UUID(0, 0)
-) : Thing()
+    val createdBy: UUID = UUID(0, 0),
+    // This is added to replace @JsonTypeInfo on the Thing interface
+    val _class: String? = "class"
+) : Thing

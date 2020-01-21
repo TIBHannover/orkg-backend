@@ -31,6 +31,11 @@ class Neo4jStatsService(
             fieldsCount, problemsCount, resourceStatementsCount, literalsStatementsCount)
     }
 
+    override fun getFieldsStats(): Map<String, Int> {
+        val counts = neo4jStatsRepository.getResearchFieldsPapersCount()
+        return counts.map { it.fieldId to it.papers.toInt() }.toMap()
+    }
+
     private fun extractValue(map: Map<*, *>, key: String): Long {
         return if (map.containsKey(key))
             map[key] as Long

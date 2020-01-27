@@ -39,6 +39,7 @@ cache:
 
 stages:
   - build
+  - deploy
 
 build:
   stage: build
@@ -48,3 +49,15 @@ build:
     paths:
       - build/reports/
       - build/libs/orkg-*.war
+
+pages:
+  stage: deploy
+  script:
+    - ./gradlew asciidoctor
+    - mkdir -p public
+    - cp -r build/asciidoc/html5/* public/
+  artifacts:
+    paths:
+      - public
+  only:
+    - master

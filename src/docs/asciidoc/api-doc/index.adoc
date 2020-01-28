@@ -335,6 +335,8 @@ operation::literal-controller-test-lookup[snippets='curl-request,http-response']
 
 include::parts/papers.adoc[]
 
+include::parts/rdf.adoc[]
+
 [[sorting-and-pagination]]
 == Sorting and Pagination
 

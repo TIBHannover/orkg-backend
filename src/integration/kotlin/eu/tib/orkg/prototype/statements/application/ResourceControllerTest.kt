@@ -183,18 +183,18 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun excludeByClass() {
-        val id = classService.create("research contribution").id!!
+        val id = classService.create("research Method").id!!
         val set = listOf(id).toSet()
-        service.create(CreateResourceRequest(null, "Contribution 1", set))
-        service.create(CreateResourceRequest(null, "Contribution 2", set))
+        service.create(CreateResourceRequest(null, "Method 1", set))
+        service.create(CreateResourceRequest(null, "Method 2", set))
 
-        service.create(CreateResourceRequest(null, "Contribution 3"))
-        val id2 = classService.create("research contribution").id!!
+        service.create(CreateResourceRequest(null, "Method 3"))
+        val id2 = classService.create("research methodology").id!!
         val set2 = listOf(id2).toSet()
-        service.create(CreateResourceRequest(null, "Paper Contribution 1", set2))
+        service.create(CreateResourceRequest(null, "Paper Method 1", set2))
 
         mockMvc
-            .perform(getRequestTo("/api/resources/?q=Contribution&exclude=$id,$id2"))
+            .perform(getRequestTo("/api/resources/?q=Method&exclude=$id,$id2"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$", hasSize<Int>(1)))
             .andDo(

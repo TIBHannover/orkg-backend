@@ -87,6 +87,7 @@ dependencies {
     // Documentation
     //
     asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.3.RELEASE")
+    compile("net.nprod:rdf4k:0.0.9")
 }
 
 val snippetsDir = file("build/generated-snippets")
@@ -94,6 +95,7 @@ val snippetsDir = file("build/generated-snippets")
 allprojects {
     repositories {
         jcenter()
+        maven { setUrl("https://dl.bintray.com/bjonnh/RDF4K") }
     }
 }
 

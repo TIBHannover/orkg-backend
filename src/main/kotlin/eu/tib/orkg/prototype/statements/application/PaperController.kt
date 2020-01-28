@@ -33,6 +33,8 @@ const val ID_CONTRIBUTION_PREDICATE = "P31"
 const val ID_CONTRIBUTION_CLASS = "Contribution"
 const val ID_ORCID_PREDICATE = "HAS_ORCID"
 const val ID_AUTHOR_CLASS = "Author"
+const val ID_VENUE_CLASS = "Venue"
+const val ID_VENUE_PREDICATE = "HAS_VENUE"
 val MAP_PREDICATE_CLASSES = mapOf("P32" to "Problem")
 
 /** Regular expression to check whether an input string is a valid ORCID id.  */
@@ -64,18 +66,12 @@ class PaperController(
     fun insertData(paper: CreatePaperRequest): Resource {
         val userId = authenticatedUserId()
         val hasDoiPredicate = predicateService.findById(PredicateId(ID_DOI_PREDICATE)).get().id!!
-        val hasAuthorPredicate = predicateService.findById(PredicateId(ID_AUTHOR_PREDICATE)).get().id!!
         val publicationMonthPredicate = predicateService.findById(PredicateId(ID_PUBDATE_MONTH_PREDICATE)).get().id!!
         val publicationYearPredicate = predicateService.findById(PredicateId(ID_PUBDATE_YEAR_PREDICATE)).get().id!!
         val researchFieldPredicate = predicateService.findById(PredicateId(ID_RESEARCH_FIELD_PREDICATE)).get().id!!
         val hasContributionPredicate = predicateService.findById(PredicateId(ID_CONTRIBUTION_PREDICATE)).get().id!!
-        val hasOrcidPredicate = predicateService.findById(PredicateId(ID_ORCID_PREDICATE)).get().id!!
-        val contClass = classService.findById(ClassId(ID_CONTRIBUTION_CLASS))
-        val contributionClass =
-            if (contClass.isPresent)
-                contClass.get().id!!
-            else
-                classService.create(userId, CreateClassRequest(ClassId(ID_CONTRIBUTION_CLASS), ID_CONTRIBUTION_CLASS, null)).id!!
+
+        val contributionClass = getOrCreateClass(ID_CONTRIBUTION_CLASS, userId)
 
         val predicates: HashMap<String, PredicateId> = HashMap()
         if (paper.predicates != null) {
@@ -101,6 +97,91 @@ class PaperController(
         }
 
         // paper authors
+        handleAuthors(paper, userId, paperId)
+
+        // paper publication date
+        if (paper.paper.publicationMonth != null)
+            statementWithLiteralService.create(
+                userId,
+                paperId,
+                publicationMonthPredicate,
+                literalService.create(userId, paper.paper.publicationMonth.toString()).id!!
+            )
+        if (paper.paper.publicationYear != null)
+            statementWithLiteralService.create(
+                userId,
+                paperId,
+                publicationYearPredicate,
+                literalService.create(userId, paper.paper.publicationYear.toString()).id!!
+            )
+
+        // paper published At
+        if (paper.paper.publishedAt != null)
+            handlePublishingVenue(paper.paper.publishedAt, paperId, userId)
+
+        // paper research field
+        statementWithResourceService.create(userId, paperId, researchFieldPredicate, ResourceId(paper.paper.researchField))
+
+        val tempResources: HashMap<String, String> = HashMap()
+
+        // paper contribution data
+        if (paper.paper.contributions != null) {
+            val contributionClassSet = setOf(contributionClass)
+            paper.paper.contributions.forEach {
+                if (it.values != null && it.values.count() > 0) {
+                    val contributionId = resourceService.create(userId, CreateResourceRequest(null, it.name, contributionClassSet)).id!!
+                    statementWithResourceService.create(userId, paperId, hasContributionPredicate, contributionId)
+                    val resourceQueue: Queue<TempResource> = LinkedList()
+                    processContributionData(contributionId, it.values, tempResources, predicates, resourceQueue, userId)
+                }
+            }
+        }
+        return paperObj
+    }
+
+    fun handlePublishingVenue(venue: String, paperId: ResourceId, userId: UUID) {
+        val venueClass = getOrCreateClass(ID_VENUE_CLASS, userId)
+        val venuePredicate = predicateService.findById(PredicateId(ID_VENUE_PREDICATE)).get().id!!
+        val pageable = createPageable(1, 10, null, false)
+        // Check if resource exists
+        var venueResource = resourceService.findAllByLabel(pageable, venue).firstOrNull()
+        if (venueResource == null) {
+            // If not override object with new venue resource
+            venueResource = resourceService.create(
+                userId,
+                CreateResourceRequest(
+                    null,
+                    venue,
+                    setOf(venueClass)
+                ))
+        }
+        // create a statement with the venue resource
+        statementWithResourceService.create(
+            userId,
+            paperId,
+            venuePredicate,
+            venueResource.id!!
+        )
+    }
+
+    private fun getOrCreateClass(classId: String, userId: UUID): ClassId {
+        val optionalClass = classService.findById(ClassId(classId))
+        return if (optionalClass.isPresent)
+            optionalClass.get().id!!
+        else
+            classService.create(
+                userId,
+                CreateClassRequest(ClassId(classId), classId, null)
+            ).id!!
+    }
+
+    fun handleAuthors(
+        paper: CreatePaperRequest,
+        userId: UUID,
+        paperId: ResourceId
+    ) {
+        val hasOrcidPredicate = predicateService.findById(PredicateId(ID_ORCID_PREDICATE)).get().id!!
+        val hasAuthorPredicate = predicateService.findById(PredicateId(ID_AUTHOR_PREDICATE)).get().id!!
         val pattern = ORCID_REGEX.toRegex()
         if (paper.paper.authors != null) {
             paper.paper.authors.forEach { it ->
@@ -170,41 +251,6 @@ class PaperController(
                 }
             }
         }
-
-        // paper publication date
-        if (paper.paper.publicationMonth != null)
-            statementWithLiteralService.create(
-                userId,
-                paperId,
-                publicationMonthPredicate,
-                literalService.create(userId, paper.paper.publicationMonth.toString()).id!!
-            )
-        if (paper.paper.publicationYear != null)
-            statementWithLiteralService.create(
-                userId,
-                paperId,
-                publicationYearPredicate,
-                literalService.create(userId, paper.paper.publicationYear.toString()).id!!
-            )
-
-        // paper research field
-        statementWithResourceService.create(userId, paperId, researchFieldPredicate, ResourceId(paper.paper.researchField))
-
-        val tempResources: HashMap<String, String> = HashMap()
-
-        // paper contribution data
-        if (paper.paper.contributions != null) {
-            val contributionClassSet = setOf(contributionClass)
-            paper.paper.contributions.forEach {
-                if (it.values != null && it.values.count() > 0) {
-                    val contributionId = resourceService.create(userId, CreateResourceRequest(null, it.name, contributionClassSet)).id!!
-                    statementWithResourceService.create(userId, paperId, hasContributionPredicate, contributionId)
-                    val resourceQueue: Queue<TempResource> = LinkedList()
-                    processContributionData(contributionId, it.values, tempResources, predicates, resourceQueue, userId)
-                }
-            }
-        }
-        return paperObj
     }
 
     fun checkContributionData(
@@ -353,6 +399,7 @@ data class Paper(
     val authors: List<Author>?,
     val publicationMonth: Int?,
     val publicationYear: Int?,
+    val publishedAt: String?,
     val researchField: String,
     val contributions: List<Contribution>?
 )

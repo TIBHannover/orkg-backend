@@ -36,6 +36,9 @@ interface Neo4jStatementWithResourceRepository :
     @Query("MATCH (sub:`Resource`)-[rel:`RELATES_TO`]->(obj:`Resource`) WHERE obj.`resource_id`={0} RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at")
     fun findAllByObject(resourceId: ResourceId, pagination: Pageable): Slice<Neo4jStatementWithResource>
 
+    @Query("""MATCH (p:Resource{resource_id:{0}})-[*]->() RETURN COUNT(p)""")
+    fun countByIdRecursive(paperId: ResourceId?): Int
+
     @Query(
         "MATCH (s:Resource)-[p:RELATES_TO]->(o:Resource) RETURN " +
             "s.resource_id as subjectId, " +

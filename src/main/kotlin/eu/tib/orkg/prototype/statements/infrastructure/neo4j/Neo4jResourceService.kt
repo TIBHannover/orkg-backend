@@ -89,6 +89,14 @@ class Neo4jResourceService(
             .content
             .map(Neo4jResource::toResource)
 
+    override fun findByDOI(doi: String): Optional<Resource> =
+        neo4jResourceRepository.findByDOI(doi)
+            .map(Neo4jResource::toResource)
+
+    override fun findByTitle(title: String?): Optional<Resource> =
+        neo4jResourceRepository.findByLabel(title)
+            .map(Neo4jResource::toResource)
+
     override fun update(request: UpdateResourceRequest): Resource {
         // already checked by service
         val found = neo4jResourceRepository.findByResourceId(request.id).get()

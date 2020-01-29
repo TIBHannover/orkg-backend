@@ -79,6 +79,10 @@ interface ResourceService {
      */
     fun findAllExcludingClassByLabelContaining(pageable: Pageable, ids: Array<ClassId>, part: String): Iterable<Resource>
 
+    fun findByDOI(doi: String): Optional<Resource>
+
+    fun findByTitle(title: String?): Optional<Resource>
+
     /**
      * Update a resource.
      */

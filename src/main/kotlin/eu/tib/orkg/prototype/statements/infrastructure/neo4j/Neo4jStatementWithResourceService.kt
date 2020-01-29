@@ -176,4 +176,7 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
 
     private fun toStatement(statement: Neo4jStatementWithResource, shared: Int) =
         toStatement(statement, statement.`object`!!, shared)
+
+    override fun countStatements(paperId: ResourceId?): Int =
+        neo4jStatementRepository.countByIdRecursive(paperId)
 }

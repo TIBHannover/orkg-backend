@@ -65,6 +65,8 @@ interface StatementWithResourceService {
      */
     fun remove(statementId: StatementId)
 
+    fun countStatements(paperId: ResourceId?): Int
+
     /**
      * updates a statement
      */

@@ -116,8 +116,8 @@ class PaperController(
             )
 
         // paper published At
-        if (paper.paper.publishedAt != null)
-            handlePublishingVenue(paper.paper.publishedAt, paperId, userId)
+        if (paper.paper.publishedIn != null)
+            handlePublishingVenue(paper.paper.publishedIn, paperId, userId)
 
         // paper research field
         statementWithResourceService.create(userId, paperId, researchFieldPredicate, ResourceId(paper.paper.researchField))
@@ -399,7 +399,7 @@ data class Paper(
     val authors: List<Author>?,
     val publicationMonth: Int?,
     val publicationYear: Int?,
-    val publishedAt: String?,
+    val publishedIn: String?,
     val researchField: String,
     val contributions: List<Contribution>?
 )

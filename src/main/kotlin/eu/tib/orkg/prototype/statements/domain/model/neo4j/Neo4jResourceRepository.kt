@@ -50,7 +50,7 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     @Query("""UNWIND {0} as r_id MATCH ()-[p:RELATED]->(node:Resource {resource_id: r_id}) WITH r_id, COUNT(p) AS cnt RETURN cnt""")
     fun getIncomingStatementsCount(ids: List<ResourceId>): Iterable<Long>
 
-    @Query("""MATCH (n:Paper)-[:HAS_VALUE_OF {predicate_id: "$ID_DOI_PREDICATE"}]->(:Literal {label: {0}}) RETURN n""")
+    @Query("""MATCH (n:Paper)-[:RELATED {predicate_id: "$ID_DOI_PREDICATE"}]->(:Literal {label: {0}}) RETURN n""")
     fun findByDOI(doi: String): Optional<Neo4jResource>
 
     fun findByLabel(label: String?): Optional<Neo4jResource>

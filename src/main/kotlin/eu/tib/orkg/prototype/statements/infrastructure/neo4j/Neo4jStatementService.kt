@@ -180,6 +180,9 @@ class Neo4jStatementService :
         )
     }
 
+    override fun countStatements(paperId: String): Int =
+        statementRepository.countByIdRecursive(paperId)
+
     private fun refreshObject(thing: Neo4jThing): Thing {
         return when (thing) {
             is Neo4jResource -> resourceService.findById(thing.resourceId).get()

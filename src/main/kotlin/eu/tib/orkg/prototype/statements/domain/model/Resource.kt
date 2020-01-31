@@ -21,4 +21,3 @@ data class Resource(
     @JsonIgnore
     var rdf: Model? = null
 }
-

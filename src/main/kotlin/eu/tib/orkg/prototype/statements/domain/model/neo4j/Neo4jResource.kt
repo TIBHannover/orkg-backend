@@ -109,8 +109,12 @@ data class Neo4jResource(
             .add(RDFS.LABEL, label)
             .add(RDF.TYPE, "c:Resource")
         classes.forEach { builder = builder.add(RDF.TYPE, "c:${it.value}") }
-        resources.forEach { builder = builder.add("p:${it.predicateId}", "r:${it.`object`!!.resourceId}") }
-        literals.forEach { builder = builder.add("p:${it.predicateId}", "\"${it.`object`!!.label}\"") }
+        resources.forEach {
+            builder = if (it.`object` is Neo4jLiteral)
+                builder.add("p:${it.predicateId}", "\"${it.`object`!!.label}\"")
+            else
+                builder.add("p:${it.predicateId}", "r:${it.`object`!!.thingId}")
+        }
         return builder.build()
     }
 }

@@ -60,4 +60,9 @@ interface StatementService {
      * updates a statement
      */
     fun update(statementEditRequest: StatementEditRequest): GeneralStatement
+
+    /**
+     * Count statements (for widget)
+     */
+    fun countStatements(paperId: String): Int
 }

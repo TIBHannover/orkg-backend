@@ -1,15 +1,13 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j.rdf
 
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.IdTriple
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.LiteralTriple
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jClass
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jClassRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jPredicate
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jPredicateRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceRepository
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementWithLiteralRepository
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementWithResourceRepository
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatement
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementRepository
 import eu.tib.orkg.prototype.statements.domain.model.rdf.RdfService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -17,11 +15,10 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class Neo4jRdfService(
-    private val resourceStatementRepository: Neo4jStatementWithResourceRepository,
+    private val statementRepository: Neo4jStatementRepository,
     private val predicateRepository: Neo4jPredicateRepository,
     private val resourceRepository: Neo4jResourceRepository,
-    private val classesRepository: Neo4jClassRepository,
-    private val literalStatementRepository: Neo4jStatementWithLiteralRepository
+    private val classesRepository: Neo4jClassRepository
 ) : RdfService {
     override fun dumpToNTriple(): String {
         // dump classes
@@ -33,11 +30,8 @@ class Neo4jRdfService(
         // dump resources
         result += resourceRepository.findAll().joinToString("\n", transform = Neo4jResource::toNTriple)
         result += "\n"
-        // dump object statements
-        result += resourceStatementRepository.listByIds().joinToString("\n", transform = IdTriple::toNTriple)
-        result += "\n"
-        // dump literal statements
-        result += literalStatementRepository.listByIds().joinToString("\n", transform = LiteralTriple::toNTriple)
+        // dump statements
+        result += statementRepository.findAll().joinToString("\n", transform = Neo4jStatement::toNTriple)
         result += "\n"
         return result
     }

@@ -4,8 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.Ordered
-import org.springframework.core.annotation.Order
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
@@ -30,8 +28,6 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore
 import org.springframework.security.web.AuthenticationEntryPoint
 import org.springframework.stereotype.Component
-import org.springframework.web.filter.OncePerRequestFilter
-import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED
@@ -128,26 +124,5 @@ class RestAuthenticationEntryPoint : AuthenticationEntryPoint {
     ) {
         // TODO: Send WWW-Authenticate header? What does the standard say?
         response.sendError(SC_UNAUTHORIZED, "Unauthorized")
-    }
-}
-
-@Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
-class CORSFilter : OncePerRequestFilter() {
-    override fun doFilterInternal(
-        request: HttpServletRequest,
-        response: HttpServletResponse,
-        filterChain: FilterChain
-    ) {
-        response.setHeader("Access-Control-Allow-Origin", "*")
-        response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT")
-        response.setHeader("Access-Control-Max-Age", "3600")
-        response.setHeader("Access-Control-Allow-Headers", "*")
-
-        if ("OPTIONS".equals(request.method, true)) {
-            response.status = HttpServletResponse.SC_OK
-        } else {
-            filterChain.doFilter(request, response)
-        }
     }
 }

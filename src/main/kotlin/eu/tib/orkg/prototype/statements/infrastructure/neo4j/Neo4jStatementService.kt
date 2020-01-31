@@ -49,66 +49,26 @@ class Neo4jStatementService :
     override fun findAll(pagination: Pageable): Iterable<GeneralStatement> =
         statementRepository.findAll(pagination)
             .content
-            .map {
-                GeneralStatement(
-                    it.statementId,
-                    refreshObject(it.subject!!),
-                    predicateService.findById(it.predicateId).get(),
-                    refreshObject(it.`object`!!),
-                    it.createdAt
-                )
-            }
+            .map { toStatement(it) }
 
     override fun findById(statementId: StatementId): Optional<GeneralStatement> =
         statementRepository.findByStatementId(statementId)
-            .map {
-                GeneralStatement(
-                    it.statementId,
-                    refreshObject(it.subject!!),
-                    predicateService.findById(it.predicateId).get(),
-                    refreshObject(it.`object`!!),
-                    it.createdAt
-                )
-            }
+            .map { toStatement(it) }
 
     override fun findAllBySubject(subjectId: String, pagination: Pageable): Iterable<GeneralStatement> =
         statementRepository.findAllBySubject(subjectId, pagination)
             .content
-            .map {
-                GeneralStatement(
-                    it.statementId,
-                    refreshObject(it.subject!!),
-                    predicateService.findById(it.predicateId).get(),
-                    refreshObject(it.`object`!!),
-                    it.createdAt
-                )
-            }
+            .map { toStatement(it) }
 
     override fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable): Iterable<GeneralStatement> =
         statementRepository.findAllByPredicateId(predicateId, pagination)
             .content
-            .map {
-                GeneralStatement(
-                    it.statementId,
-                    refreshObject(it.subject!!),
-                    predicateService.findById(it.predicateId).get(),
-                    refreshObject(it.`object`!!),
-                    it.createdAt
-                )
-            }
+            .map { toStatement(it) }
 
     override fun findAllByObject(objectId: String, pagination: Pageable): Iterable<GeneralStatement> =
         statementRepository.findAllByObject(objectId, pagination)
             .content
-            .map {
-                GeneralStatement(
-                    it.statementId,
-                    refreshObject(it.subject!!),
-                    predicateService.findById(it.predicateId).get(),
-                    refreshObject(it.`object`!!),
-                    it.createdAt
-                )
-            }
+            .map { toStatement(it) }
 
     override fun create(subject: String, predicate: PredicateId, `object`: String) =
         create(UUID(0, 0), subject, predicate, `object`)
@@ -171,13 +131,7 @@ class Neo4jStatementService :
 
         statementRepository.save(found)
 
-        return GeneralStatement(
-            found.statementId!!,
-            found.subject!!.toThing(),
-            predicateService.findById(found.predicateId).get(),
-            found.`object`!!.toThing(),
-            found.createdAt!!
-        )
+        return toStatement(found)
     }
 
     override fun countStatements(paperId: String): Int =
@@ -190,4 +144,14 @@ class Neo4jStatementService :
             else -> thing.toThing()
         }
     }
+
+    private fun toStatement(statement: Neo4jStatement) =
+        GeneralStatement(
+            id = statement.statementId!!,
+            subject = refreshObject(statement.subject!!),
+            predicate = predicateService.findById(statement.predicateId!!).get(),
+            `object` = refreshObject(statement.`object`!!),
+            createdAt = statement.createdAt!!,
+            createdBy = statement.createdBy
+        )
 }

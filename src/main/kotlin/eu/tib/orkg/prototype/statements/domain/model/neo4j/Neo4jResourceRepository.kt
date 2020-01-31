@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import eu.tib.orkg.prototype.statements.application.ID_DOI_PREDICATE
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -48,4 +49,9 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
 
     @Query("""UNWIND {0} as r_id MATCH ()-[p:RELATED]->(node:Resource {resource_id: r_id}) WITH r_id, COUNT(p) AS cnt RETURN cnt""")
     fun getIncomingStatementsCount(ids: List<ResourceId>): Iterable<Long>
+
+    @Query("""MATCH (n:Paper)-[:HAS_VALUE_OF {predicate_id: "$ID_DOI_PREDICATE"}]->(:Literal {label: {0}}) RETURN n""")
+    fun findByDOI(doi: String): Optional<Neo4jResource>
+
+    fun findByLabel(label: String?): Optional<Neo4jResource>
 }

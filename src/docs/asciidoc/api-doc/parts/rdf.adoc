@@ -1,0 +1,71 @@
+[[rdf]]
+== RDF Dump
+
+The ORKG provides a dump of the entire graph in RDF, the dump is in N-Triples format.
+
+[[rdf-dump]]
+=== Getting dump
+
+A `GET` request creates a dump of the graph and returns it as file.
+The response will be `200 OK` when successful.
+As a result of the request a file will be provided with the name `dump.nt` that can be used or imported into other RDF stores.
+
+NOTE: The created paper root resource is returned in the body for convenience. This might be subject to change.
+
+operation::rdf-controller-test-index[snippets='curl-request,http-response']
+
+[[resolvable-vocab]]
+== Resolvable Vocabulary
+
+ORKG entities in RDF format are resolvable. Each URI refers to the description of the corresponding entity in some RDF serialization.
+
+[[vocab-resource]]
+=== Resolve a resource
+
+A `GET` request to get the description of an ORKG resource.
+
+NOTE: a HTTP `Accept` header should be provided with one of the values from the table below. Otherwise, the request will be redirected to the frontend UI to see the HTML description page.
+
+operation::vocab-controller-test-resource[snippets='curl-request,http-response']
+
+
+[[vocab-predicate]]
+=== Resolve a predicate
+
+A `GET` request to get the description of an ORKG predicate.
+
+NOTE: a HTTP `Accept` header should be provided with one of the values from the table below. Otherwise, the request will be redirected to the frontend UI to see the HTML description page.
+
+operation::vocab-controller-test-predicate[snippets='curl-request,http-response']
+
+[[vocab-class]]
+=== Resolve a class
+
+A `GET` request to get the description of an ORKG class.
+
+NOTE: a HTTP `Accept` header should be provided with one of the values from the table below. Otherwise, the request will be redirected to the frontend UI to see the HTML description page.
+
+operation::vocab-controller-test-clazz[snippets='curl-request,http-response']
+
+[[vocab-accept]]
+=== Allowed accept headers
+
+This collection of HTTP `Accept` headers are allowed by the system and the corresponding serialization format.
+
+[cols="e,m"]
+.HTTP RDF serialization accept headers
+[options="header"]
+|=======================
+|Header  |Format
+|application/n-triples   | N-Triples
+|application/rdf+xml    | RDF XML
+|text/n3    | N3
+|application/json   | JSON-LD
+|application/trig    | TriG
+|application/x-trig    | TriG
+|application/n-quads  | N-Quads
+|text/x-nquads    | N-Quads
+|text/nquads  | N-Quads
+|application/turtle    | Turtle
+|text/turtle  | Turtle
+|=======================

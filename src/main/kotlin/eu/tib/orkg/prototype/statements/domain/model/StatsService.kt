@@ -7,4 +7,6 @@ interface StatsService {
      * @return the stats summary
      */
     fun getStats(): Stats
+
+    fun getFieldsStats(): Map<String, Int>
 }

@@ -32,12 +32,14 @@ class WidgetController(private val service: ResourceService, private val stateme
 
         val totalStatements = statementService.countStatements(paperNode.id!!.value)
 
-        return ok(WidgetInfo(doi = searchString,
+        return ok(WidgetInfo(id = paperNode.id.toString(),
+                                doi = searchString,
                                 title = paperNode.label,
                                 numberOfStatements = totalStatements))
     }
 
     data class WidgetInfo(
+        val id: String,
         val doi: String?,
         val title: String,
         @JsonProperty("num_statements")

@@ -114,6 +114,18 @@ class Neo4jStatementWithResourceService : StatementWithResourceService {
         return statements.map { toStatement(it, counts[it.`object`!!.resourceId]!!.toInt()) }
     }
 
+    override fun findAllByObjectAndPredicate(
+        objectId: ResourceId,
+        predicateId: PredicateId,
+        pagination: Pageable
+    ): Iterable<StatementWithResource> {
+        val statements =
+            neo4jStatementRepository.findAllByObjectAndPredicate(objectId, predicateId, pagination).content
+        val ids = distinctIdsOf(statements)
+        val counts = ids.zip(neo4jResourceRepository.getIncomingStatementsCount(ids)).toMap()
+        return statements.map { toStatement(it, counts[it.`object`!!.resourceId]!!.toInt()) }
+    }
+
     override fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable): Iterable<StatementWithResource> {
         val statements = neo4jStatementRepository.findAllByPredicateId(predicateId, pagination).content
         val ids = distinctIdsOf(statements)

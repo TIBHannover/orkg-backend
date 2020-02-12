@@ -44,6 +44,15 @@ interface StatementWithResourceService {
     ): Iterable<StatementWithResource>
 
     /**
+     * Find all statements with a given object and predicate.
+     */
+    fun findAllByObjectAndPredicate(
+        objectId: ResourceId,
+        predicateId: PredicateId,
+        pagination: Pageable
+    ): Iterable<StatementWithResource>
+
+    /**
      * Create a new statement with a resource as object.
      */
     @Suppress("Reformat")

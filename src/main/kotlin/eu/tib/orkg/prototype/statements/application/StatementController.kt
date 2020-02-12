@@ -131,6 +131,23 @@ class StatementController(
         return ok(results.take(pagination.pageSize))
     }
 
+    @GetMapping("/object/{objectId}/predicate/{predicateId}")
+    fun findByObjectAndPredicate(
+        @PathVariable objectId: String,
+        @PathVariable predicateId: PredicateId,
+        @RequestParam("page", required = false) page: Int?,
+        @RequestParam("items", required = false) items: Int?,
+        @RequestParam("sortBy", required = false) sortBy: String?,
+        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+    ): HttpEntity<Iterable<StatementResponse>> {
+        val pagination = createPageable(page, items, sortBy, desc)
+        var results =
+            statementWithResourceService.findAllByObjectAndPredicate(ResourceId(objectId), predicateId, pagination) +
+                statementWithLiteralService.findAllByObjectAndPredicate(LiteralId(objectId), predicateId, pagination)
+        results = sortResults(results, sortBy, desc)
+        return ok(results.take(pagination.pageSize))
+    }
+
     @PostMapping("/")
     @ResponseStatus(CREATED)
     fun add(@RequestBody statement: Statement, uriComponentsBuilder: UriComponentsBuilder):

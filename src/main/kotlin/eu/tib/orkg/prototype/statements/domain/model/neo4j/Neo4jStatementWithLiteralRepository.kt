@@ -29,6 +29,13 @@ interface Neo4jStatementWithLiteralRepository :
         pagination: Pageable
     ): Slice<Neo4jStatementWithLiteral>
 
+    @Query("MATCH (sub:`Resource`)-[rel:`HAS_VALUE_OF`]->(obj:`Literal`) WHERE obj.`literal_id`={0} AND rel.`predicate_id`={1} RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at")
+    fun findAllByObjectAndPredicate(
+        resourceId: LiteralId,
+        predicateId: PredicateId,
+        pagination: Pageable
+    ): Slice<Neo4jStatementWithLiteral>
+
     fun findAllByPredicateId(predicateId: PredicateId, pagination: Pageable): Slice<Neo4jStatementWithLiteral>
 
     @Query("MATCH (sub:`Resource`)-[rel:`HAS_VALUE_OF`]->(obj:`Literal`) WHERE obj.`literal_id`={0} RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at")

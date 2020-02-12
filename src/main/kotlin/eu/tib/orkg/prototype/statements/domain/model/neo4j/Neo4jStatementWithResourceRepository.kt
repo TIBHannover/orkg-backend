@@ -29,6 +29,13 @@ interface Neo4jStatementWithResourceRepository :
         pagination: Pageable
     ): Slice<Neo4jStatementWithResource>
 
+    @Query("MATCH (sub:`Resource`)-[rel:`RELATES_TO`]->(obj:`Resource`) WHERE obj.`resource_id`={0} AND rel.predicate_id={1} RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at")
+    fun findAllByObjectAndPredicate(
+        resourceId: ResourceId,
+        predicateId: PredicateId,
+        pagination: Pageable
+    ): Slice<Neo4jStatementWithResource>
+
     fun findAllByPredicateId(predicateId: PredicateId, pagination: Pageable): Slice<Neo4jStatementWithResource>
 
     @Query("MATCH (sub:`Resource`)-[rel:`RELATES_TO`]->(obj:`Resource`) WHERE obj.`resource_id`={0} RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at")

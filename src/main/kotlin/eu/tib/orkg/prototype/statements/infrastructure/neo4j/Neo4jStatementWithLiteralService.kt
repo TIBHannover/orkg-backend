@@ -113,6 +113,16 @@ class Neo4jStatementWithLiteralService :
             .content
             .map { toStatement(it) }
 
+    override fun findAllByObjectAndPredicate(
+        objectId: LiteralId,
+        predicateId: PredicateId,
+        pagination: Pageable
+    ) =
+        neo4jStatementRepository
+            .findAllByObjectAndPredicate(objectId, predicateId, pagination)
+            .content
+            .map { toStatement(it) }
+
     override fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable) =
         neo4jStatementRepository
             .findAllByPredicateId(predicateId, pagination)

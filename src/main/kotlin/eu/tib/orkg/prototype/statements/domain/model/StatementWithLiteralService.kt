@@ -44,6 +44,15 @@ interface StatementWithLiteralService {
     ): Iterable<StatementWithLiteral>
 
     /**
+     * Find all statements with a given object and predicate.
+     */
+    fun findAllByObjectAndPredicate(
+        objectId: LiteralId,
+        predicateId: PredicateId,
+        pagination: Pageable
+    ): Iterable<StatementWithLiteral>
+
+    /**
      * Create a new statement with a resource as object.
      */
     @Suppress("Reformat")

@@ -4,8 +4,7 @@ import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import eu.tib.orkg.prototype.statements.domain.model.StatementWithLiteralService
-import eu.tib.orkg.prototype.statements.domain.model.StatementWithResourceService
+import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -31,10 +30,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
     override fun createController() = controller
 
     @Autowired
-    private lateinit var statementWithResourceService: StatementWithResourceService
-
-    @Autowired
-    private lateinit var statementWithLiteralService: StatementWithLiteralService
+    private lateinit var statementService: StatementService
 
     @Autowired
     private lateinit var resourceService: ResourceService
@@ -58,10 +54,10 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val p2 = predicateService.create("blub")
         val pl = predicateService.create("to literal")
 
-        statementWithResourceService.create(r1.id!!, p1.id!!, r2.id!!)
-        statementWithResourceService.create(r1.id!!, p2.id!!, r3.id!!)
-        statementWithResourceService.create(r1.id!!, p2.id!!, r3.id!!)
-        statementWithLiteralService.create(r1.id!!, pl.id!!, l1.id!!)
+        statementService.create(r1.id!!.value, p1.id!!, r2.id!!.value)
+        statementService.create(r1.id!!.value, p2.id!!, r3.id!!.value)
+        statementService.create(r1.id!!.value, p2.id!!, r3.id!!.value)
+        statementService.create(r1.id!!.value, pl.id!!, l1.id!!.value)
 
         mockMvc
             .perform(getRequestTo("/api/statements/"))
@@ -92,10 +88,10 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val pl = predicateService.create("to literal")
 
         val statement =
-            statementWithResourceService.create(r1.id!!, p1.id!!, r2.id!!)
-        statementWithResourceService.create(r1.id!!, p1.id!!, r3.id!!)
-        statementWithResourceService.create(r1.id!!, p2.id!!, r3.id!!)
-        statementWithLiteralService.create(r2.id!!, pl.id!!, l1.id!!)
+            statementService.create(r1.id!!.value, p1.id!!, r2.id!!.value)
+        statementService.create(r1.id!!.value, p1.id!!, r3.id!!.value)
+        statementService.create(r1.id!!.value, p2.id!!, r3.id!!.value)
+        statementService.create(r2.id!!.value, pl.id!!, l1.id!!.value)
 
         mockMvc
             .perform(getRequestTo("/api/statements/${statement.id}"))
@@ -119,11 +115,11 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val p2 = predicateService.create("blub")
         val pl = predicateService.create("to literal")
 
-        statementWithResourceService.create(r1.id!!, p1.id!!, r2.id!!)
-        statementWithResourceService.create(r1.id!!, p1.id!!, r3.id!!)
-        statementWithResourceService.create(r1.id!!, p2.id!!, r3.id!!)
+        statementService.create(r1.id!!.value, p1.id!!, r2.id!!.value)
+        statementService.create(r1.id!!.value, p1.id!!, r3.id!!.value)
+        statementService.create(r1.id!!.value, p2.id!!, r3.id!!.value)
         val statement =
-            statementWithLiteralService.create(r2.id!!, pl.id!!, l1.id!!)
+            statementService.create(r2.id!!.value, pl.id!!, l1.id!!.value)
 
         mockMvc
             .perform(getRequestTo("/api/statements/${statement.id}"))
@@ -146,8 +142,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val p1 = predicateService.create("blah")
         val p2 = predicateService.create("blub")
 
-        statementWithResourceService.create(r1.id!!, p1.id!!, r2.id!!)
-        statementWithResourceService.create(r1.id!!, p2.id!!, r3.id!!)
+        statementService.create(r1.id!!.value, p1.id!!, r2.id!!.value)
+        statementService.create(r1.id!!.value, p2.id!!, r3.id!!.value)
 
         mockMvc
             .perform(getRequestTo("/api/statements/subject/${r1.id}"))
@@ -174,9 +170,9 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val p1 = predicateService.create("blah")
         val p2 = predicateService.create("blub")
 
-        statementWithResourceService.create(r1.id!!, p1.id!!, r2.id!!)
-        statementWithResourceService.create(r1.id!!, p2.id!!, r2.id!!)
-        statementWithResourceService.create(r1.id!!, p2.id!!, r3.id!!)
+        statementService.create(r1.id!!.value, p1.id!!, r2.id!!.value)
+        statementService.create(r1.id!!.value, p2.id!!, r2.id!!.value)
+        statementService.create(r1.id!!.value, p2.id!!, r3.id!!.value)
 
         mockMvc
             .perform(getRequestTo("/api/statements/subject/${r1.id}/predicate/${p1.id}"))
@@ -204,9 +200,9 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val p1 = predicateService.create("blah")
         val p2 = predicateService.create("blub")
 
-        statementWithResourceService.create(r1.id!!, p1.id!!, r2.id!!)
-        statementWithResourceService.create(r1.id!!, p1.id!!, r3.id!!)
-        statementWithResourceService.create(r1.id!!, p2.id!!, r3.id!!)
+        statementService.create(r1.id!!.value, p1.id!!, r2.id!!.value)
+        statementService.create(r1.id!!.value, p1.id!!, r3.id!!.value)
+        statementService.create(r1.id!!.value, p2.id!!, r3.id!!.value)
 
         mockMvc
             .perform(getRequestTo("/api/statements/predicate/${p1.id}"))
@@ -234,9 +230,9 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val p2 = predicateService.create("have")
         val l1 = literalService.create("money")
 
-        statementWithLiteralService.create(r1.id!!, p1.id!!, l1.id!!)
-        statementWithLiteralService.create(r2.id!!, p2.id!!, l1.id!!)
-        statementWithLiteralService.create(r3.id!!, p1.id!!, l1.id!!)
+        statementService.create(r1.id!!.value, p1.id!!, l1.id!!.value)
+        statementService.create(r2.id!!.value, p2.id!!, l1.id!!.value)
+        statementService.create(r3.id!!.value, p1.id!!, l1.id!!.value)
 
         mockMvc
             .perform(getRequestTo("/api/statements/object/${l1.id}/predicate/${p1.id}"))
@@ -266,7 +262,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val body = mapOf(
             "subject_id" to r1.id,
             "predicate_id" to p.id,
-            "object" to mapOf("id" to r2.id, "_class" to "resource")
+            "object_id" to r2.id
         )
 
         mockMvc.perform(postRequestWithBody("/api/statements/", body))
@@ -290,7 +286,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val body = mapOf(
             "subject_id" to r.id,
             "predicate_id" to p.id,
-            "object" to mapOf("id" to l.id, "_class" to "literal")
+            "object_id" to l.id
         )
 
         mockMvc.perform(postRequestWithBody("/api/statements/", body))
@@ -310,7 +306,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val s = resourceService.create("one")
         val p = predicateService.create("has symbol")
         val l = literalService.create("1")
-        val st = statementWithLiteralService.create(s.id!!, p.id!!, l.id!!)
+        val st = statementService.create(s.id!!.value, p.id!!, l.id!!.value)
 
         mockMvc.perform(deleteRequest("/api/statements/${st.id}"))
             .andExpect(status().isNoContent)
@@ -326,7 +322,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val s = resourceService.create("one")
         val p = predicateService.create("has creator")
         val r = resourceService.create("Leibniz")
-        val st = statementWithResourceService.create(s.id!!, p.id!!, r.id!!)
+        val st = statementService.create(s.id!!.value, p.id!!, r.id!!.value)
 
         mockMvc.perform(deleteRequest("/api/statements/${st.id}"))
             .andExpect(status().isNoContent)
@@ -342,19 +338,19 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val s = resourceService.create("ORKG")
         val p = predicateService.create("created by")
         val o = resourceService.create("Awesome Team")
-        val st = statementWithResourceService.create(s.id!!, p.id!!, o.id!!)
+        val st = statementService.create(s.id!!.value, p.id!!, o.id!!.value)
 
         val p2 = predicateService.create("with love from")
         val o2 = resourceService.create("Hannover")
 
         val body = mapOf(
-            "predicate_id" to p2.id!!,
-            "object_id" to o2.id!!
+            "predicate_id" to p2.id!!.value,
+            "object_id" to o2.id!!.value
         )
         mockMvc.perform(putRequestWithBody("/api/statements/${st.id}", body))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.predicate.id").value(p2.id!!.toString()))
-            .andExpect(jsonPath("$.object.id").value(o2.id!!.toString()))
+            .andExpect(jsonPath("$.predicate.id").value(p2.id!!.value))
+            .andExpect(jsonPath("$.object.id").value(o2.id!!.value))
             .andDo(
                 document(
                     snippet,
@@ -368,16 +364,16 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val s = resourceService.create("ORKG")
         val p = predicateService.create("based in")
         val o = literalService.create("Germany")
-        val st = statementWithLiteralService.create(s.id!!, p.id!!, o.id!!)
+        val st = statementService.create(s.id!!.value, p.id!!, o.id!!.value)
 
         val p2 = predicateService.create("made with love from")
 
         val body = mapOf(
-            "predicate_id" to p2.id!!
+            "predicate_id" to p2.id!!.value
         )
         mockMvc.perform(putRequestWithBody("/api/statements/${st.id}", body))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.predicate.id").value(p2.id!!.toString()))
+            .andExpect(jsonPath("$.predicate.id").value(p2.id!!.value))
             .andDo(
                 document(
                     snippet,
@@ -394,6 +390,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("subject").description("A resource"),
             fieldWithPath("subject.id").description("The ID of the subject resource"),
             fieldWithPath("subject.label").description("The label of the subject resource"),
+            fieldWithPath("subject._class").description("The type of the subject (resource, literal, etc...)."),
             fieldWithPath("subject.created_at").description("The subject creation datetime"),
             fieldWithPath("subject.created_by").description("The ID of the user that created the subject. All zeros if unknown."),
             fieldWithPath("subject.classes").description("The classes the subject resource belongs to"),
@@ -401,15 +398,16 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("predicate").description("A predicate"),
             fieldWithPath("predicate.id").description("The ID of the predicate"),
             fieldWithPath("predicate.label").description("The label of the predicate"),
+            fieldWithPath("predicate._class").ignored(),
             fieldWithPath("predicate.created_at").description("The predicate creation datetime"),
             fieldWithPath("predicate.created_by").description("The ID of the user that created the predicate. All zeros if unknown."),
             fieldWithPath("object").description("An object"),
             fieldWithPath("object.id").description("The ID of the object"),
             fieldWithPath("object.label").description("The label of the object"),
-            fieldWithPath("object._class").description("The type of the object (resource or literal)."),
+            fieldWithPath("object._class").description("The type of the object (resource, literal, etc...)."),
             fieldWithPath("object.created_at").description("The object creation datetime"),
             fieldWithPath("object.created_by").description("The ID of the user that created the object. All zeros if unknown."),
-            fieldWithPath("object.classes").description("The classes the object resource belongs to"),
+            fieldWithPath("object.classes").description("The classes the object resource belongs to").optional().ignored(),
             fieldWithPath("object.shared").optional().ignored()
         )
 
@@ -421,6 +419,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].subject").description("A resource"),
             fieldWithPath("[].subject.id").description("The ID of the subject resource"),
             fieldWithPath("[].subject.label").description("The label of the subject resource"),
+            fieldWithPath("[].subject._class").description("The type of the subject (resource, literal, etc...)."),
             fieldWithPath("[].subject.created_at").description("The subject creation datetime"),
             fieldWithPath("[].subject.created_by").description("The ID of the user that created the subject. All zeros if unknown."),
             fieldWithPath("[].subject.classes").description("The classes the subject resource belongs to"),
@@ -428,15 +427,16 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].predicate").description("A predicate"),
             fieldWithPath("[].predicate.id").description("The ID of the predicate"),
             fieldWithPath("[].predicate.label").description("The label of the predicate"),
+            fieldWithPath("[].predicate._class").ignored(),
             fieldWithPath("[].predicate.created_at").description("The predicate creation datetime"),
             fieldWithPath("[].predicate.created_by").description("The ID of the user that created the predicate. All zeros if unknown."),
             fieldWithPath("[].object").description("An object"),
             fieldWithPath("[].object.id").description("The ID of the object"),
             fieldWithPath("[].object.label").description("The label of the object"),
-            fieldWithPath("[].object._class").description("The type of the object (resource or literal)."),
+            fieldWithPath("[].object._class").description("The type of the object (resource, literal, etc...)."),
             fieldWithPath("[].object.created_at").description("The object creation datetime"),
             fieldWithPath("[].object.created_by").description("The ID of the user that created the object. All zeros if unknown."),
-            fieldWithPath("[].object.classes").description("The classes the object resource belongs to"),
+            fieldWithPath("[].object.classes").description("The classes the object resource belongs to").optional().ignored(),
             fieldWithPath("[].object.shared").optional().ignored()
         )
 }

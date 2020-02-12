@@ -33,7 +33,7 @@ class BulkStatementController(
         @RequestParam("sortBy", required = false) sortBy: String?,
         @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
     ): ResponseEntity<Iterable<BulkGetStatementsResponse>> {
-        return ok(resourceIds.map { BulkGetStatementsResponse(it.value, statementController.findByResource(it, page, items, sortBy, desc).body!!) })
+        return ok(resourceIds.map { BulkGetStatementsResponse(it.value, statementController.findBySubject(it.value, page, items, sortBy, desc).body!!) })
     }
 
     @GetMapping("/objects")

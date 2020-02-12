@@ -18,4 +18,10 @@ class StatsController(private val service: StatsService) {
     fun get(): ResponseEntity<Stats> {
         return ResponseEntity.ok(service.getStats())
     }
+
+    @GetMapping("/fields")
+    @ResponseStatus(HttpStatus.OK)
+    fun getFields(): ResponseEntity<Map<String, Int>> {
+        return ResponseEntity.ok(service.getFieldsStats())
+    }
 }

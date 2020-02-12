@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import eu.tib.orkg.prototype.statements.domain.model.Object
+import eu.tib.orkg.prototype.escapeLiterals
+import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.domain.model.Statement
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.PredicateIdGraphAttributeConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.StatementIdGraphAttributeConverter
@@ -18,19 +18,19 @@ import org.neo4j.ogm.annotation.StartNode
 import org.neo4j.ogm.annotation.typeconversion.Convert
 import java.util.UUID
 
-@RelationshipEntity(type = "RELATES_TO")
-data class Neo4jStatementWithResource(
+@RelationshipEntity(type = "RELATED")
+data class Neo4jStatement(
     @Id
     @GeneratedValue
     var id: Long? = null
 ) : AuditableEntity() {
     @StartNode
     @JsonIgnore
-    var subject: Neo4jResource? = null
+    var subject: Neo4jThing? = null
 
     @EndNode
     @JsonIgnore
-    var `object`: Neo4jResource? = null
+    var `object`: Neo4jThing? = null
 
     @Property("statement_id")
     @Required
@@ -48,9 +48,9 @@ data class Neo4jStatementWithResource(
 
     constructor(
         statementId: StatementId,
-        subject: Neo4jResource,
+        subject: Neo4jThing,
         predicateId: PredicateId,
-        `object`: Neo4jResource,
+        `object`: Neo4jThing,
         createdBy: UUID = UUID(0, 0)
     ) :
         this(null) {
@@ -61,12 +61,32 @@ data class Neo4jStatementWithResource(
         this.createdBy = createdBy
     }
 
-    fun toStatement(): Statement {
-        return Statement(
-            statementId = statementId,
-            subjectId = subject!!.resourceId!!,
-            predicateId = predicateId!!,
-            `object` = Object.Resource(`object`!!.resourceId!!)
-        )
+    override fun toString(): String {
+        return "{id:$statementId}==(${subject!!.thingId} {${subject!!.label}})-[$predicateId]->(${`object`!!.thingId} {${`object`!!.label}})=="
+    }
+
+    /**
+     * Convert the triple to a statement in NTriple format.
+     */
+    fun toNTriple(): String {
+        val pPrefix = RdfConstants.PREDICATE_NS
+        val result = "${serializeThing(subject!!)} <$pPrefix$predicateId> ${serializeThing(`object`!!)} ."
+        if (result[0] == '"')
+            // Ignore literal
+            // TODO: log this somewhere
+            return ""
+        return result
+    }
+
+    private fun serializeThing(thing: Neo4jThing): String {
+        val rPrefix = RdfConstants.RESOURCE_NS
+        val pPrefix = RdfConstants.PREDICATE_NS
+        val cPrefix = RdfConstants.CLASS_NS
+        return when (thing) {
+            is Neo4jResource -> "<$rPrefix${thing.thingId}>"
+            is Neo4jPredicate -> "<$pPrefix${thing.thingId}>"
+            is Neo4jClass -> "<$cPrefix${thing.thingId}>"
+            else -> "\"${escapeLiterals(thing.label!!)}\"^^<http://www.w3.org/2001/XMLSchema#string>"
+        }
     }
 }

@@ -6,7 +6,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import eu.tib.orkg.prototype.statements.domain.model.StatementWithResourceService
+import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -41,7 +41,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     private lateinit var predicateService: PredicateService
 
     @Autowired
-    private lateinit var statementWithResourceController: StatementWithResourceService
+    private lateinit var statementController: StatementService
 
     override fun createController() = controller
 
@@ -186,8 +186,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         val id = classService.create("research contribution").id!!
         val set = listOf(id).toSet()
         service.create(CreateResourceRequest(null, "Contribution 1", set))
-        service.create(CreateResourceRequest(null, "Contribution 2", set))
-
+        service.create(CreateResourceRequest(null, "Contribution 2"))
         service.create(CreateResourceRequest(null, "Contribution 3"))
         val id2 = classService.create("research contribution").id!!
         val set2 = listOf(id2).toSet()
@@ -196,7 +195,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/resources/?q=Contribution&exclude=$id,$id2"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", hasSize<Int>(1)))
+            .andExpect(jsonPath("$", hasSize<Int>(2)))
             .andDo(
                 document(
                     snippet,
@@ -225,8 +224,8 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         val con1 = service.create(CreateResourceRequest(null, "Connection 1")).id!!
         val con2 = service.create(CreateResourceRequest(null, "Connection 2")).id!!
         val pred = predicateService.create("Test predicate").id!!
-        statementWithResourceController.create(con1, pred, resId)
-        statementWithResourceController.create(con2, pred, resId)
+        statementController.create(con1.value, pred, resId.value)
+        statementController.create(con2.value, pred, resId.value)
         val id2 = classService.create("Class 2").id!!
         val set2 = listOf(id2).toSet()
         service.create(CreateResourceRequest(null, "Another Resource", set2))
@@ -260,7 +259,8 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("created_at").description("The resource creation datetime"),
             fieldWithPath("created_by").description("The ID of the user that created the resource. All zeros if unknown."),
             fieldWithPath("classes").description("The list of classes the resource belongs to"),
-            fieldWithPath("shared").description("The number of times this resource is shared").optional()
+            fieldWithPath("shared").description("The number of times this resource is shared").optional(),
+            fieldWithPath("_class").optional().ignored()
         )
 
     private fun resourceListResponseFields() =
@@ -270,6 +270,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].created_at").description("The resource creation datetime"),
             fieldWithPath("[].created_by").description("The ID of the user that created the resource. All zeros if unknown."),
             fieldWithPath("[].classes").description("The list of classes the resource belongs to"),
-            fieldWithPath("[].shared").description("The number of times this resource is shared").optional()
+            fieldWithPath("[].shared").description("The number of times this resource is shared").optional(),
+            fieldWithPath("[]._class").optional().ignored()
         )
 }

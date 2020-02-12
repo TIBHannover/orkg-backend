@@ -35,6 +35,16 @@ interface StatementService {
     fun findAllByObject(objectId: String, pagination: Pageable): Iterable<GeneralStatement>
 
     /**
+     * Find all statements with a given subject and predicate.
+     */
+    fun findAllBySubjectAndPredicate(subjectId: String, predicateId: PredicateId, pagination: Pageable): Iterable<GeneralStatement>
+
+    /**
+     * Find all statements with a given object and predicate.
+     */
+    fun findAllByObjectAndPredicate(objectId: String, predicateId: PredicateId, pagination: Pageable): Iterable<GeneralStatement>
+
+    /**
      * Create a new statement.
      */
     @Suppress("Reformat")

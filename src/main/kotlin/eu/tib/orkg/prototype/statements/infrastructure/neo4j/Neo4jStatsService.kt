@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.domain.model.StatsService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatsRepository
@@ -9,7 +10,8 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class Neo4jStatsService(
-    private val neo4jStatsRepository: Neo4jStatsRepository
+    private val neo4jStatsRepository: Neo4jStatsRepository,
+    private val userRepository: UserRepository
 ) : StatsService {
     override fun getStats(): Stats {
         val metadata = neo4jStatsRepository.getGraphMetaData()
@@ -34,6 +36,26 @@ class Neo4jStatsService(
     override fun getFieldsStats(): Map<String, Int> {
         val counts = neo4jStatsRepository.getResearchFieldsPapersCount()
         return counts.map { it.fieldId to it.papers.toInt() }.toMap()
+    }
+
+    override fun countPapersPerUser(): Map<String, Int> {
+        return neo4jStatsRepository.getPapersPerUserCount()
+            .map {
+                 if (userRepository.findById(it.userId).isPresent)
+                     userRepository.findById(it.userId).get().displayName!! to it.papers.toInt()
+                 else "Anonymous" to it.papers.toInt()
+            }
+            .toMap()
+    }
+
+    override fun countPapersPerUserThisMonth(): Map<String, Int> {
+        val x = neo4jStatsRepository.getPapersPerUserCountThisMonth()
+        return mapOf()
+    }
+
+    override fun countPapersPerUserThisWeek(): Map<String, Int> {
+        val x = neo4jStatsRepository.getPapersPerUserCountThisWeek()
+        return mapOf()
     }
 
     private fun extractValue(map: Map<*, *>, key: String): Long {

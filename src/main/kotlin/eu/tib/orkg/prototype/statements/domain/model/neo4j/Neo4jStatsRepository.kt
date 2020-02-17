@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
+import java.util.UUID
 
 interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
 
@@ -16,16 +17,16 @@ interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
     @Query("""MATCH (n:ResearchField) WITH n OPTIONAL MATCH (n)-[:RELATES_TO*0..3 {predicate_id: 'P36'}]->(:ResearchField)<-[:RELATES_TO {predicate_id: 'P30'}]-(p:Paper) RETURN n.resource_id AS fieldId, n.label AS field, COUNT(p) AS papers""")
     fun getResearchFieldsPapersCount(): Iterable<FieldsStats>
 
-    @Query(""""
+    @Query("""
         MATCH (p:Paper)
         WITH COLLECT(DISTINCT p.created_by) AS users
         UNWIND users AS user
         MATCH (p:Paper {created_by: user})
         RETURN user, COUNT(p) AS papers
         """)
-    fun getPapersPerUserCount(): Iterable<HashMap<String, Long>>
+    fun getPapersPerUserCount(): Iterable<PapersPerUser>
 
-    @Query(""""
+    @Query("""
         MATCH (p:Paper)
         WITH COLLECT(DISTINCT p.created_by) AS users, datetime() AS now
         UNWIND users AS user
@@ -33,9 +34,9 @@ interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
         WHERE datetime(p.created_at).year = now.year AND datetime(p.created_at).month = now.month
         RETURN user, COUNT(p) AS papers
         """)
-    fun getPapersPerUserCountThisMonth(): Iterable<HashMap<String, Long>>
+    fun getPapersPerUserCountThisMonth(): Iterable<PapersPerUser>
 
-    @Query(""""
+    @Query("""
         MATCH (p:Paper)
         WITH COLLECT(DISTINCT p.created_by) AS users, datetime() AS now
         UNWIND users AS user
@@ -43,9 +44,9 @@ interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
         WHERE datetime(p.created_at).year = now.year AND datetime(p.created_at).month = now.month AND datetime(p.created_at).week = now.week
         RETURN user, COUNT(p) AS papers
         """)
-    fun getPapersPerUserCountThisWeek(): Iterable<HashMap<String, Long>>
+    fun getPapersPerUserCountThisWeek(): Iterable<PapersPerUser>
 
-    @Query(""""
+    @Query("""
         MATCH (p:Paper)
         WITH COLLECT(DISTINCT p.created_by) AS users, datetime() AS now, range(1, datetime().month) AS months
         UNWIND months AS month
@@ -57,7 +58,7 @@ interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
         """)
     fun getPapersPerUserCountMonthlyThisYear(): Iterable<Triple<String, Long, Long>>
 
-    @Query(""""
+    @Query("""
         MATCH (n:Paper {resource_id: {0}})
         CALL apoc.path.subgraphAll(n, {relationshipFilter:'>'}) 
         YIELD relationships 
@@ -67,7 +68,7 @@ interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
         """)
     fun getPaperContributors(paperId: ResourceId): Iterable<HashMap<ResourceId, Array<String>>>
 
-    @Query(""""
+    @Query("""
         MATCH (e:AuditableEntity)
         WITH COLLECT(DISTINCT e.created_by) AS contributors, datetime() AS now
         UNWIND contributors AS contributor
@@ -86,3 +87,12 @@ data class FieldsStats(
     val field: String,
     val papers: Long
 )
+
+@QueryResult
+data class PapersPerUser(
+    val user: String,
+    val papers: Long
+) {
+    val userId: UUID
+        get() = UUID.fromString(user)
+}

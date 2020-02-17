@@ -9,4 +9,10 @@ interface StatsService {
     fun getStats(): Stats
 
     fun getFieldsStats(): Map<String, Int>
+
+    fun countPapersPerUser(): Map<String, Int>
+
+    fun countPapersPerUserThisMonth(): Map<String, Int>
+
+    fun countPapersPerUserThisWeek(): Map<String, Int>
 }

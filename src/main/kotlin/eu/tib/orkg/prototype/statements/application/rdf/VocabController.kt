@@ -46,8 +46,11 @@ class VocabController(
     ): ResponseEntity<String> {
         if (!checkAcceptHeader(acceptHeader))
             return createRedirectResponse("resource", id.value, uriComponentsBuilder)
-        val resource = resourceService.findById(id)
-        val response = getRdfSerialization(resource.get().rdf, acceptHeader)
+        val resource = resourceService
+            .findById(id)
+            // TODO: Return meaningful message to the user
+            .orElseThrow { IllegalStateException("Could not find resource $id") }
+        val response = getRdfSerialization(resource.rdf, acceptHeader)
         return ResponseEntity.ok()
             .body(response)
     }

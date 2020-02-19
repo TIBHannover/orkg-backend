@@ -20,7 +20,7 @@ class Neo4jLiteralRepositoryTest {
     private lateinit var literalRepository: Neo4jLiteralRepository
 
     @Autowired
-    private lateinit var statementRepository: Neo4jStatementWithLiteralRepository
+    private lateinit var statementRepository: Neo4jStatementRepository
 
     @Test
     @DisplayName("should save and retrieve statement")
@@ -50,7 +50,7 @@ class Neo4jLiteralRepositoryTest {
         )
 
         statementRepository.save(
-            Neo4jStatementWithLiteral(
+            Neo4jStatement(
                 statementId = StatementId(23), // irrelevant
                 subject = sub,
                 `object` = obj,

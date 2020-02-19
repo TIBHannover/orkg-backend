@@ -14,8 +14,10 @@ data class Resource(
     val classes: Set<ClassId> = emptySet(),
     val shared: Int = 0,
     @JsonProperty("created_by")
-    val createdBy: UUID = UUID(0, 0)
-) {
+    val createdBy: UUID = UUID(0, 0),
+    // This is added to replace @JsonTypeInfo on the Thing interface
+    val _class: String? = "resource"
+) : Thing {
     @JsonIgnore
     var rdf: Model? = null
 }

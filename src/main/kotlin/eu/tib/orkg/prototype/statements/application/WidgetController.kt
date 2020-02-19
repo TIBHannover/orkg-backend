@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import eu.tib.orkg.prototype.statements.domain.model.StatementWithResourceService
+import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import org.springframework.http.HttpEntity
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/widgets/")
 @CrossOrigin(origins = ["*"])
-class WidgetController(private val service: ResourceService, private val statementWithResourceService: StatementWithResourceService) {
+class WidgetController(private val service: ResourceService, private val statementService: StatementService) {
 
     @GetMapping("/")
     fun searchDoi(
@@ -30,7 +30,7 @@ class WidgetController(private val service: ResourceService, private val stateme
 
         val paperNode = found.orElseThrow { ResourceNotFound() }
 
-        val totalStatements = statementWithResourceService.countStatements(paperNode.id)
+        val totalStatements = statementService.countStatements(paperNode.id!!.value)
 
         return ok(WidgetInfo(doi = searchString,
                                 title = paperNode.label,

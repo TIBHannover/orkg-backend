@@ -26,7 +26,7 @@ data class Neo4jClass(
     @Id
     @GeneratedValue
     var id: Long? = null
-) : AuditableEntity() {
+) : Neo4jThing, AuditableEntity() {
     @Property("class_id")
     @Required
     @Convert(ClassIdGraphAttributeConverter::class)
@@ -34,7 +34,7 @@ data class Neo4jClass(
 
     @Property("label")
     @Required
-    var label: String? = null
+    override var label: String? = null
 
     var uri: String? = null
 
@@ -78,4 +78,9 @@ data class Neo4jClass(
             builder = builder.add(OWL.EQUIVALENTCLASS, uri)
         return builder.build()
     }
+
+    override val thingId: String?
+        get() = classId?.value
+
+    override fun toThing() = toClass()
 }

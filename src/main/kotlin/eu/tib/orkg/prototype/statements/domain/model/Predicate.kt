@@ -12,8 +12,10 @@ data class Predicate(
     @JsonProperty("created_at")
     val createdAt: OffsetDateTime?,
     @JsonProperty("created_by")
-    val createdBy: UUID = UUID(0, 0)
-) {
+    val createdBy: UUID = UUID(0, 0),
+    // This is added to replace @JsonTypeInfo on the Thing interface
+    val _class: String? = "predicate"
+) : Thing {
     @JsonIgnore
     var rdf: Model? = null
 }

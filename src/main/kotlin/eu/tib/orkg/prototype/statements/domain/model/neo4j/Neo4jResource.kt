@@ -6,7 +6,6 @@ import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceObject
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ResourceIdGraphAttributeConverter
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
@@ -29,28 +28,24 @@ data class Neo4jResource(
     @Id
     @GeneratedValue
     var id: Long? = null
-) : AuditableEntity() {
+) : Neo4jThing, AuditableEntity() {
 
     @Property("label")
     @Required
-    var label: String? = null
+    override var label: String? = null
 
     @Property("resource_id")
     @Required
     @Convert(ResourceIdGraphAttributeConverter::class)
     var resourceId: ResourceId? = null
 
-    @Relationship(type = "RELATES_TO")
+    @Relationship(type = "RELATED")
     @JsonIgnore
-    var resources: MutableSet<Neo4jStatementWithResource> = mutableSetOf()
+    var resources: MutableSet<Neo4jStatement> = mutableSetOf()
 
-    @Relationship(type = "RELATES_TO")
+    @Relationship(type = "RELATED", direction = Relationship.INCOMING)
     @JsonIgnore
-    var literals: MutableSet<Neo4jStatementWithLiteral> = mutableSetOf()
-
-    @Relationship(type = "RELATES_TO", direction = Relationship.INCOMING)
-    @JsonIgnore
-    var objectOf: MutableSet<Neo4jStatementWithResource> = mutableSetOf()
+    var objectOf: MutableSet<Neo4jStatement> = mutableSetOf()
 
     @Property("created_by")
     @Convert(UUIDGraphAttributeConverter::class)
@@ -83,8 +78,10 @@ data class Neo4jResource(
         return resource
     }
 
-    fun toObject(shared: Int = 0) =
-        ResourceObject(resourceId, label!!, createdAt, classes, shared, createdBy = createdBy)
+    override val thingId: String?
+        get() = resourceId?.value
+
+    override fun toThing() = toResource()
 
     /**
      * Assign a class to this `Resource` node.
@@ -112,8 +109,12 @@ data class Neo4jResource(
             .add(RDFS.LABEL, label)
             .add(RDF.TYPE, "c:Resource")
         classes.forEach { builder = builder.add(RDF.TYPE, "c:${it.value}") }
-        resources.forEach { builder = builder.add("p:${it.predicateId}", "r:${it.`object`!!.resourceId}") }
-        literals.forEach { builder = builder.add("p:${it.predicateId}", "\"${it.`object`!!.label}\"") }
+        resources.forEach {
+            builder = if (it.`object` is Neo4jLiteral)
+                builder.add("p:${it.predicateId}", "\"${it.`object`!!.label}\"")
+            else
+                builder.add("p:${it.predicateId}", "r:${it.`object`!!.thingId}")
+        }
         return builder.build()
     }
 }

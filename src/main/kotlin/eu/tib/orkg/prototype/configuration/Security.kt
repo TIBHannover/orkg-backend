@@ -84,7 +84,6 @@ class ResourceServerConfiguration(
     }
 
     // http security concerns
-
     override fun configure(http: HttpSecurity) {
         http
             .authorizeRequests()

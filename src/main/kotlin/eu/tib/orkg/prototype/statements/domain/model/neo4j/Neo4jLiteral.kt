@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
-import eu.tib.orkg.prototype.statements.domain.model.LiteralObject
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.LiteralIdGraphAttributeConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.UUIDGraphAttributeConverter
 import org.neo4j.ogm.annotation.GeneratedValue
@@ -21,10 +20,10 @@ data class Neo4jLiteral(
     @Id
     @GeneratedValue
     var id: Long? = null
-) : AuditableEntity() {
+) : Neo4jThing, AuditableEntity() {
     @Property("label")
     @Required
-    var label: String? = null
+    override var label: String? = null
 
     @Property("literal_id")
     @Required
@@ -37,7 +36,7 @@ data class Neo4jLiteral(
 
     @Relationship(type = "HAS_VALUE_OF")
     @JsonIgnore
-    var resources: MutableSet<Neo4jStatementWithLiteral> = mutableSetOf()
+    var resources: MutableSet<Neo4jStatement> = mutableSetOf()
 
     @JsonIgnore
     private var labels: MutableList<String> = mutableListOf()
@@ -53,5 +52,8 @@ data class Neo4jLiteral(
 
     fun toLiteral() = Literal(literalId, label!!, createdAt!!, createdBy = createdBy)
 
-    fun toObject() = LiteralObject(literalId, label!!, createdAt!!, classes, createdBy = createdBy)
+    override val thingId: String?
+        get() = literalId?.value
+
+    override fun toThing() = toLiteral()
 }

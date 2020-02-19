@@ -22,11 +22,11 @@ import java.util.UUID
 data class Neo4jPredicate(
     @Id
     @GeneratedValue
-    private var id: Long? = null,
+    var id: Long? = null,
 
     @Property("label")
     @Required
-    var label: String? = null,
+    override var label: String? = null,
 
     @Property("predicate_id")
     @Required
@@ -36,13 +36,18 @@ data class Neo4jPredicate(
     @Property("created_by")
     @Convert(UUIDGraphAttributeConverter::class)
     var createdBy: UUID = UUID(0, 0)
-) : AuditableEntity() {
+) : Neo4jThing, AuditableEntity() {
 
     fun toPredicate(): Predicate {
         val pred = Predicate(predicateId, label!!, createdAt!!, createdBy = createdBy)
         pred.rdf = toRdfModel()
         return pred
     }
+
+    override val thingId: String?
+        get() = predicateId?.value
+
+    override fun toThing() = toPredicate()
 
     fun toNTriple(): String {
         val cPrefix = RdfConstants.CLASS_NS

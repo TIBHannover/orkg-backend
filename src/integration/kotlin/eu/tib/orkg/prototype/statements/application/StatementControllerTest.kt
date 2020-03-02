@@ -170,9 +170,9 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val p1 = predicateService.create("blah")
         val p2 = predicateService.create("blub")
 
-        statementWithResourceService.create(r1.id!!, p1.id!!, r2.id!!)
-        statementWithResourceService.create(r1.id!!, p2.id!!, r2.id!!)
-        statementWithResourceService.create(r1.id!!, p2.id!!, r3.id!!)
+        statementService.create(r1.id!!.value, p1.id!!, r2.id!!.value)
+        statementService.create(r1.id!!.value, p2.id!!, r2.id!!.value)
+        statementService.create(r1.id!!.value, p2.id!!, r3.id!!.value)
 
         mockMvc
             .perform(getRequestTo("/api/statements/subject/${r1.id}/predicate/${p1.id}"))
@@ -230,13 +230,14 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         val p2 = predicateService.create("have")
         val l1 = literalService.create("money")
 
-        statementWithLiteralService.create(r1.id!!, p1.id!!, l1.id!!)
-        statementWithLiteralService.create(r2.id!!, p2.id!!, l1.id!!)
-        statementWithLiteralService.create(r3.id!!, p1.id!!, l1.id!!)
+        statementService.create(r1.id!!.value, p1.id!!, l1.id!!.value)
+        statementService.create(r2.id!!.value, p2.id!!, l1.id!!.value)
+        statementService.create(r3.id!!.value, p1.id!!, l1.id!!.value)
 
         mockMvc
             .perform(getRequestTo("/api/statements/object/${l1.id}/predicate/${p1.id}"))
             .andExpect(status().isOk)
+            .andDo(MockMvcResultHandlers.print())
             .andExpect(jsonPath("$", Matchers.hasSize<Int>(2)))
             .andDo(
                 document(

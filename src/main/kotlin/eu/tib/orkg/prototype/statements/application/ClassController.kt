@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
+import java.util.UUID
 
 @RestController
 @RequestMapping("/api/classes/")
@@ -40,13 +41,22 @@ class ClassController(private val service: ClassService, private val resourceSer
         @RequestParam("sortBy", required = false) sortBy: String?,
         @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean,
         @RequestParam("q", required = false) searchString: String?,
-        @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean
+        @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
+        @RequestParam("creator", required = false) creator: UUID?
     ): Iterable<Resource> {
         val pagination = createPageable(page, items, sortBy, desc)
-        return when {
-            searchString == null -> resourceService.findAllByClass(pagination, id)
-            exactMatch -> resourceService.findAllByClassAndLabel(pagination, id, searchString)
-            else -> resourceService.findAllByClassAndLabelContaining(pagination, id, searchString)
+        return if (creator != null) {
+            when {
+                searchString == null -> resourceService.findAllByClassAndCreatedBy(pagination, id, creator)
+                exactMatch -> resourceService.findAllByClassAndLabelAndCreatedBy(pagination, id, searchString, creator)
+                else -> resourceService.findAllByClassAndLabelContainingAndCreatedBy(pagination, id, searchString, creator)
+            }
+        } else {
+            when {
+                searchString == null -> resourceService.findAllByClass(pagination, id)
+                exactMatch -> resourceService.findAllByClassAndLabel(pagination, id, searchString)
+                else -> resourceService.findAllByClassAndLabelContaining(pagination, id, searchString)
+            }
         }
     }
 

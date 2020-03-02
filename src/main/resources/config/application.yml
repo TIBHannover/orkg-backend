@@ -6,6 +6,11 @@ spring:
   # Get rid of "org.postgresql.jdbc.PgConnection.createClob() not implemented" error, see
   # https://hibernate.atlassian.net/browse/HHH-12368
   jpa.properties.hibernate.jdbc.lob.non_contextual_creation: true
+  rdf:
+    # Vocab prefix not used, still hard coded
+    # might need to be copied to other profiles on deployment
+    vocab-prefix: 'http://orkg.org/orkg'
+    frontend-uri: 'http://localhost:3000'
 ---
 spring:
   profiles: development

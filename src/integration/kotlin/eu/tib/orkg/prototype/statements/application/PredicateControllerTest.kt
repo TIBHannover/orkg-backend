@@ -134,7 +134,8 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("id").description("The predicate ID"),
             fieldWithPath("label").description("The predicate label"),
             fieldWithPath("created_at").description("The predicate creation datetime"),
-            fieldWithPath("created_by").description("The ID of the user that created the predicate. All zeros if unknown.")
+            fieldWithPath("created_by").description("The ID of the user that created the predicate. All zeros if unknown."),
+            fieldWithPath("_class").optional().ignored()
         )
 
     private fun predicateListResponseFields() =
@@ -142,6 +143,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].id").description("The predicate ID"),
             fieldWithPath("[].label").description("The predicate label"),
             fieldWithPath("[].created_at").description("The predicate creation datetime"),
-            fieldWithPath("[].created_by").description("The ID of the user that created the predicate. All zeros if unknown.")
+            fieldWithPath("[].created_by").description("The ID of the user that created the predicate. All zeros if unknown."),
+            fieldWithPath("[]._class").optional().ignored()
         )
 }

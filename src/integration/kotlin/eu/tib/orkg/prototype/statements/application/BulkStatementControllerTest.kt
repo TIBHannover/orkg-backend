@@ -3,7 +3,7 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.statements.application.bulk.BulkStatementController
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import eu.tib.orkg.prototype.statements.domain.model.StatementWithResourceService
+import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,7 +25,7 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
     private lateinit var controller: BulkStatementController
 
     @Autowired
-    private lateinit var service: StatementWithResourceService
+    private lateinit var service: StatementService
 
     @Autowired
     private lateinit var resourceService: ResourceService
@@ -45,10 +45,10 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
         val p1 = predicateService.create("blah")
         val p2 = predicateService.create("blub")
 
-        service.create(r1.id!!, p1.id!!, r2.id!!)
-        service.create(r1.id!!, p2.id!!, r3.id!!)
-        service.create(r4.id!!, p2.id!!, r3.id!!)
-        service.create(r4.id!!, p1.id!!, r5.id!!)
+        service.create(r1.id!!.value, p1.id!!, r2.id!!.value)
+        service.create(r1.id!!.value, p2.id!!, r3.id!!.value)
+        service.create(r4.id!!.value, p2.id!!, r3.id!!.value)
+        service.create(r4.id!!.value, p1.id!!, r5.id!!.value)
 
         mockMvc
             .perform(getRequestTo("/api/statements/subjects/?ids=${r1.id},${r4.id}"))
@@ -77,11 +77,11 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
         val p1 = predicateService.create("blah")
         val p2 = predicateService.create("blub")
 
-        service.create(r1.id!!, p1.id!!, r3.id!!)
-        service.create(r1.id!!, p1.id!!, r4.id!!)
-        service.create(r2.id!!, p2.id!!, r4.id!!)
-        service.create(r1.id!!, p1.id!!, r3.id!!)
-        service.create(r3.id!!, p2.id!!, r4.id!!)
+        service.create(r1.id!!.value, p1.id!!, r3.id!!.value)
+        service.create(r1.id!!.value, p1.id!!, r4.id!!.value)
+        service.create(r2.id!!.value, p2.id!!, r4.id!!.value)
+        service.create(r1.id!!.value, p1.id!!, r3.id!!.value)
+        service.create(r3.id!!.value, p2.id!!, r4.id!!.value)
 
         mockMvc
             .perform(getRequestTo("/api/statements/objects/?ids=${r3.id},${r4.id}"))
@@ -108,8 +108,8 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
         val r1 = resourceService.create("Leibniz")
         val p2 = predicateService.create("head quarter")
         val r2 = resourceService.create("Hanover, Germany")
-        val st1 = service.create(s.id!!, p1.id!!, r1.id!!)
-        val st2 = service.create(s.id!!, p2.id!!, r2.id!!)
+        val st1 = service.create(s.id!!.value, p1.id!!, r1.id!!.value)
+        val st2 = service.create(s.id!!.value, p2.id!!, r2.id!!.value)
 
         mockMvc.perform(deleteRequest("/api/statements/?ids=${st1.id},${st2.id}"))
             .andExpect(status().isNoContent)
@@ -129,11 +129,11 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
         val s = resourceService.create("ORKG")
         val p = predicateService.create("created by")
         val o = resourceService.create("Awesome Team")
-        val st = service.create(s.id!!, p.id!!, o.id!!)
+        val st = service.create(s.id!!.value, p.id!!, o.id!!.value)
 
         val s2 = resourceService.create("Other projects")
         val o2 = resourceService.create("The A-Team")
-        val st2 = service.create(s2.id!!, p.id!!, o2.id!!)
+        val st2 = service.create(s2.id!!.value, p.id!!, o2.id!!.value)
 
         val newP = predicateService.create("with love from")
         val newO = resourceService.create("Hannover, Germany")
@@ -166,6 +166,7 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statement.subject").description("A resource"),
             fieldWithPath("[].statement.subject.id").description("The ID of the subject resource"),
             fieldWithPath("[].statement.subject.label").description("The label of the subject resource"),
+            fieldWithPath("[].statement.subject._class").description("The type of the subject (resource, literal, etc...)."),
             fieldWithPath("[].statement.subject.created_at").description("The subject creation datetime"),
             fieldWithPath("[].statement.subject.created_by").description("The ID of the user that created the subject. All zeros if unknown."),
             fieldWithPath("[].statement.subject.classes").description("The classes the subject resource belongs to"),
@@ -173,15 +174,16 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statement.predicate").description("A predicate"),
             fieldWithPath("[].statement.predicate.id").description("The ID of the predicate"),
             fieldWithPath("[].statement.predicate.label").description("The label of the predicate"),
+            fieldWithPath("[].statement.predicate._class").ignored(),
             fieldWithPath("[].statement.predicate.created_at").description("The predicate creation datetime"),
             fieldWithPath("[].statement.predicate.created_by").description("The ID of the user that created the predicate. All zeros if unknown."),
             fieldWithPath("[].statement.object").description("An object"),
             fieldWithPath("[].statement.object.id").description("The ID of the object"),
             fieldWithPath("[].statement.object.label").description("The label of the object"),
-            fieldWithPath("[].statement.object._class").description("The type of the object (resource or literal)."),
+            fieldWithPath("[].statement.object._class").description("The type of the object (resource, literal, etc...)."),
             fieldWithPath("[].statement.object.created_at").description("The object creation datetime"),
             fieldWithPath("[].statement.object.created_by").description("The ID of the user that created the object. All zeros if unknown."),
-            fieldWithPath("[].statement.object.classes").description("The classes the object resource belongs to"),
+            fieldWithPath("[].statement.object.classes").description("The classes the object resource belongs to").optional().ignored(),
             fieldWithPath("[].statement.object.shared").optional().ignored()
         )
 
@@ -194,6 +196,7 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statements.[].subject").description("A resource"),
             fieldWithPath("[].statements.[].subject.id").description("The ID of the subject resource"),
             fieldWithPath("[].statements.[].subject.label").description("The label of the subject resource"),
+            fieldWithPath("[].statements.[].subject._class").description("The type of the subject (resource, literal, etc...)."),
             fieldWithPath("[].statements.[].subject.created_at").description("The subject creation datetime"),
             fieldWithPath("[].statements.[].subject.created_by").description("The ID of the user that created the subject. All zeros if unknown."),
             fieldWithPath("[].statements.[].subject.classes").description("The classes the subject resource belongs to"),
@@ -201,15 +204,16 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statements.[].predicate").description("A predicate"),
             fieldWithPath("[].statements.[].predicate.id").description("The ID of the predicate"),
             fieldWithPath("[].statements.[].predicate.label").description("The label of the predicate"),
+            fieldWithPath("[].statements.[].predicate._class").ignored(),
             fieldWithPath("[].statements.[].predicate.created_at").description("The predicate creation datetime"),
             fieldWithPath("[].statements.[].predicate.created_by").description("The ID of the user that created the predicate. All zeros if unknown."),
             fieldWithPath("[].statements.[].object").description("An object"),
             fieldWithPath("[].statements.[].object.id").description("The ID of the object"),
             fieldWithPath("[].statements.[].object.label").description("The label of the object"),
-            fieldWithPath("[].statements.[].object._class").description("The type of the object (resource or literal)."),
+            fieldWithPath("[].statements.[].object._class").description("The type of the object (resource, literal, etc...)."),
             fieldWithPath("[].statements.[].object.created_at").description("The object creation datetime"),
             fieldWithPath("[].statements.[].object.created_by").description("The ID of the user that created the object. All zeros if unknown."),
-            fieldWithPath("[].statements.[].object.classes").description("The classes the object resource belongs to"),
+            fieldWithPath("[].statements.[].object.classes").description("The classes the object resource belongs to").optional().ignored(),
             fieldWithPath("[].statements.[].object.shared").optional().ignored()
         )
 }

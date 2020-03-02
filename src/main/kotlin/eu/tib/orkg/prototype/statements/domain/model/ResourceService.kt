@@ -55,9 +55,19 @@ interface ResourceService {
     fun findAllByClass(pageable: Pageable, id: ClassId): Iterable<Resource>
 
     /**
+     * Find all resources belonging to a given class and a creator.
+     */
+    fun findAllByClassAndCreatedBy(pageable: Pageable, id: ClassId, createdBy: UUID): Iterable<Resource>
+
+    /**
      * Find all resources belonging to a given class and matching a label.
      */
     fun findAllByClassAndLabel(pageable: Pageable, id: ClassId, label: String): Iterable<Resource>
+
+    /**
+     * Find all resources belonging to a given class and matching a label and created by a creator.
+     */
+    fun findAllByClassAndLabelAndCreatedBy(pageable: Pageable, id: ClassId, label: String, createdBy: UUID): Iterable<Resource>
 
     /**
      * Find all resources belonging to a given class and containing a label.
@@ -65,19 +75,28 @@ interface ResourceService {
     fun findAllByClassAndLabelContaining(pageable: Pageable, id: ClassId, part: String): Iterable<Resource>
 
     /**
-     * Find all resources belonging to a given class.
+     * Find all resources belonging to a given class and containing a label and created by a creator.
+     */
+    fun findAllByClassAndLabelContainingAndCreatedBy(pageable: Pageable, id: ClassId, part: String, createdBy: UUID): Iterable<Resource>
+
+    /**
+     * Find all resources except the ones belonging to a given class.
      */
     fun findAllExcludingClass(pageable: Pageable, ids: Array<ClassId>): Iterable<Resource>
 
     /**
-     * Find all resources belonging to a given class and matching a label.
+     * Find all resources except the ones belonging to a given class and matching a label.
      */
     fun findAllExcludingClassByLabel(pageable: Pageable, ids: Array<ClassId>, label: String): Iterable<Resource>
 
     /**
-     * Find all resources belonging to a given class and containing a label.
+     * Find all resources except the ones belonging to a given class and containing a label.
      */
     fun findAllExcludingClassByLabelContaining(pageable: Pageable, ids: Array<ClassId>, part: String): Iterable<Resource>
+
+    fun findByDOI(doi: String): Optional<Resource>
+
+    fun findByTitle(title: String?): Optional<Resource>
 
     /**
      * Update a resource.

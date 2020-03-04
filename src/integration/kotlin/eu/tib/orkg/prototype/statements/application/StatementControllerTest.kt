@@ -4,8 +4,8 @@ import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import org.hamcrest.Matchers
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
+import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -177,7 +177,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/statements/subject/${r1.id}/predicate/${p1.id}"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", Matchers.hasSize<Int>(1)))
+            .andExpect(jsonPath("$", hasSize<Int>(1)))
             .andDo(
                 document(
                     snippet,
@@ -238,7 +238,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             .perform(getRequestTo("/api/statements/object/${l1.id}/predicate/${p1.id}"))
             .andExpect(status().isOk)
             .andDo(MockMvcResultHandlers.print())
-            .andExpect(jsonPath("$", Matchers.hasSize<Int>(2)))
+            .andExpect(jsonPath("$", hasSize<Int>(2)))
             .andDo(
                 document(
                     snippet,

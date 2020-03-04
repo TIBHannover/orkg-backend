@@ -70,6 +70,26 @@ class Neo4jStatementService :
             .content
             .map { toStatement(it) }
 
+    override fun findAllBySubjectAndPredicate(
+        subjectId: String,
+        predicateId: PredicateId,
+        pagination: Pageable
+    ) =
+        statementRepository
+            .findAllBySubjectAndPredicate(subjectId, predicateId, pagination)
+            .content
+            .map { toStatement(it) }
+
+    override fun findAllByObjectAndPredicate(
+        objectId: String,
+        predicateId: PredicateId,
+        pagination: Pageable
+    ) =
+        statementRepository
+            .findAllByObjectAndPredicate(objectId, predicateId, pagination)
+            .content
+            .map { toStatement(it) }
+
     override fun create(subject: String, predicate: PredicateId, `object`: String) =
         create(UUID(0, 0), subject, predicate, `object`)
 

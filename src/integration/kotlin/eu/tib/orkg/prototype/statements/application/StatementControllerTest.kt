@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
+import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -162,6 +163,36 @@ class StatementControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    fun lookupBySubjectAndPredicate() {
+        val r1 = resourceService.create("one")
+        val r2 = resourceService.create("two")
+        val r3 = resourceService.create("three")
+        val p1 = predicateService.create("blah")
+        val p2 = predicateService.create("blub")
+
+        statementService.create(r1.id!!.value, p1.id!!, r2.id!!.value)
+        statementService.create(r1.id!!.value, p2.id!!, r2.id!!.value)
+        statementService.create(r1.id!!.value, p2.id!!, r3.id!!.value)
+
+        mockMvc
+            .perform(getRequestTo("/api/statements/subject/${r1.id}/predicate/${p1.id}"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$", hasSize<Int>(1)))
+            .andDo(
+                document(
+                    snippet,
+                    requestParameters(
+                        parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
+                        parameterWithName("items").description("Number of items to fetch per page (default: 10)").optional(),
+                        parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
+                        parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
+                    ),
+                    statementListResponseFields()
+                )
+            )
+    }
+
+    @Test
     fun lookupByPredicate() {
         val r1 = resourceService.create("one")
         val r2 = resourceService.create("two")
@@ -176,6 +207,38 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/statements/predicate/${p1.id}"))
             .andExpect(status().isOk)
+            .andDo(
+                document(
+                    snippet,
+                    requestParameters(
+                        parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
+                        parameterWithName("items").description("Number of items to fetch per page (default: 10)").optional(),
+                        parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
+                        parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
+                    ),
+                    statementListResponseFields()
+                )
+            )
+    }
+
+    @Test
+    fun lookupByObjectAndPredicate() {
+        val r1 = resourceService.create("one")
+        val r2 = resourceService.create("two")
+        val r3 = resourceService.create("three")
+        val p1 = predicateService.create("owns")
+        val p2 = predicateService.create("have")
+        val l1 = literalService.create("money")
+
+        statementService.create(r1.id!!.value, p1.id!!, l1.id!!.value)
+        statementService.create(r2.id!!.value, p2.id!!, l1.id!!.value)
+        statementService.create(r3.id!!.value, p1.id!!, l1.id!!.value)
+
+        mockMvc
+            .perform(getRequestTo("/api/statements/object/${l1.id}/predicate/${p1.id}"))
+            .andExpect(status().isOk)
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(jsonPath("$", hasSize<Int>(2)))
             .andDo(
                 document(
                     snippet,

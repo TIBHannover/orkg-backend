@@ -47,7 +47,9 @@ class PredicateController(private val service: PredicateService) : BaseControlle
 
     @PostMapping("/")
     @ResponseStatus(CREATED)
-    fun add(@RequestBody predicate: CreatePredicateRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Predicate> {
+    fun add(@RequestBody predicate: CreatePredicateRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
+        if (predicate.id != null && service.findById(predicate.id).isPresent)
+            return ResponseEntity.badRequest().body("Predicate id <${predicate.id}> already exists!")
         val userId = authenticatedUserId()
         val id = service.create(userId, predicate).id
 

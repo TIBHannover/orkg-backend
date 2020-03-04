@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
+import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -103,6 +104,26 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                     ),
                     createdResponseHeaders(),
                     predicateResponseFields()
+                )
+            )
+    }
+
+    @Test
+    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    fun addExistingId() {
+        service.create(CreatePredicateRequest(id = PredicateId("dummy"), label = "foo"))
+        val duplicatePredicate = mapOf("id" to "dummy", "label" to "bar")
+
+        mockMvc
+            .perform(postRequestWithBody("/api/predicates/", duplicatePredicate))
+            .andExpect(status().isBadRequest)
+            .andDo(
+                document(
+                    snippet,
+                    requestFields(
+                        fieldWithPath("id").description("The predicate id"),
+                        fieldWithPath("label").description("The predicate label")
+                    )
                 )
             )
     }

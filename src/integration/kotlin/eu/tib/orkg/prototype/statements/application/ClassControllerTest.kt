@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import org.hamcrest.Matchers.hasSize
@@ -81,6 +82,26 @@ class ClassControllerTest : RestDocumentationBaseTest() {
                     ),
                     createdResponseHeaders(),
                     classResponseFields()
+                )
+            )
+    }
+
+    @Test
+    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    fun addExistingId() {
+        service.create(CreateClassRequest(id = ClassId("dummy"), label = "foo", uri = null))
+        val duplicateClass = mapOf("label" to "bar", "id" to "dummy")
+
+        mockMvc
+            .perform(postRequestWithBody("/api/classes/", duplicateClass))
+            .andExpect(status().isBadRequest)
+            .andDo(
+                document(
+                    snippet,
+                    requestFields(
+                        fieldWithPath("id").description("The class id"),
+                        fieldWithPath("label").description("The class label")
+                    )
                 )
             )
     }

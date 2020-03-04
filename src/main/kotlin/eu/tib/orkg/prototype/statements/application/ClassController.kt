@@ -74,7 +74,9 @@ class ClassController(private val service: ClassService, private val resourceSer
 
     @PostMapping("/")
     @ResponseStatus(CREATED)
-    fun add(@RequestBody `class`: CreateClassRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Class> {
+    fun add(@RequestBody `class`: CreateClassRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
+        if (`class`.id != null && service.findById(`class`.id).isPresent)
+            return ResponseEntity.badRequest().body("Class id <${`class`.id}> already exists!")
         val userId = authenticatedUserId()
         val id = service.create(userId, `class`).id
         val location = uriComponentsBuilder

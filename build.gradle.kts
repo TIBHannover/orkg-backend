@@ -99,6 +99,13 @@ allprojects {
     }
 }
 
+jacoco {
+    // Upgrade to a newer JaCoCo version, as the one provided by the Gradle
+    // plug-in does not support ignoring Kotlin-generated methods.
+    // TODO: Remove setting when the default version changes to at least that.
+    toolVersion = "0.8.5"
+}
+
 tasks {
     withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"

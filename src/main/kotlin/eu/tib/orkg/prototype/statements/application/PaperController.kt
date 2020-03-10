@@ -89,7 +89,7 @@ class PaperController(
         val paperId = paperObj.id!!
 
         // paper doi
-        if (paper.paper.doi != null) {
+        if (paper.paper.doi != null && paper.paper.doi.isNotEmpty()) {
             val paperDoi = literalService.create(userId, paper.paper.doi).id!!
             statementService.create(userId, paperId.value, hasDoiPredicate, paperDoi.value)
         }
@@ -114,7 +114,7 @@ class PaperController(
             )
 
         // paper published At
-        if (paper.paper.publishedIn != null)
+        if (paper.paper.publishedIn != null && paper.paper.publishedIn.isNotEmpty())
             handlePublishingVenue(paper.paper.publishedIn, paperId, userId)
 
         // paper research field

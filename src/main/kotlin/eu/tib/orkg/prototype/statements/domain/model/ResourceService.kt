@@ -98,6 +98,10 @@ interface ResourceService {
 
     fun findByTitle(title: String?): Optional<Resource>
 
+    fun findAllByDOI(doi: String): Iterable<Resource>
+
+    fun findAllByTitle(title: String?): Iterable<Resource>
+
     /**
      * Update a resource.
      */

@@ -66,5 +66,10 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     @Query("""MATCH (n:Paper)-[:RELATED {predicate_id: "$ID_DOI_PREDICATE"}]->(:Literal {label: {0}}) RETURN n""")
     fun findByDOI(doi: String): Optional<Neo4jResource>
 
+    @Query("""MATCH (n:Paper)-[:RELATED {predicate_id: "$ID_DOI_PREDICATE"}]->(:Literal {label: {0}}) RETURN n""")
+    fun findAllByDOI(doi: String): Iterable<Neo4jResource>
+
     fun findByLabel(label: String?): Optional<Neo4jResource>
+
+    fun findAllByLabel(label: String): Iterable<Neo4jResource>
 }

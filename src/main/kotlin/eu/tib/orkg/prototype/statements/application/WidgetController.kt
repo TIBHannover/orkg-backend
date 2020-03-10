@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import org.springframework.http.HttpEntity
+import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
@@ -23,18 +24,17 @@ class WidgetController(private val service: ResourceService, private val stateme
     ): HttpEntity<WidgetInfo> {
 
         require(searchString != null || titleString != null) { "doi and title is missing" }
-        val found = if (searchString != null)
-            service.findByDOI(searchString)
+        val found = (if (searchString != null)
+            service.findAllByDOI(searchString).firstOrNull()
         else
-            service.findByTitle(titleString)
+            service.findAllByTitle(titleString).firstOrNull())
+            ?: return notFound().build()
 
-        val paperNode = found.orElseThrow { ResourceNotFound() }
+        val totalStatements = statementService.countStatements(found.id!!.value)
 
-        val totalStatements = statementService.countStatements(paperNode.id!!.value)
-
-        return ok(WidgetInfo(id = paperNode.id.toString(),
+        return ok(WidgetInfo(id = found.id.toString(),
                                 doi = searchString,
-                                title = paperNode.label,
+                                title = found.label,
                                 numberOfStatements = totalStatements))
     }
 

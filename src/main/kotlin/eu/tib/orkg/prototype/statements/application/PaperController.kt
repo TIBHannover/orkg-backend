@@ -38,7 +38,7 @@ val MAP_PREDICATE_CLASSES = mapOf("P32" to "Problem")
 
 /** Regular expression to check whether an input string is a valid ORCID id.  */
 private const val ORCID_REGEX =
-    "^\\s*(?:(?:https?://)?orcid.org/)?([0-9]{4})-?([0-9]{4})-?([0-9]{4})-?([0-9]{4})\\s*$"
+    "^\\s*(?:(?:https?://)?orcid.org/)?([0-9]{4})-?([0-9]{4})-?([0-9]{4})-?(([0-9]{4})|([0-9]{3}X))\\s*\$"
 
 @RestController
 @RequestMapping("/api/papers/")

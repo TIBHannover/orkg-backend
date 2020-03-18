@@ -5,6 +5,9 @@ import eu.tib.orkg.prototype.statements.domain.model.Class
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory
 import org.eclipse.rdf4j.model.util.ModelBuilder
+import org.eclipse.rdf4j.model.vocabulary.OWL
+import org.eclipse.rdf4j.model.vocabulary.RDF
+import org.eclipse.rdf4j.model.vocabulary.RDFS
 
 typealias ClassModelExtension = SemanticModelExtension<Class>
 
@@ -21,8 +24,8 @@ data class RdfClass(
         var description = ModelBuilder()
             .setNamespace("c", RdfConstants.CLASS_NS)
             .subject("c:${c.id}")
-            .add("rdf:type", "owl:Class")
-            .add("rdfs:label", toLiteral(c.label))
+            .add(RDF.TYPE, OWL.CLASS)
+            .add(RDFS.LABEL, toLiteral(c.label))
             .build()
 
         // Extend the model if a URI is present. Needs modification via a new builder,
@@ -30,7 +33,7 @@ data class RdfClass(
         if (c.uri != null)
             description = ModelBuilder(description)
                 .subject("c:${c.id}")
-                .add("owl:equivalentClass", toIRI("${c.uri}"))
+                .add(OWL.EQUIVALENTCLASS, toIRI("${c.uri}"))
                 .build()
 
         // Apply all extensions, if given

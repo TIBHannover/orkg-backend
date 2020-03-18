@@ -2,12 +2,15 @@ package eu.tib.orkg.prototype.statements.domain.model.rdf
 
 import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.Class
+import org.eclipse.rdf4j.model.IRI
+import org.eclipse.rdf4j.model.Literal
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory
 import org.eclipse.rdf4j.model.util.ModelBuilder
 import org.eclipse.rdf4j.model.vocabulary.OWL
 import org.eclipse.rdf4j.model.vocabulary.RDF
 import org.eclipse.rdf4j.model.vocabulary.RDFS
+import java.net.URI
 
 typealias ClassModelExtension = SemanticModelExtension<Class>
 
@@ -25,7 +28,7 @@ data class RdfClass(
             .setNamespace("c", RdfConstants.CLASS_NS)
             .subject("c:${c.id}")
             .add(RDF.TYPE, OWL.CLASS)
-            .add(RDFS.LABEL, toLiteral(c.label))
+            .add(RDFS.LABEL, c.label.toLiteral())
             .build()
 
         // Extend the model if a URI is present. Needs modification via a new builder,
@@ -33,7 +36,7 @@ data class RdfClass(
         if (c.uri != null)
             description = ModelBuilder(description)
                 .subject("c:${c.id}")
-                .add(OWL.EQUIVALENTCLASS, toIRI("${c.uri}"))
+                .add(OWL.EQUIVALENTCLASS, c.uri.toIRI())
                 .build()
 
         // Apply all extensions, if given
@@ -45,9 +48,9 @@ data class RdfClass(
         return description
     }
 
-    private fun toIRI(iri: String) = factory.createIRI(iri)
+    private fun String.toLiteral(): Literal = factory.createLiteral(this)
 
-    private fun toLiteral(value: String) = factory.createLiteral(value)
+    private fun URI.toIRI(): IRI = factory.createIRI(this.toString())
 }
 
 /**

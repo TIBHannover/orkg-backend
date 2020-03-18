@@ -5,9 +5,6 @@ import eu.tib.orkg.prototype.statements.domain.model.Class
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory
 import org.eclipse.rdf4j.model.util.ModelBuilder
-import org.eclipse.rdf4j.model.vocabulary.OWL
-import org.eclipse.rdf4j.model.vocabulary.RDF
-import org.eclipse.rdf4j.model.vocabulary.RDFS
 
 typealias ClassModelExtension = SemanticModelExtension<Class>
 
@@ -22,9 +19,6 @@ data class RdfClass(
 
     override fun describe(): Model {
         var description = ModelBuilder()
-            .setNamespace(RDF.NS)
-            .setNamespace(RDFS.NS)
-            .setNamespace(OWL.NS)
             .setNamespace("c", RdfConstants.CLASS_NS)
             .subject("c:${c.id}")
             .add("rdf:type", "owl:Class")

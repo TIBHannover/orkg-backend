@@ -67,7 +67,8 @@ class VocabController(
         if (!checkAcceptHeader(acceptHeader))
             return createRedirectResponse("predicate", id.value, uriComponentsBuilder)
         val predicate = predicateService.findById(id)
-        val response = getRdfSerialization(predicate.get().rdf, acceptHeader)
+                .orElseThrow { IllegalStateException("Could not find predicate $id") }
+        val response = getRdfSerialization(predicate.rdf, acceptHeader)
         return ResponseEntity.ok()
             .body(response)
     }
@@ -82,7 +83,8 @@ class VocabController(
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<String> {
         val clazz = classService.findById(id)
-        val response = getRdfSerialization(clazz.get().rdf, acceptHeader)
+            .orElseThrow { IllegalStateException("Could not find class $id") }
+        val response = getRdfSerialization(clazz.rdf, acceptHeader)
         return ResponseEntity.ok()
             .body(response)
     }

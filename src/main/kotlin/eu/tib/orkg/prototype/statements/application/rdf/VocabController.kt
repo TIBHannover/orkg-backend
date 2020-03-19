@@ -7,6 +7,8 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import eu.tib.orkg.prototype.statements.domain.model.rdf.RdfClass
+import eu.tib.orkg.prototype.statements.domain.model.rdf.RdfRepresentation
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.rio.RDFFormat
 import org.eclipse.rdf4j.rio.Rio
@@ -84,9 +86,9 @@ class VocabController(
     ): ResponseEntity<String> {
         val clazz = classService.findById(id)
             .orElseThrow { IllegalStateException("Could not find class $id") }
-        val response = getRdfSerialization(clazz.rdf, acceptHeader)
+        val representation = RdfRepresentation(RdfClass(clazz), formatFrom(acceptHeader))
         return ResponseEntity.ok()
-            .body(response)
+            .body(representation.render())
     }
 
     private fun checkAcceptHeader(acceptHeader: String): Boolean {

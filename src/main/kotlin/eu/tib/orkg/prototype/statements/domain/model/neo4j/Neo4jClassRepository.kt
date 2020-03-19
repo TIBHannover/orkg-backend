@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import org.springframework.data.neo4j.repository.Neo4jRepository
 import java.util.Optional
+import org.springframework.data.neo4j.repository.Neo4jRepository
 
 interface Neo4jClassRepository : Neo4jRepository<Neo4jClass, Long> {
     override fun findAll(): Iterable<Neo4jClass>

@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping
 
-import org.neo4j.ogm.typeconversion.AttributeConverter
 import java.util.UUID
+import org.neo4j.ogm.typeconversion.AttributeConverter
 
 /**
  * Helper class to convert [UUID]s for use as a property in a graph.

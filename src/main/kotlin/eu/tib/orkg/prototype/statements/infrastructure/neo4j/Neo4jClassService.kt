@@ -7,10 +7,10 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jClass
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jClassIdGenerator
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jClassRepository
-import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.util.Optional
 import java.util.UUID
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional

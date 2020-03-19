@@ -9,11 +9,11 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceIdGenerator
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceRepository
+import java.util.Optional
+import java.util.UUID
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.Optional
-import java.util.UUID
 
 @Service
 @Transactional

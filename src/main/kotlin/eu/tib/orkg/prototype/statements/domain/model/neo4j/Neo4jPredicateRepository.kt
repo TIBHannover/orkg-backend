@@ -1,10 +1,10 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import java.util.Optional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.repository.Neo4jRepository
-import java.util.Optional
 
 interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, Long> {
     override fun findAll(): Iterable<Neo4jPredicate>

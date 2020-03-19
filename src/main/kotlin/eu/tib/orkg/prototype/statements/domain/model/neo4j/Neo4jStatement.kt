@@ -8,6 +8,7 @@ import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.PredicateIdGraphAttributeConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.StatementIdGraphAttributeConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.UUIDGraphAttributeConverter
+import java.util.UUID
 import org.neo4j.ogm.annotation.EndNode
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
@@ -16,7 +17,6 @@ import org.neo4j.ogm.annotation.RelationshipEntity
 import org.neo4j.ogm.annotation.Required
 import org.neo4j.ogm.annotation.StartNode
 import org.neo4j.ogm.annotation.typeconversion.Convert
-import java.util.UUID
 
 @RelationshipEntity(type = "RELATED")
 data class Neo4jStatement(

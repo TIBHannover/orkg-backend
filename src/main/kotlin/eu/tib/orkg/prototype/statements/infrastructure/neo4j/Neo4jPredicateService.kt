@@ -7,11 +7,11 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jPredicate
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jPredicateIdGenerator
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jPredicateRepository
+import java.util.Optional
+import java.util.UUID
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.Optional
-import java.util.UUID
 
 @Service
 @Transactional

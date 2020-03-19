@@ -4,6 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.auth.domain.model.Contributor
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserService
+import java.security.Principal
+import java.util.UUID
+import javax.validation.Valid
+import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Size
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.ResponseEntity
@@ -14,11 +19,6 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.security.Principal
-import java.util.UUID
-import javax.validation.Valid
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.Size
 
 @RestController
 @RequestMapping("/api/user")

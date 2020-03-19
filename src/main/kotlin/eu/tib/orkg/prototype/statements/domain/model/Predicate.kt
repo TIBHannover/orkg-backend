@@ -2,9 +2,9 @@ package eu.tib.orkg.prototype.statements.domain.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.eclipse.rdf4j.model.Model
 import java.time.OffsetDateTime
 import java.util.UUID
+import org.eclipse.rdf4j.model.Model
 
 data class Predicate(
     val id: PredicateId?,

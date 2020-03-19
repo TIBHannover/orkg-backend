@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.statements.application
 
+import java.util.UUID
 import org.springframework.security.authentication.AnonymousAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
-import java.util.UUID
 
 /**
  * Base class for all controllers.

@@ -1,8 +1,5 @@
 package eu.tib.orkg.prototype.auth.persistence
 
-import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.persistence.CascadeType
@@ -15,6 +12,9 @@ import javax.persistence.Table
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
 
 @Entity
 @Table(name = "users")

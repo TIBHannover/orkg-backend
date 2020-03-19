@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype
 
 import eu.tib.orkg.prototype.configuration.Neo4jConfiguration
+import kotlin.annotation.AnnotationTarget.CLASS
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE
@@ -8,7 +9,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
 import org.springframework.transaction.annotation.Transactional
-import kotlin.annotation.AnnotationTarget.CLASS
 
 /**
  * Annotation that helps to setup tests of Neo4j repositories.

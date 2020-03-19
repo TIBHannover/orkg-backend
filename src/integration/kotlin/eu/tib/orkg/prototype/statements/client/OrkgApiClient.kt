@@ -1,6 +1,8 @@
 package eu.tib.orkg.prototype.statements.client
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.net.URI
+import java.util.Base64
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -10,8 +12,6 @@ import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.postForObject
-import java.net.URI
-import java.util.Base64
 
 class OrkgApiClient(private val port: Int = 80) {
 

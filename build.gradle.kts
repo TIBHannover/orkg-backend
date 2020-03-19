@@ -15,10 +15,10 @@ val junitVersion = "5.5.0"
 val testContainersVersion = "1.11.3"
 
 plugins {
-    kotlin("jvm") version "1.3.41"
-    kotlin("plugin.spring") version "1.3.41"
+    kotlin("jvm") version "1.3.70"
+    kotlin("plugin.spring") version "1.3.70"
     // Add no-arg annotations to @Entity, @Embeddable and @MappedSuperclass:
-    kotlin("plugin.jpa") version "1.3.41"
+    kotlin("plugin.jpa") version "1.3.70"
     id("org.springframework.boot") version "2.2.0.RELEASE"
     id("com.coditory.integration-test") version "1.0.6"
     id("org.asciidoctor.convert") version "1.5.9.2"

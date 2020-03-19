@@ -126,7 +126,13 @@ class VocabController(
         accept: String
     ): String {
         val writer = StringWriter()
-        val format = when (accept) {
+        val format = formatFrom(accept)
+        Rio.write(model, writer, format)
+        return writer.toString()
+    }
+
+    private fun formatFrom(acceptHeader: String): RDFFormat =
+        when (acceptHeader) {
             "application/n-triples" -> RDFFormat.NTRIPLES
             "application/rdf+xml" -> RDFFormat.RDFXML
             "text/n3" -> RDFFormat.N3
@@ -138,7 +144,4 @@ class VocabController(
             "text/nquads" -> RDFFormat.NQUADS
             else -> RDFFormat.TURTLE
         }
-        Rio.write(model, writer, format)
-        return writer.toString()
-    }
 }

@@ -107,26 +107,30 @@ jacoco {
 }
 
 tasks {
-    withType<KotlinCompile> {
+    val build by existing
+    val integrationTest by existing
+    val war by existing
+
+    withType(KotlinCompile::class.java).configureEach {
         kotlinOptions.jvmTarget = "1.8"
     }
 
-    withType<Test> {
+    withType(Test::class.java).configureEach {
         useJUnitPlatform()
 
         outputs.dir(snippetsDir)
     }
 
-    "jacocoTestReport"(JacocoReport::class) {
+    named("jacocoTestReport", JacocoReport::class).configure {
         reports {
             html.isEnabled = true
             xml.isEnabled = true
         }
     }
 
-    "asciidoctor"(AsciidoctorTask::class) {
+    named("asciidoctor", AsciidoctorTask::class).configure {
         inputs.dir(snippetsDir)
-        dependsOn("integrationTest")
+        dependsOn(integrationTest)
 
         // outputs.upToDateWhen { false }
         backends("html5")
@@ -152,7 +156,7 @@ tasks {
     }
 
     docker {
-        dependsOn(tasks["build"])
+        dependsOn(build.get())
         name = "orkg/prototype"
         buildArgs(
             mapOf(
@@ -160,7 +164,7 @@ tasks {
                 "VERSION" to "$version"
             )
         )
-        files(tasks["war"].outputs)
+        files(war.get().outputs)
     }
 
     spotless {

@@ -9,8 +9,8 @@ val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java)
     .kotlinPluginVersion
 
 val neo4jVersion = "3.5.+" // should match version in Dockerfile
-val springDataNeo4jVersion = "5.2.0"
-val springSecurityOAuthVersion = "2.3.6"
+val springDataNeo4jVersion = "5.2.5"
+val springSecurityOAuthVersion = "2.3.8"
 val junitVersion = "5.5.0"
 val testContainersVersion = "1.11.3"
 
@@ -19,7 +19,7 @@ plugins {
     kotlin("plugin.spring") version "1.3.70"
     // Add no-arg annotations to @Entity, @Embeddable and @MappedSuperclass:
     kotlin("plugin.jpa") version "1.3.70"
-    id("org.springframework.boot") version "2.2.0.RELEASE"
+    id("org.springframework.boot") version "2.2.5.RELEASE"
     id("com.coditory.integration-test") version "1.0.6"
     id("org.asciidoctor.convert") version "1.5.9.2"
     id("com.palantir.docker") version "0.22.1"

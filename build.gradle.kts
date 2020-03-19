@@ -22,7 +22,7 @@ plugins {
     id("org.springframework.boot") version "2.2.5.RELEASE"
     id("com.coditory.integration-test") version "1.0.8"
     id("org.asciidoctor.convert") version "1.5.9.2"
-    id("com.palantir.docker") version "0.22.1"
+    id("com.palantir.docker") version "0.25.0"
     id("com.diffplug.gradle.spotless") version "3.27.2"
     jacoco
     war

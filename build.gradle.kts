@@ -1,4 +1,4 @@
-import org.asciidoctor.gradle.AsciidoctorTask
+import org.asciidoctor.gradle.jvm.AsciidoctorTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -21,7 +21,7 @@ plugins {
     kotlin("plugin.jpa") version "1.3.70"
     id("org.springframework.boot") version "2.2.5.RELEASE"
     id("com.coditory.integration-test") version "1.0.8"
-    id("org.asciidoctor.convert") version "1.5.9.2"
+    id("org.asciidoctor.jvm.convert") version "3.1.0"
     id("com.palantir.docker") version "0.25.0"
     id("com.diffplug.gradle.spotless") version "3.27.2"
     jacoco
@@ -30,6 +30,11 @@ plugins {
 
 apply {
     plugin("io.spring.dependency-management")
+}
+
+configurations {
+    // The Asciidoctor Gradle plug-in does not create it anymore, so we have to...
+    create("asciidoctor")
 }
 
 dependencies {
@@ -86,7 +91,7 @@ dependencies {
     //
     // Documentation
     //
-    asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.3.RELEASE")
+    "asciidoctor"("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.4.RELEASE")
     compile("net.nprod:rdf4k:0.0.9")
 }
 
@@ -131,9 +136,14 @@ tasks {
     named("asciidoctor", AsciidoctorTask::class).configure {
         inputs.dir(snippetsDir)
         dependsOn(integrationTest)
+        configurations("asciidoctor")
+        // TODO: Use {includedir} in documentation, change strategy afterwards
+        baseDirFollowsSourceFile()
 
         // outputs.upToDateWhen { false }
-        backends("html5")
+        outputOptions {
+            backends("html5")
+        }
 
         options(mapOf("doctype" to "book"))
 

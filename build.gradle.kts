@@ -11,8 +11,10 @@ val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java)
 val neo4jVersion = "3.5.+" // should match version in Dockerfile
 val springDataNeo4jVersion = "5.2.5"
 val springSecurityOAuthVersion = "2.3.8"
-val junitVersion = "5.6.0"
 val testContainersVersion = "1.13.0"
+
+// Overwrite versions from Spring Dependencies BOM (applied by management plug-in)
+extra["junit-jupiter.version"] = "5.6.0"
 
 plugins {
     kotlin("jvm") version "1.3.70"
@@ -39,9 +41,6 @@ configurations {
 }
 
 dependencies {
-    // BOMs
-    implementation("org.junit:junit-bom:$junitVersion")
-
     //
     // Runtime
     //
@@ -74,14 +73,11 @@ dependencies {
     // Testing
     //
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
-        exclude(module = "junit")
+        exclude(group = "junit", module = "junit")
+        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
-    testImplementation("org.junit.jupiter:junit-jupiter-api")
-    testImplementation("org.junit.jupiter:junit-jupiter-params")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine")
-    testImplementation("org.mockito:mockito-junit-jupiter")
 
     testImplementation("org.neo4j:neo4j-ogm-embedded-driver")
     testImplementation("org.neo4j:neo4j-ogm-embedded-native-types")

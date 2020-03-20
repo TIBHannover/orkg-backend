@@ -63,6 +63,8 @@ dependencies {
     implementation("javax.xml.bind:jaxb-api:2.3.0")
     implementation("javax.activation:activation:1.1")
     implementation("org.glassfish.jaxb:jaxb-runtime:2.3.0")
+    // RDF
+    implementation("net.nprod:rdf4k:0.1.2")
 
     // Add Tomcat as "provided" runtime so that we can deploy as WAR
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
@@ -92,7 +94,6 @@ dependencies {
     // Documentation
     //
     "asciidoctor"("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.4.RELEASE")
-    compile("net.nprod:rdf4k:0.0.9")
 }
 
 val snippetsDir = file("build/generated-snippets")

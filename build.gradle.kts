@@ -19,6 +19,7 @@ plugins {
     kotlin("plugin.spring") version "1.3.70"
     // Add no-arg annotations to @Entity, @Embeddable and @MappedSuperclass:
     kotlin("plugin.jpa") version "1.3.70"
+    id("org.jetbrains.dokka") version "0.10.1"
     id("org.springframework.boot") version "2.2.5.RELEASE"
     id("com.coditory.integration-test") version "1.0.8"
     id("org.asciidoctor.jvm.convert") version "3.1.0"
@@ -125,6 +126,13 @@ tasks {
         useJUnitPlatform()
 
         outputs.dir(snippetsDir)
+    }
+
+    named("dokka", org.jetbrains.dokka.gradle.DokkaTask::class) {
+        outputFormat = "html"
+        configuration {
+            includes = listOf("packages.md")
+        }
     }
 
     named("jacocoTestReport", JacocoReport::class).configure {

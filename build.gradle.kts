@@ -44,7 +44,7 @@ dependencies {
     //
     // Runtime
     //
-    implementation(kotlin("stdlib-jdk8", kotlinVersion))
+    implementation(kotlin("stdlib", kotlinVersion))
     implementation(kotlin("reflect", kotlinVersion))
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -115,7 +115,7 @@ tasks {
     val war by existing
 
     withType(KotlinCompile::class.java).configureEach {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = "${JavaVersion.VERSION_11}"
     }
 
     withType(Test::class.java).configureEach {

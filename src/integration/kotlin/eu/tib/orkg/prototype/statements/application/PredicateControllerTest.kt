@@ -89,6 +89,26 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    fun lookupWithSpecialChars() {
+        service.create("has name")
+        service.create("gave name to")
+        service.create("know(s)")
+
+        mockMvc
+            .perform(getRequestTo("/api/predicates/?q=know("))
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    snippet,
+                    requestParameters(
+                        parameterWithName("q").description("A search term that must be contained in the label")
+                    ),
+                    predicateListResponseFields()
+                )
+            )
+    }
+
+    @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun add() {
         val resource = mapOf("label" to "knows")

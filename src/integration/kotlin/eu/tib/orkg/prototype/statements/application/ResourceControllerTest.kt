@@ -89,6 +89,27 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    fun lookupWithSpecialChars() {
+        service.create("research contribution")
+        service.create("programming language (PL)")
+        service.create("research topic")
+
+        mockMvc
+            .perform(getRequestTo("/api/resources/?q=PL)"))
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    snippet,
+                    requestParameters(
+                        parameterWithName("q").description("A search term that must be contained in the label"),
+                        parameterWithName("exact").description("Whether it is an exact string lookup or just containment").optional()
+                    ),
+                    resourceListResponseFields()
+                )
+            )
+    }
+
+    @Test
     fun fetch() {
         val id = service.create("research contribution").id
 

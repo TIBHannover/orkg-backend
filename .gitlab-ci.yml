@@ -1,4 +1,4 @@
-image: azul/zulu-openjdk-debian:8
+image: azul/zulu-openjdk-alpine:11
 
 # Enable Docker-in-Docker (DinD) for TestContainers
 services:

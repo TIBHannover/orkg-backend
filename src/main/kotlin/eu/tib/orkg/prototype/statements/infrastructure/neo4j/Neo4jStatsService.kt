@@ -23,12 +23,10 @@ class Neo4jStatsService(
         val fieldsCount = neo4jStatsRepository.getResearchFieldsCount()
         val problemsCount = extractValue(labels, "Problem")
         val relationsTypes = metadata.first()["relTypesCount"] as Map<*, *>
-        val resourceStatementsCount = extractValue(relationsTypes, "RELATES_TO")
-        val literalsStatementsCount = extractValue(relationsTypes, "HAS_VALUE_OF")
-        val statementsCount = literalsStatementsCount + resourceStatementsCount
+        val statementsCount = extractValue(relationsTypes, "RELATED")
         return Stats(statementsCount, resourcesCount, predicatesCount,
             literalsCount, papersCount, classesCount, contributionsCount,
-            fieldsCount, problemsCount, resourceStatementsCount, literalsStatementsCount)
+            fieldsCount, problemsCount)
     }
 
     override fun getFieldsStats(): Map<String, Int> {

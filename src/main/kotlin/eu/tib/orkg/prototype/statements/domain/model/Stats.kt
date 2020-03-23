@@ -9,7 +9,5 @@ data class Stats(
     val classes: Long,
     val contributions: Long,
     val fields: Long,
-    val problems: Long,
-    val resourceStatements: Long,
-    val literalStatements: Long
+    val problems: Long
 )

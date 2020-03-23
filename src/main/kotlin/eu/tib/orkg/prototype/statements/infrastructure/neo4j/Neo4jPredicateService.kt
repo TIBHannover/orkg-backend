@@ -52,13 +52,13 @@ class Neo4jPredicateService(
 
     override fun findAllByLabel(label: String, pageable: Pageable) =
         neo4jPredicateRepository
-            .findAllByLabelMatchesRegex("(?i)^$label$", pageable) // TODO: See declaration
+            .findAllByLabelMatchesRegex("(?i)^${Regex.escape(label)}$", pageable) // TODO: See declaration
             .content
             .map(Neo4jPredicate::toPredicate)
 
     override fun findAllByLabelContaining(part: String, pageable: Pageable) =
         neo4jPredicateRepository
-            .findAllByLabelMatchesRegex("(?i).*$part.*", pageable) // TODO: See declaration
+            .findAllByLabelMatchesRegex("(?i).*${Regex.escape(part)}.*", pageable) // TODO: See declaration
             .content
             .map(Neo4jPredicate::toPredicate)
 

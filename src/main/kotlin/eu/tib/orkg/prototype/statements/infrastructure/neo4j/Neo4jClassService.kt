@@ -46,11 +46,11 @@ class Neo4jClassService(
             .map(Neo4jClass::toClass)
 
     override fun findAllByLabel(label: String): Iterable<Class> =
-        neo4jClassRepository.findAllByLabelMatchesRegex("(?i)^$label$") // TODO: See declaration
+        neo4jClassRepository.findAllByLabelMatchesRegex("(?i)^${Regex.escape(label)}$") // TODO: See declaration
             .map(Neo4jClass::toClass)
 
     override fun findAllByLabelContaining(part: String): Iterable<Class> =
-        neo4jClassRepository.findAllByLabelMatchesRegex("(?i).*$part.*") // TODO: See declaration
+        neo4jClassRepository.findAllByLabelMatchesRegex("(?i).*${Regex.escape(part)}.*") // TODO: See declaration
             .map(Neo4jClass::toClass)
 
     override fun update(`class`: Class): Class {

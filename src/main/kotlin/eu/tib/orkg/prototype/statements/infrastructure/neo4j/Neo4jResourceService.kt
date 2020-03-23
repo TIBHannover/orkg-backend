@@ -50,12 +50,12 @@ class Neo4jResourceService(
             .map(Neo4jResource::toResource)
 
     override fun findAllByLabel(pageable: Pageable, label: String): Iterable<Resource> =
-        neo4jResourceRepository.findAllByLabelMatchesRegex("(?i)^$label$", pageable) // TODO: See declaration
+        neo4jResourceRepository.findAllByLabelMatchesRegex("(?i)^$${Regex.escape(label)}$", pageable) // TODO: See declaration
             .content
             .map(Neo4jResource::toResource)
 
     override fun findAllByLabelContaining(pageable: Pageable, part: String): Iterable<Resource> =
-        neo4jResourceRepository.findAllByLabelMatchesRegex("(?i).*$part.*", pageable) // TODO: See declaration
+        neo4jResourceRepository.findAllByLabelMatchesRegex("(?i).*${Regex.escape(part)}.*", pageable) // TODO: See declaration
             .content
             .map(Neo4jResource::toResource)
 

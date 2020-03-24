@@ -10,6 +10,7 @@ services:
       - backend
     depends_on:
       - neo4j
+      - postgres
 
   neo4j:
     image: orkg/neo4j-dev

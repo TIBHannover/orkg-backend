@@ -1,0 +1,7 @@
+:orkg: Open Research Knowledge Graph
+:orkg_full: {orkg} (ORKG)
+:gitlab_base: https://gitlab.com
+:gitlab_group: TIBHannover/orkg
+:repo_name: orkg-backend
+:project_url: {gitlab_base}/{gitlab_group}/{repo_name}
+:issues_url: {project_url}/-/issues

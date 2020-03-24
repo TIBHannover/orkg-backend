@@ -45,6 +45,8 @@ build:
   stage: build
   script:
     - ./gradlew build
+    - ./gradlew jacocoTestCoverageVerification
+    - ./gradlew jacocoTestReport
   artifacts:
     paths:
       - build/reports/

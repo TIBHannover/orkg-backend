@@ -17,6 +17,8 @@ val testContainersVersion = "1.13.0"
 extra["junit-jupiter.version"] = "5.6.0"
 
 plugins {
+    jacoco
+    war
     kotlin("jvm") version "1.3.70"
     kotlin("plugin.spring") version "1.3.70"
     // Add no-arg annotations to @Entity, @Embeddable and @MappedSuperclass:
@@ -27,8 +29,6 @@ plugins {
     id("org.asciidoctor.jvm.convert") version "3.1.0"
     id("com.palantir.docker") version "0.25.0"
     id("com.diffplug.gradle.spotless") version "3.27.2"
-    jacoco
-    war
 }
 
 apply {

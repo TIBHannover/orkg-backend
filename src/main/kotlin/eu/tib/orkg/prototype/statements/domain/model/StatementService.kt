@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
-import org.springframework.data.domain.Pageable
 import java.util.Optional
 import java.util.UUID
+import org.springframework.data.domain.Pageable
 
 /**
  * A service dealing with general statements.

@@ -1,4 +1,4 @@
-import org.asciidoctor.gradle.AsciidoctorTask
+import org.asciidoctor.gradle.jvm.AsciidoctorTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -9,21 +9,24 @@ val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java)
     .kotlinPluginVersion
 
 val neo4jVersion = "3.5.+" // should match version in Dockerfile
-val springDataNeo4jVersion = "5.2.0"
-val springSecurityOAuthVersion = "2.3.6"
-val junitVersion = "5.5.0"
-val testContainersVersion = "1.11.3"
+val springDataNeo4jVersion = "5.2.5"
+val springSecurityOAuthVersion = "2.3.8"
+val testContainersVersion = "1.13.0"
+
+// Overwrite versions from Spring Dependencies BOM (applied by management plug-in)
+extra["junit-jupiter.version"] = "5.6.0"
 
 plugins {
-    kotlin("jvm") version "1.3.41"
-    kotlin("plugin.spring") version "1.3.41"
+    kotlin("jvm") version "1.3.70"
+    kotlin("plugin.spring") version "1.3.70"
     // Add no-arg annotations to @Entity, @Embeddable and @MappedSuperclass:
-    kotlin("plugin.jpa") version "1.3.41"
-    id("org.springframework.boot") version "2.2.0.RELEASE"
-    id("com.coditory.integration-test") version "1.0.6"
-    id("org.asciidoctor.convert") version "1.5.9.2"
-    id("com.palantir.docker") version "0.22.1"
-    id("com.diffplug.gradle.spotless") version "3.23.1"
+    kotlin("plugin.jpa") version "1.3.70"
+    id("org.jetbrains.dokka") version "0.10.1"
+    id("org.springframework.boot") version "2.2.5.RELEASE"
+    id("com.coditory.integration-test") version "1.0.8"
+    id("org.asciidoctor.jvm.convert") version "3.1.0"
+    id("com.palantir.docker") version "0.25.0"
+    id("com.diffplug.gradle.spotless") version "3.27.2"
     jacoco
     war
 }
@@ -32,14 +35,16 @@ apply {
     plugin("io.spring.dependency-management")
 }
 
-dependencies {
-    // BOMs
-    implementation("org.junit:junit-bom:$junitVersion")
+configurations {
+    // The Asciidoctor Gradle plug-in does not create it anymore, so we have to...
+    create("asciidoctor")
+}
 
+dependencies {
     //
     // Runtime
     //
-    implementation(kotlin("stdlib-jdk8", kotlinVersion))
+    implementation(kotlin("stdlib", kotlinVersion))
     implementation(kotlin("reflect", kotlinVersion))
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -58,6 +63,8 @@ dependencies {
     implementation("javax.xml.bind:jaxb-api:2.3.0")
     implementation("javax.activation:activation:1.1")
     implementation("org.glassfish.jaxb:jaxb-runtime:2.3.0")
+    // RDF
+    implementation("net.nprod:rdf4k:0.1.2")
 
     // Add Tomcat as "provided" runtime so that we can deploy as WAR
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
@@ -66,14 +73,11 @@ dependencies {
     // Testing
     //
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
-        exclude(module = "junit")
+        exclude(group = "junit", module = "junit")
+        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
-    testImplementation("org.junit.jupiter:junit-jupiter-api")
-    testImplementation("org.junit.jupiter:junit-jupiter-params")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine")
-    testImplementation("org.mockito:mockito-junit-jupiter")
 
     testImplementation("org.neo4j:neo4j-ogm-embedded-driver")
     testImplementation("org.neo4j:neo4j-ogm-embedded-native-types")
@@ -86,8 +90,7 @@ dependencies {
     //
     // Documentation
     //
-    asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.3.RELEASE")
-    compile("net.nprod:rdf4k:0.0.9")
+    "asciidoctor"("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.4.RELEASE")
 }
 
 val snippetsDir = file("build/generated-snippets")
@@ -107,29 +110,45 @@ jacoco {
 }
 
 tasks {
-    withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.8"
+    val build by existing
+    val integrationTest by existing
+    val war by existing
+
+    withType(KotlinCompile::class.java).configureEach {
+        kotlinOptions.jvmTarget = "${JavaVersion.VERSION_11}"
     }
 
-    withType<Test> {
+    withType(Test::class.java).configureEach {
         useJUnitPlatform()
 
         outputs.dir(snippetsDir)
     }
 
-    "jacocoTestReport"(JacocoReport::class) {
+    named("dokka", org.jetbrains.dokka.gradle.DokkaTask::class) {
+        outputFormat = "html"
+        configuration {
+            includes = listOf("packages.md")
+        }
+    }
+
+    named("jacocoTestReport", JacocoReport::class).configure {
         reports {
             html.isEnabled = true
             xml.isEnabled = true
         }
     }
 
-    "asciidoctor"(AsciidoctorTask::class) {
+    named("asciidoctor", AsciidoctorTask::class).configure {
         inputs.dir(snippetsDir)
-        dependsOn("integrationTest")
+        dependsOn(integrationTest)
+        configurations("asciidoctor")
+        // TODO: Use {includedir} in documentation, change strategy afterwards
+        baseDirFollowsSourceFile()
 
         // outputs.upToDateWhen { false }
-        backends("html5")
+        outputOptions {
+            backends("html5")
+        }
 
         options(mapOf("doctype" to "book"))
 
@@ -152,7 +171,7 @@ tasks {
     }
 
     docker {
-        dependsOn(tasks["build"])
+        dependsOn(build.get())
         name = "orkg/prototype"
         buildArgs(
             mapOf(
@@ -160,7 +179,7 @@ tasks {
                 "VERSION" to "$version"
             )
         )
-        files(tasks["war"].outputs)
+        files(war.get().outputs)
     }
 
     spotless {

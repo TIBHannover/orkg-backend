@@ -1,4 +1,4 @@
-FROM azul/zulu-openjdk-alpine
+FROM azul/zulu-openjdk-alpine:11-jre
 LABEL maintainer="Manuel Prinz <manuel.prinz@tib.eu>"
 
 ARG PROJECT_NAME

@@ -2,11 +2,11 @@ package eu.tib.orkg.prototype.auth.service
 
 import eu.tib.orkg.prototype.auth.persistence.RoleEntity
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
+import java.util.Optional
+import java.util.UUID
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.Optional
-import java.util.UUID
 
 @Service
 @Transactional

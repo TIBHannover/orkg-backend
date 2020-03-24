@@ -2,9 +2,9 @@ package eu.tib.orkg.prototype.statements.domain.model
 
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
-import org.springframework.data.domain.Pageable
 import java.util.Optional
 import java.util.UUID
+import org.springframework.data.domain.Pageable
 
 interface ResourceService {
     /**

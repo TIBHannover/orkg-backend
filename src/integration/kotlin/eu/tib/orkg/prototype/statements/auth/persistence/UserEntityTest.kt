@@ -2,6 +2,8 @@ package eu.tib.orkg.prototype.statements.auth.persistence
 
 import eu.tib.orkg.prototype.TestContainersJpaTest
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
+import java.util.UUID
+import javax.persistence.PersistenceException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
 import org.hibernate.id.IdentifierGenerationException
@@ -10,8 +12,6 @@ import org.postgresql.util.PSQLException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.test.context.TestPropertySource
-import java.util.UUID
-import javax.persistence.PersistenceException
 
 @TestContainersJpaTest
 @TestPropertySource(

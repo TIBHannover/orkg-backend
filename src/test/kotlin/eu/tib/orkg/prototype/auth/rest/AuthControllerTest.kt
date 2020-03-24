@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.rest.AuthController.RegisterUserRequest
 import eu.tib.orkg.prototype.auth.service.UserService
+import java.util.Optional
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
@@ -20,7 +21,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
-import java.util.Optional
 
 @WebMvcTest(controllers = [AuthController::class])
 class AuthControllerTest {

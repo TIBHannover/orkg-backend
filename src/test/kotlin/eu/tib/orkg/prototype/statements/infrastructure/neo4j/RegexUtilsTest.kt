@@ -1,0 +1,60 @@
+package eu.tib.orkg.prototype.statements.infrastructure.neo4j
+
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtensionContext
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.ArgumentsProvider
+import org.junit.jupiter.params.provider.ArgumentsSource
+import java.util.stream.Stream
+
+@DisplayName("Regex utils")
+class RegexUtilsTest {
+
+    @ParameterizedTest(name = """{0} operator ("{1}") is correctly escaped""")
+    @ArgumentsSource(SpecialCharsArgumentsProvider::class)
+    @DisplayName("should escape special chars")
+    fun shouldEscapeSpecialChar(name: String, input: String, expected: String) {
+        assertThat(escapeRegexString(input)).isEqualTo(expected)
+    }
+
+    @Test
+    @DisplayName("shouldn't escape any char")
+    fun shouldNotEscapeAnything() {
+        assertThat(escapeRegexString("http://clean string & needs_nothing"))
+            .isEqualTo("http://clean string & needs_nothing")
+    }
+
+    /**
+     * Helper class to generate arguments for the parameterized test.
+     *
+     * Note: This was created because [org.junit.jupiter.params.provider.CsvSource] turned out to be unreadable.
+     */
+    internal class SpecialCharsArgumentsProvider : ArgumentsProvider {
+        override fun provideArguments(context: ExtensionContext?): Stream<out Arguments>? =
+            Stream.of(
+                // name, input, expected
+                Arguments.of("left named-capturing group", """<""", """\<"""),
+                Arguments.of("right named-capturing group", """>""", """\>"""),
+                Arguments.of("left group", """(""", """\("""),
+                Arguments.of("right group", """)""", """\)"""),
+                Arguments.of("left character class", """[""", """\["""),
+                Arguments.of("right character class", """]""", """\]"""),
+                Arguments.of("left counter", """{""", """\{"""),
+                Arguments.of("right counter", """}""", """\}"""),
+                Arguments.of("quotation", """\""", """\\"""),
+                Arguments.of("negation/beginning of line", """^""", """\^"""),
+                Arguments.of("range", """-""", """\-"""),
+                Arguments.of("assigment", """=""", """\="""),
+                Arguments.of("substitution/end of line", """$""", """\$"""),
+                Arguments.of("negation", """!""", """\!"""),
+                Arguments.of("alternative", """|""", """\|"""),
+                Arguments.of("zero or once quantification", """?""", """\?"""),
+                Arguments.of("zero or more quantification", """*""", """\*"""),
+                Arguments.of("one or more quantification", """+""", """\+"""),
+                Arguments.of("any character", """.""", """\.""")
+            )
+    }
+}

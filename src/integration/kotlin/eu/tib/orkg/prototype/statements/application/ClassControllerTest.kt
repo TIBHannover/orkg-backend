@@ -127,6 +127,26 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    fun lookupWithSpecialChars() {
+        service.create("research contribution")
+        service.create("programming language (PL)")
+        service.create("research topic")
+
+        mockMvc
+            .perform(getRequestTo("/api/classes/?q=PL)"))
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    snippet,
+                    RequestDocumentation.requestParameters(
+                        RequestDocumentation.parameterWithName("q").description("A search term that must be contained in the label")
+                    ),
+                    classListResponseFields()
+                )
+            )
+    }
+
+    @Test
     fun lookupByClass() {
         val id = service.create("research contribution").id!!
         val set = listOf(id).toSet()

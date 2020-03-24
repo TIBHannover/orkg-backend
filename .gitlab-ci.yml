@@ -57,7 +57,7 @@ pages:
   script:
     - ./gradlew asciidoctor
     - mkdir -p public
-    - cp -r build/asciidoc/html5/* public/
+    - cp -r build/docs/asciidoc/* public/
   artifacts:
     paths:
       - public

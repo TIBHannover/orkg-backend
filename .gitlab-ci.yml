@@ -46,7 +46,8 @@ build:
   script:
     - ./gradlew build
     - ./gradlew jacocoTestCoverageVerification
-    - ./gradlew jacocoTestReport
+    - ./gradlew jacocoTestReport printCoverage
+  coverage: '/^Coverage:\s(\d+\.\d+%)/'
   artifacts:
     paths:
       - build/reports/

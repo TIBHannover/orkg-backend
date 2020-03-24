@@ -26,6 +26,7 @@ plugins {
     id("org.jetbrains.dokka") version "0.10.1"
     id("org.springframework.boot") version "2.2.5.RELEASE"
     id("com.coditory.integration-test") version "1.0.8"
+    id("de.jansauer.printcoverage") version "2.0.0"
     id("org.asciidoctor.jvm.convert") version "3.1.0"
     id("com.palantir.docker") version "0.25.0"
     id("com.diffplug.gradle.spotless") version "3.27.2"

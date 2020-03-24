@@ -16,6 +16,7 @@ class RegexUtilsTest {
     @ParameterizedTest(name = """{0} operator ("{1}") is correctly escaped""")
     @ArgumentsSource(SpecialCharsArgumentsProvider::class)
     @DisplayName("should escape special chars")
+    @Suppress("UNUSED_PARAMETER") // because "name" is unused in the test, but used for improving the description
     fun shouldEscapeSpecialChar(name: String, input: String, expected: String) {
         assertThat(escapeRegexString(input)).isEqualTo(expected)
     }

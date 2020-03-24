@@ -37,7 +37,7 @@ class ExampleData(
             resourceService.create("Gruber's design of ontologies").id!!
         val wilesProof =
             resourceService.create("Wiles's proof of Fermat's last theorem").id!!
-        val mathProof =
+        // val mathProof =
             resourceService.create("Mathematical proof").id!!
         val modularityTheorem =
             resourceService.create("Modularity theorem").id!!

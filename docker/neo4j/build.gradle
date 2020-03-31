@@ -1,5 +1,7 @@
 plugins {
     id "com.palantir.docker"
+    // Workaround for Gradle IDEA bug, see https://youtrack.jetbrains.com/issue/IDEA-228368#focus=streamItem-27-4023669.0-0
+    id "java"
 }
 
 docker {

@@ -173,6 +173,7 @@ tasks {
 
     docker {
         dependsOn(build.get())
+        pull(true)
         name = "orkg/prototype"
         buildArgs(
             mapOf(

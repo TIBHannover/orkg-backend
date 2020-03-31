@@ -4,4 +4,5 @@ plugins {
 
 docker {
     name = "orkg/neo4j-dev"
+    pull true
 }

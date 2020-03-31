@@ -52,6 +52,8 @@ build:
     paths:
       - build/reports/
       - build/libs/orkg-*.war
+    reports:
+      junit: build/test-results/**/TEST-*.xml
 
 pages:
   stage: deploy

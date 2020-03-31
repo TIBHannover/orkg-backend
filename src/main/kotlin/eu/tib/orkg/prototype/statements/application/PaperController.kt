@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.net.URL
 
 const val ID_DOI_PREDICATE = "P26"
 const val ID_AUTHOR_PREDICATE = "P27"
@@ -89,9 +90,15 @@ class PaperController(
         val paperId = paperObj.id!!
 
         // paper doi
-        if (paper.paper.doi != null && paper.paper.doi.isNotEmpty()) {
+        if (paper.paper.doi?.isNotEmpty()!!) {
             val paperDoi = literalService.create(userId, paper.paper.doi).id!!
             statementService.create(userId, paperId.value, hasDoiPredicate, paperDoi.value)
+        }
+
+        // paper URL
+        if (paper.paper.url != null) {
+            val paperUrl = literalService.create(userId, paper.paper.url.toString()).id!!
+            statementService.create(userId, paperId.value, hasDoiPredicate, paperUrl.value)
         }
 
         // paper authors
@@ -114,7 +121,7 @@ class PaperController(
             )
 
         // paper published At
-        if (paper.paper.publishedIn != null && paper.paper.publishedIn.isNotEmpty())
+        if (paper.paper.publishedIn?.isNotEmpty()!!)
             handlePublishingVenue(paper.paper.publishedIn, paperId, userId)
 
         // paper research field
@@ -395,6 +402,7 @@ data class Paper(
     val publicationMonth: Int?,
     val publicationYear: Int?,
     val publishedIn: String?,
+    val url: URL?,
     val researchField: String,
     val contributions: List<Contribution>?
 )

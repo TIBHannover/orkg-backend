@@ -7,7 +7,6 @@ services:
       - "7687:7687"  # BOLT
     environment:
       - NEO4J_AUTH=none
-      - NEO4J_dbms_unmanagedExtensionClasses=semantics.extension=/rdf
     volumes:
       - 'data-neo4j:/data'
 

@@ -14,6 +14,9 @@ ENV SEMANTICS_EXT_VERSION=3.5.0.4
 # Check https://github.com/neo4j-contrib/neo4j-apoc-procedures#version-compatibility-matrix
 ENV APOC_EXT_VERSION=3.5.0.9
 
+# Activate semantics plug-in
+ENV NEO4J_dbms_unmanagedExtensionClasses="semantics.extension=/rdf"
+
 RUN \
     cd plugins && \
     curl --fail --show-error --location --remote-name \

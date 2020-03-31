@@ -1,10 +1,5 @@
 FROM neo4j:3.5
 
-# Check https://github.com/neo4j-labs/neosemantics/releases
-ENV SEMANTICS_EXT_VERSION=3.5.0.4
-# Check https://github.com/neo4j-contrib/neo4j-apoc-procedures#version-compatibility-matrix
-ENV APOC_EXT_VERSION=3.5.0.9
-
 ENV LANG C.UTF-8
 
 RUN \
@@ -13,6 +8,11 @@ RUN \
         curl \
     && \
     rm -rf /var/lib/apt/lists/*
+
+# Check https://github.com/neo4j-labs/neosemantics/releases
+ENV SEMANTICS_EXT_VERSION=3.5.0.4
+# Check https://github.com/neo4j-contrib/neo4j-apoc-procedures#version-compatibility-matrix
+ENV APOC_EXT_VERSION=3.5.0.9
 
 RUN \
     cd plugins && \

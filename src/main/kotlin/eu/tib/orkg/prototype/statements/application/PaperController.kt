@@ -34,6 +34,7 @@ const val ID_ORCID_PREDICATE = "HAS_ORCID"
 const val ID_AUTHOR_CLASS = "Author"
 const val ID_VENUE_CLASS = "Venue"
 const val ID_VENUE_PREDICATE = "HAS_VENUE"
+const val ID_URL_PREDICATE = "url"
 val MAP_PREDICATE_CLASSES = mapOf("P32" to "Problem")
 
 /** Regular expression to check whether an input string is a valid ORCID id.  */
@@ -68,6 +69,7 @@ class PaperController(
         val publicationYearPredicate = predicateService.findById(PredicateId(ID_PUBDATE_YEAR_PREDICATE)).get().id!!
         val researchFieldPredicate = predicateService.findById(PredicateId(ID_RESEARCH_FIELD_PREDICATE)).get().id!!
         val hasContributionPredicate = predicateService.findById(PredicateId(ID_CONTRIBUTION_PREDICATE)).get().id!!
+        val urlPredicate = predicateService.findById(PredicateId(ID_URL_PREDICATE)).get().id!!
 
         val contributionClass = getOrCreateClass(ID_CONTRIBUTION_CLASS, userId)
 
@@ -89,9 +91,15 @@ class PaperController(
         val paperId = paperObj.id!!
 
         // paper doi
-        if (paper.paper.doi != null && paper.paper.doi.isNotEmpty()) {
+        if (paper.paper.doi?.isNotEmpty()!!) {
             val paperDoi = literalService.create(userId, paper.paper.doi).id!!
             statementService.create(userId, paperId.value, hasDoiPredicate, paperDoi.value)
+        }
+
+        // paper URL
+        if (paper.paper.url?.isNotEmpty()!!) {
+            val paperUrl = literalService.create(userId, paper.paper.url).id!!
+            statementService.create(userId, paperId.value, urlPredicate, paperUrl.value)
         }
 
         // paper authors
@@ -114,7 +122,7 @@ class PaperController(
             )
 
         // paper published At
-        if (paper.paper.publishedIn != null && paper.paper.publishedIn.isNotEmpty())
+        if (paper.paper.publishedIn?.isNotEmpty()!!)
             handlePublishingVenue(paper.paper.publishedIn, paperId, userId)
 
         // paper research field
@@ -395,6 +403,7 @@ data class Paper(
     val publicationMonth: Int?,
     val publicationYear: Int?,
     val publishedIn: String?,
+    val url: String?,
     val researchField: String,
     val contributions: List<Contribution>?
 )

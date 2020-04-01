@@ -39,6 +39,7 @@ cache:
 
 stages:
   - build
+  - package
   - deploy
 
 build:
@@ -65,4 +66,56 @@ pages:
     paths:
       - public
   only:
+    - master
+
+.docker-login-call: &docker-login-call
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+
+# It is only possible to go "the Docker way" for now. Using Gradle will not work.
+.docker-build-instructions: &docker-build-instructions
+  # Official docker image.
+  image: docker:latest
+  stage: package
+  dependencies:
+    - build
+  services:
+    - docker:dind
+  before_script:
+    - *docker-login-call
+  script:
+    - docker build --pull -t "$IMAGE_TAG" .
+    - docker push "$IMAGE_TAG"
+
+docker-build:api:master:
+  variables:
+    IMAGE_TAG: $CI_REGISTRY_IMAGE/api
+  <<: *docker-build-instructions
+  only:
+    - master
+
+docker-build:api:
+  variables:
+    IMAGE_TAG: $CI_REGISTRY_IMAGE/api:$CI_COMMIT_REF_SLUG
+  <<: *docker-build-instructions
+  except:
+    - master
+
+docker-build:neo4j:master:
+  variables:
+    IMAGE_TAG: $CI_REGISTRY_IMAGE/neo4j
+  <<: *docker-build-instructions
+  before_script:
+    - *docker-login-call
+    - cd docker/neo4j
+  only:
+    - master
+
+docker-build:neo4j:
+  variables:
+    IMAGE_TAG: $CI_REGISTRY_IMAGE/neo4j:$CI_COMMIT_REF_SLUG
+  <<: *docker-build-instructions
+  before_script:
+    - *docker-login-call
+    - cd docker/neo4j
+  except:
     - master

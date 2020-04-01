@@ -179,13 +179,8 @@ tasks {
         pull(true)
         val tag = dockerImageTag ?: "latest"
         name = "$containerRegistryLocation/api:$tag"
-        buildArgs(
-            mapOf(
-                "PROJECT_NAME" to project.name,
-                "VERSION" to "$version"
-            )
-        )
         files(war.get().outputs)
+        copySpec.from("build/libs").into("build/libs")
     }
 
     spotless {

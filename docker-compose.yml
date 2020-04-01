@@ -2,8 +2,8 @@ version: '3'
 
 services:
 
-  prototype:
-    image: orkg/prototype
+  api:
+    image: registry.gitlab.com/tibhannover/orkg/orkg-backend/api
     ports:
       - '8000:8000'
     networks:
@@ -13,7 +13,7 @@ services:
       - postgres
 
   neo4j:
-    image: orkg/neo4j-dev
+    image: registry.gitlab.com/tibhannover/orkg/orkg-backend/neo4j
     ports:
       - '7474:7474' # HTTP
       - '7687:7687' # BOLT

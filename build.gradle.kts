@@ -13,6 +13,8 @@ val springDataNeo4jVersion = "5.2.5"
 val springSecurityOAuthVersion = "2.3.8"
 val testContainersVersion = "1.13.0"
 
+val containerRegistryLocation = "registry.gitlab.com/tibhannover/orkg/orkg-backend"
+
 // Overwrite versions from Spring Dependencies BOM (applied by management plug-in)
 extra["junit-jupiter.version"] = "5.6.0"
 
@@ -174,7 +176,7 @@ tasks {
     docker {
         dependsOn(build.get())
         pull(true)
-        name = "orkg/prototype"
+        name = "$containerRegistryLocation/api"
         buildArgs(
             mapOf(
                 "PROJECT_NAME" to project.name,

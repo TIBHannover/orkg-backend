@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController
 class OrganizationController(private val service: OrganizationService) {
 
     @PostMapping("/")
-    fun addCompany(@RequestBody company: CreateOrganizationRequest): OrganizationEntity {
-        return (service.create(company.organizationName, company.organizationLogo))
+    fun addOrganization(@RequestBody organization: CreateOrganizationRequest): OrganizationEntity {
+        return (service.create(organization.organizationName, organization.organizationLogo))
     }
 
     data class CreateOrganizationRequest(

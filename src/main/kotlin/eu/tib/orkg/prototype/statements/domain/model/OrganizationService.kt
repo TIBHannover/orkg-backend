@@ -8,5 +8,5 @@ interface OrganizationService {
      * Create a new company with a given name.
      *
      */
-    fun create(companyName: String, Companylogo: String): OrganizationEntity
+    fun create(OrganizationName: String, Organizationlogo: String): OrganizationEntity
 }

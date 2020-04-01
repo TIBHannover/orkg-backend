@@ -7,7 +7,7 @@ import javax.persistence.Table
 import javax.validation.constraints.NotBlank
 
 @Entity
-@Table(name = "companies")
+@Table(name = "organizations")
 class OrganizationEntity {
         @Id
         var id: UUID? = null

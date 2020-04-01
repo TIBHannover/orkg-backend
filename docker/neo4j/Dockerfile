@@ -1,4 +1,6 @@
-FROM neo4j:3.5
+# TODO: The most recent version (3.5.17) breaks with APOC installed, see https://github.com/neo4j/neo4j/issues/12439.
+#       The patch-level version should be removed once this problem is fixed upstream.
+FROM neo4j:3.5.16
 
 ENV LANG C.UTF-8
 

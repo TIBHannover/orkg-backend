@@ -5,6 +5,6 @@ plugins {
 }
 
 docker {
-    name = "orkg/neo4j-dev"
+    name = "registry.gitlab.com/tibhannover/orkg/orkg-backend/neo4j"
     pull true
 }

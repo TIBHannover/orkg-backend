@@ -13,6 +13,9 @@ val springDataNeo4jVersion = "5.2.5"
 val springSecurityOAuthVersion = "2.3.8"
 val testContainersVersion = "1.13.0"
 
+val containerRegistryLocation = "registry.gitlab.com/tibhannover/orkg/orkg-backend"
+val dockerImageTag: String? by project
+
 // Overwrite versions from Spring Dependencies BOM (applied by management plug-in)
 extra["junit-jupiter.version"] = "5.6.0"
 
@@ -29,6 +32,7 @@ plugins {
     id("de.jansauer.printcoverage") version "2.0.0"
     id("org.asciidoctor.jvm.convert") version "3.1.0"
     id("com.palantir.docker") version "0.25.0"
+    id("com.google.cloud.tools.jib") version "2.1.0"
     id("com.diffplug.gradle.spotless") version "3.27.2"
 }
 
@@ -174,14 +178,16 @@ tasks {
     docker {
         dependsOn(build.get())
         pull(true)
-        name = "orkg/prototype"
-        buildArgs(
-            mapOf(
-                "PROJECT_NAME" to project.name,
-                "VERSION" to "$version"
-            )
-        )
+        val tag = dockerImageTag ?: "latest"
+        name = "$containerRegistryLocation/api:$tag"
         files(war.get().outputs)
+        copySpec.from("build/libs").into("build/libs")
+    }
+
+    jib {
+        to {
+            image = "$containerRegistryLocation/api"
+        }
     }
 
     spotless {

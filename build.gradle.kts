@@ -32,6 +32,7 @@ plugins {
     id("de.jansauer.printcoverage") version "2.0.0"
     id("org.asciidoctor.jvm.convert") version "3.1.0"
     id("com.palantir.docker") version "0.25.0"
+    id("com.google.cloud.tools.jib") version "2.1.0"
     id("com.diffplug.gradle.spotless") version "3.27.2"
 }
 
@@ -181,6 +182,12 @@ tasks {
         name = "$containerRegistryLocation/api:$tag"
         files(war.get().outputs)
         copySpec.from("build/libs").into("build/libs")
+    }
+
+    jib {
+        to {
+            image = "$containerRegistryLocation/api"
+        }
     }
 
     spotless {

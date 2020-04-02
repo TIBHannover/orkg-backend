@@ -42,6 +42,13 @@ To build the image(s), run:
     ./gradlew docker
 
 This will build the application and create the Docker image.
+Alternatively, the Docker image can be build with Jib:
+
+    ./gradlew jibDockerBuild
+
+Jib can speed up pushing the image significantly.
+(Benefits are limited if only building locally.)
+
 The application can be run via https://docs.docker.com/compose/[Docker Compose].
 After installing it, run:
 

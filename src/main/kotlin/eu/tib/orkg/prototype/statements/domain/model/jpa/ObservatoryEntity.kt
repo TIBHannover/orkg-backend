@@ -1,15 +1,14 @@
-package eu.tib.orkg.prototype.statements.domain.model.jpa
+package eu.tib.orkg.prototype.statements.domain.model
 
 import java.util.UUID
-import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
 import javax.persistence.Table
 import javax.validation.constraints.NotBlank
 
 @Entity
-@Table(name = "organizations")
-class OrganizationEntity {
+@Table(name = "observatories")
+class ObservatoryEntity {
         @Id
         var id: UUID? = null
 
@@ -17,6 +16,5 @@ class OrganizationEntity {
         var name: String? = null
 
         @NotBlank
-        @Column(name = "logo_location")
-        var logoLocation: String? = null
+        var organization_id: UUID? = null
     }

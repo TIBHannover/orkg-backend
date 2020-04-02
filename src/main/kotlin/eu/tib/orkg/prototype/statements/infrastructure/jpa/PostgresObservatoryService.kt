@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
-class PostgresOrganizationService(
+class PostgresObservatoryService(
     private val postgresOrganizationRepository: PostgresOrganizationRepository
 ) : OrganizationService {
     override fun create(OrganizationName: String, OrganizationLogo: String): OrganizationEntity {
@@ -17,12 +17,8 @@ class PostgresOrganizationService(
         val newOrganization = OrganizationEntity().apply {
             id = oId
             name = OrganizationName
-            logoLocation = OrganizationLogo
+            logo = OrganizationLogo
         }
         return postgresOrganizationRepository.save(newOrganization)
-    }
-
-    override fun listOrganizations(): MutableList<OrganizationEntity> {
-        return postgresOrganizationRepository.findAll()
     }
 }

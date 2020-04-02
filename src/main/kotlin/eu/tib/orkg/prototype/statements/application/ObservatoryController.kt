@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.jpa.OrganizationEntity
 import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -17,11 +16,6 @@ class OrganizationController(private val service: OrganizationService) {
     @PostMapping("/")
     fun addOrganization(@RequestBody organization: CreateOrganizationRequest): OrganizationEntity {
         return (service.create(organization.organizationName, organization.organizationLogo))
-    }
-
-    @GetMapping("/")
-    fun listOrganizations(): MutableList<OrganizationEntity> {
-        return service.listOrganizations()
     }
 
     data class CreateOrganizationRequest(

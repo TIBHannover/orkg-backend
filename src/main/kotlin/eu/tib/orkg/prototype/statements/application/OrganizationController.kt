@@ -20,7 +20,7 @@ class OrganizationController(private val service: OrganizationService) {
     }
 
     @GetMapping("/")
-    fun listOrganizations(): MutableList<OrganizationEntity> {
+    fun listOrganizations(): List<OrganizationEntity> {
         return service.listOrganizations()
     }
 

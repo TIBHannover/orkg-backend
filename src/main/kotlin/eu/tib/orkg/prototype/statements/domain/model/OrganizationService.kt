@@ -10,5 +10,5 @@ interface OrganizationService {
      */
     fun create(OrganizationName: String, Organizationlogo: String): OrganizationEntity
 
-    fun listOrganizations(): MutableList<OrganizationEntity>
+    fun listOrganizations(): List<OrganizationEntity>
 }

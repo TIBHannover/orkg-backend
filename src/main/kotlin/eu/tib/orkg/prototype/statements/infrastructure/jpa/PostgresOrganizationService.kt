@@ -17,12 +17,11 @@ class PostgresOrganizationService(
         val newOrganization = OrganizationEntity().apply {
             id = oId
             name = OrganizationName
-            logoLocation = OrganizationLogo
         }
         return postgresOrganizationRepository.save(newOrganization)
     }
 
-    override fun listOrganizations(): MutableList<OrganizationEntity> {
+    override fun listOrganizations(): List<OrganizationEntity> {
         return postgresOrganizationRepository.findAll()
     }
 }

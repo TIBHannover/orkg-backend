@@ -1,7 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.jpa
 
 import java.util.UUID
-import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
 import javax.persistence.Table
@@ -15,8 +14,4 @@ class OrganizationEntity {
 
         @NotBlank
         var name: String? = null
-
-        @NotBlank
-        @Column(name = "logo_location")
-        var logoLocation: String? = null
     }

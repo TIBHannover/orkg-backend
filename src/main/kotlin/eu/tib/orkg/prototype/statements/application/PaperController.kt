@@ -62,7 +62,7 @@ class PaperController(
         return ResponseEntity.created(location).body(resource)
     }
 
-    fun insertData(paper: CreatePaperRequest): Resource {
+    fun insertData(request: CreatePaperRequest): Resource {
         val userId = authenticatedUserId()
         val hasDoiPredicate = predicateService.findById(PredicateId(ID_DOI_PREDICATE)).get().id!!
         val publicationMonthPredicate = predicateService.findById(PredicateId(ID_PUBDATE_MONTH_PREDICATE)).get().id!!
@@ -74,66 +74,66 @@ class PaperController(
         val contributionClass = getOrCreateClass(ID_CONTRIBUTION_CLASS, userId)
 
         val predicates: HashMap<String, PredicateId> = HashMap()
-        if (paper.predicates != null) {
-            paper.predicates.forEach {
+        if (request.predicates != null) {
+            request.predicates.forEach {
                 val surrogateId = it[it.keys.first()]!!
                 val predicateId = predicateService.create(userId, it.keys.first()).id!!
                 predicates[surrogateId] = predicateId
             }
         }
 
-        if (paper.paper.contributions != null) paper.paper.contributions.forEach {
+        if (request.paper.contributions != null) request.paper.contributions.forEach {
             checkContributionData(it.values!!, predicates)
         }
 
         // paper title
-        val paperObj = resourceService.create(userId, CreateResourceRequest(null, paper.paper.title, setOf(ClassId("Paper"))))
+        val paperObj = resourceService.create(userId, CreateResourceRequest(null, request.paper.title, setOf(ClassId("Paper"))))
         val paperId = paperObj.id!!
 
         // paper doi
-        if (paper.paper.hasDOI()) {
-            val paperDoi = literalService.create(userId, paper.paper.doi!!).id!!
+        if (request.paper.hasDOI()) {
+            val paperDoi = literalService.create(userId, request.paper.doi!!).id!!
             statementService.create(userId, paperId.value, hasDoiPredicate, paperDoi.value)
         }
 
         // paper URL
-        if (paper.paper.hasUrl()) {
-            val paperUrl = literalService.create(userId, paper.paper.url!!).id!!
+        if (request.paper.hasUrl()) {
+            val paperUrl = literalService.create(userId, request.paper.url!!).id!!
             statementService.create(userId, paperId.value, urlPredicate, paperUrl.value)
         }
 
         // paper authors
-        handleAuthors(paper, userId, paperId)
+        handleAuthors(request, userId, paperId)
 
         // paper publication date
-        if (paper.paper.publicationMonth != null)
+        if (request.paper.publicationMonth != null)
             statementService.create(
                 userId,
                 paperId.value,
                 publicationMonthPredicate,
-                literalService.create(userId, paper.paper.publicationMonth.toString()).id!!.value
+                literalService.create(userId, request.paper.publicationMonth.toString()).id!!.value
             )
-        if (paper.paper.publicationYear != null)
+        if (request.paper.publicationYear != null)
             statementService.create(
                 userId,
                 paperId.value,
                 publicationYearPredicate,
-                literalService.create(userId, paper.paper.publicationYear.toString()).id!!.value
+                literalService.create(userId, request.paper.publicationYear.toString()).id!!.value
             )
 
         // paper published At
-        if (paper.paper.hasPublishedIn())
-            handlePublishingVenue(paper.paper.publishedIn!!, paperId, userId)
+        if (request.paper.hasPublishedIn())
+            handlePublishingVenue(request.paper.publishedIn!!, paperId, userId)
 
         // paper research field
-        statementService.create(userId, paperId.value, researchFieldPredicate, ResourceId(paper.paper.researchField).value)
+        statementService.create(userId, paperId.value, researchFieldPredicate, ResourceId(request.paper.researchField).value)
 
         val tempResources: HashMap<String, String> = HashMap()
 
         // paper contribution data
-        if (paper.paper.contributions != null) {
+        if (request.paper.contributions != null) {
             val contributionClassSet = setOf(contributionClass)
-            paper.paper.contributions.forEach {
+            request.paper.contributions.forEach {
                 if (it.values != null && it.values.count() > 0) {
                     val contributionId = resourceService.create(userId, CreateResourceRequest(null, it.name, contributionClassSet)).id!!
                     statementService.create(userId, paperId.value, hasContributionPredicate, contributionId.value)
@@ -408,7 +408,7 @@ data class Paper(
     val contributions: List<Contribution>?
 ) {
     fun hasPublishedIn(): Boolean =
-         publishedIn?.isNotEmpty() != null
+        publishedIn?.isNotEmpty() != null
 
     fun hasDOI(): Boolean =
         doi?.isNotEmpty() != null

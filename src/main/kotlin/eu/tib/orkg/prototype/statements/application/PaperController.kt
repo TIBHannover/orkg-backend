@@ -91,14 +91,14 @@ class PaperController(
         val paperId = paperObj.id!!
 
         // paper doi
-        if (paper.paper.doi?.isNotEmpty()!!) {
-            val paperDoi = literalService.create(userId, paper.paper.doi).id!!
+        if (paper.paper.hasDOI()) {
+            val paperDoi = literalService.create(userId, paper.paper.doi!!).id!!
             statementService.create(userId, paperId.value, hasDoiPredicate, paperDoi.value)
         }
 
         // paper URL
-        if (paper.paper.url?.isNotEmpty()!!) {
-            val paperUrl = literalService.create(userId, paper.paper.url).id!!
+        if (paper.paper.hasUrl()) {
+            val paperUrl = literalService.create(userId, paper.paper.url!!).id!!
             statementService.create(userId, paperId.value, urlPredicate, paperUrl.value)
         }
 
@@ -122,8 +122,8 @@ class PaperController(
             )
 
         // paper published At
-        if (paper.paper.publishedIn?.isNotEmpty()!!)
-            handlePublishingVenue(paper.paper.publishedIn, paperId, userId)
+        if (paper.paper.hasPublishedIn())
+            handlePublishingVenue(paper.paper.publishedIn!!, paperId, userId)
 
         // paper research field
         statementService.create(userId, paperId.value, researchFieldPredicate, ResourceId(paper.paper.researchField).value)
@@ -406,7 +406,16 @@ data class Paper(
     val url: String?,
     val researchField: String,
     val contributions: List<Contribution>?
-)
+) {
+    fun hasPublishedIn(): Boolean =
+         publishedIn?.isNotEmpty() != null
+
+    fun hasDOI(): Boolean =
+        doi?.isNotEmpty() != null
+
+    fun hasUrl(): Boolean =
+        url?.isNotEmpty() != null
+}
 
 data class Author(
     val id: String?,

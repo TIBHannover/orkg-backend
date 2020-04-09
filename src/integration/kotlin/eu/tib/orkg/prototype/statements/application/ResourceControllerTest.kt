@@ -16,6 +16,7 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.security.test.context.support.WithUserDetails
@@ -62,7 +63,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                         parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
                         parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
                     ),
-                    resourceListResponseFields()
+                    listOfResourcesResponseFields()
                 )
             )
     }
@@ -83,7 +84,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                         parameterWithName("q").description("A search term that must be contained in the label"),
                         parameterWithName("exact").description("Whether it is an exact string lookup or just containment").optional()
                     ),
-                    resourceListResponseFields()
+                    listOfResourcesResponseFields()
                 )
             )
     }
@@ -104,7 +105,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                         parameterWithName("q").description("A search term that must be contained in the label"),
                         parameterWithName("exact").description("Whether it is an exact string lookup or just containment").optional()
                     ),
-                    resourceListResponseFields()
+                    listOfResourcesResponseFields()
                 )
             )
     }
@@ -119,7 +120,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    resourceResponseFields()
+                    responseFields(resourceResponseFields())
                 )
             )
     }
@@ -139,7 +140,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                         fieldWithPath("label").description("The resource label")
                     ),
                     createdResponseHeaders(),
-                    resourceResponseFields()
+                    responseFields(resourceResponseFields())
                 )
             )
     }
@@ -172,7 +173,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                     requestFields(
                         fieldWithPath("label").description("The updated resource label")
                     ),
-                    resourceResponseFields()
+                    responseFields(resourceResponseFields())
                 )
             )
     }
@@ -197,7 +198,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                         fieldWithPath("label").type(String).description("The updated resource label").optional(),
                         fieldWithPath("classes").description("The classes to which the resource belongs to").optional()
                     ),
-                    resourceResponseFields()
+                    responseFields(resourceResponseFields())
                 )
             )
     }
@@ -229,7 +230,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                         parameterWithName("desc").description("Direction of the sorting (default: false)").optional(),
                         parameterWithName("exclude").description("List of classes to exclude e.g Paper,C0,Contribution (default: not provided)").optional()
                     ),
-                    resourceListResponseFields()
+                    listOfResourcesResponseFields()
                 )
             )
     }
@@ -268,13 +269,13 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                         parameterWithName("desc").description("Direction of the sorting (default: false)").optional(),
                         parameterWithName("exclude").description("List of classes to exclude e.g Paper,C0,Contribution (default: not provided)").optional()
                     ),
-                    resourceListResponseFields()
+                    listOfResourcesResponseFields()
                 )
             )
     }
 
-    private fun resourceResponseFields() =
-        responseFields(
+    companion object RestDoc {
+        fun resourceResponseFields() = listOf(
             fieldWithPath("id").description("The resource ID"),
             fieldWithPath("label").description("The resource label"),
             fieldWithPath("created_at").description("The resource creation datetime"),
@@ -284,14 +285,8 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("_class").optional().ignored()
         )
 
-    private fun resourceListResponseFields() =
-        responseFields(
-            fieldWithPath("[].id").description("The resource ID"),
-            fieldWithPath("[].label").description("The resource label"),
-            fieldWithPath("[].created_at").description("The resource creation datetime"),
-            fieldWithPath("[].created_by").description("The ID of the user that created the resource. All zeros if unknown."),
-            fieldWithPath("[].classes").description("The list of classes the resource belongs to"),
-            fieldWithPath("[].shared").description("The number of times this resource is shared").optional(),
-            fieldWithPath("[]._class").optional().ignored()
-        )
+        fun listOfResourcesResponseFields(): ResponseFieldsSnippet =
+            responseFields(fieldWithPath("[]").description("A list of resources"))
+                .andWithPrefix("[].", resourceResponseFields())
+    }
 }

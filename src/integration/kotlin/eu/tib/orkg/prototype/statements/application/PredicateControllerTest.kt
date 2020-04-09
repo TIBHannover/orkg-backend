@@ -11,6 +11,7 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.security.test.context.support.WithUserDetails
@@ -48,7 +49,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                         parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
                         parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
                     ),
-                    predicateListResponseFields()
+                    listOfPredicatesResponseFields()
                 )
             )
     }
@@ -63,7 +64,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    predicateResponseFields()
+                    responseFields(predicateResponseFields())
                 )
             )
     }
@@ -83,7 +84,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                     requestParameters(
                         parameterWithName("q").description("A search term that must be contained in the label")
                     ),
-                    predicateListResponseFields()
+                    listOfPredicatesResponseFields()
                 )
             )
     }
@@ -103,7 +104,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                     requestParameters(
                         parameterWithName("q").description("A search term that must be contained in the label")
                     ),
-                    predicateListResponseFields()
+                    listOfPredicatesResponseFields()
                 )
             )
     }
@@ -123,7 +124,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                         fieldWithPath("label").description("The predicate label")
                     ),
                     createdResponseHeaders(),
-                    predicateResponseFields()
+                    responseFields(predicateResponseFields())
                 )
             )
     }
@@ -165,13 +166,13 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                     requestFields(
                         fieldWithPath("label").description("The updated predicate label")
                     ),
-                    predicateResponseFields()
+                    responseFields(predicateResponseFields())
                 )
             )
     }
 
-    private fun predicateResponseFields() =
-        responseFields(
+    companion object RestDoc {
+        fun predicateResponseFields() = listOf(
             fieldWithPath("id").description("The predicate ID"),
             fieldWithPath("label").description("The predicate label"),
             fieldWithPath("created_at").description("The predicate creation datetime"),
@@ -179,12 +180,8 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("_class").optional().ignored()
         )
 
-    private fun predicateListResponseFields() =
-        responseFields(
-            fieldWithPath("[].id").description("The predicate ID"),
-            fieldWithPath("[].label").description("The predicate label"),
-            fieldWithPath("[].created_at").description("The predicate creation datetime"),
-            fieldWithPath("[].created_by").description("The ID of the user that created the predicate. All zeros if unknown."),
-            fieldWithPath("[]._class").optional().ignored()
-        )
+        fun listOfPredicatesResponseFields(): ResponseFieldsSnippet =
+            responseFields(fieldWithPath("[]").description("A list of predicates"))
+                .andWithPrefix("[].", predicateResponseFields())
+    }
 }

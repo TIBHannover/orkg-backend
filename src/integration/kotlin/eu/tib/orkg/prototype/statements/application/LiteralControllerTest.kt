@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -105,51 +104,48 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
     @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun add() {
-        val resource = mapOf("label" to "foo", "datatype" to "xs:foo")
+        val input = mapOf("label" to "foo", "datatype" to "xs:foo")
 
-        val response = mockMvc
-            .perform(postRequestWithBody("/api/literals/", resource))
+        mockMvc
+            .perform(postRequestWithBody("/api/literals/", input))
             .andExpect(status().isCreated)
+            .andExpect(jsonPath("$.label").value(input["label"] as String))
+            .andExpect(jsonPath("$.datatype").value(input["datatype"] as String))
             .andDo(
                 document(
                     snippet,
-                    requestFields(
-                        fieldWithPath("label").description("The resource label"),
-                        fieldWithPath("datatype").description("The datatype of the literal value.")
-                    ),
+                    literalCreateAndUpdateRequestFields(),
                     createdResponseHeaders(),
                     literalResponseFields()
                 )
             )
-            .andReturn().response
-
-        assertThat(response.contentAsString).contains("\"datatype\":\"xs:foo\"")
     }
 
     @Test
     fun edit() {
-        val resource = service.create("foo").id!! // Default datatype (xs:string)
+        val resource = service.create("foo", "dt:old").id!!
 
-        val newLabel = "bar"
-        val newDatatype = "ex:CustomDatatype"
-        val update = mapOf("label" to newLabel, "datatype" to newDatatype)
+        val update = mapOf("label" to "bar", "datatype" to "dt:new")
 
         mockMvc
             .perform(putRequestWithBody("/api/literals/$resource", update))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.label").value(newLabel))
-            .andExpect(jsonPath("$.datatype").value(newDatatype))
+            .andExpect(jsonPath("$.label").value(update["label"] as String))
+            .andExpect(jsonPath("$.datatype").value(update["datatype"] as String))
             .andDo(
                 document(
                     snippet,
-                    requestFields(
-                        fieldWithPath("label").description("The updated literal value"),
-                        fieldWithPath("datatype").description("The datatype of the literal value.")
-                    ),
+                    literalCreateAndUpdateRequestFields(),
                     literalResponseFields()
                 )
             )
     }
+
+    private fun literalCreateAndUpdateRequestFields() =
+        requestFields(
+            fieldWithPath("label").description("The updated value of the literal."),
+            fieldWithPath("datatype").description("The updated datatype of the literal value.")
+        )
 
     private fun literalResponseFields() =
         responseFields(

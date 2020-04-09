@@ -128,20 +128,23 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun edit() {
-        val resource = service.create("foo").id!!
+        val resource = service.create("foo").id!! // Default datatype (xs:string)
 
         val newLabel = "bar"
-        val update = mapOf("label" to newLabel)
+        val newDatatype = "ex:CustomDatatype"
+        val update = mapOf("label" to newLabel, "datatype" to newDatatype)
 
         mockMvc
             .perform(putRequestWithBody("/api/literals/$resource", update))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.label").value(newLabel))
+            .andExpect(jsonPath("$.datatype").value(newDatatype))
             .andDo(
                 document(
                     snippet,
                     requestFields(
-                        fieldWithPath("label").description("The updated literal value")
+                        fieldWithPath("label").description("The updated literal value"),
+                        fieldWithPath("datatype").description("The datatype of the literal value.")
                     ),
                     literalResponseFields()
                 )

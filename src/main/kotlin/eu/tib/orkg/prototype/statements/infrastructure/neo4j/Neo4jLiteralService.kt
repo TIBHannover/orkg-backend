@@ -47,6 +47,7 @@ class Neo4jLiteralService(
 
         // update all the properties
         found.label = literal.label
+        found.datatype = literal.datatype
 
         return neo4jLiteralRepository.save(found).toLiteral()
     }

@@ -25,6 +25,9 @@ data class Neo4jLiteral(
     @Required
     override var label: String? = null
 
+    @Property("datatype")
+    var datatype: String? = "xs:string"
+
     @Property("literal_id")
     @Required
     @Convert(LiteralIdGraphAttributeConverter::class)
@@ -51,7 +54,7 @@ data class Neo4jLiteral(
     }
 
     fun toLiteral() =
-        Literal(id = literalId, label = label!!, createdAt = createdAt!!, createdBy = createdBy)
+        Literal(id = literalId, label = label!!, datatype = datatype!!, createdAt = createdAt!!, createdBy = createdBy)
 
     override val thingId: String?
         get() = literalId?.value

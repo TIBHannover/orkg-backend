@@ -19,35 +19,35 @@ class LiteralJsonTest {
 
     @Test
     fun serializedLiteralShouldHaveId() {
-        assertThat(serializedLiteral())
+        assertThat(createLiteral().serialize())
             .extractingJsonPathStringValue("@.id")
             .isEqualTo("L100")
     }
 
     @Test
     fun serializedLiteralShouldHaveLabel() {
-        assertThat(serializedLiteral())
+        assertThat(createLiteral().serialize())
             .extractingJsonPathStringValue("@.label")
             .isEqualTo("label")
     }
 
     @Test
     fun serializedLiteralShouldHaveCreatedTimestamp() {
-        assertThat(serializedLiteral())
+        assertThat(createLiteral().serialize())
             .extractingJsonPathStringValue("@.created_at")
             .isEqualTo("2018-12-25T05:23:42.123456789+03:00")
     }
 
     @Test
     fun serializedLiteralShouldHaveDatatype() {
-        assertThat(serializedLiteral())
+        assertThat(createLiteral().serialize())
             .extractingJsonPathStringValue("@.datatype")
             .isEqualTo("xs:string")
     }
 
     @Test
     fun serializedLiteralWithCustomDatatypeShouldHaveCustomDatatype() {
-        assertThat(json.write(createLiteral().copy(datatype = "xs:number")))
+        assertThat(createLiteral().copy(datatype = "xs:number").serialize())
             .extractingJsonPathStringValue("@.datatype")
             .isEqualTo("xs:number")
     }
@@ -59,5 +59,5 @@ class LiteralJsonTest {
             createdAt = OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3))
         )
 
-    private fun serializedLiteral() = json.write(createLiteral())
+    private fun Literal.serialize() = json.write(this)
 }

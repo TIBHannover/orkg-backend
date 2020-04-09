@@ -43,6 +43,14 @@ class LiteralJsonTest {
                 .extractingJsonPathStringValue("@.created_at")
                 .isEqualTo("2018-12-25T05:23:42.123456789+03:00")
         }
+
+        @Test
+        @DisplayName("then the user ID should the the zero UUID")
+        fun thenTheUserIdShouldTheTheZeroUuid() {
+            assertThat(serializedLiteral)
+                .extractingJsonPathStringValue("@.created_by")
+                .isEqualTo("00000000-0000-0000-0000-000000000000")
+        }
     }
 
     @Nested

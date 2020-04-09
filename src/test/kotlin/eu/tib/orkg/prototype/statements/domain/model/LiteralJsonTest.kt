@@ -14,6 +14,7 @@ import org.springframework.boot.test.json.JacksonTester
 @JsonTest
 class LiteralJsonTest {
 
+    @Suppress("SpringJavaInjectionPointsAutowiringInspection") // Bug in IDEA, works fine.
     @Autowired
     private lateinit var json: JacksonTester<Literal>
 

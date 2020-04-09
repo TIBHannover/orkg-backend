@@ -17,12 +17,12 @@ class Neo4jLiteralService(
     private val neo4jLiteralRepository: Neo4jLiteralRepository,
     private val neo4jLiteralIdGenerator: Neo4jLiteralIdGenerator
 ) : LiteralService {
-    override fun create(label: String) = create(UUID(0, 0), label)
+    override fun create(label: String, datatype: String) = create(UUID(0, 0), label, datatype)
 
-    override fun create(userId: UUID, label: String): Literal {
+    override fun create(userId: UUID, label: String, datatype: String): Literal {
         val literalId = neo4jLiteralIdGenerator.nextIdentity()
         return neo4jLiteralRepository
-            .save(Neo4jLiteral(label = label, literalId = literalId, createdBy = userId))
+            .save(Neo4jLiteral(label = label, literalId = literalId, datatype = datatype, createdBy = userId))
             .toLiteral()
     }
 

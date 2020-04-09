@@ -47,9 +47,15 @@ data class Neo4jLiteral(
     val classes: Set<ClassId>
         get() = labels.map(::ClassId).toSet()
 
-    constructor(label: String, literalId: LiteralId, createdBy: UUID = UUID(0, 0)) : this(null) {
+    constructor(
+        label: String,
+        literalId: LiteralId,
+        datatype: String = "xs:string",
+        createdBy: UUID = UUID(0, 0)
+    ) : this(null) {
         this.label = label
         this.literalId = literalId
+        this.datatype = datatype
         this.createdBy = createdBy
     }
 

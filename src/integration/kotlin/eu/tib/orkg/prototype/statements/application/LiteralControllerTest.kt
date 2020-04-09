@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -104,21 +105,25 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
     @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun add() {
-        val resource = mapOf("label" to "foo")
+        val resource = mapOf("label" to "foo", "datatype" to "xs:foo")
 
-        mockMvc
+        val response = mockMvc
             .perform(postRequestWithBody("/api/literals/", resource))
             .andExpect(status().isCreated)
             .andDo(
                 document(
                     snippet,
                     requestFields(
-                        fieldWithPath("label").description("The resource label")
+                        fieldWithPath("label").description("The resource label"),
+                        fieldWithPath("datatype").description("The datatype of the literal value.")
                     ),
                     createdResponseHeaders(),
                     literalResponseFields()
                 )
             )
+            .andReturn().response
+
+        assertThat(response.contentAsString).contains("\"datatype\":\"xs:foo\"")
     }
 
     @Test
@@ -147,6 +152,7 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
         responseFields(
             fieldWithPath("id").description("The resource ID"),
             fieldWithPath("label").description("The resource label"),
+            fieldWithPath("datatype").description("The data type of the literal value. Defaults to `xsd:string`."),
             fieldWithPath("created_at").description("The resource creation datetime"),
             fieldWithPath("created_by").description("The ID of the user that created the literal. All zeros if unknown."),
             fieldWithPath("_class").optional().ignored()
@@ -156,6 +162,7 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
         responseFields(
             fieldWithPath("[].id").description("The resource ID"),
             fieldWithPath("[].label").description("The resource label"),
+            fieldWithPath("[].datatype").description("The data type of the literal value. Defaults to `xsd:string`."),
             fieldWithPath("[].created_at").description("The resource creation datetime"),
             fieldWithPath("[].created_by").description("The ID of the user that created the literal. All zeros if unknown."),
             fieldWithPath("[]._class").optional().ignored()

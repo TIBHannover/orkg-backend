@@ -43,9 +43,12 @@ class LiteralController(private val service: LiteralService) : BaseController() 
 
     @PostMapping("/")
     @ResponseStatus(CREATED)
-    fun add(@RequestBody literal: Literal, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Literal> {
+    fun add(
+        @RequestBody literal: LiteralCreateRequest,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<Literal> {
         val userId = authenticatedUserId()
-        val id = service.create(userId, literal.label).id
+        val id = service.create(userId, literal.label, literal.datatype).id
         val location = uriComponentsBuilder
             .path("api/literals/{id}")
             .buildAndExpand(id)
@@ -68,4 +71,9 @@ class LiteralController(private val service: LiteralService) : BaseController() 
 
         return ok(service.update(updatedLiteral))
     }
+
+    data class LiteralCreateRequest(
+        var label: String,
+        var datatype: String = "xs:string"
+    )
 }

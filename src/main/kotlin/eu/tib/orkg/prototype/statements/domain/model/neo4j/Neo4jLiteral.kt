@@ -50,7 +50,8 @@ data class Neo4jLiteral(
         this.createdBy = createdBy
     }
 
-    fun toLiteral() = Literal(literalId, label!!, createdAt!!, createdBy = createdBy)
+    fun toLiteral() =
+        Literal(id = literalId, label = label!!, createdAt = createdAt!!, createdBy = createdBy)
 
     override val thingId: String?
         get() = literalId?.value

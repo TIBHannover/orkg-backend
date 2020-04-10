@@ -3,10 +3,10 @@ package eu.tib.orkg.prototype.statements.infrastructure.jpa
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.jpa.OrganizationEntity
 import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresOrganizationRepository
+import java.util.Optional
 import java.util.UUID
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.Optional
 
 @Service
 @Transactional
@@ -26,7 +26,7 @@ class PostgresOrganizationService(
         return postgresOrganizationRepository.findAll()
     }
 
-     override fun findById(id: UUID): Optional<OrganizationEntity> {
+    override fun findById(id: UUID): Optional<OrganizationEntity> {
         return postgresOrganizationRepository.findById(id)
     }
 }

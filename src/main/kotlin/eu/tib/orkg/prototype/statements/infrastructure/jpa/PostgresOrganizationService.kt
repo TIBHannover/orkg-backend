@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresOrganizationRep
 import java.util.UUID
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.Optional
 
 @Service
 @Transactional
@@ -23,5 +24,9 @@ class PostgresOrganizationService(
 
     override fun listOrganizations(): List<OrganizationEntity> {
         return postgresOrganizationRepository.findAll()
+    }
+
+     override fun findById(id: UUID): Optional<OrganizationEntity> {
+        return postgresOrganizationRepository.findById(id)
     }
 }

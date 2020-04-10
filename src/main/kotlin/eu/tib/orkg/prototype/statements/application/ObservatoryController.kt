@@ -43,9 +43,9 @@ class ObservatoryController(private val service: ObservatoryService) {
         return service.listObservatories()
     }
 
-    @GetMapping("search/")
-    fun listObservatoriesByOrganization(@RequestParam("id", required = true) searchString: UUID): List<ObservatoryEntity> {
-        return service.listObservatoriesByOrganizationId(searchString)
+    @GetMapping("search/{id}")
+    fun listObservatoriesByOrganization(@PathVariable id: UUID): List<ObservatoryEntity> {
+        return service.listObservatoriesByOrganizationId(id)
     }
 
     data class CreateObservatoryRequest(

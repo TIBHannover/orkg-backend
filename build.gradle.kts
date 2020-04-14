@@ -80,9 +80,12 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "junit", module = "junit")
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+        // TODO: We currently have a mixture of MockK and Mockito tests. After migration, we should disable Mockito.
+        // exclude(module = "mockito-core")
     }
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+    testImplementation("com.ninja-squad:springmockk:2.0.1")
 
     testImplementation("org.neo4j:neo4j-ogm-embedded-driver")
     testImplementation("org.neo4j:neo4j-ogm-embedded-native-types")

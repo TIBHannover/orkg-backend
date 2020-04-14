@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
@@ -53,8 +54,12 @@ class PaperController(
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    fun add(@RequestBody paper: CreatePaperRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Resource> {
-        val resource = insertData(paper)
+    fun add(
+        @RequestBody paper: CreatePaperRequest,
+        uriComponentsBuilder: UriComponentsBuilder,
+        @RequestParam("mergeIfExists", required = false, defaultValue = "false") mergeIfExists: Boolean
+    ): ResponseEntity<Resource> {
+        val resource = insertData(paper, mergeIfExists)
         val location = uriComponentsBuilder
             .path("api/resources/")
             .buildAndExpand(resource.id)
@@ -62,14 +67,12 @@ class PaperController(
         return ResponseEntity.created(location).body(resource)
     }
 
-    fun insertData(request: CreatePaperRequest): Resource {
+    fun insertData(
+        request: CreatePaperRequest,
+        mergeIfExists: Boolean
+    ): Resource {
         val userId = authenticatedUserId()
-        val hasDoiPredicate = predicateService.findById(PredicateId(ID_DOI_PREDICATE)).get().id!!
-        val publicationMonthPredicate = predicateService.findById(PredicateId(ID_PUBDATE_MONTH_PREDICATE)).get().id!!
-        val publicationYearPredicate = predicateService.findById(PredicateId(ID_PUBDATE_YEAR_PREDICATE)).get().id!!
-        val researchFieldPredicate = predicateService.findById(PredicateId(ID_RESEARCH_FIELD_PREDICATE)).get().id!!
         val hasContributionPredicate = predicateService.findById(PredicateId(ID_CONTRIBUTION_PREDICATE)).get().id!!
-        val urlPredicate = predicateService.findById(PredicateId(ID_URL_PREDICATE)).get().id!!
 
         val contributionClass = getOrCreateClass(ID_CONTRIBUTION_CLASS, userId)
 
@@ -86,8 +89,59 @@ class PaperController(
             checkContributionData(it.values!!, predicates)
         }
 
+        // check if should be merged or not
+        val paperObj = createOrFindPaper(mergeIfExists, request, userId)
+        val paperId = paperObj.id!!
+
+        val tempResources: HashMap<String, String> = HashMap()
+
+        // paper contribution data
+        if (request.paper.contributions != null) {
+            val contributionClassSet = setOf(contributionClass)
+            request.paper.contributions.forEach {
+                if (it.values != null && it.values.count() > 0) {
+                    val contributionId = resourceService.create(userId, CreateResourceRequest(null, it.name, contributionClassSet)).id!!
+                    statementService.create(userId, paperId.value, hasContributionPredicate, contributionId.value)
+                    val resourceQueue: Queue<TempResource> = LinkedList()
+                    processContributionData(contributionId, it.values, tempResources, predicates, resourceQueue, userId)
+                }
+            }
+        }
+        return paperObj
+    }
+
+    private fun createOrFindPaper(
+        mergeIfExists: Boolean,
+        request: CreatePaperRequest,
+        userId: UUID
+    ): Resource {
+        return if (mergeIfExists) {
+            val byTitle = resourceService.findAllByTitle(request.paper.title)
+            var found: Resource? = null
+            if (byTitle.count() != 0) {
+                found = if (request.paper.hasDOI()) {
+                    // filter on both DOI an title
+                    byTitle.intersect(resourceService.findAllByDOI(request.paper.doi!!)).firstOrNull()
+                } else {
+                    byTitle.firstOrNull()
+                }
+            }
+            found ?: addNewPaper(userId, request)
+        } else {
+            addNewPaper(userId, request)
+        }
+    }
+
+    private fun addNewPaper(userId: UUID, request: CreatePaperRequest): Resource {
+        val hasDoiPredicate = predicateService.findById(PredicateId(ID_DOI_PREDICATE)).get().id!!
+        val publicationMonthPredicate = predicateService.findById(PredicateId(ID_PUBDATE_MONTH_PREDICATE)).get().id!!
+        val publicationYearPredicate = predicateService.findById(PredicateId(ID_PUBDATE_YEAR_PREDICATE)).get().id!!
+        val researchFieldPredicate = predicateService.findById(PredicateId(ID_RESEARCH_FIELD_PREDICATE)).get().id!!
+        val urlPredicate = predicateService.findById(PredicateId(ID_URL_PREDICATE)).get().id!!
+
         // paper title
-        val paperObj = resourceService.create(userId, CreateResourceRequest(null, request.paper.title, setOf(ClassId("Paper"))))
+        val paperObj =
+            resourceService.create(userId, CreateResourceRequest(null, request.paper.title, setOf(ClassId("Paper"))))
         val paperId = paperObj.id!!
 
         // paper doi
@@ -126,22 +180,12 @@ class PaperController(
             handlePublishingVenue(request.paper.publishedIn!!, paperId, userId)
 
         // paper research field
-        statementService.create(userId, paperId.value, researchFieldPredicate, ResourceId(request.paper.researchField).value)
-
-        val tempResources: HashMap<String, String> = HashMap()
-
-        // paper contribution data
-        if (request.paper.contributions != null) {
-            val contributionClassSet = setOf(contributionClass)
-            request.paper.contributions.forEach {
-                if (it.values != null && it.values.count() > 0) {
-                    val contributionId = resourceService.create(userId, CreateResourceRequest(null, it.name, contributionClassSet)).id!!
-                    statementService.create(userId, paperId.value, hasContributionPredicate, contributionId.value)
-                    val resourceQueue: Queue<TempResource> = LinkedList()
-                    processContributionData(contributionId, it.values, tempResources, predicates, resourceQueue, userId)
-                }
-            }
-        }
+        statementService.create(
+            userId,
+            paperId.value,
+            researchFieldPredicate,
+            ResourceId(request.paper.researchField).value
+        )
         return paperObj
     }
 

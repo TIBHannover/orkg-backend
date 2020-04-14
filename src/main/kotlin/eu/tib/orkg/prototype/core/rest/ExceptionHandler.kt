@@ -20,30 +20,26 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         headers: HttpHeaders,
         status: HttpStatus,
         request: WebRequest
-    ): ResponseEntity<Any> {
-        val errors = ex.bindingResult.fieldErrors.map {
-            FieldValidationError(
-                field = it.field.toSnakeCase(),
-                message = it?.defaultMessage
-            )
+    ) = buildBadRequestResponse(ex) {
+        ex.bindingResult.fieldErrors.map {
+            FieldValidationError(field = it.field.toSnakeCase(), message = it?.defaultMessage)
         }
-        val payload = ValidationFailureResponse(
-            status = status.value(),
-            error = status.reasonPhrase,
-            errors = errors
-        )
-        return ResponseEntity.badRequest().body(payload)
     }
 
     @ExceptionHandler(PropertyValidationException::class)
-    fun handleIllegalArgumentException(ex: PropertyValidationException): ResponseEntity<Any> {
-        // Use a list so that it is compatible to the javax.validation responses
-        val errors = listOf(
-            FieldValidationError(
-                field = ex.property,
-                message = ex.message
+    fun handleIllegalArgumentException(ex: PropertyValidationException) =
+        buildBadRequestResponse(ex) {
+            // Use a list so that it is compatible to the javax.validation responses
+            listOf(
+                FieldValidationError(field = ex.property, message = ex.message)
             )
-        )
+        }
+
+    fun <T> buildBadRequestResponse(
+        exception: T,
+        block: (ex: T) -> List<FieldValidationError>
+    ): ResponseEntity<Any> {
+        val errors = block(exception)
         val payload = ValidationFailureResponse(
             status = BAD_REQUEST.value(),
             error = BAD_REQUEST.reasonPhrase,

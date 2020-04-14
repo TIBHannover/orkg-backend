@@ -3,6 +3,8 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
+import javax.validation.Valid
+import javax.validation.constraints.NotBlank
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -44,7 +46,7 @@ class LiteralController(private val service: LiteralService) : BaseController() 
     @PostMapping("/")
     @ResponseStatus(CREATED)
     fun add(
-        @RequestBody literal: LiteralCreateRequest,
+        @RequestBody @Valid literal: LiteralCreateRequest,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<Literal> {
         val userId = authenticatedUserId()
@@ -60,7 +62,7 @@ class LiteralController(private val service: LiteralService) : BaseController() 
     @PutMapping("/{id}")
     fun update(
         @PathVariable id: LiteralId,
-        @RequestBody request: LiteralUpdateRequest
+        @RequestBody @Valid request: LiteralUpdateRequest
     ): ResponseEntity<Literal> {
         val found = service.findById(id)
 
@@ -69,18 +71,23 @@ class LiteralController(private val service: LiteralService) : BaseController() 
 
         var updatedLiteral = found.get()
 
-        if (request.label != null)
+        if (request.label != null) {
+            if (request.label.isBlank()) throw PropertyIsBlank("label")
             updatedLiteral = updatedLiteral.copy(label = request.label)
+        }
 
-        if (request.datatype != null)
+        if (request.datatype != null) {
+            if (request.datatype.isBlank()) throw PropertyIsBlank("datatype")
             updatedLiteral = updatedLiteral.copy(datatype = request.datatype)
-
+        }
         return ok(service.update(updatedLiteral))
     }
 
     data class LiteralCreateRequest(
-        var label: String,
-        var datatype: String = "xs:string"
+        @field:NotBlank
+        val label: String,
+        @field:NotBlank
+        val datatype: String = "xs:string"
     )
 
     data class LiteralUpdateRequest(

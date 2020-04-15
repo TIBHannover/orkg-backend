@@ -1,5 +1,8 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.application.LiteralControllerTest.RestDoc.literalResponseFields
+import eu.tib.orkg.prototype.statements.application.PredicateControllerTest.RestDoc.predicateResponseFields
+import eu.tib.orkg.prototype.statements.application.ResourceControllerTest.RestDoc.resourceResponseFields
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
@@ -14,6 +17,8 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestBody
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
+import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.security.test.context.support.WithUserDetails
@@ -72,7 +77,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                         parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
                         parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
                     ),
-                    statementListResponseFields()
+                    sharedListOfStatementsResponseFields()
+                        .and(subsectionWithPath("[].object").description("An object. Can be either a resource or a literal."))
                 )
             )
     }
@@ -129,7 +135,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    statementResponseFields()
+                    statementWithLiteralResponseFields()
                 )
             )
     }
@@ -248,7 +254,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                         parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
                         parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
                     ),
-                    statementListResponseFields()
+                    sharedListOfStatementsResponseFields()
+                        .and(subsectionWithPath("[].object").description("An object. Can be either a resource or a literal."))
                 )
             )
     }
@@ -297,7 +304,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                     snippet,
                     requestBody(),
                     createdResponseHeaders(),
-                    statementResponseFields()
+                    statementWithLiteralResponseFields()
                 )
             )
     }
@@ -356,7 +363,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     requestBody(),
-                    statementResponseFields())
+                    statementResponseFields()
+                )
             )
     }
 
@@ -379,65 +387,37 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     requestBody(),
-                    statementResponseFields())
+                    statementWithLiteralResponseFields()
+                )
             )
     }
 
-    private fun statementResponseFields() =
-        responseFields(
-            fieldWithPath("id").description("The statement ID"),
-            fieldWithPath("created_at").description("The statement creation datetime"),
-            fieldWithPath("created_by").description("The ID of the user that created the statement. All zeros if unknown."),
-            fieldWithPath("subject").description("A resource"),
-            fieldWithPath("subject.id").description("The ID of the subject resource"),
-            fieldWithPath("subject.label").description("The label of the subject resource"),
-            fieldWithPath("subject._class").description("The type of the subject (resource, literal, etc...)."),
-            fieldWithPath("subject.created_at").description("The subject creation datetime"),
-            fieldWithPath("subject.created_by").description("The ID of the user that created the subject. All zeros if unknown."),
-            fieldWithPath("subject.classes").description("The classes the subject resource belongs to"),
-            fieldWithPath("subject.shared").description("The number of time this resource has been shared"),
-            fieldWithPath("predicate").description("A predicate"),
-            fieldWithPath("predicate.id").description("The ID of the predicate"),
-            fieldWithPath("predicate.label").description("The label of the predicate"),
-            fieldWithPath("predicate._class").ignored(),
-            fieldWithPath("predicate.created_at").description("The predicate creation datetime"),
-            fieldWithPath("predicate.created_by").description("The ID of the user that created the predicate. All zeros if unknown."),
-            fieldWithPath("object").description("An object"),
-            fieldWithPath("object.id").description("The ID of the object"),
-            fieldWithPath("object.label").description("The label of the object"),
-            fieldWithPath("object._class").description("The type of the object (resource, literal, etc...)."),
-            fieldWithPath("object.created_at").description("The object creation datetime"),
-            fieldWithPath("object.created_by").description("The ID of the user that created the object. All zeros if unknown."),
-            fieldWithPath("object.classes").description("The classes the object resource belongs to").optional().ignored(),
-            fieldWithPath("object.shared").optional().ignored()
-        )
+    private fun statementFields() = listOf(
+        fieldWithPath("id").description("The statement ID"),
+        fieldWithPath("created_at").description("The statement creation datetime"),
+        fieldWithPath("created_by").description("The ID of the user that created the statement. All zeros if unknown.")
+    )
 
-    private fun statementListResponseFields() =
-        responseFields(
-            fieldWithPath("[].id").description("The statement ID"),
-            fieldWithPath("[].created_at").description("The statement creation datetime"),
-            fieldWithPath("[].created_by").description("The ID of the user that created the statement. All zeros if unknown."),
-            fieldWithPath("[].subject").description("A resource"),
-            fieldWithPath("[].subject.id").description("The ID of the subject resource"),
-            fieldWithPath("[].subject.label").description("The label of the subject resource"),
-            fieldWithPath("[].subject._class").description("The type of the subject (resource, literal, etc...)."),
-            fieldWithPath("[].subject.created_at").description("The subject creation datetime"),
-            fieldWithPath("[].subject.created_by").description("The ID of the user that created the subject. All zeros if unknown."),
-            fieldWithPath("[].subject.classes").description("The classes the subject resource belongs to"),
-            fieldWithPath("[].subject.shared").description("The number of time this resource has been shared"),
-            fieldWithPath("[].predicate").description("A predicate"),
-            fieldWithPath("[].predicate.id").description("The ID of the predicate"),
-            fieldWithPath("[].predicate.label").description("The label of the predicate"),
-            fieldWithPath("[].predicate._class").ignored(),
-            fieldWithPath("[].predicate.created_at").description("The predicate creation datetime"),
-            fieldWithPath("[].predicate.created_by").description("The ID of the user that created the predicate. All zeros if unknown."),
-            fieldWithPath("[].object").description("An object"),
-            fieldWithPath("[].object.id").description("The ID of the object"),
-            fieldWithPath("[].object.label").description("The label of the object"),
-            fieldWithPath("[].object._class").description("The type of the object (resource, literal, etc...)."),
-            fieldWithPath("[].object.created_at").description("The object creation datetime"),
-            fieldWithPath("[].object.created_by").description("The ID of the user that created the object. All zeros if unknown."),
-            fieldWithPath("[].object.classes").description("The classes the object resource belongs to").optional().ignored(),
-            fieldWithPath("[].object.shared").optional().ignored()
-        )
+    private fun sharedStatementResponseFields(): ResponseFieldsSnippet =
+        responseFields(statementFields())
+            .andWithPrefix("subject.", resourceResponseFields())
+            .andWithPrefix("predicate.", predicateResponseFields())
+
+    private fun sharedListOfStatementsResponseFields(): ResponseFieldsSnippet =
+        responseFields(fieldWithPath("[]").description("A list of statements."))
+            .andWithPrefix("[].", statementFields())
+            .andWithPrefix("[].subject.", resourceResponseFields())
+            .andWithPrefix("[].predicate.", predicateResponseFields())
+
+    private fun statementResponseFields() = sharedStatementResponseFields()
+        .andWithPrefix("object.", resourceResponseFields())
+
+    private fun statementWithLiteralResponseFields() = sharedStatementResponseFields()
+        .andWithPrefix("object.", literalResponseFields())
+
+    private fun statementListResponseFields() = sharedListOfStatementsResponseFields()
+        .andWithPrefix("[].object.", resourceResponseFields())
+
+    private fun statementWithLiteralListResponseFields() = sharedListOfStatementsResponseFields()
+        .andWithPrefix("[].object.", literalResponseFields())
 }

@@ -25,6 +25,9 @@ data class Neo4jLiteral(
     @Required
     override var label: String? = null
 
+    @Property("datatype")
+    var datatype: String? = "xsd:string"
+
     @Property("literal_id")
     @Required
     @Convert(LiteralIdGraphAttributeConverter::class)
@@ -44,13 +47,20 @@ data class Neo4jLiteral(
     val classes: Set<ClassId>
         get() = labels.map(::ClassId).toSet()
 
-    constructor(label: String, literalId: LiteralId, createdBy: UUID = UUID(0, 0)) : this(null) {
+    constructor(
+        label: String,
+        literalId: LiteralId,
+        datatype: String = "xsd:string",
+        createdBy: UUID = UUID(0, 0)
+    ) : this(null) {
         this.label = label
         this.literalId = literalId
+        this.datatype = datatype
         this.createdBy = createdBy
     }
 
-    fun toLiteral() = Literal(literalId, label!!, createdAt!!, createdBy = createdBy)
+    fun toLiteral() =
+        Literal(id = literalId, label = label!!, datatype = datatype!!, createdAt = createdAt!!, createdBy = createdBy)
 
     override val thingId: String?
         get() = literalId?.value

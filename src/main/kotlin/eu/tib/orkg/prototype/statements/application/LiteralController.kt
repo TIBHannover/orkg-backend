@@ -3,6 +3,8 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
+import javax.validation.Valid
+import javax.validation.constraints.NotBlank
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -43,9 +45,12 @@ class LiteralController(private val service: LiteralService) : BaseController() 
 
     @PostMapping("/")
     @ResponseStatus(CREATED)
-    fun add(@RequestBody literal: Literal, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Literal> {
+    fun add(
+        @RequestBody @Valid literal: LiteralCreateRequest,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<Literal> {
         val userId = authenticatedUserId()
-        val id = service.create(userId, literal.label).id
+        val id = service.create(userId, literal.label, literal.datatype).id
         val location = uriComponentsBuilder
             .path("api/literals/{id}")
             .buildAndExpand(id)
@@ -57,15 +62,37 @@ class LiteralController(private val service: LiteralService) : BaseController() 
     @PutMapping("/{id}")
     fun update(
         @PathVariable id: LiteralId,
-        @RequestBody literal: Literal
+        @RequestBody @Valid request: LiteralUpdateRequest
     ): ResponseEntity<Literal> {
         val found = service.findById(id)
 
         if (!found.isPresent)
             return notFound().build()
 
-        val updatedLiteral = literal.copy(id = found.get().id)
+        var updatedLiteral = found.get()
 
+        if (request.label != null) {
+            if (request.label.isBlank()) throw PropertyIsBlank("label")
+            updatedLiteral = updatedLiteral.copy(label = request.label)
+        }
+
+        if (request.datatype != null) {
+            if (request.datatype.isBlank()) throw PropertyIsBlank("datatype")
+            updatedLiteral = updatedLiteral.copy(datatype = request.datatype)
+        }
         return ok(service.update(updatedLiteral))
     }
+
+    data class LiteralCreateRequest(
+        @field:NotBlank
+        val label: String,
+        @field:NotBlank
+        val datatype: String = "xsd:string"
+    )
+
+    data class LiteralUpdateRequest(
+        val id: LiteralId?,
+        val label: String?,
+        val datatype: String?
+    )
 }

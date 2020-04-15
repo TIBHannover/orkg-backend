@@ -14,3 +14,13 @@ class ClassNotFound : java.lang.RuntimeException()
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class PredicateNotFound(predicate: String) : RuntimeException("Predicate $predicate is not found")
+
+/**
+ * Base class for custom property validation.
+ */
+abstract class PropertyValidationException(open val property: String, override val message: String) : RuntimeException()
+
+/**
+ * Exception indicating that a property was blank when it was not supposed to be.
+ */
+class PropertyIsBlank(override val property: String) : PropertyValidationException(property, "must not be blank")

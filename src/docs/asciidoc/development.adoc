@@ -1,0 +1,75 @@
+= Development of ORKG
+include::_default-attributes.adoc[]
+:fn-idea-license: footnote:[Ultimate Edition is recommended due to Spring integration. TIB/L3S members should contact their group leaders for a license.]
+
+This document contains information relevant to developers of the {orkg} or those interested in contributing.
+It is considered to be "living documentation" and should be updated regularly.
+If there are any inconsistencies, outdated information or plain errors, all of those should be considered bugs and should be reported in our {issues_url}[issue tracker].
+
+== Programming language and libraries
+
+Developers should be familiar with the following languages, frameworks and/or libraries used by the ORKG backend:
+
+* https://kotlinlang.org/[Kotlin] (JVM), the programming language used
+* https://spring.io/projects/spring-boot[Spring Boot] as well as
+** https://spring.io/projects/spring-data[Spring Data], specifically https://spring.io/projects/spring-data-jpa[Spring Data JPA] and https://spring.io/projects/spring-data-neo4j[Spring Data Neo4j]
+** https://spring.io/projects/spring-security[Spring Security], specifically https://spring.io/projects/spring-security-oauth[Spring Security OAuth]
+* https://assertj.github.io/doc/[AssertJ] for testing
+
+== Development environment and tools
+
+Developers are free to choose the tools they feel most comfortable with.
+However, the following tools are recommended:
+
+* https://www.jetbrains.com/idea/[IntelliJ IDEA]{fn-idea-license} for working with the code
+** https://www.jetbrains.com/toolbox-app/[Toolbox App] for installing JetBrains products and managing IDE versions
+* http://sdkman.io/[SDKMAN] for managing JDKs
+* https://www.docker.com/[Docker] and https://docs.docker.com/compose/[Docker Compose] for managing (development) containers
+* https://github.com/zaquestion/lab[lab], if you want to interact with GitLab via the command-line (optional)
+
+Developers should also be familiar with https://gradle.org/[Gradle], our build management tool, as well as https://asciidoctor.org/[Asciidoctor], our documentation tool.
+(Both _do not_ need to be installed.)
+
+Gradle is provided with the repository and does _not_ need to be installed separately.
+The `gradlew` wrapper script can be used to call it from the command-line.
+(IntelliJ IDEA will automatically pick it up.)
+
+Asciidoctor is installed via a Gradle plug-in and can be run from Gradle by executing the `asciidoctor` task.
+
+== Testing
+
+=== Current status
+
+In the prototyping stage, ORKG did not see much testing effort.
+We work to improve the situation continuously by providing tests for newly written code and areas of the code that are modified and currently lack test.
+Developers are expected to provide tests with every merge request.
+
+=== Test organization
+
+There are currently two types of tests: __unit tests__, found in the `test` module, as well as __integration tests__, found in the `integration` module.
+
+_Unit tests_ should make out the largest portions of test, as described in the https://martinfowler.com/articles/practical-test-pyramid.html#TheTestPyramid[test pyramid].
+They should be written in accordance to the FIRST principle (see https://github.com/ghsukumar/SFDC_Best_Practices/wiki/F.I.R.S.T-Principles-of-Unit-Testing[here] and https://agileinaflash.blogspot.com/2009/02/first.html[here]).
+Because test code is code and therefore needs maintenance, only just enough test should be written.
+A good guideline it the one proposed by Sandi Metz, as summarized in https://gist.github.com/Integralist/7944948[this write-up] and https://www.youtube.com/watch?v=URSWYvyc42M[her talk at Rails Conf 2013].
+All code should be written with testability in mind since testability is a good indicator for code quality: clean code is usually easy to test.
+
+Some of the tests in the `test` module could be considered integration tests, as they instantiate some parts of the Spring Boot framework.
+Due to their short runtime, no effort was made (yet) to separate them into a module of their own.
+
+The _integration tests_ are designed to test the full system as closely as possible to the production system.
+They therefore use Docker containers during the test runs, using https://www.testcontainers.org/[TestContainers].
+This results in an increased start-up and run time which slow the testing cycle down and should only be used for testing all components, start to finish.
+They are additionally used to generate the API documentation using https://spring.io/projects/spring-restdocs[Spring REST Docs] to ensure the API is in accordance with the rest of the system.
+
+=== Testing with Spring Boot
+
+Testing in Spring and Spring Boot is a complex topic due to the complexities of the framework.
+To get started, the following articles from the "Reflectoring" blog are a recommended read:
+
+* https://reflectoring.io/unit-testing-spring-boot/[Unit Testing with Spring Boot]
+* https://reflectoring.io/spring-boot-test/[Integration Tests with @SpringBootTest]
+* https://reflectoring.io/spring-boot-web-controller-test/[Testing Spring MVC Web Controllers with @WebMvcTest]
+* https://reflectoring.io/spring-boot-data-jpa-test/[Testing JPA Queries with @DataJpaTest]
+
+Another useful source is the https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-testing[chapter on testing] in the official Spring Boot documentation.

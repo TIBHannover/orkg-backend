@@ -87,7 +87,7 @@ class LiteralController(private val service: LiteralService) : BaseController() 
         @field:NotBlank
         val label: String,
         @field:NotBlank
-        val datatype: String = "xs:string"
+        val datatype: String = "xsd:string"
     )
 
     data class LiteralUpdateRequest(

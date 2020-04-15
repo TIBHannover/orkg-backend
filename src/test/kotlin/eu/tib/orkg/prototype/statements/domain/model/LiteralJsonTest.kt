@@ -28,11 +28,11 @@ class LiteralJsonTest {
         private val serializedLiteral = createLiteral().serialize()
 
         @Test
-        @DisplayName("then the data type should be `xs:string`")
+        @DisplayName("then the data type should be `xsd:string`")
         fun thenTheDataTypeShouldBeString() {
             assertThat(serializedLiteral)
                 .extractingJsonPathStringValue("@.datatype")
-                .isEqualTo("xs:string")
+                .isEqualTo("xsd:string")
         }
 
         @Test

@@ -26,7 +26,7 @@ data class Neo4jLiteral(
     override var label: String? = null
 
     @Property("datatype")
-    var datatype: String? = "xs:string"
+    var datatype: String? = "xsd:string"
 
     @Property("literal_id")
     @Required
@@ -50,7 +50,7 @@ data class Neo4jLiteral(
     constructor(
         label: String,
         literalId: LiteralId,
-        datatype: String = "xs:string",
+        datatype: String = "xsd:string",
         createdBy: UUID = UUID(0, 0)
     ) : this(null) {
         this.label = label

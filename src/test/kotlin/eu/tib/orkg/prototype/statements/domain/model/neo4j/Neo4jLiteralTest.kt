@@ -17,9 +17,9 @@ internal class Neo4jLiteralTest {
         }
 
         @Test
-        @DisplayName("Then the data type is `xs:string`")
+        @DisplayName("Then the data type is `xsd:string`")
         fun thenTheDataTypeIsString() {
-            assertThat(neo4jLiteral.datatype).isEqualTo("xs:string")
+            assertThat(neo4jLiteral.datatype).isEqualTo("xsd:string")
         }
 
         @Nested
@@ -29,9 +29,9 @@ internal class Neo4jLiteralTest {
             private val converted = neo4jLiteral.toLiteral()
 
             @Test
-            @DisplayName("Then the data type is `xs:string`")
+            @DisplayName("Then the data type is `xsd:string`")
             fun thenTheDataTypeIsString() {
-                assertThat(converted.datatype).isEqualTo("xs:string")
+                assertThat(converted.datatype).isEqualTo("xsd:string")
             }
         }
     }

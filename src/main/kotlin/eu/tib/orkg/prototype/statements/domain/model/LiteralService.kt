@@ -12,14 +12,14 @@ interface LiteralService {
      *
      * @return The newly created literal.
      */
-    fun create(label: String, datatype: String = "xs:string"): Literal
+    fun create(label: String, datatype: String = "xsd:string"): Literal
 
     /**
      * Create a new literal with a given label belonging to a given user.
      *
      * @return the newly created literal
      */
-    fun create(userId: UUID, label: String, datatype: String = "xs:string"): Literal
+    fun create(userId: UUID, label: String, datatype: String = "xsd:string"): Literal
 
     /**
      * Find all literals.

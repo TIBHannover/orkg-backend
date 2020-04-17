@@ -37,4 +37,8 @@ class PostgresObservatoryService(
     override fun findById(id: UUID): Optional<ObservatoryEntity> {
         return postgresObservatoryRepository.findById(id)
     }
+
+    //override fun listUsersByObseratory(id: UUID): Optional<ObservatoryEntity> {
+        //return postgresObservatoryRepository.findById(id)
+    //}
 }

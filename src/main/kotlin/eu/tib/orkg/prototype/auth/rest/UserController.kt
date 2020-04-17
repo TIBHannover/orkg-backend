@@ -79,6 +79,20 @@ class UserController(
         return ok(UpdatedUserResponse("success"))
     }
 
+    @PutMapping("/role")
+    fun updateUserRoleToOwner(principal: Principal): ResponseEntity<Any> {
+        if (principal.name == null)
+            return ResponseEntity((UNAUTHORIZED))
+        val foundUser = userService.findById(UUID.fromString(principal.name))
+        if (foundUser.isPresent) {
+            val currentUser = foundUser.get()
+            val id = currentUser.id!!
+            userService.updateRole(id)
+            return ok(UserDetails(currentUser))
+        }
+        return ResponseEntity(NOT_FOUND)
+    }
+
     /**
      * Decorator for user data.
      * This class prevents user data from leaking by only exposing data that is relevant to the client.

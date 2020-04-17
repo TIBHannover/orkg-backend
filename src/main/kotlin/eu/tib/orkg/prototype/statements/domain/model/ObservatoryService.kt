@@ -16,4 +16,8 @@ interface ObservatoryService {
     fun findByName(name: String): Optional<ObservatoryEntity>
 
     fun findById(id: UUID): Optional<ObservatoryEntity>
+
+    //fun registerUserInObservatory(id: UUID): Optional<ObservatoryEntity>
+
+    //fun listUsersByObseratory(id: UUID): Optional<ObservatoryEntity>
 }

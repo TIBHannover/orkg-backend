@@ -1,5 +1,10 @@
 package eu.tib.orkg.prototype.auth.persistence
 
+import com.fasterxml.jackson.annotation.JsonBackReference
+import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.persistence.CascadeType
@@ -7,14 +12,17 @@ import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.JoinTable
+import javax.persistence.ManyToMany
+import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
+import javax.persistence.OneToOne
 import javax.persistence.Table
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.NotNull
-import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.core.userdetails.UserDetails
+
 
 @Entity
 @Table(name = "users")
@@ -41,6 +49,14 @@ class UserEntity {
 
     @OneToMany(mappedBy = "id", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     var roles: MutableCollection<RoleEntity> = mutableSetOf()
+
+    @JsonBackReference
+    @OneToMany(cascade=[CascadeType.ALL])
+    @JoinTable(
+        name = "userobservatories",
+        joinColumns = [JoinColumn(name = "user_id", referencedColumnName="id")],
+        inverseJoinColumns = [JoinColumn(name = "observatory_id", referencedColumnName="id")])
+    var likedObs: MutableCollection<ObservatoryEntity> = mutableSetOf()
 }
 
 @Entity

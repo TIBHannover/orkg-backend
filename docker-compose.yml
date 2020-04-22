@@ -4,6 +4,9 @@ services:
 
   api:
     image: registry.gitlab.com/tibhannover/orkg/orkg-backend
+    environment:
+      SPRING_DATASOURCE_URL: 'jdbc:postgresql://postgres/postgres'
+      SPRING_DATA_NEO4J_URI: 'bolt://neo4j:7687'
     ports:
       - '127.0.0.1:8080:8080'
       - '::1:8080:8080'

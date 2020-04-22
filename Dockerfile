@@ -5,4 +5,4 @@ EXPOSE 8080
 
 COPY build/libs/orkg-*.jar /app/application.jar
 
-CMD ["java", "-jar", "-Dspring.profiles.active=docker", "/app/application.jar"]
+CMD ["java", "-jar", "/app/application.jar"]

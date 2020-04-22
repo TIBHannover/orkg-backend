@@ -31,23 +31,3 @@ spring:
 orkg:
   cors:
     origins: 'http://localhost:3000'
----
-spring:
-  profiles: docker
-  data:
-    neo4j:
-      uri: 'bolt://neo4j:7687'
-      #username:
-      #password:
-      use-native-types: true
-  datasource:
-    url: 'jdbc:postgresql://postgres/postgres'
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
-    jpa:
-      database-platform: org.hibernate.dialect.PostgreSQLDialect
-      hibernate:
-        ddl-auto: validate
-      show-sql: true
-      # generate-ddl: true

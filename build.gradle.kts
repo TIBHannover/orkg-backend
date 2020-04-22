@@ -182,14 +182,14 @@ tasks {
         dependsOn(build.get())
         pull(true)
         val tag = dockerImageTag ?: "latest"
-        name = "$containerRegistryLocation/api:$tag"
         files(war.get().outputs)
+        name = "$containerRegistryLocation:$tag"
         copySpec.from("build/libs").into("build/libs")
     }
 
     jib {
         to {
-            image = "$containerRegistryLocation/api"
+            image = containerRegistryLocation
         }
     }
 

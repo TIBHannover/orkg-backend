@@ -70,35 +70,24 @@ pages:
     - master
 
 .docker-build-instructions: &docker-build-instructions
-  # Official docker image.
-  image: docker:latest
+  image: gradle:6.3-jdk11
   stage: package
   dependencies:
     - build
-  services:
-    - docker:dind
-  before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    # Try to fetch the latest image and profit from sharing layers while building
-    - docker pull $CI_REGISTRY_IMAGE:latest || true
-    # Build and label according to commit ID
-    - docker build --pull --cache-from $CI_REGISTRY_IMAGE:latest -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA" .
-    - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA"
-    # Push with additional (possibly-changing) labels
-    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $IMAGE_TAG
-    - docker push $IMAGE_TAG
+    # Build using Jib (pushed automatically)
+    - gradle jib -Djib.to.image=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA -Djib.to.tags=$IMAGE_TAG -Djib.to.auth.username=$REGISTRY_USER -Djib.to.auth.password=$REGISTRY_PASSWORD
 
 docker-build-master:
   variables:
-    IMAGE_TAG: $CI_REGISTRY_IMAGE:latest
+    IMAGE_TAG: latest
   <<: *docker-build-instructions
   only:
     - master
 
 docker-build:
   variables:
-    IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    IMAGE_TAG: $CI_COMMIT_REF_SLUG
   <<: *docker-build-instructions
   except:
     - master

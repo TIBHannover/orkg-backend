@@ -53,7 +53,7 @@ build:
   artifacts:
     paths:
       - build/reports/
-      - build/libs/orkg-*.war
+      - build/libs/orkg-*.jar
     reports:
       junit: build/test-results/**/TEST-*.xml
 

@@ -21,7 +21,6 @@ extra["junit-jupiter.version"] = "5.6.0"
 
 plugins {
     jacoco
-    war
     kotlin("jvm") version "1.3.70"
     kotlin("plugin.spring") version "1.3.70"
     // Add no-arg annotations to @Entity, @Embeddable and @MappedSuperclass:
@@ -71,9 +70,6 @@ dependencies {
     // RDF
     implementation("net.nprod:rdf4k:0.1.2")
 
-    // Add Tomcat as "provided" runtime so that we can deploy as WAR
-    providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
-
     //
     // Testing
     //
@@ -120,7 +116,6 @@ jacoco {
 tasks {
     val build by existing
     val integrationTest by existing
-    val war by existing
 
     withType(KotlinCompile::class.java).configureEach {
         kotlinOptions.jvmTarget = "${JavaVersion.VERSION_11}"
@@ -182,8 +177,8 @@ tasks {
         dependsOn(build.get())
         pull(true)
         val tag = dockerImageTag ?: "latest"
-        files(war.get().outputs)
         name = "$containerRegistryLocation:$tag"
+        files(bootJar.get().outputs)
         copySpec.from("build/libs").into("build/libs")
     }
 

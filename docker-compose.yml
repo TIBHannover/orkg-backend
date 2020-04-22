@@ -1,11 +1,12 @@
-version: '3'
+version: '3.7'
 
 services:
 
   api:
     image: registry.gitlab.com/tibhannover/orkg/orkg-backend
     ports:
-      - '8000:8000'
+      - '127.0.0.1:8000:8000'
+      - '::1:8000:8000'
     networks:
       - backend
     depends_on:
@@ -14,9 +15,11 @@ services:
 
   neo4j:
     image: neo4j:3.5
+    expose:
+      - '7687' # BOLT
     ports:
-      - '7474:7474' # HTTP
-      - '7687:7687' # BOLT
+      - '127.0.0.1:7474:7474' # HTTP
+      - '::1:7474:7474'
     environment:
       NEO4JLABS_PLUGINS: '["apoc"]'
       NEO4J_AUTH: none
@@ -28,10 +31,14 @@ services:
 
   postgres:
     image: postgres:11
+    expose:
+      - '5432'
     ports:
-      - '5432:5432'
+      - '127.0.0.1:5432:5432'
+      - '::1:5432:5432'
     environment:
-      - PGDATA=/var/lib/postgresql/data/pgdata
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
     networks:
       - backend
     volumes:

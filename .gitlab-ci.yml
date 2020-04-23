@@ -40,6 +40,7 @@ cache:
 stages:
   - build
   - package
+  - verify
   - deploy
 
 build:
@@ -52,7 +53,7 @@ build:
   artifacts:
     paths:
       - build/reports/
-      - build/libs/orkg-*.war
+      - build/libs/orkg-*.jar
     reports:
       junit: build/test-results/**/TEST-*.xml
 
@@ -68,54 +69,34 @@ pages:
   only:
     - master
 
-.docker-login-call: &docker-login-call
-  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-
-# It is only possible to go "the Docker way" for now. Using Gradle will not work.
 .docker-build-instructions: &docker-build-instructions
-  # Official docker image.
-  image: docker:latest
+  image: gradle:6.3-jdk11
   stage: package
   dependencies:
     - build
-  services:
-    - docker:dind
-  before_script:
-    - *docker-login-call
   script:
-    - docker build --pull -t "$IMAGE_TAG" .
-    - docker push "$IMAGE_TAG"
+    # Build using Jib (pushed automatically)
+    - gradle jib -Djib.to.image=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA -Djib.to.tags=$IMAGE_TAG -Djib.to.auth.username=$REGISTRY_USER -Djib.to.auth.password=$REGISTRY_PASSWORD
 
-docker-build:api:master:
+docker-build-master:
   variables:
-    IMAGE_TAG: $CI_REGISTRY_IMAGE/api
+    IMAGE_TAG: latest
   <<: *docker-build-instructions
   only:
     - master
 
-docker-build:api:
+docker-build:
   variables:
-    IMAGE_TAG: $CI_REGISTRY_IMAGE/api:$CI_COMMIT_REF_SLUG
+    IMAGE_TAG: $CI_COMMIT_REF_SLUG
   <<: *docker-build-instructions
   except:
     - master
 
-docker-build:neo4j:master:
-  variables:
-    IMAGE_TAG: $CI_REGISTRY_IMAGE/neo4j
-  <<: *docker-build-instructions
-  before_script:
-    - *docker-login-call
-    - cd docker/neo4j
-  only:
-    - master
+# (Security) Scanning templates
+include:
+  - template: Container-Scanning.gitlab-ci.yml
 
-docker-build:neo4j:
+container_scanning:
+  stage: verify
   variables:
-    IMAGE_TAG: $CI_REGISTRY_IMAGE/neo4j:$CI_COMMIT_REF_SLUG
-  <<: *docker-build-instructions
-  before_script:
-    - *docker-login-call
-    - cd docker/neo4j
-  except:
-    - master
+    CI_APPLICATION_REPOSITORY: $CI_REGISTRY_IMAGE

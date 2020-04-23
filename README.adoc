@@ -1,17 +1,17 @@
-= ORKG Backend Prototype
+= ORKG Backend API
 Manuel Prinz <manuel.prinz@tib.eu>
 
 :icons: font
-:apidoc_url: http://orkg.git.tib.eu/orkg-prototype/api-doc/
+:apidoc_url: https://tibhannover.gitlab.io/orkg/orkg-backend/api-doc/index.html
 
-This repository contains a backend prototype for the ORKG based on the https://spring.io/[Spring Framework].
+This repository contains a backend API for the ORKG based on the https://spring.io/[Spring Framework].
 It is written in https://kotlinlang.org/[Kotlin] as a proof-of-concept and for experimenting with a possible architecture and technologies.
 
 == Building and running
 
 === Prerequisites
 
-The prototype can be run stand-alone.
+The backend API can be run stand-alone.
 However, it needs other services in order to start properly.
 Services are managed via https://www.docker.com/community-edition[Docker (CE)] and https://docs.docker.com/compose/[Docker Compose].
 Please follow the respective installation instructions for your operating system or distribution.
@@ -19,35 +19,26 @@ Please follow the respective installation instructions for your operating system
 === Stand-alone application
 
 NOTE: Running the application stand-alone is mostly for development purposes.
-      It still needs Neo4j configured and running.
+      It still needs Neo4j and PostgreSQL configured and running.
       If you want to test the application, please refer to the section <<Building a Docker image>> below.
-      Alternatively, build the necessary images yourself by following the advice in the section <<Docker images>> (not recommended).
 
-To build and run the prototype, type:
+To build and run the API, type:
 
     ./gradlew bootRun
 
-This will start a server running on http://localhost:8000.
+This will start a server running on http://localhost:8080.
 
-The REST entry-point is http://localhost:8000/api/.
+The REST entry-point is http://localhost:8080/api/.
 
 === Building a Docker image
 
 NOTE: The following commands assume that you added your user to the `docker` group https://docs.docker.com/install/linux/linux-postinstall/[as suggested in the documentation].
       If you did not do so, you have to prefix all commands with `sudo`.
 
-The application can also run as a Docker container.
-To build the image(s), run:
-
-    ./gradlew docker
-
-This will build the application and create the Docker image.
-Alternatively, the Docker image can be build with Jib:
+The Docker image can be build with Jib.
+Run:
 
     ./gradlew jibDockerBuild
-
-Jib can speed up pushing the image significantly.
-(Benefits are limited if only building locally.)
 
 The application can be run via https://docs.docker.com/compose/[Docker Compose].
 After installing it, run:
@@ -58,47 +49,27 @@ This will start the application image and all dependent containers.
 It will take care of linking all containers so the services can see each other.
 You can start and connect all services yourself but this is not recommended.
 
-The application can be accessed via http://localhost:8000/.
+The application can be accessed via http://localhost:8080/.
 The other services can be accessed via the URLs described in the table "<<endpoints>>".
 
 To diagnose problems, check the logs with:
 
     docker-compose logs -f
 
-WARNING: The following steps will destroy all data you saved to the database!
-
 To restart from scratch, run:
 
     docker-compose stop
     docker-compose rm
+
+Data is saved to named volumes for Neo4j and Postgres, respectively, and persists even if you destroy the containers.
+If you also need to get rid of the data use the `docker volume` sub-commands to locate and remove them.
 
 == Docker images
 
 NOTE: This section is only relevant if you want to work with some of the components in isolation.
       Please refer to the section <<Building a Docker image>> if you want to run the application via Docker.
 
-=== Building the images
-
-To build all Docker images (that contain the service dependencies), run:
-
-    ./gradlew docker
-
-If you want to build only specific images, either
-
-[loweralpha]
-. call `./gradlew :docker/IMAGE:docker` from the project root directory, or
-. go to a `docker/IMAGE` directory and call `../../gradlew docker` there,
-
-where `IMAGE` is the name of a sub-directory under `docker/`.
-
-=== Running the images
-
-The easiest way to start Docker containers from the images is via https://docs.docker.com/compose/[Docker Compose].
-After installing it, run:
-
-    docker-compose -f docker/IMAGE/docker-compose.yml up -d
-
-where `IMAGE` is the name of a sub-directory under `docker/`.
+CAUTION: The recommended way to start the Backend is (still) via Docker Compose.
 
 === Image end-points
 
@@ -112,30 +83,33 @@ The images will provide the following end-points:
 |Container name
 |End-points
 
-|`orkg/prototype`
-|`orkgprototype_prototype_1`
-|http://localhost:8000/api/ (REST API)
+|`registry.gitlab.com/tibhannover/orkg/orkg-backend`
+|`orkg-backend_api_1`
+|http://localhost:8080/api/ (REST API)
 
-|`orkg/neo4j-dev`
-|`orkgprototype_neo4j_1`
-| http://localhost:7474/browser/ +
-bolt://localhost:7687
+|`neo4j`
+|`orkg-backend_neo4j_1`
+| http://localhost:7474/browser/ (HTTP) +
+localhost:7687 (BOLT)
+
+| `postgres:11`
+| `orkg-backend_postgres_1`
+| localhost:5432
 
 |===
+
+All exposed ports are bound to `localhost` (IPv4 and IPv6) to not "leak" to all networks.
+If you need to expose those to your host network, refer to the Docker documentation and change the Compose file accordingly.
 
 === Notes on the Neo4j Docker image
 
 The Neo4j Docker image includes the following extensions:
 
 * https://github.com/neo4j-contrib/neo4j-apoc-procedures[Awesome Procedures On Cypher (APOC)]
-* https://github.com/jbarrasa/neosemantics[Neo4j Semantics Extension]
 
-They are not used be the ORKG (as of now) but are very convenient during development.
-There is no need to install them when deploying the ORKG.
-Please check their specific documentation if you want to make use of them.
+APOC is required by the ORKG.
+You need to include it when you setup Neo4j in your environment manually.
 
 === REST API documentation
 
 The documentation can be found at {apidoc_url}.
-
-NOTE: The documentation is currently only accessible from within the TIB network (i.e., also not accessible via Eduroam).

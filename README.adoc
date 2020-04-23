@@ -89,7 +89,8 @@ The images will provide the following end-points:
 
 |`neo4j`
 |`orkg-backend_neo4j_1`
-| http://localhost:7474/browser/
+| http://localhost:7474/browser/ (HTTP) +
+localhost:7687 (BOLT)
 
 | `postgres:11`
 | `orkg-backend_postgres_1`
@@ -97,8 +98,7 @@ The images will provide the following end-points:
 
 |===
 
-The BOLT port is only exposed to the respective Docker network and not to the host.
-All other exposed ports are bound to `localhost` (IPv4 and IPv6) to not "leak" to all networks.
+All exposed ports are bound to `localhost` (IPv4 and IPv6) to not "leak" to all networks.
 If you need to expose those to your host network, refer to the Docker documentation and change the Compose file accordingly.
 
 === Notes on the Neo4j Docker image

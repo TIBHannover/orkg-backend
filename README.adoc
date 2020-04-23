@@ -2,7 +2,7 @@
 Manuel Prinz <manuel.prinz@tib.eu>
 
 :icons: font
-:apidoc_url: http://orkg.git.tib.eu/orkg-prototype/api-doc/
+:apidoc_url: https://tibhannover.gitlab.io/orkg/orkg-backend/api-doc/index.html
 
 This repository contains a backend API for the ORKG based on the https://spring.io/[Spring Framework].
 It is written in https://kotlinlang.org/[Kotlin] as a proof-of-concept and for experimenting with a possible architecture and technologies.

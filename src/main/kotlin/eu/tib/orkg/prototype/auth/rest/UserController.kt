@@ -93,6 +93,12 @@ class UserController(
         return ResponseEntity(NOT_FOUND)
     }
 
+    @GetMapping("/listuser/{id}")
+    fun listUsersByObservatoryId(@PathVariable id: UUID): Iterable<UserDetails> {
+        return userService.findUsersByObservatoryId(id)
+            .map(UserController::UserDetails)
+    }
+
     /**
      * Decorator for user data.
      * This class prevents user data from leaking by only exposing data that is relevant to the client.

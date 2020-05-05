@@ -59,7 +59,10 @@ class UserService(
             name = "ORGANIZATION_OWNER"
             id = userId
         })
-        //user.roles = newRole
         repository.save(user)
+    }
+
+    fun findUsersByObservatoryId(id: UUID): Iterable<UserEntity> {
+        return repository.findUsersByObservatoryId(id)
     }
 }

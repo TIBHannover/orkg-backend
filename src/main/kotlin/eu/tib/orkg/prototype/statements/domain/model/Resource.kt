@@ -16,7 +16,11 @@ data class Resource(
     @JsonProperty("created_by")
     val createdBy: UUID = UUID(0, 0),
     // This is added to replace @JsonTypeInfo on the Thing interface
-    val _class: String? = "resource"
+    val _class: String? = "resource",
+    @JsonProperty("observatory_id")
+    val observatoryId: UUID = UUID(0, 0),
+    @JsonProperty("automatic_extraction")
+    val automaticExtraction: Boolean = false
 ) : Thing {
     @JsonIgnore
     var rdf: Model? = null

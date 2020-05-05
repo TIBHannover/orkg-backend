@@ -51,6 +51,13 @@ data class Neo4jResource(
     @Convert(UUIDGraphAttributeConverter::class)
     var createdBy: UUID = UUID(0, 0)
 
+    @Property("observatory_id")
+    @Convert(UUIDGraphAttributeConverter::class)
+    var observatoryId: UUID = UUID(0, 0)
+
+    @Property("automatic_extraction")
+    var automaticExtraction: Boolean = false
+
     /**
      * List of node labels. Labels other than the `Resource` label are mapped to classes.
      */
@@ -66,14 +73,16 @@ data class Neo4jResource(
             labels = value.map { it.value }.toMutableList()
         }
 
-    constructor(label: String, resourceId: ResourceId, createdBy: UUID = UUID(0, 0)) : this(null) {
+    constructor(label: String, resourceId: ResourceId, createdBy: UUID = UUID(0, 0), observatoryId: UUID = UUID(0, 0), automaticExtraction: Boolean) : this(null) {
         this.label = label
         this.resourceId = resourceId
         this.createdBy = createdBy
+        this.observatoryId = observatoryId
+        this.automaticExtraction = automaticExtraction
     }
 
     fun toResource(): Resource {
-        val resource = Resource(resourceId, label!!, createdAt, classes, objectOf.size, createdBy = createdBy)
+        val resource = Resource(resourceId, label!!, createdAt, classes, objectOf.size, createdBy = createdBy, observatoryId = observatoryId, automaticExtraction = automaticExtraction)
         resource.rdf = toRdfModel()
         return resource
     }

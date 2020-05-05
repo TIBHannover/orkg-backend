@@ -1,6 +1,8 @@
 package eu.tib.orkg.prototype.statements.application
+import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
+import java.util.Optional
 import java.util.UUID
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -32,7 +34,7 @@ class ObservatoryController(private val service: ObservatoryService) {
     }
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: UUID): ObservatoryEntity? =
+    fun findById(@PathVariable id: UUID): Observatory =
         service
             .findById(id)
             .orElseThrow()
@@ -45,6 +47,11 @@ class ObservatoryController(private val service: ObservatoryService) {
     @GetMapping("search/{id}")
     fun listObservatoriesByOrganization(@PathVariable id: UUID): List<ObservatoryEntity> {
         return service.listObservatoriesByOrganizationId(id)
+    }
+
+    @GetMapping("searchuser/{id}")
+    fun findObservatoryByUserId(@PathVariable id: UUID): Optional<ObservatoryEntity> {
+        return service.findByUserId(id)
     }
 
     data class CreateObservatoryRequest(

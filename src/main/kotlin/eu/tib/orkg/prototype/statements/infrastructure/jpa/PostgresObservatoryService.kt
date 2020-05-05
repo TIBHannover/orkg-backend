@@ -1,4 +1,5 @@
 package eu.tib.orkg.prototype.statements.infrastructure.jpa
+import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
 import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresObservatoryRepository
@@ -34,11 +35,12 @@ class PostgresObservatoryService(
         return postgresObservatoryRepository.findByName(name)
     }
 
-    override fun findById(id: UUID): Optional<ObservatoryEntity> {
+    override fun findById(id: UUID): Optional<Observatory> {
         return postgresObservatoryRepository.findById(id)
+            .map(ObservatoryEntity::toObservatory)
     }
 
-    //override fun listUsersByObseratory(id: UUID): Optional<ObservatoryEntity> {
-        //return postgresObservatoryRepository.findById(id)
-    //}
+    override fun findByUserId(id: UUID): Optional<ObservatoryEntity> {
+        return postgresObservatoryRepository.findByUsersId(id)
+    }
 }

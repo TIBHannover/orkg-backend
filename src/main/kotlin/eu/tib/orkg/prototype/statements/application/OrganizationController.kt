@@ -66,10 +66,13 @@ class OrganizationController(private val service: OrganizationService) {
         }
 
         var pathFile: String = System.getProperty("user.dir")
-        var path: String = "$pathFile/images/$name.$extension"
+        var path: String = "$pathFile/images/"
+        if (!File(path).isDirectory)
+            File(path).mkdir()
+        var imagePath: String = "$path$name.$extension"
         var base64Image = strings[1]
         val imageByteArray = Base64.getDecoder().decode(base64Image)
-        File(path).writeBytes(imageByteArray)
+        File(imagePath).writeBytes(imageByteArray)
     }
 
     fun encoder(filePath: String, id: String): String {

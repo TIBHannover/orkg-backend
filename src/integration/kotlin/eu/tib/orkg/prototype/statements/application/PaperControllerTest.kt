@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
@@ -10,14 +11,18 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Import
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.request.RequestDocumentation
+import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
 @DisplayName("Paper Controller")
 @Transactional
+@Import(MockUserDetailsService::class)
 class PaperControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
@@ -36,6 +41,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
 
     @Test
     @Disabled("Broken, due to problems with fixed IDs. See GitLab issue #94.")
+    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun add() {
         service.create(CreatePredicateRequest(PredicateId("P26"), "Has DOI"))
         service.create(CreatePredicateRequest(PredicateId("P27"), "Has Author"))
@@ -45,6 +51,9 @@ class PaperControllerTest : RestDocumentationBaseTest() {
         service.create(CreatePredicateRequest(PredicateId("P31"), "Has contribution"))
         service.create(CreatePredicateRequest(PredicateId("P32"), "Has research problem"))
         service.create(CreatePredicateRequest(PredicateId("HAS_EVALUATION"), "Has evaluation"))
+        service.create(CreatePredicateRequest(PredicateId("url"), "Has url"))
+        service.create(CreatePredicateRequest(PredicateId("HAS_ORCID"), "Has ORCID"))
+        service.create(CreatePredicateRequest(PredicateId("HAS_VENUE"), "Has Venue"))
 
         resourceService.create(CreateResourceRequest(ResourceId("R12"), "Computer Science"))
         resourceService.create(CreateResourceRequest(ResourceId("R3003"), "Question Answering over Linked Data"))
@@ -78,6 +87,11 @@ class PaperControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
+                    RequestDocumentation.requestParameters(
+                        RequestDocumentation.parameterWithName("mergeIfExists")
+                            .description("Boolean (default = false) to merge newly added contribution in the paper if it already exists")
+                            .optional()
+                    ),
                     createdResponseHeaders(),
                     paperResponseFields()
                 )
@@ -90,6 +104,8 @@ class PaperControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("label").description("The paper label"),
             fieldWithPath("classes").description("The list of classes the paper belongs to"),
             fieldWithPath("created_at").description("The paper creation datetime"),
-            fieldWithPath("shared").description("The number of times this resource is shared").optional()
+            fieldWithPath("shared").description("The number of times this resource is shared").optional(),
+            fieldWithPath("created_by").description("The user's UUID that created the paper"),
+            fieldWithPath("_class").description("The type of the entity").ignored()
         )
 }

@@ -1,7 +1,5 @@
 package eu.tib.orkg.prototype.auth.persistence
 
-import com.fasterxml.jackson.annotation.JsonBackReference
-import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.persistence.CascadeType
@@ -9,8 +7,6 @@ import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.Id
-import javax.persistence.JoinColumn
-import javax.persistence.JoinTable
 import javax.persistence.OneToMany
 import javax.persistence.Table
 import javax.validation.constraints.Email
@@ -45,14 +41,6 @@ class UserEntity {
 
     @OneToMany(mappedBy = "id", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     var roles: MutableCollection<RoleEntity> = mutableSetOf()
-
-    @JsonBackReference
-    @OneToMany(cascade = [CascadeType.ALL])
-    @JoinTable(
-        name = "userobservatories",
-        joinColumns = [JoinColumn(name = "user_id", referencedColumnName = "id")],
-        inverseJoinColumns = [JoinColumn(name = "observatory_id", referencedColumnName = "id")])
-    var likedObs: MutableCollection<ObservatoryEntity> = mutableSetOf()
 }
 
 @Entity

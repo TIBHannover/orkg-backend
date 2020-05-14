@@ -53,3 +53,7 @@ spring:
         ddl-auto: validate
       show-sql: true
       # generate-ddl: true
+---
+directory:
+  path:
+    "${user.dir}/images"

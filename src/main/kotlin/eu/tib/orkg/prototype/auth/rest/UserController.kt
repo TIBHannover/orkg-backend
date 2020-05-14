@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.auth.domain.model.Contributor
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
+import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
 import java.security.Principal
+import java.util.Optional
 import java.util.UUID
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
@@ -23,7 +26,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/user")
 class UserController(
-    private val userService: UserService
+    private val userService: UserService,
+    private val observatoryService: ObservatoryService
 ) {
     @GetMapping("/")
     fun lookupUserDetails(principal: Principal): ResponseEntity<UserDetails> {
@@ -93,10 +97,9 @@ class UserController(
         return ResponseEntity(NOT_FOUND)
     }
 
-    @GetMapping("/listuser/{id}")
-    fun listUsersByObservatoryId(@PathVariable id: UUID): Iterable<UserDetails> {
-        return userService.findUsersByObservatoryId(id)
-            .map(UserController::UserDetails)
+    @GetMapping("{id}/observatories")
+    fun findObservatoryByUserId(@PathVariable id: UUID): Optional<ObservatoryEntity> {
+        return observatoryService.findByUserId(id)
     }
 
     /**

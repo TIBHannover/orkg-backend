@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.domain.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
+import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import java.time.OffsetDateTime
 import java.util.UUID
 import org.eclipse.rdf4j.model.Model
@@ -19,8 +20,8 @@ data class Resource(
     val _class: String? = "resource",
     @JsonProperty("observatory_id")
     val observatoryId: UUID = UUID(0, 0),
-    @JsonProperty("automatic_extraction")
-    val automaticExtraction: Boolean = false
+    @JsonProperty("extraction_method")
+    val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
 ) : Thing {
     @JsonIgnore
     var rdf: Model? = null

@@ -12,9 +12,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
-import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
 import java.util.LinkedList
-import java.util.Optional
 import java.util.Queue
 import java.util.UUID
 import org.springframework.http.HttpStatus
@@ -51,7 +49,7 @@ class PaperController(
     private val predicateService: PredicateService,
     private val statementService: StatementService,
     private val classService: ClassService,
-    private val obsservice: ObservatoryService
+    private val observatoryService: ObservatoryService
 ) : BaseController() {
 
     @PostMapping("/")
@@ -67,11 +65,10 @@ class PaperController(
 
     fun insertData(paper: CreatePaperRequest): Resource {
         val userId = authenticatedUserId()
-        val observatory: Optional<ObservatoryEntity>
-        observatory = obsservice.findByUserId(userId)
-        var obs = UUID(0, 0)
+        val observatory = observatoryService.findByUserId(userId)
+        var observatoryId = UUID(0, 0)
         if (!observatory.isEmpty)
-            obs = observatory.get().id!!
+            observatoryId = observatory.get().id!!
 
         val hasDoiPredicate = predicateService.findById(PredicateId(ID_DOI_PREDICATE)).get().id!!
         val publicationMonthPredicate = predicateService.findById(PredicateId(ID_PUBDATE_MONTH_PREDICATE)).get().id!!
@@ -95,7 +92,7 @@ class PaperController(
         }
 
         // paper title
-        val paperObj = resourceService.create(userId, CreateResourceRequest(null, paper.paper.title, setOf(ClassId("Paper"))), obs, paper.paper.automaticExtraction)
+        val paperObj = resourceService.create(userId, CreateResourceRequest(null, paper.paper.title, setOf(ClassId("Paper"))), observatoryId, paper.paper.extractionMethod)
         val paperId = paperObj.id!!
 
         // paper doi
@@ -105,7 +102,7 @@ class PaperController(
         }
 
         // paper authors
-        handleAuthors(paper, userId, paperId, obs)
+        handleAuthors(paper, userId, paperId, observatoryId)
 
         // paper publication date
         if (paper.paper.publicationMonth != null)
@@ -125,7 +122,7 @@ class PaperController(
 
         // paper published At
         if (paper.paper.publishedIn != null && paper.paper.publishedIn.isNotEmpty())
-            handlePublishingVenue(paper.paper.publishedIn, paperId, userId, obs, paper.paper.automaticExtraction)
+            handlePublishingVenue(paper.paper.publishedIn, paperId, userId, observatoryId, paper.paper.extractionMethod)
 
         // paper research field
         statementService.create(userId, paperId.value, researchFieldPredicate, ResourceId(paper.paper.researchField).value)
@@ -137,17 +134,17 @@ class PaperController(
             val contributionClassSet = setOf(contributionClass)
             paper.paper.contributions.forEach {
                 if (it.values != null && it.values.count() > 0) {
-                    val contributionId = resourceService.create(userId, CreateResourceRequest(null, it.name, contributionClassSet), obs, paper.paper.automaticExtraction).id!!
+                    val contributionId = resourceService.create(userId, CreateResourceRequest(null, it.name, contributionClassSet), observatoryId, paper.paper.extractionMethod).id!!
                     statementService.create(userId, paperId.value, hasContributionPredicate, contributionId.value)
                     val resourceQueue: Queue<TempResource> = LinkedList()
-                    processContributionData(contributionId, it.values, tempResources, predicates, resourceQueue, userId, false, obs, paper.paper.automaticExtraction)
+                    processContributionData(contributionId, it.values, tempResources, predicates, resourceQueue, userId, false, observatoryId, paper.paper.extractionMethod)
                 }
             }
         }
         return paperObj
     }
 
-    fun handlePublishingVenue(venue: String, paperId: ResourceId, userId: UUID, obs: UUID, automaticExtraction: Boolean) {
+    fun handlePublishingVenue(venue: String, paperId: ResourceId, userId: UUID, observatoryId: UUID, extractionMethod: ExtractionMethod) {
         val venueClass = getOrCreateClass(ID_VENUE_CLASS, userId)
         val venuePredicate = predicateService.findById(PredicateId(ID_VENUE_PREDICATE)).get().id!!
         val pageable = createPageable(1, 10, null, false)
@@ -161,8 +158,8 @@ class PaperController(
                     null,
                     venue,
                     setOf(venueClass)
-                ), obs,
-                    automaticExtraction
+                ), observatoryId,
+                    extractionMethod
                 )
         }
         // create a statement with the venue resource
@@ -189,7 +186,7 @@ class PaperController(
         paper: CreatePaperRequest,
         userId: UUID,
         paperId: ResourceId,
-        obs: UUID
+        observatoryId: UUID
     ) {
         val hasOrcidPredicate = predicateService.findById(PredicateId(ID_ORCID_PREDICATE)).get().id!!
         val hasAuthorPredicate = predicateService.findById(PredicateId(ID_AUTHOR_PREDICATE)).get().id!!
@@ -244,8 +241,8 @@ class PaperController(
                             val author = resourceService.create(
                                 userId,
                                 CreateResourceRequest(null, it.label, setOf(authorClassId)),
-                                obs,
-                                paper.paper.automaticExtraction
+                                observatoryId,
+                                paper.paper.extractionMethod
                             )
                             statementService.create(
                                 userId,
@@ -326,8 +323,8 @@ class PaperController(
         resourceQueue: Queue<TempResource>,
         userId: UUID,
         recursive: Boolean = false,
-        obs: UUID,
-        automaticExtraction: Boolean
+        observatoryId: UUID,
+        extractionMethod: ExtractionMethod
     ) {
 
         for ((predicate, value) in data) {
@@ -371,15 +368,15 @@ class PaperController(
                         MAP_PREDICATE_CLASSES[predicateId!!.value]?.let { ClassId(it) }?.let { classes.add(it) }
                         // Create resource
                         val newResource = if (classes.isNotEmpty())
-                            resourceService.create(userId, CreateResourceRequest(null, resource.label, classes.toSet()), obs, automaticExtraction).id!!
+                            resourceService.create(userId, CreateResourceRequest(null, resource.label, classes.toSet()), observatoryId, extractionMethod).id!!
                         else
-                            resourceService.create(userId, resource.label, obs, automaticExtraction).id!!
+                            resourceService.create(userId, resource.label, observatoryId, extractionMethod).id!!
                         if (resource.`@temp` != null) {
                             tempResources[resource.`@temp`] = newResource.value
                         }
                         statementService.create(userId, subject.value, predicateId, newResource.value)
                         if (resource.values != null) {
-                            processContributionData(newResource, resource.values, tempResources, predicates, resourceQueue, userId, true, obs, automaticExtraction)
+                            processContributionData(newResource, resource.values, tempResources, predicates, resourceQueue, userId, true, observatoryId, extractionMethod)
                         }
                     }
                 }
@@ -414,7 +411,7 @@ data class Paper(
     val publishedIn: String?,
     val researchField: String,
     val contributions: List<Contribution>?,
-    val automaticExtraction: Boolean = false
+    val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
 )
 
 data class Author(

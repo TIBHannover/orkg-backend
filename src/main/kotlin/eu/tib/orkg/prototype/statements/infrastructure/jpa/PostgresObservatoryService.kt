@@ -27,7 +27,7 @@ class PostgresObservatoryService(
         return postgresObservatoryRepository.findAll()
     }
 
-    override fun listObservatoriesByOrganizationId(id: UUID): List<ObservatoryEntity> {
+    override fun findObservatoriesByOrganizationId(id: UUID): List<ObservatoryEntity> {
         return postgresObservatoryRepository.findByorganizationId(id)
     }
 

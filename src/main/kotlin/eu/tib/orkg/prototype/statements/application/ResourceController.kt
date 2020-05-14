@@ -31,7 +31,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/resources/")
 class ResourceController(
     private val service: ResourceService,
-    private val obsservice: ObservatoryService
+    private val observatoryService: ObservatoryService
 ) : BaseController() {
 
     @GetMapping("/{id}")
@@ -72,12 +72,12 @@ class ResourceController(
             return badRequest().body("Resource id <${resource.id}> already exists!")
         val userId = authenticatedUserId()
         val observatory: Optional<ObservatoryEntity>
-        observatory = obsservice.findByUserId(userId)
-        var obs = UUID(0, 0)
+        observatory = observatoryService.findByUserId(userId)
+        var observatoryId = UUID(0, 0)
         if (!observatory.isEmpty)
-            obs = observatory.get().id!!
+            observatoryId = observatory.get().id!!
 
-        val id = service.create(userId, resource, obs, resource.automaticExtraction).id
+        val id = service.create(userId, resource, observatoryId, resource.extractionMethod).id
         val location = uriComponentsBuilder
             .path("api/resources/{id}")
             .buildAndExpand(id)
@@ -101,22 +101,23 @@ class ResourceController(
         return ok(service.update(updatedRequest))
     }
 
-    @GetMapping("findByObservatory/{id}")
-    fun findByObservatoryId(@PathVariable id: UUID): Iterable<Resource> {
-        return service.findAllByObservatoryId(id)
-    }
-
-    @GetMapping("findContributors/{id}")
-    fun findContributors(@PathVariable id: ResourceId): Iterable<ResourceContributors> {
+    @GetMapping("{id}/contributors")
+    fun findContributorsById(@PathVariable id: ResourceId): Iterable<ResourceContributors> {
         return service.findContributorsByResourceId(id)
     }
+}
+
+enum class ExtractionMethod {
+    AUTOMATIC,
+    MANUAL,
+    UNKNOWN
 }
 
 data class CreateResourceRequest(
     val id: ResourceId?,
     val label: String,
     val classes: Set<ClassId> = emptySet(),
-    val automaticExtraction: Boolean = false
+    val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
 )
 
 data class UpdateResourceRequest(

@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.escapeLiterals
+import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -55,8 +56,8 @@ data class Neo4jResource(
     @Convert(UUIDGraphAttributeConverter::class)
     var observatoryId: UUID = UUID(0, 0)
 
-    @Property("automatic_extraction")
-    var automaticExtraction: Boolean = false
+    @Property("extraction_method")
+    var extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
 
     /**
      * List of node labels. Labels other than the `Resource` label are mapped to classes.
@@ -73,16 +74,16 @@ data class Neo4jResource(
             labels = value.map { it.value }.toMutableList()
         }
 
-    constructor(label: String, resourceId: ResourceId, createdBy: UUID = UUID(0, 0), observatoryId: UUID = UUID(0, 0), automaticExtraction: Boolean) : this(null) {
+    constructor(label: String, resourceId: ResourceId, createdBy: UUID = UUID(0, 0), observatoryId: UUID = UUID(0, 0), extractionMethod: ExtractionMethod) : this(null) {
         this.label = label
         this.resourceId = resourceId
         this.createdBy = createdBy
         this.observatoryId = observatoryId
-        this.automaticExtraction = automaticExtraction
+        this.extractionMethod = extractionMethod
     }
 
     fun toResource(): Resource {
-        val resource = Resource(resourceId, label!!, createdAt, classes, objectOf.size, createdBy = createdBy, observatoryId = observatoryId, automaticExtraction = automaticExtraction)
+        val resource = Resource(resourceId, label!!, createdAt, classes, objectOf.size, createdBy = createdBy, observatoryId = observatoryId, extractionMethod = extractionMethod)
         resource.rdf = toRdfModel()
         return resource
     }

@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
+import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
 import java.util.Optional
@@ -18,7 +19,7 @@ interface ResourceService {
     /**
      * Create a new resource with a given label belonging to a given user.
      */
-    fun create(userId: UUID, label: String, obs: UUID, automaticExtraction: Boolean): Resource
+    fun create(userId: UUID, label: String, observatoryId: UUID, extractionMethod: ExtractionMethod): Resource
 
     /**
      * Create a new resource from a request.
@@ -28,7 +29,7 @@ interface ResourceService {
     /**
      * Create a new resource belonging to a given user.
      */
-    fun create(userId: UUID, request: CreateResourceRequest, obs: UUID, automaticExtraction: Boolean): Resource
+    fun create(userId: UUID, request: CreateResourceRequest, observatoryId: UUID, extractionMethod: ExtractionMethod): Resource
 
     /**
      * Find all resources.

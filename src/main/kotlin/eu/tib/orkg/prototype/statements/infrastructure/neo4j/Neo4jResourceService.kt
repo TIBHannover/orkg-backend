@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
+import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -23,19 +24,19 @@ class Neo4jResourceService(
     private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator
 ) : ResourceService {
 
-    override fun create(label: String) = create(UUID(0, 0), label, UUID(0, 0), false)
+    override fun create(label: String) = create(UUID(0, 0), label, UUID(0, 0), ExtractionMethod.UNKNOWN)
 
-    override fun create(userId: UUID, label: String, obs: UUID, automaticExtraction: Boolean): Resource {
+    override fun create(userId: UUID, label: String, obs: UUID, extractionMethod: ExtractionMethod): Resource {
         val resourceId = neo4jResourceIdGenerator.nextIdentity()
-        return neo4jResourceRepository.save(Neo4jResource(label = label, resourceId = resourceId, createdBy = userId, observatoryId = obs, automaticExtraction = automaticExtraction))
+        return neo4jResourceRepository.save(Neo4jResource(label = label, resourceId = resourceId, createdBy = userId, observatoryId = obs, extractionMethod = extractionMethod))
             .toResource()
     }
 
-    override fun create(request: CreateResourceRequest) = create(UUID(0, 0), request, UUID(0, 0), false)
+    override fun create(request: CreateResourceRequest) = create(UUID(0, 0), request, UUID(0, 0), ExtractionMethod.UNKNOWN)
 
-    override fun create(userId: UUID, request: CreateResourceRequest, obs: UUID, automaticExtraction: Boolean): Resource {
+    override fun create(userId: UUID, request: CreateResourceRequest, obs: UUID, extractionMethod: ExtractionMethod): Resource {
         val id = request.id ?: neo4jResourceIdGenerator.nextIdentity()
-        val resource = Neo4jResource(label = request.label, resourceId = id, createdBy = userId, observatoryId = obs, automaticExtraction = automaticExtraction)
+        val resource = Neo4jResource(label = request.label, resourceId = id, createdBy = userId, observatoryId = obs, extractionMethod = extractionMethod)
         request.classes.forEach { resource.assignTo(it.toString()) }
         return neo4jResourceRepository.save(resource).toResource()
     }

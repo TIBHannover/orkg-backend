@@ -76,7 +76,7 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
 
     fun findByObservatoryId(id: UUID): Iterable<Neo4jResource>
 
-    @Query("""MATCH (n:Resource {resource_id: {0}}) CALL apoc.path.subgraphAll(n, {relationshipFilter:'>'}) YIELD relationships UNWIND relationships as rel WITH rel AS p, startNode(rel) AS s, endNode(rel) AS o, n RETURN n.resource_id AS id, (p.created_by) AS created_by, MAX(p.created_at) AS created_at""")
+    @Query("""MATCH (n:Resource {resource_id: {0}}) CALL apoc.path.subgraphAll(n, {relationshipFilter:'>'}) YIELD relationships UNWIND relationships as rel WITH rel AS p, startNode(rel) AS s, endNode(rel) AS o, n RETURN n.resource_id AS id, (p.created_by) AS createdBy, MAX(p.created_at) AS createdAt""")
     fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors>
 }
 
@@ -84,7 +84,7 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
 data class ResourceContributors(
     val id: String,
 
-    val created_by: String,
+    val createdBy: String,
 
-    val created_at: String
+    val createdAt: String
 )

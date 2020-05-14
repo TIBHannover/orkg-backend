@@ -1,8 +1,11 @@
 package eu.tib.orkg.prototype.statements.application
+import eu.tib.orkg.prototype.auth.rest.UserController
+import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
+import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
-import java.util.Optional
 import java.util.UUID
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -17,20 +20,23 @@ import org.springframework.web.util.UriComponentsBuilder
 @RestController
 @RequestMapping("/api/observatories/")
 @CrossOrigin(origins = ["*"])
-class ObservatoryController(private val service: ObservatoryService) {
+class ObservatoryController(
+    private val service: ObservatoryService,
+    private val userService: UserService,
+    private val resourceService: ResourceService
+) {
 
     @PostMapping("/")
     fun addObservatory(@RequestBody observatory: CreateObservatoryRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
-        if (service.findByName(observatory.observatoryName).isEmpty) {
+        return if (service.findByName(observatory.observatoryName).isEmpty) {
             val id = service.create(observatory.observatoryName, observatory.organizationId).id
-            // return "Observatory created successfully"
             val location = uriComponentsBuilder
                 .path("api/observatories/{id}")
                 .buildAndExpand(id)
                 .toUri()
-            return ResponseEntity.created(location).body(service.findById(id!!).get())
+            ResponseEntity.created(location).body(service.findById(id!!).get())
         } else
-            return ResponseEntity.badRequest().body("Observatory already exist")
+            ResponseEntity.badRequest().body("Observatory already exist")
     }
 
     @GetMapping("/{id}")
@@ -40,18 +46,19 @@ class ObservatoryController(private val service: ObservatoryService) {
             .orElseThrow()
 
     @GetMapping("/")
-    fun listObservatories(): List<ObservatoryEntity> {
+    fun findObservatories(): List<ObservatoryEntity> {
         return service.listObservatories()
     }
 
-    @GetMapping("search/{id}")
-    fun listObservatoriesByOrganization(@PathVariable id: UUID): List<ObservatoryEntity> {
-        return service.listObservatoriesByOrganizationId(id)
+    @GetMapping("{id}/resources")
+    fun findResourcesByObservatoryId(@PathVariable id: UUID): Iterable<Resource> {
+        return resourceService.findAllByObservatoryId(id)
     }
 
-    @GetMapping("searchuser/{id}")
-    fun findObservatoryByUserId(@PathVariable id: UUID): Optional<ObservatoryEntity> {
-        return service.findByUserId(id)
+    @GetMapping("{id}/users")
+    fun findUsersByObservatoryId(@PathVariable id: UUID): Iterable<UserController.UserDetails> {
+        return userService.findUsersByObservatoryId(id)
+            .map(UserController::UserDetails)
     }
 
     data class CreateObservatoryRequest(

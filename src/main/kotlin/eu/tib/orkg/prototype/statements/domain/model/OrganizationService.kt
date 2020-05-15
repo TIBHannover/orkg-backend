@@ -10,7 +10,7 @@ interface OrganizationService {
      * Create a new company with a given name.
      *
      */
-    fun create(OrganizationName: String, Organizationlogo: String): OrganizationEntity
+    fun create(OrganizationName: String, CreatedBy: UUID): OrganizationEntity
 
     fun listOrganizations(): List<OrganizationEntity>
 

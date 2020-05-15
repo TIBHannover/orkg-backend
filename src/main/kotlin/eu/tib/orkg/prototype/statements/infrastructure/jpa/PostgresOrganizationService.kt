@@ -13,11 +13,12 @@ import org.springframework.transaction.annotation.Transactional
 class PostgresOrganizationService(
     private val postgresOrganizationRepository: PostgresOrganizationRepository
 ) : OrganizationService {
-    override fun create(OrganizationName: String, OrganizationLogo: String): OrganizationEntity {
-        val oId = UUID.randomUUID()
+    override fun create(OrganizationName: String, CreatedBy: UUID): OrganizationEntity {
+        val organizationId = UUID.randomUUID()
         val newOrganization = OrganizationEntity().apply {
-            id = oId
+            id = organizationId
             name = OrganizationName
+            createdBy = CreatedBy
         }
         return postgresOrganizationRepository.save(newOrganization)
     }

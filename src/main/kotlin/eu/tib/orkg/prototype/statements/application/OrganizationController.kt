@@ -29,7 +29,7 @@ class OrganizationController(
 
     @PostMapping("/")
     fun addOrganization(@RequestBody organization: CreateOrganizationRequest): OrganizationEntity {
-        var response = (service.create(organization.organizationName, organization.organizationLogo))
+        var response = (service.create(organization.organizationName, organization.createdBy))
         decoder(organization.organizationLogo, response.id)
         return response
     }
@@ -48,7 +48,8 @@ class OrganizationController(
                 OrganizationController.UpdateOrganizationResponse(
                 organizationId = id,
                 organizationName = response.get().name,
-                organizationLogo = logo
+                organizationLogo = logo,
+                    createdBy = response.get().createdBy
             )
         )
     }
@@ -60,13 +61,15 @@ class OrganizationController(
 
     data class CreateOrganizationRequest(
         val organizationName: String,
-        var organizationLogo: String
+        var organizationLogo: String,
+        val createdBy: UUID
     )
 
     data class UpdateOrganizationResponse(
         val organizationId: UUID,
         val organizationName: String?,
-        var organizationLogo: String?
+        val organizationLogo: String?,
+        val createdBy: UUID?
     )
 
     fun decoder(base64Str: String, name: UUID?) {

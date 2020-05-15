@@ -54,6 +54,8 @@ spring:
       show-sql: true
       # generate-ddl: true
 ---
-directory:
-  path:
-    "${user.dir}/images"
+orkg:
+  storage:
+    images:
+      dir:
+        "${user.dir}/images"

@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
@@ -23,8 +24,8 @@ class OrganizationController(
     private val service: OrganizationService,
     private val observatoryService: ObservatoryService,
 
-    @Value("\${directory.path}")
-    val directoryPath: String
+    @Value("\${orkg.storage.images.dir}")
+    val imageStoragePath: String
 ) {
 
     @PostMapping("/")
@@ -41,7 +42,7 @@ class OrganizationController(
     @GetMapping("/{id}")
     fun findById(@PathVariable id: UUID): UpdateOrganizationResponse {
         var response = service.findById(id)
-        var path: String = "$directoryPath/"
+        var path: String = "$imageStoragePath/"
         var logo = encoder(path, response.get().id.toString())
 
         return (
@@ -66,29 +67,32 @@ class OrganizationController(
     )
 
     data class UpdateOrganizationResponse(
+        @JsonProperty("organization_id")
         val organizationId: UUID,
+        @JsonProperty("organization_name")
         val organizationName: String?,
+        @JsonProperty("organization_logo")
         val organizationLogo: String?,
+        @JsonProperty("created_by")
         val createdBy: UUID?
     )
 
     fun decoder(base64Str: String, name: UUID?) {
-        val strings: List<String> = base64Str.split(",")
+        val (mimeType, encodedString) = base64Str.split(",")
         var extension: String = ""
-
-        when {
-            strings[0] == "data:image/jpeg;base64" -> extension = "jpeg"
-            strings[0] == "data:image/png;base64" -> extension = "png"
-            strings[0] == "data:image/jpg;base64" -> extension = "jpg"
+        when (mimeType) {
+            "data:image/jpeg;base64" -> extension = "jpeg"
+            "data:image/png;base64" -> extension = "png"
+            "data:image/jpg;base64" -> extension = "jpg"
         }
 
-        writeImage(strings[1], extension, name)
+        writeImage(encodedString, extension, name)
     }
 
         fun writeImage(image: String, imageExtension: String, name: UUID?) {
-            if (!File(directoryPath).isDirectory)
-                File(directoryPath).mkdir()
-            var imagePath: String = "$directoryPath/$name.$imageExtension"
+            if (!File(imageStoragePath).isDirectory)
+                File(imageStoragePath).mkdir()
+            var imagePath: String = "$imageStoragePath/$name.$imageExtension"
             var base64Image = image
             val imageByteArray = Base64.getDecoder().decode(base64Image)
             File(imagePath).writeBytes(imageByteArray)

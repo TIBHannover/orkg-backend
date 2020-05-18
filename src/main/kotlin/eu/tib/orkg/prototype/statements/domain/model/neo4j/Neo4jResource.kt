@@ -74,7 +74,7 @@ data class Neo4jResource(
             labels = value.map { it.value }.toMutableList()
         }
 
-    constructor(label: String, resourceId: ResourceId, createdBy: UUID = UUID(0, 0), observatoryId: UUID = UUID(0, 0), extractionMethod: ExtractionMethod) : this(null) {
+    constructor(label: String, resourceId: ResourceId, createdBy: UUID = UUID(0, 0), observatoryId: UUID = UUID(0, 0), extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN) : this(null) {
         this.label = label
         this.resourceId = resourceId
         this.createdBy = createdBy

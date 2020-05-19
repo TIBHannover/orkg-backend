@@ -9,6 +9,10 @@ spring:
     # might need to be copied to other profiles on deployment
     vocab-prefix: 'http://orkg.org/orkg'
     frontend-uri: 'http://localhost:3000'
+orkg:
+  storage:
+    images:
+      dir: "${user.dir}/images"
 ---
 spring:
   profiles: development

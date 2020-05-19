@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 import org.springframework.data.neo4j.annotation.Query
+import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
 interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
@@ -72,4 +73,18 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     fun findByLabel(label: String?): Optional<Neo4jResource>
 
     fun findAllByLabel(label: String): Iterable<Neo4jResource>
+
+    fun findByObservatoryId(id: UUID): Iterable<Neo4jResource>
+
+    @Query("""MATCH (n:Resource {resource_id: {0}}) CALL apoc.path.subgraphAll(n, {relationshipFilter:'>'}) YIELD relationships UNWIND relationships as rel WITH rel AS p, startNode(rel) AS s, endNode(rel) AS o, n RETURN n.resource_id AS id, (p.created_by) AS createdBy, MAX(p.created_at) AS createdAt""")
+    fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors>
 }
+
+@QueryResult
+data class ResourceContributors(
+    val id: String,
+
+    val createdBy: String,
+
+    val createdAt: String
+)

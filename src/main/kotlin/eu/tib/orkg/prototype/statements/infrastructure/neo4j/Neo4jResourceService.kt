@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
+import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -9,6 +10,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceIdGenerator
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceRepository
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
 import java.util.Optional
 import java.util.UUID
 import org.springframework.data.domain.Pageable
@@ -22,19 +24,19 @@ class Neo4jResourceService(
     private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator
 ) : ResourceService {
 
-    override fun create(label: String) = create(UUID(0, 0), label)
+    override fun create(label: String) = create(UUID(0, 0), label, UUID(0, 0), ExtractionMethod.UNKNOWN)
 
-    override fun create(userId: UUID, label: String): Resource {
+    override fun create(userId: UUID, label: String, observatoryId: UUID, extractionMethod: ExtractionMethod): Resource {
         val resourceId = neo4jResourceIdGenerator.nextIdentity()
-        return neo4jResourceRepository.save(Neo4jResource(label = label, resourceId = resourceId, createdBy = userId))
+        return neo4jResourceRepository.save(Neo4jResource(label = label, resourceId = resourceId, createdBy = userId, observatoryId = observatoryId, extractionMethod = extractionMethod))
             .toResource()
     }
 
-    override fun create(request: CreateResourceRequest) = create(UUID(0, 0), request)
+    override fun create(request: CreateResourceRequest) = create(UUID(0, 0), request, UUID(0, 0), ExtractionMethod.UNKNOWN)
 
-    override fun create(userId: UUID, request: CreateResourceRequest): Resource {
+    override fun create(userId: UUID, request: CreateResourceRequest, observatoryId: UUID, extractionMethod: ExtractionMethod): Resource {
         val id = request.id ?: neo4jResourceIdGenerator.nextIdentity()
-        val resource = Neo4jResource(label = request.label, resourceId = id, createdBy = userId)
+        val resource = Neo4jResource(label = request.label, resourceId = id, createdBy = userId, observatoryId = observatoryId, extractionMethod = extractionMethod)
         request.classes.forEach { resource.assignTo(it.toString()) }
         return neo4jResourceRepository.save(resource).toResource()
     }
@@ -119,6 +121,13 @@ class Neo4jResourceService(
     override fun findAllByTitle(title: String?): Iterable<Resource> =
         neo4jResourceRepository.findAllByLabel(title!!)
             .map(Neo4jResource::toResource)
+
+    override fun findAllByObservatoryId(id: UUID): Iterable<Resource> =
+        neo4jResourceRepository.findByObservatoryId(id)
+            .map(Neo4jResource::toResource)
+
+    override fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors> =
+        neo4jResourceRepository.findContributorsByResourceId(id)
 
     override fun update(request: UpdateResourceRequest): Resource {
         // already checked by service

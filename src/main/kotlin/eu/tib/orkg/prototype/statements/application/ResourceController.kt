@@ -2,9 +2,14 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
+import java.util.Optional
+import java.util.UUID
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.badRequest
@@ -24,7 +29,10 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/resources/")
-class ResourceController(private val service: ResourceService) : BaseController() {
+class ResourceController(
+    private val service: ResourceService,
+    private val observatoryService: ObservatoryService
+) : BaseController() {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: ResourceId): Resource =
@@ -63,7 +71,13 @@ class ResourceController(private val service: ResourceService) : BaseController(
         if (resource.id != null && service.findById(resource.id).isPresent)
             return badRequest().body("Resource id <${resource.id}> already exists!")
         val userId = authenticatedUserId()
-        val id = service.create(userId, resource).id
+        val observatory: Optional<ObservatoryEntity>
+        observatory = observatoryService.findByUserId(userId)
+        var observatoryId = UUID(0, 0)
+        if (!observatory.isEmpty)
+            observatoryId = observatory.get().id!!
+
+        val id = service.create(userId, resource, observatoryId, resource.extractionMethod).id
         val location = uriComponentsBuilder
             .path("api/resources/{id}")
             .buildAndExpand(id)
@@ -86,12 +100,24 @@ class ResourceController(private val service: ResourceService) : BaseController(
 
         return ok(service.update(updatedRequest))
     }
+
+    @GetMapping("{id}/contributors")
+    fun findContributorsById(@PathVariable id: ResourceId): Iterable<ResourceContributors> {
+        return service.findContributorsByResourceId(id)
+    }
+}
+
+enum class ExtractionMethod {
+    AUTOMATIC,
+    MANUAL,
+    UNKNOWN
 }
 
 data class CreateResourceRequest(
     val id: ResourceId?,
     val label: String,
-    val classes: Set<ClassId> = emptySet()
+    val classes: Set<ClassId> = emptySet(),
+    val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
 )
 
 data class UpdateResourceRequest(

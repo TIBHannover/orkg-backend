@@ -52,4 +52,17 @@ class UserService(
         user.displayName = newName
         repository.save(user)
     }
+
+    fun updateRole(userId: UUID) {
+        val user = repository.findById(userId).orElseThrow { throw RuntimeException("No user with ID $userId") }
+        user.roles = mutableSetOf(RoleEntity().apply {
+            name = "ORGANIZATION_OWNER"
+            id = userId
+        })
+        repository.save(user)
+    }
+
+    fun findUsersByObservatoryId(id: UUID): Iterable<UserEntity> {
+        return repository.findUsersByObservatoryId(id)
+    }
 }

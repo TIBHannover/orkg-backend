@@ -1,7 +1,9 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
+import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
 import java.util.Optional
 import java.util.UUID
 import org.springframework.data.domain.Pageable
@@ -17,7 +19,7 @@ interface ResourceService {
     /**
      * Create a new resource with a given label belonging to a given user.
      */
-    fun create(userId: UUID, label: String): Resource
+    fun create(userId: UUID, label: String, observatoryId: UUID, extractionMethod: ExtractionMethod): Resource
 
     /**
      * Create a new resource from a request.
@@ -27,7 +29,7 @@ interface ResourceService {
     /**
      * Create a new resource belonging to a given user.
      */
-    fun create(userId: UUID, request: CreateResourceRequest): Resource
+    fun create(userId: UUID, request: CreateResourceRequest, observatoryId: UUID, extractionMethod: ExtractionMethod): Resource
 
     /**
      * Find all resources.
@@ -101,6 +103,10 @@ interface ResourceService {
     fun findAllByDOI(doi: String): Iterable<Resource>
 
     fun findAllByTitle(title: String?): Iterable<Resource>
+
+    fun findAllByObservatoryId(id: UUID): Iterable<Resource>
+
+    fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors>
 
     /**
      * Update a resource.

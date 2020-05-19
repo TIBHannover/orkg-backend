@@ -1,10 +1,12 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.createPageable
+import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -49,7 +51,8 @@ class PaperController(
     private val literalService: LiteralService,
     private val predicateService: PredicateService,
     private val statementService: StatementService,
-    private val classService: ClassService
+    private val classService: ClassService,
+    private val observatoryService: ObservatoryService
 ) : BaseController() {
 
     @PostMapping("/")
@@ -76,6 +79,11 @@ class PaperController(
 
         val contributionClass = getOrCreateClass(ID_CONTRIBUTION_CLASS, userId)
 
+        val observatory = observatoryService.findByUserId(userId)
+        var observatoryId = UUID(0, 0)
+        if (!observatory.isEmpty)
+            observatoryId = observatory.get().id!!
+
         val predicates: HashMap<String, PredicateId> = HashMap()
         if (request.predicates != null) {
             request.predicates.forEach {
@@ -100,10 +108,15 @@ class PaperController(
             val contributionClassSet = setOf(contributionClass)
             request.paper.contributions.forEach {
                 if (it.values != null && it.values.count() > 0) {
-                    val contributionId = resourceService.create(userId, CreateResourceRequest(null, it.name, contributionClassSet)).id!!
+                    val contributionId = resourceService.create(
+                        userId,
+                        CreateResourceRequest(null, it.name, contributionClassSet),
+                        observatoryId,
+                        request.paper.extractionMethod
+                    ).id!!
                     statementService.create(userId, paperId.value, hasContributionPredicate, contributionId.value)
                     val resourceQueue: Queue<TempResource> = LinkedList()
-                    processContributionData(contributionId, it.values, tempResources, predicates, resourceQueue, userId)
+                    processContributionData(contributionId, it.values, tempResources, predicates, resourceQueue, userId, observatoryId = observatoryId, extractionMethod = request.paper.extractionMethod)
                 }
             }
         }
@@ -139,9 +152,18 @@ class PaperController(
         val researchFieldPredicate = predicateService.findById(PredicateId(ID_RESEARCH_FIELD_PREDICATE)).get().id!!
         val urlPredicate = predicateService.findById(PredicateId(ID_URL_PREDICATE)).get().id!!
 
+        val observatory = observatoryService.findByUserId(userId)
+        var observatoryId = UUID(0, 0)
+        if (!observatory.isEmpty)
+            observatoryId = observatory.get().id!!
+
         // paper title
-        val paperObj =
-            resourceService.create(userId, CreateResourceRequest(null, request.paper.title, setOf(ClassId("Paper"))))
+        val paperObj = resourceService.create(
+            userId,
+            CreateResourceRequest(null, request.paper.title, setOf(ClassId("Paper"))),
+            observatoryId,
+            request.paper.extractionMethod
+        )
         val paperId = paperObj.id!!
 
         // paper doi
@@ -157,7 +179,7 @@ class PaperController(
         }
 
         // paper authors
-        handleAuthors(request, userId, paperId)
+        handleAuthors(request, userId, paperId, observatoryId)
 
         // paper publication date
         if (request.paper.publicationMonth != null)
@@ -177,7 +199,13 @@ class PaperController(
 
         // paper published At
         if (request.paper.hasPublishedIn())
-            handlePublishingVenue(request.paper.publishedIn!!, paperId, userId)
+            handlePublishingVenue(
+                request.paper.publishedIn!!,
+                paperId,
+                userId,
+                observatoryId,
+                request.paper.extractionMethod
+            )
 
         // paper research field
         statementService.create(
@@ -189,7 +217,13 @@ class PaperController(
         return paperObj
     }
 
-    fun handlePublishingVenue(venue: String, paperId: ResourceId, userId: UUID) {
+    fun handlePublishingVenue(
+        venue: String,
+        paperId: ResourceId,
+        userId: UUID,
+        observatoryId: UUID,
+        extractionMethod: ExtractionMethod
+    ) {
         val venueClass = getOrCreateClass(ID_VENUE_CLASS, userId)
         val venuePredicate = predicateService.findById(PredicateId(ID_VENUE_PREDICATE)).get().id!!
         val pageable = createPageable(1, 10, null, false)
@@ -203,7 +237,10 @@ class PaperController(
                     null,
                     venue,
                     setOf(venueClass)
-                ))
+                ),
+                observatoryId,
+                extractionMethod
+            )
         }
         // create a statement with the venue resource
         statementService.create(
@@ -228,7 +265,8 @@ class PaperController(
     fun handleAuthors(
         paper: CreatePaperRequest,
         userId: UUID,
-        paperId: ResourceId
+        paperId: ResourceId,
+        observatoryId: UUID
     ) {
         val hasOrcidPredicate = predicateService.findById(PredicateId(ID_ORCID_PREDICATE)).get().id!!
         val hasAuthorPredicate = predicateService.findById(PredicateId(ID_AUTHOR_PREDICATE)).get().id!!
@@ -282,7 +320,9 @@ class PaperController(
                             // create resource
                             val author = resourceService.create(
                                 userId,
-                                CreateResourceRequest(null, it.label, setOf(authorClassId))
+                                CreateResourceRequest(null, it.label, setOf(authorClassId)),
+                                observatoryId,
+                                paper.paper.extractionMethod
                             )
                             statementService.create(
                                 userId,
@@ -362,7 +402,9 @@ class PaperController(
         predicates: HashMap<String, PredicateId>,
         resourceQueue: Queue<TempResource>,
         userId: UUID,
-        recursive: Boolean = false
+        recursive: Boolean = false,
+        observatoryId: UUID,
+        extractionMethod: ExtractionMethod
     ) {
 
         for ((predicate, value) in data) {
@@ -406,15 +448,30 @@ class PaperController(
                         MAP_PREDICATE_CLASSES[predicateId!!.value]?.let { ClassId(it) }?.let { classes.add(it) }
                         // Create resource
                         val newResource = if (classes.isNotEmpty())
-                            resourceService.create(userId, CreateResourceRequest(null, resource.label, classes.toSet())).id!!
+                            resourceService.create(
+                                userId,
+                                CreateResourceRequest(null, resource.label, classes.toSet()),
+                                observatoryId,
+                                extractionMethod
+                            ).id!!
                         else
-                            resourceService.create(userId, resource.label).id!!
+                            resourceService.create(userId, resource.label, observatoryId, extractionMethod).id!!
                         if (resource.`@temp` != null) {
                             tempResources[resource.`@temp`] = newResource.value
                         }
                         statementService.create(userId, subject.value, predicateId, newResource.value)
                         if (resource.values != null) {
-                            processContributionData(newResource, resource.values, tempResources, predicates, resourceQueue, userId, true)
+                            processContributionData(
+                                newResource,
+                                resource.values,
+                                tempResources,
+                                predicates,
+                                resourceQueue,
+                                userId,
+                                true,
+                                observatoryId,
+                                extractionMethod
+                            )
                         }
                     }
                 }
@@ -449,7 +506,8 @@ data class Paper(
     val publishedIn: String?,
     val url: String?,
     val researchField: String,
-    val contributions: List<Contribution>?
+    val contributions: List<Contribution>?,
+    val extractionMethod: ExtractionMethod = UNKNOWN
 ) {
     fun hasPublishedIn(): Boolean =
         publishedIn?.isNotEmpty() != null

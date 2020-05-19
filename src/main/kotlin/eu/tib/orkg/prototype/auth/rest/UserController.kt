@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.auth.domain.model.Contributor
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
+import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
 import java.security.Principal
+import java.util.Optional
 import java.util.UUID
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
@@ -23,7 +26,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/user")
 class UserController(
-    private val userService: UserService
+    private val userService: UserService,
+    private val observatoryService: ObservatoryService
 ) {
     @GetMapping("/")
     fun lookupUserDetails(principal: Principal): ResponseEntity<UserDetails> {
@@ -77,6 +81,25 @@ class UserController(
             }
         }
         return ok(UpdatedUserResponse("success"))
+    }
+
+    @PutMapping("/role")
+    fun updateUserRoleToOwner(principal: Principal): ResponseEntity<Any> {
+        if (principal.name == null)
+            return ResponseEntity((UNAUTHORIZED))
+        val foundUser = userService.findById(UUID.fromString(principal.name))
+        if (foundUser.isPresent) {
+            val currentUser = foundUser.get()
+            val id = currentUser.id!!
+            userService.updateRole(id)
+            return ok(UserDetails(currentUser))
+        }
+        return ResponseEntity(NOT_FOUND)
+    }
+
+    @GetMapping("{id}/observatories")
+    fun findObservatoryByUserId(@PathVariable id: UUID): Optional<ObservatoryEntity> {
+        return observatoryService.findByUserId(id)
     }
 
     /**

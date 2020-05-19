@@ -41,7 +41,6 @@ class UserController(
 
     @GetMapping("/{id}")
     fun lookupContributor(@PathVariable id: UUID): ResponseEntity<Contributor> {
-        println("called with: $id")
         val contributor = userService.findById(id)
         if (contributor.isPresent) {
             val c = contributor.get()

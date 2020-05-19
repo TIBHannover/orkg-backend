@@ -26,17 +26,17 @@ class Neo4jResourceService(
 
     override fun create(label: String) = create(UUID(0, 0), label, UUID(0, 0), ExtractionMethod.UNKNOWN)
 
-    override fun create(userId: UUID, label: String, obs: UUID, extractionMethod: ExtractionMethod): Resource {
+    override fun create(userId: UUID, label: String, observatoryId: UUID, extractionMethod: ExtractionMethod): Resource {
         val resourceId = neo4jResourceIdGenerator.nextIdentity()
-        return neo4jResourceRepository.save(Neo4jResource(label = label, resourceId = resourceId, createdBy = userId, observatoryId = obs, extractionMethod = extractionMethod))
+        return neo4jResourceRepository.save(Neo4jResource(label = label, resourceId = resourceId, createdBy = userId, observatoryId = observatoryId, extractionMethod = extractionMethod))
             .toResource()
     }
 
     override fun create(request: CreateResourceRequest) = create(UUID(0, 0), request, UUID(0, 0), ExtractionMethod.UNKNOWN)
 
-    override fun create(userId: UUID, request: CreateResourceRequest, obs: UUID, extractionMethod: ExtractionMethod): Resource {
+    override fun create(userId: UUID, request: CreateResourceRequest, observatoryId: UUID, extractionMethod: ExtractionMethod): Resource {
         val id = request.id ?: neo4jResourceIdGenerator.nextIdentity()
-        val resource = Neo4jResource(label = request.label, resourceId = id, createdBy = userId, observatoryId = obs, extractionMethod = extractionMethod)
+        val resource = Neo4jResource(label = request.label, resourceId = id, createdBy = userId, observatoryId = observatoryId, extractionMethod = extractionMethod)
         request.classes.forEach { resource.assignTo(it.toString()) }
         return neo4jResourceRepository.save(resource).toResource()
     }

@@ -20,13 +20,12 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/organizations/")
 @CrossOrigin(origins = ["*"])
-class OrganizationController(
+abstract class OrganizationController(
     private val service: OrganizationService,
-    private val observatoryService: ObservatoryService,
-
-    @Value("\${orkg.storage.images.dir}")
-    val imageStoragePath: String
+    private val observatoryService: ObservatoryService
 ) {
+    @Value("\${orkg.storage.images.dir}")
+    var imageStoragePath: String? = null
 
     @PostMapping("/")
     fun addOrganization(@RequestBody organization: CreateOrganizationRequest): OrganizationEntity {

@@ -233,6 +233,8 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].classes").description("The list of classes the resource belongs to"),
             fieldWithPath("[].created_at").description("The resource creation datetime"),
             fieldWithPath("[].created_by").description("The ID of the user that created the class. All zeros if unknown."),
+            fieldWithPath("[].observatory_id").description("The ID of the observatory that maintains this resource."),
+            fieldWithPath("[].extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic"."""),
             fieldWithPath("[].shared").description("The number of times this resource is shared").optional(),
             fieldWithPath("[]._class").optional().ignored()
         )

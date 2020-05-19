@@ -395,6 +395,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("subject.created_at").description("The subject creation datetime"),
             fieldWithPath("subject.created_by").description("The ID of the user that created the subject. All zeros if unknown."),
             fieldWithPath("subject.classes").description("The classes the subject resource belongs to"),
+            fieldWithPath("subject.observatory_id").description("The ID of the observatory that maintains this resource."),
+            fieldWithPath("subject.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic"."""),
             fieldWithPath("subject.shared").description("The number of time this resource has been shared"),
             fieldWithPath("predicate").description("A predicate"),
             fieldWithPath("predicate.id").description("The ID of the predicate"),
@@ -409,6 +411,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("object.created_at").description("The object creation datetime"),
             fieldWithPath("object.created_by").description("The ID of the user that created the object. All zeros if unknown."),
             fieldWithPath("object.classes").description("The classes the object resource belongs to").optional().ignored(),
+            fieldWithPath("object.observatory_id").description("The ID of the observatory that maintains this resource.").optional().ignored(),
+            fieldWithPath("object.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic".""").optional().ignored(),
             fieldWithPath("object.shared").optional().ignored()
         )
 
@@ -424,6 +428,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].subject.created_at").description("The subject creation datetime"),
             fieldWithPath("[].subject.created_by").description("The ID of the user that created the subject. All zeros if unknown."),
             fieldWithPath("[].subject.classes").description("The classes the subject resource belongs to"),
+            fieldWithPath("[].subject.observatory_id").description("The ID of the observatory that maintains this resource."),
+            fieldWithPath("[].subject.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic"."""),
             fieldWithPath("[].subject.shared").description("The number of time this resource has been shared"),
             fieldWithPath("[].predicate").description("A predicate"),
             fieldWithPath("[].predicate.id").description("The ID of the predicate"),
@@ -438,6 +444,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].object.created_at").description("The object creation datetime"),
             fieldWithPath("[].object.created_by").description("The ID of the user that created the object. All zeros if unknown."),
             fieldWithPath("[].object.classes").description("The classes the object resource belongs to").optional().ignored(),
+            fieldWithPath("[].object.observatory_id").description("The ID of the observatory that maintains this resource.").optional().ignored(),
+            fieldWithPath("[].object.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic".""").optional().ignored(),
             fieldWithPath("[].object.shared").optional().ignored()
         )
 }

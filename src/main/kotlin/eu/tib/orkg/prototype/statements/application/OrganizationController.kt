@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/organizations/")
 @CrossOrigin(origins = ["*"])
-abstract class OrganizationController(
+class OrganizationController(
     private val service: OrganizationService,
     private val observatoryService: ObservatoryService
 ) {

@@ -78,12 +78,10 @@ class OrganizationController(
 
     fun decoder(base64Str: String, name: UUID?) {
         val (mimeType, encodedString) = base64Str.split(",")
-        var extension: String = ""
-        when (mimeType) {
-            "data:image/jpeg;base64" -> extension = "jpeg"
-            "data:image/png;base64" -> extension = "png"
-            "data:image/jpg;base64" -> extension = "jpg"
-        }
+        //var a: String = "data:image/svg;base64"
+        val (extension, data ) = (mimeType.substring(mimeType
+                                .indexOf("/") + 1))
+                                .split(";")
 
         writeImage(encodedString, extension, name)
     }
@@ -103,12 +101,7 @@ class OrganizationController(
         File(filePath).walk().forEach {
             if (it.name.substringBeforeLast(".") == id) {
                 ext = it.name.substringAfterLast(".")
-                when (ext) {
-                    "jpeg" -> ext = "data:image/jpeg;base64"
-                    "png" -> ext = "data:image/png;base64"
-                    "jpg" -> ext = "data:image/jpg;base64"
-                }
-
+                ext = "data:image/$ext;base64"
                 file = it.toString()
             }
         }

@@ -11,7 +11,6 @@ interface UserRepository :
     fun findByEmail(email: String): Optional<UserEntity>
     override fun findById(id: UUID): Optional<UserEntity>
 
-    //@Query(value = "SELECT * FROM users INNER JOIN user_observatories uo on users.id = uo.user_id where uo.observatory_id=:id", nativeQuery = true)
     fun findUsersByObservatoryId(id: UUID): Iterable<UserEntity>
 
     fun findOrganizationById(id: UUID): Optional<UserEntity>

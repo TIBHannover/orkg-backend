@@ -1,5 +1,4 @@
 package eu.tib.orkg.prototype.statements.infrastructure.jpa
-import eu.tib.orkg.prototype.auth.persistence.RoleEntity
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
@@ -15,18 +14,17 @@ import org.springframework.transaction.annotation.Transactional
 class PostgresObservatoryService(
     private val postgresObservatoryRepository: PostgresObservatoryRepository
 ) : ObservatoryService {
-    override fun create(observatoryName: String, OrganizationId: UUID): ObservatoryEntity {
+    override fun create(observatoryName: String, Organization: OrganizationEntity): ObservatoryEntity {
         val oId = UUID.randomUUID()
         val newObservatory = ObservatoryEntity().apply {
             id = oId
             name = observatoryName
-
-            organizations = mutableSetOf(OrganizationEntity().apply {
-                id = OrganizationId
-            })
-
+            organizations = mutableSetOf(
+                Organization
+            )
         }
-        .also { println(it.toString()) }
+
+        println(newObservatory.toObservatory())
         return postgresObservatoryRepository.save(newObservatory)
     }
 

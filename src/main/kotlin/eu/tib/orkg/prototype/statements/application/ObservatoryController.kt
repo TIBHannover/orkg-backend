@@ -3,6 +3,7 @@ import eu.tib.orkg.prototype.auth.rest.UserController
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
@@ -23,13 +24,15 @@ import org.springframework.web.util.UriComponentsBuilder
 class ObservatoryController(
     private val service: ObservatoryService,
     private val userService: UserService,
-    private val resourceService: ResourceService
+    private val resourceService: ResourceService,
+    private val organizationService: OrganizationService
 ) {
 
     @PostMapping("/")
     fun addObservatory(@RequestBody observatory: CreateObservatoryRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         return if (service.findByName(observatory.observatoryName).isEmpty) {
-            val id = service.create(observatory.observatoryName, observatory.organizationId).id
+            var organizationEntity = organizationService.findById(observatory.organizationId)
+            val id = service.create(observatory.observatoryName, organizationEntity.get()).id
             val location = uriComponentsBuilder
                 .path("api/observatories/{id}")
                 .buildAndExpand(id)

@@ -5,9 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface PostgresObservatoryRepository : JpaRepository<ObservatoryEntity, UUID> {
 
-    fun findByorganizationId(id: UUID): List<ObservatoryEntity>
+    fun findByorganizationsId(id: UUID): List<ObservatoryEntity>
 
     fun findByName(name: String): Optional<ObservatoryEntity>
 
-    fun findByUsersId(id: UUID): Optional<ObservatoryEntity>
 }

@@ -1,5 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.auth.persistence.UserEntity
+import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
@@ -31,7 +33,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/resources/")
 class ResourceController(
     private val service: ResourceService,
-    private val observatoryService: ObservatoryService
+    private val userService: UserService
 ) : BaseController() {
 
     @GetMapping("/{id}")
@@ -71,13 +73,16 @@ class ResourceController(
         if (resource.id != null && service.findById(resource.id).isPresent)
             return badRequest().body("Resource id <${resource.id}> already exists!")
         val userId = authenticatedUserId()
-        val observatory: Optional<ObservatoryEntity>
-        observatory = observatoryService.findByUserId(userId)
+        val user: Optional<UserEntity> = userService.findById(userId)
+        //user = userService.findById(userId)
         var observatoryId = UUID(0, 0)
-        if (!observatory.isEmpty)
-            observatoryId = observatory.get().id!!
+        var organizationId = UUID(0,0)
+        if (!user.isEmpty) {
+            organizationId = user.get().organizationId
+            observatoryId = user.get().observatoryId
+        }
 
-        val id = service.create(userId, resource, observatoryId, resource.extractionMethod).id
+        val id = service.create(userId, resource, observatoryId, resource.extractionMethod, organizationId).id
         val location = uriComponentsBuilder
             .path("api/resources/{id}")
             .buildAndExpand(id)

@@ -17,5 +17,5 @@ interface ObservatoryService {
 
     fun findById(id: UUID): Optional<Observatory>
 
-    fun findByUserId(id: UUID): Optional<ObservatoryEntity>
+    //fun findByUserId(id: UUID): Optional<ObservatoryEntity>
 }

@@ -65,4 +65,10 @@ class UserService(
     fun findUsersByObservatoryId(id: UUID): Iterable<UserEntity> {
         return repository.findUsersByObservatoryId(id)
     }
+
+    fun findOrganizationById(userId: UUID): Optional<UserEntity> {
+        val user = repository.findOrganizationById(userId)
+        return user
+
+    }
 }

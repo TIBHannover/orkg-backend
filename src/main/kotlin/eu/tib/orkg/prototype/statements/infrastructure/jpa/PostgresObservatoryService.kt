@@ -44,5 +44,4 @@ class PostgresObservatoryService(
         return postgresObservatoryRepository.findById(id)
             .map(ObservatoryEntity::toObservatory)
     }
-
 }

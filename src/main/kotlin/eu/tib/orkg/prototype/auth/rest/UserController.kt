@@ -5,7 +5,6 @@ import eu.tib.orkg.prototype.auth.domain.model.Contributor
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
-import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
 import java.security.Principal
 import java.util.Optional
 import java.util.UUID

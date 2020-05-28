@@ -61,7 +61,7 @@ data class Neo4jResource(
 
     @Property("organization_id")
     @Convert(UUIDGraphAttributeConverter::class)
-    var organizationId: UUID = UUID(0,0)
+    var organizationId: UUID = UUID(0, 0)
     /**
      * List of node labels. Labels other than the `Resource` label are mapped to classes.
      */
@@ -77,7 +77,7 @@ data class Neo4jResource(
             labels = value.map { it.value }.toMutableList()
         }
 
-    constructor(label: String, resourceId: ResourceId, createdBy: UUID = UUID(0, 0), observatoryId: UUID = UUID(0, 0), extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN, organizationId: UUID = UUID(0,0)) : this(null) {
+    constructor(label: String, resourceId: ResourceId, createdBy: UUID = UUID(0, 0), observatoryId: UUID = UUID(0, 0), extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN, organizationId: UUID = UUID(0, 0)) : this(null) {
         this.label = label
         this.resourceId = resourceId
         this.createdBy = createdBy

@@ -24,7 +24,7 @@ class Neo4jResourceService(
     private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator
 ) : ResourceService {
 
-    override fun create(label: String) = create(UUID(0, 0), label, UUID(0, 0), ExtractionMethod.UNKNOWN, UUID(0,0))
+    override fun create(label: String) = create(UUID(0, 0), label, UUID(0, 0), ExtractionMethod.UNKNOWN, UUID(0, 0))
 
     override fun create(userId: UUID, label: String, observatoryId: UUID, extractionMethod: ExtractionMethod, organizationId: UUID): Resource {
         val resourceId = neo4jResourceIdGenerator.nextIdentity()
@@ -32,7 +32,7 @@ class Neo4jResourceService(
             .toResource()
     }
 
-    override fun create(request: CreateResourceRequest) = create(UUID(0, 0), request, UUID(0, 0), ExtractionMethod.UNKNOWN, UUID(0,0))
+    override fun create(request: CreateResourceRequest) = create(UUID(0, 0), request, UUID(0, 0), ExtractionMethod.UNKNOWN, UUID(0, 0))
 
     override fun create(userId: UUID, request: CreateResourceRequest, observatoryId: UUID, extractionMethod: ExtractionMethod, organizationId: UUID): Resource {
         val id = request.id ?: neo4jResourceIdGenerator.nextIdentity()

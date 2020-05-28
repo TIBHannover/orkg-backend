@@ -9,11 +9,10 @@ import javax.persistence.FetchType
 import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.JoinTable
+import javax.persistence.ManyToMany
 import javax.persistence.OneToMany
 import javax.persistence.Table
 import javax.validation.constraints.NotBlank
-import javax.persistence.ManyToMany
-
 
 @Entity
 @Table(name = "observatories")
@@ -34,7 +33,6 @@ class ObservatoryEntity {
         joinColumns = [JoinColumn(name = "observatory_id", referencedColumnName = "id")],
         inverseJoinColumns = [JoinColumn(name = "organization_id", referencedColumnName = "id")])
     var organizations: MutableCollection<OrganizationEntity> = mutableSetOf()
-
 
     fun toObservatory() = Observatory(id, name, organizations)
 }

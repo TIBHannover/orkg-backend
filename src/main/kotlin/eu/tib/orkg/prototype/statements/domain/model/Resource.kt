@@ -23,7 +23,7 @@ data class Resource(
     @JsonProperty("extraction_method")
     val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     @JsonProperty("organization_id")
-    val organizationId: UUID = UUID(0,0)
+    val organizationId: UUID = UUID(0, 0)
 ) : Thing {
     @JsonIgnore
     var rdf: Model? = null

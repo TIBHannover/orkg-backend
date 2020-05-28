@@ -8,5 +8,4 @@ interface PostgresObservatoryRepository : JpaRepository<ObservatoryEntity, UUID>
     fun findByorganizationsId(id: UUID): List<ObservatoryEntity>
 
     fun findByName(name: String): Optional<ObservatoryEntity>
-
 }

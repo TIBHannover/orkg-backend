@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import javax.validation.constraints.Null
 
 @Entity
 @Table(name = "users")
@@ -40,10 +41,10 @@ class UserEntity {
     var created: LocalDateTime = LocalDateTime.now()
 
     @Column(name = "organization_id")
-    var organizationId: UUID = UUID(0,0)
+    var organizationId: UUID? = null
 
     @Column(name = "observatory_id")
-    var observatoryId: UUID = UUID(0,0)
+    var observatoryId: UUID? = null
 
     @OneToMany(mappedBy = "id", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     var roles: MutableCollection<RoleEntity> = mutableSetOf()

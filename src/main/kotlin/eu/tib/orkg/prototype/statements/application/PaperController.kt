@@ -8,7 +8,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -16,6 +15,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import java.util.LinkedList
+import java.util.Optional
 import java.util.Queue
 import java.util.UUID
 import org.springframework.http.HttpStatus
@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
-import java.util.Optional
 
 const val ID_DOI_PREDICATE = "P26"
 const val ID_AUTHOR_PREDICATE = "P27"
@@ -83,17 +82,16 @@ class PaperController(
         val contributionClass = getOrCreateClass(ID_CONTRIBUTION_CLASS, userId)
 
         val user: Optional<UserEntity> = userService.findById(userId)
-        //user = userService.findById(userId)
-        var organizationId = UUID(0,0)
-        var observatoryId = UUID(0, 0)
+        var organizationId: UUID? = UUID(0,0)
+        var observatoryId: UUID? = UUID(0,0)
         if (!user.isEmpty) {
-            observatoryId = user.get().observatoryId
-            organizationId = user.get().organizationId
+            observatoryId = user.get().observatoryId!!
+            organizationId = user.get().organizationId!!
         }
-        //val observatory = observatoryService.findByUserId(userId)
-        //var observatoryId = UUID(0, 0)
-        //if (!observatory.isEmpty)
-            //observatoryId = observatory.get().id!!
+        // val observatory = observatoryService.findByUserId(userId)
+        // var observatoryId = UUID(0, 0)
+        // if (!observatory.isEmpty)
+            // observatoryId = observatory.get().id!!
 
         val predicates: HashMap<String, PredicateId> = HashMap()
         if (request.predicates != null) {
@@ -122,9 +120,9 @@ class PaperController(
                     val contributionId = resourceService.create(
                         userId,
                         CreateResourceRequest(null, it.name, contributionClassSet),
-                        observatoryId,
+                        observatoryId!!,
                         request.paper.extractionMethod,
-                        organizationId
+                        organizationId!!
                     ).id!!
                     statementService.create(userId, paperId.value, hasContributionPredicate, contributionId.value)
                     val resourceQueue: Queue<TempResource> = LinkedList()
@@ -165,25 +163,25 @@ class PaperController(
         val urlPredicate = predicateService.findById(PredicateId(ID_URL_PREDICATE)).get().id!!
 
         val user: Optional<UserEntity> = userService.findById(userId)
-        //user = userService.findById(userId)
-        var organizationId = UUID(0,0)
-        var observatoryId = UUID(0, 0)
+        // user = userService.findById(userId)
+        var organizationId: UUID? = UUID(0,0)
+        var observatoryId: UUID? = UUID(0,0)
         if (!user.isEmpty) {
             organizationId = user.get().organizationId
             observatoryId = user.get().observatoryId
         }
-        //val observatory = observatoryService.findByUserId(userId)
-        //var observatoryId = UUID(0, 0)
-        //if (!observatory.isEmpty)
-            //observatoryId = observatory.get().id!!
+        // val observatory = observatoryService.findByUserId(userId)
+        // var observatoryId = UUID(0, 0)
+        // if (!observatory.isEmpty)
+            // observatoryId = observatory.get().id!!
 
         // paper title
         val paperObj = resourceService.create(
             userId,
             CreateResourceRequest(null, request.paper.title, setOf(ClassId("Paper"))),
-            observatoryId,
+            observatoryId!!,
             request.paper.extractionMethod,
-            organizationId
+            organizationId!!
         )
         val paperId = paperObj.id!!
 

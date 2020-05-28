@@ -4,11 +4,9 @@ import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
 import java.util.Optional
 import java.util.UUID
@@ -74,15 +72,15 @@ class ResourceController(
             return badRequest().body("Resource id <${resource.id}> already exists!")
         val userId = authenticatedUserId()
         val user: Optional<UserEntity> = userService.findById(userId)
-        //user = userService.findById(userId)
-        var observatoryId = UUID(0, 0)
-        var organizationId = UUID(0,0)
+        // user = userService.findById(userId)
+        var observatoryId: UUID? = UUID(0, 0)
+        var organizationId: UUID? = UUID(0, 0)
         if (!user.isEmpty) {
             organizationId = user.get().organizationId
             observatoryId = user.get().observatoryId
         }
 
-        val id = service.create(userId, resource, observatoryId, resource.extractionMethod, organizationId).id
+        val id = service.create(userId, resource, observatoryId!!, resource.extractionMethod, organizationId!!).id
         val location = uriComponentsBuilder
             .path("api/resources/{id}")
             .buildAndExpand(id)

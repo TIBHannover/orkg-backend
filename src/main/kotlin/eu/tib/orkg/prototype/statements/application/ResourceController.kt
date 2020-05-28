@@ -72,7 +72,6 @@ class ResourceController(
             return badRequest().body("Resource id <${resource.id}> already exists!")
         val userId = authenticatedUserId()
         val user: Optional<UserEntity> = userService.findById(userId)
-        // user = userService.findById(userId)
         var observatoryId: UUID? = UUID(0, 0)
         var organizationId: UUID? = UUID(0, 0)
         if (!user.isEmpty) {

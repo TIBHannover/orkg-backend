@@ -88,10 +88,6 @@ class PaperController(
             observatoryId = user.get().observatoryId!!
             organizationId = user.get().organizationId!!
         }
-        // val observatory = observatoryService.findByUserId(userId)
-        // var observatoryId = UUID(0, 0)
-        // if (!observatory.isEmpty)
-            // observatoryId = observatory.get().id!!
 
         val predicates: HashMap<String, PredicateId> = HashMap()
         if (request.predicates != null) {
@@ -163,17 +159,12 @@ class PaperController(
         val urlPredicate = predicateService.findById(PredicateId(ID_URL_PREDICATE)).get().id!!
 
         val user: Optional<UserEntity> = userService.findById(userId)
-        // user = userService.findById(userId)
         var organizationId: UUID? = UUID(0,0)
         var observatoryId: UUID? = UUID(0,0)
         if (!user.isEmpty) {
             organizationId = user.get().organizationId
             observatoryId = user.get().observatoryId
         }
-        // val observatory = observatoryService.findByUserId(userId)
-        // var observatoryId = UUID(0, 0)
-        // if (!observatory.isEmpty)
-            // observatoryId = observatory.get().id!!
 
         // paper title
         val paperObj = resourceService.create(

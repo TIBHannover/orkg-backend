@@ -78,7 +78,6 @@ class OrganizationController(
 
     fun decoder(base64Str: String, name: UUID?) {
         val (mimeType, encodedString) = base64Str.split(",")
-        // var a: String = "data:image/svg;base64"
         val (extension, data) = (mimeType.substring(mimeType
                                 .indexOf("/") + 1))
                                 .split(";")

@@ -67,8 +67,8 @@ class UserService(
     }
 
     fun findOrganizationById(userId: UUID): Optional<UserEntity> {
-        val user = repository.findOrganizationById(userId)
-        return user
+         return repository.findOrganizationById(userId)
+
 
     }
 }

@@ -27,7 +27,6 @@ class ObservatoryEntity {
     @OneToMany(mappedBy = "id", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     var users: Set<UserEntity>? = null
 
-    //@ManyToMany(mappedBy = "observatories", fetch = FetchType.LAZY )
     @JsonIgnore
     @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     @JoinTable(

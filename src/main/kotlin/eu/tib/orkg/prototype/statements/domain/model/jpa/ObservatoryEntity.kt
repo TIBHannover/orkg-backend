@@ -29,7 +29,7 @@ class ObservatoryEntity {
     @JsonIgnore
     @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     @JoinTable(
-        name = "observatory_organizations",
+        name = "observatories_organizations",
         joinColumns = [JoinColumn(name = "observatory_id", referencedColumnName = "id")],
         inverseJoinColumns = [JoinColumn(name = "organization_id", referencedColumnName = "id")])
     var organizations: MutableCollection<OrganizationEntity> = mutableSetOf()

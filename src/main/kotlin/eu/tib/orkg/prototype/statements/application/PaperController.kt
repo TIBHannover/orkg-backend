@@ -82,8 +82,8 @@ class PaperController(
         val contributionClass = getOrCreateClass(ID_CONTRIBUTION_CLASS, userId)
 
         val user: Optional<UserEntity> = userService.findById(userId)
-        var organizationId: UUID? = UUID(0,0)
-        var observatoryId: UUID? = UUID(0,0)
+        var organizationId: UUID? = UUID(0, 0)
+        var observatoryId: UUID? = UUID(0, 0)
         if (!user.isEmpty) {
             observatoryId = user.get().observatoryId!!
             organizationId = user.get().organizationId!!
@@ -159,8 +159,8 @@ class PaperController(
         val urlPredicate = predicateService.findById(PredicateId(ID_URL_PREDICATE)).get().id!!
 
         val user: Optional<UserEntity> = userService.findById(userId)
-        var organizationId: UUID? = UUID(0,0)
-        var observatoryId: UUID? = UUID(0,0)
+        var organizationId: UUID? = UUID(0, 0)
+        var observatoryId: UUID? = UUID(0, 0)
         if (!user.isEmpty) {
             organizationId = user.get().organizationId
             observatoryId = user.get().observatoryId

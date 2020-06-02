@@ -9,6 +9,7 @@ import java.io.File
 import java.util.Base64
 import java.util.UUID
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/organizations/")
@@ -28,10 +30,19 @@ class OrganizationController(
     var imageStoragePath: String? = null
 
     @PostMapping("/")
-    fun addOrganization(@RequestBody organization: CreateOrganizationRequest): OrganizationEntity {
-        var response = (service.create(organization.organizationName, organization.createdBy))
-        decoder(organization.organizationLogo, response.id)
-        return response
+    fun addOrganization(@RequestBody organization: CreateOrganizationRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
+        val (mimeType, encodedString) = organization.organizationLogo.split(",")
+        return if (!mimeType.contains("image/")) {
+            ResponseEntity.badRequest().body("Please upload valid image")
+        } else {
+            var response = (service.create(organization.organizationName, organization.createdBy))
+            decoder(organization.organizationLogo, response.id)
+            val location = uriComponentsBuilder
+                .path("api/organizations/{id}")
+                .buildAndExpand(response.id)
+                .toUri()
+            ResponseEntity.created(location).body(service.findById(response.id!!).get())
+        }
     }
     @GetMapping("/")
     fun findOrganizations(): List<OrganizationEntity> {

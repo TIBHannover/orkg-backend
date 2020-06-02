@@ -171,6 +171,7 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statement.subject.created_by").description("The ID of the user that created the subject. All zeros if unknown."),
             fieldWithPath("[].statement.subject.classes").description("The classes the subject resource belongs to"),
             fieldWithPath("[].statement.subject.observatory_id").description("The ID of the observatory that maintains this resource."),
+            fieldWithPath("[].statement.subject.organization_id").description("The ID of the organization that maintains this resource."),
             fieldWithPath("[].statement.subject.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic"."""),
             fieldWithPath("[].statement.subject.shared").description("The number of time this resource has been shared"),
             fieldWithPath("[].statement.predicate").description("A predicate"),
@@ -187,6 +188,7 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statement.object.created_by").description("The ID of the user that created the object. All zeros if unknown."),
             fieldWithPath("[].statement.object.classes").description("The classes the object resource belongs to").optional().ignored(),
             fieldWithPath("[].statement.object.observatory_id").description("The ID of the observatory that maintains this resource.").optional().ignored(),
+            fieldWithPath("[].statement.object.organization_id").description("The ID of the organization that maintains this resource.").optional().ignored(),
             fieldWithPath("[].statement.object.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic".""").optional().ignored(),
             fieldWithPath("[].statement.object.shared").optional().ignored()
         )
@@ -205,6 +207,7 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statements.[].subject.created_by").description("The ID of the user that created the subject. All zeros if unknown."),
             fieldWithPath("[].statements.[].subject.classes").description("The classes the subject resource belongs to"),
             fieldWithPath("[].statements.[].subject.observatory_id").description("The ID of the observatory that maintains this resource."),
+            fieldWithPath("[].statements.[].subject.organization_id").description("The ID of the organization that maintains this resource."),
             fieldWithPath("[].statements.[].subject.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic"."""),
             fieldWithPath("[].statements.[].subject.shared").description("The number of time this resource has been shared"),
             fieldWithPath("[].statements.[].predicate").description("A predicate"),
@@ -221,6 +224,7 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statements.[].object.created_by").description("The ID of the user that created the object. All zeros if unknown."),
             fieldWithPath("[].statements.[].object.classes").description("The classes the object resource belongs to").optional().ignored(),
             fieldWithPath("[].statements.[].object.observatory_id").description("The ID of the observatory that maintains this resource.").optional().ignored(),
+            fieldWithPath("[].statements.[].object.organization_id").description("The ID of the organization that maintains this resource.").optional().ignored(),
             fieldWithPath("[].statements.[].object.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic".""").optional().ignored(),
             fieldWithPath("[].statements.[].object.shared").optional().ignored()
         )

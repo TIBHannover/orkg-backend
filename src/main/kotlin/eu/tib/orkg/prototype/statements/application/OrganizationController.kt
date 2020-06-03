@@ -31,7 +31,7 @@ class OrganizationController(
 
     @PostMapping("/")
     fun addOrganization(@RequestBody organization: CreateOrganizationRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
-        val (mimeType, encodedString) = organization.organizationLogo.split(",")
+        val (mimeType, _) = organization.organizationLogo.split(",")
         return if (!mimeType.contains("image/")) {
             ResponseEntity.badRequest().body("Please upload valid image")
         } else {
@@ -89,7 +89,7 @@ class OrganizationController(
 
     fun decoder(base64Str: String, name: UUID?) {
         val (mimeType, encodedString) = base64Str.split(",")
-        val (extension, data) = (mimeType.substring(mimeType
+        val (extension, _) = (mimeType.substring(mimeType
                                 .indexOf("/") + 1))
                                 .split(";")
 

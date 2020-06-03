@@ -72,11 +72,11 @@ class ResourceController(
             return badRequest().body("Resource id <${resource.id}> already exists!")
         val userId = authenticatedUserId()
         val user: Optional<UserEntity> = userService.findById(userId)
-        var observatoryId: UUID? = UUID(0, 0)
-        var organizationId: UUID? = UUID(0, 0)
+        var observatoryId = UUID(0, 0)
+        var organizationId = UUID(0, 0)
         if (!user.isEmpty) {
-            organizationId = user.get().organizationId
-            observatoryId = user.get().observatoryId
+            organizationId = user.get().organizationId ?: UUID(0, 0)
+            observatoryId = user.get().observatoryId ?: UUID(0, 0)
         }
 
         val id = service.create(userId, resource, observatoryId!!, resource.extractionMethod, organizationId!!).id

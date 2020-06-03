@@ -19,7 +19,7 @@ interface ResourceService {
     /**
      * Create a new resource with a given label belonging to a given user.
      */
-    fun create(userId: UUID, label: String, observatoryId: UUID, extractionMethod: ExtractionMethod): Resource
+    fun create(userId: UUID, label: String, observatoryId: UUID, extractionMethod: ExtractionMethod, organizationId: UUID): Resource
 
     /**
      * Create a new resource from a request.
@@ -29,7 +29,7 @@ interface ResourceService {
     /**
      * Create a new resource belonging to a given user.
      */
-    fun create(userId: UUID, request: CreateResourceRequest, observatoryId: UUID, extractionMethod: ExtractionMethod): Resource
+    fun create(userId: UUID, request: CreateResourceRequest, observatoryId: UUID, extractionMethod: ExtractionMethod, organizationId: UUID): Resource
 
     /**
      * Find all resources.

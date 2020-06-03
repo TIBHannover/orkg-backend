@@ -1,12 +1,13 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.auth.persistence.UserEntity
+import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -14,6 +15,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import java.util.LinkedList
+import java.util.Optional
 import java.util.Queue
 import java.util.UUID
 import org.springframework.http.HttpStatus
@@ -52,7 +54,7 @@ class PaperController(
     private val predicateService: PredicateService,
     private val statementService: StatementService,
     private val classService: ClassService,
-    private val observatoryService: ObservatoryService
+    private val userService: UserService
 ) : BaseController() {
 
     @PostMapping("/")
@@ -79,10 +81,13 @@ class PaperController(
 
         val contributionClass = getOrCreateClass(ID_CONTRIBUTION_CLASS, userId)
 
-        val observatory = observatoryService.findByUserId(userId)
-        var observatoryId = UUID(0, 0)
-        if (!observatory.isEmpty)
-            observatoryId = observatory.get().id!!
+        val user: Optional<UserEntity> = userService.findById(userId)
+        var organizationId: UUID? = UUID(0, 0)
+        var observatoryId: UUID? = UUID(0, 0)
+        if (!user.isEmpty) {
+            observatoryId = user.get().observatoryId!!
+            organizationId = user.get().organizationId!!
+        }
 
         val predicates: HashMap<String, PredicateId> = HashMap()
         if (request.predicates != null) {
@@ -111,12 +116,13 @@ class PaperController(
                     val contributionId = resourceService.create(
                         userId,
                         CreateResourceRequest(null, it.name, contributionClassSet),
-                        observatoryId,
-                        request.paper.extractionMethod
+                        observatoryId!!,
+                        request.paper.extractionMethod,
+                        organizationId!!
                     ).id!!
                     statementService.create(userId, paperId.value, hasContributionPredicate, contributionId.value)
                     val resourceQueue: Queue<TempResource> = LinkedList()
-                    processContributionData(contributionId, it.values, tempResources, predicates, resourceQueue, userId, observatoryId = observatoryId, extractionMethod = request.paper.extractionMethod)
+                    processContributionData(contributionId, it.values, tempResources, predicates, resourceQueue, userId, observatoryId = observatoryId, extractionMethod = request.paper.extractionMethod, organizationId = organizationId)
                 }
             }
         }
@@ -152,17 +158,21 @@ class PaperController(
         val researchFieldPredicate = predicateService.findById(PredicateId(ID_RESEARCH_FIELD_PREDICATE)).get().id!!
         val urlPredicate = predicateService.findById(PredicateId(ID_URL_PREDICATE)).get().id!!
 
-        val observatory = observatoryService.findByUserId(userId)
-        var observatoryId = UUID(0, 0)
-        if (!observatory.isEmpty)
-            observatoryId = observatory.get().id!!
+        val user: Optional<UserEntity> = userService.findById(userId)
+        var organizationId: UUID? = UUID(0, 0)
+        var observatoryId: UUID? = UUID(0, 0)
+        if (!user.isEmpty) {
+            organizationId = user.get().organizationId
+            observatoryId = user.get().observatoryId
+        }
 
         // paper title
         val paperObj = resourceService.create(
             userId,
             CreateResourceRequest(null, request.paper.title, setOf(ClassId("Paper"))),
-            observatoryId,
-            request.paper.extractionMethod
+            observatoryId!!,
+            request.paper.extractionMethod,
+            organizationId!!
         )
         val paperId = paperObj.id!!
 
@@ -179,7 +189,7 @@ class PaperController(
         }
 
         // paper authors
-        handleAuthors(request, userId, paperId, observatoryId)
+        handleAuthors(request, userId, paperId, observatoryId, organizationId)
 
         // paper publication date
         if (request.paper.publicationMonth != null)
@@ -204,7 +214,8 @@ class PaperController(
                 paperId,
                 userId,
                 observatoryId,
-                request.paper.extractionMethod
+                request.paper.extractionMethod,
+                organizationId
             )
 
         // paper research field
@@ -222,7 +233,8 @@ class PaperController(
         paperId: ResourceId,
         userId: UUID,
         observatoryId: UUID,
-        extractionMethod: ExtractionMethod
+        extractionMethod: ExtractionMethod,
+        organizationId: UUID
     ) {
         val venueClass = getOrCreateClass(ID_VENUE_CLASS, userId)
         val venuePredicate = predicateService.findById(PredicateId(ID_VENUE_PREDICATE)).get().id!!
@@ -239,7 +251,8 @@ class PaperController(
                     setOf(venueClass)
                 ),
                 observatoryId,
-                extractionMethod
+                extractionMethod,
+                organizationId
             )
         }
         // create a statement with the venue resource
@@ -266,7 +279,8 @@ class PaperController(
         paper: CreatePaperRequest,
         userId: UUID,
         paperId: ResourceId,
-        observatoryId: UUID
+        observatoryId: UUID,
+        organizationId: UUID
     ) {
         val hasOrcidPredicate = predicateService.findById(PredicateId(ID_ORCID_PREDICATE)).get().id!!
         val hasAuthorPredicate = predicateService.findById(PredicateId(ID_AUTHOR_PREDICATE)).get().id!!
@@ -322,7 +336,8 @@ class PaperController(
                                 userId,
                                 CreateResourceRequest(null, it.label, setOf(authorClassId)),
                                 observatoryId,
-                                paper.paper.extractionMethod
+                                paper.paper.extractionMethod,
+                                organizationId
                             )
                             statementService.create(
                                 userId,
@@ -404,7 +419,8 @@ class PaperController(
         userId: UUID,
         recursive: Boolean = false,
         observatoryId: UUID,
-        extractionMethod: ExtractionMethod
+        extractionMethod: ExtractionMethod,
+        organizationId: UUID
     ) {
 
         for ((predicate, value) in data) {
@@ -452,10 +468,11 @@ class PaperController(
                                 userId,
                                 CreateResourceRequest(null, resource.label, classes.toSet()),
                                 observatoryId,
-                                extractionMethod
+                                extractionMethod,
+                                organizationId
                             ).id!!
                         else
-                            resourceService.create(userId, resource.label, observatoryId, extractionMethod).id!!
+                            resourceService.create(userId, resource.label, observatoryId, extractionMethod, organizationId).id!!
                         if (resource.`@temp` != null) {
                             tempResources[resource.`@temp`] = newResource.value
                         }
@@ -470,7 +487,8 @@ class PaperController(
                                 userId,
                                 true,
                                 observatoryId,
-                                extractionMethod
+                                extractionMethod,
+                                organizationId
                             )
                         }
                     }

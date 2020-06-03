@@ -3,7 +3,9 @@ package eu.tib.orkg.prototype.statements.domain.model.jpa
 import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.FetchType
 import javax.persistence.Id
+import javax.persistence.ManyToMany
 import javax.persistence.Table
 import javax.validation.constraints.NotBlank
 
@@ -18,4 +20,7 @@ class OrganizationEntity {
 
         @Column(name = "created_by")
         var createdBy: UUID? = null
+
+        @ManyToMany(mappedBy = "organizations", fetch = FetchType.LAZY)
+        var observatories: Set<ObservatoryEntity>? = null
     }

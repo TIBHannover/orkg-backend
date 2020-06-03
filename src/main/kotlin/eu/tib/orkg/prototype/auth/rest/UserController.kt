@@ -5,7 +5,6 @@ import eu.tib.orkg.prototype.auth.domain.model.Contributor
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
-import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
 import java.security.Principal
 import java.util.Optional
 import java.util.UUID
@@ -96,9 +95,9 @@ class UserController(
         return ResponseEntity(NOT_FOUND)
     }
 
-    @GetMapping("{id}/observatories")
-    fun findObservatoryByUserId(@PathVariable id: UUID): Optional<ObservatoryEntity> {
-        return observatoryService.findByUserId(id)
+    @GetMapping("{id}/organizations")
+    fun findOrganizationByUserId(@PathVariable id: UUID): Optional<UserEntity> {
+        return userService.findOrganizationById(id)
     }
 
     /**
@@ -117,6 +116,12 @@ class UserController(
 
         @JsonProperty("created_at")
         val created = user.created
+
+        @JsonProperty("organization_id")
+        val organizationId = user.organizationId
+
+        @JsonProperty("observatory_id")
+        val observatoryId = user.observatoryId
     }
 
     data class UpdatedUserResponse(

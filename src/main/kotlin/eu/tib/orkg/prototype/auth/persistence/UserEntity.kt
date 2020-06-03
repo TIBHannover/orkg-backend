@@ -39,6 +39,12 @@ class UserEntity {
     @NotNull
     var created: LocalDateTime = LocalDateTime.now()
 
+    @Column(name = "organization_id")
+    var organizationId: UUID? = null
+
+    @Column(name = "observatory_id")
+    var observatoryId: UUID? = null
+
     @OneToMany(mappedBy = "id", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     var roles: MutableCollection<RoleEntity> = mutableSetOf()
 }

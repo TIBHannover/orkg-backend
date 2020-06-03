@@ -9,7 +9,7 @@ services:
       SPRING_DATA_NEO4J_URI: 'bolt://neo4j:7687'
     ports:
       - '127.0.0.1:8080:8080'
-      - '::1:8080:8080'
+      #- '::1:8080:8080'
     networks:
       - backend
     depends_on:
@@ -20,9 +20,9 @@ services:
     image: neo4j:3.5
     ports:
       - '127.0.0.1:7474:7474' # HTTP
-      - '::1:7474:7474'
+      #- '::1:7474:7474'
       - '127.0.0.1:7687:7687' # BOLT
-      - '::1:7687:7687'
+      #- '::1:7687:7687'
     environment:
       NEO4JLABS_PLUGINS: '["apoc"]'
       NEO4J_AUTH: none
@@ -38,7 +38,7 @@ services:
       - '5432'
     ports:
       - '127.0.0.1:5432:5432'
-      - '::1:5432:5432'
+      #- '::1:5432:5432'
     environment:
       POSTGRES_PASSWORD: postgres
       PGDATA: /var/lib/postgresql/data/pgdata

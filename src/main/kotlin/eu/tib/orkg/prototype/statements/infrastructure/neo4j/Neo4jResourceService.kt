@@ -82,12 +82,12 @@ class Neo4jResourceService(
             .map(Neo4jResource::toResource)
 
     override fun findAllByClassAndLabelContaining(pageable: Pageable, id: ClassId, part: String): Iterable<Resource> =
-        neo4jResourceRepository.findAllByClassAndLabelContaining(id.toString(), "(?i).*$part.*", pageable)
+        neo4jResourceRepository.findAllByClassAndLabelContaining(id.toString(), "(?i).*${escapeRegexString(part)}.*", pageable)
             .content
             .map(Neo4jResource::toResource)
 
     override fun findAllByClassAndLabelContainingAndCreatedBy(pageable: Pageable, id: ClassId, part: String, createdBy: UUID): Iterable<Resource> =
-        neo4jResourceRepository.findAllByClassAndLabelContainingAndCreatedBy(id.toString(), "(?i).*$part.*", createdBy, pageable)
+        neo4jResourceRepository.findAllByClassAndLabelContainingAndCreatedBy(id.toString(), "(?i).*${escapeRegexString(part)}.*", createdBy, pageable)
             .content
             .map(Neo4jResource::toResource)
 
@@ -102,7 +102,7 @@ class Neo4jResourceService(
             .map(Neo4jResource::toResource)
 
     override fun findAllExcludingClassByLabelContaining(pageable: Pageable, ids: Array<ClassId>, part: String): Iterable<Resource> =
-        neo4jResourceRepository.findAllExcludingClassByLabelContaining(ids.map { it.value }, "(?i).*$part.*", pageable)
+        neo4jResourceRepository.findAllExcludingClassByLabelContaining(ids.map { it.value }, "(?i).*${escapeRegexString(part)}.*", pageable)
             .content
             .map(Neo4jResource::toResource)
 

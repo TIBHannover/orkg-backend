@@ -4,9 +4,12 @@ import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.Literal
+import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
 import java.util.Optional
 import java.util.UUID
@@ -31,14 +34,18 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/resources/")
 class ResourceController(
     private val service: ResourceService,
-    private val userService: UserService
+    private val userService: UserService,
+    private val statementService: StatementService
 ) : BaseController() {
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: ResourceId): Resource =
-        service
+    fun findById(@PathVariable id: ResourceId): Resource {
+        val resource = service
             .findById(id)
             .orElseThrow { ResourceNotFound() }
+        resource.formattedLabel = createFormattedLabels(resource)
+        return resource
+    }
 
     @GetMapping("/")
     fun findByLabel(
@@ -106,6 +113,53 @@ class ResourceController(
     @GetMapping("{id}/contributors")
     fun findContributorsById(@PathVariable id: ResourceId): Iterable<ResourceContributors> {
         return service.findContributorsByResourceId(id)
+    }
+
+    fun createFormattedLabels(resource: Resource): String? {
+        if (resource.classes.isNotEmpty()) {
+            val pagination = createPageable(1, 1000, null, false)
+            val classId = resource.classes.first()
+            // Check if the instance is of a templated class
+            val found = statementService.findAllByObjectAndPredicate(
+                objectId = classId.value,
+                predicateId = PredicateId("TemplateOfClass"),
+                pagination = pagination
+            ).firstOrNull() ?: return null
+            // Check if the templated class has format option
+            val format = statementService.findAllBySubjectAndPredicate(
+                subjectId = (found.subject as Resource).id!!.value,
+                predicateId = PredicateId("TemplateLabelFormat"),
+                pagination = pagination
+            ).firstOrNull() ?: return null
+            // Get format rule
+            val formatRule = format.`object` as Literal
+            // Get all statements of the current resource to format the label
+            val statements = statementService.findAllBySubject(
+                subjectId = resource.id!!.value,
+                pagination = pagination
+            )
+            if (statements.count() == 0)
+                return null
+            // Create a map with predicate -> value
+            val properties = statements.map {
+                Pair(it.predicate.id!!.value,
+                    (it.`object` as Literal).label)
+            }.toMap()
+            // Catch JS/Python string format patterns and replace them
+            val pattern = """\{\w*}""".toRegex()
+            val matches = pattern.findAll(formatRule.label)
+            var formattedString = formatRule.label
+            matches.forEach {
+                val predId = formatRule.label.substring(
+                    startIndex = it.groups.first()!!.range.first + 1,
+                    endIndex = it.groups.first()!!.range.last
+                )
+                if (properties.containsKey(predId))
+                    formattedString = formattedString.replaceFirst("{$predId}", properties[predId] ?: error("Predicate not found"))
+            }
+            return formattedString
+        }
+        return null
     }
 }
 

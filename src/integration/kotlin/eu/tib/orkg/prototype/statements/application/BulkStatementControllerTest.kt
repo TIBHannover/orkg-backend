@@ -174,6 +174,7 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statement.subject.organization_id").description("The ID of the organization that maintains this resource."),
             fieldWithPath("[].statement.subject.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic"."""),
             fieldWithPath("[].statement.subject.shared").description("The number of time this resource has been shared"),
+            fieldWithPath("[].statement.subject.formatted_label").description("The formatted label representation if applies"),
             fieldWithPath("[].statement.predicate").description("A predicate"),
             fieldWithPath("[].statement.predicate.id").description("The ID of the predicate"),
             fieldWithPath("[].statement.predicate.label").description("The label of the predicate"),
@@ -190,7 +191,8 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statement.object.observatory_id").description("The ID of the observatory that maintains this resource.").optional().ignored(),
             fieldWithPath("[].statement.object.organization_id").description("The ID of the organization that maintains this resource.").optional().ignored(),
             fieldWithPath("[].statement.object.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic".""").optional().ignored(),
-            fieldWithPath("[].statement.object.shared").optional().ignored()
+            fieldWithPath("[].statement.object.shared").optional().ignored(),
+            fieldWithPath("[].statement.object.formatted_label").description("The formatted label representation if applies")
         )
 
     private fun bulkStatementListResponseFields() =
@@ -210,6 +212,7 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statements.[].subject.organization_id").description("The ID of the organization that maintains this resource."),
             fieldWithPath("[].statements.[].subject.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic"."""),
             fieldWithPath("[].statements.[].subject.shared").description("The number of time this resource has been shared"),
+            fieldWithPath("[].statements.[].subject.formatted_label").description("The formatted label representation if applies"),
             fieldWithPath("[].statements.[].predicate").description("A predicate"),
             fieldWithPath("[].statements.[].predicate.id").description("The ID of the predicate"),
             fieldWithPath("[].statements.[].predicate.label").description("The label of the predicate"),
@@ -226,6 +229,7 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statements.[].object.observatory_id").description("The ID of the observatory that maintains this resource.").optional().ignored(),
             fieldWithPath("[].statements.[].object.organization_id").description("The ID of the organization that maintains this resource.").optional().ignored(),
             fieldWithPath("[].statements.[].object.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic".""").optional().ignored(),
-            fieldWithPath("[].statements.[].object.shared").optional().ignored()
+            fieldWithPath("[].statements.[].object.shared").optional().ignored(),
+            fieldWithPath("[].statements.[].object.formatted_label").description("The formatted label representation if applies")
         )
 }

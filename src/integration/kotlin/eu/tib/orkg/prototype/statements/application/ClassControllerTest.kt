@@ -237,6 +237,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].organization_id").description("The ID of the organization that maintains this resource."),
             fieldWithPath("[].extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic"."""),
             fieldWithPath("[].shared").description("The number of times this resource is shared").optional(),
-            fieldWithPath("[]._class").optional().ignored()
+            fieldWithPath("[]._class").optional().ignored(),
+            fieldWithPath("[].formatted_label").description("The formatted label representation if applies")
         )
 }

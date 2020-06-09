@@ -58,7 +58,7 @@ class ResourceController(
         @RequestParam("exclude", required = false, defaultValue = "") excludeClasses: Array<String>
     ): Iterable<Resource> {
         val pagination = createPageable(page, items, sortBy, desc)
-        return when {
+        val resources = when {
             excludeClasses.isNotEmpty() -> when {
                 searchString == null -> service.findAllExcludingClass(pagination, excludeClasses.map { ClassId(it) }.toTypedArray())
                 exactMatch -> service.findAllExcludingClassByLabel(pagination, excludeClasses.map { ClassId(it) }.toTypedArray(), searchString)
@@ -70,6 +70,10 @@ class ResourceController(
                 else -> service.findAllByLabelContaining(pagination, searchString)
             }
         }
+        resources.forEach {
+            it.formattedLabel = createFormattedLabels(it)
+        }
+        return resources
     }
 
     @PostMapping("/")
@@ -86,7 +90,7 @@ class ResourceController(
             observatoryId = user.get().observatoryId ?: UUID(0, 0)
         }
 
-        val id = service.create(userId, resource, observatoryId!!, resource.extractionMethod, organizationId!!).id
+        val id = service.create(userId, resource, observatoryId, resource.extractionMethod, organizationId).id
         val location = uriComponentsBuilder
             .path("api/resources/{id}")
             .buildAndExpand(id)

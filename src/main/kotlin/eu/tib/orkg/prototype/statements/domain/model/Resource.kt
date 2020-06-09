@@ -27,4 +27,7 @@ data class Resource(
 ) : Thing {
     @JsonIgnore
     var rdf: Model? = null
+
+    @JsonProperty("formatted_label")
+    var formattedLabel: String? = null
 }

@@ -50,17 +50,17 @@ class OrganizationController(
     }
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: UUID): UpdateOrganizationResponse {
+    fun findById(@PathVariable id: UUID): Organization {
         var response = service.findById(id)
         var path: String = "$imageStoragePath/"
         var logo = encoder(path, response.get().id.toString())
 
         return (
-                OrganizationController.UpdateOrganizationResponse(
-                organizationId = id,
-                organizationName = response.get().name,
-                organizationLogo = logo,
-                    createdBy = response.get().createdBy
+            Organization(
+                id = response.get().id,
+                name = response.get().name,
+                logo = logo,
+                observatories = response.get().observatories
             )
         )
     }

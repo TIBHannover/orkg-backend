@@ -9,6 +9,8 @@ data class Organization(
 
     var name: String?,
 
+    var logo: String?,
+
     @JsonProperty("created_by")
     val createdBy: UUID? = UUID(0, 0),
 

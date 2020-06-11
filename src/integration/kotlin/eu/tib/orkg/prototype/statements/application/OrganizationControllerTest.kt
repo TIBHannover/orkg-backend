@@ -3,8 +3,9 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
-import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import java.util.UUID
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -33,7 +34,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
     private lateinit var service: OrganizationService
 
     @Autowired
-    private lateinit var resourceService: ResourceService
+    private lateinit var observatoryService: ObservatoryService
 
     @Autowired
     private lateinit var classService: ClassService
@@ -59,10 +60,42 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
             )
     }
 
+    @Test
+    fun fetch() {
+        val id = service.create("test organization", UUID(0, 0)).id
+
+        mockMvc
+            .perform(getRequestTo("/api/organizations/$id"))
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    snippet,
+                    responseFields(organizationResponseFields())
+                )
+            )
+    }
+
+    @Test
+    fun lookUpObservatoriesByOrganization() {
+        userService.registerUser("abc@gmail.com", "123456", "M Haris")
+        val id = service.create("test organization", userService.findByEmail("abc@gmail.com").get().id!!).id
+        observatoryService.create("test observatory", service.findById(id!!).get())
+
+        mockMvc
+            .perform(getRequestTo("/api/organizations/$id/observatories"))
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    snippet
+                )
+            )
+    }
+
     companion object RestDoc {
         private fun organizationResponseFields() = listOf(
             fieldWithPath("id").description("The organization ID"),
             fieldWithPath("name").description("The organization name"),
+            fieldWithPath("logo").description("The logo of the organization"),
             fieldWithPath("created_by").description("The ID of the user that created the organization."),
             fieldWithPath("observatories").description("The list of the observatories belong to an organization")
         )

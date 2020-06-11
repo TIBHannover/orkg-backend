@@ -2,9 +2,9 @@ package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
+import eu.tib.orkg.prototype.statements.domain.model.Organization
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
-import eu.tib.orkg.prototype.statements.domain.model.jpa.OrganizationEntity
 import java.io.File
 import java.util.Base64
 import java.util.UUID
@@ -45,7 +45,7 @@ class OrganizationController(
         }
     }
     @GetMapping("/")
-    fun findOrganizations(): List<OrganizationEntity> {
+    fun findOrganizations(): List<Organization> {
         return service.listOrganizations()
     }
 

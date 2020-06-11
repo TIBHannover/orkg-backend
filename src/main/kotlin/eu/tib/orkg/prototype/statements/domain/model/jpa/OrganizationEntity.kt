@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.jpa
 
+import eu.tib.orkg.prototype.statements.domain.model.Organization
 import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -22,5 +23,7 @@ class OrganizationEntity {
         var createdBy: UUID? = null
 
         @ManyToMany(mappedBy = "organizations", fetch = FetchType.LAZY)
-        var observatories: Set<ObservatoryEntity>? = null
+        var observatories: Set<ObservatoryEntity>? = emptySet()
+
+        fun toOrganization() = Organization(id, name, createdBy, observatories)
     }

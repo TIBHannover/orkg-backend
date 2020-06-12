@@ -6,7 +6,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
 import java.util.UUID
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -49,7 +48,7 @@ class ObservatoryController(
             .orElseThrow { ObservatoryNotFound() }
 
     @GetMapping("/")
-    fun findObservatories(): List<ObservatoryEntity> {
+    fun findObservatories(): List<Observatory> {
         return service.listObservatories()
     }
 

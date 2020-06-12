@@ -10,7 +10,7 @@ interface ObservatoryService {
      */
     fun create(observatoryName: String, organization: OrganizationEntity): ObservatoryEntity
 
-    fun listObservatories(): List<ObservatoryEntity>
+    fun listObservatories(): List<Observatory>
 
     fun findObservatoriesByOrganizationId(id: UUID): List<ObservatoryEntity>
 

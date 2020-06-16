@@ -46,7 +46,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
 
     @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
-    fun add() {
+    fun index() {
 
         userService.registerUser("abc@gmail.com", "123456", "M Haris")
         val id = service.create("test organization", userService.findByEmail("abc@gmail.com").get().id!!).id

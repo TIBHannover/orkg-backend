@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import eu.tib.orkg.prototype.statements.application.CreateClassRequest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
+import eu.tib.orkg.prototype.statements.domain.model.IndexService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
@@ -23,10 +24,14 @@ class ExampleData(
     private val resourceService: ResourceService,
     private val predicateService: PredicateService,
     private val statementService: StatementService,
-    private val classService: ClassService
+    private val classService: ClassService,
+    private val indexService: IndexService
 ) : ApplicationRunner {
 
     override fun run(args: ApplicationArguments?) {
+        // Create required constraints and indices
+        indexService.createRequiredPropertyIndices()
+        indexService.createRequiredUniqueConstraints()
         if (statementsPresent())
             return
 

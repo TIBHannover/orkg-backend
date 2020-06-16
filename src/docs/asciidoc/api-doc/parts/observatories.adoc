@@ -1,0 +1,30 @@
+[[observatory]]
+== Observatories
+
+Observatories represent groups which are stored in Postgres and managed by organizations. One Observatory can belong to many organizations.
+[[organizations-list]]
+=== Listing Observatories
+
+A `GET` request lists all organizations:
+
+operation::observatory-controller-test-index[snippets='curl-request,http-response']
+
+[[observatory-create]]
+=== Creating observatories
+
+A `POST` request creates a new observatories with a given name.
+The response will be `200 Created` when successful.
+The observatories can be retrieved by following the URI in the `Location` header field.
+
+operation::observatory-controller-test-add[snippets='request-fields,curl-request,http-response']
+
+The response body consists of the following fields:
+
+operation::observatory-controller-test-add[snippets='response-fields']
+
+[[observatories-fetch]]
+=== Fetching an observatory
+
+A `GET` request provides information about a resource.
+
+operation::observatory-controller-test-fetch[snippets='curl-request,http-response']

@@ -60,7 +60,7 @@ class Neo4jIndexService(
         indexType: IndexType
     ) {
         val newConstraint = Neo4jIndexInfo(label, property, indexType.value)
-        if (!existingConstraints.any { it == newConstraint }) {
+        if (!existingConstraints.contains(newConstraint)) {
             if (indexType == IndexType.PROPERTY)
                 neo4jIndexRepository.createPropertyIndex(label, property)
             else

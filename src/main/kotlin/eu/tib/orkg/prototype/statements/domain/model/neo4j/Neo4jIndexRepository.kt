@@ -12,25 +12,26 @@ interface Neo4jIndexRepository : Neo4jRepository<Neo4jResource, Long>, IndexRepo
 }
 
 interface IndexRepository {
-
-    fun createUniqueConstraint(type: String, property: String)
-
-    fun createPropertyIndex(type: String, property: String)
+    fun createIndex(index: Neo4jIndex)
 }
 
 class IndexRepositoryImpl(private val ogmSession: Session) : IndexRepository {
 
-    // TODO: in Neo4j 3.5 you can't set the name and the create index statement changes in Neo4j 4.0
-    override fun createPropertyIndex(type: String, property: String) {
-        val query = """CREATE INDEX ON :$type($property);"""
-        ogmSession.query(query, emptyMap<String, Any>())
+    override fun createIndex(index: Neo4jIndex) {
+        ogmSession.query(index.toCypherQuery(), emptyMap<String, Any>())
     }
+}
 
-    // TODO: in Neo4j 3.5 you can't set the name, you can in Neo4j 4.0
-    override fun createUniqueConstraint(type: String, property: String) {
-        val query = """CREATE CONSTRAINT ON (n:$type) ASSERT n.$property IS UNIQUE;"""
-        ogmSession.query(query, emptyMap<String, Any>())
-    }
+interface Neo4jIndex {
+    fun toCypherQuery(): String
+}
+
+data class UniqueIndex(private val label: String, private val property: String) : Neo4jIndex {
+    override fun toCypherQuery() = """CREATE CONSTRAINT ON (n:$label) ASSERT n.$property IS UNIQUE;"""
+}
+
+data class PropertyIndex(val label: String, val property: String) : Neo4jIndex {
+    override fun toCypherQuery() = """CREATE INDEX ON :$label($property);"""
 }
 
 @QueryResult

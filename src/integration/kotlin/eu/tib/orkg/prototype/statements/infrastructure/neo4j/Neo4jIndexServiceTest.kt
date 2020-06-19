@@ -21,8 +21,7 @@ class Neo4jIndexServiceTest {
     @Test
     @DisplayName("should create required indices")
     fun shouldCreateNeededIndices() {
-        service.createRequiredUniqueConstraints()
-        service.createRequiredPropertyIndices()
+        service.verifyIndices()
 
         // 12 here is hard coded because we have also 12 constraints hardcoded
         assertThat(repository.getExistingIndicesAndConstraints().count() >= 12)

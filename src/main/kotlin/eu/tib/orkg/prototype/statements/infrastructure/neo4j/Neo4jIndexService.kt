@@ -1,8 +1,10 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.statements.domain.model.IndexService
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jIndexInfo
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jIndex
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jIndexRepository
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.PropertyIndex
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.UniqueIndex
 import org.neo4j.driver.exceptions.DatabaseException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -17,59 +19,43 @@ class Neo4jIndexService(
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun createRequiredUniqueConstraints() {
-        val existingConstraints = neo4jIndexRepository.getExistingIndicesAndConstraints()
+    override fun verifyIndices() {
+        val existingIndexes = this.getIndexes()
         listOf(
-            "Class" to "class_id",
-            "Literal" to "literal_id",
-            "Predicate" to "predicate_id",
-            "Resource" to "resource_id",
-            "Thing" to "class_id",
-            "Thing" to "literal_id",
-            "Thing" to "predicate_id",
-            "Thing" to "resource_id"
-        ).forEach { (nodeLabel, property) ->
+            UniqueIndex("Class", "class_id"),
+            UniqueIndex("Literal", "literal_id"),
+            UniqueIndex("Predicate", "predicate_id"),
+            UniqueIndex("Resource", "resource_id"),
+            UniqueIndex("Thing", "class_id"),
+            UniqueIndex("Thing", "literal_id"),
+            UniqueIndex("Thing", "predicate_id"),
+            UniqueIndex("Thing", "resource_id"),
+            PropertyIndex("Literal", "label"),
+            PropertyIndex("Predicate", "label"),
+            PropertyIndex("Resource", "label"),
+            PropertyIndex("Class", "label")
+        ).forEach { index ->
             try {
-                checkAndCreateConstraint(existingConstraints, nodeLabel, property, IndexType.UNIQUE)
+                checkAndCreateConstraint(existingIndexes, index)
             } catch (ex: DatabaseException) {
-                logger.warn("Unique constrains :$nodeLabel($property), can't be created")
+                logger.warn("couldn't execute constraint ${index.toCypherQuery()}")
             }
         }
     }
 
-    override fun createRequiredPropertyIndices() {
-        val existingConstraints = neo4jIndexRepository.getExistingIndicesAndConstraints()
-        listOf(
-            "Literal" to "label",
-            "Predicate" to "label",
-            "Resource" to "label",
-            "Class" to "label"
-        ).forEach { (nodeLabel, property) ->
-            try {
-                checkAndCreateConstraint(existingConstraints, nodeLabel, property, IndexType.PROPERTY)
-            } catch (ex: DatabaseException) {
-                logger.warn("Property Index :$nodeLabel($property), can't be created.")
-            }
+    override fun getIndexes(): Iterable<Neo4jIndex> = neo4jIndexRepository.getExistingIndicesAndConstraints().map {
+        when (it.type) {
+            "node_unique_property" -> UniqueIndex(it.label, it.property)
+            "node_label_property" -> PropertyIndex(it.label, it.property)
+            else -> throw IllegalArgumentException("Unknown class")
         }
     }
 
     private fun checkAndCreateConstraint(
-        existingConstraints: Iterable<Neo4jIndexInfo>,
-        label: String,
-        property: String,
-        indexType: IndexType
+        existingIndexes: Iterable<Neo4jIndex>,
+        neo4jIndex: Neo4jIndex
     ) {
-        val newConstraint = Neo4jIndexInfo(label, property, indexType.value)
-        if (!existingConstraints.contains(newConstraint)) {
-            if (indexType == IndexType.PROPERTY)
-                neo4jIndexRepository.createPropertyIndex(label, property)
-            else
-                neo4jIndexRepository.createUniqueConstraint(label, property)
-        }
+        if (!existingIndexes.contains(neo4jIndex))
+            neo4jIndexRepository.createIndex(neo4jIndex)
     }
-}
-
-private enum class IndexType(val value: String) {
-    UNIQUE("node_unique_property"),
-    PROPERTY("node_label_property")
 }

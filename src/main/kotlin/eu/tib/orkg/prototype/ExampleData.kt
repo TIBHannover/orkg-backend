@@ -30,8 +30,7 @@ class ExampleData(
 
     override fun run(args: ApplicationArguments?) {
         // Create required constraints and indices
-        indexService.createRequiredPropertyIndices()
-        indexService.createRequiredUniqueConstraints()
+        indexService.verifyIndices()
         if (statementsPresent())
             return
 

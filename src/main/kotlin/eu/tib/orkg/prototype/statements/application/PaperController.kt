@@ -170,9 +170,9 @@ class PaperController(
         val paperObj = resourceService.create(
             userId,
             CreateResourceRequest(null, request.paper.title, setOf(ClassId("Paper"))),
-            observatoryId!!,
+            observatoryId,
             request.paper.extractionMethod,
-            organizationId!!
+            organizationId
         )
         val paperId = paperObj.id!!
 
@@ -447,7 +447,11 @@ class PaperController(
                         }
                     }
                     resource.text != null -> { // create new literal
-                        val newLiteral = literalService.create(userId, resource.text).id!!
+                        val newLiteral = literalService.create(
+                                userId,
+                                resource.text,
+                                resource.datatype ?: "xsd:string"
+                            ).id!!
                         if (resource.`@temp` != null) {
                             tempResources[resource.`@temp`] = newLiteral.value
                         }
@@ -553,6 +557,7 @@ data class PaperValue(
     val `class`: String?,
     val `@temp`: String?,
     val text: String?,
+    val datatype: String?,
     val label: String?,
     val values: HashMap<String, List<PaperValue>>?
 )

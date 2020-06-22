@@ -38,7 +38,7 @@ class Neo4jIndexService(
             try {
                 checkAndCreateConstraint(existingIndexes, index)
             } catch (ex: DatabaseException) {
-                logger.warn("couldn't execute constraint ${index.toCypherQuery()}")
+                logger.warn("Error while creating index or constraint in Neo4j, command was: {}", index.toCypherQuery())
             }
         }
     }
@@ -47,7 +47,7 @@ class Neo4jIndexService(
         when (it.type) {
             "node_unique_property" -> UniqueIndex(it.label, it.property)
             "node_label_property" -> PropertyIndex(it.label, it.property)
-            else -> throw IllegalArgumentException("Unknown class")
+            else -> throw IllegalArgumentException("Cannot determine type when fetching indexes from Neo4j, got: ${it.type}")
         }
     }
 

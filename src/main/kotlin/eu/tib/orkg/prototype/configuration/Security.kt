@@ -39,13 +39,15 @@ class AuthorizationServerConfiguration(
     private val userDetailsService: UserDetailsService
 ) : AuthorizationServerConfigurerAdapter() {
 
+    private val sixteenHours = 16 * 60 * 60
+
     override fun configure(clients: ClientDetailsServiceConfigurer) {
         clients.inMemory()
             .withClient("orkg-client")
             .secret("{noop}secret")
             .authorizedGrantTypes("password")
             .scopes("read")
-            .accessTokenValiditySeconds(3600)
+            .accessTokenValiditySeconds(sixteenHours)
     }
 
     override fun configure(endpoints: AuthorizationServerEndpointsConfigurer) {

@@ -1,6 +1,8 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import java.util.Optional
 import org.springframework.data.domain.Pageable
@@ -41,4 +43,10 @@ interface Neo4jStatementRepository :
         predicateId: PredicateId,
         pagination: Pageable
     ): Slice<Neo4jStatement>
+
+    @Query("MATCH (template:`Resource`)-[rel:`RELATED` {predicate_id:'TemplateOfClass'}]->(res:`Class`) WHERE res.`class_id`={0} RETURN template LIMIT 1")
+    fun findTemplate(classId: ClassId): Optional<Neo4jResource>
+
+    @Query("""MATCH (temp:`Thing`)-[rel:`RELATED`]->(format:`Literal`) WHERE temp.`resource_id`={0} AND rel.`predicate_id`='TemplateLabelFormat' RETURN format LIMIT 1""")
+    fun checkIfTemplateIsFormatted(templateId: ResourceId): Optional<Neo4jLiteral>
 }

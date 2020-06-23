@@ -42,6 +42,11 @@ interface ResourceService {
     fun findById(id: ResourceId?): Optional<Resource>
 
     /**
+     * Find a resource by its ID. Choose formatting or not enabled
+     */
+    fun findById(id: ResourceId?, formatted: Boolean): Optional<Resource>
+
+    /**
      * Find all resources matching a label.
      */
     fun findAllByLabel(pageable: Pageable, label: String): Iterable<Resource>

@@ -4,8 +4,6 @@ import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.Literal
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
@@ -40,11 +38,9 @@ class ResourceController(
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: ResourceId): Resource {
-        val resource = service
+        return service
             .findById(id)
             .orElseThrow { ResourceNotFound() }
-        resource.formattedLabel = createFormattedLabels(resource)
-        return resource
     }
 
     @GetMapping("/")
@@ -58,7 +54,7 @@ class ResourceController(
         @RequestParam("exclude", required = false, defaultValue = "") excludeClasses: Array<String>
     ): Iterable<Resource> {
         val pagination = createPageable(page, items, sortBy, desc)
-        val resources = when {
+        return when {
             excludeClasses.isNotEmpty() -> when {
                 searchString == null -> service.findAllExcludingClass(pagination, excludeClasses.map { ClassId(it) }.toTypedArray())
                 exactMatch -> service.findAllExcludingClassByLabel(pagination, excludeClasses.map { ClassId(it) }.toTypedArray(), searchString)
@@ -70,10 +66,6 @@ class ResourceController(
                 else -> service.findAllByLabelContaining(pagination, searchString)
             }
         }
-        resources.forEach {
-            it.formattedLabel = createFormattedLabels(it)
-        }
-        return resources
     }
 
     @PostMapping("/")
@@ -85,7 +77,7 @@ class ResourceController(
         val user: Optional<UserEntity> = userService.findById(userId)
         var observatoryId = UUID(0, 0)
         var organizationId = UUID(0, 0)
-        if (!user.isEmpty) {
+        if (user.isPresent) {
             organizationId = user.get().organizationId ?: UUID(0, 0)
             observatoryId = user.get().observatoryId ?: UUID(0, 0)
         }
@@ -117,53 +109,6 @@ class ResourceController(
     @GetMapping("{id}/contributors")
     fun findContributorsById(@PathVariable id: ResourceId): Iterable<ResourceContributors> {
         return service.findContributorsByResourceId(id)
-    }
-
-    fun createFormattedLabels(resource: Resource): String? {
-        if (resource.classes.isNotEmpty()) {
-            val pagination = createPageable(1, 1000, null, false)
-            val classId = resource.classes.first()
-            // Check if the instance is of a templated class
-            val found = statementService.findAllByObjectAndPredicate(
-                objectId = classId.value,
-                predicateId = PredicateId("TemplateOfClass"),
-                pagination = pagination
-            ).firstOrNull() ?: return null
-            // Check if the templated class has format option
-            val format = statementService.findAllBySubjectAndPredicate(
-                subjectId = (found.subject as Resource).id!!.value,
-                predicateId = PredicateId("TemplateLabelFormat"),
-                pagination = pagination
-            ).firstOrNull() ?: return null
-            // Get format rule
-            val formatRule = format.`object` as Literal
-            // Get all statements of the current resource to format the label
-            val statements = statementService.findAllBySubject(
-                subjectId = resource.id!!.value,
-                pagination = pagination
-            )
-            if (statements.count() == 0)
-                return null
-            // Create a map with predicate -> value
-            val properties = statements.map {
-                Pair(it.predicate.id!!.value,
-                    (it.`object` as Literal).label)
-            }.toMap()
-            // Catch JS/Python string format patterns and replace them
-            val pattern = """\{\w*}""".toRegex()
-            val matches = pattern.findAll(formatRule.label)
-            var formattedString = formatRule.label
-            matches.forEach {
-                val predId = formatRule.label.substring(
-                    startIndex = it.groups.first()!!.range.first + 1,
-                    endIndex = it.groups.first()!!.range.last
-                )
-                if (properties.containsKey(predId))
-                    formattedString = formattedString.replaceFirst("{$predId}", properties[predId] ?: error("Predicate not found"))
-            }
-            return formattedString
-        }
-        return null
     }
 }
 

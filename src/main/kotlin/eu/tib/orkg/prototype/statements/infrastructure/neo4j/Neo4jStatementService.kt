@@ -1,10 +1,14 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
+import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
+import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
@@ -54,6 +58,11 @@ class Neo4jStatementService :
     override fun findById(statementId: StatementId): Optional<GeneralStatement> =
         statementRepository.findByStatementId(statementId)
             .map { toStatement(it) }
+
+    fun findAllBySubject(subjectId: String, pagination: Pageable, formatted: Boolean = true): Iterable<GeneralStatement> =
+        statementRepository.findAllBySubject(subjectId, pagination)
+            .content
+            .map { toStatement(it, formatted) }
 
     override fun findAllBySubject(subjectId: String, pagination: Pageable): Iterable<GeneralStatement> =
         statementRepository.findAllBySubject(subjectId, pagination)
@@ -157,20 +166,28 @@ class Neo4jStatementService :
     override fun countStatements(paperId: String): Int =
         statementRepository.countByIdRecursive(paperId)
 
-    private fun refreshObject(thing: Neo4jThing): Thing {
+    override fun findTemplate(classId: ClassId): Optional<Resource> =
+        statementRepository.findTemplate(classId)
+            .map(Neo4jResource::toResource)
+
+    override fun checkIfTemplateIsFormatted(templateId: ResourceId): Optional<Literal> =
+        statementRepository.checkIfTemplateIsFormatted(templateId)
+            .map(Neo4jLiteral::toLiteral)
+
+    private fun refreshObject(thing: Neo4jThing, formatted: Boolean = true): Thing {
         return when (thing) {
-            is Neo4jResource -> resourceService.findById(thing.resourceId).get()
+            is Neo4jResource -> resourceService.findById(thing.resourceId, formatted).get()
             is Neo4jLiteral -> literalService.findById(thing.literalId).get()
             else -> thing.toThing()
         }
     }
 
-    private fun toStatement(statement: Neo4jStatement) =
+    private fun toStatement(statement: Neo4jStatement, formatted: Boolean = true) =
         GeneralStatement(
             id = statement.statementId!!,
-            subject = refreshObject(statement.subject!!),
+            subject = refreshObject(statement.subject!!, formatted),
             predicate = predicateService.findById(statement.predicateId!!).get(),
-            `object` = refreshObject(statement.`object`!!),
+            `object` = refreshObject(statement.`object`!!, formatted),
             createdAt = statement.createdAt!!,
             createdBy = statement.createdBy
         )

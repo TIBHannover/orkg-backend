@@ -83,4 +83,14 @@ interface StatementService {
      * Count statements (for widget)
      */
     fun countStatements(paperId: String): Int
+
+    /**
+     * Find template of a class (if existing)
+     */
+    fun findTemplate(classId: ClassId): Optional<Resource>
+
+    /**
+     * Checks if the provided template has a formatting node
+     */
+    fun checkIfTemplateIsFormatted(templateId: ResourceId): Optional<Literal>
 }

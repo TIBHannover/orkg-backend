@@ -25,6 +25,11 @@ interface StatementService {
     fun findAllBySubject(subjectId: String, pagination: Pageable): Iterable<GeneralStatement>
 
     /**
+     * Find all statements with a given subject.
+     */
+    fun findAllBySubject(subjectId: String, pagination: Pageable, formatted: Boolean): Iterable<GeneralStatement>
+
+    /**
      * Find all statements with a given predicate.
      */
     fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable): Iterable<GeneralStatement>

@@ -59,15 +59,13 @@ class Neo4jStatementService :
         statementRepository.findByStatementId(statementId)
             .map { toStatement(it) }
 
-    fun findAllBySubject(subjectId: String, pagination: Pageable, formatted: Boolean = true): Iterable<GeneralStatement> =
+    override fun findAllBySubject(subjectId: String, pagination: Pageable, formatted: Boolean): Iterable<GeneralStatement> =
         statementRepository.findAllBySubject(subjectId, pagination)
             .content
             .map { toStatement(it, formatted) }
 
     override fun findAllBySubject(subjectId: String, pagination: Pageable): Iterable<GeneralStatement> =
-        statementRepository.findAllBySubject(subjectId, pagination)
-            .content
-            .map { toStatement(it) }
+        this.findAllBySubject(subjectId, pagination, true)
 
     override fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable): Iterable<GeneralStatement> =
         statementRepository.findAllByPredicateId(predicateId, pagination)

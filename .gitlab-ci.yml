@@ -51,6 +51,7 @@ build:
     - ./gradlew jacocoTestReport printCoverage
   coverage: '/^Coverage:\s(\d+\.\d+%)/'
   artifacts:
+    when: always
     paths:
       - build/reports/
       - build/libs/orkg-*.jar

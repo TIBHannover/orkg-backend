@@ -1,3 +1,5 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-interface Thing
+interface Thing {
+    val label: String
+}

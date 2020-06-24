@@ -192,7 +192,7 @@ class Neo4jResourceService(
             // Create a map with predicate -> value
             val properties = statements.map {
                 it.predicate.id!!.value to
-                    (it.`object` as Literal).label
+                    it.`object`.label
             }.toMap()
             this.formattedLabel = formatLabel(formatRule, properties)
         }

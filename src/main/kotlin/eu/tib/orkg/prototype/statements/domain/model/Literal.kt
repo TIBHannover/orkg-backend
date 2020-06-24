@@ -6,7 +6,7 @@ import java.util.UUID
 
 data class Literal(
     val id: LiteralId?,
-    val label: String,
+    override val label: String,
     val datatype: String = "xsd:string",
     @JsonProperty("created_at")
     val createdAt: OffsetDateTime?,

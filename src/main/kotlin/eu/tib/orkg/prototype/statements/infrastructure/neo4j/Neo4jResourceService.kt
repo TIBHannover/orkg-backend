@@ -172,7 +172,6 @@ class Neo4jResourceService(
 
     fun Resource.toFormatted(): Resource {
         if (this.classes.isNotEmpty()) {
-            val pagination = createPageable(1, 10, null, false)
             val classId = this.classes.first()
             // Check if the instance is of a templated class
             val found = statementService.findTemplate(classId)
@@ -185,7 +184,7 @@ class Neo4jResourceService(
             // Get all statements of the current resource to format the label
             val statements = statementService.findAllBySubject(
                 subjectId = this.id!!.value,
-                pagination = pagination,
+                pagination = createPageable(1, 30, null, false),
                 formatted = false
             )
             if (statements.count() == 0) return this

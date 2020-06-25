@@ -14,5 +14,7 @@ data class Organization(
     @JsonProperty("created_by")
     val createdBy: UUID? = UUID(0, 0),
 
+    val url: String?,
+
     var observatories: Set<ObservatoryEntity>? = emptySet()
 )

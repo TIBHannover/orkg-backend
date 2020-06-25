@@ -13,4 +13,6 @@ interface UserRepository :
     fun findUsersByObservatoryId(id: UUID): Iterable<UserEntity>
 
     fun findOrganizationById(id: UUID): Optional<UserEntity>
+
+    fun findUsersByOrganizationId(id: UUID): Iterable<UserEntity>
 }

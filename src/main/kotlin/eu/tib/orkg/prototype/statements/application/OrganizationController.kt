@@ -1,6 +1,8 @@
 package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import eu.tib.orkg.prototype.auth.rest.UserController
+import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.Organization
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
@@ -24,6 +26,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @CrossOrigin(origins = ["*"])
 class OrganizationController(
     private val service: OrganizationService,
+    private val userService: UserService,
     private val observatoryService: ObservatoryService
 ) {
     @Value("\${orkg.storage.images.dir}")
@@ -35,7 +38,7 @@ class OrganizationController(
         return if (!mimeType.contains("image/")) {
             ResponseEntity.badRequest().body("Please upload valid image")
         } else {
-            var response = (service.create(organization.organizationName, organization.createdBy))
+            var response = (service.create(organization.organizationName, organization.createdBy, organization.url))
             decoder(organization.organizationLogo, response.id)
             val location = uriComponentsBuilder
                 .path("api/organizations/{id}")
@@ -60,6 +63,8 @@ class OrganizationController(
                 id = response.get().id,
                 name = response.get().name,
                 logo = logo,
+                createdBy = response.get().createdBy,
+                url = response.get().url,
                 observatories = response.get().observatories
             )
         )
@@ -70,10 +75,17 @@ class OrganizationController(
         return observatoryService.findObservatoriesByOrganizationId(id)
     }
 
+    @GetMapping("{id}/users")
+    fun findUsersByOrganizationId(@PathVariable id: UUID): Iterable<UserController.UserDetails> {
+        return userService.findUsersByOrganizationId(id)
+            .map(UserController::UserDetails)
+    }
+
     data class CreateOrganizationRequest(
         val organizationName: String,
         var organizationLogo: String,
-        val createdBy: UUID
+        val createdBy: UUID,
+        val url: String
     )
 
     data class UpdateOrganizationResponse(

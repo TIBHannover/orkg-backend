@@ -42,15 +42,14 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
     override fun createController() = controller
 
     @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    //@WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun index() {
 
         userService.registerUser("abc@gmail.com", "123456", "M Haris")
-        service.create("test organization", userService.findByEmail("abc@gmail.com").get().id!!)
+        service.create("test organization", userService.findByEmail("abc@gmail.com").get().id!!, "www.google.com")
 
         mockMvc
             .perform(getRequestTo("/api/organizations/"))
-            .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -62,7 +61,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun fetch() {
-        val id = service.create("test organization", UUID(0, 0)).id
+        val id = service.create("test organization", UUID(0, 0), "www.google.com").id
 
         mockMvc
             .perform(getRequestTo("/api/organizations/$id"))
@@ -78,8 +77,8 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
     @Test
     fun lookUpObservatoriesByOrganization() {
         userService.registerUser("abc@gmail.com", "123456", "M Haris")
-        val id = service.create("test organization", userService.findByEmail("abc@gmail.com").get().id!!).id
-        observatoryService.create("test observatory", service.findById(id!!).get())
+        val id = service.create("test organization", userService.findByEmail("abc@gmail.com").get().id!!, "www.google.com").id
+        observatoryService.create("test observatory", "test description", service.findById(id!!).get())
 
         mockMvc
             .perform(getRequestTo("/api/organizations/$id/observatories"))
@@ -97,6 +96,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("name").description("The organization name"),
             fieldWithPath("logo").description("The logo of the organization"),
             fieldWithPath("created_by").description("The ID of the user that created the organization."),
+            fieldWithPath("url").description("The URL of the organization."),
             fieldWithPath("observatories").description("The list of the observatories belong to an organization")
         )
 

@@ -22,8 +22,10 @@ class OrganizationEntity {
         @Column(name = "created_by")
         var createdBy: UUID? = null
 
+        var url: String? = null
+
         @ManyToMany(mappedBy = "organizations", fetch = FetchType.LAZY)
         var observatories: Set<ObservatoryEntity>? = emptySet()
 
-        fun toOrganization() = Organization(id, name, null, createdBy, observatories)
+        fun toOrganization() = Organization(id, name, null, createdBy, url, observatories)
     }

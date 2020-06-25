@@ -7,6 +7,7 @@ import java.util.UUID
 data class Observatory(
     val id: UUID?,
     val name: String?,
-    val users: MutableCollection<UserEntity>?,
-    val organizations: MutableCollection<OrganizationEntity>?
+    val description: String?,
+    val users: Set<UserEntity>? = mutableSetOf(),
+    val organizations: Set<OrganizationEntity>? = mutableSetOf()
 )

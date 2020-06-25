@@ -45,21 +45,20 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     override fun createController() = controller
 
     @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    //@WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun index() {
 
         userService.registerUser("abc@gmail.com", "123456", "M Haris")
-        val id = service.create("test organization", userService.findByEmail("abc@gmail.com").get().id!!).id
-        val observatoryId = observatoryService.create("test observatory", service.findById(id!!).get())
+        val organizationId = service.create("test organization", userService.findByEmail("abc@gmail.com").get().id!!, "www.google.com").id
+        val observatoryId = observatoryService.create("test observatory", "example description", service.findById(organizationId!!).get())
 
         mockMvc
             .perform(getRequestTo("/api/observatories/"))
-            .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk)
             .andDo(
                 document(
                     snippet,
-                    listOfobservatoriesResponseFields()
+                    listOfObservatoriesResponseFields()
                 )
             )
     }
@@ -67,12 +66,11 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     @Test
     fun fetch() {
         userService.registerUser("abc@gmail.com", "123456", "M Haris")
-        val id = service.create("test organization", userService.findByEmail("abc@gmail.com").get().id!!).id
-        val observatoryId = observatoryService.create("test observatory", service.findById(id!!).get()).id
+        val id = service.create("test organization", userService.findByEmail("abc@gmail.com").get().id!!, "www.google.com").id
+        val observatoryId = observatoryService.create("test observatory", "example description", service.findById(id!!).get()).id
 
         mockMvc
             .perform(getRequestTo("/api/observatories/$observatoryId"))
-            .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -84,15 +82,13 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookUpResourcesByObservatoryId() {
-
         userService.registerUser("abc@gmail.com", "123456", "M Haris")
-        val id = service.create("test organization", userService.findByEmail("abc@gmail.com").get().id!!).id
-        val observatoryId = observatoryService.create("test observatory", service.findById(id!!).get()).id
-        resourceService.create(userService.findByEmail("abc@gmail.com").get().id!!, "test resource", observatoryId!!, ExtractionMethod.UNKNOWN, id)
+        val organizationId = service.create("test organization", userService.findByEmail("abc@gmail.com").get().id!!, "www.google.com").id
+        val observatoryId = observatoryService.create("test observatory", "example description", service.findById(organizationId!!).get()).id
+        resourceService.create(userService.findByEmail("abc@gmail.com").get().id!!, "test resource", observatoryId!!, ExtractionMethod.UNKNOWN, organizationId)
 
         mockMvc
             .perform(getRequestTo("/api/observatories/$observatoryId/resources"))
-            .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -105,14 +101,16 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
         private fun observatoryResponseFields() = listOf(
             fieldWithPath("id").description("The observatory ID"),
             fieldWithPath("name").description("The observatory name"),
-            fieldWithPath("users").description("The users belong to an observatory"),
+            fieldWithPath("description").description("The observatory description"),
+            fieldWithPath("users").description("The members  belonging to an observatory"),
             fieldWithPath("organizations.[].id").description("The ID of the organizations which are managing this observatory"),
             fieldWithPath("organizations.[].name").description("The name of the organizations which are managing this observatory"),
-            fieldWithPath("organizations.[].createdBy").description("The user ID of the organizations which are managing this observatory"),
+            fieldWithPath("organizations.[].createdBy").description("The ID of the user who has created an organization"),
+            fieldWithPath("organizations.[].url").description("The URL of the organizations which are managing this observatory"),
             fieldWithPath("organizations.[].observatories").description("The list of the observatories which are handled by this organizations")
         )
 
-        fun listOfobservatoriesResponseFields(): ResponseFieldsSnippet =
+        fun listOfObservatoriesResponseFields(): ResponseFieldsSnippet =
             responseFields(fieldWithPath("[]").description("A list of observatories"))
                 .andWithPrefix("[].", observatoryResponseFields())
     }

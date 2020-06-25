@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.domain.model.jpa
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
+import eu.tib.orkg.prototype.statements.domain.model.Organization
 import java.util.UUID
 import javax.persistence.CascadeType
 import javax.persistence.Entity
@@ -23,8 +24,10 @@ class ObservatoryEntity {
     @NotBlank
     var name: String? = null
 
+    var description: String? = null
+
     @OneToMany(mappedBy = "id", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-    var users: MutableCollection<UserEntity>? = mutableSetOf()
+    var users: Set<UserEntity>? = mutableSetOf()
 
     @JsonIgnore
     @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
@@ -32,7 +35,7 @@ class ObservatoryEntity {
         name = "observatories_organizations",
         joinColumns = [JoinColumn(name = "observatory_id", referencedColumnName = "id")],
         inverseJoinColumns = [JoinColumn(name = "organization_id", referencedColumnName = "id")])
-    var organizations: MutableCollection<OrganizationEntity>? = mutableSetOf()
+    var organizations: Set<OrganizationEntity>? = mutableSetOf()
 
-    fun toObservatory() = Observatory(id, name, users, organizations)
+    fun toObservatory() = Observatory(id, name, description, users, organizations)
 }

@@ -1,7 +1,8 @@
 [[organization]]
 == Organizations
 
-Organizations represent institutes or groups which are stored in Postgres. These can handle further smaller groups named observatories.
+Organizations represent institutes or groups.
+These can handle further smaller groups named <<observatories>>.
 
 [[organizations-list]]
 === Listing Organizations

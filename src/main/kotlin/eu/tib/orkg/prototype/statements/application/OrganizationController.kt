@@ -53,20 +53,22 @@ class OrganizationController(
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: UUID): Organization {
-        var response = service.findById(id).get()
+        var response = service
+            .findById(id)
+            .orElseThrow { OrganizationNotFound() }
         var path: String = "$imageStoragePath/"
         var logo = encoder(path, response.id.toString())
 
         return (
-            Organization(
-                id = response.id,
-                name = response.name,
-                logo = logo,
-                createdBy = response.createdBy,
-                url = response.url,
-                observatories = response.observatories
+                Organization(
+                    id = response.id,
+                    name = response.name,
+                    logo = logo,
+                    createdBy = response.createdBy,
+                    url = response.url,
+                    observatories = response.observatories
+                )
             )
-        )
     }
 
     @GetMapping("{id}/observatories")

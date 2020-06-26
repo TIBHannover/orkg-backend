@@ -8,7 +8,7 @@ interface ObservatoryService {
      * Create a new company with a given name.
      *
      */
-    fun create(observatoryName: String, observatoryDescription: String, organization: OrganizationEntity): ObservatoryEntity
+    fun create(name: String, description: String, organization: OrganizationEntity): ObservatoryEntity
 
     fun listObservatories(): List<Observatory>
 

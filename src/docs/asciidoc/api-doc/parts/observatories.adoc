@@ -1,9 +1,9 @@
 [[observatory]]
 == Observatories
 
-Observatories represent groups which are managed by organizations.
-One Observatory can be managed by many organizations.
 Observatories are groups of experts affiliated with different institutions that curates and organize ORKG content for a specific discipline.
+Observatories represent groups which are managed by <<organizations>>.
+One Observatory can be managed by many organizations.
 [[organizations-list]]
 === Listing Observatories
 

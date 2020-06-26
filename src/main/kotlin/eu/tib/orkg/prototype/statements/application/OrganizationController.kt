@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.application
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.auth.rest.UserController
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
@@ -54,18 +53,18 @@ class OrganizationController(
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: UUID): Organization {
-        var response = service.findById(id)
+        var response = service.findById(id).get()
         var path: String = "$imageStoragePath/"
-        var logo = encoder(path, response.get().id.toString())
+        var logo = encoder(path, response.id.toString())
 
         return (
             Organization(
-                id = response.get().id,
-                name = response.get().name,
+                id = response.id,
+                name = response.name,
                 logo = logo,
-                createdBy = response.get().createdBy,
-                url = response.get().url,
-                observatories = response.get().observatories
+                createdBy = response.createdBy,
+                url = response.url,
+                observatories = response.observatories
             )
         )
     }
@@ -86,17 +85,6 @@ class OrganizationController(
         var organizationLogo: String,
         val createdBy: UUID,
         val url: String
-    )
-
-    data class UpdateOrganizationResponse(
-        @JsonProperty("organization_id")
-        val organizationId: UUID,
-        @JsonProperty("organization_name")
-        val organizationName: String?,
-        @JsonProperty("organization_logo")
-        val organizationLogo: String?,
-        @JsonProperty("created_by")
-        val createdBy: UUID?
     )
 
     fun decoder(base64Str: String, name: UUID?) {

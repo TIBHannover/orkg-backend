@@ -8,6 +8,6 @@ data class Observatory(
     val id: UUID?,
     val name: String?,
     val description: String?,
-    val users: Set<UserEntity>? = mutableSetOf(),
-    val organizations: Set<OrganizationEntity>? = mutableSetOf()
+    val users: Set<UserEntity>?,
+    val organizations: Set<OrganizationEntity>?
 )

@@ -14,8 +14,6 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
-import org.springframework.security.test.context.support.WithUserDetails
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
@@ -42,11 +40,9 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
     override fun createController() = controller
 
     @Test
-    //@WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun index() {
-
-        userService.registerUser("abc@gmail.com", "123456", "M Haris")
-        service.create("test organization", userService.findByEmail("abc@gmail.com").get().id!!, "www.google.com")
+        var userId = findByEmail()
+        service.create("test organization", userId, "www.example.org")
 
         mockMvc
             .perform(getRequestTo("/api/organizations/"))
@@ -61,10 +57,10 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun fetch() {
-        val id = service.create("test organization", UUID(0, 0), "www.google.com").id
+        val organizationId = service.create("test organization", UUID(0, 0), "www.example.org").id
 
         mockMvc
-            .perform(getRequestTo("/api/organizations/$id"))
+            .perform(getRequestTo("/api/organizations/$organizationId"))
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -76,18 +72,23 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookUpObservatoriesByOrganization() {
-        userService.registerUser("abc@gmail.com", "123456", "M Haris")
-        val id = service.create("test organization", userService.findByEmail("abc@gmail.com").get().id!!, "www.google.com").id
-        observatoryService.create("test observatory", "test description", service.findById(id!!).get())
+        var userId = findByEmail()
+        val organizationId = service.create("test organization", userId, "www.example.org").id
+        observatoryService.create("test observatory", "test description", service.findById(organizationId!!).get())
 
         mockMvc
-            .perform(getRequestTo("/api/organizations/$id/observatories"))
+            .perform(getRequestTo("/api/organizations/$organizationId/observatories"))
             .andExpect(status().isOk)
             .andDo(
                 document(
                     snippet
                 )
             )
+    }
+
+    fun findByEmail(): UUID {
+        userService.registerUser("abc@gmail.com", "123456", "Test user")
+        return userService.findByEmail("abc@gmail.com").get().id!!
     }
 
     companion object RestDoc {

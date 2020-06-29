@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.statements.domain.model.neo4j
+package eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j
 
 import eu.tib.orkg.prototype.Neo4jRepositoryTest
 import eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j.Neo4jIndexRepository

@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.Neo4jServiceTest
-import eu.tib.orkg.prototype.statements.domain.model.IndexService
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jIndexRepository
+import eu.tib.orkg.prototype.graphdb.indexing.domain.model.IndexService
+import eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j.Neo4jIndexRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test

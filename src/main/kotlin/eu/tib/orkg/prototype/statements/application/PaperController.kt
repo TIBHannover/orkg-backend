@@ -170,9 +170,9 @@ class PaperController(
         val paperObj = resourceService.create(
             userId,
             CreateResourceRequest(null, request.paper.title, setOf(ClassId("Paper"))),
-            observatoryId!!,
+            observatoryId,
             request.paper.extractionMethod,
-            organizationId!!
+            organizationId
         )
         val paperId = paperObj.id!!
 

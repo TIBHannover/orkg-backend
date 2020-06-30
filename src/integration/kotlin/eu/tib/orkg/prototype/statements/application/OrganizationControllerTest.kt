@@ -41,7 +41,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun index() {
-        var userId = findByEmail()
+        var userId = createTestUser()
         service.create("test organization", userId, "www.example.org")
 
         mockMvc
@@ -72,7 +72,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookUpObservatoriesByOrganization() {
-        var userId = findByEmail()
+        var userId = createTestUser()
         val organizationId = service.create("test organization", userId, "www.example.org").id
         observatoryService.create("test observatory", "test description", service.findById(organizationId!!).get())
 
@@ -86,7 +86,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
             )
     }
 
-    fun findByEmail(): UUID {
+    fun createTestUser(): UUID {
         userService.registerUser("abc@gmail.com", "123456", "Test user")
         return userService.findByEmail("abc@gmail.com").get().id!!
     }

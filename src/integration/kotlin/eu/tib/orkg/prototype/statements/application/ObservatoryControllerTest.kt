@@ -46,7 +46,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     @Test
     fun index() {
 
-        var userId = findByEmail()
+        var userId = createTestUser()
         val organizationId = service.create("test organization", userId, "www.example.org").id
         val observatoryId = observatoryService.create("test observatory", "example description", service.findById(organizationId!!).get())
 
@@ -63,7 +63,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun fetch() {
-        var userId = findByEmail()
+        var userId = createTestUser()
         val organizationId = service.create("test organization", userId, "www.example.org").id
         val observatoryId = observatoryService.create("test observatory", "example description", service.findById(organizationId!!).get()).id
 
@@ -80,7 +80,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookUpResourcesByObservatoryId() {
-        var userId = findByEmail()
+        var userId = createTestUser()
         val organizationId = service.create("test organization", userId, "www.example.org").id
         val observatoryId = observatoryService.create("test observatory", "example description", service.findById(organizationId!!).get()).id
         resourceService.create(userId, "test resource", observatoryId!!, ExtractionMethod.UNKNOWN, organizationId)
@@ -95,7 +95,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
             )
     }
 
-    fun findByEmail(): UUID {
+    fun createTestUser(): UUID {
         userService.registerUser("abc@gmail.com", "123456", "Test user")
         return userService.findByEmail("abc@gmail.com").get().id!!
     }

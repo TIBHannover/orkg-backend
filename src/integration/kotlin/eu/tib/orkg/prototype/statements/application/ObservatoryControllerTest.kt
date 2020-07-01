@@ -79,14 +79,48 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    fun lookUpResourcesByObservatoryId() {
+    fun lookUpPapersByObservatoryId() {
         var userId = createTestUser()
         val organizationId = service.create("test organization", userId, "www.example.org").id
         val observatoryId = observatoryService.create("test observatory", "example description", service.findById(organizationId!!).get()).id
         resourceService.create(userId, "test resource", observatoryId!!, ExtractionMethod.UNKNOWN, organizationId)
 
         mockMvc
-            .perform(getRequestTo("/api/observatories/$observatoryId/resources"))
+            .perform(getRequestTo("/api/observatories/$observatoryId/papers"))
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    snippet
+                )
+            )
+    }
+
+    @Test
+    fun lookUpComparisonsByObservatoryId() {
+        var userId = createTestUser()
+        val organizationId = service.create("test organization", userId, "www.example.org").id
+        val observatoryId = observatoryService.create("test observatory", "example description", service.findById(organizationId!!).get()).id
+        resourceService.create(userId, "test comparison", observatoryId!!, ExtractionMethod.UNKNOWN, organizationId)
+
+        mockMvc
+            .perform(getRequestTo("/api/observatories/$observatoryId/comparisons"))
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    snippet
+                )
+            )
+    }
+
+    @Test
+    fun lookUpProblemsByObservatoryId() {
+        var userId = createTestUser()
+        val organizationId = service.create("test organization", userId, "www.example.org").id
+        val observatoryId = observatoryService.create("test observatory", "example description", service.findById(organizationId!!).get()).id
+        resourceService.create(userId, "test problems", observatoryId!!, ExtractionMethod.UNKNOWN, organizationId)
+
+        mockMvc
+            .perform(getRequestTo("/api/observatories/$observatoryId/problems"))
             .andExpect(status().isOk)
             .andDo(
                 document(

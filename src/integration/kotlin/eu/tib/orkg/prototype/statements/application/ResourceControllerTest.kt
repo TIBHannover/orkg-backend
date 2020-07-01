@@ -256,7 +256,8 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             .perform(getRequestTo("/api/resources/?q=Resource&exclude=$id"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$", hasSize<Int>(2)))
-            .andExpect(jsonPath("$[0].shared").value(2))
+            .andExpect(jsonPath("$[?(@.label == 'Resource 3')].shared").value(2))
+            .andExpect(jsonPath("$[?(@.label == 'Another Resource')].shared").value(0))
             .andDo(
                 document(
                     snippet,

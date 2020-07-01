@@ -122,8 +122,16 @@ class Neo4jResourceService(
         neo4jResourceRepository.findAllByLabel(title!!)
             .map(Neo4jResource::toResource)
 
-    override fun findAllByObservatoryId(id: UUID): Iterable<Resource> =
-        neo4jResourceRepository.findByObservatoryId(id)
+    override fun findPapersByObservatoryId(id: UUID): Iterable<Resource> =
+        neo4jResourceRepository.findPapersByObservatoryId(id)
+            .map(Neo4jResource::toResource)
+
+    override fun findComparisonsByObservatoryId(id: UUID): Iterable<Resource> =
+        neo4jResourceRepository.findComparisonsByObservatoryId(id)
+            .map(Neo4jResource::toResource)
+
+    override fun findProblemsByObservatoryId(id: UUID): Iterable<Resource> =
+        neo4jResourceRepository.findProblemsByObservatoryId(id)
             .map(Neo4jResource::toResource)
 
     override fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors> =

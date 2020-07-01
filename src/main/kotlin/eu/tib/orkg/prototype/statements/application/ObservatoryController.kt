@@ -52,9 +52,19 @@ class ObservatoryController(
         return service.listObservatories()
     }
 
-    @GetMapping("{id}/resources")
-    fun findResourcesByObservatoryId(@PathVariable id: UUID): Iterable<Resource> {
-        return resourceService.findAllByObservatoryId(id)
+    @GetMapping("{id}/papers")
+    fun findPapersByObservatoryId(@PathVariable id: UUID): Iterable<Resource> {
+        return resourceService.findPapersByObservatoryId(id)
+    }
+
+    @GetMapping("{id}/comparisons")
+    fun findComparisonsByObservatoryId(@PathVariable id: UUID): Iterable<Resource> {
+        return resourceService.findComparisonsByObservatoryId(id)
+    }
+
+    @GetMapping("{id}/problems")
+    fun findProblemsByObservatoryId(@PathVariable id: UUID): Iterable<Resource> {
+        return resourceService.findProblemsByObservatoryId(id)
     }
 
     @GetMapping("{id}/users")

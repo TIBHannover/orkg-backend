@@ -104,7 +104,11 @@ interface ResourceService {
 
     fun findAllByTitle(title: String?): Iterable<Resource>
 
-    fun findAllByObservatoryId(id: UUID): Iterable<Resource>
+    fun findPapersByObservatoryId(id: UUID): Iterable<Resource>
+
+    fun findComparisonsByObservatoryId(id: UUID): Iterable<Resource>
+
+    fun findProblemsByObservatoryId(id: UUID): Iterable<Resource>
 
     fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors>
 

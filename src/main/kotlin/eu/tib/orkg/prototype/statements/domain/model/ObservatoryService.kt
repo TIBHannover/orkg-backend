@@ -12,7 +12,7 @@ interface ObservatoryService {
 
     fun listObservatories(): List<Observatory>
 
-    fun findObservatoriesByOrganizationId(id: UUID): List<ObservatoryEntity>
+    fun findObservatoriesByOrganizationId(id: UUID): List<Observatory>
 
     fun findByName(name: String): Optional<ObservatoryEntity>
 

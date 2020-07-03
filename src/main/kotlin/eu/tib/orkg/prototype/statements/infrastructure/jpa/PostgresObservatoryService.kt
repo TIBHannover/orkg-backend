@@ -34,8 +34,9 @@ class PostgresObservatoryService(
             .map(ObservatoryEntity::toObservatory)
     }
 
-    override fun findObservatoriesByOrganizationId(id: UUID): List<ObservatoryEntity> {
+    override fun findObservatoriesByOrganizationId(id: UUID): List<Observatory> {
         return postgresObservatoryRepository.findByorganizationsId(id)
+            .map(ObservatoryEntity::toObservatory)
     }
 
     override fun findByName(name: String): Optional<ObservatoryEntity> {

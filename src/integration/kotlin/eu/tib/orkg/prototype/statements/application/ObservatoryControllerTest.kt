@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
@@ -15,6 +16,9 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
+import org.hamcrest.Matchers.hasSize
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
@@ -69,6 +73,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
 
         mockMvc
             .perform(getRequestTo("/api/observatories/$observatoryId"))
+            .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -83,14 +88,16 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
         var userId = createTestUser()
         val organizationId = service.create("test organization", userId, "www.example.org").id
         val observatoryId = observatoryService.create("test observatory", "example description", service.findById(organizationId!!).get()).id
-        resourceService.create(userId, "test resource", observatoryId!!, ExtractionMethod.UNKNOWN, organizationId)
+        resourceService.create(userId, CreateResourceRequest(null, "test paper", setOf(ClassId("Paper"))), observatoryId!!, ExtractionMethod.UNKNOWN, organizationId)
 
         mockMvc
             .perform(getRequestTo("/api/observatories/$observatoryId/papers"))
             .andExpect(status().isOk)
+            .andExpect(jsonPath("$", hasSize<Int>(1)))
             .andDo(
                 document(
-                    snippet
+                    snippet,
+                    ResourceControllerTest.listOfResourcesResponseFields()
                 )
             )
     }
@@ -100,14 +107,16 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
         var userId = createTestUser()
         val organizationId = service.create("test organization", userId, "www.example.org").id
         val observatoryId = observatoryService.create("test observatory", "example description", service.findById(organizationId!!).get()).id
-        resourceService.create(userId, "test comparison", observatoryId!!, ExtractionMethod.UNKNOWN, organizationId)
+        resourceService.create(userId, CreateResourceRequest(null, "test paper", setOf(ClassId("Comparison"))), observatoryId!!, ExtractionMethod.UNKNOWN, organizationId)
 
         mockMvc
             .perform(getRequestTo("/api/observatories/$observatoryId/comparisons"))
+            .andExpect(jsonPath("$", hasSize<Int>(1)))
             .andExpect(status().isOk)
             .andDo(
                 document(
-                    snippet
+                    snippet,
+                    ResourceControllerTest.listOfResourcesResponseFields()
                 )
             )
     }
@@ -117,14 +126,16 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
         var userId = createTestUser()
         val organizationId = service.create("test organization", userId, "www.example.org").id
         val observatoryId = observatoryService.create("test observatory", "example description", service.findById(organizationId!!).get()).id
-        resourceService.create(userId, "test problems", observatoryId!!, ExtractionMethod.UNKNOWN, organizationId)
+        resourceService.create(userId, CreateResourceRequest(null, "test paper", setOf(ClassId("Problem"))), observatoryId!!, ExtractionMethod.UNKNOWN, organizationId)
 
         mockMvc
             .perform(getRequestTo("/api/observatories/$observatoryId/problems"))
+            .andExpect(jsonPath("$", hasSize<Int>(1)))
             .andExpect(status().isOk)
             .andDo(
                 document(
-                    snippet
+                    snippet,
+                    ResourceControllerTest.listOfResourcesResponseFields()
                 )
             )
     }

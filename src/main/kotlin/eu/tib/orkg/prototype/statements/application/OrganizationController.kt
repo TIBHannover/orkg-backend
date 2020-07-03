@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.auth.rest.UserController
 import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.Organization
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
@@ -76,7 +77,7 @@ class OrganizationController(
     }
 
     @GetMapping("{id}/observatories")
-    fun findObservatoriesByOrganization(@PathVariable id: UUID): List<ObservatoryEntity> {
+    fun findObservatoriesByOrganization(@PathVariable id: UUID): List<Observatory> {
         return observatoryService.findObservatoriesByOrganizationId(id)
     }
 

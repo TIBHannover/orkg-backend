@@ -48,7 +48,11 @@ class OrganizationController(
     }
     @GetMapping("/")
     fun findOrganizations(): List<Organization> {
-        return service.listOrganizations()
+        var response = service.listOrganizations()
+        response.forEach {
+            it.logo = encoder(it.id.toString())
+        }
+        return response
     }
 
     @GetMapping("/{id}")
@@ -56,8 +60,8 @@ class OrganizationController(
         var response = service
             .findById(id)
             .orElseThrow { OrganizationNotFound() }
-        var path: String = "$imageStoragePath/"
-        var logo = encoder(path, response.id.toString())
+        var logo = encoder(response.id.toString())
+
 
         return (
                 Organization(
@@ -107,10 +111,11 @@ class OrganizationController(
             File(imagePath).writeBytes(imageByteArray)
     }
 
-    fun encoder(filePath: String, id: String): String {
+    fun encoder(id: String): String {
         var file: String = ""
         var ext: String = ""
-        File(filePath).walk().forEach {
+        var path: String = "$imageStoragePath/"
+        File(path).walk().forEach {
             if (it.name.substringBeforeLast(".") == id) {
                 ext = it.name.substringAfterLast(".")
                 ext = "data:image/$ext;base64"

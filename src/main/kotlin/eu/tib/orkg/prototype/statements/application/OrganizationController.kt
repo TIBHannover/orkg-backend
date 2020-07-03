@@ -6,7 +6,6 @@ import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.Organization
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
-import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
 import java.io.File
 import java.util.Base64
 import java.util.UUID
@@ -62,7 +61,6 @@ class OrganizationController(
             .findById(id)
             .orElseThrow { OrganizationNotFound() }
         var logo = encoder(response.id.toString())
-
 
         return (
                 Organization(

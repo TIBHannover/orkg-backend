@@ -9,4 +9,6 @@ interface StatsService {
     fun getStats(): Stats
 
     fun getFieldsStats(): Map<String, Int>
+
+    fun getFieldsPerProblem(problemId: ResourceId): Iterable<Map<String, Any?>>
 }

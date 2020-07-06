@@ -1,10 +1,12 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.domain.model.StatsService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
@@ -23,5 +25,11 @@ class StatsController(private val service: StatsService) {
     @ResponseStatus(HttpStatus.OK)
     fun getFields(): ResponseEntity<Map<String, Int>> {
         return ResponseEntity.ok(service.getFieldsStats())
+    }
+
+    @GetMapping("/fields/problem/{problemId}")
+    fun getFieldPerProblem(@PathVariable problemId: ResourceId): ResponseEntity<Iterable<Map<String, Any?>>> {
+        // return ResponseEntity.ok(listOf())
+        return ResponseEntity.ok(service.getFieldsPerProblem(problemId))
     }
 }

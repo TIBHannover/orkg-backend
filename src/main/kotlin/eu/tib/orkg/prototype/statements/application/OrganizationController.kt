@@ -35,7 +35,8 @@ class OrganizationController(
     fun addOrganization(@RequestBody organization: CreateOrganizationRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         val (mimeType, _) = organization.organizationLogo.split(",")
         return if (!mimeType.contains("image/")) {
-            ResponseEntity.badRequest().body("Please upload valid image")
+            ResponseEntity.badRequest().body(
+                    ErrorMessage(message = "Please upload a valid image"))
         } else {
             var response = (service.create(organization.organizationName, organization.createdBy, organization.url))
             decoder(organization.organizationLogo, response.id)
@@ -85,13 +86,6 @@ class OrganizationController(
             .map(UserController::UserDetails)
     }
 
-    data class CreateOrganizationRequest(
-        val organizationName: String,
-        var organizationLogo: String,
-        val createdBy: UUID,
-        val url: String
-    )
-
     fun decoder(base64Str: String, name: UUID?) {
         val (mimeType, encodedString) = base64Str.split(",")
         val (extension, _) = (mimeType.substring(mimeType
@@ -131,4 +125,15 @@ class OrganizationController(
         } else
             return ""
     }
+
+    data class CreateOrganizationRequest(
+        val organizationName: String,
+        var organizationLogo: String,
+        val createdBy: UUID,
+        val url: String
+    )
+
+    data class ErrorMessage(
+        val message: String
+    )
 }

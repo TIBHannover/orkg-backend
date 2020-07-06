@@ -38,7 +38,9 @@ class ObservatoryController(
                 .toUri()
             ResponseEntity.created(location).body(service.findById(id!!).get())
         } else
-            ResponseEntity.badRequest().body("Observatory already exist")
+            ResponseEntity.badRequest().body(
+                    ErrorMessage(message = "Observatory already exist")
+                )
     }
 
     @GetMapping("/{id}")
@@ -77,5 +79,9 @@ class ObservatoryController(
         val observatoryName: String,
         val organizationId: UUID,
         val description: String
+    )
+
+    data class ErrorMessage(
+        val message: String
     )
 }

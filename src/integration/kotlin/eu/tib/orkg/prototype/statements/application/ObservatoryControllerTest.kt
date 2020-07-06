@@ -52,7 +52,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
 
         var userId = createTestUser()
         val organizationId = service.create("test organization", userId, "www.example.org").id
-        val observatoryId = observatoryService.create("test observatory", "example description", service.findById(organizationId!!).get())
+        observatoryService.create("test observatory", "example description", service.findById(organizationId!!).get())
 
         mockMvc
             .perform(getRequestTo("/api/observatories/"))
@@ -73,7 +73,6 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
 
         mockMvc
             .perform(getRequestTo("/api/observatories/$observatoryId"))
-            .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk)
             .andDo(
                 document(

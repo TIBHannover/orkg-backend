@@ -1,10 +1,11 @@
 package eu.tib.orkg.prototype.statements.application
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import eu.tib.orkg.prototype.auth.rest.UserController
+import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
+import eu.tib.orkg.prototype.statements.domain.model.Organization
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
-import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
-import eu.tib.orkg.prototype.statements.domain.model.jpa.OrganizationEntity
 import java.io.File
 import java.util.Base64
 import java.util.UUID
@@ -24,6 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @CrossOrigin(origins = ["*"])
 class OrganizationController(
     private val service: OrganizationService,
+    private val userService: UserService,
     private val observatoryService: ObservatoryService
 ) {
     @Value("\${orkg.storage.images.dir}")
@@ -33,9 +35,10 @@ class OrganizationController(
     fun addOrganization(@RequestBody organization: CreateOrganizationRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         val (mimeType, _) = organization.organizationLogo.split(",")
         return if (!mimeType.contains("image/")) {
-            ResponseEntity.badRequest().body("Please upload valid image")
+            ResponseEntity.badRequest().body(
+                    ErrorMessage(message = "Please upload a valid image"))
         } else {
-            var response = (service.create(organization.organizationName, organization.createdBy))
+            var response = (service.create(organization.organizationName, organization.createdBy, organization.url))
             decoder(organization.organizationLogo, response.id)
             val location = uriComponentsBuilder
                 .path("api/organizations/{id}")
@@ -45,47 +48,43 @@ class OrganizationController(
         }
     }
     @GetMapping("/")
-    fun findOrganizations(): List<OrganizationEntity> {
-        return service.listOrganizations()
+    fun findOrganizations(): List<Organization> {
+        var response = service.listOrganizations()
+        response.forEach {
+            it.logo = encoder(it.id.toString())
+        }
+        return response
     }
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: UUID): UpdateOrganizationResponse {
-        var response = service.findById(id)
-        var path: String = "$imageStoragePath/"
-        var logo = encoder(path, response.get().id.toString())
+    fun findById(@PathVariable id: UUID): Organization {
+        var response = service
+            .findById(id)
+            .orElseThrow { OrganizationNotFound() }
+        var logo = encoder(response.id.toString())
 
         return (
-                OrganizationController.UpdateOrganizationResponse(
-                organizationId = id,
-                organizationName = response.get().name,
-                organizationLogo = logo,
-                    createdBy = response.get().createdBy
+                Organization(
+                    id = response.id,
+                    name = response.name,
+                    logo = logo,
+                    createdBy = response.createdBy,
+                    url = response.url,
+                    observatories = response.observatories
+                )
             )
-        )
     }
 
     @GetMapping("{id}/observatories")
-    fun findObservatoriesByOrganization(@PathVariable id: UUID): List<ObservatoryEntity> {
+    fun findObservatoriesByOrganization(@PathVariable id: UUID): List<Observatory> {
         return observatoryService.findObservatoriesByOrganizationId(id)
     }
 
-    data class CreateOrganizationRequest(
-        val organizationName: String,
-        var organizationLogo: String,
-        val createdBy: UUID
-    )
-
-    data class UpdateOrganizationResponse(
-        @JsonProperty("organization_id")
-        val organizationId: UUID,
-        @JsonProperty("organization_name")
-        val organizationName: String?,
-        @JsonProperty("organization_logo")
-        val organizationLogo: String?,
-        @JsonProperty("created_by")
-        val createdBy: UUID?
-    )
+    @GetMapping("{id}/users")
+    fun findUsersByOrganizationId(@PathVariable id: UUID): Iterable<UserController.UserDetails> {
+        return userService.findUsersByOrganizationId(id)
+            .map(UserController::UserDetails)
+    }
 
     fun decoder(base64Str: String, name: UUID?) {
         val (mimeType, encodedString) = base64Str.split(",")
@@ -105,10 +104,11 @@ class OrganizationController(
             File(imagePath).writeBytes(imageByteArray)
     }
 
-    fun encoder(filePath: String, id: String): String {
+    fun encoder(id: String): String {
         var file: String = ""
         var ext: String = ""
-        File(filePath).walk().forEach {
+        var path: String = "$imageStoragePath/"
+        File(path).walk().forEach {
             if (it.name.substringBeforeLast(".") == id) {
                 ext = it.name.substringAfterLast(".")
                 ext = "data:image/$ext;base64"
@@ -125,4 +125,15 @@ class OrganizationController(
         } else
             return ""
     }
+
+    data class CreateOrganizationRequest(
+        val organizationName: String,
+        var organizationLogo: String,
+        val createdBy: UUID,
+        val url: String
+    )
+
+    data class ErrorMessage(
+        val message: String
+    )
 }

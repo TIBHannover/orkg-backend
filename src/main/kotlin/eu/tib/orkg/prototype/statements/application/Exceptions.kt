@@ -18,6 +18,9 @@ class PredicateNotFound(predicate: String) : RuntimeException("Predicate $predic
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class ObservatoryNotFound : RuntimeException("Observatory not found")
 
+@ResponseStatus(HttpStatus.NOT_FOUND)
+class OrganizationNotFound : RuntimeException("Organization not found")
+
 /**
  * Base class for custom property validation.
  */

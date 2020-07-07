@@ -337,6 +337,10 @@ include::parts/papers.adoc[]
 
 include::parts/rdf.adoc[]
 
+include::parts/organizations.adoc[]
+
+include::parts/observatories.adoc[]
+
 [[sorting-and-pagination]]
 == Sorting and Pagination
 

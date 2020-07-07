@@ -8,11 +8,11 @@ interface ObservatoryService {
      * Create a new company with a given name.
      *
      */
-    fun create(observatoryName: String, organization: OrganizationEntity): ObservatoryEntity
+    fun create(name: String, description: String, organization: OrganizationEntity): ObservatoryEntity
 
-    fun listObservatories(): List<ObservatoryEntity>
+    fun listObservatories(): List<Observatory>
 
-    fun findObservatoriesByOrganizationId(id: UUID): List<ObservatoryEntity>
+    fun findObservatoriesByOrganizationId(id: UUID): List<Observatory>
 
     fun findByName(name: String): Optional<ObservatoryEntity>
 

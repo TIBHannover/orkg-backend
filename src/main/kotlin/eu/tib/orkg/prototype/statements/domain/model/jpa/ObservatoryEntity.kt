@@ -23,8 +23,10 @@ class ObservatoryEntity {
     @NotBlank
     var name: String? = null
 
+    var description: String? = null
+
     @OneToMany(mappedBy = "id", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-    var users: Set<UserEntity>? = null
+    var users: Set<UserEntity>? = mutableSetOf()
 
     @JsonIgnore
     @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
@@ -32,7 +34,7 @@ class ObservatoryEntity {
         name = "observatories_organizations",
         joinColumns = [JoinColumn(name = "observatory_id", referencedColumnName = "id")],
         inverseJoinColumns = [JoinColumn(name = "organization_id", referencedColumnName = "id")])
-    var organizations: MutableCollection<OrganizationEntity> = mutableSetOf()
+    var organizations: Set<OrganizationEntity>? = mutableSetOf()
 
-    fun toObservatory() = Observatory(id, name, organizations)
+    fun toObservatory() = Observatory(id, name, description, users, organizations)
 }

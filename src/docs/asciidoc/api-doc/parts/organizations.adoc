@@ -1,0 +1,32 @@
+[[organization]]
+== Organizations
+
+Organizations represent institutes or groups.
+These can handle further smaller groups named <<observatories>>.
+
+[[organizations-list]]
+=== Listing Organizations
+
+A `GET` request lists all organizations:
+
+operation::organization-controller-test-index[snippets='curl-request,http-response']
+
+[[organization-create]]
+=== Creating organizations
+
+A `POST` request creates a new organizations with a given name.
+The response will be `200 Created` when successful.
+The organization can be retrieved by following the URI in the `Location` header field.
+
+operation::organization-controller-test-add[snippets='request-fields,curl-request,http-response']
+
+The response body consists of the following fields:
+
+operation::organization-controller-test-add[snippets='response-fields']
+
+[[organizations-fetch]]
+=== Fetching an organization
+
+A `GET` request provides information about a resource.
+
+operation::organization-controller-test-fetch[snippets='curl-request,http-response']

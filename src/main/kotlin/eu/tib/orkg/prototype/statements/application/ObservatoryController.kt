@@ -6,7 +6,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
 import java.util.UUID
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -32,14 +31,16 @@ class ObservatoryController(
     fun addObservatory(@RequestBody observatory: CreateObservatoryRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         return if (service.findByName(observatory.observatoryName).isEmpty) {
             var organizationEntity = organizationService.findById(observatory.organizationId)
-            val id = service.create(observatory.observatoryName, organizationEntity.get()).id
+            val id = service.create(observatory.observatoryName, observatory.description, organizationEntity.get()).id
             val location = uriComponentsBuilder
                 .path("api/observatories/{id}")
                 .buildAndExpand(id)
                 .toUri()
             ResponseEntity.created(location).body(service.findById(id!!).get())
         } else
-            ResponseEntity.badRequest().body("Observatory already exist")
+            ResponseEntity.badRequest().body(
+                    ErrorMessage(message = "Observatory already exist")
+                )
     }
 
     @GetMapping("/{id}")
@@ -49,13 +50,23 @@ class ObservatoryController(
             .orElseThrow { ObservatoryNotFound() }
 
     @GetMapping("/")
-    fun findObservatories(): List<ObservatoryEntity> {
+    fun findObservatories(): List<Observatory> {
         return service.listObservatories()
     }
 
-    @GetMapping("{id}/resources")
-    fun findResourcesByObservatoryId(@PathVariable id: UUID): Iterable<Resource> {
-        return resourceService.findAllByObservatoryId(id)
+    @GetMapping("{id}/papers")
+    fun findPapersByObservatoryId(@PathVariable id: UUID): Iterable<Resource> {
+        return resourceService.findPapersByObservatoryId(id)
+    }
+
+    @GetMapping("{id}/comparisons")
+    fun findComparisonsByObservatoryId(@PathVariable id: UUID): Iterable<Resource> {
+        return resourceService.findComparisonsByObservatoryId(id)
+    }
+
+    @GetMapping("{id}/problems")
+    fun findProblemsByObservatoryId(@PathVariable id: UUID): Iterable<Resource> {
+        return resourceService.findProblemsByObservatoryId(id)
     }
 
     @GetMapping("{id}/users")
@@ -66,6 +77,11 @@ class ObservatoryController(
 
     data class CreateObservatoryRequest(
         val observatoryName: String,
-        val organizationId: UUID
+        val organizationId: UUID,
+        val description: String
+    )
+
+    data class ErrorMessage(
+        val message: String
     )
 }

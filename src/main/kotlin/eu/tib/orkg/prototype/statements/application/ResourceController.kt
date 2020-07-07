@@ -79,7 +79,7 @@ class ResourceController(
             observatoryId = user.get().observatoryId ?: UUID(0, 0)
         }
 
-        val id = service.create(userId, resource, observatoryId!!, resource.extractionMethod, organizationId!!).id
+        val id = service.create(userId, resource, observatoryId, resource.extractionMethod, organizationId).id
         val location = uriComponentsBuilder
             .path("api/resources/{id}")
             .buildAndExpand(id)

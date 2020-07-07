@@ -69,4 +69,8 @@ class UserService(
     fun findOrganizationById(userId: UUID): Optional<UserEntity> {
         return repository.findOrganizationById(userId)
     }
+
+    fun findUsersByOrganizationId(id: UUID): Iterable<UserEntity> {
+        return repository.findUsersByOrganizationId(id)
+    }
 }

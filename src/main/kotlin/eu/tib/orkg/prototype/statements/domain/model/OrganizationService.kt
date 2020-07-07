@@ -10,9 +10,9 @@ interface OrganizationService {
      * Create a new company with a given name.
      *
      */
-    fun create(OrganizationName: String, CreatedBy: UUID): OrganizationEntity
+    fun create(OrganizationName: String, CreatedBy: UUID, Url: String): Organization
 
-    fun listOrganizations(): List<OrganizationEntity>
+    fun listOrganizations(): List<Organization>
 
     fun findById(id: UUID): Optional<OrganizationEntity>
 }

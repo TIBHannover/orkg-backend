@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.domain.model.StatsService
@@ -14,8 +13,6 @@ import org.springframework.transaction.annotation.Transactional
 class Neo4jStatsService(
     private val neo4jStatsRepository: Neo4jStatsRepository
 ) : StatsService {
-
-    val mapper = jacksonObjectMapper()
 
     override fun getStats(): Stats {
         val metadata = neo4jStatsRepository.getGraphMetaData()

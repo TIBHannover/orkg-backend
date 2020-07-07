@@ -70,8 +70,6 @@ dependencies {
     // RDF
     implementation("net.nprod:rdf4k:0.1.2")
 
-    implementation("com.github.rocketraman:kpropmap:0.0.2")
-
     //
     // Testing
     //

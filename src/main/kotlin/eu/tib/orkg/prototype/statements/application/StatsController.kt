@@ -29,7 +29,6 @@ class StatsController(private val service: StatsService) {
 
     @GetMapping("/fields/problem/{problemId}")
     fun getFieldPerProblem(@PathVariable problemId: ResourceId): ResponseEntity<Iterable<Map<String, Any?>>> {
-        // return ResponseEntity.ok(listOf())
         return ResponseEntity.ok(service.getFieldsPerProblem(problemId))
     }
 }

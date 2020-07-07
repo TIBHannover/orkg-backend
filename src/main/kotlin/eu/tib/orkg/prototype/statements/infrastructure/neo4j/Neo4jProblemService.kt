@@ -15,7 +15,7 @@ class Neo4jProblemService(
     override fun getFieldsPerProblem(problemId: ResourceId): List<Any> {
         return neo4jProblemRepository.getResearchFieldsPerProblem(problemId).map {
             object {
-                val field = it.field
+                val field = it.field.toResource()
                 val freq = it.freq
             }
         }

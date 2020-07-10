@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional
 class Neo4jStatsService(
     private val neo4jStatsRepository: Neo4jStatsRepository
 ) : StatsService {
+
     override fun getStats(): Stats {
         val metadata = neo4jStatsRepository.getGraphMetaData()
         val labels = metadata.first()["labels"] as Map<*, *>

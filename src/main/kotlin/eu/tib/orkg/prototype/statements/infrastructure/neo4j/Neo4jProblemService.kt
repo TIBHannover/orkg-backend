@@ -78,6 +78,22 @@ class Neo4jProblemService(
             .dropWhile { it.isAnonymous }
     }
 
+    override fun getAuthorsPerProblem(problemId: ResourceId): List<Any> {
+        return neo4jProblemRepository.getAuthorsLeaderboardPerProblem(problemId)
+            .map {
+                if (it.isLiteral)
+                    object {
+                        val field = it.author
+                        val papers = it.papers
+                    }
+                else
+                    object {
+                        val field = it.authorResource.toResource()
+                        val papers = it.papers
+                    }
+            }
+    }
+
     /*
     Iterate over the list of months, and if no problems are found go back a bit more in time
     and if none found take all time results

@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 import eu.tib.orkg.prototype.statements.domain.model.ProblemService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.ContributorPerProblem
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jProblemRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import org.springframework.stereotype.Service
@@ -26,6 +27,11 @@ class Neo4jProblemService(
     override fun getTopResearchProblems(): List<Resource> =
         getTopResearchProblemsGoingBack(listOf(1, 2, 3, 6), emptyList())
             .map(Neo4jResource::toResource)
+
+    override fun getContributorsPerProblem(problemId: ResourceId): List<ContributorPerProblem> {
+        return neo4jProblemRepository.getUsersLeaderboardPerProblem(problemId)
+            .dropWhile { it.isAnonymous }
+    }
 
     /*
     Iterate over the list of months, and if no problems are found go back a bit more in time

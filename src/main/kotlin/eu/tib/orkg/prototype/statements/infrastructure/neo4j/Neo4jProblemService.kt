@@ -29,6 +29,11 @@ class Neo4jProblemService(
         findTopResearchProblemsGoingBack(listOf(1, 2, 3, 6), emptyList())
             .map(Neo4jResource::toResource)
 
+    override fun getContributorsPerProblem(problemId: ResourceId): List<ContributorPerProblem> {
+        return neo4jProblemRepository.getUsersLeaderboardPerProblem(problemId)
+            .dropWhile { it.isAnonymous }
+    }
+
     /*
     Iterate over the list of months, and if no problems are found go back a bit more in time
     and if none found take all time results

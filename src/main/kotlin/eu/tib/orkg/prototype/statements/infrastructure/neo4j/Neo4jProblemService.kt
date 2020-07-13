@@ -125,4 +125,20 @@ class Neo4jProblemService(
         return neo4jProblemRepository.getUsersLeaderboardPerProblem(problemId)
             .dropWhile { it.isAnonymous }
     }
+
+    override fun getAuthorsPerProblem(problemId: ResourceId): List<Any> {
+        return neo4jProblemRepository.getAuthorsLeaderboardPerProblem(problemId)
+            .map {
+                if (it.isLiteral)
+                    object {
+                        val field = it.author
+                        val papers = it.papers
+                    }
+                else
+                    object {
+                        val field = it.authorResource.toResource()
+                        val papers = it.papers
+                    }
+            }
+    }
 }

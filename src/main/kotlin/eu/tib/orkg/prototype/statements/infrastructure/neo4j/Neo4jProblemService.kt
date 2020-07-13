@@ -120,4 +120,9 @@ class Neo4jProblemService(
                     }
             }
     }
+
+    override fun getContributorsPerProblem(problemId: ResourceId): List<ContributorPerProblem> {
+        return neo4jProblemRepository.getUsersLeaderboardPerProblem(problemId)
+            .dropWhile { it.isAnonymous }
+    }
 }

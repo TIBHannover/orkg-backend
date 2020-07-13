@@ -9,4 +9,6 @@ interface ProblemService {
     fun getTopResearchProblems(): List<Resource>
 
     fun getContributorsPerProblem(problemId: ResourceId): List<ContributorPerProblem>
+
+    fun getAuthorsPerProblem(problemId: ResourceId): List<Any>
 }

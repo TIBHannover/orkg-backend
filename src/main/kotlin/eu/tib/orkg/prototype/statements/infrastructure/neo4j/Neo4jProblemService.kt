@@ -29,6 +29,22 @@ class Neo4jProblemService(
             .dropWhile { it.isAnonymous }
     }
 
+    override fun getAuthorsPerProblem(problemId: ResourceId): List<Any> {
+        return neo4jProblemRepository.getAuthorsLeaderboardPerProblem(problemId)
+            .map {
+                if (it.isLiteral)
+                    object {
+                        val field = it.author
+                        val papers = it.papers
+                    }
+                else
+                    object {
+                        val field = it.authorResource.toResource()
+                        val papers = it.papers
+                    }
+            }
+    }
+
     override fun getTopResearchProblems(): List<Resource> =
         getTopResearchProblemsGoingBack(listOf(1, 2, 3, 6), emptyList())
             .map(Neo4jResource::toResource)

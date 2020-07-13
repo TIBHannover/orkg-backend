@@ -7,4 +7,6 @@ interface ProblemService {
     fun getFieldsPerProblem(problemId: ResourceId): List<Any>
 
     fun getContributorsPerProblem(problemId: ResourceId): List<ContributorPerProblem>
+
+    fun getAuthorsPerProblem(problemId: ResourceId): List<Any>
 }

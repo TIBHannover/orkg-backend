@@ -33,4 +33,9 @@ class ProblemController(
         }
         return ResponseEntity.ok(contributors)
     }
+
+    @GetMapping("/{problemId}/authors")
+    fun getAuthorsPerProblem(@PathVariable problemId: ResourceId): ResponseEntity<Iterable<Any>> {
+        return ResponseEntity.ok(service.getAuthorsPerProblem(problemId))
+    }
 }

@@ -19,6 +19,12 @@ WHERE contribution.created_by IS NOT NULL
 RETURN contribution.created_by AS user, COUNT(contribution.created_by) AS freq
 ORDER BY freq DESC""")
     fun getUsersLeaderboardPerProblem(problemId: ResourceId): Iterable<ContributorPerProblem>
+
+    @Query("""MATCH (problem:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P27'}]->(author: Thing)
+RETURN author.label AS author, COLLECT(author)[0] AS thing , COUNT(paper.resource_id) AS papers
+ORDER BY papers DESC, author""")
+    // TODO: Should group on the resource and not on the label. See https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/172#note_378465870
+    fun getAuthorsLeaderboardPerProblem(problemId: ResourceId): Iterable<AuthorPerProblem>
 }
 
 @QueryResult
@@ -34,5 +40,17 @@ data class ContributorPerProblem(
 ) {
     val contributor: UUID = UUID.fromString(user)
     val isAnonymous: Boolean
-        get() { return user == "00000000-0000-0000-0000-000000000000" }
+        get() = user == "00000000-0000-0000-0000-000000000000"
+}
+
+@QueryResult
+data class AuthorPerProblem(
+    val author: String,
+    val thing: Neo4jThing,
+    val papers: Long
+) {
+    val isLiteral: Boolean
+        get() = thing is Neo4jLiteral
+    val authorResource: Neo4jResource
+        get() = thing as Neo4jResource
 }

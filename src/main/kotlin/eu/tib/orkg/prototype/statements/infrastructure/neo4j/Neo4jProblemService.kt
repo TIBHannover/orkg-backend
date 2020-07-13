@@ -39,12 +39,12 @@ class Neo4jProblemService(
             .map {
                 if (it.isLiteral)
                     object {
-                        val field = it.author
+                        val author = it.author
                         val papers = it.papers
                     }
                 else
                     object {
-                        val field = it.authorResource.toResource()
+                        val author = it.authorResource.toResource()
                         val papers = it.papers
                     }
             }

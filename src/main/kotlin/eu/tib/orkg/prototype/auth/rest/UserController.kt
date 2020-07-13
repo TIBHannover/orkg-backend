@@ -5,6 +5,8 @@ import eu.tib.orkg.prototype.auth.domain.model.Contributor
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
+import java.math.BigInteger
+import java.security.MessageDigest
 import java.security.Principal
 import java.util.Optional
 import java.util.UUID
@@ -109,7 +111,7 @@ class UserController(
         val id: UUID = user.id!!
 
         @JsonProperty("email")
-        val email = user.email
+        val email = user.email?.md5()
 
         @JsonProperty("display_name")
         val displayName = user.displayName
@@ -156,4 +158,9 @@ class UserController(
     ) {
         fun hasMatchingPasswords() = newPassword == newMatchingPassword
     }
+}
+
+fun String.md5(): String {
+    val md = MessageDigest.getInstance("MD5")
+    return BigInteger(1, md.digest(toByteArray())).toString(16).padStart(32, '0')
 }

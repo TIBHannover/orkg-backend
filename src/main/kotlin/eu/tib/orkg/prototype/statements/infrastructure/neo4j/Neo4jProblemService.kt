@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 import eu.tib.orkg.prototype.statements.domain.model.ProblemService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.ContributorPerProblem
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jProblemRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import org.springframework.stereotype.Service
@@ -21,6 +22,11 @@ class Neo4jProblemService(
                 val freq = it.freq
             }
         }
+    }
+
+    override fun getContributorsPerProblem(problemId: ResourceId): List<ContributorPerProblem> {
+        return neo4jProblemRepository.getUsersLeaderboardPerProblem(problemId)
+            .dropWhile { it.isAnonymous }
     }
 
     override fun getTopResearchProblems(): List<Resource> =
@@ -43,4 +49,5 @@ class Neo4jProblemService(
         else
             getTopResearchProblemsGoingBack(listOfMonths.drop(1), newResult)
     }
+
 }

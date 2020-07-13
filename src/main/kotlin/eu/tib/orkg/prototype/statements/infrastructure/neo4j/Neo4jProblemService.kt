@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.statements.domain.model.ProblemService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.ContributorPerProblem
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jProblemRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -19,5 +20,10 @@ class Neo4jProblemService(
                 val freq = it.freq
             }
         }
+    }
+
+    override fun getContributorsPerProblem(problemId: ResourceId): List<ContributorPerProblem> {
+        return neo4jProblemRepository.getUsersLeaderboardPerProblem(problemId)
+            .dropWhile { it.isAnonymous }
     }
 }

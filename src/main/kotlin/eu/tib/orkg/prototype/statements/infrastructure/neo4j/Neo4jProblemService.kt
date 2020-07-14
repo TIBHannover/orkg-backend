@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ContributorPerProblem
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jProblemRepository
+import org.springframework.data.domain.Pageable
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -28,13 +29,15 @@ class Neo4jProblemService(
         getTopResearchProblemsGoingBack(listOf(1, 2, 3, 6), emptyList())
             .map(Neo4jResource::toResource)
 
-    override fun getContributorsPerProblem(problemId: ResourceId): List<ContributorPerProblem> {
-        return neo4jProblemRepository.getUsersLeaderboardPerProblem(problemId)
+    override fun getContributorsPerProblem(problemId: ResourceId, pageable: Pageable): List<ContributorPerProblem> {
+        return neo4jProblemRepository.getUsersLeaderboardPerProblem(problemId, pageable)
+            .content
             .dropWhile { it.isAnonymous }
     }
 
-    override fun getAuthorsPerProblem(problemId: ResourceId): List<Any> {
-        return neo4jProblemRepository.getAuthorsLeaderboardPerProblem(problemId)
+    override fun getAuthorsPerProblem(problemId: ResourceId, pageable: Pageable): List<Any> {
+        return neo4jProblemRepository.getAuthorsLeaderboardPerProblem(problemId, pageable)
+            .content
             .map {
                 if (it.isLiteral)
                     object {

@@ -121,13 +121,15 @@ class Neo4jProblemService(
             }
     }
 
-    override fun getContributorsPerProblem(problemId: ResourceId): List<ContributorPerProblem> {
-        return neo4jProblemRepository.getUsersLeaderboardPerProblem(problemId)
+    override fun getContributorsPerProblem(problemId: ResourceId, pageable: Pageable): List<ContributorPerProblem> {
+        return neo4jProblemRepository.getUsersLeaderboardPerProblem(problemId, pageable)
+            .content
             .dropWhile { it.isAnonymous }
     }
 
-    override fun getAuthorsPerProblem(problemId: ResourceId): List<Any> {
-        return neo4jProblemRepository.getAuthorsLeaderboardPerProblem(problemId)
+    override fun getAuthorsPerProblem(problemId: ResourceId, pageable: Pageable): List<Any> {
+        return neo4jProblemRepository.getAuthorsLeaderboardPerProblem(problemId, pageable)
+            .content
             .map {
                 if (it.isLiteral)
                     object {

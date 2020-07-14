@@ -380,6 +380,8 @@ include::parts/organizations.adoc[]
 
 include::parts/observatories.adoc[]
 
+include::parts/problems.adoc[]
+
 include::parts/research-fields.adoc[]
 
 include::parts/problems.adoc[]

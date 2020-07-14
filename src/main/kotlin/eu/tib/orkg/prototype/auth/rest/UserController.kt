@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
@@ -111,7 +112,7 @@ class UserController(
         val id: UUID = user.id!!
 
         @JsonProperty("email")
-        val email = user.email?.md5()
+        val email = if (SecurityContextHolder.getContext().authentication.name == user.id.toString()) user.email else user.email?.md5()
 
         @JsonProperty("display_name")
         val displayName = user.displayName

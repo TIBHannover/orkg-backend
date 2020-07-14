@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ContributorPerProblem
+import org.springframework.data.domain.Pageable
 
 interface ProblemService {
 
@@ -8,7 +9,7 @@ interface ProblemService {
 
     fun getTopResearchProblems(): List<Resource>
 
-    fun getContributorsPerProblem(problemId: ResourceId): List<ContributorPerProblem>
+    fun getContributorsPerProblem(problemId: ResourceId, pageable: Pageable): List<ContributorPerProblem>
 
-    fun getAuthorsPerProblem(problemId: ResourceId): List<Any>
+    fun getAuthorsPerProblem(problemId: ResourceId, pageable: Pageable): List<Any>
 }

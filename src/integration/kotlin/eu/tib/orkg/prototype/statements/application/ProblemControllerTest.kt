@@ -59,8 +59,10 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
 
         val nullUUID = UUID.fromString("00000000-0000-0000-0000-000000000000")
 
-        userService.registerUser("test@test.com", "testTest123", "test_user")
-        val uuid = userService.findByEmail("test@test.com").get().id!!
+        val userEmail = "test@testemail.com"
+        if (!userService.findByEmail(userEmail).isPresent)
+            userService.registerUser(userEmail, "testTest123", "test_user")
+        val uuid = userService.findByEmail(userEmail).get().id!!
 
         val contribution = resourceService.create(
             uuid,

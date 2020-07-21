@@ -12,7 +12,12 @@ import javax.validation.constraints.NotBlank
 
 @Entity
 @Table(name = "organizations")
-class OrganizationEntity {
+class OrganizationEntity() {
+
+    constructor(id: UUID) : this() {
+        this.id = id
+    }
+
     @Id
     var id: UUID? = null
 

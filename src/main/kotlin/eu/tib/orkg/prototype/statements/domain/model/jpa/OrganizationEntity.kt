@@ -13,19 +13,19 @@ import javax.validation.constraints.NotBlank
 @Entity
 @Table(name = "organizations")
 class OrganizationEntity {
-        @Id
-        var id: UUID? = null
+    @Id
+    var id: UUID? = null
 
-        @NotBlank
-        var name: String? = null
+    @NotBlank
+    var name: String? = null
 
-        @Column(name = "created_by")
-        var createdBy: UUID? = null
+    @Column(name = "created_by")
+    var createdBy: UUID? = null
 
-        var url: String? = null
+    var url: String? = null
 
-        @ManyToMany(mappedBy = "organizations", fetch = FetchType.LAZY)
-        var observatories: Set<ObservatoryEntity>? = emptySet()
+    @ManyToMany(mappedBy = "organizations", fetch = FetchType.LAZY)
+    var observatories: Set<ObservatoryEntity>? = emptySet()
 
-        fun toOrganization() = Organization(id, name, null, createdBy, url, observatories)
-    }
+    fun toOrganization() = Organization(id, name, null, createdBy, url, observatories)
+}

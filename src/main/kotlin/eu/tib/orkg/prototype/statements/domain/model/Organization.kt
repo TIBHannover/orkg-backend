@@ -19,7 +19,7 @@ data class Organization(
     // TODO: Do we want/need a members list, as with observatories?
 
     @Deprecated("""The set of observatories is cyclic and will be removed. Use "observatory_ids" instead.""")
-    val observatories: Set<ObservatoryEntity> = emptySet(),
+    val observatories: Set<ObservatoryEntity>? = emptySet(),
 
     @JsonProperty("observatory_ids")
     val observatoryIds: Set<UUID> = emptySet()

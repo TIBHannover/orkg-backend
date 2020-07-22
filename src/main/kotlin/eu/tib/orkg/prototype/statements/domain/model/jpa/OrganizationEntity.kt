@@ -32,5 +32,14 @@ class OrganizationEntity() {
     @ManyToMany(mappedBy = "organizations", fetch = FetchType.LAZY)
     var observatories: Set<ObservatoryEntity>? = emptySet()
 
-    fun toOrganization() = Organization(id, name, null, createdBy, url, observatories)
+    fun toOrganization() =
+        Organization(
+            id = id,
+            name = name,
+            logo = null,
+            createdBy = createdBy,
+            url = url,
+            observatories = observatories!!,
+            observatoryIds = observatories!!.mapNotNull(ObservatoryEntity::id).toSet()
+        )
 }

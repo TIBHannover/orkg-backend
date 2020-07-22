@@ -3,10 +3,8 @@ package eu.tib.orkg.prototype.auth.rest
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserService
-import eu.tib.orkg.prototype.contributions.domain.model.Contributor
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
+import eu.tib.orkg.prototype.statements.application.UserNotFound
 import java.security.Principal
-import java.util.Optional
 import java.util.UUID
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
@@ -25,8 +23,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/user")
 class UserController(
-    private val userService: UserService,
-    private val observatoryService: ObservatoryService
+    private val userService: UserService
 ) {
     @GetMapping("/")
     fun lookupUserDetails(principal: Principal): ResponseEntity<UserDetails> {
@@ -38,19 +35,16 @@ class UserController(
         return ResponseEntity(NOT_FOUND)
     }
 
+    /**
+     * Retrieve the user's data.
+     *
+     * <strong>Note:</strong> This endpoint should only be used to obtain data for the logged-in user!
+     * It should not be used for other user data! Use the contributor abstraction for that!
+     */
     @GetMapping("/{id}")
-    fun lookupContributor(@PathVariable id: UUID): ResponseEntity<Contributor> {
-        val contributor = userService.findById(id)
-        if (contributor.isPresent) {
-            val c = contributor.get()
-            return ok(
-                Contributor(
-                    id = c.id!!,
-                    name = c.displayName!!
-                )
-            )
-        }
-        return ResponseEntity(NOT_FOUND)
+    fun lookupUser(@PathVariable id: UUID): ResponseEntity<UserDetails> {
+        val contributor = userService.findById(id).orElseThrow { UserNotFound("$id") }
+        return ok(UserDetails(contributor))
     }
 
     @PutMapping("/")
@@ -98,11 +92,6 @@ class UserController(
             return ok(UserDetails(currentUser))
         }
         return ResponseEntity(NOT_FOUND)
-    }
-
-    @GetMapping("{id}/organizations")
-    fun findOrganizationByUserId(@PathVariable id: UUID): Optional<UserEntity> {
-        return userService.findOrganizationById(id)
     }
 
     /**

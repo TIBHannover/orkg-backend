@@ -61,16 +61,4 @@ class UserService(
         })
         repository.save(user)
     }
-
-    fun findUsersByObservatoryId(id: UUID): Iterable<UserEntity> {
-        return repository.findUsersByObservatoryId(id)
-    }
-
-    fun findOrganizationById(userId: UUID): Optional<UserEntity> {
-        return repository.findOrganizationById(userId)
-    }
-
-    fun findUsersByOrganizationId(id: UUID): Iterable<UserEntity> {
-        return repository.findUsersByOrganizationId(id)
-    }
 }

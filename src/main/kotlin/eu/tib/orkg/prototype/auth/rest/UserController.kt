@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.auth.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.auth.domain.model.Contributor
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import java.security.Principal
 import java.util.Optional
@@ -43,7 +43,12 @@ class UserController(
         val contributor = userService.findById(id)
         if (contributor.isPresent) {
             val c = contributor.get()
-            return ok(Contributor(id = c.id!!, name = c.displayName!!))
+            return ok(
+                Contributor(
+                    id = c.id!!,
+                    name = c.displayName!!
+                )
+            )
         }
         return ResponseEntity(NOT_FOUND)
     }

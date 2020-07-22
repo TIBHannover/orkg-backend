@@ -9,5 +9,7 @@ data class Observatory(
     val name: String?,
     val description: String?,
     val users: Set<UserEntity>?,
-    val organizations: Set<OrganizationEntity>?
+    @Deprecated("""The set of organizations is cyclic and will be removed. Use "organization_ids" instead.""")
+    val organizations: Set<OrganizationEntity>?,
+    val organization_ids: Set<UUID> = emptySet()
 )

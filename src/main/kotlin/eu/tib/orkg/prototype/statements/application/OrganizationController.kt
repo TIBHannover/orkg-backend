@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.auth.rest.UserController
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.contributions.domain.model.Contributor
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.Organization
@@ -25,8 +25,8 @@ import org.springframework.web.util.UriComponentsBuilder
 @CrossOrigin(origins = ["*"])
 class OrganizationController(
     private val service: OrganizationService,
-    private val userService: UserService,
-    private val observatoryService: ObservatoryService
+    private val observatoryService: ObservatoryService,
+    private val contributorService: ContributorService
 ) {
     @Value("\${orkg.storage.images.dir}")
     var imageStoragePath: String? = null
@@ -81,10 +81,8 @@ class OrganizationController(
     }
 
     @GetMapping("{id}/users")
-    fun findUsersByOrganizationId(@PathVariable id: UUID): Iterable<UserController.UserDetails> {
-        return userService.findUsersByOrganizationId(id)
-            .map(UserController::UserDetails)
-    }
+    fun findUsersByOrganizationId(@PathVariable id: UUID): Iterable<Contributor> =
+        contributorService.findUsersByOrganizationId(id)
 
     fun decoder(base64Str: String, name: UUID?) {
         val (mimeType, encodedString) = base64Str.split(",")

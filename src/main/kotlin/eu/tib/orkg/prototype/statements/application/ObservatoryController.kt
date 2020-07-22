@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
-import eu.tib.orkg.prototype.auth.rest.UserController
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.contributions.domain.model.Contributor
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
@@ -22,9 +22,9 @@ import org.springframework.web.util.UriComponentsBuilder
 @CrossOrigin(origins = ["*"])
 class ObservatoryController(
     private val service: ObservatoryService,
-    private val userService: UserService,
     private val resourceService: ResourceService,
-    private val organizationService: OrganizationService
+    private val organizationService: OrganizationService,
+    private val contributorService: ContributorService
 ) {
 
     @PostMapping("/")
@@ -70,10 +70,8 @@ class ObservatoryController(
     }
 
     @GetMapping("{id}/users")
-    fun findUsersByObservatoryId(@PathVariable id: UUID): Iterable<UserController.UserDetails> {
-        return userService.findUsersByObservatoryId(id)
-            .map(UserController::UserDetails)
-    }
+    fun findUsersByObservatoryId(@PathVariable id: UUID): Iterable<Contributor> =
+        contributorService.findUsersByObservatoryId(id)
 
     data class CreateObservatoryRequest(
         val observatoryName: String,

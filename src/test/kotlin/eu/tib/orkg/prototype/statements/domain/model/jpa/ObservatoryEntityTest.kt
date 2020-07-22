@@ -1,10 +1,10 @@
 package eu.tib.orkg.prototype.statements.domain.model.jpa
 
+import java.util.UUID
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import java.util.UUID
 
 @DisplayName("Given a ObservatoryEntity")
 internal class ObservatoryEntityTest {

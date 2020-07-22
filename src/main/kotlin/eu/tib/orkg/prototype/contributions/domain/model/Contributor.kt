@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.contributions.domain.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import java.time.OffsetDateTime
 import java.util.UUID
 
 /**
@@ -11,7 +12,38 @@ import java.util.UUID
  * user's email address.
  */
 data class Contributor(
+    /**
+     * The user's ID.
+     */
     val id: UUID,
+
+    /**
+     * The name the users wants to be displayed.
+     */
     @JsonProperty("display_name")
-    val name: String
+    val name: String,
+
+    /**
+     * The date and time the user joined the project, i.e. the time the corresponding account was created.
+     */
+    @JsonProperty("joined_at")
+    val joinedAt: OffsetDateTime,
+
+    /**
+     * The ID of the organization the user belongs to.
+     */
+    @JsonProperty("organization_id")
+    val organizationId: UUID = UUID(0, 0),
+
+    /**
+     * The ID of the observatory the user belongs to.
+     */
+    @JsonProperty("observatory_id")
+    val observatoryId: UUID = UUID(0, 0),
+
+    /**
+     * The Gravatar ID of the user, e.g. the hashed email address.
+     */
+    @JsonProperty("gravatar_id")
+    val gravatarId: String
 )

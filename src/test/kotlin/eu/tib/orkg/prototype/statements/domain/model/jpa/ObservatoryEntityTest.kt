@@ -28,8 +28,8 @@ internal class ObservatoryEntityTest {
                     organizations = setOfRandomUUIDs.map(::OrganizationEntity).toSet()
                 }
                 val observatory = entity.toObservatory()
-                assertThat(observatory.organization_ids).hasSize(3) // simple check for duplicates, should never trigger
-                assertThat(observatory.organization_ids).containsExactlyInAnyOrder(*setOfRandomUUIDs)
+                assertThat(observatory.organizationIds).hasSize(3) // simple check for duplicates, should never trigger
+                assertThat(observatory.organizationIds).containsExactlyInAnyOrder(*setOfRandomUUIDs)
             }
         }
     }

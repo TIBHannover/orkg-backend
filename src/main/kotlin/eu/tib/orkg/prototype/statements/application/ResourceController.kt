@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
+import java.util.UUID
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.badRequest
@@ -70,14 +71,14 @@ class ResourceController(
         if (resource.id != null && service.findById(resource.id).isPresent)
             return badRequest().body("Resource id <${resource.id}> already exists!")
         val userId = authenticatedUserId()
-        val contributor = contributorService.findById(userId).orElseThrow { UserNotFound("$userId") }
-        val id = service.create(
-            userId = userId,
-            request = resource,
-            observatoryId = contributor.observatoryId,
-            extractionMethod = resource.extractionMethod,
-            organizationId = contributor.organizationId
-        ).id
+        val contributor = contributorService.findById(userId)
+        var observatoryId = UUID(0, 0)
+        var organizationId = UUID(0, 0)
+        if (!contributor.isEmpty) {
+            organizationId = contributor.get().organizationId
+            observatoryId = contributor.get().observatoryId
+        }
+        val id = service.create(userId, resource, observatoryId, resource.extractionMethod, organizationId).id
         val location = uriComponentsBuilder
             .path("api/resources/{id}")
             .buildAndExpand(id)

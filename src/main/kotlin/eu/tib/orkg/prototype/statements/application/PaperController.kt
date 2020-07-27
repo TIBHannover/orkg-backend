@@ -1,7 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.auth.persistence.UserEntity
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -15,7 +14,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import java.util.LinkedList
-import java.util.Optional
 import java.util.Queue
 import java.util.UUID
 import org.springframework.http.HttpStatus
@@ -54,7 +52,7 @@ class PaperController(
     private val predicateService: PredicateService,
     private val statementService: StatementService,
     private val classService: ClassService,
-    private val userService: UserService
+    private val contributorService: ContributorService
 ) : BaseController() {
 
     @PostMapping("/")
@@ -81,7 +79,7 @@ class PaperController(
 
         val contributionClass = getOrCreateClass(ID_CONTRIBUTION_CLASS, userId)
 
-        val user: Optional<UserEntity> = userService.findById(userId)
+        val user = contributorService.findById(userId)
         var organizationId = UUID(0, 0)
         var observatoryId = UUID(0, 0)
         if (!user.isEmpty) {
@@ -160,7 +158,7 @@ class PaperController(
         val researchFieldPredicate = predicateService.findById(PredicateId(ID_RESEARCH_FIELD_PREDICATE)).get().id!!
         val urlPredicate = predicateService.findById(PredicateId(ID_URL_PREDICATE)).get().id!!
 
-        val user: Optional<UserEntity> = userService.findById(userId)
+        val user = contributorService.findById(userId)
         var organizationId = UUID(0, 0)
         var observatoryId = UUID(0, 0)
         if (!user.isEmpty) {

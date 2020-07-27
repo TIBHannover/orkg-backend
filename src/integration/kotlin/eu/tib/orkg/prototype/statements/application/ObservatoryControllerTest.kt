@@ -161,6 +161,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("name").description("The observatory name"),
             fieldWithPath("description").description("The observatory description"),
             fieldWithPath("users").description("The members belonging to an observatory"),
+            fieldWithPath("organization_ids").description("The list of organizations that the observatory belongs to"),
             fieldWithPath("organizations.[].id").description("The ID of the organizations which are managing this observatory"),
             fieldWithPath("organizations.[].name").description("The name of the organizations which are managing this observatory"),
             fieldWithPath("organizations.[].createdBy").description("The ID of the user who has created an organization"),

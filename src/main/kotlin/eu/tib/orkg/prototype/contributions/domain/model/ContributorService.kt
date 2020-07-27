@@ -14,7 +14,7 @@ class ContributorService(
 ) {
     fun findById(userId: UUID): Optional<Contributor> =
         userRepository
-            .findOrganizationById(userId)
+            .findById(userId)
             .map(UserEntity::toContributor)
 
     fun findOrganizationById(userId: UUID): Optional<Contributor> =

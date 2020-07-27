@@ -33,4 +33,8 @@ class PostgresOrganizationService(
     override fun findById(id: UUID): Optional<OrganizationEntity> {
         return postgresOrganizationRepository.findById(id)
     }
+
+    override fun updateOrganization(organization: OrganizationEntity): Organization {
+        return postgresOrganizationRepository.save(organization).toOrganization()
+    }
 }

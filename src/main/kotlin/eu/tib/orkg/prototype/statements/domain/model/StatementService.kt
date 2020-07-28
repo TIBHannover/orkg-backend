@@ -94,4 +94,10 @@ interface StatementService {
      * With a filter on the class of the subject
      */
     fun findAllByPredicateAndLabelAndSubjectClass(predicateId: PredicateId, literal: String, subjectClass: ClassId, pagination: Pageable): Iterable<GeneralStatement>
+
+    /**
+     * Get a bundle of statements
+     * which represents the entire sub-graph starting from a [Thing]
+     */
+    fun fetchAsBundle(thingId: String): Bundle
 }

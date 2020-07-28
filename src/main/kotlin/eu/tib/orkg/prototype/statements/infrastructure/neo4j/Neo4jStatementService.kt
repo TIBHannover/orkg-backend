@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
+import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
@@ -16,7 +17,9 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementIdGener
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThingRepository
+import java.util.LinkedList
 import java.util.Optional
+import java.util.Queue
 import java.util.UUID
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Pageable
@@ -156,6 +159,32 @@ class Neo4jStatementService :
 
     override fun countStatements(paperId: String): Int =
         statementRepository.countByIdRecursive(paperId)
+
+    override fun fetchAsBundle(thingId: String): Bundle =
+        traceStatementsPerHop(thingId, statementRepository.fetchAsBundle(thingId))
+
+    private fun traceStatementsPerHop(rootId: String, graphStatements: Iterable<Neo4jStatement>): Bundle {
+        val resourceDepth = mutableMapOf(rootId to 0)
+        val statements: Queue<Neo4jStatement> = LinkedList(graphStatements.toList())
+        while (statements.isNotEmpty()) {
+            // pop statement from the queue and check for it
+            val element = statements.remove()
+            if (element.subject!!.thingId!! in resourceDepth) {
+                // found subject in the queue, so add object to que with extra hop
+                val hop = resourceDepth[element.subject!!.thingId!!]!!
+                resourceDepth[element.`object`!!.thingId!!] = hop + 1
+            } else {
+                // return the statement to the queue because no partner is found
+                statements.add(element)
+            }
+        }
+        // addressed all statements
+        val bundle = Bundle(rootId)
+        graphStatements.map {
+            bundle.addStatement(toStatement(it), resourceDepth[it.subject!!.thingId!!]!!)
+        }
+        return bundle
+    }
 
     private fun refreshObject(thing: Neo4jThing): Thing {
         return when (thing) {

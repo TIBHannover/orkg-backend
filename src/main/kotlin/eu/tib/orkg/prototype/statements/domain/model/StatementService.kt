@@ -83,4 +83,10 @@ interface StatementService {
      * Count statements (for widget)
      */
     fun countStatements(paperId: String): Int
+
+    /**
+     * Get a bundle of statements
+     * which represents the entire sub-graph starting from a [Thing]
+     */
+    fun fetchAsBundle(thingId: String): Bundle
 }

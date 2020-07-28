@@ -172,6 +172,13 @@ operation::statement-controller-test-lookup-by-predicate[snippets='request-param
 
 TIP: {pagination_note}
 
+[[statements-fetch-as-bundle]]
+=== Fetching statements for a thing as a bundle
+
+A `GET` request that fetches the entire subgraph of a certain entity and returns all the statements as a bundle
+
+operation::statement-controller-fetch-bundle[snippets='request-parameters,curl-request,http-response']
+
 include::parts/bulk-statements.adoc[]
 
 include::parts/classes.adoc[]

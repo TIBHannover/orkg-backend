@@ -35,3 +35,9 @@ spring:
 orkg:
   cors:
     origins: 'http://localhost:3000'
+
+datacite:
+  test:
+    username: "TIB.ORKG"
+    password: "orkg@tib"
+    DOIPrefix: "10.7484"

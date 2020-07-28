@@ -57,4 +57,12 @@ interface Neo4jStatementRepository :
         subjectClass: ClassId,
         pagination: Pageable
     ): Slice<Neo4jStatement>
+
+    @Query("""MATCH (n:Thing)
+WHERE n.resource_id = {0} OR n.literal_id = {0} OR n.class_id = {0} OR n.predicate_id = {0}
+CALL apoc.path.subgraphAll(n, {relationshipFilter:'>', bfs:true})
+YIELD relationships
+UNWIND relationships as rel
+RETURN startNode(rel) as subject, rel as predicate, endNode(rel) as object""")
+    fun fetchAsBundle(id: String): Iterable<Neo4jStatement>
 }

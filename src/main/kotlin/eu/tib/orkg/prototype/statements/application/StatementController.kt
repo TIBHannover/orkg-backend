@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.createPageable
+import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.CreateStatement
@@ -188,6 +189,13 @@ class StatementController(
         statementService.remove(foundStatement.get().id!!)
 
         return ResponseEntity.noContent().build()
+    }
+
+    @GetMapping("/{thingId}/bundle")
+    fun fetchAsBundle(
+        @PathVariable thingId: String
+    ): HttpEntity<Bundle> {
+        return ok(statementService.fetchAsBundle(thingId))
     }
 
     private fun getIdAsString(thing: Thing): String =

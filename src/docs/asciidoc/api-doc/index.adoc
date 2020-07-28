@@ -155,7 +155,7 @@ A `GET` request lists all the statements with a given subject:
 
 operation::statement-controller-test-lookup-by-subject[snippets='request-parameters,curl-request,http-response']
 
-: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>
+Note: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>
 
 [[statements-lookup-by-predicate]]
 === Lookup statements by predicate
@@ -164,7 +164,14 @@ A `GET` request lists all the statements with a given predicate:
 
 operation::statement-controller-test-lookup-by-predicate[snippets='request-parameters,curl-request,http-response']
 
-: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>
+Note: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>
+
+[[statements-fetch-as-bundle]]
+=== Fetching statements for a thing as a bundle
+
+A `GET` request that fetches the entire subgraph of a certain entity and returns all the statements as a bundle
+
+operation::statement-controller-fetch-bundle[snippets='request-parameters,curl-request,http-response']
 
 include::parts/bulk-statements.adoc[]
 

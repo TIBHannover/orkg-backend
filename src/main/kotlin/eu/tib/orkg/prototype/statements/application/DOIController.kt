@@ -11,9 +11,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import eu.tib.orkg.prototype.statements.domain.model.Thing
-import java.time.LocalDate
-import java.util.Base64
-import java.util.UUID
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -21,17 +18,20 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
+import java.time.LocalDate
+import java.util.Base64
+import java.util.UUID
+
 
 @RestController
 @RequestMapping("/api/dois/")
 @CrossOrigin(origins = ["*"])
 class DOIController(
-    private val service: OrganizationService,
-    private val userService: UserService,
-    private val resourceService: ResourceService,
-    private val statementService: StatementService,
-    private val literalService: LiteralService,
-    private val observatoryService: ObservatoryService
+    private val statementService: StatementService
 ) {
     @Value("\${datacite.test.username}")
     var dataciteTestUsername: String? = null
@@ -43,11 +43,21 @@ class DOIController(
     var dataciteTestDOIPrefix: String? = null
 
     @PostMapping("/")
-    fun addDOI(@RequestBody doiData: CreateDOIRequest): String? {
-        val base64 = Base64.getEncoder().encodeToString(("$dataciteTestUsername:$dataciteTestPassword").toByteArray())
-        getCreatorsXml(doiData.authors)
-        getRelatedPapers(doiData.relatedResources)
-        return createXmlMetadata(doiData.comparisonId, doiData.description, doiData.title, getCreatorsXml(doiData.authors), getRelatedPapers(doiData.relatedResources), doiData.subject)
+    fun addDOI(@RequestBody doiData: CreateDOIRequest): String {
+        var xmlMetadata = createXmlMetadata(doiData.comparisonId, doiData.description, doiData.title, getCreatorsXml(doiData.authors), getRelatedPapers(doiData.relatedResources), doiData.subject)
+        var DOIData="""{
+                "data": {
+                "id": "$dataciteTestDOIPrefix/${doiData.comparisonId}",
+                "type": "dois",
+                "attributes": {
+                "event": "draft",
+                "doi": "$dataciteTestDOIPrefix/${doiData.comparisonId}",
+                "url": "${doiData.url}",
+                "xml": "${Base64.getEncoder().encodeToString((xmlMetadata).toByteArray())}"
+            }
+        }
+    }"""
+        return registerDOI(DOIData)
     }
 
     fun createXmlMetadata(comparisonId: String, description: String, title: String, creators: String, relatedIdentifiers: String, subject: String): String {
@@ -121,6 +131,32 @@ class DOIController(
         }
     }
 
+    fun registerDOI(DOIData: String): String {
+        val url = URL("https://api.test.datacite.org/dois")
+        val con = url.openConnection() as HttpURLConnection
+        con.requestMethod = "POST"
+        con.setRequestProperty("Content-Type", "application/vnd.api+json; utf-8")
+        val credentials = Base64.getEncoder().encodeToString(("$dataciteTestUsername:$dataciteTestPassword").toByteArray())
+        con.setRequestProperty("Authorization","Basic $credentials" )
+        con.setRequestProperty("Accept", "application/json")
+        con.doOutput = true
+        con.outputStream.use { os ->
+            val input = DOIData.toByteArray(charset("utf-8"))
+            os.write(input, 0, input.size)
+        }
+
+        BufferedReader(
+            InputStreamReader(con.inputStream, "utf-8")
+        ).use { br ->
+            val response = StringBuilder()
+            var responseLine: String? = null
+            while (br.readLine().also { responseLine = it } != null) {
+                response.append(responseLine!!.trim { it <= ' ' })
+            }
+            return response.toString()
+        }
+    }
+
     data class CreateDOIRequest(
         val comparisonId: String,
         val title: String,
@@ -131,7 +167,10 @@ class DOIController(
         val url: String
     )
 
-    data class Creator(val creator: String, val ORCID: String)
+    data class Creator(
+        val creator: String,
+        val ORCID: String
+    )
 
     data class CreateOrganizationRequest(
         val organizationName: String,

@@ -116,4 +116,6 @@ interface ResourceService {
      * Update a resource.
      */
     fun update(request: UpdateResourceRequest): Resource
+
+    fun checkIfResourceHasStatements(id: ResourceId): Boolean
 }

@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity.badRequest
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -106,6 +108,20 @@ class ResourceController(
     @GetMapping("{id}/contributors")
     fun findContributorsById(@PathVariable id: ResourceId): Iterable<ResourceContributors> {
         return service.findContributorsByResourceId(id)
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    fun delete(@PathVariable id: ResourceId): ResponseEntity<Unit> {
+        val found = service.findById(id)
+
+        if (!found.isPresent)
+            return notFound().build()
+
+        if (service.checkIfResourceHasStatements(found.get().id!!))
+            throw ResourceCantBeDeleted()
+
+        return ResponseEntity.noContent().build()
     }
 }
 

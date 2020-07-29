@@ -21,6 +21,9 @@ class ObservatoryNotFound : RuntimeException("Observatory not found")
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class OrganizationNotFound : RuntimeException("Organization not found")
 
+@ResponseStatus(HttpStatus.FORBIDDEN)
+class ResourceCantBeDeleted : RuntimeException("Resource have statements so can't be deleted")
+
 /**
  * Base class for custom property validation.
  */

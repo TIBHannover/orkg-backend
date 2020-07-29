@@ -8,6 +8,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import org.hamcrest.Matchers.hasSize
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -42,7 +43,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     private lateinit var predicateService: PredicateService
 
     @Autowired
-    private lateinit var statementController: StatementService
+    private lateinit var statementService: StatementService
 
     override fun createController() = controller
 
@@ -236,6 +237,67 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    fun deleteResourceNotFound() {
+        mockMvc
+            .perform(deleteRequest("/api/resources/R2F1R21215"))
+            .andExpect(status().isNotFound)
+            .andDo(
+                document(
+                    snippet
+                )
+            )
+    }
+
+    @Test
+    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    fun deleteResourceSuccess() {
+        val id = service.create("bye bye").id!!
+
+        mockMvc
+            .perform(deleteRequest("/api/resources/$id"))
+            .andExpect(status().isNoContent)
+            .andDo(
+                document(
+                    snippet
+                )
+            )
+    }
+
+    @Test
+    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    fun deleteResourceForbidden() {
+        val id = service.create("parent").id!!
+        val obj = service.create("son").id!!
+        val rel = predicateService.create("related").id!!
+        statementService.create(id.value, rel, obj.value)
+
+        mockMvc
+            .perform(deleteRequest("/api/resources/$id"))
+            .andExpect(status().isForbidden)
+            .andDo(
+                document(
+                    snippet
+                )
+            )
+    }
+
+    @Test
+    @Disabled("throwing an exception with the message (An Authentication object was not found in the SecurityContext)")
+    fun deleteResourceWithoutLogin() {
+        val id = service.create("To Delete").id!!
+
+        mockMvc
+            .perform(deleteRequest("/api/resources/$id"))
+            .andExpect(status().isUnauthorized)
+            .andDo(
+                document(
+                    snippet
+                )
+            )
+    }
+
+    @Test
     fun testSharedIndicatorWhenResourcesWithClassExclusion() {
         val id = classService.create("Class 1").id!!
         val set = listOf(id).toSet()
@@ -246,8 +308,8 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         val con1 = service.create(CreateResourceRequest(null, "Connection 1")).id!!
         val con2 = service.create(CreateResourceRequest(null, "Connection 2")).id!!
         val pred = predicateService.create("Test predicate").id!!
-        statementController.create(con1.value, pred, resId.value)
-        statementController.create(con2.value, pred, resId.value)
+        statementService.create(con1.value, pred, resId.value)
+        statementService.create(con2.value, pred, resId.value)
         val id2 = classService.create("Class 2").id!!
         val set2 = listOf(id2).toSet()
         service.create(CreateResourceRequest(null, "Another Resource", set2))

@@ -118,4 +118,6 @@ interface ResourceService {
     fun update(request: UpdateResourceRequest): Resource
 
     fun checkIfResourceHasStatements(id: ResourceId): Boolean
+
+    fun delete(id: ResourceId)
 }

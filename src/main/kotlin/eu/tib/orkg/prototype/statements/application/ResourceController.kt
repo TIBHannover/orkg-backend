@@ -121,6 +121,8 @@ class ResourceController(
         if (service.checkIfResourceHasStatements(found.get().id!!))
             throw ResourceCantBeDeleted()
 
+        service.delete(id)
+
         return ResponseEntity.noContent().build()
     }
 }

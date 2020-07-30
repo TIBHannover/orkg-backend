@@ -165,11 +165,5 @@ class DOIController(
         val creator: String,
         val ORCID: String
     )
-
-    data class CreateOrganizationRequest(
-        val organizationName: String,
-        var organizationLogo: String,
-        val createdBy: UUID,
-        val url: String
-    )
+    
 }

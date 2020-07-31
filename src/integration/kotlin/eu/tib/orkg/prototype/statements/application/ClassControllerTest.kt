@@ -107,6 +107,25 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    fun addReservedId() {
+        val reservedClass = mapOf("label" to "bar", "id" to "Resource")
+
+        mockMvc
+            .perform(postRequestWithBody("/api/classes/", reservedClass))
+            .andExpect(status().isBadRequest)
+            .andDo(
+                document(
+                    snippet,
+                    requestFields(
+                        fieldWithPath("id").description("The class id"),
+                        fieldWithPath("label").description("The class label")
+                    )
+                )
+            )
+    }
+
+    @Test
     fun lookup() {
         service.create("research contribution")
         service.create("programming language")

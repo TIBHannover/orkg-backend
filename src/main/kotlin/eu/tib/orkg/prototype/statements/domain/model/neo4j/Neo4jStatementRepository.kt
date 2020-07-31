@@ -48,5 +48,5 @@ interface Neo4jStatementRepository :
     fun findTemplate(classId: ClassId): Optional<Neo4jResource>
 
     @Query("""MATCH (temp:`Thing`)-[rel:`RELATED`]->(format:`Literal`) WHERE temp.`resource_id`={0} AND rel.`predicate_id`='TemplateLabelFormat' RETURN format LIMIT 1""")
-    fun checkIfTemplateIsFormatted(templateId: ResourceId): Optional<Neo4jLiteral>
+    fun hasTemplateLabelFormat(templateId: ResourceId): Optional<Neo4jLiteral>
 }

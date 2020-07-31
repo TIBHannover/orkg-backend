@@ -171,13 +171,13 @@ class Neo4jResourceService(
     }
 
     fun Resource.toFormatted(): Resource {
-        if (this.classes.isNotEmpty()) {
+        if (this.hasClasses) {
             val classId = this.classes.first()
             // Check if the instance is of a templated class
             val found = statementService.findTemplate(classId)
             if (!found.isPresent) return this
             // Check if the templated class has format option
-            val format = statementService.checkIfTemplateIsFormatted(found.get().id!!)
+            val format = statementService.hasTemplateLabelFormat(found.get().id!!)
             if (!format.isPresent) return this
             // Get format rule
             val formatRule = format.get()
@@ -214,7 +214,7 @@ class Neo4jResourceService(
             if (properties.containsKey(predId))
                 formattedString =
                     formattedString.replaceFirst("{$predId}", properties[predId]
-                        ?: error("Predicate not found"))
+                        ?: error("Format pattern contains predicate {$predId}, that doesn't exists in the statements"))
         }
         return formattedString
     }

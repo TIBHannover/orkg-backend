@@ -97,5 +97,5 @@ interface StatementService {
     /**
      * Checks if the provided template has a formatting node
      */
-    fun checkIfTemplateIsFormatted(templateId: ResourceId): Optional<Literal>
+    fun hasTemplateLabelFormat(templateId: ResourceId): Optional<Literal>
 }

@@ -168,8 +168,8 @@ class Neo4jStatementService :
         statementRepository.findTemplate(classId)
             .map(Neo4jResource::toResource)
 
-    override fun checkIfTemplateIsFormatted(templateId: ResourceId): Optional<Literal> =
-        statementRepository.checkIfTemplateIsFormatted(templateId)
+    override fun hasTemplateLabelFormat(templateId: ResourceId): Optional<Literal> =
+        statementRepository.hasTemplateLabelFormat(templateId)
             .map(Neo4jLiteral::toLiteral)
 
     private fun refreshObject(thing: Neo4jThing, formatted: Boolean = true): Thing {

@@ -30,4 +30,7 @@ data class Resource(
 
     @JsonProperty("formatted_label")
     var formattedLabel: String? = null
+
+    val hasClasses: Boolean
+        get() = this.classes.isNotEmpty()
 }

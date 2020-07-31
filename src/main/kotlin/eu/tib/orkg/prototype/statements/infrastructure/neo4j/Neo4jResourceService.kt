@@ -171,7 +171,7 @@ class Neo4jResourceService(
     }
 
     fun Resource.toFormatted(): Resource {
-        if (this.hasClasses) {
+        if (this.hasClasses()) {
             val classId = this.classes.first()
             // Check if the instance is of a templated class
             val found = statementService.findTemplate(classId)

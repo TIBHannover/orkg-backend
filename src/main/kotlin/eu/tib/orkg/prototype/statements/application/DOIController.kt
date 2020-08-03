@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.configuration.DataCiteConfiguration
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -13,7 +14,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.time.LocalDate
 import java.util.Base64
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.PostMapping
@@ -27,25 +28,20 @@ import org.springframework.web.bind.annotation.RestController
 class DOIController(
     private val statementService: StatementService
 ) {
-    @Value("\${datacite.test.username}")
-    var dataciteTestUsername: String? = null
 
-    @Value("\${datacite.test.password}")
-    var dataciteTestPassword: String? = null
-
-    @Value("\${datacite.test.DOIPrefix}")
-    var dataciteTestDOIPrefix: String? = null
+    @Autowired
+    private lateinit var dataciteConfiguration: DataCiteConfiguration
 
     @PostMapping("/")
     fun addDOI(@RequestBody doiData: CreateDOIRequest): String {
         var xmlMetadata = createXmlMetadata(doiData.comparisonId, doiData.description, doiData.title, getCreatorsXml(doiData.authors), getRelatedPapers(doiData.relatedResources), doiData.subject)
         var doiMetaData = """{
                 "data": {
-                "id": "$dataciteTestDOIPrefix/${doiData.comparisonId}",
+                "id": "${dataciteConfiguration.DOIPrefix}/${doiData.comparisonId}",
                 "type": "dois",
                 "attributes": {
                 "event": "draft",
-                "doi": "$dataciteTestDOIPrefix/${doiData.comparisonId}",
+                "doi": "${dataciteConfiguration.DOIPrefix}/${doiData.comparisonId}",
                 "url": "${doiData.url}",
                 "xml": "${Base64.getEncoder().encodeToString((xmlMetadata).toByteArray())}"
             }
@@ -57,7 +53,7 @@ class DOIController(
     fun createXmlMetadata(comparisonId: String, description: String, title: String, creators: String, relatedIdentifiers: String, subject: String): String {
         var xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
         "<resource xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://datacite.org/schema/kernel-4\" xsi:schemaLocation=\"http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.3/metadata.xsd\">\n" +
-        "<identifier identifierType=\"DOI\">$dataciteTestDOIPrefix/$comparisonId</identifier>\n" +
+        "<identifier identifierType=\"DOI\">${dataciteConfiguration.DOIPrefix}/$comparisonId</identifier>\n" +
         "<creators>\n" +
             "${creators}\n" +
         "</creators>\n" +
@@ -132,7 +128,8 @@ class DOIController(
             con.requestMethod = "POST"
             con.setRequestProperty("Content-Type", "application/vnd.api+json; utf-8")
             val credentials =
-                Base64.getEncoder().encodeToString(("$dataciteTestUsername:$dataciteTestPassword").toByteArray())
+                // Base64.getEncoder().encodeToString(("$dataciteTestUsername:$dataciteTestPassword").toByteArray())
+                Base64.getEncoder().encodeToString(("${dataciteConfiguration.username}:${dataciteConfiguration.password}").toByteArray())
             con.setRequestProperty("Authorization", "Basic $credentials")
             con.setRequestProperty("Accept", "application/json")
             con.doOutput = true

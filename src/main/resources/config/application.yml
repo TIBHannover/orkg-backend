@@ -13,6 +13,10 @@ orkg:
   storage:
     images:
       dir: "${user.dir}/images"
+  datacite:
+    username: ""
+    password: ""
+    DOIPrefix: ""
 ---
 spring:
   profiles: development
@@ -35,9 +39,3 @@ spring:
 orkg:
   cors:
     origins: 'http://localhost:3000'
-
-datacite:
-  test:
-    username: ""
-    password: ""
-    DOIPrefix: "10.7484"

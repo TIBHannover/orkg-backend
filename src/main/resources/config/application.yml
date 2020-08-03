@@ -38,6 +38,6 @@ orkg:
 
 datacite:
   test:
-    username: "TIB.ORKG"
-    password: "orkg@tib"
+    username: ""
+    password: ""
     DOIPrefix: "10.7484"

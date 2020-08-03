@@ -7,12 +7,12 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import java.io.BufferedReader
+import java.io.IOException
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import java.time.LocalDate
 import java.util.Base64
-import java.util.UUID
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -39,7 +39,7 @@ class DOIController(
     @PostMapping("/")
     fun addDOI(@RequestBody doiData: CreateDOIRequest): String {
         var xmlMetadata = createXmlMetadata(doiData.comparisonId, doiData.description, doiData.title, getCreatorsXml(doiData.authors), getRelatedPapers(doiData.relatedResources), doiData.subject)
-        var DOIData = """{
+        var doiMetaData = """{
                 "data": {
                 "id": "$dataciteTestDOIPrefix/${doiData.comparisonId}",
                 "type": "dois",
@@ -51,7 +51,7 @@ class DOIController(
             }
         }
     }"""
-        return registerDOI(DOIData)
+        return registerDOI(doiMetaData)
     }
 
     fun createXmlMetadata(comparisonId: String, description: String, title: String, creators: String, relatedIdentifiers: String, subject: String): String {
@@ -127,27 +127,32 @@ class DOIController(
 
     fun registerDOI(DOIData: String): String {
         val url = URL("https://api.test.datacite.org/dois")
-        val con = url.openConnection() as HttpURLConnection
-        con.requestMethod = "POST"
-        con.setRequestProperty("Content-Type", "application/vnd.api+json; utf-8")
-        val credentials = Base64.getEncoder().encodeToString(("$dataciteTestUsername:$dataciteTestPassword").toByteArray())
-        con.setRequestProperty("Authorization", "Basic $credentials")
-        con.setRequestProperty("Accept", "application/json")
-        con.doOutput = true
-        con.outputStream.use { os ->
-            val input = DOIData.toByteArray(charset("utf-8"))
-            os.write(input, 0, input.size)
-        }
-
-        BufferedReader(
-            InputStreamReader(con.inputStream, "utf-8")
-        ).use { br ->
-            val response = StringBuilder()
-            var responseLine: String? = null
-            while (br.readLine().also { responseLine = it } != null) {
-                response.append(responseLine!!.trim { it <= ' ' })
+        try {
+            val con = url.openConnection() as HttpURLConnection
+            con.requestMethod = "POST"
+            con.setRequestProperty("Content-Type", "application/vnd.api+json; utf-8")
+            val credentials =
+                Base64.getEncoder().encodeToString(("$dataciteTestUsername:$dataciteTestPassword").toByteArray())
+            con.setRequestProperty("Authorization", "Basic $credentials")
+            con.setRequestProperty("Accept", "application/json")
+            con.doOutput = true
+            con.outputStream.use { os ->
+                val input = DOIData.toByteArray(charset("utf-8"))
+                os.write(input, 0, input.size)
             }
-            return response.toString()
+
+            BufferedReader(
+                InputStreamReader(con.inputStream, "utf-8")
+            ).use { br ->
+                val response = StringBuilder()
+                var responseLine: String? = null
+                while (br.readLine().also { responseLine = it } != null) {
+                    response.append(responseLine!!.trim { it <= ' ' })
+                }
+                return response.toString()
+            }
+        } catch (e: Exception) {
+                throw IOException("Error Creating DOI")
         }
     }
 
@@ -165,5 +170,4 @@ class DOIController(
         val creator: String,
         val ORCID: String
     )
-    
 }

@@ -6,8 +6,8 @@ import java.util.UUID
 
 data class Observatory(
     val id: UUID?,
-    val name: String?,
-    val description: String?,
+    var name: String?,
+    var description: String?,
     val users: Set<UserEntity>?,
     val organizations: Set<OrganizationEntity>?
 )

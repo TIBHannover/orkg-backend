@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -75,9 +76,39 @@ class ObservatoryController(
             .map(UserController::UserDetails)
     }
 
+    @PutMapping("/updateName")
+    fun updateObservatoryName(@RequestBody observatory: UpdateObservatoryNameRequest): Observatory {
+        var response = service
+            .findById(observatory.id)
+            .orElseThrow { ObservatoryNotFound() }
+        response.name = observatory.observatoryName
+
+        return service.updateObservatory(response)
+    }
+
+    @PutMapping("/updateDescription")
+    fun updateObservatoryUrl(@RequestBody observatory: UpdateObservatoryDescriptionRequest): Observatory {
+        var response = service
+            .findById(observatory.id)
+            .orElseThrow { ObservatoryNotFound() }
+        response.description = observatory.description
+
+        return service.updateObservatory(response)
+    }
+
     data class CreateObservatoryRequest(
         val observatoryName: String,
         val organizationId: UUID,
+        val description: String
+    )
+
+    data class UpdateObservatoryNameRequest(
+        val id: UUID,
+        val observatoryName: String
+    )
+
+    data class UpdateObservatoryDescriptionRequest(
+        val id: UUID,
         val description: String
     )
 

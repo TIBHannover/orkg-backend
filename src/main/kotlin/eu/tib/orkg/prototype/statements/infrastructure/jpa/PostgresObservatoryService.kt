@@ -47,4 +47,13 @@ class PostgresObservatoryService(
         return postgresObservatoryRepository.findById(id)
             .map(ObservatoryEntity::toObservatory)
     }
+
+    override fun updateObservatory(observatory: Observatory): Observatory {
+        val observatoryEntity = ObservatoryEntity().apply {
+            id = observatory.id
+            name = observatory.name
+            description = observatory.description
+        }
+        return postgresObservatoryRepository.save(observatoryEntity).toObservatory()
+    }
 }

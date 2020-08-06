@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus
 
@@ -22,7 +23,7 @@ class ObservatoryNotFound : RuntimeException("Observatory not found")
 class OrganizationNotFound : RuntimeException("Organization not found")
 
 @ResponseStatus(HttpStatus.FORBIDDEN)
-class ResourceCantBeDeleted : RuntimeException("Resource have statements so can't be deleted")
+class ResourceCantBeDeleted(id: ResourceId) : RuntimeException("Unable to delete Resource $id because it is used in at least one statement")
 
 /**
  * Base class for custom property validation.

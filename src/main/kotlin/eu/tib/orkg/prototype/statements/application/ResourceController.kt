@@ -118,8 +118,8 @@ class ResourceController(
         if (!found.isPresent)
             return notFound().build()
 
-        if (service.checkIfResourceHasStatements(found.get().id!!))
-            throw ResourceCantBeDeleted()
+        if (service.hasStatements(found.get().id!!))
+            throw ResourceCantBeDeleted(id)
 
         service.delete(id)
 

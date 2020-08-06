@@ -240,7 +240,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun deleteResourceNotFound() {
         mockMvc
-            .perform(deleteRequest("/api/resources/R2F1R21215"))
+            .perform(deleteRequest("/api/resources/NONEXISTENT"))
             .andExpect(status().isNotFound)
             .andDo(
                 document(

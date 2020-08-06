@@ -25,6 +25,12 @@ class OrganizationNotFound : RuntimeException("Organization not found")
 @ResponseStatus(HttpStatus.FORBIDDEN)
 class ResourceCantBeDeleted(id: ResourceId) : RuntimeException("Unable to delete Resource $id because it is used in at least one statement")
 
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+class ClassNotAllowed(`class`: String) : RuntimeException("This class id ($`class`) is not allowed")
+
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+class ClassAlreadyExists(`class`: String) : RuntimeException("The class with the id ($`class`) already exists")
+
 /**
  * Base class for custom property validation.
  */

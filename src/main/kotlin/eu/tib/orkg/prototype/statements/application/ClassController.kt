@@ -76,7 +76,9 @@ class ClassController(private val service: ClassService, private val resourceSer
     @ResponseStatus(CREATED)
     fun add(@RequestBody `class`: CreateClassRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         if (`class`.id != null && service.findById(`class`.id).isPresent)
-            return ResponseEntity.badRequest().body("Class id <${`class`.id}> already exists!")
+            throw ClassAlreadyExists(`class`.id.value)
+        if (`class`.id != null && `class`.id.value in listOf("Predicate", "Resource", "Class", "Literal", "Thing"))
+            throw ClassNotAllowed(`class`.id.value)
         val userId = authenticatedUserId()
         val id = service.create(userId, `class`).id
         val location = uriComponentsBuilder

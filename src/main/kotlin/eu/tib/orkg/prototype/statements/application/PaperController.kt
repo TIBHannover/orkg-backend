@@ -112,15 +112,17 @@ class PaperController(
         if (request.paper.contributions != null) {
             val contributionClassSet = setOf(contributionClass)
             request.paper.contributions.forEach {
+                // Create contribution resource whether it has data or not
+                val contributionId = resourceService.create(
+                    userId,
+                    CreateResourceRequest(null, it.name, contributionClassSet),
+                    observatoryId,
+                    request.paper.extractionMethod,
+                    organizationId
+                ).id!!
+                statementService.create(userId, paperId.value, hasContributionPredicate, contributionId.value)
+                // Check if the contribution has more statements to add
                 if (it.values != null && it.values.count() > 0) {
-                    val contributionId = resourceService.create(
-                        userId,
-                        CreateResourceRequest(null, it.name, contributionClassSet),
-                        observatoryId,
-                        request.paper.extractionMethod,
-                        organizationId
-                    ).id!!
-                    statementService.create(userId, paperId.value, hasContributionPredicate, contributionId.value)
                     val resourceQueue: Queue<TempResource> = LinkedList()
                     processContributionData(contributionId, it.values, tempResources, predicates, resourceQueue, userId, observatoryId = observatoryId, extractionMethod = request.paper.extractionMethod, organizationId = organizationId)
                 }

@@ -47,7 +47,7 @@ class ObservatoryController(
     fun findById(@PathVariable id: UUID): Observatory =
         service
             .findById(id)
-            .orElseThrow { ObservatoryNotFound() }
+            .orElseThrow { ObservatoryNotFound(id) }
 
     @GetMapping("/")
     fun findObservatories(): List<Observatory> {

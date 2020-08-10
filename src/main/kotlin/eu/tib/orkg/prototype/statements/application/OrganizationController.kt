@@ -60,7 +60,7 @@ class OrganizationController(
     fun findById(@PathVariable id: UUID): Organization {
         var response = service
             .findById(id)
-            .orElseThrow { OrganizationNotFound() }
+            .orElseThrow { OrganizationNotFound(id) }
         var logo = encoder(response.id.toString())
 
         return (

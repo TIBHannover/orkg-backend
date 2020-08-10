@@ -6,8 +6,7 @@ import java.util.UUID
 interface OrganizationService {
 
     /**
-     * Create a new company with a given name.
-     *
+     * Create a new organization with a given name.
      */
     fun create(OrganizationName: String, CreatedBy: UUID, Url: String): Organization
 

@@ -4,8 +4,7 @@ import java.util.UUID
 
 interface ObservatoryService {
     /**
-     * Create a new company with a given name.
-     *
+     * Create a new observatory with a given name.
      */
     fun create(name: String, description: String, organization: Organization): Observatory
 

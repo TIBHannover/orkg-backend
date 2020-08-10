@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-import eu.tib.orkg.prototype.statements.domain.model.jpa.OrganizationEntity
 import java.util.Optional
 import java.util.UUID
 
@@ -14,5 +13,5 @@ interface OrganizationService {
 
     fun listOrganizations(): List<Organization>
 
-    fun findById(id: UUID): Optional<OrganizationEntity>
+    fun findById(id: UUID): Optional<Organization>
 }

@@ -30,7 +30,8 @@ class PostgresOrganizationService(
             .map(OrganizationEntity::toOrganization)
     }
 
-    override fun findById(id: UUID): Optional<OrganizationEntity> {
-        return postgresOrganizationRepository.findById(id)
-    }
+    override fun findById(id: UUID): Optional<Organization> =
+        postgresOrganizationRepository
+            .findById(id)
+            .map(OrganizationEntity::toOrganization)
 }

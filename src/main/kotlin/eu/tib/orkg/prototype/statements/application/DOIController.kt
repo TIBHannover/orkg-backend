@@ -127,9 +127,7 @@ class DOIController(
             val con = url.openConnection() as HttpURLConnection
             con.requestMethod = "POST"
             con.setRequestProperty("Content-Type", "application/vnd.api+json; utf-8")
-            val credentials =
-                // Base64.getEncoder().encodeToString(("$dataciteTestUsername:$dataciteTestPassword").toByteArray())
-                Base64.getEncoder().encodeToString(("${dataciteConfiguration.username}:${dataciteConfiguration.password}").toByteArray())
+            val credentials = Base64.getEncoder().encodeToString(("${dataciteConfiguration.username}:${dataciteConfiguration.password}").toByteArray())
             con.setRequestProperty("Authorization", "Basic $credentials")
             con.setRequestProperty("Accept", "application/json")
             con.doOutput = true

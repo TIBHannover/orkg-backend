@@ -77,8 +77,8 @@ class ClassController(private val service: ClassService, private val resourceSer
     fun add(@RequestBody `class`: CreateClassRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         if (`class`.id != null && service.findById(`class`.id).isPresent)
             throw ClassAlreadyExists(`class`.id.value)
-        if (`class`.id != null && `class`.id.value in listOf("Predicate", "Resource", "Class", "Literal", "Thing"))
-            throw ClassNotAllowed(`class`.id.value)
+        if (!`class`.hasValidName())
+            throw ClassNotAllowed(`class`.id!!.value)
         val userId = authenticatedUserId()
         val id = service.create(userId, `class`).id
         val location = uriComponentsBuilder
@@ -109,4 +109,12 @@ data class CreateClassRequest(
     val id: ClassId?,
     val label: String,
     val uri: URI?
-)
+) {
+    /*
+    Checks if the class has a valid class Id (class name)
+    a valid class name is either null (auto assigned by the system)
+    or a name that is not one of the reserved ones.
+     */
+    fun hasValidName(): Boolean =
+        this.id == null || this.id.value !in listOf("Predicate", "Resource", "Class", "Literal", "Thing")
+}

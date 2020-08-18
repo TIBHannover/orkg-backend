@@ -34,7 +34,6 @@ class DOIController(
 
     @PostMapping("/")
     fun addDOI(@RequestBody doiData: CreateDOIRequest): String {
-        println(doiData)
         var xmlMetadata = createXmlMetadata(doiData.comparisonId, doiData.description, doiData.title, getCreatorsXml(doiData.authors), getRelatedPapers(doiData.relatedResources), doiData.subject)
         var doiMetaData = """{
                 "data": {
@@ -82,7 +81,6 @@ class DOIController(
     }
 
     fun getCreatorsXml(authors: List<Creator>): String {
-        println(authors)
         var authorsList = ""
         authors.forEach {
             authorsList += "<creator>\n" +
@@ -90,7 +88,6 @@ class DOIController(
             "<nameIdentifier schemeURI=\"http://orcid.org/\" nameIdentifierScheme=\"ORCID\">${it.ORCID}</nameIdentifier>\n" +
             "</creator\n"
         }
-        println(authorsList)
         return authorsList
     }
 

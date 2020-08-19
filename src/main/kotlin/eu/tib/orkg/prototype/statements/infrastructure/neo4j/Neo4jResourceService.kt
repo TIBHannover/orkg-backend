@@ -149,4 +149,12 @@ class Neo4jResourceService(
 
         return neo4jResourceRepository.save(found).toResource()
     }
+
+    override fun hasStatements(id: ResourceId) =
+        neo4jResourceRepository.checkIfResourceHasStatements(id)
+
+    override fun delete(id: ResourceId) {
+        val found = neo4jResourceRepository.findByResourceId(id).get()
+        neo4jResourceRepository.delete(found)
+    }
 }

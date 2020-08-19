@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.contributions.application
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.application.UserNotFound
-import java.util.Optional
 import java.util.UUID
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -22,8 +21,7 @@ class ContributorController(
         return ResponseEntity.ok(contributor)
     }
 
-    // TODO: check if this does the right thing -> should return organizations?!
     @GetMapping("/{id}/organizations")
-    fun findMemberOrganizationsByUserId(@PathVariable id: UUID): Optional<Contributor> =
-        contributorService.findOrganizationById(id)
+    fun findMemberOrganizationsByUserId(@PathVariable id: UUID): Iterable<Contributor> =
+        contributorService.findUsersByOrganizationId(id)
 }

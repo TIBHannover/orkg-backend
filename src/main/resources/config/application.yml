@@ -17,6 +17,7 @@ orkg:
     username: ""
     password: ""
     DOIPrefix: ""
+    url: "https://api.test.datacite.org/dois"
 ---
 spring:
   profiles: development

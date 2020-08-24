@@ -80,36 +80,6 @@ class DOIController(
         }
     }
 
-//    fun registerDOI(DOIData: String): String {
-//        val url = URL("https://api.test.datacite.org/dois")
-//        try {
-//            val con = url.openConnection() as HttpURLConnection
-//            con.requestMethod = "POST"
-//            con.setRequestProperty("Content-Type", "application/vnd.api+json; utf-8")
-//            val credentials = dataciteConfiguration.encodeCredentials()
-//            con.setRequestProperty("Authorization", "Basic $credentials")
-//            con.setRequestProperty("Accept", "application/json")
-//            con.doOutput = true
-//            con.outputStream.use { os ->
-//                val input = DOIData.toByteArray(charset("utf-8"))
-//                os.write(input, 0, input.size)
-//            }
-//
-//            BufferedReader(
-//                InputStreamReader(con.inputStream, "utf-8")
-//            ).use { br ->
-//                val response = StringBuilder()
-//                var responseLine: String? = null
-//                while (br.readLine().also { responseLine = it } != null) {
-//                    response.append(responseLine!!.trim { it <= ' ' })
-//                }
-//                return response.toString()
-//            }
-//        } catch (e: Exception) {
-//                throw IOException("Error Creating DOI")
-//        }
-//    }
-
     data class CreateDOIRequest(
         val comparison_id: String,
         val title: String,

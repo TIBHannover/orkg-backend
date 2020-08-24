@@ -21,6 +21,9 @@ class ObservatoryNotFound : RuntimeException("Observatory not found")
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class OrganizationNotFound : RuntimeException("Organization not found")
 
+@ResponseStatus(HttpStatus.FORBIDDEN)
+class DoiNotCreated : RuntimeException("Error Creating DOI")
+
 /**
  * Base class for custom property validation.
  */

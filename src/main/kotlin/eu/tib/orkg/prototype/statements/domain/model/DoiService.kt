@@ -1,13 +1,17 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import eu.tib.orkg.prototype.statements.application.DoiNotCreated
+import liquibase.pro.packaged.ex
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.server.ResponseStatusException
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
-import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
+import org.springframework.http.HttpStatus
+
 
 @Service
 @Transactional
@@ -29,7 +33,9 @@ class DoiService {
             con.doOutput = true
             return con
         } catch (e: Exception) {
-            throw IOException(DoiNotCreated())
+            throw ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Error creating Doi", e
+            )
         }
     }
 
@@ -41,7 +47,9 @@ class DoiService {
             InputStreamReader(httpConnection.inputStream, "utf-8")
         ).readLines().map(String::trim).joinToString("\n")
     } catch (e: Exception) {
-        throw IOException(DoiNotCreated())
+            throw ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Error creating Doi", e
+            )
     }
     }
 }

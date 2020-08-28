@@ -31,7 +31,7 @@ class DoiService(
         }
     }
 
-    fun prepareHttpCall(url: String, credentials: String): HttpURLConnection {
+    private fun prepareHttpCall(url: String, credentials: String): HttpURLConnection {
         val dataciteUrl = URL(url)
         val con = dataciteUrl.openConnection() as HttpURLConnection
         con.requestMethod = "POST"
@@ -42,7 +42,7 @@ class DoiService(
         return con
     }
 
-    fun doiRegisterRequest(doiData: String, httpConnection: HttpURLConnection): Optional<String> {
+    private fun doiRegisterRequest(doiData: String, httpConnection: HttpURLConnection): Optional<String> {
         httpConnection.outputStream.write(doiData.toByteArray(charset("utf-8")))
         return Optional.of(BufferedReader(
                 InputStreamReader(httpConnection.inputStream, "utf-8"))

@@ -43,7 +43,7 @@ class DoiService(
     }
 
     fun doiRegisterRequest(doiData: String, httpConnection: HttpURLConnection): Optional<String> {
-            httpConnection.outputStream.write(doiData.toByteArray(charset("utf-8")))
+        httpConnection.outputStream.write(doiData.toByteArray(charset("utf-8")))
         return Optional.of(BufferedReader(
                 InputStreamReader(httpConnection.inputStream, "utf-8"))
                 .readLines().map(String::trim).joinToString("\n"))

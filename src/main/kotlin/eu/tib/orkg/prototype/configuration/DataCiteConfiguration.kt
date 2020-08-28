@@ -11,6 +11,7 @@ class DataCiteConfiguration {
     final var password: String? = null
     final var doiPrefix: String? = null
     final var url: String? = null
+    final var publish: String? = null
 
     fun encodeCredentials(): String? {
         return Base64.getEncoder().encodeToString(("${this.username}:${this.password}").toByteArray())

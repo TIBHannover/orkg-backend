@@ -29,6 +29,7 @@ class DOIController(
     fun addDOI(@RequestBody doiData: CreateDOIRequest): String {
         val doiPrefix = dataciteConfiguration.doiPrefix!!
         val xmlMetadata = doiData.toXML(doiPrefix, doiService.getRelatedPapers(doiData.relatedResources))
+        // This structure is required by the DataCite API
         val doiMetaData = """{
                 "data": {
                 "id": "$doiPrefix/${doiData.comparisonId}",

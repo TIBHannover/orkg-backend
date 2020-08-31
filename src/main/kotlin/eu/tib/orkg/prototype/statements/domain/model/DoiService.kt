@@ -44,9 +44,10 @@ class DoiService(
 
     private fun doiRegisterRequest(doiData: String, httpConnection: HttpURLConnection): Optional<String> {
         httpConnection.outputStream.write(doiData.toByteArray(charset("utf-8")))
-        return Optional.of(BufferedReader(
-                InputStreamReader(httpConnection.inputStream, "utf-8"))
-                .readLines().map(String::trim).joinToString("\n"))
+        val responseBody = BufferedReader(InputStreamReader(httpConnection.inputStream, "utf-8"))
+            .readLines()
+            .joinToString("\n", transform = String::trim)
+        return Optional.of(responseBody)
     }
 
     fun getRelatedPapers(relatedResources: Set<ResourceId>): String {

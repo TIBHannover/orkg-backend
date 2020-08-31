@@ -20,7 +20,7 @@ class DoiService(
 
     fun registerDoi(doiData: String, credentials: String, url: String): Optional<String> {
         return try {
-            var httpConnection = prepareHttpCall(url, credentials)
+            val httpConnection = prepareHttpCall(url, credentials)
             try {
                 doiRegisterRequest(doiData, httpConnection)
             } catch (e: Exception) {
@@ -53,10 +53,10 @@ class DoiService(
         val pagination = PageRequest.of(0, 1)
         var relatedIdentifiers = ""
         relatedResources.map { resourceId ->
-            var statements = statementService.findAllByObject(resourceId.value, pagination)
+            val statements = statementService.findAllByObject(resourceId.value, pagination)
             statements.map { statement ->
-                var paper = refreshSubject(statement.subject)
-                var result = statementService.findAllBySubjectAndPredicate(paper.id.toString(), PredicateId(
+                val paper = refreshSubject(statement.subject)
+                val result = statementService.findAllBySubjectAndPredicate(paper.id.toString(), PredicateId(
                     ID_DOI_PREDICATE
                 ), pagination)
                 result.forEach {

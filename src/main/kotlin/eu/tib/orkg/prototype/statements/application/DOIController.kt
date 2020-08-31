@@ -27,9 +27,9 @@ class DOIController(
 
     @PostMapping("/")
     fun addDOI(@RequestBody doiData: CreateDOIRequest): String {
-        var doiPrefix = dataciteConfiguration.doiPrefix!!
-        var xmlMetadata = doiData.toXML(doiPrefix, doiService.getRelatedPapers(doiData.relatedResources))
-        var doiMetaData = """{
+        val doiPrefix = dataciteConfiguration.doiPrefix!!
+        val xmlMetadata = doiData.toXML(doiPrefix, doiService.getRelatedPapers(doiData.relatedResources))
+        val doiMetaData = """{
                 "data": {
                 "id": "$doiPrefix/${doiData.comparisonId}",
                 "type": "dois",

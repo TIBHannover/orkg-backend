@@ -16,7 +16,7 @@ orkg:
   datacite:
     username: ""
     password: ""
-    DOIPrefix: "10.7484"
+    doiPrefix: "10.7484"
     url: "https://api.test.datacite.org/dois"
     publish: "draft"
 ---

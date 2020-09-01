@@ -14,12 +14,13 @@ import org.springframework.transaction.annotation.Transactional
 class PostgresObservatoryService(
     private val postgresObservatoryRepository: PostgresObservatoryRepository
 ) : ObservatoryService {
-    override fun create(name: String, description: String, organization: OrganizationEntity): ObservatoryEntity {
+    override fun create(name: String, description: String, organization: OrganizationEntity, researchField: String): ObservatoryEntity {
         val oId = UUID.randomUUID()
         val newObservatory = ObservatoryEntity().apply {
             id = oId
             this.name = name
             this.description = description
+            this.researchField = researchField
             organizations = mutableSetOf(
                 organization
             )
@@ -53,6 +54,7 @@ class PostgresObservatoryService(
             id = observatory.id
             name = observatory.name
             description = observatory.description
+            researchField = observatory.researchField
         }
         return postgresObservatoryRepository.save(observatoryEntity).toObservatory()
     }

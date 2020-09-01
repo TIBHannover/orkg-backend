@@ -32,7 +32,7 @@ class ObservatoryController(
     fun addObservatory(@RequestBody observatory: CreateObservatoryRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         return if (service.findByName(observatory.observatoryName).isEmpty) {
             var organizationEntity = organizationService.findById(observatory.organizationId)
-            val id = service.create(observatory.observatoryName, observatory.description, organizationEntity.get()).id
+            val id = service.create(observatory.observatoryName, observatory.description, organizationEntity.get(), observatory.researchField).id
             val location = uriComponentsBuilder
                 .path("api/observatories/{id}")
                 .buildAndExpand(id)
@@ -87,7 +87,7 @@ class ObservatoryController(
     }
 
     @PutMapping("/updateDescription")
-    fun updateObservatoryUrl(@RequestBody observatory: UpdateObservatoryDescriptionRequest): Observatory {
+    fun updateObservatoryDescription(@RequestBody observatory: UpdateObservatoryDescriptionRequest): Observatory {
         var response = service
             .findById(observatory.id)
             .orElseThrow { ObservatoryNotFound() }
@@ -96,10 +96,21 @@ class ObservatoryController(
         return service.updateObservatory(response)
     }
 
+    @PutMapping("/updateResearchField")
+    fun updateObservatoryResearchField(@RequestBody observatory: UpdateObservatoryResearchField): Observatory {
+        var response = service
+            .findById(observatory.id)
+            .orElseThrow { ObservatoryNotFound() }
+        response.researchField = observatory.researchField
+
+        return service.updateObservatory(response)
+    }
+
     data class CreateObservatoryRequest(
         val observatoryName: String,
         val organizationId: UUID,
-        val description: String
+        val description: String,
+        val researchField: String
     )
 
     data class UpdateObservatoryNameRequest(
@@ -110,6 +121,11 @@ class ObservatoryController(
     data class UpdateObservatoryDescriptionRequest(
         val id: UUID,
         val description: String
+    )
+
+    data class UpdateObservatoryResearchField(
+        val id: UUID,
+        val researchField: String
     )
 
     data class ErrorMessage(

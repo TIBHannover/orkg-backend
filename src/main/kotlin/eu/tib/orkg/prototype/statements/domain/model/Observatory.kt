@@ -8,6 +8,7 @@ data class Observatory(
     val id: UUID?,
     var name: String?,
     var description: String?,
+    var researchField: String?,
     val users: Set<UserEntity>?,
     val organizations: Set<OrganizationEntity>?
 )

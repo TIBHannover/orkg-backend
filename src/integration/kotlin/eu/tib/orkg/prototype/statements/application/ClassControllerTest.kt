@@ -70,16 +70,19 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun add() {
-        val `class` = mapOf("label" to "foo")
+        val `class` = mapOf("label" to "foo", "uri" to "http://example.org/bar")
 
         mockMvc
             .perform(postRequestWithBody("/api/classes/", `class`))
             .andExpect(status().isCreated)
+            .andExpect(jsonPath("$.label").value("foo"))
+            .andExpect(jsonPath("$.uri").value("http://example.org/bar"))
             .andDo(
                 document(
                     snippet,
                     requestFields(
-                        fieldWithPath("label").description("The class label")
+                        fieldWithPath("label").description("The class label"),
+                        fieldWithPath("uri").description("The class URI")
                     ),
                     createdResponseHeaders(),
                     classResponseFields()

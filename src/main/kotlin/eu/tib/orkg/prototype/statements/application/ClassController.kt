@@ -99,7 +99,10 @@ class ClassController(private val service: ClassService, private val resourceSer
         if (!found.isPresent)
             return ResponseEntity.notFound().build()
 
-        val updatedClass = `class`.copy(id = found.get().id)
+        var updatedClass = `class`.copy(id = found.get().id)
+
+        if (updatedClass.label != `class`.label)
+            updatedClass = updatedClass.copy(label = `class`.label)
 
         return ResponseEntity.ok(service.update(updatedClass))
     }

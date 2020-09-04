@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import java.net.URI
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -69,16 +70,19 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun add() {
-        val `class` = mapOf("label" to "foo")
+        val `class` = mapOf("label" to "foo", "uri" to "http://example.org/bar")
 
         mockMvc
             .perform(postRequestWithBody("/api/classes/", `class`))
             .andExpect(status().isCreated)
+            .andExpect(jsonPath("$.label").value("foo"))
+            .andExpect(jsonPath("$.uri").value("http://example.org/bar"))
             .andDo(
                 document(
                     snippet,
                     requestFields(
-                        fieldWithPath("label").description("The class label")
+                        fieldWithPath("label").description("The class label"),
+                        fieldWithPath("uri").description("The class URI")
                     ),
                     createdResponseHeaders(),
                     classResponseFields()
@@ -185,20 +189,24 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun edit() {
-        val `class` = service.create("foo").id!!
+        val `class` = service.create(CreateClassRequest(id = null, label = "foo", uri = URI("http://example.org/foo"))).id!!
 
         val newLabel = "bar"
-        val resource = mapOf("label" to newLabel)
+        // Set properties that are not supposed to be updated to "null" to prevent regressions.
+        // Make sure to add an assertion for those as well.
+        val resource = mapOf("label" to newLabel, "uri" to null)
 
         mockMvc
             .perform(putRequestWithBody("/api/classes/$`class`", resource))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.label").value(newLabel))
+            .andExpect(jsonPath("$.uri").value("http://example.org/foo")) // old value
             .andDo(
                 document(
                     snippet,
                     requestFields(
-                        fieldWithPath("label").description("The updated class label")
+                        fieldWithPath("label").description("The updated class label"),
+                        fieldWithPath("uri").ignored()
                     ),
                     classResponseFields()
                 )

@@ -16,6 +16,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation
 import org.springframework.security.test.context.support.WithUserDetails
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -59,6 +60,27 @@ class ClassControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/classes/$id"))
             .andExpect(status().isOk)
+            .andDo(
+                document(
+                    snippet,
+                    classResponseFields()
+                )
+            )
+    }
+
+    @Test
+    fun fetchByURI() {
+        // Arrange
+        service.create(CreateClassRequest(ClassId("dummy"), "dummy label", URI.create("http://example.org/exists")))
+
+        // Act and Assert
+        mockMvc
+            .perform(getRequestTo("/api/classes/?uri=http://example.org/exists"))
+            .andExpect(status().isOk)
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(jsonPath("\$.id").value("dummy"))
+            .andExpect(jsonPath("\$.label").value("dummy label"))
+            .andExpect(jsonPath("\$.uri").value("http://example.org/exists"))
             .andDo(
                 document(
                     snippet,

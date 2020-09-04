@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.statements.application.CreateClassRequest
 import java.util.Optional
 import java.util.UUID
 
-interface ClassService {
+interface ClassService : URIService<Class> {
     /**
      * Create a new class with a given label.
      *

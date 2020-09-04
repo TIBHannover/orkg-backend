@@ -33,6 +33,11 @@ class ClassController(private val service: ClassService, private val resourceSer
             .findById(id)
             .orElseThrow { ClassNotFound() }
 
+    @GetMapping("/", params = ["uri"])
+    fun findByURI(@RequestParam uri: URI): Class = service
+            .findByURI(uri)
+            .orElseThrow { ClassNotFound() }
+
     @GetMapping("/{id}/resources/")
     fun findResourcesWithClass(
         @PathVariable id: ClassId,

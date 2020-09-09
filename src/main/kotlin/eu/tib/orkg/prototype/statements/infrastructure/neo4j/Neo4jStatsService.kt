@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.statements.domain.model.StatsService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatsRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 @Service
 @Transactional
@@ -33,6 +34,16 @@ class Neo4jStatsService(
     override fun getFieldsStats(): Map<String, Int> {
         val counts = neo4jStatsRepository.getResearchFieldsPapersCount()
         return counts.map { it.fieldId to it.papers.toInt() }.toMap()
+    }
+
+    override fun getObservatoryPapersCount(id: UUID): Long {
+        val counts = neo4jStatsRepository.getObservatoryPapersCount(id)
+        return counts
+    }
+
+    override fun getObservatoryComparisonsCount(id: UUID): Long {
+        val counts = neo4jStatsRepository.getObservatoryComparisonsCount(id)
+        return counts
     }
 
     private fun extractValue(map: Map<*, *>, key: String): Long {

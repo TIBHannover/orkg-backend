@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import java.util.UUID
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
-import java.util.UUID
 
 interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
 

@@ -3,9 +3,9 @@ package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.domain.model.StatsService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatsRepository
+import java.util.UUID
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
 
 @Service
 @Transactional

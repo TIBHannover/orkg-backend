@@ -10,5 +10,7 @@ data class Observatory(
     var description: String?,
     var researchField: String?,
     val users: Set<UserEntity>?,
-    val organizations: Set<OrganizationEntity>?
+    val organizations: Set<OrganizationEntity>?,
+    var numPapers: Long,
+    var numComparisons: Long
 )

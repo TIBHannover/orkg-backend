@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
@@ -76,32 +76,33 @@ class ObservatoryController(
             .map(UserController::UserDetails)
     }
 
-    @PutMapping("/updateName")
-    fun updateObservatoryName(@RequestBody observatory: UpdateObservatoryNameRequest): Observatory {
+    @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
+    fun updateObservatoryName(@PathVariable id: UUID, @RequestBody name: String): Observatory {
         var response = service
-            .findById(observatory.id)
+            .findById(id)
             .orElseThrow { ObservatoryNotFound() }
-        response.name = observatory.observatoryName
+        println(name)
+        response.name = name.replace("\"", "")
 
         return service.updateObservatory(response)
     }
 
-    @PutMapping("/updateDescription")
-    fun updateObservatoryDescription(@RequestBody observatory: UpdateObservatoryDescriptionRequest): Observatory {
+    @RequestMapping("{id}/description", method = [RequestMethod.POST, RequestMethod.PUT])
+    fun updateObservatoryDescription(@PathVariable id: UUID, @RequestBody description: String): Observatory {
         var response = service
-            .findById(observatory.id)
+            .findById(id)
             .orElseThrow { ObservatoryNotFound() }
-        response.description = observatory.description
+        response.description = description.replace("\"", "")
 
         return service.updateObservatory(response)
     }
 
-    @PutMapping("/updateResearchField")
-    fun updateObservatoryResearchField(@RequestBody observatory: UpdateObservatoryResearchField): Observatory {
+    @RequestMapping("{id}/researchField", method = [RequestMethod.POST, RequestMethod.PUT])
+    fun updateObservatoryResearchField(@PathVariable id: UUID, @RequestBody researchField: String): Observatory {
         var response = service
-            .findById(observatory.id)
+            .findById(id)
             .orElseThrow { ObservatoryNotFound() }
-        response.researchField = observatory.researchField
+        response.researchField = researchField.replace("\"", "")
 
         return service.updateObservatory(response)
     }
@@ -110,21 +111,6 @@ class ObservatoryController(
         val observatoryName: String,
         val organizationId: UUID,
         val description: String,
-        val researchField: String
-    )
-
-    data class UpdateObservatoryNameRequest(
-        val id: UUID,
-        val observatoryName: String
-    )
-
-    data class UpdateObservatoryDescriptionRequest(
-        val id: UUID,
-        val description: String
-    )
-
-    data class UpdateObservatoryResearchField(
-        val id: UUID,
         val researchField: String
     )
 

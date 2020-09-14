@@ -26,7 +26,7 @@ class ObservatoryEntity {
 
     var description: String? = null
 
-    @Column(name="research_field")
+    @Column(name = "research_field")
     var researchField: String? = null
 
     @OneToMany(mappedBy = "id", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
@@ -40,5 +40,5 @@ class ObservatoryEntity {
         inverseJoinColumns = [JoinColumn(name = "organization_id", referencedColumnName = "id")])
     var organizations: Set<OrganizationEntity>? = mutableSetOf()
 
-    fun toObservatory() = Observatory(id, name, description, researchField, users, organizations)
+    fun toObservatory() = Observatory(id, name, description, researchField, users, organizations, 0, 0)
 }

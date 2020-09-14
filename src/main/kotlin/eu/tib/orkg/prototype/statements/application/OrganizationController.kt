@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
@@ -35,7 +35,6 @@ class OrganizationController(
 
     @PostMapping("/")
     fun addOrganization(@RequestBody organization: CreateOrganizationRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
-        // return if (!mimeType.contains("image/")) {
         return if (!isValidLogo(organization.organizationLogo)) {
             ResponseEntity.badRequest().body(
                     ErrorMessage(message = "Please upload a valid image"))
@@ -88,36 +87,37 @@ class OrganizationController(
             .map(UserController::UserDetails)
     }
 
-    @PutMapping("/updateName")
-    fun updateOrganizationName(@RequestBody organization: UpdateOrganizationNameRequest): Organization {
-        var response = findOrganization(organization.id)
-        response.name = organization.organizationName
+    @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
+    fun updateOrganizationName(@PathVariable id: UUID, @RequestBody name: String): Organization {
+        var response = findOrganization(id)
+        response.name = name.replace("\"", "")
 
         var updatedOrganization = service.updateOrganization(response)
         updatedOrganization.logo = encoder(response.id.toString())
         return updatedOrganization
     }
 
-    @PutMapping("/updateUrl")
-    fun updateOrganizationUrl(@RequestBody organization: UpdateOrganizationUrlRequest): Organization {
-        var response = findOrganization(organization.id)
-        response.url = organization.url
+    @RequestMapping("{id}/url", method = [RequestMethod.POST, RequestMethod.PUT])
+    fun updateOrganizationUrl(@PathVariable id: UUID, @RequestBody url: String): Organization {
+        var response = findOrganization(id)
+        response.url = url.replace("\"", "")
 
         var updatedOrganization = service.updateOrganization(response)
         updatedOrganization.logo = encoder(updatedOrganization.id.toString())
         return updatedOrganization
     }
 
-    @PutMapping("/updateLogo")
-    fun updateOrganizationLogo(@RequestBody organization: UpdateOrganizationLogoRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
-        var response = findOrganization(organization.id).toOrganization()
-        return if (!isValidLogo(organization.organizationLogo)) {
+    @RequestMapping("{id}/logo", method = [RequestMethod.POST, RequestMethod.PUT])
+    fun updateOrganizationLogo(@PathVariable id: UUID, @RequestBody logo: String, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
+        var response = findOrganization(id).toOrganization()
+        var trimmedLogo = logo.replace("\"", "")
+        return if (!isValidLogo(trimmedLogo)) {
             ResponseEntity.badRequest().body(
                 ErrorMessage(message = "Please upload a valid image")
             )
         } else {
-            decoder(organization.organizationLogo, response.id)
-            response.logo = organization.organizationLogo
+            decoder(trimmedLogo, response.id)
+            response.logo = trimmedLogo
 
             val location = uriComponentsBuilder
                 .path("api/organizations/{id}")
@@ -176,7 +176,6 @@ class OrganizationController(
     fun isValidLogo(logo: String): Boolean {
         val (mimeType, _) = logo.split(",")
         return mimeType.contains("image/")
-        // !mimeType.contains("image/")
     }
 
     data class CreateOrganizationRequest(
@@ -184,21 +183,6 @@ class OrganizationController(
         var organizationLogo: String,
         val createdBy: UUID,
         val url: String
-    )
-
-    data class UpdateOrganizationNameRequest(
-        val id: UUID,
-        val organizationName: String
-    )
-
-    data class UpdateOrganizationLogoRequest(
-        val id: UUID,
-        var organizationLogo: String
-    )
-
-    data class UpdateOrganizationUrlRequest(
-        val id: UUID,
-        val url: String?
     )
 
     data class ErrorMessage(

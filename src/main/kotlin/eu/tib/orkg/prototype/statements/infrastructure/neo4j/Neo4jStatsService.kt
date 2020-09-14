@@ -36,15 +36,12 @@ class Neo4jStatsService(
         return counts.map { it.fieldId to it.papers.toInt() }.toMap()
     }
 
-    override fun getObservatoryPapersCount(id: UUID): Long {
-        val counts = neo4jStatsRepository.getObservatoryPapersCount(id)
-        return counts
-    }
+    override fun getObservatoryPapersCount(id: UUID): Long =
+        neo4jStatsRepository.getObservatoryPapersCount(id)
 
-    override fun getObservatoryComparisonsCount(id: UUID): Long {
-        val counts = neo4jStatsRepository.getObservatoryComparisonsCount(id)
-        return counts
-    }
+
+    override fun getObservatoryComparisonsCount(id: UUID): Long =
+        neo4jStatsRepository.getObservatoryComparisonsCount(id)
 
     private fun extractValue(map: Map<*, *>, key: String): Long {
         return if (map.containsKey(key))

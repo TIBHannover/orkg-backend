@@ -1,7 +1,6 @@
 package eu.tib.orkg.prototype.statements.infrastructure.jpa
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
-import eu.tib.orkg.prototype.statements.domain.model.Organization
 import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
 import eu.tib.orkg.prototype.statements.domain.model.jpa.OrganizationEntity
 import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresObservatoryRepository

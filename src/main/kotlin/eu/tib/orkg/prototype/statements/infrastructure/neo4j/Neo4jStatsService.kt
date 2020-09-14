@@ -39,7 +39,6 @@ class Neo4jStatsService(
     override fun getObservatoryPapersCount(id: UUID): Long =
         neo4jStatsRepository.getObservatoryPapersCount(id)
 
-
     override fun getObservatoryComparisonsCount(id: UUID): Long =
         neo4jStatsRepository.getObservatoryComparisonsCount(id)
 

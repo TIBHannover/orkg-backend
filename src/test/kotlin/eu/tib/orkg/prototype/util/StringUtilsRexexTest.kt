@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.provider.ArgumentsSource
 
 @DisplayName("Regex utils")
-class StringUtilsTest {
+class StringUtilsRexexTest {
 
     @ParameterizedTest(name = """{0} operator ("{1}") is correctly escaped""")
     @ArgumentsSource(SpecialCharsArgumentsProvider::class)

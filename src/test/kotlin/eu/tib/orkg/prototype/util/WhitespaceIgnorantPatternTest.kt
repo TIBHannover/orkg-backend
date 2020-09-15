@@ -19,4 +19,10 @@ class WhitespaceIgnorantPatternTest {
         val pattern = WhitespaceIgnorantPattern("a string\twith\n    whitespace").toString()
         assertThat(pattern).isNotEqualTo("""a\s+string\s+with\s+whitespace""")
     }
+
+    @Test
+    @DisplayName("should compose with other helpers")
+    fun shouldComposeWithOtherHelpers() {
+        assertThat(WhitespaceIgnorantPattern(WhitespaceIgnorantPattern("foo")).toString()).isEqualTo("foo")
+    }
 }

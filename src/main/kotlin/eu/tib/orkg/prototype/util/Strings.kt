@@ -3,12 +3,21 @@ package eu.tib.orkg.prototype.util
 import java.util.regex.Pattern
 
 /**
+ * Interface to make string helper classes composable.
+ */
+interface StringHelper {
+    override fun toString(): String
+}
+
+/**
  * A class that escapes all character in a String that have a special meaning in Regular Expressions.
  */
-class EscapedRegex(private val regex: String) {
+class EscapedRegex(private val regex: String) : StringHelper {
     private object RegExChars {
         val pattern = Pattern.compile("""[<(\[{\\^\-=${'$'}!|\]})?*+.>]""").toRegex()
     }
+
+    constructor(helper: StringHelper) : this(helper.toString())
 
     override fun toString(): String {
         return RegExChars.pattern.replace(regex) { match ->
@@ -20,7 +29,9 @@ class EscapedRegex(private val regex: String) {
 /**
  * Trims a string and replaces multiple whitespace characters with a single space character.
  */
-class SanitizedWhitespace(private val input: String) {
+class SanitizedWhitespace(private val input: String) : StringHelper {
+    constructor(helper: StringHelper) : this(helper.toString())
+
     override fun toString() = input.trim().replace("""\s+""".toRegex(), " ")
 }
 
@@ -31,7 +42,9 @@ class SanitizedWhitespace(private val input: String) {
  * The [SanitizedWhitespace] class can be used to sanitize the string beforehand.
  * Other whitespace will be left untouched.
  */
-class WhitespaceIgnorantPattern(private val input: String) {
+class WhitespaceIgnorantPattern(private val input: String) : StringHelper {
+    constructor(helper: StringHelper) : this(helper.toString())
+
     override fun toString(): String {
         return input.replace(" ", "\\s+")
     }

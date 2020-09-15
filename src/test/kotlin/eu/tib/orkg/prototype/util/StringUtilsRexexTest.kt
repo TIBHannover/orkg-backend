@@ -28,6 +28,12 @@ class StringUtilsRexexTest {
             .isEqualTo("http://clean string & needs_nothing")
     }
 
+    @Test
+    @DisplayName("should compose with other helpers")
+    fun shouldComposeWithOtherHelpers() {
+        assertThat(EscapedRegex(EscapedRegex("foo")).toString()).isEqualTo("foo")
+    }
+
     /**
      * Helper class to generate arguments for the parameterized test.
      *

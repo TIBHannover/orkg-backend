@@ -19,4 +19,10 @@ internal class StringUtilsWhitespaceTest {
         val sanitized = SanitizedWhitespace("string  with \n multiple\twhitespace ").toString()
         assertThat(sanitized).isEqualTo("string with multiple whitespace")
     }
+
+    @Test
+    @DisplayName("should compose with other helpers")
+    fun shouldComposeWithOtherHelpers() {
+        assertThat(SanitizedWhitespace(SanitizedWhitespace("foo")).toString()).isEqualTo("foo")
+    }
 }

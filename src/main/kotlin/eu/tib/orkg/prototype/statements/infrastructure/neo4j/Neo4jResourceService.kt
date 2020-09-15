@@ -56,10 +56,13 @@ class Neo4jResourceService(
             .content
             .map(Neo4jResource::toResource)
 
-    override fun findAllByLabelContaining(pageable: Pageable, part: String): Iterable<Resource> =
-        neo4jResourceRepository.findAllByLabelMatchesRegex("(?i).*${escapeRegexString(part)}.*", pageable) // TODO: See declaration
+    override fun findAllByLabelContaining(pageable: Pageable, part: String): Iterable<Resource> {
+        val cleaned = part.trim().replace("""\s+""".toRegex(), " ")
+        val regex = "(?i).*${escapeRegexString(cleaned).replace(" ", "\\s+")}.*"
+        return neo4jResourceRepository.findAllByLabelMatchesRegex(regex, pageable) // TODO: See declaration
             .content
             .map(Neo4jResource::toResource)
+    }
 
     override fun findAllByClass(pageable: Pageable, id: ClassId): Iterable<Resource> =
         neo4jResourceRepository.findAllByClass(id.toString(), pageable)

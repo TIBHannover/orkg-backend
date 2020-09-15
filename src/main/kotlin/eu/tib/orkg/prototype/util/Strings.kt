@@ -23,3 +23,16 @@ class EscapedRegex(private val regex: String) {
 class SanitizedWhitespace(private val input: String) {
     override fun toString() = input.trim().replace("""\s+""".toRegex(), " ")
 }
+
+/**
+ * Transforms all spaces in string to a Regular Expression pattern matching multiple whitespaces.
+ *
+ * Spaces will be transformed individually.
+ * The [SanitizedWhitespace] class can be used to sanitize the string beforehand.
+ * Other whitespace will be left untouched.
+ */
+class WhitespaceIgnorantPattern(private val input: String) {
+    override fun toString(): String {
+        return input.replace(" ", "\\s+")
+    }
+}

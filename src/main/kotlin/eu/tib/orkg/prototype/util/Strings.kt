@@ -16,3 +16,10 @@ class EscapedRegex(private val regex: String) {
         }
     }
 }
+
+/**
+ * Trims a string and replaces multiple whitespace characters with a single space character.
+ */
+class SanitizedWhitespace(private val input: String) {
+    override fun toString() = input.trim().replace("""\s+""".toRegex(), " ")
+}

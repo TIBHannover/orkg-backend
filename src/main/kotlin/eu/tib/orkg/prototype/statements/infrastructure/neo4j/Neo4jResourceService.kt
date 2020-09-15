@@ -12,6 +12,7 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceIdGenera
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
 import eu.tib.orkg.prototype.util.EscapedRegex
+import eu.tib.orkg.prototype.util.SanitizedWhitespace
 import java.util.Optional
 import java.util.UUID
 import org.springframework.data.domain.Pageable
@@ -58,7 +59,7 @@ class Neo4jResourceService(
             .map(Neo4jResource::toResource)
 
     override fun findAllByLabelContaining(pageable: Pageable, part: String): Iterable<Resource> {
-        val cleaned = part.trim().replace("""\s+""".toRegex(), " ")
+        val cleaned = SanitizedWhitespace(part).toString()
         val regex = "(?i).*${"${EscapedRegex(cleaned)}".replace(" ", "\\s+")}.*"
         return neo4jResourceRepository.findAllByLabelMatchesRegex(regex, pageable) // TODO: See declaration
             .content

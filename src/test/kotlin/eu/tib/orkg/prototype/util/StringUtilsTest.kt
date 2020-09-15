@@ -1,6 +1,5 @@
-package eu.tib.orkg.prototype.statements.infrastructure.neo4j
+package eu.tib.orkg.prototype.util
 
-import eu.tib.orkg.prototype.util.EscapedRegex
 import java.util.stream.Stream
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
@@ -12,7 +11,7 @@ import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.provider.ArgumentsSource
 
 @DisplayName("Regex utils")
-class RegexUtilsTest {
+class StringUtilsTest {
 
     @ParameterizedTest(name = """{0} operator ("{1}") is correctly escaped""")
     @ArgumentsSource(SpecialCharsArgumentsProvider::class)

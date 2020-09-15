@@ -13,6 +13,7 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceReposito
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
 import eu.tib.orkg.prototype.util.EscapedRegex
 import eu.tib.orkg.prototype.util.SanitizedWhitespace
+import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
 import java.util.Optional
 import java.util.UUID
 import org.springframework.data.domain.Pageable
@@ -54,14 +55,12 @@ class Neo4jResourceService(
             .map(Neo4jResource::toResource)
 
     override fun findAllByLabel(pageable: Pageable, label: String): Iterable<Resource> =
-        neo4jResourceRepository.findAllByLabelMatchesRegex("(?i)^${EscapedRegex(label)}$", pageable) // TODO: See declaration
+        neo4jResourceRepository.findAllByLabelMatchesRegex(label.toExactSearchString(), pageable) // TODO: See declaration
             .content
             .map(Neo4jResource::toResource)
 
     override fun findAllByLabelContaining(pageable: Pageable, part: String): Iterable<Resource> {
-        val cleaned = SanitizedWhitespace(part).toString()
-        val regex = "(?i).*${"${EscapedRegex(cleaned)}".replace(" ", "\\s+")}.*"
-        return neo4jResourceRepository.findAllByLabelMatchesRegex(regex, pageable) // TODO: See declaration
+        return neo4jResourceRepository.findAllByLabelMatchesRegex(part.toSearchString(), pageable) // TODO: See declaration
             .content
             .map(Neo4jResource::toResource)
     }
@@ -87,12 +86,12 @@ class Neo4jResourceService(
             .map(Neo4jResource::toResource)
 
     override fun findAllByClassAndLabelContaining(pageable: Pageable, id: ClassId, part: String): Iterable<Resource> =
-        neo4jResourceRepository.findAllByClassAndLabelContaining(id.toString(), "(?i).*${escapeRegexString(part)}.*", pageable)
+        neo4jResourceRepository.findAllByClassAndLabelContaining(id.toString(), part.toSearchString(), pageable)
             .content
             .map(Neo4jResource::toResource)
 
     override fun findAllByClassAndLabelContainingAndCreatedBy(pageable: Pageable, id: ClassId, part: String, createdBy: UUID): Iterable<Resource> =
-        neo4jResourceRepository.findAllByClassAndLabelContainingAndCreatedBy(id.toString(), "(?i).*${escapeRegexString(part)}.*", createdBy, pageable)
+        neo4jResourceRepository.findAllByClassAndLabelContainingAndCreatedBy(id.toString(), part.toSearchString(), createdBy, pageable)
             .content
             .map(Neo4jResource::toResource)
 
@@ -107,7 +106,7 @@ class Neo4jResourceService(
             .map(Neo4jResource::toResource)
 
     override fun findAllExcludingClassByLabelContaining(pageable: Pageable, ids: Array<ClassId>, part: String): Iterable<Resource> =
-        neo4jResourceRepository.findAllExcludingClassByLabelContaining(ids.map { it.value }, "(?i).*${escapeRegexString(part)}.*", pageable)
+        neo4jResourceRepository.findAllExcludingClassByLabelContaining(ids.map { it.value }, part.toSearchString(), pageable)
             .content
             .map(Neo4jResource::toResource)
 
@@ -162,4 +161,8 @@ class Neo4jResourceService(
         val found = neo4jResourceRepository.findByResourceId(id).get()
         neo4jResourceRepository.delete(found)
     }
+
+    private fun String.toSearchString() = "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"
+
+    private fun String.toExactSearchString() = "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"
 }

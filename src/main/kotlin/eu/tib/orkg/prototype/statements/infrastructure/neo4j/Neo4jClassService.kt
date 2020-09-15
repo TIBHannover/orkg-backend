@@ -7,6 +7,9 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jClass
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jClassIdGenerator
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jClassRepository
+import eu.tib.orkg.prototype.util.EscapedRegex
+import eu.tib.orkg.prototype.util.SanitizedWhitespace
+import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
 import java.util.Optional
 import java.util.UUID
 import org.springframework.stereotype.Service
@@ -46,11 +49,11 @@ class Neo4jClassService(
             .map(Neo4jClass::toClass)
 
     override fun findAllByLabel(label: String): Iterable<Class> =
-        neo4jClassRepository.findAllByLabelMatchesRegex("(?i)^${escapeRegexString(label)}$") // TODO: See declaration
+        neo4jClassRepository.findAllByLabelMatchesRegex(label.toExactSearchString()) // TODO: See declaration
             .map(Neo4jClass::toClass)
 
     override fun findAllByLabelContaining(part: String): Iterable<Class> =
-        neo4jClassRepository.findAllByLabelMatchesRegex("(?i).*${escapeRegexString(part)}.*") // TODO: See declaration
+        neo4jClassRepository.findAllByLabelMatchesRegex(part.toSearchString()) // TODO: See declaration
             .map(Neo4jClass::toClass)
 
     override fun update(`class`: Class): Class {
@@ -62,4 +65,8 @@ class Neo4jClassService(
 
         return neo4jClassRepository.save(found).toClass()
     }
+
+    private fun String.toSearchString() = "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"
+
+    private fun String.toExactSearchString() = "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"
 }

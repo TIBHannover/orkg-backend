@@ -18,13 +18,13 @@ class RegexUtilsTest {
     @DisplayName("should escape special chars")
     @Suppress("UNUSED_PARAMETER") // because "name" is unused in the test, but used for improving the description
     fun shouldEscapeSpecialChar(name: String, input: String, expected: String) {
-        assertThat(escapeRegexString(input)).isEqualTo(expected)
+        assertThat(EscapedRegex(input).toString()).isEqualTo(expected)
     }
 
     @Test
     @DisplayName("shouldn't escape any char")
     fun shouldNotEscapeAnything() {
-        assertThat(escapeRegexString("http://clean string & needs_nothing"))
+        assertThat(EscapedRegex("http://clean string & needs_nothing").toString())
             .isEqualTo("http://clean string & needs_nothing")
     }
 

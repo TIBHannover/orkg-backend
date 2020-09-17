@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.graphdb.indexing.neo4j
 
 import eu.tib.orkg.prototype.graphdb.indexing.domain.model.IndexService
+import eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j.FulltextIndex
 import eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j.Neo4jIndex
 import eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j.Neo4jIndexRepository
 import eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j.PropertyIndex
@@ -86,6 +87,7 @@ class Neo4jIndexService(
                 it.label,
                 it.property
             )
+            "node_fulltext" -> FulltextIndex(it.label, it.property)
             else -> throw IllegalArgumentException("Cannot determine type when fetching indexes from Neo4j, got: ${it.type}")
         }
     }

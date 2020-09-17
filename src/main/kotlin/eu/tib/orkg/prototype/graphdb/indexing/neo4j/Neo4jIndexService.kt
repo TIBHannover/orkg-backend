@@ -67,7 +67,11 @@ class Neo4jIndexService(
                 "Resource",
                 "label"
             ),
-            PropertyIndex("Class", "label")
+            PropertyIndex("Class", "label"),
+            FulltextIndex("Class", "label"),
+            FulltextIndex("Literal", "label"),
+            FulltextIndex("Predicate", "label"),
+            FulltextIndex("Resource", "label")
         ).forEach { index ->
             try {
                 checkAndCreateConstraint(existingIndexes, index)

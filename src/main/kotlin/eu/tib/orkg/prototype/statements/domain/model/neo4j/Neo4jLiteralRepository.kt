@@ -4,7 +4,8 @@ import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import java.util.Optional
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
-interface Neo4jLiteralRepository : Neo4jRepository<Neo4jLiteral, Long> {
+interface Neo4jLiteralRepository : Neo4jRepository<Neo4jLiteral, Long>, FulltextSearchUseCase<Neo4jLiteral> {
+
     override fun findAll(): Iterable<Neo4jLiteral>
 
     override fun findById(id: Long?): Optional<Neo4jLiteral>

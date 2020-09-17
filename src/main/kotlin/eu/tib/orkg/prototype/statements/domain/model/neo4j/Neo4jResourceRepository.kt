@@ -11,7 +11,8 @@ import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
-interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
+interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long>, FulltextSearchUseCase<Neo4jResource> {
+
     override fun findAll(): Iterable<Neo4jResource>
 
     override fun findById(id: Long?): Optional<Neo4jResource>

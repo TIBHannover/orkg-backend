@@ -24,6 +24,8 @@ class Neo4jResourceService(
     private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator
 ) : ResourceService {
 
+    private val fulltextIndex = "resource_labels"
+
     override fun create(label: String) = create(UUID(0, 0), label, UUID(0, 0), ExtractionMethod.UNKNOWN, UUID(0, 0))
 
     override fun create(userId: UUID, label: String, observatoryId: UUID, extractionMethod: ExtractionMethod, organizationId: UUID): Resource {
@@ -57,8 +59,8 @@ class Neo4jResourceService(
             .map(Neo4jResource::toResource)
 
     override fun findAllByLabelContaining(pageable: Pageable, part: String): Iterable<Resource> =
-        neo4jResourceRepository.findAllByLabelMatchesRegex("(?i).*${escapeRegexString(part)}.*", pageable) // TODO: See declaration
-            .content
+        neo4jResourceRepository
+            .searchLabelsInFulltextIndex(fulltextIndex, part)
             .map(Neo4jResource::toResource)
 
     override fun findAllByClass(pageable: Pageable, id: ClassId): Iterable<Resource> =

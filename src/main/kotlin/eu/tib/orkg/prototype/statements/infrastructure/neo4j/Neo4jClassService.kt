@@ -19,6 +19,8 @@ class Neo4jClassService(
     private val neo4jClassIdGenerator: Neo4jClassIdGenerator
 ) : ClassService {
 
+    private val fulltextIndex = "class_labels"
+
     override fun create(label: String) = create(UUID(0, 0), label)
 
     override fun create(userId: UUID, label: String): Class {
@@ -50,7 +52,8 @@ class Neo4jClassService(
             .map(Neo4jClass::toClass)
 
     override fun findAllByLabelContaining(part: String): Iterable<Class> =
-        neo4jClassRepository.findAllByLabelMatchesRegex("(?i).*${escapeRegexString(part)}.*") // TODO: See declaration
+        neo4jClassRepository
+            .searchLabelsInFulltextIndex(fulltextIndex, part)
             .map(Neo4jClass::toClass)
 
     override fun update(`class`: Class): Class {

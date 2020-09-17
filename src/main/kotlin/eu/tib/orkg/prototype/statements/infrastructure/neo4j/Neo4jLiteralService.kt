@@ -17,6 +17,9 @@ class Neo4jLiteralService(
     private val neo4jLiteralRepository: Neo4jLiteralRepository,
     private val neo4jLiteralIdGenerator: Neo4jLiteralIdGenerator
 ) : LiteralService {
+
+    private val fulltextIndex = "literal_labels"
+
     override fun create(label: String, datatype: String) = create(UUID(0, 0), label, datatype)
 
     override fun create(userId: UUID, label: String, datatype: String): Literal {
@@ -38,7 +41,8 @@ class Neo4jLiteralService(
             .map(Neo4jLiteral::toLiteral)
 
     override fun findAllByLabelContaining(part: String) =
-        neo4jLiteralRepository.findAllByLabelMatchesRegex("(?i).*${escapeRegexString(part)}.*") // TODO: See declaration
+        neo4jLiteralRepository
+            .searchLabelsInFulltextIndex(fulltextIndex, part)
             .map(Neo4jLiteral::toLiteral)
 
     override fun update(literal: Literal): Literal {

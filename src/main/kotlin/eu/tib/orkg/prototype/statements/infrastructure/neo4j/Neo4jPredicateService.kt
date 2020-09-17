@@ -20,6 +20,8 @@ class Neo4jPredicateService(
     private val neo4jPredicateIdGenerator: Neo4jPredicateIdGenerator
 ) : PredicateService {
 
+    private val fulltextIndex = "predicate_labels"
+
     override fun create(label: String) = create(UUID(0, 0), label)
 
     override fun create(userId: UUID, label: String): Predicate {
@@ -58,8 +60,7 @@ class Neo4jPredicateService(
 
     override fun findAllByLabelContaining(part: String, pageable: Pageable) =
         neo4jPredicateRepository
-            .findAllByLabelMatchesRegex("(?i).*${escapeRegexString(part)}.*", pageable) // TODO: See declaration
-            .content
+            .searchLabelsInFulltextIndex(fulltextIndex, part)
             .map(Neo4jPredicate::toPredicate)
 
     override fun update(predicate: Predicate): Predicate {

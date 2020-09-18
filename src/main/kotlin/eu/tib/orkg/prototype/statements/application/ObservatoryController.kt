@@ -77,34 +77,38 @@ class ObservatoryController(
     }
 
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateObservatoryName(@PathVariable id: UUID, @RequestBody name: String): Observatory {
+    fun updateObservatoryName(@PathVariable id: UUID, @RequestBody name: UpdateRequest): Observatory {
         var response = service
             .findById(id)
             .orElseThrow { ObservatoryNotFound() }
-        println(name)
-        response.name = name.replace("\"", "")
+
+        response.name = getStringFromJson(name)
 
         return service.updateObservatory(response)
     }
 
     @RequestMapping("{id}/description", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateObservatoryDescription(@PathVariable id: UUID, @RequestBody description: String): Observatory {
+    fun updateObservatoryDescription(@PathVariable id: UUID, @RequestBody description: UpdateRequest): Observatory {
         var response = service
             .findById(id)
             .orElseThrow { ObservatoryNotFound() }
-        response.description = description.replace("\"", "")
+        response.description = getStringFromJson(description)
 
         return service.updateObservatory(response)
     }
 
-    @RequestMapping("{id}/researchField", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateObservatoryResearchField(@PathVariable id: UUID, @RequestBody researchField: String): Observatory {
+    @RequestMapping("{id}/research_field", method = [RequestMethod.POST, RequestMethod.PUT])
+    fun updateObservatoryResearchField(@PathVariable id: UUID, @RequestBody research_field: UpdateRequest): Observatory {
         var response = service
             .findById(id)
             .orElseThrow { ObservatoryNotFound() }
-        response.researchField = researchField.replace("\"", "")
+        response.researchField = getStringFromJson(research_field)
 
         return service.updateObservatory(response)
+    }
+
+    fun getStringFromJson(value: UpdateRequest): String {
+        return value.updateValue
     }
 
     data class CreateObservatoryRequest(
@@ -112,6 +116,10 @@ class ObservatoryController(
         val organizationId: UUID,
         val description: String,
         val researchField: String
+    )
+
+    data class UpdateRequest(
+        val updateValue: String
     )
 
     data class ErrorMessage(

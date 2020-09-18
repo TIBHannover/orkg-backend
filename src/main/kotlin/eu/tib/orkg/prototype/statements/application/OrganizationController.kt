@@ -88,9 +88,9 @@ class OrganizationController(
     }
 
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateOrganizationName(@PathVariable id: UUID, @RequestBody name: String): Organization {
+    fun updateOrganizationName(@PathVariable id: UUID, @RequestBody name: UpdateRequest): Organization {
         var response = findOrganization(id)
-        response.name = name.replace("\"", "")
+        response.name = getStringFromJson(name)
 
         var updatedOrganization = service.updateOrganization(response)
         updatedOrganization.logo = encoder(response.id.toString())
@@ -98,9 +98,9 @@ class OrganizationController(
     }
 
     @RequestMapping("{id}/url", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateOrganizationUrl(@PathVariable id: UUID, @RequestBody url: String): Organization {
+    fun updateOrganizationUrl(@PathVariable id: UUID, @RequestBody url: UpdateRequest): Organization {
         var response = findOrganization(id)
-        response.url = url.replace("\"", "")
+        response.url = getStringFromJson(url)
 
         var updatedOrganization = service.updateOrganization(response)
         updatedOrganization.logo = encoder(updatedOrganization.id.toString())
@@ -108,16 +108,16 @@ class OrganizationController(
     }
 
     @RequestMapping("{id}/logo", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateOrganizationLogo(@PathVariable id: UUID, @RequestBody logo: String, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
+    fun updateOrganizationLogo(@PathVariable id: UUID, @RequestBody logo: UpdateRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         var response = findOrganization(id).toOrganization()
-        var trimmedLogo = logo.replace("\"", "")
-        return if (!isValidLogo(trimmedLogo)) {
+        var logo = getStringFromJson(logo)
+        return if (!isValidLogo(logo)) {
             ResponseEntity.badRequest().body(
                 ErrorMessage(message = "Please upload a valid image")
             )
         } else {
-            decoder(trimmedLogo, response.id)
-            response.logo = trimmedLogo
+            decoder(logo, response.id)
+            response.logo = logo
 
             val location = uriComponentsBuilder
                 .path("api/organizations/{id}")
@@ -131,6 +131,10 @@ class OrganizationController(
         return service
             .findById(id)
             .orElseThrow { OrganizationNotFound() }
+    }
+
+    fun getStringFromJson(value: UpdateRequest): String {
+        return value.updateValue
     }
 
     fun decoder(base64Str: String, name: UUID?) {
@@ -187,5 +191,9 @@ class OrganizationController(
 
     data class ErrorMessage(
         val message: String
+    )
+
+    data class UpdateRequest(
+        val updateValue: String
     )
 }

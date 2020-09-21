@@ -36,9 +36,20 @@ class PostgresObservatoryService(
         var observatoriesList = postgresObservatoryRepository.findAll()
             .map(ObservatoryEntity::toObservatory)
 
+        var totalPapers = neo4jStatsService.getObservatoriesPapersCount()
+        var groupPapers = totalPapers.groupBy({ it.observatoryId }, { it.resources })
+
+        var totalComparisons = neo4jStatsService.getObservatoriesComparisonsCount()
+        var groupComparisons = totalComparisons.groupBy({ it.observatoryId }, { it.resources })
+
         observatoriesList.forEach {
-            it.numPapers = neo4jStatsService.getObservatoryPapersCount(it.id!!)
-            it.numComparisons = neo4jStatsService.getObservatoryComparisonsCount(it.id!!)
+            if (it.id.toString() in groupPapers) {
+                it.numPapers = groupPapers[(it.id.toString())]?.get(0)!!
+            }
+
+            if (it.id.toString() in groupComparisons) {
+                it.numComparisons = groupComparisons[(it.id.toString())]?.get(0)!!
+            }
         }
 
             return observatoriesList

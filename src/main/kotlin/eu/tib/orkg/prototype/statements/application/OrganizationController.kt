@@ -90,7 +90,7 @@ class OrganizationController(
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
     fun updateOrganizationName(@PathVariable id: UUID, @RequestBody name: UpdateRequest): Organization {
         var response = findOrganization(id)
-        response.name = getStringFromJson(name)
+        response.name = name.value
 
         var updatedOrganization = service.updateOrganization(response)
         updatedOrganization.logo = encoder(response.id.toString())
@@ -100,7 +100,7 @@ class OrganizationController(
     @RequestMapping("{id}/url", method = [RequestMethod.POST, RequestMethod.PUT])
     fun updateOrganizationUrl(@PathVariable id: UUID, @RequestBody url: UpdateRequest): Organization {
         var response = findOrganization(id)
-        response.url = getStringFromJson(url)
+        response.url = url.value
 
         var updatedOrganization = service.updateOrganization(response)
         updatedOrganization.logo = encoder(updatedOrganization.id.toString())
@@ -110,7 +110,7 @@ class OrganizationController(
     @RequestMapping("{id}/logo", method = [RequestMethod.POST, RequestMethod.PUT])
     fun updateOrganizationLogo(@PathVariable id: UUID, @RequestBody logo: UpdateRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         var response = findOrganization(id).toOrganization()
-        var logo = getStringFromJson(logo)
+        var logo = logo.value
         return if (!isValidLogo(logo)) {
             ResponseEntity.badRequest().body(
                 ErrorMessage(message = "Please upload a valid image")
@@ -131,10 +131,6 @@ class OrganizationController(
         return service
             .findById(id)
             .orElseThrow { OrganizationNotFound() }
-    }
-
-    fun getStringFromJson(value: UpdateRequest): String {
-        return value.updateValue
     }
 
     fun decoder(base64Str: String, name: UUID?) {
@@ -194,6 +190,6 @@ class OrganizationController(
     )
 
     data class UpdateRequest(
-        val updateValue: String
+        val value: String
     )
 }

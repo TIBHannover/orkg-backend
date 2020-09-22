@@ -43,11 +43,8 @@ class Neo4jStatsService(
     override fun getObservatoryComparisonsCount(id: UUID): Long =
         neo4jStatsRepository.getObservatoryComparisonsCount(id)
 
-    override fun getObservatoriesPapersCount(): Iterable<ObservatoryResources> =
-        neo4jStatsRepository.getObservatoriesPapersCount()
-
-    override fun getObservatoriesComparisonsCount(): Iterable<ObservatoryResources> =
-        neo4jStatsRepository.getObservatoriesComparisonsCount()
+    override fun getObservatoriesPapersAndComparisonsCount(): Iterable<ObservatoryResources> =
+        neo4jStatsRepository.getObservatoriesPapersAndComparisonsCount()
 
     private fun extractValue(map: Map<*, *>, key: String): Long {
         return if (map.containsKey(key))

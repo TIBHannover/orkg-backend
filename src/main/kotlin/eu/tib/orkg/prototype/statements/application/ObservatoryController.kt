@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import eu.tib.orkg.prototype.statements.infrastructure.neo4j.Neo4jStatsService
 import java.util.UUID
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -17,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import javax.validation.Valid
+import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Size
 
 @RestController
 @RequestMapping("/api/observatories/")
@@ -25,7 +29,8 @@ class ObservatoryController(
     private val service: ObservatoryService,
     private val userService: UserService,
     private val resourceService: ResourceService,
-    private val organizationService: OrganizationService
+    private val organizationService: OrganizationService,
+    private val neo4jStatsService: Neo4jStatsService
 ) {
 
     @PostMapping("/")
@@ -77,38 +82,47 @@ class ObservatoryController(
     }
 
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateObservatoryName(@PathVariable id: UUID, @RequestBody name: UpdateRequest): Observatory {
+    fun updateObservatoryName(@PathVariable id: UUID, @RequestBody @Valid name: UpdateRequest): Observatory {
         var response = service
             .findById(id)
             .orElseThrow { ObservatoryNotFound() }
 
-        response.name = getStringFromJson(name)
+        response.name = name.value
 
         return service.updateObservatory(response)
     }
 
     @RequestMapping("{id}/description", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateObservatoryDescription(@PathVariable id: UUID, @RequestBody description: UpdateRequest): Observatory {
+    fun updateObservatoryDescription(@PathVariable id: UUID, @RequestBody @Valid description: UpdateRequest): Observatory {
         var response = service
             .findById(id)
             .orElseThrow { ObservatoryNotFound() }
-        response.description = getStringFromJson(description)
+        response.description = description.value
 
         return service.updateObservatory(response)
     }
 
     @RequestMapping("{id}/research_field", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateObservatoryResearchField(@PathVariable id: UUID, @RequestBody research_field: UpdateRequest): Observatory {
+    fun updateObservatoryResearchField(@PathVariable id: UUID, @RequestBody @Valid research_field: UpdateRequest): Observatory {
         var response = service
             .findById(id)
             .orElseThrow { ObservatoryNotFound() }
-        response.researchField = getStringFromJson(research_field)
+        response.researchField = research_field.value
 
         return service.updateObservatory(response)
     }
 
-    fun getStringFromJson(value: UpdateRequest): String {
-        return value.updateValue
+    @GetMapping("stats/observatories")
+    fun findObservatoriesWithStats(): List<Observatory> {
+        var totalObservatories = service.listObservatories()
+        var totalPapers = (neo4jStatsService.getObservatoriesPapersAndComparisonsCount()).associateBy { it.observatoryId }
+        totalObservatories.forEach {
+            if (it.id.toString() in totalPapers)
+                it.numPapers = totalPapers[it.id.toString()]?.resources ?: 0
+                it.numComparisons = totalPapers[it.id.toString()]?.comparisons ?: 0
+        }
+
+        return totalObservatories
     }
 
     data class CreateObservatoryRequest(
@@ -119,7 +133,8 @@ class ObservatoryController(
     )
 
     data class UpdateRequest(
-        val updateValue: String
+        @field:Size(min = 1)
+        val value: String
     )
 
     data class ErrorMessage(

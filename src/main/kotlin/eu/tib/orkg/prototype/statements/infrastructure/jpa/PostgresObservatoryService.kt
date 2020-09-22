@@ -33,26 +33,9 @@ class PostgresObservatoryService(
     }
 
     override fun listObservatories(): List<Observatory> {
-        var observatoriesList = postgresObservatoryRepository.findAll()
+
+        return postgresObservatoryRepository.findAll()
             .map(ObservatoryEntity::toObservatory)
-
-        var totalPapers = neo4jStatsService.getObservatoriesPapersCount()
-        var groupPapers = totalPapers.groupBy({ it.observatoryId }, { it.resources })
-
-        var totalComparisons = neo4jStatsService.getObservatoriesComparisonsCount()
-        var groupComparisons = totalComparisons.groupBy({ it.observatoryId }, { it.resources })
-
-        observatoriesList.forEach {
-            if (it.id.toString() in groupPapers) {
-                it.numPapers = groupPapers[(it.id.toString())]?.get(0)!!
-            }
-
-            if (it.id.toString() in groupComparisons) {
-                it.numComparisons = groupComparisons[(it.id.toString())]?.get(0)!!
-            }
-        }
-
-            return observatoriesList
     }
 
     override fun findObservatoriesByOrganizationId(id: UUID): List<Observatory> {
@@ -65,11 +48,8 @@ class PostgresObservatoryService(
     }
 
     override fun findById(id: UUID): Optional<Observatory> {
-        var observatory = postgresObservatoryRepository.findById(id)
+        return postgresObservatoryRepository.findById(id)
             .map(ObservatoryEntity::toObservatory)
-        observatory.get().numPapers = neo4jStatsService.getObservatoryPapersCount(observatory.get().id!!)
-        observatory.get().numComparisons = neo4jStatsService.getObservatoryComparisonsCount(observatory.get().id!!)
-        return observatory
     }
 
     override fun updateObservatory(observatory: Observatory): Observatory {

@@ -17,7 +17,5 @@ interface StatsService {
 
     fun getObservatoryComparisonsCount(id: UUID): Long
 
-    fun getObservatoriesPapersCount(): Iterable<ObservatoryResources>
-
-    fun getObservatoriesComparisonsCount(): Iterable<ObservatoryResources>
+    fun getObservatoriesPapersAndComparisonsCount(): Iterable<ObservatoryResources>
 }

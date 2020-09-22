@@ -22,11 +22,8 @@ interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
     @Query("""MATCH (n:Comparison {observatory_id: {0}}) RETURN COUNT(n) As totalComparisons""")
     fun getObservatoryComparisonsCount(id: UUID): Long
 
-    @Query("""MATCH (n:Paper) Where n.observatory_id<>'00000000-0000-0000-0000-000000000000' RETURN (n.observatory_id) as observatoryId, count(*) as resources""")
-    fun getObservatoriesPapersCount(): Iterable<ObservatoryResources>
-
-    @Query("""MATCH (n:Comparison) where n.observatory_id<>'00000000-0000-0000-0000-000000000000' RETURN (n.observatory_id) as observatoryId, count(*) as resources""")
-    fun getObservatoriesComparisonsCount(): Iterable<ObservatoryResources>
+    @Query("""MATCH (n:Paper) where n.observatory_id<>'00000000-0000-0000-0000-000000000000' WITH DISTINCT (n.observatory_id) as observatoryId, count(*) as resources MATCH (c:Comparison) where c.observatory_id<>'00000000-0000-0000-0000-000000000000' AND c.observatory_id = observatoryId WITH DISTINCT (c.observatory_id) as observatoryId, count(*) as comparisons, resources RETURN observatoryId, resources, comparisons""")
+    fun getObservatoriesPapersAndComparisonsCount(): Iterable<ObservatoryResources>
 }
 
 @QueryResult
@@ -40,5 +37,7 @@ data class FieldsStats(
 data class ObservatoryResources(
     val observatoryId: String,
 
-    val resources: Long
+    val resources: Long?,
+
+    val comparisons: Long?
 )

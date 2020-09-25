@@ -155,6 +155,7 @@ class ExampleData(
         statementService.totalNumberOfStatements() > 0
 }
 
+@Deprecated("It will be removed in favor of Spring's support of Pageable.", ReplaceWith("pageable"))
 fun createPageable(page: Int?, items: Int?, sortBy: String?, desc: Boolean): Pageable {
     val sort = if (sortBy != null) Sort.by(sortBy) else Sort.unsorted()
     var size = items ?: 10 ; if (size < 1) size = 1

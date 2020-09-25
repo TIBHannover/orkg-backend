@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import eu.tib.orkg.prototype.statements.application.StatementResponse
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.ok
@@ -26,23 +27,17 @@ class BulkStatementController(
     @GetMapping("/subjects")
     fun findBySubjects(
         @RequestParam("ids") resourceIds: List<ResourceId>,
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+        pageable: Pageable
     ): ResponseEntity<Iterable<BulkGetStatementsResponse>> {
-        return ok(resourceIds.map { BulkGetStatementsResponse(it.value, statementController.findBySubject(it.value, page, items, sortBy, desc).body!!) })
+        return ok(resourceIds.map { BulkGetStatementsResponse(it.value, statementController.findBySubject(it.value, pageable).body!!) })
     }
 
     @GetMapping("/objects")
     fun findByObjects(
         @RequestParam("ids") resourceIds: List<ResourceId>,
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+        pageable: Pageable
     ): ResponseEntity<Iterable<BulkGetStatementsResponse>> {
-        return ok(resourceIds.map { BulkGetStatementsResponse(it.value, statementController.findByObject(it.value, page, items, sortBy, desc).body!!) })
+        return ok(resourceIds.map { BulkGetStatementsResponse(it.value, statementController.findByObject(it.value, pageable).body!!) })
     }
 
     @DeleteMapping("/")

@@ -1,7 +1,6 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.Neo4jServiceTest
-import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -164,7 +163,8 @@ class Neo4jResourceServiceTest {
     fun shouldAllowRegexSpecialCharsInLabel() {
         val res = service.create("C\$razy LAb(el. he*r?")
         val found = service.findAllByLabelContaining(
-            createPageable(null, null, null, false), "LAb(el.")
+            PageRequest.of(1, 10), "LAb(el."
+        )
         assertThat(found).isNotNull
         assertThat(found.contains(res))
     }

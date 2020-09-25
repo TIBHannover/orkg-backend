@@ -16,9 +16,6 @@ val testContainersVersion = "1.13.0"
 val containerRegistryLocation = "registry.gitlab.com/tibhannover/orkg/orkg-backend"
 val dockerImageTag: String? by project
 
-// Overwrite versions from Spring Dependencies BOM (applied by management plug-in)
-extra["junit-jupiter.version"] = "5.6.0"
-
 plugins {
     jacoco
     kotlin("jvm") version "1.3.70"
@@ -104,13 +101,6 @@ allprojects {
         jcenter()
         maven { setUrl("https://dl.bintray.com/bjonnh/RDF4K") }
     }
-}
-
-jacoco {
-    // Upgrade to a newer JaCoCo version, as the one provided by the Gradle
-    // plug-in does not support ignoring Kotlin-generated methods.
-    // TODO: Remove setting when the default version changes to at least that.
-    toolVersion = "0.8.5"
 }
 
 tasks {

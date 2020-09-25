@@ -18,10 +18,10 @@ val dockerImageTag: String? by project
 
 plugins {
     jacoco
-    kotlin("jvm") version "1.3.70"
-    kotlin("plugin.spring") version "1.3.70"
+    kotlin("jvm") version "1.4.10"
+    kotlin("plugin.spring") version "1.4.10"
     // Add no-arg annotations to @Entity, @Embeddable and @MappedSuperclass:
-    kotlin("plugin.jpa") version "1.3.70"
+    kotlin("plugin.jpa") version "1.4.10"
     id("org.jetbrains.dokka") version "0.10.1"
     id("org.springframework.boot") version "2.2.5.RELEASE"
     id("com.coditory.integration-test") version "1.0.8"

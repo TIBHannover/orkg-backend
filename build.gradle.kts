@@ -9,7 +9,7 @@ val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java)
     .kotlinPluginVersion
 
 val neo4jVersion = "3.5.+" // should match version in Dockerfile
-val springDataNeo4jVersion = "5.2.5"
+val springDataNeo4jVersion = "5.3.4"
 val springSecurityOAuthVersion = "2.3.8"
 val testContainersVersion = "1.13.0"
 
@@ -23,7 +23,7 @@ plugins {
     // Add no-arg annotations to @Entity, @Embeddable and @MappedSuperclass:
     kotlin("plugin.jpa") version "1.4.10"
     id("org.jetbrains.dokka") version "0.10.1"
-    id("org.springframework.boot") version "2.2.5.RELEASE"
+    id("org.springframework.boot") version "2.3.4.RELEASE"
     id("com.coditory.integration-test") version "1.0.8"
     id("de.jansauer.printcoverage") version "2.0.0"
     id("org.asciidoctor.jvm.convert") version "3.1.0"
@@ -57,6 +57,7 @@ dependencies {
     implementation("org.neo4j:neo4j-ogm-bolt-native-types")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.security.oauth:spring-security-oauth2:$springSecurityOAuthVersion.RELEASE")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.data:spring-data-neo4j:$springDataNeo4jVersion.RELEASE")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

@@ -45,7 +45,7 @@ class BulkStatementController(
         pageable: Pageable
     ): List<BulkGetStatementsResponse> {
         return resourceIds.map { BulkGetStatementsResponse(it.value, statementService.findAllByObject(it.value, pageable)) }
-    }
+}
 
     @DeleteMapping("/")
     fun delete(

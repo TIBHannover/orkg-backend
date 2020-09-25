@@ -57,8 +57,6 @@ abstract class RestDocumentationBaseTest {
         restDocumentation: RestDocumentationContextProvider
     ) {
         mockMvc = standaloneSetup(createController())
-            // These tests are not auto-configured so @EnableSpringDataWebSupport is missing which means we need to
-            // configure the handlers and resolvers ourself.
             .setCustomArgumentResolvers(PageableHandlerMethodArgumentResolver())
             .apply<StandaloneMockMvcBuilder>(
                 documentationConfiguration(restDocumentation)

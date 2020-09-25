@@ -63,14 +63,19 @@ class ClassController(private val service: ClassService, private val resourceSer
     @GetMapping("/")
     fun findByLabel(
         @RequestParam("q", required = false) searchString: String?,
-        @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean
-    ) =
-        if (searchString == null)
-            service.findAll()
-        else if (exactMatch)
-            service.findAllByLabel(searchString)
-        else
-            service.findAllByLabelContaining(searchString)
+        @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
+        @RequestParam("page", required = false) page: Int?,
+        @RequestParam("items", required = false) items: Int?,
+        @RequestParam("sortBy", required = false) sortBy: String?,
+        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+    ): Iterable<Class> {
+        val pagination = createPageable(page, items, sortBy, desc)
+        return when {
+            searchString == null -> service.findAll(pagination)
+            exactMatch -> service.findAllByLabel(pagination, searchString)
+            else -> service.findAllByLabelContaining(pagination, searchString)
+        }
+    }
 
     @PostMapping("/")
     @ResponseStatus(CREATED)

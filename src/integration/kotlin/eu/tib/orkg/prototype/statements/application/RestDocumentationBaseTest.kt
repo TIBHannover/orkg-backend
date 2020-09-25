@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver
 import org.springframework.http.MediaType
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.RestDocumentationContextProvider
@@ -51,6 +52,7 @@ abstract class RestDocumentationBaseTest {
         restDocumentation: RestDocumentationContextProvider
     ) {
         mockMvc = standaloneSetup(createController())
+            .setCustomArgumentResolvers(PageableHandlerMethodArgumentResolver())
             .apply<StandaloneMockMvcBuilder>(
                 documentationConfiguration(restDocumentation)
                     .operationPreprocessors()

@@ -1,13 +1,13 @@
 package eu.tib.orkg.prototype.statements.adapter.input.rest.bulk
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.application.StatementController
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import eu.tib.orkg.prototype.statements.application.StatementResponse
 import eu.tib.orkg.prototype.statements.application.port.`in`.GetBulkStatementsQuery
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -28,25 +28,16 @@ class BulkStatementController(
     @GetMapping("/subjects")
     fun findBySubjects(
         @RequestParam("ids") resourceIds: List<ResourceId>,
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+        pageable: Pageable
     ): ResponseEntity<Iterable<BulkGetStatementsResponse>> {
-        val pageable = createPageable(page, items, sortBy, desc)
         return ok(query.getBulkStatementsBySubjects(resourceIds.map { it.value }, pageable)
-            .map { (k, v) -> BulkGetStatementsResponse(k, v) })
-    }
+            .map { (k, v) -> BulkGetStatementsResponse(k, v) })}
 
     @GetMapping("/objects")
     fun findByObjects(
         @RequestParam("ids") resourceIds: List<ResourceId>,
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+        pageable: Pageable
     ): ResponseEntity<Iterable<BulkGetStatementsResponse>> {
-        val pageable = createPageable(page, items, sortBy, desc)
         return ok(query.getBulkStatementsByObjects(resourceIds.map { it.value }, pageable)
             .map { (k, v) -> BulkGetStatementsResponse(k, v) })
     }

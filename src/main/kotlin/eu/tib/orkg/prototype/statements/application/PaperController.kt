@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
-import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
 import eu.tib.orkg.prototype.statements.application.ObjectController.Constants
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -14,6 +13,8 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
+import java.util.UUID
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -200,7 +201,7 @@ class PaperController(
         organizationId: OrganizationId
     ) {
         val venuePredicate = predicateService.findById(Constants.VenuePredicate).get().id!!
-        val pageable = createPageable(1, 10, null, false)
+        val pageable = PageRequest.of(1, 10)
         // Check if resource exists
         var venueResource = resourceService.findAllByLabel(pageable, venue).firstOrNull()
         if (venueResource == null) {
@@ -256,7 +257,7 @@ class PaperController(
                             val authorStatement =
                                 statementService.findAllByObject(
                                     foundOrcid.id!!.value,
-                                    createPageable(1, 10, null, false) // TODO: Hide values by using default values for the parameters
+                                    PageRequest.of(1, 10) // TODO: Hide values by using default values for the parameters
                                 ).firstOrNull { it.predicate.id == Constants.OrcidPredicate }
                                     ?: throw OrphanOrcidValue(orcidValue)
                             statementService.create(

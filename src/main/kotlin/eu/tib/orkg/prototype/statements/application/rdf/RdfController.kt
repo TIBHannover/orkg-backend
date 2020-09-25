@@ -42,7 +42,7 @@ class RdfController(
     ): Iterable<Thing> {
         return when (type) {
             "property" -> predicateController.findByLabel(searchString, exactMatch, page, items, sortBy, desc)
-            "class" -> classController.findByLabel(searchString, exactMatch)
+            "class" -> classController.findByLabel(searchString, exactMatch, page, items, sortBy, desc)
             else -> resourceController.findByLabel(searchString, exactMatch, page, items, sortBy, desc, arrayOf())
         }
     }

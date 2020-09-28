@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import java.net.URI
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus
 
@@ -30,6 +31,10 @@ class ClassNotAllowed(`class`: String) : RuntimeException("This class id ($`clas
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 class ClassAlreadyExists(`class`: String) : RuntimeException("The class with the id ($`class`) already exists")
+
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+class DuplicateURI(uri: URI, id: String) :
+    PropertyValidationException("uri", "The URI <$uri> is already assigned to class with ID $id.")
 
 /**
  * Base class for custom property validation.

@@ -134,6 +134,35 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    fun addExistingURI() {
+        service.create(
+            CreateClassRequest(
+                id = ClassId("some-id"),
+                label = "foo",
+                uri = URI.create("http://example.org/in-use")
+            )
+        )
+        val duplicateClass = mapOf(
+            "label" to "bar",
+            "uri" to "http://example.org/in-use"
+        )
+
+        mockMvc
+            .perform(postRequestWithBody("/api/classes/", duplicateClass))
+            .andExpect(status().isBadRequest)
+            .andDo(
+                document(
+                    snippet,
+                    requestFields(
+                        fieldWithPath("label").description("The class label"),
+                        fieldWithPath("uri").description("The URI of the class")
+                    )
+                )
+            )
+    }
+
+    @Test
+    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun addReservedId() {
         val reservedClass = mapOf("label" to "bar", "id" to "Resource")
 

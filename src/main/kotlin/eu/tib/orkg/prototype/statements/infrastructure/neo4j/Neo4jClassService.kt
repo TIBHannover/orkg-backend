@@ -12,6 +12,7 @@ import eu.tib.orkg.prototype.util.SanitizedWhitespace
 import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
 import java.util.Optional
 import java.util.UUID
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -44,6 +45,11 @@ class Neo4jClassService(
         neo4jClassRepository.findAll()
             .map(Neo4jClass::toClass)
 
+    override fun findAll(pageable: Pageable): Iterable<Class> =
+        neo4jClassRepository.findAll(pageable)
+            .content
+            .map(Neo4jClass::toClass)
+
     override fun findById(id: ClassId?): Optional<Class> =
         neo4jClassRepository.findByClassId(id)
             .map(Neo4jClass::toClass)
@@ -52,8 +58,18 @@ class Neo4jClassService(
         neo4jClassRepository.findAllByLabelMatchesRegex(label.toExactSearchString()) // TODO: See declaration
             .map(Neo4jClass::toClass)
 
+    override fun findAllByLabel(pageable: Pageable, label: String): Iterable<Class> =
+        neo4jClassRepository.findAllByLabelMatchesRegex(label.toExactSearchString(), pageable) // TODO: See declaration
+            .content
+            .map(Neo4jClass::toClass)
+
     override fun findAllByLabelContaining(part: String): Iterable<Class> =
         neo4jClassRepository.findAllByLabelMatchesRegex(part.toSearchString()) // TODO: See declaration
+            .map(Neo4jClass::toClass)
+
+    override fun findAllByLabelContaining(pageable: Pageable, part: String): Iterable<Class> =
+        neo4jClassRepository.findAllByLabelMatchesRegex(part.toSearchString(), pageable) // TODO: See declaration
+            .content
             .map(Neo4jClass::toClass)
 
     override fun update(`class`: Class): Class {

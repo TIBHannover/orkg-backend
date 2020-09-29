@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.Neo4jStatsService
 import java.util.UUID
 import javax.validation.Valid
@@ -113,16 +114,8 @@ class ObservatoryController(
     }
 
     @GetMapping("stats/observatories")
-    fun findObservatoriesWithStats(): List<Observatory> {
-        val totalObservatories = service.listObservatories()
-        val totalPapers = (neo4jStatsService.getObservatoriesPapersAndComparisonsCount()).associateBy { it.observatoryId }
-        totalObservatories.forEach {
-            if (it.id.toString() in totalPapers)
-                it.numPapers = totalPapers[it.id.toString()]?.resources ?: 0
-                it.numComparisons = totalPapers[it.id.toString()]?.comparisons ?: 0
-        }
-
-        return totalObservatories
+    fun findObservatoriesWithStats(): List<ObservatoryResources> {
+        return neo4jStatsService.getObservatoriesPapersAndComparisonsCount()
     }
 
     data class CreateObservatoryRequest(

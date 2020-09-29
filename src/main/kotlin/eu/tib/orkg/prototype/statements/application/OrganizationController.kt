@@ -108,9 +108,9 @@ class OrganizationController(
     }
 
     @RequestMapping("{id}/logo", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateOrganizationLogo(@PathVariable id: UUID, @RequestBody logo: UpdateRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
+    fun updateOrganizationLogo(@PathVariable id: UUID, @RequestBody submittedLogo: UpdateRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         val response = findOrganization(id).toOrganization()
-        val logo = logo.value
+        val logo = submittedLogo.value
         return if (!isValidLogo(logo)) {
             ResponseEntity.badRequest().body(
                 ErrorMessage(message = "Please upload a valid image")

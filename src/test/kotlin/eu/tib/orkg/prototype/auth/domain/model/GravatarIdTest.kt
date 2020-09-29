@@ -50,4 +50,11 @@ internal class GravatarIdTest {
         val id = GravatarId("user@example.org")
         assertThat(id.imageURL()).isEqualTo("https://www.gravatar.com/avatar/572c3489ea700045927076136a969e27")
     }
+
+    @Test
+    @DisplayName("should force a default if email is not available")
+    fun shouldForceADefaultIfEmailIsNotAvailable() {
+        val id = GravatarId()
+        assertThat(id.imageURL()).isEqualTo("https://www.gravatar.com/avatar/?d=mp&f=y")
+    }
 }

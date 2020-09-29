@@ -14,11 +14,15 @@ import java.security.MessageDigest
  * @property email The email address to calculate the ID from.
  * @constructor Creates a new Gravatar ID for the given email address.
  */
-data class GravatarId(private val email: String) {
+data class GravatarId(private val email: String? = null) {
     private val hashed: String by lazy {
-        val processed = email.trim().toLowerCase()
-        val md = MessageDigest.getInstance("MD5")
-        BigInteger(1, md.digest(processed.toByteArray())).toString(16).padStart(32, '0')
+        if (email != null) {
+            val processed = email.trim().toLowerCase()
+            val md = MessageDigest.getInstance("MD5")
+            return@lazy BigInteger(1, md.digest(processed.toByteArray())).toString(16).padStart(32, '0')
+        }
+        // Default: force "mystery person" icon
+        "?d=mp&f=y"
     }
 
     /**

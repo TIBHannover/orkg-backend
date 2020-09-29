@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.Class
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.CreateStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
@@ -89,6 +90,24 @@ class StatementController(
     ): HttpEntity<Iterable<StatementResponse>> {
         val pagination = createPageable(page, items, sortBy, desc)
         return ok(statementService.findAllByPredicate(predicateId, pagination))
+    }
+
+    @GetMapping("/predicate/{predicateId}/literal/{literal}")
+    fun findByPredicateAndLiteralAndSubjectClass(
+        @PathVariable predicateId: PredicateId,
+        @PathVariable literal: String,
+        @RequestParam("subjectClass", required = false) subjectClass: ClassId?,
+        @RequestParam("page", required = false) page: Int?,
+        @RequestParam("items", required = false) items: Int?,
+        @RequestParam("sortBy", required = false) sortBy: String?,
+        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+    ): HttpEntity<Iterable<StatementResponse>> {
+        val pagination = createPageable(page, items, sortBy, desc)
+        val result = when (subjectClass) {
+            null -> statementService.findAllByPredicateAndLabel(predicateId, literal, pagination)
+            else -> statementService.findAllByPredicateAndLabelAndSubjectClass(predicateId, literal, subjectClass, pagination)
+        }
+        return ok(result)
     }
 
     @GetMapping("/object/{objectId}")

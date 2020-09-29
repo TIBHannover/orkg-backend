@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.auth.persistence
 
-import eu.tib.orkg.prototype.auth.domain.model.GravatarId
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
@@ -58,7 +57,7 @@ class UserEntity {
         joinedAt = OffsetDateTime.of(this.created, UTC),
         organizationId = this.organizationId ?: UUID(0, 0),
         observatoryId = this.observatoryId ?: UUID(0, 0),
-        gravatarId = GravatarId(this.email!!).toString()
+        email = this.email!!
     )
 }
 

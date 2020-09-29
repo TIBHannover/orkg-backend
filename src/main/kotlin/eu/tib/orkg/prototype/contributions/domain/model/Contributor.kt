@@ -1,6 +1,8 @@
 package eu.tib.orkg.prototype.contributions.domain.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
+import eu.tib.orkg.prototype.auth.domain.model.GravatarId
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -42,8 +44,17 @@ data class Contributor(
     val observatoryId: UUID = UUID(0, 0),
 
     /**
+     * The email address of the contributor.
+     *
+     * Used to generate the Gravatar image URL.
+     */
+    @JsonIgnore
+    private val email: String? = null
+) {
+    /**
      * The Gravatar ID of the user, e.g. the hashed email address.
      */
-    @JsonProperty("gravatar_id")
+    @get:JsonProperty("gravatar_id")
     val gravatarId: String
-)
+        get() = GravatarId(email).imageURL()
+}

@@ -40,5 +40,5 @@ class ObservatoryEntity {
         inverseJoinColumns = [JoinColumn(name = "organization_id", referencedColumnName = "id")])
     var organizations: Set<OrganizationEntity>? = mutableSetOf()
 
-    fun toObservatory() = Observatory(id, name, description, researchField, users, organizations, 0, 0)
+    fun toObservatory() = Observatory(id, name, description, researchField, users, organizations)
 }

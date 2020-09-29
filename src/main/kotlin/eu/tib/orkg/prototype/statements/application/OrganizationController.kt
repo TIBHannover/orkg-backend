@@ -146,8 +146,7 @@ class OrganizationController(
             if (!File(imageStoragePath).isDirectory)
                 File(imageStoragePath).mkdir()
             val imagePath: String = "$imageStoragePath/$name.$imageExtension"
-            val base64Image = image
-            val imageByteArray = Base64.getDecoder().decode(base64Image)
+            val imageByteArray = Base64.getDecoder().decode(image)
             File(imagePath).writeBytes(imageByteArray)
     }
 

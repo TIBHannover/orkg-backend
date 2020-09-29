@@ -10,6 +10,9 @@ import eu.tib.orkg.prototype.statements.domain.model.jpa.OrganizationEntity
 import java.io.File
 import java.util.Base64
 import java.util.UUID
+import javax.validation.Valid
+import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Size
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -88,7 +91,7 @@ class OrganizationController(
     }
 
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateOrganizationName(@PathVariable id: UUID, @RequestBody name: UpdateRequest): Organization {
+    fun updateOrganizationName(@PathVariable id: UUID, @RequestBody @Valid name: UpdateRequest): Organization {
         val response = findOrganization(id)
         response.name = name.value
 
@@ -98,7 +101,7 @@ class OrganizationController(
     }
 
     @RequestMapping("{id}/url", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateOrganizationUrl(@PathVariable id: UUID, @RequestBody url: UpdateRequest): Organization {
+    fun updateOrganizationUrl(@PathVariable id: UUID, @RequestBody @Valid url: UpdateRequest): Organization {
         val response = findOrganization(id)
         response.url = url.value
 
@@ -108,7 +111,7 @@ class OrganizationController(
     }
 
     @RequestMapping("{id}/logo", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateOrganizationLogo(@PathVariable id: UUID, @RequestBody submittedLogo: UpdateRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
+    fun updateOrganizationLogo(@PathVariable id: UUID, @RequestBody @Valid submittedLogo: UpdateRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         val response = findOrganization(id).toOrganization()
         val logo = submittedLogo.value
         return if (!isValidLogo(logo)) {
@@ -189,6 +192,8 @@ class OrganizationController(
     )
 
     data class UpdateRequest(
+        @field:NotBlank
+        @field:Size(min = 1)
         val value: String
     )
 }

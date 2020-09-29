@@ -79,13 +79,9 @@ class PaperController(
 
         val contributionClass = getOrCreateClass(ID_CONTRIBUTION_CLASS, userId)
 
-        val user = contributorService.findById(userId)
-        var organizationId = UUID(0, 0)
-        var observatoryId = UUID(0, 0)
-        if (!user.isEmpty) {
-            observatoryId = user.get().observatoryId ?: UUID(0, 0)
-            organizationId = user.get().organizationId ?: UUID(0, 0)
-        }
+        val user = contributorService.findByIdOrElseUnknown(userId)
+        val organizationId = user.organizationId
+        val observatoryId = user.observatoryId
 
         val predicates: HashMap<String, PredicateId> = HashMap()
         if (request.predicates != null) {
@@ -158,13 +154,9 @@ class PaperController(
         val researchFieldPredicate = predicateService.findById(PredicateId(ID_RESEARCH_FIELD_PREDICATE)).get().id!!
         val urlPredicate = predicateService.findById(PredicateId(ID_URL_PREDICATE)).get().id!!
 
-        val user = contributorService.findById(userId)
-        var organizationId = UUID(0, 0)
-        var observatoryId = UUID(0, 0)
-        if (!user.isEmpty) {
-            organizationId = user.get().organizationId ?: UUID(0, 0)
-            observatoryId = user.get().observatoryId ?: UUID(0, 0)
-        }
+        val user = contributorService.findByIdOrElseUnknown(userId)
+        val organizationId = user.organizationId
+        val observatoryId = user.observatoryId
 
         // paper title
         val paperObj = resourceService.create(

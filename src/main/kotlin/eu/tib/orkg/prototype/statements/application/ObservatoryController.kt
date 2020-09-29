@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import javax.validation.constraints.NotBlank
 
 @RestController
 @RequestMapping("/api/observatories/")
@@ -132,6 +133,7 @@ class ObservatoryController(
     )
 
     data class UpdateRequest(
+        @field:NotBlank
         @field:Size(min = 1)
         val value: String
     )

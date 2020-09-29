@@ -103,11 +103,11 @@ class ObservatoryController(
     }
 
     @RequestMapping("{id}/research_field", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateObservatoryResearchField(@PathVariable id: UUID, @RequestBody @Valid research_field: UpdateRequest): Observatory {
+    fun updateObservatoryResearchField(@PathVariable id: UUID, @RequestBody @Valid researchField: UpdateRequest): Observatory {
         var response = service
             .findById(id)
             .orElseThrow { ObservatoryNotFound() }
-        response.researchField = research_field.value
+        response.researchField = researchField.value
 
         return service.updateObservatory(response)
     }

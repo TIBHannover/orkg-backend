@@ -10,6 +10,7 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jClassRepository
 import eu.tib.orkg.prototype.util.EscapedRegex
 import eu.tib.orkg.prototype.util.SanitizedWhitespace
 import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
+import java.net.URI
 import java.util.Optional
 import java.util.UUID
 import org.springframework.data.domain.Pageable
@@ -81,6 +82,11 @@ class Neo4jClassService(
 
         return neo4jClassRepository.save(found).toClass()
     }
+
+    override fun findByURI(uri: URI): Optional<Class> =
+        neo4jClassRepository
+            .findByUri(uri.toString())
+            .map(Neo4jClass::toClass)
 
     private fun String.toSearchString() = "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"
 

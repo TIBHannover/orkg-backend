@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
 import eu.tib.orkg.prototype.statements.domain.model.jpa.OrganizationEntity
 import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresObservatoryRepository
+import eu.tib.orkg.prototype.statements.infrastructure.neo4j.Neo4jStatsService
 import java.util.Optional
 import java.util.UUID
 import org.springframework.stereotype.Service
@@ -12,14 +13,16 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class PostgresObservatoryService(
-    private val postgresObservatoryRepository: PostgresObservatoryRepository
+    private val postgresObservatoryRepository: PostgresObservatoryRepository,
+    private val neo4jStatsService: Neo4jStatsService
 ) : ObservatoryService {
-    override fun create(name: String, description: String, organization: OrganizationEntity): ObservatoryEntity {
+    override fun create(name: String, description: String, organization: OrganizationEntity, researchField: String): ObservatoryEntity {
         val oId = UUID.randomUUID()
         val newObservatory = ObservatoryEntity().apply {
             id = oId
             this.name = name
             this.description = description
+            this.researchField = researchField
             organizations = mutableSetOf(
                 organization
             )
@@ -30,6 +33,7 @@ class PostgresObservatoryService(
     }
 
     override fun listObservatories(): List<Observatory> {
+
         return postgresObservatoryRepository.findAll()
             .map(ObservatoryEntity::toObservatory)
     }
@@ -46,5 +50,16 @@ class PostgresObservatoryService(
     override fun findById(id: UUID): Optional<Observatory> {
         return postgresObservatoryRepository.findById(id)
             .map(ObservatoryEntity::toObservatory)
+    }
+
+    override fun updateObservatory(observatory: Observatory): Observatory {
+        val observatoryEntity = ObservatoryEntity().apply {
+            id = observatory.id
+            name = observatory.name
+            description = observatory.description
+            researchField = observatory.researchField
+            organizations = observatory.organizations
+        }
+        return postgresObservatoryRepository.save(observatoryEntity).toObservatory()
     }
 }

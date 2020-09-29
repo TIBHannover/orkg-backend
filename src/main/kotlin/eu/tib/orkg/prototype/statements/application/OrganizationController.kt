@@ -39,7 +39,7 @@ class OrganizationController(
             ResponseEntity.badRequest().body(
                     ErrorMessage(message = "Please upload a valid image"))
         } else {
-            var response = (service.create(organization.organizationName, organization.createdBy, organization.url))
+            val response = (service.create(organization.organizationName, organization.createdBy, organization.url))
             decoder(organization.organizationLogo, response.id)
             val location = uriComponentsBuilder
                 .path("api/organizations/{id}")
@@ -50,7 +50,7 @@ class OrganizationController(
     }
     @GetMapping("/")
     fun findOrganizations(): List<Organization> {
-        var response = service.listOrganizations()
+        val response = service.listOrganizations()
         response.forEach {
             it.logo = encoder(it.id.toString())
         }
@@ -59,10 +59,10 @@ class OrganizationController(
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: UUID): Organization {
-        var response = service
+        val response = service
             .findById(id)
             .orElseThrow { OrganizationNotFound() }
-        var logo = encoder(response.id.toString())
+        val logo = encoder(response.id.toString())
 
         return (
                 Organization(
@@ -89,28 +89,28 @@ class OrganizationController(
 
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
     fun updateOrganizationName(@PathVariable id: UUID, @RequestBody name: UpdateRequest): Organization {
-        var response = findOrganization(id)
+        val response = findOrganization(id)
         response.name = name.value
 
-        var updatedOrganization = service.updateOrganization(response)
+        val updatedOrganization = service.updateOrganization(response)
         updatedOrganization.logo = encoder(response.id.toString())
         return updatedOrganization
     }
 
     @RequestMapping("{id}/url", method = [RequestMethod.POST, RequestMethod.PUT])
     fun updateOrganizationUrl(@PathVariable id: UUID, @RequestBody url: UpdateRequest): Organization {
-        var response = findOrganization(id)
+        val response = findOrganization(id)
         response.url = url.value
 
-        var updatedOrganization = service.updateOrganization(response)
+        val updatedOrganization = service.updateOrganization(response)
         updatedOrganization.logo = encoder(updatedOrganization.id.toString())
         return updatedOrganization
     }
 
     @RequestMapping("{id}/logo", method = [RequestMethod.POST, RequestMethod.PUT])
     fun updateOrganizationLogo(@PathVariable id: UUID, @RequestBody logo: UpdateRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
-        var response = findOrganization(id).toOrganization()
-        var logo = logo.value
+        val response = findOrganization(id).toOrganization()
+        val logo = logo.value
         return if (!isValidLogo(logo)) {
             ResponseEntity.badRequest().body(
                 ErrorMessage(message = "Please upload a valid image")
@@ -145,8 +145,8 @@ class OrganizationController(
         fun writeImage(image: String, imageExtension: String, name: UUID?) {
             if (!File(imageStoragePath).isDirectory)
                 File(imageStoragePath).mkdir()
-            var imagePath: String = "$imageStoragePath/$name.$imageExtension"
-            var base64Image = image
+            val imagePath: String = "$imageStoragePath/$name.$imageExtension"
+            val base64Image = image
             val imageByteArray = Base64.getDecoder().decode(base64Image)
             File(imagePath).writeBytes(imageByteArray)
     }
@@ -154,7 +154,7 @@ class OrganizationController(
     fun encoder(id: String): String {
         var file: String = ""
         var ext: String = ""
-        var path: String = "$imageStoragePath/"
+        val path: String = "$imageStoragePath/"
         File(path).walk().forEach {
             if (it.name.substringBeforeLast(".") == id) {
                 ext = it.name.substringAfterLast(".")

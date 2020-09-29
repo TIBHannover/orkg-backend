@@ -36,7 +36,7 @@ class ObservatoryController(
     @PostMapping("/")
     fun addObservatory(@RequestBody observatory: CreateObservatoryRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         return if (service.findByName(observatory.observatoryName).isEmpty) {
-            var organizationEntity = organizationService.findById(observatory.organizationId)
+            val organizationEntity = organizationService.findById(observatory.organizationId)
             val id = service.create(observatory.observatoryName, observatory.description, organizationEntity.get(), observatory.researchField).id
             val location = uriComponentsBuilder
                 .path("api/observatories/{id}")
@@ -83,7 +83,7 @@ class ObservatoryController(
 
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
     fun updateObservatoryName(@PathVariable id: UUID, @RequestBody @Valid name: UpdateRequest): Observatory {
-        var response = service
+        val response: Observatory = service
             .findById(id)
             .orElseThrow { ObservatoryNotFound() }
 
@@ -94,7 +94,7 @@ class ObservatoryController(
 
     @RequestMapping("{id}/description", method = [RequestMethod.POST, RequestMethod.PUT])
     fun updateObservatoryDescription(@PathVariable id: UUID, @RequestBody @Valid description: UpdateRequest): Observatory {
-        var response = service
+        val response = service
             .findById(id)
             .orElseThrow { ObservatoryNotFound() }
         response.description = description.value
@@ -104,7 +104,7 @@ class ObservatoryController(
 
     @RequestMapping("{id}/research_field", method = [RequestMethod.POST, RequestMethod.PUT])
     fun updateObservatoryResearchField(@PathVariable id: UUID, @RequestBody @Valid researchField: UpdateRequest): Observatory {
-        var response = service
+        val response = service
             .findById(id)
             .orElseThrow { ObservatoryNotFound() }
         response.researchField = researchField.value
@@ -114,8 +114,8 @@ class ObservatoryController(
 
     @GetMapping("stats/observatories")
     fun findObservatoriesWithStats(): List<Observatory> {
-        var totalObservatories = service.listObservatories()
-        var totalPapers = (neo4jStatsService.getObservatoriesPapersAndComparisonsCount()).associateBy { it.observatoryId }
+        val totalObservatories = service.listObservatories()
+        val totalPapers = (neo4jStatsService.getObservatoriesPapersAndComparisonsCount()).associateBy { it.observatoryId }
         totalObservatories.forEach {
             if (it.id.toString() in totalPapers)
                 it.numPapers = totalPapers[it.id.toString()]?.resources ?: 0

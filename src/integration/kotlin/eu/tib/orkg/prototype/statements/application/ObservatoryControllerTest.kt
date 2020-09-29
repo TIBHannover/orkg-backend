@@ -166,9 +166,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("organizations.[].name").description("The name of the organizations which are managing this observatory"),
             fieldWithPath("organizations.[].createdBy").description("The ID of the user who has created an organization"),
             fieldWithPath("organizations.[].url").description("The URL of the organizations which are managing this observatory"),
-            fieldWithPath("organizations.[].observatories").description("The list of the observatories which are handled by this organizations"),
-            fieldWithPath("numPapers").description("Total number of papers belong to an observatory"),
-            fieldWithPath("numComparisons").description("Total number of comparisons belong to an observatory")
+            fieldWithPath("organizations.[].observatories").description("The list of the observatories which are handled by this organizations")
         )
 
         fun listOfObservatoriesResponseFields(): ResponseFieldsSnippet =

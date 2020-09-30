@@ -72,7 +72,7 @@ class OrganizationController(
                     name = response.name,
                     logo = logo,
                     createdBy = response.createdBy,
-                    url = response.url,
+                    homepage = response.homepage,
                     observatoryIds = response.observatoryIds
                 )
             )
@@ -100,7 +100,7 @@ class OrganizationController(
     @RequestMapping("{id}/url", method = [RequestMethod.POST, RequestMethod.PUT])
     fun updateOrganizationUrl(@PathVariable id: UUID, @RequestBody @Valid url: UpdateRequest): Organization {
         val response = findOrganization(id)
-        response.url = url.value
+        response.homepage = url.value
 
         val updatedOrganization = service.updateOrganization(response)
         updatedOrganization.logo = encoder(updatedOrganization.id.toString())

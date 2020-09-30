@@ -41,8 +41,8 @@ class PostgresOrganizationService(
         if (organization.name != entity.name)
             entity.name = organization.name
 
-        if (organization.url != entity.url)
-            entity.url = organization.url
+        if (organization.homepage != entity.url)
+            entity.url = organization.homepage
 
         return postgresOrganizationRepository.save(entity).toOrganization()
     }

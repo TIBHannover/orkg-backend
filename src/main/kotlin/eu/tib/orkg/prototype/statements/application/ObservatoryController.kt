@@ -82,33 +82,29 @@ class ObservatoryController(
 
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
     fun updateObservatoryName(@PathVariable id: UUID, @RequestBody @Valid name: UpdateRequest): Observatory {
-        val response: Observatory = service
+        service
             .findById(id)
             .orElseThrow { ObservatoryNotFound(id) }
 
-        response.name = name.value
-
-        return service.updateObservatory(response)
+        return service.changeName(id, name.value)
     }
 
     @RequestMapping("{id}/description", method = [RequestMethod.POST, RequestMethod.PUT])
     fun updateObservatoryDescription(@PathVariable id: UUID, @RequestBody @Valid description: UpdateRequest): Observatory {
-        val response = service
+        service
             .findById(id)
             .orElseThrow { ObservatoryNotFound(id) }
-        response.description = description.value
 
-        return service.updateObservatory(response)
+        return service.changeDescription(id, description.value)
     }
 
     @RequestMapping("{id}/research_field", method = [RequestMethod.POST, RequestMethod.PUT])
     fun updateObservatoryResearchField(@PathVariable id: UUID, @RequestBody @Valid researchField: UpdateRequest): Observatory {
-        val response = service
+        service
             .findById(id)
             .orElseThrow { ObservatoryNotFound(id) }
-        response.researchField = researchField.value
 
-        return service.updateObservatory(response)
+        return service.changeResearchField(id, researchField.value)
     }
 
     @GetMapping("stats/observatories")

@@ -16,5 +16,9 @@ interface ObservatoryService {
 
     fun findById(id: UUID): Optional<Observatory>
 
-    fun updateObservatory(observatory: Observatory): Observatory
+    fun changeName(id: UUID, to: String): Observatory
+
+    fun changeDescription(id: UUID, to: String): Observatory
+
+    fun changeResearchField(id: UUID, to: String): Observatory
 }

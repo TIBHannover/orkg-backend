@@ -57,14 +57,24 @@ class PostgresObservatoryService(
             .map(ObservatoryEntity::toObservatory)
     }
 
-    override fun updateObservatory(observatory: Observatory): Observatory {
-        val observatoryEntity = ObservatoryEntity().apply {
-            id = observatory.id
-            name = observatory.name
-            description = observatory.description
-            researchField = observatory.researchField
-            organizations = observatory.organizations
+    override fun changeName(id: UUID, to: String): Observatory {
+        val entity = postgresObservatoryRepository.findById(id).get().apply {
+            name = to
         }
-        return postgresObservatoryRepository.save(observatoryEntity).toObservatory()
+        return postgresObservatoryRepository.save(entity).toObservatory()
+    }
+
+    override fun changeDescription(id: UUID, to: String): Observatory {
+        val entity = postgresObservatoryRepository.findById(id).get().apply {
+            description = to
+        }
+        return postgresObservatoryRepository.save(entity).toObservatory()
+    }
+
+    override fun changeResearchField(id: UUID, to: String): Observatory {
+        val entity = postgresObservatoryRepository.findById(id).get().apply {
+            researchField = to
+        }
+        return postgresObservatoryRepository.save(entity).toObservatory()
     }
 }

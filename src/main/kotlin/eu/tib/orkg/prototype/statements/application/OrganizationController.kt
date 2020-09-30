@@ -145,15 +145,15 @@ class OrganizationController(
         fun writeImage(image: String, imageExtension: String, name: UUID?) {
             if (!File(imageStoragePath).isDirectory)
                 File(imageStoragePath).mkdir()
-            val imagePath: String = "$imageStoragePath/$name.$imageExtension"
+            val imagePath = "$imageStoragePath/$name.$imageExtension"
             val imageByteArray = Base64.getDecoder().decode(image)
             File(imagePath).writeBytes(imageByteArray)
     }
 
     fun encoder(id: String): String {
-        var file: String = ""
-        var ext: String = ""
-        val path: String = "$imageStoragePath/"
+        var file = ""
+        var ext = ""
+        val path = "$imageStoragePath/"
         File(path).walk().forEach {
             if (it.name.substringBeforeLast(".") == id) {
                 ext = it.name.substringAfterLast(".")

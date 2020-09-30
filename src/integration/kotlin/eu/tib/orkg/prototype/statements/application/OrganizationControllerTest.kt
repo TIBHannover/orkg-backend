@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
-import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import java.util.UUID
@@ -33,9 +32,6 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var observatoryService: ObservatoryService
-
-    @Autowired
-    private lateinit var classService: ClassService
 
     override fun createController() = controller
 

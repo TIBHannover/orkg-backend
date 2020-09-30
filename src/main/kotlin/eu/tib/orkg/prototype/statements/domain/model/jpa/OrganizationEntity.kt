@@ -39,7 +39,6 @@ class OrganizationEntity() {
             logo = null,
             createdBy = createdBy,
             url = url,
-            observatories = observatories!!,
             observatoryIds = observatories!!.mapNotNull(ObservatoryEntity::id).toSet()
         )
 }

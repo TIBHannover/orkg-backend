@@ -73,7 +73,7 @@ class OrganizationController(
                     logo = logo,
                     createdBy = response.createdBy,
                     url = response.url,
-                    observatories = response.observatories
+                    observatoryIds = response.observatoryIds
                 )
             )
     }

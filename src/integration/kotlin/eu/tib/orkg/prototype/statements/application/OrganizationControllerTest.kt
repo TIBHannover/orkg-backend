@@ -41,7 +41,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun index() {
-        var userId = createTestUser()
+        val userId = createTestUser()
         service.create("test organization", userId, "www.example.org")
 
         mockMvc
@@ -72,7 +72,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookUpObservatoriesByOrganization() {
-        var userId = createTestUser()
+        val userId = createTestUser()
         val organizationId = service.create("test organization", userId, "www.example.org").id
         observatoryService.create("test observatory", "test description", service.findById(organizationId!!).get(), "Computer Sciences")
 
@@ -99,7 +99,6 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("logo").description("The logo of the organization"),
             fieldWithPath("created_by").description("The ID of the user that created the organization."),
             fieldWithPath("url").description("The URL of the organization."),
-            fieldWithPath("observatories").description("The list of the observatories belong to an organization"),
             fieldWithPath("observatory_ids").description("The list of observatories that belong to this organization")
         )
 

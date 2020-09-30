@@ -7,8 +7,10 @@ import java.util.UUID
 
 data class Observatory(
     val id: UUID?,
-    val name: String?,
-    val description: String?,
+    var name: String?,
+    var description: String?,
+    @JsonProperty("research_field")
+    var researchField: String?,
     val users: Set<Contributor> = emptySet(),
     @Deprecated("""The set of organizations is cyclic and will be removed. Use "organization_ids" instead.""")
     val organizations: Set<OrganizationEntity>?,

@@ -13,4 +13,6 @@ interface OrganizationService {
     fun listOrganizations(): List<Organization>
 
     fun findById(id: UUID): Optional<Organization>
+
+    fun updateOrganization(organization: Organization): Organization
 }

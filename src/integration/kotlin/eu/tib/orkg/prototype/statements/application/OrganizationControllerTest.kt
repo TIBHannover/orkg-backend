@@ -74,7 +74,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
     fun lookUpObservatoriesByOrganization() {
         var userId = createTestUser()
         val organizationId = service.create("test organization", userId, "www.example.org").id
-        observatoryService.create("test observatory", "test description", service.findById(organizationId!!).get())
+        observatoryService.create("test observatory", "test description", service.findById(organizationId!!).get(), "Computer Sciences")
 
         mockMvc
             .perform(getRequestTo("/api/organizations/$organizationId/observatories"))

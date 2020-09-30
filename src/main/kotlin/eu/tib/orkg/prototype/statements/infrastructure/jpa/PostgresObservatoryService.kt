@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Organization
 import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
 import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresObservatoryRepository
 import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresOrganizationRepository
+import eu.tib.orkg.prototype.statements.infrastructure.neo4j.Neo4jStatsService
 import java.util.Optional
 import java.util.UUID
 import org.springframework.stereotype.Service
@@ -15,9 +16,10 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class PostgresObservatoryService(
     private val postgresObservatoryRepository: PostgresObservatoryRepository,
-    private val postgresOrganizationRepository: PostgresOrganizationRepository
+    private val postgresOrganizationRepository: PostgresOrganizationRepository,
+    private val neo4jStatsService: Neo4jStatsService
 ) : ObservatoryService {
-    override fun create(name: String, description: String, organization: Organization): Observatory {
+    override fun create(name: String, description: String, organization: Organization, researchField: String): Observatory {
         val oId = UUID.randomUUID()
         val org = postgresOrganizationRepository
             .findById(organization.id!!)
@@ -26,6 +28,7 @@ class PostgresObservatoryService(
             id = oId
             this.name = name
             this.description = description
+            this.researchField = researchField
             organizations = mutableSetOf(org)
         }
 
@@ -34,6 +37,7 @@ class PostgresObservatoryService(
     }
 
     override fun listObservatories(): List<Observatory> {
+
         return postgresObservatoryRepository.findAll()
             .map(ObservatoryEntity::toObservatory)
     }
@@ -51,5 +55,16 @@ class PostgresObservatoryService(
     override fun findById(id: UUID): Optional<Observatory> {
         return postgresObservatoryRepository.findById(id)
             .map(ObservatoryEntity::toObservatory)
+    }
+
+    override fun updateObservatory(observatory: Observatory): Observatory {
+        val observatoryEntity = ObservatoryEntity().apply {
+            id = observatory.id
+            name = observatory.name
+            description = observatory.description
+            researchField = observatory.researchField
+            organizations = observatory.organizations
+        }
+        return postgresObservatoryRepository.save(observatoryEntity).toObservatory()
     }
 }

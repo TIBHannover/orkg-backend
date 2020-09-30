@@ -6,7 +6,7 @@ interface ObservatoryService {
     /**
      * Create a new observatory with a given name.
      */
-    fun create(name: String, description: String, organization: Organization): Observatory
+    fun create(name: String, description: String, organization: Organization, researchField: String): Observatory
 
     fun listObservatories(): List<Observatory>
 
@@ -15,4 +15,6 @@ interface ObservatoryService {
     fun findByName(name: String): Optional<Observatory>
 
     fun findById(id: UUID): Optional<Observatory>
+
+    fun updateObservatory(observatory: Observatory): Observatory
 }

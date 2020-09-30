@@ -14,7 +14,7 @@ data class Organization(
     @JsonProperty("created_by")
     val createdBy: UUID? = UUID(0, 0),
 
-    val url: String?,
+    var url: String?,
 
     // TODO: Do we want/need a members list, as with observatories?
 

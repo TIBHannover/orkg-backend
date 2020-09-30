@@ -47,7 +47,7 @@ class ObservatoryEntity {
             name = name,
             description = description,
             researchField = researchField,
-            users = users!!.map(UserEntity::toContributor).toSet(),
+            members = users!!.map(UserEntity::toContributor).toSet(),
             organizationIds = organizations!!.mapNotNull(OrganizationEntity::id).toSet()
         )
 }

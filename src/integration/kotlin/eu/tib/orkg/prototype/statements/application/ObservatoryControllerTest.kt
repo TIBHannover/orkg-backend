@@ -161,7 +161,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("name").description("The observatory name"),
             fieldWithPath("description").description("The observatory description"),
             fieldWithPath("research_field").description("The research field of an observatory"),
-            fieldWithPath("users").description("The members belonging to an observatory"),
+            fieldWithPath("members").description("The members belonging to the observatory"),
             fieldWithPath("organization_ids").description("The list of organizations that the observatory belongs to")
         )
 

@@ -6,10 +6,10 @@ import java.util.UUID
 
 data class Observatory(
     val id: UUID?,
-    var name: String?,
-    var description: String?,
+    val name: String?,
+    val description: String?,
     @JsonProperty("research_field")
-    var researchField: String?,
+    val researchField: String?,
     val users: Set<Contributor> = emptySet(),
     @JsonProperty("organization_ids")
     val organizationIds: Set<UUID> = emptySet()

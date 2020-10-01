@@ -145,6 +145,12 @@ class OrganizationController(
         fun writeImage(image: String, imageExtension: String, name: UUID?) {
             if (!File(imageStoragePath).isDirectory)
                 File(imageStoragePath).mkdir()
+            // check if logo already exist then delete it
+            File(imageStoragePath).walk().forEach {
+                if (it.name.substringBeforeLast(".") == name.toString()) {
+                    it.delete()
+                }
+            }
             val imagePath = "$imageStoragePath/$name.$imageExtension"
             val imageByteArray = Base64.getDecoder().decode(image)
             File(imagePath).writeBytes(imageByteArray)

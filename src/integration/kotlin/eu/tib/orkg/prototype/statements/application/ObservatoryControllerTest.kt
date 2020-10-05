@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
@@ -41,15 +40,11 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     @Autowired
     private lateinit var resourceService: ResourceService
 
-    @Autowired
-    private lateinit var classService: ClassService
-
     override fun createController() = controller
 
     @Test
     fun index() {
-
-        var userId = createTestUser()
+        val userId = createTestUser()
         val organizationId = createTestOrganization(userId)
         createTestObservatory(organizationId)
 
@@ -66,7 +61,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun fetch() {
-        var userId = createTestUser()
+        val userId = createTestUser()
         val organizationId = createTestOrganization(userId)
         val observatoryId = createTestObservatory(organizationId)
 
@@ -83,7 +78,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookUpPapersByObservatoryId() {
-        var userId = createTestUser()
+        val userId = createTestUser()
         val organizationId = createTestOrganization(userId)
         val observatoryId = createTestObservatory(organizationId)
         createTestResource(userId, organizationId, observatoryId, "Paper")
@@ -102,7 +97,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookUpComparisonsByObservatoryId() {
-        var userId = createTestUser()
+        val userId = createTestUser()
         val organizationId = createTestOrganization(userId)
         val observatoryId = createTestObservatory(organizationId)
         createTestResource(userId, organizationId, observatoryId, "Comparison")
@@ -121,7 +116,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookUpProblemsByObservatoryId() {
-        var userId = createTestUser()
+        val userId = createTestUser()
         val organizationId = createTestOrganization(userId)
         val observatoryId = createTestObservatory(organizationId)
         createTestResource(userId, organizationId, observatoryId, "Problem")
@@ -161,12 +156,8 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("name").description("The observatory name"),
             fieldWithPath("description").description("The observatory description"),
             fieldWithPath("research_field").description("The research field of an observatory"),
-            fieldWithPath("users").description("The members belonging to an observatory"),
-            fieldWithPath("organizations.[].id").description("The ID of the organizations which are managing this observatory"),
-            fieldWithPath("organizations.[].name").description("The name of the organizations which are managing this observatory"),
-            fieldWithPath("organizations.[].createdBy").description("The ID of the user who has created an organization"),
-            fieldWithPath("organizations.[].url").description("The URL of the organizations which are managing this observatory"),
-            fieldWithPath("organizations.[].observatories").description("The list of the observatories which are handled by this organizations")
+            fieldWithPath("members").description("The members belonging to the observatory"),
+            fieldWithPath("organization_ids").description("The list of organizations that the observatory belongs to")
         )
 
         fun listOfObservatoriesResponseFields(): ResponseFieldsSnippet =

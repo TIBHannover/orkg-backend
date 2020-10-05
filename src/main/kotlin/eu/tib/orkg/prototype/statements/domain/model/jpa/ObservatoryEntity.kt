@@ -37,8 +37,17 @@ class ObservatoryEntity {
     @JoinTable(
         name = "observatories_organizations",
         joinColumns = [JoinColumn(name = "observatory_id", referencedColumnName = "id")],
-        inverseJoinColumns = [JoinColumn(name = "organization_id", referencedColumnName = "id")])
+        inverseJoinColumns = [JoinColumn(name = "organization_id", referencedColumnName = "id")]
+    )
     var organizations: Set<OrganizationEntity>? = mutableSetOf()
 
-    fun toObservatory() = Observatory(id, name, description, researchField, users, organizations)
+    fun toObservatory() =
+        Observatory(
+            id = id,
+            name = name,
+            description = description,
+            researchField = researchField,
+            members = users!!.map(UserEntity::toContributor).toSet(),
+            organizationIds = organizations!!.mapNotNull(OrganizationEntity::id).toSet()
+        )
 }

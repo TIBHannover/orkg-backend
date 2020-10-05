@@ -1,20 +1,18 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-import eu.tib.orkg.prototype.statements.domain.model.jpa.OrganizationEntity
 import java.util.Optional
 import java.util.UUID
 
 interface OrganizationService {
 
     /**
-     * Create a new company with a given name.
-     *
+     * Create a new organization with a given name.
      */
     fun create(OrganizationName: String, CreatedBy: UUID, Url: String): Organization
 
     fun listOrganizations(): List<Organization>
 
-    fun findById(id: UUID): Optional<OrganizationEntity>
+    fun findById(id: UUID): Optional<Organization>
 
-    fun updateOrganization(organization: OrganizationEntity): Organization
+    fun updateOrganization(organization: Organization): Organization
 }

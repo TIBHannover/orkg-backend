@@ -1,12 +1,11 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.auth.rest.UserController
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.contributions.domain.model.Contributor
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.Organization
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
-import eu.tib.orkg.prototype.statements.domain.model.jpa.OrganizationEntity
 import java.io.File
 import java.util.Base64
 import java.util.UUID
@@ -30,8 +29,8 @@ import org.springframework.web.util.UriComponentsBuilder
 @CrossOrigin(origins = ["*"])
 class OrganizationController(
     private val service: OrganizationService,
-    private val userService: UserService,
-    private val observatoryService: ObservatoryService
+    private val observatoryService: ObservatoryService,
+    private val contributorService: ContributorService
 ) {
     @Value("\${orkg.storage.images.dir}")
     var imageStoragePath: String? = null
@@ -64,7 +63,7 @@ class OrganizationController(
     fun findById(@PathVariable id: UUID): Organization {
         val response = service
             .findById(id)
-            .orElseThrow { OrganizationNotFound() }
+            .orElseThrow { OrganizationNotFound(id) }
         val logo = encoder(response.id.toString())
 
         return (
@@ -73,8 +72,8 @@ class OrganizationController(
                     name = response.name,
                     logo = logo,
                     createdBy = response.createdBy,
-                    url = response.url,
-                    observatories = response.observatories
+                    homepage = response.homepage,
+                    observatoryIds = response.observatoryIds
                 )
             )
     }
@@ -85,10 +84,8 @@ class OrganizationController(
     }
 
     @GetMapping("{id}/users")
-    fun findUsersByOrganizationId(@PathVariable id: UUID): Iterable<UserController.UserDetails> {
-        return userService.findUsersByOrganizationId(id)
-            .map(UserController::UserDetails)
-    }
+    fun findUsersByOrganizationId(@PathVariable id: UUID): Iterable<Contributor> =
+        contributorService.findUsersByOrganizationId(id)
 
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
     fun updateOrganizationName(@PathVariable id: UUID, @RequestBody @Valid name: UpdateRequest): Organization {
@@ -103,7 +100,7 @@ class OrganizationController(
     @RequestMapping("{id}/url", method = [RequestMethod.POST, RequestMethod.PUT])
     fun updateOrganizationUrl(@PathVariable id: UUID, @RequestBody @Valid url: UpdateRequest): Organization {
         val response = findOrganization(id)
-        response.url = url.value
+        response.homepage = url.value
 
         val updatedOrganization = service.updateOrganization(response)
         updatedOrganization.logo = encoder(updatedOrganization.id.toString())
@@ -112,7 +109,7 @@ class OrganizationController(
 
     @RequestMapping("{id}/logo", method = [RequestMethod.POST, RequestMethod.PUT])
     fun updateOrganizationLogo(@PathVariable id: UUID, @RequestBody @Valid submittedLogo: UpdateRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
-        val response = findOrganization(id).toOrganization()
+        val response = findOrganization(id)
         val logo = submittedLogo.value
         return if (!isValidLogo(logo)) {
             ResponseEntity.badRequest().body(
@@ -130,10 +127,10 @@ class OrganizationController(
         }
     }
 
-    fun findOrganization(id: UUID): OrganizationEntity {
+    fun findOrganization(id: UUID): Organization {
         return service
             .findById(id)
-            .orElseThrow { OrganizationNotFound() }
+            .orElseThrow { OrganizationNotFound(id) }
     }
 
     fun decoder(base64Str: String, name: UUID?) {
@@ -148,15 +145,21 @@ class OrganizationController(
         fun writeImage(image: String, imageExtension: String, name: UUID?) {
             if (!File(imageStoragePath).isDirectory)
                 File(imageStoragePath).mkdir()
-            val imagePath: String = "$imageStoragePath/$name.$imageExtension"
+            // check if logo already exist then delete it
+            File(imageStoragePath).walk().forEach {
+                if (it.name.substringBeforeLast(".") == name.toString()) {
+                    it.delete()
+                }
+            }
+            val imagePath = "$imageStoragePath/$name.$imageExtension"
             val imageByteArray = Base64.getDecoder().decode(image)
             File(imagePath).writeBytes(imageByteArray)
     }
 
     fun encoder(id: String): String {
-        var file: String = ""
-        var ext: String = ""
-        val path: String = "$imageStoragePath/"
+        var file = ""
+        var ext = ""
+        val path = "$imageStoragePath/"
         File(path).walk().forEach {
             if (it.name.substringBeforeLast(".") == id) {
                 ext = it.name.substringAfterLast(".")

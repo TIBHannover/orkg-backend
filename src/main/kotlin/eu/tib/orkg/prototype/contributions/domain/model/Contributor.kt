@@ -56,5 +56,5 @@ data class Contributor(
      */
     @get:JsonProperty("gravatar_id")
     val gravatarId: String
-        get() = GravatarId(email).imageURL()
+        get() = GravatarId(email).toString()
 }

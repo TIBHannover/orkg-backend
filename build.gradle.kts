@@ -9,30 +9,27 @@ val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java)
     .kotlinPluginVersion
 
 val neo4jVersion = "3.5.+" // should match version in Dockerfile
-val springDataNeo4jVersion = "5.2.5"
+val springDataNeo4jVersion = "5.3.4"
 val springSecurityOAuthVersion = "2.3.8"
-val testContainersVersion = "1.13.0"
+val testContainersVersion = "1.14.3"
 
 val containerRegistryLocation = "registry.gitlab.com/tibhannover/orkg/orkg-backend"
 val dockerImageTag: String? by project
 
-// Overwrite versions from Spring Dependencies BOM (applied by management plug-in)
-extra["junit-jupiter.version"] = "5.6.0"
-
 plugins {
     jacoco
-    kotlin("jvm") version "1.3.70"
-    kotlin("plugin.spring") version "1.3.70"
+    kotlin("jvm") version "1.4.10"
+    kotlin("plugin.spring") version "1.4.10"
     // Add no-arg annotations to @Entity, @Embeddable and @MappedSuperclass:
-    kotlin("plugin.jpa") version "1.3.70"
+    kotlin("plugin.jpa") version "1.4.10"
     id("org.jetbrains.dokka") version "0.10.1"
-    id("org.springframework.boot") version "2.2.5.RELEASE"
-    id("com.coditory.integration-test") version "1.0.8"
+    id("org.springframework.boot") version "2.3.4.RELEASE"
+    id("com.coditory.integration-test") version "1.1.8"
     id("de.jansauer.printcoverage") version "2.0.0"
-    id("org.asciidoctor.jvm.convert") version "3.1.0"
+    id("org.asciidoctor.jvm.convert") version "3.2.0"
     id("com.palantir.docker") version "0.25.0"
-    id("com.google.cloud.tools.jib") version "2.1.0"
-    id("com.diffplug.gradle.spotless") version "3.27.2"
+    id("com.google.cloud.tools.jib") version "2.5.0"
+    id("com.diffplug.spotless") version "5.6.1"
 }
 
 apply {
@@ -60,6 +57,7 @@ dependencies {
     implementation("org.neo4j:neo4j-ogm-bolt-native-types")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.security.oauth:spring-security-oauth2:$springSecurityOAuthVersion.RELEASE")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.data:spring-data-neo4j:$springDataNeo4jVersion.RELEASE")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -104,13 +102,6 @@ allprojects {
         jcenter()
         maven { setUrl("https://dl.bintray.com/bjonnh/RDF4K") }
     }
-}
-
-jacoco {
-    // Upgrade to a newer JaCoCo version, as the one provided by the Gradle
-    // plug-in does not support ignoring Kotlin-generated methods.
-    // TODO: Remove setting when the default version changes to at least that.
-    toolVersion = "0.8.5"
 }
 
 tasks {

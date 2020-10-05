@@ -54,7 +54,18 @@ data class Contributor(
     /**
      * The Gravatar ID of the user, e.g. the hashed email address.
      */
+    @Suppress("unused")
     @get:JsonProperty("gravatar_id")
     val gravatarId: String
         get() = GravatarId(email).toString()
+
+    /**
+     * The URL to an image that represents the user (aka. an avatar).
+     *
+     * This currently returns a URL to the Gravatar service, using a "mystery person" icon if the email was not set.
+     */
+    @Suppress("unused")
+    @get:JsonProperty("avatar_url")
+    val avatarURL: String
+        get() = GravatarId(email).imageURL()
 }

@@ -3,7 +3,7 @@
 //
 // ====================================
 
-= ORKG Architecture
+= Open Research Knowledge Graph -- Architecture Documentation
 The ORKG Development Team
 // toc-title definition MUST follow document title without blank line!
 :toc-title: Table of Contents

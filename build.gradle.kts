@@ -171,6 +171,7 @@ tasks {
             exclude("parts/**")
             include("*.adoc")
             include("api-doc/*.adoc")
+            include("architecture/*.adoc")
         })
     }
 

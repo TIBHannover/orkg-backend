@@ -1,0 +1,78 @@
+// header file for arc42-template,
+// including all help texts
+//
+// ====================================
+
+= ORKG Architecture
+The ORKG Development Team
+// toc-title definition MUST follow document title without blank line!
+:toc-title: Table of Contents
+
+//additional style for arc42 help callouts
+ifdef::basebackend-html[]
+++++
+<style>
+.arc42help {font-size:small; width: 14px; height: 16px; overflow: hidden; position: absolute; right: 0px; padding: 2px 0px 3px 2px;}
+.arc42help::before {content: "?";}
+.arc42help:hover {width:auto; height: auto; z-index: 100; padding: 10px;}
+.arc42help:hover::before {content: "";}
+@media print {
+	.arc42help {display:hidden;}
+}
+</style>
+++++
+endif::basebackend-html[]
+
+// configure EN settings for asciidoc
+include::src/config.adoc[]
+include::../_default-attributes.adoc[]
+
+
+NOTE: Within the following text, the "{orkg}" shall be abbreviated with ORKG.
+
+// horizontal line
+'''
+
+// numbering from here on
+:numbered:
+
+<<<
+include::src/01_introduction_and_goals.adoc[]
+
+////
+<<<
+include::src/02_architecture_constraints.adoc[]
+
+<<<
+include::src/03_system_scope_and_context.adoc[]
+
+<<<
+include::src/04_solution_strategy.adoc[]
+
+<<<
+include::src/05_building_block_view.adoc[]
+
+<<<
+include::src/06_runtime_view.adoc[]
+
+<<<
+include::src/07_deployment_view.adoc[]
+
+<<<
+include::src/08_concepts.adoc[]
+
+<<<
+include::src/09_design_decisions.adoc[]
+
+<<<
+include::src/10_quality_scenarios.adoc[]
+
+<<<
+include::src/11_technical_risks.adoc[]
+
+<<<
+include::src/12_glossary.adoc[]
+////
+
+<<<
+include::src/about-arc42.adoc[]

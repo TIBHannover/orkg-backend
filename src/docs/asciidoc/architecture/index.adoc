@@ -69,10 +69,10 @@ include::src/10_quality_scenarios.adoc[]
 
 <<<
 include::src/11_technical_risks.adoc[]
+////
 
 <<<
 include::src/12_glossary.adoc[]
-////
 
 <<<
 include::src/about-arc42.adoc[]

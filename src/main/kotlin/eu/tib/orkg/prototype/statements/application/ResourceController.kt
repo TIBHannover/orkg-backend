@@ -102,6 +102,23 @@ class ResourceController(
         return ok(service.update(updatedRequest))
     }
 
+    @PutMapping("/{id}/addObservatory")
+    // @PreAuthorize("hasAuthority('ROLE_USER')")
+    fun updateWithObservatory(
+        @PathVariable id: ResourceId,
+        @RequestBody request: UpdateResourceObservatoryRequest
+    ): ResponseEntity<Resource> {
+        val found = service.findById(id)
+
+        if (!found.isPresent)
+            return notFound().build()
+
+        val userId = authenticatedUserId()
+        val updatedRequest = request.copy(id = id)
+
+        return ok(service.updatePaperObservatory(updatedRequest, userId))
+    }
+
     @GetMapping("{id}/contributors")
     fun findContributorsById(@PathVariable id: ResourceId): Iterable<ResourceContributors> {
         return service.findContributorsByResourceId(id)
@@ -141,4 +158,10 @@ data class UpdateResourceRequest(
     val id: ResourceId?,
     val label: String?,
     val classes: Set<ClassId>?
+)
+
+data class UpdateResourceObservatoryRequest(
+    val id: ResourceId?,
+    val observatoryId: UUID,
+    val organizationId: UUID
 )

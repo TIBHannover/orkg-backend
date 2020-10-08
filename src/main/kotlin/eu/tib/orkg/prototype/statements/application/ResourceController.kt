@@ -103,7 +103,7 @@ class ResourceController(
     }
 
     @PutMapping("/{id}/addObservatory")
-    // @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateWithObservatory(
         @PathVariable id: ResourceId,
         @RequestBody request: UpdateResourceObservatoryRequest

@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.graphdb.indexing.neo4j
 
 import eu.tib.orkg.prototype.graphdb.indexing.domain.model.IndexService
+import eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j.FullTextIndex
 import eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j.Neo4jIndex
 import eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j.Neo4jIndexRepository
 import eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j.PropertyIndex
@@ -83,6 +84,10 @@ class Neo4jIndexService(
                 it.property
             )
             "node_label_property" -> PropertyIndex(
+                it.label,
+                it.property
+            )
+            "node_fulltext" -> FullTextIndex(
                 it.label,
                 it.property
             )

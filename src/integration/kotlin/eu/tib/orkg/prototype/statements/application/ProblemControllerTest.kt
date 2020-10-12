@@ -91,12 +91,13 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
 
     companion object RestDoc {
 
-        fun usersPerProblemResponseFields() = listOf(
+        private fun usersPerProblemResponseFields() = listOf(
             fieldWithPath("user").description("The user object"),
             fieldWithPath("user.id").description("The UUID of the user in the system"),
-            fieldWithPath("user.email").description("The hashed email of the user"),
+            fieldWithPath("user.gravatar_id").description("The gravatar id of the user"),
             fieldWithPath("user.display_name").description("The user's display name"),
-            fieldWithPath("user.created_at").description("the datetime when the user was created"),
+            fieldWithPath("user.avatar_url").description("The user's avatar url (gravatar url)"),
+            fieldWithPath("user.joined_at").description("the datetime when the user was created"),
             fieldWithPath("user.organization_id").description("the organization id that this user belongs to").optional(),
             fieldWithPath("user.observatory_id").description("the observatory id that this user belongs to").optional(),
             fieldWithPath("contributions").description("The number of contributions this user created")

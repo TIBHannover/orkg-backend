@@ -1,6 +1,9 @@
 package eu.tib.orkg.prototype.auth.persistence
 
+import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneOffset.UTC
 import java.util.UUID
 import javax.persistence.CascadeType
 import javax.persistence.Column
@@ -47,6 +50,15 @@ class UserEntity {
 
     @OneToMany(mappedBy = "id", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     var roles: MutableCollection<RoleEntity> = mutableSetOf()
+
+    fun toContributor() = Contributor(
+        id = this.id!!,
+        name = this.displayName!!,
+        joinedAt = OffsetDateTime.of(this.created, UTC),
+        organizationId = this.organizationId ?: UUID(0, 0),
+        observatoryId = this.observatoryId ?: UUID(0, 0),
+        email = this.email!!
+    )
 }
 
 @Entity

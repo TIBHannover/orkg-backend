@@ -16,6 +16,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation
 import org.springframework.security.test.context.support.WithUserDetails
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -68,6 +69,27 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    fun fetchByURI() {
+        // Arrange
+        service.create(CreateClassRequest(ClassId("dummy"), "dummy label", URI.create("http://example.org/exists")))
+
+        // Act and Assert
+        mockMvc
+            .perform(getRequestTo("/api/classes/?uri=http://example.org/exists"))
+            .andExpect(status().isOk)
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(jsonPath("\$.id").value("dummy"))
+            .andExpect(jsonPath("\$.label").value("dummy label"))
+            .andExpect(jsonPath("\$.uri").value("http://example.org/exists"))
+            .andDo(
+                document(
+                    snippet,
+                    classResponseFields()
+                )
+            )
+    }
+
+    @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun add() {
         val `class` = mapOf("label" to "foo", "uri" to "http://example.org/bar")
@@ -105,6 +127,35 @@ class ClassControllerTest : RestDocumentationBaseTest() {
                     requestFields(
                         fieldWithPath("id").description("The class id"),
                         fieldWithPath("label").description("The class label")
+                    )
+                )
+            )
+    }
+
+    @Test
+    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    fun addExistingURI() {
+        service.create(
+            CreateClassRequest(
+                id = ClassId("some-id"),
+                label = "foo",
+                uri = URI.create("http://example.org/in-use")
+            )
+        )
+        val duplicateClass = mapOf(
+            "label" to "bar",
+            "uri" to "http://example.org/in-use"
+        )
+
+        mockMvc
+            .perform(postRequestWithBody("/api/classes/", duplicateClass))
+            .andExpect(status().isBadRequest)
+            .andDo(
+                document(
+                    snippet,
+                    requestFields(
+                        fieldWithPath("label").description("The class label"),
+                        fieldWithPath("uri").description("The URI of the class")
                     )
                 )
             )

@@ -5,7 +5,7 @@ import java.util.Optional
 import java.util.UUID
 import org.springframework.data.domain.Pageable
 
-interface ClassService {
+interface ClassService : URIService<Class> {
     /**
      * Create a new class with a given label.
      *

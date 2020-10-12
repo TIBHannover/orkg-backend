@@ -5,8 +5,6 @@ import eu.tib.orkg.prototype.auth.domain.model.Contributor
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
-import java.math.BigInteger
-import java.security.MessageDigest
 import java.security.Principal
 import java.util.Optional
 import java.util.UUID
@@ -17,7 +15,6 @@ import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
@@ -41,14 +38,16 @@ class UserController(
         return ResponseEntity(NOT_FOUND)
     }
 
+    /**
+     * Retrieve the user's data.
+     *
+     * <strong>Note:</strong> This endpoint should only be used to obtain data for the logged-in user!
+     * It should not be used for other user data! Use the contributor abstraction for that!
+     */
     @GetMapping("/{id}")
-    fun lookupContributor(@PathVariable id: UUID): ResponseEntity<Contributor> {
-        val contributor = userService.findById(id)
-        if (contributor.isPresent) {
-            val c = contributor.get()
-            return ok(Contributor(id = c.id!!, name = c.displayName!!))
-        }
-        return ResponseEntity(NOT_FOUND)
+    fun lookupUser(@PathVariable id: UUID): ResponseEntity<UserDetails> {
+        val contributor = userService.findById(id).orElseThrow { UserNotFound("$id") }
+        return ok(UserDetails(contributor))
     }
 
     @PutMapping("/")
@@ -98,11 +97,6 @@ class UserController(
         return ResponseEntity(NOT_FOUND)
     }
 
-    @GetMapping("{id}/organizations")
-    fun findOrganizationByUserId(@PathVariable id: UUID): Optional<UserEntity> {
-        return userService.findOrganizationById(id)
-    }
-
     /**
      * Decorator for user data.
      * This class prevents user data from leaking by only exposing data that is relevant to the client.
@@ -112,7 +106,7 @@ class UserController(
         val id: UUID = user.id!!
 
         @JsonProperty("email")
-        val email = if (SecurityContextHolder.getContext().authentication.name == user.id.toString()) user.email else user.email?.md5()
+        val email = user.email
 
         @JsonProperty("display_name")
         val displayName = user.displayName
@@ -159,9 +153,4 @@ class UserController(
     ) {
         fun hasMatchingPasswords() = newPassword == newMatchingPassword
     }
-}
-
-fun String.md5(): String {
-    val md = MessageDigest.getInstance("MD5")
-    return BigInteger(1, md.digest(toByteArray())).toString(16).padStart(32, '0')
 }

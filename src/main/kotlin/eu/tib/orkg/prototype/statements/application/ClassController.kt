@@ -33,6 +33,11 @@ class ClassController(private val service: ClassService, private val resourceSer
             .findById(id)
             .orElseThrow { ClassNotFound() }
 
+    @GetMapping("/", params = ["uri"])
+    fun findByURI(@RequestParam uri: URI): Class = service
+            .findByURI(uri)
+            .orElseThrow { ClassNotFound() }
+
     @GetMapping("/{id}/resources/")
     fun findResourcesWithClass(
         @PathVariable id: ClassId,
@@ -84,6 +89,12 @@ class ClassController(private val service: ClassService, private val resourceSer
             throw ClassAlreadyExists(`class`.id.value)
         if (!`class`.hasValidName())
             throw ClassNotAllowed(`class`.id!!.value)
+        if (`class`.uri != null) {
+            val found = service.findByURI(`class`.uri)
+            if (found.isPresent)
+                throw DuplicateURI(`class`.uri, found.get().id.toString())
+        }
+
         val userId = authenticatedUserId()
         val id = service.create(userId, `class`).id
         val location = uriComponentsBuilder

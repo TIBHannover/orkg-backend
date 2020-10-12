@@ -1,14 +1,12 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.auth.persistence.UserEntity
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
-import java.util.Optional
 import java.util.UUID
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
@@ -33,7 +31,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/resources/")
 class ResourceController(
     private val service: ResourceService,
-    private val userService: UserService
+    private val contributorService: ContributorService
 ) : BaseController() {
 
     @GetMapping("/{id}")
@@ -73,14 +71,13 @@ class ResourceController(
         if (resource.id != null && service.findById(resource.id).isPresent)
             return badRequest().body("Resource id <${resource.id}> already exists!")
         val userId = authenticatedUserId()
-        val user: Optional<UserEntity> = userService.findById(userId)
+        val contributor = contributorService.findById(userId)
         var observatoryId = UUID(0, 0)
         var organizationId = UUID(0, 0)
-        if (!user.isEmpty) {
-            organizationId = user.get().organizationId ?: UUID(0, 0)
-            observatoryId = user.get().observatoryId ?: UUID(0, 0)
+        if (!contributor.isEmpty) {
+            organizationId = contributor.get().organizationId
+            observatoryId = contributor.get().observatoryId
         }
-
         val id = service.create(userId, resource, observatoryId, resource.extractionMethod, organizationId).id
         val location = uriComponentsBuilder
             .path("api/resources/{id}")

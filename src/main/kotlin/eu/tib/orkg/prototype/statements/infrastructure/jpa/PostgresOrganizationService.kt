@@ -30,7 +30,20 @@ class PostgresOrganizationService(
             .map(OrganizationEntity::toOrganization)
     }
 
-    override fun findById(id: UUID): Optional<OrganizationEntity> {
-        return postgresOrganizationRepository.findById(id)
+    override fun findById(id: UUID): Optional<Organization> =
+        postgresOrganizationRepository
+            .findById(id)
+            .map(OrganizationEntity::toOrganization)
+
+    override fun updateOrganization(organization: Organization): Organization {
+        val entity = postgresOrganizationRepository.findById(organization.id!!).get()
+
+        if (organization.name != entity.name)
+            entity.name = organization.name
+
+        if (organization.homepage != entity.url)
+            entity.url = organization.homepage
+
+        return postgresOrganizationRepository.save(entity).toOrganization()
     }
 }

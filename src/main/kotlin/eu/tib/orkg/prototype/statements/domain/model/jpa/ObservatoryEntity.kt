@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import java.util.UUID
 import javax.persistence.CascadeType
+import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.Id
@@ -25,6 +26,9 @@ class ObservatoryEntity {
 
     var description: String? = null
 
+    @Column(name = "research_field")
+    var researchField: String? = null
+
     @OneToMany(mappedBy = "id", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     var users: Set<UserEntity>? = mutableSetOf()
 
@@ -33,8 +37,17 @@ class ObservatoryEntity {
     @JoinTable(
         name = "observatories_organizations",
         joinColumns = [JoinColumn(name = "observatory_id", referencedColumnName = "id")],
-        inverseJoinColumns = [JoinColumn(name = "organization_id", referencedColumnName = "id")])
+        inverseJoinColumns = [JoinColumn(name = "organization_id", referencedColumnName = "id")]
+    )
     var organizations: Set<OrganizationEntity>? = mutableSetOf()
 
-    fun toObservatory() = Observatory(id, name, description, users, organizations)
+    fun toObservatory() =
+        Observatory(
+            id = id,
+            name = name,
+            description = description,
+            researchField = researchField,
+            members = users!!.map(UserEntity::toContributor).toSet(),
+            organizationIds = organizations!!.mapNotNull(OrganizationEntity::id).toSet()
+        )
 }

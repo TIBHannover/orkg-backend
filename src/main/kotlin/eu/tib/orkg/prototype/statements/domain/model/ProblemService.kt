@@ -5,7 +5,13 @@ import org.springframework.data.domain.Pageable
 
 interface ProblemService {
 
-    fun getFieldsPerProblem(problemId: ResourceId): List<Any>
+    fun findFieldsPerProblem(problemId: ResourceId): List<Any>
+
+    fun findTopResearchProblems(): List<Resource>
+
+    fun findContributorsPerProblem(problemId: ResourceId, pageable: Pageable): List<ContributorPerProblem>
+
+    fun findAuthorsPerProblem(problemId: ResourceId, pageable: Pageable): List<Any>
 
     fun getContributorsPerProblem(problemId: ResourceId, pageable: Pageable): List<ContributorPerProblem>
 

@@ -1,12 +1,11 @@
 package eu.tib.orkg.prototype.auth.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.auth.domain.model.Contributor
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.statements.application.UserNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import java.security.Principal
-import java.util.Optional
 import java.util.UUID
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank

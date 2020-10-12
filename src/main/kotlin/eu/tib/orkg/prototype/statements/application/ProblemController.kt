@@ -1,7 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.auth.rest.UserController.UserDetails
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.ProblemService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -15,16 +14,19 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/problems/")
-class ProblemController(private val service: ProblemService) {
+class ProblemController(
+    private val service: ProblemService,
+    private val contributorService: ContributorService
+) {
 
     @GetMapping("/{problemId}/fields")
     fun getFieldPerProblem(@PathVariable problemId: ResourceId): ResponseEntity<Iterable<Any>> {
-        return ResponseEntity.ok(service.getFieldsPerProblem(problemId))
+        return ResponseEntity.ok(service.findFieldsPerProblem(problemId))
     }
 
     @GetMapping("/top")
     fun getTopProblems(): ResponseEntity<Iterable<Resource>> {
-        return ResponseEntity.ok(service.getTopResearchProblems())
+        return ResponseEntity.ok(service.findTopResearchProblems())
     }
 
     @GetMapping("/{problemId}/users")
@@ -34,10 +36,10 @@ class ProblemController(private val service: ProblemService) {
         @RequestParam("items", required = false) items: Int?
     ): ResponseEntity<Iterable<Any>> {
         val pagination = createPageable(page, items, null, false)
-        val contributors = service.getContributorsPerProblem(problemId, pagination).map {
-            val user = userService.findById(it.contributor).get()
+        val contributors = service.findContributorsPerProblem(problemId, pagination).map {
+            val user = contributorService.findById(it.contributor).get()
             object {
-                val user = UserDetails(user)
+                val user = user
                 val contributions = it.freq
             }
         }
@@ -51,6 +53,6 @@ class ProblemController(private val service: ProblemService) {
         @RequestParam("items", required = false) items: Int?
     ): ResponseEntity<Iterable<Any>> {
         val pagination = createPageable(page, items, null, false)
-        return ResponseEntity.ok(service.getAuthorsPerProblem(problemId, pagination))
+        return ResponseEntity.ok(service.findAuthorsPerProblem(problemId, pagination))
     }
 }

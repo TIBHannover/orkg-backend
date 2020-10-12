@@ -99,9 +99,9 @@ class Neo4jProblemService(
     }
 
     override fun findContributorsPerProblem(problemId: ResourceId, pageable: Pageable): List<ContributorPerProblem> {
-        return neo4jProblemRepository
-            .findContributorsLeaderboardPerProblem(problemId, pageable)
+        return neo4jProblemRepository.findUsersLeaderboardPerProblem(problemId, pageable)
             .content
+            .dropWhile { it.isAnonymous }
     }
 
     override fun findAuthorsPerProblem(problemId: ResourceId, pageable: Pageable): List<Any> {
@@ -116,29 +116,6 @@ class Neo4jProblemService(
                 else
                     object {
                         val author = it.toAuthorResource.toResource()
-                        val papers = it.papers
-                    }
-            }
-    }
-
-    override fun getContributorsPerProblem(problemId: ResourceId, pageable: Pageable): List<ContributorPerProblem> {
-        return neo4jProblemRepository.getUsersLeaderboardPerProblem(problemId, pageable)
-            .content
-            .dropWhile { it.isAnonymous }
-    }
-
-    override fun getAuthorsPerProblem(problemId: ResourceId, pageable: Pageable): List<Any> {
-        return neo4jProblemRepository.getAuthorsLeaderboardPerProblem(problemId, pageable)
-            .content
-            .map {
-                if (it.isLiteral)
-                    object {
-                        val author = it.author
-                        val papers = it.papers
-                    }
-                else
-                    object {
-                        val author = it.authorResource.toResource()
                         val papers = it.papers
                     }
             }

@@ -29,6 +29,66 @@ class Neo4jResourceServiceTest {
     }
 
     @Test
+    @DisplayName("Given a resource with a label that contains whitespaces, When searched exactly, Then it should return the resource")
+    fun whenSearchedExactlyThenItShouldReturnTheResource() {
+        val label = "a label with whitespace"
+        service.create(label)
+
+        val result = service.findAllByLabelContaining(PageRequest.of(0, 10), label)
+
+        assertThat(result).hasSize(1)
+        assertThat(result.first().label).isEqualTo(label)
+    }
+
+    @Test
+    @DisplayName("Given a resource with a label that contains whitespaces, When searched exactly but surrounded by extra whitespace, Then it should return the resource")
+    fun whenSearchedExactlyButSurroundedByExtraWhitespaceThenItShouldReturnTheResource() {
+        val label = "a label with whitespace"
+        service.create(label)
+
+        val result = service.findAllByLabelContaining(PageRequest.of(0, 10), "  $label\t ")
+
+        assertThat(result).hasSize(1)
+        assertThat(result.first().label).isEqualTo(label)
+    }
+
+    @Test
+    @DisplayName("Given a resource with a label that contains whitespaces, When searched partially, Then it should return the resource")
+    fun whenSearchedPartiallyThenItShouldReturnTheResource() {
+        val label = "a label with whitespace"
+        service.create(label)
+
+        val result = service.findAllByLabelContaining(PageRequest.of(0, 10), "bel wi")
+
+        assertThat(result).hasSize(1)
+        assertThat(result.first().label).isEqualTo(label)
+    }
+
+    @Test
+    @DisplayName("Given a resource with a label that contains whitespaces, When searched with extra whitespace in the search string, Then it should return the resource")
+    fun whenSearchedWithExtraWhitespaceInTheSearchStringThenItShouldReturnTheResource() {
+        val label = "a label with whitespace"
+        service.create(label)
+
+        val result = service.findAllByLabelContaining(PageRequest.of(0, 10), "label \t  with")
+
+        assertThat(result).hasSize(1)
+        assertThat(result.first().label).isEqualTo(label)
+    }
+
+    @Test
+    @DisplayName("Given a resource with a label containing multiple consecutive whitespace, When searched with single whitespace, Then it should return the resource")
+    fun whenSearchedWithSingleWhitespaceThenItShouldReturnTheResource() {
+        val label = "one two  three   four"
+        service.create(label)
+
+        val result = service.findAllByLabelContaining(PageRequest.of(0, 10), "one two three four")
+
+        assertThat(result).hasSize(1)
+        assertThat(result.first().label).isEqualTo(label)
+    }
+
+    @Test
     @DisplayName("should find created resources")
     fun shouldFindCreatedResources() {
         service.create("first")

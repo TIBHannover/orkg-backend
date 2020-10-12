@@ -36,15 +36,17 @@ data class Neo4jClass(
     @Required
     override var label: String? = null
 
+    @Property("uri")
     var uri: String? = null
 
     @Property("created_by")
     @Convert(UUIDGraphAttributeConverter::class)
     var createdBy: UUID = UUID(0, 0)
 
-    constructor(label: String, classId: ClassId, createdBy: UUID = UUID(0, 0)) : this(null) {
+    constructor(label: String, classId: ClassId, createdBy: UUID = UUID(0, 0), uri: URI?) : this(null) {
         this.label = label
         this.classId = classId
+        this.uri = uri?.toString()
         this.createdBy = createdBy
     }
 

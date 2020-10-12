@@ -1,6 +1,8 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import java.util.UUID
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -16,11 +18,27 @@ interface Neo4jProblemRepository :
                     ORDER BY freq DESC""")
     fun getResearchFieldsPerProblem(problemId: ResourceId): Iterable<FieldPerProblem>
 
+    @Query("""MATCH (problem:Problem)<-[:RELATED {predicate_id:'P32'}]-(cont:Contribution)
+                    WITH problem, cont, datetime() AS now
+                    WHERE datetime(cont.created_at).year = now.year AND datetime(cont.created_at).month <= now.month AND datetime(cont.created_at).month > now.month - {0}
+                    WITH problem, COUNT(cont) AS cnt
+                    RETURN problem
+                    ORDER BY cnt  DESC
+                    LIMIT 5""")
+    fun getTopResearchProblemsGoingBack(months: Int): Iterable<Neo4jResource>
+
+    @Query("""MATCH (problem:Problem)<-[:RELATED {predicate_id:'P32'}]-(cont:Contribution)
+                    WITH problem, COUNT(cont) AS cnt
+                    RETURN problem
+                    ORDER BY cnt DESC
+                    LIMIT 5""")
+    fun getTopResearchProblemsAllTime(): Iterable<Neo4jResource>
+
     @Query(value = """MATCH (problem:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(contribution:Contribution)
 WHERE contribution.created_by IS NOT NULL
 RETURN contribution.created_by AS user, COUNT(contribution.created_by) AS freq
 ORDER BY freq DESC""",
-    countQuery = """MATCH (problem:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(contribution:Contribution)
+        countQuery = """MATCH (problem:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(contribution:Contribution)
 WHERE contribution.created_by IS NOT NULL
 WITH contribution.created_by AS user, COUNT(contribution.created_by) AS freq
 RETURN COUNT(user)""")

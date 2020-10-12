@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.auth.rest.UserController.UserDetails
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.ProblemService
+import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -14,14 +15,16 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/problems/")
-class ProblemController(
-    private val service: ProblemService,
-    private val userService: UserService
-) {
+class ProblemController(private val service: ProblemService) {
 
     @GetMapping("/{problemId}/fields")
     fun getFieldPerProblem(@PathVariable problemId: ResourceId): ResponseEntity<Iterable<Any>> {
         return ResponseEntity.ok(service.getFieldsPerProblem(problemId))
+    }
+
+    @GetMapping("/top")
+    fun getTopProblems(): ResponseEntity<Iterable<Resource>> {
+        return ResponseEntity.ok(service.getTopResearchProblems())
     }
 
     @GetMapping("/{problemId}/users")

@@ -7,6 +7,9 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jPredicate
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jPredicateIdGenerator
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jPredicateRepository
+import eu.tib.orkg.prototype.util.EscapedRegex
+import eu.tib.orkg.prototype.util.SanitizedWhitespace
+import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
 import java.util.Optional
 import java.util.UUID
 import org.springframework.data.domain.Pageable
@@ -52,13 +55,13 @@ class Neo4jPredicateService(
 
     override fun findAllByLabel(label: String, pageable: Pageable) =
         neo4jPredicateRepository
-            .findAllByLabelMatchesRegex("(?i)^${escapeRegexString(label)}$", pageable) // TODO: See declaration
+            .findAllByLabelMatchesRegex(label.toExactSearchString(), pageable) // TODO: See declaration
             .content
             .map(Neo4jPredicate::toPredicate)
 
     override fun findAllByLabelContaining(part: String, pageable: Pageable) =
         neo4jPredicateRepository
-            .findAllByLabelMatchesRegex("(?i).*${escapeRegexString(part)}.*", pageable) // TODO: See declaration
+            .findAllByLabelMatchesRegex(part.toSearchString(), pageable) // TODO: See declaration
             .content
             .map(Neo4jPredicate::toPredicate)
 
@@ -71,4 +74,8 @@ class Neo4jPredicateService(
 
         return neo4jPredicateRepository.save(found).toPredicate()
     }
+
+    private fun String.toSearchString() = "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"
+
+    private fun String.toExactSearchString() = "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"
 }

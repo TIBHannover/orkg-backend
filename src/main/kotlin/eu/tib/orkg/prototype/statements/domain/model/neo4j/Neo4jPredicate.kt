@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.escapeLiterals
 import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
@@ -15,6 +16,7 @@ import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
 import org.neo4j.ogm.annotation.NodeEntity
 import org.neo4j.ogm.annotation.Property
+import org.neo4j.ogm.annotation.Relationship
 import org.neo4j.ogm.annotation.Required
 import org.neo4j.ogm.annotation.typeconversion.Convert
 
@@ -35,12 +37,18 @@ data class Neo4jPredicate(
 
     @Property("created_by")
     @Convert(UUIDGraphAttributeConverter::class)
-    var createdBy: UUID = UUID(0, 0)
+    var createdBy: UUID = UUID(0, 0),
+
+    @Relationship(type = "RELATED", direction = Relationship.OUTGOING)
+    @JsonIgnore
+    var subjectOf: MutableSet<Neo4jStatement> = mutableSetOf()
 ) : Neo4jThing, AuditableEntity() {
 
     fun toPredicate(): Predicate {
         val pred = Predicate(predicateId, label!!, createdAt!!, createdBy = createdBy)
         pred.rdf = toRdfModel()
+        if (subjectOf.isNotEmpty())
+            pred.description = subjectOf.firstOrNull { it.predicateId?.value == "description" }?.`object`?.label
         return pred
     }
 

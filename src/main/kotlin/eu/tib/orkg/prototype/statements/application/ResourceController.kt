@@ -119,6 +119,25 @@ class ResourceController(
         return ok(service.updatePaperObservatory(updatedRequest, userId))
     }
 
+    @PostMapping("/observatory/{observatoryId}/organization/{organizationId}/researchProblem")
+    fun addObservatoryResearchProblem(
+        @PathVariable observatoryId: UUID,
+        @PathVariable organizationId: UUID,
+        @RequestBody resource: CreateResourceRequest,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<Any> {
+        if (resource.id != null && service.findById(resource.id).isPresent)
+            return badRequest().body("Resource id <${resource.id}> already exists!")
+        val userId = authenticatedUserId()
+        val id = service.create(userId, resource, observatoryId, resource.extractionMethod, organizationId).id
+        val location = uriComponentsBuilder
+            .path("api/resources/{id}")
+            .buildAndExpand(id)
+            .toUri()
+
+        return created(location).body(service.findById(id).get())
+    }
+
     @GetMapping("{id}/contributors")
     fun findContributorsById(@PathVariable id: ResourceId): Iterable<ResourceContributors> {
         return service.findContributorsByResourceId(id)

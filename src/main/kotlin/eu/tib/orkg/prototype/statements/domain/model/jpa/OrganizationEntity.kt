@@ -12,20 +12,33 @@ import javax.validation.constraints.NotBlank
 
 @Entity
 @Table(name = "organizations")
-class OrganizationEntity {
-        @Id
-        var id: UUID? = null
+class OrganizationEntity() {
 
-        @NotBlank
-        var name: String? = null
-
-        @Column(name = "created_by")
-        var createdBy: UUID? = null
-
-        var url: String? = null
-
-        @ManyToMany(mappedBy = "organizations", fetch = FetchType.LAZY)
-        var observatories: Set<ObservatoryEntity>? = emptySet()
-
-        fun toOrganization() = Organization(id, name, null, createdBy, url, observatories)
+    constructor(id: UUID) : this() {
+        this.id = id
     }
+
+    @Id
+    var id: UUID? = null
+
+    @NotBlank
+    var name: String? = null
+
+    @Column(name = "created_by")
+    var createdBy: UUID? = null
+
+    var url: String? = null
+
+    @ManyToMany(mappedBy = "organizations", fetch = FetchType.LAZY)
+    var observatories: Set<ObservatoryEntity>? = emptySet()
+
+    fun toOrganization() =
+        Organization(
+            id = id,
+            name = name,
+            logo = null,
+            createdBy = createdBy,
+            homepage = url,
+            observatoryIds = observatories!!.mapNotNull(ObservatoryEntity::id).toSet()
+        )
+}

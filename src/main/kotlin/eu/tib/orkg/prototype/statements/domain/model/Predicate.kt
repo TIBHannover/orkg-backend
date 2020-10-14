@@ -18,4 +18,7 @@ data class Predicate(
 ) : Thing {
     @JsonIgnore
     var rdf: Model? = null
+
+    @JsonProperty("description")
+    var description: String? = null
 }

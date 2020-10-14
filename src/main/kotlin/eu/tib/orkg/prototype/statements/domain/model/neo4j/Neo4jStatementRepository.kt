@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import java.util.Optional
@@ -39,6 +40,21 @@ interface Neo4jStatementRepository :
     fun findAllBySubjectAndPredicate(
         subjectId: String,
         predicateId: PredicateId,
+        pagination: Pageable
+    ): Slice<Neo4jStatement>
+
+    @Query("MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Literal`) WHERE rel.`predicate_id`={0} AND obj.`label`={1} RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at")
+    fun findAllByPredicateIdAndLabel(
+        predicateId: PredicateId,
+        literal: String,
+        pagination: Pageable
+    ): Slice<Neo4jStatement>
+
+    @Query("MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Literal`) WHERE {2} IN labels(sub) AND rel.`predicate_id`={0} AND obj.`label`={1} RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at")
+    fun findAllByPredicateIdAndLabelAndSubjectClass(
+        predicateId: PredicateId,
+        literal: String,
+        subjectClass: ClassId,
         pagination: Pageable
     ): Slice<Neo4jStatement>
 

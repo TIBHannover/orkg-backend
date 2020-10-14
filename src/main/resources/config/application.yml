@@ -13,6 +13,12 @@ orkg:
   storage:
     images:
       dir: "${user.dir}/images"
+  datacite:
+    username: ""
+    password: ""
+    doiPrefix: "10.7484"
+    url: "https://api.test.datacite.org/dois"
+    publish: "draft"
 ---
 spring:
   profiles: development

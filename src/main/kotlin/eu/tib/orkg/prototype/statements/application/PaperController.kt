@@ -1,7 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.auth.persistence.UserEntity
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -15,7 +14,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import java.util.LinkedList
-import java.util.Optional
 import java.util.Queue
 import java.util.UUID
 import org.springframework.http.HttpStatus
@@ -54,7 +52,7 @@ class PaperController(
     private val predicateService: PredicateService,
     private val statementService: StatementService,
     private val classService: ClassService,
-    private val userService: UserService
+    private val contributorService: ContributorService
 ) : BaseController() {
 
     @PostMapping("/")
@@ -81,13 +79,9 @@ class PaperController(
 
         val contributionClass = getOrCreateClass(ID_CONTRIBUTION_CLASS, userId)
 
-        val user: Optional<UserEntity> = userService.findById(userId)
-        var organizationId = UUID(0, 0)
-        var observatoryId = UUID(0, 0)
-        if (!user.isEmpty) {
-            observatoryId = user.get().observatoryId ?: UUID(0, 0)
-            organizationId = user.get().organizationId ?: UUID(0, 0)
-        }
+        val user = contributorService.findByIdOrElseUnknown(userId)
+        val organizationId = user.organizationId
+        val observatoryId = user.observatoryId
 
         val predicates: HashMap<String, PredicateId> = HashMap()
         if (request.predicates != null) {
@@ -112,15 +106,17 @@ class PaperController(
         if (request.paper.contributions != null) {
             val contributionClassSet = setOf(contributionClass)
             request.paper.contributions.forEach {
+                // Create contribution resource whether it has data or not
+                val contributionId = resourceService.create(
+                    userId,
+                    CreateResourceRequest(null, it.name, contributionClassSet),
+                    observatoryId,
+                    request.paper.extractionMethod,
+                    organizationId
+                ).id!!
+                statementService.create(userId, paperId.value, hasContributionPredicate, contributionId.value)
+                // Check if the contribution has more statements to add
                 if (it.values != null && it.values.count() > 0) {
-                    val contributionId = resourceService.create(
-                        userId,
-                        CreateResourceRequest(null, it.name, contributionClassSet),
-                        observatoryId,
-                        request.paper.extractionMethod,
-                        organizationId
-                    ).id!!
-                    statementService.create(userId, paperId.value, hasContributionPredicate, contributionId.value)
                     val resourceQueue: Queue<TempResource> = LinkedList()
                     processContributionData(contributionId, it.values, tempResources, predicates, resourceQueue, userId, observatoryId = observatoryId, extractionMethod = request.paper.extractionMethod, organizationId = organizationId)
                 }
@@ -158,13 +154,9 @@ class PaperController(
         val researchFieldPredicate = predicateService.findById(PredicateId(ID_RESEARCH_FIELD_PREDICATE)).get().id!!
         val urlPredicate = predicateService.findById(PredicateId(ID_URL_PREDICATE)).get().id!!
 
-        val user: Optional<UserEntity> = userService.findById(userId)
-        var organizationId = UUID(0, 0)
-        var observatoryId = UUID(0, 0)
-        if (!user.isEmpty) {
-            organizationId = user.get().organizationId ?: UUID(0, 0)
-            observatoryId = user.get().observatoryId ?: UUID(0, 0)
-        }
+        val user = contributorService.findByIdOrElseUnknown(userId)
+        val organizationId = user.organizationId
+        val observatoryId = user.observatoryId
 
         // paper title
         val paperObj = resourceService.create(

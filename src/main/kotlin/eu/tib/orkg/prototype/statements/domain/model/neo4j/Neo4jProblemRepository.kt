@@ -12,6 +12,22 @@ interface Neo4jProblemRepository :
                     RETURN field, COUNT(paper) AS freq
                     ORDER BY freq DESC""")
     fun getResearchFieldsPerProblem(problemId: ResourceId): Iterable<FieldPerProblem>
+
+    @Query("""MATCH (problem:Problem)<-[:RELATED {predicate_id:'P32'}]-(cont:Contribution)
+                    WITH problem, cont, datetime() AS now
+                    WHERE datetime(cont.created_at).year = now.year AND datetime(cont.created_at).month <= now.month AND datetime(cont.created_at).month > now.month - {0}
+                    WITH problem, COUNT(cont) AS cnt
+                    RETURN problem
+                    ORDER BY cnt  DESC
+                    LIMIT 5""")
+    fun getTopResearchProblemsGoingBack(months: Int): Iterable<Neo4jResource>
+
+    @Query("""MATCH (problem:Problem)<-[:RELATED {predicate_id:'P32'}]-(cont:Contribution)
+                    WITH problem, COUNT(cont) AS cnt
+                    RETURN problem
+                    ORDER BY cnt DESC
+                    LIMIT 5""")
+    fun getTopResearchProblemsAllTime(): Iterable<Neo4jResource>
 }
 
 @QueryResult

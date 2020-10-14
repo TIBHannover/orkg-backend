@@ -6,6 +6,9 @@ import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteral
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteralIdGenerator
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteralRepository
+import eu.tib.orkg.prototype.util.EscapedRegex
+import eu.tib.orkg.prototype.util.SanitizedWhitespace
+import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
 import java.util.Optional
 import java.util.UUID
 import org.springframework.stereotype.Service
@@ -34,11 +37,11 @@ class Neo4jLiteralService(
             .map(Neo4jLiteral::toLiteral)
 
     override fun findAllByLabel(label: String) =
-        neo4jLiteralRepository.findAllByLabelMatchesRegex("(?i)^${escapeRegexString(label)}$") // TODO: See declaration
+        neo4jLiteralRepository.findAllByLabelMatchesRegex(label.toExactSearchString()) // TODO: See declaration
             .map(Neo4jLiteral::toLiteral)
 
     override fun findAllByLabelContaining(part: String) =
-        neo4jLiteralRepository.findAllByLabelMatchesRegex("(?i).*${escapeRegexString(part)}.*") // TODO: See declaration
+        neo4jLiteralRepository.findAllByLabelMatchesRegex(part.toSearchString()) // TODO: See declaration
             .map(Neo4jLiteral::toLiteral)
 
     override fun update(literal: Literal): Literal {
@@ -51,4 +54,8 @@ class Neo4jLiteralService(
 
         return neo4jLiteralRepository.save(found).toLiteral()
     }
+
+    private fun String.toSearchString() = "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"
+
+    private fun String.toExactSearchString() = "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"
 }

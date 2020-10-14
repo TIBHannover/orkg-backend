@@ -1,12 +1,17 @@
 package eu.tib.orkg.prototype.statements.application
-import eu.tib.orkg.prototype.auth.rest.UserController
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.contributions.domain.model.Contributor
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
+import eu.tib.orkg.prototype.statements.infrastructure.neo4j.Neo4jStatsService
 import java.util.UUID
+import javax.validation.Valid
+import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Size
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
@@ -14,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
@@ -22,16 +28,17 @@ import org.springframework.web.util.UriComponentsBuilder
 @CrossOrigin(origins = ["*"])
 class ObservatoryController(
     private val service: ObservatoryService,
-    private val userService: UserService,
     private val resourceService: ResourceService,
-    private val organizationService: OrganizationService
+    private val organizationService: OrganizationService,
+    private val contributorService: ContributorService,
+    private val neo4jStatsService: Neo4jStatsService
 ) {
 
     @PostMapping("/")
     fun addObservatory(@RequestBody observatory: CreateObservatoryRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         return if (service.findByName(observatory.observatoryName).isEmpty) {
-            var organizationEntity = organizationService.findById(observatory.organizationId)
-            val id = service.create(observatory.observatoryName, observatory.description, organizationEntity.get()).id
+            val organizationEntity = organizationService.findById(observatory.organizationId)
+            val id = service.create(observatory.observatoryName, observatory.description, organizationEntity.get(), observatory.researchField).id
             val location = uriComponentsBuilder
                 .path("api/observatories/{id}")
                 .buildAndExpand(id)
@@ -47,7 +54,7 @@ class ObservatoryController(
     fun findById(@PathVariable id: UUID): Observatory =
         service
             .findById(id)
-            .orElseThrow { ObservatoryNotFound() }
+            .orElseThrow { ObservatoryNotFound(id) }
 
     @GetMapping("/")
     fun findObservatories(): List<Observatory> {
@@ -70,15 +77,52 @@ class ObservatoryController(
     }
 
     @GetMapping("{id}/users")
-    fun findUsersByObservatoryId(@PathVariable id: UUID): Iterable<UserController.UserDetails> {
-        return userService.findUsersByObservatoryId(id)
-            .map(UserController::UserDetails)
+    fun findUsersByObservatoryId(@PathVariable id: UUID): Iterable<Contributor> =
+        contributorService.findUsersByObservatoryId(id)
+
+    @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
+    fun updateObservatoryName(@PathVariable id: UUID, @RequestBody @Valid name: UpdateRequest): Observatory {
+        service
+            .findById(id)
+            .orElseThrow { ObservatoryNotFound(id) }
+
+        return service.changeName(id, name.value)
+    }
+
+    @RequestMapping("{id}/description", method = [RequestMethod.POST, RequestMethod.PUT])
+    fun updateObservatoryDescription(@PathVariable id: UUID, @RequestBody @Valid description: UpdateRequest): Observatory {
+        service
+            .findById(id)
+            .orElseThrow { ObservatoryNotFound(id) }
+
+        return service.changeDescription(id, description.value)
+    }
+
+    @RequestMapping("{id}/research_field", method = [RequestMethod.POST, RequestMethod.PUT])
+    fun updateObservatoryResearchField(@PathVariable id: UUID, @RequestBody @Valid researchField: UpdateRequest): Observatory {
+        service
+            .findById(id)
+            .orElseThrow { ObservatoryNotFound(id) }
+
+        return service.changeResearchField(id, researchField.value)
+    }
+
+    @GetMapping("stats/observatories")
+    fun findObservatoriesWithStats(): List<ObservatoryResources> {
+        return neo4jStatsService.getObservatoriesPapersAndComparisonsCount()
     }
 
     data class CreateObservatoryRequest(
         val observatoryName: String,
         val organizationId: UUID,
-        val description: String
+        val description: String,
+        val researchField: String
+    )
+
+    data class UpdateRequest(
+        @field:NotBlank
+        @field:Size(min = 1)
+        val value: String
     )
 
     data class ErrorMessage(

@@ -231,7 +231,27 @@ Resources can be looked up by label by providing a search fragment.
 
 operation::resource-controller-test-lookup[snippets='request-parameters,curl-request,http-response']
 
-: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>
+Note: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>
+
+
+[[resources-delete]]
+=== Delete a resource
+
+A `DELETE` request with the id of the resource to delete.
+
+Note: This request is only acceptable if you have sufficient permissions.
+
+a successful request return a No-Content HTTP status code.
+
+operation::resource-controller-test-delete-resource-success[snippets='request-parameters,curl-request,http-response']
+
+If the resource doesn't exist, the API returns a 404 status code.
+
+operation::resource-controller-test-delete-resource-not-found[snippets='request-parameters,curl-request,http-response']
+
+To safely delete a resource, the resource shouldn't have any statements related to it. In this case a Forbidden HTTP status is returned.
+
+operation::resource-controller-test-delete-resource-forbidden[snippets='request-parameters,curl-request,http-response']
 
 [[predicates]]
 == Predicates

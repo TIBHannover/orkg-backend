@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import java.net.URI
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -15,6 +16,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation
 import org.springframework.security.test.context.support.WithUserDetails
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -67,18 +69,42 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    fun fetchByURI() {
+        // Arrange
+        service.create(CreateClassRequest(ClassId("dummy"), "dummy label", URI.create("http://example.org/exists")))
+
+        // Act and Assert
+        mockMvc
+            .perform(getRequestTo("/api/classes/?uri=http://example.org/exists"))
+            .andExpect(status().isOk)
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(jsonPath("\$.id").value("dummy"))
+            .andExpect(jsonPath("\$.label").value("dummy label"))
+            .andExpect(jsonPath("\$.uri").value("http://example.org/exists"))
+            .andDo(
+                document(
+                    snippet,
+                    classResponseFields()
+                )
+            )
+    }
+
+    @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun add() {
-        val `class` = mapOf("label" to "foo")
+        val `class` = mapOf("label" to "foo", "uri" to "http://example.org/bar")
 
         mockMvc
             .perform(postRequestWithBody("/api/classes/", `class`))
             .andExpect(status().isCreated)
+            .andExpect(jsonPath("$.label").value("foo"))
+            .andExpect(jsonPath("$.uri").value("http://example.org/bar"))
             .andDo(
                 document(
                     snippet,
                     requestFields(
-                        fieldWithPath("label").description("The class label")
+                        fieldWithPath("label").description("The class label"),
+                        fieldWithPath("uri").description("The class URI")
                     ),
                     createdResponseHeaders(),
                     classResponseFields()
@@ -94,6 +120,54 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
         mockMvc
             .perform(postRequestWithBody("/api/classes/", duplicateClass))
+            .andExpect(status().isBadRequest)
+            .andDo(
+                document(
+                    snippet,
+                    requestFields(
+                        fieldWithPath("id").description("The class id"),
+                        fieldWithPath("label").description("The class label")
+                    )
+                )
+            )
+    }
+
+    @Test
+    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    fun addExistingURI() {
+        service.create(
+            CreateClassRequest(
+                id = ClassId("some-id"),
+                label = "foo",
+                uri = URI.create("http://example.org/in-use")
+            )
+        )
+        val duplicateClass = mapOf(
+            "label" to "bar",
+            "uri" to "http://example.org/in-use"
+        )
+
+        mockMvc
+            .perform(postRequestWithBody("/api/classes/", duplicateClass))
+            .andExpect(status().isBadRequest)
+            .andDo(
+                document(
+                    snippet,
+                    requestFields(
+                        fieldWithPath("label").description("The class label"),
+                        fieldWithPath("uri").description("The URI of the class")
+                    )
+                )
+            )
+    }
+
+    @Test
+    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    fun addReservedId() {
+        val reservedClass = mapOf("label" to "bar", "id" to "Resource")
+
+        mockMvc
+            .perform(postRequestWithBody("/api/classes/", reservedClass))
             .andExpect(status().isBadRequest)
             .andDo(
                 document(
@@ -166,20 +240,24 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun edit() {
-        val `class` = service.create("foo").id!!
+        val `class` = service.create(CreateClassRequest(id = null, label = "foo", uri = URI("http://example.org/foo"))).id!!
 
         val newLabel = "bar"
-        val resource = mapOf("label" to newLabel)
+        // Set properties that are not supposed to be updated to "null" to prevent regressions.
+        // Make sure to add an assertion for those as well.
+        val resource = mapOf("label" to newLabel, "uri" to null)
 
         mockMvc
             .perform(putRequestWithBody("/api/classes/$`class`", resource))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.label").value(newLabel))
+            .andExpect(jsonPath("$.uri").value("http://example.org/foo")) // old value
             .andDo(
                 document(
                     snippet,
                     requestFields(
-                        fieldWithPath("label").description("The updated class label")
+                        fieldWithPath("label").description("The updated class label"),
+                        fieldWithPath("uri").ignored()
                     ),
                     classResponseFields()
                 )

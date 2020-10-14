@@ -3,8 +3,9 @@ package eu.tib.orkg.prototype.statements.domain.model
 import eu.tib.orkg.prototype.statements.application.CreateClassRequest
 import java.util.Optional
 import java.util.UUID
+import org.springframework.data.domain.Pageable
 
-interface ClassService {
+interface ClassService : URIService<Class> {
     /**
      * Create a new class with a given label.
      *
@@ -30,9 +31,14 @@ interface ClassService {
     fun create(userId: UUID, request: CreateClassRequest): Class
 
     /**
-     * Find all resources.
+     * Find all classes.
      */
     fun findAll(): Iterable<Class>
+
+    /**
+     * Find all classes (paginated).
+     */
+    fun findAll(pageable: Pageable): Iterable<Class>
 
     /**
      * Find a class by its ID.
@@ -45,9 +51,19 @@ interface ClassService {
     fun findAllByLabel(label: String): Iterable<Class>
 
     /**
+     * Find all classes matching a label (paginated).
+     */
+    fun findAllByLabel(pageable: Pageable, label: String): Iterable<Class>
+
+    /**
      * Find all resources matching a label partially.
      */
     fun findAllByLabelContaining(part: String): Iterable<Class>
+
+    /**
+     * Find all classes matching a label partially (paginated).
+     */
+    fun findAllByLabelContaining(pageable: Pageable, part: String): Iterable<Class>
 
     /**
      * Update a class.

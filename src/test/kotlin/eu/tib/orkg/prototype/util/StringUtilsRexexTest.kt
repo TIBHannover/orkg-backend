@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.statements.infrastructure.neo4j
+package eu.tib.orkg.prototype.util
 
 import java.util.stream.Stream
 import org.assertj.core.api.Assertions.assertThat
@@ -11,21 +11,27 @@ import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.provider.ArgumentsSource
 
 @DisplayName("Regex utils")
-class RegexUtilsTest {
+class StringUtilsRexexTest {
 
     @ParameterizedTest(name = """{0} operator ("{1}") is correctly escaped""")
     @ArgumentsSource(SpecialCharsArgumentsProvider::class)
     @DisplayName("should escape special chars")
     @Suppress("UNUSED_PARAMETER") // because "name" is unused in the test, but used for improving the description
     fun shouldEscapeSpecialChar(name: String, input: String, expected: String) {
-        assertThat(escapeRegexString(input)).isEqualTo(expected)
+        assertThat(EscapedRegex(input).toString()).isEqualTo(expected)
     }
 
     @Test
     @DisplayName("shouldn't escape any char")
     fun shouldNotEscapeAnything() {
-        assertThat(escapeRegexString("http://clean string & needs_nothing"))
+        assertThat(EscapedRegex("http://clean string & needs_nothing").toString())
             .isEqualTo("http://clean string & needs_nothing")
+    }
+
+    @Test
+    @DisplayName("should compose with other helpers")
+    fun shouldComposeWithOtherHelpers() {
+        assertThat(EscapedRegex(EscapedRegex("foo")).toString()).isEqualTo("foo")
     }
 
     /**

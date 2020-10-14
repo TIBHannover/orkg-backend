@@ -33,6 +33,11 @@ class ClassController(private val service: ClassService, private val resourceSer
             .findById(id)
             .orElseThrow { ClassNotFound() }
 
+    @GetMapping("/", params = ["uri"])
+    fun findByURI(@RequestParam uri: URI): Class = service
+            .findByURI(uri)
+            .orElseThrow { ClassNotFound() }
+
     @GetMapping("/{id}/resources/")
     fun findResourcesWithClass(
         @PathVariable id: ClassId,
@@ -63,20 +68,33 @@ class ClassController(private val service: ClassService, private val resourceSer
     @GetMapping("/")
     fun findByLabel(
         @RequestParam("q", required = false) searchString: String?,
-        @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean
-    ) =
-        if (searchString == null)
-            service.findAll()
-        else if (exactMatch)
-            service.findAllByLabel(searchString)
-        else
-            service.findAllByLabelContaining(searchString)
+        @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
+        @RequestParam("page", required = false) page: Int?,
+        @RequestParam("items", required = false) items: Int?,
+        @RequestParam("sortBy", required = false) sortBy: String?,
+        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+    ): Iterable<Class> {
+        val pagination = createPageable(page, items, sortBy, desc)
+        return when {
+            searchString == null -> service.findAll(pagination)
+            exactMatch -> service.findAllByLabel(pagination, searchString)
+            else -> service.findAllByLabelContaining(pagination, searchString)
+        }
+    }
 
     @PostMapping("/")
     @ResponseStatus(CREATED)
     fun add(@RequestBody `class`: CreateClassRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         if (`class`.id != null && service.findById(`class`.id).isPresent)
-            return ResponseEntity.badRequest().body("Class id <${`class`.id}> already exists!")
+            throw ClassAlreadyExists(`class`.id.value)
+        if (!`class`.hasValidName())
+            throw ClassNotAllowed(`class`.id!!.value)
+        if (`class`.uri != null) {
+            val found = service.findByURI(`class`.uri)
+            if (found.isPresent)
+                throw DuplicateURI(`class`.uri, found.get().id.toString())
+        }
+
         val userId = authenticatedUserId()
         val id = service.create(userId, `class`).id
         val location = uriComponentsBuilder
@@ -97,7 +115,10 @@ class ClassController(private val service: ClassService, private val resourceSer
         if (!found.isPresent)
             return ResponseEntity.notFound().build()
 
-        val updatedClass = `class`.copy(id = found.get().id)
+        var updatedClass = `class`.copy(id = found.get().id)
+
+        if (updatedClass.label != `class`.label)
+            updatedClass = updatedClass.copy(label = `class`.label)
 
         return ResponseEntity.ok(service.update(updatedClass))
     }
@@ -107,4 +128,12 @@ data class CreateClassRequest(
     val id: ClassId?,
     val label: String,
     val uri: URI?
-)
+) {
+    /*
+    Checks if the class has a valid class Id (class name)
+    a valid class name is either null (auto assigned by the system)
+    or a name that is not one of the reserved ones.
+     */
+    fun hasValidName(): Boolean =
+        this.id == null || this.id.value !in listOf("Predicate", "Resource", "Class", "Literal", "Thing")
+}

@@ -19,7 +19,7 @@ class MockUserDetailsService : UserDetailsService {
         return User
             .withUsername(userId)
             .password("invalid, not a hash")
-            .authorities(emptySet())
+            .authorities("ROLE_USER")
             .build()
     }
 }

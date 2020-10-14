@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
@@ -160,6 +161,33 @@ class Neo4jStatementService :
     override fun countStatements(paperId: String): Int =
         statementRepository.countByIdRecursive(paperId)
 
+    override fun findAllByPredicateAndLabel(
+        predicateId: PredicateId,
+        literal: String,
+        pagination: Pageable
+    ): Iterable<GeneralStatement> =
+        statementRepository.findAllByPredicateIdAndLabel(predicateId, literal, pagination)
+            .content
+            .map { toStatement(it) }
+
+    override fun findAllByPredicateAndLabelAndSubjectClass(
+        predicateId: PredicateId,
+        literal: String,
+        subjectClass: ClassId,
+        pagination: Pageable
+    ): Iterable<GeneralStatement> =
+        statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(predicateId, literal, subjectClass, pagination)
+            .content
+            .map { toStatement(it) }
+
+    private fun refreshObject(thing: Neo4jThing): Thing {
+        return when (thing) {
+            is Neo4jResource -> resourceService.findById(thing.resourceId).get()
+            is Neo4jLiteral -> literalService.findById(thing.literalId).get()
+            else -> thing.toThing()
+        }
+    }
+
     override fun fetchAsBundle(thingId: String): Bundle =
         traceStatementsPerHop(thingId, statementRepository.fetchAsBundle(thingId))
 
@@ -184,14 +212,6 @@ class Neo4jStatementService :
             bundle.addStatement(toStatement(it), resourceDepth[it.subject!!.thingId!!]!!)
         }
         return bundle
-    }
-
-    private fun refreshObject(thing: Neo4jThing): Thing {
-        return when (thing) {
-            is Neo4jResource -> resourceService.findById(thing.resourceId).get()
-            is Neo4jLiteral -> literalService.findById(thing.literalId).get()
-            else -> thing.toThing()
-        }
     }
 
     private fun toStatement(statement: Neo4jStatement) =

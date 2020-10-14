@@ -85,6 +85,17 @@ interface StatementService {
     fun countStatements(paperId: String): Int
 
     /**
+     * Finds all statements by predicate and the label value of the object
+     */
+    fun findAllByPredicateAndLabel(predicateId: PredicateId, literal: String, pagination: Pageable): Iterable<GeneralStatement>
+
+    /**
+     * Finds all statements by predicate and the label value of the object
+     * With a filter on the class of the subject
+     */
+    fun findAllByPredicateAndLabelAndSubjectClass(predicateId: PredicateId, literal: String, subjectClass: ClassId, pagination: Pageable): Iterable<GeneralStatement>
+
+    /**
      * Get a bundle of statements
      * which represents the entire sub-graph starting from a [Thing]
      */

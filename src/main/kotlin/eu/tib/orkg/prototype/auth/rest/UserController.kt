@@ -116,6 +116,8 @@ class UserController(
 
         @JsonProperty("observatory_id")
         val observatoryId = user.observatoryId
+
+        val roles = user.roles
     }
 
     data class UpdatedUserResponse(

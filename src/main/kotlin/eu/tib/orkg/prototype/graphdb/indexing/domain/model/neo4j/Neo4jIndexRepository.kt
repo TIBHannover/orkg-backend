@@ -39,6 +39,14 @@ data class PropertyIndex(val label: String, val property: String) :
     override fun toCypherQuery() = """CREATE INDEX ON :$label($property);"""
 }
 
+data class FullTextIndex(val label: String, val property: String) :
+    Neo4jIndex {
+    override fun toCypherQuery(): String {
+        val indexName = "full_${label}_$property".toLowerCase()
+        return """CALL db.index.fulltext.createNodeIndex("$indexName", ["$label"], ["$property"])"""
+    }
+}
+
 @QueryResult
 data class Neo4jIndexInfo(
     val label: String,

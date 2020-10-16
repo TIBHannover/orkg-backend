@@ -5,10 +5,8 @@ import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.domain.EntityScan
-import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.Ordered.HIGHEST_PRECEDENCE
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
@@ -139,11 +137,6 @@ class RestAuthenticationEntryPoint : AuthenticationEntryPoint {
 /**
  * Custom CORS configuration.
  *
- * According to the documentation, providing a [CorsConfigurationSource] bean should be enough.
- * It does create the correct configuration but gets configured *after* Spring Security *OAuth2*.
- * This might be a bug or by design; however, it is not in line with the documentation.
- * Spring OAuth2 is deprecated upstream with a newer solution that might fix the problem.
- *
  * See also the documentation on CORS for [Spring MVC](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/web.html#mvc-cors)
  * and [Spring Security](https://docs.spring.io/spring-security/site/docs/current/reference/html5/#cors).
  */
@@ -158,15 +151,6 @@ class CorsConfig {
                     allowedMethods = listOf("OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE")
                 }
             registerCorsConfiguration("/**", configuration)
-        }
-    }
-
-    // TODO: Test again after migrating to newer OAuth solution (and revert back to simple CorsConfigurationSource).
-    @Bean
-    fun customCorsFilter(): FilterRegistrationBean<CorsFilter> {
-        val filter = CorsFilter(corsConfigurationSource())
-        return FilterRegistrationBean(filter).apply {
-            order = HIGHEST_PRECEDENCE
         }
     }
 }

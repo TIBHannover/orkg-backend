@@ -1,8 +1,10 @@
 package eu.tib.orkg.prototype.auth.rest
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.rest.AuthController.RegisterUserRequest
+import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.auth.service.UserService
 import java.util.Optional
 import org.junit.jupiter.api.BeforeEach
@@ -19,10 +21,11 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
+import org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup
 import org.springframework.web.context.WebApplicationContext
 
 @WebMvcTest(controllers = [AuthController::class])
+@AuthorizationServerUnitTestWorkaround
 class AuthControllerTest {
 
     private lateinit var mockMvc: MockMvc
@@ -36,9 +39,14 @@ class AuthControllerTest {
     @MockBean
     private lateinit var userService: UserService
 
+    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
+    @MockBean
+    private lateinit var userRepository: UserRepository
+
     @BeforeEach
     fun setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context).build()
+        mockMvc = webAppContextSetup(context)
+            .build()
     }
 
     @Test

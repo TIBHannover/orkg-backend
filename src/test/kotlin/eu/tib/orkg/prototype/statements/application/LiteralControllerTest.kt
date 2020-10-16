@@ -2,6 +2,8 @@ package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
+import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
+import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.statements.application.LiteralController.LiteralCreateRequest
 import eu.tib.orkg.prototype.statements.application.LiteralController.LiteralUpdateRequest
 import eu.tib.orkg.prototype.statements.domain.model.Literal
@@ -28,6 +30,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
 @WebMvcTest(controllers = [LiteralController::class])
+@AuthorizationServerUnitTestWorkaround
 @DisplayName("Given a Literal controller")
 class LiteralControllerTest {
 
@@ -41,6 +44,10 @@ class LiteralControllerTest {
 
     @MockkBean
     private lateinit var literalService: LiteralService
+
+    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
+    @MockkBean
+    private lateinit var userRepository: UserRepository
 
     @BeforeEach
     fun setup() {

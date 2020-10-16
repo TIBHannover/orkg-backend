@@ -38,4 +38,3 @@ abstract class CorsBaseTest {
             "OPTIONS,GET,HEAD,POST,PUT,DELETE"
         )
 }
-

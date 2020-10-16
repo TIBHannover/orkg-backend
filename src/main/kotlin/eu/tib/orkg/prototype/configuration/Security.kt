@@ -148,10 +148,9 @@ class RestAuthenticationEntryPoint : AuthenticationEntryPoint {
  */
 @Configuration
 class CorsConfig {
-    // TODO: Test again after migrating to newer OAuth solution (and revert back to simple CorsConfigurationSource).
     @Bean
-    fun customCorsFilter(): FilterRegistrationBean<CorsFilter> {
-        val source = UrlBasedCorsConfigurationSource().apply {
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        return UrlBasedCorsConfigurationSource().apply {
             val configuration = CorsConfiguration()
                 .applyPermitDefaultValues()
                 .apply {
@@ -159,8 +158,13 @@ class CorsConfig {
                 }
             registerCorsConfiguration("/**", configuration)
         }
-        return FilterRegistrationBean(CorsFilter(source)).apply {
-            // Adjust the order of the filter. This will load the filter before everything else.
+    }
+
+    // TODO: Test again after migrating to newer OAuth solution (and revert back to simple CorsConfigurationSource).
+    @Bean
+    fun customCorsFilter(): FilterRegistrationBean<CorsFilter> {
+        val filter = CorsFilter(corsConfigurationSource())
+        return FilterRegistrationBean(filter).apply {
             order = HIGHEST_PRECEDENCE
         }
     }

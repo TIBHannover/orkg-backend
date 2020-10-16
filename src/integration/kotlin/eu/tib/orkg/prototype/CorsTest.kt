@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype
 
 import java.util.stream.Stream
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -14,19 +13,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest
 class CorsTest : CorsBaseTest() {
-    @Test
-    fun preflightRequestToApiWorksFromAnyOrigin() {
-        mockMvc
-            .perform(
-                options("/api/resources/")
-                    .header("Origin", "https://example.com")
-                    .header("Access-Control-Request-Method", "POST")
-            )
-            .andExpect(status().isOk)
-            .andExpect(allOriginsAllowed())
-            .andExpect(allAllowedMethodsPresent())
-    }
-
     @DisplayName("CORS Pre-flight requests should pass with `200 OK`")
     @ParameterizedTest(name = "to endpoint {0} requesting method {1}")
     @ArgumentsSource(RequestArgumentsProvider::class)
@@ -45,6 +31,8 @@ class CorsTest : CorsBaseTest() {
     internal class RequestArgumentsProvider : ArgumentsProvider {
         override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> =
             Stream.of(
+                // API endpoints
+                Arguments.of("/api/resources/", "POST"),
                 // AuthorizationServer endpoints
                 Arguments.of("/oauth/token", "POST"),
                 Arguments.of("/oauth/token_key", "POST"),

@@ -27,6 +27,7 @@ However, the following tools are recommended:
 ** https://www.jetbrains.com/toolbox-app/[Toolbox App] for installing JetBrains products and managing IDE versions
 * http://sdkman.io/[SDKMAN] for managing JDKs
 * https://www.docker.com/[Docker] and https://docs.docker.com/compose/[Docker Compose] for managing (development) containers
+* https://pre-commit.com/[pre-commit] to never forget running automatic tasks before committing (optional)
 * https://github.com/zaquestion/lab[lab], if you want to interact with GitLab via the command-line (optional)
 
 Developers should also be familiar with https://gradle.org/[Gradle], our build management tool, as well as https://asciidoctor.org/[Asciidoctor], our documentation tool.
@@ -37,6 +38,23 @@ The `gradlew` wrapper script can be used to call it from the command-line.
 (IntelliJ IDEA will automatically pick it up.)
 
 Asciidoctor is installed via a Gradle plug-in and can be run from Gradle by executing the `asciidoctor` task.
+
+=== Setting up pre-commit
+
+If you use `pre-commit`, you need to run the following command to install the hooks:
+
+    pre-commit install
+
+To test if the installation succeeded, run:
+
+   pre-commit run --all-files
+
+This will download all required hooks on the first run, which can take a couple of minutes, so please be patient.
+(Subsequent calls will be faster due to caching.)
+If everything worked, the hooks will be triggered automatically from now on.
+
+To disable the hooks, run `pre-commit uninstall`.
+For further information on usage and configuration check the https://pre-commit.com/[homepage].
 
 == Testing
 

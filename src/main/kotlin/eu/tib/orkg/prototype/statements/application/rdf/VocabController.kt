@@ -15,7 +15,6 @@ import org.eclipse.rdf4j.rio.Rio
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestHeader
@@ -25,7 +24,6 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/vocab")
-@CrossOrigin(origins = ["*"])
 class VocabController(
     private val resourceService: ResourceService,
     private val predicateService: PredicateService,

@@ -1,12 +1,8 @@
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "eu.tib"
 version = "0.0.1-SNAPSHOT"
-
-val kotlinVersion = plugins.getPlugin(KotlinPluginWrapper::class.java)
-    .kotlinPluginVersion
 
 val neo4jVersion = "3.5.+" // should match version in Dockerfile
 val springDataNeo4jVersion = "5.3.4"
@@ -17,11 +13,12 @@ val containerRegistryLocation = "registry.gitlab.com/tibhannover/orkg/orkg-backe
 val dockerImageTag: String? by project
 
 plugins {
+    val kotlinVersion = "1.4.10"
+
     jacoco
-    kotlin("jvm") version "1.4.10"
-    kotlin("plugin.spring") version "1.4.10"
-    // Add no-arg annotations to @Entity, @Embeddable and @MappedSuperclass:
-    kotlin("plugin.jpa") version "1.4.10"
+    kotlin("jvm") version kotlinVersion
+    kotlin("plugin.spring") version kotlinVersion
+    kotlin("plugin.jpa") version kotlinVersion
     id("org.jetbrains.dokka") version "0.10.1"
     id("org.springframework.boot") version "2.3.4.RELEASE"
     id("com.coditory.integration-test") version "1.1.8"
@@ -45,8 +42,9 @@ dependencies {
     //
     // Runtime
     //
-    implementation(kotlin("stdlib", kotlinVersion))
-    implementation(kotlin("reflect", kotlinVersion))
+    implementation(platform(kotlin("bom")))
+    implementation(kotlin("stdlib"))
+    implementation(kotlin("reflect"))
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.postgresql:postgresql")

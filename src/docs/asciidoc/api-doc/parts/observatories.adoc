@@ -1,16 +1,17 @@
-[[observatory]]
+[[observatories]]
 == Observatories
 
 Observatories are groups of experts affiliated with different institutions that curates and organize ORKG content for a specific discipline.
 Observatories represent groups which are managed by <<organizations>>.
 One Observatory can be managed by many organizations.
-[[organizations-list]]
+[[observatories-list]]
 === Listing Observatories
 
 A `GET` request lists all organizations:
 
 operation::observatory-controller-test-index[snippets='curl-request,http-response']
 
+////
 [[observatory-create]]
 === Creating observatories
 
@@ -18,11 +19,14 @@ A `POST` request creates a new observatories with a given name.
 The response will be `200 Created` when successful.
 The observatories can be retrieved by following the URI in the `Location` header field.
 
+// FIXME: implement missing test
 operation::observatory-controller-test-add[snippets='request-fields,curl-request,http-response']
 
 The response body consists of the following fields:
 
+// FIXME: implement missing test
 operation::observatory-controller-test-add[snippets='response-fields']
+////
 
 [[observatories-fetch]]
 === Fetching an observatory

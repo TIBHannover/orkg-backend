@@ -1,13 +1,19 @@
 = ORKG REST API Documentation
 :doctype: book
 :toc: right
+include::../_default-attributes.adoc[]
+:pagination_note: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>.
 
-:orkg: Open Research Knowledge Graph
 
 [[overview]]
 == Overview
 
 This document describes the REST API of the {orkg}.
+
+WARNING: This API is still **in development** and therefore **unstable** and **subject to change**!
+         Be aware that the API can (and will) break without notice, so beware if you intend to consume it directly.
+         We will support a stable API in the future, but it is uncertain when that will be.
+         This documentation will be updated to reflect that.
 
 ////
 === Current version
@@ -90,7 +96,7 @@ include::parts/auth.adoc[leveloffset=+1]
 A statement represents a kind of sentence in the knowledge graph,
  similar to RDF triples.
 Similar to a real sentence, it is a tuple of a subject, a predicate, and
- a object.
+ an object.
 
 Subjects and objects represent nodes in the graph are formed from a
  <<Resources,resource>>.
@@ -102,7 +108,7 @@ Resources and predicates are identifiable by an ID, whereas literals are
  not since they represent a value.
 
 Statements can also be referenced by their IDs.
-This allows to store and retrieve provenance information about them.
+This allows storing and retrieving provenance information about them.
 
 [[statements-list]]
 === Listing statements
@@ -111,7 +117,7 @@ A `GET` request lists all the statements:
 
 operation::statement-controller-test-index[snippets='request-parameters,curl-request,http-response']
 
-TIP: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>
+TIP: {pagination_note}
 
 [[statements-create]]
 === Creating statements
@@ -119,7 +125,7 @@ A `POST` request creates a new statement.
 The response will be `201 Created` when successful.
 The statement can be retrieved by following the URI in the `Location` header field.
 
-NOTE: The created statement is returned in the body for convenience. This might be subject to change.
+NOTE: The response body contains the created statement for convenience. This might be subject to change.
 
 Creating statements can be done in two ways:
 
@@ -155,7 +161,7 @@ A `GET` request lists all the statements with a given subject:
 
 operation::statement-controller-test-lookup-by-subject[snippets='request-parameters,curl-request,http-response']
 
-: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>
+TIP: {pagination_note}
 
 [[statements-lookup-by-predicate]]
 === Lookup statements by predicate
@@ -164,7 +170,7 @@ A `GET` request lists all the statements with a given predicate:
 
 operation::statement-controller-test-lookup-by-predicate[snippets='request-parameters,curl-request,http-response']
 
-: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>
+TIP: {pagination_note}
 
 include::parts/bulk-statements.adoc[]
 
@@ -183,7 +189,7 @@ A `GET` request lists all resources:
 
 operation::resource-controller-test-index[snippets='request-parameters,curl-request,http-response']
 
-: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>
+TIP: {pagination_note}
 
 [[resources-create]]
 === Creating resources
@@ -224,7 +230,7 @@ Resources can be looked up by label by providing a search fragment.
 
 operation::resource-controller-test-lookup[snippets='request-parameters,curl-request,http-response']
 
-Note: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>
+TIP: {pagination_note}
 
 
 [[resources-delete]]
@@ -236,15 +242,15 @@ Note: This request is only acceptable if you have sufficient permissions.
 
 a successful request return a No-Content HTTP status code.
 
-operation::resource-controller-test-delete-resource-success[snippets='request-parameters,curl-request,http-response']
+operation::resource-controller-test-delete-resource-success[snippets='curl-request,http-response']
 
 If the resource doesn't exist, the API returns a 404 status code.
 
-operation::resource-controller-test-delete-resource-not-found[snippets='request-parameters,curl-request,http-response']
+operation::resource-controller-test-delete-resource-not-found[snippets='curl-request,http-response']
 
 To safely delete a resource, the resource shouldn't have any statements related to it. In this case a Forbidden HTTP status is returned.
 
-operation::resource-controller-test-delete-resource-forbidden[snippets='request-parameters,curl-request,http-response']
+operation::resource-controller-test-delete-resource-forbidden[snippets='curl-request,http-response']
 
 [[predicates]]
 == Predicates
@@ -261,7 +267,7 @@ A `GET` request lists all predicates:
 
 operation::predicate-controller-test-index[snippets='request-parameters,curl-request,http-response']
 
-: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>
+TIP: {pagination_note}
 
 [[predicates-create]]
 === Creating predicates
@@ -270,7 +276,7 @@ A `POST` request creates a new predicate with a given label.
 The response will be `201 Created` when successful.
 The predicate can be retrieved by following the URI in the `Location` header field.
 
-NOTE: The created predicate is returned in the body for convenience. This might be subject to change.
+NOTE: The response body contains the created predicate for convenience. This might be subject to change.
 
 operation::predicate-controller-test-add[snippets='request-fields,curl-request,http-response']
 

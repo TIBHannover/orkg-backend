@@ -6,7 +6,6 @@ import eu.tib.orkg.prototype.statements.application.ResourceController
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.rdf.RdfService
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/rdf")
-@CrossOrigin(origins = ["*"])
 class RdfController(
     private val rdfService: RdfService,
     private val resourceController: ResourceController,

@@ -38,6 +38,3 @@ spring:
       ddl-auto: validate
     show-sql: true
     # generate-ddl: true
-orkg:
-  cors:
-    origins: 'http://localhost:3000'

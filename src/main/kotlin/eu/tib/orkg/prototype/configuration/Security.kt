@@ -24,16 +24,21 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter
+import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore
 import org.springframework.security.web.AuthenticationEntryPoint
+import org.springframework.security.web.header.HeaderWriterFilter
 import org.springframework.stereotype.Component
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.web.filter.CorsFilter
 
 @Configuration
-@EnableAuthorizationServer
 class AuthorizationServerConfiguration(
     private val authenticationManager: AuthenticationManager,
     private val userDetailsService: UserDetailsService
@@ -126,5 +131,47 @@ class RestAuthenticationEntryPoint : AuthenticationEntryPoint {
     ) {
         // TODO: Send WWW-Authenticate header? What does the standard say?
         response.sendError(SC_UNAUTHORIZED, "Unauthorized")
+    }
+}
+
+/**
+ * Custom CORS configuration.
+ *
+ * See also the documentation on CORS for [Spring MVC](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/web.html#mvc-cors)
+ * and [Spring Security](https://docs.spring.io/spring-security/site/docs/current/reference/html5/#cors).
+ */
+@Configuration
+class CorsConfig {
+    @Bean
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        return UrlBasedCorsConfigurationSource().apply {
+            val configuration = CorsConfiguration()
+                .applyPermitDefaultValues()
+                .apply {
+                    allowedMethods = listOf("OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE")
+                }
+            registerCorsConfiguration("/**", configuration)
+        }
+    }
+}
+
+/**
+ * Work-around for the (broken?) AuthenticationServer.
+ *
+ * We keep the security configuration of the authorization server by configuring it via the super-class.
+ * In addition we add a new [CorsFilter] after the [HeaderWriterFilter];
+ * that is the same position as in other filter chains.
+ * To ensure that the [CorsFilter] is configured correctly, we autowire our (custom) [CorsConfigurationSource].
+ *
+ * Due to autowiring magic/weirdness, the [EnableAuthorizationServer] annotation needs to be removed from the configuration.
+ */
+@Configuration
+class AuthorizationServerWorkaround : AuthorizationServerSecurityConfiguration() {
+    @Autowired
+    private lateinit var corsConfigurationSource: CorsConfigurationSource
+
+    override fun configure(http: HttpSecurity) {
+        super.configure(http)
+        http.addFilterAfter(CorsFilter(corsConfigurationSource), HeaderWriterFilter::class.java)
     }
 }

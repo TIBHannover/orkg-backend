@@ -4,6 +4,7 @@
 Papers represent a collection of concepts in the knowledge graph.
 They can be seen as a collection of <<Resources,resources>>, <<Literals,literals>> and <<Predicates,predicates>>
 
+////
 [[papers-create]]
 === Creating papers
 
@@ -13,12 +14,15 @@ The paper root resource (object) can be retrieved by following the URI in the `L
 
 NOTE: The created paper root resource is returned in the body for convenience. This might be subject to change.
 
+// FIXME: implement missing test
 operation::paper-controller-test-add[snippets='request-fields,curl-request,http-response']
 
 For more details on how the request would look like see https://gitlab.com/TIBHannover/orkg/orkg-backend/issues/77[Gitlab issue].
 
 The response body consists of the following fields:
 
+// FIXME: implement missing test
 operation::paper-controller-test-add[snippets='response-fields']
 
 NOTE: The Resources, Literals, Predicates part of the request are checked and an error is returned when some is missing or non-existing.
+////

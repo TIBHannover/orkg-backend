@@ -8,7 +8,6 @@ import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import java.time.LocalDate
 import java.util.Base64
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/dois/")
-@CrossOrigin(origins = ["*"])
 class DOIController(
     private val statementService: StatementService,
     private val doiService: DoiService

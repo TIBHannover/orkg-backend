@@ -14,7 +14,6 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -26,7 +25,6 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/organizations/")
-@CrossOrigin(origins = ["*"])
 class OrganizationController(
     private val service: OrganizationService,
     private val observatoryService: ObservatoryService,

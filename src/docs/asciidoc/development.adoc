@@ -1,5 +1,7 @@
 = Development of ORKG
 include::_default-attributes.adoc[]
+:prewrap!:
+:experimental:
 :fn-idea-license: footnote:[Ultimate Edition is recommended due to Spring integration. TIB/L3S members should contact their group leaders for a license.]
 
 This document contains information relevant to developers of the {orkg} or those interested in contributing.
@@ -73,3 +75,84 @@ To get started, the following articles from the "Reflectoring" blog are a recomm
 * https://reflectoring.io/spring-boot-data-jpa-test/[Testing JPA Queries with @DataJpaTest]
 
 Another useful source is the https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-testing[chapter on testing] in the official Spring Boot documentation.
+
+[[tips-and-tricks]]
+== Tips & Tricks
+
+The following sections contain work-flows or tricks for specific tasks that can help during development.
+
+=== Restarting the API container
+
+Sometimes there is a race condition between the containers:
+The backend started already while Neo4j is still starting up.
+This leads to failing connections.
+Although the API will try reconnecting to Neo4j automatically, the timeouts may be longer than you want to wait.
+In this case you can simply restart the API container:
+
+    docker-compose stop api && docker-compose rm -f api && docker-compose up -d api
+
+=== Importing a database dump
+
+NOTE: Dumps are provided to TIB members only. This may change in the future. Or not.
+
+Sometimes it is helpful to work on a production database dump, e.g. for debugging.
+To make that work with the Neo4j Community Edition and Docker, a workflow similar to the one below can be used.
+
+. Create a named volume for the dumps.
+(_This only needs to be done once._)
+It allows us to store multiple versions of dumps to choose from but use the same workflow for importing.
++
+[source,shell]
+----
+docker volume create orkg-dumps
+----
+
+. Copy a dump to the volume.
+This uses a temporary container called `dummy` to mount the volume.
+It will be deleted after copying.
++
+`alpine` is a very small Linux distribution.
+The Docker image itself does not matter much, but it is preferred to use something small.
++
+We assume the dump to be named `neo4j-dump-YYYYMMDD.dump` and to reside in the current directory.
+You may need to adjust this to your situation.
++
+[source,shell]
+----
+docker container create --name dummy --volume orkg-dumps:/dumps alpine
+docker cp neo4j-dump-YYYYMMDD.dump dummy:/dumps
+docker rm dummy
+----
+
+. Shut down all running ORKG containers.
+(The only container that needs to be stopped is `neo4j`, but we want to be sure.)
++
+[source,shell]
+----
+docker-compose down
+----
+
+. Import the dump into Neo4j.
+We will create a temporary Neo4j container from which we load the dump.
+Importing the dump will be done interactively from a shell inside the container.
+It needs to be forced because the database already exists and contains data.
++
+You also need to leave the container afterwards.
+This can be done by typing `exit` or pressing kbd:[Ctrl+d].
++
+[source,shell]
+----
+docker run -it --rm --entrypoint --volumes-from orkg-backend_neo4j_1 --volume orkg-dumps:/dumps neo4j:3.5
+neo4j-admin load --from=/dumps/neo4j-dump-YYYYMMDD.dump --force
+# Type "exit" or press Ctrl+d
+----
++
+You should be back at your normal command-line prompt.
+
+. Start everything back up.
+The Neo4j container should now contain the data of the dump.
++
+[source,shell]
+----
+docker-compose up -d
+----

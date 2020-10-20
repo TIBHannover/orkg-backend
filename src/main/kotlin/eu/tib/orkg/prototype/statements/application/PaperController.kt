@@ -426,25 +426,13 @@ class PaperController(
                     resource.`@id` != null -> { // Add an existing resource or literal
                         when {
                             resource.`@id`.startsWith("L") || resource.`@id`.startsWith("R") -> {
-                                // check if predicate is P32
-                                if (predicateId!!.value == "P32") {
-                                    // Check if resource (json) is Resource and not Literal
-                                    if (resource.`@id`.startsWith("R")) {
-                                        // Fetch resource from service
-                                        val res = resourceService.findById(ResourceId(resource.`@id`)).get()
-                                        // Check if resource (neo4j) has 'Problem' in the classes
-                                        val problemClass = ClassId("Problem")
-                                        if (problemClass !in res.classes) {
-                                            // If no, update resource (neo4j) through service
-                                            // val set = mutableSetOf<ClassId>()
-                                            // set.addAll(res.classes)
-                                            // set.add(problemClass)
-                                            resourceService.update(UpdateResourceRequest(res.id, null, setOf(problemClass)))
-                                        }
-                                        // If yes, skip
-                                    }
+                                // Update existing resources with pre-defined classes
+                                MAP_PREDICATE_CLASSES[predicateId!!.value]?.let { ClassId(it) }?.let {
+                                    val res = resourceService.findById(ResourceId(resource.`@id`)).get()
+                                    val newClasses = res.classes.toMutableSet()
+                                    newClasses.add(it)
+                                    resourceService.update(UpdateResourceRequest(res.id, null, newClasses))
                                 }
-                                // Finally, create Statement
                                 statementService.create(userId, subject.value, predicateId, resource.`@id`)
                             }
                             resource.`@id`.startsWith("_") -> {

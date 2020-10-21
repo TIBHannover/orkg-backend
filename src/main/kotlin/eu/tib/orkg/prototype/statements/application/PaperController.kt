@@ -5,7 +5,6 @@ import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
 import eu.tib.orkg.prototype.statements.application.ObjectController.Constants
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -30,7 +29,6 @@ class PaperController(
     private val literalService: LiteralService,
     private val predicateService: PredicateService,
     private val statementService: StatementService,
-    private val classService: ClassService,
     private val contributorService: ContributorService,
     private val objectController: ObjectController
 ) : BaseController() {
@@ -42,7 +40,7 @@ class PaperController(
         uriComponentsBuilder: UriComponentsBuilder,
         @RequestParam("mergeIfExists", required = false, defaultValue = "false") mergeIfExists: Boolean
     ): ResponseEntity<Resource> {
-        val resource = insertData(paper, mergeIfExists)
+        val resource = addPaperContent(paper, mergeIfExists)
         val location = uriComponentsBuilder
             .path("api/resources/")
             .buildAndExpand(resource.id)
@@ -50,7 +48,11 @@ class PaperController(
         return ResponseEntity.created(location).body(resource)
     }
 
-    fun insertData(
+    /**
+     * Main entry point, to create paper and check contributions
+     * Using the Object endpoint to handle recursive object creation
+     */
+    fun addPaperContent(
         request: CreatePaperRequest,
         mergeIfExists: Boolean
     ): Resource {
@@ -76,6 +78,10 @@ class PaperController(
         return paperObj
     }
 
+    /**
+     * Merges a paper if requested and found
+     * o/w creates a new paper resource
+     */
     private fun createOrFindPaper(
         mergeIfExists: Boolean,
         request: CreatePaperRequest,
@@ -98,6 +104,10 @@ class PaperController(
         }
     }
 
+    /**
+     * Handles the creation of a new paper resource
+     * i.e., creates the new paper, meta-data
+     */
     private fun addNewPaper(userId: UUID, request: CreatePaperRequest): Resource {
         val contributor = contributorService.findByIdOrElseUnknown(userId)
         val organizationId = contributor.organizationId
@@ -165,6 +175,10 @@ class PaperController(
         return paperObj
     }
 
+    /**
+     * Handles the venues of the papers
+     * i.e., reusing venues across papers if existing
+     */
     fun handlePublishingVenue(
         venue: String,
         paperId: ResourceId,
@@ -200,6 +214,11 @@ class PaperController(
         )
     }
 
+    /**
+     * Handles the authors of a paper
+     * Create orcid nodes if needed and creates author literal or
+     * resource depending on that
+     */
     fun handleAuthors(
         paper: CreatePaperRequest,
         userId: UUID,
@@ -276,11 +295,19 @@ class PaperController(
     }
 }
 
+/**
+ * Main entry point, basic skeleton of a paper
+ */
 data class CreatePaperRequest(
     val predicates: List<HashMap<String, String>>?,
     val paper: Paper
 )
 
+/**
+ * Concrete paper holder class
+ * contains meta-information of papers
+ * and helper methods
+ */
 data class Paper(
     val title: String,
     val doi: String?,
@@ -303,6 +330,9 @@ data class Paper(
         url?.isNotEmpty() != null
 }
 
+/**
+ * Author class container
+ */
 data class Author(
     val id: String?,
     val label: String?,

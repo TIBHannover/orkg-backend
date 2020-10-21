@@ -155,12 +155,8 @@ class Neo4jResourceService(
         return neo4jResourceRepository.save(found).toResource()
     }
 
-    override fun updatePaperObservatory(
-        request: UpdateResourceObservatoryRequest,
-        userId: UUID
-    ): Resource {
-        val found = neo4jResourceRepository.findByResourceId(request.id).get()
-
+    override fun updatePaperObservatory(request: UpdateResourceObservatoryRequest, id: ResourceId, userId: UUID): Resource {
+        val found = neo4jResourceRepository.findByResourceId(id).get()
             found.observatoryId = request.observatoryId
             found.organizationId = request.organizationId
             found.createdBy = userId

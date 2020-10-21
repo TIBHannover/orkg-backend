@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
@@ -102,40 +104,17 @@ class ResourceController(
         return ok(service.update(updatedRequest))
     }
 
-    @PutMapping("/{id}/addObservatory")
+    @RequestMapping("{id}/observatory", method = [RequestMethod.POST, RequestMethod.PUT])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateWithObservatory(
         @PathVariable id: ResourceId,
         @RequestBody request: UpdateResourceObservatoryRequest
     ): ResponseEntity<Resource> {
         val found = service.findById(id)
-
         if (!found.isPresent)
             return notFound().build()
-
         val userId = authenticatedUserId()
-        val updatedRequest = request.copy(id = id)
-
-        return ok(service.updatePaperObservatory(updatedRequest, userId))
-    }
-
-    @PostMapping("/observatory/{observatoryId}/organization/{organizationId}/researchProblem")
-    fun addObservatoryResearchProblem(
-        @PathVariable observatoryId: UUID,
-        @PathVariable organizationId: UUID,
-        @RequestBody resource: CreateResourceRequest,
-        uriComponentsBuilder: UriComponentsBuilder
-    ): ResponseEntity<Any> {
-        if (resource.id != null && service.findById(resource.id).isPresent)
-            return badRequest().body("Resource id <${resource.id}> already exists!")
-        val userId = authenticatedUserId()
-        val id = service.create(userId, resource, observatoryId, resource.extractionMethod, organizationId).id
-        val location = uriComponentsBuilder
-            .path("api/resources/{id}")
-            .buildAndExpand(id)
-            .toUri()
-
-        return created(location).body(service.findById(id).get())
+        return ok(service.updatePaperObservatory(request, id, userId))
     }
 
     @GetMapping("{id}/contributors")
@@ -180,7 +159,8 @@ data class UpdateResourceRequest(
 )
 
 data class UpdateResourceObservatoryRequest(
-    val id: ResourceId?,
+    @JsonProperty("observatory_id")
     val observatoryId: UUID,
+    @JsonProperty("organization_id")
     val organizationId: UUID
 )

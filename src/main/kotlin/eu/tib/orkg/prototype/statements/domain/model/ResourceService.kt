@@ -118,10 +118,7 @@ interface ResourceService {
      */
     fun update(request: UpdateResourceRequest): Resource
 
-    fun updatePaperObservatory(
-        request: UpdateResourceObservatoryRequest,
-        userId: UUID
-    ): Resource
+    fun updatePaperObservatory(request: UpdateResourceObservatoryRequest, id: ResourceId, userId: UUID): Resource
 
     fun hasStatements(id: ResourceId): Boolean
 

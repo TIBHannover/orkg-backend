@@ -48,6 +48,13 @@ class ObjectController(
         return ResponseEntity.created(location).body(resource)
     }
 
+    /**
+     * Creates an object into the ORKG
+     * and object here is the term, like a json-object
+     * and not as an object in the RDF-statement.
+     * This object allows for the flexibility of adding sub-graphs into
+     * the ORKG that are not rooted in a paper.
+     */
     fun createObject(request: CreateObjectRequest): Resource {
         // Get provenance info
         val userId = authenticatedUserId()
@@ -100,6 +107,11 @@ class ObjectController(
         return resource
     }
 
+    /**
+     * Check for the validity of the object statements
+     * make sure that all the referred to existing resources/literals
+     * are existing in the graph
+     */
     fun checkObjectStatements(
         data: HashMap<String, List<ObjectStatement>>,
         predicates: HashMap<String, PredicateId>
@@ -140,6 +152,10 @@ class ObjectController(
         }
     }
 
+    /**
+     * Process every resource/literal in the statements
+     * do this recursively for all subsequent statements
+     */
     fun goThroughStatementsRecursively(
         subject: ResourceId,
         data: HashMap<String, List<ObjectStatement>>,

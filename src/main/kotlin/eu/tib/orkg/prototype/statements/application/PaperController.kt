@@ -488,19 +488,19 @@ class PaperController(
      */
     companion object Constants {
         // IDs of predicates
-        private const val ID_DOI_PREDICATE = "P26"
-        private const val ID_AUTHOR_PREDICATE = "P27"
-        private const val ID_PUBDATE_MONTH_PREDICATE = "P28"
-        private const val ID_PUBDATE_YEAR_PREDICATE = "P29"
-        private const val ID_RESEARCH_FIELD_PREDICATE = "P30"
-        private const val ID_CONTRIBUTION_PREDICATE = "P31"
-        private const val ID_URL_PREDICATE = "url"
-        private const val ID_ORCID_PREDICATE = "HAS_ORCID"
-        private const val ID_VENUE_PREDICATE = "HAS_VENUE"
+        const val ID_DOI_PREDICATE = "P26"
+        const val ID_AUTHOR_PREDICATE = "P27"
+        const val ID_PUBDATE_MONTH_PREDICATE = "P28"
+        const val ID_PUBDATE_YEAR_PREDICATE = "P29"
+        const val ID_RESEARCH_FIELD_PREDICATE = "P30"
+        const val ID_CONTRIBUTION_PREDICATE = "P31"
+        const val ID_URL_PREDICATE = "url"
+        const val ID_ORCID_PREDICATE = "HAS_ORCID"
+        const val ID_VENUE_PREDICATE = "HAS_VENUE"
         // IDs of classes
-        private const val ID_CONTRIBUTION_CLASS = "Contribution"
-        private const val ID_AUTHOR_CLASS = "Author"
-        private const val ID_VENUE_CLASS = "Venue"
+        const val ID_CONTRIBUTION_CLASS = "Contribution"
+        const val ID_AUTHOR_CLASS = "Author"
+        const val ID_VENUE_CLASS = "Venue"
         // Miscellaneous
         val MAP_PREDICATE_CLASSES = mapOf("P32" to "Problem")
         /** Regular expression to check whether an input string is a valid ORCID id.  */

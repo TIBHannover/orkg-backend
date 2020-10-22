@@ -176,13 +176,8 @@ class ObjectController(
                         when {
                             resource.isExistingResource() || resource.isExistingLiteral() -> {
                                 // Update existing resources with pre-defined classes
-                                MAP_PREDICATE_CLASSES[predicateId!!.value]?.let { ClassId(it) }?.let {
-                                    val res = resourceService.findById(ResourceId(resource.`@id`!!)).get()
-                                    val newClasses = res.classes.toMutableSet()
-                                    newClasses.add(it)
-                                    resourceService.update(UpdateResourceRequest(res.id, null, newClasses))
-                                }
-                                statementService.create(userId, subject.value, predicateId, resource.`@id`!!)
+                                typeResourceBasedOnPredicate(predicateId, resource)
+                                statementService.create(userId, subject.value, predicateId!!, resource.`@id`!!)
                             }
                             resource.isTempResource() -> {
                                 if (!tempResources.containsKey(resource.`@id`))
@@ -266,6 +261,21 @@ class ObjectController(
             } else {
                 resourceQueue.add(temp)
             }
+        }
+    }
+
+    /**
+     * Type an existing resource with the range of the predicate if required
+     */
+    private fun typeResourceBasedOnPredicate(
+        predicateId: PredicateId?,
+        resource: ObjectStatement
+    ) {
+        MAP_PREDICATE_CLASSES[predicateId!!.value]?.let { ClassId(it) }?.let {
+            val res = resourceService.findById(ResourceId(resource.`@id`!!)).get()
+            val newClasses = res.classes.toMutableSet()
+            newClasses.add(it)
+            resourceService.update(UpdateResourceRequest(res.id, null, newClasses))
         }
     }
 

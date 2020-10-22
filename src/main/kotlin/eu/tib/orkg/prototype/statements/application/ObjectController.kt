@@ -16,6 +16,8 @@ import java.util.Queue
 import java.util.UUID
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PatchMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -48,6 +50,24 @@ class ObjectController(
         return ResponseEntity.created(location).body(resource)
     }
 
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    fun add(
+        @PathVariable id: ResourceId,
+        @RequestBody obj: CreateObjectRequest,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<Resource> {
+        resourceService
+            .findById(id)
+            .orElseThrow { ResourceNotFound() }
+        val resource = createObject(obj, id)
+        val location = uriComponentsBuilder
+            .path("api/objects/")
+            .buildAndExpand(resource.id)
+            .toUri()
+        return ResponseEntity.created(location).body(resource)
+    }
+
     /**
      * Creates an object into the ORKG
      * and object here is the term, like a json-object
@@ -55,7 +75,10 @@ class ObjectController(
      * This object allows for the flexibility of adding sub-graphs into
      * the ORKG that are not rooted in a paper.
      */
-    fun createObject(request: CreateObjectRequest): Resource {
+    fun createObject(
+        request: CreateObjectRequest,
+        existingResourceId: ResourceId? = null
+    ): Resource {
         // Get provenance info
         val userId = authenticatedUserId()
         val contributor = contributorService.findByIdOrElseUnknown(userId)
@@ -81,18 +104,21 @@ class ObjectController(
         val tempResources: HashMap<String, String> = HashMap()
 
         // Create the resource
-        val classes = if (request.resource.isTyped())
+        val resourceId = if (existingResourceId == null) {
+            val classes = if (request.resource.isTyped())
                 request.resource.classes!!.map { ClassId(it) }.toSet()
             else
                 emptySet()
-        val resource = resourceService.create(
-            userId,
-            CreateResourceRequest(null, request.resource.name, classes),
-            observatoryId,
-            request.resource.extractionMethod,
-            organizationId
-        )
-        val resourceId = resource.id!!
+            resourceService.create(
+                userId,
+                CreateResourceRequest(null, request.resource.name, classes),
+                observatoryId,
+                request.resource.extractionMethod,
+                organizationId
+            ).id!!
+        } else {
+            existingResourceId
+        }
 
         // Check if the contribution has more statements to add
         if (request.resource.hasSubsequentStatements()) {
@@ -109,7 +135,7 @@ class ObjectController(
                 organizationId = organizationId
             )
         }
-        return resource
+        return resourceService.findById(resourceId).get()
     }
 
     /**

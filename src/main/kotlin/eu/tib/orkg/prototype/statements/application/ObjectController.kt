@@ -64,8 +64,8 @@ class ObjectController(
 
         // Handle predicates (temp and existing)
         val predicates: HashMap<String, PredicateId> = HashMap()
-        if (request.predicates != null) {
-            request.predicates.forEach {
+        if (request.hasTempPredicates()) {
+            request.predicates!!.forEach {
                 val surrogateId = it[it.keys.first()]!!
                 val predicateId = predicateService.create(userId, it.keys.first()).id!!
                 predicates[surrogateId] = predicateId
@@ -73,13 +73,16 @@ class ObjectController(
         }
 
         // Check if object statements are valid
-        if (request.resource.values != null)
-                checkObjectStatements(request.resource.values, predicates)
+        if (request.resource.hasSubsequentStatements())
+                checkObjectStatements(request.resource.values!!, predicates)
 
         val tempResources: HashMap<String, String> = HashMap()
 
         // Create the resource
-        val classes = request.resource.classes.map { ClassId(it) }.toSet()
+        val classes = if (request.resource.isTyped())
+                request.resource.classes!!.map { ClassId(it) }.toSet()
+            else
+                emptySet()
         val resource = resourceService.create(
             userId,
             CreateResourceRequest(null, request.resource.name, classes),
@@ -90,11 +93,11 @@ class ObjectController(
         val resourceId = resource.id!!
 
         // Check if the contribution has more statements to add
-        if (request.resource.values != null && request.resource.values.count() > 0) {
+        if (request.resource.hasSubsequentStatements()) {
             val resourceQueue: Queue<TempResource> = LinkedList()
             goThroughStatementsRecursively(
                 resourceId,
-                request.resource.values,
+                request.resource.values!!,
                 tempResources,
                 predicates,
                 resourceQueue,
@@ -137,7 +140,7 @@ class ObjectController(
                         }
                     }
                     resource.isTyped() -> { // Check for existing classes
-                        resource.classes.forEach {
+                        resource.classes!!.forEach {
                             if (!classService.findById(ClassId(it)).isPresent)
                                 throw ClassNotFound(it)
                         }
@@ -199,8 +202,8 @@ class ObjectController(
                         // Check for classes of resource
                         val classes = mutableListOf<ClassId>()
                         // add attached classes
-                        if (resource.classes.isNotEmpty()) {
-                            resource.classes.forEach {
+                        if (resource.isTyped()) {
+                            resource.classes!!.forEach {
                                 classes.add(ClassId(it))
                             }
                         }
@@ -339,18 +342,39 @@ class ObjectController(
 data class CreateObjectRequest(
     val predicates: List<HashMap<String, String>>?,
     val resource: NamedObject
-)
+) {
+    /**
+     * Check if the object has a set
+     * of predicates to be preocessed
+     */
+    fun hasTempPredicates() =
+        this.predicates != null && this.predicates.count() > 0
+}
 
 data class NamedObject(
     val name: String,
-    val classes: List<String>,
+    val classes: List<String>?,
     val values: HashMap<String, List<ObjectStatement>>?,
     val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
-)
+) {
+    /**
+     * Check if the object has a set
+     * of statements to be added recursively
+     */
+    fun hasSubsequentStatements() =
+        this.values != null && this.values.count() > 0
+
+    /**
+     * Check if the resource is typed
+     * i.e., it has classes
+     */
+    fun isTyped() =
+        this.classes != null && this.classes.isNotEmpty()
+}
 
 data class ObjectStatement(
     val `@id`: String?,
-    val classes: List<String>,
+    val classes: List<String>?,
     val `@temp`: String?,
     val text: String?,
     val datatype: String?,
@@ -391,7 +415,7 @@ data class ObjectStatement(
      * i.e., it has classes
      */
     fun isTyped() =
-        this.classes.isNotEmpty()
+        this.classes != null && this.classes.isNotEmpty()
 
     /**
      * Check if this is a new resource to be created

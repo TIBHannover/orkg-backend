@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.auth.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import eu.tib.orkg.prototype.auth.persistence.RoleEntity
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.statements.application.UserNotFound
@@ -117,7 +118,9 @@ class UserController(
         @JsonProperty("observatory_id")
         val observatoryId = user.observatoryId
 
-        val roles = user.roles
+        @get:JsonProperty("is_curation_allowed")
+        val isCurationAllowed: Boolean
+        get() = "ROLE_ADMIN" in user.roles.map(RoleEntity::name)
     }
 
     data class UpdatedUserResponse(

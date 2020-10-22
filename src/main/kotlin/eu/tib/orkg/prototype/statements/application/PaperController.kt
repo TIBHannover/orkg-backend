@@ -65,17 +65,27 @@ class PaperController(
         // paper contribution data
         if (request.paper.hasContributions()) {
             request.paper.contributions!!.forEach {
-                // Convert Paper structure to Object structure
-                val contribution = it.copy(classes = listOf(Constants.ID_CONTRIBUTION_CLASS))
-                val objectRequest = CreateObjectRequest(request.predicates, contribution)
-                // Create contribution resource whether it has data or not
-                val contributionId =
-                    objectController.createObject(objectRequest).id!!
+                val contributionId = createCompleteContribution(it, request)
                 // Create statement between paper and contribution
                 statementService.create(userId, paperId.value, Constants.contributionPredicate, contributionId.value)
             }
         }
         return paperObj
+    }
+
+    /**
+     * Using the object controller
+     * inset the full graph of the contribution
+     */
+    private fun createCompleteContribution(
+        jsonObject: NamedObject,
+        paperRequest: CreatePaperRequest
+    ): ResourceId {
+        // Convert Paper structure to Object structure
+        val contribution = jsonObject.copy(classes = listOf(Constants.ID_CONTRIBUTION_CLASS))
+        val objectRequest = CreateObjectRequest(paperRequest.predicates, contribution)
+        // Create contribution resource whether it has data or not
+        return objectController.createObject(objectRequest).id!!
     }
 
     /**

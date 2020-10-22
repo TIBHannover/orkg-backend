@@ -63,8 +63,8 @@ class PaperController(
         val paperId = paperObj.id!!
 
         // paper contribution data
-        if (request.paper.contributions != null) {
-            request.paper.contributions.forEach {
+        if (request.paper.hasContributions()) {
+            request.paper.contributions!!.forEach {
                 // Convert Paper structure to Object structure
                 val contribution = it.copy(classes = listOf(Constants.ID_CONTRIBUTION_CLASS))
                 val objectRequest = CreateObjectRequest(request.predicates, contribution)
@@ -227,8 +227,8 @@ class PaperController(
         organizationId: UUID
     ) {
         val pattern = Constants.ORCID_REGEX.toRegex()
-        if (paper.paper.authors != null) {
-            paper.paper.authors.forEach { it ->
+        if (paper.paper.hasAuthors()) {
+            paper.paper.authors!!.forEach { it ->
                 if (it.id == null) {
                     if (it.label != null && it.orcid != null) {
                         // Check if ORCID is a valid string
@@ -244,12 +244,7 @@ class PaperController(
                             val authorStatement =
                                 statementService.findAllByObject(
                                     foundOrcid.id!!.value,
-                                    createPageable(
-                                        1,
-                                        10,
-                                        null,
-                                        false
-                                    ) // TODO: Hide values by using default values for the parameters
+                                    createPageable(1, 10, null, false) // TODO: Hide values by using default values for the parameters
                                 ).firstOrNull { it.predicate.id == Constants.orcidPredicate }
                                     ?: throw OrphanOrcidValue(orcidValue)
                             statementService.create(
@@ -320,14 +315,35 @@ data class Paper(
     val contributions: List<NamedObject>?,
     val extractionMethod: ExtractionMethod = UNKNOWN
 ) {
+    /**
+     * Check if the paper has a published in venue
+     */
     fun hasPublishedIn(): Boolean =
         publishedIn?.isNotEmpty() != null
 
+    /**
+     * Check if the paper has a DOI
+     */
     fun hasDOI(): Boolean =
         doi?.isNotEmpty() != null
 
+    /**
+     * Check if the paper has a URL
+     */
     fun hasUrl(): Boolean =
         url?.isNotEmpty() != null
+
+    /**
+     * Check if the paper has contributions
+     */
+    fun hasContributions() =
+        !contributions.isNullOrEmpty()
+
+    /**
+     * Check if the paper has authors
+     */
+    fun hasAuthors() =
+        !authors.isNullOrEmpty()
 }
 
 /**

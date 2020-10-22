@@ -170,42 +170,42 @@ class ObjectController(
     ) {
         for ((predicate, value) in data) {
             val predicateId = extractPredicate(predicate, predicates)
-            for (resource in value) {
+            for (jsonObject in value) {
                 when {
-                    resource.isExisting() -> { // Add an existing resource or literal
+                    jsonObject.isExisting() -> { // Add an existing resource or literal
                         when {
-                            resource.isExistingResource() || resource.isExistingLiteral() -> {
+                            jsonObject.isExistingResource() || jsonObject.isExistingLiteral() -> {
                                 // Update existing resources with pre-defined classes
-                                typeResourceBasedOnPredicate(predicateId, resource)
-                                statementService.create(userId, subject.value, predicateId!!, resource.`@id`!!)
+                                typeResourceBasedOnPredicate(predicateId, jsonObject)
+                                statementService.create(userId, subject.value, predicateId!!, jsonObject.`@id`!!)
                             }
-                            resource.isTempResource() -> {
-                                if (!tempResources.containsKey(resource.`@id`))
-                                    resourceQueue.add(TempResource(subject, predicateId!!, resource.`@id`!!))
+                            jsonObject.isTempResource() -> {
+                                if (!tempResources.containsKey(jsonObject.`@id`))
+                                    resourceQueue.add(TempResource(subject, predicateId!!, jsonObject.`@id`!!))
                                 else {
-                                    val tempId = tempResources[resource.`@id`]
+                                    val tempId = tempResources[jsonObject.`@id`]
                                     statementService.create(userId, subject.value, predicateId!!, tempId!!)
                                 }
                             }
                         }
                     }
-                    resource.isNewLiteral() -> { // create new literal
+                    jsonObject.isNewLiteral() -> { // create new literal
                         val newLiteral = literalService.create(
                             userId,
-                            resource.text!!,
-                            resource.datatype ?: "xsd:string"
+                            jsonObject.text!!,
+                            jsonObject.datatype ?: "xsd:string"
                         ).id!!
-                        if (resource.`@temp` != null) {
-                            tempResources[resource.`@temp`] = newLiteral.value
+                        if (jsonObject.`@temp` != null) {
+                            tempResources[jsonObject.`@temp`] = newLiteral.value
                         }
                         statementService.create(userId, subject.value, predicateId!!, newLiteral.value)
                     }
-                    resource.isNewResource() -> { // create new resource
+                    jsonObject.isNewResource() -> { // create new resource
                         // Check for classes of resource
                         val classes = mutableListOf<ClassId>()
                         // add attached classes
-                        if (resource.isTyped()) {
-                            resource.classes!!.forEach {
+                        if (jsonObject.isTyped()) {
+                            jsonObject.classes!!.forEach {
                                 classes.add(ClassId(it))
                             }
                         }
@@ -215,7 +215,7 @@ class ObjectController(
                         val newResource = if (classes.isNotEmpty())
                             resourceService.create(
                                 userId,
-                                CreateResourceRequest(null, resource.label!!, classes.toSet()),
+                                CreateResourceRequest(null, jsonObject.label!!, classes.toSet()),
                                 observatoryId,
                                 extractionMethod,
                                 organizationId
@@ -223,19 +223,19 @@ class ObjectController(
                         else
                             resourceService.create(
                                 userId,
-                                resource.label!!,
+                                jsonObject.label!!,
                                 observatoryId,
                                 extractionMethod,
                                 organizationId
                             ).id!!
-                        if (resource.`@temp` != null) {
-                            tempResources[resource.`@temp`] = newResource.value
+                        if (jsonObject.`@temp` != null) {
+                            tempResources[jsonObject.`@temp`] = newResource.value
                         }
                         statementService.create(userId, subject.value, predicateId, newResource.value)
-                        if (resource.hasSubsequentStatements()) {
+                        if (jsonObject.hasSubsequentStatements()) {
                             goThroughStatementsRecursively(
                                 newResource,
-                                resource.values!!,
+                                jsonObject.values!!,
                                 tempResources,
                                 predicates,
                                 resourceQueue,

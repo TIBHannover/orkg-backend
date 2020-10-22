@@ -66,7 +66,7 @@ class PaperController(
         if (request.paper.contributions != null) {
             request.paper.contributions.forEach {
                 // Convert Paper structure to Object structure
-                val contribution = it.copy(`class` = Constants.ID_CONTRIBUTION_CLASS)
+                val contribution = it.copy(classes = listOf(Constants.ID_CONTRIBUTION_CLASS))
                 val objectRequest = CreateObjectRequest(request.predicates, contribution)
                 // Create contribution resource whether it has data or not
                 val contributionId =

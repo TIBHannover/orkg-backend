@@ -65,10 +65,10 @@ class UserEntity {
 @Table(name = "roles")
 open class RoleEntity {
     @Id
-    var id: UUID? = null
+    open var id: UUID? = null
 
     @NotBlank
-    var name: String? = null
+    open var name: String? = null
 }
 
 /**

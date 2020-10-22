@@ -229,10 +229,10 @@ class PaperController(
         val pattern = Constants.ORCID_REGEX.toRegex()
         if (paper.paper.hasAuthors()) {
             paper.paper.authors!!.forEach { it ->
-                if (it.id == null) {
-                    if (it.label != null && it.orcid != null) {
+                if (!it.isExistingAuthor()) {
+                    if (it.hasNameAndOrcid()) {
                         // Check if ORCID is a valid string
-                        if (!pattern.matches(it.orcid))
+                        if (!pattern.matches(it.orcid!!))
                             throw OrcidNotValid(it.orcid)
                         // Remove te http://orcid.org prefix from the ORCID value
                         val indexClean = it.orcid.lastIndexOf('/')
@@ -257,7 +257,7 @@ class PaperController(
                             // create resource
                             val author = resourceService.create(
                                 userId,
-                                CreateResourceRequest(null, it.label, setOf(Constants.authorClass)),
+                                CreateResourceRequest(null, it.label!!, setOf(Constants.authorClass)),
                                 observatoryId,
                                 paper.paper.extractionMethod,
                                 organizationId
@@ -283,7 +283,7 @@ class PaperController(
                         )
                     }
                 } else {
-                    statementService.create(userId, paperId.value, Constants.authorPredicate, it.id)
+                    statementService.create(userId, paperId.value, Constants.authorPredicate, it.id!!)
                 }
             }
         }
@@ -353,4 +353,18 @@ data class Author(
     val id: String?,
     val label: String?,
     val orcid: String?
-)
+) {
+    /**
+     * Check if the author has a name (label)
+     * and an ORCID at the same time
+     */
+    fun hasNameAndOrcid() =
+        label != null && orcid != null
+
+    /**
+     * Check if the author is an existing resource
+     * i.e., the id of the author is not null
+     */
+    fun isExistingAuthor() =
+        !id.isNullOrEmpty()
+}

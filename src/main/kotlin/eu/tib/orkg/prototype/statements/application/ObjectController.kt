@@ -123,31 +123,31 @@ class ObjectController(
             val predicateId = extractPredicate(predicate, predicates)
             if (!predicateService.findById(predicateId).isPresent)
                 throw PredicateNotFound(predicate)
-            for (resource in value) {
+            for (jsonObject in value) {
                 when {
-                    resource.isExisting() -> { // Add an existing resource or literal
+                    jsonObject.isExisting() -> { // Add an existing resource or literal
                         when {
-                            resource.isExistingLiteral() -> {
-                                val id = resource.`@id`!!
+                            jsonObject.isExistingLiteral() -> {
+                                val id = jsonObject.`@id`!!
                                 if (!literalService.findById(LiteralId(id)).isPresent)
                                     throw LiteralNotFound(id)
                             }
-                            resource.isExistingResource() -> {
-                                val id = resource.`@id`!!
+                            jsonObject.isExistingResource() -> {
+                                val id = jsonObject.`@id`!!
                                 if (!resourceService.findById(ResourceId(id)).isPresent)
                                     throw ResourceNotFound(id)
                             }
                         }
                     }
-                    resource.isTyped() -> { // Check for existing classes
-                        resource.classes!!.forEach {
+                    jsonObject.isTyped() -> { // Check for existing classes
+                        jsonObject.classes!!.forEach {
                             if (!classService.findById(ClassId(it)).isPresent)
                                 throw ClassNotFound(it)
                         }
                     }
                 }
-                if (resource.hasSubsequentStatements())
-                    checkObjectStatements(resource.values!!, predicates)
+                if (jsonObject.hasSubsequentStatements())
+                    checkObjectStatements(jsonObject.values!!, predicates)
             }
         }
     }

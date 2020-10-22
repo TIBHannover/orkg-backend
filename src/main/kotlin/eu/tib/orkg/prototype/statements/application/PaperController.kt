@@ -139,14 +139,14 @@ class PaperController(
         handleAuthors(request, userId, paperId, observatoryId, organizationId)
 
         // paper publication date
-        if (request.paper.publicationMonth != null)
+        if (request.paper.hasPublicationMonth())
             statementService.create(
                 userId,
                 paperId.value,
                 Constants.publicationMonthPredicate,
                 literalService.create(userId, request.paper.publicationMonth.toString()).id!!.value
             )
-        if (request.paper.publicationYear != null)
+        if (request.paper.hasPublicationYear())
             statementService.create(
                 userId,
                 paperId.value,
@@ -344,6 +344,18 @@ data class Paper(
      */
     fun hasAuthors() =
         !authors.isNullOrEmpty()
+
+    /**
+     * Check if the paper has a publication month value
+     */
+    fun hasPublicationMonth() =
+        publicationMonth != null
+
+    /**
+     * Check if the paper has a publication year value
+     */
+    fun hasPublicationYear() =
+        publicationYear != null
 }
 
 /**

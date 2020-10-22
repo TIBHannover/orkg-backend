@@ -74,7 +74,9 @@ class ObjectController(
 
         // Check if object statements are valid
         if (request.resource.hasSubsequentStatements())
-                checkObjectStatements(request.resource.values!!, predicates)
+            checkObjectStatements(request.resource.values!!, predicates)
+        if (request.resource.isTyped())
+            request.resource.classes!!.forEach { checkIfClassExists(it) }
 
         val tempResources: HashMap<String, String> = HashMap()
 
@@ -121,35 +123,57 @@ class ObjectController(
     ) {
         for ((predicate, value) in data) {
             val predicateId = extractPredicate(predicate, predicates)
-            if (!predicateService.findById(predicateId).isPresent)
-                throw PredicateNotFound(predicate)
+            checkIfPredicateExists(predicateId!!.value)
             for (jsonObject in value) {
-                when {
-                    jsonObject.isExisting() -> { // Add an existing resource or literal
-                        when {
-                            jsonObject.isExistingLiteral() -> {
-                                val id = jsonObject.`@id`!!
-                                if (!literalService.findById(LiteralId(id)).isPresent)
-                                    throw LiteralNotFound(id)
-                            }
-                            jsonObject.isExistingResource() -> {
-                                val id = jsonObject.`@id`!!
-                                if (!resourceService.findById(ResourceId(id)).isPresent)
-                                    throw ResourceNotFound(id)
-                            }
-                        }
+                if (jsonObject.isExisting()) // Add an existing resource or literal
+                    when {
+                        jsonObject.isExistingLiteral() ->
+                            checkIfLiteralExists(jsonObject.`@id`!!)
+                        jsonObject.isExistingResource() ->
+                            checkIfResourceExists(jsonObject.`@id`!!)
                     }
-                    jsonObject.isTyped() -> { // Check for existing classes
-                        jsonObject.classes!!.forEach {
-                            if (!classService.findById(ClassId(it)).isPresent)
-                                throw ClassNotFound(it)
-                        }
-                    }
-                }
+                if (jsonObject.isTyped()) // Check for existing classes
+                    jsonObject.classes!!.forEach { checkIfClassExists(it) }
                 if (jsonObject.hasSubsequentStatements())
                     checkObjectStatements(jsonObject.values!!, predicates)
             }
         }
+    }
+
+    /**
+     * Check if a predicate is existing
+     * o/w throw out a suitable exception
+     */
+    private fun checkIfPredicateExists(predicate: String) {
+        if (!predicateService.findById(PredicateId(predicate)).isPresent)
+            throw PredicateNotFound(predicate)
+    }
+
+    /**
+     * Check if a literal is existing
+     * o/w throw out a suitable exception
+     */
+    private fun checkIfLiteralExists(literalId: String) {
+        if (!literalService.findById(LiteralId(literalId)).isPresent)
+            throw LiteralNotFound(literalId)
+    }
+
+    /**
+     * Check if a resource is existing
+     * o/w throw out a suitable exception
+     */
+    private fun checkIfResourceExists(resourceId: String) {
+        if (!resourceService.findById(ResourceId(resourceId)).isPresent)
+            throw ResourceNotFound(resourceId)
+    }
+
+    /**
+     * Check if a class is existing
+     * o/w throw out a suitable exception
+     */
+    private fun checkIfClassExists(it: String) {
+        if (!classService.findById(ClassId(it)).isPresent)
+            throw ClassNotFound(it)
     }
 
     /**

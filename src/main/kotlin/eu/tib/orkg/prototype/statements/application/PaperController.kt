@@ -426,7 +426,14 @@ class PaperController(
                     resource.`@id` != null -> { // Add an existing resource or literal
                         when {
                             resource.`@id`.startsWith("L") || resource.`@id`.startsWith("R") -> {
-                                statementService.create(userId, subject.value, predicateId!!, resource.`@id`)
+                                // Update existing resources with pre-defined classes
+                                MAP_PREDICATE_CLASSES[predicateId!!.value]?.let { ClassId(it) }?.let {
+                                    val res = resourceService.findById(ResourceId(resource.`@id`)).get()
+                                    val newClasses = res.classes.toMutableSet()
+                                    newClasses.add(it)
+                                    resourceService.update(UpdateResourceRequest(res.id, null, newClasses))
+                                }
+                                statementService.create(userId, subject.value, predicateId, resource.`@id`)
                             }
                             resource.`@id`.startsWith("_") -> {
                                 if (!tempResources.containsKey(resource.`@id`))

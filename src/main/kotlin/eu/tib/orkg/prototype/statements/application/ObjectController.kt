@@ -79,7 +79,7 @@ class ObjectController(
         val tempResources: HashMap<String, String> = HashMap()
 
         // Create the resource
-        val classes = if (request.resource.`class` == null) emptySet() else setOf(ClassId(request.resource.`class`))
+        val classes = request.resource.classes.map { ClassId(it) }.toSet()
         val resource = resourceService.create(
             userId,
             CreateResourceRequest(null, request.resource.name, classes),
@@ -117,37 +117,34 @@ class ObjectController(
         predicates: HashMap<String, PredicateId>
     ) {
         for ((predicate, value) in data) {
-            val predicateId = if (predicate.startsWith("_"))
-                predicates[predicate]
-            else
-                PredicateId(predicate)
-
+            val predicateId = extractPredicate(predicate, predicates)
             if (!predicateService.findById(predicateId).isPresent)
                 throw PredicateNotFound(predicate)
             for (resource in value) {
                 when {
-                    resource.`@id` != null -> { // Add an existing resource or literal
+                    resource.isExisting() -> { // Add an existing resource or literal
                         when {
-                            resource.`@id`.startsWith("L") -> {
-                                val id = resource.`@id`
+                            resource.isExistingLiteral() -> {
+                                val id = resource.`@id`!!
                                 if (!literalService.findById(LiteralId(id)).isPresent)
                                     throw LiteralNotFound(id)
                             }
-                            resource.`@id`.startsWith("R") -> {
-                                val id = resource.`@id`
+                            resource.isExistingResource() -> {
+                                val id = resource.`@id`!!
                                 if (!resourceService.findById(ResourceId(id)).isPresent)
                                     throw ResourceNotFound(id)
                             }
                         }
                     }
-                    resource.`class` != null -> { // Check for existing classes
-                        val id = resource.`class`
-                        if (!classService.findById(ClassId(id)).isPresent)
-                            throw ClassNotFound(id)
+                    resource.isTyped() -> { // Check for existing classes
+                        resource.classes.forEach {
+                            if (!classService.findById(ClassId(it)).isPresent)
+                                throw ClassNotFound(it)
+                        }
                     }
                 }
-                if (resource.values != null)
-                    checkObjectStatements(resource.values, predicates)
+                if (resource.hasSubsequentStatements())
+                    checkObjectStatements(resource.values!!, predicates)
             }
         }
     }
@@ -169,20 +166,17 @@ class ObjectController(
         organizationId: UUID
     ) {
         for ((predicate, value) in data) {
-            val predicateId = if (predicate.startsWith("_"))
-                predicates[predicate]
-            else
-                PredicateId(predicate)
+            val predicateId = extractPredicate(predicate, predicates)
             for (resource in value) {
                 when {
-                    resource.`@id` != null -> { // Add an existing resource or literal
+                    resource.isExisting() -> { // Add an existing resource or literal
                         when {
-                            resource.`@id`.startsWith("L") || resource.`@id`.startsWith("R") -> {
-                                statementService.create(userId, subject.value, predicateId!!, resource.`@id`)
+                            resource.isExistingResource() || resource.isExistingLiteral() -> {
+                                statementService.create(userId, subject.value, predicateId!!, resource.`@id`!!)
                             }
-                            resource.`@id`.startsWith("_") -> {
+                            resource.isTempResource() -> {
                                 if (!tempResources.containsKey(resource.`@id`))
-                                    resourceQueue.add(TempResource(subject, predicateId!!, resource.`@id`))
+                                    resourceQueue.add(TempResource(subject, predicateId!!, resource.`@id`!!))
                                 else {
                                     val tempId = tempResources[resource.`@id`]
                                     statementService.create(userId, subject.value, predicateId!!, tempId!!)
@@ -190,10 +184,10 @@ class ObjectController(
                             }
                         }
                     }
-                    resource.text != null -> { // create new literal
+                    resource.isNewLiteral() -> { // create new literal
                         val newLiteral = literalService.create(
                             userId,
-                            resource.text,
+                            resource.text!!,
                             resource.datatype ?: "xsd:string"
                         ).id!!
                         if (resource.`@temp` != null) {
@@ -201,12 +195,14 @@ class ObjectController(
                         }
                         statementService.create(userId, subject.value, predicateId!!, newLiteral.value)
                     }
-                    resource.label != null -> { // create new resource
+                    resource.isNewResource() -> { // create new resource
                         // Check for classes of resource
                         val classes = mutableListOf<ClassId>()
                         // add attached classes
-                        if (resource.`class` != null) {
-                            classes.add(ClassId(resource.`class`))
+                        if (resource.classes.isNotEmpty()) {
+                            resource.classes.forEach {
+                                classes.add(ClassId(it))
+                            }
                         }
                         // add pre-defined classes
                         MAP_PREDICATE_CLASSES[predicateId!!.value]?.let { ClassId(it) }?.let { classes.add(it) }
@@ -214,7 +210,7 @@ class ObjectController(
                         val newResource = if (classes.isNotEmpty())
                             resourceService.create(
                                 userId,
-                                CreateResourceRequest(null, resource.label, classes.toSet()),
+                                CreateResourceRequest(null, resource.label!!, classes.toSet()),
                                 observatoryId,
                                 extractionMethod,
                                 organizationId
@@ -222,7 +218,7 @@ class ObjectController(
                         else
                             resourceService.create(
                                 userId,
-                                resource.label,
+                                resource.label!!,
                                 observatoryId,
                                 extractionMethod,
                                 organizationId
@@ -231,10 +227,10 @@ class ObjectController(
                             tempResources[resource.`@temp`] = newResource.value
                         }
                         statementService.create(userId, subject.value, predicateId, newResource.value)
-                        if (resource.values != null) {
+                        if (resource.hasSubsequentStatements()) {
                             goThroughStatementsRecursively(
                                 newResource,
-                                resource.values,
+                                resource.values!!,
                                 tempResources,
                                 predicates,
                                 resourceQueue,
@@ -261,6 +257,20 @@ class ObjectController(
                 resourceQueue.add(temp)
             }
         }
+    }
+
+    /**
+     * Find a predicate in the temp list of predicates
+     * or create a new PredicateId object for it
+     */
+    private fun extractPredicate(
+        predicate: String,
+        predicates: HashMap<String, PredicateId>
+    ): PredicateId? {
+        return if (predicate.startsWith("_"))
+            predicates[predicate]
+        else
+            PredicateId(predicate)
     }
 
     /**
@@ -333,20 +343,77 @@ data class CreateObjectRequest(
 
 data class NamedObject(
     val name: String,
-    val `class`: String?,
+    val classes: List<String>,
     val values: HashMap<String, List<ObjectStatement>>?,
     val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
 )
 
 data class ObjectStatement(
     val `@id`: String?,
-    val `class`: String?,
+    val classes: List<String>,
     val `@temp`: String?,
     val text: String?,
     val datatype: String?,
     val label: String?,
     val values: HashMap<String, List<ObjectStatement>>?
-)
+) {
+
+    /**
+     * Indicate if the resource is an existing thing
+     * i.e., the @id property is used in the json object
+     */
+    fun isExisting() =
+        this.`@id` != null
+
+    /**
+     * Check if the resource is existing
+     * and that the id starts with an R
+     */
+    fun isExistingResource() =
+        this.isExisting() && this.`@id`!!.startsWith("R")
+
+    /**
+     * Check if the literal exists
+     * and that the id starts with an L
+     */
+    fun isExistingLiteral() =
+        this.isExisting() && this.`@id`!!.startsWith("L")
+
+    /**
+     * Check if the resource is a temp resource
+     * i.e., its id starts with an _
+     */
+    fun isTempResource() =
+        this.`@id`!!.startsWith("_")
+
+    /**
+     * Check if the resource is typed
+     * i.e., it has classes
+     */
+    fun isTyped() =
+        this.classes.isNotEmpty()
+
+    /**
+     * Check if this is a new resource to be created
+     * i.e., the label property in the json object is used
+     */
+    fun isNewResource() =
+        this.label != null
+
+    /**
+     * Check if this is a new literal to be created
+     * i.e., the text property in the json object is used
+     */
+    fun isNewLiteral() =
+        this.text != null
+
+    /**
+     * Check if the object has a set
+     * of statements to be added recursively
+     */
+    fun hasSubsequentStatements() =
+        this.values != null && this.values.count() > 0
+}
 
 data class TempResource(
     val subject: ResourceId,

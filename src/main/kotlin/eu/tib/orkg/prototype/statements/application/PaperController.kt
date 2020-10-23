@@ -65,7 +65,7 @@ class PaperController(
         // paper contribution data
         if (request.paper.hasContributions()) {
             request.paper.contributions!!.forEach {
-                val contributionId = createCompleteContribution(it, request)
+                val contributionId = addCompleteContribution(it, request)
                 // Create statement between paper and contribution
                 statementService.create(userId, paperId.value, Constants.ContributionPredicate, contributionId.value)
             }
@@ -77,7 +77,7 @@ class PaperController(
      * Using the object controller
      * inset the full graph of the contribution
      */
-    private fun createCompleteContribution(
+    private fun addCompleteContribution(
         jsonObject: NamedObject,
         paperRequest: CreatePaperRequest
     ): ResourceId {
@@ -108,9 +108,9 @@ class PaperController(
                     byTitle.firstOrNull()
                 }
             }
-            found ?: addNewPaper(userId, request)
+            found ?: createNewPaperWithMetadata(userId, request)
         } else {
-            addNewPaper(userId, request)
+            createNewPaperWithMetadata(userId, request)
         }
     }
 
@@ -118,7 +118,7 @@ class PaperController(
      * Handles the creation of a new paper resource
      * i.e., creates the new paper, meta-data
      */
-    private fun addNewPaper(userId: UUID, request: CreatePaperRequest): Resource {
+    private fun createNewPaperWithMetadata(userId: UUID, request: CreatePaperRequest): Resource {
         val contributor = contributorService.findByIdOrElseUnknown(userId)
         val organizationId = contributor.organizationId
         val observatoryId = contributor.observatoryId

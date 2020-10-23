@@ -264,16 +264,30 @@ class ObjectController(
                 }
             }
         }
+        handleTempResourcesInQueue(resourceQueue, tempResources, recursive, userId)
+    }
+
+    /**
+     * Go through the queue of temp resources
+     * and add appropriate statements until queue is empty
+     * or the limit (50) is reached
+     */
+    private fun handleTempResourcesInQueue(
+        queue: Queue<TempResource>,
+        tempResources: HashMap<String, String>,
+        isRecursive: Boolean,
+        userId: UUID
+    ) {
         // Loop until the Queue is empty
         var limit = 50 // this is just to ensure that a user won't add an id that is not there
-        while (!recursive && !resourceQueue.isEmpty() && limit > 0) {
-            val temp = resourceQueue.remove()
+        while (!isRecursive && !queue.isEmpty() && limit > 0) {
+            val temp = queue.remove()
             limit--
             if (tempResources.containsKey(temp.`object`)) {
                 val tempId = tempResources[temp.`object`]
                 statementService.create(userId, temp.subject.value, temp.predicate, tempId!!)
             } else {
-                resourceQueue.add(temp)
+                queue.add(temp)
             }
         }
     }

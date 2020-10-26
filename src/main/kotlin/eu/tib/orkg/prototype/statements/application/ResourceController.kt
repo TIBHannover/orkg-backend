@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -73,7 +74,7 @@ class ResourceController(
         if (resource.id != null && service.findById(resource.id).isPresent)
             return badRequest().body("Resource id <${resource.id}> already exists!")
         val userId = authenticatedUserId()
-        val contributor = contributorService.findById(userId)
+        val contributor = contributorService.findById(ContributorId(userId))
         var observatoryId = UUID(0, 0)
         var organizationId = UUID(0, 0)
         if (!contributor.isEmpty) {

@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
@@ -81,7 +82,7 @@ class ObjectController(
     ): Resource {
         // Get provenance info
         val userId = authenticatedUserId()
-        val contributor = contributorService.findByIdOrElseUnknown(userId)
+        val contributor = contributorService.findByIdOrElseUnknown(ContributorId(userId))
         val organizationId = contributor.organizationId
         val observatoryId = contributor.observatoryId
 

@@ -4,7 +4,6 @@ import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import java.time.OffsetDateTime
 import java.util.Optional
-import java.util.UUID
 import javax.transaction.Transactional
 import org.springframework.stereotype.Service
 
@@ -13,15 +12,15 @@ import org.springframework.stereotype.Service
 class ContributorService(
     private val userRepository: UserRepository
 ) {
-    fun findById(userId: UUID): Optional<Contributor> =
+    fun findById(userId: ContributorId): Optional<Contributor> =
         userRepository
-            .findById(userId)
+            .findById(userId.value)
             .map(UserEntity::toContributor)
 
     /**
      * Attempt to find a contributor with a given ID, or return a default user.
      */
-    fun findByIdOrElseUnknown(userId: UUID): Contributor =
+    fun findByIdOrElseUnknown(userId: ContributorId): Contributor =
         findById(userId)
             .orElse(
                 Contributor(
@@ -31,18 +30,18 @@ class ContributorService(
                 )
             )
 
-    fun findOrganizationById(userId: UUID): Optional<Contributor> =
+    fun findOrganizationById(userId: ContributorId): Optional<Contributor> =
         userRepository
-            .findOrganizationById(userId)
+            .findOrganizationById(userId.value)
             .map(UserEntity::toContributor)
 
-    fun findUsersByOrganizationId(id: UUID): Iterable<Contributor> =
+    fun findUsersByOrganizationId(id: ContributorId): Iterable<Contributor> =
         userRepository
-            .findUsersByOrganizationId(id)
+            .findUsersByOrganizationId(id.value)
             .map(UserEntity::toContributor)
 
-    fun findUsersByObservatoryId(id: UUID): Iterable<Contributor> =
+    fun findUsersByObservatoryId(id: ContributorId): Iterable<Contributor> =
         userRepository
-            .findUsersByObservatoryId(id)
+            .findUsersByObservatoryId(id.value)
             .map(UserEntity::toContributor)
 }

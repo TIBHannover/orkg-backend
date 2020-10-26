@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
@@ -82,7 +83,7 @@ class OrganizationController(
     }
 
     @GetMapping("{id}/users")
-    fun findUsersByOrganizationId(@PathVariable id: UUID): Iterable<Contributor> =
+    fun findUsersByOrganizationId(@PathVariable id: ContributorId): Iterable<Contributor> =
         contributorService.findUsersByOrganizationId(id)
 
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])

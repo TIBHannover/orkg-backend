@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
@@ -119,7 +120,7 @@ class PaperController(
      * i.e., creates the new paper, meta-data
      */
     private fun createNewPaperWithMetadata(userId: UUID, request: CreatePaperRequest): Resource {
-        val contributor = contributorService.findByIdOrElseUnknown(userId)
+        val contributor = contributorService.findByIdOrElseUnknown(ContributorId(userId))
         val organizationId = contributor.organizationId
         val observatoryId = contributor.observatoryId
 

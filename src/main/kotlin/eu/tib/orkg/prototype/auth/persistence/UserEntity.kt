@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.auth.persistence
 
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneOffset.UTC
@@ -66,7 +67,7 @@ class UserEntity {
         )
 
     fun toContributor() = Contributor(
-        id = this.id!!,
+        id = ContributorId(this.id!!),
         name = this.displayName!!,
         joinedAt = OffsetDateTime.of(this.created, UTC),
         organizationId = this.organizationId ?: UUID(0, 0),

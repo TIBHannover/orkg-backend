@@ -25,7 +25,7 @@ class ContributorService(
         findById(userId)
             .orElse(
                 Contributor(
-                    id = UUID(0, 0),
+                    id = ContributorId.createUnknownContributor(),
                     name = "Unknown User",
                     joinedAt = OffsetDateTime.MIN
                 )

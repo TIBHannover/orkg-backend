@@ -17,7 +17,7 @@ data class Contributor(
     /**
      * The user's ID.
      */
-    val id: UUID,
+    val id: ContributorId,
 
     /**
      * The name the users wants to be displayed.

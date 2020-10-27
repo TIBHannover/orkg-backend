@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 import eu.tib.orkg.prototype.statements.domain.model.FieldService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jFieldRepository
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -12,8 +13,9 @@ class Neo4jFieldService(
     private val neo4jFieldRepository: Neo4jFieldRepository
 ) : FieldService {
 
-    override fun getResearchProblemsOfField(fieldId: ResourceId): List<Any> {
-        return neo4jFieldRepository.getResearchProblemsOfField(fieldId)
+    override fun getResearchProblemsOfField(fieldId: ResourceId, pageable: Pageable): List<Any> {
+        return neo4jFieldRepository.getResearchProblemsOfField(fieldId, pageable)
+            .content
             .map {
                 object {
                     val problem = it.problem.toResource()

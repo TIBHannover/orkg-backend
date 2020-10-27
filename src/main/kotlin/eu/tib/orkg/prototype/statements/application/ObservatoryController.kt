@@ -78,6 +78,16 @@ class ObservatoryController(
     fun findUsersByObservatoryId(@PathVariable id: UUID): Iterable<Contributor> =
         contributorService.findUsersByObservatoryId(id)
 
+    @GetMapping("/research_field")
+    fun findObservatoriesByResearchField(): Map<String?, List<Observatory>> {
+        val list = service.listObservatories()
+        list.forEach{
+            if(it.researchField===null)
+            it.researchField="other".toString()
+        }
+        return list.groupBy{ it.researchField}
+    }
+
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
     fun updateObservatoryName(@PathVariable id: UUID, @RequestBody @Valid name: UpdateRequest): Observatory {
         service
@@ -97,12 +107,12 @@ class ObservatoryController(
     }
 
     @RequestMapping("{id}/research_field", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateObservatoryResearchField(@PathVariable id: UUID, @RequestBody @Valid researchField: UpdateRequest): Observatory {
+    fun updateObservatoryResearchField(@PathVariable id: UUID, @RequestBody @Valid researchFieldId: UpdateRequest): Observatory {
         service
             .findById(id)
             .orElseThrow { ObservatoryNotFound(id) }
 
-        return service.changeResearchField(id, researchField.value)
+        return service.changeResearchField(id, researchFieldId.value)
     }
 
     @GetMapping("stats/observatories")

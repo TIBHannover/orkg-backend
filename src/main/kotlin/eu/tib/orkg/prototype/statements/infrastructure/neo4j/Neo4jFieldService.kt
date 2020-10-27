@@ -16,7 +16,7 @@ class Neo4jFieldService(
         return neo4jFieldRepository.getResearchProblemsOfField(fieldId)
             .map {
                 object {
-                    val problem = it.problem
+                    val problem = it.problem.toResource()
                     val papers = it.papers
                 }
             }

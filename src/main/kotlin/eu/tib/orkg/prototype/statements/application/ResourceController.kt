@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
@@ -102,6 +104,19 @@ class ResourceController(
         return ok(service.update(updatedRequest))
     }
 
+    @RequestMapping("{id}/observatory", method = [RequestMethod.POST, RequestMethod.PUT])
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    fun updateWithObservatory(
+        @PathVariable id: ResourceId,
+        @RequestBody request: UpdateResourceObservatoryRequest
+    ): ResponseEntity<Resource> {
+        val found = service.findById(id)
+        if (!found.isPresent)
+            return notFound().build()
+        val userId = authenticatedUserId()
+        return ok(service.updatePaperObservatory(request, id, userId))
+    }
+
     @GetMapping("{id}/contributors")
     fun findContributorsById(@PathVariable id: ResourceId): Iterable<ResourceContributors> {
         return service.findContributorsByResourceId(id)
@@ -141,4 +156,11 @@ data class UpdateResourceRequest(
     val id: ResourceId?,
     val label: String?,
     val classes: Set<ClassId>?
+)
+
+data class UpdateResourceObservatoryRequest(
+    @JsonProperty("observatory_id")
+    val observatoryId: UUID,
+    @JsonProperty("organization_id")
+    val organizationId: UUID
 )

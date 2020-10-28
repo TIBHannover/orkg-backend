@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.domain.model
 
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
+import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryRequest
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
 import java.util.Optional
@@ -116,6 +117,8 @@ interface ResourceService {
      * Update a resource.
      */
     fun update(request: UpdateResourceRequest): Resource
+
+    fun updatePaperObservatory(request: UpdateResourceObservatoryRequest, id: ResourceId, userId: UUID): Resource
 
     fun hasStatements(id: ResourceId): Boolean
 

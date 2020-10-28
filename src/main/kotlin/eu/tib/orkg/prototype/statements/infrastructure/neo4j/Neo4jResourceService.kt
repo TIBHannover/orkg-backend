@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
+import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryRequest
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -150,6 +151,15 @@ class Neo4jResourceService(
             found.label = request.label
         if (request.classes != null)
             found.classes = request.classes
+
+        return neo4jResourceRepository.save(found).toResource()
+    }
+
+    override fun updatePaperObservatory(request: UpdateResourceObservatoryRequest, id: ResourceId, userId: UUID): Resource {
+        val found = neo4jResourceRepository.findByResourceId(id).get()
+            found.observatoryId = request.observatoryId
+            found.organizationId = request.organizationId
+            found.createdBy = userId
 
         return neo4jResourceRepository.save(found).toResource()
     }

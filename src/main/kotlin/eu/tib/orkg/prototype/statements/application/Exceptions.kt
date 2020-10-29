@@ -50,7 +50,11 @@ class OrphanOrcidValue(orcid: String) : RuntimeException("ORCID value ($orcid) i
 /**
  * Base class for custom property validation.
  */
-abstract class PropertyValidationException(open val property: String, override val message: String) : RuntimeException()
+abstract class PropertyValidationException(
+    open val property: String,
+    override val message: String,
+    override val cause: Throwable? = null
+) : RuntimeException(cause)
 
 /**
  * Exception indicating that a property was blank when it was not supposed to be.

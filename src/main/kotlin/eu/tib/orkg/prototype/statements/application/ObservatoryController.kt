@@ -81,11 +81,12 @@ class ObservatoryController(
     @GetMapping("/research_field")
     fun findObservatoriesByResearchField(): Map<String?, List<Observatory>> {
         var list = service.listObservatories()
+
         list.forEach {
-            if (it.researchField === null)
-                it.researchField = "other".toString()
+            if (it.researchField?.id === null)
+                it.researchField?.label = "Others"
         }
-        return list.groupBy { it.researchField }
+        return list.groupBy { it.researchField?.label }
     }
 
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])

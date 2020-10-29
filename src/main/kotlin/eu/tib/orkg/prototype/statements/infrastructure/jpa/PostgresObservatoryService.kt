@@ -38,7 +38,7 @@ class PostgresObservatoryService(
 
         var response = postgresObservatoryRepository.save(newObservatory).toObservatory()
         return if (response.researchField !== null)
-            response.withResearchField(getResource(response.researchField!!))
+            response.withResearchField(getResource(response.researchField.toString()))
         else response
     }
 
@@ -48,8 +48,8 @@ class PostgresObservatoryService(
             .map(ObservatoryEntity::toObservatory)
 
         response.forEach {
-            if (it.researchField !== null)
-                it.withResearchField(getResource(it.researchField!!))
+            if (it.researchField?.id !== null)
+                it.withResearchField(getResource(it.researchField?.id!!))
         }
         return response
     }
@@ -59,8 +59,8 @@ class PostgresObservatoryService(
             .map(ObservatoryEntity::toObservatory)
 
         response.forEach {
-            if (it.researchField !== null)
-                it.withResearchField(getResource(it.researchField!!))
+            if (it.researchField?.id !== null)
+                it.withResearchField(getResource(it.researchField.toString()))
         }
         return response
     }
@@ -69,15 +69,15 @@ class PostgresObservatoryService(
         var response = postgresObservatoryRepository
             .findByName(name)
             .map(ObservatoryEntity::toObservatory).get()
-        return if (response.researchField !== null)
-            Optional.of(response.withResearchField(getResource(response.researchField!!)))
+        return if (response.researchField?.id !== null)
+            Optional.of(response.withResearchField(getResource(response.researchField.toString())))
         else Optional.of(response)
     }
 
     override fun findById(id: UUID): Optional<Observatory> {
         var response = postgresObservatoryRepository.findById(id).map(ObservatoryEntity::toObservatory).get()
-        return if (response.researchField !== null)
-            Optional.of(response.withResearchField(getResource(response.researchField!!)))
+        return if (response.researchField?.id !== null)
+            Optional.of(response.withResearchField(getResource(response.researchField.toString())))
         else Optional.of(response)
     }
 
@@ -86,8 +86,8 @@ class PostgresObservatoryService(
             name = to
         }
         var response = postgresObservatoryRepository.save(entity).toObservatory()
-        return if (response.researchField !== null)
-            response.withResearchField(getResource(response.researchField!!))
+        return if (response.researchField?.id !== null)
+            response.withResearchField(getResource(response.researchField.toString()))
         else response
     }
 
@@ -96,8 +96,8 @@ class PostgresObservatoryService(
             description = to
         }
         var response = postgresObservatoryRepository.save(entity).toObservatory()
-        return if (response.researchField !== null)
-            response.withResearchField(getResource(response.researchField!!))
+        return if (response.researchField?.id !== null)
+            response.withResearchField(getResource(response.researchField.toString()))
         else response
     }
 
@@ -106,13 +106,16 @@ class PostgresObservatoryService(
             researchField = to
         }
         var response = postgresObservatoryRepository.save(entity).toObservatory()
-        return if (response.researchField !== null)
-            response.withResearchField(getResource(response.researchField!!))
+        return if (response.researchField?.id !== null)
+            response.withResearchField(getResource(response.researchField.toString()))
         else response
     }
 
-    fun getResource(id: String): Optional<Resource> {
-        return resourceService.findById(ResourceId(id))
+    fun getResource(resource: String): Optional<Resource> {
+            return resourceService.findById(ResourceId(resource))
     }
-    fun Observatory.withResearchField(rf: Optional<Resource>) = this.apply { researchField = rf.get().toString() }
+    fun Observatory.withResearchField(rf: Optional<Resource>) = this.apply {
+        researchField?.id = rf.get().id.toString()
+        researchField?.label = rf.get().label
+    }
 }

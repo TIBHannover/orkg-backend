@@ -23,7 +23,7 @@ class PostgresObservatoryService(
     override fun create(name: String, description: String, organization: Organization, researchField: String): Observatory {
         val oId = UUID.randomUUID()
         val org = postgresOrganizationRepository
-            .findById(organization.id!!)
+            .findById(organization.id!!.value)
             .orElseThrow { OrganizationNotFound(organization.id) } // FIXME: should always have an ID
         val newObservatory = ObservatoryEntity().apply {
             id = oId

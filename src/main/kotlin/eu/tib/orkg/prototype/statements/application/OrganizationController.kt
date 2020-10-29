@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.Organization
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import java.io.File
 import java.util.Base64
@@ -59,22 +60,13 @@ class OrganizationController(
     }
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: UUID): Organization {
+    fun findById(@PathVariable id: OrganizationId): Organization {
         val response = service
             .findById(id)
             .orElseThrow { OrganizationNotFound(id) }
         val logo = encoder(response.id.toString())
 
-        return (
-                Organization(
-                    id = response.id,
-                    name = response.name,
-                    logo = logo,
-                    createdBy = response.createdBy,
-                    homepage = response.homepage,
-                    observatoryIds = response.observatoryIds
-                )
-            )
+        return response.copy(logo = logo)
     }
 
     @GetMapping("{id}/observatories")
@@ -87,7 +79,7 @@ class OrganizationController(
         contributorService.findUsersByOrganizationId(id)
 
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateOrganizationName(@PathVariable id: UUID, @RequestBody @Valid name: UpdateRequest): Organization {
+    fun updateOrganizationName(@PathVariable id: OrganizationId, @RequestBody @Valid name: UpdateRequest): Organization {
         val response = findOrganization(id)
         response.name = name.value
 
@@ -97,7 +89,7 @@ class OrganizationController(
     }
 
     @RequestMapping("{id}/url", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateOrganizationUrl(@PathVariable id: UUID, @RequestBody @Valid url: UpdateRequest): Organization {
+    fun updateOrganizationUrl(@PathVariable id: OrganizationId, @RequestBody @Valid url: UpdateRequest): Organization {
         val response = findOrganization(id)
         response.homepage = url.value
 
@@ -107,7 +99,7 @@ class OrganizationController(
     }
 
     @RequestMapping("{id}/logo", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateOrganizationLogo(@PathVariable id: UUID, @RequestBody @Valid submittedLogo: UpdateRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
+    fun updateOrganizationLogo(@PathVariable id: OrganizationId, @RequestBody @Valid submittedLogo: UpdateRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         val response = findOrganization(id)
         val logo = submittedLogo.value
         return if (!isValidLogo(logo)) {
@@ -126,13 +118,13 @@ class OrganizationController(
         }
     }
 
-    fun findOrganization(id: UUID): Organization {
+    fun findOrganization(id: OrganizationId): Organization {
         return service
             .findById(id)
             .orElseThrow { OrganizationNotFound(id) }
     }
 
-    fun decoder(base64Str: String, name: UUID?) {
+    fun decoder(base64Str: String, name: OrganizationId?) {
         val (mimeType, encodedString) = base64Str.split(",")
         val (extension, _) = (mimeType.substring(mimeType
                                 .indexOf("/") + 1))
@@ -141,7 +133,7 @@ class OrganizationController(
         writeImage(encodedString, extension, name)
     }
 
-        fun writeImage(image: String, imageExtension: String, name: UUID?) {
+        fun writeImage(image: String, imageExtension: String, name: OrganizationId?) {
             if (!File(imageStoragePath).isDirectory)
                 File(imageStoragePath).mkdir()
             // check if logo already exist then delete it

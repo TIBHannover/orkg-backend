@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.net.URI
 import java.util.UUID
@@ -22,7 +23,7 @@ class PredicateNotFound(predicate: String) : RuntimeException("Predicate $predic
 class ObservatoryNotFound(id: UUID) : RuntimeException("""Observatory "$id" not found""")
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
-class OrganizationNotFound(id: UUID) : RuntimeException("""Organization "$id" not found""")
+class OrganizationNotFound(id: OrganizationId) : RuntimeException("""Organization "$id" not found""")
 
 @ResponseStatus(HttpStatus.FORBIDDEN)
 class ResourceCantBeDeleted(id: ResourceId) : RuntimeException("Unable to delete Resource $id because it is used in at least one statement")

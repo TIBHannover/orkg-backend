@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model.jpa
 
 import eu.tib.orkg.prototype.statements.domain.model.Organization
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -34,7 +35,7 @@ class OrganizationEntity() {
 
     fun toOrganization() =
         Organization(
-            id = id,
+            id = OrganizationId(id!!),
             name = name,
             logo = null,
             createdBy = createdBy,

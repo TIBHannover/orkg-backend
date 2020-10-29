@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.UUID
 
 data class Organization(
-    val id: UUID?,
+    val id: OrganizationId?,
 
     var name: String?,
 
@@ -14,8 +14,6 @@ data class Organization(
     val createdBy: UUID? = UUID(0, 0),
 
     var homepage: String?,
-
-    // TODO: Do we want/need a members list, as with observatories?
 
     @JsonProperty("observatory_ids")
     val observatoryIds: Set<UUID> = emptySet()

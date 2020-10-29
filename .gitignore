@@ -22,3 +22,5 @@ gradle-app.setting
 
 # TestContainers
 out/
+
+images/

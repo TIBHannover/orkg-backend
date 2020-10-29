@@ -38,6 +38,10 @@ class ClassAlreadyExists(`class`: String) : RuntimeException("The class with the
 class DuplicateURI(uri: URI, id: String) :
     PropertyValidationException("uri", "The URI <$uri> is already assigned to class with ID $id.")
 
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+class InvalidUUID(uuid: String, cause: Throwable?) :
+    PropertyValidationException("id", "Value \"$uuid\" is not a valid UUID.", cause)
+
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class UserNotFound(userId: String) : RuntimeException("""User $userId not found""")
 

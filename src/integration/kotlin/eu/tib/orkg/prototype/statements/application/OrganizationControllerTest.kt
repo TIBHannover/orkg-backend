@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
@@ -76,7 +77,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
     fun lookUpObservatoriesByOrganization() {
         val userId = createTestUser()
         val organizationId = service.create("test organization", userId, "www.example.org").id
-        val resource = createTestResource(UUID(0, 0), UUID(0, 0), UUID(0, 0), "ResearchField")
+        val resource = createTestResource(UUID(0, 0), OrganizationId.createUnknownOrganization(), UUID(0, 0), "ResearchField")
         observatoryService.create("test observatory", "example description", service.findById(organizationId!!).get(), resource.id.toString()).id!!
 
         mockMvc
@@ -95,7 +96,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
         return userService.findByEmail("abc@gmail.com").get().id!!
     }
 
-    fun createTestResource(userId: UUID, organizationId: UUID, observatoryId: UUID, resourceType: String): Resource {
+    fun createTestResource(userId: UUID, organizationId: OrganizationId, observatoryId: UUID, resourceType: String): Resource {
         return resourceService.create(userId, CreateResourceRequest(null, "test paper", setOf(ClassId(resourceType))), observatoryId, ExtractionMethod.UNKNOWN, organizationId)
     }
 

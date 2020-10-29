@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
 import eu.tib.orkg.prototype.statements.application.ObjectController.Constants
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -196,7 +197,7 @@ class PaperController(
         userId: UUID,
         observatoryId: UUID,
         extractionMethod: ExtractionMethod,
-        organizationId: UUID
+        organizationId: OrganizationId
     ) {
         val venuePredicate = predicateService.findById(Constants.VenuePredicate).get().id!!
         val pageable = createPageable(1, 10, null, false)
@@ -235,7 +236,7 @@ class PaperController(
         userId: UUID,
         paperId: ResourceId,
         observatoryId: UUID,
-        organizationId: UUID
+        organizationId: OrganizationId
     ) {
         val pattern = Constants.ORCID_REGEX.toRegex()
         if (paper.paper.hasAuthors()) {

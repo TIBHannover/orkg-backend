@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
@@ -76,7 +77,7 @@ class ResourceController(
         val userId = authenticatedUserId()
         val contributor = contributorService.findById(ContributorId(userId))
         var observatoryId = UUID(0, 0)
-        var organizationId = UUID(0, 0)
+        var organizationId = OrganizationId.createUnknownOrganization()
         if (!contributor.isEmpty) {
             organizationId = contributor.get().organizationId
             observatoryId = contributor.get().observatoryId

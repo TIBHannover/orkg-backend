@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.auth.persistence
 
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneOffset.UTC
@@ -70,7 +71,7 @@ class UserEntity {
         id = ContributorId(this.id!!),
         name = this.displayName!!,
         joinedAt = OffsetDateTime.of(this.created, UTC),
-        organizationId = this.organizationId ?: UUID(0, 0),
+        organizationId = this.organizationId?.let { OrganizationId(it) } ?: OrganizationId.createUnknownOrganization(),
         observatoryId = this.observatoryId ?: UUID(0, 0),
         email = this.email!!
     )

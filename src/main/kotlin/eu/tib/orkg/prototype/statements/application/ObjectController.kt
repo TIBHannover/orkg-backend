@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -181,7 +182,7 @@ class ObjectController(
         recursive: Boolean = false,
         observatoryId: UUID,
         extractionMethod: ExtractionMethod,
-        organizationId: UUID
+        organizationId: OrganizationId
     ) {
         for ((predicate, value) in data) {
             val predicateId = extractPredicate(predicate, predicates)

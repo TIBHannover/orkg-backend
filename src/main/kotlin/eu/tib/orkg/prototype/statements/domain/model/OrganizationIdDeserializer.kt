@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.domain.model
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
+import eu.tib.orkg.prototype.statements.application.InvalidUUID
 import java.util.UUID
 
 class OrganizationIdDeserializer :
@@ -13,6 +14,10 @@ class OrganizationIdDeserializer :
             ctxt: DeserializationContext?
         ): OrganizationId? =
             p?.valueAsString?.let {
-                OrganizationId(UUID.fromString(it))
+                try {
+                    OrganizationId(UUID.fromString(it))
+                } catch (exception: IllegalArgumentException) {
+                    throw InvalidUUID(it, exception)
+                }
             }
 }

@@ -9,6 +9,9 @@ import java.util.UUID
 @JsonDeserialize(using = ContributorIdDeserializer::class)
 @JsonSerialize(using = ContributorIdSerializer::class)
 data class ContributorId(val value: UUID) {
+
+    constructor(s: String) : this(UUID.fromString(s))
+
     companion object {
         fun createUnknownContributor() = ContributorId(UUID(0, 0))
     }

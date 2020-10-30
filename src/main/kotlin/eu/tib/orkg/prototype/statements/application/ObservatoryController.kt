@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
@@ -77,7 +76,7 @@ class ObservatoryController(
     }
 
     @GetMapping("{id}/users")
-    fun findUsersByObservatoryId(@PathVariable id: ContributorId): Iterable<Contributor> =
+    fun findUsersByObservatoryId(@PathVariable id: UUID): Iterable<Contributor> =
         contributorService.findUsersByObservatoryId(id)
 
     @GetMapping("research-field/{id}/observatories")

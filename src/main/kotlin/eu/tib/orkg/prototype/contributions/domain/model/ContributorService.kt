@@ -34,11 +34,11 @@ class ContributorService(
 
     fun findUsersByOrganizationId(id: OrganizationId): Iterable<Contributor> =
         userRepository
-            .findUsersByOrganizationId(id.value)
+            .findByOrganizationId(id.value)
             .map(UserEntity::toContributor)
 
     fun findUsersByObservatoryId(id: UUID): Iterable<Contributor> =
         userRepository
-            .findUsersByObservatoryId(id)
+            .findByObservatoryId(id)
             .map(UserEntity::toContributor)
 }

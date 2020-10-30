@@ -30,11 +30,6 @@ class ContributorService(
                 )
             )
 
-    fun findOrganizationById(userId: ContributorId): Optional<Contributor> =
-        userRepository
-            .findOrganizationById(userId.value)
-            .map(UserEntity::toContributor)
-
     fun findUsersByOrganizationId(id: ContributorId): Iterable<Contributor> =
         userRepository
             .findUsersByOrganizationId(id.value)

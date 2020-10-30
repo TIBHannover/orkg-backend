@@ -37,8 +37,8 @@ class PostgresObservatoryService(
         }
 
         var response = postgresObservatoryRepository.save(newObservatory).toObservatory()
-        return if (response.researchField !== null)
-            response.withResearchField(getResource(response.researchField.toString()))
+        return if (response.researchField?.id !== null)
+            response.withResearchField(getResource(response.researchField?.id!!))
         else response
     }
 
@@ -60,7 +60,7 @@ class PostgresObservatoryService(
 
         response.forEach {
             if (it.researchField?.id !== null)
-                it.withResearchField(getResource(it.researchField.toString()))
+                it.withResearchField(getResource(it.researchField?.id!!))
         }
         return response
     }
@@ -70,14 +70,14 @@ class PostgresObservatoryService(
             .findByName(name)
             .map(ObservatoryEntity::toObservatory).get()
         return if (response.researchField?.id !== null)
-            Optional.of(response.withResearchField(getResource(response.researchField.toString())))
+            Optional.of(response.withResearchField(getResource(response.researchField?.id!!)))
         else Optional.of(response)
     }
 
     override fun findById(id: UUID): Optional<Observatory> {
         var response = postgresObservatoryRepository.findById(id).map(ObservatoryEntity::toObservatory).get()
         return if (response.researchField?.id !== null)
-            Optional.of(response.withResearchField(getResource(response.researchField.toString())))
+            Optional.of(response.withResearchField(getResource(response.researchField?.id!!)))
         else Optional.of(response)
     }
 
@@ -87,7 +87,7 @@ class PostgresObservatoryService(
         }
         var response = postgresObservatoryRepository.save(entity).toObservatory()
         return if (response.researchField?.id !== null)
-            response.withResearchField(getResource(response.researchField.toString()))
+            response.withResearchField(getResource(response.researchField?.id!!))
         else response
     }
 
@@ -97,7 +97,7 @@ class PostgresObservatoryService(
         }
         var response = postgresObservatoryRepository.save(entity).toObservatory()
         return if (response.researchField?.id !== null)
-            response.withResearchField(getResource(response.researchField.toString()))
+            response.withResearchField(getResource(response.researchField?.id!!))
         else response
     }
 
@@ -107,7 +107,7 @@ class PostgresObservatoryService(
         }
         var response = postgresObservatoryRepository.save(entity).toObservatory()
         return if (response.researchField?.id !== null)
-            response.withResearchField(getResource(response.researchField.toString()))
+            response.withResearchField(getResource(response.researchField?.id!!))
         else response
     }
 

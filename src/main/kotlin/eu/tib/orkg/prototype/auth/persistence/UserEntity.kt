@@ -5,12 +5,12 @@ import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneOffset.UTC
 import java.util.UUID
-import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.FetchType
 import javax.persistence.Id
-import javax.persistence.OneToMany
+import javax.persistence.JoinColumn
+import javax.persistence.JoinTable
+import javax.persistence.ManyToMany
 import javax.persistence.Table
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
@@ -48,8 +48,13 @@ class UserEntity {
     @Column(name = "observatory_id")
     var observatoryId: UUID? = null
 
-    @OneToMany(mappedBy = "id", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-    var roles: MutableCollection<RoleEntity> = mutableSetOf()
+    @ManyToMany
+    @JoinTable(
+        name = "users_roles",
+        joinColumns = [JoinColumn(name = "user_id")],
+        inverseJoinColumns = [JoinColumn(name = "role_id")]
+    )
+    var roles: MutableSet<RoleEntity> = mutableSetOf()
 
     fun toContributor() = Contributor(
         id = this.id!!,
@@ -65,10 +70,15 @@ class UserEntity {
 @Table(name = "roles")
 open class RoleEntity {
     @Id
-    open var id: UUID? = null
+    @Column(name = "role_id", nullable = false)
+    open var id: Int? = null
 
     @NotBlank
+    @Column(name = "name", nullable = false)
     open var name: String? = null
+
+    @ManyToMany(mappedBy = "roles")
+    private var users: MutableSet<UserEntity> = mutableSetOf()
 }
 
 /**

@@ -178,9 +178,9 @@ class Neo4jStatementService :
     ): Iterable<GeneralStatement> =
         statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(predicateId, literal, subjectClass, pagination)
             .content
-            .map { toStatement(it)
+            .map { toStatement(it) }
 
-                override fun fetchAsBundle(thingId: String): Bundle =
+    override fun fetchAsBundle(thingId: String): Bundle =
         traceStatementsPerHop(thingId, statementRepository.fetchAsBundle(thingId))
 
     private fun traceStatementsPerHop(rootId: String, graphStatements: Iterable<Neo4jStatement>): Bundle {

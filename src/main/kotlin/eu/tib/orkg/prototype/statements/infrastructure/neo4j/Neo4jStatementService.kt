@@ -180,32 +180,6 @@ class Neo4jStatementService :
             .content
             .map { toStatement(it) }
 
-    override fun fetchAsBundle(thingId: String): Bundle =
-        traceStatementsPerHop(thingId, statementRepository.fetchAsBundle(thingId))
-
-    private fun traceStatementsPerHop(rootId: String, graphStatements: Iterable<Neo4jStatement>): Bundle {
-        val resourceDepth = mutableMapOf(rootId to 0)
-        val statements: Queue<Neo4jStatement> = LinkedList(graphStatements.toList())
-        while (statements.isNotEmpty()) {
-            // pop statement from the queue and check for it
-            val element = statements.remove()
-            if (element.subject!!.thingId!! in resourceDepth) {
-                // found subject in the queue, so add object to que with extra hop
-                val hop = resourceDepth[element.subject!!.thingId!!]!!
-                resourceDepth[element.`object`!!.thingId!!] = hop + 1
-            } else {
-                // return the statement to the queue because no partner is found
-                statements.add(element)
-            }
-        }
-        // addressed all statements
-        val bundle = Bundle(rootId)
-        graphStatements.map {
-            bundle.addStatement(toStatement(it), resourceDepth[it.subject!!.thingId!!]!!)
-        }
-        return bundle
-    }
-
     private fun refreshObject(thing: Neo4jThing): Thing {
         return when (thing) {
             is Neo4jResource -> resourceService.findById(thing.resourceId).get()

@@ -7,13 +7,13 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
-class ResourceNotFound : RuntimeException()
+class ResourceNotFound(id: String? = null) : RuntimeException("Resource $id not found")
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
-class LiteralNotFound : RuntimeException()
+class LiteralNotFound(id: String? = null) : RuntimeException("Literal $id not found")
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
-class ClassNotFound : java.lang.RuntimeException()
+class ClassNotFound(id: String? = null) : RuntimeException("Class $id not found")
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class PredicateNotFound(predicate: String) : RuntimeException("Predicate $predicate is not found")
@@ -39,6 +39,12 @@ class DuplicateURI(uri: URI, id: String) :
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class UserNotFound(userId: String) : RuntimeException("""User $userId not found""")
+
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+class OrcidNotValid(orcid: String) : RuntimeException("ORCID value ($orcid) is not valid identifier")
+
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+class OrphanOrcidValue(orcid: String) : RuntimeException("ORCID value ($orcid) is not attached to any author!")
 
 /**
  * Base class for custom property validation.

@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
-import eu.tib.orkg.prototype.statements.application.ID_DOI_PREDICATE
+import eu.tib.orkg.prototype.statements.application.ObjectController.Constants.ID_DOI_PREDICATE
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.util.Optional
 import java.util.UUID

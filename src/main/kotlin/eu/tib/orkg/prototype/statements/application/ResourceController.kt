@@ -123,7 +123,7 @@ class ResourceController(
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun delete(@PathVariable id: ResourceId): ResponseEntity<Unit> {
         val found = service.findById(id)
 

@@ -207,6 +207,14 @@ class Neo4jStatementService :
         return bundle
     }
 
+    private fun refreshObject(thing: Neo4jThing): Thing {
+        return when (thing) {
+            is Neo4jResource -> resourceService.findById(thing.resourceId).get()
+            is Neo4jLiteral -> literalService.findById(thing.literalId).get()
+            else -> thing.toThing()
+        }
+    }
+
     override fun fetchAsBundle(thingId: String): Bundle =
         traceStatementsPerHop(thingId, statementRepository.fetchAsBundle(thingId))
 

@@ -428,17 +428,14 @@ class StatementControllerTest : RestDocumentationBaseTest() {
     private fun bundleResponseFields(): ResponseFieldsSnippet =
         responseFields(
             listOf(
-                fieldWithPath("rootId").description("The root ID of the object"),
-                fieldWithPath("bundle").description("The bundle of statements")
+                fieldWithPath("root").description("The root ID of the object"),
+                fieldWithPath("statements").description("The bundle of statements")
             )
-        ).and(
-            bundleStatementFields()
         )
-
-    private fun bundleStatementFields() = listOf(
-        fieldWithPath("statement").description("A statement representation").ignored(),
-        fieldWithPath("level").description("The level, or number of hops from the root object")
-    )
+        .and(statementFields())
+        .andWithPrefix("subject.", resourceResponseFields())
+        .andWithPrefix("predicate.", predicateResponseFields())
+        .andWithPrefix("object.", resourceResponseFields())
 
     private fun statementFields() = listOf(
         fieldWithPath("id").description("The statement ID"),

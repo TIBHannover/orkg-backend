@@ -81,13 +81,12 @@ class ObservatoryController(
 
     @GetMapping("/research_field")
     fun findObservatoriesByResearchField(
-        @RequestParam("research_field", required = false) researchField: String?,
+        @RequestParam("researchField", required = false) researchField: String?
     ): Map<String?, List<Observatory>> {
         val list: List<Observatory>?
-        if(researchField!=null) {
+        if (researchField != null) {
             list = service.findObservatoriesByResearchField(researchField = researchField)
-        }
-        else {
+        } else {
             list = service.listObservatories()
             list.forEach {
                 if (it.researchField?.id === null)

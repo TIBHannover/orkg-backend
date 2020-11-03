@@ -82,7 +82,7 @@ class PostgresObservatoryService(
     }
 
     override fun findObservatoriesByResearchField(researchField: String): List<Observatory> {
-        var response=postgresObservatoryRepository.findByResearchField(researchField).map(ObservatoryEntity::toObservatory)
+        var response = postgresObservatoryRepository.findByResearchField(researchField).map(ObservatoryEntity::toObservatory)
 
         response.forEach {
             if (it.researchField?.id !== null)

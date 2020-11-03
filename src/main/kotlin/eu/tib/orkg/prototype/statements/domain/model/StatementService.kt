@@ -99,5 +99,5 @@ interface StatementService {
      * Get a bundle of statements
      * which represents the entire sub-graph starting from a [Thing]
      */
-    fun fetchAsBundle(thingId: String): Bundle
+    fun fetchAsBundle(thingId: String, maxLevel: Int?): Bundle
 }

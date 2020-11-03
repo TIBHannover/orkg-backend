@@ -81,6 +81,16 @@ class PostgresObservatoryService(
         else Optional.of(response)
     }
 
+    override fun findObservatoriesByResearchField(researchField: String): List<Observatory> {
+        var response=postgresObservatoryRepository.findByResearchField(researchField).map(ObservatoryEntity::toObservatory)
+
+        response.forEach {
+            if (it.researchField?.id !== null)
+                it.withResearchField(getResource(it.researchField?.id!!))
+        }
+        return response
+    }
+
     override fun changeName(id: UUID, to: String): Observatory {
         val entity = postgresObservatoryRepository.findById(id).get().apply {
             name = to

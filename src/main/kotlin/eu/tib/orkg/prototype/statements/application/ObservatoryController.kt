@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
@@ -79,12 +80,19 @@ class ObservatoryController(
         contributorService.findUsersByObservatoryId(id)
 
     @GetMapping("/research_field")
-    fun findObservatoriesByResearchField(): Map<String?, List<Observatory>> {
-        var list = service.listObservatories()
-
-        list.forEach {
-            if (it.researchField?.id === null)
-                it.researchField?.label = "Others"
+    fun findObservatoriesByResearchField(
+        @RequestParam("research_field", required = false) researchField: String?,
+    ): Map<String?, List<Observatory>> {
+        val list: List<Observatory>?
+        if(researchField!=null) {
+            list = service.findObservatoriesByResearchField(researchField = researchField)
+        }
+        else {
+            list = service.listObservatories()
+            list.forEach {
+                if (it.researchField?.id === null)
+                    it.researchField?.label = "Others"
+            }
         }
         return list.groupBy { it.researchField?.label }
     }

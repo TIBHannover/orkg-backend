@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
@@ -79,21 +78,11 @@ class ObservatoryController(
     fun findUsersByObservatoryId(@PathVariable id: UUID): Iterable<Contributor> =
         contributorService.findUsersByObservatoryId(id)
 
-    @GetMapping("/research_field")
+    @GetMapping("research_field/{id}/observatories")
     fun findObservatoriesByResearchField(
-        @RequestParam("researchField", required = false) researchField: String?
-    ): Map<String?, List<Observatory>> {
-        val list: List<Observatory>?
-        if (researchField != null) {
-            list = service.findObservatoriesByResearchField(researchField = researchField)
-        } else {
-            list = service.listObservatories()
-            list.forEach {
-                if (it.researchField?.id === null)
-                    it.researchField?.label = "Others"
-            }
-        }
-        return list.groupBy { it.researchField?.label }
+        @PathVariable id: String
+    ): List<Observatory>? {
+        return service.findObservatoriesByResearchField(id)
     }
 
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])

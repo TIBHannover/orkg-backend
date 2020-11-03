@@ -99,5 +99,5 @@ interface StatementService {
      * Get a bundle of statements
      * which represents the entire sub-graph starting from a [Thing]
      */
-    fun fetchAsBundle(thingId: String, maxLevel: Int?): Bundle
+    fun fetchAsBundle(thingId: String, minLevel: Int?, maxLevel: Int?, blackClasses: List<String>, whiteClasses: List<String>): Bundle
 }

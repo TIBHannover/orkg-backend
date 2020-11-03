@@ -193,9 +193,20 @@ class StatementController(
     @GetMapping("/{thingId}/bundle")
     fun fetchAsBundle(
         @PathVariable thingId: String,
+        @RequestParam("minLevel", required = false) minLevel: Int?,
         @RequestParam("maxLevel", required = false) maxLevel: Int?,
+        @RequestParam("blackClasses", required = false, defaultValue = "") blackClasses: List<String>,
+        @RequestParam("whiteClasses", required = false, defaultValue = "") whiteClasses: List<String>
     ): HttpEntity<Bundle> {
-        return ok(statementService.fetchAsBundle(thingId, maxLevel))
+        return ok(
+            statementService.fetchAsBundle(
+                thingId,
+                minLevel,
+                maxLevel,
+                blackClasses,
+                whiteClasses
+            )
+        )
     }
 
     private fun getIdAsString(thing: Thing): String =

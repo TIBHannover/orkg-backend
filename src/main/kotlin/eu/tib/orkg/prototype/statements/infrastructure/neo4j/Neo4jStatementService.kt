@@ -18,9 +18,7 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementIdGener
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThingRepository
-import java.util.LinkedList
 import java.util.Optional
-import java.util.Queue
 import java.util.UUID
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Pageable
@@ -188,24 +186,52 @@ class Neo4jStatementService :
         }
     }
 
-    override fun fetchAsBundle(thingId: String, maxLevel: Int?): Bundle =
+    override fun fetchAsBundle(
+        thingId: String,
+        minLevel: Int?,
+        maxLevel: Int?,
+        blackClasses: List<String>,
+        whiteClasses: List<String>
+    ): Bundle =
         Bundle(
             thingId,
             statementRepository.fetchAsBundle(
                 thingId,
-                constructApocBundleConfiguration(maxLevel)
+                constructApocBundleConfiguration(
+                    minLevel,
+                    maxLevel,
+                    blackClasses,
+                    whiteClasses
+                )
             )
                 .map { toStatement(it) }
                 .toMutableList()
         )
 
-    private fun constructApocBundleConfiguration(maxLevel: Int?): Map<String, Any> {
+    private fun constructApocBundleConfiguration(
+        minLevel: Int?,
+        maxLevel: Int?,
+        blackClasses: List<String>,
+        whiteClasses: List<String>
+    ): Map<String, Any> {
         val conf = mutableMapOf<String, Any>(
             "relationshipFilter" to ">",
             "bfs" to true
         )
-        if(maxLevel != null)
+        if (maxLevel != null)
             conf["maxLevel"] = maxLevel
+        if (minLevel != null)
+            conf["minLevel"] = minLevel
+        if (blackClasses.isNotEmpty() || whiteClasses.isNotEmpty())
+            conf["labelFilter"] = ""
+        if (blackClasses.isNotEmpty())
+            conf["labelFilter"] = blackClasses.joinToString(prefix = "-", separator = "|-")
+        if (whiteClasses.isNotEmpty()) {
+            var positiveLabels = whiteClasses.joinToString(prefix = "+", separator = "|+")
+            if ((conf["labelFilter"] as String).isNotBlank())
+                positiveLabels = "${conf["labelFilter"]}|$positiveLabels"
+            conf["labelFilter"] = positiveLabels
+        }
         return conf
     }
 

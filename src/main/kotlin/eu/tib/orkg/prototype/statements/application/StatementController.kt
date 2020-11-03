@@ -192,9 +192,10 @@ class StatementController(
 
     @GetMapping("/{thingId}/bundle")
     fun fetchAsBundle(
-        @PathVariable thingId: String
+        @PathVariable thingId: String,
+        @RequestParam("maxLevel", required = false) maxLevel: Int?,
     ): HttpEntity<Bundle> {
-        return ok(statementService.fetchAsBundle(thingId))
+        return ok(statementService.fetchAsBundle(thingId, maxLevel))
     }
 
     private fun getIdAsString(thing: Thing): String =

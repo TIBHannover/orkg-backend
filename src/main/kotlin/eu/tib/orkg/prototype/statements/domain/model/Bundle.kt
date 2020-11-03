@@ -1,16 +1,14 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-data class Bundle(
-    val rootId: String
-) {
-    var bundle: MutableList<BundleStatement> = mutableListOf()
+import com.fasterxml.jackson.annotation.JsonProperty
 
-    fun addStatement(statement: GeneralStatement, level: Int) {
-        bundle.add(BundleStatement(statement, level))
+data class Bundle(
+    @JsonProperty("root")
+    val rootId: String,
+    @JsonProperty("statements")
+    var bundle: MutableList<GeneralStatement> = mutableListOf()
+) {
+    fun addStatement(statement: GeneralStatement) {
+        bundle.add(statement)
     }
 }
-
-data class BundleStatement(
-    val statement: GeneralStatement,
-    val level: Int
-)

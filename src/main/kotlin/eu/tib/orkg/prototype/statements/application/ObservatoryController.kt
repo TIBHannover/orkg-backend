@@ -78,7 +78,7 @@ class ObservatoryController(
     fun findUsersByObservatoryId(@PathVariable id: UUID): Iterable<Contributor> =
         contributorService.findUsersByObservatoryId(id)
 
-    @GetMapping("research_field/{id}/observatories")
+    @GetMapping("field/{id}/observatories")
     fun findObservatoriesByResearchField(
         @PathVariable id: String
     ): List<Observatory>? {

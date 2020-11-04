@@ -17,6 +17,7 @@ plugins {
 
     jacoco
     kotlin("jvm") version kotlinVersion
+    kotlin("plugin.allopen") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
     id("org.jetbrains.dokka") version "0.10.1"
@@ -100,6 +101,12 @@ allprojects {
         jcenter()
         maven { setUrl("https://dl.bintray.com/bjonnh/RDF4K") }
     }
+}
+
+allOpen {
+    annotation("javax.persistence.Entity")
+    annotation("javax.persistence.MappedSuperclass")
+    annotation("javax.persistence.Embeddable")
 }
 
 tasks {

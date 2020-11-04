@@ -25,7 +25,7 @@ internal class ObservatoryEntityTest {
             @DisplayName("it should return the list of organization IDs")
             fun itShouldReturnTheListOfOrganizationIDs() {
                 val entity = ObservatoryEntity().apply {
-                    organizations = setOfRandomUUIDs.map(::OrganizationEntity).toSet()
+                    organizations = setOfRandomUUIDs.map(::OrganizationEntity).toMutableSet()
                 }
                 val observatory = entity.toObservatory()
                 assertThat(observatory.organizationIds).hasSize(3) // simple check for duplicates, should never trigger

@@ -30,7 +30,7 @@ class ObservatoryEntity {
     var researchField: String? = null
 
     @OneToMany(mappedBy = "id", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-    var users: Set<UserEntity>? = mutableSetOf()
+    var users: MutableSet<UserEntity>? = mutableSetOf()
 
     @JsonIgnore
     @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
@@ -39,7 +39,7 @@ class ObservatoryEntity {
         joinColumns = [JoinColumn(name = "observatory_id", referencedColumnName = "id")],
         inverseJoinColumns = [JoinColumn(name = "organization_id", referencedColumnName = "id")]
     )
-    var organizations: Set<OrganizationEntity>? = mutableSetOf()
+    var organizations: MutableSet<OrganizationEntity>? = mutableSetOf()
 
     fun toObservatory() =
         Observatory(

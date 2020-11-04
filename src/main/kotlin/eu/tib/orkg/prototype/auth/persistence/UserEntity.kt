@@ -68,14 +68,14 @@ class UserEntity {
 
 @Entity
 @Table(name = "roles")
-open class RoleEntity {
+class RoleEntity {
     @Id
     @Column(name = "role_id", nullable = false)
-    open var id: Int? = null
+    var id: Int? = null
 
     @NotBlank
     @Column(name = "name", nullable = false)
-    open var name: String? = null
+    var name: String? = null
 
     @ManyToMany(mappedBy = "roles")
     private var users: MutableSet<UserEntity> = mutableSetOf()

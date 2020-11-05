@@ -7,7 +7,7 @@ import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
-interface Neo4jFieldRepository :
+interface Neo4jResearchFieldRepository :
     Neo4jRepository<Neo4jStatement, Long> {
 
     @Query("""MATCH (field:ResearchField {resource_id: {0}})<-[:RELATED {predicate_id: 'P30'}]-(paper:Paper)-[:RELATED {predicate_id: 'P31'}]->(cont:Contribution)-[:RELATED {predicate_id: 'P32'}]->(problem:Thing)

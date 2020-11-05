@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.createPageable
-import eu.tib.orkg.prototype.statements.domain.model.FieldService
+import eu.tib.orkg.prototype.statements.domain.model.ResearchFieldService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import org.springframework.http.ResponseEntity
@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/fields/")
-class FieldController(
-    private val service: FieldService,
+class ResearchFieldController(
+    private val service: ResearchFieldService,
     private val resourceService: ResourceService
 ) {
 

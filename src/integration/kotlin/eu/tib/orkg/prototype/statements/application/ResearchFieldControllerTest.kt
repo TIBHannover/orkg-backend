@@ -97,7 +97,7 @@ class ResearchFieldControllerTest : RestDocumentationBaseTest() {
         )
 
         mockMvc
-            .perform(getRequestTo("/api/fields/${fieldResource.id!!}/problems/"))
+            .perform(getRequestTo("/api/research-fields/${fieldResource.id!!}/problems/"))
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andDo(
                 MockMvcRestDocumentation.document(

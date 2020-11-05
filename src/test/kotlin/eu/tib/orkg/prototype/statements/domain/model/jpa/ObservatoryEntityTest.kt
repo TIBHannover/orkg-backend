@@ -25,6 +25,7 @@ internal class ObservatoryEntityTest {
             @DisplayName("it should return the list of organization IDs")
             fun itShouldReturnTheListOfOrganizationIDs() {
                 val entity = ObservatoryEntity().apply {
+                    id = UUID.fromString("66ca8f3f-e34b-4489-a2dc-8d6095f89983")
                     organizations = setOfRandomUUIDs.map(::OrganizationEntity).toMutableSet()
                 }
                 val observatory = entity.toObservatory()

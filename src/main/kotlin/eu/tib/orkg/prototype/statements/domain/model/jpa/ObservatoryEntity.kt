@@ -2,8 +2,8 @@ package eu.tib.orkg.prototype.statements.domain.model.jpa
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
-import eu.tib.orkg.prototype.statements.domain.model.ResearchField
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.ResearchField
 import java.util.UUID
 import javax.persistence.CascadeType
 import javax.persistence.Column

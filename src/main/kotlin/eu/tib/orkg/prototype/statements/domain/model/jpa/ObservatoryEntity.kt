@@ -3,6 +3,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ResearchField
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import java.util.UUID
 import javax.persistence.CascadeType
 import javax.persistence.Column
@@ -18,7 +19,7 @@ import javax.validation.constraints.NotBlank
 
 @Entity
 @Table(name = "observatories")
-class ObservatoryEntity {
+class ObservatoryEntity() {
     @Id
     var id: UUID? = null
 
@@ -44,7 +45,7 @@ class ObservatoryEntity {
 
     fun toObservatory() =
         Observatory(
-            id = id,
+            id = ObservatoryId(id!!),
             name = name,
             description = description,
             researchField = ResearchField(researchField, null),

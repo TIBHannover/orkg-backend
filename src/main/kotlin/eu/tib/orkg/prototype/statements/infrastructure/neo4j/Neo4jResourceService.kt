@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryRequest
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -29,17 +30,17 @@ class Neo4jResourceService(
     private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator
 ) : ResourceService {
 
-    override fun create(label: String) = create(UUID(0, 0), label, UUID(0, 0), ExtractionMethod.UNKNOWN, OrganizationId.createUnknownOrganization())
+    override fun create(label: String) = create(UUID(0, 0), label, ObservatoryId.createUnknownObservatory(), ExtractionMethod.UNKNOWN, OrganizationId.createUnknownOrganization())
 
-    override fun create(userId: UUID, label: String, observatoryId: UUID, extractionMethod: ExtractionMethod, organizationId: OrganizationId): Resource {
+    override fun create(userId: UUID, label: String, observatoryId: ObservatoryId, extractionMethod: ExtractionMethod, organizationId: OrganizationId): Resource {
         val resourceId = neo4jResourceIdGenerator.nextIdentity()
         return neo4jResourceRepository.save(Neo4jResource(label = label, resourceId = resourceId, createdBy = userId, observatoryId = observatoryId, extractionMethod = extractionMethod, organizationId = organizationId))
             .toResource()
     }
 
-    override fun create(request: CreateResourceRequest) = create(UUID(0, 0), request, UUID(0, 0), ExtractionMethod.UNKNOWN, OrganizationId.createUnknownOrganization())
+    override fun create(request: CreateResourceRequest) = create(UUID(0, 0), request, ObservatoryId.createUnknownObservatory(), ExtractionMethod.UNKNOWN, OrganizationId.createUnknownOrganization())
 
-    override fun create(userId: UUID, request: CreateResourceRequest, observatoryId: UUID, extractionMethod: ExtractionMethod, organizationId: OrganizationId): Resource {
+    override fun create(userId: UUID, request: CreateResourceRequest, observatoryId: ObservatoryId, extractionMethod: ExtractionMethod, organizationId: OrganizationId): Resource {
         val id = request.id ?: neo4jResourceIdGenerator.nextIdentity()
         val resource = Neo4jResource(label = request.label, resourceId = id, createdBy = userId, observatoryId = observatoryId, extractionMethod = extractionMethod, organizationId = organizationId)
         request.classes.forEach { resource.assignTo(it.toString()) }
@@ -128,15 +129,15 @@ class Neo4jResourceService(
         neo4jResourceRepository.findAllByLabel(title!!)
             .map(Neo4jResource::toResource)
 
-    override fun findPapersByObservatoryId(id: UUID): Iterable<Resource> =
+    override fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Resource> =
         neo4jResourceRepository.findPapersByObservatoryId(id)
             .map(Neo4jResource::toResource)
 
-    override fun findComparisonsByObservatoryId(id: UUID): Iterable<Resource> =
+    override fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
         neo4jResourceRepository.findComparisonsByObservatoryId(id)
             .map(Neo4jResource::toResource)
 
-    override fun findProblemsByObservatoryId(id: UUID): Iterable<Resource> =
+    override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
         neo4jResourceRepository.findProblemsByObservatoryId(id)
             .map(Neo4jResource::toResource)
 
@@ -158,8 +159,8 @@ class Neo4jResourceService(
 
     override fun updatePaperObservatory(request: UpdateResourceObservatoryRequest, id: ResourceId, userId: UUID): Resource {
         val found = neo4jResourceRepository.findByResourceId(id).get()
-            found.observatoryId = request.observatoryId
-            found.organizationId = request.organizationId
+            found.observatoryId = request.observatoryId.value
+            found.organizationId = request.organizationId.value
             found.createdBy = userId
 
         return neo4jResourceRepository.save(found).toResource()

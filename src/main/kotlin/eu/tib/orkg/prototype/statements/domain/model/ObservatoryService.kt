@@ -14,13 +14,13 @@ interface ObservatoryService {
 
     fun findByName(name: String): Optional<Observatory>
 
-    fun findById(id: UUID): Optional<Observatory>
+    fun findById(id: ObservatoryId): Optional<Observatory>
 
-    fun changeName(id: UUID, to: String): Observatory
+    fun changeName(id: ObservatoryId, to: String): Observatory
 
-    fun changeDescription(id: UUID, to: String): Observatory
+    fun changeDescription(id: ObservatoryId, to: String): Observatory
 
-    fun changeResearchField(id: UUID, to: String): Observatory
+    fun changeResearchField(id: ObservatoryId, to: String): Observatory
 
     fun findObservatoriesByResearchField(researchField: String): List<Observatory>
 }

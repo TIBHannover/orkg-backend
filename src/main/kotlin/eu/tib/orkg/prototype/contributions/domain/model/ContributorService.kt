@@ -2,10 +2,10 @@ package eu.tib.orkg.prototype.contributions.domain.model
 
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserRepository
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import java.time.OffsetDateTime
 import java.util.Optional
-import java.util.UUID
 import javax.transaction.Transactional
 import org.springframework.stereotype.Service
 
@@ -37,8 +37,8 @@ class ContributorService(
             .findByOrganizationId(id.value)
             .map(UserEntity::toContributor)
 
-    fun findUsersByObservatoryId(id: UUID): Iterable<Contributor> =
+    fun findUsersByObservatoryId(id: ObservatoryId): Iterable<Contributor> =
         userRepository
-            .findByObservatoryId(id)
+            .findByObservatoryId(id.value)
             .map(UserEntity::toContributor)
 }

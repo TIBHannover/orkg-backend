@@ -20,7 +20,7 @@ interface ResourceService {
     /**
      * Create a new resource with a given label belonging to a given user.
      */
-    fun create(userId: UUID, label: String, observatoryId: UUID, extractionMethod: ExtractionMethod, organizationId: OrganizationId): Resource
+    fun create(userId: UUID, label: String, observatoryId: ObservatoryId, extractionMethod: ExtractionMethod, organizationId: OrganizationId): Resource
 
     /**
      * Create a new resource from a request.
@@ -30,7 +30,7 @@ interface ResourceService {
     /**
      * Create a new resource belonging to a given user.
      */
-    fun create(userId: UUID, request: CreateResourceRequest, observatoryId: UUID, extractionMethod: ExtractionMethod, organizationId: OrganizationId): Resource
+    fun create(userId: UUID, request: CreateResourceRequest, observatoryId: ObservatoryId, extractionMethod: ExtractionMethod, organizationId: OrganizationId): Resource
 
     /**
      * Find all resources.
@@ -105,11 +105,11 @@ interface ResourceService {
 
     fun findAllByTitle(title: String?): Iterable<Resource>
 
-    fun findPapersByObservatoryId(id: UUID): Iterable<Resource>
+    fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Resource>
 
-    fun findComparisonsByObservatoryId(id: UUID): Iterable<Resource>
+    fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<Resource>
 
-    fun findProblemsByObservatoryId(id: UUID): Iterable<Resource>
+    fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource>
 
     fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors>
 

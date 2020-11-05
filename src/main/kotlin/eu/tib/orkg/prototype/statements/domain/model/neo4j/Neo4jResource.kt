@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.escapeLiterals
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -78,11 +79,11 @@ data class Neo4jResource(
             labels = value.map { it.value }.toMutableList()
         }
 
-    constructor(label: String, resourceId: ResourceId, createdBy: UUID = UUID(0, 0), observatoryId: UUID = UUID(0, 0), extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN, organizationId: OrganizationId = OrganizationId.createUnknownOrganization()) : this(null) {
+    constructor(label: String, resourceId: ResourceId, createdBy: UUID = UUID(0, 0), observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(), extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN, organizationId: OrganizationId = OrganizationId.createUnknownOrganization()) : this(null) {
         this.label = label
         this.resourceId = resourceId
         this.createdBy = createdBy
-        this.observatoryId = observatoryId
+        this.observatoryId = observatoryId.value
         this.extractionMethod = extractionMethod
         this.organizationId = organizationId.value
     }

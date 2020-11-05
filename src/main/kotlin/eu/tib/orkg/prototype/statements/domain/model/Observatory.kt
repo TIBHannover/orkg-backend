@@ -5,7 +5,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import java.util.UUID
 
 data class Observatory(
-    val id: UUID?,
+    val id: ObservatoryId?,
     val name: String?,
     val description: String?,
     @JsonProperty("research_field")

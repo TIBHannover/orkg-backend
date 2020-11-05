@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.statements.application.ObjectController.Constants.ID_DOI_PREDICATE
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.util.Optional
 import java.util.UUID
@@ -75,13 +76,13 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     fun findAllByLabel(label: String): Iterable<Neo4jResource>
 
     @Query("""MATCH (n:Paper {observatory_id: {0}}) RETURN n""")
-    fun findPapersByObservatoryId(id: UUID): Iterable<Neo4jResource>
+    fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Neo4jResource>
 
     @Query("""MATCH (n:Comparison {observatory_id: {0}}) RETURN n""")
-    fun findComparisonsByObservatoryId(id: UUID): Iterable<Neo4jResource>
+    fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<Neo4jResource>
 
     @Query("""MATCH (n:Problem {observatory_id: {0}}) RETURN n""")
-    fun findProblemsByObservatoryId(id: UUID): Iterable<Neo4jResource>
+    fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Neo4jResource>
 
     @Query("""MATCH (n:Resource {resource_id: {0}}) CALL apoc.path.subgraphAll(n, {relationshipFilter:'>'}) YIELD relationships UNWIND relationships as rel WITH rel AS p, startNode(rel) AS s, endNode(rel) AS o, n WHERE p.created_by <> "00000000-0000-0000-0000-000000000000" RETURN n.resource_id AS id, (p.created_by) AS createdBy, MAX(p.created_at) AS createdAt ORDER BY createdAt""")
     fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors>

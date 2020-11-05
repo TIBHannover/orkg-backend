@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
 import eu.tib.orkg.prototype.statements.application.ObjectController.Constants
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -195,7 +196,7 @@ class PaperController(
         venue: String,
         paperId: ResourceId,
         userId: UUID,
-        observatoryId: UUID,
+        observatoryId: ObservatoryId,
         extractionMethod: ExtractionMethod,
         organizationId: OrganizationId
     ) {
@@ -235,7 +236,7 @@ class PaperController(
         paper: CreatePaperRequest,
         userId: UUID,
         paperId: ResourceId,
-        observatoryId: UUID,
+        observatoryId: ObservatoryId,
         organizationId: OrganizationId
     ) {
         val pattern = Constants.ORCID_REGEX.toRegex()

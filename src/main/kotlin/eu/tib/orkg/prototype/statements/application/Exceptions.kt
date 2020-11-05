@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.net.URI
-import java.util.UUID
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus
 
@@ -20,7 +20,7 @@ class ClassNotFound(id: String? = null) : RuntimeException("Class $id not found"
 class PredicateNotFound(predicate: String) : RuntimeException("Predicate $predicate is not found")
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
-class ObservatoryNotFound(id: UUID) : RuntimeException("""Observatory "$id" not found""")
+class ObservatoryNotFound(id: ObservatoryId) : RuntimeException("""Observatory "$id" not found""")
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class OrganizationNotFound(id: OrganizationId) : RuntimeException("""Organization "$id" not found""")

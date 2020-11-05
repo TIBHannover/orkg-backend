@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.Organization
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
@@ -46,8 +47,8 @@ class PostgresObservatoryService(
                 it.withResearchField(it.researchField?.id!!)
             }
 
-    override fun findObservatoriesByOrganizationId(id: UUID): List<Observatory> =
-        postgresObservatoryRepository.findByorganizationsId(id)
+    override fun findObservatoriesByOrganizationId(id: OrganizationId): List<Observatory> =
+        postgresObservatoryRepository.findByorganizationsId(id.value)
             .map(ObservatoryEntity::toObservatory)
             .onEach {
             if (hasResearchField(it))

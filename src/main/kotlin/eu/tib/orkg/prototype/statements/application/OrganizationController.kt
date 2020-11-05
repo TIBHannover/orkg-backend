@@ -69,7 +69,7 @@ class OrganizationController(
     }
 
     @GetMapping("{id}/observatories")
-    fun findObservatoriesByOrganization(@PathVariable id: UUID): List<Observatory> {
+    fun findObservatoriesByOrganization(@PathVariable id: OrganizationId): List<Observatory> {
         return observatoryService.findObservatoriesByOrganizationId(id)
     }
 

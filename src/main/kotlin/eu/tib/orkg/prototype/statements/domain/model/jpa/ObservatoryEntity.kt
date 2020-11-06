@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.domain.model.jpa
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
-import eu.tib.orkg.prototype.statements.domain.model.ResearchFieldResource
+import eu.tib.orkg.prototype.statements.domain.model.ResearchField
 import java.util.UUID
 import javax.persistence.CascadeType
 import javax.persistence.Column
@@ -47,7 +47,7 @@ class ObservatoryEntity {
             id = id,
             name = name,
             description = description,
-            researchField = ResearchFieldResource(researchField, null),
+            researchField = ResearchField(researchField, null),
             members = users!!.map(UserEntity::toContributor).toSet(),
             organizationIds = organizations!!.mapNotNull(OrganizationEntity::id).toSet()
         )

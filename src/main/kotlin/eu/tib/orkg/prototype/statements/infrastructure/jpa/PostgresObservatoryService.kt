@@ -3,13 +3,11 @@ import eu.tib.orkg.prototype.statements.application.OrganizationNotFound
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.Organization
-import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
 import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresObservatoryRepository
 import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresOrganizationRepository
-import eu.tib.orkg.prototype.statements.infrastructure.neo4j.Neo4jStatsService
 import java.util.Optional
 import java.util.UUID
 import org.springframework.stereotype.Service
@@ -20,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional
 class PostgresObservatoryService(
     private val postgresObservatoryRepository: PostgresObservatoryRepository,
     private val postgresOrganizationRepository: PostgresOrganizationRepository,
-    private val neo4jStatsService: Neo4jStatsService,
     private val resourceService: ResourceService
 ) : ObservatoryService {
     override fun create(name: String, description: String, organization: Organization, researchField: String): Observatory {
@@ -36,57 +33,50 @@ class PostgresObservatoryService(
             organizations = mutableSetOf(org)
         }
 
-        var response = postgresObservatoryRepository.save(newObservatory).toObservatory()
-        return if (response.researchField?.id !== null)
-            response.withResearchField(getResource(response.researchField?.id!!))
+        val response = postgresObservatoryRepository.save(newObservatory).toObservatory()
+        return if (isIdPresent(response))
+            response.withResearchField(response.researchField?.id!!)
         else response
     }
 
-    override fun listObservatories(): List<Observatory> {
-
-        var response = postgresObservatoryRepository.findAll()
+    override fun listObservatories(): List<Observatory> =
+        postgresObservatoryRepository.findAll()
             .map(ObservatoryEntity::toObservatory)
+            .onEach {
+            if (isIdPresent(it))
+                it.withResearchField(it.researchField?.id!!)
+            }
 
-        response.forEach {
-            if (it.researchField?.id !== null)
-                it.withResearchField(getResource(it.researchField?.id!!))
-        }
-        return response
-    }
-
-    override fun findObservatoriesByOrganizationId(id: UUID): List<Observatory> {
-        var response = postgresObservatoryRepository.findByorganizationsId(id)
+    override fun findObservatoriesByOrganizationId(id: UUID): List<Observatory> =
+        postgresObservatoryRepository.findByorganizationsId(id)
             .map(ObservatoryEntity::toObservatory)
-
-        response.forEach {
-            if (it.researchField?.id !== null)
-                it.withResearchField(getResource(it.researchField?.id!!))
+            .onEach {
+            if (isIdPresent(it))
+                it.withResearchField(it.researchField?.id!!)
         }
-        return response
-    }
 
     override fun findByName(name: String): Optional<Observatory> {
-        var response = postgresObservatoryRepository
+        val response = postgresObservatoryRepository
             .findByName(name)
             .map(ObservatoryEntity::toObservatory).get()
-        return if (response.researchField?.id !== null)
-            Optional.of(response.withResearchField(getResource(response.researchField?.id!!)))
+        return if (isIdPresent(response))
+            Optional.of(response.withResearchField(response.researchField?.id!!))
         else Optional.of(response)
     }
 
     override fun findById(id: UUID): Optional<Observatory> {
-        var response = postgresObservatoryRepository.findById(id).map(ObservatoryEntity::toObservatory).get()
-        return if (response.researchField?.id !== null)
-            Optional.of(response.withResearchField(getResource(response.researchField?.id!!)))
+        val response = postgresObservatoryRepository.findById(id).map(ObservatoryEntity::toObservatory).get()
+        return if (isIdPresent(response))
+            Optional.of(response.withResearchField(response.researchField?.id!!))
         else Optional.of(response)
     }
 
     override fun findObservatoriesByResearchField(researchField: String): List<Observatory> {
-        var response = postgresObservatoryRepository.findByResearchField(researchField).map(ObservatoryEntity::toObservatory)
+        val response = postgresObservatoryRepository.findByResearchField(researchField).map(ObservatoryEntity::toObservatory)
 
         response.forEach {
-            if (it.researchField?.id !== null)
-                it.withResearchField(getResource(it.researchField?.id!!))
+            if (isIdPresent(it))
+                it.withResearchField(it.researchField?.id!!)
         }
         return response
     }
@@ -95,9 +85,9 @@ class PostgresObservatoryService(
         val entity = postgresObservatoryRepository.findById(id).get().apply {
             name = to
         }
-        var response = postgresObservatoryRepository.save(entity).toObservatory()
-        return if (response.researchField?.id !== null)
-            response.withResearchField(getResource(response.researchField?.id!!))
+        val response = postgresObservatoryRepository.save(entity).toObservatory()
+        return if (isIdPresent(response))
+            response.withResearchField(response.researchField?.id!!)
         else response
     }
 
@@ -105,9 +95,9 @@ class PostgresObservatoryService(
         val entity = postgresObservatoryRepository.findById(id).get().apply {
             description = to
         }
-        var response = postgresObservatoryRepository.save(entity).toObservatory()
-        return if (response.researchField?.id !== null)
-            response.withResearchField(getResource(response.researchField?.id!!))
+        val response = postgresObservatoryRepository.save(entity).toObservatory()
+        return if (isIdPresent(response))
+            response.withResearchField(response.researchField?.id!!)
         else response
     }
 
@@ -115,17 +105,19 @@ class PostgresObservatoryService(
         val entity = postgresObservatoryRepository.findById(id).get().apply {
             researchField = to
         }
-        var response = postgresObservatoryRepository.save(entity).toObservatory()
-        return if (response.researchField?.id !== null)
-            response.withResearchField(getResource(response.researchField?.id!!))
+        val response = postgresObservatoryRepository.save(entity).toObservatory()
+        return if (isIdPresent(response))
+            response.withResearchField(response.researchField?.id!!)
         else response
     }
 
-    fun getResource(resource: String): Optional<Resource> {
-            return resourceService.findById(ResourceId(resource))
+    fun isIdPresent(response: Observatory): Boolean {
+        return response.researchField?.id !== null
     }
-    fun Observatory.withResearchField(rf: Optional<Resource>) = this.apply {
-        researchField?.id = rf.get().id.toString()
-        researchField?.label = rf.get().label
+
+    fun Observatory.withResearchField(resourceId: String) = this.apply {
+        val resource = resourceService.findById(ResourceId(resourceId))
+        researchField?.id = resource.get().id.toString()
+        researchField?.label = resource.get().label
     }
 }

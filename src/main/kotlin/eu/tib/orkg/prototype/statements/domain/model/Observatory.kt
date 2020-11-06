@@ -9,10 +9,10 @@ data class Observatory(
     val name: String?,
     val description: String?,
     @JsonProperty("research_field")
-    var researchField: ResearchFieldResource?,
+    val researchField: ResearchField?,
     val members: Set<Contributor> = emptySet(),
     @JsonProperty("organization_ids")
     val organizationIds: Set<UUID> = emptySet()
 )
 
-data class ResearchFieldResource(var id: String?, var label: String?)
+data class ResearchField(var id: String?, var label: String?)

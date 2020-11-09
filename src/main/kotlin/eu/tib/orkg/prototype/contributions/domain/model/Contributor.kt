@@ -41,7 +41,7 @@ data class Contributor(
      * The ID of the observatory the user belongs to.
      */
     @JsonProperty("observatory_id")
-    val observatoryId: UUID = UUID(0, 0),
+    val observatoryIds: Set<UUID> = emptySet(),
 
     /**
      * The email address of the contributor.

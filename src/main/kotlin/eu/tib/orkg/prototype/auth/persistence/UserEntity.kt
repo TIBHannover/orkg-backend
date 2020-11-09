@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.auth.persistence
 
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
+import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneOffset.UTC
@@ -45,8 +46,13 @@ class UserEntity {
     @Column(name = "organization_id")
     var organizationId: UUID? = null
 
-    @Column(name = "observatory_id")
-    var observatoryId: UUID? = null
+    @ManyToMany()
+    @JoinTable(
+        name = "observatory_members",
+        joinColumns = [JoinColumn(name = "user_id")],
+        inverseJoinColumns = [JoinColumn(name = "observatory_id")]
+    )
+    private var observatories: MutableSet<ObservatoryEntity> = mutableSetOf()
 
     @ManyToMany
     @JoinTable(
@@ -70,9 +76,12 @@ class UserEntity {
         name = this.displayName!!,
         joinedAt = OffsetDateTime.of(this.created, UTC),
         organizationId = this.organizationId ?: UUID(0, 0),
-        observatoryId = this.observatoryId ?: UUID(0, 0),
+        observatoryIds = toObservatoryIds(),
         email = this.email!!
     )
+
+    fun toObservatoryIds(): Set<UUID> =
+        observatories.mapNotNull(ObservatoryEntity::id).toSet()
 }
 
 @Entity

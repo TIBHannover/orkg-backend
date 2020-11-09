@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
+import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import java.util.UUID
 import org.hamcrest.Matchers.hasSize
@@ -46,7 +47,8 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     fun index() {
         val userId = createTestUser()
         val organizationId = createTestOrganization(userId)
-        createTestObservatory(organizationId)
+        val resource = createTestResource(UUID(0, 0), UUID(0, 0), UUID(0, 0), "ResearchField")
+        createTestObservatory(organizationId, resource.id.toString())
 
         mockMvc
             .perform(getRequestTo("/api/observatories/"))
@@ -63,7 +65,8 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     fun fetch() {
         val userId = createTestUser()
         val organizationId = createTestOrganization(userId)
-        val observatoryId = createTestObservatory(organizationId)
+        val resource = createTestResource(UUID(0, 0), UUID(0, 0), UUID(0, 0), "ResearchField")
+        val observatoryId = createTestObservatory(organizationId, resource.id.toString())
 
         mockMvc
             .perform(getRequestTo("/api/observatories/$observatoryId"))
@@ -80,7 +83,8 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     fun lookUpPapersByObservatoryId() {
         val userId = createTestUser()
         val organizationId = createTestOrganization(userId)
-        val observatoryId = createTestObservatory(organizationId)
+        val resource = createTestResource(UUID(0, 0), UUID(0, 0), UUID(0, 0), "ResearchField")
+        val observatoryId = createTestObservatory(organizationId, resource.id.toString())
         createTestResource(userId, organizationId, observatoryId, "Paper")
 
         mockMvc
@@ -99,7 +103,8 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     fun lookUpComparisonsByObservatoryId() {
         val userId = createTestUser()
         val organizationId = createTestOrganization(userId)
-        val observatoryId = createTestObservatory(organizationId)
+        val resource = createTestResource(UUID(0, 0), UUID(0, 0), UUID(0, 0), "ResearchField")
+        val observatoryId = createTestObservatory(organizationId, resource.id.toString())
         createTestResource(userId, organizationId, observatoryId, "Comparison")
 
         mockMvc
@@ -118,7 +123,8 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     fun lookUpProblemsByObservatoryId() {
         val userId = createTestUser()
         val organizationId = createTestOrganization(userId)
-        val observatoryId = createTestObservatory(organizationId)
+        val resource = createTestResource(UUID(0, 0), UUID(0, 0), UUID(0, 0), "ResearchField")
+        val observatoryId = createTestObservatory(organizationId, resource.id.toString())
         createTestResource(userId, organizationId, observatoryId, "Problem")
 
         mockMvc
@@ -142,12 +148,12 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
         return service.create("test organization", userId, "www.example.org").id!!
     }
 
-    fun createTestObservatory(organizationId: UUID): UUID {
-        return observatoryService.create("test observatory", "example description", service.findById(organizationId).get(), "Computer Sciences").id!!
+    fun createTestObservatory(organizationId: UUID, resourceId: String): UUID {
+        return observatoryService.create("test observatory", "example description", service.findById(organizationId).get(), resourceId).id!!
     }
 
-    fun createTestResource(userId: UUID, organizationId: UUID, observatoryId: UUID, resourceType: String) {
-        resourceService.create(userId, CreateResourceRequest(null, "test paper", setOf(ClassId(resourceType))), observatoryId, ExtractionMethod.UNKNOWN, organizationId)
+    fun createTestResource(userId: UUID, organizationId: UUID, observatoryId: UUID, resourceType: String): Resource {
+        return resourceService.create(userId, CreateResourceRequest(null, "test paper", setOf(ClassId(resourceType))), observatoryId, ExtractionMethod.UNKNOWN, organizationId)
     }
 
     companion object RestDoc {
@@ -156,6 +162,8 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("name").description("The observatory name"),
             fieldWithPath("description").description("The observatory description"),
             fieldWithPath("research_field").description("The research field of an observatory"),
+            fieldWithPath("research_field.id").description("The research field of an observatory"),
+            fieldWithPath("research_field.label").description("The research field of an observatory"),
             fieldWithPath("members").description("The members belonging to the observatory"),
             fieldWithPath("organization_ids").description("The list of organizations that the observatory belongs to")
         )

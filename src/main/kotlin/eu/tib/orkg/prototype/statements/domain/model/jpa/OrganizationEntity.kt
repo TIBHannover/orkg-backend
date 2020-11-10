@@ -30,7 +30,7 @@ class OrganizationEntity() {
     var url: String? = null
 
     @ManyToMany(mappedBy = "organizations", fetch = FetchType.LAZY)
-    var observatories: Set<ObservatoryEntity>? = emptySet()
+    var observatories: MutableSet<ObservatoryEntity>? = mutableSetOf()
 
     fun toOrganization() =
         Organization(

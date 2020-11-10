@@ -374,6 +374,8 @@ include::parts/organizations.adoc[]
 
 include::parts/observatories.adoc[]
 
+include::parts/research-fields.adoc[]
+
 [[sorting-and-pagination]]
 == Sorting and Pagination
 

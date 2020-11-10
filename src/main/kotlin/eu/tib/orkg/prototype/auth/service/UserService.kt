@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.auth.service
 
-import eu.tib.orkg.prototype.auth.persistence.RoleEntity
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import java.util.Optional
 import java.util.UUID
@@ -12,7 +11,8 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class UserService(
     private val repository: UserRepository,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
+    private val roleRepository: RoleRepository
 ) {
     fun findByEmail(email: String): Optional<UserEntity> {
         return repository.findByEmail(email)
@@ -22,16 +22,15 @@ class UserService(
 
     fun registerUser(anEmail: String, aPassword: String, aDisplayName: String?) {
         val userId = UUID.randomUUID()
+        val role = roleRepository.findByName("ROLE_USER")
         val newUser = UserEntity().apply {
             id = userId
             email = anEmail
             password = passwordEncoder.encode(aPassword)
             displayName = aDisplayName
             enabled = true
-            roles = mutableSetOf(RoleEntity().apply {
-                name = "ROLE_USER"
-                id = userId
-            })
+            if (role.isPresent)
+                roles.add(role.get())
         }
         repository.save(newUser)
     }
@@ -55,10 +54,8 @@ class UserService(
 
     fun updateRole(userId: UUID) {
         val user = repository.findById(userId).orElseThrow { throw RuntimeException("No user with ID $userId") }
-        user.roles = mutableSetOf(RoleEntity().apply {
-            name = "ORGANIZATION_OWNER"
-            id = userId
-        })
+        val role = roleRepository.findByName("ORGANIZATION_OWNER").orElseThrow { IllegalStateException("Role missing.") }
+        user.roles.add(role)
         repository.save(user)
     }
 }

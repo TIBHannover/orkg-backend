@@ -2,8 +2,11 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
+import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import java.util.UUID
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -32,6 +35,9 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var observatoryService: ObservatoryService
+
+    @Autowired
+    private lateinit var resourceService: ResourceService
 
     override fun createController() = controller
 
@@ -70,7 +76,8 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
     fun lookUpObservatoriesByOrganization() {
         val userId = createTestUser()
         val organizationId = service.create("test organization", userId, "www.example.org").id
-        observatoryService.create("test observatory", "test description", service.findById(organizationId!!).get(), "Computer Sciences")
+        val resource = createTestResource(UUID(0, 0), UUID(0, 0), UUID(0, 0), "ResearchField")
+        observatoryService.create("test observatory", "example description", service.findById(organizationId!!).get(), resource.id.toString()).id!!
 
         mockMvc
             .perform(getRequestTo("/api/organizations/$organizationId/observatories"))
@@ -86,6 +93,10 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
     fun createTestUser(): UUID {
         userService.registerUser("abc@gmail.com", "123456", "Test user")
         return userService.findByEmail("abc@gmail.com").get().id!!
+    }
+
+    fun createTestResource(userId: UUID, organizationId: UUID, observatoryId: UUID, resourceType: String): Resource {
+        return resourceService.create(userId, CreateResourceRequest(null, "test paper", setOf(ClassId(resourceType))), observatoryId, ExtractionMethod.UNKNOWN, organizationId)
     }
 
     companion object RestDoc {

@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.domain.model.jpa
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
+import eu.tib.orkg.prototype.statements.domain.model.ResearchField
 import java.util.UUID
 import javax.persistence.CascadeType
 import javax.persistence.Column
@@ -30,7 +31,7 @@ class ObservatoryEntity {
     var researchField: String? = null
 
     @OneToMany(mappedBy = "id", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-    var users: Set<UserEntity>? = mutableSetOf()
+    var users: MutableSet<UserEntity>? = mutableSetOf()
 
     @JsonIgnore
     @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
@@ -39,14 +40,14 @@ class ObservatoryEntity {
         joinColumns = [JoinColumn(name = "observatory_id", referencedColumnName = "id")],
         inverseJoinColumns = [JoinColumn(name = "organization_id", referencedColumnName = "id")]
     )
-    var organizations: Set<OrganizationEntity>? = mutableSetOf()
+    var organizations: MutableSet<OrganizationEntity>? = mutableSetOf()
 
     fun toObservatory() =
         Observatory(
             id = id,
             name = name,
             description = description,
-            researchField = researchField,
+            researchField = ResearchField(researchField, null),
             members = users!!.map(UserEntity::toContributor).toSet(),
             organizationIds = organizations!!.mapNotNull(OrganizationEntity::id).toSet()
         )

@@ -5,12 +5,12 @@ import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneOffset.UTC
 import java.util.UUID
-import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.FetchType
 import javax.persistence.Id
-import javax.persistence.OneToMany
+import javax.persistence.JoinColumn
+import javax.persistence.JoinTable
+import javax.persistence.ManyToMany
 import javax.persistence.Table
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
@@ -48,8 +48,22 @@ class UserEntity {
     @Column(name = "observatory_id")
     var observatoryId: UUID? = null
 
-    @OneToMany(mappedBy = "id", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-    var roles: MutableCollection<RoleEntity> = mutableSetOf()
+    @ManyToMany
+    @JoinTable(
+        name = "users_roles",
+        joinColumns = [JoinColumn(name = "user_id")],
+        inverseJoinColumns = [JoinColumn(name = "role_id")]
+    )
+    var roles: MutableSet<RoleEntity> = mutableSetOf()
+
+    fun toUserPrincipal(): UserDetails =
+        UserPrincipal(
+            username = id!!,
+            password = password!!,
+            roles = roles.map(RoleEntity::toGrantedAuthority).toMutableSet(),
+            enabled = enabled,
+            displayName = displayName!!
+        )
 
     fun toContributor() = Contributor(
         id = this.id!!,
@@ -63,35 +77,40 @@ class UserEntity {
 
 @Entity
 @Table(name = "roles")
-open class RoleEntity {
+class RoleEntity {
     @Id
-    open var id: UUID? = null
+    @Column(name = "role_id", nullable = false)
+    var id: Int? = null
 
     @NotBlank
-    open var name: String? = null
+    @Column(name = "name", nullable = false)
+    var name: String? = null
+
+    @Suppress("unused") // Not currently used, but necessary for JPA mapping
+    @ManyToMany(mappedBy = "roles")
+    private var users: MutableSet<UserEntity> = mutableSetOf()
+
+    fun toGrantedAuthority(): GrantedAuthority = SimpleGrantedAuthority(name)
 }
 
-/**
- * Decorator for user entities.
- */
-data class UserPrincipal(private val userEntity: UserEntity) : UserDetails {
-    override fun getAuthorities(): MutableCollection<out GrantedAuthority> =
-        userEntity.roles
-            .map(RoleEntity::name)
-            .map(::SimpleGrantedAuthority)
-            .toMutableSet()
+data class UserPrincipal(
+    private val username: UUID,
+    private val password: String,
+    private val roles: MutableSet<GrantedAuthority>,
+    private val enabled: Boolean = true,
+    val displayName: String
+) : UserDetails {
+    override fun getAuthorities() = roles
 
-    override fun isEnabled() = userEntity.enabled
+    override fun getPassword() = password
 
-    override fun getUsername() = userEntity.id.toString()
-
-    override fun isCredentialsNonExpired() = true
-
-    override fun getPassword() = userEntity.password!!
+    override fun getUsername() = username.toString()
 
     override fun isAccountNonExpired() = true
 
     override fun isAccountNonLocked() = true
 
-    val displayName get() = userEntity.displayName!!
+    override fun isCredentialsNonExpired() = true
+
+    override fun isEnabled() = enabled
 }

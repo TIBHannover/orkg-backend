@@ -1,0 +1,13 @@
+[[research-fields]]
+== Research Fields
+
+Research fields are meta objects that help better classify the content within the ORKG.
+The research field is essentially a <<Resources, resource>> and hence inherits all the specifications of resource.
+
+[[problems-list]]
+=== Listing Problems in field
+
+A `GET` request lists all problems used within all papers under the specified research field:
+
+operation::research-field-controller-test-get-problems-per-field[snippets='curl-request,http-response']
+

@@ -34,9 +34,7 @@ class PostgresObservatoryService(
         }
 
         val response = postgresObservatoryRepository.save(newObservatory).toObservatory()
-        return if (hasResearchField(response))
-            response.withResearchField(response.researchField?.id!!)
-        else response
+        return expand(response)
     }
 
     override fun listObservatories(): List<Observatory> =
@@ -86,9 +84,7 @@ class PostgresObservatoryService(
             name = to
         }
         val response = postgresObservatoryRepository.save(entity).toObservatory()
-        return if (hasResearchField(response))
-            response.withResearchField(response.researchField?.id!!)
-        else response
+        return expand(response)
     }
 
     override fun changeDescription(id: UUID, to: String): Observatory {
@@ -96,9 +92,7 @@ class PostgresObservatoryService(
             description = to
         }
         val response = postgresObservatoryRepository.save(entity).toObservatory()
-        return if (hasResearchField(response))
-            response.withResearchField(response.researchField?.id!!)
-        else response
+        return expand(response)
     }
 
     override fun changeResearchField(id: UUID, to: String): Observatory {
@@ -106,9 +100,7 @@ class PostgresObservatoryService(
             researchField = to
         }
         val response = postgresObservatoryRepository.save(entity).toObservatory()
-        return if (hasResearchField(response))
-            response.withResearchField(response.researchField?.id!!)
-        else response
+        return expand(response)
     }
 
     fun hasResearchField(response: Observatory): Boolean {
@@ -120,4 +112,9 @@ class PostgresObservatoryService(
         researchField?.id = resource.get().id.toString()
         researchField?.label = resource.get().label
     }
+
+    private fun expand(response: Observatory): Observatory =
+        if (hasResearchField(response))
+            response.withResearchField(response.researchField?.id!!)
+        else response
 }

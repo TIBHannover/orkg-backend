@@ -21,4 +21,6 @@ interface ObservatoryService {
     fun changeDescription(id: UUID, to: String): Observatory
 
     fun changeResearchField(id: UUID, to: String): Observatory
+
+    fun findObservatoriesByResearchField(researchField: String): List<Observatory>
 }

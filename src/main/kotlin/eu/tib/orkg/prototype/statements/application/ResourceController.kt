@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.application
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.createPageable
+import eu.tib.orkg.prototype.statements.domain.model.Attributable
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -78,8 +79,8 @@ class ResourceController(
         var organizationId = UUID(0, 0)
         if (!contributor.isEmpty) {
             organizationId = contributor.get().organizationId
-            observatoryId = contributor.get().observatoryId
         }
+        observatoryId = resource.observatoryId ?: UUID(0, 0) // FIXME: re-work attribution
         val id = service.create(userId, resource, observatoryId, resource.extractionMethod, organizationId).id
         val location = uriComponentsBuilder
             .path("api/resources/{id}")
@@ -149,8 +150,10 @@ data class CreateResourceRequest(
     val id: ResourceId?,
     val label: String,
     val classes: Set<ClassId> = emptySet(),
-    val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
-)
+    val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
+    @JsonProperty("observatory_id")
+    override val observatoryId: UUID? = null
+) : Attributable
 
 data class UpdateResourceRequest(
     val id: ResourceId?,

@@ -1,8 +1,10 @@
 package eu.tib.orkg.prototype.statements.application
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
+import eu.tib.orkg.prototype.statements.domain.model.Attributable
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
@@ -81,7 +83,7 @@ class PaperController(
 
         val user = contributorService.findByIdOrElseUnknown(userId)
         val organizationId = user.organizationId
-        val observatoryId = user.observatoryId
+        val observatoryId = request.observatoryId ?: UUID(0, 0) // FIXME: re-work attribution
 
         val predicates: HashMap<String, PredicateId> = HashMap()
         if (request.predicates != null) {
@@ -156,7 +158,7 @@ class PaperController(
 
         val user = contributorService.findByIdOrElseUnknown(userId)
         val organizationId = user.organizationId
-        val observatoryId = user.observatoryId
+        val observatoryId = request.observatoryId ?: UUID(0, 0) // FIXME: re-work attribution
 
         // paper title
         val paperObj = resourceService.create(
@@ -515,8 +517,10 @@ class PaperController(
 
 data class CreatePaperRequest(
     val predicates: List<HashMap<String, String>>?,
-    val paper: Paper
-)
+    val paper: Paper,
+    @JsonProperty("observatory_id")
+    override val observatoryId: UUID? = null
+) : Attributable
 
 data class Paper(
     val title: String,

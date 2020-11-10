@@ -74,9 +74,11 @@ class ObservatoryController(
         return resourceService.findProblemsByObservatoryId(id)
     }
 
-    @GetMapping("{id}/users")
-    fun findUsersByObservatoryId(@PathVariable id: UUID): Iterable<Contributor> =
-        contributorService.findUsersByObservatoryId(id)
+    @GetMapping("{id}/members")
+    fun findMembers(@PathVariable id: UUID): Iterable<Contributor> =
+        service
+            .findMembers(id)
+            .orElseThrow { ObservatoryNotFound(id) }
 
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
     fun updateObservatoryName(@PathVariable id: UUID, @RequestBody @Valid name: UpdateRequest): Observatory {

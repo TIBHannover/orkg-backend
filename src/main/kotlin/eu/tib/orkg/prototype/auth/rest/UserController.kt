@@ -115,8 +115,8 @@ class UserController(
         @JsonProperty("organization_id")
         val organizationId = user.organizationId
 
-        @JsonProperty("observatory_id")
-        val observatoryId = user.observatoryId
+        @JsonProperty("observatory_ids")
+        val observatoryIds = user.toObservatoryIds()
 
         @get:JsonProperty("is_curation_allowed")
         val isCurationAllowed: Boolean

@@ -1,4 +1,6 @@
 package eu.tib.orkg.prototype.statements.infrastructure.jpa
+import eu.tib.orkg.prototype.auth.persistence.UserEntity
+import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.statements.application.OrganizationNotFound
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
@@ -77,4 +79,12 @@ class PostgresObservatoryService(
         }
         return postgresObservatoryRepository.save(entity).toObservatory()
     }
+
+    override fun findMembers(id: UUID): Optional<Iterable<Contributor>> =
+        postgresObservatoryRepository
+            .findById(id)
+            .map(ObservatoryEntity::members)
+            .map {
+                it?.map(UserEntity::toContributor)
+            }
 }

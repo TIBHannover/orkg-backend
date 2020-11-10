@@ -10,8 +10,6 @@ interface UserRepository :
     fun findByEmail(email: String): Optional<UserEntity>
     override fun findById(id: UUID): Optional<UserEntity>
 
-    fun findUsersByObservatoryId(id: UUID): Iterable<UserEntity>
-
     fun findOrganizationById(id: UUID): Optional<UserEntity>
 
     fun findUsersByOrganizationId(id: UUID): Iterable<UserEntity>

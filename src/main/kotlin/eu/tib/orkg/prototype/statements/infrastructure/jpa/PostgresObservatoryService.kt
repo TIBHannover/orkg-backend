@@ -34,7 +34,7 @@ class PostgresObservatoryService(
         }
 
         val response = postgresObservatoryRepository.save(newObservatory).toObservatory()
-        return if (isIdPresent(response))
+        return if (hasResearchField(response))
             response.withResearchField(response.researchField?.id!!)
         else response
     }
@@ -43,7 +43,7 @@ class PostgresObservatoryService(
         postgresObservatoryRepository.findAll()
             .map(ObservatoryEntity::toObservatory)
             .onEach {
-            if (isIdPresent(it))
+            if (hasResearchField(it))
                 it.withResearchField(it.researchField?.id!!)
             }
 
@@ -51,7 +51,7 @@ class PostgresObservatoryService(
         postgresObservatoryRepository.findByorganizationsId(id)
             .map(ObservatoryEntity::toObservatory)
             .onEach {
-            if (isIdPresent(it))
+            if (hasResearchField(it))
                 it.withResearchField(it.researchField?.id!!)
         }
 
@@ -59,14 +59,14 @@ class PostgresObservatoryService(
         val response = postgresObservatoryRepository
             .findByName(name)
             .map(ObservatoryEntity::toObservatory).get()
-        return if (isIdPresent(response))
+        return if (hasResearchField(response))
             Optional.of(response.withResearchField(response.researchField?.id!!))
         else Optional.of(response)
     }
 
     override fun findById(id: UUID): Optional<Observatory> {
         val response = postgresObservatoryRepository.findById(id).map(ObservatoryEntity::toObservatory).get()
-        return if (isIdPresent(response))
+        return if (hasResearchField(response))
             Optional.of(response.withResearchField(response.researchField?.id!!))
         else Optional.of(response)
     }
@@ -75,7 +75,7 @@ class PostgresObservatoryService(
         val response = postgresObservatoryRepository.findByResearchField(researchField).map(ObservatoryEntity::toObservatory)
 
         response.forEach {
-            if (isIdPresent(it))
+            if (hasResearchField(it))
                 it.withResearchField(it.researchField?.id!!)
         }
         return response
@@ -86,7 +86,7 @@ class PostgresObservatoryService(
             name = to
         }
         val response = postgresObservatoryRepository.save(entity).toObservatory()
-        return if (isIdPresent(response))
+        return if (hasResearchField(response))
             response.withResearchField(response.researchField?.id!!)
         else response
     }
@@ -96,7 +96,7 @@ class PostgresObservatoryService(
             description = to
         }
         val response = postgresObservatoryRepository.save(entity).toObservatory()
-        return if (isIdPresent(response))
+        return if (hasResearchField(response))
             response.withResearchField(response.researchField?.id!!)
         else response
     }
@@ -106,12 +106,12 @@ class PostgresObservatoryService(
             researchField = to
         }
         val response = postgresObservatoryRepository.save(entity).toObservatory()
-        return if (isIdPresent(response))
+        return if (hasResearchField(response))
             response.withResearchField(response.researchField?.id!!)
         else response
     }
 
-    fun isIdPresent(response: Observatory): Boolean {
+    fun hasResearchField(response: Observatory): Boolean {
         return response.researchField?.id !== null
     }
 

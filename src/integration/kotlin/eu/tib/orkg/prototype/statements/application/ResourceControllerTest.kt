@@ -237,7 +237,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
     fun deleteResourceNotFound() {
         mockMvc
             .perform(deleteRequest("/api/resources/NONEXISTENT"))
@@ -250,7 +250,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
     fun deleteResourceSuccess() {
         val id = service.create("bye bye").id!!
 
@@ -265,7 +265,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
     fun deleteResourceForbidden() {
         val id = service.create("parent").id!!
         val obj = service.create("son").id!!

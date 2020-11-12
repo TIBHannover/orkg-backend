@@ -63,7 +63,7 @@ data class ContributorPerProblem(
 ) {
     val contributor: UUID = UUID.fromString(user)
     val isAnonymous: Boolean
-        get() = user == "00000000-0000-0000-0000-000000000000"
+        get() = contributor == UUID(0, 0)
 }
 
 @QueryResult

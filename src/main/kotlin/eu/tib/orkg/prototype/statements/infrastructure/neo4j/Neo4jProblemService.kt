@@ -5,7 +5,6 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ContributorPerProblem
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jProblemRepository
-import org.springframework.data.domain.Pageable
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -77,7 +76,7 @@ class Neo4jProblemService(
             .map(Neo4jResource::toResource)
 
     override fun getContributorsPerProblem(problemId: ResourceId, pageable: Pageable): List<ContributorPerProblem> {
-        return neo4jProblemRepository.getUsersLeaderboardPerProblem(problemId, pageable)
+        return neo4jProblemRepository.findContributorsLeaderboardPerProblem(problemId, pageable)
             .content
             .dropWhile { it.isAnonymous }
     }
@@ -100,9 +99,9 @@ class Neo4jProblemService(
     }
 
     override fun findContributorsPerProblem(problemId: ResourceId, pageable: Pageable): List<ContributorPerProblem> {
-        return neo4jProblemRepository.findUsersLeaderboardPerProblem(problemId, pageable)
+        return neo4jProblemRepository
+            .findContributorsLeaderboardPerProblem(problemId, pageable)
             .content
-            .dropWhile { it.isAnonymous }
     }
 
     override fun findAuthorsPerProblem(problemId: ResourceId, pageable: Pageable): List<Any> {
@@ -129,9 +128,9 @@ class Neo4jProblemService(
     private fun getTopResearchProblemsGoingBack(listOfMonths: List<Int>, result: List<Neo4jResource>): Iterable<Neo4jResource> {
         val month = listOfMonths.firstOrNull()
         val problems = if (month == null)
-            neo4jProblemRepository.getTopResearchProblemsAllTime()
+            neo4jProblemRepository.findTopResearchProblemsAllTime()
         else
-            neo4jProblemRepository.getTopResearchProblemsGoingBack(month)
+            neo4jProblemRepository.findTopResearchProblemsGoingBack(month)
         val newResult = result.plus(problems).distinct()
         return if (newResult.count() >= 5)
             newResult.take(5)

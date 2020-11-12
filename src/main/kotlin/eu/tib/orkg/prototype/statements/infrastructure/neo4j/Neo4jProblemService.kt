@@ -5,7 +5,6 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ContributorPerProblem
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jProblemRepository
-import org.springframework.data.domain.Pageable
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -31,7 +30,7 @@ class Neo4jProblemService(
             .map(Neo4jResource::toResource)
 
     override fun getContributorsPerProblem(problemId: ResourceId, pageable: Pageable): List<ContributorPerProblem> {
-        return neo4jProblemRepository.getUsersLeaderboardPerProblem(problemId, pageable)
+        return neo4jProblemRepository.findContributorsLeaderboardPerProblem(problemId, pageable)
             .content
             .dropWhile { it.isAnonymous }
     }
@@ -54,9 +53,9 @@ class Neo4jProblemService(
     }
 
     override fun findContributorsPerProblem(problemId: ResourceId, pageable: Pageable): List<ContributorPerProblem> {
-        return neo4jProblemRepository.findUsersLeaderboardPerProblem(problemId, pageable)
+        return neo4jProblemRepository
+            .findContributorsLeaderboardPerProblem(problemId, pageable)
             .content
-            .dropWhile { it.isAnonymous }
     }
 
     override fun findAuthorsPerProblem(problemId: ResourceId, pageable: Pageable): List<Any> {

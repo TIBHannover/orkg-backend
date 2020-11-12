@@ -14,8 +14,4 @@ interface ProblemService {
     fun findAuthorsPerProblem(problemId: ResourceId, pageable: Pageable): List<Any>
 
     fun getContributorsPerProblem(problemId: ResourceId, pageable: Pageable): List<ContributorPerProblem>
-
-    fun getAuthorsPerProblem(problemId: ResourceId, pageable: Pageable): List<Any>
-
-    fun getTopResearchProblems(): List<Resource>
 }

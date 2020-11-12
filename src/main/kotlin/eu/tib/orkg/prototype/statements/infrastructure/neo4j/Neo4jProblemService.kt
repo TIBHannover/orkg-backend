@@ -79,7 +79,7 @@ class Neo4jProblemService(
     Iterate over the list of months, and if no problems are found go back a bit more in time
     and if none found take all time results
      */
-    private fun getTopResearchProblemsGoingBack(listOfMonths: List<Int>, result: List<Neo4jResource>): Iterable<Neo4jResource> {
+    private fun findTopResearchProblemsGoingBack(listOfMonths: List<Int>, result: List<Neo4jResource>): Iterable<Neo4jResource> {
         val month = listOfMonths.firstOrNull()
         val problems = if (month == null)
             neo4jProblemRepository.findTopResearchProblemsAllTime()
@@ -89,6 +89,29 @@ class Neo4jProblemService(
         return if (newResult.count() >= 5)
             newResult.take(5)
         else
-            getTopResearchProblemsGoingBack(listOfMonths.drop(1), newResult)
+            findTopResearchProblemsGoingBack(listOfMonths.drop(1), newResult)
+    }
+
+    override fun findContributorsPerProblem(problemId: ResourceId, pageable: Pageable): List<ContributorPerProblem> {
+        return neo4jProblemRepository.findUsersLeaderboardPerProblem(problemId, pageable)
+            .content
+            .dropWhile { it.isAnonymous }
+    }
+
+    override fun findAuthorsPerProblem(problemId: ResourceId, pageable: Pageable): List<Any> {
+        return neo4jProblemRepository.findAuthorsLeaderboardPerProblem(problemId, pageable)
+            .content
+            .map {
+                if (it.isLiteral)
+                    object {
+                        val author = it.author
+                        val papers = it.papers
+                    }
+                else
+                    object {
+                        val author = it.toAuthorResource.toResource()
+                        val papers = it.papers
+                    }
+            }
     }
 }

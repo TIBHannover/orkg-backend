@@ -56,10 +56,10 @@ class PostgresObservatoryService(
     override fun findByName(name: String): Optional<Observatory> {
         val response = postgresObservatoryRepository
             .findByName(name)
-            .map(ObservatoryEntity::toObservatory).get()
-        return if (hasResearchField(response))
-            Optional.of(response.withResearchField(response.researchField?.id!!))
-        else Optional.of(response)
+            .map(ObservatoryEntity::toObservatory)!!
+        return if (response.isPresent && hasResearchField(response.get()))
+            Optional.of(response.get().withResearchField(response.get().researchField?.id!!))
+        else response
     }
 
     override fun findById(id: UUID): Optional<Observatory> {

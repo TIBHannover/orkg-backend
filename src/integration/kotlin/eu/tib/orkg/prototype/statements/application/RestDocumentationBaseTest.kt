@@ -21,6 +21,11 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put
 import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest
 import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse
 import org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
+import org.springframework.restdocs.request.ParameterDescriptor
+import org.springframework.restdocs.request.RequestDocumentation
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.restdocs.request.RequestParametersSnippet
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
@@ -106,4 +111,25 @@ abstract class RestDocumentationBaseTest {
         responseHeaders(
             headerWithName("Location").description("Location to the created statement")
         )
+
+    protected fun pageableRequestParameters(vararg descriptors: ParameterDescriptor):
+        RequestParametersSnippet =
+            RequestDocumentation.requestParameters(
+                mutableListOf(
+                    RequestDocumentation.parameterWithName("page").description(
+                        "Page number of items to fetch (default: 1)"
+                    )
+                        .optional(),
+                    RequestDocumentation.parameterWithName("items").description(
+                        "Number of items to fetch per page (default: 10)"
+                    )
+                        .optional(),
+                    RequestDocumentation.parameterWithName("sort").description(
+                        "Key to sort by (default: not provided)"
+                    )
+                        .optional()
+                ).apply {
+                    addAll(descriptors)
+                }
+            )
 }

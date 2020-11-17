@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.domain.model.StatsService
-import java.util.UUID
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -29,13 +29,13 @@ class StatsController(private val service: StatsService) {
 
     @GetMapping("/{id}/stats/papers")
     @ResponseStatus(HttpStatus.OK)
-    fun getObservatoryPapersCount(@PathVariable id: UUID): ResponseEntity<Long> {
+    fun getObservatoryPapersCount(@PathVariable id: ObservatoryId): ResponseEntity<Long> {
         return ResponseEntity.ok(service.getObservatoryPapersCount(id))
     }
 
     @GetMapping("/{id}/stats/comparisons")
     @ResponseStatus(HttpStatus.OK)
-    fun getObservatoryComparisonsCount(@PathVariable id: UUID): ResponseEntity<Long> {
+    fun getObservatoryComparisonsCount(@PathVariable id: ObservatoryId): ResponseEntity<Long> {
         return ResponseEntity.ok(service.getObservatoryComparisonsCount(id))
     }
 }

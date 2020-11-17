@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.escapeLiterals
 import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.Class
@@ -52,7 +53,7 @@ data class Neo4jClass(
 
     fun toClass(): Class {
         val aURI: URI? = if (uri != null) URI.create(uri!!) else null
-        val clazz = Class(classId!!, label!!, aURI, createdAt!!, createdBy = createdBy)
+        val clazz = Class(classId!!, label!!, aURI, createdAt!!, createdBy = ContributorId(createdBy))
         clazz.rdf = toRdfModel()
         return clazz
     }

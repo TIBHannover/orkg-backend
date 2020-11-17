@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -7,7 +8,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import java.net.URI
-import java.util.UUID
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -47,7 +47,7 @@ class ClassController(private val service: ClassService, private val resourceSer
         @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean,
         @RequestParam("q", required = false) searchString: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
-        @RequestParam("creator", required = false) creator: UUID?
+        @RequestParam("creator", required = false) creator: ContributorId?
     ): Iterable<Resource> {
         val pagination = createPageable(page, items, sortBy, desc)
         return if (creator != null) {
@@ -96,7 +96,7 @@ class ClassController(private val service: ClassService, private val resourceSer
         }
 
         val userId = authenticatedUserId()
-        val id = service.create(userId, `class`).id
+        val id = service.create(ContributorId(userId), `class`).id
         val location = uriComponentsBuilder
             .path("api/classes/{id}")
             .buildAndExpand(id)

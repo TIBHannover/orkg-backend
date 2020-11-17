@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.jpa
 
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import java.util.UUID
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
@@ -17,6 +18,8 @@ internal class ObservatoryEntityTest {
             UUID.fromString("f270f9fe-6326-4b8c-a627-72a45a152a7f"),
             UUID.fromString("410d7d35-c8cc-43ba-8d84-283be9a20067")
         )
+        private val setOfOrganizationIds =
+            setOfRandomUUIDs.map(::OrganizationId).toTypedArray()
 
         @Nested
         @DisplayName("when converted to a domain object")
@@ -30,7 +33,7 @@ internal class ObservatoryEntityTest {
                 }
                 val observatory = entity.toObservatory()
                 assertThat(observatory.organizationIds).hasSize(3) // simple check for duplicates, should never trigger
-                assertThat(observatory.organizationIds).containsExactlyInAnyOrder(*setOfRandomUUIDs)
+                assertThat(observatory.organizationIds).containsExactlyInAnyOrder(*setOfOrganizationIds)
             }
         }
     }

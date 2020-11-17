@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.infrastructure.jpa
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Organization
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
@@ -15,12 +16,12 @@ import org.springframework.transaction.annotation.Transactional
 class PostgresOrganizationService(
     private val postgresOrganizationRepository: PostgresOrganizationRepository
 ) : OrganizationService {
-    override fun create(OrganizationName: String, CreatedBy: UUID, Url: String): Organization {
+    override fun create(OrganizationName: String, CreatedBy: ContributorId, Url: String): Organization {
         val organizationId = UUID.randomUUID()
         val newOrganization = OrganizationEntity().apply {
             id = organizationId
             name = OrganizationName
-            createdBy = CreatedBy
+            createdBy = CreatedBy.value
             url = Url
         }
         return postgresOrganizationRepository.save(newOrganization).toOrganization()

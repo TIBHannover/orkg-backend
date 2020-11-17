@@ -82,7 +82,7 @@ class ResourceController(
             organizationId = contributor.get().organizationId
             observatoryId = contributor.get().observatoryId
         }
-        val id = service.create(userId, resource, observatoryId, resource.extractionMethod, organizationId).id
+        val id = service.create(ContributorId(userId), resource, observatoryId, resource.extractionMethod, organizationId).id
         val location = uriComponentsBuilder
             .path("api/resources/{id}")
             .buildAndExpand(id)
@@ -116,7 +116,7 @@ class ResourceController(
         if (!found.isPresent)
             return notFound().build()
         val userId = authenticatedUserId()
-        return ok(service.updatePaperObservatory(request, id, userId))
+        return ok(service.updatePaperObservatory(request, id, ContributorId(userId)))
     }
 
     @GetMapping("{id}/contributors")

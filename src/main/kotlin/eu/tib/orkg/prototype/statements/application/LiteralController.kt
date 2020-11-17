@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
@@ -50,7 +51,7 @@ class LiteralController(private val service: LiteralService) : BaseController() 
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<Literal> {
         val userId = authenticatedUserId()
-        val id = service.create(userId, literal.label, literal.datatype).id
+        val id = service.create(ContributorId(userId), literal.label, literal.datatype).id
         val location = uriComponentsBuilder
             .path("api/literals/{id}")
             .buildAndExpand(id)

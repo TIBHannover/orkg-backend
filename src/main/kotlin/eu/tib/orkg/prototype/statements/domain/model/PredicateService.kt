@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.CreatePredicateRequest
 import java.util.Optional
-import java.util.UUID
 import org.springframework.data.domain.Pageable
 
 interface PredicateService {
@@ -14,7 +14,7 @@ interface PredicateService {
     /**
      * Create a new predicate with a given label for a given user.
      */
-    fun create(userId: UUID, label: String): Predicate
+    fun create(userId: ContributorId, label: String): Predicate
 
     /**
      * Create a new predicate from a request.
@@ -24,7 +24,7 @@ interface PredicateService {
     /**
      * Create a new predicate from a request for a given user.
      */
-    fun create(userId: UUID, request: CreatePredicateRequest): Predicate
+    fun create(userId: ContributorId, request: CreatePredicateRequest): Predicate
 
     /**
      * List all predicates.

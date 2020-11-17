@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -141,7 +142,7 @@ class StatementController(
         HttpEntity<StatementResponse> {
         val userId = authenticatedUserId()
         val body = statementService.create(
-            userId,
+            ContributorId(userId),
             statement.subjectId,
             statement.predicateId,
             statement.objectId

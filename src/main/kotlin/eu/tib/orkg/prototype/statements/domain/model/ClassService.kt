@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.CreateClassRequest
 import java.util.Optional
-import java.util.UUID
 import org.springframework.data.domain.Pageable
 
 interface ClassService : URIService<Class> {
@@ -18,7 +18,7 @@ interface ClassService : URIService<Class> {
      *
      * @return the newly created Class
      */
-    fun create(userId: UUID, label: String): Class
+    fun create(userId: ContributorId, label: String): Class
 
     /**
      * Create a new class from a request.
@@ -28,7 +28,7 @@ interface ClassService : URIService<Class> {
     /**
      * Create a new class from a request belonging to a given user.
      */
-    fun create(userId: UUID, request: CreateClassRequest): Class
+    fun create(userId: ContributorId, request: CreateClassRequest): Class
 
     /**
      * Find all classes.

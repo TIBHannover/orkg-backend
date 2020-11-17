@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
@@ -9,7 +10,6 @@ import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import java.util.UUID
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -61,7 +61,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun fetch() {
-        val organizationId = service.create("test organization", UUID(0, 0), "www.example.org").id
+        val organizationId = service.create("test organization", ContributorId.createUnknownContributor(), "www.example.org").id
 
         mockMvc
             .perform(getRequestTo("/api/organizations/$organizationId"))
@@ -78,7 +78,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
     fun lookUpObservatoriesByOrganization() {
         val userId = createTestUser()
         val organizationId = service.create("test organization", userId, "www.example.org").id
-        val resource = createTestResource(UUID(0, 0), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
+        val resource = createTestResource(ContributorId.createUnknownContributor(), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
         observatoryService.create("test observatory", "example description", service.findById(organizationId!!).get(), resource.id.toString()).id!!
 
         mockMvc
@@ -92,12 +92,12 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
             )
     }
 
-    fun createTestUser(): UUID {
+    fun createTestUser(): ContributorId {
         userService.registerUser("abc@gmail.com", "123456", "Test user")
-        return userService.findByEmail("abc@gmail.com").get().id!!
+        return ContributorId(userService.findByEmail("abc@gmail.com").get().id!!)
     }
 
-    fun createTestResource(userId: UUID, organizationId: OrganizationId, observatoryId: ObservatoryId, resourceType: String): Resource {
+    fun createTestResource(userId: ContributorId, organizationId: OrganizationId, observatoryId: ObservatoryId, resourceType: String): Resource {
         return resourceService.create(userId, CreateResourceRequest(null, "test paper", setOf(ClassId(resourceType))), observatoryId, ExtractionMethod.UNKNOWN, organizationId)
     }
 

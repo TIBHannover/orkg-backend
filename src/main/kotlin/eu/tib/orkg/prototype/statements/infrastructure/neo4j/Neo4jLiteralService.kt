@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
@@ -10,7 +11,6 @@ import eu.tib.orkg.prototype.util.EscapedRegex
 import eu.tib.orkg.prototype.util.SanitizedWhitespace
 import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
 import java.util.Optional
-import java.util.UUID
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -20,12 +20,12 @@ class Neo4jLiteralService(
     private val neo4jLiteralRepository: Neo4jLiteralRepository,
     private val neo4jLiteralIdGenerator: Neo4jLiteralIdGenerator
 ) : LiteralService {
-    override fun create(label: String, datatype: String) = create(UUID(0, 0), label, datatype)
+    override fun create(label: String, datatype: String) = create(ContributorId.createUnknownContributor(), label, datatype)
 
-    override fun create(userId: UUID, label: String, datatype: String): Literal {
+    override fun create(userId: ContributorId, label: String, datatype: String): Literal {
         val literalId = neo4jLiteralIdGenerator.nextIdentity()
         return neo4jLiteralRepository
-            .save(Neo4jLiteral(label = label, literalId = literalId, datatype = datatype, createdBy = userId))
+            .save(Neo4jLiteral(label = label, literalId = literalId, datatype = datatype, createdBy = userId.value))
             .toLiteral()
     }
 

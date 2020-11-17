@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.util.UUID
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 
 data class Organization(
     val id: OrganizationId?,
@@ -11,10 +11,10 @@ data class Organization(
     var logo: String?,
 
     @JsonProperty("created_by")
-    val createdBy: UUID? = UUID(0, 0),
+    val createdBy: ContributorId? = ContributorId.createUnknownContributor(),
 
     var homepage: String?,
 
     @JsonProperty("observatory_ids")
-    val observatoryIds: Set<UUID> = emptySet()
+    val observatoryIds: Set<ObservatoryId> = emptySet()
 )

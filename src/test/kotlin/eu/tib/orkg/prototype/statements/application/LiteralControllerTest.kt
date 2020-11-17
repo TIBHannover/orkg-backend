@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
 import eu.tib.orkg.prototype.auth.service.UserRepository
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.LiteralController.LiteralCreateRequest
 import eu.tib.orkg.prototype.statements.application.LiteralController.LiteralUpdateRequest
 import eu.tib.orkg.prototype.statements.domain.model.Literal
@@ -133,7 +134,7 @@ class LiteralControllerTest {
             .andExpect(header().string("Location", "http://localhost/api/literals/L1"))
 
         verify(exactly = 1) {
-            literalService.create(UUID.fromString("f2d66c90-3cbf-4d4f-951f-0fc470f682c4"), "irrelevant", "irrelevant")
+            literalService.create(ContributorId(UUID.fromString("f2d66c90-3cbf-4d4f-951f-0fc470f682c4")), "irrelevant", "irrelevant")
         }
     }
 

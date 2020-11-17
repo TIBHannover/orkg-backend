@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.StatementResponse
 import java.time.OffsetDateTime
-import java.util.UUID
 
 data class GeneralStatement(
     val id: StatementId? = null,
@@ -13,7 +13,7 @@ data class GeneralStatement(
     @JsonProperty("created_at")
     val createdAt: OffsetDateTime?,
     @JsonProperty("created_by")
-    val createdBy: UUID = UUID(0, 0)
+    val createdBy: ContributorId = ContributorId.createUnknownContributor()
 
 ) : StatementResponse
 

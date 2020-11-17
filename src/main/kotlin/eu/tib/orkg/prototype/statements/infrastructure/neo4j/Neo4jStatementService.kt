@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
@@ -18,7 +19,6 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementReposit
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThingRepository
 import java.util.Optional
-import java.util.UUID
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -92,10 +92,10 @@ class Neo4jStatementService :
             .map { toStatement(it) }
 
     override fun create(subject: String, predicate: PredicateId, `object`: String) =
-        create(UUID(0, 0), subject, predicate, `object`)
+        create(ContributorId.createUnknownContributor(), subject, predicate, `object`)
 
     override fun create(
-        userId: UUID,
+        userId: ContributorId,
         subject: String,
         predicate: PredicateId,
         `object`: String
@@ -120,7 +120,7 @@ class Neo4jStatementService :
                 predicateId = predicate,
                 subject = foundSubject,
                 `object` = foundObject,
-                createdBy = userId
+                createdBy = userId.value
             )
         )
 
@@ -130,7 +130,7 @@ class Neo4jStatementService :
             foundPredicate.get(),
             foundObject.toThing(),
             persistedStatement.createdAt!!,
-            persistedStatement.createdBy
+            ContributorId(persistedStatement.createdBy)
         )
     }
 
@@ -192,6 +192,6 @@ class Neo4jStatementService :
             predicate = predicateService.findById(statement.predicateId!!).get(),
             `object` = refreshObject(statement.`object`!!),
             createdAt = statement.createdAt!!,
-            createdBy = statement.createdBy
+            createdBy = ContributorId(statement.createdBy)
         )
 }

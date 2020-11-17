@@ -1,5 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model.jpa
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.Organization
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import java.util.UUID
@@ -38,8 +40,8 @@ class OrganizationEntity() {
             id = OrganizationId(id!!),
             name = name,
             logo = null,
-            createdBy = createdBy,
+            createdBy = ContributorId(createdBy!!),
             homepage = url,
-            observatoryIds = observatories!!.mapNotNull(ObservatoryEntity::id).toSet()
+            observatoryIds = observatories!!.map { ObservatoryId(it.id!!) }.toSet()
         )
 }

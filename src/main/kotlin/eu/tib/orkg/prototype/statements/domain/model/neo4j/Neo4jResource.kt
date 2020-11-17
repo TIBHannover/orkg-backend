@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.escapeLiterals
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
@@ -89,7 +90,7 @@ data class Neo4jResource(
     }
 
     fun toResource(): Resource {
-        val resource = Resource(resourceId, label!!, createdAt, classes, objectOf.size, createdBy = createdBy, observatoryId = observatoryId, extractionMethod = extractionMethod, organizationId = organizationId)
+        val resource = Resource(resourceId, label!!, createdAt, classes, objectOf.size, createdBy = ContributorId(createdBy), observatoryId = ObservatoryId(observatoryId), extractionMethod = extractionMethod, organizationId = OrganizationId(organizationId))
         resource.rdf = toRdfModel()
         return resource
     }

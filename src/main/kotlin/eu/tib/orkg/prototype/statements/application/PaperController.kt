@@ -14,7 +14,6 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
-import java.util.UUID
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -59,7 +58,7 @@ class PaperController(
         request: CreatePaperRequest,
         mergeIfExists: Boolean
     ): Resource {
-        val userId = authenticatedUserId()
+        val userId = ContributorId(authenticatedUserId())
 
         // check if should be merged or not
         val paperObj = createOrFindPaper(mergeIfExists, request, userId)
@@ -98,7 +97,7 @@ class PaperController(
     private fun createOrFindPaper(
         mergeIfExists: Boolean,
         request: CreatePaperRequest,
-        userId: UUID
+        userId: ContributorId
     ): Resource {
         return if (mergeIfExists) {
             val byTitle = resourceService.findAllByTitle(request.paper.title)
@@ -121,8 +120,8 @@ class PaperController(
      * Handles the creation of a new paper resource
      * i.e., creates the new paper, meta-data
      */
-    private fun createNewPaperWithMetadata(userId: UUID, request: CreatePaperRequest): Resource {
-        val contributor = contributorService.findByIdOrElseUnknown(ContributorId(userId))
+    private fun createNewPaperWithMetadata(userId: ContributorId, request: CreatePaperRequest): Resource {
+        val contributor = contributorService.findByIdOrElseUnknown(userId)
         val organizationId = contributor.organizationId
         val observatoryId = contributor.observatoryId
 
@@ -195,7 +194,7 @@ class PaperController(
     fun handlePublishingVenue(
         venue: String,
         paperId: ResourceId,
-        userId: UUID,
+        userId: ContributorId,
         observatoryId: ObservatoryId,
         extractionMethod: ExtractionMethod,
         organizationId: OrganizationId
@@ -234,7 +233,7 @@ class PaperController(
      */
     fun handleAuthors(
         paper: CreatePaperRequest,
-        userId: UUID,
+        userId: ContributorId,
         paperId: ResourceId,
         observatoryId: ObservatoryId,
         organizationId: OrganizationId

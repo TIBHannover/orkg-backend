@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
@@ -9,7 +10,6 @@ import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import java.util.UUID
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -49,7 +49,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     fun index() {
         val userId = createTestUser()
         val organizationId = createTestOrganization(userId)
-        val resource = createTestResource(UUID(0, 0), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
+        val resource = createTestResource(ContributorId.createUnknownContributor(), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
         createTestObservatory(organizationId, resource.id.toString())
 
         mockMvc
@@ -67,7 +67,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     fun fetch() {
         val userId = createTestUser()
         val organizationId = createTestOrganization(userId)
-        val resource = createTestResource(UUID(0, 0), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
+        val resource = createTestResource(ContributorId.createUnknownContributor(), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
         val observatoryId = createTestObservatory(organizationId, resource.id.toString())
 
         mockMvc
@@ -85,7 +85,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     fun lookUpPapersByObservatoryId() {
         val userId = createTestUser()
         val organizationId = createTestOrganization(userId)
-        val resource = createTestResource(UUID(0, 0), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
+        val resource = createTestResource(ContributorId.createUnknownContributor(), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
         val observatoryId = createTestObservatory(organizationId, resource.id.toString())
         createTestResource(userId, organizationId, observatoryId, "Paper")
 
@@ -105,7 +105,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     fun lookUpComparisonsByObservatoryId() {
         val userId = createTestUser()
         val organizationId = createTestOrganization(userId)
-        val resource = createTestResource(UUID(0, 0), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
+        val resource = createTestResource(ContributorId.createUnknownContributor(), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
         val observatoryId = createTestObservatory(organizationId, resource.id.toString())
         createTestResource(userId, organizationId, observatoryId, "Comparison")
 
@@ -125,7 +125,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     fun lookUpProblemsByObservatoryId() {
         val userId = createTestUser()
         val organizationId = createTestOrganization(userId)
-        val resource = createTestResource(UUID(0, 0), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
+        val resource = createTestResource(ContributorId.createUnknownContributor(), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
         val observatoryId = createTestObservatory(organizationId, resource.id.toString())
         createTestResource(userId, organizationId, observatoryId, "Problem")
 
@@ -141,12 +141,12 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
             )
     }
 
-    fun createTestUser(): UUID {
+    fun createTestUser(): ContributorId {
         userService.registerUser("abc@gmail.com", "123456", "Test user")
-        return userService.findByEmail("abc@gmail.com").get().id!!
+        return ContributorId(userService.findByEmail("abc@gmail.com").get().id!!)
     }
 
-    fun createTestOrganization(userId: UUID): OrganizationId {
+    fun createTestOrganization(userId: ContributorId): OrganizationId {
         return service.create("test organization", userId, "www.example.org").id!!
     }
 
@@ -154,7 +154,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
         return observatoryService.create("test observatory", "example description", service.findById(organizationId).get(), resourceId).id!!
     }
 
-    fun createTestResource(userId: UUID, organizationId: OrganizationId, observatoryId: ObservatoryId, resourceType: String): Resource {
+    fun createTestResource(userId: ContributorId, organizationId: OrganizationId, observatoryId: ObservatoryId, resourceType: String): Resource {
         return resourceService.create(userId, CreateResourceRequest(null, "test paper", setOf(ClassId(resourceType))), observatoryId, ExtractionMethod.UNKNOWN, organizationId)
     }
 

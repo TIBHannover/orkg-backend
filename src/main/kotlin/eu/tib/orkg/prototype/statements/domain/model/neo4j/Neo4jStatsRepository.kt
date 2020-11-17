@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.util.UUID
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
@@ -18,10 +18,10 @@ interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
     fun getResearchFieldsPapersCount(): Iterable<FieldsStats>
 
     @Query("""MATCH (n:Paper {observatory_id: {0}}) RETURN COUNT(n) As totalPapers""")
-    fun getObservatoryPapersCount(id: UUID): Long
+    fun getObservatoryPapersCount(id: ObservatoryId): Long
 
     @Query("""MATCH (n:Comparison {observatory_id: {0}}) RETURN COUNT(n) As totalComparisons""")
-    fun getObservatoryComparisonsCount(id: UUID): Long
+    fun getObservatoryComparisonsCount(id: ObservatoryId): Long
 
     @Query("""MATCH (n:Paper) WHERE n.observatory_id<>'00000000-0000-0000-0000-000000000000' WITH DISTINCT (n.observatory_id) AS observatoryId, COUNT(n) AS resources OPTIONAL MATCH (c:Comparison) where c.observatory_id<>'00000000-0000-0000-0000-000000000000' AND c.observatory_id = observatoryId WITH DISTINCT (c.observatory_id) as cobservatoryId, count(c) as comparisons, resources, observatoryId RETURN observatoryId, resources, comparisons""")
     fun getObservatoriesPapersAndComparisonsCount(): List<ObservatoryResources>

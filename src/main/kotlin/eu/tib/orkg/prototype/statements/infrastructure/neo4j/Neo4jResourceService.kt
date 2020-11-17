@@ -74,7 +74,7 @@ class Neo4jResourceService(
             .map(Neo4jResource::toResource)
 
     override fun findAllByClassAndCreatedBy(pageable: Pageable, id: ClassId, createdBy: ContributorId): Iterable<Resource> =
-        neo4jResourceRepository.findAllByClassAndCreatedBy(id.toString(), createdBy.value, pageable)
+        neo4jResourceRepository.findAllByClassAndCreatedBy(id.toString(), createdBy, pageable)
             .content
             .map(Neo4jResource::toResource)
 
@@ -84,7 +84,7 @@ class Neo4jResourceService(
             .map(Neo4jResource::toResource)
 
     override fun findAllByClassAndLabelAndCreatedBy(pageable: Pageable, id: ClassId, label: String, createdBy: ContributorId): Iterable<Resource> =
-        neo4jResourceRepository.findAllByClassAndLabelAndCreatedBy(id.toString(), label, createdBy.value, pageable)
+        neo4jResourceRepository.findAllByClassAndLabelAndCreatedBy(id.toString(), label, createdBy, pageable)
             .content
             .map(Neo4jResource::toResource)
 
@@ -94,7 +94,7 @@ class Neo4jResourceService(
             .map(Neo4jResource::toResource)
 
     override fun findAllByClassAndLabelContainingAndCreatedBy(pageable: Pageable, id: ClassId, part: String, createdBy: ContributorId): Iterable<Resource> =
-        neo4jResourceRepository.findAllByClassAndLabelContainingAndCreatedBy(id.toString(), part.toSearchString(), createdBy.value, pageable)
+        neo4jResourceRepository.findAllByClassAndLabelContainingAndCreatedBy(id.toString(), part.toSearchString(), createdBy, pageable)
             .content
             .map(Neo4jResource::toResource)
 

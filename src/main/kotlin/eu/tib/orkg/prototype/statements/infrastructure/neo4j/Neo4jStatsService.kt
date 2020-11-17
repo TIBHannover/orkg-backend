@@ -38,10 +38,10 @@ class Neo4jStatsService(
     }
 
     override fun getObservatoryPapersCount(id: ObservatoryId): Long =
-        neo4jStatsRepository.getObservatoryPapersCount(id.value)
+        neo4jStatsRepository.getObservatoryPapersCount(id)
 
     override fun getObservatoryComparisonsCount(id: ObservatoryId): Long =
-        neo4jStatsRepository.getObservatoryComparisonsCount(id.value)
+        neo4jStatsRepository.getObservatoryComparisonsCount(id)
 
     override fun getObservatoriesPapersAndComparisonsCount(): List<ObservatoryResources> =
         neo4jStatsRepository.getObservatoriesPapersAndComparisonsCount()

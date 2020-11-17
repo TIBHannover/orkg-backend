@@ -14,7 +14,6 @@ import io.mockk.every
 import io.mockk.verify
 import java.time.OffsetDateTime
 import java.util.Optional
-import java.util.UUID
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -134,7 +133,7 @@ class LiteralControllerTest {
             .andExpect(header().string("Location", "http://localhost/api/literals/L1"))
 
         verify(exactly = 1) {
-            literalService.create(ContributorId(UUID.fromString("f2d66c90-3cbf-4d4f-951f-0fc470f682c4")), "irrelevant", "irrelevant")
+            literalService.create(ContributorId("f2d66c90-3cbf-4d4f-951f-0fc470f682c4"), "irrelevant", "irrelevant")
         }
     }
 

@@ -6,9 +6,8 @@ import eu.tib.orkg.prototype.escapeLiterals
 import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.PredicateIdGraphAttributeConverter
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.UUIDGraphAttributeConverter
-import java.util.UUID
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
 import org.eclipse.rdf4j.model.vocabulary.RDF
@@ -37,8 +36,8 @@ data class Neo4jPredicate(
     private var predicateId: PredicateId? = null,
 
     @Property("created_by")
-    @Convert(UUIDGraphAttributeConverter::class)
-    var createdBy: UUID = UUID(0, 0),
+    @Convert(ContributorIdConverter::class)
+    var createdBy: ContributorId = ContributorId.createUnknownContributor(),
 
     @Relationship(type = "RELATED", direction = Relationship.OUTGOING)
     @JsonIgnore
@@ -46,7 +45,7 @@ data class Neo4jPredicate(
 ) : Neo4jThing, AuditableEntity() {
 
     fun toPredicate(): Predicate {
-        val pred = Predicate(predicateId, label!!, createdAt!!, createdBy = ContributorId(createdBy))
+        val pred = Predicate(predicateId, label!!, createdAt!!, createdBy = createdBy)
         pred.rdf = toRdfModel()
         if (subjectOf.isNotEmpty())
             pred.description = subjectOf.firstOrNull { it.predicateId?.value == "description" }?.`object`?.label

@@ -120,7 +120,7 @@ class Neo4jStatementService :
                 predicateId = predicate,
                 subject = foundSubject,
                 `object` = foundObject,
-                createdBy = userId.value
+                createdBy = userId
             )
         )
 
@@ -130,7 +130,7 @@ class Neo4jStatementService :
             foundPredicate.get(),
             foundObject.toThing(),
             persistedStatement.createdAt!!,
-            ContributorId(persistedStatement.createdBy)
+            persistedStatement.createdBy
         )
     }
 
@@ -192,6 +192,6 @@ class Neo4jStatementService :
             predicate = predicateService.findById(statement.predicateId!!).get(),
             `object` = refreshObject(statement.`object`!!),
             createdAt = statement.createdAt!!,
-            createdBy = ContributorId(statement.createdBy)
+            createdBy = statement.createdBy
         )
 }

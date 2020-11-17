@@ -29,7 +29,7 @@ class Neo4jClassService(
     override fun create(userId: ContributorId, label: String): Class {
         val classId = neo4jClassIdGenerator.nextIdentity()
         return neo4jClassRepository
-            .save(Neo4jClass(classId = classId, createdBy = userId.value, label = label, uri = null))
+            .save(Neo4jClass(classId = classId, createdBy = userId, label = label, uri = null))
             .toClass()
     }
 
@@ -38,7 +38,7 @@ class Neo4jClassService(
     override fun create(userId: ContributorId, request: CreateClassRequest): Class {
         val id = request.id ?: neo4jClassIdGenerator.nextIdentity()
         return neo4jClassRepository.save(
-            Neo4jClass(classId = id, createdBy = userId.value, label = request.label, uri = request.uri)
+            Neo4jClass(classId = id, createdBy = userId, label = request.label, uri = request.uri)
         ).toClass()
     }
 

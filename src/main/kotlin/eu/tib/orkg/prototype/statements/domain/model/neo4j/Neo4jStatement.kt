@@ -1,14 +1,14 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.escapeLiterals
 import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.PredicateIdGraphAttributeConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.StatementIdGraphAttributeConverter
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.UUIDGraphAttributeConverter
-import java.util.UUID
 import org.neo4j.ogm.annotation.EndNode
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
@@ -43,15 +43,15 @@ data class Neo4jStatement(
     var predicateId: PredicateId? = null
 
     @Property("created_by")
-    @Convert(UUIDGraphAttributeConverter::class)
-    var createdBy: UUID = UUID(0, 0)
+    @Convert(ContributorIdConverter::class)
+    var createdBy: ContributorId = ContributorId.createUnknownContributor()
 
     constructor(
         statementId: StatementId,
         subject: Neo4jThing,
         predicateId: PredicateId,
         `object`: Neo4jThing,
-        createdBy: UUID = UUID(0, 0)
+        createdBy: ContributorId = ContributorId.createUnknownContributor()
     ) :
         this(null) {
         this.statementId = statementId

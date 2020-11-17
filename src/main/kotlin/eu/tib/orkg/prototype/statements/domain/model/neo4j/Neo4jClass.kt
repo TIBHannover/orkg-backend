@@ -6,10 +6,9 @@ import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ClassIdGraphAttributeConverter
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.UUIDGraphAttributeConverter
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import java.lang.StringBuilder
 import java.net.URI
-import java.util.UUID
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
 import org.eclipse.rdf4j.model.vocabulary.OWL
@@ -41,10 +40,10 @@ data class Neo4jClass(
     var uri: String? = null
 
     @Property("created_by")
-    @Convert(UUIDGraphAttributeConverter::class)
-    var createdBy: UUID = UUID(0, 0)
+    @Convert(ContributorIdConverter::class)
+    var createdBy: ContributorId = ContributorId.createUnknownContributor()
 
-    constructor(label: String, classId: ClassId, createdBy: UUID = UUID(0, 0), uri: URI?) : this(null) {
+    constructor(label: String, classId: ClassId, createdBy: ContributorId = ContributorId.createUnknownContributor(), uri: URI?) : this(null) {
         this.label = label
         this.classId = classId
         this.uri = uri?.toString()
@@ -53,7 +52,7 @@ data class Neo4jClass(
 
     fun toClass(): Class {
         val aURI: URI? = if (uri != null) URI.create(uri!!) else null
-        val clazz = Class(classId!!, label!!, aURI, createdAt!!, createdBy = ContributorId(createdBy))
+        val clazz = Class(classId!!, label!!, aURI, createdAt!!, createdBy = createdBy)
         clazz.rdf = toRdfModel()
         return clazz
     }

@@ -25,7 +25,7 @@ class Neo4jLiteralService(
     override fun create(userId: ContributorId, label: String, datatype: String): Literal {
         val literalId = neo4jLiteralIdGenerator.nextIdentity()
         return neo4jLiteralRepository
-            .save(Neo4jLiteral(label = label, literalId = literalId, datatype = datatype, createdBy = userId.value))
+            .save(Neo4jLiteral(label = label, literalId = literalId, datatype = datatype, createdBy = userId))
             .toLiteral()
     }
 

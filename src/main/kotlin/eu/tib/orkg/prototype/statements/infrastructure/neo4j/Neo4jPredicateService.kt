@@ -28,7 +28,7 @@ class Neo4jPredicateService(
     override fun create(userId: ContributorId, label: String): Predicate {
         val id = neo4jPredicateIdGenerator.nextIdentity()
         return neo4jPredicateRepository
-            .save(Neo4jPredicate(label = label, predicateId = id, createdBy = userId.value))
+            .save(Neo4jPredicate(label = label, predicateId = id, createdBy = userId))
             .toPredicate()
     }
 
@@ -37,7 +37,7 @@ class Neo4jPredicateService(
     override fun create(userId: ContributorId, request: CreatePredicateRequest): Predicate {
         val id = request.id ?: neo4jPredicateIdGenerator.nextIdentity()
         return neo4jPredicateRepository
-            .save(Neo4jPredicate(label = request.label, predicateId = id, createdBy = userId.value))
+            .save(Neo4jPredicate(label = request.label, predicateId = id, createdBy = userId))
             .toPredicate()
     }
 

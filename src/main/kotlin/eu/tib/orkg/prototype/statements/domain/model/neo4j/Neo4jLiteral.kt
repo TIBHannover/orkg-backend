@@ -5,9 +5,8 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.LiteralIdGraphAttributeConverter
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.UUIDGraphAttributeConverter
-import java.util.UUID
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
 import org.neo4j.ogm.annotation.NodeEntity
@@ -35,8 +34,8 @@ data class Neo4jLiteral(
     var literalId: LiteralId? = null
 
     @Property("created_by")
-    @Convert(UUIDGraphAttributeConverter::class)
-    var createdBy: UUID = UUID(0, 0)
+    @Convert(ContributorIdConverter::class)
+    var createdBy: ContributorId = ContributorId.createUnknownContributor()
 
     @Relationship(type = "HAS_VALUE_OF")
     @JsonIgnore
@@ -52,7 +51,7 @@ data class Neo4jLiteral(
         label: String,
         literalId: LiteralId,
         datatype: String = "xsd:string",
-        createdBy: UUID = UUID(0, 0)
+        createdBy: ContributorId = ContributorId.createUnknownContributor()
     ) : this(null) {
         this.label = label
         this.literalId = literalId
@@ -61,7 +60,7 @@ data class Neo4jLiteral(
     }
 
     fun toLiteral() =
-        Literal(id = literalId, label = label!!, datatype = datatype!!, createdAt = createdAt!!, createdBy = ContributorId(createdBy))
+        Literal(id = literalId, label = label!!, datatype = datatype!!, createdAt = createdAt!!, createdBy = createdBy)
 
     override val thingId: String?
         get() = literalId?.value

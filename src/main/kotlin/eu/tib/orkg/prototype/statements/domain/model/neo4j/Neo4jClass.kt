@@ -5,7 +5,7 @@ import eu.tib.orkg.prototype.escapeLiterals
 import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ClassIdGraphAttributeConverter
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ClassIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import java.lang.StringBuilder
 import java.net.URI
@@ -29,7 +29,7 @@ data class Neo4jClass(
 ) : Neo4jThing, AuditableEntity() {
     @Property("class_id")
     @Required
-    @Convert(ClassIdGraphAttributeConverter::class)
+    @Convert(ClassIdConverter::class)
     var classId: ClassId? = null
 
     @Property("label")

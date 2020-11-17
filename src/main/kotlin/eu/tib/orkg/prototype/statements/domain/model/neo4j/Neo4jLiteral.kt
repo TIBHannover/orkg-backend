@@ -6,7 +6,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.LiteralIdGraphAttributeConverter
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.LiteralIdConverter
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
 import org.neo4j.ogm.annotation.NodeEntity
@@ -30,7 +30,7 @@ data class Neo4jLiteral(
 
     @Property("literal_id")
     @Required
-    @Convert(LiteralIdGraphAttributeConverter::class)
+    @Convert(LiteralIdConverter::class)
     var literalId: LiteralId? = null
 
     @Property("created_by")

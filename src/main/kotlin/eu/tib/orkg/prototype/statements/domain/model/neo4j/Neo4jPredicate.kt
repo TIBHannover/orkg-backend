@@ -7,7 +7,7 @@ import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.PredicateIdGraphAttributeConverter
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.PredicateIdConverter
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
 import org.eclipse.rdf4j.model.vocabulary.RDF
@@ -32,7 +32,7 @@ data class Neo4jPredicate(
 
     @Property("predicate_id")
     @Required
-    @Convert(PredicateIdGraphAttributeConverter::class)
+    @Convert(PredicateIdConverter::class)
     private var predicateId: PredicateId? = null,
 
     @Property("created_by")

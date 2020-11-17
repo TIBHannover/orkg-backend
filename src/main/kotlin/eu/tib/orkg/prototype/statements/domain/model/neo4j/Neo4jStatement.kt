@@ -7,8 +7,8 @@ import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.PredicateIdGraphAttributeConverter
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.StatementIdGraphAttributeConverter
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.PredicateIdConverter
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.StatementIdConverter
 import org.neo4j.ogm.annotation.EndNode
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
@@ -34,12 +34,12 @@ data class Neo4jStatement(
 
     @Property("statement_id")
     @Required
-    @Convert(StatementIdGraphAttributeConverter::class)
+    @Convert(StatementIdConverter::class)
     var statementId: StatementId? = null
 
     @Property("predicate_id")
     @Required
-    @Convert(PredicateIdGraphAttributeConverter::class)
+    @Convert(PredicateIdConverter::class)
     var predicateId: PredicateId? = null
 
     @Property("created_by")

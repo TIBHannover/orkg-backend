@@ -13,7 +13,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ObservatoryIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.OrganizationIdConverter
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ResourceIdGraphAttributeConverter
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ResourceIdConverter
 import java.lang.StringBuilder
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
@@ -41,7 +41,7 @@ data class Neo4jResource(
 
     @Property("resource_id")
     @Required
-    @Convert(ResourceIdGraphAttributeConverter::class)
+    @Convert(ResourceIdConverter::class)
     var resourceId: ResourceId? = null
 
     @Relationship(type = "RELATED")

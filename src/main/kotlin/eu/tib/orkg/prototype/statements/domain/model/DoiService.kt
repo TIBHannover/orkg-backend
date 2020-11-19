@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-import eu.tib.orkg.prototype.statements.application.ID_DOI_PREDICATE
+import eu.tib.orkg.prototype.statements.application.ObjectController.Constants.ID_DOI_PREDICATE
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection

@@ -1,10 +1,13 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -13,7 +16,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import java.util.LinkedList
 import java.util.Queue
-import java.util.UUID
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PatchMapping
@@ -80,7 +82,7 @@ class ObjectController(
         existingResourceId: ResourceId? = null
     ): Resource {
         // Get provenance info
-        val userId = authenticatedUserId()
+        val userId = ContributorId(authenticatedUserId())
         val contributor = contributorService.findByIdOrElseUnknown(userId)
         val organizationId = contributor.organizationId
         val observatoryId = contributor.observatoryId
@@ -176,11 +178,11 @@ class ObjectController(
         tempResources: HashMap<String, String>,
         predicates: HashMap<String, PredicateId>,
         resourceQueue: Queue<TempResource>,
-        userId: UUID,
+        userId: ContributorId,
         recursive: Boolean = false,
-        observatoryId: UUID,
+        observatoryId: ObservatoryId,
         extractionMethod: ExtractionMethod,
-        organizationId: UUID
+        organizationId: OrganizationId
     ) {
         for ((predicate, value) in data) {
             val predicateId = extractPredicate(predicate, predicates)
@@ -276,7 +278,7 @@ class ObjectController(
         queue: Queue<TempResource>,
         tempResources: HashMap<String, String>,
         isRecursive: Boolean,
-        userId: UUID
+        userId: ContributorId
     ) {
         // Loop until the Queue is empty
         var limit = 50 // this is just to ensure that a user won't add an id that is not there

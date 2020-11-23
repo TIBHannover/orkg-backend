@@ -2,13 +2,14 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.Neo4jStatsService
-import java.util.UUID
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
@@ -49,7 +50,7 @@ class ObservatoryController(
     }
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: UUID): Observatory =
+    fun findById(@PathVariable id: ObservatoryId): Observatory =
         service
             .findById(id)
             .orElseThrow { ObservatoryNotFound(id) }
@@ -60,22 +61,22 @@ class ObservatoryController(
     }
 
     @GetMapping("{id}/papers")
-    fun findPapersByObservatoryId(@PathVariable id: UUID): Iterable<Resource> {
+    fun findPapersByObservatoryId(@PathVariable id: ObservatoryId): Iterable<Resource> {
         return resourceService.findPapersByObservatoryId(id)
     }
 
     @GetMapping("{id}/comparisons")
-    fun findComparisonsByObservatoryId(@PathVariable id: UUID): Iterable<Resource> {
+    fun findComparisonsByObservatoryId(@PathVariable id: ObservatoryId): Iterable<Resource> {
         return resourceService.findComparisonsByObservatoryId(id)
     }
 
     @GetMapping("{id}/problems")
-    fun findProblemsByObservatoryId(@PathVariable id: UUID): Iterable<Resource> {
+    fun findProblemsByObservatoryId(@PathVariable id: ObservatoryId): Iterable<Resource> {
         return resourceService.findProblemsByObservatoryId(id)
     }
 
     @GetMapping("{id}/users")
-    fun findUsersByObservatoryId(@PathVariable id: UUID): Iterable<Contributor> =
+    fun findUsersByObservatoryId(@PathVariable id: ObservatoryId): Iterable<Contributor> =
         contributorService.findUsersByObservatoryId(id)
 
     @GetMapping("research-field/{id}/observatories")
@@ -86,7 +87,7 @@ class ObservatoryController(
     }
 
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateObservatoryName(@PathVariable id: UUID, @RequestBody @Valid name: UpdateRequest): Observatory {
+    fun updateObservatoryName(@PathVariable id: ObservatoryId, @RequestBody @Valid name: UpdateRequest): Observatory {
         service
             .findById(id)
             .orElseThrow { ObservatoryNotFound(id) }
@@ -95,7 +96,7 @@ class ObservatoryController(
     }
 
     @RequestMapping("{id}/description", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateObservatoryDescription(@PathVariable id: UUID, @RequestBody @Valid description: UpdateRequest): Observatory {
+    fun updateObservatoryDescription(@PathVariable id: ObservatoryId, @RequestBody @Valid description: UpdateRequest): Observatory {
         service
             .findById(id)
             .orElseThrow { ObservatoryNotFound(id) }
@@ -104,7 +105,7 @@ class ObservatoryController(
     }
 
     @RequestMapping("{id}/research_field", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateObservatoryResearchField(@PathVariable id: UUID, @RequestBody @Valid researchFieldId: UpdateRequest): Observatory {
+    fun updateObservatoryResearchField(@PathVariable id: ObservatoryId, @RequestBody @Valid researchFieldId: UpdateRequest): Observatory {
         service
             .findById(id)
             .orElseThrow { ObservatoryNotFound(id) }
@@ -119,7 +120,7 @@ class ObservatoryController(
 
     data class CreateObservatoryRequest(
         val observatoryName: String,
-        val organizationId: UUID,
+        val organizationId: OrganizationId,
         val description: String,
         val researchField: String
     )

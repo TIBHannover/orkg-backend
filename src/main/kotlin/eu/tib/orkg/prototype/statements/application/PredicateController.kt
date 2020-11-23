@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
@@ -51,7 +52,7 @@ class PredicateController(private val service: PredicateService) : BaseControlle
         if (predicate.id != null && service.findById(predicate.id).isPresent)
             return ResponseEntity.badRequest().body("Predicate id <${predicate.id}> already exists!")
         val userId = authenticatedUserId()
-        val id = service.create(userId, predicate).id
+        val id = service.create(ContributorId(userId), predicate).id
 
         val location = uriComponentsBuilder
             .path("api/predicates/{id}")

@@ -1,12 +1,12 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryRequest
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
 import java.util.Optional
-import java.util.UUID
 import org.springframework.data.domain.Pageable
 
 interface ResourceService {
@@ -20,7 +20,7 @@ interface ResourceService {
     /**
      * Create a new resource with a given label belonging to a given user.
      */
-    fun create(userId: UUID, label: String, observatoryId: UUID, extractionMethod: ExtractionMethod, organizationId: UUID): Resource
+    fun create(userId: ContributorId, label: String, observatoryId: ObservatoryId, extractionMethod: ExtractionMethod, organizationId: OrganizationId): Resource
 
     /**
      * Create a new resource from a request.
@@ -30,7 +30,7 @@ interface ResourceService {
     /**
      * Create a new resource belonging to a given user.
      */
-    fun create(userId: UUID, request: CreateResourceRequest, observatoryId: UUID, extractionMethod: ExtractionMethod, organizationId: UUID): Resource
+    fun create(userId: ContributorId, request: CreateResourceRequest, observatoryId: ObservatoryId, extractionMethod: ExtractionMethod, organizationId: OrganizationId): Resource
 
     /**
      * Find all resources.
@@ -60,7 +60,7 @@ interface ResourceService {
     /**
      * Find all resources belonging to a given class and a creator.
      */
-    fun findAllByClassAndCreatedBy(pageable: Pageable, id: ClassId, createdBy: UUID): Iterable<Resource>
+    fun findAllByClassAndCreatedBy(pageable: Pageable, id: ClassId, createdBy: ContributorId): Iterable<Resource>
 
     /**
      * Find all resources belonging to a given class and matching a label.
@@ -70,7 +70,7 @@ interface ResourceService {
     /**
      * Find all resources belonging to a given class and matching a label and created by a creator.
      */
-    fun findAllByClassAndLabelAndCreatedBy(pageable: Pageable, id: ClassId, label: String, createdBy: UUID): Iterable<Resource>
+    fun findAllByClassAndLabelAndCreatedBy(pageable: Pageable, id: ClassId, label: String, createdBy: ContributorId): Iterable<Resource>
 
     /**
      * Find all resources belonging to a given class and containing a label.
@@ -80,7 +80,7 @@ interface ResourceService {
     /**
      * Find all resources belonging to a given class and containing a label and created by a creator.
      */
-    fun findAllByClassAndLabelContainingAndCreatedBy(pageable: Pageable, id: ClassId, part: String, createdBy: UUID): Iterable<Resource>
+    fun findAllByClassAndLabelContainingAndCreatedBy(pageable: Pageable, id: ClassId, part: String, createdBy: ContributorId): Iterable<Resource>
 
     /**
      * Find all resources except the ones belonging to a given class.
@@ -105,11 +105,11 @@ interface ResourceService {
 
     fun findAllByTitle(title: String?): Iterable<Resource>
 
-    fun findPapersByObservatoryId(id: UUID): Iterable<Resource>
+    fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Resource>
 
-    fun findComparisonsByObservatoryId(id: UUID): Iterable<Resource>
+    fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<Resource>
 
-    fun findProblemsByObservatoryId(id: UUID): Iterable<Resource>
+    fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource>
 
     fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors>
 
@@ -118,7 +118,7 @@ interface ResourceService {
      */
     fun update(request: UpdateResourceRequest): Resource
 
-    fun updatePaperObservatory(request: UpdateResourceObservatoryRequest, id: ResourceId, userId: UUID): Resource
+    fun updatePaperObservatory(request: UpdateResourceObservatoryRequest, id: ResourceId, userId: ContributorId): Resource
 
     fun hasStatements(id: ResourceId): Boolean
 

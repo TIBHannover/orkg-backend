@@ -1,10 +1,10 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.domain.model.StatsService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatsRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
-import java.util.UUID
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -37,10 +37,10 @@ class Neo4jStatsService(
         return counts.map { it.fieldId to it.papers.toInt() }.toMap()
     }
 
-    override fun getObservatoryPapersCount(id: UUID): Long =
+    override fun getObservatoryPapersCount(id: ObservatoryId): Long =
         neo4jStatsRepository.getObservatoryPapersCount(id)
 
-    override fun getObservatoryComparisonsCount(id: UUID): Long =
+    override fun getObservatoryComparisonsCount(id: ObservatoryId): Long =
         neo4jStatsRepository.getObservatoryComparisonsCount(id)
 
     override fun getObservatoriesPapersAndComparisonsCount(): List<ObservatoryResources> =

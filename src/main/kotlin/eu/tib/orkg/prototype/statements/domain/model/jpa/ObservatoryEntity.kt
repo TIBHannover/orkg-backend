@@ -2,6 +2,8 @@ package eu.tib.orkg.prototype.statements.domain.model.jpa
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.ResearchField
 import java.util.UUID
 import javax.persistence.CascadeType
@@ -18,7 +20,7 @@ import javax.validation.constraints.NotBlank
 
 @Entity
 @Table(name = "observatories")
-class ObservatoryEntity {
+class ObservatoryEntity() {
     @Id
     var id: UUID? = null
 
@@ -44,11 +46,11 @@ class ObservatoryEntity {
 
     fun toObservatory() =
         Observatory(
-            id = id,
+            id = ObservatoryId(id!!),
             name = name,
             description = description,
             researchField = ResearchField(researchField, null),
             members = users!!.map(UserEntity::toContributor).toSet(),
-            organizationIds = organizations!!.mapNotNull(OrganizationEntity::id).toSet()
+            organizationIds = organizations!!.map { OrganizationId(it.id!!) }.toSet()
         )
 }

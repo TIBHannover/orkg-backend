@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.CreateClassRequest
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -12,7 +13,6 @@ import eu.tib.orkg.prototype.util.SanitizedWhitespace
 import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
 import java.net.URI
 import java.util.Optional
-import java.util.UUID
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -24,18 +24,18 @@ class Neo4jClassService(
     private val neo4jClassIdGenerator: Neo4jClassIdGenerator
 ) : ClassService {
 
-    override fun create(label: String) = create(UUID(0, 0), label)
+    override fun create(label: String) = create(ContributorId.createUnknownContributor(), label)
 
-    override fun create(userId: UUID, label: String): Class {
+    override fun create(userId: ContributorId, label: String): Class {
         val classId = neo4jClassIdGenerator.nextIdentity()
         return neo4jClassRepository
             .save(Neo4jClass(classId = classId, createdBy = userId, label = label, uri = null))
             .toClass()
     }
 
-    override fun create(request: CreateClassRequest) = create(UUID(0, 0), request)
+    override fun create(request: CreateClassRequest) = create(ContributorId.createUnknownContributor(), request)
 
-    override fun create(userId: UUID, request: CreateClassRequest): Class {
+    override fun create(userId: ContributorId, request: CreateClassRequest): Class {
         val id = request.id ?: neo4jClassIdGenerator.nextIdentity()
         return neo4jClassRepository.save(
             Neo4jClass(classId = id, createdBy = userId, label = request.label, uri = request.uri)

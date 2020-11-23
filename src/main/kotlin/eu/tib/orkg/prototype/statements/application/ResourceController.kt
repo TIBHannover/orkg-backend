@@ -1,14 +1,16 @@
 package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
-import java.util.UUID
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.badRequest
@@ -73,14 +75,14 @@ class ResourceController(
         if (resource.id != null && service.findById(resource.id).isPresent)
             return badRequest().body("Resource id <${resource.id}> already exists!")
         val userId = authenticatedUserId()
-        val contributor = contributorService.findById(userId)
-        var observatoryId = UUID(0, 0)
-        var organizationId = UUID(0, 0)
+        val contributor = contributorService.findById(ContributorId(userId))
+        var observatoryId = ObservatoryId.createUnknownObservatory()
+        var organizationId = OrganizationId.createUnknownOrganization()
         if (!contributor.isEmpty) {
             organizationId = contributor.get().organizationId
             observatoryId = contributor.get().observatoryId
         }
-        val id = service.create(userId, resource, observatoryId, resource.extractionMethod, organizationId).id
+        val id = service.create(ContributorId(userId), resource, observatoryId, resource.extractionMethod, organizationId).id
         val location = uriComponentsBuilder
             .path("api/resources/{id}")
             .buildAndExpand(id)
@@ -114,7 +116,7 @@ class ResourceController(
         if (!found.isPresent)
             return notFound().build()
         val userId = authenticatedUserId()
-        return ok(service.updatePaperObservatory(request, id, userId))
+        return ok(service.updatePaperObservatory(request, id, ContributorId(userId)))
     }
 
     @GetMapping("{id}/contributors")
@@ -160,7 +162,7 @@ data class UpdateResourceRequest(
 
 data class UpdateResourceObservatoryRequest(
     @JsonProperty("observatory_id")
-    val observatoryId: UUID,
+    val observatoryId: ObservatoryId,
     @JsonProperty("organization_id")
-    val organizationId: UUID
+    val organizationId: OrganizationId
 )

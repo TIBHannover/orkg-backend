@@ -12,6 +12,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
 import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.badRequest
 import org.springframework.http.ResponseEntity.created
@@ -117,6 +118,22 @@ class ResourceController(
             return notFound().build()
         val userId = authenticatedUserId()
         return ok(service.updatePaperObservatory(request, id, ContributorId(userId)))
+    }
+
+    @PutMapping("/{id}/verified")
+    @ResponseStatus(NO_CONTENT)
+    fun markVerified(@PathVariable id: ResourceId) {
+        service
+            .markAsVerified(id)
+            .orElseThrow { ResourceNotFound(id.toString()) }
+    }
+
+    @DeleteMapping("/{id}/verified")
+    @ResponseStatus(NO_CONTENT)
+    fun unmarkVerified(@PathVariable id: ResourceId) {
+        service
+            .markAsUnverified(id)
+            .orElseThrow { ResourceNotFound(id.toString()) }
     }
 
     @GetMapping("{id}/contributors")

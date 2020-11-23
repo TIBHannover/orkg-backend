@@ -5,11 +5,12 @@ import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryRequest
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
+import eu.tib.orkg.prototype.statements.application.port.input.MarkAsVerifiedUseCase
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
 import java.util.Optional
 import org.springframework.data.domain.Pageable
 
-interface ResourceService {
+interface ResourceService : MarkAsVerifiedUseCase {
     /**
      * Create a new resource with a given label.
      *

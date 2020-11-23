@@ -3,6 +3,8 @@ package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
+import eu.tib.orkg.prototype.statements.application.ExtractionMethod.MANUAL
+import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
 import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryRequest
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -30,7 +32,13 @@ class Neo4jResourceService(
     private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator
 ) : ResourceService {
 
-    override fun create(label: String) = create(ContributorId.createUnknownContributor(), label, ObservatoryId.createUnknownObservatory(), ExtractionMethod.UNKNOWN, OrganizationId.createUnknownOrganization())
+    override fun create(label: String) = create(
+        ContributorId.createUnknownContributor(),
+        label,
+        ObservatoryId.createUnknownObservatory(),
+        UNKNOWN,
+        OrganizationId.createUnknownOrganization()
+    )
 
     override fun create(userId: ContributorId, label: String, observatoryId: ObservatoryId, extractionMethod: ExtractionMethod, organizationId: OrganizationId): Resource {
         val resourceId = neo4jResourceIdGenerator.nextIdentity()
@@ -38,7 +46,13 @@ class Neo4jResourceService(
             .toResource()
     }
 
-    override fun create(request: CreateResourceRequest) = create(ContributorId.createUnknownContributor(), request, ObservatoryId.createUnknownObservatory(), ExtractionMethod.UNKNOWN, OrganizationId.createUnknownOrganization())
+    override fun create(request: CreateResourceRequest) = create(
+        ContributorId.createUnknownContributor(),
+        request,
+        ObservatoryId.createUnknownObservatory(),
+        UNKNOWN,
+        OrganizationId.createUnknownOrganization()
+    )
 
     override fun create(userId: ContributorId, request: CreateResourceRequest, observatoryId: ObservatoryId, extractionMethod: ExtractionMethod, organizationId: OrganizationId): Resource {
         val id = request.id ?: neo4jResourceIdGenerator.nextIdentity()
@@ -172,6 +186,20 @@ class Neo4jResourceService(
     override fun delete(id: ResourceId) {
         val found = neo4jResourceRepository.findByResourceId(id).get()
         neo4jResourceRepository.delete(found)
+    }
+
+    override fun markAsVerified(resourceId: ResourceId) = setVerifiedFlag(resourceId, true)
+
+    override fun markAsUnverified(resourceId: ResourceId) = setVerifiedFlag(resourceId, false)
+
+    private fun setVerifiedFlag(resourceId: ResourceId, verified: Boolean): Optional<Resource> {
+        val result = neo4jResourceRepository.findByResourceId(resourceId)
+        if (result.isPresent) {
+            val resource = result.get()
+            resource.extractionMethod = if (verified) MANUAL else UNKNOWN
+            return Optional.of(neo4jResourceRepository.save(resource).toResource())
+        }
+        return Optional.empty()
     }
 
     private fun String.toSearchString() = "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"

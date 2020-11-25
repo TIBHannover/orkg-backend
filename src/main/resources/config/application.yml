@@ -38,3 +38,6 @@ spring:
       ddl-auto: validate
     show-sql: true
     # generate-ddl: true
+logging:
+  level:
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG

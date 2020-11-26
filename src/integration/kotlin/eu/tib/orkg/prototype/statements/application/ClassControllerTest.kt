@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.application.ResourceControllerTest.RestDoc.listOfResourcesResponseFields
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
@@ -233,7 +234,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    resourceListResponseFields()
+                    listOfResourcesResponseFields()
                 )
             )
     }
@@ -279,7 +280,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    resourceListResponseFields()
+                    listOfResourcesResponseFields()
                 )
             )
     }
@@ -301,20 +302,6 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].uri").description("An optional URI to describe the class (RDF)").optional(),
             fieldWithPath("[].created_at").description("The class creation datetime"),
             fieldWithPath("[].created_by").description("The ID of the user that created the class. All zeros if unknown."),
-            fieldWithPath("[]._class").optional().ignored()
-        )
-
-    private fun resourceListResponseFields() =
-        responseFields(
-            fieldWithPath("[].id").description("The resource ID"),
-            fieldWithPath("[].label").description("The resource label"),
-            fieldWithPath("[].classes").description("The list of classes the resource belongs to"),
-            fieldWithPath("[].created_at").description("The resource creation datetime"),
-            fieldWithPath("[].created_by").description("The ID of the user that created the class. All zeros if unknown."),
-            fieldWithPath("[].observatory_id").description("The ID of the observatory that maintains this resource."),
-            fieldWithPath("[].organization_id").description("The ID of the organization that maintains this resource."),
-            fieldWithPath("[].extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic"."""),
-            fieldWithPath("[].shared").description("The number of times this resource is shared").optional(),
             fieldWithPath("[]._class").optional().ignored()
         )
 }

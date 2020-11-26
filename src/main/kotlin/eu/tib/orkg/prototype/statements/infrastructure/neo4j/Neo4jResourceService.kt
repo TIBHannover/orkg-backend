@@ -196,7 +196,7 @@ class Neo4jResourceService(
         val result = neo4jResourceRepository.findByResourceId(resourceId)
         if (result.isPresent) {
             val resource = result.get()
-            resource.extractionMethod = if (verified) MANUAL else UNKNOWN
+            resource.verified = verified
             return Optional.of(neo4jResourceRepository.save(resource).toResource())
         }
         return Optional.empty()

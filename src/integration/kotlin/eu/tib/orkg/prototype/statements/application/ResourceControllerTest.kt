@@ -347,6 +347,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("observatory_id").description("The ID of the observatory that maintains this resource."),
             fieldWithPath("extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic"."""),
             fieldWithPath("organization_id").description("The ID of the organization that maintains this resource."),
+            fieldWithPath("verified").description("A flag if the resource is verified or now. Semantics of this flag are not defined (yet)."),
             fieldWithPath("shared").description("The number of times this resource is shared").optional(),
             fieldWithPath("_class").optional().ignored()
         )

@@ -63,6 +63,9 @@ data class Neo4jResource(
     @Property("extraction_method")
     var extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
 
+    @Property("verified")
+    var verified: Boolean = false
+
     @Property("organization_id")
     @Convert(OrganizationIdConverter::class)
     var organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
@@ -108,7 +111,8 @@ data class Neo4jResource(
             createdBy = createdBy,
             observatoryId = observatoryId,
             extractionMethod = extractionMethod,
-            organizationId = organizationId
+            organizationId = organizationId,
+            verified = verified
         )
         resource.rdf = toRdfModel()
         return resource

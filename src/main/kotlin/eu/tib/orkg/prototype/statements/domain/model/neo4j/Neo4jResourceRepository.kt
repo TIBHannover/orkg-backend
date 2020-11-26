@@ -89,6 +89,10 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
 
     @Query("""MATCH (n:Resource {resource_id: {0}}) RETURN EXISTS ((n)-[:RELATED]-(:Thing)) AS used""")
     fun checkIfResourceHasStatements(id: ResourceId): Boolean
+
+    fun findAllByVerifiedIsTrue(pageable: Pageable): Page<Neo4jResource>
+
+    fun findAllByVerifiedIsFalse(pageable: Pageable): Page<Neo4jResource>
 }
 
 @QueryResult

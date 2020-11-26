@@ -5,7 +5,7 @@ import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.createResource
-import eu.tib.orkg.prototype.statements.application.port.input.MarkAsVerifiedUseCase
+import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsVerifiedUseCase
 import io.mockk.every
 import java.util.Optional
 import org.junit.jupiter.api.BeforeEach

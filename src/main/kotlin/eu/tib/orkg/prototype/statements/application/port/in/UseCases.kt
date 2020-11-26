@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.statements.application.port.input
+package eu.tib.orkg.prototype.statements.application.port.`in`
 
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId

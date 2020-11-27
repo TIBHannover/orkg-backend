@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
-import eu.tib.orkg.prototype.statements.application.ExtractionMethod.MANUAL
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
 import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryRequest
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
@@ -21,6 +20,7 @@ import eu.tib.orkg.prototype.util.EscapedRegex
 import eu.tib.orkg.prototype.util.SanitizedWhitespace
 import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
 import java.util.Optional
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -191,6 +191,16 @@ class Neo4jResourceService(
     override fun markAsVerified(resourceId: ResourceId) = setVerifiedFlag(resourceId, true)
 
     override fun markAsUnverified(resourceId: ResourceId) = setVerifiedFlag(resourceId, false)
+
+    override fun loadVerifiedResources(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository
+            .findAllByVerifiedIsTrue(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadUnverifiedResources(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository
+            .findAllByVerifiedIsFalse(pageable)
+            .map(Neo4jResource::toResource)
 
     private fun setVerifiedFlag(resourceId: ResourceId, verified: Boolean): Optional<Resource> {
         val result = neo4jResourceRepository.findByResourceId(resourceId)

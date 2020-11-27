@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsVerifiedUseCase
+import eu.tib.orkg.prototype.statements.application.port.out.LoadResourcePort
 import io.mockk.every
 import java.util.Optional
 import org.junit.jupiter.api.BeforeEach
@@ -39,6 +40,9 @@ class ResourceVerificationControllerTest {
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var userRepository: UserRepository
+
+    @MockkBean
+    private lateinit var resourcePort: LoadResourcePort
 
     @MockkBean
     private lateinit var service: MarkAsVerifiedUseCase

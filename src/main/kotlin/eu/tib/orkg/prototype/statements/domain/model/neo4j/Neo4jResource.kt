@@ -111,8 +111,7 @@ data class Neo4jResource(
             createdBy = createdBy,
             observatoryId = observatoryId,
             extractionMethod = extractionMethod,
-            organizationId = organizationId,
-            verified = verified
+            organizationId = organizationId
         )
         resource.rdf = toRdfModel()
         return resource

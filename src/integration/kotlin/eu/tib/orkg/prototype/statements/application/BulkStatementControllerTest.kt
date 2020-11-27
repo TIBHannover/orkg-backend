@@ -171,7 +171,6 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statement.subject.created_by").description("The ID of the user that created the subject. All zeros if unknown."),
             fieldWithPath("[].statement.subject.classes").description("The classes the subject resource belongs to"),
             fieldWithPath("[].statement.subject.observatory_id").description("The ID of the observatory that maintains this resource."),
-            fieldWithPath("[].statement.subject.verified").description("A flag if the resource is verified or now. Semantics of this flag are not defined (yet)."),
             fieldWithPath("[].statement.subject.organization_id").description("The ID of the organization that maintains this resource."),
             fieldWithPath("[].statement.subject.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic"."""),
             fieldWithPath("[].statement.subject.shared").description("The number of time this resource has been shared"),
@@ -192,7 +191,6 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statement.object.observatory_id").description("The ID of the observatory that maintains this resource.").optional().ignored(),
             fieldWithPath("[].statement.object.organization_id").description("The ID of the organization that maintains this resource.").optional().ignored(),
             fieldWithPath("[].statement.object.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic".""").optional().ignored(),
-            fieldWithPath("[].statement.object.verified").description("A flag if the resource is verified or now. Semantics of this flag are not defined (yet)."),
             fieldWithPath("[].statement.object.shared").optional().ignored()
         )
 
@@ -212,7 +210,6 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statements.[].subject.observatory_id").description("The ID of the observatory that maintains this resource."),
             fieldWithPath("[].statements.[].subject.organization_id").description("The ID of the organization that maintains this resource."),
             fieldWithPath("[].statements.[].subject.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic"."""),
-            fieldWithPath("[].statements.[].subject.verified").description("A flag if the resource is verified or now. Semantics of this flag are not defined (yet)."),
             fieldWithPath("[].statements.[].subject.shared").description("The number of time this resource has been shared"),
             fieldWithPath("[].statements.[].predicate").description("A predicate"),
             fieldWithPath("[].statements.[].predicate.id").description("The ID of the predicate"),
@@ -231,7 +228,6 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statements.[].object.observatory_id").description("The ID of the observatory that maintains this resource.").optional().ignored(),
             fieldWithPath("[].statements.[].object.organization_id").description("The ID of the organization that maintains this resource.").optional().ignored(),
             fieldWithPath("[].statements.[].object.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic".""").optional().ignored(),
-            fieldWithPath("[].statements.[].object.verified").description("A flag if the resource is verified or now. Semantics of this flag are not defined (yet)."),
             fieldWithPath("[].statements.[].object.shared").optional().ignored()
         )
 }

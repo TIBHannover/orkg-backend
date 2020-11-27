@@ -64,7 +64,7 @@ data class Neo4jResource(
     var extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
 
     @Property("verified")
-    var verified: Boolean = false
+    var verified: Boolean? = null
 
     @Property("organization_id")
     @Convert(OrganizationIdConverter::class)

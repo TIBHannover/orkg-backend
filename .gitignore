@@ -21,6 +21,6 @@ gradle-app.setting
 !.idea/codeStyles/*
 
 # TestContainers
-out/
+/out/
 
 images/

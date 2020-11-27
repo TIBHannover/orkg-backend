@@ -10,3 +10,8 @@ interface GetVerifiedResourcesQuery {
 
     fun getUnverifiedResources(pageable: Pageable): Page<Resource>
 }
+
+interface GetVerifiedPapersQuery {
+    fun getVerifiedPapers(pageable: Pageable): Page<Resource>
+    fun getUnverifiedPapers(pageable: Pageable): Page<Resource>
+}

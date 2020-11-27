@@ -202,6 +202,16 @@ class Neo4jResourceService(
             .findAllByVerifiedIsFalse(pageable)
             .map(Neo4jResource::toResource)
 
+    override fun loadVerifiedPapers(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository
+            .findAllVerifiedPapers(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadUnverifiedPapers(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository
+            .findAllUnverifiedPapers(pageable)
+            .map(Neo4jResource::toResource)
+
     private fun setVerifiedFlag(resourceId: ResourceId, verified: Boolean): Optional<Resource> {
         val result = neo4jResourceRepository.findByResourceId(resourceId)
         if (result.isPresent) {

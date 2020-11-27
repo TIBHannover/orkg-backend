@@ -93,6 +93,18 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     fun findAllByVerifiedIsTrue(pageable: Pageable): Page<Neo4jResource>
 
     fun findAllByVerifiedIsFalse(pageable: Pageable): Page<Neo4jResource>
+
+    @Query(
+        value = """MATCH (n) WHERE EXISTS(n.verified) AND n.verified = true AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(n)) WITH n RETURN n""",
+        countQuery = """MATCH (n) WHERE EXISTS(n.verified) AND n.verified = true AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(n)) WITH n RETURN count(n)"""
+    )
+    fun findAllVerifiedPapers(pageable: Pageable): Page<Neo4jResource>
+
+    @Query(
+        value = """MATCH (n) WHERE EXISTS(n.verified) AND n.verified = false AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(n)) WITH n RETURN n""",
+        countQuery = """MATCH (n) WHERE EXISTS(n.verified) AND n.verified = false AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(n)) WITH n RETURN count(n)"""
+    )
+    fun findAllUnverifiedPapers(pageable: Pageable): Page<Neo4jResource>
 }
 
 @QueryResult

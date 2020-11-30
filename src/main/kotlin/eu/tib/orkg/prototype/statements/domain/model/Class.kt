@@ -20,4 +20,6 @@ data class Class(
 ) : Thing {
     @JsonIgnore
     var rdf: Model? = null
+
+    fun toClass(): Class = Class(id, label, uri, createdAt, createdBy, _class)
 }

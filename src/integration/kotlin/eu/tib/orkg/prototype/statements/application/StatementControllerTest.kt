@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Statement Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
+
 class StatementControllerTest : RestDocumentationBaseTest() {
 
     override fun createController() = controller
@@ -183,7 +184,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/statements/subject/${r1.id}/predicate/${p1.id}"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andDo(
                 document(
                     snippet,
@@ -244,7 +245,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             .perform(getRequestTo("/api/statements/object/${l1.id}/predicate/${p1.id}"))
             .andExpect(status().isOk)
             .andDo(MockMvcResultHandlers.print())
-            .andExpect(jsonPath("$", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andDo(
                 document(
                     snippet,
@@ -254,8 +255,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                         parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
                         parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
                     ),
-                    sharedListOfStatementsResponseFields()
-                        .and(subsectionWithPath("[].object").description("An object. Can be either a resource or a literal."))
+                    sharedListOfStmtSubPredResponseFields()
+                        .and(subsectionWithPath("content[].object").description("An object. Can be either a resource or a literal."))
                 )
             )
     }
@@ -409,15 +410,23 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             .andWithPrefix("[].subject.", resourceResponseFields())
             .andWithPrefix("[].predicate.", predicateResponseFields())
 
+    private fun sharedListOfStmtSubPredResponseFields(): ResponseFieldsSnippet =
+        responseFields(pageableDetailedFieldParameters())
+            .andWithPrefix("content[].", statementFields())
+            .andWithPrefix("content[].subject.", resourceResponseFields())
+            .andWithPrefix("content[].predicate.", predicateResponseFields())
+
     private fun statementResponseFields() = sharedStatementResponseFields()
         .andWithPrefix("object.", resourceResponseFields())
 
     private fun statementWithLiteralResponseFields() = sharedStatementResponseFields()
         .andWithPrefix("object.", literalResponseFields())
 
-    private fun statementListResponseFields() = sharedListOfStatementsResponseFields()
-        .andWithPrefix("[].object.", resourceResponseFields())
-
-    private fun statementWithLiteralListResponseFields() = sharedListOfStatementsResponseFields()
-        .andWithPrefix("[].object.", literalResponseFields())
+    fun statementListResponseFields(): ResponseFieldsSnippet =
+        responseFields(pageableDetailedFieldParameters())
+            .andWithPrefix("")
+            .andWithPrefix("content[].object.", resourceResponseFields())
+            .andWithPrefix("content[].subject.", resourceResponseFields())
+            .andWithPrefix("content[].predicate.", predicateResponseFields())
+            .andWithPrefix("")
 }

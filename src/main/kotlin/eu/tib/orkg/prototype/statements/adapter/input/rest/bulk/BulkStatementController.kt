@@ -5,8 +5,10 @@ import eu.tib.orkg.prototype.statements.application.StatementController
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import eu.tib.orkg.prototype.statements.application.StatementResponse
 import eu.tib.orkg.prototype.statements.application.port.`in`.GetBulkStatementsQuery
+import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
@@ -21,47 +23,45 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/statements")
 class BulkStatementController(
+    private val statementService: StatementService,
     private val query: GetBulkStatementsQuery,
-    private val statementController: StatementController
-) {
+    private val statementController: StatementController) {
 
     @GetMapping("/subjects")
     fun findBySubjects(
         @RequestParam("ids") resourceIds: List<ResourceId>,
-        pageable: Pageable
-    ): ResponseEntity<Iterable<BulkGetStatementsResponse>> {
+        pageable: Pageable): ResponseEntity<Iterable<BulkGetStatementsResponse>> {
         return ok(query.getBulkStatementsBySubjects(resourceIds.map { it.value }, pageable)
-            .map { (k, v) -> BulkGetStatementsResponse(k, v) })}
+            .map { (k, v) -> BulkGetStatementsResponse(k, v) })
+    }
 
     @GetMapping("/objects")
     fun findByObjects(
         @RequestParam("ids") resourceIds: List<ResourceId>,
-        pageable: Pageable
-    ): ResponseEntity<Iterable<BulkGetStatementsResponse>> {
+        pageable: Pageable): ResponseEntity<Iterable<BulkGetStatementsResponse>> {
         return ok(query.getBulkStatementsByObjects(resourceIds.map { it.value }, pageable)
-            .map { (k, v) -> BulkGetStatementsResponse(k, v) })
-    }
+            .map { (k, v) -> BulkGetStatementsResponse(k, v) })}
 
     @DeleteMapping("/")
     fun delete(
         @RequestParam("ids") statementsIds: List<StatementId>
     ): ResponseEntity<Unit> {
         statementsIds.forEach { statementController.delete(it) }
-        return ResponseEntity.noContent().build()
-    }
+        return ResponseEntity.noContent().build()}
 
     @PutMapping("/")
     fun edit(
         @RequestParam("ids") statementsIds: List<StatementId>,
         @RequestBody(required = true) statementEditRequest: StatementEditRequest
     ): ResponseEntity<Iterable<BulkPutStatementResponse>> {
-        return ok(statementsIds.map { BulkPutStatementResponse(it, statementController.edit(it, statementEditRequest).body!!) })
+        return ok(statementsIds.map {
+            BulkPutStatementResponse(it, statementService.update(statementEditRequest)) })
     }
 }
 
 data class BulkGetStatementsResponse(
     val id: String,
-    val statements: Iterable<StatementResponse>
+    val statements: Iterable<GeneralStatement>
 )
 
 data class BulkPutStatementResponse(

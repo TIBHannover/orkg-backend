@@ -27,4 +27,11 @@ data class Resource(
 ) : Thing {
     @JsonIgnore
     var rdf: Model? = null
+
+    fun toResource(): Resource = Resource(id, label,
+                            createdAt, classes,
+                            shared, createdBy,
+                            _class, observatoryId,
+                            extractionMethod = ExtractionMethod.UNKNOWN,
+                            organizationId)
 }

@@ -74,7 +74,6 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
             .perform(getRequestTo("/api/resources/"))
             .andExpect(status().isOk)
-
             .andDo(
                 document(
                     snippet,

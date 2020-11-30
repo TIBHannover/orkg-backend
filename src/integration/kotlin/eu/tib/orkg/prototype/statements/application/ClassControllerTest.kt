@@ -249,6 +249,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     resourceListDetailedResponseFields()
+
                 )
             )
     }

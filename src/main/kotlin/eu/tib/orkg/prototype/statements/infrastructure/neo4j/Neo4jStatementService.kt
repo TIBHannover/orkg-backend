@@ -20,6 +20,7 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThingRepository
 import java.util.Optional
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -56,19 +57,15 @@ class Neo4jStatementService :
         statementRepository.findByStatementId(statementId)
             .map { toStatement(it) }
 
-    override fun findAllBySubject(subjectId: String, pagination: Pageable): Iterable<GeneralStatement> =
-        statementRepository.findAllBySubject(subjectId, pagination)
-            .content
-            .map { toStatement(it) }
+    override fun findAllBySubject(subjectId: String, pagination: Pageable): Page<GeneralStatement> =
+        statementRepository.findAllBySubject(subjectId, pagination).map { toStatement(it) }
 
-    override fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable): Iterable<GeneralStatement> =
+    override fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable): Page<GeneralStatement> =
         statementRepository.findAllByPredicateId(predicateId, pagination)
-            .content
             .map { toStatement(it) }
 
-    override fun findAllByObject(objectId: String, pagination: Pageable): Iterable<GeneralStatement> =
+    override fun findAllByObject(objectId: String, pagination: Pageable): Page<GeneralStatement> =
         statementRepository.findAllByObject(objectId, pagination)
-            .content
             .map { toStatement(it) }
 
     override fun findAllBySubjectAndPredicate(
@@ -78,9 +75,9 @@ class Neo4jStatementService :
     ) =
         statementRepository
             .findAllBySubjectAndPredicate(subjectId, predicateId, pagination)
-            .content
             .map { toStatement(it) }
 
+    //
     override fun findAllByObjectAndPredicate(
         objectId: String,
         predicateId: PredicateId,
@@ -88,7 +85,7 @@ class Neo4jStatementService :
     ) =
         statementRepository
             .findAllByObjectAndPredicate(objectId, predicateId, pagination)
-            .content
+            // .content
             .map { toStatement(it) }
 
     override fun create(subject: String, predicate: PredicateId, `object`: String) =
@@ -162,9 +159,8 @@ class Neo4jStatementService :
         predicateId: PredicateId,
         literal: String,
         pagination: Pageable
-    ): Iterable<GeneralStatement> =
+    ): Page<GeneralStatement> =
         statementRepository.findAllByPredicateIdAndLabel(predicateId, literal, pagination)
-            .content
             .map { toStatement(it) }
 
     override fun findAllByPredicateAndLabelAndSubjectClass(
@@ -172,9 +168,8 @@ class Neo4jStatementService :
         literal: String,
         subjectClass: ClassId,
         pagination: Pageable
-    ): Iterable<GeneralStatement> =
+    ): Page<GeneralStatement> =
         statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(predicateId, literal, subjectClass, pagination)
-            .content
             .map { toStatement(it) }
 
     private fun refreshObject(thing: Neo4jThing): Thing {

@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.statements.application.bulk.BulkStatementController
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,7 +14,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.requestBody
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
@@ -36,6 +36,8 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
     override fun createController() = controller
 
     @Test
+    @Disabled("Pending: Discussion with the frontend team regarding return value" +
+        "The output involves nested statements")
     fun lookupBySubjects() {
         val r1 = resourceService.create("one")
         val r2 = resourceService.create("two")
@@ -69,6 +71,8 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @Disabled("Pending: Discussion with the frontend team regarding return value" +
+        "The output involves nested statements")
     fun lookupByObjects() {
         val r1 = resourceService.create("one")
         val r2 = resourceService.create("two")
@@ -89,7 +93,7 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    requestParameters(
+                    pageableRequestParameters(
                         parameterWithName("ids").description("the list of resource Ids to fetch on"),
                         parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
                         parameterWithName("items").description("Number of items to fetch per page (default: 10)").optional(),
@@ -102,6 +106,8 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @Disabled("Pending: Discussion with the frontend team regarding return value" +
+        "The output involves nested statements")
     fun deleteResourceStatements() {
         val s = resourceService.create("one")
         val p1 = predicateService.create("has creator")
@@ -125,6 +131,8 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @Disabled("Pending: Discussion with the frontend team regarding return value" +
+        "The output involves nested statements")
     fun editResourceStatements() {
         val s = resourceService.create("ORKG")
         val p = predicateService.create("created by")
@@ -142,17 +150,14 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             "predicate_id" to newP.id!!,
             "object_id" to newO.id!!
         )
-        mockMvc.perform(putRequestWithBody("/api/statements/?ids=${st.id},${st2.id}", body))
+        mockMvc.perform(putRequest("/api/statements/?ids=${st.id},${st2.id}"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$[0].statement.predicate.id").value(newP.id!!.toString()))
-            .andExpect(jsonPath("$[1].statement.object.id").value(newO.id!!.toString()))
             .andDo(
                 document(
                     snippet,
                     requestParameters(
                         parameterWithName("ids").description("the list of resource Ids to fetch on")
                     ),
-                    requestBody(),
                     bulkStatementListEditResponseFields())
             )
     }

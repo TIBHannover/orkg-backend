@@ -24,6 +24,8 @@ class ResourceVerificationController(
     private val adapter: LoadResourcePort // FIXME: should be adapter
 ) : BaseController() {
 
+    // TODO: Those should most likely go to a paper controller, as the use case on other entities is undefined.
+
     @GetMapping("/", params = ["verified=true"])
     fun loadVerifiedResources(pageable: Pageable): Page<Resource> =
         adapter.loadVerifiedResources(pageable)

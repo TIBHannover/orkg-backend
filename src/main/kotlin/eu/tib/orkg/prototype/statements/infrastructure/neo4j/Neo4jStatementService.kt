@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -21,7 +22,6 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThingRepository
 import java.util.LinkedList
 import java.util.Optional
 import java.util.Queue
-import java.util.UUID
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -95,10 +95,10 @@ class Neo4jStatementService :
             .map { toStatement(it) }
 
     override fun create(subject: String, predicate: PredicateId, `object`: String) =
-        create(UUID(0, 0), subject, predicate, `object`)
+        create(ContributorId.createUnknownContributor(), subject, predicate, `object`)
 
     override fun create(
-        userId: UUID,
+        userId: ContributorId,
         subject: String,
         predicate: PredicateId,
         `object`: String

@@ -1,16 +1,20 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.escapeLiterals
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ResourceIdGraphAttributeConverter
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.UUIDGraphAttributeConverter
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ObservatoryIdConverter
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.OrganizationIdConverter
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ResourceIdConverter
 import java.lang.StringBuilder
-import java.util.UUID
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
 import org.eclipse.rdf4j.model.vocabulary.RDF
@@ -37,7 +41,7 @@ data class Neo4jResource(
 
     @Property("resource_id")
     @Required
-    @Convert(ResourceIdGraphAttributeConverter::class)
+    @Convert(ResourceIdConverter::class)
     var resourceId: ResourceId? = null
 
     @Relationship(type = "RELATED")
@@ -49,19 +53,20 @@ data class Neo4jResource(
     var objectOf: MutableSet<Neo4jStatement> = mutableSetOf()
 
     @Property("created_by")
-    @Convert(UUIDGraphAttributeConverter::class)
-    var createdBy: UUID = UUID(0, 0)
+    @Convert(ContributorIdConverter::class)
+    var createdBy: ContributorId = ContributorId.createUnknownContributor()
 
     @Property("observatory_id")
-    @Convert(UUIDGraphAttributeConverter::class)
-    var observatoryId: UUID = UUID(0, 0)
+    @Convert(ObservatoryIdConverter::class)
+    var observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory()
 
     @Property("extraction_method")
     var extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
 
     @Property("organization_id")
-    @Convert(UUIDGraphAttributeConverter::class)
-    var organizationId: UUID = UUID(0, 0)
+    @Convert(OrganizationIdConverter::class)
+    var organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
+
     /**
      * List of node labels. Labels other than the `Resource` label are mapped to classes.
      */
@@ -77,7 +82,14 @@ data class Neo4jResource(
             labels = value.map { it.value }.toMutableList()
         }
 
-    constructor(label: String, resourceId: ResourceId, createdBy: UUID = UUID(0, 0), observatoryId: UUID = UUID(0, 0), extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN, organizationId: UUID = UUID(0, 0)) : this(null) {
+    constructor(
+        label: String,
+        resourceId: ResourceId,
+        createdBy: ContributorId = ContributorId.createUnknownContributor(),
+        observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
+        extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
+        organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
+    ) : this(null) {
         this.label = label
         this.resourceId = resourceId
         this.createdBy = createdBy
@@ -87,7 +99,17 @@ data class Neo4jResource(
     }
 
     fun toResource(): Resource {
-        val resource = Resource(resourceId, label!!, createdAt, classes, objectOf.size, createdBy = createdBy, observatoryId = observatoryId, extractionMethod = extractionMethod, organizationId = organizationId)
+        val resource = Resource(
+            resourceId,
+            label!!,
+            createdAt,
+            classes,
+            objectOf.size,
+            createdBy = createdBy,
+            observatoryId = observatoryId,
+            extractionMethod = extractionMethod,
+            organizationId = organizationId
+        )
         resource.rdf = toRdfModel()
         return resource
     }

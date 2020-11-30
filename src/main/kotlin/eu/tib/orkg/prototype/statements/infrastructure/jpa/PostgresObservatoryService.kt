@@ -1,8 +1,10 @@
 package eu.tib.orkg.prototype.statements.infrastructure.jpa
 import eu.tib.orkg.prototype.statements.application.OrganizationNotFound
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.Organization
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
@@ -23,7 +25,7 @@ class PostgresObservatoryService(
     override fun create(name: String, description: String, organization: Organization, researchField: String): Observatory {
         val oId = UUID.randomUUID()
         val org = postgresOrganizationRepository
-            .findById(organization.id!!)
+            .findById(organization.id!!.value)
             .orElseThrow { OrganizationNotFound(organization.id) } // FIXME: should always have an ID
         val newObservatory = ObservatoryEntity().apply {
             id = oId
@@ -45,8 +47,8 @@ class PostgresObservatoryService(
                 it.withResearchField(it.researchField?.id!!)
             }
 
-    override fun findObservatoriesByOrganizationId(id: UUID): List<Observatory> =
-        postgresObservatoryRepository.findByorganizationsId(id)
+    override fun findObservatoriesByOrganizationId(id: OrganizationId): List<Observatory> =
+        postgresObservatoryRepository.findByorganizationsId(id.value)
             .map(ObservatoryEntity::toObservatory)
             .onEach {
             if (hasResearchField(it))
@@ -56,14 +58,14 @@ class PostgresObservatoryService(
     override fun findByName(name: String): Optional<Observatory> {
         val response = postgresObservatoryRepository
             .findByName(name)
-            .map(ObservatoryEntity::toObservatory).get()
-        return if (hasResearchField(response))
-            Optional.of(response.withResearchField(response.researchField?.id!!))
-        else Optional.of(response)
+            .map(ObservatoryEntity::toObservatory)!!
+        return if (response.isPresent && hasResearchField(response.get()))
+            Optional.of(response.get().withResearchField(response.get().researchField?.id!!))
+        else response
     }
 
-    override fun findById(id: UUID): Optional<Observatory> {
-        val response = postgresObservatoryRepository.findById(id).map(ObservatoryEntity::toObservatory).get()
+    override fun findById(id: ObservatoryId): Optional<Observatory> {
+        val response = postgresObservatoryRepository.findById(id.value).map(ObservatoryEntity::toObservatory).get()
         return if (hasResearchField(response))
             Optional.of(response.withResearchField(response.researchField?.id!!))
         else Optional.of(response)
@@ -79,24 +81,24 @@ class PostgresObservatoryService(
         return response
     }
 
-    override fun changeName(id: UUID, to: String): Observatory {
-        val entity = postgresObservatoryRepository.findById(id).get().apply {
+    override fun changeName(id: ObservatoryId, to: String): Observatory {
+        val entity = postgresObservatoryRepository.findById(id.value).get().apply {
             name = to
         }
         val response = postgresObservatoryRepository.save(entity).toObservatory()
         return expand(response)
     }
 
-    override fun changeDescription(id: UUID, to: String): Observatory {
-        val entity = postgresObservatoryRepository.findById(id).get().apply {
+    override fun changeDescription(id: ObservatoryId, to: String): Observatory {
+        val entity = postgresObservatoryRepository.findById(id.value).get().apply {
             description = to
         }
         val response = postgresObservatoryRepository.save(entity).toObservatory()
         return expand(response)
     }
 
-    override fun changeResearchField(id: UUID, to: String): Observatory {
-        val entity = postgresObservatoryRepository.findById(id).get().apply {
+    override fun changeResearchField(id: ObservatoryId, to: String): Observatory {
+        val entity = postgresObservatoryRepository.findById(id.value).get().apply {
             researchField = to
         }
         val response = postgresObservatoryRepository.save(entity).toObservatory()

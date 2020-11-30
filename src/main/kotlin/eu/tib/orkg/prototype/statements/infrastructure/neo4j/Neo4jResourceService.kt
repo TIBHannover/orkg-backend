@@ -1,10 +1,13 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryRequest
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
@@ -16,7 +19,6 @@ import eu.tib.orkg.prototype.util.EscapedRegex
 import eu.tib.orkg.prototype.util.SanitizedWhitespace
 import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
 import java.util.Optional
-import java.util.UUID
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -28,17 +30,17 @@ class Neo4jResourceService(
     private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator
 ) : ResourceService {
 
-    override fun create(label: String) = create(UUID(0, 0), label, UUID(0, 0), ExtractionMethod.UNKNOWN, UUID(0, 0))
+    override fun create(label: String) = create(ContributorId.createUnknownContributor(), label, ObservatoryId.createUnknownObservatory(), ExtractionMethod.UNKNOWN, OrganizationId.createUnknownOrganization())
 
-    override fun create(userId: UUID, label: String, observatoryId: UUID, extractionMethod: ExtractionMethod, organizationId: UUID): Resource {
+    override fun create(userId: ContributorId, label: String, observatoryId: ObservatoryId, extractionMethod: ExtractionMethod, organizationId: OrganizationId): Resource {
         val resourceId = neo4jResourceIdGenerator.nextIdentity()
         return neo4jResourceRepository.save(Neo4jResource(label = label, resourceId = resourceId, createdBy = userId, observatoryId = observatoryId, extractionMethod = extractionMethod, organizationId = organizationId))
             .toResource()
     }
 
-    override fun create(request: CreateResourceRequest) = create(UUID(0, 0), request, UUID(0, 0), ExtractionMethod.UNKNOWN, UUID(0, 0))
+    override fun create(request: CreateResourceRequest) = create(ContributorId.createUnknownContributor(), request, ObservatoryId.createUnknownObservatory(), ExtractionMethod.UNKNOWN, OrganizationId.createUnknownOrganization())
 
-    override fun create(userId: UUID, request: CreateResourceRequest, observatoryId: UUID, extractionMethod: ExtractionMethod, organizationId: UUID): Resource {
+    override fun create(userId: ContributorId, request: CreateResourceRequest, observatoryId: ObservatoryId, extractionMethod: ExtractionMethod, organizationId: OrganizationId): Resource {
         val id = request.id ?: neo4jResourceIdGenerator.nextIdentity()
         val resource = Neo4jResource(label = request.label, resourceId = id, createdBy = userId, observatoryId = observatoryId, extractionMethod = extractionMethod, organizationId = organizationId)
         request.classes.forEach { resource.assignTo(it.toString()) }
@@ -71,7 +73,7 @@ class Neo4jResourceService(
             .content
             .map(Neo4jResource::toResource)
 
-    override fun findAllByClassAndCreatedBy(pageable: Pageable, id: ClassId, createdBy: UUID): Iterable<Resource> =
+    override fun findAllByClassAndCreatedBy(pageable: Pageable, id: ClassId, createdBy: ContributorId): Iterable<Resource> =
         neo4jResourceRepository.findAllByClassAndCreatedBy(id.toString(), createdBy, pageable)
             .content
             .map(Neo4jResource::toResource)
@@ -81,7 +83,7 @@ class Neo4jResourceService(
             .content
             .map(Neo4jResource::toResource)
 
-    override fun findAllByClassAndLabelAndCreatedBy(pageable: Pageable, id: ClassId, label: String, createdBy: UUID): Iterable<Resource> =
+    override fun findAllByClassAndLabelAndCreatedBy(pageable: Pageable, id: ClassId, label: String, createdBy: ContributorId): Iterable<Resource> =
         neo4jResourceRepository.findAllByClassAndLabelAndCreatedBy(id.toString(), label, createdBy, pageable)
             .content
             .map(Neo4jResource::toResource)
@@ -91,7 +93,7 @@ class Neo4jResourceService(
             .content
             .map(Neo4jResource::toResource)
 
-    override fun findAllByClassAndLabelContainingAndCreatedBy(pageable: Pageable, id: ClassId, part: String, createdBy: UUID): Iterable<Resource> =
+    override fun findAllByClassAndLabelContainingAndCreatedBy(pageable: Pageable, id: ClassId, part: String, createdBy: ContributorId): Iterable<Resource> =
         neo4jResourceRepository.findAllByClassAndLabelContainingAndCreatedBy(id.toString(), part.toSearchString(), createdBy, pageable)
             .content
             .map(Neo4jResource::toResource)
@@ -127,15 +129,15 @@ class Neo4jResourceService(
         neo4jResourceRepository.findAllByLabel(title!!)
             .map(Neo4jResource::toResource)
 
-    override fun findPapersByObservatoryId(id: UUID): Iterable<Resource> =
+    override fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Resource> =
         neo4jResourceRepository.findPapersByObservatoryId(id)
             .map(Neo4jResource::toResource)
 
-    override fun findComparisonsByObservatoryId(id: UUID): Iterable<Resource> =
+    override fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
         neo4jResourceRepository.findComparisonsByObservatoryId(id)
             .map(Neo4jResource::toResource)
 
-    override fun findProblemsByObservatoryId(id: UUID): Iterable<Resource> =
+    override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
         neo4jResourceRepository.findProblemsByObservatoryId(id)
             .map(Neo4jResource::toResource)
 
@@ -155,7 +157,7 @@ class Neo4jResourceService(
         return neo4jResourceRepository.save(found).toResource()
     }
 
-    override fun updatePaperObservatory(request: UpdateResourceObservatoryRequest, id: ResourceId, userId: UUID): Resource {
+    override fun updatePaperObservatory(request: UpdateResourceObservatoryRequest, id: ResourceId, userId: ContributorId): Resource {
         val found = neo4jResourceRepository.findByResourceId(id).get()
             found.observatoryId = request.observatoryId
             found.organizationId = request.organizationId

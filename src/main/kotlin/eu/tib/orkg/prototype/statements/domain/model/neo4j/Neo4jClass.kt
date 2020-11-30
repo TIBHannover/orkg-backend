@@ -1,14 +1,14 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.escapeLiterals
 import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ClassIdGraphAttributeConverter
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.UUIDGraphAttributeConverter
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ClassIdConverter
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import java.lang.StringBuilder
 import java.net.URI
-import java.util.UUID
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
 import org.eclipse.rdf4j.model.vocabulary.OWL
@@ -29,7 +29,7 @@ data class Neo4jClass(
 ) : Neo4jThing, AuditableEntity() {
     @Property("class_id")
     @Required
-    @Convert(ClassIdGraphAttributeConverter::class)
+    @Convert(ClassIdConverter::class)
     var classId: ClassId? = null
 
     @Property("label")
@@ -40,10 +40,10 @@ data class Neo4jClass(
     var uri: String? = null
 
     @Property("created_by")
-    @Convert(UUIDGraphAttributeConverter::class)
-    var createdBy: UUID = UUID(0, 0)
+    @Convert(ContributorIdConverter::class)
+    var createdBy: ContributorId = ContributorId.createUnknownContributor()
 
-    constructor(label: String, classId: ClassId, createdBy: UUID = UUID(0, 0), uri: URI?) : this(null) {
+    constructor(label: String, classId: ClassId, createdBy: ContributorId = ContributorId.createUnknownContributor(), uri: URI?) : this(null) {
         this.label = label
         this.classId = classId
         this.uri = uri?.toString()

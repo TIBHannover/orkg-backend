@@ -1,9 +1,10 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.ObjectController.Constants.ID_DOI_PREDICATE
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.util.Optional
-import java.util.UUID
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
@@ -32,7 +33,7 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
 
     @Query(value = """MATCH (node:`Resource`) WHERE {0} IN labels(node) AND node.created_by = {1} WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
         countQuery = """MATCH (node:`Resource`) WHERE {0} IN labels(node) AND node.created_by = {1} WITH COUNT(node) as cnt RETURN cnt""")
-    fun findAllByClassAndCreatedBy(`class`: String, createdBy: UUID, pageable: Pageable): Page<Neo4jResource>
+    fun findAllByClassAndCreatedBy(`class`: String, createdBy: ContributorId, pageable: Pageable): Page<Neo4jResource>
 
     // TODO: Check if the countQuery can be optimized or joined with the value query
     @Query(value = """MATCH (node:`Resource`) WHERE {0} IN labels(node) AND node.label = {1} WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
@@ -41,7 +42,7 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
 
     @Query(value = """MATCH (node:`Resource`) WHERE {0} IN labels(node) AND node.label = {1} AND node.created_by = {2} WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
         countQuery = """MATCH (node:`Resource`) WHERE {0} IN labels(node) AND node.label = {1} AND node.created_by = {2} WITH COUNT(node) as cnt RETURN cnt""")
-    fun findAllByClassAndLabelAndCreatedBy(`class`: String, label: String, createdBy: UUID, pageable: Pageable): Slice<Neo4jResource>
+    fun findAllByClassAndLabelAndCreatedBy(`class`: String, label: String, createdBy: ContributorId, pageable: Pageable): Slice<Neo4jResource>
 
     // TODO: move from Slice to Page object
     @Query(value = """MATCH (node:`Resource`) WHERE {0} IN labels(node) AND node.label =~ {1}  WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
@@ -50,7 +51,7 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
 
     @Query(value = """MATCH (node:`Resource`) WHERE {0} IN labels(node) AND node.label =~ {1} AND node.created_by = {2} WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
         countQuery = """MATCH (node:`Resource`) WHERE {0} IN labels(node) AND node.label =~ {1} AND node.created_by = {2} WITH COUNT(node) as cnt RETURN cnt""")
-    fun findAllByClassAndLabelContainingAndCreatedBy(`class`: String, label: String, createdBy: UUID, pageable: Pageable): Slice<Neo4jResource>
+    fun findAllByClassAndLabelContainingAndCreatedBy(`class`: String, label: String, createdBy: ContributorId, pageable: Pageable): Slice<Neo4jResource>
 
     @Query(value = """MATCH (node:`Resource`) WHERE NOT ANY(c in {0} WHERE c IN labels(node)) WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""")
     fun findAllExcludingClass(classes: List<String>, pageable: Pageable): Slice<Neo4jResource>
@@ -75,13 +76,13 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     fun findAllByLabel(label: String): Iterable<Neo4jResource>
 
     @Query("""MATCH (n:Paper {observatory_id: {0}}) RETURN n""")
-    fun findPapersByObservatoryId(id: UUID): Iterable<Neo4jResource>
+    fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Neo4jResource>
 
     @Query("""MATCH (n:Comparison {observatory_id: {0}}) RETURN n""")
-    fun findComparisonsByObservatoryId(id: UUID): Iterable<Neo4jResource>
+    fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<Neo4jResource>
 
     @Query("""MATCH (n:Problem {observatory_id: {0}}) RETURN n""")
-    fun findProblemsByObservatoryId(id: UUID): Iterable<Neo4jResource>
+    fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Neo4jResource>
 
     @Query("""MATCH (n:Resource {resource_id: {0}}) CALL apoc.path.subgraphAll(n, {relationshipFilter:'>'}) YIELD relationships UNWIND relationships as rel WITH rel AS p, startNode(rel) AS s, endNode(rel) AS o, n WHERE p.created_by <> "00000000-0000-0000-0000-000000000000" RETURN n.resource_id AS id, (p.created_by) AS createdBy, MAX(p.created_at) AS createdAt ORDER BY createdAt""")
     fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors>

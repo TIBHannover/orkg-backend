@@ -3,8 +3,9 @@ package eu.tib.orkg.prototype.contributions.domain.model
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.auth.domain.model.GravatarId
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import java.time.OffsetDateTime
-import java.util.UUID
 
 /**
  * Class representing a user that contributes to the graph.
@@ -17,7 +18,7 @@ data class Contributor(
     /**
      * The user's ID.
      */
-    val id: UUID,
+    val id: ContributorId,
 
     /**
      * The name the users wants to be displayed.
@@ -35,13 +36,13 @@ data class Contributor(
      * The ID of the organization the user belongs to.
      */
     @JsonProperty("organization_id")
-    val organizationId: UUID = UUID(0, 0),
+    val organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
 
     /**
      * The ID of the observatory the user belongs to.
      */
     @JsonProperty("observatory_id")
-    val observatoryId: UUID = UUID(0, 0),
+    val observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
 
     /**
      * The email address of the contributor.

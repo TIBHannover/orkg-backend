@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.domain.model
 import java.util.Optional
-import java.util.UUID
 
 interface ObservatoryService {
     /**
@@ -10,17 +9,17 @@ interface ObservatoryService {
 
     fun listObservatories(): List<Observatory>
 
-    fun findObservatoriesByOrganizationId(id: UUID): List<Observatory>
+    fun findObservatoriesByOrganizationId(id: OrganizationId): List<Observatory>
 
     fun findByName(name: String): Optional<Observatory>
 
-    fun findById(id: UUID): Optional<Observatory>
+    fun findById(id: ObservatoryId): Optional<Observatory>
 
-    fun changeName(id: UUID, to: String): Observatory
+    fun changeName(id: ObservatoryId, to: String): Observatory
 
-    fun changeDescription(id: UUID, to: String): Observatory
+    fun changeDescription(id: ObservatoryId, to: String): Observatory
 
-    fun changeResearchField(id: UUID, to: String): Observatory
+    fun changeResearchField(id: ObservatoryId, to: String): Observatory
 
     fun findObservatoriesByResearchField(researchField: String): List<Observatory>
 }

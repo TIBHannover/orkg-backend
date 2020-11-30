@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import java.util.Optional
-import java.util.UUID
 import org.springframework.data.domain.Pageable
 
 /**
@@ -62,7 +62,7 @@ interface StatementService {
      * Create a new statement with the created_by user.
      */
     @Suppress("Reformat")
-    fun create(userId: UUID, subject: String, predicate: PredicateId, `object`: String): GeneralStatement
+    fun create(userId: ContributorId, subject: String, predicate: PredicateId, `object`: String): GeneralStatement
 
     /**
      * Determine the total number of statements.

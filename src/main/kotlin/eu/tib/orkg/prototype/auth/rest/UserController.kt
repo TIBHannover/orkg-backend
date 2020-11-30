@@ -27,8 +27,8 @@ class UserController(
     private val userService: UserService
 ) {
     @GetMapping("/")
-    fun lookupUserDetails(principal: Principal): ResponseEntity<UserDetails> {
-        if (principal.name == null)
+    fun lookupUserDetails(principal: Principal?): ResponseEntity<UserDetails> {
+        if (principal?.name == null)
             return ResponseEntity(UNAUTHORIZED)
         val user = userService.findById(UUID.fromString(principal.name))
         if (user.isPresent)
@@ -49,8 +49,8 @@ class UserController(
     }
 
     @PutMapping("/")
-    fun updateUserDetails(@RequestBody @Valid updatedDetails: UserDetailsUpdateRequest, principal: Principal): ResponseEntity<UserDetails> {
-        if (principal.name == null)
+    fun updateUserDetails(@RequestBody @Valid updatedDetails: UserDetailsUpdateRequest, principal: Principal?): ResponseEntity<UserDetails> {
+        if (principal?.name == null)
             return ResponseEntity((UNAUTHORIZED))
         val foundUser = userService.findById(UUID.fromString(principal.name))
         if (foundUser.isPresent) {
@@ -63,8 +63,8 @@ class UserController(
     }
 
     @PutMapping("/password")
-    fun updatePassword(@RequestBody @Valid updatedPassword: PasswordDTO, principal: Principal): ResponseEntity<Any> {
-        if (principal.name == null)
+    fun updatePassword(@RequestBody @Valid updatedPassword: PasswordDTO, principal: Principal?): ResponseEntity<Any> {
+        if (principal?.name == null)
             return ResponseEntity((UNAUTHORIZED))
         if (!updatedPassword.hasMatchingPasswords())
             throw PasswordsDoNotMatch()
@@ -82,8 +82,8 @@ class UserController(
     }
 
     @PutMapping("/role")
-    fun updateUserRoleToOwner(principal: Principal): ResponseEntity<Any> {
-        if (principal.name == null)
+    fun updateUserRoleToOwner(principal: Principal?): ResponseEntity<Any> {
+        if (principal?.name == null)
             return ResponseEntity((UNAUTHORIZED))
         val foundUser = userService.findById(UUID.fromString(principal.name))
         if (foundUser.isPresent) {

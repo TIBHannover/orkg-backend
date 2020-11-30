@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
@@ -7,6 +8,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import java.net.URI
 import java.util.UUID
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
@@ -43,9 +45,9 @@ class ClassController(private val service: ClassService, private val resourceSer
         @PathVariable id: ClassId,
         @RequestParam("q", required = false) searchString: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
-        @RequestParam("creator", required = false) creator: ContributorId?
+        @RequestParam("creator", required = false) creator: ContributorId?,
         pageable: Pageable
-    ): Iterable<Resource> {
+    ): Page<Resource> {
         return if (creator != null) {
             when {
                 searchString == null -> resourceService.findAllByClassAndCreatedBy(pageable, id, creator)
@@ -66,11 +68,11 @@ class ClassController(private val service: ClassService, private val resourceSer
         @RequestParam("q", required = false) searchString: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         pageable: Pageable
-    ): Iterable<Class> {
+    ): Page<Class> {
         return when {
-            searchString == null -> service.findAll(pageable)
-            exactMatch -> service.findAllByLabel(pageable, searchString)
-            else -> service.findAllByLabelContaining(pageable, searchString)
+            searchString == null -> service.findAll(pageable).map(Class::toClass)
+            exactMatch -> service.findAllByLabel(pageable, searchString).map(Class::toClass)
+            else -> service.findAllByLabelContaining(pageable, searchString).map(Class::toClass)
         }
     }
 

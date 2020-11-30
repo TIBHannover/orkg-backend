@@ -11,6 +11,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
 import java.util.UUID
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
@@ -51,17 +52,17 @@ class ResourceController(
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         @RequestParam("exclude", required = false, defaultValue = "") excludeClasses: Array<String>,
         pageable: Pageable
-    ): Iterable<Resource> {
+    ): Page<Resource> {
         return when {
             excludeClasses.isNotEmpty() -> when {
-                searchString == null -> service.findAllExcludingClass(pageable, excludeClasses.map { ClassId(it) }.toTypedArray())
-                exactMatch -> service.findAllExcludingClassByLabel(pageable, excludeClasses.map { ClassId(it) }.toTypedArray(), searchString)
-                else -> service.findAllExcludingClassByLabelContaining(pageable, excludeClasses.map { ClassId(it) }.toTypedArray(), searchString)
+                searchString == null -> service.findAllExcludingClass(pageable, excludeClasses.map { ClassId(it) }.toTypedArray()).map(Resource::toResource)
+                exactMatch -> service.findAllExcludingClassByLabel(pageable, excludeClasses.map { ClassId(it) }.toTypedArray(), searchString).map(Resource::toResource)
+                else -> service.findAllExcludingClassByLabelContaining(pageable, excludeClasses.map { ClassId(it) }.toTypedArray(), searchString).map(Resource::toResource)
             }
             else -> when {
-                searchString == null -> service.findAll(pageable)
-                exactMatch -> service.findAllByLabel(pageable, searchString)
-                else -> service.findAllByLabelContaining(pageable, searchString)
+                searchString == null -> service.findAll(pageable).map(Resource::toResource)
+                exactMatch -> service.findAllByLabel(pageable, searchString).map(Resource::toResource)
+                else -> service.findAllByLabelContaining(pageable, searchString).map(Resource::toResource)
             }
         }
     }

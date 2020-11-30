@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.CreateStatement
+import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
@@ -12,6 +13,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import eu.tib.orkg.prototype.statements.domain.model.Thing
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus.CREATED
@@ -57,7 +59,7 @@ class StatementController(
     fun findBySubject(
         @PathVariable subjectId: String,
         pageable: Pageable
-    ): HttpEntity<Iterable<StatementResponse>> {
+    ): HttpEntity<Page<GeneralStatement>> {
         return ok(statementService.findAllBySubject(subjectId, pageable))
     }
 
@@ -99,8 +101,8 @@ class StatementController(
     fun findByObject(
         @PathVariable objectId: String,
         pageable: Pageable
-    ): HttpEntity<Iterable<StatementResponse>> {
-        return ok(statementService.findAllByObject(objectId, pageable))
+    ): Page<GeneralStatement> {
+        return statementService.findAllByObject(objectId, pageable)
     }
 
     @GetMapping("/object/{objectId}/predicate/{predicateId}")

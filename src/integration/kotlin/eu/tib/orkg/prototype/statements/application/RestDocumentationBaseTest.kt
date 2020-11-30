@@ -21,10 +21,10 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put
 import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest
 import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse
 import org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
+import org.springframework.restdocs.payload.FieldDescriptor
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.ParameterDescriptor
 import org.springframework.restdocs.request.RequestDocumentation
-import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.restdocs.request.RequestParametersSnippet
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
@@ -101,6 +101,12 @@ abstract class RestDocumentationBaseTest {
             .characterEncoding("utf-8")
             .content(objectMapper.writeValueAsString(body))
 
+    protected fun putRequest(url: String): MockHttpServletRequestBuilder =
+        put(url)
+            .accept(APPLICATION_JSON)
+            .contentType(APPLICATION_JSON)
+            .characterEncoding("utf-8")
+
     protected fun deleteRequest(url: String): MockHttpServletRequestBuilder =
         delete(url)
             .accept(APPLICATION_JSON)
@@ -120,7 +126,7 @@ abstract class RestDocumentationBaseTest {
                         "Page number of items to fetch (default: 1)"
                     )
                         .optional(),
-                    RequestDocumentation.parameterWithName("items").description(
+                    RequestDocumentation.parameterWithName("size").description(
                         "Number of items to fetch per page (default: 10)"
                     )
                         .optional(),
@@ -132,4 +138,32 @@ abstract class RestDocumentationBaseTest {
                     addAll(descriptors)
                 }
             )
+
+    protected fun pageableDetailedFieldParameters(): List<FieldDescriptor> = listOf(
+        fieldWithPath("content[]").description("The content"),
+        fieldWithPath("content[].id").description("The content ID"),
+        fieldWithPath("content[].created_by").description("The content's created by date"),
+        fieldWithPath("content[].created_at").description("The content's created at date"),
+        fieldWithPath("pageable").description("The attribute pageable"),
+        fieldWithPath("pageable.sort").description("The attribute sort below pageable"),
+        fieldWithPath("pageable.sort.sorted").description("The attribute sorted below sort"),
+        fieldWithPath("pageable.sort.unsorted").description("The attribute unsorted below sort"),
+        fieldWithPath("pageable.sort.empty").description("The attribute empty below sort"),
+        fieldWithPath("pageable.offset").description("The offset of the results"),
+        fieldWithPath("pageable.pageNumber").description("The page number of the results"),
+        fieldWithPath("pageable.pageSize").description("The page size of the results"),
+        fieldWithPath("pageable.paged").description("The paged attribute in pageable"),
+        fieldWithPath("pageable.unpaged").description("The unpaged attribute in pageable"),
+        fieldWithPath("totalPages").description("The total number of pages"),
+        fieldWithPath("totalElements").description("The total number of elements"),
+        fieldWithPath("last").description("The last attribute"),
+        fieldWithPath("size").description("The size attribute"),
+        fieldWithPath("number").description("The number attribute"),
+        fieldWithPath("sort").description("The sort attribute"),
+        fieldWithPath("sort.sorted").description("The sorted attribute inside sort"),
+        fieldWithPath("sort.unsorted").description("The unsorted attribute inside sort"),
+        fieldWithPath("sort.empty").description("The empty attribute inside sort"),
+        fieldWithPath("numberOfElements").description("The number of elements"),
+        fieldWithPath("first").description("The first attribute"),
+        fieldWithPath("empty").description("The empty attribute"))
 }

@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
@@ -35,11 +36,11 @@ class PredicateController(private val service: PredicateService) : BaseControlle
         @RequestParam("q", required = false) searchString: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         pageable: Pageable
-    ): Iterable<Predicate> {
+    ): Page<Predicate> {
         return when {
-            searchString == null -> service.findAll(pageable)
-            exactMatch -> service.findAllByLabel(searchString, pageable)
-            else -> service.findAllByLabelContaining(searchString, pageable)
+            searchString == null -> service.findAll(pageable).map(Predicate::toPredicate)
+            exactMatch -> service.findAllByLabel(searchString, pageable).map(Predicate::toPredicate)
+            else -> service.findAllByLabelContaining(searchString, pageable).map(Predicate::toPredicate)
         }
     }
 

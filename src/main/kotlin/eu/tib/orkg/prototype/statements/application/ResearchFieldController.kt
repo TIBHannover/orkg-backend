@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.statements.domain.model.ResearchFieldService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
@@ -22,7 +23,7 @@ class ResearchFieldController(
     fun getResearchProblemsOfField(
         @PathVariable fieldId: ResourceId,
         pageable: Pageable
-    ): ResponseEntity<Iterable<Any>> {
+    ): ResponseEntity<Page<Any>> {
         resourceService.findById(fieldId)
             .orElseThrow { ResourceNotFound() }
         return ok(service.getResearchProblemsOfField(fieldId, pageable))

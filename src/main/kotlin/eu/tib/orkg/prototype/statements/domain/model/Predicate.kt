@@ -21,4 +21,6 @@ data class Predicate(
 
     @JsonProperty("description")
     var description: String? = null
+
+    fun toPredicate() = Predicate(id, label, createdAt, createdBy, _class)
 }

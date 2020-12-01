@@ -14,6 +14,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.requestBody
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
@@ -152,6 +153,8 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
         )
         mockMvc.perform(putRequest("/api/statements/?ids=${st.id},${st2.id}"))
             .andExpect(status().isOk)
+            .andExpect(jsonPath("$[0].statement.predicate.id").value(newP.id!!.toString()))
+            .andExpect(jsonPath("$[1].statement.object.id").value(newO.id!!.toString()))
             .andDo(
                 document(
                     snippet,

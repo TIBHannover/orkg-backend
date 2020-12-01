@@ -37,9 +37,9 @@ class PredicateController(private val service: PredicateService) : BaseControlle
         pageable: Pageable
     ): Page<Predicate> {
         return when {
-            searchString == null -> service.findAll(pageable).map(Predicate::toPredicate)
-            exactMatch -> service.findAllByLabel(searchString, pageable).map(Predicate::toPredicate)
-            else -> service.findAllByLabelContaining(searchString, pageable).map(Predicate::toPredicate)
+            searchString == null -> service.findAll(pageable)
+            exactMatch -> service.findAllByLabel(searchString, pageable)
+            else -> service.findAllByLabelContaining(searchString, pageable)
         }
     }
 

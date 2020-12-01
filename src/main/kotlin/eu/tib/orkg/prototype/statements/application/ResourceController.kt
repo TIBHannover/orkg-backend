@@ -54,14 +54,14 @@ class ResourceController(
     ): Page<Resource> {
         return when {
             excludeClasses.isNotEmpty() -> when {
-                searchString == null -> service.findAllExcludingClass(pageable, excludeClasses.map { ClassId(it) }.toTypedArray()).map(Resource::toResource)
-                exactMatch -> service.findAllExcludingClassByLabel(pageable, excludeClasses.map { ClassId(it) }.toTypedArray(), searchString).map(Resource::toResource)
-                else -> service.findAllExcludingClassByLabelContaining(pageable, excludeClasses.map { ClassId(it) }.toTypedArray(), searchString).map(Resource::toResource)
+                searchString == null -> service.findAllExcludingClass(pageable, excludeClasses.map { ClassId(it) }.toTypedArray())
+                exactMatch -> service.findAllExcludingClassByLabel(pageable, excludeClasses.map { ClassId(it) }.toTypedArray(), searchString)
+                else -> service.findAllExcludingClassByLabelContaining(pageable, excludeClasses.map { ClassId(it) }.toTypedArray(), searchString)
             }
             else -> when {
-                searchString == null -> service.findAll(pageable).map(Resource::toResource)
-                exactMatch -> service.findAllByLabel(pageable, searchString).map(Resource::toResource)
-                else -> service.findAllByLabelContaining(pageable, searchString).map(Resource::toResource)
+                searchString == null -> service.findAll(pageable)
+                exactMatch -> service.findAllByLabel(pageable, searchString)
+                else -> service.findAllByLabelContaining(pageable, searchString)
             }
         }
     }

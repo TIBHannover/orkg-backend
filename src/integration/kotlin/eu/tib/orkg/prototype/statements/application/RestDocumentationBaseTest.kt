@@ -141,9 +141,6 @@ abstract class RestDocumentationBaseTest {
 
     protected fun pageableDetailedFieldParameters(): List<FieldDescriptor> = listOf(
         fieldWithPath("content[]").description("The content"),
-        fieldWithPath("content[].id").description("The content ID"),
-        fieldWithPath("content[].created_by").description("The content's created by date"),
-        fieldWithPath("content[].created_at").description("The content's created at date"),
         fieldWithPath("pageable").description("The attribute pageable"),
         fieldWithPath("pageable.sort").description("The attribute sort below pageable"),
         fieldWithPath("pageable.sort.sorted").description("The attribute sorted below sort"),

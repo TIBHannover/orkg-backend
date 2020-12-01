@@ -411,7 +411,10 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             .andWithPrefix("[].predicate.", predicateResponseFields())
 
     private fun sharedListOfStmtSubPredResponseFields(): ResponseFieldsSnippet =
-        responseFields(pageableDetailedFieldParameters())
+        responseFields(pageableDetailedFieldParameters()).and(
+            fieldWithPath("content[].id").description("The content ID")).and(
+            fieldWithPath("content[].created_by").description("The content created by")).and(
+            fieldWithPath("content[].created_at").description("The content created at"))
             .andWithPrefix("content[].", statementFields())
             .andWithPrefix("content[].subject.", resourceResponseFields())
             .andWithPrefix("content[].predicate.", predicateResponseFields())
@@ -423,8 +426,11 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         .andWithPrefix("object.", literalResponseFields())
 
     fun statementListResponseFields(): ResponseFieldsSnippet =
-        responseFields(pageableDetailedFieldParameters())
-            .andWithPrefix("")
+        responseFields(pageableDetailedFieldParameters()).and(
+            fieldWithPath("content[].id").description("The content ID")).and(
+            fieldWithPath("content[].created_by").description("The content created by")).and(
+            fieldWithPath("content[].created_at").description("The content created at"))
+    .andWithPrefix("")
             .andWithPrefix("content[].object.", resourceResponseFields())
             .andWithPrefix("content[].subject.", resourceResponseFields())
             .andWithPrefix("content[].predicate.", predicateResponseFields())

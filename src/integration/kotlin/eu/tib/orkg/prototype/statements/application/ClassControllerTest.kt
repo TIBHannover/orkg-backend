@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import java.net.URI
+import org.hamcrest.Matchers
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -234,8 +235,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    resourceListResponseFields2()
-
+                    resourceListDetailedResponseFields()
                 )
             )
     }
@@ -276,11 +276,11 @@ class ClassControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/classes/$id/resources/?q=Math"))
             .andExpect(status().isOk)
+            .andExpect(jsonPath("$.content", Matchers.hasSize<Int>(2)))
             .andDo(
                 document(
                     snippet,
-                    resourceListResponseFields2()
-
+                    resourceListDetailedResponseFields()
                 )
             )
     }
@@ -305,10 +305,10 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("_class").optional().ignored()
         )
 
-    private fun resourceListResponseFields2() =
+    private fun resourceListDetailedResponseFields() =
         responseFields(pageableDetailedFieldParameters())
             .andWithPrefix("content[].", resourceListInnerResponseFields()
-            ).andWithPrefix("")
+                    ).andWithPrefix("")
 
     fun resourceListInnerResponseFields() = listOf(
         fieldWithPath("id").description("The resource ID"),

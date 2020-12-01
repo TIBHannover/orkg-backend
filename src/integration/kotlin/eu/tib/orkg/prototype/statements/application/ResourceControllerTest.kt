@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -216,7 +217,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             .perform(
                 getRequestTo("/api/resources/?q=Contribution&exclude=$id,$id2"))
             .andExpect(status().isOk)
-            // .andExpect(jsonPath("$", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.content", Matchers.hasSize<Int>(2)))
             .andDo(
                 document(
                     snippet,
@@ -333,8 +334,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     }
 
     fun listOfDetailedResourcesResponseFields(): ResponseFieldsSnippet {
-        return responseFields(
-            pageableDetailedFieldParameters())
+        return responseFields(pageableDetailedFieldParameters())
             .andWithPrefix("content[].", resourceResponseFields()
         ).andWithPrefix("")
     }

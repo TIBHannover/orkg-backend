@@ -16,7 +16,6 @@ class Neo4jResearchFieldService(
 
     override fun getResearchProblemsOfField(fieldId: ResourceId, pageable: Pageable): Page<Any> {
         return neo4jResearchFieldRepository.getResearchProblemsOfField(fieldId, pageable)
-            // .content
             .map {
                 object {
                     val problem = it.problem.toResource()

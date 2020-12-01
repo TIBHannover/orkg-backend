@@ -70,9 +70,9 @@ class ClassController(private val service: ClassService, private val resourceSer
         pageable: Pageable
     ): Page<Class> {
         return when {
-            searchString == null -> service.findAll(pageable).map(Class::toClass)
-            exactMatch -> service.findAllByLabel(pageable, searchString).map(Class::toClass)
-            else -> service.findAllByLabelContaining(pageable, searchString).map(Class::toClass)
+            searchString == null -> service.findAll(pageable)
+            exactMatch -> service.findAllByLabel(pageable, searchString)
+            else -> service.findAllByLabelContaining(pageable, searchString)
         }
     }
 

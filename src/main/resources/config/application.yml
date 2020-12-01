@@ -42,4 +42,3 @@ logging:
   level:
     org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
     org.neo4j.ogm.drivers.bolt.request.BoltRequest: DEBUG
-    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG

@@ -199,3 +199,9 @@ tasks {
         }
     }
 }
+
+asciidoctorj {
+    modules {
+        diagram.use()
+    }
+}

@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
-@WebMvcTest(controllers = [ResourceVerificationController::class])
+@WebMvcTest(controllers = [PaperVerificationCommandController::class])
 @AuthorizationServerUnitTestWorkaround
 @DisplayName("Given a Resource")
 class ResourceVerificationControllerTest {
@@ -98,12 +98,12 @@ class ResourceVerificationControllerTest {
     }
 
     private fun markVerifiedRequest(id: String): MockHttpServletRequestBuilder =
-        put("/api/resources/{id}/verified", id)
+        put("/api/papers/{id}/metadata/verified", id)
             .contentType(APPLICATION_JSON)
             .characterEncoding("UTF-8")
 
     private fun markUnverifiedRequest(id: String): MockHttpServletRequestBuilder =
-        delete("/api/resources/{id}/verified", id)
+        delete("/api/papers/{id}/metadata/verified", id)
             .contentType(APPLICATION_JSON)
             .characterEncoding("UTF-8")
 }

@@ -172,6 +172,7 @@ tasks {
             include("*.adoc")
             include("api-doc/*.adoc")
             include("architecture/*.adoc")
+            include("references/*.adoc")
         })
     }
 

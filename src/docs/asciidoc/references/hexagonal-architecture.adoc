@@ -1,0 +1,238 @@
+[.text-justify]
+= Hexagonal Architecture
+:toc:
+
+== Motivation
+
+ORKG uses the "<<Hexagonal Architecture>>" pattern, also known as "Ports & Adapters".
+Unfortunately, "organic growth" and external factors lead to technical debt that let the architecture decay to a point where it is not recognized as such.
+While working on new features we should aim to refactor towards Hexagonal Architecture, so that the architecture becomes visible again.
+
+This reference aims to explain the patterns used and is supposed to be a guide in the refactoring effort.
+A lot of the ideas are taken from the book "https://www.tib.eu/en/search/id/TIBKAT:1683192303/[Get Your Hands Dirty on Clean Architecture]" by Tom Hombergs.
+This book is a recommended reading for a deeper understanding of the content in this reference.
+
+NOTE: Refactoring will happen in steps, so this reference will need updates in accordance with the code changes.
+      If the code and this reference differ, it is considered a bug and should be filed as such.
+
+== Hexagonal Architecture
+
+Hexagonal Architecture (HA) was invented by Alistair Cockburn, https://alistair.cockburn.us/hexagonal-architecture/[published] in 2005 on his blog.
+It aims to create loosly coupled architecture components that can be connected easily via ports and adapters.
+This architecture is also called "ports & adapters" for this reason.
+Please see the https://alistair.cockburn.us/hexagonal-architecture/[original article] for more in-depth information.
+
+The goal of HA is to protect the domain objects and logic from other concerns, such as user interaction and persistence.
+This is achieved by providing ports.
+Ports act as an interface to the outside world.
+The role of input ports is to receive data from a system, whereas output ports submit data to a system.
+These external systems connect by providing adapters matching the ports.
+
+For the ORKG, the input system is the REST API.
+Spring Controllers act as adapters to the input ports.
+The output system is the persistence layer, which can be either Neo4j or PostgreSQL.
+Output adapters implement persistence of the data received via the output ports.
+
+The advantage of isolating these components via interfaces is that the domain logic forms a tight core that does not need to change if external systems change.
+For example, we might decide to forward data to another (micro-)service to handle the persistence.
+The only change required is to implement a new adapter for the output port and replacing the old adapter with the new implementation.
+This degree of isolation gives a lot of flexibility when interacting with other systems.
+It also allows to test the domain logic in isolation, making tests fast and reliable.
+
+=== Code Organization
+
+TBD: domain object, contained core
+
+==== Application Package
+
+Code is organized by contexts.
+A context holds everything that belongs to the application, i.e. ports, use cases, domain objects and services.
+
+The most important package is the `domain` package.
+It contains all domain objects.
+
+Alongside the `domain` package lives the `application` package.
+It contains everything that is relevant to organize the domain.
+Application Services encapsulate business logic across domain objects.
+They implement the input ports of the application so that an external system can interact with the domain.
+They also access the output ports to save and load domain information.
+
+The sub-packages `application.port.in` and `application.port.out` contain the input and output ports, respectively.
+Input ports are interfaces ending in the name `UseCase` that provide methods for a specific use case.
+Output ports are interfaces ending in `Port`.
+
+All classes and interfaces in the `application` package and its sub-packages form the API and therefore need to be public.
+
+==== Adapters Package
+
+The input and output adapters are not part of the application logic, so they are contained in their own package.
+They are further split into separate concerns.
+For example, all Spring Controllers live in `adapters.in.rest` as they are adapters to the input ports of the application.
+The JPA and OGM entities as well as Spring repositories live in the `adapters.out.persistence` package.
+They provide implementations for persistence by providing an adapter to the output port of the application.
+
+==== A Graphical Example
+
+The example below shows the interfaces and classes involved a hypothetical domain object ``Foo``footnote:[This is (almost) a reproduction from the book "Get Your Hands Dirty on Clean Architecture" which covers the topic in greater detail.]:
+
+.Schematic overview of all the components in a context.
+[plantuml,organization,png]
+----
+package "Input Adapters" <<Rectangle>> {
+  package adapters.in.rest {
+    class "FooController" as Controller
+  }
+}
+package "Domain with Ports" <<Rectangle>> {
+  package application.port.in {
+    interface "FooUseCase" as UseCase
+  }
+  package application {
+    class "FooService" as Service
+  }
+  package domain {
+    class "Foo" as DomainClass
+  }
+  package application.port.out {
+    interface "LoadFooPort" as LoadOutPort
+  }
+}
+package "Output Adapters" <<Rectangle>> {
+  package adapters.out.persistence {
+    class "FooPersistenceAdapter" as PersistenceAdapter
+  }
+}
+
+Controller -> UseCase : accesses
+UseCase <|.. Service : implements
+Service --> LoadOutPort : accesses
+LoadOutPort <|. PersistenceAdapter : implements
+
+Service -> DomainClass : accesses
+----
+
+It is located in the `domain` package.
+The use cases for `Foo` are defined in the `FooUseCase` interface that represents the input port of the application and is implemented in the `FooService`.
+The service accesses the `LoadFooPort` to locate and load `Foo`s from an "external" system.
+
+Users interact with the system via a REST API, implemented in `FooController`.
+The controller accesses `Foo`s via the `FooUseCase` input port and only concerns itself with the things required for a REST API, such as serialization of the data.
+
+The `FooPersistenceAdapter` provides an implementation of the `LoadFooPort` to find and load `Foo`s in a database (or other system).
+It is also responsible to converting the `Foo` into a form that can be stored properly.
+On loading, it needs to convert this representation back to a `Foo`.
+
+== Concepts in Detail
+
+=== Modules, Packages & Layers
+
+Modules, packages and layers concepts that are inter-related and need some explanation because they can be easily confused.
+
+_Modules_ are a way of separating different functionality by isolating components.
+A module produces at least one build artifact that can be dependent on other modules/artifacts.
+Classes in different modules must interact via public APIs.
+They are usually supported by the build system (Gradle) and can help to enforce context boundaries.
+In the Hexagonal Architecture, adapters and ports are usually separated in different modules.
+The module that provides an adapter depends on the module containing the port.
+
+_Packages_ are a way of organizing different aspects of the same context to keep a clean structure.
+It is harder to enforce boundaries via public APIs as all classes in the same package can reference each other.
+Java's "package-private" visibility can be of help but does not exist in Kotlin.
+Sub-packages have no access to their parent packages so sometimes there is a compromise to be made between making a class public or keeping classes in the same package instead of moving them to sub-packages.
+Packages are not reflected in Hexagonal Architecture per se but can be used to effectively separate concerns, such as application logic and domain classes.
+
+_Layers_ are usually represented as packages.
+The general idea is that higher layers only depend on lower layers.
+In a layered architecture the layers would often follow a scheme like "web -> application -> domain -> infrastructure/persistence".
+The problem with this is approach is the same as with packages: it is hard to separate contexts.
+This leads to the architecture decaying because it is very easy to take short-cuts.
+(Almost every class can access almost every class.)
+In a Hexagonal Architecture, the "classical" layers are harder to see because both "web" and "persistence" are on the "outside" and point "inwards" to the core (application and domain).
+Both architectures share a similar idea, and both can be translated into the other.
+However, Hexagonal Architecture is stricter in enforcing the boundaries, leading to decreased coupling of components.
+This is achieved by relying on dependency injection, as explained later in the section <<Dependency Inversion and Injection>>.
+
+=== Input Ports
+
+The following sections describe the two forms of ports on the "input" side of the system: <<Use Cases>> and <<Queries>>.
+They represent the boundaries that input adapters, e.g. controllers, can use to obtain information or trigger state changes.
+
+==== Use Cases
+
+_Use Cases_ define the interactions an actor has with the system and are represented in the form of interfaces.
+(Actors are usually users that interact with the system, e.g. through a REST API, but could also be different systems.)
+Their objective is to provide functionality that leads to action (side effects), e.g. changing the state of a resource ("write").
+The interfaces should provide methods for all parts of the use case.
+In some cases, this can be only a few or even just one.
+Each "use case interface" must represent a single use case and should be considered a form of communication: it communicates which interactions are part of it.
+Lumping methods into a common interface because they are similar leads to blurring the boundaries between use cases and makes testing and refactoring harder due to increased coupling.
+
+Use case implementations are provided by the application services.
+Services are free to implement several use cases were it makes sense; but ideally there is a 1:1 mapping between the two.
+
+Use cases also define the boundary to the "input" side of the system.
+Input adapters depend on the use case interfaces to interact with the system.
+Service implementations need to be injected.
+This abstraction allows behavior in the domain to change without requiring changes in the adapters.
+It also makes it easy to inject fake service implementations in tests to allow for testing the adapter's behavior in isolation.
+
+==== Queries
+
+Similar to <<Use Cases>>, _Queries_ are also a boundary on the "input" side of the system.
+Their job is to provide the adapter with the possibility to receive information from the system and are "read-only".
+The separation of Queries and Use Cases allows changing (and scaling) reading and writing operations independently of each other.
+It allows for optimizing where needed (e.g. with caching) on a per-need basis: If the naive implementation is fast enough, there is no need to make it faster, while custom implementations for slow queries are still possible.
+
+Queries are represented as interfaces and are implemented in services, just like their Use Case counterparts.
+They are used by adapters to get information back the user and are not coupled to a specific persistence technology.
+
+=== Output Ports
+
+Output ports provide the boundary on the "output" side of the system.
+This is usually a database for persistence but could also be different systems.
+The ideas are similar as on <<Input Ports>>: decouple implementations from domain logic.
+They also have separation between "read-only" and "write" operations.
+
+==== Load Ports
+
+Load Ports are the equivalent of a <<Queries,query>>.
+They are an abstraction in the form of interfaces for obtaining data from another system, such as a database.
+Output adapters provide the implementation to retrieve data from the system and convert them to domain objects.
+Application Services use these ports to load data but have no knowledge about the underlying implementation.
+Load ports never modify data.
+They are "read-only".
+
+==== State Ports
+
+State Port are equivalent to <<Use Cases>> and are responsible for mutating data, therefore providing "write" operations.
+Similar to <<Load Ports>>, they are interfaces with implementations provided by output adapters.
+Application Services use State Ports to persist mutated state of domain objects.
+
+=== Dependency Inversion and Injection
+
+The high degree of decoupling used to achieve the separation between the components is due to Dependency Inversion.
+Input adapters only interact with the system via interfaces (Use Cases or Queries).
+So do Application Services with respect to Output Ports.
+In order to obtain the concrete implementations (the service and the adapter), respectively, Dependency Injection is required.
+
+This is usually done by an overarching component, often called "configuration".
+Since we use Spring Boot, this component is called "Application Context".
+It is responsible to instantiate the implementations in the right order and wire them via constructor injection.
+Constructor injection is preferred over property injection because it is easier to inject fake components in tests without the help of the framework.
+
+With respect to the architecture, all things related to Spring and dependency injection should be contained in a separate "configuration" module that takes are of wiring the components of its parent module.
+
+A separate "application" module can include those modules to configure the whole application, maybe even conditionally.
+The advantage of the approach is the ability to add or remove functionality, depending on the need.
+This will be simpler than working with feature toggles in most cases.
+It also separates the domain from the infrastructure.
+
+Currently, ORKG makes use of "component scanning" in Spring in order to wire the respective components.
+This has lead to bugs in the past.
+Programmatic configuration becomes easier in Hexagonal Architecture and should be preferred, if possible.
+
+== Final remarks
+
+This document is rather complex and maybe even confusing, although best efforts were taken to make it as clear as possible as well as concise as possible.
+Bad wording or explanations should be considered bugs, as in all forms of documentation.
+Please take the time to file an issue on GitLab to improve this document!

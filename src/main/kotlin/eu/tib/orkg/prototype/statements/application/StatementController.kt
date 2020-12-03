@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.application
 
-
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId

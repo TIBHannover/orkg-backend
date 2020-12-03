@@ -4,7 +4,6 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.CreateClassRequest
 import java.net.URI
 import java.util.Optional
-import java.util.UUID
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 

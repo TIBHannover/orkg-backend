@@ -9,7 +9,7 @@ Unfortunately, "organic growth" and external factors lead to technical debt that
 While working on new features we should aim to refactor towards Hexagonal Architecture, so that the architecture becomes visible again.
 
 This reference aims to explain the patterns used and is supposed to be a guide in the refactoring effort.
-A lot of the ideas are taken from the book "https://www.tib.eu/en/search/id/TIBKAT:1683192303/[Get Your Hands Dirty on Clean Architecture]" by Tom Hombergs.
+A lot of the ideas are taken from the book https://www.tib.eu/en/search/id/TIBKAT:1683192303/[_Get Your Hands Dirty on Clean Architecture_] by Tom Hombergs.
 This book is a recommended reading for a deeper understanding of the content in this reference.
 
 NOTE: Refactoring will happen in steps, so this reference will need updates in accordance with the code changes.

@@ -212,6 +212,21 @@ class Neo4jResourceService(
             .findAllUnverifiedPapers(pageable)
             .map(Neo4jResource::toResource)
 
+    /**
+     * Get the "verified" flag of a paper resource.
+     *
+     * @param id The ID of a resource of class "Paper".
+     * @return The value of the flag, or `null` if the resource is not found or not a paper.
+     */
+    override fun getPaperVerifiedFlag(id: ResourceId): Boolean? {
+        val result = neo4jResourceRepository.findPaperByResourceId(id)
+        if (result.isPresent) {
+            val paper = result.get()
+            return paper.verified ?: false
+        }
+        return null
+    }
+
     private fun setVerifiedFlag(resourceId: ResourceId, verified: Boolean): Optional<Resource> {
         val result = neo4jResourceRepository.findByResourceId(resourceId)
         if (result.isPresent) {

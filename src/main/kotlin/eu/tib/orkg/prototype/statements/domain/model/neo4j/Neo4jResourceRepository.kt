@@ -34,6 +34,8 @@ private const val WITH_NODE_PROPERTIES =
 
 // Custom queries
 
+private const val MATCH_PAPER_BY_ID = """MATCH (node:`Resource`:`Paper` {resource_id: {0}})"""
+
 private const val MATCH_VERIFIED_PAPER =
     """MATCH (node) WHERE EXISTS(node.verified) AND node.verified = true AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
 
@@ -121,6 +123,9 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     fun findAllByVerifiedIsTrue(pageable: Pageable): Page<Neo4jResource>
 
     fun findAllByVerifiedIsFalse(pageable: Pageable): Page<Neo4jResource>
+
+    @Query("""$MATCH_PAPER_BY_ID $WITH_NODE_PROPERTIES $RETURN_NODE""")
+    fun findPaperByResourceId(id: ResourceId): Optional<Neo4jResource>
 
     @Query(
         value = """$MATCH_VERIFIED_PAPER $WITH_NODE_PROPERTIES $RETURN_NODE""",

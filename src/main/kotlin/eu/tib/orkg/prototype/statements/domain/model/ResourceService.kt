@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryRequest
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsVerifiedUseCase
+import eu.tib.orkg.prototype.statements.application.port.out.GetPaperVerifiedFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperPort
 import eu.tib.orkg.prototype.statements.application.port.out.LoadResourcePort
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
@@ -13,7 +14,7 @@ import java.util.Optional
 import org.springframework.data.domain.Pageable
 
 // FIXME: acts as port and adapter now -> separate!
-interface ResourceService : MarkAsVerifiedUseCase, LoadResourcePort, LoadPaperPort {
+interface ResourceService : MarkAsVerifiedUseCase, LoadResourcePort, LoadPaperPort, GetPaperVerifiedFlagQuery {
     /**
      * Create a new resource with a given label.
      *

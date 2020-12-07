@@ -40,7 +40,7 @@ private const val MATCH_VERIFIED_PAPER =
     """MATCH (node) WHERE EXISTS(node.verified) AND node.verified = true AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
 
 private const val MATCH_UNVERIFIED_PAPER =
-    """MATCH (node) WHERE EXISTS(node.verified) AND node.verified = false AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
+    """MATCH (node) WHERE (NOT EXISTS(node.verified) OR node.verified = false) AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
 
 interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     override fun findAll(): Iterable<Neo4jResource>

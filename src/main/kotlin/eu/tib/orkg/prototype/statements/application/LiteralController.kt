@@ -73,7 +73,6 @@ class LiteralController(private val service: LiteralService) : BaseController() 
         var updatedLiteral = found.get()
 
         if (request.label != null) {
-            if (request.label.isBlank()) throw PropertyIsBlank("label")
             updatedLiteral = updatedLiteral.copy(label = request.label)
         }
 
@@ -85,7 +84,7 @@ class LiteralController(private val service: LiteralService) : BaseController() 
     }
 
     data class LiteralCreateRequest(
-        @field:NotBlank
+        // No restriction, as we need to support empty values; at lease for strings. See TIBHannover/orkg/orkg-backend!152.
         val label: String,
         @field:NotBlank
         val datatype: String = "xsd:string"

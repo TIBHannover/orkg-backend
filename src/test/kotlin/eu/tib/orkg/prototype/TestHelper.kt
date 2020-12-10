@@ -3,6 +3,9 @@ package eu.tib.orkg.prototype
 import eu.tib.orkg.prototype.auth.service.OrkgUserDetailsService
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.configuration.AuthorizationServerConfiguration
+import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import java.time.OffsetDateTime
 import org.springframework.context.annotation.Import
 
 /**
@@ -17,3 +20,8 @@ import org.springframework.context.annotation.Import
     OrkgUserDetailsService::class
 )
 annotation class AuthorizationServerUnitTestWorkaround
+
+/**
+ * Creates a resource that uses as many defaults as possible.
+ */
+fun createResource() = Resource(ResourceId(1), "Default Label", OffsetDateTime.now())

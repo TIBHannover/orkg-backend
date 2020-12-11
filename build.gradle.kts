@@ -66,6 +66,7 @@ dependencies {
     implementation("org.glassfish.jaxb:jaxb-runtime:2.3.0")
     // RDF
     implementation("net.nprod:rdf4k:0.1.2")
+    implementation("io.github.config4k:config4k:0.4.2")
 
     //
     // Testing

@@ -50,4 +50,9 @@ interface PredicateService {
      * Update a predicate.
      */
     fun update(predicate: Predicate): Predicate
+
+    /**
+     * Create if not exists
+     */
+    fun createIfNotExists(id: PredicateId, label: String)
 }

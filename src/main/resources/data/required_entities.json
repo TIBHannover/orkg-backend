@@ -1,0 +1,390 @@
+{
+  "classes": [
+    {
+      "id": "Paper",
+      "label": "Paper"
+    },
+    {
+      "id": "Problem",
+      "label": "Problem"
+    },
+    {
+      "id": "Contribution",
+      "label": "Contribution"
+
+    },
+    {
+      "id": "QBDataset",
+      "label": "qb:Dataset",
+      "uri": "http://purl.org/linked-data/cube#DataSet"
+    },
+    {
+      "id": "Author",
+      "label": "Author"
+    },
+    {
+      "id": "VENUE",
+      "label": "Venue"
+    },
+    {
+      "id": "FeaturedPaper",
+      "label": "Featured Paper"
+    },
+    {
+      "id": "FeaturedComparisonCategory",
+      "label": "Featured Comparison Category"
+    },
+    {
+      "id": "FeaturedComparison",
+      "label": "Featured Comparison"
+    },
+    {
+      "id": "ContributionTemplate",
+      "label": "Contribution Template"
+    },
+    {
+      "id": "ResearchField",
+      "label": "Research Field"
+    },
+    {
+      "id": "Comparison",
+      "label": "Comparison"
+    },
+    {
+      "id": "Date",
+      "label": "Date"
+    },
+    {
+      "id": "String",
+      "label": "String"
+    },
+    {
+      "id": "Number",
+      "label": "Number"
+    },
+    {
+      "id": "PaperDeleted",
+      "label": "PaperDeleted"
+    },
+    {
+      "id": "ContributionDeleted",
+      "label": "ContributionDeleted"
+    },
+    {
+      "id": "ComparisonRelatedFigure",
+      "label": "Comparison Related Figure"
+    },
+    {
+      "id": "ComparisonRelatedResource",
+      "label": "Comparison Related Resource"
+    },
+    {
+      "id": "Predicates",
+      "label": "Predicate"
+    },
+    {
+      "id": "DCLocation",
+      "label": "dc:Location"
+      "uri": "http://purl.org/dc/terms/Location"
+    },
+    {
+      "id": "Predicates",
+      "label": "Predicate"
+    },
+    {
+      "id": "VISUALIZATION_DEFINITION",
+      "label": "ORKG Visualization Description Class"
+    },
+    {
+      "id": "Sentence",
+      "label": "Sentence"
+    },
+    {
+      "id": "Acknowledgements",
+      "label": "Acknowledgements"
+    },
+    {
+      "id": "Background",
+      "label": "Background"
+    },
+    {
+      "id": "Caption",
+      "label": "Caption"
+    },
+    {
+      "id": "Conclusion",
+      "label": "Conclusion"
+    },
+    {
+      "id": "Contribution",
+      "label": "Contribution"
+    },
+    {
+      "id": "Data",
+      "label": "Data"
+    },
+    {
+      "id": "DatasetDescription",
+      "label": "DatasetDescription"
+    },
+    {
+      "id": "Discussion",
+      "label": "Discussion"
+    },
+    {
+      "id": "Epilogue",
+      "label": "Epilogue"
+    },
+    {
+      "id": "Evaluation",
+      "label": "Evaluation"
+    },
+    {
+      "id": "ExternalResourceDescription",
+      "label": "ExternalResourceDescription"
+    },
+    {
+      "id": "FutureWork",
+      "label": "FutureWork"
+    },
+    {
+      "id": "Introduction",
+      "label": "Introduction"
+    },
+    {
+      "id": "Legend",
+      "label": "Legend"
+    },
+    {
+      "id": "Materials",
+      "label": "Materials"
+    },
+    {
+      "id": "Methods",
+      "label": "Methods"
+    },
+    {
+      "id": "Model",
+      "label": "Model"
+    },
+    {
+      "id": "Motivation",
+      "label": "Motivation"
+    },
+    {
+      "id": "Postscript",
+      "label": "Postscript"
+    },
+    {
+      "id": "ProblemStatement",
+      "label": "ProblemStatement"
+    },
+    {
+      "id": "Prologue",
+      "label": "Prologue"
+    },
+    {
+      "id": "RelatedWork",
+      "label": "RelatedWork"
+    },
+    {
+      "id": "Results",
+      "label": "Results"
+    },
+    {
+      "id": "Scenario",
+      "label": "Scenario"
+    },
+    {
+      "id": "SupplementaryInformationDescription",
+      "label": "SupplementaryInformationDescription"
+    }
+  ],
+
+  "predicates": [
+    {
+      "label": "HAS_VISUALIZATION_DEFINITION",
+      "id": "HAS_VISUALIZATION_DEFINITION"
+    },
+    {
+      "label": "Has evaluation",
+      "id": "HAS_EVALUATION"
+    },
+    {
+      "label": "Has approach",
+      "id": "HAS_APPROACH"
+    },
+    {
+      "label": "Has method",
+      "id": "HAS_METHOD"
+    },
+    {
+      "label": "Has implementation",
+      "id": "HAS_IMPLEMENTATION"
+    },
+    {
+      "label": "Has result",
+      "id": "HAS_RESULTS"
+    },
+    {
+      "label": "Has value",
+      "id": "HAS_VALUE"
+    },
+    {
+      "label": "Has metric",
+      "id": "HAS_METRIC"
+    },
+    {
+      "label": "Material",
+      "id": "MATERIAL"
+    },
+    {
+      "label": "Method",
+      "id": "METHOD"
+    },
+    {
+      "label": "Process",
+      "id": "PROCESS"
+    },
+    {
+      "label": "Data",
+      "id": "DATA"
+    },
+    {
+      "label": "Has ORCID",
+      "id": "HAS_ORCID"
+    },
+    {
+      "label": "type",
+      "id": "type"
+    },
+    {
+      "label": "icon",
+      "id": "icon"
+    },
+    {
+      "label": "description",
+      "id": "description"
+    },
+    {
+      "label": "url",
+      "id": "url"
+    },
+    {
+      "label": "onHomepage",
+      "id": "onHomepage"
+    },
+    {
+      "label": "Template of research field",
+      "id": "TemplateOfResearchField"
+    },
+    {
+      "label": "Template of predicate",
+      "id": "TemplateOfPredicate"
+    },
+    {
+      "label": "Template of class",
+      "id": "TemplateOfClass"
+    },
+    {
+      "label": "Template sub-template",
+      "id": "TemplateSub"
+    },
+    {
+      "label": "Template of research problem",
+      "id": "TemplateOfResearchProblem"
+    },
+    {
+      "label": "Same as",
+      "id": "SAME_AS"
+    },
+    {
+      "label": "Has venue",
+      "id": "HAS_VENUE"
+    },
+    {
+      "label": "reference",
+      "id": "reference"
+    },
+    {
+      "label": "Template component",
+      "id": "TemplateComponent"
+    },
+    {
+      "label": "Template component property",
+      "id": "TemplateComponentProperty"
+    },
+    {
+      "label": "Template component value",
+      "id": "TemplateComponentValue"
+    },
+    {
+      "label": "Order",
+      "id": "order"
+    },
+    {
+      "label": "Related Resource",
+      "id": "RelatedResource"
+    },
+    {
+      "label": "Related Figure",
+      "id": "RelatedFigure"
+    },
+    {
+      "label": "Template Component Validation Rule",
+      "id": "TemplateComponentValidationRule"
+    },
+    {
+      "label": "Template Label Format",
+      "id": "TemplateLabelFormat"
+    },
+    {
+      "label": "TemplateStrict",
+      "id": "TemplateStrict"
+    },
+    {
+      "label": "TemplateComponentOrder",
+      "id": "TemplateComponentOrder"
+    },
+    {
+      "label": "TemplateComponentOccurrenceMin",
+      "id": "TemplateComponentOccurrenceMin"
+    },
+    {
+      "label": "TemplateComponentOccurrenceMax",
+      "id": "TemplateComponentOccurrenceMax"
+    },
+    {
+      "label": "Image",
+      "id": "Image"
+    },
+    {
+      "label": "Sub Problem",
+      "id": "subProblem"
+    },
+    {
+      "label": "compare contribution",
+      "id": "compareContribution"
+    },
+    {
+      "label": "has property",
+      "id": "hasProperty"
+    },
+    {
+      "label": "has previous version",
+      "id": "hasPreviousVersion"
+    },
+    {
+      "label": "has subject",
+      "id": "hasSubject"
+    },
+    {
+      "label": "has content",
+      "id": "hasContent"
+    },
+    {
+      "label": "contains",
+      "id": "contains"
+    }
+  ]
+}

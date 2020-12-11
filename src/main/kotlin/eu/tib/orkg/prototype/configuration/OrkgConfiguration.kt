@@ -10,12 +10,17 @@ class OrkgConfiguration {
 
     inner class Storage {
         private lateinit var images: Images
-
         inner class Images {
             /**
              * Directory to store images, such as logos for observatories.
              */
             var dir: String? = "#{user.dir}/images"
+        }
+        inner class InitialImportData {
+            /**
+             * Path to initial import data for classes and predicates
+             */
+            var initialSetupFile: String? = "data/required_entities.json"
         }
     }
 }

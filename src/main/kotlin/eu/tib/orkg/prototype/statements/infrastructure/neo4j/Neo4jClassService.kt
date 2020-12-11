@@ -88,7 +88,35 @@ class Neo4jClassService(
             .findByUri(uri.toString())
             .map(Neo4jClass::toClass)
 
-    private fun String.toSearchString() = "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"
+    override fun createIfNotExists(id: ClassId, label: String, uri: URI?) {
+        // Checking if URI is null
+        if (uri == null) {
+            // check only for ID
+            val found = neo4jClassRepository.findByClassId(id)
+            if (found.isEmpty) {
+                neo4jClassRepository.save(Neo4jClass(classId = id, label = label, uri = uri))
+            }
+        } else {
+            val oClassByURI = neo4jClassRepository.findByUri(uri.toString())
+            val oClassById = neo4jClassRepository.findByClassId(id)
+            when {
+                oClassById.isEmpty && oClassByURI.isEmpty -> neo4jClassRepository.save(
+                    Neo4jClass(
+                        classId = id,
+                        label = label,
+                        uri = uri
+                    )
+                )
+                // Throwing an exception if IDs are different
+                oClassById.isPresent && oClassByURI.isPresent
+                    && oClassById.get().id != oClassByURI.get().id -> throw Exception("ID mismatch for class ID: ${oClassById.get().id}")
+            }
+        }
+    }
 
-    private fun String.toExactSearchString() = "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"
+    private fun String.toSearchString() =
+        "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"
+
+    private fun String.toExactSearchString() =
+        "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"
 }

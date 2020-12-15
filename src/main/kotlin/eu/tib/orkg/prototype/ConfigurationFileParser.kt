@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
  * Class to read the file containing
  * classes and predicates
  */
-class FileParser(private val reader: Reader) {
+class EntityConfigurationParser(private val reader: Reader) {
 
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 
@@ -28,8 +28,8 @@ class FileParser(private val reader: Reader) {
         val predicates: ConfigList = configFactory.getList("predicates")
 
         return CreateMainCommand(
-            getClassCommandList(classes),
-            getPredicateCommandList(predicates)
+            createClassCommandList(classes),
+            createPredicateCommandList(predicates)
         )
     }
 
@@ -37,47 +37,29 @@ class FileParser(private val reader: Reader) {
      * Return a list of CreateClassCommand
      */
     @Suppress("UNCHECKED_CAST")
-    private fun getClassCommandList(classes: ConfigList): List<CreateClassCommand> {
-        val listClass = mutableListOf<CreateClassCommand>()
+    private fun createClassCommandList(classes: ConfigList): List<CreateClassCommand> = classes.map {
+        val classMap = it.unwrapped() as Map<String, String>
 
-        classes.forEach {
-            val classMap = it.unwrapped() as Map<String, String>
+        val classId: String =
+            classMap["id"] ?: throw Exception("A null value was found for id while importing classes")
+        val classLabel: String =
+            classMap["label"] ?: throw Exception("A null value was found for label while importing classes")
 
-            val classId: String =
-                classMap["id"] ?: throw Exception("A null value was found for id while importing classes")
-            val classLabel: String =
-                classMap["label"] ?: throw Exception("A null value was found for label while importing classes")
-
-            val oClass = CreateClassCommand(
-                classId,
-                classLabel,
-                classMap["uri"]
-            )
-            listClass.add(oClass)
-        }
-        return listClass
+        CreateClassCommand(classId, classLabel, classMap["uri"])
     }
 
     /**
      * Return a list of CreatePredicatesCommand
      */
     @Suppress("UNCHECKED_CAST")
-    private fun getPredicateCommandList(predicates: ConfigList): List<CreatePredicatesCommand> {
-        val listPredicates = mutableListOf<CreatePredicatesCommand>()
+    private fun createPredicateCommandList(predicates: ConfigList): List<CreatePredicatesCommand> = predicates.map {
+        val predicateMap = it.unwrapped() as Map<String, String>
 
-        predicates.forEach {
-            val predicateMap = it.unwrapped() as Map<String, String>
-            val predicateId: String =
-                predicateMap["id"] ?: throw Exception("A null value was found for id while importing predicates")
-            val predicateLabel: String =
-                predicateMap["label"] ?: throw Exception("A null value was found for label while importing predicates")
+        val predicateId: String =
+            predicateMap["id"] ?: throw Exception("A null value was found for id while importing predicates")
+        val predicateLabel: String =
+            predicateMap["label"] ?: throw Exception("A null value was found for label while importing predicates")
 
-            val oPredicate = CreatePredicatesCommand(
-                predicateId,
-                predicateLabel
-            )
-            listPredicates.add(oPredicate)
-        }
-        return listPredicates
+        CreatePredicatesCommand(predicateId, predicateLabel)
     }
 }

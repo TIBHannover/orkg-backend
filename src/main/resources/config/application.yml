@@ -13,6 +13,9 @@ orkg:
   storage:
     images:
       dir: "${user.dir}/images"
+  init:
+    setup:
+      entities-file: "data/required_entities.json"
   datacite:
     username: ""
     password: ""

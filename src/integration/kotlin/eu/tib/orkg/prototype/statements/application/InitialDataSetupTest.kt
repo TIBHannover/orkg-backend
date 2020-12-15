@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.FileParser
+import eu.tib.orkg.prototype.EntityConfigurationParser
 import java.io.StringReader
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
@@ -11,20 +11,46 @@ import org.slf4j.LoggerFactory
 
 @DisplayName("Initial Data Setup")
 class InitialDataSetupTest {
-    private val logger = LoggerFactory.getLogger(this::class.java.name)
 
     @Test
     fun testInitialData() {
-        var strInput = "{\"classes\": [{\"id\": \"Paper\",\"label\": \"Paper\"}], \"predicates\": [{\"label\": \"Has evaluation\",\"id\": \"HAS_EVALUATION\"}]}"
-        val fileParser = FileParser(StringReader(strInput))
+        val strInput = """
+            {
+            	"classes": [
+            		{
+            			"id": "Paper",
+            			"label": "Paper"
+            		}
+            	],
+            	"predicates": [
+            		{
+            			"label": "Has evaluation",
+            			"id": "HAS_EVALUATION"
+            		}
+            	]
+            }
+        """.trimIndent()
+        val fileParser = EntityConfigurationParser(StringReader(strInput))
 
         assertDoesNotThrow(fileParser::parseInitialData)
     }
 
     @Test
     fun testInitialDataWithInvalidInput() {
-        var strInput = "{\"classes\": [{\"id\": \"Paper\"}], \"predicates\": [{\"label\": \"Has evaluation\",\"id\": \"HAS_EVALUATION\"}]}"
-        val fileParser = FileParser(StringReader(strInput))
+        val strInput = """{
+            "classes": [
+                {
+                    "id": "Paper"
+                }
+            ],
+            "predicates": [
+                {
+                    "label": "Has evaluation",
+                    "id": "HAS_EVALUATION"
+                }
+            ]
+        }""".trimIndent()
+        val fileParser = EntityConfigurationParser(StringReader(strInput))
 
         val exception = assertThrows<Exception>("A null value was found for label while importing classes") {
             fileParser.parseInitialData()

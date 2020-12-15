@@ -1,6 +1,8 @@
 package eu.tib.orkg.prototype.configuration
 
+import javax.validation.constraints.NotBlank
 import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.context.annotation.Configuration
 
 @Configuration
@@ -21,6 +23,11 @@ class OrkgConfiguration {
              * Path to initial import data for classes and predicates
              */
             var initialSetupFile: String? = "data/required_entities.json"
+            get() = this.toString()
         }
     }
 }
+
+@ConfigurationProperties(prefix = "orkg.init.setup")
+@ConstructorBinding
+data class InputInjection(@get:NotBlank var entitiesFile: String)

@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.statements.application.ResourceControllerTest.RestDoc.listOfResourcesResponseFields
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService

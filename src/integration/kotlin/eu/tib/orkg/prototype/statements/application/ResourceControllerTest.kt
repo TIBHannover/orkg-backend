@@ -205,7 +205,6 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @Disabled
     fun excludeByClass() {
         val id = classService.create("research contribution").id!!
         val set = listOf(id).toSet()

@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.domain.model
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.CreateClassRequest
+import java.net.URI
 import java.util.Optional
 import org.springframework.data.domain.Pageable
 
@@ -69,4 +70,9 @@ interface ClassService : URIService<Class> {
      * Update a class.
      */
     fun update(`class`: Class): Class
+
+    /**
+     * Create if not exists a class
+     */
+    fun createIfNotExists(id: ClassId, label: String, uri: URI?)
 }

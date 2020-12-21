@@ -61,7 +61,7 @@ class DoiService(
                     ID_DOI_PREDICATE
                 ), pagination)
                 result.forEach {
-                    relatedIdentifiers += """<relatedIdentifier relationType="IsDerivedFrom" relatedIdentifierType="DOI">${refreshObject(it.`object`).label}</relatedIdentifier>"""
+                    relatedIdentifiers += """<relatedIdentifier relationType="References" relatedIdentifierType="DOI">${refreshObject(it.`object`).label}</relatedIdentifier>"""
                 }
             }
         }

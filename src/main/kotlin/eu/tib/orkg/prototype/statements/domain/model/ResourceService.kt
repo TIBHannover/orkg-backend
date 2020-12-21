@@ -123,7 +123,7 @@ interface ResourceService : MarkAsVerifiedUseCase, LoadResourcePort, LoadPaperPo
      */
     fun update(request: UpdateResourceRequest): Resource
 
-    fun updatePaperObservatory(request: UpdateResourceObservatoryRequest, id: ResourceId, userId: ContributorId): Resource
+    fun updatePaperObservatory(request: UpdateResourceObservatoryRequest, id: ResourceId): Resource
 
     fun hasStatements(id: ResourceId): Boolean
 

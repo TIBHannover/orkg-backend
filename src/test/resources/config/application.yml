@@ -5,3 +5,6 @@ orkg:
   storage:
     images:
       dir: '/tmp/orkg/images'
+  init:
+    setup:
+      entities-file: "data/required_entities.json"

@@ -12,6 +12,36 @@ import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
+/**
+ * Partial query that returns the node as well as its ID and relationships.
+ * Queries using this partial query must use `node` as the binding name.
+ */
+private const val RETURN_NODE =
+    """RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)"""
+
+/**
+ * Partial query that returns the node count for use in count queries.
+ * Queries using this partial query must use `node` as the binding name.
+ */
+private const val RETURN_NODE_COUNT = """RETURN count(node)"""
+
+/**
+ * Partial query that expands the node properties so that they can be used with pagination in custom queries.
+ * Queries using this partial query must use `node` as the binding name.
+ */
+private const val WITH_NODE_PROPERTIES =
+    """WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at"""
+
+// Custom queries
+
+private const val MATCH_PAPER_BY_ID = """MATCH (node:`Resource`:`Paper` {resource_id: {0}})"""
+
+private const val MATCH_VERIFIED_PAPER =
+    """MATCH (node) WHERE EXISTS(node.verified) AND node.verified = true AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
+
+private const val MATCH_UNVERIFIED_PAPER =
+    """MATCH (node) WHERE (NOT EXISTS(node.verified) OR node.verified = false) AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
+
 interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     override fun findAll(): Iterable<Neo4jResource>
 
@@ -89,6 +119,25 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
 
     @Query("""MATCH (n:Resource {resource_id: {0}}) RETURN EXISTS ((n)-[:RELATED]-(:Thing)) AS used""")
     fun checkIfResourceHasStatements(id: ResourceId): Boolean
+
+    fun findAllByVerifiedIsTrue(pageable: Pageable): Page<Neo4jResource>
+
+    fun findAllByVerifiedIsFalse(pageable: Pageable): Page<Neo4jResource>
+
+    @Query("""$MATCH_PAPER_BY_ID $WITH_NODE_PROPERTIES $RETURN_NODE""")
+    fun findPaperByResourceId(id: ResourceId): Optional<Neo4jResource>
+
+    @Query(
+        value = """$MATCH_VERIFIED_PAPER $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        countQuery = """$MATCH_VERIFIED_PAPER $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
+    )
+    fun findAllVerifiedPapers(pageable: Pageable): Page<Neo4jResource>
+
+    @Query(
+        value = """$MATCH_UNVERIFIED_PAPER $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        countQuery = """$MATCH_UNVERIFIED_PAPER $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
+    )
+    fun findAllUnverifiedPapers(pageable: Pageable): Page<Neo4jResource>
 }
 
 @QueryResult

@@ -13,6 +13,9 @@ orkg:
   storage:
     images:
       dir: "${user.dir}/images"
+  init:
+    setup:
+      entities-file: "data/required_entities.json"
   datacite:
     username: ""
     password: ""
@@ -38,3 +41,7 @@ spring:
       ddl-auto: validate
     show-sql: true
     # generate-ddl: true
+logging:
+  level:
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+    org.neo4j.ogm.drivers.bolt.request.BoltRequest: DEBUG

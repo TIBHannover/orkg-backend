@@ -75,6 +75,15 @@ class Neo4jPredicateService(
         return neo4jPredicateRepository.save(found).toPredicate()
     }
 
+    override fun createIfNotExists(id: PredicateId, label: String) {
+        val oPredicate = neo4jPredicateRepository.findByPredicateId(id)
+
+        if (oPredicate.isEmpty) {
+            neo4jPredicateRepository
+                .save(Neo4jPredicate(label = label, predicateId = id)).toPredicate()
+        }
+    }
+
     private fun String.toSearchString() = "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"
 
     private fun String.toExactSearchString() = "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"

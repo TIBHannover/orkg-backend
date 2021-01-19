@@ -4,7 +4,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import java.util.Optional
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 import org.springframework.data.neo4j.annotation.Query
@@ -85,11 +84,11 @@ interface Neo4jStatementRepository :
     fun findAllBySubjects(
         subjectIds: List<String>,
         pagination: Pageable
-    ): Page<Neo4jStatement>
+    ): Slice<Neo4jStatement>
 
     @Query("""$MATCH_STATEMENT $WHERE_OBJECT_ID_IN $RETURN_STATEMENT""")
     fun findAllByObjects(
         subjectIds: List<String>,
         pagination: Pageable
-    ): Page<Neo4jStatement>
+    ): Slice<Neo4jStatement>
 }

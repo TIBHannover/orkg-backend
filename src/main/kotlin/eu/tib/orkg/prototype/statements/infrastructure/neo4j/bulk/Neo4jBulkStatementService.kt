@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.statements.domain.model.BulkStatementsService
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
+import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteral
@@ -40,7 +41,7 @@ class Neo4jBulkStatementService :
         return statementRepository.findAllBySubjects(subjects, pageable)
             .content // FIXME: Not sure how page information can be passed in such call
             .map { toStatement(it) }
-            .groupBy { it.id!!.value }
+            .groupBy { (it.subject as Resource).id!!.value }
     }
 
     override fun getBulkStatementsByObjects(
@@ -50,7 +51,7 @@ class Neo4jBulkStatementService :
         return statementRepository.findAllByObjects(objects, pageable)
             .content // FIXME: Not sure how page information can be passed in such call
             .map { toStatement(it) }
-            .groupBy { it.id!!.value }
+            .groupBy { (it.`object` as Resource).id!!.value }
     }
 
     // FIXME: This is duplicated from the StatementService

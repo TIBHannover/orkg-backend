@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.application.BundleConfiguration
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -215,21 +216,13 @@ class Neo4jStatementService :
 
     override fun fetchAsBundle(
         thingId: String,
-        minLevel: Int?,
-        maxLevel: Int?,
-        blackClasses: List<String>,
-        whiteClasses: List<String>
+        configuration: BundleConfiguration
     ): Bundle =
         Bundle(
             thingId,
             statementRepository.fetchAsBundle(
                 thingId,
-                constructApocBundleConfiguration(
-                    minLevel,
-                    maxLevel,
-                    blackClasses,
-                    whiteClasses
-                )
+                configuration.toApocConfiguration()
             )
                 .map { toStatement(it) }
                 .toMutableList()

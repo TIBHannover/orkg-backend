@@ -193,33 +193,6 @@ class Neo4jStatementService :
                 .toMutableList()
         )
 
-    private fun constructApocBundleConfiguration(
-        minLevel: Int?,
-        maxLevel: Int?,
-        blackClasses: List<String>,
-        whiteClasses: List<String>
-    ): Map<String, Any> {
-        val conf = mutableMapOf<String, Any>(
-            "relationshipFilter" to ">",
-            "bfs" to true
-        )
-        if (maxLevel != null)
-            conf["maxLevel"] = maxLevel
-        if (minLevel != null)
-            conf["minLevel"] = minLevel
-        if (blackClasses.isNotEmpty() || whiteClasses.isNotEmpty())
-            conf["labelFilter"] = ""
-        if (blackClasses.isNotEmpty())
-            conf["labelFilter"] = blackClasses.joinToString(prefix = "-", separator = "|-")
-        if (whiteClasses.isNotEmpty()) {
-            var positiveLabels = whiteClasses.joinToString(prefix = "+", separator = "|+")
-            if ((conf["labelFilter"] as String).isNotBlank())
-                positiveLabels = "${conf["labelFilter"]}|$positiveLabels"
-            conf["labelFilter"] = positiveLabels
-        }
-        return conf
-    }
-
     private fun refreshObject(thing: Neo4jThing): Thing {
         return when (thing) {
             is Neo4jResource -> resourceService.findById(thing.resourceId).get()

@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.statements.application.BundleConfiguration
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -188,52 +189,17 @@ class Neo4jStatementService :
 
     override fun fetchAsBundle(
         thingId: String,
-        minLevel: Int?,
-        maxLevel: Int?,
-        blackClasses: List<String>,
-        whiteClasses: List<String>
+        configuration: BundleConfiguration
     ): Bundle =
         Bundle(
             thingId,
             statementRepository.fetchAsBundle(
                 thingId,
-                constructApocBundleConfiguration(
-                    minLevel,
-                    maxLevel,
-                    blackClasses,
-                    whiteClasses
-                )
+                configuration.toApocConfiguration()
             )
                 .map { toStatement(it) }
                 .toMutableList()
         )
-
-    private fun constructApocBundleConfiguration(
-        minLevel: Int?,
-        maxLevel: Int?,
-        blackClasses: List<String>,
-        whiteClasses: List<String>
-    ): Map<String, Any> {
-        val conf = mutableMapOf<String, Any>(
-            "relationshipFilter" to ">",
-            "bfs" to true
-        )
-        if (maxLevel != null)
-            conf["maxLevel"] = maxLevel
-        if (minLevel != null)
-            conf["minLevel"] = minLevel
-        if (blackClasses.isNotEmpty() || whiteClasses.isNotEmpty())
-            conf["labelFilter"] = ""
-        if (blackClasses.isNotEmpty())
-            conf["labelFilter"] = blackClasses.joinToString(prefix = "-", separator = "|-")
-        if (whiteClasses.isNotEmpty()) {
-            var positiveLabels = whiteClasses.joinToString(prefix = "+", separator = "|+")
-            if ((conf["labelFilter"] as String).isNotBlank())
-                positiveLabels = "${conf["labelFilter"]}|$positiveLabels"
-            conf["labelFilter"] = positiveLabels
-        }
-        return conf
-    }
 
     private fun toStatement(statement: Neo4jStatement) =
         GeneralStatement(

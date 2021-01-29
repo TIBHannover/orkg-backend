@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import eu.tib.orkg.prototype.statements.application.BundleConfiguration
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import java.util.Optional
 import java.util.UUID
@@ -99,5 +100,5 @@ interface StatementService {
      * Get a bundle of statements
      * which represents the entire sub-graph starting from a [Thing]
      */
-    fun fetchAsBundle(thingId: String, minLevel: Int?, maxLevel: Int?, blackClasses: List<String>, whiteClasses: List<String>): Bundle
+    fun fetchAsBundle(thingId: String, configuration: BundleConfiguration): Bundle
 }

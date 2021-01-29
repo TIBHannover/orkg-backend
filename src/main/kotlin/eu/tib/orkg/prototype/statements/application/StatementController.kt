@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.Class
@@ -193,18 +194,12 @@ class StatementController(
     @GetMapping("/{thingId}/bundle")
     fun fetchAsBundle(
         @PathVariable thingId: String,
-        @RequestParam("minLevel", required = false) minLevel: Int?,
-        @RequestParam("maxLevel", required = false) maxLevel: Int?,
-        @RequestParam("blackClasses", required = false, defaultValue = "") blackClasses: List<String>,
-        @RequestParam("whiteClasses", required = false, defaultValue = "") whiteClasses: List<String>
+        configuration: BundleConfiguration
     ): HttpEntity<Bundle> {
         return ok(
             statementService.fetchAsBundle(
                 thingId,
-                minLevel,
-                maxLevel,
-                blackClasses,
-                whiteClasses
+                configuration
             )
         )
     }
@@ -217,4 +212,43 @@ class StatementController(
             is Class -> thing.id!!.value
             else -> thing.toString()
         }
+}
+
+/**
+ * A Bundle configuration class containing the min and max levels to be fetched
+ * Also the list of classes to be white-listed or black-listed during the fetch
+ * @param minLevel the minimum level to be fetched (if not provided it is set to 0)
+ * @param maxLevel the maximum level of statements to be fetched (if not provided, all child statements will be fetched)
+ * @param blackListedClasses the list of classes to be black-listed (i.e. not fetched), these classes are checked on the subjects and objects of a statement
+ * @param whiteListedClasses the list of classes to be white-listed (i.e. the only ones to be fetched), these classes are checked on the subjects and objects of a statement
+ */
+data class BundleConfiguration(
+    val minLevel: Int?,
+    val maxLevel: Int?,
+    @JsonProperty("blackClasses")
+    val blackListedClasses: List<String>,
+    @JsonProperty("whiteClasses")
+    val whiteListedClasses: List<String>
+) {
+    fun toApocConfiguration(): Map<String, Any> {
+        val conf = mutableMapOf<String, Any>(
+            "relationshipFilter" to ">",
+            "bfs" to true
+        )
+        if (maxLevel != null)
+            conf["maxLevel"] = maxLevel
+        if (minLevel != null)
+            conf["minLevel"] = minLevel
+        if (blackListedClasses.isNotEmpty() || whiteListedClasses.isNotEmpty())
+            conf["labelFilter"] = ""
+        if (blackListedClasses.isNotEmpty())
+            conf["labelFilter"] = blackListedClasses.joinToString(prefix = "-", separator = "|-")
+        if (blackListedClasses.isNotEmpty()) {
+            var positiveLabels = whiteListedClasses.joinToString(prefix = "+", separator = "|+")
+            if ((conf["labelFilter"] as String).isNotBlank())
+                positiveLabels = "${conf["labelFilter"]}|$positiveLabels"
+            conf["labelFilter"] = positiveLabels
+        }
+        return conf
+    }
 }

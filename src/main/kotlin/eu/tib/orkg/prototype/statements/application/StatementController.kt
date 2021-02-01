@@ -227,9 +227,9 @@ data class BundleConfiguration(
     val minLevel: Int?,
     val maxLevel: Int?,
     @JsonProperty("blackClasses")
-    val blackListedClasses: List<String>,
+    val blackListedClasses: List<String> = emptyList(),
     @JsonProperty("whiteClasses")
-    val whiteListedClasses: List<String>
+    val whiteListedClasses: List<String> = emptyList()
 ) {
     fun toApocConfiguration(): Map<String, Any> {
         val conf = mutableMapOf<String, Any>(

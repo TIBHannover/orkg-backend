@@ -194,12 +194,19 @@ class StatementController(
     @GetMapping("/{thingId}/bundle")
     fun fetchAsBundle(
         @PathVariable thingId: String,
-        configuration: BundleConfiguration
+        @RequestParam("minLevel", required = false) minLevel: Int?,
+        @RequestParam("maxLevel", required = false) maxLevel: Int?,
+        @RequestParam("blackClasses", required = false, defaultValue = "") blackListedClasses: List<String>,
+        @RequestParam("whiteClasses", required = false, defaultValue = "") whiteListedClasses: List<String>
     ): HttpEntity<Bundle> {
         return ok(
             statementService.fetchAsBundle(
                 thingId,
-                configuration
+                // FIXME: had to pass configuration like this otherwise lists are not parsed correctly by spring
+                BundleConfiguration(
+                    minLevel, maxLevel,
+                    blackListedClasses, whiteListedClasses
+                )
             )
         )
     }
@@ -225,8 +232,8 @@ class StatementController(
 data class BundleConfiguration(
     val minLevel: Int?,
     val maxLevel: Int?,
-    val blackListedClasses: List<String> = emptyList(),
-    val whiteListedClasses: List<String> = emptyList()
+    val blackListedClasses: List<String>,
+    val whiteListedClasses: List<String>
 ) {
     fun toApocConfiguration(): Map<String, Any> {
         val conf = mutableMapOf<String, Any>(

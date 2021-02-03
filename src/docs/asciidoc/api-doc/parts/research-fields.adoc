@@ -11,3 +11,47 @@ A `GET` request lists all problems used within all papers under the specified re
 
 operation::research-field-controller-test-get-problems-per-field[snippets='curl-request,http-response']
 
+
+[[problems-list]]
+=== Listing Papers in field
+
+A `GET` request lists all papers under the specified research field.
+//TODO:A sample request and response will be added later when the uni tests have been written.
+
+[[problems-list]]
+=== Listing Contributors in field
+
+A `GET` request lists all contributors under the specified research field.
+//TODO:A sample request and response will be added later when the unit tests have been written.
+
+[[problems-list]]
+=== Listing Comparisons in field
+
+A `GET` request lists all comparisons under the specified research field.
+//TODO:A sample request and response will be added later when the unit tests have been written.
+
+[[problems-list]]
+=== Listing Problems in field including sub research fields
+
+A `GET` request lists all problems used within all papers under the specified research field and sub research fields.
+//TODO:A sample request and response will be added later when the unit tests have been written.
+
+[[problems-list]]
+=== Listing Papers in field including sub research fields
+
+A `GET` request lists all papers under the specified research field and sub research fields.
+//TODO:A sample request and response will be added later when the unit tests have been written.
+
+[[problems-list]]
+=== Listing Contributors in field including sub research fields
+
+A `GET` request lists all contributors under the entire tree of the specified research field, comparisons, papers and individual contributions.
+//TODO:A sample request and response will be added later when the unit tests have been written.
+
+[[problems-list]]
+=== Listing Comparisons in field including sub research fields
+
+A `GET` request lists all comparisons under the specified research field and sub research fields.
+//TODO:A sample request and response will be added later when the unit tests have been written.
+
+

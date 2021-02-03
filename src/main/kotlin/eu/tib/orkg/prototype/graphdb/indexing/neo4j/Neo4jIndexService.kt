@@ -67,6 +67,10 @@ class Neo4jIndexService(
                 "Resource",
                 "label"
             ),
+            PropertyIndex(
+                "ResearchField",
+                "resource_id"
+            ),
             PropertyIndex("Class", "label")
         ).forEach { index ->
             try {

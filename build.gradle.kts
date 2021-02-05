@@ -40,6 +40,9 @@ configurations {
 }
 
 dependencies {
+    // Platform alignment for ORKG components
+    api(platform(project(":platform")))
+
     //
     // Runtime
     //

@@ -115,8 +115,7 @@ class ResourceController(
         val found = service.findById(id)
         if (!found.isPresent)
             return notFound().build()
-        val userId = authenticatedUserId()
-        return ok(service.updatePaperObservatory(request, id, ContributorId(userId)))
+        return ok(service.updatePaperObservatory(request, id))
     }
 
     @GetMapping("{id}/contributors")

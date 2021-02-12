@@ -49,11 +49,11 @@ class DoiService(
     }
 
     fun getRelatedPapers(relatedResources: Set<ResourceId>): String {
-        var doiList: Set<String> = mutableSetOf()
+        var doiList: MutableSet<String> = mutableSetOf()
         relatedResources.map { resourceId ->
             val doi = literalService.findDOIByContributionId(resourceId)
             if (doi.isPresent && !doiList.contains(doi.get().label)) {
-                doiList = doiList + doi.get().label
+                doiList.add(doi.get().label)
                 }
         }
 

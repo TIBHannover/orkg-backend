@@ -49,20 +49,14 @@ class DoiService(
     }
 
     fun getRelatedPapers(relatedResources: Set<ResourceId>): String {
-        var relatedIdentifiers = ""
-        var doiList: List<String> = listOf()
+        var doiList: Set<String> = mutableSetOf()
         relatedResources.map { resourceId ->
             val doi = literalService.findDOIByContributionId(resourceId)
             if (doi.isPresent && !doiList.contains(doi.get().label)) {
                 doiList = doiList + doi.get().label
-                doiList.forEach { println(it) }
                 }
         }
 
-        doiList.forEach {
-            relatedIdentifiers += """<relatedIdentifier relationType="References" relatedIdentifierType="DOI">$it</relatedIdentifier>"""
-        }
-
-        return relatedIdentifiers
+        return doiList.joinToString("\n", transform = { """<relatedIdentifier relationType="References" relatedIdentifierType="DOI">$it</relatedIdentifier>""" })
     }
 }

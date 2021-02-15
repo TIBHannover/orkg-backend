@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
@@ -68,7 +69,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
         val userId = createTestUser()
         val organizationId = createTestOrganization(userId)
         val resource = createTestResource(ContributorId.createUnknownContributor(), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
-        val observatoryId = createTestObservatory(organizationId, resource.id.toString())
+        val observatoryId = createTestObservatory(organizationId, resource.id.toString()).id
 
         mockMvc
             .perform(getRequestTo("/api/observatories/$observatoryId"))
@@ -86,7 +87,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
         val userId = createTestUser()
         val organizationId = createTestOrganization(userId)
         val resource = createTestResource(ContributorId.createUnknownContributor(), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
-        val observatoryId = createTestObservatory(organizationId, resource.id.toString())
+        val observatoryId = createTestObservatory(organizationId, resource.id.toString()).id!!
         createTestResource(userId, organizationId, observatoryId, "Paper")
 
         mockMvc
@@ -106,7 +107,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
         val userId = createTestUser()
         val organizationId = createTestOrganization(userId)
         val resource = createTestResource(ContributorId.createUnknownContributor(), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
-        val observatoryId = createTestObservatory(organizationId, resource.id.toString())
+        val observatoryId = createTestObservatory(organizationId, resource.id.toString()).id!!
         createTestResource(userId, organizationId, observatoryId, "Comparison")
 
         mockMvc
@@ -126,7 +127,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
         val userId = createTestUser()
         val organizationId = createTestOrganization(userId)
         val resource = createTestResource(ContributorId.createUnknownContributor(), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
-        val observatoryId = createTestObservatory(organizationId, resource.id.toString())
+        val observatoryId = createTestObservatory(organizationId, resource.id.toString()).id!!
         createTestResource(userId, organizationId, observatoryId, "Problem")
 
         mockMvc
@@ -150,8 +151,8 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
         return service.create("test organization", userId, "www.example.org").id!!
     }
 
-    fun createTestObservatory(organizationId: OrganizationId, resourceId: String): ObservatoryId {
-        return observatoryService.create("test observatory", "example description", service.findById(organizationId).get(), resourceId).id!!
+    fun createTestObservatory(organizationId: OrganizationId, resourceId: String): Observatory {
+        return observatoryService.create("test observatory", "example description", service.findById(organizationId).get(), resourceId)
     }
 
     fun createTestResource(userId: ContributorId, organizationId: OrganizationId, observatoryId: ObservatoryId, resourceType: String): Resource {
@@ -167,7 +168,8 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("research_field.id").description("The research field of an observatory"),
             fieldWithPath("research_field.label").description("The research field of an observatory"),
             fieldWithPath("members").description("The members belonging to the observatory"),
-            fieldWithPath("organization_ids").description("The list of organizations that the observatory belongs to")
+            fieldWithPath("organization_ids").description("The list of organizations that the observatory belongs to"),
+            fieldWithPath("uri_name").description("The URI of an observatory")
         )
 
         fun listOfObservatoriesResponseFields(): ResponseFieldsSnippet =

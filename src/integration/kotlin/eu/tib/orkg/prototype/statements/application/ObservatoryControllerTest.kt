@@ -152,7 +152,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     }
 
     fun createTestObservatory(organizationId: OrganizationId, resourceId: String): Observatory {
-        return observatoryService.create("test observatory", "example description", service.findById(organizationId).get(), resourceId)
+        return observatoryService.create("test observatory", "example description", service.findById(organizationId).get(), resourceId, "test_observatory")
     }
 
     fun createTestResource(userId: ContributorId, organizationId: OrganizationId, observatoryId: ObservatoryId, resourceType: String): Resource {

@@ -10,6 +10,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.Neo4jStatsService
+import org.springframework.http.MediaType
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
@@ -22,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.util.UUID
+import java.util.regex.Pattern
 
 @RestController
 @RequestMapping("/api/observatories/")
@@ -50,10 +53,17 @@ class ObservatoryController(
     }
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: ObservatoryId): Observatory =
-        service
-            .findById(id)
-            .orElseThrow { ObservatoryNotFound(id) }
+    fun findById(@PathVariable id: String): Observatory {
+        return if(id.matches("[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}".toRegex())) {
+            service
+                .findById(ObservatoryId(UUID.fromString(id)))
+                .orElseThrow { ObservatoryNotFound(ObservatoryId(UUID.fromString(id))) }
+        } else {
+            service
+                .findByUriName(id)
+                .orElseThrow { ObservatoryURLNotFound(id) }
+        }
+    }
 
     @GetMapping("/")
     fun findObservatories(): List<Observatory> {

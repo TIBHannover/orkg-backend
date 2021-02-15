@@ -15,6 +15,8 @@ interface ObservatoryService {
 
     fun findById(id: ObservatoryId): Optional<Observatory>
 
+    fun findByUriName(id: String): Optional<Observatory>
+
     fun changeName(id: ObservatoryId, to: String): Observatory
 
     fun changeDescription(id: ObservatoryId, to: String): Observatory

@@ -71,6 +71,13 @@ class PostgresObservatoryService(
         else Optional.of(response)
     }
 
+    override fun findByUriName(id: String): Optional<Observatory> {
+        val response = postgresObservatoryRepository.findByUriName(id).map(ObservatoryEntity::toObservatory).get()
+        return if (hasResearchField(response))
+            Optional.of(response.withResearchField(response.researchField?.id!!))
+        else Optional.of(response)
+    }
+
     override fun findObservatoriesByResearchField(researchField: String): List<Observatory> {
         val response = postgresObservatoryRepository.findByResearchField(researchField).map(ObservatoryEntity::toObservatory)
 

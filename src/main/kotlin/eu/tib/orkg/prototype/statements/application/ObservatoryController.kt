@@ -38,7 +38,7 @@ class ObservatoryController(
     fun addObservatory(@RequestBody observatory: CreateObservatoryRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         return if (service.findByName(observatory.observatoryName).isEmpty) {
             val organizationEntity = organizationService.findById(observatory.organizationId)
-            val id = service.create(observatory.observatoryName, observatory.description, organizationEntity.get(), observatory.researchField).id
+            val id = service.create(observatory.observatoryName, observatory.description, organizationEntity.get(), observatory.researchField, observatory.uriName).id
             val location = uriComponentsBuilder
                 .path("api/observatories/{id}")
                 .buildAndExpand(id)
@@ -130,7 +130,8 @@ class ObservatoryController(
         val observatoryName: String,
         val organizationId: OrganizationId,
         val description: String,
-        val researchField: String
+        val researchField: String,
+        val uriName: String
     )
 
     data class UpdateRequest(

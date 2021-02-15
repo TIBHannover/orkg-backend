@@ -22,7 +22,7 @@ class PostgresObservatoryService(
     private val postgresOrganizationRepository: PostgresOrganizationRepository,
     private val resourceService: ResourceService
 ) : ObservatoryService {
-    override fun create(name: String, description: String, organization: Organization, researchField: String): Observatory {
+    override fun create(name: String, description: String, organization: Organization, researchField: String, uriName: String): Observatory {
         val oId = UUID.randomUUID()
         val org = postgresOrganizationRepository
             .findById(organization.id!!.value)
@@ -33,6 +33,7 @@ class PostgresObservatoryService(
             this.description = description
             this.researchField = researchField
             organizations = mutableSetOf(org)
+            this.uriName = uriName
         }
 
         val response = postgresObservatoryRepository.save(newObservatory).toObservatory()

@@ -36,9 +36,15 @@ class ObservatoryController(
 
     @PostMapping("/")
     fun addObservatory(@RequestBody observatory: CreateObservatoryRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
-        return if (service.findByName(observatory.observatoryName).isEmpty) {
+        return if (service.findByName(observatory.observatoryName).isEmpty && service.findByUriName(observatory.uriName).isEmpty) {
             val organizationEntity = organizationService.findById(observatory.organizationId)
-            val id = service.create(observatory.observatoryName, observatory.description, organizationEntity.get(), observatory.researchField, observatory.uriName).id
+            val id = service.create(
+                observatory.observatoryName,
+                observatory.description,
+                organizationEntity.get(),
+                observatory.researchField,
+                observatory.uriName
+            ).id
             val location = uriComponentsBuilder
                 .path("api/observatories/{id}")
                 .buildAndExpand(id)
@@ -46,7 +52,7 @@ class ObservatoryController(
             ResponseEntity.created(location).body(service.findById(id!!).get())
         } else
             ResponseEntity.badRequest().body(
-                    ErrorMessage(message = "Observatory already exist")
+                    ErrorMessage(message = "Observatory with same name or URL already exist")
                 )
     }
 

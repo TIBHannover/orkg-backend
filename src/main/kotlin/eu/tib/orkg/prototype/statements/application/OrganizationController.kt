@@ -59,10 +59,16 @@ class OrganizationController(
     }
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: OrganizationId): Organization {
-        val response = service
-            .findById(id)
-            .orElseThrow { OrganizationNotFound(id) }
+    fun findById(@PathVariable id: String): Organization {
+        val response: Organization = if (id.matches("[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}".toRegex())) {
+            service
+                .findById(OrganizationId(id))
+                .orElseThrow { OrganizationNotFound(OrganizationId(id)) }
+        } else {
+            service
+                .findByUriName(id)
+                .orElseThrow { OrganizationNotFound(OrganizationId(id)) }
+        }
         val logo = encoder(response.id.toString())
 
         return response.copy(logo = logo)
@@ -177,7 +183,8 @@ class OrganizationController(
         val organizationName: String,
         var organizationLogo: String,
         val createdBy: ContributorId,
-        val url: String
+        val url: String,
+        val uriName: String
     )
 
     data class ErrorMessage(

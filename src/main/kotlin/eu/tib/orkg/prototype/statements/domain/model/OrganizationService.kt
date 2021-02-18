@@ -14,5 +14,7 @@ interface OrganizationService {
 
     fun findById(id: OrganizationId): Optional<Organization>
 
+    fun findByUriName(name: String): Optional<Organization>
+
     fun updateOrganization(organization: Organization): Organization
 }

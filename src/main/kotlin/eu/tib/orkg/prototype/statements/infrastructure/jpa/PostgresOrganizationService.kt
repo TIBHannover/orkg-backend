@@ -37,6 +37,11 @@ class PostgresOrganizationService(
             .findById(id.value)
             .map(OrganizationEntity::toOrganization)
 
+    override fun findByUriName(name: String): Optional<Organization> =
+        postgresOrganizationRepository
+            .findByUriName(name)
+            .map(OrganizationEntity::toOrganization)
+
     override fun updateOrganization(organization: Organization): Organization {
         val entity = postgresOrganizationRepository.findById(organization.id!!.value).get()
 

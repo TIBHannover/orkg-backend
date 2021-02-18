@@ -147,7 +147,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     }
 
     fun createTestOrganization(userId: ContributorId): OrganizationId {
-        return service.create("test organization", userId, "www.example.org").id!!
+        return service.create("test organization", userId, "www.example.org", "test_organization").id!!
     }
 
     fun createTestObservatory(organizationId: OrganizationId, resourceId: String): ObservatoryId {

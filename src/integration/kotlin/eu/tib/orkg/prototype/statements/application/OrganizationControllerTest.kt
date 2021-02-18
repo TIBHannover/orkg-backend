@@ -46,7 +46,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
     @Test
     fun index() {
         val userId = createTestUser()
-        service.create("test organization", userId, "www.example.org")
+        service.create("test organization", userId, "www.example.org", "organization_test")
 
         mockMvc
             .perform(getRequestTo("/api/organizations/"))
@@ -61,7 +61,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun fetch() {
-        val organizationId = service.create("test organization", ContributorId.createUnknownContributor(), "www.example.org").id
+        val organizationId = service.create("test organization", ContributorId.createUnknownContributor(), "www.example.org", "test_organization").id
 
         mockMvc
             .perform(getRequestTo("/api/organizations/$organizationId"))
@@ -77,7 +77,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
     @Test
     fun lookUpObservatoriesByOrganization() {
         val userId = createTestUser()
-        val organizationId = service.create("test organization", userId, "www.example.org").id
+        val organizationId = service.create("test organization", userId, "www.example.org", "organization_test").id
         val resource = createTestResource(ContributorId.createUnknownContributor(), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
         observatoryService.create("test observatory", "example description", service.findById(organizationId!!).get(), resource.id.toString()).id!!
 
@@ -108,7 +108,8 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("logo").description("The logo of the organization"),
             fieldWithPath("created_by").description("The ID of the user that created the organization."),
             fieldWithPath("homepage").description("The URL of the organization's homepage."),
-            fieldWithPath("observatory_ids").description("The list of observatories that belong to this organization")
+            fieldWithPath("observatory_ids").description("The list of observatories that belong to this organization"),
+            fieldWithPath("uri_name").description("The URL of an organization")
         )
 
         fun listOfOrganizationsResponseFields(): ResponseFieldsSnippet =

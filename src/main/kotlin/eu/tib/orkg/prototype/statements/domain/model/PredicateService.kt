@@ -51,4 +51,9 @@ interface PredicateService {
      * Update a predicate.
      */
     fun update(predicate: Predicate): Predicate
+
+    /**
+     * Delete all predicates
+     */
+    fun removeAll()
 }

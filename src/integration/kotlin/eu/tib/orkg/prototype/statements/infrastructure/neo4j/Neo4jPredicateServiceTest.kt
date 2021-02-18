@@ -1,22 +1,30 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
-import eu.tib.orkg.prototype.Neo4jServiceTest
 import eu.tib.orkg.prototype.statements.application.CreatePredicateRequest
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
 
-@Neo4jServiceTest
+@SpringBootTest
 @DisplayName("Neo4j: Predicate service")
 class Neo4jPredicateServiceTest {
 
     @Autowired
     private lateinit var service: PredicateService
+
+    @BeforeEach
+    fun setup() {
+        service.removeAll()
+
+        assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(0)
+    }
 
     @Test
     @DisplayName("should create predicate from request")
@@ -30,21 +38,22 @@ class Neo4jPredicateServiceTest {
     @Test
     @DisplayName("should find created predicates")
     fun shouldFindCreatedPredicates() {
-        service.create("first")
-        service.create("second")
+        service.create(CreatePredicateRequest(PredicateId("firstID"), "First Concept"))
+        service.create(CreatePredicateRequest(PredicateId("secondID"), "Second Concept"))
 
         val predicates = service.findAll(PageRequest.of(0, 10))
+
         val labels = predicates.map(Predicate::label)
 
         assertThat(predicates).hasSize(2)
-        assertThat(labels).containsExactlyInAnyOrder("first", "second")
+        assertThat(labels).containsExactlyInAnyOrder("First Concept", "Second Concept")
     }
 
     @Test
     @DisplayName("should return empty list when label was not found")
     fun shouldReturnEmptyListWhenLabelWasNotFound() {
-        service.create("first")
-        service.create("second")
+        service.create("third")
+        service.create("fourth")
 
         assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(2)
 

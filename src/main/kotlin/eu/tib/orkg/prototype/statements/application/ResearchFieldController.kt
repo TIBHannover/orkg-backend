@@ -49,7 +49,8 @@ class ResearchFieldController(
     @GetMapping("/{id}/subfields/problems")
     fun getResearchProblemsIncludingSubFields(
         @PathVariable id: ResourceId,
-        pageable: Pageable): ResponseEntity<Page<Neo4jResource>>{
+        pageable: Pageable
+    ): ResponseEntity<Page<Neo4jResource>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         return ok(service.getResearchProblemsIncludingSubFields(id, pageable))
     }
@@ -62,7 +63,8 @@ class ResearchFieldController(
     @GetMapping("/{id}/subfields/contributors")
     fun getContributorsIncludingSubFields(
         @PathVariable id: ResourceId,
-        pageable: Pageable): ResponseEntity<Page<Contributor>>{
+        pageable: Pageable
+    ): ResponseEntity<Page<Contributor>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         return ok(service.getContributorsExcludingSubFields(id, pageable))
     }
@@ -75,7 +77,8 @@ class ResearchFieldController(
     @GetMapping("/{id}/subfields/comparisons")
     fun getComparisonsIncludingSubFields(
         @PathVariable id: ResourceId,
-        pageable: Pageable): ResponseEntity<Page<Neo4jResource>>{
+        pageable: Pageable
+    ): ResponseEntity<Page<Neo4jResource>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         return ok(service.getComparisonsIncludingSubFields(id, pageable))
     }
@@ -88,7 +91,8 @@ class ResearchFieldController(
     @GetMapping("/{id}/subfields/papers")
     fun getPapersIncludingSubFields(
         @PathVariable id: ResourceId,
-        pageable: Pageable): ResponseEntity<Page<Neo4jResource>>{
+        pageable: Pageable
+    ): ResponseEntity<Page<Neo4jResource>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         return ok(service.getPapersIncludingSubFields(id, pageable))
     }
@@ -101,7 +105,8 @@ class ResearchFieldController(
     @GetMapping("/{id}/papers")
     fun getPapersExcludingSubFields(
         @PathVariable id: ResourceId,
-        pageable: Pageable): ResponseEntity<Page<Neo4jResource>>{
+        pageable: Pageable
+    ): ResponseEntity<Page<Neo4jResource>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         return ok(service.getPapersExcludingSubFields(id, pageable))
     }
@@ -114,7 +119,8 @@ class ResearchFieldController(
     @GetMapping("/{id}/comparisons")
     fun getComparisonsExcludingSubFields(
         @PathVariable id: ResourceId,
-        pageable: Pageable): ResponseEntity<Page<Neo4jResource>>{
+        pageable: Pageable
+    ): ResponseEntity<Page<Neo4jResource>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         return ok(service.getComparisonsExcludingSubFields(id, pageable))
     }
@@ -127,7 +133,8 @@ class ResearchFieldController(
     @GetMapping("/{id}/contributors")
     fun getContributorsExcludingSubFields(
         @PathVariable id: ResourceId,
-        pageable: Pageable): ResponseEntity<Page<Contributor>>{
+        pageable: Pageable
+    ): ResponseEntity<Page<Contributor>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         return ok(service.getContributorsExcludingSubFields(id, pageable))
     }

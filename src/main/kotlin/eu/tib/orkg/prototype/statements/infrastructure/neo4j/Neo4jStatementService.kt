@@ -172,6 +172,8 @@ class Neo4jStatementService :
         statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(predicateId, literal, subjectClass, pagination)
             .map { toStatement(it) }
 
+    override fun removeAll() = statementRepository.deleteAll()
+
     private fun refreshObject(thing: Neo4jThing): Thing {
         return when (thing) {
             is Neo4jResource -> resourceService.findById(thing.resourceId).get()

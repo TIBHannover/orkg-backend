@@ -1,11 +1,10 @@
 package eu.tib.orkg.prototype.auth.service
 
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
-import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
 import java.util.Optional
 import java.util.UUID
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
@@ -22,7 +21,6 @@ interface UserRepository :
 
     fun findByOrganizationId(id: UUID): Iterable<UserEntity>
 
-   @Query("SELECT u FROM UserEntity u WHERE u.id in ?1")
+    @Query("SELECT u FROM UserEntity u WHERE u.id in ?1")
     fun findByIdIn(@Param("ids")ids: Array<UUID>, pageable: Pageable): Page<UserEntity>
-
 }

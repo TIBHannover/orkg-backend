@@ -10,10 +10,13 @@ import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
+import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
@@ -42,6 +45,17 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
     private lateinit var resourceService: ResourceService
 
     override fun createController() = controller
+
+    @BeforeEach
+    fun setup() {
+        service.removeAll()
+        observatoryService.removeAll()
+        resourceService.removeAll()
+
+        Assertions.assertThat(service.listOrganizations()).hasSize(0)
+        Assertions.assertThat(observatoryService.listObservatories()).hasSize(0)
+        Assertions.assertThat(resourceService.findAll(PageRequest.of(0, 10))).hasSize(0)
+    }
 
     @Test
     fun index() {

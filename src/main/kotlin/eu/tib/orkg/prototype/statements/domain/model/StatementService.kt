@@ -95,4 +95,9 @@ interface StatementService {
      * With a filter on the class of the subject
      */
     fun findAllByPredicateAndLabelAndSubjectClass(predicateId: PredicateId, literal: String, subjectClass: ClassId, pagination: Pageable): Iterable<GeneralStatement>
+
+    /**
+     * Delete all statements
+     */
+    fun removeAll()
 }

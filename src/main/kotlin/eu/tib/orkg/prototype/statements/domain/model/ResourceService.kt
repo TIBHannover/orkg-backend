@@ -129,4 +129,9 @@ interface ResourceService : MarkAsVerifiedUseCase, LoadResourcePort, LoadPaperPo
     fun hasStatements(id: ResourceId): Boolean
 
     fun delete(id: ResourceId)
+
+    /**
+     * Delete all resources
+     */
+    fun removeAll()
 }

@@ -73,6 +73,8 @@ class Neo4jPredicateService(
         return neo4jPredicateRepository.save(found).toPredicate()
     }
 
+    override fun removeAll() = neo4jPredicateRepository.deleteAll()
+
     private fun String.toSearchString() = "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"
 
     private fun String.toExactSearchString() = "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"

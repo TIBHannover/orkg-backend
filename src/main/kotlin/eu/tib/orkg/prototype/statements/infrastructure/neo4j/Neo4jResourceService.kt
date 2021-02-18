@@ -176,6 +176,8 @@ class Neo4jResourceService(
         neo4jResourceRepository.delete(found)
     }
 
+    override fun removeAll() = neo4jResourceRepository.deleteAll()
+
     override fun markAsVerified(resourceId: ResourceId) = setVerifiedFlag(resourceId, true)
 
     override fun markAsUnverified(resourceId: ResourceId) = setVerifiedFlag(resourceId, false)

@@ -4,9 +4,12 @@ import eu.tib.orkg.prototype.statements.application.rdf.VocabController
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -28,6 +31,19 @@ class VocabControllerTest : RestDocumentationBaseTest() {
     private lateinit var classService: ClassService
 
     override fun createController() = controller
+
+    @BeforeEach
+    fun setup() {
+        val tempPageable = PageRequest.of(0, 10)
+
+        resourceService.removeAll()
+        predicateService.removeAll()
+        classService.removeAll()
+
+        Assertions.assertThat(resourceService.findAll(tempPageable)).hasSize(0)
+        Assertions.assertThat(predicateService.findAll(tempPageable)).hasSize(0)
+        Assertions.assertThat(classService.findAll(tempPageable)).hasSize(0)
+    }
 
     @Test
     fun resource() {

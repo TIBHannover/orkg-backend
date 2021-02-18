@@ -22,4 +22,9 @@ interface ObservatoryService {
     fun changeResearchField(id: ObservatoryId, to: String): Observatory
 
     fun findObservatoriesByResearchField(researchField: String): List<Observatory>
+
+    /**
+     * Remove all observatories
+     */
+    fun removeAll()
 }

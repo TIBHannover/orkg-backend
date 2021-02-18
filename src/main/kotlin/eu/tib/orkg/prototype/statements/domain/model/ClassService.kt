@@ -70,4 +70,9 @@ interface ClassService : URIService<Class> {
      * Update a class.
      */
     fun update(`class`: Class): Class
+
+    /**
+     * Delete all classes
+     */
+    fun removeAll()
 }

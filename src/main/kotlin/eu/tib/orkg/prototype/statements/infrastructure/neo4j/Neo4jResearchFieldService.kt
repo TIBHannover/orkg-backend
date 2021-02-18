@@ -7,11 +7,11 @@ import eu.tib.orkg.prototype.statements.domain.model.ResearchFieldService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResearchFieldRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
+import java.util.UUID
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
 
 @Service
 @Transactional
@@ -33,7 +33,7 @@ class Neo4jResearchFieldService(
     override fun getResearchProblemsIncludingSubFields(id: ResourceId, pageable: Pageable): Page<Neo4jResource> =
         neo4jResearchFieldRepository.getProblemsIncludingSubFields(id, pageable)
 
-    override fun getContributorsIncludingSubFields(id: ResourceId, pageable: Pageable): Page<Contributor>{
+    override fun getContributorsIncludingSubFields(id: ResourceId, pageable: Pageable): Page<Contributor> {
         val userList = mutableListOf<UUID>()
         neo4jResearchFieldRepository.getContributorsFromResearchFieldAndIncludeSubfields(id, pageable).map {
             userList.add(it.value)

@@ -85,7 +85,7 @@ class Neo4jIndexService(
             ),
             PropertyIndex(
                 "Resource",
-                "created_at"
+                "created_by"
             ),
             PropertyIndex(
                 "Class",

@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
 
 interface StatsService {
@@ -17,4 +18,10 @@ interface StatsService {
     fun getObservatoryComparisonsCount(id: ObservatoryId): Long
 
     fun getObservatoriesPapersAndComparisonsCount(): Iterable<ObservatoryResources>
+
+    fun getTopCurrentContributors(): List<Contributor>
+
+    fun getRecentChangeLog(): List<String>
+
+    fun getTrendingResearchProblems(): List<String>
 }

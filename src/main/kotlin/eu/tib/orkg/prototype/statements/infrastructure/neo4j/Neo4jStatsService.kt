@@ -1,17 +1,23 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.auth.persistence.UserEntity
+import eu.tib.orkg.prototype.auth.service.UserRepository
+import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.domain.model.StatsService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatsRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
+import java.time.LocalDate
+import java.util.UUID
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
 class Neo4jStatsService(
-    private val neo4jStatsRepository: Neo4jStatsRepository
+    private val neo4jStatsRepository: Neo4jStatsRepository,
+    private val userRepository: UserRepository
 ) : StatsService {
 
     override fun getStats(): Stats {
@@ -45,6 +51,21 @@ class Neo4jStatsService(
 
     override fun getObservatoriesPapersAndComparisonsCount(): List<ObservatoryResources> =
         neo4jStatsRepository.getObservatoriesPapersAndComparisonsCount()
+
+    override fun getTopCurrentContributors(): List<Contributor> {
+        val userList = mutableListOf<UUID>()
+        val previousMonthDate: LocalDate = LocalDate.now().minusMonths(1)
+
+        neo4jStatsRepository.getTopCurrentContributors(previousMonthDate.toString()).map {
+            userList.add(it.value)
+        }
+
+        return userRepository.findByIdIn(userList.toTypedArray()).map(UserEntity::toContributor)
+    }
+
+    override fun getRecentChangeLog(): List<String> = neo4jStatsRepository.getChangeLog()
+
+    override fun getTrendingResearchProblems(): List<String> = neo4jStatsRepository.getTrendingResearchProblems()
 
     private fun extractValue(map: Map<*, *>, key: String): Long {
         return if (map.containsKey(key))

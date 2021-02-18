@@ -14,4 +14,6 @@ interface UserRepository :
     fun findByObservatoryId(id: UUID): Iterable<UserEntity>
 
     fun findByOrganizationId(id: UUID): Iterable<UserEntity>
+
+    fun findByIdIn(ids: Array<UUID>): Iterable<UserEntity>
 }

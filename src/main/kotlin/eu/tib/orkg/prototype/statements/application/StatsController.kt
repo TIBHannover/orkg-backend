@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.domain.model.StatsService
@@ -38,4 +39,19 @@ class StatsController(private val service: StatsService) {
     fun getObservatoryComparisonsCount(@PathVariable id: ObservatoryId): ResponseEntity<Long> {
         return ResponseEntity.ok(service.getObservatoryComparisonsCount(id))
     }
+
+    @GetMapping("/top/research-problems")
+    @ResponseStatus(HttpStatus.OK)
+    fun getTrendingResearchProblems(): ResponseEntity<List<String>> =
+        ResponseEntity.ok(service.getTrendingResearchProblems())
+
+    @GetMapping("/top/changelog")
+    @ResponseStatus(HttpStatus.OK)
+    fun getTopChangeLogs(): ResponseEntity<List<String>> =
+        ResponseEntity.ok(service.getRecentChangeLog())
+
+    @GetMapping("/top/contributors")
+    @ResponseStatus(HttpStatus.OK)
+    fun getTopContributors(): ResponseEntity<List<Contributor>> =
+        ResponseEntity.ok(service.getTopCurrentContributors())
 }

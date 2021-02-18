@@ -68,10 +68,28 @@ class Neo4jIndexService(
                 "label"
             ),
             PropertyIndex(
-                "ResearchField",
-                "resource_id"
+                "Paper",
+                "created_by"
             ),
-            PropertyIndex("Class", "label")
+            PropertyIndex(
+                "Thing",
+                "label"
+            ),
+            PropertyIndex(
+                "Thing",
+                "created_at"
+            ),
+            PropertyIndex(
+                "Resource",
+                "created_at"
+            ),
+            PropertyIndex(
+                "Resource",
+                "created_at"
+            ),
+            PropertyIndex(
+                "Class",
+                "label")
         ).forEach { index ->
             try {
                 checkAndCreateConstraint(existingIndexes, index)

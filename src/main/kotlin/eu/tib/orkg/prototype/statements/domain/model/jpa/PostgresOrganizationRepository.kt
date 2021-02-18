@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface PostgresOrganizationRepository : JpaRepository<OrganizationEntity, UUID> {
 
     fun findByUriName(name: String): Optional<OrganizationEntity>
+
+    fun findByName(name: String): Optional<OrganizationEntity>
 }

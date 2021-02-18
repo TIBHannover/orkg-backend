@@ -36,19 +36,26 @@ class OrganizationController(
 
     @PostMapping("/")
     fun addOrganization(@RequestBody organization: CreateOrganizationRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
-        return if (!isValidLogo(organization.organizationLogo)) {
-            ResponseEntity.badRequest().body(
+        if (!isValidLogo(organization.organizationLogo)) {
+            return ResponseEntity.badRequest().body(
                     ErrorMessage(message = "Please upload a valid image"))
         } else {
-            val response = (service.create(organization.organizationName, organization.createdBy, organization.url))
-            decoder(organization.organizationLogo, response.id)
-            val location = uriComponentsBuilder
-                .path("api/organizations/{id}")
-                .buildAndExpand(response.id)
-                .toUri()
-            ResponseEntity.created(location).body(service.findById(response.id!!).get())
+            return if (service.findByName(organization.organizationName).isEmpty && service.findByUriName(organization.uriName).isEmpty) {
+                val response = (service.create(organization.organizationName, organization.createdBy, organization.url, organization.uriName))
+                decoder(organization.organizationLogo, response.id)
+                val location = uriComponentsBuilder
+                    .path("api/organizations/{id}")
+                    .buildAndExpand(response.id)
+                    .toUri()
+                ResponseEntity.created(location).body(service.findById(response.id!!).get())
+            } else {
+                ResponseEntity.badRequest().body(
+                    ErrorMessage(message = "Organization with same name or URL already exist")
+                )
+            }
         }
     }
+
     @GetMapping("/")
     fun findOrganizations(): List<Organization> {
         val response = service.listOrganizations()

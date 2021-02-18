@@ -16,13 +16,14 @@ import org.springframework.transaction.annotation.Transactional
 class PostgresOrganizationService(
     private val postgresOrganizationRepository: PostgresOrganizationRepository
 ) : OrganizationService {
-    override fun create(OrganizationName: String, CreatedBy: ContributorId, Url: String): Organization {
+    override fun create(OrganizationName: String, CreatedBy: ContributorId, Url: String, uriName: String): Organization {
         val organizationId = UUID.randomUUID()
         val newOrganization = OrganizationEntity().apply {
             id = organizationId
             name = OrganizationName
             createdBy = CreatedBy.value
             url = Url
+            this.uriName = uriName
         }
         return postgresOrganizationRepository.save(newOrganization).toOrganization()
     }
@@ -35,6 +36,11 @@ class PostgresOrganizationService(
     override fun findById(id: OrganizationId): Optional<Organization> =
         postgresOrganizationRepository
             .findById(id.value)
+            .map(OrganizationEntity::toOrganization)
+
+    override fun findByName(name: String): Optional<Organization> =
+        postgresOrganizationRepository
+            .findByName(name)
             .map(OrganizationEntity::toOrganization)
 
     override fun findByUriName(name: String): Optional<Organization> =

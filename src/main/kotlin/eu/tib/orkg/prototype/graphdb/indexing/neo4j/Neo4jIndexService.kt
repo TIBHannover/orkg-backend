@@ -67,6 +67,26 @@ class Neo4jIndexService(
                 "Resource",
                 "label"
             ),
+            PropertyIndex(
+                "Paper",
+                "created_by"
+            ),
+            PropertyIndex(
+                "Thing",
+                "label"
+            ),
+            PropertyIndex(
+              "Thing",
+                "created_at"
+            ),
+            PropertyIndex(
+                "Resource",
+                "created_at"
+            ),
+            PropertyIndex(
+                "Resource",
+                "created_at"
+            ),
             PropertyIndex("Class", "label")
         ).forEach { index ->
             try {

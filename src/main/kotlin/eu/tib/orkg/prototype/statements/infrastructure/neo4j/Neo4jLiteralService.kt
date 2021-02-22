@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteral
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteralIdGenerator
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteralRepository
@@ -42,6 +43,10 @@ class Neo4jLiteralService(
 
     override fun findAllByLabelContaining(part: String) =
         neo4jLiteralRepository.findAllByLabelMatchesRegex(part.toSearchString()) // TODO: See declaration
+            .map(Neo4jLiteral::toLiteral)
+
+    override fun findDOIByContributionId(id: ResourceId): Optional<Literal> =
+        neo4jLiteralRepository.findDOIByContributionId(id)
             .map(Neo4jLiteral::toLiteral)
 
     override fun update(literal: Literal): Literal {

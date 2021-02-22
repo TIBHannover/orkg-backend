@@ -171,6 +171,8 @@ tasks {
             exclude("parts/**")
             include("*.adoc")
             include("api-doc/*.adoc")
+            include("architecture/*.adoc")
+            include("references/*.adoc")
         })
     }
 
@@ -196,5 +198,11 @@ tasks {
         kotlinGradle {
             ktlint()
         }
+    }
+}
+
+asciidoctorj {
+    modules {
+        diagram.use()
     }
 }

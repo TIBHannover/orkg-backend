@@ -1,10 +1,10 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.CreateStatement
+import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
@@ -12,6 +12,8 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import eu.tib.orkg.prototype.statements.domain.model.Thing
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
@@ -38,13 +40,9 @@ class StatementController(
 
     @GetMapping("/")
     fun findAll(
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+        pageable: Pageable
     ): Iterable<StatementResponse> {
-        val pagination = createPageable(page, items, sortBy, desc)
-        return statementService.findAll(pagination)
+        return statementService.findAll(pageable)
     }
 
     @GetMapping("/{statementId}")
@@ -59,38 +57,26 @@ class StatementController(
     @GetMapping("/subject/{subjectId}")
     fun findBySubject(
         @PathVariable subjectId: String,
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
-    ): HttpEntity<Iterable<StatementResponse>> {
-        val pagination = createPageable(page, items, sortBy, desc)
-        return ok(statementService.findAllBySubject(subjectId, pagination))
+        pageable: Pageable
+    ): HttpEntity<Page<GeneralStatement>> {
+        return ok(statementService.findAllBySubject(subjectId, pageable))
     }
 
     @GetMapping("/subject/{subjectId}/predicate/{predicateId}")
     fun findBySubjectAndPredicate(
         @PathVariable subjectId: String,
         @PathVariable predicateId: PredicateId,
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+        pageable: Pageable
     ): HttpEntity<Iterable<StatementResponse>> {
-        val pagination = createPageable(page, items, sortBy, desc)
-        return ok(statementService.findAllBySubjectAndPredicate(subjectId, predicateId, pagination))
+        return ok(statementService.findAllBySubjectAndPredicate(subjectId, predicateId, pageable))
     }
 
     @GetMapping("/predicate/{predicateId}")
     fun findByPredicate(
         @PathVariable predicateId: PredicateId,
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+        pageable: Pageable
     ): HttpEntity<Iterable<StatementResponse>> {
-        val pagination = createPageable(page, items, sortBy, desc)
-        return ok(statementService.findAllByPredicate(predicateId, pagination))
+        return ok(statementService.findAllByPredicate(predicateId, pageable))
     }
 
     @GetMapping("/predicate/{predicateId}/literal/{literal}")
@@ -98,15 +84,14 @@ class StatementController(
         @PathVariable predicateId: PredicateId,
         @PathVariable literal: String,
         @RequestParam("subjectClass", required = false) subjectClass: ClassId?,
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+        pageable: Pageable
     ): HttpEntity<Iterable<StatementResponse>> {
-        val pagination = createPageable(page, items, sortBy, desc)
         val result = when (subjectClass) {
-            null -> statementService.findAllByPredicateAndLabel(predicateId, literal, pagination)
-            else -> statementService.findAllByPredicateAndLabelAndSubjectClass(predicateId, literal, subjectClass, pagination)
+            null -> statementService.findAllByPredicateAndLabel(predicateId, literal, pageable)
+            else -> statementService.findAllByPredicateAndLabelAndSubjectClass(
+                predicateId, literal, subjectClass,
+                pageable
+            )
         }
         return ok(result)
     }
@@ -114,26 +99,18 @@ class StatementController(
     @GetMapping("/object/{objectId}")
     fun findByObject(
         @PathVariable objectId: String,
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
-    ): HttpEntity<Iterable<StatementResponse>> {
-        val pagination = createPageable(page, items, sortBy, desc)
-        return ok(statementService.findAllByObject(objectId, pagination))
+        pageable: Pageable
+    ): Page<GeneralStatement> {
+        return statementService.findAllByObject(objectId, pageable)
     }
 
     @GetMapping("/object/{objectId}/predicate/{predicateId}")
     fun findByObjectAndPredicate(
         @PathVariable objectId: String,
         @PathVariable predicateId: PredicateId,
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+        pageable: Pageable
     ): HttpEntity<Iterable<StatementResponse>> {
-        val pagination = createPageable(page, items, sortBy, desc)
-        return ok(statementService.findAllByObjectAndPredicate(objectId, predicateId, pagination))
+        return ok(statementService.findAllByObjectAndPredicate(objectId, predicateId, pageable))
     }
 
     @PostMapping("/")

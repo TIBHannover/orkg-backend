@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.CreateClassRequest
 import java.net.URI
 import java.util.Optional
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface ClassService : URIService<Class> {
@@ -39,7 +40,7 @@ interface ClassService : URIService<Class> {
     /**
      * Find all classes (paginated).
      */
-    fun findAll(pageable: Pageable): Iterable<Class>
+    fun findAll(pageable: Pageable): Page<Class>
 
     /**
      * Find a class by its ID.
@@ -54,7 +55,7 @@ interface ClassService : URIService<Class> {
     /**
      * Find all classes matching a label (paginated).
      */
-    fun findAllByLabel(pageable: Pageable, label: String): Iterable<Class>
+    fun findAllByLabel(pageable: Pageable, label: String): Page<Class>
 
     /**
      * Find all resources matching a label partially.
@@ -64,7 +65,7 @@ interface ClassService : URIService<Class> {
     /**
      * Find all classes matching a label partially (paginated).
      */
-    fun findAllByLabelContaining(pageable: Pageable, part: String): Iterable<Class>
+    fun findAllByLabelContaining(pageable: Pageable, part: String): Page<Class>
 
     /**
      * Update a class.

@@ -158,6 +158,12 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
         return resourceService.create(userId, CreateResourceRequest(null, "test paper", setOf(ClassId(resourceType))), observatoryId, ExtractionMethod.UNKNOWN, organizationId)
     }
 
+    fun listOfObservatoriesResponseFields2(): ResponseFieldsSnippet =
+        responseFields(
+            pageableDetailedFieldParameters()
+        ).andWithPrefix("content[].", observatoryResponseFields())
+            .andWithPrefix("")
+
     companion object RestDoc {
         private fun observatoryResponseFields() = listOf(
             fieldWithPath("id").description("The observatory ID"),

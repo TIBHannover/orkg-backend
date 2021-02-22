@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.domain.model
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import java.util.Optional
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 /**
@@ -22,17 +23,17 @@ interface StatementService {
     /**
      * Find all statements with a given subject.
      */
-    fun findAllBySubject(subjectId: String, pagination: Pageable): Iterable<GeneralStatement>
+    fun findAllBySubject(subjectId: String, pagination: Pageable): Page<GeneralStatement>
 
     /**
      * Find all statements with a given predicate.
      */
-    fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable): Iterable<GeneralStatement>
+    fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable): Page<GeneralStatement>
 
     /**
      * Find all statements by object.
      */
-    fun findAllByObject(objectId: String, pagination: Pageable): Iterable<GeneralStatement>
+    fun findAllByObject(objectId: String, pagination: Pageable): Page<GeneralStatement>
 
     /**
      * Find all statements with a given subject and predicate.

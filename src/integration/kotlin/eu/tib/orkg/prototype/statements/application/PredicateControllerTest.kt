@@ -49,7 +49,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                         parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
                         parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
                     ),
-                    listOfPredicatesResponseFields()
+                    listOfPredicatesResponseFields3()
                 )
             )
     }
@@ -84,7 +84,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                     requestParameters(
                         parameterWithName("q").description("A search term that must be contained in the label")
                     ),
-                    listOfPredicatesResponseFields()
+                    listOfPredicatesResponseFields3()
                 )
             )
     }
@@ -104,7 +104,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                     requestParameters(
                         parameterWithName("q").description("A search term that must be contained in the label")
                     ),
-                    listOfPredicatesResponseFields()
+                    listOfPredicatesResponseFields3()
                 )
             )
     }
@@ -171,6 +171,10 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
             )
     }
 
+    fun listOfPredicatesResponseFields3(): ResponseFieldsSnippet =
+        responseFields(pageableDetailedFieldParameters())
+            .andWithPrefix("content[].", predicateResponseFields())
+
     companion object RestDoc {
         fun predicateResponseFields() = listOf(
             fieldWithPath("id").description("The predicate ID"),
@@ -178,11 +182,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("created_at").description("The predicate creation datetime"),
             fieldWithPath("created_by").description("The ID of the user that created the predicate. All zeros if unknown."),
             fieldWithPath("description").description("The description of the predicate, if exists.").optional(),
-            fieldWithPath("_class").optional().ignored()
+            fieldWithPath("_class").description("Class description").optional().ignored()
         )
-
-        fun listOfPredicatesResponseFields(): ResponseFieldsSnippet =
-            responseFields(fieldWithPath("[]").description("A list of predicates"))
-                .andWithPrefix("[].", predicateResponseFields())
     }
 }

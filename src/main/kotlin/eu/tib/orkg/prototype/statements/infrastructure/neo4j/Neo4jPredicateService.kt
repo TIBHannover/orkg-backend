@@ -12,6 +12,7 @@ import eu.tib.orkg.prototype.util.EscapedRegex
 import eu.tib.orkg.prototype.util.SanitizedWhitespace
 import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
 import java.util.Optional
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -41,10 +42,9 @@ class Neo4jPredicateService(
             .toPredicate()
     }
 
-    override fun findAll(pageable: Pageable): Iterable<Predicate> {
+    override fun findAll(pageable: Pageable): Page<Predicate> {
         return neo4jPredicateRepository
             .findAll(pageable)
-            .content
             .map(Neo4jPredicate::toPredicate)
     }
 
@@ -53,16 +53,14 @@ class Neo4jPredicateService(
             .findByPredicateId(id)
             .map(Neo4jPredicate::toPredicate)
 
-    override fun findAllByLabel(label: String, pageable: Pageable) =
+    override fun findAllByLabel(label: String, pageable: Pageable): Page<Predicate> =
         neo4jPredicateRepository
             .findAllByLabelMatchesRegex(label.toExactSearchString(), pageable) // TODO: See declaration
-            .content
             .map(Neo4jPredicate::toPredicate)
 
-    override fun findAllByLabelContaining(part: String, pageable: Pageable) =
+    override fun findAllByLabelContaining(part: String, pageable: Pageable): Page<Predicate> =
         neo4jPredicateRepository
             .findAllByLabelMatchesRegex(part.toSearchString(), pageable) // TODO: See declaration
-            .content
             .map(Neo4jPredicate::toPredicate)
 
     override fun update(predicate: Predicate): Predicate {

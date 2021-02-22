@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.escapeLiterals
 import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
@@ -18,6 +19,7 @@ import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
 import org.neo4j.ogm.annotation.NodeEntity
 import org.neo4j.ogm.annotation.Property
+import org.neo4j.ogm.annotation.Relationship
 import org.neo4j.ogm.annotation.Required
 import org.neo4j.ogm.annotation.typeconversion.Convert
 
@@ -25,7 +27,10 @@ import org.neo4j.ogm.annotation.typeconversion.Convert
 data class Neo4jClass(
     @Id
     @GeneratedValue
-    var id: Long? = null
+    var id: Long? = null,
+    @Relationship(type = "RELATED", direction = Relationship.OUTGOING)
+    @JsonIgnore
+    var subjectOf: MutableSet<Neo4jClass> = mutableSetOf()
 ) : Neo4jThing, AuditableEntity() {
     @Property("class_id")
     @Required
@@ -54,6 +59,8 @@ data class Neo4jClass(
         val aURI: URI? = if (uri != null) URI.create(uri!!) else null
         val clazz = Class(classId!!, label!!, aURI, createdAt!!, createdBy = createdBy)
         clazz.rdf = toRdfModel()
+        if (subjectOf.isNotEmpty())
+            clazz.description = subjectOf.firstOrNull { it.classId?.value == "description" }?.label
         return clazz
     }
 

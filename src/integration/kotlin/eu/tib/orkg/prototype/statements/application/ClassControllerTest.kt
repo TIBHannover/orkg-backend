@@ -291,6 +291,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("uri").description("An optional URI to describe the class (RDF)").optional(),
             fieldWithPath("created_at").description("The class creation datetime"),
             fieldWithPath("created_by").description("The ID of the user that created the class. All zeros if unknown."),
+            fieldWithPath("description").description("The description of the class, if exists.").optional(),
             fieldWithPath("_class").optional().ignored()
         )
 
@@ -301,6 +302,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("uri").description("An optional URI to describe the class (RDF)").optional(),
             fieldWithPath("created_at").description("The class creation datetime"),
             fieldWithPath("created_by").description("The ID of the user that created the class. All zeros if unknown."),
+            fieldWithPath("description").description("The description of the class, if exists.").optional(),
             fieldWithPath("_class").optional().ignored()
         )
 

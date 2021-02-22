@@ -40,7 +40,13 @@ class Neo4jClassService(
     override fun create(request: CreateClassRequest) = create(ContributorId.createUnknownContributor(), request)
 
     override fun create(userId: ContributorId, request: CreateClassRequest): Class {
-        val id = request.id ?: neo4jClassIdGenerator.nextIdentity()
+        var id = request.id ?: neo4jClassIdGenerator.nextIdentity()
+
+        // Should be moved to the Generator in the future
+        while (neo4jClassRepository.findByClassId(id).isPresent) {
+            id = neo4jClassIdGenerator.nextIdentity()
+        }
+
         return neo4jClassRepository.save(
             Neo4jClass(classId = id, createdBy = userId, label = request.label, uri = request.uri)
         ).toClass()

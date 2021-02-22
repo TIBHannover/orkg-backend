@@ -39,7 +39,13 @@ class Neo4jPredicateService(
     override fun create(request: CreatePredicateRequest) = create(ContributorId.createUnknownContributor(), request)
 
     override fun create(userId: ContributorId, request: CreatePredicateRequest): Predicate {
-        val id = request.id ?: neo4jPredicateIdGenerator.nextIdentity()
+        var id = request.id ?: neo4jPredicateIdGenerator.nextIdentity()
+
+        // Should be moved to the Generator in the future
+        while (neo4jPredicateRepository.findByPredicateId(id).isPresent) {
+            id = neo4jPredicateIdGenerator.nextIdentity()
+        }
+
         return neo4jPredicateRepository
             .save(Neo4jPredicate(label = request.label, predicateId = id, createdBy = userId))
             .toPredicate()

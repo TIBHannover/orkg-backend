@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j.bulk
 
-import eu.tib.orkg.prototype.statements.domain.model.BulkStatementsService
+import eu.tib.orkg.prototype.statements.application.port.`in`.GetBulkStatementsQuery
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class Neo4jBulkStatementService :
-    BulkStatementsService {
+    GetBulkStatementsQuery {
 
     @Autowired
     private lateinit var predicateService: PredicateService

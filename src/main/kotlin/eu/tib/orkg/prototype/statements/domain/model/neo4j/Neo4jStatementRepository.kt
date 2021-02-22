@@ -9,6 +9,28 @@ import org.springframework.data.domain.Slice
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
+/**
+ * Partial query that matches a statement.
+ * Queries using this partial query must use `rel` as the binding name for predicates, `sub` for subjects, and `obj` for objects.
+ */
+private const val MATCH_STATEMENT =
+    """MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Thing`)"""
+
+/**
+ * Partial query that returns the statement, with the id and the created at date.
+ * Queries using this partial query must use `rel` as the binding name for predicates, `sub` for subjects, and `obj` for objects.
+ */
+private const val RETURN_STATEMENT =
+    """RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at"""
+
+// Custom queries
+
+private const val WHERE_SUBJECT_ID_IN =
+    """WHERE sub.`resource_id` IN {0} OR sub.`literal_id` IN {0} OR sub.`predicate_id` IN {0} OR sub.`class_id` IN {0}"""
+
+private const val WHERE_OBJECT_ID_IN =
+    """WHERE obj.`resource_id` IN {0} OR obj.`literal_id` IN {0} OR obj.`predicate_id` IN {0} OR obj.`class_id` IN {0}"""
+
 interface Neo4jStatementRepository :
     Neo4jRepository<Neo4jStatement, Long> {
 
@@ -55,6 +77,18 @@ interface Neo4jStatementRepository :
         predicateId: PredicateId,
         literal: String,
         subjectClass: ClassId,
+        pagination: Pageable
+    ): Slice<Neo4jStatement>
+
+    @Query("""$MATCH_STATEMENT $WHERE_SUBJECT_ID_IN $RETURN_STATEMENT""")
+    fun findAllBySubjects(
+        subjectIds: List<String>,
+        pagination: Pageable
+    ): Slice<Neo4jStatement>
+
+    @Query("""$MATCH_STATEMENT $WHERE_OBJECT_ID_IN $RETURN_STATEMENT""")
+    fun findAllByObjects(
+        subjectIds: List<String>,
         pagination: Pageable
     ): Slice<Neo4jStatement>
 }

@@ -25,12 +25,14 @@ import org.springframework.web.bind.annotation.RestController
 class BulkStatementController(
     private val statementService: StatementService,
     private val query: GetBulkStatementsQuery,
-    private val statementController: StatementController) {
+    private val statementController: StatementController
+) {
 
     @GetMapping("/subjects")
     fun findBySubjects(
         @RequestParam("ids") resourceIds: List<ResourceId>,
-        pageable: Pageable): ResponseEntity<Iterable<BulkGetStatementsResponse>> {
+        pageable: Pageable
+    ): ResponseEntity<Iterable<BulkGetStatementsResponse>> {
         return ok(query.getBulkStatementsBySubjects(resourceIds.map { it.value }, pageable)
             .map { (k, v) -> BulkGetStatementsResponse(k, v) })
     }
@@ -38,16 +40,17 @@ class BulkStatementController(
     @GetMapping("/objects")
     fun findByObjects(
         @RequestParam("ids") resourceIds: List<ResourceId>,
-        pageable: Pageable): ResponseEntity<Iterable<BulkGetStatementsResponse>> {
+        pageable: Pageable
+    ): ResponseEntity<Iterable<BulkGetStatementsResponse>> {
         return ok(query.getBulkStatementsByObjects(resourceIds.map { it.value }, pageable)
-            .map { (k, v) -> BulkGetStatementsResponse(k, v) })}
+            .map { (k, v) -> BulkGetStatementsResponse(k, v) }) }
 
     @DeleteMapping("/")
     fun delete(
         @RequestParam("ids") statementsIds: List<StatementId>
     ): ResponseEntity<Unit> {
         statementsIds.forEach { statementController.delete(it) }
-        return ResponseEntity.noContent().build()}
+        return ResponseEntity.noContent().build() }
 
     @PutMapping("/")
     fun edit(

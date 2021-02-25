@@ -160,7 +160,7 @@ This can be done by typing `exit` or pressing kbd:[Ctrl+d].
 +
 [source,shell]
 ----
-docker run -it --rm --entrypoint --volumes-from orkg-backend_neo4j_1 --volume orkg-dumps:/dumps neo4j:3.5
+docker run -it --rm --entrypoint /bin/bash --volumes-from orkg-backend_neo4j_1 --volume orkg-dumps:/dumps neo4j:3.5
 neo4j-admin load --from=/dumps/neo4j-dump-YYYYMMDD.dump --force
 # Type "exit" or press Ctrl+d
 ----

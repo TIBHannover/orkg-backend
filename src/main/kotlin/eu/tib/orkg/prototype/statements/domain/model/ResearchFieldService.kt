@@ -1,10 +1,12 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
+import java.util.Optional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface ResearchFieldService {
+    fun findById(id: ResourceId): Optional<Resource>
 
     fun getResearchProblemsOfField(id: ResourceId, pageable: Pageable): Page<Any>
 

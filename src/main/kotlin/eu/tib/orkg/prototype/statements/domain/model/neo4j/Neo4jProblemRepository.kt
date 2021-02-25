@@ -1,12 +1,16 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import java.util.Optional
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
 interface Neo4jProblemRepository :
-    Neo4jRepository<Neo4jStatement, Long> {
+    Neo4jRepository<Neo4jResource, Long> {
+
+    @Query("""MATCH (node:Problem {resource_id: {0}) RETURN node""")
+    fun findById(id: ResourceId): Optional<Neo4jResource>
 
     @Query("""MATCH (:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(field:ResearchField)
                     RETURN field, COUNT(paper) AS freq

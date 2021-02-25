@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import java.util.Optional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.Query
@@ -9,7 +10,10 @@ import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
 interface Neo4jResearchFieldRepository :
-    Neo4jRepository<Neo4jStatement, Long> {
+    Neo4jRepository<Neo4jResource, Long> {
+
+    @Query("""MATCH (field:ResearchField {resource_id: {0}})""")
+    fun findById(id: ResourceId): Optional<Neo4jResource>
 
     @Query("""MATCH (field:ResearchField {resource_id: {0}})<-[:RELATED {predicate_id: 'P30'}]-(paper:Paper)-[:RELATED {predicate_id: 'P31'}]->(cont:Contribution)-[:RELATED {predicate_id: 'P32'}]->(problem:Thing)
                     WITH COUNT(paper) AS papers, problem

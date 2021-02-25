@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jProblemRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
+import java.util.Optional
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -13,6 +14,10 @@ import org.springframework.transaction.annotation.Transactional
 class Neo4jProblemService(
     private val neo4jProblemRepository: Neo4jProblemRepository
 ) : ProblemService {
+    override fun findById(id: ResourceId): Optional<Resource> =
+        neo4jProblemRepository
+            .findById(id)
+            .map(Neo4jResource::toResource)
 
     override fun getFieldsPerProblem(problemId: ResourceId): List<Any> {
         return neo4jProblemRepository.getResearchFieldsPerProblem(problemId).map {

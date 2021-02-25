@@ -9,6 +9,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResearchFieldRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
+import java.util.Optional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -20,6 +21,10 @@ class Neo4jResearchFieldService(
     private val neo4jResearchFieldRepository: Neo4jResearchFieldRepository,
     private val userRepository: UserRepository
 ) : ResearchFieldService {
+    override fun findById(id: ResourceId): Optional<Resource> =
+        neo4jResearchFieldRepository
+            .findById(id)
+            .map(Neo4jResource::toResource)
 
     override fun getResearchProblemsOfField(id: ResourceId, pageable: Pageable): Page<Any> {
         return neo4jResearchFieldRepository.getResearchProblemsOfField(id, pageable)

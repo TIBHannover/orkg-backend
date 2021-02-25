@@ -196,8 +196,8 @@ class StatementController(
         @PathVariable thingId: String,
         @RequestParam("minLevel", required = false) minLevel: Int?,
         @RequestParam("maxLevel", required = false) maxLevel: Int?,
-        @RequestParam("blackClasses", required = false, defaultValue = "") blackListedClasses: List<String>,
-        @RequestParam("whiteClasses", required = false, defaultValue = "") whiteListedClasses: List<String>
+        @RequestParam("blacklist", required = false, defaultValue = "") blacklist: List<ClassId>,
+        @RequestParam("whitelist", required = false, defaultValue = "") whitelist: List<ClassId>
     ): HttpEntity<Bundle> {
         return ok(
             statementService.fetchAsBundle(
@@ -205,7 +205,7 @@ class StatementController(
                 // FIXME: had to pass configuration like this otherwise lists are not parsed correctly by spring
                 BundleConfiguration(
                     minLevel, maxLevel,
-                    blackListedClasses, whiteListedClasses
+                    blacklist, whitelist
                 )
             )
         )
@@ -226,34 +226,37 @@ class StatementController(
  * Also the list of classes to be white-listed or black-listed during the fetch
  * @param minLevel the minimum level to be fetched (if not provided it is set to 0)
  * @param maxLevel the maximum level of statements to be fetched (if not provided, all child statements will be fetched)
- * @param blackListedClasses the list of classes to be black-listed (i.e. not fetched), these classes are checked on the subjects and objects of a statement
- * @param whiteListedClasses the list of classes to be white-listed (i.e. the only ones to be fetched), these classes are checked on the subjects and objects of a statement
+ * @param blacklist the list of classes to be black-listed (i.e. not fetched), these classes are checked on the subjects and objects of a statement
+ * @param whitelist the list of classes to be white-listed (i.e. the only ones to be fetched), these classes are checked on the subjects and objects of a statement
  */
 data class BundleConfiguration(
     val minLevel: Int?,
     val maxLevel: Int?,
-    val blackListedClasses: List<String>,
-    val whiteListedClasses: List<String>
+    val blacklist: List<ClassId>,
+    val whitelist: List<ClassId>
 ) {
     fun toApocConfiguration(): Map<String, Any> {
         val conf = mutableMapOf<String, Any>(
             "relationshipFilter" to ">",
             "bfs" to true
         )
+        // configure min and max levels
         if (maxLevel != null)
             conf["maxLevel"] = maxLevel
         if (minLevel != null)
             conf["minLevel"] = minLevel
-        if (blackListedClasses.isNotEmpty() || whiteListedClasses.isNotEmpty())
-            conf["labelFilter"] = ""
-        if (blackListedClasses.isNotEmpty())
-            conf["labelFilter"] = blackListedClasses.joinToString(prefix = "-", separator = "|-")
-        if (blackListedClasses.isNotEmpty()) {
-            var positiveLabels = whiteListedClasses.joinToString(prefix = "+", separator = "|+")
-            if ((conf["labelFilter"] as String).isNotBlank())
-                positiveLabels = "${conf["labelFilter"]}|$positiveLabels"
-            conf["labelFilter"] = positiveLabels
+        // configure blacklisting and whitelisting classes
+        var labelFilter = ""
+        if (blacklist.isNotEmpty())
+            labelFilter = blacklist.joinToString(prefix = "-", separator = "|-")
+        if (blacklist.isNotEmpty()) {
+            var positiveLabels = whitelist.joinToString(prefix = "+", separator = "|+")
+            if (labelFilter.isNotBlank())
+                positiveLabels += "|$positiveLabels"
+            labelFilter = positiveLabels
         }
+        if (blacklist.isNotEmpty() || whitelist.isNotEmpty())
+            conf["labelFilter"] = labelFilter
         return conf
     }
 }

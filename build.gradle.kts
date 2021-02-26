@@ -24,7 +24,7 @@ plugins {
     id("org.springframework.boot") version "2.3.4.RELEASE"
     id("com.coditory.integration-test") version "1.1.8"
     id("de.jansauer.printcoverage") version "2.0.0"
-    id("org.asciidoctor.jvm.convert") version "3.2.0"
+    id("org.asciidoctor.jvm.convert") version "3.3.2"
     id("com.palantir.docker") version "0.25.0"
     id("com.google.cloud.tools.jib") version "2.5.0"
     id("com.diffplug.spotless") version "5.6.1"

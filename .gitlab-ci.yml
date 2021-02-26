@@ -1,4 +1,4 @@
-image: azul/zulu-openjdk-alpine:11
+image: azul/zulu-openjdk-debian:11
 
 # Enable Docker-in-Docker (DinD) for TestContainers
 services:
@@ -61,6 +61,7 @@ build:
 pages:
   stage: deploy
   script:
+    - apt update && apt install graphviz
     - ./gradlew asciidoctor
     - mkdir -p public
     - cp -r build/docs/asciidoc/* public/

@@ -56,6 +56,7 @@ pages:
   cache:
     <<: *gradle_cache_settings
     policy: pull
+  services: []    # Disable Docker-in-Docker
   script:
     - apt update && apt install --assume-yes graphviz
     - ./gradlew --build-cache asciidoctor

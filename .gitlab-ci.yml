@@ -16,12 +16,13 @@ before_script:
   - rm -f  ${GRADLE_USER_HOME}/caches/modules-2/modules-2.lock
   - rm -fr ${GRADLE_USER_HOME}/caches/*/plugin-resolution/
 
-cache:
-  key: gradle
+# Ideas taken from https://docs.gitlab.com/ee/ci/caching/ as well as
+#   https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Gradle.gitlab-ci.yml
+cache: &gradle_cache_settings
+  key: ${CI_COMMIT_REF_SLUG}   # One cache per branch
   paths:
-    # Gradle wrappers and downloaded artifacts
-    - .gradle/wrapper
-    - .gradle/caches
+    - build
+    - .gradle
 
 stages:
   - build
@@ -31,8 +32,11 @@ stages:
 
 build:
   stage: build
+  cache:
+    <<: *gradle_cache_settings
+    policy: push
   script:
-    - ./gradlew build
+    - ./gradlew --build-cache build
     - ./gradlew jacocoTestCoverageVerification
     - ./gradlew jacocoTestReport printCoverage
   coverage: '/^Coverage:\s(\d+\.\d+%)/'
@@ -46,6 +50,9 @@ build:
 
 pages:
   stage: deploy
+  cache:
+    <<: *gradle_cache_settings
+    policy: pull
   script:
     - apt update && apt install --assume-yes graphviz
     - ./gradlew asciidoctor
@@ -59,6 +66,9 @@ pages:
 
 .docker-build-instructions: &docker-build-instructions
   stage: package
+  cache:
+    <<: *gradle_cache_settings
+    policy: pull
   dependencies:
     - build
   script:

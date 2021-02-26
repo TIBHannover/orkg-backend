@@ -76,7 +76,7 @@ class Neo4jIndexService(
                 "label"
             ),
             PropertyIndex(
-              "Thing",
+                "Thing",
                 "created_at"
             ),
             PropertyIndex(

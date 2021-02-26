@@ -53,6 +53,8 @@ build:
 
 pages:
   stage: deploy
+  needs:
+    - build
   cache:
     <<: *gradle_cache_settings
     policy: pull

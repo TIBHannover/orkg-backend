@@ -12,7 +12,6 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.TrendingResearchProblems
 import java.time.LocalDate
 import java.util.UUID
-import java.util.logging.Logger
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -25,8 +24,6 @@ class Neo4jStatsService(
     private val neo4jStatsRepository: Neo4jStatsRepository,
     private val userRepository: UserRepository
 ) : StatsService {
-
-    private val logger: Logger = Logger.getLogger("Neo4jStatsService")
     override fun getStats(): Stats {
         val metadata = neo4jStatsRepository.getGraphMetaData()
         val labels = metadata.first()["labels"] as Map<*, *>

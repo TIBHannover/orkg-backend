@@ -56,7 +56,7 @@ pages:
     policy: pull
   script:
     - apt update && apt install --assume-yes graphviz
-    - ./gradlew asciidoctor
+    - ./gradlew --build-cache asciidoctor
     - mkdir -p public
     - cp -r build/docs/asciidoc/* public/
   artifacts:

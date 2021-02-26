@@ -1,4 +1,4 @@
-image: azul/zulu-openjdk-alpine:11
+image: azul/zulu-openjdk-debian:11
 
 # Enable Docker-in-Docker (DinD) for TestContainers
 services:
@@ -61,6 +61,7 @@ build:
 pages:
   stage: deploy
   script:
+    - apt update && apt install graphviz
     - ./gradlew asciidoctor
     - mkdir -p public
     - cp -r build/docs/asciidoc/* public/
@@ -71,13 +72,12 @@ pages:
     - master
 
 .docker-build-instructions: &docker-build-instructions
-  image: gradle:6.3-jdk11
   stage: package
   dependencies:
     - build
   script:
     # Build using Jib (pushed automatically)
-    - gradle jib -Djib.to.image=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA -Djib.to.tags=$IMAGE_TAG -Djib.to.auth.username=$REGISTRY_USER -Djib.to.auth.password=$REGISTRY_PASSWORD
+    - ./gradlew jib -Djib.to.image=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA -Djib.to.tags=$IMAGE_TAG -Djib.to.auth.username=$REGISTRY_USER -Djib.to.auth.password=$REGISTRY_PASSWORD
 
 docker-build-master:
   variables:

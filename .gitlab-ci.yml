@@ -16,20 +16,6 @@ before_script:
   - rm -f  ${GRADLE_USER_HOME}/caches/modules-2/modules-2.lock
   - rm -fr ${GRADLE_USER_HOME}/caches/*/plugin-resolution/
 
-# Some words on how caching works in GitLab CI:
-#   Only sub-directories of the build directory can be added
-#   to the cache. Expansion of variables does not work. We
-#   will only keep the `wrapper` and `caches` sub-directories
-#   of Gradle in the cache. Gradle will place those into
-#   $HOME/.gradle by default. To be able to save them, they
-#   need to be present in the build directory. By setting
-#   `GRADLE_USER_HOME` we make Gradle place the directories
-#   into a location from which we can move them to the cache
-#   (and retrieve them from there again). Although the cache
-#   directory is available as `/cache` you cannot directly
-#   interact with it. Data will only be transferred to and
-#   from the build directory. (It took me a while to get it
-#   right…)
 cache:
   key: gradle
   paths:

@@ -23,6 +23,7 @@ cache: &gradle_cache_settings
   paths:
     - build
     - .gradle
+  policy: pull-push
 
 stages:
   - build

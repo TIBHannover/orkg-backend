@@ -96,8 +96,12 @@ docker-build:
 # (Security) Scanning templates
 include:
   - template: Container-Scanning.gitlab-ci.yml
+  - template: Dependency-Scanning.gitlab-ci.yml
 
 container_scanning:
   stage: verify
   variables:
     CI_APPLICATION_REPOSITORY: $CI_REGISTRY_IMAGE
+
+dependency_scanning:
+  stage: verify

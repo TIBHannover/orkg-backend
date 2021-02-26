@@ -105,3 +105,4 @@ container_scanning:
 
 dependency_scanning:
   stage: verify
+  needs: []

@@ -79,7 +79,7 @@ pages:
     - build
   script:
     # Build using Jib (pushed automatically)
-    - ./gradlew jib -Djib.to.image=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA -Djib.to.tags=$IMAGE_TAG -Djib.to.auth.username=$REGISTRY_USER -Djib.to.auth.password=$REGISTRY_PASSWORD
+    - ./gradlew --build-cache jib -Djib.to.image=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA -Djib.to.tags=$IMAGE_TAG -Djib.to.auth.username=$REGISTRY_USER -Djib.to.auth.password=$REGISTRY_PASSWORD
 
 docker-build-master:
   variables:

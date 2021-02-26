@@ -61,7 +61,7 @@ build:
 pages:
   stage: deploy
   script:
-    - apt update && apt install graphviz
+    - apt update && apt install --assume-yes graphviz
     - ./gradlew asciidoctor
     - mkdir -p public
     - cp -r build/docs/asciidoc/* public/

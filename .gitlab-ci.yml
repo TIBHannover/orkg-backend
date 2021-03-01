@@ -51,7 +51,8 @@ build:
     reports:
       junit: build/test-results/**/TEST-*.xml
 
-pages:
+# Template job for building all documentation
+.build-documentation:
   stage: deploy
   needs:
     - build
@@ -64,6 +65,16 @@ pages:
     - ./gradlew --build-cache asciidoctor
     - mkdir -p public
     - cp -r build/docs/asciidoc/* public/
+
+# Attempt to build the documentation although we do not deploy it to GitLab Pages.
+# This ensures that everything works as expected and prevents surprises when merging.
+dummy-doc-build:
+  extends: .build-documentation
+  except:
+    - master
+
+pages:
+  extends: .build-documentation
   artifacts:
     paths:
       - public

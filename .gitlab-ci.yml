@@ -1,6 +1,6 @@
 image: azul/zulu-openjdk-debian:11
 
-# Enable Docker-in-Docker (DinD) for TestContainers
+# Enable Docker-in-Docker (DinD) for TestContainers and Docker image builds.
 services:
   - docker:dind
 
@@ -51,7 +51,8 @@ build:
     reports:
       junit: build/test-results/**/TEST-*.xml
 
-# Template job for building all documentation
+# Template job for building all documentation. These jobs rely on the Gradle build cache
+# because Spring RestDoc snippets are generated from the test and we do not want re-run those.
 .build-documentation:
   stage: deploy
   needs:
@@ -73,6 +74,7 @@ dummy-doc-build:
   except:
     - master
 
+# Deploy documentation to GitLab Pages.
 pages:
   extends: .build-documentation
   artifacts:
@@ -81,6 +83,7 @@ pages:
   only:
     - master
 
+# Template for building Docker images.
 .docker-build-instructions: &docker-build-instructions
   stage: package
   cache:

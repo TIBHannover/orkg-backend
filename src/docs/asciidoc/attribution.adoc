@@ -11,6 +11,7 @@
 
 * We consider changes in paper, visualization, contribution, comparison and problem.
 * URL: http://localhost:8080/api/stats/top/changelog
+
 == Trending Research Problems
 
 * We consider most contributed research problems by more than 1 contributor.

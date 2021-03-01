@@ -1,7 +1,9 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.application.BundleConfiguration
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
+import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
@@ -171,6 +173,20 @@ class Neo4jStatementService :
     ): Page<GeneralStatement> =
         statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(predicateId, literal, subjectClass, pagination)
             .map { toStatement(it) }
+
+    override fun fetchAsBundle(
+        thingId: String,
+        configuration: BundleConfiguration
+    ): Bundle =
+        Bundle(
+            thingId,
+            statementRepository.fetchAsBundle(
+                thingId,
+                configuration.toApocConfiguration()
+            )
+                .map { toStatement(it) }
+                .toMutableList()
+        )
 
     private fun refreshObject(thing: Neo4jThing): Thing {
         return when (thing) {

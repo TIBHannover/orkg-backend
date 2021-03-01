@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.application.BundleConfiguration
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import java.util.Optional
 import org.springframework.data.domain.Page
@@ -95,4 +96,10 @@ interface StatementService {
      * With a filter on the class of the subject
      */
     fun findAllByPredicateAndLabelAndSubjectClass(predicateId: PredicateId, literal: String, subjectClass: ClassId, pagination: Pageable): Iterable<GeneralStatement>
+
+    /**
+     * Get a bundle of statements
+     * which represents the entire sub-graph starting from a [Thing]
+     */
+    fun fetchAsBundle(thingId: String, configuration: BundleConfiguration): Bundle
 }

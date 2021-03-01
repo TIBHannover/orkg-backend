@@ -9,6 +9,7 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import org.hamcrest.Matchers.hasSize
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -74,7 +75,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                     snippet,
                     requestParameters(
                         parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
-                        parameterWithName("items").description("Number of items to fetch per page (default: 10)").optional(),
+                        parameterWithName("items").description("Number of items to fetch per page (default: 10)")
+                            .optional(),
                         parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
                         parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
                     ),
@@ -160,7 +162,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                     snippet,
                     requestParameters(
                         parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
-                        parameterWithName("items").description("Number of items to fetch per page (default: 10)").optional(),
+                        parameterWithName("items").description("Number of items to fetch per page (default: 10)")
+                            .optional(),
                         parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
                         parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
                     ),
@@ -190,7 +193,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                     snippet,
                     requestParameters(
                         parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
-                        parameterWithName("items").description("Number of items to fetch per page (default: 10)").optional(),
+                        parameterWithName("items").description("Number of items to fetch per page (default: 10)")
+                            .optional(),
                         parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
                         parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
                     ),
@@ -219,7 +223,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                     snippet,
                     requestParameters(
                         parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
-                        parameterWithName("items").description("Number of items to fetch per page (default: 10)").optional(),
+                        parameterWithName("items").description("Number of items to fetch per page (default: 10)")
+                            .optional(),
                         parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
                         parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
                     ),
@@ -251,7 +256,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                     snippet,
                     requestParameters(
                         parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
-                        parameterWithName("items").description("Number of items to fetch per page (default: 10)").optional(),
+                        parameterWithName("items").description("Number of items to fetch per page (default: 10)")
+                            .optional(),
                         parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
                         parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
                     ),
@@ -322,7 +328,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    requestBody())
+                    requestBody()
+                )
             )
     }
 
@@ -338,7 +345,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    requestBody())
+                    requestBody()
+                )
             )
     }
 
@@ -392,6 +400,43 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                 )
             )
     }
+
+    @Test
+    @Disabled("Broken, due to APOC not being in Embedded Neo4j. See GitLab issue #85.")
+    fun fetchBundle() {
+        val r1 = resourceService.create("one")
+        val r2 = resourceService.create("two")
+        val r3 = resourceService.create("three")
+        val r4 = resourceService.create("four")
+        val p1 = predicateService.create("blah")
+        val p2 = predicateService.create("blub")
+
+        statementService.create(r1.id!!.value, p1.id!!, r2.id!!.value)
+        statementService.create(r1.id!!.value, p2.id!!, r3.id!!.value)
+        statementService.create(r2.id!!.value, p1.id!!, r4.id!!.value)
+
+        mockMvc
+            .perform(getRequestTo("/api/statements/${r1.id}/bundle"))
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    snippet,
+                    bundleResponseFields()
+                )
+            )
+    }
+
+    private fun bundleResponseFields(): ResponseFieldsSnippet =
+        responseFields(
+            listOf(
+                fieldWithPath("root").description("The root ID of the object"),
+                fieldWithPath("statements").description("The bundle of statements")
+            )
+        )
+        .and(statementFields())
+        .andWithPrefix("subject.", resourceResponseFields())
+        .andWithPrefix("predicate.", predicateResponseFields())
+        .andWithPrefix("object.", resourceResponseFields())
 
     private fun statementFields() = listOf(
         fieldWithPath("id").description("The statement ID"),

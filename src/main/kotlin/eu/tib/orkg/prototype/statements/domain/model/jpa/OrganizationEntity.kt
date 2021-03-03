@@ -46,6 +46,6 @@ class OrganizationEntity() {
             createdBy = ContributorId(createdBy!!),
             homepage = url,
             observatoryIds = observatories!!.map { ObservatoryId(it.id!!) }.toSet(),
-            uriName = uriName
+            displayId = uriName
         )
 }

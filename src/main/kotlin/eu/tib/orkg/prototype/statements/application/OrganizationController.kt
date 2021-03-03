@@ -10,6 +10,8 @@ import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import java.io.File
 import java.util.Base64
+import java.util.Optional
+import java.util.UUID
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
@@ -40,8 +42,8 @@ class OrganizationController(
             return ResponseEntity.badRequest().body(
                     ErrorMessage(message = "Please upload a valid image"))
         } else {
-            return if (service.findByName(organization.organizationName).isEmpty && service.findByUriName(organization.uriName).isEmpty) {
-                val response = (service.create(organization.organizationName, organization.createdBy, organization.url, organization.uriName))
+            return if (service.findByName(organization.organizationName).isEmpty && service.findByUriName(organization.display_id).isEmpty) {
+                val response = (service.create(organization.organizationName, organization.createdBy, organization.url, organization.display_id))
                 decoder(organization.organizationLogo, response.id)
                 val location = uriComponentsBuilder
                     .path("api/organizations/{id}")
@@ -67,7 +69,7 @@ class OrganizationController(
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: String): Organization {
-        val response: Organization = if (id.matches("[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}".toRegex())) {
+        val response: Organization = if (isValidUUID(id)) {
             service
                 .findById(OrganizationId(id))
                 .orElseThrow { OrganizationNotFound(OrganizationId(id)) }
@@ -186,12 +188,21 @@ class OrganizationController(
         return mimeType.contains("image/")
     }
 
+    fun isValidUUID(id: String): Boolean {
+        return try {
+            Optional.of(UUID.fromString(id)).isPresent
+        } catch (e: RuntimeException) {
+            false
+        }
+    }
+
     data class CreateOrganizationRequest(
         val organizationName: String,
         var organizationLogo: String,
         val createdBy: ContributorId,
         val url: String,
-        val uriName: String
+        @field:NotBlank
+        val display_id: String
     )
 
     data class ErrorMessage(

@@ -18,6 +18,6 @@ data class Organization(
     @JsonProperty("observatory_ids")
     val observatoryIds: Set<ObservatoryId> = emptySet(),
 
-    @JsonProperty("uri_name")
-    var uriName: String?
+    @JsonProperty("display_id")
+    var displayId: String?
 )

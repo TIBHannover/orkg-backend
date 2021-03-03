@@ -23,7 +23,7 @@ class PostgresOrganizationService(
             name = OrganizationName
             createdBy = CreatedBy.value
             url = Url
-            this.uriName = displayId
+            this.displayId = displayId
         }
         return postgresOrganizationRepository.save(newOrganization).toOrganization()
     }
@@ -43,9 +43,9 @@ class PostgresOrganizationService(
             .findByName(name)
             .map(OrganizationEntity::toOrganization)
 
-    override fun findByUriName(name: String): Optional<Organization> =
+    override fun findByDisplayId(name: String): Optional<Organization> =
         postgresOrganizationRepository
-            .findByUriName(name)
+            .findByDisplayId(name)
             .map(OrganizationEntity::toOrganization)
 
     override fun updateOrganization(organization: Organization): Organization {

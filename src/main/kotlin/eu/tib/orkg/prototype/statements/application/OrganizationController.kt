@@ -42,8 +42,8 @@ class OrganizationController(
             return ResponseEntity.badRequest().body(
                     ErrorMessage(message = "Please upload a valid image"))
         } else {
-            return if (service.findByName(organization.organizationName).isEmpty && service.findByUriName(organization.display_id).isEmpty) {
-                val response = (service.create(organization.organizationName, organization.createdBy, organization.url, organization.display_id))
+            return if (service.findByName(organization.organizationName).isEmpty && service.findByDisplayId(organization.displayId).isEmpty) {
+                val response = (service.create(organization.organizationName, organization.createdBy, organization.url, organization.displayId))
                 decoder(organization.organizationLogo, response.id)
                 val location = uriComponentsBuilder
                     .path("api/organizations/{id}")
@@ -75,7 +75,7 @@ class OrganizationController(
                 .orElseThrow { OrganizationNotFound(OrganizationId(id)) }
         } else {
             service
-                .findByUriName(id)
+                .findByDisplayId(id)
                 .orElseThrow { OrganizationNotFound(OrganizationId(id)) }
         }
         val logo = encoder(response.id.toString())
@@ -202,7 +202,7 @@ class OrganizationController(
         val createdBy: ContributorId,
         val url: String,
         @field:NotBlank
-        val display_id: String
+        val displayId: String
     )
 
     data class ErrorMessage(

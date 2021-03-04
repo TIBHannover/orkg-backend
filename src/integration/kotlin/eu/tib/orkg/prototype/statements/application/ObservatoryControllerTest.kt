@@ -152,7 +152,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     }
 
     fun createTestObservatory(organizationId: OrganizationId, resourceId: String): Observatory {
-        return observatoryService.create("test observatory", "example description", service.findById(organizationId).get(), resourceId, "test_observatory")
+        return observatoryService.create("test observatory", "example description", service.findById(organizationId).get(), resourceId, "test-observatory")
     }
 
     fun createTestResource(userId: ContributorId, organizationId: OrganizationId, observatoryId: ObservatoryId, resourceType: String): Resource {
@@ -169,7 +169,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("research_field.label").description("The research field of an observatory"),
             fieldWithPath("members").description("The members belonging to the observatory"),
             fieldWithPath("organization_ids").description("The list of organizations that the observatory belongs to"),
-            fieldWithPath("uri_name").description("The URI of an observatory")
+            fieldWithPath("display_id").description("The URI of an observatory")
         )
 
         fun listOfObservatoriesResponseFields(): ResponseFieldsSnippet =

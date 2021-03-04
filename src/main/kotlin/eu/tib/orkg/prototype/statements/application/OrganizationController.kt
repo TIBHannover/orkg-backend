@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
@@ -10,7 +11,6 @@ import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import java.io.File
 import java.util.Base64
-import java.util.Optional
 import java.util.UUID
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
@@ -190,18 +190,22 @@ class OrganizationController(
 
     fun isValidUUID(id: String): Boolean {
         return try {
-            Optional.of(UUID.fromString(id)).isPresent
-        } catch (e: RuntimeException) {
+            UUID.fromString(id) != null
+        } catch (e: IllegalArgumentException) {
             false
         }
     }
 
     data class CreateOrganizationRequest(
+        @JsonProperty("organization_name")
         val organizationName: String,
+        @JsonProperty("organization_logo")
         var organizationLogo: String,
+        @JsonProperty("created_by")
         val createdBy: ContributorId,
         val url: String,
         @field:NotBlank
+        @JsonProperty("display_id")
         val displayId: String
     )
 

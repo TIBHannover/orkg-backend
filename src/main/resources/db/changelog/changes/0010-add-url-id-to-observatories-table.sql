@@ -2,6 +2,13 @@
 
 --changeset mharis:10 dbms:postgresql
 
---adding column to handle URLs with observatories name
+--adding column to handle named URLs
 alter table observatories
-    add uri_name varchar;
+    add display_id varchar;
+
+--replacing default value with name of observatories
+update observatories set display_id=LOWER(replace(replace(observatories.name,' ','-'), '''',''));
+
+alter table observatories alter column display_id set not null;
+create unique index observatories_display_id_uindex on observatories (display_id);
+

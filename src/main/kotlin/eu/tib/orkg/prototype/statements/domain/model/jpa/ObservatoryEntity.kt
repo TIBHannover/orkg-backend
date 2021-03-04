@@ -35,7 +35,7 @@ class ObservatoryEntity() {
     @OneToMany(mappedBy = "id", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     var users: MutableSet<UserEntity>? = mutableSetOf()
 
-    @Column(name="display_id")
+    @Column(name = "display_id")
     var displayId: String? = null
 
     @JsonIgnore

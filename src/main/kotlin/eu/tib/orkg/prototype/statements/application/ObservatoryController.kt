@@ -1,4 +1,5 @@
 package eu.tib.orkg.prototype.statements.application
+import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
@@ -58,7 +59,7 @@ class ObservatoryController(
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: String): Observatory {
-        return if (id.matches("[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}".toRegex())) {
+        return if (isValidUUID(id)) {
             service
                 .findById(ObservatoryId(UUID.fromString(id)))
                 .orElseThrow { ObservatoryNotFound(ObservatoryId(UUID.fromString(id))) }
@@ -132,11 +133,24 @@ class ObservatoryController(
         return neo4jStatsService.getObservatoriesPapersAndComparisonsCount()
     }
 
+    fun isValidUUID(id: String): Boolean {
+        return try {
+            UUID.fromString(id) != null
+        } catch (e: IllegalArgumentException) {
+            false
+        }
+    }
+
     data class CreateObservatoryRequest(
+        @JsonProperty("observatory_name")
         val observatoryName: String,
+        @JsonProperty("organization_id")
         val organizationId: OrganizationId,
         val description: String,
+        @JsonProperty("research_field")
         val researchField: String,
+        @field:NotBlank
+        @JsonProperty("display_id")
         val displayId: String
     )
 

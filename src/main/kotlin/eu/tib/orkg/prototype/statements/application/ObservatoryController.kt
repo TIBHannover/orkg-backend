@@ -36,14 +36,14 @@ class ObservatoryController(
 
     @PostMapping("/")
     fun addObservatory(@RequestBody observatory: CreateObservatoryRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
-        return if (service.findByName(observatory.observatoryName).isEmpty && service.findByUriName(observatory.uriName).isEmpty) {
+        return if (service.findByName(observatory.observatoryName).isEmpty && service.findByDisplayId(observatory.displayId).isEmpty) {
             val organizationEntity = organizationService.findById(observatory.organizationId)
             val id = service.create(
                 observatory.observatoryName,
                 observatory.description,
                 organizationEntity.get(),
                 observatory.researchField,
-                observatory.uriName
+                observatory.displayId
             ).id
             val location = uriComponentsBuilder
                 .path("api/observatories/{id}")
@@ -64,7 +64,7 @@ class ObservatoryController(
                 .orElseThrow { ObservatoryNotFound(ObservatoryId(UUID.fromString(id))) }
         } else {
             service
-                .findByUriName(id)
+                .findByDisplayId(id)
                 .orElseThrow { ObservatoryURLNotFound(id) }
         }
     }
@@ -137,7 +137,7 @@ class ObservatoryController(
         val organizationId: OrganizationId,
         val description: String,
         val researchField: String,
-        val uriName: String
+        val displayId: String
     )
 
     data class UpdateRequest(

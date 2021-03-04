@@ -35,7 +35,8 @@ class ObservatoryEntity() {
     @OneToMany(mappedBy = "id", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
     var users: MutableSet<UserEntity>? = mutableSetOf()
 
-    var uriName: String? = null
+    @Column(name="display_id")
+    var displayId: String? = null
 
     @JsonIgnore
     @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
@@ -54,6 +55,6 @@ class ObservatoryEntity() {
             researchField = ResearchField(researchField, null),
             members = users!!.map(UserEntity::toContributor).toSet(),
             organizationIds = organizations!!.map { OrganizationId(it.id!!) }.toSet(),
-            uriName = uriName
+            displayId = displayId
         )
 }

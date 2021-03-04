@@ -22,7 +22,7 @@ class PostgresObservatoryService(
     private val postgresOrganizationRepository: PostgresOrganizationRepository,
     private val resourceService: ResourceService
 ) : ObservatoryService {
-    override fun create(name: String, description: String, organization: Organization, researchField: String, uriName: String): Observatory {
+    override fun create(name: String, description: String, organization: Organization, researchField: String, displayId: String): Observatory {
         val oId = UUID.randomUUID()
         val org = postgresOrganizationRepository
             .findById(organization.id!!.value)
@@ -33,7 +33,7 @@ class PostgresObservatoryService(
             this.description = description
             this.researchField = researchField
             organizations = mutableSetOf(org)
-            this.uriName = uriName
+            this.displayId = displayId
         }
 
         val response = postgresObservatoryRepository.save(newObservatory).toObservatory()
@@ -72,8 +72,8 @@ class PostgresObservatoryService(
         else Optional.of(response)
     }
 
-    override fun findByUriName(id: String): Optional<Observatory> {
-        val response = postgresObservatoryRepository.findByUriName(id).map(ObservatoryEntity::toObservatory)
+    override fun findByDisplayId(id: String): Optional<Observatory> {
+        val response = postgresObservatoryRepository.findByDisplayId(id).map(ObservatoryEntity::toObservatory)
         return if (response.isPresent && hasResearchField(response.get()))
             Optional.of(response.get().withResearchField(response.get().researchField?.id!!))
         else response

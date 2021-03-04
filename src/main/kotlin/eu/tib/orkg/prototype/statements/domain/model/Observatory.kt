@@ -12,8 +12,8 @@ data class Observatory(
     val members: Set<Contributor> = emptySet(),
     @JsonProperty("organization_ids")
     val organizationIds: Set<OrganizationId> = emptySet(),
-    @JsonProperty("uri_name")
-    val uriName: String? = null
+    @JsonProperty("display_id")
+    val displayId: String? = null
 )
 
 data class ResearchField(var id: String?, var label: String?)

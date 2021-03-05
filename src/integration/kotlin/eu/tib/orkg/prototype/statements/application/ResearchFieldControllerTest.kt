@@ -45,8 +45,6 @@ class ResearchFieldControllerTest : RestDocumentationBaseTest() {
     @Autowired
     private lateinit var statementService: StatementService
 
-    override fun createController() = controller
-
     @BeforeEach
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)

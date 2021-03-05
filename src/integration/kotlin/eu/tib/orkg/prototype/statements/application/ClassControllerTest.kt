@@ -39,8 +39,6 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     @Autowired
     private lateinit var resourceService: ResourceService
 
-    override fun createController() = controller
-
     @BeforeEach
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)

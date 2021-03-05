@@ -22,8 +22,6 @@ internal class ContributorControllerTest : RestDocumentationBaseTest() {
     @Autowired
     private lateinit var service: UserService
 
-    override fun createController() = controller
-
     @Test
     @DisplayName("When contributor is found Then returns contributor information")
     fun getById() {

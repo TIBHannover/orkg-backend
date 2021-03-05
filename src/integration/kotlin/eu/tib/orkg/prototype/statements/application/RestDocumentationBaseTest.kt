@@ -50,8 +50,6 @@ abstract class RestDocumentationBaseTest {
 
     protected val snippet = "{class-name}-{method-name}"
 
-    abstract fun createController(): Any
-
     @BeforeEach
     fun setup(
         webApplicationContext: WebApplicationContext,

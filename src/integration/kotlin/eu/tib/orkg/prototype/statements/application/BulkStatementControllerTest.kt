@@ -37,8 +37,6 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
     @Autowired
     private lateinit var predicateService: PredicateService
 
-    override fun createController() = controller
-
     @BeforeEach
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)

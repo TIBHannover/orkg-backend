@@ -47,8 +47,6 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     @Autowired
     private lateinit var resourceService: ResourceService
 
-    override fun createController() = controller
-
     @BeforeEach
     fun setup() {
         observatoryService.removeAll()

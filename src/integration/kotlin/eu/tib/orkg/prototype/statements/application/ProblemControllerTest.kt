@@ -48,8 +48,6 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
     @Autowired
     private lateinit var userService: UserService
 
-    override fun createController() = controller
-
     @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun getUsersPerProblem() {

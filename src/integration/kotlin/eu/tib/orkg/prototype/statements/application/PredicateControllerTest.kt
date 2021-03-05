@@ -33,8 +33,6 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
     @Autowired
     private lateinit var service: PredicateService
 
-    override fun createController() = controller
-
     @BeforeEach
     fun setup() {
         service.removeAll()

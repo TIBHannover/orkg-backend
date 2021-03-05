@@ -40,8 +40,6 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     @Autowired
     private lateinit var classService: ClassService
 
-    override fun createController() = controller
-
     @BeforeEach
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)

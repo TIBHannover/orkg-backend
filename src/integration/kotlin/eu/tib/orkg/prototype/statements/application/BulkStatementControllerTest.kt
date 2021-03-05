@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.statements.application.bulk.BulkStatementController
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -47,9 +47,9 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
         predicateService.removeAll()
         service.removeAll()
 
-        Assertions.assertThat(resourceService.findAll(tempPageable)).hasSize(0)
-        Assertions.assertThat(predicateService.findAll(tempPageable)).hasSize(0)
-        Assertions.assertThat(service.findAll(tempPageable)).hasSize(0)
+        assertThat(resourceService.findAll(tempPageable)).hasSize(0)
+        assertThat(predicateService.findAll(tempPageable)).hasSize(0)
+        assertThat(service.findAll(tempPageable)).hasSize(0)
     }
 
     @Test

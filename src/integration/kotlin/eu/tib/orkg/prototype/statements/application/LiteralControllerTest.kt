@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -37,7 +37,7 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
     fun setup() {
         service.removeAll()
 
-        Assertions.assertThat(service.findAll()).hasSize(0)
+        assertThat(service.findAll()).hasSize(0)
     }
 
     @Test

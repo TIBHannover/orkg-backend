@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.statements.application.rdf.VocabController
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -40,9 +40,9 @@ class VocabControllerTest : RestDocumentationBaseTest() {
         predicateService.removeAll()
         classService.removeAll()
 
-        Assertions.assertThat(resourceService.findAll(tempPageable)).hasSize(0)
-        Assertions.assertThat(predicateService.findAll(tempPageable)).hasSize(0)
-        Assertions.assertThat(classService.findAll(tempPageable)).hasSize(0)
+        assertThat(resourceService.findAll(tempPageable)).hasSize(0)
+        assertThat(predicateService.findAll(tempPageable)).hasSize(0)
+        assertThat(classService.findAll(tempPageable)).hasSize(0)
     }
 
     @Test

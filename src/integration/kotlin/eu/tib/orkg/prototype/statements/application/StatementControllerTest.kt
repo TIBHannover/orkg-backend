@@ -8,7 +8,7 @@ import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -62,10 +62,10 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         predicateService.removeAll()
         literalService.removeAll()
 
-        Assertions.assertThat(statementService.findAll(tempPageable)).hasSize(0)
-        Assertions.assertThat(resourceService.findAll(tempPageable)).hasSize(0)
-        Assertions.assertThat(predicateService.findAll(tempPageable)).hasSize(0)
-        Assertions.assertThat(literalService.findAll()).hasSize(0)
+        assertThat(statementService.findAll(tempPageable)).hasSize(0)
+        assertThat(resourceService.findAll(tempPageable)).hasSize(0)
+        assertThat(predicateService.findAll(tempPageable)).hasSize(0)
+        assertThat(literalService.findAll()).hasSize(0)
     }
 
     @Test

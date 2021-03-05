@@ -3,7 +3,7 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -39,7 +39,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
     fun setup() {
         service.removeAll()
 
-        Assertions.assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(0)
+        assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(0)
     }
 
     @Test
@@ -59,7 +59,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                         parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
                         parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
                     ),
-                    listOfPredicatesResponseFields3()
+                    listOfPredicatesResponseFields()
                 )
             )
     }
@@ -94,7 +94,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                     requestParameters(
                         parameterWithName("q").description("A search term that must be contained in the label")
                     ),
-                    listOfPredicatesResponseFields3()
+                    listOfPredicatesResponseFields()
                 )
             )
     }
@@ -114,7 +114,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                     requestParameters(
                         parameterWithName("q").description("A search term that must be contained in the label")
                     ),
-                    listOfPredicatesResponseFields3()
+                    listOfPredicatesResponseFields()
                 )
             )
     }
@@ -181,7 +181,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
             )
     }
 
-    fun listOfPredicatesResponseFields3(): ResponseFieldsSnippet =
+    fun listOfPredicatesResponseFields(): ResponseFieldsSnippet =
         responseFields(pageableDetailedFieldParameters())
             .andWithPrefix("content[].", predicateResponseFields())
 

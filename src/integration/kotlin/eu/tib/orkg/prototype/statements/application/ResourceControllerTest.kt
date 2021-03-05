@@ -7,7 +7,7 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
@@ -60,10 +60,10 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         predicateService.removeAll()
         statementService.removeAll()
 
-        Assertions.assertThat(service.findAll(tempPageable)).hasSize(0)
-        Assertions.assertThat(classService.findAll(tempPageable)).hasSize(0)
-        Assertions.assertThat(predicateService.findAll(tempPageable)).hasSize(0)
-        Assertions.assertThat(statementService.findAll(tempPageable)).hasSize(0)
+        assertThat(service.findAll(tempPageable)).hasSize(0)
+        assertThat(classService.findAll(tempPageable)).hasSize(0)
+        assertThat(predicateService.findAll(tempPageable)).hasSize(0)
+        assertThat(statementService.findAll(tempPageable)).hasSize(0)
     }
 
     @Test

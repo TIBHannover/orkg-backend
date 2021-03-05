@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.statements.application.rdf.RdfController
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.not
 import org.junit.jupiter.api.BeforeEach
@@ -43,9 +43,9 @@ class RdfControllerTest : RestDocumentationBaseTest() {
         predicateService.removeAll()
         classService.removeAll()
 
-        Assertions.assertThat(service.findAll(tempPageable)).hasSize(0)
-        Assertions.assertThat(predicateService.findAll(tempPageable)).hasSize(0)
-        Assertions.assertThat(classService.findAll(tempPageable)).hasSize(0)
+        assertThat(service.findAll(tempPageable)).hasSize(0)
+        assertThat(predicateService.findAll(tempPageable)).hasSize(0)
+        assertThat(classService.findAll(tempPageable)).hasSize(0)
     }
 
     @Test

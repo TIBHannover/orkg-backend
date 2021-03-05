@@ -10,7 +10,7 @@ import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -52,9 +52,9 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
         observatoryService.removeAll()
         resourceService.removeAll()
 
-        Assertions.assertThat(service.listOrganizations()).hasSize(0)
-        Assertions.assertThat(observatoryService.listObservatories()).hasSize(0)
-        Assertions.assertThat(resourceService.findAll(PageRequest.of(0, 10))).hasSize(0)
+        assertThat(service.listOrganizations()).hasSize(0)
+        assertThat(observatoryService.listObservatories()).hasSize(0)
+        assertThat(resourceService.findAll(PageRequest.of(0, 10))).hasSize(0)
     }
 
     @Test

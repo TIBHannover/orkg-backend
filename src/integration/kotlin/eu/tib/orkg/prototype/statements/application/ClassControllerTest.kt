@@ -5,7 +5,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import java.net.URI
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -48,8 +48,8 @@ class ClassControllerTest : RestDocumentationBaseTest() {
         service.removeAll()
         resourceService.removeAll()
 
-        Assertions.assertThat(service.findAll(tempPageable)).hasSize(0)
-        Assertions.assertThat(resourceService.findAll(tempPageable)).hasSize(0)
+        assertThat(service.findAll(tempPageable)).hasSize(0)
+        assertThat(resourceService.findAll(tempPageable)).hasSize(0)
     }
 
     @Test

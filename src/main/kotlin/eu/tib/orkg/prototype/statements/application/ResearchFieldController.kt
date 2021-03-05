@@ -2,9 +2,9 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.statements.domain.model.ResearchFieldService
+import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
@@ -27,9 +27,10 @@ class ResearchFieldController(
 ) {
 
     /**
-     * Fetches all the research problems
-     * based on a research field {id}
-     * that excludes the sub-research fields
+     * Fetches all the research problems and
+     * number of papers based on a research
+     * field {id} that excludes the
+     * sub-research fields
      */
     @GetMapping("/{id}/problems")
     fun getResearchProblemsOfField(
@@ -46,11 +47,11 @@ class ResearchFieldController(
      * based on a research field {id}
      * that includes the sub-research fields
      */
-    @GetMapping("/{id}/subfields/problems")
+    @GetMapping("/{id}/subfields/research-problems")
     fun getResearchProblemsIncludingSubFields(
         @PathVariable id: ResourceId,
         pageable: Pageable
-    ): ResponseEntity<Page<Neo4jResource>> {
+    ): ResponseEntity<Page<Resource>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         return ok(service.getResearchProblemsIncludingSubFields(id, pageable))
     }
@@ -66,7 +67,7 @@ class ResearchFieldController(
         pageable: Pageable
     ): ResponseEntity<Page<Contributor>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
-        return ok(service.getContributorsExcludingSubFields(id, pageable))
+        return ok(service.getContributorsIncludingSubFields(id, pageable))
     }
 
     /**
@@ -78,7 +79,7 @@ class ResearchFieldController(
     fun getComparisonsIncludingSubFields(
         @PathVariable id: ResourceId,
         pageable: Pageable
-    ): ResponseEntity<Page<Neo4jResource>> {
+    ): ResponseEntity<Page<Resource>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         return ok(service.getComparisonsIncludingSubFields(id, pageable))
     }
@@ -92,7 +93,7 @@ class ResearchFieldController(
     fun getPapersIncludingSubFields(
         @PathVariable id: ResourceId,
         pageable: Pageable
-    ): ResponseEntity<Page<Neo4jResource>> {
+    ): ResponseEntity<Page<Resource>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         return ok(service.getPapersIncludingSubFields(id, pageable))
     }
@@ -106,7 +107,7 @@ class ResearchFieldController(
     fun getPapersExcludingSubFields(
         @PathVariable id: ResourceId,
         pageable: Pageable
-    ): ResponseEntity<Page<Neo4jResource>> {
+    ): ResponseEntity<Page<Resource>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         return ok(service.getPapersExcludingSubFields(id, pageable))
     }
@@ -120,7 +121,7 @@ class ResearchFieldController(
     fun getComparisonsExcludingSubFields(
         @PathVariable id: ResourceId,
         pageable: Pageable
-    ): ResponseEntity<Page<Neo4jResource>> {
+    ): ResponseEntity<Page<Resource>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         return ok(service.getComparisonsExcludingSubFields(id, pageable))
     }
@@ -137,5 +138,18 @@ class ResearchFieldController(
     ): ResponseEntity<Page<Contributor>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         return ok(service.getContributorsExcludingSubFields(id, pageable))
+    }
+
+    /**
+     * Fetches all the research problems
+     * based on a research field {id}
+     */
+    @GetMapping("/{id}/research-problems")
+    fun getResearchProblemsExcludingSubFields(
+        @PathVariable id: ResourceId,
+        pageable: Pageable
+    ): ResponseEntity<Page<Resource>> {
+        resourceService.findById(id).orElseThrow { ResourceNotFound() }
+        return ok(service.getResearchProblemsExcludingSubFields(id, pageable))
     }
 }

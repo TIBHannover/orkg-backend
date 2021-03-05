@@ -7,7 +7,7 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -50,10 +50,10 @@ class StatsControllerTest : RestDocumentationBaseTest() {
         literalService.removeAll()
         classService.removeAll()
 
-        Assertions.assertThat(resourceService.findAll(tempPageable)).hasSize(0)
-        Assertions.assertThat(predicateService.findAll(tempPageable)).hasSize(0)
-        Assertions.assertThat(literalService.findAll()).hasSize(0)
-        Assertions.assertThat(classService.findAll(tempPageable)).hasSize(0)
+        assertThat(resourceService.findAll(tempPageable)).hasSize(0)
+        assertThat(predicateService.findAll(tempPageable)).hasSize(0)
+        assertThat(literalService.findAll()).hasSize(0)
+        assertThat(classService.findAll(tempPageable)).hasSize(0)
     }
 
     @Test

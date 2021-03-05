@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver
 import org.springframework.http.MediaType
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.RestDocumentationContextProvider
@@ -30,8 +29,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup
-import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder
+import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
+import org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup
+import org.springframework.web.context.WebApplicationContext
 
 /**
  * Base class for REST API documentation test.
@@ -54,19 +54,17 @@ abstract class RestDocumentationBaseTest {
 
     @BeforeEach
     fun setup(
+        webApplicationContext: WebApplicationContext,
         restDocumentation: RestDocumentationContextProvider
     ) {
-        mockMvc = standaloneSetup(createController())
-            // These tests are not auto-configured so @EnableSpringDataWebSupport is missing which means we need to
-            // configure the handlers and resolvers ourself.
-            .setCustomArgumentResolvers(PageableHandlerMethodArgumentResolver())
-            .apply<StandaloneMockMvcBuilder>(
+        mockMvc = webAppContextSetup(webApplicationContext)
+            .apply<DefaultMockMvcBuilder>(
                 documentationConfiguration(restDocumentation)
                     .operationPreprocessors()
                     .withRequestDefaults(prettyPrint())
                     .withResponseDefaults(prettyPrint())
             )
-            .alwaysDo<StandaloneMockMvcBuilder>(
+            .alwaysDo<DefaultMockMvcBuilder>(
                 document(
                     "{class-name}-{method-name}",
                     preprocessRequest(prettyPrint()),

@@ -11,6 +11,7 @@ import io.mockk.every
 import java.time.OffsetDateTime
 import java.util.Optional
 import java.util.UUID
+import org.hamcrest.Matchers
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,9 +20,13 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup
 import org.springframework.web.context.WebApplicationContext
+
+/** A regular expression to match ISO 8601 formatted dates. */
+private const val ISO_8601_PATTERN = """^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}[+-]\d{2}:\d{2}$"""
 
 @WebMvcTest(controllers = [ContributorController::class])
 @AuthorizationServerUnitTestWorkaround
@@ -62,10 +67,13 @@ class ContributorControllerTest {
         mockMvc
             .perform(contributorRequest(id))
             .andExpect(status().isOk)
+            .andExpect(jsonPath("\$.joined_at").value(isISO8601()))
     }
 
     private fun contributorRequest(id: ContributorId) =
         get("/api/contributors/$id")
             .contentType(MediaType.APPLICATION_JSON)
             .characterEncoding("UTF-8")
+
+    private fun isISO8601() = Matchers.matchesRegex(ISO_8601_PATTERN)
 }

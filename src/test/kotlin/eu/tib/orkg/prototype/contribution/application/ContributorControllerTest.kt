@@ -4,6 +4,7 @@ import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.contributions.application.ContributorController
+import eu.tib.orkg.prototype.contributions.application.ports.input.RetrieveContributorUseCase
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import io.mockk.every
@@ -12,7 +13,6 @@ import java.util.Optional
 import java.util.UUID
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.orkg.provenance.contributors.application.ports.input.RetrieveContributorUseCase
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean

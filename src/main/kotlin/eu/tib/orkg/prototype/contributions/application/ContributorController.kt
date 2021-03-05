@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.contributions.application
 
+import eu.tib.orkg.prototype.contributions.application.ports.input.RetrieveContributorUseCase
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.ContributorNotFound
-import org.orkg.provenance.contributors.application.ports.input.RetrieveContributorUseCase
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping

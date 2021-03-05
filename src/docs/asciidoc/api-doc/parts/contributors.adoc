@@ -1,0 +1,15 @@
+= Contributors
+
+Contributors are people contributing to the ORKG.
+They can become a member of an <<organizations,organization>> or join an <<observatories,observatory>>.
+
+[[contributor-fetch]]
+== Obtaining contributor information
+
+Information about a specific contributor can be obtained by sending a `GET` request to the contributor endpoint:
+
+operation::contributor-controller-test-get-by-id[snippets='curl-request,http-response']
+
+The response contains the following fields:
+
+operation::contributor-controller-test-get-by-id[snippets='response-fields']

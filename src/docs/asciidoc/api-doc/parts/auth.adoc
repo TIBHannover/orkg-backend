@@ -3,6 +3,9 @@
 Authentication is done via the OAuth2 protocol.
 An authentication token needs to be obtained and provided to protected endpoints.
 
+NOTE: This endpoint only delivers information about the currenly logged in user.
+      If you need to obtain information about other users in the system, check the <<contributors>> section.
+
 == Obtaining an access token
 
 A token can be obtained by sending a `POST` request to the `/oauth/token` endpoint.

@@ -81,6 +81,8 @@ class PostgresObservatoryService(
         return response
     }
 
+    override fun removeAll() = postgresObservatoryRepository.deleteAll()
+
     override fun changeName(id: ObservatoryId, to: String): Observatory {
         val entity = postgresObservatoryRepository.findById(id.value).get().apply {
             name = to

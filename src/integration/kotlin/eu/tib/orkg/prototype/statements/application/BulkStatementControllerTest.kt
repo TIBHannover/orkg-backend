@@ -4,10 +4,13 @@ import eu.tib.orkg.prototype.statements.adapter.input.rest.bulk.BulkStatementCon
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestBody
@@ -35,6 +38,19 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
     private lateinit var predicateService: PredicateService
 
     override fun createController() = controller
+
+    @BeforeEach
+    fun setup() {
+        val tempPageable = PageRequest.of(0, 10)
+
+        resourceService.removeAll()
+        predicateService.removeAll()
+        service.removeAll()
+
+        assertThat(resourceService.findAll(tempPageable)).hasSize(0)
+        assertThat(predicateService.findAll(tempPageable)).hasSize(0)
+        assertThat(service.findAll(tempPageable)).hasSize(0)
+    }
 
     @Test
     @Disabled("Pending: Discussion with the frontend team regarding return value" +

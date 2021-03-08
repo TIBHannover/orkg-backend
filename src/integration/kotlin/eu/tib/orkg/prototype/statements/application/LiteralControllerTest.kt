@@ -2,6 +2,8 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,6 +32,13 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
     private lateinit var service: LiteralService
 
     override fun createController() = controller
+
+    @BeforeEach
+    fun setup() {
+        service.removeAll()
+
+        assertThat(service.findAll()).hasSize(0)
+    }
 
     @Test
     fun index() {

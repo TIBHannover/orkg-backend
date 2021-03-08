@@ -48,4 +48,6 @@ class PostgresOrganizationService(
 
         return postgresOrganizationRepository.save(entity).toOrganization()
     }
+
+    override fun removeAll() = postgresOrganizationRepository.deleteAll()
 }

@@ -102,4 +102,9 @@ interface StatementService {
      * which represents the entire sub-graph starting from a [Thing]
      */
     fun fetchAsBundle(thingId: String, configuration: BundleConfiguration): Bundle
+
+    /**
+     * Delete all statements
+     */
+    fun removeAll()
 }

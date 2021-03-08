@@ -56,4 +56,9 @@ interface PredicateService {
      * Create if not exists
      */
     fun createIfNotExists(id: PredicateId, label: String)
+
+    /**
+     * Delete all predicates
+     */
+    fun removeAll()
 }

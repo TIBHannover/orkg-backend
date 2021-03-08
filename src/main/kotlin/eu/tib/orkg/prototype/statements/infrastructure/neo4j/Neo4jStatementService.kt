@@ -74,7 +74,7 @@ class Neo4jStatementService :
         subjectId: String,
         predicateId: PredicateId,
         pagination: Pageable
-    ) =
+    ): Page<GeneralStatement> =
         statementRepository
             .findAllBySubjectAndPredicate(subjectId, predicateId, pagination)
             .map { toStatement(it) }
@@ -84,11 +84,10 @@ class Neo4jStatementService :
         objectId: String,
         predicateId: PredicateId,
         pagination: Pageable
-    ) =
+    ): Page<GeneralStatement> =
         statementRepository
             .findAllByObjectAndPredicate(objectId, predicateId, pagination)
-            // .content
-            .map { toStatement(it) }
+            .map(this::toStatement)
 
     override fun create(subject: String, predicate: PredicateId, `object`: String) =
         create(ContributorId.createUnknownContributor(), subject, predicate, `object`)
@@ -187,6 +186,8 @@ class Neo4jStatementService :
                 .map { toStatement(it) }
                 .toMutableList()
         )
+
+    override fun removeAll() = statementRepository.deleteAll()
 
     private fun refreshObject(thing: Neo4jThing): Thing {
         return when (thing) {

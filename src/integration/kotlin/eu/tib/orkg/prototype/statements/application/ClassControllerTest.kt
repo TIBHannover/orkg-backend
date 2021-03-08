@@ -5,11 +5,14 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import java.net.URI
+import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
+import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
@@ -37,6 +40,17 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     private lateinit var resourceService: ResourceService
 
     override fun createController() = controller
+
+    @BeforeEach
+    fun setup() {
+        val tempPageable = PageRequest.of(0, 10)
+
+        service.removeAll()
+        resourceService.removeAll()
+
+        assertThat(service.findAll(tempPageable)).hasSize(0)
+        assertThat(resourceService.findAll(tempPageable)).hasSize(0)
+    }
 
     @Test
     fun index() {

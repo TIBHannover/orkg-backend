@@ -46,4 +46,9 @@ interface LiteralService {
      * Update a literal.
      */
     fun update(literal: Literal): Literal
+
+    /**
+     * Delete all literals
+     */
+    fun removeAll()
 }

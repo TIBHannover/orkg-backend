@@ -60,6 +60,8 @@ class Neo4jLiteralService(
         return neo4jLiteralRepository.save(found).toLiteral()
     }
 
+    override fun removeAll() = neo4jLiteralRepository.deleteAll()
+
     private fun String.toSearchString() = "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"
 
     private fun String.toExactSearchString() = "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"

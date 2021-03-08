@@ -81,6 +81,8 @@ class Neo4jClassService(
         return neo4jClassRepository.save(found).toClass()
     }
 
+    override fun removeAll() = neo4jClassRepository.deleteAll()
+
     override fun findByURI(uri: URI): Optional<Class> =
         neo4jClassRepository
             .findByUri(uri.toString())

@@ -76,4 +76,9 @@ interface ClassService : URIService<Class> {
      * Create if not exists a class
      */
     fun createIfNotExists(id: ClassId, label: String, uri: URI?)
+
+    /**
+     * Delete all classes
+     */
+    fun removeAll()
 }

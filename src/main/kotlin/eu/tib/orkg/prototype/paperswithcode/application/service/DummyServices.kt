@@ -25,9 +25,12 @@ class DummyBenchmarkService(
     private val researchFieldService: ResearchFieldService
 ) : RetrieveBenchmarkUseCase {
     override fun summariesForResearchField(id: ResourceId): Optional<List<BenchmarkSummary>> {
+        /*
+        // TODO: Verification should be done on real service
         val researchField = researchFieldService.findById(id)
         if (!researchField.isPresent)
             return Optional.empty()
+         */
         // TODO: Might be better to do in one query?
         val benchmarkSummaries = findResearchProblem.allByResearchField(id).map {
             summarizeBenchmark.byResearchProblem(it.id).get()
@@ -43,8 +46,11 @@ class DummyDatasetService(
     private val summarizeDataset: SummarizeDatasetQuery
 ) : RetrieveDatasetUseCase {
     override fun forResearchProblem(id: ResourceId): Optional<List<Dataset>> {
+        /*
+        // TODO: Validate in real implementation
         val problem = researchProblemService.findById(id)
         if (!problem.isPresent) return Optional.empty()
+         */
         return findDatasets.forResearchProblem(id)
     }
 

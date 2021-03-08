@@ -23,6 +23,11 @@ private const val MATCH_STATEMENT =
 private const val RETURN_STATEMENT =
     """RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at"""
 
+/**
+ * Partial query that returns the number of statements (relationships) in [Query.countQuery] queries.
+ */
+private const val RETURN_COUNT = "RETURN count(rel) AS count"
+
 // Custom queries
 
 private const val WHERE_SUBJECT_ID_IN =
@@ -70,14 +75,20 @@ interface Neo4jStatementRepository :
         pagination: Pageable
     ): Page<Neo4jStatement>
 
-    @Query("MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Literal`) WHERE rel.`predicate_id`={0} AND obj.`label`={1} RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at")
+    @Query(
+        "MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Literal`) WHERE rel.`predicate_id`={0} AND obj.`label`={1} RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at",
+        countQuery = "MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Literal`) WHERE rel.`predicate_id`={0} AND obj.`label`={1} $RETURN_COUNT"
+    )
     fun findAllByPredicateIdAndLabel(
         predicateId: PredicateId,
         literal: String,
         pagination: Pageable
     ): Page<Neo4jStatement>
 
-    @Query("MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Literal`) WHERE {2} IN labels(sub) AND rel.`predicate_id`={0} AND obj.`label`={1} RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at")
+    @Query(
+        "MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Literal`) WHERE {2} IN labels(sub) AND rel.`predicate_id`={0} AND obj.`label`={1} RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at",
+        countQuery = "MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Literal`) WHERE {2} IN labels(sub) AND rel.`predicate_id`={0} AND obj.`label`={1} $RETURN_COUNT"
+    )
     fun findAllByPredicateIdAndLabelAndSubjectClass(
         predicateId: PredicateId,
         literal: String,
@@ -85,13 +96,19 @@ interface Neo4jStatementRepository :
         pagination: Pageable
     ): Page<Neo4jStatement>
 
-    @Query("""$MATCH_STATEMENT $WHERE_SUBJECT_ID_IN $RETURN_STATEMENT""")
+    @Query(
+        """$MATCH_STATEMENT $WHERE_SUBJECT_ID_IN $RETURN_STATEMENT""",
+        countQuery = "$MATCH_STATEMENT $WHERE_OBJECT_ID_IN $RETURN_COUNT"
+    )
     fun findAllBySubjects(
         subjectIds: List<String>,
         pagination: Pageable
     ): Page<Neo4jStatement>
 
-    @Query("""$MATCH_STATEMENT $WHERE_OBJECT_ID_IN $RETURN_STATEMENT""")
+    @Query(
+        """$MATCH_STATEMENT $WHERE_OBJECT_ID_IN $RETURN_STATEMENT""",
+        countQuery = "$MATCH_STATEMENT $WHERE_OBJECT_ID_IN $RETURN_COUNT"
+    )
     fun findAllByObjects(
         subjectIds: List<String>,
         pagination: Pageable

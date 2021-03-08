@@ -51,21 +51,21 @@ interface Neo4jStatementRepository :
 
     fun findByStatementId(id: StatementId): Optional<Neo4jStatement>
 
-    @Query("MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Thing`) WHERE sub.`resource_id`={0} OR sub.`literal_id`={0} OR sub.`predicate_id`={0} OR sub.`class_id`={0} $WITH_SORTABLE_FIELDS RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at",
-    countQuery = "MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Thing`) WHERE sub.`resource_id`={0} OR sub.`literal_id`={0} OR sub.`predicate_id`={0} OR sub.`class_id`={0} $WITH_SORTABLE_FIELDS $RETURN_COUNT")
+    @Query("$MATCH_STATEMENT WHERE sub.`resource_id`={0} OR sub.`literal_id`={0} OR sub.`predicate_id`={0} OR sub.`class_id`={0} $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
+    countQuery = "$MATCH_STATEMENT WHERE sub.`resource_id`={0} OR sub.`literal_id`={0} OR sub.`predicate_id`={0} OR sub.`class_id`={0} $WITH_SORTABLE_FIELDS $RETURN_COUNT")
     fun findAllBySubject(subjectId: String, pagination: Pageable): Page<Neo4jStatement>
 
     fun findAllByPredicateId(predicateId: PredicateId, pagination: Pageable): Page<Neo4jStatement>
 
-    @Query("MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Thing`) WHERE obj.`resource_id`={0} OR obj.`literal_id`={0} OR obj.`predicate_id`={0} OR obj.`class_id`={0} $WITH_SORTABLE_FIELDS RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at",
-    countQuery = "MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Thing`) WHERE obj.`resource_id`={0} OR obj.`literal_id`={0} OR obj.`predicate_id`={0} OR obj.`class_id`={0} $WITH_SORTABLE_FIELDS $RETURN_COUNT")
+    @Query("$MATCH_STATEMENT WHERE obj.`resource_id`={0} OR obj.`literal_id`={0} OR obj.`predicate_id`={0} OR obj.`class_id`={0} $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
+    countQuery = "$MATCH_STATEMENT WHERE obj.`resource_id`={0} OR obj.`literal_id`={0} OR obj.`predicate_id`={0} OR obj.`class_id`={0} $WITH_SORTABLE_FIELDS $RETURN_COUNT")
     fun findAllByObject(objectId: String, pagination: Pageable): Page<Neo4jStatement>
 
     @Query("""MATCH (p:`Thing`)-[*]->() WHERE p.`resource_id`={0} OR p.`literal_id`={0} OR p.`predicate_id`={0} OR p.`class_id`={0} RETURN COUNT(p)""")
     fun countByIdRecursive(paperId: String): Int
 
-    @Query("MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Thing`) WHERE (obj.`resource_id`={0} OR obj.`literal_id`={0} OR obj.`predicate_id`={0} OR obj.`class_id`={0}) AND rel.`predicate_id`={1} $WITH_SORTABLE_FIELDS RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at",
-    countQuery = "MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Thing`) WHERE (obj.`resource_id`={0} OR obj.`literal_id`={0} OR obj.`predicate_id`={0} OR obj.`class_id`={0}) AND rel.`predicate_id`={1} $WITH_SORTABLE_FIELDS $RETURN_COUNT")
+    @Query("$MATCH_STATEMENT WHERE (obj.`resource_id`={0} OR obj.`literal_id`={0} OR obj.`predicate_id`={0} OR obj.`class_id`={0}) AND rel.`predicate_id`={1} $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
+    countQuery = "$MATCH_STATEMENT WHERE (obj.`resource_id`={0} OR obj.`literal_id`={0} OR obj.`predicate_id`={0} OR obj.`class_id`={0}) AND rel.`predicate_id`={1} $WITH_SORTABLE_FIELDS $RETURN_COUNT")
 
     fun findAllByObjectAndPredicate(
         objectId: String,
@@ -73,8 +73,8 @@ interface Neo4jStatementRepository :
         pagination: Pageable
     ): Page<Neo4jStatement>
 
-    @Query("MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Thing`) WHERE (sub.`resource_id`={0} OR sub.`literal_id`={0} OR sub.`predicate_id`={0} OR sub.`class_id`={0}) AND rel.`predicate_id`={1} $WITH_SORTABLE_FIELDS RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at",
-    countQuery = "MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Thing`) WHERE (sub.`resource_id`={0} OR sub.`literal_id`={0} OR sub.`predicate_id`={0} OR sub.`class_id`={0}) AND rel.`predicate_id`={1} $WITH_SORTABLE_FIELDS $RETURN_COUNT")
+    @Query("$MATCH_STATEMENT WHERE (sub.`resource_id`={0} OR sub.`literal_id`={0} OR sub.`predicate_id`={0} OR sub.`class_id`={0}) AND rel.`predicate_id`={1} $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
+    countQuery = "$MATCH_STATEMENT WHERE (sub.`resource_id`={0} OR sub.`literal_id`={0} OR sub.`predicate_id`={0} OR sub.`class_id`={0}) AND rel.`predicate_id`={1} $WITH_SORTABLE_FIELDS $RETURN_COUNT")
     fun findAllBySubjectAndPredicate(
         subjectId: String,
         predicateId: PredicateId,
@@ -82,7 +82,7 @@ interface Neo4jStatementRepository :
     ): Page<Neo4jStatement>
 
     @Query(
-        "MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Literal`) WHERE rel.`predicate_id`={0} AND obj.`label`={1} $WITH_SORTABLE_FIELDS RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at",
+        "MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Literal`) WHERE rel.`predicate_id`={0} AND obj.`label`={1} $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
         countQuery = "MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Literal`) WHERE rel.`predicate_id`={0} AND obj.`label`={1} $WITH_SORTABLE_FIELDS $RETURN_COUNT"
     )
     fun findAllByPredicateIdAndLabel(
@@ -92,7 +92,7 @@ interface Neo4jStatementRepository :
     ): Page<Neo4jStatement>
 
     @Query(
-        "MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Literal`) WHERE {2} IN labels(sub) AND rel.`predicate_id`={0} AND obj.`label`={1} $WITH_SORTABLE_FIELDS RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at",
+        "MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Literal`) WHERE {2} IN labels(sub) AND rel.`predicate_id`={0} AND obj.`label`={1} $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
         countQuery = "MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Literal`) WHERE {2} IN labels(sub) AND rel.`predicate_id`={0} AND obj.`label`={1} $WITH_SORTABLE_FIELDS $RETURN_COUNT"
     )
     fun findAllByPredicateIdAndLabelAndSubjectClass(

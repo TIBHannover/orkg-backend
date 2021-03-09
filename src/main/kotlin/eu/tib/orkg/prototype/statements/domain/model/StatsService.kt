@@ -15,12 +15,24 @@ interface StatsService {
      */
     fun getStats(): Stats
 
+    /**
+     * Get paper count for each research field
+     */
     fun getFieldsStats(): Map<String, Int>
 
+    /**
+     * Get paper count by observatory ID
+     */
     fun getObservatoryPapersCount(id: ObservatoryId): Long
 
+    /**
+     * Get comparison count by observatory ID
+     */
     fun getObservatoryComparisonsCount(id: ObservatoryId): Long
 
+    /**
+     * Get paper count and comparison count
+     */
     fun getObservatoriesPapersAndComparisonsCount(): Iterable<ObservatoryResources>
 
     /**
@@ -34,7 +46,17 @@ interface StatsService {
     fun getRecentChangeLog(pageable: Pageable): Page<ChangeLog>
 
     /**
+     * Get recent changes in ORKG by research field
+     */
+    fun getRecentChangeLogByResearchField(id: ResourceId, pageable: Pageable): Page<ChangeLog>
+
+    /**
      * Get trending research problems
      */
     fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems>
+
+    /**
+     * Get top contributors by research field ID
+     */
+    fun getTopCurrentContributorsByResearchField(id: ResourceId, pageable: Pageable): Page<TopContributorsWithProfile>
 }

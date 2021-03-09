@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.Query
@@ -32,15 +33,27 @@ interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
     countQuery = "MATCH(sub: Resource) WHERE ('Paper' IN LABELS(sub) OR 'Comparison' IN LABELS(sub) OR 'ProblemStatement' IN LABELS(sub) OR 'Contribution' IN LABELS(sub) OR 'Visualization' IN LABELS(sub)) AND (sub.created_by <> '00000000-0000-0000-0000-000000000000' AND sub.created_at > {0} ) RETURN DISTINCT COUNT(sub.created_by) AS cnt")
     fun getTopCurrentContributors(date: String, pageable: Pageable): Page<TopContributors>
 
-    @Query("""MATCH (sub: Thing) WHERE ('Paper' IN labels(sub) OR 'Comparison' IN labels(sub) OR 'Problem' IN labels(sub) OR 'Visualization' IN labels(sub) OR 'Contribution' IN labels(sub)) AND (sub.created_by <> '00000000-0000-0000-0000-000000000000')  RETURN sub.resource_id AS id, sub.label AS label, sub.created_at AS createdAt, sub.created_by AS createdBy, labels(sub) AS classes""",
-    countQuery = "MATCH (sub: Thing) WHERE ('Paper' IN labels(sub) OR 'Comparison' IN labels(sub) OR 'Problem' IN labels(sub) OR 'Visualization' IN labels(sub) OR 'Contribution' IN labels(sub)) AND (sub.created_by <> '00000000-0000-0000-0000-000000000000') RETURN count(sub.created_by) as cnt")
+    @Query("""MATCH(p:Paper)-[:RELATED {predicate_id: 'P30'}]->(:ResearchField{resource_id:{0} }) WHERE (p.created_by <> '00000000-0000-0000-0000-000000000000' AND p.created_at > {1} ) RETURN DISTINCT p.created_by AS id, count(p) AS numberOfContributions""",
+    countQuery = "MATCH(p:Paper)-[:RELATED {predicate_id: 'P30'}]->(:ResearchField{resource_id:{0} }) WHERE (p.created_by <> '00000000-0000-0000-0000-000000000000' AND p.created_at > {1} ) RETURN DISTINCT COUNT(p.created_by) AS cnt")
+    fun getTopCurrentContributorsByResearchFieldId(id: ResourceId, date: String, pageable: Pageable): Page<TopContributors>
+
+    @Query("""MATCH (sub: Thing) WHERE ('Paper' IN labels(sub) OR 'Comparison' IN labels(sub) OR 'Problem' IN labels(sub) OR 'Visualization' IN labels(sub) OR 'Contribution' IN labels(sub)) AND (NOT 'PaperDeleted' IN  labels(sub)) AND (NOT 'ContributionDeleted' IN labels(sub)) RETURN sub.resource_id AS id, sub.label AS label, sub.created_at AS createdAt, COALESCE(sub.created_by, '00000000-0000-0000-0000-000000000000') as createdBy, labels(sub) AS classes""",
+    countQuery = "MATCH (sub: Thing) WHERE ('Paper' IN labels(sub) OR 'Comparison' IN labels(sub) OR 'Problem' IN labels(sub) OR 'Visualization' IN labels(sub) OR 'Contribution' IN labels(sub)) AND (NOT 'PaperDeleted' IN  labels(sub)) AND (NOT 'ContributionDeleted' IN labels(sub)) RETURN count(sub.created_by) as cnt")
     fun getChangeLog(pageable: Pageable): Page<ChangeLogResponse>
+
+    @Query("""MATCH (v:Visualization)-[:RELATED]->(comp:Comparison)-[:RELATED]->(contribution:Contribution)<-[:RELATED]-(p:Paper)-[:RELATED]->(r:ResearchField{resource_id: {0}}) WHERE (NOT 'PaperDeleted' IN  labels(p) AND NOT 'ContributionDeleted' IN labels(contribution))  WITH COLLECT([v.resource_id,v.label, v.created_at, v.created_by,labels(v)])  + COLLECT([comp.resource_id,comp.label, comp.created_at, comp.created_by, labels(comp)]) + COLLECT([contribution.resource_id,contribution.label, contribution.created_at, contribution.created_by, labels(contribution)]) + COLLECT([p.resource_id,p.label, p.created_at, p.created_by, labels(p)]) + COLLECT([r.resource_id,r.label, r.created_at, r.created_by, labels(r)]) AS items UNWIND items AS changelogs RETURN DISTINCT changelogs[0] AS id, changelogs[1] AS label, changelogs[2] AS createdAt, changelogs[3] AS createdBy, changelogs[4] AS classes""",
+    countQuery = "MATCH (v:Visualization)-[:RELATED]->(comp:Comparison)-[:RELATED]->(contribution:Contribution)<-[:RELATED]-(p:Paper)-[:RELATED]->(r:ResearchField{resource_id: {0}}) WHERE (NOT 'PaperDeleted' IN  labels(p) AND NOT 'ContributionDeleted' IN labels(contribution))  WITH COLLECT([v.resource_id,v.label, v.created_at, v.created_by,labels(v)])  + COLLECT([comp.resource_id,comp.label, comp.created_at, comp.created_by, labels(comp)]) + COLLECT([contribution.resource_id,contribution.label, contribution.created_at, contribution.created_by, labels(contribution)]) + COLLECT([p.resource_id,p.label, p.created_at, p.created_by, labels(p)]) + COLLECT([r.resource_id,r.label, r.created_at, r.created_by, labels(r)]) AS items UNWIND items AS changelogs RETURN COUNT(changelogs) AS cnt")
+    fun getChangeLogByResearchField(id: ResourceId, pageable: Pageable): Page<ChangeLogResponse>
 
     @Query("""MATCH (paper: Paper)-[:RELATED {predicate_id: 'P31'}]->(c1: Contribution)-[:RELATED{predicate_id: 'P32'}]-> (r:Problem) WHERE paper.created_by <> '00000000-0000-0000-0000-000000000000' WITH r.resource_id AS id, r.label AS researchProblem, COUNT(paper) AS papersCount, COLLECT(DISTINCT paper.created_by) AS contributor RETURN id, researchProblem, papersCount""",
     countQuery = "MATCH (paper: Paper)-[:RELATED {predicate_id: 'P31'}]->(c1: Contribution)-[:RELATED{predicate_id: 'P32'}]-> (r:Problem) WHERE paper.created_by <> '00000000-0000-0000-0000-000000000000' WITH r.resource_id AS id, r.label AS researchProblem, COUNT(paper) AS papersCount, COLLECT(DISTINCT paper.created_by) AS contributor RETURN count(researchProblem) as cnt")
     fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems>
 }
 
+/**
+ * Data class for fetching
+ * field statistics
+ */
 @QueryResult
 data class FieldsStats(
     val fieldId: String,
@@ -48,6 +61,10 @@ data class FieldsStats(
     val papers: Long
 )
 
+/**
+ * Data class for fetching
+ * Observatory resources
+ */
 @QueryResult
 data class ObservatoryResources(
     @JsonProperty("observatory_id")

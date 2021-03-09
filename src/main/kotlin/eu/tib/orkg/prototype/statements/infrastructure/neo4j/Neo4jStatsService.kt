@@ -1,17 +1,22 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.domain.model.StatsService
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.ChangeLogResponse
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatsRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.TopContributors
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.TrendingResearchProblems
 import java.time.LocalDate
 import java.util.UUID
+import java.util.logging.Logger
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -24,6 +29,9 @@ class Neo4jStatsService(
     private val neo4jStatsRepository: Neo4jStatsRepository,
     private val userRepository: UserRepository
 ) : StatsService {
+
+    private val logger: Logger = Logger.getLogger("Neo4j")
+
     override fun getStats(): Stats {
         val metadata = neo4jStatsRepository.getGraphMetaData()
         val labels = metadata.first()["labels"] as Map<*, *>
@@ -57,31 +65,37 @@ class Neo4jStatsService(
         neo4jStatsRepository.getObservatoriesPapersAndComparisonsCount()
 
     override fun getTopCurrentContributors(pageable: Pageable): Page<TopContributorsWithProfile> {
-        val userList = mutableListOf<UUID>()
         val previousMonthDate: LocalDate = LocalDate.now().minusMonths(1)
-        val refinedTopContributors = mutableListOf<TopContributorsWithProfile>()
-
-        val topContributors = neo4jStatsRepository.getTopCurrentContributors(previousMonthDate.toString(), pageable)
-
-        topContributors.map {
-            userList.add(UUID.fromString(it.id))
-        }
-
-        val mapValues = userRepository.findByIdIn(userList.toTypedArray()).map(UserEntity::toContributor).groupBy(Contributor::id)
-
-        topContributors.forEach { topContributor ->
-            val contributor = mapValues[ContributorId(topContributor.id)]?.first()
-            refinedTopContributors.add(TopContributorsWithProfile(topContributor.numberOfContributions,
-            Profile(contributor?.id, contributor?.name, contributor?.gravatarId, contributor?.avatarURL)))
-        }
-
-        return PageImpl(refinedTopContributors, pageable, refinedTopContributors.size.toLong())
+        return getContributorsWithProfile(neo4jStatsRepository.getTopCurrentContributors(
+            previousMonthDate.toString(), pageable), pageable)
     }
 
     override fun getRecentChangeLog(pageable: Pageable): Page<ChangeLog> {
+        val changeLogs = neo4jStatsRepository.getChangeLog(pageable)
+
+        return getChangeLogsWithProfile(changeLogs, pageable)
+    }
+
+    override fun getRecentChangeLogByResearchField(id: ResourceId, pageable: Pageable): Page<ChangeLog> {
+        val changeLogs = neo4jStatsRepository.getChangeLogByResearchField(id, pageable)
+
+        return getChangeLogsWithProfile(changeLogs, pageable)
+    }
+
+    override fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems> = neo4jStatsRepository.getTrendingResearchProblems(pageable)
+
+    override fun getTopCurrentContributorsByResearchField(
+        id: ResourceId,
+        pageable: Pageable
+    ): Page<TopContributorsWithProfile> {
+        val previousMonthDate: LocalDate = LocalDate.now().minusMonths(1)
+        return getContributorsWithProfile(neo4jStatsRepository.getTopCurrentContributorsByResearchFieldId(
+            id, previousMonthDate.toString(), pageable), pageable)
+    }
+
+    private fun getChangeLogsWithProfile(changeLogs: Page<ChangeLogResponse>, pageable: Pageable): Page<ChangeLog> {
         val userList = mutableListOf<UUID>()
         val refinedChangeLog = mutableListOf<ChangeLog>()
-        val changeLogs = neo4jStatsRepository.getChangeLog(pageable)
 
         changeLogs.map {
             userList.add(UUID.fromString(it.createdBy))
@@ -94,13 +108,8 @@ class Neo4jStatsService(
 
             val filteredClasses = changeLogResponse.classes.filter {
                 it != "Thing" &&
-                it != "Resource" &&
-                it != "AuditableEntity" &&
-                it != "FeaturedPaper" &&
-                it != "PaperDeleted" &&
-                it != "ContributionDeleted" &&
-                it != "FeaturedComparison" &&
-                it != "Sentence" }
+                    it != "Resource" &&
+                    it != "AuditableEntity" }
 
             refinedChangeLog.add(ChangeLog(changeLogResponse.id, changeLogResponse.label, changeLogResponse.createdAt,
                 filteredClasses, Profile(contributor?.id, contributor?.name, contributor?.gravatarId, contributor?.avatarURL)))
@@ -109,7 +118,24 @@ class Neo4jStatsService(
         return PageImpl(refinedChangeLog, pageable, refinedChangeLog.size.toLong())
     }
 
-    override fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems> = neo4jStatsRepository.getTrendingResearchProblems(pageable)
+    private fun getContributorsWithProfile(topContributors: Page<TopContributors>, pageable: Pageable): Page<TopContributorsWithProfile> {
+        val userList = mutableListOf<UUID>()
+        val refinedTopContributors = mutableListOf<TopContributorsWithProfile>()
+
+        topContributors.map {
+            userList.add(UUID.fromString(it.id))
+        }
+
+        val mapValues = userRepository.findByIdIn(userList.toTypedArray()).map(UserEntity::toContributor).groupBy(Contributor::id)
+
+        topContributors.forEach { topContributor ->
+            val contributor = mapValues[ContributorId(topContributor.id)]?.first()
+            refinedTopContributors.add(TopContributorsWithProfile(topContributor.numberOfContributions,
+                Profile(contributor?.id, contributor?.name, contributor?.gravatarId, contributor?.avatarURL)))
+        }
+
+        return PageImpl(refinedTopContributors, pageable, refinedTopContributors.size.toLong())
+    }
 
     private fun extractValue(map: Map<*, *>, key: String): Long {
         return if (map.containsKey(key))
@@ -126,6 +152,7 @@ class Neo4jStatsService(
 data class ChangeLog(
     val id: String,
     val label: String,
+    @JsonProperty("created_at")
     val createdAt: String,
     val classes: List<String>,
     val profile: Profile?
@@ -137,6 +164,7 @@ data class ChangeLog(
  * profile
  */
 data class TopContributorsWithProfile(
+    @JsonProperty("contributions_count")
     val contributionsCount: Long,
     val profile: Profile?
 )
@@ -147,7 +175,10 @@ data class TopContributorsWithProfile(
  */
 data class Profile(
     val id: ContributorId?,
+    @JsonProperty("display_name")
     val displayName: String?,
+    @JsonProperty("gravatar_id")
     val gravatarId: String?,
+    @JsonProperty("gravatar_url")
     val gravatarUrl: String?
 )

@@ -19,6 +19,8 @@ spring:
       ddl-auto: validate
     show-sql: true
     # generate-ddl: true
+liquigraph:
+  enabled: false
 logging:
   level:
     org.neo4j.ogm.drivers: DEBUG

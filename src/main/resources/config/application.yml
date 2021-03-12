@@ -22,6 +22,10 @@ orkg:
     doiPrefix: "10.7484"
     url: "https://api.test.datacite.org/dois"
     publish: "draft"
+liquigraph:
+  url: "jdbc:neo4j:${spring.data.neo4j.uri}"
+  user: "${spring.data.neo4j.username}"
+  password: "${spring.data.neo4j.password}"
 ---
 spring:
   profiles: development

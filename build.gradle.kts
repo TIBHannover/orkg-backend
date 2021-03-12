@@ -49,19 +49,25 @@ dependencies {
     implementation(platform(kotlin("bom")))
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
-
+    // PostgreSQL + Liquibase
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.postgresql:postgresql")
     implementation("org.liquibase:liquibase-core")
+    // Neo4j
     implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
         exclude(module = "neo4j-ogm-http-driver")
     }
+    implementation("org.springframework.data:spring-data-neo4j:$springDataNeo4jVersion.RELEASE")
     implementation("org.neo4j:neo4j-ogm-bolt-native-types")
+    // Liquigraph (Neo4j)
+    implementation("org.liquigraph:liquigraph-spring-boot-starter:4.0.2")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    // Security
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.security.oauth:spring-security-oauth2:$springSecurityOAuthVersion.RELEASE")
+    // Web
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.data:spring-data-neo4j:$springDataNeo4jVersion.RELEASE")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     // JAXB stuff. Was removed from Java 9. Seems to be needed for OAuth2.
     implementation("javax.xml.bind:jaxb-api:2.3.0")

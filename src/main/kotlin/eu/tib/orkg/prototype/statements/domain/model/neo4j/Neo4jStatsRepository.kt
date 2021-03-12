@@ -29,13 +29,16 @@ interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
     @Query("""MATCH (n:Paper) WHERE n.observatory_id<>'00000000-0000-0000-0000-000000000000' WITH DISTINCT (n.observatory_id) AS observatoryId, COUNT(n) AS resources OPTIONAL MATCH (c:Comparison) where c.observatory_id<>'00000000-0000-0000-0000-000000000000' AND c.observatory_id = observatoryId WITH DISTINCT (c.observatory_id) as cobservatoryId, count(c) as comparisons, resources, observatoryId RETURN observatoryId, resources, comparisons""")
     fun getObservatoriesPapersAndComparisonsCount(): List<ObservatoryResources>
 
-    @Query("""MATCH(sub: Resource) WHERE ('Paper' IN LABELS(sub) OR 'Comparison' IN LABELS(sub) OR 'ProblemStatement' IN LABELS(sub) OR 'Contribution' IN LABELS(sub) OR 'Visualization' IN LABELS(sub)) AND (sub.created_by <> '00000000-0000-0000-0000-000000000000' AND sub.created_at > {0} ) RETURN DISTINCT sub.created_by AS id, count(sub) AS numberOfContributions""",
+    @Query("""MATCH(sub: Resource) WHERE ('Paper' IN LABELS(sub) OR 'Comparison' IN LABELS(sub) OR 'ProblemStatement' IN LABELS(sub) OR 'Contribution' IN LABELS(sub) OR 'Visualization' IN LABELS(sub)) AND (sub.created_by <> '00000000-0000-0000-0000-000000000000' AND sub.created_at > {0} ) RETURN DISTINCT sub.created_by AS id, count(sub) AS contributions""",
     countQuery = "MATCH(sub: Resource) WHERE ('Paper' IN LABELS(sub) OR 'Comparison' IN LABELS(sub) OR 'ProblemStatement' IN LABELS(sub) OR 'Contribution' IN LABELS(sub) OR 'Visualization' IN LABELS(sub)) AND (sub.created_by <> '00000000-0000-0000-0000-000000000000' AND sub.created_at > {0} ) RETURN DISTINCT COUNT(sub.created_by) AS cnt")
-    fun getTopCurrentContributors(date: String, pageable: Pageable): Page<TopContributors>
+    fun getTopCurrentContributorIdsAndContributionsCount(date: String, pageable: Pageable): Page<TopContributorIdentifiers>
 
-    @Query("""MATCH(p:Paper)-[:RELATED {predicate_id: 'P30'}]->(:ResearchField{resource_id:{0} }) WHERE (p.created_by <> '00000000-0000-0000-0000-000000000000' AND p.created_at > {1} ) RETURN DISTINCT p.created_by AS id, count(p) AS numberOfContributions""",
-    countQuery = "MATCH(p:Paper)-[:RELATED {predicate_id: 'P30'}]->(:ResearchField{resource_id:{0} }) WHERE (p.created_by <> '00000000-0000-0000-0000-000000000000' AND p.created_at > {1} ) RETURN DISTINCT COUNT(p.created_by) AS cnt")
-    fun getTopCurrentContributorsByResearchFieldId(id: ResourceId, date: String, pageable: Pageable): Page<TopContributors>
+    /**
+     * This query fetches the contributor IDs from sub research fields as well.
+     */
+    @Query("""MATCH (research:ResearchField)<-[:RELATED* {predicate_id: 'P36'}]-(research1:ResearchField{resource_id: {0}}) WITH COLLECT (research) + COLLECT(research1) AS all_research_fields MATCH(p:Paper)-[:RELATED{predicate_id: 'P30'}]->(resField) WHERE resField IN all_research_fields AND (p.created_by <> '00000000-0000-0000-0000-000000000000' AND p.created_at > {1}) RETURN DISTINCT p.created_by AS id, COUNT(DISTINCT p) AS contributions""",
+    countQuery = "MATCH (research:ResearchField)<-[:RELATED* {predicate_id: 'P36'}]-(research1:ResearchField{resource_id: {0}}) WITH COLLECT (research) + COLLECT(research1) AS all_research_fields MATCH(p:Paper)-[:RELATED{predicate_id: 'P30'}]->(resField) WHERE resField IN all_research_fields AND (p.created_by <> '00000000-0000-0000-0000-000000000000' AND p.created_at > {1}) RETURN COUNT(DISTINCT p.created_by) AS cnt")
+    fun getTopCurContribIdsAndContribCountByResearchFieldId(id: ResourceId, date: String, pageable: Pageable): Page<TopContributorIdentifiers>
 
     @Query("""MATCH (sub: Thing) WHERE ('Paper' IN labels(sub) OR 'Comparison' IN labels(sub) OR 'Problem' IN labels(sub) OR 'Visualization' IN labels(sub) OR 'Contribution' IN labels(sub)) AND (NOT 'PaperDeleted' IN  labels(sub)) AND (NOT 'ContributionDeleted' IN labels(sub)) RETURN sub.resource_id AS id, sub.label AS label, sub.created_at AS createdAt, COALESCE(sub.created_by, '00000000-0000-0000-0000-000000000000') as createdBy, labels(sub) AS classes""",
     countQuery = "MATCH (sub: Thing) WHERE ('Paper' IN labels(sub) OR 'Comparison' IN labels(sub) OR 'Problem' IN labels(sub) OR 'Visualization' IN labels(sub) OR 'Contribution' IN labels(sub)) AND (NOT 'PaperDeleted' IN  labels(sub)) AND (NOT 'ContributionDeleted' IN labels(sub)) RETURN count(sub.created_by) as cnt")
@@ -105,7 +108,7 @@ data class TrendingResearchProblems(
  * per contributor
  */
 @QueryResult
-data class TopContributors(
+data class TopContributorIdentifiers(
     val id: String,
-    val numberOfContributions: Long
+    val contributions: Long
 )

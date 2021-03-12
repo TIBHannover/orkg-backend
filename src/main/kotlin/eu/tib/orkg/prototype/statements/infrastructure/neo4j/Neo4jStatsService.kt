@@ -12,11 +12,10 @@ import eu.tib.orkg.prototype.statements.domain.model.StatsService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ChangeLogResponse
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatsRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.TopContributors
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.TopContributorIdentifiers
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.TrendingResearchProblems
 import java.time.LocalDate
 import java.util.UUID
-import java.util.logging.Logger
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -29,9 +28,6 @@ class Neo4jStatsService(
     private val neo4jStatsRepository: Neo4jStatsRepository,
     private val userRepository: UserRepository
 ) : StatsService {
-
-    private val logger: Logger = Logger.getLogger("Neo4j")
-
     override fun getStats(): Stats {
         val metadata = neo4jStatsRepository.getGraphMetaData()
         val labels = metadata.first()["labels"] as Map<*, *>
@@ -66,7 +62,7 @@ class Neo4jStatsService(
 
     override fun getTopCurrentContributors(pageable: Pageable): Page<TopContributorsWithProfile> {
         val previousMonthDate: LocalDate = LocalDate.now().minusMonths(1)
-        return getContributorsWithProfile(neo4jStatsRepository.getTopCurrentContributors(
+        return getContributorsWithProfile(neo4jStatsRepository.getTopCurrentContributorIdsAndContributionsCount(
             previousMonthDate.toString(), pageable), pageable)
     }
 
@@ -89,7 +85,7 @@ class Neo4jStatsService(
         pageable: Pageable
     ): Page<TopContributorsWithProfile> {
         val previousMonthDate: LocalDate = LocalDate.now().minusMonths(1)
-        return getContributorsWithProfile(neo4jStatsRepository.getTopCurrentContributorsByResearchFieldId(
+        return getContributorsWithProfile(neo4jStatsRepository.getTopCurContribIdsAndContribCountByResearchFieldId(
             id, previousMonthDate.toString(), pageable), pageable)
     }
 
@@ -118,7 +114,7 @@ class Neo4jStatsService(
         return PageImpl(refinedChangeLog, pageable, refinedChangeLog.size.toLong())
     }
 
-    private fun getContributorsWithProfile(topContributors: Page<TopContributors>, pageable: Pageable): Page<TopContributorsWithProfile> {
+    private fun getContributorsWithProfile(topContributors: Page<TopContributorIdentifiers>, pageable: Pageable): Page<TopContributorsWithProfile> {
         val userList = mutableListOf<UUID>()
         val refinedTopContributors = mutableListOf<TopContributorsWithProfile>()
 
@@ -130,7 +126,7 @@ class Neo4jStatsService(
 
         topContributors.forEach { topContributor ->
             val contributor = mapValues[ContributorId(topContributor.id)]?.first()
-            refinedTopContributors.add(TopContributorsWithProfile(topContributor.numberOfContributions,
+            refinedTopContributors.add(TopContributorsWithProfile(topContributor.contributions,
                 Profile(contributor?.id, contributor?.name, contributor?.gravatarId, contributor?.avatarURL)))
         }
 
@@ -164,8 +160,7 @@ data class ChangeLog(
  * profile
  */
 data class TopContributorsWithProfile(
-    @JsonProperty("contributions_count")
-    val contributionsCount: Long,
+    val contributions: Long,
     val profile: Profile?
 )
 

@@ -7,7 +7,6 @@ version = "0.0.1-SNAPSHOT"
 val neo4jVersion = "3.5.+" // should match version in Dockerfile
 val springDataNeo4jVersion = "5.3.4"
 val springSecurityOAuthVersion = "2.3.8"
-val testContainersVersion = "1.14.3"
 
 val containerRegistryLocation = "registry.gitlab.com/tibhannover/orkg/orkg-backend"
 val dockerImageTag: String? by project
@@ -89,10 +88,11 @@ dependencies {
     testImplementation("org.neo4j:neo4j-ogm-embedded-native-types")
     testImplementation("org.neo4j:neo4j:$neo4jVersion")
     // TestContainers
-    testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
-    testImplementation("org.testcontainers:junit-jupiter:$testContainersVersion")
-    testImplementation("org.testcontainers:postgresql:$testContainersVersion")
-    testImplementation("org.testcontainers:neo4j:$testContainersVersion")
+    testImplementation(platform("org.testcontainers:testcontainers-bom:1.14.3"))
+    testImplementation("org.testcontainers:testcontainers")
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:postgresql")
+    testImplementation("org.testcontainers:neo4j")
 
     //
     // Documentation

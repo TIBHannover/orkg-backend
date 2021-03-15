@@ -3,6 +3,7 @@ package testhelper.spring.testcontainers
 import java.time.Duration
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_METHOD
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.Neo4jContainer
@@ -17,11 +18,12 @@ import org.testcontainers.junit.jupiter.Testcontainers
  */
 @Testcontainers
 @TestInstance(PER_METHOD)
+@DirtiesContext
 abstract class Neo4jContainerTest {
   companion object {
     @Container
-    @JvmStatic
-    private val neo4jContainer =
+    @JvmField // Important to make it accessible. @JvmStatic works, but will make it private.
+    protected val neo4jContainer =
         Neo4jContainer<Nothing>("neo4j:3.5").apply {
           withAdminPassword(disabled)
           withStartupTimeout(Duration.ofMinutes(1))

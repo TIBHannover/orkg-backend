@@ -32,6 +32,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup
 import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder
+import testhelper.spring.testcontainers.Neo4jContainerTest
 
 /**
  * Base class for REST API documentation test.
@@ -41,7 +42,7 @@ import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder
  */
 @SpringBootTest
 @ExtendWith(SpringExtension::class, RestDocumentationExtension::class)
-abstract class RestDocumentationBaseTest {
+abstract class RestDocumentationBaseTest : Neo4jContainerTest() {
 
     protected lateinit var mockMvc: MockMvc
 

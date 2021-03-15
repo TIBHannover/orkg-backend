@@ -11,11 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
 import org.springframework.context.annotation.Import
 import org.springframework.transaction.annotation.Transactional
+import testhelper.spring.testcontainers.Neo4jContainerTest
 
 @DataNeo4jTest
 @Transactional
 @Import(Neo4jConfiguration::class)
-class Neo4jResourceTest {
+class Neo4jResourceTest : Neo4jContainerTest() {
 
     @Autowired
     private lateinit var repository: Neo4jResourceRepository

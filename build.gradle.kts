@@ -74,6 +74,7 @@ dependencies {
     //
     // Testing
     //
+    testImplementation(project(":test-helper"))
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "junit", module = "junit")
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
@@ -84,9 +85,6 @@ dependencies {
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation("com.ninja-squad:springmockk:2.0.1")
 
-    testImplementation("org.neo4j:neo4j-ogm-embedded-driver")
-    testImplementation("org.neo4j:neo4j-ogm-embedded-native-types")
-    testImplementation("org.neo4j:neo4j:$neo4jVersion")
     // TestContainers
     testImplementation(platform("org.testcontainers:testcontainers-bom:1.14.3"))
     testImplementation("org.testcontainers:testcontainers")

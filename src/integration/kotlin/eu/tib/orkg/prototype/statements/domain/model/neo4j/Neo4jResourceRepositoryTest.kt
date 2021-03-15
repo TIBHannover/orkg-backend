@@ -11,9 +11,10 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
+import testhelper.spring.testcontainers.Neo4jContainerTest
 
 @Neo4jRepositoryTest
-class Neo4jResourceRepositoryTest {
+class Neo4jResourceRepositoryTest : Neo4jContainerTest() {
 
     @Autowired
     private lateinit var resourceRepository: Neo4jResourceRepository

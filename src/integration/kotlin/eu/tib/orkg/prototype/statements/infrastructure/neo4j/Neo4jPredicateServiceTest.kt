@@ -11,10 +11,11 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
+import testhelper.spring.testcontainers.Neo4jContainerTest
 
 @SpringBootTest
 @DisplayName("Neo4j: Predicate service")
-class Neo4jPredicateServiceTest {
+class Neo4jPredicateServiceTest : Neo4jContainerTest() {
 
     @Autowired
     private lateinit var service: PredicateService

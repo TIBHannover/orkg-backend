@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import java.util.UUID
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import java.util.UUID
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
@@ -33,21 +33,21 @@ interface Neo4jProblemRepository :
     fun findTopResearchProblemsAllTime(): Iterable<Neo4jResource>
 
     @Query(value = """MATCH (problem:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(contribution:Contribution)
-WHERE contribution.created_by IS NOT NULL
-RETURN contribution.created_by AS user, COUNT(contribution.created_by) AS freq
-ORDER BY freq DESC""",
-        countQuery = """MATCH (problem:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(contribution:Contribution)
-WHERE contribution.created_by IS NOT NULL
-WITH contribution.created_by AS user, COUNT(contribution.created_by) AS freq
-RETURN COUNT(user)""")
+                        WHERE contribution.created_by IS NOT NULL AND contribution.created_by <> '00000000-0000-0000-0000-000000000000'
+                        RETURN contribution.created_by AS user, COUNT(contribution.created_by) AS freq
+                        ORDER BY freq DESC""",
+    countQuery = """MATCH (problem:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(contribution:Contribution)
+                    WHERE contribution.created_by IS NOT NULL AND contribution.created_by <> '00000000-0000-0000-0000-000000000000'
+                    WITH contribution.created_by AS user, COUNT(contribution.created_by) AS freq
+                    RETURN COUNT(user)""")
     fun findContributorsLeaderboardPerProblem(problemId: ResourceId, pageable: Pageable): Page<ContributorPerProblem>
 
     @Query(value = """MATCH (problem:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P27'}]->(author: Thing)
-RETURN author.label AS author, COLLECT(author)[0] AS thing , COUNT(paper.resource_id) AS papers
-ORDER BY papers DESC, author""",
+                        RETURN author.label AS author, COLLECT(author)[0] AS thing , COUNT(paper.resource_id) AS papers
+                        ORDER BY papers DESC, author""",
         countQuery = """MATCH (problem:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P27'}]->(author: Thing)
-WITH author.label AS author, COLLECT(author)[0] AS thing , COUNT(paper.resource_id) AS papers
-RETURN COUNT (author)""")
+                        WITH author.label AS author, COLLECT(author)[0] AS thing , COUNT(paper.resource_id) AS papers
+                        RETURN COUNT (author)""")
     // TODO: Should group on the resource and not on the label. See https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/172#note_378465870
     fun findAuthorsLeaderboardPerProblem(problemId: ResourceId, pageable: Pageable): Page<AuthorPerProblem>
 }

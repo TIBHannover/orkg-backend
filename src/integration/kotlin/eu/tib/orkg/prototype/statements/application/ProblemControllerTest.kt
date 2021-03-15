@@ -1,14 +1,16 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
-import java.util.UUID
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -57,26 +59,26 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
 
         val problem = resourceService.create(CreateResourceRequest(null, "save the world", setOf(problemClassId))).id!!
 
-        val nullUUID = UUID.fromString("00000000-0000-0000-0000-000000000000")
-
         val userEmail = "test@testemail.com"
         if (!userService.findByEmail(userEmail).isPresent)
             userService.registerUser(userEmail, "testTest123", "test_user")
         val uuid = userService.findByEmail(userEmail).get().id!!
+        val contributor = ContributorId(uuid)
 
         val contribution = resourceService.create(
-            uuid,
+            contributor,
             CreateResourceRequest(null, "Be healthy", setOf(contributionClassId)),
-            nullUUID,
+            ObservatoryId.createUnknownObservatory(),
             ExtractionMethod.MANUAL,
-            nullUUID
+            OrganizationId.createUnknownOrganization()
         ).id!!
 
-        statementService.create(uuid, contribution.value, predicate, problem.value)
+        statementService.create(contributor, contribution.value, predicate, problem.value)
 
         mockMvc
             .perform(getRequestTo("/api/problems/$problem/users?items=4"))
             .andExpect(status().isOk)
+            .andDo { println(it.response.contentAsString) }
             .andDo(
                 document(
                     snippet,

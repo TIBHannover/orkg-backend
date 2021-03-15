@@ -1,6 +1,8 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import java.util.UUID
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.annotation.QueryResult
@@ -38,7 +40,7 @@ ORDER BY freq DESC""",
 WHERE contribution.created_by IS NOT NULL
 WITH contribution.created_by AS user, COUNT(contribution.created_by) AS freq
 RETURN COUNT(user)""")
-    fun findUsersLeaderboardPerProblem(problemId: ResourceId, pageable: Pageable): Page<ContributorPerProblem>
+    fun findContributorsLeaderboardPerProblem(problemId: ResourceId, pageable: Pageable): Page<ContributorPerProblem>
 
     @Query(value = """MATCH (problem:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P27'}]->(author: Thing)
 RETURN author.label AS author, COLLECT(author)[0] AS thing , COUNT(paper.resource_id) AS papers

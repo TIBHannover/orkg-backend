@@ -1,5 +1,6 @@
 plugins {
   kotlin("jvm")
+  id("org.jetbrains.dokka")
   id("com.diffplug.spotless")
 
   id("org.springframework.boot") apply false
@@ -28,6 +29,8 @@ dependencies {
   }
   api("org.testcontainers:neo4j") { because("Provides Neo4jContainer implementation") }
 }
+
+tasks { dokka { configuration { includes = listOf("packages.md") } } }
 
 spotless {
   val ktfmtVersion = "0.21"

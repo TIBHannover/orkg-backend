@@ -28,6 +28,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @DirtiesContext
 abstract class Neo4jContainerTest {
   companion object {
+    /** The Neo4j container object. */
     @Container
     @JvmField // Important to make it accessible. @JvmStatic works, but will make it private.
     protected val neo4jContainer =

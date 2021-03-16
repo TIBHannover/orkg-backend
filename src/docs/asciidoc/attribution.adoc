@@ -18,5 +18,11 @@
 * We do not consider anonymous user i.e., '00000000-0000-0000-0000-000000000000'.
 * URL: http://localhost:8080/api/stats/top/research-problems
 
+== Visualizations
 
-
+* Comparisons have visualizations. It is not mandatory.
+* From the backend, we provide resource IDs and meta information as the API response.
+* The backend does not handle "Sim Comp" service information for visualization implementation.
+* Two new endpoints have been introduced for visualization - With and without sub research fields
+* http://www.localhost:8080/api/visualizations/research-field/R133/subfields
+* http://www.localhost:8080/api/visualizations/research-field/R133/

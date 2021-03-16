@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.domain.model.ProblemService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId

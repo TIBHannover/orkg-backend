@@ -1,0 +1,18 @@
+[[section-glossary]]
+== Glossary
+
+A glossary of terms used by stakeholders and developers.
+
+[options="header",cols="1,4"]
+|===
+| Term | Definition
+| Contributor | A person contributing to the ORKG, e.g. adding statements.
+| Cypher | A descriptive database query language.
+Initially invented by and for Neo4j.
+Now developed in an open standard and adapted by other vendors.
+| Neo4j | A free software linked property graph (LPG) database.
+See https://neo4j.com/.
+| User | A person registered on the ORKG service.
+This term is only used in terms of authentication.
+In other contexts, users are referred to by their roles, e.g. "contributors".
+|===

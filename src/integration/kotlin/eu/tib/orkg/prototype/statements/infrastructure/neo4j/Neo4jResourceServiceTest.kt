@@ -1,23 +1,30 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
-import eu.tib.orkg.prototype.Neo4jServiceTest
-import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
 
-@Neo4jServiceTest
+@SpringBootTest
 @DisplayName("Neo4: Resource service")
 class Neo4jResourceServiceTest {
 
     @Autowired
     private lateinit var service: ResourceService
+
+    @BeforeEach
+    fun setup() {
+        service.removeAll()
+
+        assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(0)
+    }
 
     @Test
     @DisplayName("should create resource from request")
@@ -164,7 +171,8 @@ class Neo4jResourceServiceTest {
     fun shouldAllowRegexSpecialCharsInLabel() {
         val res = service.create("C\$razy LAb(el. he*r?")
         val found = service.findAllByLabelContaining(
-            createPageable(null, null, null, false), "LAb(el.")
+            PageRequest.of(1, 10), "LAb(el."
+        )
         assertThat(found).isNotNull
         assertThat(found.contains(res))
     }

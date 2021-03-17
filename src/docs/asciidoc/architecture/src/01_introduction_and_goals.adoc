@@ -1,0 +1,31 @@
+[[section-introduction-and-goals]]
+== Introduction and Goals
+
+The {orkg} (ORKG) aims to build a knowledge graph that makes the content of scholarly communication readable.
+
+=== Requirements Overview
+
+TBD
+
+=== Quality Goals
+
+[options="header"]
+|===
+|Quality Goal|Scenario
+|Flexibility|Users should have the flexibility to model data in a way that matches their domain.
+|Structure|Data in the ORKG should be structured in a way that makes it comparable and discoverable.
+|Correctness|The ORKG API should not accept bogus input. Automated tests should exist to prevent bad data entering the system.
+|===
+
+=== Stakeholders
+
+.List of Stakeholders
+[options="header",cols="1,3"]
+|===
+|Role/Name|Expectations
+| _TIB_ | Development and hosting of the ORKG service.
+| _Scientists_ | Use ORKG to support their research, e.g. finding papers, adding results, getting overview of state-of-the-art in a field.
+| _Contributors_ | Adding scholarly knowledge to the ORKG with easy workflows. Import/Export functionality.
+| _Curators_ | Finding issues in the data; easy tools to modify data.
+| _API consumers_ | Consumers of the API expect it to be understandable, well documented and stable.
+|===

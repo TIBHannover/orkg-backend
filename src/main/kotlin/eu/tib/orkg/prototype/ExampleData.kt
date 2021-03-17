@@ -13,9 +13,6 @@ import java.io.InputStream
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Profile
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 
 @Component
@@ -153,13 +150,6 @@ class ExampleData(
 
     private fun statementsPresent() =
         statementService.totalNumberOfStatements() > 0
-}
-
-fun createPageable(page: Int?, items: Int?, sortBy: String?, desc: Boolean): Pageable {
-    val sort = if (sortBy != null) Sort.by(sortBy) else Sort.unsorted()
-    var size = items ?: 10 ; if (size < 1) size = 1
-    val pageNr = if (page != null) page - 1 else 0
-    return PageRequest.of(pageNr, size, if (desc) { sort.descending() } else { sort })
 }
 
 data class ResearchField(val name: String, val subfields: List<ResearchField> = listOf())

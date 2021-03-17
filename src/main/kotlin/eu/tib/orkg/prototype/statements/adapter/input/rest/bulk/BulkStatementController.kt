@@ -1,11 +1,14 @@
-package eu.tib.orkg.prototype.statements.application.bulk
+package eu.tib.orkg.prototype.statements.adapter.input.rest.bulk
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.statements.application.StatementController
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import eu.tib.orkg.prototype.statements.application.StatementResponse
+import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import eu.tib.orkg.prototype.statements.domain.model.StatementService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.ok
@@ -20,36 +23,35 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/statements")
 class BulkStatementController(
-    private val statementController: StatementController
+    private val statementService: StatementService
 ) {
-
     @GetMapping("/subjects")
     fun findBySubjects(
         @RequestParam("ids") resourceIds: List<ResourceId>,
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
-    ): ResponseEntity<Iterable<BulkGetStatementsResponse>> {
-        return ok(resourceIds.map { BulkGetStatementsResponse(it.value, statementController.findBySubject(it.value, page, items, sortBy, desc).body!!) })
+        pageable: Pageable
+    ): ResponseEntity<List<BulkGetStatementsResponse>> {
+        return ok(
+                resourceIds.map {
+                        BulkGetStatementsResponse(it.value,
+                            statementService.findAllBySubject(it.value, pageable)
+                        )
+                }
+        )
     }
 
     @GetMapping("/objects")
     fun findByObjects(
         @RequestParam("ids") resourceIds: List<ResourceId>,
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
-    ): ResponseEntity<Iterable<BulkGetStatementsResponse>> {
-        return ok(resourceIds.map { BulkGetStatementsResponse(it.value, statementController.findByObject(it.value, page, items, sortBy, desc).body!!) })
+        pageable: Pageable
+    ): List<BulkGetStatementsResponse> {
+        return resourceIds.map { BulkGetStatementsResponse(it.value, statementService.findAllByObject(it.value, pageable)) }
     }
 
     @DeleteMapping("/")
     fun delete(
         @RequestParam("ids") statementsIds: List<StatementId>
     ): ResponseEntity<Unit> {
-        statementsIds.forEach { statementController.delete(it) }
+        statementsIds.forEach { statementService.remove(it) }
         return noContent().build()
     }
 
@@ -58,13 +60,13 @@ class BulkStatementController(
         @RequestParam("ids") statementsIds: List<StatementId>,
         @RequestBody(required = true) statementEditRequest: StatementEditRequest
     ): ResponseEntity<Iterable<BulkPutStatementResponse>> {
-        return ok(statementsIds.map { BulkPutStatementResponse(it, statementController.edit(it, statementEditRequest).body!!) })
+        return ok(statementsIds.map { BulkPutStatementResponse(it, statementService.update(statementEditRequest)) })
     }
 }
 
 data class BulkGetStatementsResponse(
     val id: String,
-    val statements: Iterable<StatementResponse>
+    val statements: Page<GeneralStatement>
 )
 
 data class BulkPutStatementResponse(

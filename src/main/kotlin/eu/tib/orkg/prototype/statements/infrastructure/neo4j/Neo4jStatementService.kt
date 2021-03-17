@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.application.BundleConfiguration
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -19,10 +20,9 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementIdGener
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThingRepository
-import java.util.LinkedList
 import java.util.Optional
-import java.util.Queue
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -59,40 +59,35 @@ class Neo4jStatementService :
         statementRepository.findByStatementId(statementId)
             .map { toStatement(it) }
 
-    override fun findAllBySubject(subjectId: String, pagination: Pageable): Iterable<GeneralStatement> =
-        statementRepository.findAllBySubject(subjectId, pagination)
-            .content
-            .map { toStatement(it) }
+    override fun findAllBySubject(subjectId: String, pagination: Pageable): Page<GeneralStatement> =
+        statementRepository.findAllBySubject(subjectId, pagination).map { toStatement(it) }
 
-    override fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable): Iterable<GeneralStatement> =
+    override fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable): Page<GeneralStatement> =
         statementRepository.findAllByPredicateId(predicateId, pagination)
-            .content
             .map { toStatement(it) }
 
-    override fun findAllByObject(objectId: String, pagination: Pageable): Iterable<GeneralStatement> =
+    override fun findAllByObject(objectId: String, pagination: Pageable): Page<GeneralStatement> =
         statementRepository.findAllByObject(objectId, pagination)
-            .content
             .map { toStatement(it) }
 
     override fun findAllBySubjectAndPredicate(
         subjectId: String,
         predicateId: PredicateId,
         pagination: Pageable
-    ) =
+    ): Page<GeneralStatement> =
         statementRepository
             .findAllBySubjectAndPredicate(subjectId, predicateId, pagination)
-            .content
             .map { toStatement(it) }
 
+    //
     override fun findAllByObjectAndPredicate(
         objectId: String,
         predicateId: PredicateId,
         pagination: Pageable
-    ) =
+    ): Page<GeneralStatement> =
         statementRepository
             .findAllByObjectAndPredicate(objectId, predicateId, pagination)
-            .content
-            .map { toStatement(it) }
+            .map(this::toStatement)
 
     override fun create(subject: String, predicate: PredicateId, `object`: String) =
         create(ContributorId.createUnknownContributor(), subject, predicate, `object`)
@@ -165,9 +160,8 @@ class Neo4jStatementService :
         predicateId: PredicateId,
         literal: String,
         pagination: Pageable
-    ): Iterable<GeneralStatement> =
+    ): Page<GeneralStatement> =
         statementRepository.findAllByPredicateIdAndLabel(predicateId, literal, pagination)
-            .content
             .map { toStatement(it) }
 
     override fun findAllByPredicateAndLabelAndSubjectClass(
@@ -175,10 +169,25 @@ class Neo4jStatementService :
         literal: String,
         subjectClass: ClassId,
         pagination: Pageable
-    ): Iterable<GeneralStatement> =
+    ): Page<GeneralStatement> =
         statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(predicateId, literal, subjectClass, pagination)
-            .content
             .map { toStatement(it) }
+
+    override fun fetchAsBundle(
+        thingId: String,
+        configuration: BundleConfiguration
+    ): Bundle =
+        Bundle(
+            thingId,
+            statementRepository.fetchAsBundle(
+                thingId,
+                configuration.toApocConfiguration()
+            )
+                .map { toStatement(it) }
+                .toMutableList()
+        )
+
+    override fun removeAll() = statementRepository.deleteAll()
 
     private fun refreshObject(thing: Neo4jThing): Thing {
         return when (thing) {
@@ -186,32 +195,6 @@ class Neo4jStatementService :
             is Neo4jLiteral -> literalService.findById(thing.literalId).get()
             else -> thing.toThing()
         }
-    }
-
-    override fun fetchAsBundle(thingId: String): Bundle =
-        traceStatementsPerHop(thingId, statementRepository.fetchAsBundle(thingId))
-
-    private fun traceStatementsPerHop(rootId: String, graphStatements: Iterable<Neo4jStatement>): Bundle {
-        val resourceDepth = mutableMapOf(rootId to 0)
-        val statements: Queue<Neo4jStatement> = LinkedList(graphStatements.toList())
-        while (statements.isNotEmpty()) {
-            // pop statement from the queue and check for it
-            val element = statements.remove()
-            if (element.subject!!.thingId!! in resourceDepth) {
-                // found subject in the queue, so add object to que with extra hop
-                val hop = resourceDepth[element.subject!!.thingId!!]!!
-                resourceDepth[element.`object`!!.thingId!!] = hop + 1
-            } else {
-                // return the statement to the queue because no partner is found
-                statements.add(element)
-            }
-        }
-        // addressed all statements
-        val bundle = Bundle(rootId)
-        graphStatements.map {
-            bundle.addStatement(toStatement(it), resourceDepth[it.subject!!.thingId!!]!!)
-        }
-        return bundle
     }
 
     private fun toStatement(statement: Neo4jStatement) =

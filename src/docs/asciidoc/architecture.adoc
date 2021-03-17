@@ -41,6 +41,3 @@ logging:
   with `@JsonIgnore` or other annotations that prevent them from being
   serialized. Serialization might lead to recursion and eventually blow
   up the stack.
-
-
-include::parts/glossary.adoc[leveloffset=+1]

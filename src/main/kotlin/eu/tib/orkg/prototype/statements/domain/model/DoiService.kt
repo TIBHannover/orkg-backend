@@ -1,12 +1,10 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-import eu.tib.orkg.prototype.statements.application.ObjectController.Constants.ID_DOI_PREDICATE
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.Optional
-import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -15,7 +13,7 @@ import org.springframework.web.server.ResponseStatusException
 @Service
 @Transactional
 class DoiService(
-    private val statementService: StatementService
+    private val literalService: LiteralService
 ) {
 
     fun registerDoi(doiData: String, credentials: String, url: String): Optional<String> {
@@ -51,35 +49,14 @@ class DoiService(
     }
 
     fun getRelatedPapers(relatedResources: Set<ResourceId>): String {
-        val pagination = PageRequest.of(0, 1)
-        var relatedIdentifiers = ""
+        val doiList: MutableSet<String> = mutableSetOf()
         relatedResources.map { resourceId ->
-            val statements = statementService.findAllByObject(resourceId.value, pagination)
-            statements.map { statement ->
-                val paper = refreshSubject(statement.subject)
-                val result = statementService.findAllBySubjectAndPredicate(paper.id.toString(), PredicateId(
-                    ID_DOI_PREDICATE
-                ), pagination)
-                result.forEach {
-                    relatedIdentifiers += """<relatedIdentifier relationType="IsDerivedFrom" relatedIdentifierType="DOI">${refreshObject(it.`object`).label}</relatedIdentifier>"""
+            val doi = literalService.findDOIByContributionId(resourceId)
+            if (doi.isPresent && !doiList.contains(doi.get().label)) {
+                doiList.add(doi.get().label)
                 }
-            }
         }
 
-        return relatedIdentifiers
-    }
-
-    private fun refreshSubject(thing: Thing): Resource {
-        return when (thing) {
-            is Resource -> thing
-            else -> error("")
-        }
-    }
-
-    private fun refreshObject(thing: Thing): Literal {
-        return when (thing) {
-            is Literal -> thing
-            else -> error("")
-        }
+        return doiList.joinToString("\n", transform = { """<relatedIdentifier relationType="References" relatedIdentifierType="DOI">$it</relatedIdentifier>""" })
     }
 }

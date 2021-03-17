@@ -1,10 +1,11 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -33,16 +34,12 @@ class PredicateController(private val service: PredicateService) : BaseControlle
     fun findByLabel(
         @RequestParam("q", required = false) searchString: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
-    ): Iterable<Predicate> {
-        val pagination = createPageable(page, items, sortBy, desc)
+        pageable: Pageable
+    ): Page<Predicate> {
         return when {
-            searchString == null -> service.findAll(pagination)
-            exactMatch -> service.findAllByLabel(searchString, pagination)
-            else -> service.findAllByLabelContaining(searchString, pagination)
+            searchString == null -> service.findAll(pageable)
+            exactMatch -> service.findAllByLabel(searchString, pageable)
+            else -> service.findAllByLabelContaining(searchString, pageable)
         }
     }
 

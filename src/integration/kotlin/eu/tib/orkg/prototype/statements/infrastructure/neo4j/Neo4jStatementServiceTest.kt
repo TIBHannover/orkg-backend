@@ -1,17 +1,18 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
-import eu.tib.orkg.prototype.Neo4jServiceTest
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
 
-@Neo4jServiceTest
+@SpringBootTest
 class Neo4jStatementServiceTest {
 
     @Autowired
@@ -22,6 +23,19 @@ class Neo4jStatementServiceTest {
 
     @Autowired
     private lateinit var service: StatementService
+
+    @BeforeEach
+    fun setup() {
+        val tempPageable = PageRequest.of(0, 10)
+
+        resourceService.removeAll()
+        predicateService.removeAll()
+        service.removeAll()
+
+        assertThat(resourceService.findAll(tempPageable)).hasSize(0)
+        assertThat(predicateService.findAll(tempPageable)).hasSize(0)
+        assertThat(service.findAll(tempPageable)).hasSize(0)
+    }
 
     @Test
     @DisplayName("shouldCreateStatementWhenAllResourcesExist")

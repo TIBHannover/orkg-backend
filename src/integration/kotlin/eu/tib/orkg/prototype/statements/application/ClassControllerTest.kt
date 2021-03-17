@@ -1,20 +1,23 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.statements.application.ResourceControllerTest.RestDoc.listOfResourcesResponseFields
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import java.net.URI
-import org.hamcrest.Matchers.hasSize
+import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
+import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation
 import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
@@ -38,6 +41,17 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
     override fun createController() = controller
 
+    @BeforeEach
+    fun setup() {
+        val tempPageable = PageRequest.of(0, 10)
+
+        service.removeAll()
+        resourceService.removeAll()
+
+        assertThat(service.findAll(tempPageable)).hasSize(0)
+        assertThat(resourceService.findAll(tempPageable)).hasSize(0)
+    }
+
     @Test
     fun index() {
         service.create("research contribution")
@@ -49,7 +63,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    classListResponseFields()
+                    classListDetailedResponseFields()
                 )
             )
     }
@@ -196,7 +210,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
                     RequestDocumentation.requestParameters(
                         RequestDocumentation.parameterWithName("q").description("A search term that must be contained in the label")
                     ),
-                    classListResponseFields()
+                    classListDetailedResponseFields()
                 )
             )
     }
@@ -216,7 +230,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
                     RequestDocumentation.requestParameters(
                         RequestDocumentation.parameterWithName("q").description("A search term that must be contained in the label")
                     ),
-                    classListResponseFields()
+                    classListDetailedResponseFields()
                 )
             )
     }
@@ -234,7 +248,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    listOfResourcesResponseFields()
+                    resourceListDetailedResponseFields()
                 )
             )
     }
@@ -259,8 +273,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
                     requestFields(
                         fieldWithPath("label").description("The updated class label"),
                         fieldWithPath("uri").ignored()
-                    ),
-                    classResponseFields()
+                    ), classResponseFields()
                 )
             )
     }
@@ -276,11 +289,11 @@ class ClassControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/classes/$id/resources/?q=Math"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.content", Matchers.hasSize<Int>(2)))
             .andDo(
                 document(
                     snippet,
-                    listOfResourcesResponseFields()
+                    resourceListDetailedResponseFields()
                 )
             )
     }
@@ -292,16 +305,41 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("uri").description("An optional URI to describe the class (RDF)").optional(),
             fieldWithPath("created_at").description("The class creation datetime"),
             fieldWithPath("created_by").description("The ID of the user that created the class. All zeros if unknown."),
+            fieldWithPath("description").description("The description of the class, if exists.").optional(),
             fieldWithPath("_class").optional().ignored()
         )
 
     private fun classListResponseFields() =
-        responseFields(
-            fieldWithPath("[].id").description("The class ID").optional(),
-            fieldWithPath("[].label").description("The class label"),
-            fieldWithPath("[].uri").description("An optional URI to describe the class (RDF)").optional(),
-            fieldWithPath("[].created_at").description("The class creation datetime"),
-            fieldWithPath("[].created_by").description("The ID of the user that created the class. All zeros if unknown."),
-            fieldWithPath("[]._class").optional().ignored()
+        listOf(
+            fieldWithPath("id").description("The class ID").optional(),
+            fieldWithPath("label").description("The class label"),
+            fieldWithPath("uri").description("An optional URI to describe the class (RDF)").optional(),
+            fieldWithPath("created_at").description("The class creation datetime"),
+            fieldWithPath("created_by").description("The ID of the user that created the class. All zeros if unknown."),
+            fieldWithPath("description").description("The description of the class, if exists.").optional(),
+            fieldWithPath("_class").optional().ignored()
         )
+
+    private fun resourceListDetailedResponseFields() =
+        responseFields(pageableDetailedFieldParameters())
+            .andWithPrefix("content[].", resourceListInnerResponseFields()
+                    ).andWithPrefix("")
+
+    fun resourceListInnerResponseFields() = listOf(
+        fieldWithPath("id").description("The resource ID"),
+        fieldWithPath("label").description("The resource label"),
+        fieldWithPath("created_at").description("The resource creation datetime"),
+        fieldWithPath("created_by").description("The ID of the user that created the resource. All zeros if unknown."),
+        fieldWithPath("classes").description("The list of classes the resource belongs to"),
+        fieldWithPath("observatory_id").description("The ID of the observatory that maintains this resource."),
+        fieldWithPath("extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic"."""),
+        fieldWithPath("organization_id").description("The ID of the organization that maintains this resource."),
+        fieldWithPath("shared").description("The number of times this resource is shared"),
+        fieldWithPath("_class").description("Resource").optional()
+    )
+
+    fun classListDetailedResponseFields(): ResponseFieldsSnippet =
+        responseFields(pageableDetailedFieldParameters())
+            .andWithPrefix("content[].", classListResponseFields()
+        ).andWithPrefix("")
 }

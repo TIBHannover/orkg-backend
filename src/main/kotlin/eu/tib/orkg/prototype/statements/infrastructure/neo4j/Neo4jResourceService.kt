@@ -61,70 +61,58 @@ class Neo4jResourceService(
         return neo4jResourceRepository.save(resource).toResource()
     }
 
-    override fun findAll(pageable: Pageable): Iterable<Resource> =
+    override fun findAll(pageable: Pageable): Page<Resource> =
         neo4jResourceRepository
             .findAll(pageable)
-            .content
             .map(Neo4jResource::toResource)
 
     override fun findById(id: ResourceId?): Optional<Resource> =
         neo4jResourceRepository.findByResourceId(id)
             .map(Neo4jResource::toResource)
 
-    override fun findAllByLabel(pageable: Pageable, label: String): Iterable<Resource> =
+    override fun findAllByLabel(pageable: Pageable, label: String): Page<Resource> =
         neo4jResourceRepository.findAllByLabelMatchesRegex(label.toExactSearchString(), pageable) // TODO: See declaration
-            .content
             .map(Neo4jResource::toResource)
 
-    override fun findAllByLabelContaining(pageable: Pageable, part: String): Iterable<Resource> {
+    override fun findAllByLabelContaining(pageable: Pageable, part: String): Page<Resource> {
         return neo4jResourceRepository.findAllByLabelMatchesRegex(part.toSearchString(), pageable) // TODO: See declaration
-            .content
             .map(Neo4jResource::toResource)
     }
 
-    override fun findAllByClass(pageable: Pageable, id: ClassId): Iterable<Resource> =
+    override fun findAllByClass(pageable: Pageable, id: ClassId): Page<Resource> =
         neo4jResourceRepository.findAllByClass(id.toString(), pageable)
-            .content
             .map(Neo4jResource::toResource)
 
-    override fun findAllByClassAndCreatedBy(pageable: Pageable, id: ClassId, createdBy: ContributorId): Iterable<Resource> =
+    override fun findAllByClassAndCreatedBy(pageable: Pageable, id: ClassId, createdBy: ContributorId): Page<Resource> =
         neo4jResourceRepository.findAllByClassAndCreatedBy(id.toString(), createdBy, pageable)
-            .content
             .map(Neo4jResource::toResource)
 
-    override fun findAllByClassAndLabel(pageable: Pageable, id: ClassId, label: String): Iterable<Resource> =
+    override fun findAllByClassAndLabel(pageable: Pageable, id: ClassId, label: String): Page<Resource> =
         neo4jResourceRepository.findAllByClassAndLabel(id.toString(), label, pageable)
-            .content
             .map(Neo4jResource::toResource)
 
-    override fun findAllByClassAndLabelAndCreatedBy(pageable: Pageable, id: ClassId, label: String, createdBy: ContributorId): Iterable<Resource> =
+    override fun findAllByClassAndLabelAndCreatedBy(pageable: Pageable, id: ClassId, label: String, createdBy: ContributorId): Page<Resource> =
         neo4jResourceRepository.findAllByClassAndLabelAndCreatedBy(id.toString(), label, createdBy, pageable)
-            .content
             .map(Neo4jResource::toResource)
 
-    override fun findAllByClassAndLabelContaining(pageable: Pageable, id: ClassId, part: String): Iterable<Resource> =
+    override fun findAllByClassAndLabelContaining(pageable: Pageable, id: ClassId, part: String): Page<Resource> =
         neo4jResourceRepository.findAllByClassAndLabelContaining(id.toString(), part.toSearchString(), pageable)
-            .content
             .map(Neo4jResource::toResource)
 
-    override fun findAllByClassAndLabelContainingAndCreatedBy(pageable: Pageable, id: ClassId, part: String, createdBy: ContributorId): Iterable<Resource> =
+    override fun findAllByClassAndLabelContainingAndCreatedBy(pageable: Pageable, id: ClassId, part: String, createdBy: ContributorId): Page<Resource> =
         neo4jResourceRepository.findAllByClassAndLabelContainingAndCreatedBy(id.toString(), part.toSearchString(), createdBy, pageable)
-            .content
             .map(Neo4jResource::toResource)
 
-    override fun findAllExcludingClass(pageable: Pageable, ids: Array<ClassId>): Iterable<Resource> =
+    override fun findAllExcludingClass(pageable: Pageable, ids: Array<ClassId>): Page<Resource> =
         neo4jResourceRepository.findAllExcludingClass(ids.map { it.value }, pageable)
-            .content
             .map(Neo4jResource::toResource)
 
-    override fun findAllExcludingClassByLabel(pageable: Pageable, ids: Array<ClassId>, label: String): Iterable<Resource> =
+    override fun findAllExcludingClassByLabel(pageable: Pageable, ids: Array<ClassId>, label: String): Page<Resource> =
         neo4jResourceRepository.findAllExcludingClassByLabel(ids.map { it.value }, label, pageable)
-            .content
             .map(Neo4jResource::toResource)
 
-    override fun findAllExcludingClassByLabelContaining(pageable: Pageable, ids: Array<ClassId>, part: String): Iterable<Resource> =
+    override fun findAllExcludingClassByLabelContaining(pageable: Pageable, ids: Array<ClassId>, part: String): Page<Resource> =
         neo4jResourceRepository.findAllExcludingClassByLabelContaining(ids.map { it.value }, part.toSearchString(), pageable)
-            .content
             .map(Neo4jResource::toResource)
 
     override fun findByDOI(doi: String): Optional<Resource> =
@@ -171,11 +159,10 @@ class Neo4jResourceService(
         return neo4jResourceRepository.save(found).toResource()
     }
 
-    override fun updatePaperObservatory(request: UpdateResourceObservatoryRequest, id: ResourceId, userId: ContributorId): Resource {
+    override fun updatePaperObservatory(request: UpdateResourceObservatoryRequest, id: ResourceId): Resource {
         val found = neo4jResourceRepository.findByResourceId(id).get()
             found.observatoryId = request.observatoryId
             found.organizationId = request.organizationId
-            found.createdBy = userId
 
         return neo4jResourceRepository.save(found).toResource()
     }
@@ -187,6 +174,8 @@ class Neo4jResourceService(
         val found = neo4jResourceRepository.findByResourceId(id).get()
         neo4jResourceRepository.delete(found)
     }
+
+    override fun removeAll() = neo4jResourceRepository.deleteAll()
 
     override fun markAsVerified(resourceId: ResourceId) = setVerifiedFlag(resourceId, true)
 

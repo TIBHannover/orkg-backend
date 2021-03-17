@@ -1,6 +1,6 @@
-image: azul/zulu-openjdk-alpine:11
+image: azul/zulu-openjdk-debian:11
 
-# Enable Docker-in-Docker (DinD) for TestContainers
+# Enable Docker-in-Docker (DinD) for TestContainers and Docker image builds.
 services:
   - docker:dind
 
@@ -8,6 +8,8 @@ variables:
   DOCKER_HOST: "tcp://docker:2375"
   # Improve performance by using overlayfs
   DOCKER_DRIVER: overlay2
+  # Disable Gradle daemon during build
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
 before_script:
   # Tell Gradle to write its files to the build directory
@@ -16,26 +18,14 @@ before_script:
   - rm -f  ${GRADLE_USER_HOME}/caches/modules-2/modules-2.lock
   - rm -fr ${GRADLE_USER_HOME}/caches/*/plugin-resolution/
 
-# Some words on how caching works in GitLab CI:
-#   Only sub-directories of the build directory can be added
-#   to the cache. Expansion of variables does not work. We
-#   will only keep the `wrapper` and `caches` sub-directories
-#   of Gradle in the cache. Gradle will place those into
-#   $HOME/.gradle by default. To be able to save them, they
-#   need to be present in the build directory. By setting
-#   `GRADLE_USER_HOME` we make Gradle place the directories
-#   into a location from which we can move them to the cache
-#   (and retrieve them from there again). Although the cache
-#   directory is available as `/cache` you cannot directly
-#   interact with it. Data will only be transferred to and
-#   from the build directory. (It took me a while to get it
-#   right…)
-cache:
-  key: gradle
+# Ideas taken from https://docs.gitlab.com/ee/ci/caching/ as well as
+#   https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Gradle.gitlab-ci.yml
+cache: &gradle_cache_settings
+  key: ${CI_COMMIT_REF_SLUG}   # One cache per branch
   paths:
-    # Gradle wrappers and downloaded artifacts
-    - .gradle/wrapper
-    - .gradle/caches
+    - build
+    - .gradle
+  policy: pull-push
 
 stages:
   - build
@@ -45,8 +35,11 @@ stages:
 
 build:
   stage: build
+  cache:
+    <<: *gradle_cache_settings
+    policy: push
   script:
-    - ./gradlew build
+    - ./gradlew --build-cache build
     - ./gradlew jacocoTestCoverageVerification
     - ./gradlew jacocoTestReport printCoverage
   coverage: '/^Coverage:\s(\d+\.\d+%)/'
@@ -58,26 +51,49 @@ build:
     reports:
       junit: build/test-results/**/TEST-*.xml
 
-pages:
+# Template job for building all documentation. These jobs rely on the Gradle build cache
+# because Spring RestDoc snippets are generated from the test and we do not want re-run those.
+.build-documentation:
   stage: deploy
+  needs:
+    - build
+  cache:
+    <<: *gradle_cache_settings
+    policy: pull
+  services: []    # Disable Docker-in-Docker
   script:
-    - ./gradlew asciidoctor
+    - apt update && apt install --assume-yes graphviz
+    - ./gradlew --build-cache asciidoctor
     - mkdir -p public
     - cp -r build/docs/asciidoc/* public/
+
+# Attempt to build the documentation although we do not deploy it to GitLab Pages.
+# This ensures that everything works as expected and prevents surprises when merging.
+dummy-doc-build:
+  extends: .build-documentation
+  except:
+    - master
+
+# Deploy documentation to GitLab Pages.
+pages:
+  extends: .build-documentation
   artifacts:
     paths:
       - public
   only:
     - master
 
+# Template for building Docker images.
 .docker-build-instructions: &docker-build-instructions
-  image: gradle:6.3-jdk11
   stage: package
+  cache:
+    <<: *gradle_cache_settings
+    policy: pull
   dependencies:
     - build
   script:
     # Build using Jib (pushed automatically)
-    - gradle jib -Djib.to.image=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA -Djib.to.tags=$IMAGE_TAG -Djib.to.auth.username=$REGISTRY_USER -Djib.to.auth.password=$REGISTRY_PASSWORD
+    - ./gradlew --build-cache jib -Djib.to.image=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA -Djib.to.tags=$IMAGE_TAG -Djib.to.auth.username=$REGISTRY_USER -Djib.to.auth.password=$REGISTRY_PASSWORD
 
 docker-build-master:
   variables:
@@ -96,8 +112,13 @@ docker-build:
 # (Security) Scanning templates
 include:
   - template: Container-Scanning.gitlab-ci.yml
+  - template: Dependency-Scanning.gitlab-ci.yml
 
 container_scanning:
   stage: verify
   variables:
     CI_APPLICATION_REPOSITORY: $CI_REGISTRY_IMAGE
+
+dependency_scanning:
+  stage: verify
+  needs: []

@@ -8,12 +8,15 @@ import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
+import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
+import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestBody
@@ -31,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Statement Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
+
 class StatementControllerTest : RestDocumentationBaseTest() {
 
     override fun createController() = controller
@@ -49,6 +53,21 @@ class StatementControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var controller: StatementController
+
+    @BeforeEach
+    fun setup() {
+        val tempPageable = PageRequest.of(0, 10)
+
+        statementService.removeAll()
+        resourceService.removeAll()
+        predicateService.removeAll()
+        literalService.removeAll()
+
+        assertThat(statementService.findAll(tempPageable)).hasSize(0)
+        assertThat(resourceService.findAll(tempPageable)).hasSize(0)
+        assertThat(predicateService.findAll(tempPageable)).hasSize(0)
+        assertThat(literalService.findAll()).hasSize(0)
+    }
 
     @Test
     fun index() {
@@ -186,7 +205,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/statements/subject/${r1.id}/predicate/${p1.id}"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andDo(
                 document(
                     snippet,
@@ -249,7 +268,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             .perform(getRequestTo("/api/statements/object/${l1.id}/predicate/${p1.id}"))
             .andExpect(status().isOk)
             .andDo(MockMvcResultHandlers.print())
-            .andExpect(jsonPath("$", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andDo(
                 document(
                     snippet,
@@ -260,8 +279,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                         parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
                         parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
                     ),
-                    sharedListOfStatementsResponseFields()
-                        .and(subsectionWithPath("[].object").description("An object. Can be either a resource or a literal."))
+                    sharedListOfStmtSubPredResponseFields()
+                        .and(subsectionWithPath("content[].object").description("An object. Can be either a resource or a literal."))
                 )
             )
     }
@@ -428,17 +447,14 @@ class StatementControllerTest : RestDocumentationBaseTest() {
     private fun bundleResponseFields(): ResponseFieldsSnippet =
         responseFields(
             listOf(
-                fieldWithPath("rootId").description("The root ID of the object"),
-                fieldWithPath("bundle").description("The bundle of statements")
+                fieldWithPath("root").description("The root ID of the object"),
+                fieldWithPath("statements").description("The bundle of statements")
             )
-        ).and(
-            bundleStatementFields()
         )
-
-    private fun bundleStatementFields() = listOf(
-        fieldWithPath("statement").description("A statement representation").ignored(),
-        fieldWithPath("level").description("The level, or number of hops from the root object")
-    )
+        .and(statementFields())
+        .andWithPrefix("subject.", resourceResponseFields())
+        .andWithPrefix("predicate.", predicateResponseFields())
+        .andWithPrefix("object.", resourceResponseFields())
 
     private fun statementFields() = listOf(
         fieldWithPath("id").description("The statement ID"),
@@ -457,15 +473,29 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             .andWithPrefix("[].subject.", resourceResponseFields())
             .andWithPrefix("[].predicate.", predicateResponseFields())
 
+    private fun sharedListOfStmtSubPredResponseFields(): ResponseFieldsSnippet =
+        responseFields(pageableDetailedFieldParameters()).and(
+            fieldWithPath("content[].id").description("The content ID")).and(
+            fieldWithPath("content[].created_by").description("The content created by")).and(
+            fieldWithPath("content[].created_at").description("The content created at"))
+            .andWithPrefix("content[].", statementFields())
+            .andWithPrefix("content[].subject.", resourceResponseFields())
+            .andWithPrefix("content[].predicate.", predicateResponseFields())
+
     private fun statementResponseFields() = sharedStatementResponseFields()
         .andWithPrefix("object.", resourceResponseFields())
 
     private fun statementWithLiteralResponseFields() = sharedStatementResponseFields()
         .andWithPrefix("object.", literalResponseFields())
 
-    private fun statementListResponseFields() = sharedListOfStatementsResponseFields()
-        .andWithPrefix("[].object.", resourceResponseFields())
-
-    private fun statementWithLiteralListResponseFields() = sharedListOfStatementsResponseFields()
-        .andWithPrefix("[].object.", literalResponseFields())
+    fun statementListResponseFields(): ResponseFieldsSnippet =
+        responseFields(pageableDetailedFieldParameters()).and(
+            fieldWithPath("content[].id").description("The content ID")).and(
+            fieldWithPath("content[].created_by").description("The content created by")).and(
+            fieldWithPath("content[].created_at").description("The content created at"))
+    .andWithPrefix("")
+            .andWithPrefix("content[].object.", resourceResponseFields())
+            .andWithPrefix("content[].subject.", resourceResponseFields())
+            .andWithPrefix("content[].predicate.", predicateResponseFields())
+            .andWithPrefix("")
 }

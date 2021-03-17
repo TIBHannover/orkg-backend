@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,6 +22,17 @@ class Neo4jLiteralRepositoryTest {
 
     @Autowired
     private lateinit var statementRepository: Neo4jStatementRepository
+
+    @BeforeEach
+    fun setup() {
+        resourceRepository.deleteAll()
+        literalRepository.deleteAll()
+        statementRepository.deleteAll()
+
+        assertThat(resourceRepository.findAll()).hasSize(0)
+        assertThat(literalRepository.findAll()).hasSize(0)
+        assertThat(statementRepository.findAll()).hasSize(0)
+    }
 
     @Test
     @DisplayName("should save and retrieve statement")

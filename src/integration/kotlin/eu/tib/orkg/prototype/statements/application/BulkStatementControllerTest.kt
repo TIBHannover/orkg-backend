@@ -1,12 +1,16 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.statements.application.bulk.BulkStatementController
+import eu.tib.orkg.prototype.statements.adapter.input.rest.bulk.BulkStatementController
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestBody
@@ -35,7 +39,22 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
 
     override fun createController() = controller
 
+    @BeforeEach
+    fun setup() {
+        val tempPageable = PageRequest.of(0, 10)
+
+        resourceService.removeAll()
+        predicateService.removeAll()
+        service.removeAll()
+
+        assertThat(resourceService.findAll(tempPageable)).hasSize(0)
+        assertThat(predicateService.findAll(tempPageable)).hasSize(0)
+        assertThat(service.findAll(tempPageable)).hasSize(0)
+    }
+
     @Test
+    @Disabled("Pending: Discussion with the frontend team regarding return value" +
+        "The output involves nested statements")
     fun lookupBySubjects() {
         val r1 = resourceService.create("one")
         val r2 = resourceService.create("two")
@@ -69,6 +88,8 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @Disabled("Pending: Discussion with the frontend team regarding return value" +
+        "The output involves nested statements")
     fun lookupByObjects() {
         val r1 = resourceService.create("one")
         val r2 = resourceService.create("two")
@@ -89,7 +110,7 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    requestParameters(
+                    pageableRequestParameters(
                         parameterWithName("ids").description("the list of resource Ids to fetch on"),
                         parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
                         parameterWithName("items").description("Number of items to fetch per page (default: 10)").optional(),
@@ -102,6 +123,8 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @Disabled("Pending: Discussion with the frontend team regarding return value" +
+        "The output involves nested statements")
     fun deleteResourceStatements() {
         val s = resourceService.create("one")
         val p1 = predicateService.create("has creator")
@@ -125,6 +148,8 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @Disabled("Pending: Discussion with the frontend team regarding return value" +
+        "The output involves nested statements")
     fun editResourceStatements() {
         val s = resourceService.create("ORKG")
         val p = predicateService.create("created by")
@@ -142,7 +167,7 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             "predicate_id" to newP.id!!,
             "object_id" to newO.id!!
         )
-        mockMvc.perform(putRequestWithBody("/api/statements/?ids=${st.id},${st2.id}", body))
+        mockMvc.perform(putRequest("/api/statements/?ids=${st.id},${st2.id}"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$[0].statement.predicate.id").value(newP.id!!.toString()))
             .andExpect(jsonPath("$[1].statement.object.id").value(newO.id!!.toString()))
@@ -152,7 +177,6 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
                     requestParameters(
                         parameterWithName("ids").description("the list of resource Ids to fetch on")
                     ),
-                    requestBody(),
                     bulkStatementListEditResponseFields())
             )
     }

@@ -7,12 +7,16 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
+import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.hasSize
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
+import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
@@ -47,24 +51,34 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     override fun createController() = controller
 
+    @BeforeEach
+    fun setup() {
+        val tempPageable = PageRequest.of(0, 10)
+
+        service.removeAll()
+        classService.removeAll()
+        predicateService.removeAll()
+        statementService.removeAll()
+
+        assertThat(service.findAll(tempPageable)).hasSize(0)
+        assertThat(classService.findAll(tempPageable)).hasSize(0)
+        assertThat(predicateService.findAll(tempPageable)).hasSize(0)
+        assertThat(statementService.findAll(tempPageable)).hasSize(0)
+    }
+
     @Test
     fun index() {
         service.create("research contribution")
         service.create("programming language")
-
         mockMvc
+
             .perform(getRequestTo("/api/resources/"))
             .andExpect(status().isOk)
             .andDo(
                 document(
                     snippet,
-                    requestParameters(
-                        parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
-                        parameterWithName("items").description("Number of items to fetch per page (default: 10)").optional(),
-                        parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
-                        parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
-                    ),
-                    listOfResourcesResponseFields()
+                    pageableRequestParameters(),
+                    listOfDetailedResourcesResponseFields()
                 )
             )
     }
@@ -83,9 +97,10 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                     snippet,
                     requestParameters(
                         parameterWithName("q").description("A search term that must be contained in the label"),
-                        parameterWithName("exact").description("Whether it is an exact string lookup or just containment").optional()
+                        parameterWithName("exact").description("Whether it is an exact string lookup or just containment")
+                            .optional()
                     ),
-                    listOfResourcesResponseFields()
+                    listOfDetailedResourcesResponseFields()
                 )
             )
     }
@@ -104,9 +119,10 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                     snippet,
                     requestParameters(
                         parameterWithName("q").description("A search term that must be contained in the label"),
-                        parameterWithName("exact").description("Whether it is an exact string lookup or just containment").optional()
+                        parameterWithName("exact").description("Whether it is an exact string lookup or just containment")
+                            .optional()
                     ),
-                    listOfResourcesResponseFields()
+                    listOfDetailedResourcesResponseFields()
                 )
             )
     }
@@ -216,22 +232,21 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         service.create(CreateResourceRequest(null, "Paper Contribution 1", set2))
 
         mockMvc
-            .perform(getRequestTo("/api/resources/?q=Contribution&exclude=$id,$id2"))
+            .perform(
+                getRequestTo("/api/resources/?q=Contribution&exclude=$id,$id2"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.content", Matchers.hasSize<Int>(2)))
             .andDo(
                 document(
                     snippet,
-                    requestParameters(
+                    pageableRequestParameters(
                         parameterWithName("q").description("A search term that must be contained in the label"),
-                        parameterWithName("exact").description("Whether it is an exact string lookup or just containment").optional(),
-                        parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
-                        parameterWithName("items").description("Number of items to fetch per page (default: 10)").optional(),
-                        parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
-                        parameterWithName("desc").description("Direction of the sorting (default: false)").optional(),
-                        parameterWithName("exclude").description("List of classes to exclude e.g Paper,C0,Contribution (default: not provided)").optional()
-                    ),
-                    listOfResourcesResponseFields()
+                        parameterWithName("exact").description("Whether it is an exact string lookup or just containment")
+                            .optional(),
+                        parameterWithName("exclude").description("List of classes to exclude e.g Paper,C0,Contribution (default: not provided)")
+                            .optional()
+                        ),
+                    listOfDetailedResourcesResponseFields()
                 )
             )
     }
@@ -317,24 +332,29 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/resources/?q=Resource&exclude=$id"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", hasSize<Int>(2)))
-            .andExpect(jsonPath("$[?(@.label == 'Resource 3')].shared").value(2))
-            .andExpect(jsonPath("$[?(@.label == 'Another Resource')].shared").value(0))
+            .andExpect(jsonPath("$.content", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.content[?(@.label == 'Resource 3')].shared").value(2))
+            .andExpect(jsonPath("$.content[?(@.label == 'Another Resource')].shared").value(0))
             .andDo(
                 document(
                     snippet,
-                    requestParameters(
-                        parameterWithName("q").description("A search term that must be contained in the label").optional(),
-                        parameterWithName("exact").description("Whether it is an exact string lookup or just containment").optional(),
-                        parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
-                        parameterWithName("items").description("Number of items to fetch per page (default: 10)").optional(),
-                        parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
-                        parameterWithName("desc").description("Direction of the sorting (default: false)").optional(),
-                        parameterWithName("exclude").description("List of classes to exclude e.g Paper,C0,Contribution (default: not provided)").optional()
+                    pageableRequestParameters(
+                        parameterWithName("q").description("A search term that must be contained in the label")
+                            .optional(),
+                        parameterWithName("exact").description("Whether it is an exact string lookup or just containment")
+                            .optional(),
+                        parameterWithName("exclude").description("List of classes to exclude e.g Paper,C0,Contribution (default: not provided)")
+                            .optional()
                     ),
-                    listOfResourcesResponseFields()
+                    listOfDetailedResourcesResponseFields()
                 )
             )
+    }
+
+    fun listOfDetailedResourcesResponseFields(): ResponseFieldsSnippet {
+        return responseFields(pageableDetailedFieldParameters())
+            .andWithPrefix("content[].", resourceResponseFields()
+        ).andWithPrefix("")
     }
 
     companion object RestDoc {
@@ -348,11 +368,13 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic"."""),
             fieldWithPath("organization_id").description("The ID of the organization that maintains this resource."),
             fieldWithPath("shared").description("The number of times this resource is shared").optional(),
-            fieldWithPath("_class").optional().ignored()
+            fieldWithPath("_class").description("Class").optional()
         )
 
         fun listOfResourcesResponseFields(): ResponseFieldsSnippet =
-            responseFields(fieldWithPath("[]").description("A list of resources"))
+            responseFields(
+                fieldWithPath("[]").description("A list of resources"))
                 .andWithPrefix("[].", resourceResponseFields())
+                .andWithPrefix("")
     }
 }

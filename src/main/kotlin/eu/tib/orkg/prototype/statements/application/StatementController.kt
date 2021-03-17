@@ -1,11 +1,11 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.CreateStatement
+import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
@@ -13,6 +13,8 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import eu.tib.orkg.prototype.statements.domain.model.Thing
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
@@ -39,13 +41,9 @@ class StatementController(
 
     @GetMapping("/")
     fun findAll(
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+        pageable: Pageable
     ): Iterable<StatementResponse> {
-        val pagination = createPageable(page, items, sortBy, desc)
-        return statementService.findAll(pagination)
+        return statementService.findAll(pageable)
     }
 
     @GetMapping("/{statementId}")
@@ -60,38 +58,26 @@ class StatementController(
     @GetMapping("/subject/{subjectId}")
     fun findBySubject(
         @PathVariable subjectId: String,
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
-    ): HttpEntity<Iterable<StatementResponse>> {
-        val pagination = createPageable(page, items, sortBy, desc)
-        return ok(statementService.findAllBySubject(subjectId, pagination))
+        pageable: Pageable
+    ): HttpEntity<Page<GeneralStatement>> {
+        return ok(statementService.findAllBySubject(subjectId, pageable))
     }
 
     @GetMapping("/subject/{subjectId}/predicate/{predicateId}")
     fun findBySubjectAndPredicate(
         @PathVariable subjectId: String,
         @PathVariable predicateId: PredicateId,
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+        pageable: Pageable
     ): HttpEntity<Iterable<StatementResponse>> {
-        val pagination = createPageable(page, items, sortBy, desc)
-        return ok(statementService.findAllBySubjectAndPredicate(subjectId, predicateId, pagination))
+        return ok(statementService.findAllBySubjectAndPredicate(subjectId, predicateId, pageable))
     }
 
     @GetMapping("/predicate/{predicateId}")
     fun findByPredicate(
         @PathVariable predicateId: PredicateId,
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+        pageable: Pageable
     ): HttpEntity<Iterable<StatementResponse>> {
-        val pagination = createPageable(page, items, sortBy, desc)
-        return ok(statementService.findAllByPredicate(predicateId, pagination))
+        return ok(statementService.findAllByPredicate(predicateId, pageable))
     }
 
     @GetMapping("/predicate/{predicateId}/literal/{literal}")
@@ -99,15 +85,14 @@ class StatementController(
         @PathVariable predicateId: PredicateId,
         @PathVariable literal: String,
         @RequestParam("subjectClass", required = false) subjectClass: ClassId?,
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+        pageable: Pageable
     ): HttpEntity<Iterable<StatementResponse>> {
-        val pagination = createPageable(page, items, sortBy, desc)
         val result = when (subjectClass) {
-            null -> statementService.findAllByPredicateAndLabel(predicateId, literal, pagination)
-            else -> statementService.findAllByPredicateAndLabelAndSubjectClass(predicateId, literal, subjectClass, pagination)
+            null -> statementService.findAllByPredicateAndLabel(predicateId, literal, pageable)
+            else -> statementService.findAllByPredicateAndLabelAndSubjectClass(
+                predicateId, literal, subjectClass,
+                pageable
+            )
         }
         return ok(result)
     }
@@ -115,26 +100,18 @@ class StatementController(
     @GetMapping("/object/{objectId}")
     fun findByObject(
         @PathVariable objectId: String,
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
-    ): HttpEntity<Iterable<StatementResponse>> {
-        val pagination = createPageable(page, items, sortBy, desc)
-        return ok(statementService.findAllByObject(objectId, pagination))
+        pageable: Pageable
+    ): Page<GeneralStatement> {
+        return statementService.findAllByObject(objectId, pageable)
     }
 
     @GetMapping("/object/{objectId}/predicate/{predicateId}")
     fun findByObjectAndPredicate(
         @PathVariable objectId: String,
         @PathVariable predicateId: PredicateId,
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
+        pageable: Pageable
     ): HttpEntity<Iterable<StatementResponse>> {
-        val pagination = createPageable(page, items, sortBy, desc)
-        return ok(statementService.findAllByObjectAndPredicate(objectId, predicateId, pagination))
+        return ok(statementService.findAllByObjectAndPredicate(objectId, predicateId, pageable))
     }
 
     @PostMapping("/")
@@ -193,9 +170,22 @@ class StatementController(
 
     @GetMapping("/{thingId}/bundle")
     fun fetchAsBundle(
-        @PathVariable thingId: String
+        @PathVariable thingId: String,
+        @RequestParam("minLevel", required = false) minLevel: Int?,
+        @RequestParam("maxLevel", required = false) maxLevel: Int?,
+        @RequestParam("blacklist", required = false, defaultValue = "") blacklist: List<ClassId>,
+        @RequestParam("whitelist", required = false, defaultValue = "") whitelist: List<ClassId>
     ): HttpEntity<Bundle> {
-        return ok(statementService.fetchAsBundle(thingId))
+        return ok(
+            statementService.fetchAsBundle(
+                thingId,
+                // FIXME: had to pass configuration like this otherwise lists are not parsed correctly by spring
+                BundleConfiguration(
+                    minLevel, maxLevel,
+                    blacklist, whitelist
+                )
+            )
+        )
     }
 
     private fun getIdAsString(thing: Thing): String =
@@ -206,4 +196,44 @@ class StatementController(
             is Class -> thing.id!!.value
             else -> thing.toString()
         }
+}
+
+/**
+ * A Bundle configuration class containing the min and max levels to be fetched
+ * Also the list of classes to be white-listed or black-listed during the fetch
+ * @param minLevel the minimum level to be fetched (if not provided it is set to 0)
+ * @param maxLevel the maximum level of statements to be fetched (if not provided, all child statements will be fetched)
+ * @param blacklist the list of classes to be black-listed (i.e. not fetched), these classes are checked on the subjects and objects of a statement
+ * @param whitelist the list of classes to be white-listed (i.e. the only ones to be fetched), these classes are checked on the subjects and objects of a statement
+ */
+data class BundleConfiguration(
+    val minLevel: Int?,
+    val maxLevel: Int?,
+    val blacklist: List<ClassId>,
+    val whitelist: List<ClassId>
+) {
+    fun toApocConfiguration(): Map<String, Any> {
+        val conf = mutableMapOf<String, Any>(
+            "relationshipFilter" to ">",
+            "bfs" to true
+        )
+        // configure min and max levels
+        if (maxLevel != null)
+            conf["maxLevel"] = maxLevel
+        if (minLevel != null)
+            conf["minLevel"] = minLevel
+        // configure blacklisting and whitelisting classes
+        var labelFilter = ""
+        if (blacklist.isNotEmpty())
+            labelFilter = blacklist.joinToString(prefix = "-", separator = "|-")
+        if (blacklist.isNotEmpty()) {
+            var positiveLabels = whitelist.joinToString(prefix = "+", separator = "|+")
+            if (labelFilter.isNotBlank())
+                positiveLabels += "|$positiveLabels"
+            labelFilter = positiveLabels
+        }
+        if (blacklist.isNotEmpty() || whitelist.isNotEmpty())
+            conf["labelFilter"] = labelFilter
+        return conf
+    }
 }

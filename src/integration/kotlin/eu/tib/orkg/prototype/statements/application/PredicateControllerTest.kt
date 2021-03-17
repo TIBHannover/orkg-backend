@@ -3,10 +3,13 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
+import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
@@ -31,6 +34,13 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
     private lateinit var service: PredicateService
 
     override fun createController() = controller
+
+    @BeforeEach
+    fun setup() {
+        service.removeAll()
+
+        assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(0)
+    }
 
     @Test
     fun index() {
@@ -171,6 +181,10 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
             )
     }
 
+    fun listOfPredicatesResponseFields(): ResponseFieldsSnippet =
+        responseFields(pageableDetailedFieldParameters())
+            .andWithPrefix("content[].", predicateResponseFields())
+
     companion object RestDoc {
         fun predicateResponseFields() = listOf(
             fieldWithPath("id").description("The predicate ID"),
@@ -178,11 +192,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("created_at").description("The predicate creation datetime"),
             fieldWithPath("created_by").description("The ID of the user that created the predicate. All zeros if unknown."),
             fieldWithPath("description").description("The description of the predicate, if exists.").optional(),
-            fieldWithPath("_class").optional().ignored()
+            fieldWithPath("_class").description("Class description").optional().ignored()
         )
-
-        fun listOfPredicatesResponseFields(): ResponseFieldsSnippet =
-            responseFields(fieldWithPath("[]").description("A list of predicates"))
-                .andWithPrefix("[].", predicateResponseFields())
     }
 }

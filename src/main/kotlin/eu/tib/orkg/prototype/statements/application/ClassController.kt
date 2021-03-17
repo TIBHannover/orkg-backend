@@ -1,13 +1,14 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.createPageable
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import java.net.URI
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -41,26 +42,22 @@ class ClassController(private val service: ClassService, private val resourceSer
     @GetMapping("/{id}/resources/")
     fun findResourcesWithClass(
         @PathVariable id: ClassId,
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean,
         @RequestParam("q", required = false) searchString: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
-        @RequestParam("creator", required = false) creator: ContributorId?
-    ): Iterable<Resource> {
-        val pagination = createPageable(page, items, sortBy, desc)
+        @RequestParam("creator", required = false) creator: ContributorId?,
+        pageable: Pageable
+    ): Page<Resource> {
         return if (creator != null) {
             when {
-                searchString == null -> resourceService.findAllByClassAndCreatedBy(pagination, id, creator)
-                exactMatch -> resourceService.findAllByClassAndLabelAndCreatedBy(pagination, id, searchString, creator)
-                else -> resourceService.findAllByClassAndLabelContainingAndCreatedBy(pagination, id, searchString, creator)
+                searchString == null -> resourceService.findAllByClassAndCreatedBy(pageable, id, creator)
+                exactMatch -> resourceService.findAllByClassAndLabelAndCreatedBy(pageable, id, searchString, creator)
+                else -> resourceService.findAllByClassAndLabelContainingAndCreatedBy(pageable, id, searchString, creator)
             }
         } else {
             when {
-                searchString == null -> resourceService.findAllByClass(pagination, id)
-                exactMatch -> resourceService.findAllByClassAndLabel(pagination, id, searchString)
-                else -> resourceService.findAllByClassAndLabelContaining(pagination, id, searchString)
+                searchString == null -> resourceService.findAllByClass(pageable, id)
+                exactMatch -> resourceService.findAllByClassAndLabel(pageable, id, searchString)
+                else -> resourceService.findAllByClassAndLabelContaining(pageable, id, searchString)
             }
         }
     }
@@ -69,16 +66,12 @@ class ClassController(private val service: ClassService, private val resourceSer
     fun findByLabel(
         @RequestParam("q", required = false) searchString: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
-        @RequestParam("sortBy", required = false) sortBy: String?,
-        @RequestParam("desc", required = false, defaultValue = "false") desc: Boolean
-    ): Iterable<Class> {
-        val pagination = createPageable(page, items, sortBy, desc)
+        pageable: Pageable
+    ): Page<Class> {
         return when {
-            searchString == null -> service.findAll(pagination)
-            exactMatch -> service.findAllByLabel(pagination, searchString)
-            else -> service.findAllByLabelContaining(pagination, searchString)
+            searchString == null -> service.findAll(pageable)
+            exactMatch -> service.findAllByLabel(pageable, searchString)
+            else -> service.findAllByLabelContaining(pageable, searchString)
         }
     }
 

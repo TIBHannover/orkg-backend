@@ -28,6 +28,9 @@ class Neo4jStatsService(
     private val neo4jStatsRepository: Neo4jStatsRepository,
     private val userRepository: UserRepository
 ) : StatsService {
+
+    val internalClassLabels: (String) -> Boolean = { it !in setOf("Thing", "Resource", "AuditableEntity") }
+
     override fun getStats(): Stats {
         val metadata = neo4jStatsRepository.getGraphMetaData()
         val labels = metadata.first()["labels"] as Map<*, *>
@@ -90,22 +93,16 @@ class Neo4jStatsService(
     }
 
     private fun getChangeLogsWithProfile(changeLogs: Page<ChangeLogResponse>, pageable: Pageable): Page<ChangeLog> {
-        val userList = mutableListOf<UUID>()
         val refinedChangeLog = mutableListOf<ChangeLog>()
 
-        changeLogs.map {
-            userList.add(UUID.fromString(it.createdBy))
-        }
+        val userIdList = changeLogs.content.map { UUID.fromString(it.createdBy) }.toTypedArray()
 
-        val mapValues = userRepository.findByIdIn(userList.toTypedArray()).map(UserEntity::toContributor).groupBy(Contributor::id)
+        val mapValues = userRepository.findByIdIn(userIdList, pageable).map(UserEntity::toContributor).groupBy(Contributor::id)
 
         changeLogs.forEach { changeLogResponse ->
             val contributor = mapValues[ContributorId(changeLogResponse.createdBy)]?.first()
 
-            val filteredClasses = changeLogResponse.classes.filter {
-                it != "Thing" &&
-                    it != "Resource" &&
-                    it != "AuditableEntity" }
+            val filteredClasses = changeLogResponse.classes.filter(internalClassLabels)
 
             refinedChangeLog.add(ChangeLog(changeLogResponse.id, changeLogResponse.label, changeLogResponse.createdAt,
                 filteredClasses, Profile(contributor?.id, contributor?.name, contributor?.gravatarId, contributor?.avatarURL)))
@@ -115,20 +112,15 @@ class Neo4jStatsService(
     }
 
     private fun getContributorsWithProfile(topContributors: Page<TopContributorIdentifiers>, pageable: Pageable): Page<TopContributorsWithProfile> {
-        val userList = mutableListOf<UUID>()
-        val refinedTopContributors = mutableListOf<TopContributorsWithProfile>()
+        val userIdList = topContributors.content.map { UUID.fromString(it.id) }.toTypedArray()
 
-        topContributors.map {
-            userList.add(UUID.fromString(it.id))
-        }
+        val mapValues = userRepository.findByIdIn(userIdList, pageable).map(UserEntity::toContributor).groupBy(Contributor::id)
 
-        val mapValues = userRepository.findByIdIn(userList.toTypedArray()).map(UserEntity::toContributor).groupBy(Contributor::id)
-
-        topContributors.forEach { topContributor ->
-            val contributor = mapValues[ContributorId(topContributor.id)]?.first()
-            refinedTopContributors.add(TopContributorsWithProfile(topContributor.contributions,
-                Profile(contributor?.id, contributor?.name, contributor?.gravatarId, contributor?.avatarURL)))
-        }
+        val refinedTopContributors =
+            topContributors.content.map { topContributor ->
+                val contributor = mapValues[ContributorId(topContributor.id)]?.first()
+                TopContributorsWithProfile(topContributor.contributions, Profile(contributor?.id, contributor?.name, contributor?.gravatarId, contributor?.avatarURL))
+            } as MutableList<TopContributorsWithProfile>
 
         return PageImpl(refinedTopContributors, pageable, refinedTopContributors.size.toLong())
     }

@@ -1,0 +1,22 @@
+= Notes pertaining to the stats on the home page of ORKG
+
+== Top Contributors
+
+* We consider only those who add new papers, contribution, comparison, visualization and statement.
+* Only the last 1 month's statistic from the time of the query.
+* Reason: We currently do not store the history of user edits.
+* URL: http://localhost:8080/api/stats/top/contributors
+
+== Recent Changelog
+
+* We consider changes in paper, visualization, contribution, comparison and problem.
+* URL: http://localhost:8080/api/stats/top/changelog
+
+== Trending Research Problems
+
+* We consider most contributed research problems by more than 1 contributor.
+* We do not consider anonymous user i.e., '00000000-0000-0000-0000-000000000000'.
+* URL: http://localhost:8080/api/stats/top/research-problems
+
+
+

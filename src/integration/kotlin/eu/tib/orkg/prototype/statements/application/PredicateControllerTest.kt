@@ -59,7 +59,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                         parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
                         parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
                     ),
-                    listOfPredicatesResponseFields()
+                    listOfPredicatesResponseFields3()
                 )
             )
     }
@@ -94,7 +94,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                     requestParameters(
                         parameterWithName("q").description("A search term that must be contained in the label")
                     ),
-                    listOfPredicatesResponseFields()
+                    listOfPredicatesResponseFields3()
                 )
             )
     }
@@ -114,7 +114,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                     requestParameters(
                         parameterWithName("q").description("A search term that must be contained in the label")
                     ),
-                    listOfPredicatesResponseFields()
+                    listOfPredicatesResponseFields3()
                 )
             )
     }
@@ -181,7 +181,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
             )
     }
 
-    fun listOfPredicatesResponseFields(): ResponseFieldsSnippet =
+    fun listOfPredicatesResponseFields3(): ResponseFieldsSnippet =
         responseFields(pageableDetailedFieldParameters())
             .andWithPrefix("content[].", predicateResponseFields())
 

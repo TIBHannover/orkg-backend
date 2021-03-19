@@ -23,4 +23,5 @@ data class Class(
 
     @JsonProperty("description")
     var description: String? = null
+    fun toClass(): Class = Class(id, label, uri, createdAt, createdBy, _class)
 }

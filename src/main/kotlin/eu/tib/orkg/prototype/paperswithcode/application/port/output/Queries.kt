@@ -6,22 +6,21 @@ import eu.tib.orkg.prototype.paperswithcode.application.domain.DatasetSummary
 import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
 import eu.tib.orkg.prototype.statements.domain.model.ResearchField
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import java.util.Optional
 
 interface FindResearchProblemQuery {
     fun allByResearchField(id: ResourceId): List<ResearchProblem>
 }
 
 interface SummarizeBenchmarkQuery {
-    fun byResearchProblem(id: ResourceId): Optional<BenchmarkSummary>
+    fun byResearchField(id: ResourceId): List<BenchmarkSummary>
 }
 
 interface FindDatasetsQuery {
-    fun forResearchProblem(id: ResourceId): Optional<List<Dataset>>
+    fun forResearchProblem(id: ResourceId): List<Dataset>
 }
 
 interface SummarizeDatasetQuery {
-    fun by(id: ResourceId): Optional<List<DatasetSummary>>
+    fun by(id: ResourceId): List<DatasetSummary>
 }
 
 interface FindResearchFieldsQuery {

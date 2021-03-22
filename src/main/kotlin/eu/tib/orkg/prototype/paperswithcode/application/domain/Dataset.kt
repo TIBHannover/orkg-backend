@@ -17,12 +17,12 @@ data class Dataset(
 data class DatasetSummary(
     @JsonProperty("model_name")
     val modelName: String,
-    val score: Int,
+    val score: Float,
     val metric: String,
-    // @JsonProperty("paper_id")
-    // val paperId: ResourceId,
+    @JsonProperty("paper_id")
+    val paperId: ResourceId,
     @JsonProperty("paper_title")
     val paperTitle: String,
-    @JsonProperty("code_url")
-    val codeURL: String
+    @JsonProperty("code_urls")
+    val codeURLs: List<String>
 )

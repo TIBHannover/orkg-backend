@@ -47,7 +47,9 @@ data class Neo4jBenchmarkUnpacked(
     val score: String,
     val metric: String,
     val paper: Neo4jResource,
-    val codes: List<String>
+    val codes: List<String>,
+    val month: String?,
+    val year: String?
 ) {
     // FIXME: conform the naming of the method and returning type
     fun toDatasetSummary() =
@@ -57,6 +59,8 @@ data class Neo4jBenchmarkUnpacked(
             metric,
             paper.resourceId!!,
             paper.label!!,
+            month,
+            year,
             codes
         )
 }

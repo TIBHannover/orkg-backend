@@ -23,6 +23,10 @@ data class DatasetSummary(
     val paperId: ResourceId,
     @JsonProperty("paper_title")
     val paperTitle: String,
+    @JsonProperty("paper_month")
+    val paperMonth: String?,
+    @JsonProperty("paper_year")
+    val paperYear: String?,
     @JsonProperty("code_urls")
     val codeURLs: List<String>
 )

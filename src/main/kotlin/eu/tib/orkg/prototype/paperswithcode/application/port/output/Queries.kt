@@ -3,13 +3,8 @@ package eu.tib.orkg.prototype.paperswithcode.application.port.output
 import eu.tib.orkg.prototype.paperswithcode.application.domain.BenchmarkSummary
 import eu.tib.orkg.prototype.paperswithcode.application.domain.Dataset
 import eu.tib.orkg.prototype.paperswithcode.application.domain.DatasetSummary
-import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
 import eu.tib.orkg.prototype.statements.domain.model.ResearchField
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-
-interface FindResearchProblemQuery {
-    fun allByResearchField(id: ResourceId): List<ResearchProblem>
-}
 
 interface SummarizeBenchmarkQuery {
     fun byResearchField(id: ResourceId): List<BenchmarkSummary>

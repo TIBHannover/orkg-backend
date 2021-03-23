@@ -382,6 +382,8 @@ include::parts/observatories.adoc[]
 
 include::parts/research-fields.adoc[]
 
+include::parts/datasets-benchmarks.adoc[]
+
 [[sorting-and-pagination]]
 == Sorting and Pagination
 

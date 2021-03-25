@@ -193,14 +193,14 @@ class ObjectController(
                             jsonObject.isExistingResource() || jsonObject.isExistingLiteral() -> {
                                 // Update existing resources with pre-defined classes
                                 typeResourceBasedOnPredicate(predicateId, jsonObject)
-                                statementService.create(userId, subject.value, predicateId!!, jsonObject.`@id`!!)
+                                statementService.add(userId, subject.value, predicateId!!, jsonObject.`@id`!!)
                             }
                             jsonObject.isTempResource() -> {
                                 if (!tempResources.containsKey(jsonObject.`@id`))
                                     resourceQueue.add(TempResource(subject, predicateId!!, jsonObject.`@id`!!))
                                 else {
                                     val tempId = tempResources[jsonObject.`@id`]
-                                    statementService.create(userId, subject.value, predicateId!!, tempId!!)
+                                    statementService.add(userId, subject.value, predicateId!!, tempId!!)
                                 }
                             }
                         }
@@ -214,7 +214,7 @@ class ObjectController(
                         if (jsonObject.`@temp` != null) {
                             tempResources[jsonObject.`@temp`] = newLiteral.value
                         }
-                        statementService.create(userId, subject.value, predicateId!!, newLiteral.value)
+                        statementService.add(userId, subject.value, predicateId!!, newLiteral.value)
                     }
                     jsonObject.isNewResource() -> { // create new resource
                         // Check for classes of resource
@@ -247,7 +247,7 @@ class ObjectController(
                         if (jsonObject.`@temp` != null) {
                             tempResources[jsonObject.`@temp`] = newResource.value
                         }
-                        statementService.create(userId, subject.value, predicateId, newResource.value)
+                        statementService.add(userId, subject.value, predicateId, newResource.value)
                         if (jsonObject.hasSubsequentStatements()) {
                             goThroughStatementsRecursively(
                                 newResource,
@@ -287,7 +287,7 @@ class ObjectController(
             limit--
             if (tempResources.containsKey(temp.`object`)) {
                 val tempId = tempResources[temp.`object`]
-                statementService.create(userId, temp.subject.value, temp.predicate, tempId!!)
+                statementService.add(userId, temp.subject.value, temp.predicate, tempId!!)
             } else {
                 queue.add(temp)
             }

@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
+import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
@@ -21,6 +22,7 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementReposit
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThingRepository
 import java.util.Optional
+import java.util.concurrent.ConcurrentHashMap
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -49,6 +51,8 @@ class Neo4jStatementService :
 
     @Autowired
     private lateinit var neo4jStatementIdGenerator: Neo4jStatementIdGenerator
+
+    private val predicateCache: MutableMap<PredicateId, Predicate> = ConcurrentHashMap(64)
 
     override fun findAll(pagination: Pageable): Iterable<GeneralStatement> =
         statementRepository.findAll(pagination)
@@ -131,6 +135,33 @@ class Neo4jStatementService :
         )
     }
 
+    override fun add(userId: ContributorId, subject: String, predicate: PredicateId, `object`: String) {
+        // This method mostly exists for performance reasons. Since we do not need any data but the IDs
+        // to construct the statement in Neo4j, we are safe to cache at least the predicate.
+
+        val foundSubject = thingRepository
+            .findByThingId(subject)
+            .orElseThrow { IllegalStateException("Could not find subject $subject") }
+
+        findPredicateCached(predicate) // ignore return value
+
+        val foundObject = thingRepository
+            .findByThingId(`object`)
+            .orElseThrow { IllegalStateException("Could not find object: $`object`") }
+
+        val id = neo4jStatementIdGenerator.nextIdentity()
+
+        val persistedStatement = statementRepository.save(
+            Neo4jStatement(
+                statementId = id,
+                predicateId = predicate,
+                subject = foundSubject,
+                `object` = foundObject,
+                createdBy = userId
+            )
+        )
+    }
+
     override fun totalNumberOfStatements(): Long =
         statementRepository.count()
 
@@ -205,4 +236,13 @@ class Neo4jStatementService :
             createdAt = statement.createdAt!!,
             createdBy = statement.createdBy
         )
+
+    private fun findPredicateCached(predicate: PredicateId): Predicate {
+        val cached = predicateCache[predicate]
+        if (cached != null)
+            return cached
+        val persisted = predicateService.findById(predicate).orElseThrow { IllegalArgumentException("Predicate could not be found: $predicate") }
+        predicateCache[predicate] = persisted
+        return persisted
+    }
 }

@@ -151,7 +151,7 @@ class Neo4jStatementService :
 
         val id = neo4jStatementIdGenerator.nextIdentity()
 
-        val persistedStatement = statementRepository.save(
+        statementRepository.save(
             Neo4jStatement(
                 statementId = id,
                 predicateId = predicate,

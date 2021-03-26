@@ -52,8 +52,6 @@ class Neo4jStatementService :
     @Autowired
     private lateinit var neo4jStatementIdGenerator: Neo4jStatementIdGenerator
 
-    private val predicateCache: MutableMap<PredicateId, Predicate> = ConcurrentHashMap(64)
-
     override fun findAll(pagination: Pageable): Iterable<GeneralStatement> =
         statementRepository.findAll(pagination)
             .content
@@ -136,14 +134,15 @@ class Neo4jStatementService :
     }
 
     override fun add(userId: ContributorId, subject: String, predicate: PredicateId, `object`: String) {
-        // This method mostly exists for performance reasons. Since we do not need any data but the IDs
-        // to construct the statement in Neo4j, we are safe to cache at least the predicate.
+        // This method mostly exists for performance reasons. We just create the statement but do not return anything.
+        // That saves the extra calls to the database to retrieve the statement again, even if it may not be needed.
 
         val foundSubject = thingRepository
             .findByThingId(subject)
             .orElseThrow { IllegalStateException("Could not find subject $subject") }
 
-        findPredicateCached(predicate) // ignore return value
+        predicateService.findById(predicate)
+            .orElseThrow { IllegalArgumentException("Predicate could not be found: $predicate") }
 
         val foundObject = thingRepository
             .findByThingId(`object`)
@@ -236,13 +235,4 @@ class Neo4jStatementService :
             createdAt = statement.createdAt!!,
             createdBy = statement.createdBy
         )
-
-    private fun findPredicateCached(predicate: PredicateId): Predicate {
-        val cached = predicateCache[predicate]
-        if (cached != null)
-            return cached
-        val persisted = predicateService.findById(predicate).orElseThrow { IllegalArgumentException("Predicate could not be found: $predicate") }
-        predicateCache[predicate] = persisted
-        return persisted
-    }
 }

@@ -339,12 +339,10 @@ class ObjectController(
     }
 
     /**
-     * Check if a class is existing
-     * o/w throw out a suitable exception
+     * Check if a class exists, otherwise throw out suitable exception.
      */
     private fun checkIfClassExists(it: String) {
-        if (!classService.findById(ClassId(it)).isPresent)
-            throw ClassNotFound(it)
+        if (!classService.exists(ClassId(it))) throw ClassNotFound(it)
     }
 
     /**

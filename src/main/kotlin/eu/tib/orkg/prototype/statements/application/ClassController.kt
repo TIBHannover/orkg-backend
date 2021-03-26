@@ -89,7 +89,7 @@ class ClassController(private val service: ClassService, private val resourceSer
         }
 
         val userId = authenticatedUserId()
-        val id = service.create(ContributorId(userId), `class`).id
+        val id = service.create(ContributorId(userId), `class`).id!!
         val location = uriComponentsBuilder
             .path("api/classes/{id}")
             .buildAndExpand(id)

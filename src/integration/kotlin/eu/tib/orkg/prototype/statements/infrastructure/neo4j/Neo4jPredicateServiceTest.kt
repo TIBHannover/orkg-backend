@@ -100,7 +100,7 @@ class Neo4jPredicateServiceTest {
     fun shouldReturnResourceWithTheSameId() {
         service.create("irrelevant")
         service.create("also irrelevant")
-        val expectedId = service.create("to be found").id
+        val expectedId = service.create("to be found").id!!
 
         val found = service.findById(expectedId)
 

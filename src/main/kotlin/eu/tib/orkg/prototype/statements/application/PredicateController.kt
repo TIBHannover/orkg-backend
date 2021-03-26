@@ -49,7 +49,7 @@ class PredicateController(private val service: PredicateService) : BaseControlle
         if (predicate.id != null && service.findById(predicate.id).isPresent)
             return ResponseEntity.badRequest().body("Predicate id <${predicate.id}> already exists!")
         val userId = authenticatedUserId()
-        val id = service.create(ContributorId(userId), predicate).id
+        val id = service.create(ContributorId(userId), predicate).id!!
 
         val location = uriComponentsBuilder
             .path("api/predicates/{id}")

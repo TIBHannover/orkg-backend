@@ -111,7 +111,7 @@ docker-build:
 
 # (Security) Scanning templates
 include:
-  - template: Container-Scanning.gitlab-ci.yml
+  - remote: https://gitlab.com/gitlab-org/gitlab/-/raw/b36fc45ecea531bf149ee3dff39d205d074c4227/lib/gitlab/ci/templates/Security/Container-Scanning.gitlab-ci.yml
   - template: Dependency-Scanning.gitlab-ci.yml
 
 container_scanning:

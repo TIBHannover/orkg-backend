@@ -32,6 +32,9 @@ class OrganizationEntity() {
 
     var url: String? = null
 
+    @Column(name = "display_id")
+    var displayId: String? = null
+
     @ManyToMany(mappedBy = "organizations", fetch = FetchType.LAZY)
     var observatories: MutableSet<ObservatoryEntity>? = mutableSetOf()
 
@@ -42,6 +45,7 @@ class OrganizationEntity() {
             logo = null,
             createdBy = ContributorId(createdBy!!),
             homepage = url,
-            observatoryIds = observatories!!.map { ObservatoryId(it.id!!) }.toSet()
+            observatoryIds = observatories!!.map { ObservatoryId(it.id!!) }.toSet(),
+            displayId = displayId
         )
 }

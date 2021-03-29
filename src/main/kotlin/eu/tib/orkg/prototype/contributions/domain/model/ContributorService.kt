@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.contributions.domain.model
 
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserRepository
+import eu.tib.orkg.prototype.contributions.application.ports.input.RetrieveContributorUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import java.time.OffsetDateTime
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Service
 @Transactional
 class ContributorService(
     private val userRepository: UserRepository
-) {
+) : RetrieveContributorUseCase {
     fun findById(userId: ContributorId): Optional<Contributor> =
         userRepository
             .findById(userId.value)
@@ -41,4 +42,6 @@ class ContributorService(
         userRepository
             .findByObservatoryId(id.value)
             .map(UserEntity::toContributor)
+
+    override fun byId(id: ContributorId): Optional<Contributor> = findById(id)
 }

@@ -88,12 +88,8 @@
       "uri": "http://purl.org/dc/terms/Location"
     },
     {
-      "id": "Predicates",
-      "label": "Predicate"
-    },
-    {
-      "id": "VISUALIZATION_DEFINITION",
-      "label": "ORKG Visualization Description Class"
+      "id": "Visualization",
+      "label": "Visualization"
     },
     {
       "id": "Sentence",
@@ -202,189 +198,337 @@
   ],
 
   "predicates": [
-    {
-      "label": "HAS_VISUALIZATION_DEFINITION",
-      "id": "HAS_VISUALIZATION_DEFINITION"
-    },
-    {
-      "label": "Has evaluation",
-      "id": "HAS_EVALUATION"
-    },
-    {
-      "label": "Has approach",
-      "id": "HAS_APPROACH"
-    },
-    {
-      "label": "Has method",
-      "id": "HAS_METHOD"
-    },
-    {
-      "label": "Has implementation",
-      "id": "HAS_IMPLEMENTATION"
-    },
-    {
-      "label": "Has result",
-      "id": "HAS_RESULTS"
-    },
-    {
-      "label": "Has value",
-      "id": "HAS_VALUE"
-    },
-    {
-      "label": "Has metric",
-      "id": "HAS_METRIC"
-    },
-    {
-      "label": "Material",
-      "id": "MATERIAL"
-    },
-    {
-      "label": "Method",
-      "id": "METHOD"
-    },
-    {
-      "label": "Process",
-      "id": "PROCESS"
-    },
-    {
-      "label": "Data",
-      "id": "DATA"
-    },
-    {
-      "label": "Has ORCID",
-      "id": "HAS_ORCID"
-    },
-    {
-      "label": "type",
-      "id": "type"
-    },
-    {
-      "label": "icon",
-      "id": "icon"
-    },
-    {
-      "label": "description",
-      "id": "description"
-    },
-    {
-      "label": "url",
-      "id": "url"
-    },
-    {
-      "label": "onHomepage",
-      "id": "onHomepage"
-    },
-    {
-      "label": "Template of research field",
-      "id": "TemplateOfResearchField"
-    },
-    {
-      "label": "Template of predicate",
-      "id": "TemplateOfPredicate"
-    },
-    {
-      "label": "Template of class",
-      "id": "TemplateOfClass"
-    },
-    {
-      "label": "Template sub-template",
-      "id": "TemplateSub"
-    },
-    {
-      "label": "Template of research problem",
-      "id": "TemplateOfResearchProblem"
-    },
-    {
-      "label": "Same as",
-      "id": "SAME_AS"
-    },
-    {
-      "label": "Has venue",
-      "id": "HAS_VENUE"
-    },
-    {
-      "label": "reference",
-      "id": "reference"
-    },
-    {
-      "label": "Template component",
-      "id": "TemplateComponent"
-    },
-    {
-      "label": "Template component property",
-      "id": "TemplateComponentProperty"
-    },
-    {
-      "label": "Template component value",
-      "id": "TemplateComponentValue"
-    },
-    {
-      "label": "Order",
-      "id": "order"
-    },
-    {
-      "label": "Related Resource",
-      "id": "RelatedResource"
-    },
-    {
-      "label": "Related Figure",
-      "id": "RelatedFigure"
-    },
-    {
-      "label": "Template Component Validation Rule",
-      "id": "TemplateComponentValidationRule"
-    },
-    {
-      "label": "Template Label Format",
-      "id": "TemplateLabelFormat"
-    },
-    {
-      "label": "TemplateStrict",
-      "id": "TemplateStrict"
-    },
-    {
-      "label": "TemplateComponentOrder",
-      "id": "TemplateComponentOrder"
-    },
-    {
-      "label": "TemplateComponentOccurrenceMin",
-      "id": "TemplateComponentOccurrenceMin"
-    },
-    {
-      "label": "TemplateComponentOccurrenceMax",
-      "id": "TemplateComponentOccurrenceMax"
-    },
-    {
-      "label": "Image",
-      "id": "Image"
-    },
-    {
-      "label": "Sub Problem",
-      "id": "subProblem"
-    },
-    {
-      "label": "compare contribution",
-      "id": "compareContribution"
-    },
-    {
-      "label": "has property",
-      "id": "hasProperty"
-    },
-    {
-      "label": "has previous version",
-      "id": "hasPreviousVersion"
-    },
-    {
-      "label": "has subject",
-      "id": "hasSubject"
-    },
-    {
-      "label": "has content",
-      "id": "hasContent"
-    },
-    {
-      "label": "contains",
-      "id": "contains"
-    }
+      {
+          "label": "addresses",
+          "id": "P0"
+      },
+      {
+          "label": "yields",
+          "id": "P1"
+      },
+      {
+          "label": "employs",
+          "id": "P2"
+      },
+      {
+          "label": "is a",
+          "id": "P3"
+      },
+      {
+          "label": "refers to",
+          "id": "P4"
+      },
+      {
+          "label": "uses",
+          "id": "P5"
+      },
+      {
+          "label": "author",
+          "id": "P6"
+      },
+      {
+          "label": "affiliation",
+          "id": "P7"
+      },
+      {
+          "label": "email",
+          "id": "P8"
+      },
+      {
+          "label": "ORCID",
+          "id": "P9"
+      },
+      {
+          "label": "DOI",
+          "id": "P10"
+      },
+      {
+          "label": "problem",
+          "id": "P11"
+      },
+      {
+          "label": "solution",
+          "id": "P12"
+      },
+      {
+          "label": "use case",
+          "id": "P13"
+      },
+      {
+          "label": "description",
+          "id": "P14"
+      },
+      {
+          "label": "implementation",
+          "id": "P15"
+      },
+      {
+          "label": "has",
+          "id": "P16"
+      },
+      {
+          "label": "has part",
+          "id": "P17"
+      },
+      {
+          "label": "part of",
+          "id": "P18"
+      },
+      {
+          "label": "input",
+          "id": "P19"
+      },
+      {
+          "label": "output",
+          "id": "P20"
+      },
+      {
+          "label": "programming language",
+          "id": "P21"
+      },
+      {
+          "label": "environment",
+          "id": "P22"
+      },
+      {
+          "label": "defines",
+          "id": "P23"
+      },
+      {
+          "label": "field",
+          "id": "P24"
+      },
+      {
+          "label": "web site",
+          "id": "P25"
+      },
+      {
+          "label": "has doi",
+          "id": "P26"
+      },
+      {
+          "label": "has author",
+          "id": "P27"
+      },
+      {
+          "label": "has publication month",
+          "id": "P28"
+      },
+      {
+          "label": "has publication year",
+          "id": "P29"
+      },
+      {
+          "label": "has research field",
+          "id": "P30"
+      },
+      {
+          "label": "has contribution",
+          "id": "P31"
+      },
+      {
+          "label": "has research problem",
+          "id": "P32"
+      },
+      {
+          "label": "approach",
+          "id": "P33"
+      },
+      {
+          "label": "evaluation",
+          "id": "P34"
+      },
+      {
+          "label": "implementation",
+          "id": "P35"
+      },
+      {
+          "label": "has subfield",
+          "id": "P36"
+      },
+      {
+          "label": "Has Visualization",
+          "id": "hasVisualization"
+      },
+      {
+          "label": "Has evaluation",
+          "id": "HAS_EVALUATION"
+      },
+      {
+          "label": "Has approach",
+          "id": "HAS_APPROACH"
+      },
+      {
+          "label": "Has method",
+          "id": "HAS_METHOD"
+      },
+      {
+          "label": "Has implementation",
+          "id": "HAS_IMPLEMENTATION"
+      },
+      {
+          "label": "Has result",
+          "id": "HAS_RESULTS"
+      },
+      {
+          "label": "Has value",
+          "id": "HAS_VALUE"
+      },
+      {
+          "label": "Has metric",
+          "id": "HAS_METRIC"
+      },
+      {
+          "label": "Material",
+          "id": "MATERIAL"
+      },
+      {
+          "label": "Method",
+          "id": "METHOD"
+      },
+      {
+          "label": "Process",
+          "id": "PROCESS"
+      },
+      {
+          "label": "Data",
+          "id": "DATA"
+      },
+      {
+          "label": "Has ORCID",
+          "id": "HAS_ORCID"
+      },
+      {
+          "label": "type",
+          "id": "type"
+      },
+      {
+          "label": "icon",
+          "id": "icon"
+      },
+      {
+          "label": "description",
+          "id": "description"
+      },
+      {
+          "label": "url",
+          "id": "url"
+      },
+      {
+          "label": "onHomepage",
+          "id": "onHomepage"
+      },
+      {
+          "label": "Template of research field",
+          "id": "TemplateOfResearchField"
+      },
+      {
+          "label": "Template of predicate",
+          "id": "TemplateOfPredicate"
+      },
+      {
+          "label": "Template of class",
+          "id": "TemplateOfClass"
+      },
+      {
+          "label": "Template sub-template",
+          "id": "TemplateSub"
+      },
+      {
+          "label": "Template of research problem",
+          "id": "TemplateOfResearchProblem"
+      },
+      {
+          "label": "Same as",
+          "id": "SAME_AS"
+      },
+      {
+          "label": "Has venue",
+          "id": "HAS_VENUE"
+      },
+      {
+          "label": "reference",
+          "id": "reference"
+      },
+      {
+          "label": "Template component",
+          "id": "TemplateComponent"
+      },
+      {
+          "label": "Template component property",
+          "id": "TemplateComponentProperty"
+      },
+      {
+          "label": "Template component value",
+          "id": "TemplateComponentValue"
+      },
+      {
+          "label": "Order",
+          "id": "order"
+      },
+      {
+          "label": "Related Resource",
+          "id": "RelatedResource"
+      },
+      {
+          "label": "Related Figure",
+          "id": "RelatedFigure"
+      },
+      {
+          "label": "Template Component Validation Rule",
+          "id": "TemplateComponentValidationRule"
+      },
+      {
+          "label": "Template Label Format",
+          "id": "TemplateLabelFormat"
+      },
+      {
+          "label": "TemplateStrict",
+          "id": "TemplateStrict"
+      },
+      {
+          "label": "TemplateComponentOrder",
+          "id": "TemplateComponentOrder"
+      },
+      {
+          "label": "TemplateComponentOccurrenceMin",
+          "id": "TemplateComponentOccurrenceMin"
+      },
+      {
+          "label": "TemplateComponentOccurrenceMax",
+          "id": "TemplateComponentOccurrenceMax"
+      },
+      {
+          "label": "Image",
+          "id": "Image"
+      },
+      {
+          "label": "Sub Problem",
+          "id": "subProblem"
+      },
+      {
+          "label": "compare contribution",
+          "id": "compareContribution"
+      },
+      {
+          "label": "has property",
+          "id": "hasProperty"
+      },
+      {
+          "label": "has previous version",
+          "id": "hasPreviousVersion"
+      },
+      {
+          "label": "has subject",
+          "id": "hasSubject"
+      },
+      {
+          "label": "has content",
+          "id": "hasContent"
+      },
+      {
+          "label": "contains",
+          "id": "contains"
+      }
   ]
 }

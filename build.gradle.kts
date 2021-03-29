@@ -13,13 +13,14 @@ val containerRegistryLocation = "registry.gitlab.com/tibhannover/orkg/orkg-backe
 val dockerImageTag: String? by project
 
 plugins {
-    val kotlinVersion = "1.4.10"
+    val kotlinVersion = "1.4.31"
 
     jacoco
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.allopen") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
+    kotlin("plugin.serialization") version kotlinVersion
     id("org.jetbrains.dokka") version "0.10.1"
     id("org.springframework.boot") version "2.3.4.RELEASE"
     id("com.coditory.integration-test") version "1.1.8"
@@ -72,6 +73,8 @@ dependencies {
     implementation("io.github.config4k:config4k:0.4.2") {
         because("Required for parsing the essential entity configuration")
     }
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0")
     //
     // Testing
     //

@@ -24,10 +24,19 @@ class OrkgConfiguration {
              */
             var initialSetupFile: String? = "data/required_entities.json"
             get() = this.toString()
+
+            /**
+             * Path to sub research fields file
+             */
+            var subResearchFieldsFile: String? = "data/ResearchFields.json"
+            get() = this.toString()
         }
     }
 }
 
 @ConfigurationProperties(prefix = "orkg.init.setup")
 @ConstructorBinding
-data class InputInjection(@get:NotBlank var entitiesFile: String)
+data class InputInjection(
+    @get:NotBlank var entitiesFile: String,
+    @get:NotBlank var subResearchFieldsFile: String
+)

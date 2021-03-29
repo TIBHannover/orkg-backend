@@ -9,6 +9,7 @@ import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsVerifiedUseC
 import eu.tib.orkg.prototype.statements.application.port.out.GetPaperVerifiedFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperPort
 import eu.tib.orkg.prototype.statements.application.port.out.LoadResourcePort
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
 import java.util.Optional
 import org.springframework.data.domain.Page
@@ -134,4 +135,6 @@ interface ResourceService : MarkAsVerifiedUseCase, LoadResourcePort, LoadPaperPo
      * Delete all resources
      */
     fun removeAll()
+
+    fun getResourceByLabel(label: String?): Optional<Neo4jResource>
 }

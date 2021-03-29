@@ -8,3 +8,4 @@ orkg:
   init:
     setup:
       entities-file: "data/required_entities.json"
+      sub-research-fields-file: "data/ResearchFields.json"

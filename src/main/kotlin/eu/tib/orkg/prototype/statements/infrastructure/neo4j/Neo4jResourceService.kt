@@ -216,6 +216,10 @@ class Neo4jResourceService(
         return null
     }
 
+    override fun getResourceByLabel(label: String?): Optional<Neo4jResource> {
+        return neo4jResourceRepository.findByLabel(label)
+    }
+
     private fun setVerifiedFlag(resourceId: ResourceId, verified: Boolean): Optional<Resource> {
         val result = neo4jResourceRepository.findByResourceId(resourceId)
         if (result.isPresent) {

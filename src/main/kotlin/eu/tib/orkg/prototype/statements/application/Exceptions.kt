@@ -27,6 +27,9 @@ class ContributorNotFound(id: ContributorId) : RuntimeException("""Contributor $
 class ObservatoryNotFound(id: ObservatoryId) : RuntimeException("""Observatory "$id" not found""")
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
+class ObservatoryURLNotFound(id: String) : RuntimeException("""Observatory "$id" not found""")
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
 class OrganizationNotFound(id: OrganizationId) : RuntimeException("""Organization "$id" not found""")
 
 @ResponseStatus(HttpStatus.FORBIDDEN)

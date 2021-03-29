@@ -1,4 +1,5 @@
 package eu.tib.orkg.prototype.statements.application
+import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
@@ -10,6 +11,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.Neo4jStatsService
+import java.util.UUID
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
@@ -35,9 +37,15 @@ class ObservatoryController(
 
     @PostMapping("/")
     fun addObservatory(@RequestBody observatory: CreateObservatoryRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
-        return if (service.findByName(observatory.observatoryName).isEmpty) {
+        return if (service.findByName(observatory.observatoryName).isEmpty && service.findByDisplayId(observatory.displayId).isEmpty) {
             val organizationEntity = organizationService.findById(observatory.organizationId)
-            val id = service.create(observatory.observatoryName, observatory.description, organizationEntity.get(), observatory.researchField).id
+            val id = service.create(
+                observatory.observatoryName,
+                observatory.description,
+                organizationEntity.get(),
+                observatory.researchField,
+                observatory.displayId
+            ).id
             val location = uriComponentsBuilder
                 .path("api/observatories/{id}")
                 .buildAndExpand(id)
@@ -45,15 +53,22 @@ class ObservatoryController(
             ResponseEntity.created(location).body(service.findById(id!!).get())
         } else
             ResponseEntity.badRequest().body(
-                    ErrorMessage(message = "Observatory already exist")
+                    ErrorMessage(message = "Observatory with same name or URL already exist")
                 )
     }
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: ObservatoryId): Observatory =
-        service
-            .findById(id)
-            .orElseThrow { ObservatoryNotFound(id) }
+    fun findById(@PathVariable id: String): Observatory {
+        return if (isValidUUID(id)) {
+            service
+                .findById(ObservatoryId(UUID.fromString(id)))
+                .orElseThrow { ObservatoryNotFound(ObservatoryId(UUID.fromString(id))) }
+        } else {
+            service
+                .findByDisplayId(id)
+                .orElseThrow { ObservatoryURLNotFound(id) }
+        }
+    }
 
     @GetMapping("/")
     fun findObservatories(): List<Observatory> {
@@ -118,11 +133,25 @@ class ObservatoryController(
         return neo4jStatsService.getObservatoriesPapersAndComparisonsCount()
     }
 
+    fun isValidUUID(id: String): Boolean {
+        return try {
+            UUID.fromString(id) != null
+        } catch (e: IllegalArgumentException) {
+            false
+        }
+    }
+
     data class CreateObservatoryRequest(
+        @JsonProperty("observatory_name")
         val observatoryName: String,
+        @JsonProperty("organization_id")
         val organizationId: OrganizationId,
         val description: String,
-        val researchField: String
+        @JsonProperty("research_field")
+        val researchField: String,
+        @field:NotBlank
+        @JsonProperty("display_id")
+        val displayId: String
     )
 
     data class UpdateRequest(

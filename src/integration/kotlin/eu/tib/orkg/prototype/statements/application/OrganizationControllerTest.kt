@@ -93,7 +93,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
         val userId = createTestUser()
         val organizationId = service.create("test organization", userId, "www.example.org").id
         val resource = createTestResource(ContributorId.createUnknownContributor(), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
-        observatoryService.create("test observatory", "example description", service.findById(organizationId!!).get(), resource.id.toString()).id!!
+        observatoryService.create("test observatory", "example description", service.findById(organizationId!!).get(), resource.id.toString(), "test_observatory").id!!
 
         mockMvc
             .perform(getRequestTo("/api/organizations/$organizationId/observatories"))

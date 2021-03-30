@@ -12,6 +12,8 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import java.io.FileReader
 import java.net.URI
+import java.time.chrono.ThaiBuddhistEra.of
+import java.util.EnumSet.of
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -20,6 +22,8 @@ import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Profile
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
 @Component
@@ -121,10 +125,14 @@ class DataInitializer(
         }
     }
     private fun getResourceId(label: String): ResourceId? {
-        return if (resourceService.getResourceByLabel(label).isEmpty) {
+        // Taking the first result from the resultant list. Hence,
+        // setting the size to 1
+        val pageable: Pageable = PageRequest.of(0, 1)
+
+        return if (resourceService.findAllByLabel(pageable, label).isEmpty) {
             resourceService.create(label).id
         } else {
-            resourceService.getResourceByLabel(label).get().resourceId
+            resourceService.findAllByLabel(pageable, label).content[0].id
         }
     }
 }

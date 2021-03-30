@@ -48,6 +48,7 @@ dependencies {
     // Runtime
     //
     implementation(platform(kotlin("bom")))
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0")
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
 
@@ -73,8 +74,6 @@ dependencies {
     implementation("io.github.config4k:config4k:0.4.2") {
         because("Required for parsing the essential entity configuration")
     }
-
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0")
     //
     // Testing
     //

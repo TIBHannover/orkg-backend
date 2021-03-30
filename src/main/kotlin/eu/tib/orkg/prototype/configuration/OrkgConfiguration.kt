@@ -23,13 +23,11 @@ class OrkgConfiguration {
              * Path to initial import data for classes and predicates
              */
             var initialSetupFile: String? = "data/required_entities.json"
-            get() = this.toString()
 
             /**
              * Path to sub research fields file
              */
             var subResearchFieldsFile: String? = "data/ResearchFields.json"
-            get() = this.toString()
         }
     }
 }

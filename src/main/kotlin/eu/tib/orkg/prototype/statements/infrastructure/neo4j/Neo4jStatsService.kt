@@ -97,7 +97,7 @@ class Neo4jStatsService(
 
         val userIdList = changeLogs.content.map { UUID.fromString(it.createdBy) }.toTypedArray()
 
-        val mapValues = userRepository.findByIdIn(userIdList, pageable).map(UserEntity::toContributor).groupBy(Contributor::id)
+        val mapValues = userRepository.findByIdIn(userIdList).map(UserEntity::toContributor).groupBy(Contributor::id)
 
         changeLogs.forEach { changeLogResponse ->
             val contributor = mapValues[ContributorId(changeLogResponse.createdBy)]?.first()
@@ -114,7 +114,7 @@ class Neo4jStatsService(
     private fun getContributorsWithProfile(topContributors: Page<TopContributorIdentifiers>, pageable: Pageable): Page<TopContributorsWithProfile> {
         val userIdList = topContributors.content.map { UUID.fromString(it.id) }.toTypedArray()
 
-        val mapValues = userRepository.findByIdIn(userIdList, pageable).map(UserEntity::toContributor).groupBy(Contributor::id)
+        val mapValues = userRepository.findByIdIn(userIdList).map(UserEntity::toContributor).groupBy(Contributor::id)
 
         val refinedTopContributors =
             topContributors.content.map { topContributor ->

@@ -7,7 +7,6 @@ import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
-import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
@@ -22,7 +21,6 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementReposit
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThingRepository
 import java.util.Optional
-import java.util.concurrent.ConcurrentHashMap
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

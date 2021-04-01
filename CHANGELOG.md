@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Caching of predicates to improve performance.
+- A script to load an existing Neo4j database dump into a Docker container (development).
 ### Changed
 - Default roles will be created on start-up if they do not exist already.
 

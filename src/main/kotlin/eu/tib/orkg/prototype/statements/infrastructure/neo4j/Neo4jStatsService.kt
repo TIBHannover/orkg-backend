@@ -101,9 +101,7 @@ class Neo4jStatsService(
 
         changeLogs.forEach { changeLogResponse ->
             val contributor = mapValues[ContributorId(changeLogResponse.createdBy)]?.first()
-
             val filteredClasses = changeLogResponse.classes.filter(internalClassLabels)
-
             refinedChangeLog.add(ChangeLog(changeLogResponse.id, changeLogResponse.label, changeLogResponse.createdAt,
                 filteredClasses, Profile(contributor?.id, contributor?.name, contributor?.gravatarId, contributor?.avatarURL)))
         }
@@ -138,11 +136,11 @@ class Neo4jStatsService(
  * along with the profile of the contributor
  */
 data class ChangeLog(
-    val id: String,
-    val label: String,
+    val id: String?,
+    val label: String?,
     @JsonProperty("created_at")
-    val createdAt: String,
-    val classes: List<String>,
+    val createdAt: String?,
+    val classes: List<String>?,
     val profile: Profile?
 )
 

@@ -199,13 +199,16 @@ class OrganizationController(
     }
 
     data class CreateOrganizationRequest(
+        @JsonProperty("organization_name")
         val organizationName: String,
+        @JsonProperty("organization_logo")
         var organizationLogo: String,
+        @JsonProperty("created_by")
         val createdBy: ContributorId,
         val url: String,
         @field:NotBlank
         @JsonProperty("display_id") // TODO: force passing value after front-end changes
-        val displayId: String = replaceWhitespaceWithUnderscores(removeSingleQuotes(organizationName))
+        val displayId: String
     )
 
     data class ErrorMessage(

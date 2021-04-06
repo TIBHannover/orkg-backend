@@ -13,3 +13,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.1...master
 [0.1.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.1
+
+- Snake-case variables for observatories and organizations

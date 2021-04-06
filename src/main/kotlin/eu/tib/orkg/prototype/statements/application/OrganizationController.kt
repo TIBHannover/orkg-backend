@@ -9,8 +9,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.Organization
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
-import eu.tib.orkg.prototype.util.removeSingleQuotes
-import eu.tib.orkg.prototype.util.replaceWhitespaceWithUnderscores
 import java.io.File
 import java.util.Base64
 import java.util.UUID
@@ -199,13 +197,16 @@ class OrganizationController(
     }
 
     data class CreateOrganizationRequest(
+        @JsonProperty("organization_name")
         val organizationName: String,
+        @JsonProperty("organization_logo")
         var organizationLogo: String,
+        @JsonProperty("created_by")
         val createdBy: ContributorId,
         val url: String,
         @field:NotBlank
-        @JsonProperty("display_id") // TODO: force passing value after front-end changes
-        val displayId: String = replaceWhitespaceWithUnderscores(removeSingleQuotes(organizationName))
+        @JsonProperty("display_id")
+        val displayId: String
     )
 
     data class ErrorMessage(

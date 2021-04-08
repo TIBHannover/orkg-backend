@@ -41,6 +41,11 @@ spring:
       ddl-auto: validate
     show-sql: true
     # generate-ddl: true
+org.neo4j.driver: # TODO: this section can be removed after upgrading to SDN 6
+  uri: "${spring.data.neo4j.uri}"
+  authentication:
+    username: "${spring.data.neo4j.username}"
+    password: "${spring.data.neo4j.password}"
 logging:
   level:
     org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG

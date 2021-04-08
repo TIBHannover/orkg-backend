@@ -60,6 +60,7 @@ dependencies {
         exclude(module = "neo4j-ogm-http-driver")
     }
     implementation("org.neo4j:neo4j-ogm-bolt-native-types")
+    implementation("eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter:0.0.13") // TODO: Upgrade after Spring Boot 2.4
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.security.oauth:spring-security-oauth2:$springSecurityOAuthVersion.RELEASE")
     implementation("org.springframework.boot:spring-boot-starter-validation")

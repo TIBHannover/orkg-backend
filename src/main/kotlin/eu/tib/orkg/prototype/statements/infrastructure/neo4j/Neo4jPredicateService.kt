@@ -12,6 +12,7 @@ import eu.tib.orkg.prototype.util.EscapedRegex
 import eu.tib.orkg.prototype.util.SanitizedWhitespace
 import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
 import java.util.Optional
+import java.util.concurrent.ConcurrentHashMap
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -23,6 +24,8 @@ class Neo4jPredicateService(
     private val neo4jPredicateRepository: Neo4jPredicateRepository,
     private val neo4jPredicateIdGenerator: Neo4jPredicateIdGenerator
 ) : PredicateService {
+
+    private val predicateCache: MutableMap<PredicateId, Predicate> = ConcurrentHashMap(64)
 
     override fun create(label: String) = create(ContributorId.createUnknownContributor(), label)
 
@@ -48,10 +51,7 @@ class Neo4jPredicateService(
             .map(Neo4jPredicate::toPredicate)
     }
 
-    override fun findById(id: PredicateId?): Optional<Predicate> =
-        neo4jPredicateRepository
-            .findByPredicateId(id)
-            .map(Neo4jPredicate::toPredicate)
+    override fun findById(id: PredicateId): Optional<Predicate> = Optional.ofNullable(findPredicateCached(id))
 
     override fun findAllByLabel(label: String, pageable: Pageable): Page<Predicate> =
         neo4jPredicateRepository
@@ -87,4 +87,17 @@ class Neo4jPredicateService(
     private fun String.toSearchString() = "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"
 
     private fun String.toExactSearchString() = "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"
+
+    private fun findPredicateCached(id: PredicateId): Predicate? {
+        val cached = predicateCache[id]
+        if (cached != null)
+            return cached
+        val persisted = neo4jPredicateRepository.findByPredicateId(id).map(Neo4jPredicate::toPredicate)
+        if (persisted.isPresent) {
+            val instance = persisted.get()
+            predicateCache[id] = instance
+            return instance
+        }
+        return null
+    }
 }

@@ -17,6 +17,7 @@ plugins {
 
     jacoco
     kotlin("jvm") version kotlinVersion
+    kotlin("kapt") version kotlinVersion
     kotlin("plugin.allopen") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
@@ -49,6 +50,8 @@ dependencies {
     implementation(platform(kotlin("bom")))
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
+
+    kapt("org.springframework.boot:spring-boot-configuration-processor")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.postgresql:postgresql")

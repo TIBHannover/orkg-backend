@@ -14,6 +14,7 @@ import eu.tib.orkg.prototype.statements.infrastructure.neo4j.Neo4jStatsService
 import java.util.UUID
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -36,7 +37,7 @@ class ObservatoryController(
 ) {
 
     @PostMapping("/")
-    fun addObservatory(@RequestBody observatory: CreateObservatoryRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
+    fun addObservatory(@RequestBody @Valid observatory: CreateObservatoryRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         return if (service.findByName(observatory.observatoryName).isEmpty && service.findByDisplayId(observatory.displayId).isEmpty) {
             val organizationEntity = organizationService.findById(observatory.organizationId)
             val id = service.create(
@@ -149,6 +150,10 @@ class ObservatoryController(
         val description: String,
         @JsonProperty("research_field")
         val researchField: String,
+        @field:Pattern(
+            regexp = "^[a-zA-Z0-9_]+$",
+            message = "Only underscores ( _ ), numbers, and letters are allowed in the permalink field"
+        )
         @field:NotBlank
         @JsonProperty("display_id")
         val displayId: String

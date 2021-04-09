@@ -85,7 +85,9 @@ data class ObservatoryResources(
 data class ChangeLogResponse(
     val id: String,
     val label: String,
+    @JsonProperty("created_at")
     val createdAt: String,
+    @JsonProperty("created_by")
     val createdBy: String,
     val classes: List<String>
 )

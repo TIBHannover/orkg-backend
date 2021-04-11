@@ -13,7 +13,7 @@ val containerRegistryLocation = "registry.gitlab.com/tibhannover/orkg/orkg-backe
 val dockerImageTag: String? by project
 
 plugins {
-    val kotlinVersion = "1.4.31"
+    val kotlinVersion = "1.4.32"
 
     jacoco
     kotlin("jvm") version kotlinVersion

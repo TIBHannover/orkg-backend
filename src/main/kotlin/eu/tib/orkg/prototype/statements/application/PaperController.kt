@@ -122,12 +122,8 @@ class PaperController(
      */
     private fun createNewPaperWithMetadata(userId: ContributorId, request: CreatePaperRequest): Resource {
         val contributor = contributorService.findByIdOrElseUnknown(userId)
-       // val organizationId = contributor.organizationId
-        //val observatoryId = contributor.observatoryId
         val organizationId = request.paper.observatoryInfo?.organizationId!!
         val observatoryId = request.paper.observatoryInfo.observatoryId!!
-        println("--------------------------------------------------")
-        println(request.paper.observatoryInfo)
         // paper title
         val paperObj = resourceService.create(
             userId,

@@ -84,7 +84,7 @@
     },
     {
       "id": "DCLocation",
-      "label": "dc:Location"
+      "label": "dc:Location",
       "uri": "http://purl.org/dc/terms/Location"
     },
     {

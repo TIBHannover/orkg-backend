@@ -12,8 +12,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import java.io.FileReader
 import java.net.URI
-import java.time.chrono.ThaiBuddhistEra.of
-import java.util.EnumSet.of
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -39,6 +37,7 @@ class DataInitializer(
 ) : ApplicationRunner {
 
     private val logger = LoggerFactory.getLogger(this::class.java.name)
+
     /**
      * Creating new classes and predicates only
      * if they don't exist
@@ -97,33 +96,20 @@ class DataInitializer(
      */
     fun createSubResearchFields(jsonContent: String) {
         logger.info("Creating Sub Research Fields...")
-        var subfieldPredicate: PredicateId? = predicateService.findById(PredicateId("P36")).get().id
+        val subfieldPredicate: PredicateId = predicateService.findById(PredicateId("P36")).orElseThrow().id!!
         val arrResult = Json.decodeFromString<ArrayList<SubResearchFields>>(jsonContent)
 
-        arrResult.map {
-            if (subfieldPredicate != null)
-                unmarshall(it.name, it.subfields, subfieldPredicate)
-        }
+        val (entities, relationships) = parseSubfields(arrResult)
 
+        logger.info("Found ${entities.size} entities and ${relationships.size} relationships.")
+
+        val ids: Map<String, ResourceId> = entities.map { it to getResourceId(it)!! }.toMap()
+        relationships.toMap().forEach { (from, to) ->
+            statementService.create(ids[from].toString(), subfieldPredicate, ids[to].toString())
+        }
         logger.info("Completed creation of Sub Research Fields...")
     }
 
-    private fun unmarshall(parent: String?, arrSubResearchFields: ArrayList<SubResearchFields>?, predicateId: PredicateId) {
-        if (arrSubResearchFields?.isNotEmpty() == true) {
-            arrSubResearchFields.map {
-                if (it.subfields != null) {
-                    unmarshall(it.name, it.subfields, predicateId)
-                } else {
-                    if (parent != null) {
-                        val parentResourceIdValue = getResourceId(parent)?.value
-                        val childResourceIdValue = getResourceId(it.name as String)?.value
-                        if (parentResourceIdValue != null && childResourceIdValue != null)
-                            statementService.create(parentResourceIdValue, predicateId, childResourceIdValue)
-                    }
-                }
-            }
-        }
-    }
     private fun getResourceId(label: String): ResourceId? {
         // Taking the first result from the resultant list. Hence,
         // setting the size to 1
@@ -137,12 +123,34 @@ class DataInitializer(
     }
 }
 
+fun parseSubfields(fields: List<SubResearchFields>): Pair<Set<String>, Set<Pair<String, String>>> {
+    val entities = mutableSetOf<String>()
+    val relationships = mutableSetOf<Pair<String, String>>()
+    for (entry in fields)
+        descend(entry, entities, relationships)
+    return entities to relationships
+}
+
+private fun descend(
+    parent: SubResearchFields,
+    entities: MutableSet<String>,
+    relationships: MutableSet<Pair<String, String>>
+) {
+    entities.add(parent.name)
+    if (parent.subfields != null) {
+        for (entry in parent.subfields) {
+            relationships.add(parent.name to entry.name)
+            descend(entry, entities, relationships)
+        }
+    }
+}
+
 @Serializable
 data class SubResearchFields(
     @JsonProperty("name")
-    var name: String? = null,
+    val name: String,
     @JsonProperty("subfields")
-    var subfields: ArrayList<SubResearchFields>? = null
+    val subfields: List<SubResearchFields>? = null
 )
 
 data class CreateClassCommand(val id: String, val label: String, val uri: String?)

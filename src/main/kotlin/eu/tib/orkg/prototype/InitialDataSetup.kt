@@ -96,7 +96,7 @@ class DataInitializer(
      */
     fun createSubResearchFields(jsonContent: String) {
         logger.info("Creating Sub Research Fields...")
-        val subfieldPredicate: PredicateId = predicateService.findById(PredicateId("P36")).orElseThrow().id!!
+        val hasSubResearchFieldId: PredicateId = predicateService.findById(PredicateId("P36")).orElseThrow().id!!
         val arrResult = Json.decodeFromString<ArrayList<SubResearchFields>>(jsonContent)
 
         val (entities, relationships) = parseSubfields(arrResult)
@@ -105,7 +105,7 @@ class DataInitializer(
 
         val ids: Map<String, ResourceId> = entities.map { it to getResourceId(it)!! }.toMap()
         relationships.toMap().forEach { (from, to) ->
-            statementService.create(ids[from].toString(), subfieldPredicate, ids[to].toString())
+            statementService.create(ids[from].toString(), hasSubResearchFieldId, ids[to].toString())
         }
         logger.info("Completed creation of Sub Research Fields...")
     }

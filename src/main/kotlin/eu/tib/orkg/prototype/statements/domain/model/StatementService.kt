@@ -67,6 +67,11 @@ interface StatementService {
     fun create(userId: ContributorId, subject: String, predicate: PredicateId, `object`: String): GeneralStatement
 
     /**
+     * Create a new statement, but do not return the result.
+     */
+    fun add(userId: ContributorId, subject: String, predicate: PredicateId, `object`: String)
+
+    /**
      * Determine the total number of statements.
      */
     fun totalNumberOfStatements(): Long

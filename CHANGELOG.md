@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Caching of predicates to improve performance.
+### Changed
+- Default roles will be created on start-up if they do not exist already.
 
 ## [0.1.0] - 2021-03-30
 ### Added

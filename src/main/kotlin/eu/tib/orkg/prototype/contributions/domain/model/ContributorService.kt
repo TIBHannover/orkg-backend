@@ -44,4 +44,9 @@ class ContributorService(
             .map(UserEntity::toContributor)
 
     override fun byId(id: ContributorId): Optional<Contributor> = findById(id)
+
+    fun listContributors(): List<Contributor> =
+        userRepository
+            .findAll()
+            .map(UserEntity::toContributor)
 }

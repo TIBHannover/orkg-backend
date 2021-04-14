@@ -13,6 +13,7 @@ import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -417,6 +418,34 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                     statementWithLiteralResponseFields()
                 )
             )
+    }
+
+    @Test
+    @Tag("regression")
+    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    fun duplicateStatements() {
+        val r1 = resourceService.create("one")
+        val r2 = resourceService.create("two")
+        val p = predicateService.create("less than")
+
+        val body = mapOf(
+            "subject_id" to r1.id,
+            "predicate_id" to p.id,
+            "object_id" to r2.id
+        )
+
+        // Create the statement
+        mockMvc.perform(postRequestWithBody("/api/statements/", body))
+            .andExpect(status().isCreated)
+
+        // Try to create theme statement
+        mockMvc.perform(postRequestWithBody("/api/statements/", body))
+            .andExpect(status().isCreated)
+
+        // Should have only one result
+        mockMvc.perform(getRequestTo("/api/statements/"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("\$.length()").value(1))
     }
 
     @Test

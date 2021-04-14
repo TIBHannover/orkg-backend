@@ -97,6 +97,10 @@ class Neo4jStatementService :
         predicate: PredicateId,
         `object`: String
     ): GeneralStatement {
+        val existing = statementRepository.findBy(subject, predicate, `object`)
+        if (existing.isPresent)
+            return toStatement(existing.get())
+
         val foundSubject = thingRepository
             .findByThingId(subject)
             .orElseThrow { IllegalStateException("Could not find subject $subject") }
@@ -134,6 +138,8 @@ class Neo4jStatementService :
     override fun add(userId: ContributorId, subject: String, predicate: PredicateId, `object`: String) {
         // This method mostly exists for performance reasons. We just create the statement but do not return anything.
         // That saves the extra calls to the database to retrieve the statement again, even if it may not be needed.
+
+        if (statementRepository.exists(subject, predicate, `object`)) return
 
         val foundSubject = thingRepository
             .findByThingId(subject)

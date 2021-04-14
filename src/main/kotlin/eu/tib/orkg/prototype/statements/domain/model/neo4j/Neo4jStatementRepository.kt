@@ -137,4 +137,22 @@ UNWIND relationships as rel
 RETURN startNode(rel) as subject, rel as predicate, endNode(rel) as object"""
     )
     fun fetchAsBundle(id: String, configuration: Map<String, Any>): Iterable<Neo4jStatement>
+
+    @Query("""MATCH (s:Thing)-[p:RELATED {predicate_id: {1}}]->(o:Thing)
+WHERE
+(s.resource_id = {0} OR s.predicate_id = {0} OR s.class_id = {0})
+AND
+(o.resource_id = {2} OR o.predicate_id = {2} OR o.class_id = {2} OR o.literal_id = {2})
+RETURN p IS NOT NULL"""
+    )
+    fun exists(subjectId: String, predicateId: PredicateId, objectId: String): Boolean
+
+    @Query("""MATCH (s:Thing)-[p:RELATED {predicate_id: {1}}]->(o:Thing)
+WHERE
+(s.resource_id = {0} OR s.predicate_id = {0} OR s.class_id = {0})
+AND
+(o.resource_id = {2} OR o.predicate_id = {2} OR o.class_id = {2} OR o.literal_id = {2})
+RETURN s, p, o"""
+    )
+    fun findBy(subjectId: String, predicateId: PredicateId, objectId: String): Optional<Neo4jStatement>
 }

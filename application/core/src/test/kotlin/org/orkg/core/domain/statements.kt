@@ -6,9 +6,9 @@ import io.kotest.matchers.shouldBe
 internal class StatementSpec :
     DescribeSpec({
       describe("equality") {
-        val one = Statement.WithResource("a".toURI(), "b".toURI(), "c".toURI())
+        val one = Statement.WithResource("a".toIRI(), "b".toIRI(), "c".toIRI())
         describe("statements with equal subject, predicate and object") {
-          val same = Statement.WithResource("a".toURI(), "b".toURI(), "c".toURI())
+          val same = Statement.WithResource("a".toIRI(), "b".toIRI(), "c".toIRI())
           it("should be equal") { one shouldBe same }
         }
       }

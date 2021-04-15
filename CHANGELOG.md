@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A script to load an existing Neo4j database dump into a Docker container (development).
 ### Changed
 - Default roles will be created on start-up if they do not exist already.
+### Fixed
+- Statements are now created once, as they should be. (Closes: [#296](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/296))
 
 ## [0.1.0] - 2021-03-30
 ### Added

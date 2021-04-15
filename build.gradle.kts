@@ -28,6 +28,7 @@ plugins {
     id("com.palantir.docker") version "0.25.0"
     id("com.google.cloud.tools.jib") version "2.5.0"
     id("com.diffplug.spotless") version "5.12.1"
+    id("io.gitlab.arturbosch.detekt") version "1.16.0" apply false
 }
 
 apply {

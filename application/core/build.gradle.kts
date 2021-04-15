@@ -1,6 +1,7 @@
 plugins {
   kotlin("jvm")
   id("com.diffplug.spotless")
+  // id("io.gitlab.arturbosch.detekt")
 }
 
 repositories { jcenter() }

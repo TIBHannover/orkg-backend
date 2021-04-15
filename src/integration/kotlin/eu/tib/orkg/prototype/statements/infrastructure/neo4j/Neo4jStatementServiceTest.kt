@@ -67,12 +67,12 @@ class Neo4jStatementServiceTest {
 
         service.create(r1.value, p1, r2.value)
         service.create(r1.value, p1, r3.value)
-        service.create(r1.value, p1, r3.value)
+        service.create(r1.value, p1, r3.value) // duplicate, should be skipped
         service.create(r3.value, p2, r1.value)
 
         val statements = service.findAll(pagination)
 
-        assertThat(statements).hasSize(4)
+        assertThat(statements).hasSize(3)
     }
 
     @Test
@@ -110,12 +110,12 @@ class Neo4jStatementServiceTest {
 
         service.create(r1.value, p1, r2.value)
         service.create(r1.value, p1, r3.value)
-        service.create(r1.value, p1, r3.value)
+        service.create(r1.value, p1, r3.value) // duplicate, should be skipped
         service.create(r3.value, p2, r1.value)
 
-        assertThat(service.findAll(pagination)).hasSize(4)
+        assertThat(service.findAll(pagination)).hasSize(3)
 
-        assertThat(service.findAllBySubject(r1.value, pagination)).hasSize(3)
+        assertThat(service.findAllBySubject(r1.value, pagination)).hasSize(2)
         assertThat(service.findAllBySubject(r2.value, pagination)).hasSize(0)
         assertThat(service.findAllBySubject(r3.value, pagination)).hasSize(1)
     }
@@ -132,12 +132,12 @@ class Neo4jStatementServiceTest {
 
         service.create(r1.value, p1, r2.value)
         service.create(r1.value, p1, r3.value)
-        service.create(r1.value, p1, r3.value)
+        service.create(r1.value, p1, r3.value) // duplicate, should be skipped
         service.create(r3.value, p2, r1.value)
 
-        assertThat(service.findAll(pagination)).hasSize(4)
+        assertThat(service.findAll(pagination)).hasSize(3)
 
-        assertThat(service.findAllByPredicate(p1, pagination)).hasSize(3)
+        assertThat(service.findAllByPredicate(p1, pagination)).hasSize(2)
         assertThat(service.findAllByPredicate(p2, pagination)).hasSize(1)
     }
 }

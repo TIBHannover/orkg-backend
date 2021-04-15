@@ -1,5 +1,6 @@
 plugins {
   kotlin("jvm")
+  jacoco
   id("com.diffplug.spotless")
   // id("io.gitlab.arturbosch.detekt")
 }

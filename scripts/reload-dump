@@ -21,7 +21,11 @@ docker-compose rm -f neo4j
 docker volume rm "${source_dir}_neo4j-data"
 
 # Re-initialize database. Wait for Neo4j to start (this might take a while), then shut down again.
-( docker-compose up neo4j & ) | grep -q 'Remote interface available at http:'
+# We initially used:
+#   ( docker-compose up neo4j & ) | grep -q 'Remote interface available at http:'
+# but that does not seem to work in Windows Subsystem for Linux (WSL).
+docker-compose up -d neo4j
+until docker-compose logs neo4j | grep -q 'Remote interface available at http:'; do sleep 1; done
 docker-compose stop neo4j
 
 # Load dump

@@ -10,7 +10,7 @@ source_dir=orkg-backend
 # Load dump into separate volume
 docker volume create "$dump_volume"
 temp_container=$(docker container create --volume "${dump_volume}:/dumps" alpine)
-docker cp dumps/neo4j-dump-latest.dump ${temp_container}:/dumps
+docker cp -L dumps/neo4j-dump-latest.dump ${temp_container}:/dumps
 docker rm "$temp_container"
 
 # Shutdown and remove Neo4j

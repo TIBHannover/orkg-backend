@@ -110,8 +110,16 @@ class ClassController(private val service: ClassService, private val resourceSer
 
         var updatedClass = `class`.copy(id = found.get().id)
 
-        if (updatedClass.label != `class`.label)
-            updatedClass = updatedClass.copy(label = `class`.label)
+        updatedClass = when {
+            updatedClass.label != `class`.label && updatedClass.uri != `class`.uri ->
+                updatedClass.copy(label = `class`.label, uri = `class`.uri)
+            updatedClass.label != `class`.label ->
+                updatedClass.copy(label = `class`.label)
+            updatedClass.uri != `class`.uri ->
+                updatedClass.copy(uri = `class`.uri)
+            else ->
+                updatedClass
+        }
 
         return ResponseEntity.ok(service.update(updatedClass))
     }

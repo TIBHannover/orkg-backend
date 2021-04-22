@@ -48,8 +48,8 @@ sealed class Statement {
 
 fun String.toIRI(): IRI = IRI.Absolute(this)
 
+/*
 //// EXAMPLES
-
 fun foo(l: Literal<Any>): Int {
   return when (l) {
     is StringLiteral -> l.value.toInt() // fall flat on your face...
@@ -59,5 +59,4 @@ fun foo(l: Literal<Any>): Int {
     is GenericLiteral<*> -> l.value.toString().toInt()
   }
 }
-
-fun bar(l: StringLiteral): String = l.value
+*/

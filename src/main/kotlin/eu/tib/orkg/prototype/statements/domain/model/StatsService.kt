@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.TrendingResearchProblems
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.ChangeLog
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.TopContributorsWithProfile
+import eu.tib.orkg.prototype.statements.infrastructure.neo4j.TopContributorsWithProfileAndTotalCount
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
@@ -58,5 +59,5 @@ interface StatsService {
     /**
      * Get top contributors by research field ID
      */
-    fun getTopCurrentContributorsByResearchField(id: ResourceId, pageable: Pageable): Page<TopContributorsWithProfile>
+    fun getTopCurrentContributorsByResearchField(id: ResourceId, days: Long): Iterable<TopContributorsWithProfileAndTotalCount>
 }

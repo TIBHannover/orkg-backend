@@ -21,11 +21,25 @@ data class Predicate(override val iri: IRI) : Resource
 
 data class Class(override val iri: IRI) : Resource
 
-// TODO: Triple
-@RDFLike sealed class Triple
+/**
+ * A triple of subject, predicate and object, just like in RDF. Subjects and predicates are always
+ * [IRI] s, the object can be either an [IRI] or a [Literal].
+ */
+@RDFLike
+sealed class Triple {
+  /** A [Triple] with an [IRI] in the object position. */
+  data class WithResource(val s: IRI, val p: IRI, val o: IRI) : Triple()
+
+  /** A [Triple] with a literal in the object position. */
+  data class WithLiteral(val s: IRI, val p: IRI, val o: Literal<Any>) : Triple()
+}
 
 // TODO: something with an ID
 sealed class Statement {
+  var id: Id? = null
+  data class Id(private val value: String)
+
+  // FIXME: needs ID in parameter
   data class WithResource(val s: IRI, val p: IRI, val o: IRI) : Statement() {
     // constructor(s: String, p: String, o: String) : this(s.toIRI(), p.toIRI(), o.toIRI())
   }

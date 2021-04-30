@@ -4,6 +4,8 @@
 #
 set -e
 
+neo4j_version=3.5
+
 dump_volume=orkg-dumps
 source_dir=orkg-backend
 
@@ -30,7 +32,7 @@ docker-compose stop neo4j
 
 # Load dump.
 # The double dash seems to be required to make the script work with "Git Bash" in Windows. :-/
-docker run -i --rm --entrypoint //bin/bash --volumes-from "${source_dir}_neo4j_1" --volume "${dump_volume}:/dumps" neo4j:3.5 <<EOS
+docker run -i --rm --entrypoint //bin/bash --volumes-from "${source_dir}_neo4j_1" --volume "${dump_volume}:/dumps" neo4j:$neo4j_version <<EOS
 neo4j-admin load --from=/dumps/neo4j-dump-latest.dump --force
 EOS
 

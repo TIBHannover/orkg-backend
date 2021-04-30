@@ -109,7 +109,12 @@ class Neo4jStatementService :
             .findByThingId(`object`)
             .orElseThrow { IllegalStateException("Could not find object: $`object`") }
 
-        val id = neo4jStatementIdGenerator.nextIdentity()
+        var id = neo4jStatementIdGenerator.nextIdentity()
+
+        // Should be moved to the Generator in the future
+        while (statementRepository.findByStatementId(id).isPresent) {
+            id = neo4jStatementIdGenerator.nextIdentity()
+        }
 
         val persistedStatement = statementRepository.save(
             Neo4jStatement(

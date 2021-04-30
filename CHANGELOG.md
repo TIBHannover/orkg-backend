@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Caching of predicates to improve performance.
 - A script to load an existing Neo4j database dump into a Docker container (development).
+  It should also run properly on Windows. (Fingers crossed…)
 - Annotation processing during development is properly supported now. It may require you to run the "clean" task once before the stubs are generated and picked up by your IDE.
 - Shared run configurations for IntelliJ IDEA to support the development workflow.
 ### Changed

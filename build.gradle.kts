@@ -209,3 +209,11 @@ asciidoctorj {
         diagram.use()
     }
 }
+
+kapt {
+    // Turn off the discovery of annotation processors in the compile classpath. This means that all annotation
+    // processors need to be listed manually.
+    // The problem seems to be that the Neo4j annotation processor leaks into the classpath.
+    // TODO: Check if classpath leakage is fixed in later versions.
+    includeCompileClasspath = false
+}

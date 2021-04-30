@@ -17,6 +17,7 @@ plugins {
 
     jacoco
     kotlin("jvm") version kotlinVersion
+    kotlin("kapt") version kotlinVersion
     kotlin("plugin.allopen") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
@@ -49,6 +50,8 @@ dependencies {
     implementation(platform(kotlin("bom")))
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
+
+    kapt("org.springframework.boot:spring-boot-configuration-processor")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.postgresql:postgresql")
@@ -205,4 +208,12 @@ asciidoctorj {
     modules {
         diagram.use()
     }
+}
+
+kapt {
+    // Turn off the discovery of annotation processors in the compile classpath. This means that all annotation
+    // processors need to be listed manually.
+    // The problem seems to be that the Neo4j annotation processor leaks into the classpath.
+    // TODO: Check if classpath leakage is fixed in later versions.
+    includeCompileClasspath = false
 }

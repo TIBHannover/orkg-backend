@@ -27,7 +27,7 @@ import org.springframework.web.context.WebApplicationContext
 
 /** A regular expression to match ISO 8601 formatted dates. */
 // If nanosecond part is rounded to zero, the last digit is removed. Fun bug. -----vvv
-private const val ISO_8601_PATTERN = """^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{5}\d?([+-]\d{2}:\d{2}|Z)$"""
+private const val ISO_8601_PATTERN = """^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{1,8}\d?([+-]\d{2}:\d{2}|Z)$"""
 
 @WebMvcTest(controllers = [ContributorController::class])
 @AuthorizationServerUnitTestWorkaround

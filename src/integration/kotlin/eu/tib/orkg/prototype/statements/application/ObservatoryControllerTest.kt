@@ -36,9 +36,6 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     private lateinit var userService: UserService
 
     @Autowired
-    private lateinit var controller: ObservatoryController
-
-    @Autowired
     private lateinit var service: OrganizationService
 
     @Autowired

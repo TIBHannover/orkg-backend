@@ -49,9 +49,6 @@ class StatementControllerTest : RestDocumentationBaseTest() {
     @Autowired
     private lateinit var literalService: LiteralService
 
-    @Autowired
-    private lateinit var controller: StatementController
-
     @BeforeEach
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)

@@ -33,9 +33,6 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
     private lateinit var userService: UserService
 
     @Autowired
-    private lateinit var controller: OrganizationController
-
-    @Autowired
     private lateinit var service: OrganizationService
 
     @Autowired

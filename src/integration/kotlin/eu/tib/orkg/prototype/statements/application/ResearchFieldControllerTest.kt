@@ -31,9 +31,6 @@ import org.springframework.transaction.annotation.Transactional
 class ResearchFieldControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var controller: ResearchFieldController
-
-    @Autowired
     private lateinit var resourceService: ResourceService
 
     @Autowired

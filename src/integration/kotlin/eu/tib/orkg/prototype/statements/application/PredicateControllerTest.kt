@@ -28,9 +28,6 @@ import org.springframework.transaction.annotation.Transactional
 class PredicateControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var controller: PredicateController
-
-    @Autowired
     private lateinit var service: PredicateService
 
     @BeforeEach

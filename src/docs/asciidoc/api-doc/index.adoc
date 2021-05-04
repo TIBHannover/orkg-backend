@@ -376,9 +376,14 @@ include::parts/papers.adoc[]
 
 include::parts/rdf.adoc[]
 
+[[contributors]]
+include::parts/contributors.adoc[leveloffset=+1]
+
 include::parts/organizations.adoc[]
 
 include::parts/observatories.adoc[]
+
+include::parts/problems.adoc[]
 
 include::parts/research-fields.adoc[]
 

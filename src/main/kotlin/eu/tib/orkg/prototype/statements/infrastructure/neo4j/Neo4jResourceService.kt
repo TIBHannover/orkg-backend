@@ -41,7 +41,13 @@ class Neo4jResourceService(
     )
 
     override fun create(userId: ContributorId, label: String, observatoryId: ObservatoryId, extractionMethod: ExtractionMethod, organizationId: OrganizationId): Resource {
-        val resourceId = neo4jResourceIdGenerator.nextIdentity()
+        var resourceId = neo4jResourceIdGenerator.nextIdentity()
+
+        // Should be moved to the Generator in the future
+        while (neo4jResourceRepository.findByResourceId(resourceId).isPresent) {
+            resourceId = neo4jResourceIdGenerator.nextIdentity()
+        }
+
         return neo4jResourceRepository.save(Neo4jResource(label = label, resourceId = resourceId, createdBy = userId, observatoryId = observatoryId, extractionMethod = extractionMethod, organizationId = organizationId))
             .toResource()
     }

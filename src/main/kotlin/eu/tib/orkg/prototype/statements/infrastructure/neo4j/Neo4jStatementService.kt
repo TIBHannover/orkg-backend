@@ -79,7 +79,6 @@ class Neo4jStatementService :
             .findAllBySubjectAndPredicate(subjectId, predicateId, pagination)
             .map { toStatement(it) }
 
-    //
     override fun findAllByObjectAndPredicate(
         objectId: String,
         predicateId: PredicateId,
@@ -87,7 +86,7 @@ class Neo4jStatementService :
     ): Page<GeneralStatement> =
         statementRepository
             .findAllByObjectAndPredicate(objectId, predicateId, pagination)
-            .map(this::toStatement)
+            .map { toStatement(it) }
 
     override fun create(subject: String, predicate: PredicateId, `object`: String) =
         create(ContributorId.createUnknownContributor(), subject, predicate, `object`)
@@ -110,7 +109,12 @@ class Neo4jStatementService :
             .findByThingId(`object`)
             .orElseThrow { IllegalStateException("Could not find object: $`object`") }
 
-        val id = neo4jStatementIdGenerator.nextIdentity()
+        var id = neo4jStatementIdGenerator.nextIdentity()
+
+        // Should be moved to the Generator in the future
+        while (statementRepository.findByStatementId(id).isPresent) {
+            id = neo4jStatementIdGenerator.nextIdentity()
+        }
 
         val persistedStatement = statementRepository.save(
             Neo4jStatement(
@@ -129,6 +133,34 @@ class Neo4jStatementService :
             foundObject.toThing(),
             persistedStatement.createdAt!!,
             persistedStatement.createdBy
+        )
+    }
+
+    override fun add(userId: ContributorId, subject: String, predicate: PredicateId, `object`: String) {
+        // This method mostly exists for performance reasons. We just create the statement but do not return anything.
+        // That saves the extra calls to the database to retrieve the statement again, even if it may not be needed.
+
+        val foundSubject = thingRepository
+            .findByThingId(subject)
+            .orElseThrow { IllegalStateException("Could not find subject $subject") }
+
+        predicateService.findById(predicate)
+            .orElseThrow { IllegalArgumentException("Predicate could not be found: $predicate") }
+
+        val foundObject = thingRepository
+            .findByThingId(`object`)
+            .orElseThrow { IllegalStateException("Could not find object: $`object`") }
+
+        val id = neo4jStatementIdGenerator.nextIdentity()
+
+        statementRepository.save(
+            Neo4jStatement(
+                statementId = id,
+                predicateId = predicate,
+                subject = foundSubject,
+                `object` = foundObject,
+                createdBy = userId
+            )
         )
     }
 

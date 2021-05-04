@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -20,7 +21,13 @@ class ClassNotFound(id: String? = null) : RuntimeException("Class $id not found"
 class PredicateNotFound(predicate: String) : RuntimeException("Predicate $predicate is not found")
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
+class ContributorNotFound(id: ContributorId) : RuntimeException("""Contributor $id not found""")
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
 class ObservatoryNotFound(id: ObservatoryId) : RuntimeException("""Observatory "$id" not found""")
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+class ObservatoryURLNotFound(id: String) : RuntimeException("""Observatory "$id" not found""")
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class OrganizationNotFound(id: OrganizationId) : RuntimeException("""Organization "$id" not found""")

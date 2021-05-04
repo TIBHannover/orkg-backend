@@ -13,6 +13,7 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResearchFieldRep
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import java.util.Optional
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -43,7 +44,7 @@ class Neo4jResearchFieldService(
 
     override fun getContributorsIncludingSubFields(id: ResourceId, pageable: Pageable): Page<Contributor> {
         val contributors = neo4jResearchFieldRepository.getContributorIdsFromResearchFieldAndIncludeSubfields(id, pageable).map(ContributorId::value)
-        return userRepository.findByIdIn(contributors.content.toTypedArray(), pageable).map(UserEntity::toContributor)
+        return PageImpl(userRepository.findByIdIn(contributors.content.toTypedArray()).map(UserEntity::toContributor))
     }
 
     override fun getPapersIncludingSubFields(id: ResourceId, pageable: Pageable): Page<Resource> =
@@ -54,7 +55,7 @@ class Neo4jResearchFieldService(
 
     override fun getContributorsExcludingSubFields(id: ResourceId, pageable: Pageable): Page<Contributor> {
         val contributors = neo4jResearchFieldRepository.getContributorIdsExcludingSubFields(id, pageable).map(ContributorId::value)
-        return userRepository.findByIdIn(contributors.content.toTypedArray(), pageable).map(UserEntity::toContributor)
+        return PageImpl(userRepository.findByIdIn(contributors.content.toTypedArray()).map(UserEntity::toContributor))
     }
 
     override fun getPapersExcludingSubFields(id: ResourceId, pageable: Pageable): Page<Resource> =

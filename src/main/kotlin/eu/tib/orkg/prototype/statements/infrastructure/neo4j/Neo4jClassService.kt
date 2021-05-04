@@ -13,6 +13,7 @@ import eu.tib.orkg.prototype.util.SanitizedWhitespace
 import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
 import java.net.URI
 import java.util.Optional
+import java.util.concurrent.ConcurrentHashMap
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -24,6 +25,8 @@ class Neo4jClassService(
     private val neo4jClassRepository: Neo4jClassRepository,
     private val neo4jClassIdGenerator: Neo4jClassIdGenerator
 ) : ClassService {
+
+    private val classCache: MutableMap<ClassId, Class> = ConcurrentHashMap(64)
 
     override fun create(label: String) = create(ContributorId.createUnknownContributor(), label)
 
@@ -37,10 +40,22 @@ class Neo4jClassService(
     override fun create(request: CreateClassRequest) = create(ContributorId.createUnknownContributor(), request)
 
     override fun create(userId: ContributorId, request: CreateClassRequest): Class {
-        val id = request.id ?: neo4jClassIdGenerator.nextIdentity()
+        var id = request.id ?: neo4jClassIdGenerator.nextIdentity()
+
+        // Should be moved to the Generator in the future
+        while (neo4jClassRepository.findByClassId(id).isPresent) {
+            id = neo4jClassIdGenerator.nextIdentity()
+        }
+
         return neo4jClassRepository.save(
             Neo4jClass(classId = id, createdBy = userId, label = request.label, uri = request.uri)
         ).toClass()
+    }
+
+    override fun exists(id: ClassId): Boolean {
+        // Instead of just asking the database an "exists query", we fetch the full object if it cannot be found.
+        // This is a certain overhead but will keep the cache warm for use in the find() methods, of needed.
+        return findClassCached(id) != null
     }
 
     override fun findAll() =
@@ -51,9 +66,7 @@ class Neo4jClassService(
         neo4jClassRepository.findAll(pageable)
             .map(Neo4jClass::toClass)
 
-    override fun findById(id: ClassId?): Optional<Class> =
-        neo4jClassRepository.findByClassId(id)
-            .map(Neo4jClass::toClass)
+    override fun findById(id: ClassId): Optional<Class> = Optional.ofNullable(findClassCached(id))
 
     override fun findAllByLabel(label: String): Iterable<Class> =
         neo4jClassRepository.findAllByLabelMatchesRegex(label.toExactSearchString()) // TODO: See declaration
@@ -119,4 +132,17 @@ class Neo4jClassService(
 
     private fun String.toExactSearchString() =
         "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"
+
+    private fun findClassCached(`class`: ClassId): Class? {
+        val cached = classCache[`class`]
+        if (cached != null)
+            return cached
+        val persisted = neo4jClassRepository.findByClassId(`class`).map(Neo4jClass::toClass)
+        if (persisted.isPresent) {
+            val instance = persisted.get()
+            classCache[`class`] = instance
+            return instance
+        }
+        return null
+    }
 }

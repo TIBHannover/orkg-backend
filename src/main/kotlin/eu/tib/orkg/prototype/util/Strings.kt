@@ -49,3 +49,7 @@ class WhitespaceIgnorantPattern(private val input: String) : StringHelper {
         return input.replace(" ", "\\s+")
     }
 }
+
+fun replaceWhitespaceWithUnderscores(input: String): String = input.replace(" ", "_")
+
+fun removeSingleQuotes(input: String): String = input.replace("'", "")

@@ -43,7 +43,7 @@ data class Neo4jDataset(
 
 @QueryResult
 data class Neo4jBenchmarkUnpacked(
-    val model: String,
+    val model: String?,
     val score: String,
     val metric: String,
     val paper: Neo4jResource,

@@ -288,6 +288,71 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
             )
     }
 
+    @Test
+    fun fetchDatasetSummaryWithoutModels() {
+        val dataset = resourceService.create(CreateResourceRequest(null, "some dataset", setOf(ClassId("Dataset"))))
+
+        val paper = resourceService.create(CreateResourceRequest(null, "paper", setOf(ClassId("Paper"))))
+        val contribution1 = resourceService.create(CreateResourceRequest(null, "Contribution 1", setOf(ClassId("Contribution"))))
+        val contribution2 = resourceService.create(CreateResourceRequest(null, "Contribution 2", setOf(ClassId("Contribution"))))
+
+        val benchmark1 = resourceService.create(CreateResourceRequest(null, "Benchmark 1", setOf(ClassId("Benchmark"))))
+        val benchmark2 = resourceService.create(CreateResourceRequest(null, "Benchmark 2", setOf(ClassId("Benchmark"))))
+
+        val codes1 = (1..3).map { literalService.create("https://some-code-$it.cool") }
+        val codes2 = (1..2).map { literalService.create("https://some-code-$it-$it.cool") }
+
+        val evaluationB1E1 = resourceService.create(CreateResourceRequest(null, "Evaluation 1", setOf(ClassId("Evaluation"))))
+        val evaluationB1E2 = resourceService.create(CreateResourceRequest(null, "Evaluation 2", setOf(ClassId("Evaluation"))))
+        val evaluationB2E1 = resourceService.create(CreateResourceRequest(null, "Evaluation 1", setOf(ClassId("Evaluation"))))
+
+        val metric1 = resourceService.create(CreateResourceRequest(null, "Metric 1", setOf(ClassId("Metric"))))
+        val metric2 = resourceService.create(CreateResourceRequest(null, "Metric 2", setOf(ClassId("Metric"))))
+
+        val scoreOfM1B1E1 = literalService.create("2.55")
+        val scoreOfM1B1E2 = literalService.create("4548")
+        val scoreOfM1B2E1 = literalService.create("0.54")
+
+        statementService.create(paper.id!!.value, PredicateId("P31"), contribution1.id!!.value)
+        statementService.create(paper.id!!.value, PredicateId("P31"), contribution2.id!!.value)
+
+        statementService.create(contribution1.id!!.value, PredicateId("HAS_BENCHMARK"), benchmark1.id!!.value)
+        statementService.create(contribution2.id!!.value, PredicateId("HAS_BENCHMARK"), benchmark2.id!!.value)
+
+        codes1.forEach {
+            statementService.create(contribution1.id!!.value, PredicateId("HAS_SOURCE_CODE"), it.id!!.value)
+        }
+        codes2.forEach {
+            statementService.create(contribution2.id!!.value, PredicateId("HAS_SOURCE_CODE"), it.id!!.value)
+        }
+
+        statementService.create(benchmark1.id!!.value, PredicateId("HAS_EVALUATION"), evaluationB1E1.id!!.value)
+        statementService.create(benchmark1.id!!.value, PredicateId("HAS_EVALUATION"), evaluationB1E2.id!!.value)
+        statementService.create(benchmark2.id!!.value, PredicateId("HAS_EVALUATION"), evaluationB2E1.id!!.value)
+
+        statementService.create(benchmark1.id!!.value, PredicateId("HAS_DATASET"), dataset.id!!.value)
+        statementService.create(benchmark2.id!!.value, PredicateId("HAS_DATASET"), dataset.id!!.value)
+
+        statementService.create(evaluationB1E1.id!!.value, PredicateId("HAS_METRIC"), metric1.id!!.value)
+        statementService.create(evaluationB1E2.id!!.value, PredicateId("HAS_METRIC"), metric2.id!!.value)
+        statementService.create(evaluationB2E1.id!!.value, PredicateId("HAS_METRIC"), metric1.id!!.value)
+
+        statementService.create(evaluationB1E1.id!!.value, PredicateId("HAS_VALUE"), scoreOfM1B1E1.id!!.value)
+        statementService.create(evaluationB1E2.id!!.value, PredicateId("HAS_VALUE"), scoreOfM1B1E2.id!!.value)
+        statementService.create(evaluationB2E1.id!!.value, PredicateId("HAS_VALUE"), scoreOfM1B2E1.id!!.value)
+
+        mockMvc
+            .perform(getRequestTo("/api/datasets/${dataset.id}/summary"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$", Matchers.hasSize<Int>(3)))
+            .andDo(
+                document(
+                    snippet,
+                    datasetSummaryListResponseFields()
+                )
+            )
+    }
+
     private fun researchFieldResponseFields() =
         listOf(
             fieldWithPath("id").description("Research field ID"),
@@ -332,7 +397,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
 
     private fun datasetSummaryResponseFields() =
         listOf(
-            fieldWithPath("model_name").description("The model name used on the dataset"),
+            fieldWithPath("model_name").description("The model name used on the dataset").optional(),
             fieldWithPath("metric").description("The metric used in the evaluation"),
             fieldWithPath("score").description("the score of the evaluation with the corresponding metric"),
             fieldWithPath("paper_id").description("The paper id is where the evaluation is published"),

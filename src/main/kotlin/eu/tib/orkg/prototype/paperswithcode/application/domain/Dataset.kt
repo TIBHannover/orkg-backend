@@ -24,9 +24,9 @@ data class DatasetSummary(
     @JsonProperty("paper_title")
     val paperTitle: String,
     @JsonProperty("paper_month")
-    val paperMonth: String?,
+    val paperMonth: Int?,
     @JsonProperty("paper_year")
-    val paperYear: String?,
+    val paperYear: Int?,
     @JsonProperty("code_urls")
     val codeURLs: List<String>
 )

@@ -12,7 +12,7 @@ MATCH (r:ResearchField {resource_id: {0}})<-[:RELATED {predicate_id: 'P30'}]-(p:
 MATCH (cont)-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]->(:Benchmark)-[:RELATED {predicate_id: 'HAS_DATASET'}]->(ds:Dataset)
 MATCH (cont)-[:RELATED {predicate_id: 'P32'}]->(pr:Problem)
 OPTIONAL MATCH (cont)-[:RELATED {predicate_id: 'HAS_SOURCE_CODE'}]->(l:Literal)
-RETURN COUNT(DISTINCT p) AS totalPapers, COLLECT(DISTINCT pr) AS problems, COUNT(DISTINCT l) AS totalCodes, COUNT(DISTINCT ds) AS totalDatasets
+RETURN DISTINCT pr AS problem, COUNT(DISTINCT p) AS totalPapers, COUNT(DISTINCT l) AS totalCodes, COUNT(DISTINCT ds) AS totalDatasets
     """)
     fun summarizeBenchmarkByResearchField(id: ResourceId): Iterable<Neo4jBenchmarkSummary>
 }

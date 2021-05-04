@@ -308,13 +308,13 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("total_papers").description("Total number of papers"),
             fieldWithPath("total_datasets").description("Total number of datasets related"),
             fieldWithPath("total_codes").description("Total number of code urls"),
-            fieldWithPath("research_problems").description("Research problems concerned with this research field")
+            fieldWithPath("research_problem").description("Research problem concerned with this research field")
         )
 
     private fun benchmarkListResponseFields() =
         responseFields(fieldWithPath("[]").description("A list of benchmarks"))
             .andWithPrefix("[].", benchmarkResponseFields())
-            .andWithPrefix("[].research_problems.[].", researchProblemResponseFields())
+            .andWithPrefix("[].research_problem.", researchProblemResponseFields())
 
     private fun datasetResponseFields() =
         listOf(

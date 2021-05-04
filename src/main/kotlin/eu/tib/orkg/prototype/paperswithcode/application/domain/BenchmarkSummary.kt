@@ -5,8 +5,8 @@ import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
 
 /** Simple DTO for the benchmark response. */
 data class BenchmarkSummary(
-    @JsonProperty("research_problems")
-    val researchProblems: List<ResearchProblem>,
+    @JsonProperty("research_problem")
+    val researchProblem: ResearchProblem,
     override val totalPapers: Int,
     override val totalDatasets: Int,
     override val totalCodes: Int

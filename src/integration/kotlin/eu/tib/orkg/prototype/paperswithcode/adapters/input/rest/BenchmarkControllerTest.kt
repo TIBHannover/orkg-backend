@@ -147,8 +147,9 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/benchmarks/summary/research-field/${fieldWithDataset.id}"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", Matchers.hasSize<Int>(1)))
-            .andExpect(jsonPath("$[0].research_problems", Matchers.hasSize<Int>(2)))
+            .andExpect(jsonPath("$", Matchers.hasSize<Int>(2)))
+            .andExpect(jsonPath("$[0].research_problem.id", Matchers.equalTo(problem2.id!!.value)))
+            .andExpect(jsonPath("$[1].research_problem.id", Matchers.equalTo(problem1.id!!.value)))
             .andExpect(jsonPath("$[0].total_papers", Matchers.equalTo(1)))
             .andExpect(jsonPath("$[0].total_datasets", Matchers.equalTo(2)))
             .andExpect(jsonPath("$[0].total_codes", Matchers.equalTo(5)))

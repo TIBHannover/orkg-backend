@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.auth.persistence.RoleEntity
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.statements.application.UserNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import java.security.Principal
@@ -97,6 +98,14 @@ class UserController(
         return ResponseEntity(NOT_FOUND)
     }
 
+    @PutMapping("/observatory")
+    fun updateUserObservatory(@RequestBody usersObservatory: UsersObservatoryRequest): UpdatedUserResponse {
+        usersObservatory.usersId.map {
+            userService.updateObservatory(it)
+        }
+        return UpdatedUserResponse(status = "Contributors added successfully")
+    }
+
     /**
      * Decorator for user data.
      * This class prevents user data from leaking by only exposing data that is relevant to the client.
@@ -157,4 +166,9 @@ class UserController(
     ) {
         fun hasMatchingPasswords() = newPassword == newMatchingPassword
     }
+
+    data class UsersObservatoryRequest(
+        @JsonProperty("users_id")
+        val usersId: Set<Contributor>
+    )
 }

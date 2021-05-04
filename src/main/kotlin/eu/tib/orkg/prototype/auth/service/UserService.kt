@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.auth.service
 
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
+import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import java.util.Optional
 import java.util.UUID
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -56,6 +57,19 @@ class UserService(
         val user = repository.findById(userId).orElseThrow { throw RuntimeException("No user with ID $userId") }
         val role = roleRepository.findByName("ORGANIZATION_OWNER").orElseThrow { IllegalStateException("Role missing.") }
         user.roles.add(role)
+        repository.save(user)
+    }
+
+    fun updateObservatory(contributor: Contributor) {
+        val user = repository.findById(contributor.id.value).orElseThrow { throw RuntimeException("No user with ID ${contributor.id.value}") }
+        if (contributor.observatoryId.value == UUID(0, 0))
+            user.observatoryId = null
+        else
+            user.observatoryId = contributor.observatoryId.value
+        if (contributor.organizationId.value == UUID(0, 0))
+            user.organizationId = null
+        else
+            user.organizationId = contributor.organizationId.value
         repository.save(user)
     }
 }

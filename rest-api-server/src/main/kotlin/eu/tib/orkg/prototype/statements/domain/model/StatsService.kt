@@ -60,4 +60,9 @@ interface StatsService {
      * Get top contributors by research field ID
      */
     fun getTopCurrentContributorsByResearchField(id: ResourceId, days: Long): Iterable<TopContributorsWithProfileAndTotalCount>
+
+    /**
+     * Get top contributors by research field ID excluding sub research fields
+     */
+    fun getTopCurrentContributorsByResearchFieldExcludeSubFields(id: ResourceId, days: Long): Iterable<TopContributorsWithProfileAndTotalCount>
 }

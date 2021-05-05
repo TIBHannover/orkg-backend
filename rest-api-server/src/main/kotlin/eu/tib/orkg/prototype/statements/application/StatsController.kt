@@ -113,12 +113,25 @@ class StatsController(private val service: StatsService) {
      * Fetch the top contributors by research field ID along with
      * the profile details
      */
-    @GetMapping("/research-field/{id}/top/contributors")
+    @GetMapping("/research-field/{id}/subfields/top/contributors")
     @ResponseStatus(HttpStatus.OK)
     fun getTopContributorsByResearchField(@PathVariable id: ResourceId, @RequestParam days: Optional<Long>): ResponseEntity<Iterable<TopContributorsWithProfileAndTotalCount>> {
         if (days.isPresent) {
             return ResponseEntity.ok(service.getTopCurrentContributorsByResearchField(id, days.get()))
         }
         return ResponseEntity.ok(service.getTopCurrentContributorsByResearchField(id, 0))
+    }
+
+    /**
+     * Fetch the top contributors by research field ID along with
+     * the profile details
+     */
+    @GetMapping("/research-field/{id}/top/contributors")
+    @ResponseStatus(HttpStatus.OK)
+    fun getTopContributorsByResearchFieldExcludeSubFields(@PathVariable id: ResourceId, @RequestParam days: Optional<Long>): ResponseEntity<Iterable<TopContributorsWithProfileAndTotalCount>> {
+        if (days.isPresent) {
+            return ResponseEntity.ok(service.getTopCurrentContributorsByResearchFieldExcludeSubFields(id, days.get()))
+        }
+        return ResponseEntity.ok(service.getTopCurrentContributorsByResearchFieldExcludeSubFields(id, 0))
     }
 }

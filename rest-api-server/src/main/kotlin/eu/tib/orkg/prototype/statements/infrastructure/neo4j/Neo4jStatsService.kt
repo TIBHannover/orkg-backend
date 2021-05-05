@@ -112,6 +112,19 @@ class Neo4jStatsService(
         return getContributorsWithProfileAndTotalCount(totalContributions)
     }
 
+    override fun getTopCurrentContributorsByResearchFieldExcludeSubFields(
+        id: ResourceId,
+        days: Long
+    ): Iterable<TopContributorsWithProfileAndTotalCount> {
+        val previousMonthDate: String = calculatePreviousDate(days)
+
+        val values = neo4jStatsRepository.getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(id, previousMonthDate)
+
+        val totalContributions = extractAndCalculateContributionDetails(values)
+
+        return getContributorsWithProfileAndTotalCount(totalContributions)
+    }
+
     private fun getChangeLogsWithProfile(changeLogs: Page<ChangeLogResponse>, pageable: Pageable): Page<ChangeLog> {
         val refinedChangeLog = mutableListOf<ChangeLog>()
 

@@ -23,6 +23,8 @@ interface ObservatoryService {
 
     fun changeResearchField(id: ObservatoryId, to: String): Observatory
 
+    fun updateOrganization(id: ObservatoryId, to: Set<Organization>): Observatory
+
     fun findObservatoriesByResearchField(researchField: String): List<Observatory>
 
     /**

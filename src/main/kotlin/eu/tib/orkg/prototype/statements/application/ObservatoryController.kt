@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
+import eu.tib.orkg.prototype.statements.domain.model.Organization
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -130,6 +131,15 @@ class ObservatoryController(
         return service.changeResearchField(id, researchFieldId.value)
     }
 
+    @RequestMapping("{id}/organization", method = [RequestMethod.POST, RequestMethod.PUT])
+    fun updateObservatoryOrganization(@PathVariable id: ObservatoryId, @RequestBody organizationRequest: UpdateOrganizationRequest): Observatory {
+        service
+            .findById(id)
+            .orElseThrow { ObservatoryNotFound(id) }
+
+        return service.updateOrganization(id, organizationRequest.organizations)
+    }
+
     @GetMapping("stats/observatories")
     fun findObservatoriesWithStats(): List<ObservatoryResources> {
         return neo4jStatsService.getObservatoriesPapersAndComparisonsCount()
@@ -157,6 +167,10 @@ class ObservatoryController(
         @field:NotBlank
         @field:Size(min = 1)
         val value: String
+    )
+
+    data class UpdateOrganizationRequest(
+        val organizations: Set<Organization>
     )
 
     data class ErrorMessage(

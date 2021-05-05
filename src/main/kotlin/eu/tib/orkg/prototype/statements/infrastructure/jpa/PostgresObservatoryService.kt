@@ -115,6 +115,23 @@ class PostgresObservatoryService(
         return expand(response)
     }
 
+    override fun updateOrganization(id: ObservatoryId, to: Set<Organization>): Observatory {
+        val entity = postgresObservatoryRepository.findById(id.value).get()
+        val list = entity.organizations!!
+        to.map {
+            val org = postgresOrganizationRepository
+                .findById(it.id!!.value)
+                .orElseThrow { OrganizationNotFound(it.id) }
+            list.add(org)
+        }
+
+        entity.apply {
+            organizations = list
+        }
+        val response = postgresObservatoryRepository.save(entity).toObservatory()
+        return expand(response)
+    }
+
     fun hasResearchField(response: Observatory): Boolean {
         return response.researchField?.id !== null
     }

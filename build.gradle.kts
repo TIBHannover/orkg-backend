@@ -71,7 +71,7 @@ dependencies {
     implementation("javax.activation:activation:1.1")
     implementation("org.glassfish.jaxb:jaxb-runtime:2.3.0")
     // RDF
-    implementation("net.nprod:rdf4k:0.1.2")
+    implementation("org.eclipse.rdf4j:rdf4j-client:3.6.3")
     implementation("io.github.config4k:config4k:0.4.2") {
         because("Required for parsing the essential entity configuration")
     }
@@ -107,7 +107,7 @@ val snippetsDir = file("build/generated-snippets")
 allprojects {
     repositories {
         jcenter()
-        maven { setUrl("https://dl.bintray.com/bjonnh/RDF4K") }
+        mavenCentral()
     }
 }
 

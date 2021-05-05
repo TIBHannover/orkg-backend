@@ -20,7 +20,6 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.TrendingResearchProbl
 import java.lang.IllegalStateException
 import java.time.LocalDate
 import java.util.UUID
-import java.util.logging.Logger
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -35,7 +34,6 @@ class Neo4jStatsService(
     private val observatoryRepository: PostgresObservatoryRepository,
     private val organizationRepository: PostgresOrganizationRepository
 ) : StatsService {
-    private val logger = Logger.getLogger("Neo4j")
     val internalClassLabels: (String) -> Boolean = { it !in setOf("Thing", "Resource", "AuditableEntity") }
 
     override fun getStats(extra: List<String>?): Stats {

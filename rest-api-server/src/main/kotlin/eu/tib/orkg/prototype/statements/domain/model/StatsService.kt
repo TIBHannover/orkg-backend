@@ -39,7 +39,7 @@ interface StatsService {
     /**
      * Get top contributors
      */
-    fun getTopCurrentContributors(pageable: Pageable): Page<TopContributorsWithProfile>
+    fun getTopCurrentContributors(pageable: Pageable, days: Long): Page<TopContributorsWithProfile>
 
     /**
      * Get recent changes in ORKG

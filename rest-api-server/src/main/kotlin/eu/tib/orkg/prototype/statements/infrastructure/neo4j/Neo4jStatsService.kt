@@ -20,6 +20,7 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.TrendingResearchProbl
 import java.lang.IllegalStateException
 import java.time.LocalDate
 import java.util.UUID
+import java.util.logging.Logger
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -34,7 +35,7 @@ class Neo4jStatsService(
     private val observatoryRepository: PostgresObservatoryRepository,
     private val organizationRepository: PostgresOrganizationRepository
 ) : StatsService {
-
+    private val logger = Logger.getLogger("Neo4j")
     val internalClassLabels: (String) -> Boolean = { it !in setOf("Thing", "Resource", "AuditableEntity") }
 
     override fun getStats(extra: List<String>?): Stats {
@@ -79,10 +80,11 @@ class Neo4jStatsService(
     override fun getObservatoriesPapersAndComparisonsCount(): List<ObservatoryResources> =
         neo4jStatsRepository.getObservatoriesPapersAndComparisonsCount()
 
-    override fun getTopCurrentContributors(pageable: Pageable): Page<TopContributorsWithProfile> {
-        val previousMonthDate: LocalDate = LocalDate.now().minusMonths(1)
+    override fun getTopCurrentContributors(pageable: Pageable, days: Long): Page<TopContributorsWithProfile> {
+        val previousMonthDate: String = calculatePreviousDate(days)
+
         return getContributorsWithProfile(neo4jStatsRepository.getTopCurrentContributorIdsAndContributionsCount(
-            previousMonthDate.toString(), pageable), pageable)
+            previousMonthDate, pageable), pageable)
     }
 
     override fun getRecentChangeLog(pageable: Pageable): Page<ChangeLog> {
@@ -103,16 +105,9 @@ class Neo4jStatsService(
         id: ResourceId,
         days: Long
     ): Iterable<TopContributorsWithProfileAndTotalCount> {
-        // Setting the all-time date to 2010-01-01
-        // This date value is set to retrieve all the contributions from ORKG
-        // It is assumed that no contributions pre-date the hard-coded date
-        var previousMonthDate: LocalDate? = LocalDate.of(2010, 1, 1)
+        val previousMonthDate: String = calculatePreviousDate(days)
 
-        if (days > 0) {
-            previousMonthDate = LocalDate.now().minusDays(days)
-        }
-
-        val values = neo4jStatsRepository.getTopCurContribIdsAndContribCountByResearchFieldId(id, previousMonthDate.toString())
+        val values = neo4jStatsRepository.getTopCurContribIdsAndContribCountByResearchFieldId(id, previousMonthDate)
 
         val totalContributions = extractAndCalculateContributionDetails(values)
 
@@ -235,6 +230,18 @@ class Neo4jStatsService(
         }
 
         return counts
+    }
+
+    private fun calculatePreviousDate(days: Long): String {
+        // Setting the all-time date to 2010-01-01
+        // This date value is set to retrieve all the contributions from ORKG
+        // It is assumed that no contributions pre-date the hard-coded date
+        var previousMonthDate: LocalDate? = LocalDate.of(2010, 1, 1)
+
+        if (days > 0) {
+            previousMonthDate = LocalDate.now().minusDays(days)
+        }
+        return previousMonthDate.toString()
     }
 }
 

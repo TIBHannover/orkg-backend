@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-import java.util.Optional
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ContributorPerProblem
+import java.util.Optional
 import org.springframework.data.domain.Pageable
 
 interface ProblemService {

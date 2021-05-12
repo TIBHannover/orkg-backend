@@ -32,6 +32,15 @@ class ObservatoryURLNotFound(id: String) : RuntimeException("""Observatory "$id"
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class OrganizationNotFound(id: OrganizationId) : RuntimeException("""Organization "$id" not found""")
 
+@ResponseStatus(HttpStatus.NOT_FOUND)
+class ResearchFieldNotFound(id: ResourceId) : RuntimeException("""Research field "$id" not found""")
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+class ResearchProblemNotFound(id: ResourceId) : RuntimeException("""Research problem "$id" not found""")
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+class DatasetNotFound(id: ResourceId) : RuntimeException("""Dataset "$id" not found""")
+
 @ResponseStatus(HttpStatus.FORBIDDEN)
 class ResourceCantBeDeleted(id: ResourceId) : RuntimeException("Unable to delete Resource $id because it is used in at least one statement")
 

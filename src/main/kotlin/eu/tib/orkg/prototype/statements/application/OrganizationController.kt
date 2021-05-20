@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
@@ -8,8 +9,11 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.Organization
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
+import eu.tib.orkg.prototype.util.removeSingleQuotes
+import eu.tib.orkg.prototype.util.replaceWhitespaceWithUnderscores
 import java.io.File
 import java.util.Base64
+import java.util.UUID
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
@@ -36,19 +40,26 @@ class OrganizationController(
 
     @PostMapping("/")
     fun addOrganization(@RequestBody organization: CreateOrganizationRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
-        return if (!isValidLogo(organization.organizationLogo)) {
-            ResponseEntity.badRequest().body(
+        if (!isValidLogo(organization.organizationLogo)) {
+            return ResponseEntity.badRequest().body(
                     ErrorMessage(message = "Please upload a valid image"))
         } else {
-            val response = (service.create(organization.organizationName, organization.createdBy, organization.url))
-            decoder(organization.organizationLogo, response.id)
-            val location = uriComponentsBuilder
-                .path("api/organizations/{id}")
-                .buildAndExpand(response.id)
-                .toUri()
-            ResponseEntity.created(location).body(service.findById(response.id!!).get())
+            return if (service.findByName(organization.organizationName).isEmpty && service.findByDisplayId(organization.displayId).isEmpty) {
+                val response = (service.create(organization.organizationName, organization.createdBy, organization.url, organization.displayId))
+                decoder(organization.organizationLogo, response.id)
+                val location = uriComponentsBuilder
+                    .path("api/organizations/{id}")
+                    .buildAndExpand(response.id)
+                    .toUri()
+                ResponseEntity.created(location).body(service.findById(response.id!!).get())
+            } else {
+                ResponseEntity.badRequest().body(
+                    ErrorMessage(message = "Organization with same name or URL already exist")
+                )
+            }
         }
     }
+
     @GetMapping("/")
     fun findOrganizations(): List<Organization> {
         val response = service.listOrganizations()
@@ -59,10 +70,16 @@ class OrganizationController(
     }
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: OrganizationId): Organization {
-        val response = service
-            .findById(id)
-            .orElseThrow { OrganizationNotFound(id) }
+    fun findById(@PathVariable id: String): Organization {
+        val response: Organization = if (isValidUUID(id)) {
+            service
+                .findById(OrganizationId(id))
+                .orElseThrow { OrganizationNotFound(OrganizationId(id)) }
+        } else {
+            service
+                .findByDisplayId(id)
+                .orElseThrow { OrganizationNotFound(OrganizationId(id)) }
+        }
         val logo = encoder(response.id.toString())
 
         return response.copy(logo = logo)
@@ -173,11 +190,25 @@ class OrganizationController(
         return mimeType.contains("image/")
     }
 
+    fun isValidUUID(id: String): Boolean {
+        return try {
+            UUID.fromString(id) != null
+        } catch (e: IllegalArgumentException) {
+            false
+        }
+    }
+
     data class CreateOrganizationRequest(
+        @JsonProperty("organization_name")
         val organizationName: String,
+        @JsonProperty("organization_logo")
         var organizationLogo: String,
+        @JsonProperty("created_by")
         val createdBy: ContributorId,
-        val url: String
+        val url: String,
+        @field:NotBlank
+        @JsonProperty("display_id") // TODO: force passing value after front-end changes
+        val displayId: String
     )
 
     data class ErrorMessage(

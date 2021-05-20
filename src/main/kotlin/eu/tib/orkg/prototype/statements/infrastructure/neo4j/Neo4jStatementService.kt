@@ -79,7 +79,6 @@ class Neo4jStatementService :
             .findAllBySubjectAndPredicate(subjectId, predicateId, pagination)
             .map { toStatement(it) }
 
-    //
     override fun findAllByObjectAndPredicate(
         objectId: String,
         predicateId: PredicateId,
@@ -87,7 +86,7 @@ class Neo4jStatementService :
     ): Page<GeneralStatement> =
         statementRepository
             .findAllByObjectAndPredicate(objectId, predicateId, pagination)
-            .map(this::toStatement)
+            .map { toStatement(it) }
 
     override fun create(subject: String, predicate: PredicateId, `object`: String) =
         create(ContributorId.createUnknownContributor(), subject, predicate, `object`)

@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface ResearchFieldService {
-
     fun getResearchProblemsOfField(id: ResourceId, pageable: Pageable): Page<Any>
 
     fun getResearchProblemsIncludingSubFields(id: ResourceId, pageable: Pageable): Page<Resource>

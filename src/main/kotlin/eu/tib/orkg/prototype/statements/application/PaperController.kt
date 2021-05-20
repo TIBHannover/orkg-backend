@@ -124,6 +124,7 @@ class PaperController(
         val contributor = contributorService.findByIdOrElseUnknown(userId)
         val organizationId = request.paper.observatoryInfo?.organizationId!!
         val observatoryId = request.paper.observatoryInfo.observatoryId!!
+
         // paper title
         val paperObj = resourceService.create(
             userId,

@@ -2,7 +2,7 @@ import org.asciidoctor.gradle.jvm.AsciidoctorTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 group = "eu.tib"
-version = "0.1.1-SNAPSHOT"
+version = "0.3.1-SNAPSHOT"
 
 val neo4jVersion = "3.5.+" // should match version in Dockerfile
 val springDataNeo4jVersion = "5.3.4"
@@ -17,6 +17,7 @@ plugins {
 
     jacoco
     kotlin("jvm") version kotlinVersion
+    kotlin("kapt") version kotlinVersion
     kotlin("plugin.allopen") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
@@ -50,6 +51,8 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
 
+    kapt("org.springframework.boot:spring-boot-configuration-processor")
+
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.postgresql:postgresql")
     implementation("org.liquibase:liquibase-core")
@@ -68,7 +71,7 @@ dependencies {
     implementation("javax.activation:activation:1.1")
     implementation("org.glassfish.jaxb:jaxb-runtime:2.3.0")
     // RDF
-    implementation("net.nprod:rdf4k:0.1.2")
+    implementation("org.eclipse.rdf4j:rdf4j-client:3.6.3")
     implementation("io.github.config4k:config4k:0.4.2") {
         because("Required for parsing the essential entity configuration")
     }
@@ -104,7 +107,7 @@ val snippetsDir = file("build/generated-snippets")
 allprojects {
     repositories {
         jcenter()
-        maven { setUrl("https://dl.bintray.com/bjonnh/RDF4K") }
+        mavenCentral()
     }
 }
 
@@ -205,4 +208,12 @@ asciidoctorj {
     modules {
         diagram.use()
     }
+}
+
+kapt {
+    // Turn off the discovery of annotation processors in the compile classpath. This means that all annotation
+    // processors need to be listed manually.
+    // The problem seems to be that the Neo4j annotation processor leaks into the classpath.
+    // TODO: Check if classpath leakage is fixed in later versions.
+    includeCompileClasspath = false
 }

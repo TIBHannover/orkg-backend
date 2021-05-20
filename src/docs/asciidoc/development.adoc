@@ -113,6 +113,10 @@ In this case you can simply restart the API container:
 
 NOTE: Dumps are provided to TIB members only. This may change in the future. Or not.
 
+NOTE: You can re-load / setup a database dump with the `reload-dump` script in the `scripts` directory.
+      The following section is still relevant if you want to understand what is happening there.
+      To load a dump, place it in the `dumps` directory and name it `neo4j-dump-latest.dump` (or use a symlink).
+
 Sometimes it is helpful to work on a production database dump, e.g. for debugging.
 To make that work with the Neo4j Community Edition and Docker, a workflow similar to the one below can be used.
 

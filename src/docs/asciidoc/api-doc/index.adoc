@@ -387,7 +387,7 @@ include::parts/problems.adoc[]
 
 include::parts/research-fields.adoc[]
 
-include::parts/problems.adoc[]
+include::parts/datasets-benchmarks.adoc[]
 
 [[sorting-and-pagination]]
 == Sorting and Pagination

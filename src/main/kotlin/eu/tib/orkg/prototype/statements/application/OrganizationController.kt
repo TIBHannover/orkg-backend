@@ -9,8 +9,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.Organization
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
-import eu.tib.orkg.prototype.util.removeSingleQuotes
-import eu.tib.orkg.prototype.util.replaceWhitespaceWithUnderscores
 import java.io.File
 import java.util.Base64
 import java.util.UUID

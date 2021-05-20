@@ -11,8 +11,6 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.Neo4jStatsService
-import eu.tib.orkg.prototype.util.removeSingleQuotes
-import eu.tib.orkg.prototype.util.replaceWhitespaceWithUnderscores
 import java.util.UUID
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank

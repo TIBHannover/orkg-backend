@@ -69,7 +69,7 @@ class PaperController(
             request.paper.contributions!!.forEach {
                 val contributionId = addCompleteContribution(it, request)
                 // Create statement between paper and contribution
-                statementService.create(userId, paperId.value, Constants.ContributionPredicate, contributionId.value)
+                statementService.add(userId, paperId.value, Constants.ContributionPredicate, contributionId.value)
             }
         }
         return paperObj
@@ -138,13 +138,13 @@ class PaperController(
         // paper doi
         if (request.paper.hasDOI()) {
             val paperDoi = literalService.create(userId, request.paper.doi!!).id!!
-            statementService.create(userId, paperId.value, Constants.DoiPredicate, paperDoi.value)
+            statementService.add(userId, paperId.value, Constants.DoiPredicate, paperDoi.value)
         }
 
         // paper URL
         if (request.paper.hasUrl()) {
             val paperUrl = literalService.create(userId, request.paper.url!!).id!!
-            statementService.create(userId, paperId.value, Constants.UrlPredicate, paperUrl.value)
+            statementService.add(userId, paperId.value, Constants.UrlPredicate, paperUrl.value)
         }
 
         // paper authors
@@ -152,14 +152,14 @@ class PaperController(
 
         // paper publication date
         if (request.paper.hasPublicationMonth())
-            statementService.create(
+            statementService.add(
                 userId,
                 paperId.value,
                 Constants.PublicationMonthPredicate,
                 literalService.create(userId, request.paper.publicationMonth.toString()).id!!.value
             )
         if (request.paper.hasPublicationYear())
-            statementService.create(
+            statementService.add(
                 userId,
                 paperId.value,
                 Constants.PublicationYearPredicate,
@@ -178,7 +178,7 @@ class PaperController(
             )
 
         // paper research field
-        statementService.create(
+        statementService.add(
             userId,
             paperId.value,
             Constants.ResearchFieldPredicate,
@@ -218,7 +218,7 @@ class PaperController(
             )
         }
         // create a statement with the venue resource
-        statementService.create(
+        statementService.add(
             userId,
             paperId.value,
             venuePredicate,
@@ -259,7 +259,7 @@ class PaperController(
                                     PageRequest.of(1, 10) // TODO: Hide values by using default values for the parameters
                                 ).firstOrNull { it.predicate.id == Constants.OrcidPredicate }
                                     ?: throw OrphanOrcidValue(orcidValue)
-                            statementService.create(
+                            statementService.add(
                                 userId,
                                 paperId.value,
                                 Constants.AuthorPredicate,
@@ -274,7 +274,7 @@ class PaperController(
                                 paper.paper.extractionMethod,
                                 organizationId
                             )
-                            statementService.create(
+                            statementService.add(
                                 userId,
                                 paperId.value,
                                 Constants.AuthorPredicate,
@@ -283,11 +283,11 @@ class PaperController(
                             // Create orcid literal
                             val orcid = literalService.create(userId, orcidValue)
                             // Add ORCID id to the new resource
-                            statementService.create(userId, author.id.value, Constants.OrcidPredicate, orcid.id!!.value)
+                            statementService.add(userId, author.id.value, Constants.OrcidPredicate, orcid.id!!.value)
                         }
                     } else {
                         // create literal and link it
-                        statementService.create(
+                        statementService.add(
                             userId,
                             paperId.value,
                             Constants.AuthorPredicate,
@@ -295,7 +295,7 @@ class PaperController(
                         )
                     }
                 } else {
-                    statementService.create(userId, paperId.value, Constants.AuthorPredicate, it.id!!)
+                    statementService.add(userId, paperId.value, Constants.AuthorPredicate, it.id!!)
                 }
             }
         }

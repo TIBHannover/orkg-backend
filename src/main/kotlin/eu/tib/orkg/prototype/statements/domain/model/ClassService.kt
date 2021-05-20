@@ -33,6 +33,11 @@ interface ClassService : URIService<Class> {
     fun create(userId: ContributorId, request: CreateClassRequest): Class
 
     /**
+     * Determine if a class with a given ID exists.
+     */
+    fun exists(id: ClassId): Boolean
+
+    /**
      * Find all classes.
      */
     fun findAll(): Iterable<Class>
@@ -45,7 +50,7 @@ interface ClassService : URIService<Class> {
     /**
      * Find a class by its ID.
      */
-    fun findById(id: ClassId?): Optional<Class>
+    fun findById(id: ClassId): Optional<Class>
 
     /**
      * Find all resources matching a label.

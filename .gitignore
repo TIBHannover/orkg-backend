@@ -19,8 +19,11 @@ gradle-app.setting
 .idea/*
 !.idea/codeStyles
 !.idea/codeStyles/*
+!.idea/runConfigurations
+!.idea/runConfigurations/*
 
 # TestContainers
 /out/
 
 images/
+dumps/

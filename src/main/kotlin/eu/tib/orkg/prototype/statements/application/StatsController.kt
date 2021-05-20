@@ -7,6 +7,8 @@ import eu.tib.orkg.prototype.statements.domain.model.StatsService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.TrendingResearchProblems
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.ChangeLog
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.TopContributorsWithProfile
+import eu.tib.orkg.prototype.statements.infrastructure.neo4j.TopContributorsWithProfileAndTotalCount
+import java.util.Optional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -14,6 +16,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
@@ -105,6 +108,10 @@ class StatsController(private val service: StatsService) {
      */
     @GetMapping("/research-field/{id}/top/contributors")
     @ResponseStatus(HttpStatus.OK)
-    fun getTopContributorsByResearchField(@PathVariable id: ResourceId, pageable: Pageable): ResponseEntity<Page<TopContributorsWithProfile>> =
-        ResponseEntity.ok(service.getTopCurrentContributorsByResearchField(id, pageable))
+    fun getTopContributorsByResearchField(@PathVariable id: ResourceId, @RequestParam days: Optional<Long>): ResponseEntity<Iterable<TopContributorsWithProfileAndTotalCount>> {
+        if (days.isPresent) {
+            return ResponseEntity.ok(service.getTopCurrentContributorsByResearchField(id, days.get()))
+        }
+        return ResponseEntity.ok(service.getTopCurrentContributorsByResearchField(id, 0))
+    }
 }

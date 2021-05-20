@@ -12,8 +12,10 @@ import eu.tib.orkg.prototype.statements.domain.model.StatsService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ChangeLogResponse
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatsRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResultObject
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.TopContributorIdentifiers
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.TrendingResearchProblems
+import java.lang.IllegalStateException
 import java.time.LocalDate
 import java.util.UUID
 import org.springframework.data.domain.Page
@@ -85,11 +87,22 @@ class Neo4jStatsService(
 
     override fun getTopCurrentContributorsByResearchField(
         id: ResourceId,
-        pageable: Pageable
-    ): Page<TopContributorsWithProfile> {
-        val previousMonthDate: LocalDate = LocalDate.now().minusMonths(1)
-        return getContributorsWithProfile(neo4jStatsRepository.getTopCurContribIdsAndContribCountByResearchFieldId(
-            id, previousMonthDate.toString(), pageable), pageable)
+        days: Long
+    ): Iterable<TopContributorsWithProfileAndTotalCount> {
+        // Setting the all-time date to 2010-01-01
+        // This date value is set to retrieve all the contributions from ORKG
+        // It is assumed that no contributions pre-date the hard-coded date
+        var previousMonthDate: LocalDate? = LocalDate.of(2010, 1, 1)
+
+        if (days > 0) {
+            previousMonthDate = LocalDate.now().minusDays(days)
+        }
+
+        val values = neo4jStatsRepository.getTopCurContribIdsAndContribCountByResearchFieldId(id, previousMonthDate.toString())
+
+        val totalContributions = extractAndCalculateContributionDetails(values)
+
+        return getContributorsWithProfileAndTotalCount(totalContributions)
     }
 
     private fun getChangeLogsWithProfile(changeLogs: Page<ChangeLogResponse>, pageable: Pageable): Page<ChangeLog> {
@@ -97,13 +110,11 @@ class Neo4jStatsService(
 
         val userIdList = changeLogs.content.map { UUID.fromString(it.createdBy) }.toTypedArray()
 
-        val mapValues = userRepository.findByIdIn(userIdList, pageable).map(UserEntity::toContributor).groupBy(Contributor::id)
+        val mapValues = userRepository.findByIdIn(userIdList).map(UserEntity::toContributor).groupBy(Contributor::id)
 
         changeLogs.forEach { changeLogResponse ->
             val contributor = mapValues[ContributorId(changeLogResponse.createdBy)]?.first()
-
             val filteredClasses = changeLogResponse.classes.filter(internalClassLabels)
-
             refinedChangeLog.add(ChangeLog(changeLogResponse.id, changeLogResponse.label, changeLogResponse.createdAt,
                 filteredClasses, Profile(contributor?.id, contributor?.name, contributor?.gravatarId, contributor?.avatarURL)))
         }
@@ -114,7 +125,7 @@ class Neo4jStatsService(
     private fun getContributorsWithProfile(topContributors: Page<TopContributorIdentifiers>, pageable: Pageable): Page<TopContributorsWithProfile> {
         val userIdList = topContributors.content.map { UUID.fromString(it.id) }.toTypedArray()
 
-        val mapValues = userRepository.findByIdIn(userIdList, pageable).map(UserEntity::toContributor).groupBy(Contributor::id)
+        val mapValues = userRepository.findByIdIn(userIdList).map(UserEntity::toContributor).groupBy(Contributor::id)
 
         val refinedTopContributors =
             topContributors.content.map { topContributor ->
@@ -125,11 +136,91 @@ class Neo4jStatsService(
         return PageImpl(refinedTopContributors, pageable, refinedTopContributors.size.toLong())
     }
 
+    private fun getContributorsWithProfileAndTotalCount(topContributors: List<OverallContributions>): List<TopContributorsWithProfileAndTotalCount> {
+        val userIdList = topContributors.map { UUID.fromString(it.id) }.toTypedArray()
+
+        val mapValues = userRepository.findByIdIn(userIdList).map(UserEntity::toContributor).groupBy(Contributor::id)
+
+        return topContributors.map { topContributor ->
+            val contributor = mapValues[topContributor.id?.let { ContributorId(it) }]?.first()
+            TopContributorsWithProfileAndTotalCount(
+                topContributor.individualContributionsCount as IndividualContributionsCount,
+                Profile(contributor?.id, contributor?.name, contributor?.gravatarId, contributor?.avatarURL))
+        }
+    }
+
     private fun extractValue(map: Map<*, *>, key: String): Long {
         return if (map.containsKey(key))
             map[key] as Long
         else
             0
+    }
+
+    private fun extractAndCalculateContributionDetails(values: List<List<Map<String, List<ResultObject>>>>): List<OverallContributions> {
+        val mapLookUpResult = mutableMapOf<String, IndividualContributionsCount>()
+
+        values.forEachIndexed { index, row ->
+            row.forEach { hashMap ->
+                if (hashMap["total"] != null) {
+                    val value = hashMap["total"]
+                    val iter = value?.iterator()
+                    while (iter != null && iter.hasNext()) {
+                        val mapEntry = iter.next()
+                        if (mapEntry["id"] != null) {
+                            val id = mapEntry["id"] as String
+                            val cnt = mapEntry["cnt"] as Long
+
+                            val counts = if (mapLookUpResult.containsKey(id)) {
+                                mapLookUpResult[id]!!
+                            } else {
+                                IndividualContributionsCount()
+                            }
+
+                            mapLookUpResult[id] = updateCount(index, counts, cnt)
+                        }
+                    }
+                }
+            }
+        }
+
+        /*Returning a maximum of top 30 results from the list
+        since post processing is not possible in UNION for
+        Neo4j < 4.When Neo4j is upgraded, the limit
+        should be applied in the cypher query
+        Also, processing here makes sense for now since
+        all the contributions need to be added to get the
+        list in descending order before getting the top 30.
+        Also note: Frontend needs just 30 as it fits on
+        wide-body monitors*/
+        return mapLookUpResult.entries.map { mapEntry ->
+            OverallContributions(mapEntry.key, mapEntry.value)
+        }.sortedByDescending { it.individualContributionsCount?.total }
+            .subList(0, if (mapLookUpResult.size > 30) 30 else mapLookUpResult.size)
+    }
+
+    private fun updateCount(index: Int, counts: IndividualContributionsCount, value: Long?): IndividualContributionsCount {
+        // 0 = Contribution; 1 = Comparison; 2 = Paper; 3 = Visualization; 4 = Problem
+        when (index) {
+            0 -> {
+                counts.contributions = value ?: 0
+            }
+            1 -> {
+                counts.comparisons = value ?: 0
+            }
+            2 -> {
+                counts.papers = value ?: 0
+            }
+            3 -> {
+                counts.visualizations = value ?: 0
+            }
+            4 -> {
+                counts.problems = value ?: 0
+            } else -> {
+                throw IllegalStateException("Contributions: The query returns more indices than expected")
+            }
+        }
+
+        return counts
     }
 }
 
@@ -138,12 +229,23 @@ class Neo4jStatsService(
  * along with the profile of the contributor
  */
 data class ChangeLog(
-    val id: String,
-    val label: String,
+    val id: String?,
+    val label: String?,
     @JsonProperty("created_at")
-    val createdAt: String,
-    val classes: List<String>,
+    val createdAt: String?,
+    val classes: List<String>?,
     val profile: Profile?
+)
+
+/**
+ * Class containing top contributors along with
+ * contributions count and the corresponding
+ * profile
+ */
+data class TopContributorsWithProfileAndTotalCount(
+    @JsonProperty("counts")
+    val individualContributions: IndividualContributionsCount,
+    val profile: Profile
 )
 
 /**
@@ -169,3 +271,28 @@ data class Profile(
     @JsonProperty("gravatar_url")
     val gravatarUrl: String?
 )
+
+/**
+ * Data class containing individual contributions and id
+ */
+data class OverallContributions(
+    @JsonProperty("id")
+    var id: String? = null,
+    @JsonProperty("counts")
+    var individualContributionsCount: IndividualContributionsCount? = null
+)
+
+/**
+ * Data class containing individual contributions
+ */
+data class IndividualContributionsCount(
+    var contributions: Long = 0,
+    var comparisons: Long = 0,
+    var papers: Long = 0,
+    var visualizations: Long = 0,
+    var problems: Long = 0
+
+) {
+    val total: Long
+        get() = contributions + comparisons + papers + visualizations + problems
+}

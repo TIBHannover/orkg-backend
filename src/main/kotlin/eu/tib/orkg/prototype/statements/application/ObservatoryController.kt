@@ -144,12 +144,9 @@ class ObservatoryController(
     }
 
     data class CreateObservatoryRequest(
-        @JsonProperty("observatory_name")
         val observatoryName: String,
-        @JsonProperty("organization_id")
         val organizationId: OrganizationId,
         val description: String,
-        @JsonProperty("research_field")
         val researchField: String,
         @field:NotBlank
         @JsonProperty("display_id") // TODO: force passing value after front-end changes

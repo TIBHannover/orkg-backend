@@ -199,11 +199,8 @@ class OrganizationController(
     }
 
     data class CreateOrganizationRequest(
-        @JsonProperty("organization_name")
         val organizationName: String,
-        @JsonProperty("organization_logo")
         var organizationLogo: String,
-        @JsonProperty("created_by")
         val createdBy: ContributorId,
         val url: String,
         @field:NotBlank

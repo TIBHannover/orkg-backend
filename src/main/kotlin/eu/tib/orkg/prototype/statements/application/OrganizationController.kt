@@ -9,6 +9,8 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.Organization
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
+import eu.tib.orkg.prototype.util.removeSingleQuotes
+import eu.tib.orkg.prototype.util.replaceWhitespaceWithUnderscores
 import java.io.File
 import java.util.Base64
 import java.util.UUID
@@ -206,7 +208,7 @@ class OrganizationController(
         val url: String,
         @field:NotBlank
         @JsonProperty("display_id") // TODO: force passing value after front-end changes
-        val displayId: String
+        val displayId: String = replaceWhitespaceWithUnderscores(removeSingleQuotes(organizationName))
     )
 
     data class ErrorMessage(

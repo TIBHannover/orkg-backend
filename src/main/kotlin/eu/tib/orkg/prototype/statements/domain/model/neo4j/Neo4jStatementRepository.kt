@@ -134,7 +134,8 @@ WHERE n.resource_id = {0} OR n.literal_id = {0} OR n.class_id = {0} OR n.predica
 CALL apoc.path.subgraphAll(n, {1})
 YIELD relationships
 UNWIND relationships as rel
-RETURN startNode(rel) as subject, rel as predicate, endNode(rel) as object"""
+RETURN startNode(rel) as subject, rel as predicate, endNode(rel) as object
+ORDER BY rel.created_at"""
     )
     fun fetchAsBundle(id: String, configuration: Map<String, Any>): Iterable<Neo4jStatement>
 }

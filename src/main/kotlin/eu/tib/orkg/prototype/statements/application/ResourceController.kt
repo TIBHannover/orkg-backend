@@ -73,12 +73,8 @@ class ResourceController(
             return badRequest().body("Resource id <${resource.id}> already exists!")
         val userId = authenticatedUserId()
         val contributor = contributorService.findById(ContributorId(userId))
-        var observatoryId = ObservatoryId.createUnknownObservatory()
-        var organizationId = OrganizationId.createUnknownOrganization()
-        if (!contributor.isEmpty) {
-            organizationId = contributor.get().organizationId
-            observatoryId = contributor.get().observatoryId
-        }
+        val organizationId = resource.organizationId
+        val observatoryId = resource.observatoryId
         val id = service.create(ContributorId(userId), resource, observatoryId, resource.extractionMethod, organizationId).id
         val location = uriComponentsBuilder
             .path("api/resources/{id}")
@@ -147,7 +143,9 @@ data class CreateResourceRequest(
     val id: ResourceId?,
     val label: String,
     val classes: Set<ClassId> = emptySet(),
-    val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
+    val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
+    val observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
+    val organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
 )
 
 data class UpdateResourceRequest(

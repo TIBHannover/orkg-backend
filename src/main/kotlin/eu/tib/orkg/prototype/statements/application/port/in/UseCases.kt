@@ -21,3 +21,8 @@ interface MarkAsVerifiedUseCase {
      */
     fun markAsUnverified(resourceId: ResourceId): Optional<Resource>
 }
+
+interface MarkFeaturedService {
+    fun markAsFeatured(resourceId: ResourceId): Optional<Resource>
+    fun markAsNonFeatured(resourceId: ResourceId): Optional<Resource>
+}

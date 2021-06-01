@@ -66,6 +66,9 @@ data class Neo4jResource(
     @Property("verified")
     var verified: Boolean? = null
 
+    @Property("featured")
+    var featured: Boolean? = null
+
     @Property("organization_id")
     @Convert(OrganizationIdConverter::class)
     var organizationId: OrganizationId = OrganizationId.createUnknownOrganization()

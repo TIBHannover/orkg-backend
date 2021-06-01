@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.application
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.statements.application.port.`in`.MarkFeaturedService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
@@ -10,8 +11,10 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
+import eu.tib.orkg.prototype.statements.infrastructure.neo4j.Neo4jResourceService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.badRequest
@@ -36,7 +39,9 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/resources/")
 class ResourceController(
     private val service: ResourceService,
-    private val contributorService: ContributorService
+    private val contributorService: ContributorService,
+    private val featuredService: MarkFeaturedService,
+    private val neo4jResourceService: Neo4jResourceService
 ) : BaseController() {
 
     @GetMapping("/{id}")
@@ -135,6 +140,28 @@ class ResourceController(
 
         return ResponseEntity.noContent().build()
     }
+
+    @GetMapping("/metadata/featured", params = ["featured=true"])
+    fun getFeaturedResources(pageable: Pageable) =
+        neo4jResourceService.findAllByFeatured(pageable)
+
+    @GetMapping("/metadata/featured", params = ["featured=false"])
+    fun getNonFeaturedResources(pageable: Pageable) =
+        neo4jResourceService.findAllByNonFeatured(pageable)
+
+    @PutMapping("/{id}/metadata/featured")
+    @ResponseStatus(HttpStatus.OK)
+    fun markFeatured(@PathVariable id: ResourceId) {
+        service.markAsFeatured(id).orElseThrow { ResourceNotFound(id.toString()) }
+    }
+    @DeleteMapping("/{id}/metadata/featured")
+    fun unmarkFeatured(@PathVariable id: ResourceId) {
+        service.markAsNonFeatured(id).orElseThrow { ResourceNotFound(id.toString()) }
+    }
+
+    @GetMapping("/{id}/metadata/featured")
+    fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean =
+        service.getFeaturedResourceFlag(id) ?: throw ResourceNotFound(id.toString())
 }
 
 enum class ExtractionMethod {

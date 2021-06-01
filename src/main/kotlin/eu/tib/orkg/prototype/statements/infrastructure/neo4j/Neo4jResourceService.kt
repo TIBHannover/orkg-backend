@@ -137,6 +137,14 @@ class Neo4jResourceService(
         neo4jResourceRepository.findAllByLabel(title!!)
             .map(Neo4jResource::toResource)
 
+    override fun findAllByFeatured(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository.findAllByFeaturedIsTrue(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun findAllByNonFeatured(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository.findAllByFeaturedIsFalse(pageable)
+            .map(Neo4jResource::toResource)
+
     override fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Resource> =
         neo4jResourceRepository.findPapersByObservatoryId(id)
             .map(Neo4jResource::toResource)
@@ -220,6 +228,58 @@ class Neo4jResourceService(
             return paper.verified ?: false
         }
         return null
+    }
+
+    override fun markAsFeatured(resourceId: ResourceId) = setFeaturedFlag(resourceId, true)
+
+    override fun markAsNonFeatured(resourceId: ResourceId) = setFeaturedFlag(resourceId, false)
+
+    override fun loadFeaturedPapers(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository
+            .findAllFeaturedPapers(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadNonFeaturedPapers(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository
+            .findAllNonFeaturedPapers(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadFeaturedResources(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository
+            .findAllByVerifiedIsTrue(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadNonFeaturedResources(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository
+            .findAllByVerifiedIsFalse(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun getFeaturedPaperFlag(id: ResourceId): Boolean? {
+        val result = neo4jResourceRepository.findPaperByResourceId(id)
+        if (result.isPresent) {
+            val paper = result.get()
+            return paper.featured ?: false
+        }
+        return null
+    }
+
+    override fun getFeaturedResourceFlag(id: ResourceId): Boolean? {
+        val result = neo4jResourceRepository.findByResourceId(id)
+        if (result.isPresent) {
+            val resource = result.get()
+            return resource.featured ?: false
+        }
+        return null
+    }
+
+    private fun setFeaturedFlag(resourceId: ResourceId, featured: Boolean): Optional<Resource> {
+        val result = neo4jResourceRepository.findByResourceId(resourceId)
+        if (result.isPresent) {
+            val resource = result.get()
+            resource.featured = featured
+            return Optional.of(neo4jResourceRepository.save(resource).toResource())
+        }
+        return Optional.empty()
     }
 
     private fun setVerifiedFlag(resourceId: ResourceId, verified: Boolean): Optional<Resource> {

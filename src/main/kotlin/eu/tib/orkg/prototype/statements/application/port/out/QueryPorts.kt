@@ -19,3 +19,21 @@ interface LoadPaperPort {
 interface GetPaperVerifiedFlagQuery {
     fun getPaperVerifiedFlag(id: ResourceId): Boolean?
 }
+
+interface LoadFeaturedResourcePort {
+    fun loadFeaturedResources(pageable: Pageable): Page<Resource>
+    fun loadNonFeaturedResources(pageable: Pageable): Page<Resource>
+}
+
+interface LoadFeaturedPaperAdapter {
+    fun loadFeaturedPapers(pageable: Pageable): Page<Resource>
+    fun loadNonFeaturedPapers(pageable: Pageable): Page<Resource>
+}
+
+interface GetFeaturedPaperFlagQuery {
+    fun getFeaturedPaperFlag(id: ResourceId): Boolean?
+}
+
+interface GetFeaturedResourceFlagQuery {
+    fun getFeaturedResourceFlag(id: ResourceId): Boolean? // Can combine this with the above
+}

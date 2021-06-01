@@ -27,3 +27,13 @@ interface GetBulkStatementsQuery {
         pageable: Pageable
     ): Map<String, Iterable<GeneralStatement>>
 }
+
+interface GetFeaturedResourcesQuery {
+    fun getFeaturedResources(pageable: Pageable): Page<Resource>
+    fun getNonFeaturedResources(pageable: Pageable): Page<Resource>
+}
+
+interface GetFeaturedPapersQuery {
+    fun getFeaturedPapers(pageable: Pageable): Page<Resource>
+    fun getNonFeaturedPapers(pageable: Pageable): Page<Resource>
+}

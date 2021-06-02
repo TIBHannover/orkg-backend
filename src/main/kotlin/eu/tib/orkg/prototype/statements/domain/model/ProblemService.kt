@@ -1,9 +1,11 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ContributorPerProblem
+import java.util.Optional
 import org.springframework.data.domain.Pageable
 
 interface ProblemService {
+    fun findById(id: ResourceId): Optional<Resource>
 
     fun findFieldsPerProblem(problemId: ResourceId): List<Any>
 

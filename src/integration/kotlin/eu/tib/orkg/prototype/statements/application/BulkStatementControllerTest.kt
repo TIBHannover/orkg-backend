@@ -163,10 +163,6 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
         val newP = predicateService.create("with love from")
         val newO = resourceService.create("Hannover, Germany")
 
-        val body = mapOf(
-            "predicate_id" to newP.id!!,
-            "object_id" to newO.id!!
-        )
         mockMvc.perform(putRequest("/api/statements/?ids=${st.id},${st2.id}"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$[0].statement.predicate.id").value(newP.id!!.toString()))

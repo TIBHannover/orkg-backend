@@ -24,7 +24,13 @@ class Neo4jLiteralService(
     override fun create(label: String, datatype: String) = create(ContributorId.createUnknownContributor(), label, datatype)
 
     override fun create(userId: ContributorId, label: String, datatype: String): Literal {
-        val literalId = neo4jLiteralIdGenerator.nextIdentity()
+        var literalId = neo4jLiteralIdGenerator.nextIdentity()
+
+        // Should be moved to the Generator in the future
+        while (neo4jLiteralRepository.findByLiteralId(literalId).isPresent) {
+            literalId = neo4jLiteralIdGenerator.nextIdentity()
+        }
+
         return neo4jLiteralRepository
             .save(Neo4jLiteral(label = label, literalId = literalId, datatype = datatype, createdBy = userId))
             .toLiteral()

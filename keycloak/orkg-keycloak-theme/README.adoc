@@ -1,0 +1,55 @@
+= Keycloak Themes for ORKG
+:icons: font
+
+This directory contains themes for Keycloak, so it fits nicely into the project.
+
+For more information on Keycloak themes, check the https://www.keycloak.org/docs/latest/server_development/#_themes["Themes" section in the documentation].
+
+== Building
+
+The theme bundle can be created by executing the `bundleThemes` task from Gradle.
+The resulting JAR can be found in the directory `build/themes`.
+
+== Deploying
+
+The JAR file containing the theme needs to be placed into the `standalone/deployments/` directory.
+
+This is only relevant for deploying the theme into production.
+To test the theme, see the <<Development>> section.
+
+== Development
+
+The `orkg` theme is mounted into the Docker container automatically to make developing the theme easier.
+To work on the theme it is recommended to disable caching inside Keycloak.
+This needs to be done only once after starting a fresh container.
+
+To disable the cache do:
+
+. Log into the container:
++
+  docker exec -it orkg-backend_keycloak_1 /bin/bash
+
+. Disable the theme cache by running:
++
+[source,bash,linenumbers]
+----
+/opt/jboss/keycloak/bin/jboss-cli.sh --connect --command='/subsystem=keycloak-server/theme=defaults/:write-attribute(name=cacheThemes,value=false)'
+/opt/jboss/keycloak/bin/jboss-cli.sh --connect --command='/subsystem=keycloak-server/theme=defaults/:write-attribute(name=cacheTemplates,value=false)'
+----
+. Exit the container: Press "Ctrl+d" or type `exit`.
+. Restart the container:
++
+  docker-compose stop keycloak && docker-compose up -d keycloak
+
+It is now possible to edit the files seeing the changes when refreshing the page.
+
+== Notes
+
+* The Gradle task is very minimal in order to keep things simple.
+  It follows the exact same structure and naming as described in the documentation.
+  Packaging everything into a bundle is basically copying files to the right destination inside the archive.
+  This also mean that there is no help from the IDE in case things are not consistent.
+* Although it is possible to package multiple themes into one bundle, it is usually better to keep them separate if they do not relate to the same project.
+  Packaging a new theme and a "legacy" theme after some design changes is fine.
+* Depending on how close we stay to a theme template provided by Keycloak, it might make sense to check for differences in templates from future releases to stay compatible.
+  The latest versions of themes can be found https://github.com/keycloak/keycloak/tree/master/themes/src/main/resources/theme[here].

@@ -57,6 +57,8 @@ services:
       DB_VENDOR: H2
     networks:
       - backend
+    volumes:
+      - ./keycloak/orkg-keycloak-theme/theme/orkg/:/opt/jboss/keycloak/themes/orkg:ro
 
   # Mail server. Can be used in Keycloak to test mail flows.
   mailhog:

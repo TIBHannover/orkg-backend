@@ -20,14 +20,39 @@ interface GetPaperVerifiedFlagQuery {
     fun getPaperVerifiedFlag(id: ResourceId): Boolean?
 }
 
-interface LoadFeaturedResourcePort {
+interface LoadFeaturedResourceAdapter {
     fun loadFeaturedResources(pageable: Pageable): Page<Resource>
     fun loadNonFeaturedResources(pageable: Pageable): Page<Resource>
+}
+
+interface LoadFeaturedComparisonPort {
+    fun loadFeaturedComparisons(pageable: Pageable): Page<Resource>
+    fun loadNonFeaturedComparisons(pageable: Pageable): Page<Resource>
+}
+
+interface LoadFeaturedContributionPort {
+    fun loadFeaturedContributions(pageable: Pageable): Page<Resource>
+    fun loadNonFeaturedContributions(pageable: Pageable): Page<Resource>
+}
+
+interface LoadFeaturedVisualizationPort {
+    fun loadFeaturedVisualizations(pageable: Pageable): Page<Resource>
+    fun loadNonFeaturedVisualizations(pageable: Pageable): Page<Resource>
+}
+
+interface LoadFeaturedSmartReviewPort {
+    fun loadFeaturedSmartReviews(pageable: Pageable): Page<Resource>
+    fun loadNonFeaturedSmartReviews(pageable: Pageable): Page<Resource>
 }
 
 interface LoadFeaturedPaperAdapter {
     fun loadFeaturedPapers(pageable: Pageable): Page<Resource>
     fun loadNonFeaturedPapers(pageable: Pageable): Page<Resource>
+}
+
+interface LoadFeaturedProblemAdapter {
+    fun loadFeaturedProblems(pageable: Pageable): Page<Resource>
+    fun loadNonFeaturedProblems(pageable: Pageable): Page<Resource>
 }
 
 interface GetFeaturedPaperFlagQuery {
@@ -36,4 +61,24 @@ interface GetFeaturedPaperFlagQuery {
 
 interface GetFeaturedResourceFlagQuery {
     fun getFeaturedResourceFlag(id: ResourceId): Boolean? // Can combine this with the above
+}
+
+interface GetFeaturedProblemFlagQuery {
+    fun getFeaturedProblemFlag(id: ResourceId): Boolean?
+}
+
+interface GetFeaturedContributionFlagQuery {
+    fun getFeaturedContributionFlag(id: ResourceId): Boolean?
+}
+
+interface GetFeaturedComparisonFlagQuery {
+    fun getFeaturedComparisonFlag(id: ResourceId): Boolean?
+}
+
+interface GetFeaturedVisualizationFlagQuery {
+    fun getFeaturedVisualizationFlag(id: ResourceId): Boolean?
+}
+
+interface GetFeaturedSmartReviewFlagQuery {
+    fun getFeaturedSmartReviewFlag(id: ResourceId): Boolean?
 }

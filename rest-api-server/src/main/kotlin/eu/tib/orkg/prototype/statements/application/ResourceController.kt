@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.statements.application
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
-import eu.tib.orkg.prototype.statements.application.port.`in`.MarkFeaturedService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
@@ -40,7 +39,6 @@ import org.springframework.web.util.UriComponentsBuilder
 class ResourceController(
     private val service: ResourceService,
     private val contributorService: ContributorService,
-    private val featuredService: MarkFeaturedService,
     private val neo4jResourceService: Neo4jResourceService
 ) : BaseController() {
 

@@ -7,11 +7,19 @@ import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryReq
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsVerifiedUseCase
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkFeaturedService
+import eu.tib.orkg.prototype.statements.application.port.out.GetFeaturedComparisonFlagQuery
+import eu.tib.orkg.prototype.statements.application.port.out.GetFeaturedContributionFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.GetFeaturedPaperFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.GetFeaturedResourceFlagQuery
+import eu.tib.orkg.prototype.statements.application.port.out.GetFeaturedSmartReviewFlagQuery
+import eu.tib.orkg.prototype.statements.application.port.out.GetFeaturedVisualizationFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.GetPaperVerifiedFlagQuery
+import eu.tib.orkg.prototype.statements.application.port.out.LoadFeaturedComparisonPort
+import eu.tib.orkg.prototype.statements.application.port.out.LoadFeaturedContributionPort
 import eu.tib.orkg.prototype.statements.application.port.out.LoadFeaturedPaperAdapter
-import eu.tib.orkg.prototype.statements.application.port.out.LoadFeaturedResourcePort
+import eu.tib.orkg.prototype.statements.application.port.out.LoadFeaturedResourceAdapter
+import eu.tib.orkg.prototype.statements.application.port.out.LoadFeaturedSmartReviewPort
+import eu.tib.orkg.prototype.statements.application.port.out.LoadFeaturedVisualizationPort
 import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperPort
 import eu.tib.orkg.prototype.statements.application.port.out.LoadResourcePort
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
@@ -27,9 +35,17 @@ interface ResourceService :
     GetPaperVerifiedFlagQuery,
     MarkFeaturedService,
     LoadFeaturedPaperAdapter,
-    LoadFeaturedResourcePort,
+    LoadFeaturedResourceAdapter,
     GetFeaturedPaperFlagQuery,
-    GetFeaturedResourceFlagQuery {
+    GetFeaturedResourceFlagQuery,
+    LoadFeaturedComparisonPort,
+    LoadFeaturedContributionPort,
+    LoadFeaturedVisualizationPort,
+    LoadFeaturedSmartReviewPort,
+    GetFeaturedContributionFlagQuery,
+    GetFeaturedComparisonFlagQuery,
+    GetFeaturedVisualizationFlagQuery,
+    GetFeaturedSmartReviewFlagQuery {
     /**
      * Create a new resource with a given label.
      *

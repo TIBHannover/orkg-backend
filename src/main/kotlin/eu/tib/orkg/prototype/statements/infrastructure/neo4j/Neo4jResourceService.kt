@@ -12,9 +12,13 @@ import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jComparisonRepository
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jContributionRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceIdGenerator
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceRepository
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jSmartReviewRepository
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jVisualizationRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
 import eu.tib.orkg.prototype.util.EscapedRegex
 import eu.tib.orkg.prototype.util.SanitizedWhitespace
@@ -29,6 +33,10 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class Neo4jResourceService(
     private val neo4jResourceRepository: Neo4jResourceRepository,
+    private val neo4jComparisonRepository: Neo4jComparisonRepository,
+    private val neo4jContributionRepository: Neo4jContributionRepository,
+    private val neo4jVisualizationRepository: Neo4jVisualizationRepository,
+    private val neo4jSmartReviewRepository: Neo4jSmartReviewRepository,
     private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator
 ) : ResourceService {
 
@@ -265,6 +273,89 @@ class Neo4jResourceService(
 
     override fun getFeaturedResourceFlag(id: ResourceId): Boolean? {
         val result = neo4jResourceRepository.findByResourceId(id)
+        if (result.isPresent) {
+            val resource = result.get()
+            return resource.featured ?: false
+        }
+        return null
+    }
+
+    override fun loadFeaturedComparisons(pageable: Pageable): Page<Resource> =
+        neo4jComparisonRepository
+            .findAllFeaturedComparisons(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadNonFeaturedComparisons(pageable: Pageable):
+        Page<Resource> =
+        neo4jComparisonRepository
+            .findAllNonFeaturedComparsions(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadFeaturedContributions(pageable: Pageable):
+        Page<Resource> =
+        neo4jContributionRepository
+            .findAllFeaturedContributions(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadNonFeaturedContributions(pageable: Pageable):
+        Page<Resource> =
+        neo4jContributionRepository
+            .findAllNonFeaturedContributions(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadFeaturedVisualizations(pageable: Pageable):
+        Page<Resource> =
+        neo4jVisualizationRepository
+            .findAllFeaturedVisualizations(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadNonFeaturedVisualizations(pageable: Pageable):
+        Page<Resource> =
+            neo4jVisualizationRepository
+            .findAllNonFeaturedVisualizations(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadFeaturedSmartReviews(pageable: Pageable):
+        Page<Resource> =
+        neo4jSmartReviewRepository
+            .findAllFeaturedSmartReviews(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadNonFeaturedSmartReviews(pageable: Pageable):
+        Page<Resource> =
+        neo4jSmartReviewRepository
+            .findAllNonFeaturedSmartReviews(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun getFeaturedContributionFlag(id: ResourceId): Boolean? {
+        val result = neo4jContributionRepository.findContributionByResourceId(id)
+        if (result.isPresent) {
+            val resource = result.get()
+            return resource.featured ?: false
+        }
+        return null
+    }
+
+    override fun getFeaturedComparisonFlag(id: ResourceId): Boolean? {
+        val result = neo4jComparisonRepository.findComparisonByResourceId(id)
+        if (result.isPresent) {
+            val resource = result.get()
+            return resource.featured ?: false
+        }
+        return null
+    }
+
+    override fun getFeaturedVisualizationFlag(id: ResourceId): Boolean? {
+        val result = neo4jVisualizationRepository.findVisualizationByResourceId(id)
+        if (result.isPresent) {
+            val resource = result.get()
+            return resource.featured ?: false
+        }
+        return null
+    }
+
+    override fun getFeaturedSmartReviewFlag(id: ResourceId): Boolean? {
+        val result = neo4jSmartReviewRepository.findSmartReviewByResourceId(id)
         if (result.isPresent) {
             val resource = result.get()
             return resource.featured ?: false

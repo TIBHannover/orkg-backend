@@ -6,7 +6,9 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ContributorPerProblem
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jProblemRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceRepository
 import java.util.Optional
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -14,7 +16,8 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class Neo4jProblemService(
-    private val neo4jProblemRepository: Neo4jProblemRepository
+    private val neo4jProblemRepository: Neo4jProblemRepository,
+    private val neo4jResourceRepository: Neo4jResourceRepository
 ) : ProblemService {
     override fun findById(id: ResourceId): Optional<Resource> =
         neo4jProblemRepository
@@ -72,5 +75,36 @@ class Neo4jProblemService(
                         val papers = it.papers
                     }
             }
+    }
+
+    override fun getFeaturedProblemFlag(id: ResourceId): Boolean? {
+        val result = neo4jProblemRepository.findById(id)
+        if (result.isPresent) {
+            val problem = result.get()
+            return problem.featured ?: false
+        }
+        return null
+    }
+
+    override fun loadFeaturedProblems(pageable: Pageable): Page<Resource> =
+        neo4jProblemRepository.findAllFeaturedProblems(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadNonFeaturedProblems(pageable: Pageable): Page<Resource> =
+        neo4jProblemRepository.findAllNonFeaturedProblems(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun markAsFeatured(resourceId: ResourceId) = setFeaturedFlag(resourceId, true)
+
+    override fun markAsNonFeatured(resourceId: ResourceId) = setFeaturedFlag(resourceId, false)
+
+    private fun setFeaturedFlag(resourceId: ResourceId, featured: Boolean): Optional<Resource> {
+        val result = neo4jProblemRepository.findById(resourceId)
+        if (result.isPresent) {
+            val problem = result.get()
+            problem.featured = featured
+            return Optional.of(neo4jProblemRepository.save(problem).toResource())
+        }
+        return Optional.empty()
     }
 }

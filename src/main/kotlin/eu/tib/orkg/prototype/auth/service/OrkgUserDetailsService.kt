@@ -19,3 +19,4 @@ class OrkgUserDetailsService(
         throw UsernameNotFoundException("No user found with email $username")
     }
 }
+

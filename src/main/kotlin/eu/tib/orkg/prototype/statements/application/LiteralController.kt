@@ -1,9 +1,12 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.auth.service.OrkgUserRepository
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import org.springframework.http.HttpStatus.CREATED
@@ -21,10 +24,12 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.security.Principal
 
 @RestController
 @RequestMapping("/api/literals/")
-class LiteralController(private val service: LiteralService) : BaseController() {
+class LiteralController(private val service: LiteralService,
+private val orkgUserRepository: OrkgUserRepository) : BaseController(orkgUserRepository) {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: LiteralId): Literal =
@@ -44,14 +49,16 @@ class LiteralController(private val service: LiteralService) : BaseController() 
             else
                 service.findAllByLabelContaining(searchString)
 
+    @Operation(security = [SecurityRequirement(name = "bearer-key")])
     @PostMapping("/")
     @ResponseStatus(CREATED)
     fun add(
         @RequestBody @Valid literal: LiteralCreateRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
+        principal: Principal
     ): ResponseEntity<Literal> {
-        val userId = authenticatedUserId()
-        val id = service.create(ContributorId(userId), literal.label, literal.datatype).id
+        val userId = authenticatedUserId(principal)
+        val id = service.create(ContributorId(userId!!), literal.label, literal.datatype).id
         val location = uriComponentsBuilder
             .path("api/literals/{id}")
             .buildAndExpand(id)
@@ -60,6 +67,7 @@ class LiteralController(private val service: LiteralService) : BaseController() 
         return created(location).body(service.findById(id).get())
     }
 
+    @Operation(security = [SecurityRequirement(name = "bearer-key")])
     @PutMapping("/{id}")
     fun update(
         @PathVariable id: LiteralId,

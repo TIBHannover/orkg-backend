@@ -7,6 +7,8 @@ import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
@@ -46,6 +48,7 @@ class BulkStatementController(
     ): List<BulkGetStatementsResponse> {
         return resourceIds.map { BulkGetStatementsResponse(it.value, statementService.findAllByObject(it.value, pageable)) }
 }
+    @Operation(security = [SecurityRequirement(name = "bearer-key")])
     @DeleteMapping("/")
     fun delete(
         @RequestParam("ids") statementsIds: List<StatementId>
@@ -54,6 +57,7 @@ class BulkStatementController(
         return noContent().build()
     }
 
+    @Operation(security = [SecurityRequirement(name = "bearer-key")])
     @PutMapping("/")
     fun edit(
         @RequestParam("ids") statementsIds: List<StatementId>,

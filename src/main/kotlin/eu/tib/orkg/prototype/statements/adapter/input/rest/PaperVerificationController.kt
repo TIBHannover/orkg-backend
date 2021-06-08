@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.input.rest
 
+import eu.tib.orkg.prototype.auth.service.OrkgUserRepository
 import eu.tib.orkg.prototype.statements.application.BaseController
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.port.out.GetPaperVerifiedFlagQuery
@@ -15,8 +16,9 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class PaperVerificationController(
     private val adapter: LoadPaperPort, // FIXME: should be adapter
-    private val query: GetPaperVerifiedFlagQuery
-) : BaseController() {
+    private val query: GetPaperVerifiedFlagQuery,
+    private val orkgUserRepository: OrkgUserRepository
+) : BaseController(orkgUserRepository) {
 
     @GetMapping("/api/papers/{id}/metadata/verified")
     fun getVerifiedFlag(@PathVariable id: ResourceId): Boolean =

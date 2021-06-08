@@ -1,16 +1,12 @@
 package eu.tib.orkg.prototype.auth.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.auth.persistence.RoleEntity
-import eu.tib.orkg.prototype.auth.persistence.UserEntity
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.auth.keycloak.KeycloakServiceHandler
+import eu.tib.orkg.prototype.auth.keycloak.KeycloakUserDetails
 import eu.tib.orkg.prototype.statements.application.UserNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import java.security.Principal
 import java.util.UUID
-import javax.validation.Valid
-import javax.validation.constraints.NotBlank
-import javax.validation.constraints.Size
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.ResponseEntity
@@ -25,16 +21,16 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/user")
 class UserController(
-    private val userService: UserService,
+    private val userService: KeycloakServiceHandler,
     private val observatoryService: ObservatoryService
 ) {
     @GetMapping("/")
-    fun lookupUserDetails(principal: Principal?): ResponseEntity<UserDetails> {
+    fun lookupUserDetails(principal: Principal?): ResponseEntity<KeycloakUserDetails> {
         if (principal?.name == null)
             return ResponseEntity(UNAUTHORIZED)
-        val user = userService.findById(UUID.fromString(principal.name))
-        if (user.isPresent)
-            return ok(UserDetails(user.get()))
+        val user = userService.getUserDetails(principal)
+        if (user != null)
+            return ok(user)
         return ResponseEntity(NOT_FOUND)
     }
 
@@ -45,33 +41,44 @@ class UserController(
      * It should not be used for other user data! Use the contributor abstraction for that!
      */
     @GetMapping("/{id}")
-    fun lookupUser(@PathVariable id: UUID): ResponseEntity<UserDetails> {
-        val contributor = userService.findById(id).orElseThrow { UserNotFound("$id") }
-        return ok(UserDetails(contributor))
+    fun lookupUser(@PathVariable id: UUID, principal: Principal): ResponseEntity<KeycloakUserDetails> {
+        //val contributor = userService.findById(id).orElseThrow { UserNotFound("$id") }
+        if (principal?.name == null)
+            return ResponseEntity(UNAUTHORIZED)
+        val user = userService.getUserDetails(principal)
+        if (user != null)
+            return ok(user)
+        return ResponseEntity(NOT_FOUND)
     }
-
+/*
+    @Operation(security = [SecurityRequirement(name = "bearer-key")])
     @PutMapping("/")
     fun updateUserDetails(@RequestBody @Valid updatedDetails: UserDetailsUpdateRequest, principal: Principal?): ResponseEntity<UserDetails> {
         if (principal?.name == null)
             return ResponseEntity((UNAUTHORIZED))
-        val foundUser = userService.findById(UUID.fromString(principal.name))
+        /*val foundUser = userService.findById(UUID.fromString(principal.name))
         if (foundUser.isPresent) {
             val currentUser = foundUser.get()
             val id = currentUser.id!!
             userService.updateName(id, updatedDetails.displayName)
             return ok(UserDetails(currentUser))
-        }
+        }*/
+        //Should add the details
+
         return ResponseEntity(NOT_FOUND)
     }
 
+ */
+/*
     @PutMapping("/password")
     fun updatePassword(@RequestBody @Valid updatedPassword: PasswordDTO, principal: Principal?): ResponseEntity<Any> {
+
         if (principal?.name == null)
             return ResponseEntity((UNAUTHORIZED))
         if (!updatedPassword.hasMatchingPasswords())
             throw PasswordsDoNotMatch()
 
-        val foundUser = userService.findById(UUID.fromString(principal.name))
+        /*val foundUser = userService.findById(UUID.fromString(principal.name))
         if (foundUser.isPresent) {
             val currentUser = foundUser.get()
             if (userService.checkPassword(currentUser.id!!, updatedPassword.currentPassword)) {
@@ -79,29 +86,30 @@ class UserController(
             } else {
                 throw CurrentPasswordInvalid()
             }
-        }
+        }*/
         return ok(UpdatedUserResponse("success"))
     }
-
+*/
     @PutMapping("/role")
     fun updateUserRoleToOwner(principal: Principal?): ResponseEntity<Any> {
         if (principal?.name == null)
             return ResponseEntity((UNAUTHORIZED))
-        val foundUser = userService.findById(UUID.fromString(principal.name))
+        /*val foundUser = userService.findById(UUID.fromString(principal.name))
         if (foundUser.isPresent) {
             val currentUser = foundUser.get()
             val id = currentUser.id!!
             userService.updateRole(id)
             return ok(UserDetails(currentUser))
-        }
+        }*/
         return ResponseEntity(NOT_FOUND)
     }
+
 
     /**
      * Decorator for user data.
      * This class prevents user data from leaking by only exposing data that is relevant to the client.
      */
-    data class UserDetails(private val user: UserEntity) {
+/*    data class UserDetails(private val user: UserEntity) {
         @JsonProperty("id")
         val id: UUID = user.id!!
 
@@ -124,7 +132,7 @@ class UserController(
         val isCurationAllowed: Boolean
         get() = "ROLE_ADMIN" in user.roles.map(RoleEntity::name)
     }
-
+*/
     data class UpdatedUserResponse(
         val status: String
     )
@@ -132,7 +140,7 @@ class UserController(
     /**
      * Data Transfer Object (DTO) for updating the user details.
      */
-    data class UserDetailsUpdateRequest(
+/*    data class UserDetailsUpdateRequest(
         @field:Size(min = 1, max = 100)
         @JsonProperty("display_name")
         val displayName: String
@@ -156,5 +164,5 @@ class UserController(
         val newMatchingPassword: String
     ) {
         fun hasMatchingPasswords() = newPassword == newMatchingPassword
-    }
+    }*/
 }

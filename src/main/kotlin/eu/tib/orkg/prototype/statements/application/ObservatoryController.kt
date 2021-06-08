@@ -13,6 +13,8 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.Neo4jStatsService
 import eu.tib.orkg.prototype.util.removeSingleQuotes
 import eu.tib.orkg.prototype.util.replaceWhitespaceWithUnderscores
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import java.util.UUID
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
@@ -37,6 +39,7 @@ class ObservatoryController(
     private val neo4jStatsService: Neo4jStatsService
 ) {
 
+    @Operation(security = [SecurityRequirement(name = "bearer-key")])
     @PostMapping("/")
     fun addObservatory(@RequestBody observatory: CreateObservatoryRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         return if (service.findByName(observatory.observatoryName).isEmpty && service.findByDisplayId(observatory.displayId).isEmpty) {

@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import eu.tib.orkg.prototype.auth.service.OrkgUserRepository
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -10,6 +11,8 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
@@ -31,13 +34,15 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.security.Principal
 
 @RestController
 @RequestMapping("/api/resources/")
 class ResourceController(
     private val service: ResourceService,
-    private val contributorService: ContributorService
-) : BaseController() {
+    private val contributorService: ContributorService,
+    private val orkgUserRepository: OrkgUserRepository
+) : BaseController(orkgUserRepository) {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: ResourceId): Resource =
@@ -66,13 +71,16 @@ class ResourceController(
         }
     }
 
+    @Operation(security = [SecurityRequirement(name = "bearer-key")])
     @PostMapping("/")
     @ResponseStatus(CREATED)
-    fun add(@RequestBody resource: CreateResourceRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
+    fun add(@RequestBody resource: CreateResourceRequest,
+            uriComponentsBuilder: UriComponentsBuilder,
+            principal: Principal): ResponseEntity<Any> {
         if (resource.id != null && service.findById(resource.id).isPresent)
             return badRequest().body("Resource id <${resource.id}> already exists!")
-        val userId = authenticatedUserId()
-        val contributor = contributorService.findById(ContributorId(userId))
+        val userId = authenticatedUserId(principal)
+        val contributor = contributorService.findById(ContributorId(userId!!))
         var observatoryId = ObservatoryId.createUnknownObservatory()
         var organizationId = OrganizationId.createUnknownOrganization()
         if (!contributor.isEmpty) {
@@ -88,6 +96,7 @@ class ResourceController(
         return created(location).body(service.findById(id).get())
     }
 
+    @Operation(security = [SecurityRequirement(name = "bearer-key")])
     @PutMapping("/{id}")
     fun update(
         @PathVariable id: ResourceId,
@@ -120,6 +129,7 @@ class ResourceController(
         return service.findContributorsByResourceId(id)
     }
 
+    @Operation(security = [SecurityRequirement(name = "bearer-key")])
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun delete(@PathVariable id: ResourceId): ResponseEntity<Unit> {

@@ -11,6 +11,8 @@ import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.util.removeSingleQuotes
 import eu.tib.orkg.prototype.util.replaceWhitespaceWithUnderscores
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import java.io.File
 import java.util.Base64
 import java.util.UUID
@@ -38,6 +40,7 @@ class OrganizationController(
     @Value("\${orkg.storage.images.dir}")
     var imageStoragePath: String? = null
 
+    @Operation(security = [SecurityRequirement(name = "bearer-key")])
     @PostMapping("/")
     fun addOrganization(@RequestBody organization: CreateOrganizationRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         if (!isValidLogo(organization.organizationLogo)) {

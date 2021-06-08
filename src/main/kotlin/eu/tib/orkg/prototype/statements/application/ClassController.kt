@@ -1,11 +1,14 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.auth.service.OrkgUserRepository
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import java.net.URI
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -22,11 +25,15 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.security.Principal
 
 @RestController
 @RequestMapping("/api/classes/")
-class ClassController(private val service: ClassService, private val resourceService: ResourceService) :
-    BaseController() {
+class ClassController(
+    private val service: ClassService,
+    private val resourceService: ResourceService,
+    private val orkgUserRepository: OrkgUserRepository) :
+    BaseController(orkgUserRepository) {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: ClassId): Class =
@@ -75,9 +82,10 @@ class ClassController(private val service: ClassService, private val resourceSer
         }
     }
 
+    @Operation(security = [SecurityRequirement(name = "bearer-key")])
     @PostMapping("/")
     @ResponseStatus(CREATED)
-    fun add(@RequestBody `class`: CreateClassRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
+    fun add(@RequestBody `class`: CreateClassRequest, uriComponentsBuilder: UriComponentsBuilder, principal: Principal): ResponseEntity<Any> {
         if (`class`.id != null && service.findById(`class`.id).isPresent)
             throw ClassAlreadyExists(`class`.id.value)
         if (!`class`.hasValidName())
@@ -88,8 +96,8 @@ class ClassController(private val service: ClassService, private val resourceSer
                 throw DuplicateURI(`class`.uri, found.get().id.toString())
         }
 
-        val userId = authenticatedUserId()
-        val id = service.create(ContributorId(userId), `class`).id!!
+        val userId = authenticatedUserId(principal)
+        val id = service.create(ContributorId(userId!!), `class`).id!!
         val location = uriComponentsBuilder
             .path("api/classes/{id}")
             .buildAndExpand(id)
@@ -98,6 +106,7 @@ class ClassController(private val service: ClassService, private val resourceSer
         return created(location).body(service.findById(id).get())
     }
 
+    @Operation(security = [SecurityRequirement(name = "bearer-key")])
     @PutMapping("/{id}")
     fun update(
         @PathVariable id: ClassId,

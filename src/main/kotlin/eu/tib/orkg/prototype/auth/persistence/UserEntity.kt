@@ -59,7 +59,7 @@ class UserEntity {
     )
     var roles: MutableSet<RoleEntity> = mutableSetOf()
 
-    fun toUserPrincipal(): UserDetails =
+    fun toUserPrincipal() : UserDetails =
         UserPrincipal(
             username = id!!,
             password = password!!,
@@ -67,6 +67,7 @@ class UserEntity {
             enabled = enabled,
             displayName = displayName!!
         )
+
 
     fun toContributor() = Contributor(
         id = ContributorId(this.id!!),

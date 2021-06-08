@@ -1,6 +1,9 @@
 package eu.tib.orkg.prototype.contributions.domain.model
 
+import eu.tib.orkg.prototype.auth.keycloak.KeycloakServiceHandler
+import eu.tib.orkg.prototype.auth.persistence.ORKGUserEntity
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
+import eu.tib.orkg.prototype.auth.service.OrkgUserRepository
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.contributions.application.ports.input.RetrieveContributorUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
@@ -13,12 +16,13 @@ import org.springframework.stereotype.Service
 @Service
 @Transactional
 class ContributorService(
-    private val userRepository: UserRepository
+    private val userRepository: OrkgUserRepository,
+    private val keycloakServiceHandler: KeycloakServiceHandler
 ) : RetrieveContributorUseCase {
     fun findById(userId: ContributorId): Optional<Contributor> =
         userRepository
             .findById(userId.value)
-            .map(UserEntity::toContributor)
+            .map(ORKGUserEntity::toContributor)
 
     /**
      * Attempt to find a contributor with a given ID, or return a default user.
@@ -35,13 +39,13 @@ class ContributorService(
 
     fun findUsersByOrganizationId(id: OrganizationId): Iterable<Contributor> =
         userRepository
-            .findByOrganizationId(id.value)
-            .map(UserEntity::toContributor)
+            .findAllByOrganizationId(id.value)
+            .map(ORKGUserEntity::toContributor)
 
     fun findUsersByObservatoryId(id: ObservatoryId): Iterable<Contributor> =
         userRepository
-            .findByObservatoryId(id.value)
-            .map(UserEntity::toContributor)
+            .findAllByObservatoryId(id.value)
+            .map(ORKGUserEntity::toContributor)
 
     override fun byId(id: ContributorId): Optional<Contributor> = findById(id)
 }

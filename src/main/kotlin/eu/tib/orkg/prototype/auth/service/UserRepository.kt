@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.auth.service
 
+
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import java.util.Optional
 import java.util.UUID
@@ -22,3 +23,4 @@ interface UserRepository :
     @Query("SELECT u FROM UserEntity u WHERE u.id in ?1")
     fun findByIdIn(@Param("ids")ids: Array<UUID>): List<UserEntity>
 }
+

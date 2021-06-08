@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.auth.service.OrkgUserRepository
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.Class
@@ -13,6 +14,8 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import eu.tib.orkg.prototype.statements.domain.model.Thing
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpEntity
@@ -32,12 +35,14 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.security.Principal
 
 @RestController
 @RequestMapping("/api/statements")
 class StatementController(
-    private val statementService: StatementService
-) : BaseController() {
+    private val statementService: StatementService,
+    private val orkgUserRepository: OrkgUserRepository
+) : BaseController(orkgUserRepository) {
 
     @GetMapping("/")
     fun findAll(
@@ -114,13 +119,16 @@ class StatementController(
         return ok(statementService.findAllByObjectAndPredicate(objectId, predicateId, pageable))
     }
 
+    @Operation(security = [SecurityRequirement(name = "bearer-key")])
     @PostMapping("/")
     @ResponseStatus(CREATED)
-    fun add(@RequestBody statement: CreateStatement, uriComponentsBuilder: UriComponentsBuilder):
+    fun add(@RequestBody statement: CreateStatement,
+            uriComponentsBuilder: UriComponentsBuilder,
+            principal: Principal):
         HttpEntity<StatementResponse> {
-        val userId = authenticatedUserId()
+        val userId = authenticatedUserId(principal)
         val body = statementService.create(
-            ContributorId(userId),
+            ContributorId(userId!!),
             statement.subjectId,
             statement.predicateId,
             statement.objectId
@@ -133,6 +141,7 @@ class StatementController(
         return created(location).body(body)
     }
 
+    @Operation(security = [SecurityRequirement(name = "bearer-key")])
     @PutMapping("/{id}")
     fun edit(
         @PathVariable id: StatementId,
@@ -154,6 +163,7 @@ class StatementController(
         return ok(statementService.update(toUpdate))
     }
 
+    @Operation(security = [SecurityRequirement(name = "bearer-key")])
     @DeleteMapping("/{id}")
     fun delete(
         @PathVariable id: StatementId

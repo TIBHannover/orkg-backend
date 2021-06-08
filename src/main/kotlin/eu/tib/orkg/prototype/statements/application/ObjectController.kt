@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.auth.service.OrkgUserRepository
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -14,6 +15,8 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import java.util.LinkedList
 import java.util.Queue
 import org.springframework.http.HttpStatus
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.security.Principal
 
 @RestController
 @RequestMapping("/api/objects/")
@@ -35,16 +39,19 @@ class ObjectController(
     private val predicateService: PredicateService,
     private val statementService: StatementService,
     private val classService: ClassService,
-    private val contributorService: ContributorService
-) : BaseController() {
+    private val contributorService: ContributorService,
+    private val orkgUserRepository: OrkgUserRepository
+) : BaseController(orkgUserRepository) {
 
+    @Operation(security = [SecurityRequirement(name = "bearer-key")])
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
     fun add(
         @RequestBody obj: CreateObjectRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
+        principal: Principal
     ): ResponseEntity<Resource> {
-        val resource = createObject(obj)
+        val resource = createObject(obj, principal=principal)
         val location = uriComponentsBuilder
             .path("api/objects/")
             .buildAndExpand(resource.id)
@@ -57,12 +64,13 @@ class ObjectController(
     fun add(
         @PathVariable id: ResourceId,
         @RequestBody obj: CreateObjectRequest,
-        uriComponentsBuilder: UriComponentsBuilder
+        uriComponentsBuilder: UriComponentsBuilder,
+        principal: Principal
     ): ResponseEntity<Resource> {
         resourceService
             .findById(id)
             .orElseThrow { ResourceNotFound() }
-        val resource = createObject(obj, id)
+        val resource = createObject(obj, id, principal=principal)
         val location = uriComponentsBuilder
             .path("api/objects/")
             .buildAndExpand(resource.id)
@@ -79,10 +87,11 @@ class ObjectController(
      */
     fun createObject(
         request: CreateObjectRequest,
-        existingResourceId: ResourceId? = null
+        existingResourceId: ResourceId? = null,
+        principal: Principal
     ): Resource {
         // Get provenance info
-        val userId = ContributorId(authenticatedUserId())
+        val userId = ContributorId(authenticatedUserId(principal)!!)
         val contributor = contributorService.findByIdOrElseUnknown(userId)
         val organizationId = contributor.organizationId
         val observatoryId = contributor.observatoryId

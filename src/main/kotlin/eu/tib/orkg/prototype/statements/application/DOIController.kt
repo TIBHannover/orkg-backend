@@ -5,6 +5,8 @@ import eu.tib.orkg.prototype.configuration.DataCiteConfiguration
 import eu.tib.orkg.prototype.statements.domain.model.DoiService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import java.time.LocalDate
 import java.util.Base64
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,6 +25,7 @@ class DOIController(
     @Autowired
     private lateinit var dataciteConfiguration: DataCiteConfiguration
 
+    @Operation(security = [SecurityRequirement(name = "bearer-key")])
     @PostMapping("/")
     fun addDOI(@RequestBody doiData: CreateDOIRequest): String {
         val doiPrefix = dataciteConfiguration.doiPrefix!!

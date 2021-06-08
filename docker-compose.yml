@@ -46,6 +46,15 @@ services:
       - backend
     volumes:
       - 'postgres-data:/var/lib/postgresql/data/pgdata'
+      
+    # Mail server. Can be used in Keycloak to test mail flows.
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - 127.0.0.1:1025:1025  # SMTP
+      - 127.0.0.1:8025:8025  # User interface
+    networks:
+      - backend
 
 networks:
   backend:

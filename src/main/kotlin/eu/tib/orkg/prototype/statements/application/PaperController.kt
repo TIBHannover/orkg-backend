@@ -1,5 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.auth.keycloak.KeycloakServiceHandler
+import eu.tib.orkg.prototype.auth.service.OrkgUserRepository
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
@@ -13,9 +15,15 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import org.apache.tomcat.jni.User.username
+import org.keycloak.KeycloakPrincipal
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -23,6 +31,10 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.security.Principal
+import java.util.UUID
+import java.util.logging.Logger
+
 
 @RestController
 @RequestMapping("/api/papers/")
@@ -32,17 +44,23 @@ class PaperController(
     private val predicateService: PredicateService,
     private val statementService: StatementService,
     private val contributorService: ContributorService,
-    private val objectController: ObjectController
-) : BaseController() {
+    private val objectController: ObjectController,
+    private val keycloakServiceHandler: KeycloakServiceHandler,
+    private val orkgUserRepository: OrkgUserRepository) :
+    BaseController(orkgUserRepository) {
 
+    private val logger = Logger.getLogger("Testing")
+
+    @Operation(security = [SecurityRequirement(name = "bearer-key")])
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
     fun add(
         @RequestBody paper: CreatePaperRequest,
         uriComponentsBuilder: UriComponentsBuilder,
-        @RequestParam("mergeIfExists", required = false, defaultValue = "false") mergeIfExists: Boolean
+        @RequestParam("mergeIfExists", required = false, defaultValue = "false") mergeIfExists: Boolean,
+        principal: Principal
     ): ResponseEntity<Resource> {
-        val resource = addPaperContent(paper, mergeIfExists)
+        val resource = addPaperContent(paper, mergeIfExists, principal)
         val location = uriComponentsBuilder
             .path("api/resources/")
             .buildAndExpand(resource.id)
@@ -56,9 +74,10 @@ class PaperController(
      */
     fun addPaperContent(
         request: CreatePaperRequest,
-        mergeIfExists: Boolean
+        mergeIfExists: Boolean,
+        principal: Principal
     ): Resource {
-        val userId = ContributorId(authenticatedUserId())
+        val userId = ContributorId(loggedInUserId(principal)!!)
 
         // check if should be merged or not
         val paperObj = createOrFindPaper(mergeIfExists, request, userId)
@@ -67,7 +86,7 @@ class PaperController(
         // paper contribution data
         if (request.paper.hasContributions()) {
             request.paper.contributions!!.forEach {
-                val contributionId = addCompleteContribution(it, request)
+                val contributionId = addCompleteContribution(it, request, principal)
                 // Create statement between paper and contribution
                 statementService.add(userId, paperId.value, Constants.ContributionPredicate, contributionId.value)
             }
@@ -81,13 +100,14 @@ class PaperController(
      */
     private fun addCompleteContribution(
         jsonObject: NamedObject,
-        paperRequest: CreatePaperRequest
+        paperRequest: CreatePaperRequest,
+        principal: Principal
     ): ResourceId {
         // Convert Paper structure to Object structure
         val contribution = jsonObject.copy(classes = listOf(Constants.ID_CONTRIBUTION_CLASS))
         val objectRequest = CreateObjectRequest(paperRequest.predicates, contribution)
         // Create contribution resource whether it has data or not
-        return objectController.createObject(objectRequest).id!!
+        return objectController.createObject(objectRequest, principal = principal).id!!
     }
 
     /**
@@ -300,6 +320,15 @@ class PaperController(
             }
         }
     }
+
+    /*fun loggedInUserId(principal: Principal): UUID? {
+        val user = orkgUserRepository.findByDisplayName(principal.name)
+        if(user.isPresent){
+            return user.get().keycloakID
+        }
+
+        return UUID(0,0)
+    }*/
 }
 
 /**
@@ -391,4 +420,6 @@ data class Author(
      */
     fun isExistingAuthor() =
         !id.isNullOrEmpty()
+
+
 }

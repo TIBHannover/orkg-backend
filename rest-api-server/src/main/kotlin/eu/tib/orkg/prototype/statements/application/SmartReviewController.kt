@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 class SmartReviewController(
     private val neo4jResourceService: Neo4jResourceService,
     private val service: ResourceService
-){
+) {
     @GetMapping("/metadata/featured", params = ["featured=true"])
     fun getFeaturedSmartReviews(pageable: Pageable) =
         neo4jResourceService.loadFeaturedSmartReviews(pageable)
@@ -40,6 +40,4 @@ class SmartReviewController(
     @GetMapping("/{id}/metadata/featured")
     fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean =
         service.getFeaturedResourceFlag(id) ?: throw ResourceNotFound(id.toString())
-
-
 }

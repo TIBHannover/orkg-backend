@@ -23,7 +23,9 @@ data class Resource(
     @JsonProperty("extraction_method")
     val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     @JsonProperty("organization_id")
-    val organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
+    val organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
+    @JsonProperty("featured")
+    val featured: Boolean? = null
 ) : Thing {
     @JsonIgnore
     var rdf: Model? = null

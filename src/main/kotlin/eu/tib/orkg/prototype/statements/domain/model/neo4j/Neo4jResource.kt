@@ -94,7 +94,8 @@ data class Neo4jResource(
         createdBy: ContributorId = ContributorId.createUnknownContributor(),
         observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
         extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
-        organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
+        organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
+        featured: Boolean? = null
     ) : this(null) {
         this.label = label
         this.resourceId = resourceId
@@ -102,6 +103,7 @@ data class Neo4jResource(
         this.observatoryId = observatoryId
         this.extractionMethod = extractionMethod
         this.organizationId = organizationId
+        this.featured = featured
     }
 
     fun toResource(): Resource {
@@ -114,7 +116,8 @@ data class Neo4jResource(
             createdBy = createdBy,
             observatoryId = observatoryId,
             extractionMethod = extractionMethod,
-            organizationId = organizationId
+            organizationId = organizationId,
+            featured = featured
         )
         resource.rdf = toRdfModel()
         return resource

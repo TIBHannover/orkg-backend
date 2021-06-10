@@ -28,11 +28,7 @@ class DiscussionService() {
                 "title": "${topic.title}",
                 "raw": "${topic.raw}"
             }""".toByteArray())
-
-            val responseBody = BufferedReader(InputStreamReader(httpConnection.inputStream, "utf-8"))
-                .readLines()
-                .joinToString("\n", transform = String::trim)
-            return Optional.of(responseBody)
+            return getRequest(httpConnection)
         } catch (e: Exception) {
             Optional.of(e.message.toString())
         }
@@ -41,10 +37,7 @@ class DiscussionService() {
     fun findObservatoryDiscussion(id: String): Optional<String> {
         return try {
             val httpConnection = prepareHttpCall("$discourseUrl/t/$id.json", "GET")
-            val responseBody = BufferedReader(InputStreamReader(httpConnection.inputStream, "utf-8"))
-                .readLines()
-                .joinToString("\n", transform = String::trim)
-            return Optional.of(responseBody)
+            return getRequest(httpConnection)
         } catch (e: Exception) {
             Optional.of(e.message.toString())
         }
@@ -58,5 +51,12 @@ class DiscussionService() {
         con.setRequestProperty("Api-Username", "$discourseUserName")
         con.doOutput = true
         return con
+    }
+
+    private fun getRequest(httpConnection: HttpURLConnection): Optional<String> {
+        val responseBody = BufferedReader(InputStreamReader(httpConnection.inputStream, "utf-8"))
+            .readLines()
+            .joinToString("\n", transform = String::trim)
+        return Optional.of(responseBody)
     }
 }

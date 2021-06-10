@@ -22,6 +22,10 @@ orkg:
     doiPrefix: "10.7484"
     url: "https://api.test.datacite.org/dois"
     publish: "draft"
+  discourse:
+    url: 'http://localhost:3000'
+    apiKey: '0db5e1a62efddfa3e0ee25aa60710184e4e089374b216a8e448338b66cd2216c'
+    userName: 'hariskmohammadk'
 ---
 spring:
   profiles: development

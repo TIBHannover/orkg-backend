@@ -105,13 +105,6 @@ dependencies {
 
 val snippetsDir = file("build/generated-snippets")
 
-allprojects {
-    repositories {
-        jcenter()
-        mavenCentral()
-    }
-}
-
 allOpen {
     annotation("javax.persistence.Entity")
     annotation("javax.persistence.MappedSuperclass")

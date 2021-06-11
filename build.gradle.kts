@@ -75,6 +75,8 @@ dependencies {
     implementation("io.github.config4k:config4k:0.4.2") {
         because("Required for parsing the essential entity configuration")
     }
+    //Google Guava
+    implementation("com.google.guava:guava:30.1.1-jre")
     //
     // Testing
     //

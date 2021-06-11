@@ -1,7 +1,9 @@
 package eu.tib.orkg.prototype.statements.application
 
+import com.google.common.eventbus.EventBus
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.events.listeners.NotificationData
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
 import eu.tib.orkg.prototype.statements.application.ObjectController.Constants
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.util.logging.Logger
 
 @RestController
 @RequestMapping("/api/papers/")
@@ -32,9 +35,10 @@ class PaperController(
     private val predicateService: PredicateService,
     private val statementService: StatementService,
     private val contributorService: ContributorService,
-    private val objectController: ObjectController
+    private val objectController: ObjectController,
+    private val eventBus: EventBus
 ) : BaseController() {
-
+    private val logger = Logger.getLogger("Paper Controller")
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
     fun add(
@@ -47,6 +51,11 @@ class PaperController(
             .path("api/resources/")
             .buildAndExpand(resource.id)
             .toUri()
+
+        val notificationData = NotificationData("paper",
+            resource.id?.value!!)
+        eventBus.post(notificationData);
+        logger.info("Event submitted successfully!")
         return ResponseEntity.created(location).body(resource)
     }
 

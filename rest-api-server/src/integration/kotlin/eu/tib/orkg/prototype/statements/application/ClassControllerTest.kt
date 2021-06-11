@@ -356,7 +356,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
         fieldWithPath("organization_id").description("The ID of the organization that maintains this resource."),
         fieldWithPath("shared").description("The number of times this resource is shared"),
         fieldWithPath("_class").description("Resource").optional(),
-        fieldWithPath("featured").optional()
+        fieldWithPath("featured").description("Featured").optional().ignored()
     )
 
     fun classListDetailedResponseFields(): ResponseFieldsSnippet =

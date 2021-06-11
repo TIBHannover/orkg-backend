@@ -307,7 +307,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("created_by").description("The ID of the user that created the class. All zeros if unknown."),
             fieldWithPath("description").description("The description of the class, if exists.").optional(),
             fieldWithPath("_class").optional().ignored(),
-            fieldWithPath("featured").optional()
+            fieldWithPath("featured").optional().ignored()
         )
 
     private fun classListResponseFields() =

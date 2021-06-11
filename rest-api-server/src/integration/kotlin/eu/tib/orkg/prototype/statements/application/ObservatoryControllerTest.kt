@@ -184,7 +184,8 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("research_field.label").description("The research field of an observatory"),
             fieldWithPath("members").description("The members belonging to the observatory"),
             fieldWithPath("organization_ids").description("The list of organizations that the observatory belongs to"),
-            fieldWithPath("display_id").description("The URI of an observatory")
+            fieldWithPath("display_id").description("The URI of an observatory"),
+            fieldWithPath("featured").optional()
         )
 
         fun listOfObservatoriesResponseFields(): ResponseFieldsSnippet =

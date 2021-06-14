@@ -114,8 +114,6 @@ tasks {
     }
 
     withType(Test::class.java).configureEach {
-        useJUnitPlatform()
-
         outputs.dir(snippetsDir)
     }
 

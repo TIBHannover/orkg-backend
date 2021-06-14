@@ -9,6 +9,7 @@ repositories {
 
 dependencies {
     val kotlinVersion = "1.4.10"
+    val springBootVersion = "2.3.4.RELEASE"
     // Kotlin conventions
     api("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     // Spring conventions
@@ -18,4 +19,5 @@ dependencies {
     api("org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion") {
         because("""contains "kotlin.jpa" plug-in""")
     }
+    api("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
 }

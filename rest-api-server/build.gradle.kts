@@ -17,7 +17,6 @@ plugins {
 
     jacoco
     id("org.jetbrains.dokka") version "0.10.1"
-    id("org.springframework.boot") version "2.3.4.RELEASE"
     id("com.coditory.integration-test") version "1.1.8"
     id("de.jansauer.printcoverage") version "2.0.0"
     id("org.asciidoctor.jvm.convert") version "3.3.2"
@@ -25,10 +24,6 @@ plugins {
     id("com.google.cloud.tools.jib") version "3.1.1"
     id("org.barfuin.gradle.taskinfo") version "1.2.0"
     id("com.diffplug.spotless")
-}
-
-apply {
-    plugin("io.spring.dependency-management")
 }
 
 configurations {
@@ -67,15 +62,8 @@ dependencies {
     //
     // Testing
     //
-    testImplementation("org.springframework.boot:spring-boot-starter-test") {
-        exclude(group = "junit", module = "junit")
-        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-        // TODO: We currently have a mixture of MockK and Mockito tests. After migration, we should disable Mockito.
-        // exclude(module = "mockito-core")
-    }
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
-    testImplementation("com.ninja-squad:springmockk:2.0.1")
 
     testImplementation("org.neo4j:neo4j-ogm-embedded-driver")
     testImplementation("org.neo4j:neo4j-ogm-embedded-native-types")
@@ -92,12 +80,6 @@ dependencies {
 }
 
 val snippetsDir = file("build/generated-snippets")
-
-allOpen {
-    annotation("javax.persistence.Entity")
-    annotation("javax.persistence.MappedSuperclass")
-    annotation("javax.persistence.Embeddable")
-}
 
 tasks {
     val build by existing

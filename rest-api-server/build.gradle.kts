@@ -13,14 +13,9 @@ val containerRegistryLocation = "registry.gitlab.com/tibhannover/orkg/orkg-backe
 val dockerImageTag: String? by project
 
 plugins {
-    val kotlinVersion = "1.4.10"
+    id("org.orkg.spring-conventions")
 
     jacoco
-    kotlin("jvm") version kotlinVersion
-    kotlin("kapt") version kotlinVersion
-    kotlin("plugin.allopen") version kotlinVersion
-    kotlin("plugin.spring") version kotlinVersion
-    kotlin("plugin.jpa") version kotlinVersion
     id("org.jetbrains.dokka") version "0.10.1"
     id("org.springframework.boot") version "2.3.4.RELEASE"
     id("com.coditory.integration-test") version "1.1.8"
@@ -44,13 +39,6 @@ configurations {
 dependencies {
     // Platform alignment for ORKG components
     api(platform(project(":platform")))
-
-    //
-    // Runtime
-    //
-    implementation(platform(kotlin("bom")))
-    implementation(kotlin("stdlib"))
-    implementation(kotlin("reflect"))
 
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 

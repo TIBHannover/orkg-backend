@@ -55,7 +55,7 @@ data class Neo4jBenchmarkUnpacked(
     fun toDatasetSummary() =
         DatasetSummary(
             model,
-            score.toFloat(),
+            score,
             metric,
             paper.resourceId!!,
             paper.label!!,

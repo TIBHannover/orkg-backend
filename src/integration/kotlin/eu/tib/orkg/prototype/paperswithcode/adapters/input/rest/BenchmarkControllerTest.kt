@@ -243,7 +243,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
 
         val scoreOfM1B1E1 = literalService.create("2.55")
         val scoreOfM1B1E2 = literalService.create("4548")
-        val scoreOfM1B2E1 = literalService.create("0.54")
+        val scoreOfM1B2E1 = literalService.create("3M")
 
         statementService.create(paper.id!!.value, PredicateId("P31"), contribution1.id!!.value)
         statementService.create(paper.id!!.value, PredicateId("P31"), contribution2.id!!.value)
@@ -311,7 +311,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
 
         val scoreOfM1B1E1 = literalService.create("2.55")
         val scoreOfM1B1E2 = literalService.create("4548")
-        val scoreOfM1B2E1 = literalService.create("0.54")
+        val scoreOfM1B2E1 = literalService.create("3.2B")
 
         statementService.create(paper.id!!.value, PredicateId("P31"), contribution1.id!!.value)
         statementService.create(paper.id!!.value, PredicateId("P31"), contribution2.id!!.value)

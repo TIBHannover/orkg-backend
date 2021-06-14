@@ -17,7 +17,7 @@ data class Dataset(
 data class DatasetSummary(
     @JsonProperty("model_name")
     val modelName: String?,
-    val score: Float,
+    val score: String,
     val metric: String,
     @JsonProperty("paper_id")
     val paperId: ResourceId,

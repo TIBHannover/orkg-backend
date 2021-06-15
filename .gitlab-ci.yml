@@ -113,6 +113,7 @@ docker-build:
 include:
   - remote: https://gitlab.com/gitlab-org/gitlab/-/raw/b36fc45ecea531bf149ee3dff39d205d074c4227/lib/gitlab/ci/templates/Security/Container-Scanning.gitlab-ci.yml
   - template: Dependency-Scanning.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
 
 container_scanning:
   stage: verify
@@ -120,5 +121,9 @@ container_scanning:
     CI_APPLICATION_REPOSITORY: $CI_REGISTRY_IMAGE
 
 dependency_scanning:
+  stage: verify
+  needs: []
+
+secret_detection:
   stage: verify
   needs: []

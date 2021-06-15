@@ -136,3 +136,5 @@ dependency_scanning:
 secret_detection:
   stage: verify
   needs: []
+  variables:
+    SECRET_DETECTION_EXCLUDED_PATHS: '.gradle'

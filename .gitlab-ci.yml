@@ -50,6 +50,7 @@ build:
       - build/libs/orkg-*.jar
     reports:
       junit: build/test-results/**/TEST-*.xml
+  needs: []
 
 # Template job for building all documentation. These jobs rely on the Gradle build cache
 # because Spring RestDoc snippets are generated from the test and we do not want re-run those.
@@ -89,7 +90,7 @@ pages:
   cache:
     <<: *gradle_cache_settings
     policy: pull
-  dependencies:
+  needs:
     - build
   script:
     # Build using Jib (pushed automatically)
@@ -119,6 +120,11 @@ container_scanning:
   stage: verify
   variables:
     CI_APPLICATION_REPOSITORY: $CI_REGISTRY_IMAGE
+  needs:
+    - job: docker-build
+      optional: true
+    - job: docker-build-master
+      optional: true
 
 dependency_scanning:
   stage: verify

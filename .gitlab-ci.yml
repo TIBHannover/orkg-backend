@@ -57,7 +57,8 @@ build:
 .build-documentation:
   stage: deploy
   needs:
-    - build
+    - job: build
+      artifacts: true
   cache:
     <<: *gradle_cache_settings
     policy: pull
@@ -123,8 +124,10 @@ container_scanning:
   needs:
     - job: docker-build
       optional: true
+      artifacts: false
     - job: docker-build-master
       optional: true
+      artifacts: false
 
 dependency_scanning:
   stage: verify

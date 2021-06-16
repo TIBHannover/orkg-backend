@@ -17,7 +17,7 @@ plugins {
 
     jacoco
     id("org.jetbrains.dokka") version "0.10.1"
-    id("com.coditory.integration-test") version "1.1.8"
+    id("com.coditory.integration-test") version "1.2.1"
     id("de.jansauer.printcoverage") version "2.0.0"
     id("org.asciidoctor.jvm.convert") version "3.3.2"
     id("com.palantir.docker") version "0.25.0"

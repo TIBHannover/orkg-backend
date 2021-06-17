@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.events.listeners.NotificationData
+import eu.tib.orkg.prototype.events.listeners.NotificationUpdateData
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
 import eu.tib.orkg.prototype.statements.application.ObjectController.Constants
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -51,10 +52,10 @@ class PaperController(
             .path("api/resources/")
             .buildAndExpand(resource.id)
             .toUri()
-
-        val notificationData = NotificationData("paper",
-            resource.id?.value!!)
-        eventBus.post(notificationData);
+        if(resource.id != null){
+            val notification = NotificationUpdateData(resource.id.value, true)
+            eventBus.post(notification);
+        }
         logger.info("Event submitted successfully!")
         return ResponseEntity.created(location).body(resource)
     }

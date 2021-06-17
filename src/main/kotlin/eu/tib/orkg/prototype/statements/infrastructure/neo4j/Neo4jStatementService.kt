@@ -1,6 +1,8 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import com.google.common.eventbus.EventBus
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.events.listeners.NotificationUpdateData
 import eu.tib.orkg.prototype.statements.application.BundleConfiguration
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
@@ -26,12 +28,13 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.logging.Logger
 
 @Service
 @Transactional
 class Neo4jStatementService :
     StatementService {
-
+    private val logger = Logger.getLogger("Neo4j Statement Logger")
     @Autowired
     private lateinit var thingRepository: Neo4jThingRepository
 
@@ -49,6 +52,9 @@ class Neo4jStatementService :
 
     @Autowired
     private lateinit var neo4jStatementIdGenerator: Neo4jStatementIdGenerator
+
+    @Autowired
+    private lateinit var eventBus: EventBus
 
     override fun findAll(pagination: Pageable): Iterable<GeneralStatement> =
         statementRepository.findAll(pagination)
@@ -126,6 +132,11 @@ class Neo4jStatementService :
             )
         )
 
+        val notificationUpdateData = NotificationUpdateData(
+            persistedStatement.subject?.thingId!!, false
+        )
+        eventBus.post(notificationUpdateData)
+
         return GeneralStatement(
             persistedStatement.statementId!!,
             foundSubject.toThing(),
@@ -153,7 +164,7 @@ class Neo4jStatementService :
 
         val id = neo4jStatementIdGenerator.nextIdentity()
 
-        statementRepository.save(
+        val addedStatement = statementRepository.save(
             Neo4jStatement(
                 statementId = id,
                 predicateId = predicate,
@@ -162,6 +173,8 @@ class Neo4jStatementService :
                 createdBy = userId
             )
         )
+
+        logger.info("Added Statement: $addedStatement")
     }
 
     override fun totalNumberOfStatements(): Long =
@@ -180,8 +193,9 @@ class Neo4jStatementService :
         found.subject = thingRepository.findByThingId(statementEditRequest.subjectId).get()
         found.`object` = thingRepository.findByThingId(statementEditRequest.objectId).get()
 
-        statementRepository.save(found)
+        val updatedStatement = statementRepository.save(found)
 
+        logger.info("Added Statement: $updatedStatement")
         return toStatement(found)
     }
 

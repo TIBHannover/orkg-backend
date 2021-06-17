@@ -134,4 +134,6 @@ interface ResourceService : MarkAsVerifiedUseCase, LoadResourcePort, LoadPaperPo
      * Delete all resources
      */
     fun removeAll()
+
+    //fun getResourceChangeDetails(resourceId: String)
 }

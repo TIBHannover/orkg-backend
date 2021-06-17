@@ -12,6 +12,9 @@ import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import eu.tib.orkg.prototype.statements.domain.model.jpa.entity.NotificationUpdates
+import eu.tib.orkg.prototype.statements.domain.model.jpa.repository.NotificationUpdatesRepository
+import eu.tib.orkg.prototype.statements.domain.model.jpa.repository.ResearchFieldsTreeRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceIdGenerator
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceRepository
@@ -24,6 +27,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
+import java.util.logging.Logger
 
 @Service
 @Transactional
@@ -31,6 +36,8 @@ class Neo4jResourceService(
     private val neo4jResourceRepository: Neo4jResourceRepository,
     private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator
 ) : ResourceService {
+
+    private val logger = Logger.getLogger("Resource Service Logger")
 
     override fun create(label: String) = create(
         ContributorId.createUnknownContributor(),

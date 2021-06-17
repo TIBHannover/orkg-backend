@@ -2,7 +2,9 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.ObjectController.Constants.ID_DOI_PREDICATE
+import eu.tib.orkg.prototype.statements.application.Paper
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.ResearchField
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.util.Optional
 import org.springframework.data.domain.Page
@@ -140,6 +142,12 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
         countQuery = """$MATCH_UNVERIFIED_PAPER $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllUnverifiedPapers(pageable: Pageable): Page<Neo4jResource>
+
+    @Query(value="MATCH (field:ResearchField)<-[:RELATED {predicate_id: 'P30'}]-(paper:Paper)-[:RELATED {predicate_id: 'P31'}]->(cont:Contribution)-[:RELATED {predicate_id: 'P32'}]->(problem:Thing) WHERE cont.resource_id={0} RETURN field, paper")
+    fun findChangeDetailsToResource(resourceId: String): List<ChangeResourceTemplate>
+
+    @Query(value="MATCH (field:ResearchField)<-[:RELATED {predicate_id: 'P30'}]-(paper:Paper) WHERE paper.resource_id={0} RETURN field, paper")
+    fun findDetailsOfNewResource(resourceId: String): List<ChangeResourceTemplate>
 }
 
 @QueryResult
@@ -150,3 +158,9 @@ data class ResourceContributors(
 
     val createdAt: String
 )
+@QueryResult
+data class ChangeResourceTemplate(
+    val field: Neo4jResource,
+    val paper: Neo4jResource
+)
+

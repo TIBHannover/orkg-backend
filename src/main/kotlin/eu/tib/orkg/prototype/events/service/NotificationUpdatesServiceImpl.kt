@@ -5,8 +5,6 @@ import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.statements.domain.model.jpa.entity.NotificationUpdates
 import eu.tib.orkg.prototype.statements.domain.model.jpa.repository.NotificationUpdatesRepository
 import eu.tib.orkg.prototype.statements.domain.model.jpa.repository.ResearchFieldsTreeRepository
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.util.UUID
 import java.util.logging.Logger
@@ -25,8 +23,7 @@ class NotificationUpdatesServiceImpl(
         notificationUpdatesRepository.save(notification)
     }
 
-    override fun retrieveNotificationUpdates(userId: UUID, pageable: Pageable):
-        Page<NotificationUpdates> = notificationUpdatesRepository.findAllByUserId(userId, pageable)
+    override fun retrieveNotificationUpdates(userId: UUID): List<NotificationUpdates> = notificationUpdatesRepository.findAllByUserId(userId)
 
     override fun deleteNotificationById(id: UUID) = notificationUpdatesRepository.deleteById(id)
 

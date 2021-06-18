@@ -8,6 +8,6 @@ import java.util.UUID
 
 interface NotificationUpdatesService {
     fun addNotificationUpdate(notification: NotificationUpdates)
-    fun retrieveNotificationUpdates(userId: UUID, pageable: Pageable): Page<NotificationUpdates>
+    fun retrieveNotificationUpdates(userId: UUID): List<NotificationUpdates>
     fun deleteNotificationById(id: UUID)
 }

@@ -9,6 +9,6 @@ import java.util.UUID
 
 @Repository
 interface NotificationUpdatesRepository: JpaRepository<NotificationUpdates, UUID> {
-    fun findAllByUserId(userId: UUID, pageable: Pageable): Page<NotificationUpdates>
+    fun findAllByUserId(userId: UUID): List<NotificationUpdates>
     fun findAllByNotificationByUserIDNot(userId: UUID): List<NotificationUpdates>
 }

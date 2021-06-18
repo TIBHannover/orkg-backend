@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.security.Principal
 import java.util.UUID
 
 @RestController
@@ -23,8 +22,8 @@ private val notificationUpdatesService: NotificationUpdatesService,
 private val notificationEmailSettingsService: NotificationEmailSettingsService
 ){
     @GetMapping("/{userId}")
-    fun getNotifications(@PathVariable userId: UUID, pageable: Pageable): Page<NotificationUpdates> =
-        notificationUpdatesService.retrieveNotificationUpdates(userId, pageable)
+    fun getNotifications(@PathVariable userId: UUID): List<NotificationUpdates> =
+        notificationUpdatesService.retrieveNotificationUpdates(userId)
 
     @DeleteMapping("/{id}")
     fun deleteNotificationById(@PathVariable id: UUID) =

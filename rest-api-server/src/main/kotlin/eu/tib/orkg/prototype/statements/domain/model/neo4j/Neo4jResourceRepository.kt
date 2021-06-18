@@ -44,6 +44,9 @@ private const val MATCH_UNVERIFIED_PAPER =
 private const val MATCH_FEATURED_PAPER =
     """MATCH (node) WHERE EXISTS(node.featured) AND node.featured = true AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
 
+private const val MATCH_UNLISTED_PAPER =
+    """MATCH (node) WHERE EXISTS(node.unlisted) AND node.unlisted = true AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
+
 private const val MATCH_NONFEATURED_PAPER =
     """MATCH (node) WHERE (NOT EXISTS(node.featured) OR node.featured = false) AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
 
@@ -136,6 +139,9 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
 
     fun findAllByFeaturedIsFalse(pageable: Pageable): Page<Neo4jResource>
 
+    fun findAllByUnlistedIsTrue(pageable: Pageable): Page<Neo4jResource>
+
+
     @Query("""$MATCH_PAPER_BY_ID $WITH_NODE_PROPERTIES $RETURN_NODE""")
     fun findPaperByResourceId(id: ResourceId): Optional<Neo4jResource>
 
@@ -162,6 +168,12 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
         countQuery = """$MATCH_NONFEATURED_PAPER $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllNonFeaturedPapers(pageable: Pageable): Page<Neo4jResource>
+
+    @Query(
+        value = """$MATCH_UNLISTED_PAPER $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        countQuery = """$MATCH_UNLISTED_PAPER $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
+    )
+    fun findAllUnlistedPapers(pageable: Pageable): Page<Neo4jResource>
 }
 
 @QueryResult

@@ -5,16 +5,21 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
-interface GetVerifiedResourcesQuery {
+interface GetResourcesQuery {
 
     fun getVerifiedResources(pageable: Pageable): Page<Resource>
-
     fun getUnverifiedResources(pageable: Pageable): Page<Resource>
+    fun getFeaturedResources(pageable: Pageable): Page<Resource>
+    fun getNonFeaturedResources(pageable: Pageable): Page<Resource>
+    fun getUnlistedResources(pageable: Pageable): Page<Resource>
 }
 
-interface GetVerifiedPapersQuery {
+interface GetPapersQuery {
     fun getVerifiedPapers(pageable: Pageable): Page<Resource>
     fun getUnverifiedPapers(pageable: Pageable): Page<Resource>
+    fun getFeaturedPapers(pageable: Pageable): Page<Resource>
+    fun getNonFeaturedPapers(pageable: Pageable): Page<Resource>
+    fun getUnlistedPapers(pageable: Pageable): Page<Resource>
 }
 
 interface GetBulkStatementsQuery {
@@ -26,14 +31,4 @@ interface GetBulkStatementsQuery {
         objects: List<String>,
         pageable: Pageable
     ): Map<String, Iterable<GeneralStatement>>
-}
-
-interface GetFeaturedResourcesQuery {
-    fun getFeaturedResources(pageable: Pageable): Page<Resource>
-    fun getNonFeaturedResources(pageable: Pageable): Page<Resource>
-}
-
-interface GetFeaturedPapersQuery {
-    fun getFeaturedPapers(pageable: Pageable): Page<Resource>
-    fun getNonFeaturedPapers(pageable: Pageable): Page<Resource>
 }

@@ -25,7 +25,9 @@ data class Resource(
     @JsonProperty("organization_id")
     val organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
     @JsonProperty("featured")
-    val featured: Boolean? = null
+    val featured: Boolean? = null,
+    @JsonProperty("unlisted")
+    val unlisted: Boolean? = null
 ) : Thing {
     @JsonIgnore
     var rdf: Model? = null

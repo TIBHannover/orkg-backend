@@ -28,7 +28,6 @@ class ResearchFieldController(
     private val service: ResearchFieldService,
     private val resourceService: ResourceService
 ) {
-    private val logger = Logger.getLogger("Logger")
     /**
      * Fetches all the research problems and
      * number of papers based on a research
@@ -57,7 +56,6 @@ class ResearchFieldController(
         featured: Optional<Boolean>,
         pageable: Pageable
     ): ResponseEntity<Page<Resource>> {
-        logger.info("${featured.isPresent}")
         // Add if condition to check if featured is present and pass the variable
         // Do the same for all
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
@@ -97,7 +95,6 @@ class ResearchFieldController(
         featured: Optional<Boolean>,
         pageable: Pageable
     ): ResponseEntity<Page<Resource>> {
-        logger.info("Featured: ${featured.isPresent}")
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         if (featured.isPresent) {
             return ok(service.getComparisonsIncludingSubFields(
@@ -121,7 +118,6 @@ class ResearchFieldController(
         featured: Optional<Boolean>,
         pageable: Pageable
     ): ResponseEntity<Page<Resource>> {
-        logger.info("${featured.isPresent}")
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         if (featured.isPresent) {
             return ok(service.getPapersIncludingSubFields(
@@ -145,7 +141,6 @@ class ResearchFieldController(
         featured: Optional<Boolean>,
         pageable: Pageable
     ): ResponseEntity<Page<Resource>> {
-        logger.info("${featured.isPresent}")
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         if (featured.isPresent) {
             return ok(service.getPapersExcludingSubFields(
@@ -169,7 +164,6 @@ class ResearchFieldController(
         featured: Optional<Boolean>,
         pageable: Pageable
     ): ResponseEntity<Page<Resource>> {
-        logger.info("${featured.isPresent}")
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         if (featured.isPresent) {
             return ok(service.getComparisonsExcludingSubFields(
@@ -193,7 +187,6 @@ class ResearchFieldController(
         featured: Optional<Boolean>,
         pageable: Pageable
     ): ResponseEntity<Page<Contributor>> {
-        logger.info("${featured.isPresent}")
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         return ok(service.getContributorsExcludingSubFields(id, pageable))
     }
@@ -209,7 +202,6 @@ class ResearchFieldController(
         featured: Optional<Boolean>,
         pageable: Pageable
     ): ResponseEntity<Page<Resource>> {
-        logger.info("${featured.isPresent}")
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         if (featured.isPresent) {
             return ok(service.getResearchProblemsExcludingSubFields(

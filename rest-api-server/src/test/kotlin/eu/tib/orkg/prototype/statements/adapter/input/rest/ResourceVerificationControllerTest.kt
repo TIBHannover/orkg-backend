@@ -6,7 +6,7 @@ import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsVerifiedUseCase
-import eu.tib.orkg.prototype.statements.application.port.out.LoadResourcePort
+import eu.tib.orkg.prototype.statements.application.port.out.LoadResourceAdapter
 import io.mockk.every
 import java.util.Optional
 import org.junit.jupiter.api.BeforeEach
@@ -42,7 +42,7 @@ class ResourceVerificationControllerTest {
     private lateinit var userRepository: UserRepository
 
     @MockkBean
-    private lateinit var resourcePort: LoadResourcePort
+    private lateinit var resourceAdapter: LoadResourceAdapter
 
     @MockkBean
     private lateinit var service: MarkAsVerifiedUseCase

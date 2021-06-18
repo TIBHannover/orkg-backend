@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.statements.application.service
 
-import eu.tib.orkg.prototype.statements.application.port.`in`.GetVerifiedPapersQuery
-import eu.tib.orkg.prototype.statements.application.port.`in`.GetVerifiedResourcesQuery
-import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperPort
-import eu.tib.orkg.prototype.statements.application.port.out.LoadResourcePort
+import eu.tib.orkg.prototype.statements.application.port.`in`.GetPapersQuery
+import eu.tib.orkg.prototype.statements.application.port.`in`.GetResourcesQuery
+import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperAdapter
+import eu.tib.orkg.prototype.statements.application.port.out.LoadResourceAdapter
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -13,19 +13,39 @@ import org.springframework.stereotype.Service
 // FIXME: The LoadResourcePort is currently implemented in ResourceService but should be extracted.
 
 @Service
-class GetVerifiedResourcesService(
-    private val loadResourcePort: LoadResourcePort,
-    private val loadPaperPort: LoadPaperPort
-) : GetVerifiedResourcesQuery, GetVerifiedPapersQuery {
+class GetResourcesService(
+    private val loadResourceAdapter: LoadResourceAdapter,
+    private val loadPaperAdapter: LoadPaperAdapter
+) : GetResourcesQuery, GetPapersQuery {
     override fun getVerifiedResources(pageable: Pageable): Page<Resource> =
-        loadResourcePort.loadVerifiedResources(pageable)
+        loadResourceAdapter.loadVerifiedResources(pageable)
 
     override fun getUnverifiedResources(pageable: Pageable): Page<Resource> =
-        loadResourcePort.loadUnverifiedResources(pageable)
+        loadResourceAdapter.loadUnverifiedResources(pageable)
+
+    override fun getFeaturedResources(pageable: Pageable) =
+        loadResourceAdapter.loadFeaturedResources(pageable)
+
+    override fun getNonFeaturedResources(pageable: Pageable) =
+        loadResourceAdapter.loadNonFeaturedResources(pageable)
+
+    override fun getFeaturedPapers(pageable: Pageable) =
+        loadPaperAdapter.loadFeaturedPapers(pageable)
+
+    override fun getNonFeaturedPapers(pageable: Pageable) =
+        loadPaperAdapter.loadNonFeaturedPapers(pageable)
+
+    override fun getUnlistedResources(pageable: Pageable): Page<Resource> =
+        loadResourceAdapter.loadUnlistedPapers(pageable)
 
     override fun getVerifiedPapers(pageable: Pageable): Page<Resource> =
-        loadPaperPort.loadVerifiedPapers(pageable)
+        loadPaperAdapter.loadVerifiedPapers(pageable)
 
     override fun getUnverifiedPapers(pageable: Pageable): Page<Resource> =
-        loadPaperPort.loadUnverifiedPapers(pageable)
+        loadPaperAdapter.loadUnverifiedPapers(pageable)
+
+    override fun getUnlistedPapers(pageable: Pageable): Page<Resource> =
+        loadPaperAdapter.loadUnlistedPapers(pageable)
+
 }
+

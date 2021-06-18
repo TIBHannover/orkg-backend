@@ -69,6 +69,9 @@ data class Neo4jResource(
     @Property("featured")
     var featured: Boolean? = null
 
+    @Property("unlisted")
+    var unlisted: Boolean? = null
+
     @Property("organization_id")
     @Convert(OrganizationIdConverter::class)
     var organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
@@ -95,7 +98,8 @@ data class Neo4jResource(
         observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
         extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
         organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
-        featured: Boolean? = null
+        featured: Boolean? = null,
+        unlisted: Boolean? = null
     ) : this(null) {
         this.label = label
         this.resourceId = resourceId
@@ -104,6 +108,7 @@ data class Neo4jResource(
         this.extractionMethod = extractionMethod
         this.organizationId = organizationId
         this.featured = featured
+        this.unlisted = unlisted
     }
 
     fun toResource(): Resource {
@@ -117,7 +122,8 @@ data class Neo4jResource(
             observatoryId = observatoryId,
             extractionMethod = extractionMethod,
             organizationId = organizationId,
-            featured = featured
+            featured = featured,
+            unlisted = unlisted
         )
         resource.rdf = toRdfModel()
         return resource

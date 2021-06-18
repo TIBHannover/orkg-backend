@@ -26,3 +26,8 @@ interface MarkFeaturedService {
     fun markAsFeatured(resourceId: ResourceId): Optional<Resource>
     fun markAsNonFeatured(resourceId: ResourceId): Optional<Resource>
 }
+
+interface MarkAsUnlistedService {
+    fun markAsUnlisted(resourceId: ResourceId): Optional<Resource>
+    fun removeUnlisted(resourceId: ResourceId): Optional<Resource>
+}

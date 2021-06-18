@@ -2,8 +2,8 @@ package eu.tib.orkg.prototype.statements.adapter.input.rest
 
 import eu.tib.orkg.prototype.statements.application.BaseController
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
-import eu.tib.orkg.prototype.statements.application.port.out.GetFeaturedPaperFlagQuery
-import eu.tib.orkg.prototype.statements.application.port.out.LoadFeaturedPaperAdapter
+import eu.tib.orkg.prototype.statements.application.port.out.GetPaperFlagQuery
+import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperAdapter
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.springframework.data.domain.Page
@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class PaperFeaturedController(
-    private val adapter: LoadFeaturedPaperAdapter,
-    private val query: GetFeaturedPaperFlagQuery
+    private val adapter: LoadPaperAdapter,
+    private val query: GetPaperFlagQuery
 ) : BaseController() {
 
     @GetMapping("/api/papers/{id}/metadata/featured")

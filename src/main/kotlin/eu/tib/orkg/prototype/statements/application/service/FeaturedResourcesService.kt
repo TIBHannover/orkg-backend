@@ -1,26 +1,27 @@
-package eu.tib.orkg.prototype.statements.application.service
+/*package eu.tib.orkg.prototype.statements.application.service
 
-import eu.tib.orkg.prototype.statements.application.port.`in`.GetFeaturedPapersQuery
-import eu.tib.orkg.prototype.statements.application.port.`in`.GetFeaturedResourcesQuery
-import eu.tib.orkg.prototype.statements.application.port.out.LoadFeaturedPaperAdapter
-import eu.tib.orkg.prototype.statements.application.port.out.LoadFeaturedResourceAdapter
+import eu.tib.orkg.prototype.statements.application.port.`in`.GetPapersQuery
+import eu.tib.orkg.prototype.statements.application.port.`in`.GetResourcesQuery
+import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperAdapter
+import eu.tib.orkg.prototype.statements.application.port.out.LoadResourceAdapter
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
 class FeaturedResourcesService(
-    private val loadFeaturedResourceAdapter: LoadFeaturedResourceAdapter,
-    private val loadFeaturedPaperPort: LoadFeaturedPaperAdapter
-) : GetFeaturedResourcesQuery, GetFeaturedPapersQuery {
+    private val loadResourceAdapter: LoadResourceAdapter,
+    private val loadPaperAdapter: LoadPaperAdapter
+) : GetResourcesQuery, GetPapersQuery {
     override fun getFeaturedResources(pageable: Pageable) =
-        loadFeaturedResourceAdapter.loadFeaturedResources(pageable)
+        loadResourceAdapter.loadFeaturedResources(pageable)
 
     override fun getNonFeaturedResources(pageable: Pageable) =
-        loadFeaturedResourceAdapter.loadNonFeaturedResources(pageable)
+        loadResourceAdapter.loadNonFeaturedResources(pageable)
 
     override fun getFeaturedPapers(pageable: Pageable) =
-        loadFeaturedPaperPort.loadFeaturedPapers(pageable)
+        loadPaperAdapter.loadFeaturedPapers(pageable)
 
     override fun getNonFeaturedPapers(pageable: Pageable) =
-        loadFeaturedPaperPort.loadNonFeaturedPapers(pageable)
+        loadPaperAdapter.loadNonFeaturedPapers(pageable)
 }
+*/

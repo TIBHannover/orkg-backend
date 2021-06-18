@@ -5,80 +5,78 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
-interface LoadResourcePort {
+interface LoadResourceAdapter {
     fun loadVerifiedResources(pageable: Pageable): Page<Resource>
-
     fun loadUnverifiedResources(pageable: Pageable): Page<Resource>
-}
 
-interface LoadPaperPort {
-    fun loadVerifiedPapers(pageable: Pageable): Page<Resource>
-    fun loadUnverifiedPapers(pageable: Pageable): Page<Resource>
-}
-
-interface GetPaperVerifiedFlagQuery {
-    fun getPaperVerifiedFlag(id: ResourceId): Boolean?
-}
-
-interface LoadFeaturedResourceAdapter {
     fun loadFeaturedResources(pageable: Pageable): Page<Resource>
     fun loadNonFeaturedResources(pageable: Pageable): Page<Resource>
+
+    fun loadUnlistedPapers(pageable: Pageable): Page<Resource>
+
 }
 
-interface LoadFeaturedComparisonPort {
+interface LoadPaperAdapter {
+    fun loadVerifiedPapers(pageable: Pageable): Page<Resource>
+    fun loadUnverifiedPapers(pageable: Pageable): Page<Resource>
+
+    fun loadFeaturedPapers(pageable: Pageable): Page<Resource>
+    fun loadNonFeaturedPapers(pageable: Pageable): Page<Resource>
+
+    fun loadUnlistedPapers(pageable: Pageable): Page<Resource>
+}
+
+
+interface LoadComparisonAdapter {
     fun loadFeaturedComparisons(pageable: Pageable): Page<Resource>
     fun loadNonFeaturedComparisons(pageable: Pageable): Page<Resource>
 }
 
-interface LoadFeaturedContributionPort {
+interface LoadContributionAdapter {
     fun loadFeaturedContributions(pageable: Pageable): Page<Resource>
     fun loadNonFeaturedContributions(pageable: Pageable): Page<Resource>
 }
 
-interface LoadFeaturedVisualizationPort {
+interface LoadVisualizationAdapter {
     fun loadFeaturedVisualizations(pageable: Pageable): Page<Resource>
     fun loadNonFeaturedVisualizations(pageable: Pageable): Page<Resource>
 }
 
-interface LoadFeaturedSmartReviewPort {
+interface LoadSmartReviewAdapter {
     fun loadFeaturedSmartReviews(pageable: Pageable): Page<Resource>
     fun loadNonFeaturedSmartReviews(pageable: Pageable): Page<Resource>
 }
 
-interface LoadFeaturedPaperAdapter {
-    fun loadFeaturedPapers(pageable: Pageable): Page<Resource>
-    fun loadNonFeaturedPapers(pageable: Pageable): Page<Resource>
-}
-
-interface LoadFeaturedProblemAdapter {
+interface LoadProblemAdapter {
     fun loadFeaturedProblems(pageable: Pageable): Page<Resource>
     fun loadNonFeaturedProblems(pageable: Pageable): Page<Resource>
 }
 
-interface GetFeaturedPaperFlagQuery {
+interface GetPaperFlagQuery {
+    fun getPaperVerifiedFlag(id: ResourceId): Boolean?
     fun getFeaturedPaperFlag(id: ResourceId): Boolean?
 }
 
-interface GetFeaturedResourceFlagQuery {
-    fun getFeaturedResourceFlag(id: ResourceId): Boolean? // Can combine this with the above
+interface GetResourceFlagQuery {
+    fun getFeaturedResourceFlag(id: ResourceId): Boolean?
 }
 
-interface GetFeaturedProblemFlagQuery {
+interface GetProblemFlagQuery {
     fun getFeaturedProblemFlag(id: ResourceId): Boolean?
 }
 
-interface GetFeaturedContributionFlagQuery {
+interface GetContributionFlagQuery {
     fun getFeaturedContributionFlag(id: ResourceId): Boolean?
 }
 
-interface GetFeaturedComparisonFlagQuery {
+interface GetComparisonFlagQuery {
     fun getFeaturedComparisonFlag(id: ResourceId): Boolean?
 }
 
-interface GetFeaturedVisualizationFlagQuery {
+interface GetVisualizationFlagQuery {
     fun getFeaturedVisualizationFlag(id: ResourceId): Boolean?
 }
 
-interface GetFeaturedSmartReviewFlagQuery {
+interface GetSmartReviewFlagQuery {
     fun getFeaturedSmartReviewFlag(id: ResourceId): Boolean?
 }

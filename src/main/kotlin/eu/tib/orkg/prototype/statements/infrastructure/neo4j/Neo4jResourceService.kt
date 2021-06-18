@@ -262,6 +262,11 @@ class Neo4jResourceService(
             .findAllByVerifiedIsFalse(pageable)
             .map(Neo4jResource::toResource)
 
+    override fun loadUnlistedPapers(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository
+            .findAllUnlistedPapers(pageable)
+            .map(Neo4jResource::toResource)
+
     override fun getFeaturedPaperFlag(id: ResourceId): Boolean? {
         val result = neo4jResourceRepository.findPaperByResourceId(id)
         if (result.isPresent) {

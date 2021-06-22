@@ -18,4 +18,10 @@ tasks {
             xml.required.set(true)
         }
     }
+
+    // Create reproducible archives
+    withType<AbstractArchiveTask>().configureEach {
+        isPreserveFileTimestamps = false
+        isReproducibleFileOrder = true
+    }
 }

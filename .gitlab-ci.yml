@@ -23,8 +23,8 @@ before_script:
 cache: &gradle_cache_settings
   key: ${CI_COMMIT_REF_SLUG}   # One cache per branch
   paths:
-    - build
-    - .gradle
+    - ./**/build
+    - ./**/.gradle
   policy: pull-push
 
 stages:

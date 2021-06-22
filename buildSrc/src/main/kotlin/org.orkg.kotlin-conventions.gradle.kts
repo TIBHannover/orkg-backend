@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    jacoco
 }
 
 dependencies {
@@ -10,5 +11,11 @@ dependencies {
 tasks {
     withType(Test::class.java).configureEach {
         useJUnitPlatform()
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.required.set(true)
+        }
     }
 }

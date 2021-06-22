@@ -15,7 +15,6 @@ val dockerImageTag: String? by project
 plugins {
     id("org.orkg.spring-conventions")
 
-    jacoco
     id("org.jetbrains.dokka") version "0.10.1"
     id("com.coditory.integration-test") version "1.2.1"
     id("de.jansauer.printcoverage") version "2.0.0"
@@ -106,10 +105,9 @@ tasks {
         }
     }
 
-    named("jacocoTestReport", JacocoReport::class).configure {
+    jacocoTestReport {
         reports {
-            html.isEnabled = true
-            xml.isEnabled = true
+            html.required.set(true)
         }
     }
 

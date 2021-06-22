@@ -112,8 +112,9 @@ docker-build:
 # (Security) Scanning templates
 include:
   - remote: https://gitlab.com/gitlab-org/gitlab/-/raw/b36fc45ecea531bf149ee3dff39d205d074c4227/lib/gitlab/ci/templates/Security/Container-Scanning.gitlab-ci.yml
-  - template: Dependency-Scanning.gitlab-ci.yml
   - template: Security/Secret-Detection.gitlab-ci.yml
+  # Disabled because the scanner does not work properly with Gradle multi-project builds. Remove dot if fixed. See below.
+  #- template: Dependency-Scanning.gitlab-ci.yml
 
 container_scanning:
   stage: verify
@@ -127,7 +128,8 @@ container_scanning:
       optional: true
       artifacts: false
 
-dependency_scanning:
+# Disabled because the scanner does not work properly with Gradle multi-project builds. Remove dot if fixed. See above.
+.dependency_scanning:
   stage: verify
   needs: []
 

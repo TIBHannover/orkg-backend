@@ -33,13 +33,11 @@ private const val MATCH_FEATURED_VISUALIZATION =
 private const val MATCH_NONFEATURED_VISUALIZATION =
     """MATCH (node) WHERE (NOT EXISTS(node.featured) OR node.featured = false) AND ANY(collectionFields IN ['Visualization'] WHERE collectionFields IN LABELS(node))"""
 
-
 private const val MATCH_UNLISTED_VISUALIZATION =
     """MATCH (node) WHERE EXISTS(node.unlisted) AND node.unlisted = true AND ANY(collectionFields IN ['Visualization'] WHERE collectionFields IN LABELS(node))"""
 
 private const val MATCH_LISTED_VISUALIZATION =
     """MATCH (node) WHERE (NOT EXISTS(node.unlisted) OR node.unlisted = false) AND ANY(collectionFields IN ['Visualization'] WHERE collectionFields IN LABELS(node))"""
-
 
 private const val MATCH_VISUALIZATION_BY_ID = """MATCH (node:`Resource`:`Visualization` {resource_id: {0}})"""
 

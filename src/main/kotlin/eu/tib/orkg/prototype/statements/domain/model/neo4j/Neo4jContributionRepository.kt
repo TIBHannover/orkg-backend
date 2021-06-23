@@ -33,13 +33,11 @@ private const val MATCH_FEATURED_CONTRIBUTION =
 private const val MATCH_NONFEATURED_CONTRIBUTION =
     """MATCH (node) WHERE (NOT EXISTS(node.featured) OR node.featured = false) AND ANY(collectionFields IN ['Contribution'] WHERE collectionFields IN LABELS(node))"""
 
-
 private const val MATCH_UNLISTED_CONTRIBUTION =
     """MATCH (node) WHERE EXISTS(node.unlisted) AND node.unlisted = true AND ANY(collectionFields IN ['Contribution'] WHERE collectionFields IN LABELS(node))"""
 
 private const val MATCH_LISTED_CONTRIBUTION =
     """MATCH (node) WHERE (NOT EXISTS(node.unlisted) OR node.unlisted = false) AND ANY(collectionFields IN ['Contribution'] WHERE collectionFields IN LABELS(node))"""
-
 
 private const val MATCH_CONTRIBUTION_BY_ID = """MATCH (node:`Resource`:`Contribution` {resource_id: {0}})"""
 

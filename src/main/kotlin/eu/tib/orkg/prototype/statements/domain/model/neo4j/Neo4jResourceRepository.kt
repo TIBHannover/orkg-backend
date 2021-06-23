@@ -53,7 +53,6 @@ private const val MATCH_UNLISTED_PAPER =
 private const val MATCH_LISTED_PAPER =
     """MATCH (node) WHERE (NOT EXISTS(node.unlisted) OR node.unlisted = false) AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
 
-
 interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     override fun findAll(): Iterable<Neo4jResource>
 
@@ -146,7 +145,6 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     fun findAllByUnlistedIsTrue(pageable: Pageable): Page<Neo4jResource>
 
     fun findAllByUnlistedIsFalse(pageable: Pageable): Page<Neo4jResource>
-
 
     @Query("""$MATCH_PAPER_BY_ID $WITH_NODE_PROPERTIES $RETURN_NODE""")
     fun findPaperByResourceId(id: ResourceId): Optional<Neo4jResource>

@@ -29,7 +29,6 @@ private const val MATCH_UNLISTED_PROBLEM =
 private const val MATCH_LISTED_PROBLEM =
     """MATCH (node) WHERE (NOT EXISTS(node.unlisted) OR node.unlisted = false) AND ANY(collectionFields IN ['Problem'] WHERE collectionFields IN LABELS(node))"""
 
-
 interface Neo4jProblemRepository :
     Neo4jRepository<Neo4jResource, Long> {
 
@@ -99,7 +98,6 @@ interface Neo4jProblemRepository :
         countQuery = """$MATCH_LISTED_PROBLEM $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllListedProblems(pageable: Pageable): Page<Neo4jResource>
-
 }
 
 @QueryResult

@@ -122,7 +122,7 @@ class ResearchFieldController(
         return ok(service.getPapersIncludingSubFields(
             id = id,
             featured = featured,
-            unlisted=unlisted,
+            unlisted = unlisted,
             pageable = pageable))
     }
 
@@ -202,7 +202,7 @@ class ResearchFieldController(
         return ok(service.getResearchProblemsExcludingSubFields(
             id = id,
             featured = featured,
-            unlisted= unlisted,
+            unlisted = unlisted,
             pageable = pageable))
     }
 }

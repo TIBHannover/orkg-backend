@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype.statements.adapter.input.rest
 
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsUnlistedService
-import eu.tib.orkg.prototype.statements.application.port.`in`.MarkFeaturedService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus

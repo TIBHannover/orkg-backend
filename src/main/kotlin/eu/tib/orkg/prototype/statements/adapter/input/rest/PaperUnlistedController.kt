@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 class PaperUnlistedController(
     private val adapter: LoadPaperAdapter,
     private val query: GetPaperFlagQuery
-): BaseController() {
+) : BaseController() {
 
     @GetMapping("/api/papers/{id}/metadata/unlisted")
     fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean =

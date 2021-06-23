@@ -23,6 +23,13 @@ private const val MATCH_FEATURED_PROBLEM =
 private const val MATCH_NONFEATURED_PROBLEM =
     """MATCH (node) WHERE (NOT EXISTS(node.featured) OR node.featured = false) AND ANY(collectionFields IN ['Problem'] WHERE collectionFields IN LABELS(node))"""
 
+private const val MATCH_UNLISTED_PROBLEM =
+    """MATCH (node) WHERE EXISTS(node.unlisted) AND node.unlisted = true AND ANY(collectionFields IN ['Problem'] WHERE collectionFields IN LABELS(node))"""
+
+private const val MATCH_LISTED_PROBLEM =
+    """MATCH (node) WHERE (NOT EXISTS(node.unlisted) OR node.unlisted = false) AND ANY(collectionFields IN ['Problem'] WHERE collectionFields IN LABELS(node))"""
+
+
 interface Neo4jProblemRepository :
     Neo4jRepository<Neo4jResource, Long> {
 
@@ -84,6 +91,19 @@ interface Neo4jProblemRepository :
         countQuery = """$MATCH_NONFEATURED_PROBLEM $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllNonFeaturedProblems(pageable: Pageable): Page<Neo4jResource>
+
+    @Query(
+        value = """$MATCH_UNLISTED_PROBLEM $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        countQuery = """$MATCH_UNLISTED_PROBLEM $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
+    )
+    fun findAllUnlistedProblems(pageable: Pageable): Page<Neo4jResource>
+
+    @Query(
+        value = """$MATCH_LISTED_PROBLEM $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        countQuery = """$MATCH_LISTED_PROBLEM $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
+    )
+    fun findAllListedProblems(pageable: Pageable): Page<Neo4jResource>
+
 }
 
 @QueryResult

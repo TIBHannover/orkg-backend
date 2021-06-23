@@ -40,4 +40,26 @@ class ComparisonController(
     @GetMapping("/{id}/metadata/featured")
     fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean =
         service.getFeaturedResourceFlag(id) ?: throw ResourceNotFound(id.toString())
+
+    @GetMapping("/metadata/unlisted", params = ["unlisted=true"])
+    fun getUnlistedComparisons(pageable: Pageable) =
+        neo4jResourceService.loadUnlistedComparisons(pageable)
+
+    @GetMapping("/metadata/unlisted", params = ["unlisted=false"])
+    fun getListedComparisons(pageable: Pageable) =
+        neo4jResourceService.loadListedComparisons(pageable)
+
+    @PutMapping("/{id}/metadata/unlisted")
+    @ResponseStatus(HttpStatus.OK)
+    fun markUnlisted(@PathVariable id: ResourceId) {
+        neo4jResourceService.markAsUnlisted(id).orElseThrow { ResourceNotFound(id.toString()) }
+    }
+    @DeleteMapping("/{id}/metadata/unlisted")
+    fun unmarkUnlisted(@PathVariable id: ResourceId) {
+        neo4jResourceService.markAsListed(id).orElseThrow { ResourceNotFound(id.toString()) }
+    }
+
+    @GetMapping("/{id}/metadata/unlisted")
+    fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean =
+        service.getUnlistedResourceFlag(id) ?: throw ResourceNotFound(id.toString())
 }

@@ -33,6 +33,14 @@ private const val MATCH_FEATURED_VISUALIZATION =
 private const val MATCH_NONFEATURED_VISUALIZATION =
     """MATCH (node) WHERE (NOT EXISTS(node.featured) OR node.featured = false) AND ANY(collectionFields IN ['Visualization'] WHERE collectionFields IN LABELS(node))"""
 
+
+private const val MATCH_UNLISTED_VISUALIZATION =
+    """MATCH (node) WHERE EXISTS(node.unlisted) AND node.unlisted = true AND ANY(collectionFields IN ['Visualization'] WHERE collectionFields IN LABELS(node))"""
+
+private const val MATCH_LISTED_VISUALIZATION =
+    """MATCH (node) WHERE (NOT EXISTS(node.unlisted) OR node.unlisted = false) AND ANY(collectionFields IN ['Visualization'] WHERE collectionFields IN LABELS(node))"""
+
+
 private const val MATCH_VISUALIZATION_BY_ID = """MATCH (node:`Resource`:`Visualization` {resource_id: {0}})"""
 
 interface Neo4jVisualizationRepository :
@@ -52,4 +60,16 @@ interface Neo4jVisualizationRepository :
         countQuery = """$MATCH_NONFEATURED_VISUALIZATION $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllNonFeaturedVisualizations(pageable: Pageable): Page<Neo4jResource>
+
+    @Query(
+        value = """$MATCH_UNLISTED_VISUALIZATION $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        countQuery = """$MATCH_UNLISTED_VISUALIZATION $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
+    )
+    fun findAllUnlistedVisualizations(pageable: Pageable): Page<Neo4jResource>
+
+    @Query(
+        value = """$MATCH_LISTED_VISUALIZATION $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        countQuery = """$MATCH_LISTED_VISUALIZATION $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
+    )
+    fun findAllListedVisualizations(pageable: Pageable): Page<Neo4jResource>
 }

@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsUnlistedService
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkFeaturedService
 import eu.tib.orkg.prototype.statements.application.port.out.GetProblemFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.LoadProblemAdapter
@@ -10,7 +11,8 @@ import org.springframework.data.domain.Pageable
 interface ProblemService :
     GetProblemFlagQuery,
     LoadProblemAdapter,
-    MarkFeaturedService {
+    MarkFeaturedService,
+    MarkAsUnlistedService {
     fun findById(id: ResourceId): Optional<Resource>
 
     fun findFieldsPerProblem(problemId: ResourceId): List<Any>

@@ -21,5 +21,5 @@ data class Stats(
     val observatories: Long,
     val organizations: Long,
     @JsonProperty("extras")
-    val extraCounts: Map<String, Long>?,
+    val extraCounts: Map<String, Long>?
 )

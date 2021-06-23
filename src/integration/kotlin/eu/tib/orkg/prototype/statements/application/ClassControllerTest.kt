@@ -307,7 +307,8 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("created_by").description("The ID of the user that created the class. All zeros if unknown."),
             fieldWithPath("description").description("The description of the class, if exists.").optional(),
             fieldWithPath("_class").optional().ignored(),
-            fieldWithPath("featured").description("Featured Value").optional().ignored()
+            fieldWithPath("featured").description("Featured Value").optional().ignored(),
+            fieldWithPath("unlisted").description("Unlisted Value").optional().ignored()
         )
 
     private fun classListResponseFields() =
@@ -319,7 +320,8 @@ class ClassControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("created_by").description("The ID of the user that created the class. All zeros if unknown."),
             fieldWithPath("description").description("The description of the class, if exists.").optional(),
             fieldWithPath("_class").optional().ignored(),
-            fieldWithPath("featured").description("Featured Value").optional().ignored()
+            fieldWithPath("featured").description("Featured Value").optional().ignored(),
+            fieldWithPath("unlisted").description("Unlisted Value").optional().ignored()
         )
 
     private fun resourceListDetailedResponseFields() =
@@ -338,7 +340,8 @@ class ClassControllerTest : RestDocumentationBaseTest() {
         fieldWithPath("organization_id").description("The ID of the organization that maintains this resource."),
         fieldWithPath("shared").description("The number of times this resource is shared"),
         fieldWithPath("_class").description("Resource").optional(),
-        fieldWithPath("featured").description("Featured").optional().ignored()
+        fieldWithPath("featured").description("Featured").optional().ignored(),
+        fieldWithPath("unlisted").description("Unlisted").optional().ignored()
     )
 
     fun classListDetailedResponseFields(): ResponseFieldsSnippet =

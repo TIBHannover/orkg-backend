@@ -164,7 +164,8 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("created_at").description("The resource creation datetime"),
             fieldWithPath("created_by").description("The ID of the user that created the literal. All zeros if unknown."),
             fieldWithPath("_class").optional().ignored(),
-            fieldWithPath("featured").optional().ignored()
+            fieldWithPath("featured").optional().ignored(),
+            fieldWithPath("unlisted").optional().ignored()
         )
 
         fun listOfLiteralsResponseFields(): ResponseFieldsSnippet =

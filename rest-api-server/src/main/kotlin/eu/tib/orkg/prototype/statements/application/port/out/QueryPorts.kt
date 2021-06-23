@@ -14,7 +14,6 @@ interface LoadResourceAdapter {
 
     fun loadUnlistedResources(pageable: Pageable): Page<Resource>
     fun loadListedResources(pageable: Pageable): Page<Resource>
-
 }
 
 interface LoadPaperAdapter {
@@ -27,7 +26,6 @@ interface LoadPaperAdapter {
     fun loadUnlistedPapers(pageable: Pageable): Page<Resource>
     fun loadListedPapers(pageable: Pageable): Page<Resource>
 }
-
 
 interface LoadComparisonAdapter {
     fun loadFeaturedComparisons(pageable: Pageable): Page<Resource>

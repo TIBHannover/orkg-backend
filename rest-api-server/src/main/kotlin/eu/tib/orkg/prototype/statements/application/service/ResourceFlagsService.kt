@@ -4,8 +4,6 @@ import eu.tib.orkg.prototype.statements.application.port.`in`.GetPapersQuery
 import eu.tib.orkg.prototype.statements.application.port.`in`.GetResourcesQuery
 import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperAdapter
 import eu.tib.orkg.prototype.statements.application.port.out.LoadResourceAdapter
-import eu.tib.orkg.prototype.statements.domain.model.Resource
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
@@ -52,6 +50,4 @@ class GetResourceFlagsService(
 
     override fun getListedPapers(pageable: Pageable) =
         loadPaperAdapter.loadListedPapers(pageable)
-
 }
-

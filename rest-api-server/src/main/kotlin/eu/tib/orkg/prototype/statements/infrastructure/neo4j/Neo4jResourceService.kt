@@ -248,19 +248,19 @@ class Neo4jResourceService(
         return null
     }
 
-    override fun markAsFeatured(resourceId: ResourceId): Optional<Resource>{
+    override fun markAsFeatured(resourceId: ResourceId): Optional<Resource> {
         setUnlistedFlag(resourceId, false)
         return setFeaturedFlag(resourceId, true)
     }
 
     override fun markAsNonFeatured(resourceId: ResourceId) = setFeaturedFlag(resourceId, false)
 
-    override fun markAsUnlisted(resourceId: ResourceId): Optional<Resource>{
+    override fun markAsUnlisted(resourceId: ResourceId): Optional<Resource> {
         setFeaturedFlag(resourceId, false)
         return setUnlistedFlag(resourceId, true)
     }
 
-    override fun markAsListed(resourceId: ResourceId)= setUnlistedFlag(resourceId, false)
+    override fun markAsListed(resourceId: ResourceId) = setUnlistedFlag(resourceId, false)
 
     override fun loadFeaturedPapers(pageable: Pageable): Page<Resource> =
         neo4jResourceRepository

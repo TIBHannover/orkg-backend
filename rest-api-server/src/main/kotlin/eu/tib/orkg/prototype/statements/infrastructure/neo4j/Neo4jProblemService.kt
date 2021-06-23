@@ -122,14 +122,14 @@ override fun findById(id: ResourceId): Optional<Resource> =
         neo4jProblemRepository.findAllListedProblems(pageable)
             .map(Neo4jResource::toResource)
 
-    override fun markAsFeatured(resourceId: ResourceId): Optional<Resource>{
+    override fun markAsFeatured(resourceId: ResourceId): Optional<Resource> {
         setUnlistedFlag(resourceId, false)
         return setFeaturedFlag(resourceId, true)
     }
 
     override fun markAsNonFeatured(resourceId: ResourceId) = setFeaturedFlag(resourceId, false)
 
-    override fun markAsUnlisted(resourceId: ResourceId): Optional<Resource>{
+    override fun markAsUnlisted(resourceId: ResourceId): Optional<Resource> {
         setFeaturedFlag(resourceId, false)
         return setUnlistedFlag(resourceId, true)
     }

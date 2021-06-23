@@ -132,7 +132,6 @@ data class Neo4jResource(
     override val thingId: String?
         get() = resourceId?.value
 
-
     override fun toThing() = toResource()
 
     /**

@@ -39,7 +39,6 @@ private const val MATCH_UNLISTED_SMART_REVIEW =
 private const val MATCH_LISTED_SMART_REVIEW =
     """MATCH (node) WHERE (NOT EXISTS(node.unlisted) OR node.unlisted = false) AND ANY(collectionFields IN ['SmartReviewPublished'] WHERE collectionFields IN LABELS(node))"""
 
-
 private const val MATCH_SMART_REVIEW_BY_ID = """MATCH (node:`Resource`:`SmartReviewPublished` {resource_id: {0}})"""
 
 interface Neo4jSmartReviewRepository :

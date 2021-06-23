@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-import com.datical.liquibase.ext.appdba.markunused.change.MarkUnsedChange
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
@@ -11,16 +10,16 @@ import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsVerifiedUseC
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkFeaturedService
 import eu.tib.orkg.prototype.statements.application.port.out.GetComparisonFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.GetContributionFlagQuery
+import eu.tib.orkg.prototype.statements.application.port.out.GetPaperFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.GetResourceFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.GetSmartReviewFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.GetVisualizationFlagQuery
-import eu.tib.orkg.prototype.statements.application.port.out.GetPaperFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.LoadComparisonAdapter
 import eu.tib.orkg.prototype.statements.application.port.out.LoadContributionAdapter
-import eu.tib.orkg.prototype.statements.application.port.out.LoadSmartReviewAdapter
-import eu.tib.orkg.prototype.statements.application.port.out.LoadVisualizationAdapter
 import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperAdapter
 import eu.tib.orkg.prototype.statements.application.port.out.LoadResourceAdapter
+import eu.tib.orkg.prototype.statements.application.port.out.LoadSmartReviewAdapter
+import eu.tib.orkg.prototype.statements.application.port.out.LoadVisualizationAdapter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
 import java.util.Optional
 import org.springframework.data.domain.Page

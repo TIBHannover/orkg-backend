@@ -10,7 +10,6 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
-import eu.tib.orkg.prototype.statements.infrastructure.neo4j.Neo4jResourceService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -181,7 +180,6 @@ class ResourceController(
     @GetMapping("/{id}/metadata/unlisted")
     fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean =
         service.getUnlistedResourceFlag(id) ?: throw ResourceNotFound(id.toString())
-
 }
 
 enum class ExtractionMethod {

@@ -39,7 +39,6 @@ private const val MATCH_UNLISTED_COMPARISON =
 private const val MATCH_LISTED_COMPARISON =
     """MATCH (node) WHERE (NOT EXISTS(node.unlisted) OR node.unlisted = false) AND ANY(collectionFields IN ['Comparison'] WHERE collectionFields IN LABELS(node))"""
 
-
 private const val MATCH_COMPARISON_BY_ID = """MATCH (node:`Resource`:`Comparison` {resource_id: {0}})"""
 
 interface Neo4jComparisonRepository :
@@ -59,7 +58,6 @@ interface Neo4jComparisonRepository :
         countQuery = """$MATCH_NONFEATURED_COMPARISON $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllNonFeaturedComparsions(pageable: Pageable): Page<Neo4jResource>
-
 
     @Query(
         value = """$MATCH_UNLISTED_COMPARISON $WITH_NODE_PROPERTIES $RETURN_NODE""",

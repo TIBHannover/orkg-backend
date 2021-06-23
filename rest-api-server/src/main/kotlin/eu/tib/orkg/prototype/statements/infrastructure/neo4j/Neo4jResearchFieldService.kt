@@ -80,7 +80,7 @@ class Neo4jResearchFieldService(
         unlisted: Boolean,
         pageable: Pageable
     ): Page<Resource> {
-        if(featured or unlisted){
+        if (featured or unlisted) {
             return neo4jResearchFieldRepository.getPapersIncludingSubFieldsWithFlags(
                 id = id,
                 featured = featured,
@@ -120,7 +120,6 @@ class Neo4jResearchFieldService(
             id = id,
             pageable = pageable)
             .map(Neo4jResource::toResource)
-
     }
 
     override fun getContributorsExcludingSubFields(id: ResourceId, pageable: Pageable): Page<Contributor> {
@@ -134,7 +133,7 @@ class Neo4jResearchFieldService(
 
     override fun getPapersExcludingSubFields(id: ResourceId, featured: Boolean, unlisted: Boolean, pageable: Pageable):
         Page<Resource> {
-        if(featured or unlisted){
+        if (featured or unlisted) {
             return neo4jResearchFieldRepository.getPapersExcludingSubFieldsWithFlags(
                 id = id,
                 featured = featured,
@@ -144,7 +143,6 @@ class Neo4jResearchFieldService(
         }
         return neo4jResearchFieldRepository.getPapersExcludingSubFields(id = id, pageable = pageable).map(Neo4jResource::toResource)
     }
-
 
     override fun getComparisonsExcludingSubFields(id: ResourceId, featured: Boolean, unlisted: Boolean, pageable: Pageable):
         Page<Resource> {

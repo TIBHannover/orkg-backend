@@ -33,6 +33,13 @@ private const val MATCH_FEATURED_SMART_REVIEW =
 private const val MATCH_NONFEATURED_SMART_REVIEW =
     """MATCH (node) WHERE (NOT EXISTS(node.featured) OR node.featured = false) AND ANY(collectionFields IN ['SmartReviewPublished'] WHERE collectionFields IN LABELS(node))"""
 
+private const val MATCH_UNLISTED_SMART_REVIEW =
+    """MATCH (node) WHERE EXISTS(node.unlisted) AND node.unlisted = true AND ANY(collectionFields IN ['SmartReviewPublished'] WHERE collectionFields IN LABELS(node))"""
+
+private const val MATCH_LISTED_SMART_REVIEW =
+    """MATCH (node) WHERE (NOT EXISTS(node.unlisted) OR node.unlisted = false) AND ANY(collectionFields IN ['SmartReviewPublished'] WHERE collectionFields IN LABELS(node))"""
+
+
 private const val MATCH_SMART_REVIEW_BY_ID = """MATCH (node:`Resource`:`SmartReviewPublished` {resource_id: {0}})"""
 
 interface Neo4jSmartReviewRepository :
@@ -52,4 +59,16 @@ interface Neo4jSmartReviewRepository :
         countQuery = """$MATCH_NONFEATURED_SMART_REVIEW $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllNonFeaturedSmartReviews(pageable: Pageable): Page<Neo4jResource>
+
+    @Query(
+        value = """$MATCH_UNLISTED_SMART_REVIEW $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        countQuery = """$MATCH_UNLISTED_SMART_REVIEW $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
+    )
+    fun findAllUnlistedSmartReviews(pageable: Pageable): Page<Neo4jResource>
+
+    @Query(
+        value = """$MATCH_LISTED_SMART_REVIEW $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        countQuery = """$MATCH_LISTED_SMART_REVIEW $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
+    )
+    fun findAllListedSmartReviews(pageable: Pageable): Page<Neo4jResource>
 }

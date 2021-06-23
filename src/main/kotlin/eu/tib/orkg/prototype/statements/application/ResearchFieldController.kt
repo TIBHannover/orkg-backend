@@ -6,7 +6,6 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import java.util.Optional
-import java.util.logging.Logger
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
@@ -52,21 +51,20 @@ class ResearchFieldController(
     @GetMapping("/{id}/subfields/research-problems")
     fun getResearchProblemsIncludingSubFields(
         @PathVariable id: ResourceId,
-        @RequestParam("featured")
-        featured: Optional<Boolean>,
+        @RequestParam("featured", required = false, defaultValue = "false")
+        featured: Boolean,
+        @RequestParam("unlisted", required = false, defaultValue = "false")
+        unlisted: Boolean,
         pageable: Pageable
     ): ResponseEntity<Page<Resource>> {
         // Add if condition to check if featured is present and pass the variable
         // Do the same for all
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
-        if (featured.isPresent) {
-            return ok(service.getResearchProblemsIncludingSubFields(
-                id = id,
-                featured = featured.get(),
-                pageable = pageable
-            ))
-        }
-        return ok(service.getResearchProblemsIncludingSubFields(id = id, pageable = pageable))
+        return ok(service.getResearchProblemsIncludingSubFields(
+            id = id,
+            featured = featured,
+            unlisted = unlisted,
+            pageable = pageable))
     }
 
     /**
@@ -91,19 +89,19 @@ class ResearchFieldController(
     @GetMapping("/{id}/subfields/comparisons")
     fun getComparisonsIncludingSubFields(
         @PathVariable id: ResourceId,
-        @RequestParam("featured")
-        featured: Optional<Boolean>,
+        @RequestParam("featured", required = false, defaultValue = "false")
+        featured: Boolean,
+        @RequestParam("unlisted", required = false, defaultValue = "false")
+        unlisted: Boolean,
         pageable: Pageable
     ): ResponseEntity<Page<Resource>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
-        if (featured.isPresent) {
-            return ok(service.getComparisonsIncludingSubFields(
-                id = id,
-                featured = featured.get(),
-                pageable = pageable
-            ))
-        }
-        return ok(service.getComparisonsIncludingSubFields(id = id, pageable = pageable))
+        return ok(service.getComparisonsIncludingSubFields(
+            id = id,
+            featured = featured,
+            unlisted = unlisted,
+            pageable = pageable
+        ))
     }
 
     /**
@@ -114,19 +112,18 @@ class ResearchFieldController(
     @GetMapping("/{id}/subfields/papers")
     fun getPapersIncludingSubFields(
         @PathVariable id: ResourceId,
-        @RequestParam("featured")
-        featured: Optional<Boolean>,
+        @RequestParam("featured", required = false, defaultValue = "false")
+        featured: Boolean,
+        @RequestParam("unlisted", required = false, defaultValue = "false")
+        unlisted: Boolean,
         pageable: Pageable
     ): ResponseEntity<Page<Resource>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
-        if (featured.isPresent) {
-            return ok(service.getPapersIncludingSubFields(
-                id = id,
-                featured = featured.get(),
-                pageable = pageable
-            ))
-        }
-        return ok(service.getPapersIncludingSubFields(id = id, pageable = pageable))
+        return ok(service.getPapersIncludingSubFields(
+            id = id,
+            featured = featured,
+            unlisted=unlisted,
+            pageable = pageable))
     }
 
     /**
@@ -137,19 +134,17 @@ class ResearchFieldController(
     @GetMapping("/{id}/papers")
     fun getPapersExcludingSubFields(
         @PathVariable id: ResourceId,
-        @RequestParam("featured")
-        featured: Optional<Boolean>,
+        @RequestParam("featured", required = false, defaultValue = "false")
+        featured: Boolean,
+        @RequestParam("unlisted", required = false, defaultValue = "false")
+        unlisted: Boolean,
         pageable: Pageable
     ): ResponseEntity<Page<Resource>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
-        if (featured.isPresent) {
-            return ok(service.getPapersExcludingSubFields(
-                id = id,
-                featured = featured.get(),
-                pageable = pageable
-            ))
-        }
-        return ok(service.getPapersExcludingSubFields(id = id, pageable = pageable))
+        return ok(service.getPapersExcludingSubFields(id = id,
+            featured = featured,
+            unlisted = unlisted,
+            pageable = pageable))
     }
 
     /**
@@ -160,19 +155,18 @@ class ResearchFieldController(
     @GetMapping("/{id}/comparisons")
     fun getComparisonsExcludingSubFields(
         @PathVariable id: ResourceId,
-        @RequestParam("featured")
-        featured: Optional<Boolean>,
+        @RequestParam("featured", required = false, defaultValue = "false")
+        featured: Boolean,
+        @RequestParam("unlisted", required = false, defaultValue = "false")
+        unlisted: Boolean,
         pageable: Pageable
     ): ResponseEntity<Page<Resource>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
-        if (featured.isPresent) {
-            return ok(service.getComparisonsExcludingSubFields(
-                id = id,
-                featured = featured.get(),
-                pageable = pageable
-            ))
-        }
-        return ok(service.getComparisonsExcludingSubFields(id = id, pageable = pageable))
+        return ok(service.getComparisonsExcludingSubFields(
+            id = id,
+            featured = featured,
+            unlisted = unlisted,
+            pageable = pageable))
     }
 
     /**
@@ -198,18 +192,17 @@ class ResearchFieldController(
     @GetMapping("/{id}/research-problems")
     fun getResearchProblemsExcludingSubFields(
         @PathVariable id: ResourceId,
-        @RequestParam("featured")
-        featured: Optional<Boolean>,
+        @RequestParam("featured", required = false, defaultValue = "false")
+        featured: Boolean,
+        @RequestParam("unlisted", required = false, defaultValue = "false")
+        unlisted: Boolean,
         pageable: Pageable
     ): ResponseEntity<Page<Resource>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
-        if (featured.isPresent) {
-            return ok(service.getResearchProblemsExcludingSubFields(
-                id = id,
-                featured = featured.get(),
-                pageable = pageable
-            ))
-        }
-        return ok(service.getResearchProblemsExcludingSubFields(id = id, pageable = pageable))
+        return ok(service.getResearchProblemsExcludingSubFields(
+            id = id,
+            featured = featured,
+            unlisted= unlisted,
+            pageable = pageable))
     }
 }

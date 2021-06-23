@@ -1,10 +1,12 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import com.datical.liquibase.ext.appdba.markunused.change.MarkUnsedChange
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryRequest
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
+import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsUnlistedService
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsVerifiedUseCase
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkFeaturedService
 import eu.tib.orkg.prototype.statements.application.port.out.GetComparisonFlagQuery
@@ -31,6 +33,7 @@ interface ResourceService :
     LoadPaperAdapter,
     GetPaperFlagQuery,
     MarkFeaturedService,
+    MarkAsUnlistedService,
     GetResourceFlagQuery,
     LoadComparisonAdapter,
     LoadContributionAdapter,
@@ -138,6 +141,10 @@ interface ResourceService :
     fun findAllByFeatured(pageable: Pageable): Page<Resource>
 
     fun findAllByNonFeatured(pageable: Pageable): Page<Resource>
+
+    fun findAllByUnlisted(pageable: Pageable): Page<Resource>
+
+    fun findAllByListed(pageable: Pageable): Page<Resource>
 
     fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Resource>
 

@@ -9,18 +9,18 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
-// FIXME: The MarkVerifiedUseCase is currently implemented in ResourceService but should be extracted.
+// FIXME: MarkVerifiedUseCase, MarkFeaturedService, MarkAsInlisted is currently implemented in ResourceService but should be extracted.
 // FIXME: The LoadResourcePort is currently implemented in ResourceService but should be extracted.
 
 @Service
-class GetResourcesService(
+class GetResourceFlagsService(
     private val loadResourceAdapter: LoadResourceAdapter,
     private val loadPaperAdapter: LoadPaperAdapter
 ) : GetResourcesQuery, GetPapersQuery {
-    override fun getVerifiedResources(pageable: Pageable): Page<Resource> =
+    override fun getVerifiedResources(pageable: Pageable) =
         loadResourceAdapter.loadVerifiedResources(pageable)
 
-    override fun getUnverifiedResources(pageable: Pageable): Page<Resource> =
+    override fun getUnverifiedResources(pageable: Pageable) =
         loadResourceAdapter.loadUnverifiedResources(pageable)
 
     override fun getFeaturedResources(pageable: Pageable) =
@@ -29,23 +29,29 @@ class GetResourcesService(
     override fun getNonFeaturedResources(pageable: Pageable) =
         loadResourceAdapter.loadNonFeaturedResources(pageable)
 
+    override fun getUnlistedResources(pageable: Pageable) =
+        loadResourceAdapter.loadUnlistedResources(pageable)
+
+    override fun getListedResources(pageable: Pageable) =
+        loadResourceAdapter.loadListedResources(pageable)
+
     override fun getFeaturedPapers(pageable: Pageable) =
         loadPaperAdapter.loadFeaturedPapers(pageable)
 
     override fun getNonFeaturedPapers(pageable: Pageable) =
         loadPaperAdapter.loadNonFeaturedPapers(pageable)
 
-    override fun getUnlistedResources(pageable: Pageable): Page<Resource> =
-        loadResourceAdapter.loadUnlistedPapers(pageable)
-
-    override fun getVerifiedPapers(pageable: Pageable): Page<Resource> =
+    override fun getVerifiedPapers(pageable: Pageable) =
         loadPaperAdapter.loadVerifiedPapers(pageable)
 
-    override fun getUnverifiedPapers(pageable: Pageable): Page<Resource> =
+    override fun getUnverifiedPapers(pageable: Pageable) =
         loadPaperAdapter.loadUnverifiedPapers(pageable)
 
-    override fun getUnlistedPapers(pageable: Pageable): Page<Resource> =
+    override fun getUnlistedPapers(pageable: Pageable) =
         loadPaperAdapter.loadUnlistedPapers(pageable)
+
+    override fun getListedPapers(pageable: Pageable) =
+        loadPaperAdapter.loadListedPapers(pageable)
 
 }
 

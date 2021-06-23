@@ -38,8 +38,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/resources/")
 class ResourceController(
     private val service: ResourceService,
-    private val contributorService: ContributorService,
-    private val neo4jResourceService: Neo4jResourceService
+    private val contributorService: ContributorService
 ) : BaseController() {
 
     @GetMapping("/{id}")
@@ -141,11 +140,11 @@ class ResourceController(
 
     @GetMapping("/metadata/featured", params = ["featured=true"])
     fun getFeaturedResources(pageable: Pageable) =
-        neo4jResourceService.findAllByFeatured(pageable)
+        service.findAllByFeatured(pageable)
 
     @GetMapping("/metadata/featured", params = ["featured=false"])
     fun getNonFeaturedResources(pageable: Pageable) =
-        neo4jResourceService.findAllByNonFeatured(pageable)
+        service.findAllByNonFeatured(pageable)
 
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)
@@ -160,6 +159,29 @@ class ResourceController(
     @GetMapping("/{id}/metadata/featured")
     fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean =
         service.getFeaturedResourceFlag(id) ?: throw ResourceNotFound(id.toString())
+
+    @GetMapping("/metadata/unlisted", params = ["unlisted=true"])
+    fun getUnlistedResources(pageable: Pageable) =
+        service.findAllByUnlisted(pageable)
+
+    @GetMapping("/metadata/unlisted", params = ["unlisted=false"])
+    fun getListedResources(pageable: Pageable) =
+        service.findAllByListed(pageable)
+
+    @PutMapping("/{id}/metadata/unlisted")
+    @ResponseStatus(HttpStatus.OK)
+    fun markUnlisted(@PathVariable id: ResourceId) {
+        service.markAsUnlisted(id).orElseThrow { ResourceNotFound(id.toString()) }
+    }
+    @DeleteMapping("/{id}/metadata/unlisted")
+    fun unmarkUnlisted(@PathVariable id: ResourceId) {
+        service.markAsListed(id).orElseThrow { ResourceNotFound(id.toString()) }
+    }
+
+    @GetMapping("/{id}/metadata/unlisted")
+    fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean =
+        service.getUnlistedResourceFlag(id) ?: throw ResourceNotFound(id.toString())
+
 }
 
 enum class ExtractionMethod {

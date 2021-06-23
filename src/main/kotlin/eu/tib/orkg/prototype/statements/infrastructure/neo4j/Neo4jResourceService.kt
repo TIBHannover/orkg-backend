@@ -153,6 +153,16 @@ class Neo4jResourceService(
         neo4jResourceRepository.findAllByFeaturedIsFalse(pageable)
             .map(Neo4jResource::toResource)
 
+    override fun findAllByUnlisted(pageable: Pageable):
+        Page<Resource> =
+        neo4jResourceRepository.findAllByUnlistedIsTrue(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun findAllByListed(pageable: Pageable):
+        Page<Resource> =
+        neo4jResourceRepository.findAllByUnlistedIsFalse(pageable)
+            .map(Neo4jResource::toResource)
+
     override fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Resource> =
         neo4jResourceRepository.findPapersByObservatoryId(id)
             .map(Neo4jResource::toResource)
@@ -238,9 +248,19 @@ class Neo4jResourceService(
         return null
     }
 
-    override fun markAsFeatured(resourceId: ResourceId) = setFeaturedFlag(resourceId, true)
+    override fun markAsFeatured(resourceId: ResourceId): Optional<Resource>{
+        setUnlistedFlag(resourceId, false)
+        return setFeaturedFlag(resourceId, true)
+    }
 
     override fun markAsNonFeatured(resourceId: ResourceId) = setFeaturedFlag(resourceId, false)
+
+    override fun markAsUnlisted(resourceId: ResourceId): Optional<Resource>{
+        setFeaturedFlag(resourceId, false)
+        return setUnlistedFlag(resourceId, true)
+    }
+
+    override fun markAsListed(resourceId: ResourceId)= setUnlistedFlag(resourceId, false)
 
     override fun loadFeaturedPapers(pageable: Pageable): Page<Resource> =
         neo4jResourceRepository
@@ -262,9 +282,24 @@ class Neo4jResourceService(
             .findAllByVerifiedIsFalse(pageable)
             .map(Neo4jResource::toResource)
 
+    override fun loadUnlistedResources(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository
+            .findAllByUnlistedIsTrue(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadListedResources(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository
+            .findAllByUnlistedIsFalse(pageable)
+            .map(Neo4jResource::toResource)
+
     override fun loadUnlistedPapers(pageable: Pageable): Page<Resource> =
         neo4jResourceRepository
             .findAllUnlistedPapers(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadListedPapers(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository
+            .findAllListedPapers(pageable)
             .map(Neo4jResource::toResource)
 
     override fun getFeaturedPaperFlag(id: ResourceId): Boolean? {
@@ -276,11 +311,29 @@ class Neo4jResourceService(
         return null
     }
 
+    override fun getUnlistedPaperFlag(id: ResourceId): Boolean? {
+        val result = neo4jResourceRepository.findPaperByResourceId(id)
+        if (result.isPresent) {
+            val paper = result.get()
+            return paper.unlisted ?: false
+        }
+        return null
+    }
+
     override fun getFeaturedResourceFlag(id: ResourceId): Boolean? {
         val result = neo4jResourceRepository.findByResourceId(id)
         if (result.isPresent) {
             val resource = result.get()
             return resource.featured ?: false
+        }
+        return null
+    }
+
+    override fun getUnlistedResourceFlag(id: ResourceId): Boolean? {
+        val result = neo4jResourceRepository.findByResourceId(id)
+        if (result.isPresent) {
+            val resource = result.get()
+            return resource.unlisted ?: false
         }
         return null
     }
@@ -296,6 +349,18 @@ class Neo4jResourceService(
             .findAllNonFeaturedComparsions(pageable)
             .map(Neo4jResource::toResource)
 
+    override fun loadUnlistedComparisons(pageable: Pageable):
+        Page<Resource> =
+        neo4jComparisonRepository
+            .findAllUnlistedComparisons(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadListedComparisons(pageable: Pageable):
+        Page<Resource> =
+        neo4jComparisonRepository
+            .findAllListedComparsions(pageable)
+            .map(Neo4jResource::toResource)
+
     override fun loadFeaturedContributions(pageable: Pageable):
         Page<Resource> =
         neo4jContributionRepository
@@ -306,6 +371,18 @@ class Neo4jResourceService(
         Page<Resource> =
         neo4jContributionRepository
             .findAllNonFeaturedContributions(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadUnlistedContributions(pageable: Pageable):
+        Page<Resource> =
+        neo4jContributionRepository
+            .findAllUnlistedContributions(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadListedContributions(pageable: Pageable):
+        Page<Resource> =
+        neo4jContributionRepository
+            .findAllListedContributions(pageable)
             .map(Neo4jResource::toResource)
 
     override fun loadFeaturedVisualizations(pageable: Pageable):
@@ -320,6 +397,18 @@ class Neo4jResourceService(
             .findAllNonFeaturedVisualizations(pageable)
             .map(Neo4jResource::toResource)
 
+    override fun loadUnlistedVisualizations(pageable: Pageable):
+        Page<Resource> =
+        neo4jVisualizationRepository
+            .findAllUnlistedVisualizations(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadListedVisualizations(pageable: Pageable):
+        Page<Resource> =
+        neo4jVisualizationRepository
+            .findAllListedVisualizations(pageable)
+            .map(Neo4jResource::toResource)
+
     override fun loadFeaturedSmartReviews(pageable: Pageable):
         Page<Resource> =
         neo4jSmartReviewRepository
@@ -332,11 +421,32 @@ class Neo4jResourceService(
             .findAllNonFeaturedSmartReviews(pageable)
             .map(Neo4jResource::toResource)
 
+    override fun loadUnlistedSmartReviews(pageable: Pageable):
+        Page<Resource> =
+        neo4jSmartReviewRepository
+            .findAllUnlistedSmartReviews(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadListedSmartReviews(pageable: Pageable):
+        Page<Resource> =
+        neo4jSmartReviewRepository
+            .findAllListedSmartReviews(pageable)
+            .map(Neo4jResource::toResource)
+
     override fun getFeaturedContributionFlag(id: ResourceId): Boolean? {
         val result = neo4jContributionRepository.findContributionByResourceId(id)
         if (result.isPresent) {
             val resource = result.get()
             return resource.featured ?: false
+        }
+        return null
+    }
+
+    override fun getUnlistedContributionFlag(id: ResourceId): Boolean? {
+        val result = neo4jContributionRepository.findContributionByResourceId(id)
+        if (result.isPresent) {
+            val resource = result.get()
+            return resource.unlisted ?: false
         }
         return null
     }
@@ -350,6 +460,15 @@ class Neo4jResourceService(
         return null
     }
 
+    override fun getUnlistedComparisonFlag(id: ResourceId): Boolean? {
+        val result = neo4jComparisonRepository.findComparisonByResourceId(id)
+        if (result.isPresent) {
+            val resource = result.get()
+            return resource.unlisted ?: false
+        }
+        return null
+    }
+
     override fun getFeaturedVisualizationFlag(id: ResourceId): Boolean? {
         val result = neo4jVisualizationRepository.findVisualizationByResourceId(id)
         if (result.isPresent) {
@@ -359,11 +478,29 @@ class Neo4jResourceService(
         return null
     }
 
+    override fun getUnlistedVisualizationFlag(id: ResourceId): Boolean? {
+        val result = neo4jVisualizationRepository.findVisualizationByResourceId(id)
+        if (result.isPresent) {
+            val resource = result.get()
+            return resource.unlisted ?: false
+        }
+        return null
+    }
+
     override fun getFeaturedSmartReviewFlag(id: ResourceId): Boolean? {
         val result = neo4jSmartReviewRepository.findSmartReviewByResourceId(id)
         if (result.isPresent) {
             val resource = result.get()
             return resource.featured ?: false
+        }
+        return null
+    }
+
+    override fun getUnlistedSmartReviewFlag(id: ResourceId): Boolean? {
+        val result = neo4jSmartReviewRepository.findSmartReviewByResourceId(id)
+        if (result.isPresent) {
+            val resource = result.get()
+            return resource.unlisted ?: false
         }
         return null
     }
@@ -383,6 +520,16 @@ class Neo4jResourceService(
         if (result.isPresent) {
             val resource = result.get()
             resource.verified = verified
+            return Optional.of(neo4jResourceRepository.save(resource).toResource())
+        }
+        return Optional.empty()
+    }
+
+    private fun setUnlistedFlag(resourceId: ResourceId, unlisted: Boolean): Optional<Resource> {
+        val result = neo4jResourceRepository.findByResourceId(resourceId)
+        if (result.isPresent) {
+            val resource = result.get()
+            resource.unlisted = unlisted
             return Optional.of(neo4jResourceRepository.save(resource).toResource())
         }
         return Optional.empty()

@@ -226,10 +226,10 @@ data class BundleConfiguration(
         var labelFilter = ""
         if (blacklist.isNotEmpty())
             labelFilter = blacklist.joinToString(prefix = "-", separator = "|-")
-        if (blacklist.isNotEmpty()) {
+        if (whitelist.isNotEmpty()) {
             var positiveLabels = whitelist.joinToString(prefix = "+", separator = "|+")
             if (labelFilter.isNotBlank())
-                positiveLabels += "|$positiveLabels"
+                positiveLabels += "|$labelFilter"
             labelFilter = positiveLabels
         }
         if (blacklist.isNotEmpty() || whitelist.isNotEmpty())

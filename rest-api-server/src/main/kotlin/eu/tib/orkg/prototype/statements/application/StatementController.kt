@@ -174,7 +174,8 @@ class StatementController(
         @RequestParam("minLevel", required = false) minLevel: Int?,
         @RequestParam("maxLevel", required = false) maxLevel: Int?,
         @RequestParam("blacklist", required = false, defaultValue = "") blacklist: List<ClassId>,
-        @RequestParam("whitelist", required = false, defaultValue = "") whitelist: List<ClassId>
+        @RequestParam("whitelist", required = false, defaultValue = "") whitelist: List<ClassId>,
+        @RequestParam("includeFirst", required = false, defaultValue = "true") includeFirst: Boolean
     ): HttpEntity<Bundle> {
         return ok(
             statementService.fetchAsBundle(
@@ -183,7 +184,8 @@ class StatementController(
                 BundleConfiguration(
                     minLevel, maxLevel,
                     blacklist, whitelist
-                )
+                ),
+                includeFirst
             )
         )
     }
@@ -235,5 +237,10 @@ data class BundleConfiguration(
         if (blacklist.isNotEmpty() || whitelist.isNotEmpty())
             conf["labelFilter"] = labelFilter
         return conf
+    }
+
+    companion object Factory {
+        fun firstLevelConf(): BundleConfiguration =
+            BundleConfiguration(minLevel = null, maxLevel = 1, blacklist = emptyList(), whitelist = emptyList())
     }
 }

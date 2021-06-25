@@ -198,9 +198,10 @@ class Neo4jStatementService(
 
     override fun fetchAsBundle(
         thingId: String,
-        configuration: BundleConfiguration
-    ): Bundle =
-        Bundle(
+        configuration: BundleConfiguration,
+        includeFirst: Boolean
+    ): Bundle {
+        val fullBundle = Bundle(
             thingId,
             statementRepository.fetchAsBundle(
                 thingId,
@@ -209,6 +210,19 @@ class Neo4jStatementService(
                 .map { toStatement(it) }
                 .toMutableList()
         )
+        if (includeFirst) {
+            return fullBundle + Bundle(
+                thingId,
+                statementRepository.fetchAsBundle(
+                    thingId,
+                    BundleConfiguration.firstLevelConf().toApocConfiguration()
+                )
+                    .map { toStatement(it) }
+                    .toMutableList()
+            )
+        }
+        return fullBundle
+    }
 
     override fun removeAll() = statementRepository.deleteAll()
 

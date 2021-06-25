@@ -8,7 +8,21 @@ data class Bundle(
     @JsonProperty("statements")
     var bundle: MutableList<GeneralStatement> = mutableListOf()
 ) {
-    fun addStatement(statement: GeneralStatement) {
+    private fun addStatement(statement: GeneralStatement) {
         bundle.add(statement)
+    }
+
+    operator fun contains(statement: GeneralStatement): Boolean {
+        return this.bundle.any { it.id == statement.id }
+    }
+
+    operator fun plus(other: Bundle): Bundle {
+        val newBundle = this.copy()
+        other.bundle
+            .filter { it !in this }
+            .forEach { newBundle.addStatement(it) }
+        // TODO: This is sorting descending to conform to issue (#309)
+        newBundle.bundle.sortByDescending { it.createdAt!! }
+        return newBundle
     }
 }

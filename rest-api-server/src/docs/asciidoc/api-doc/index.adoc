@@ -183,6 +183,8 @@ When fetching a bundle of statements, filtering is possible via specifying certa
 The number of levels in the tree being fetched can be filtered using the two query parameters `minLevel` & `minLevel`.
 Furthermore, to be able to further control which statements to fetch, a black/white listing operation can be introduced via the query parameters `blacklist` & `whitelist` - this filter applies to classes of subjects and objects of statements only -
 
+The endpoint also provide the parameter `includeFirst` which by default is `True` meaning it will not apply black/white listing on first level.
+
 operation::statement-controller-fetch-bundle[snippets='request-parameters,curl-request,http-response']
 
 include::parts/bulk-statements.adoc[]

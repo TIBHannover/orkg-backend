@@ -53,7 +53,7 @@ class PaperController(
             .buildAndExpand(resource.id)
             .toUri()
         if(resource.id != null){
-            val notification = NotificationUpdateData(resource.id.value, true)
+            val notification = NotificationUpdateData(resource.id.value, true, resource.createdBy.value)
             eventBus.post(notification);
         }
         logger.info("Event submitted successfully!")

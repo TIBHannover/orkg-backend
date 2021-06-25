@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 import java.util.Optional
 import java.util.UUID
 
@@ -17,9 +18,9 @@ interface ResearchFieldsTreeRepository: JpaRepository<ResearchFieldsTree, UUID> 
     fun deleteAllByUserId(userId: UUID)
 
     @Modifying
-    @Query(value="INSERT INTO research_fields_tree (id, user_id, research_field, path) VALUES (?1, ?2, ?3, CAST(?4 as ltree))",
-    nativeQuery= true)
-    fun saveNewRecord(id: UUID, userId: UUID, rf: String, path: String)
+    @Query(value="INSERT INTO research_fields_tree (id, user_id, research_field, research_field_name, path, created_date_time) " +
+        "VALUES (?1, ?2, ?3, ?4, CAST(?5 as ltree), ?6)", nativeQuery= true)
+    fun saveNewRecord(id: UUID, userId: UUID, rf: String, rfName: String, path: String, createdDateTime: LocalDateTime)
 
     //get current user and send it to so that result should not contain
     //the user who made the change
@@ -27,5 +28,7 @@ interface ResearchFieldsTreeRepository: JpaRepository<ResearchFieldsTree, UUID> 
 
     fun getAllByResearchField(researchId: String): List<ResearchFieldsTree>
 
+    fun getByResearchFieldAndUserId(researchId: String, userId: UUID): Optional<ResearchFieldsTree>
 
+    fun deleteByResearchFieldAndUserId(researchId: String, userId: UUID)
 }

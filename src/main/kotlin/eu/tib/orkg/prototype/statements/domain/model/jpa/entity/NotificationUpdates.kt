@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.jpa.entity
 
+import java.time.LocalDateTime
 import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -34,4 +35,7 @@ class NotificationUpdates {
 
     @Column(name="new_paper")
     var newPaper: Boolean = false
+
+    @Column(name="created_date_time")
+    var createdDateTime: LocalDateTime = LocalDateTime.now()
 }

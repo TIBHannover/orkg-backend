@@ -133,7 +133,7 @@ class Neo4jStatementService :
         )
 
         val notificationUpdateData = NotificationUpdateData(
-            persistedStatement.subject?.thingId!!, false
+            persistedStatement.subject?.thingId!!, false, userId.value
         )
         eventBus.post(notificationUpdateData)
 

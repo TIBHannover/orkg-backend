@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.events.service.NotificationEmailSettingsDTO
 import eu.tib.orkg.prototype.events.service.NotificationEmailSettingsService
 import eu.tib.orkg.prototype.statements.domain.model.jpa.entity.NotificationUpdates
 import eu.tib.orkg.prototype.events.service.NotificationUpdatesService
+import eu.tib.orkg.prototype.events.service.NotificationUpdatesWithProfile
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -22,7 +23,7 @@ private val notificationUpdatesService: NotificationUpdatesService,
 private val notificationEmailSettingsService: NotificationEmailSettingsService
 ){
     @GetMapping("/{userId}")
-    fun getNotifications(@PathVariable userId: UUID): List<NotificationUpdates> =
+    fun getNotifications(@PathVariable userId: UUID): Iterable<NotificationUpdatesWithProfile> =
         notificationUpdatesService.retrieveNotificationUpdates(userId)
 
     @DeleteMapping("/{id}")

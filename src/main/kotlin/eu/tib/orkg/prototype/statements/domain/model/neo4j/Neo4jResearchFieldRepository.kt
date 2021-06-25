@@ -65,7 +65,11 @@ interface Neo4jResearchFieldRepository :
     @Query("""MATCH (:Benchmark)<-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(:Paper)-[:RELATED {predicate_id: 'P30'}]->(r:ResearchField) RETURN DISTINCT r""",
         countQuery = """MATCH (:Benchmark)<-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(:Paper)-[:RELATED {predicate_id: 'P30'}]->(r:ResearchField) RETURN COUNT(DISTINCT r) AS cnt""")
     fun findResearchFieldsWithBenchmarks(): Iterable<Neo4jResource>
-    }
+
+    @Query("""MATCH (n:ResearchField{resource_id: {0}}) WITH n OPTIONAL MATCH (n)-[:RELATED* {predicate_id: 'P36'}]->(r:ResearchField) RETURN r""",
+        countQuery = """MATCH (n:ResearchField{resource_id: {0}}) WITH n OPTIONAL MATCH (n)-[:RELATED* {predicate_id: 'P36'}]->(r:ResearchField) RETURN COUNT(r) AS cnt""")
+    fun getSubResearchFieldsList(id: String): MutableList<Neo4jResource>
+}
 
 @QueryResult
 data class ProblemsPerField(

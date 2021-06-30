@@ -24,4 +24,8 @@ class DatasetAdapter(
     override fun by(id: ResourceId): List<DatasetSummary> =
         datasetRepository.summarizeDatasetQueryById(id)
             .map(Neo4jBenchmarkUnpacked::toDatasetSummary)
+
+    override fun byAndProblem(id: ResourceId, problemId: ResourceId): List<DatasetSummary> =
+        datasetRepository.summarizeDatasetQueryByIdAndProblemId(id, problemId)
+            .map(Neo4jBenchmarkUnpacked::toDatasetSummary)
 }

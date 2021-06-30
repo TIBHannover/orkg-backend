@@ -37,9 +37,12 @@ class BenchmarkController(
             .forResearchProblem(id)
             .orElseThrow { ResearchProblemNotFound(id) }
 
-    @GetMapping("/api/datasets/{id}/summary") // FIXME: are those benchmarks ??
-    fun getDatasetSummary(@PathVariable id: ResourceId): List<DatasetSummary> =
+    @GetMapping("/api/datasets/{id}/problem/{problemId}/summary")
+    fun getDatasetSummary(
+        @PathVariable id: ResourceId,
+        @PathVariable problemId: ResourceId
+    ): List<DatasetSummary> =
         retrieveDatasets
-            .summaryFor(id)
+            .summaryFor(id, problemId)
             .orElseThrow { DatasetNotFound(id) }
 }

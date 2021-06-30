@@ -16,6 +16,7 @@ interface FindDatasetsQuery {
 
 interface SummarizeDatasetQuery {
     fun by(id: ResourceId): List<DatasetSummary>
+    fun byAndProblem(id: ResourceId, problemId: ResourceId): List<DatasetSummary>
 }
 
 interface FindResearchFieldsQuery {

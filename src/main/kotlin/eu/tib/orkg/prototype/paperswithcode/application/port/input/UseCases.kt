@@ -13,7 +13,7 @@ interface RetrieveBenchmarkUseCase {
 
 interface RetrieveDatasetUseCase {
     fun forResearchProblem(id: ResourceId): Optional<List<Dataset>>
-    fun summaryFor(id: ResourceId): Optional<List<DatasetSummary>>
+    fun summaryFor(id: ResourceId, problemId: ResourceId): Optional<List<DatasetSummary>>
 }
 
 // TODO: Integrate with ResearchFieldService?

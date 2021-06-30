@@ -77,6 +77,10 @@ dependencies {
     }
     //Google Guava
     implementation("com.google.guava:guava:30.1.1-jre")
+    //SMTP, Cron and Email
+    implementation("org.springframework.boot:spring-boot-starter-mail")
+    implementation ("org.springframework.boot:spring-boot-starter-thymeleaf")
+    implementation("org.springframework.boot:spring-boot-starter-quartz")
     //
     // Testing
     //

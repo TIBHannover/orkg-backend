@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.TrendingResearchProblems
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.ChangeLog
@@ -60,4 +61,10 @@ interface StatsService {
      * Get top contributors by research field ID
      */
     fun getTopCurrentContributorsByResearchField(id: ResourceId, days: Long): Iterable<TopContributorsWithProfileAndTotalCount>
+
+    /**
+     * Get Top 5 papers recently modified
+     */
+    fun getTopTrendingPapers(): Map<String, String>
+
 }

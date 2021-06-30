@@ -41,7 +41,26 @@ spring:
       ddl-auto: validate
     show-sql: true
     # generate-ddl: true
+  mail:
+    default-encoding: UTF-8
+    host: smtp.gmail.com
+    username: testorkg@gmail.com
+    password: testorkg123
+    port: 465
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            enable: true
+    protocol: smtp
+    test-connection: false
 logging:
   level:
     org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
     org.neo4j.ogm.drivers.bolt.request.BoltRequest: DEBUG
+my:
+  cron:
+    value: 0/3 * * * * *

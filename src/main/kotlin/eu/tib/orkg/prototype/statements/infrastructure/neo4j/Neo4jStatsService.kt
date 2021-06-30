@@ -10,6 +10,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.domain.model.StatsService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ChangeLogResponse
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatsRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResultObject
@@ -103,6 +104,21 @@ class Neo4jStatsService(
         val totalContributions = extractAndCalculateContributionDetails(values)
 
         return getContributorsWithProfileAndTotalCount(totalContributions)
+    }
+
+    override fun getTopTrendingPapers(): Map<String, String> {
+        val  date = LocalDate.now().minusDays(1)
+        val papers = neo4jStatsRepository.getTrendingPapersForEmail(date.toString())
+        return getPapersAsMapValues(papers)
+    }
+
+    private fun getPapersAsMapValues(list: List<Neo4jResource>): Map<String, String>{
+        var map = HashMap<String, String>()
+        list.map {
+            map.set(it.resourceId.toString(), it.label.toString())
+        }
+
+        return map
     }
 
     private fun getChangeLogsWithProfile(changeLogs: Page<ChangeLogResponse>, pageable: Pageable): Page<ChangeLog> {

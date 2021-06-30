@@ -2,24 +2,14 @@ package eu.tib.orkg.prototype.events.service
 
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserRepository
-import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.jpa.entity.NotificationUpdates
 import eu.tib.orkg.prototype.statements.domain.model.jpa.repository.NotificationUpdatesRepository
-import eu.tib.orkg.prototype.statements.domain.model.jpa.repository.ResearchFieldsTreeRepository
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.TopContributorIdentifiers
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.Profile
-import eu.tib.orkg.prototype.statements.infrastructure.neo4j.TopContributorsWithProfile
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.UUID
-import java.util.logging.Logger
-import javax.persistence.Column
-import javax.persistence.Id
 
 @Service
 class NotificationUpdatesServiceImpl(
@@ -41,6 +31,12 @@ class NotificationUpdatesServiceImpl(
     }
 
     override fun deleteNotificationById(id: UUID) = notificationUpdatesRepository.deleteById(id)
+
+    override fun getTotalResourcesByGroup(userId: UUID): List<NotificationAnalytics> =
+        notificationUpdatesRepository.getDailyStatisticsByUser(userId)
+
+    override fun getTotalResourcesByGroupOfAllUsers(): List<NotificationAnalyticsByUser2> =
+        notificationUpdatesRepository.getDailyStatisticsOfAllUsers()
 
     private fun getContributorsWithProfile(updates: List<NotificationUpdates>, userIdList: Array<UUID>):
         Iterable<NotificationUpdatesWithProfile> {
@@ -70,22 +66,31 @@ class NotificationUpdatesServiceImpl(
 
 data class NotificationUpdatesWithProfile(
     var id: UUID? = null,
-
     var researchFieldTreeId: UUID? = null,
-
     var userId: UUID? = null,
-
     var profile: Profile,
-
     var resourceId: String? = null,
-
     var resourceType: String? = null,
-
     var title: String? = null,
-
     var newPaper: Boolean = false,
-
     var createdDateTime: LocalDateTime = LocalDateTime.now()
+)
+
+data class NotificationAnalyticsByUser(
+    val resource_type: String,
+    val count: Int,
+    val userId: String
+)
+
+interface NotificationAnalyticsByUser2{
+    fun getResourceType(): String
+    fun getCount(): Int
+    fun getUserId(): String
+}
+
+data class NotificationAnalytics(
+    val resource_type: String,
+    val count: Int
 )
 
 

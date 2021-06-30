@@ -10,4 +10,6 @@ interface NotificationUpdatesService {
     fun addNotificationUpdate(notification: NotificationUpdates)
     fun retrieveNotificationUpdates(userId: UUID): Iterable<NotificationUpdatesWithProfile>
     fun deleteNotificationById(id: UUID)
+    fun getTotalResourcesByGroup(userId: UUID): List<NotificationAnalytics>
+    fun getTotalResourcesByGroupOfAllUsers(): List<NotificationAnalyticsByUser2>
 }

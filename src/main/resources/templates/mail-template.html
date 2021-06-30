@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>ORKG Digest</title>
+    <style>
+        .container{
+            margin: 0 auto;
+            width: 80%;
+        }
+        .content{
+            margin-top: 20px;
+            width: 80%;
+        }
+        .content__heading{
+            text-align: center;
+        }
+        .details{
+            margin: 20px auto;
+            text-align: justify;
+        }
+        .details__button{
+            cursor: pointer;
+            background: rgb(232, 97, 97) none repeat scroll 0% 0% !important;
+            color: rgb(255, 255, 255) !important;
+            border: 0px none !important;
+            border-radius: 12px !important;
+            min-height: 85px;
+            margin: 10px;
+            width: 180px;
+            justify-content: center;
+            position: relative;
+        }
+        .fixed__footer{
+            margin: 10px auto;
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="https://www.orkg.org"><img
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTX2zU4vJHFI3MM8DHHze1OjH-aDsf6ltiOK2ctBzJh_K_W7y0u6nZFSFxRZAl1TkMHkA&usqp=CAU" alt="ORKG" />
+    </a>
+</div>
+
+<div class="content">
+    <div class="content__heading"><h2>Today's ORKG Summary</h2></div>
+    Dear [[${name}]],<p>
+    This is the daily digest mail of ORKG. The following details include a
+    changes to Papers for the Research Fields you are following on ORKG.</p></div>
+    <div class="details">
+        <table>
+            <tr>
+                <td><a href="https://www.orkg.org/orkg/papers"><button class="details__button">
+                    <div>Papers</div><div>[[${papers}]]</div></button></a></td>
+                <td><a href="https://www.orkg.org/orkg/comparisons"><button
+                        class="details__button">
+                    <div>Comparisons</div><div>[[${comparisons}]]</div></button></a></td>
+                <td><a href="https://www.orkg.org/orkg/visualizations"><button class="details__button">
+                    <div>Visualizations</div><div>[[${visualizations}]]</div></button></a></td>
+                <td><a href="https://www.orkg.org/orkg/smart-reviews"><button
+                        class="details__button">
+                    <div>Smart Reviews</div><div>[[${smartreviews}]]</div></button></a></td>
+            </tr>
+        </table>
+    </div>
+    <div>
+        <div>
+            <span>Here are some of the popular comparisons and visualizations in ORKG that you might find interesting.</span>
+        </div>
+
+        <div>
+            <table>
+                <tr th:each="entry: ${trendingPapers}">
+                    <td th:text="${entry.key}">Paper</td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+    <div>
+        <span>If you wish to unsubscribe from the ORKG digest, please go to the Notifications in the ORKG website and unsubscribe.</span>
+    </div>
+    <div class="fixed__footer">Copyright &copy; 2021 ORKG. All Rights Reserved.</div>
+</body>
+</html>

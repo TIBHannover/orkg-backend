@@ -116,7 +116,7 @@ class Neo4jResearchFieldService(
                 .map(Neo4jResource::toResource)
         }
 
-        return neo4jResearchFieldRepository.getComparisonsIncludingSubFieldsAndNonFeatured(
+        return neo4jResearchFieldRepository.getComparisonsIncludingSubFields(
             id = id,
             pageable = pageable)
             .map(Neo4jResource::toResource)

@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - Bundle fetch of statements is now sorted by default on the creation date of the statement in a descending manner.
+### Fixed
+- PWC datasets summaries are now filtered by problem id. (Closes: [#316](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/316))
 
 ## [0.4.0] - 2021-06-14
 ### Changed

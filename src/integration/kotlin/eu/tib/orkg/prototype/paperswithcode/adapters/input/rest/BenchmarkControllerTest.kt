@@ -221,6 +221,9 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
     fun fetchDatasetSummary() {
         val dataset = resourceService.create(CreateResourceRequest(null, "some dataset", setOf(ClassId("Dataset"))))
 
+        val problem1 = resourceService.create(CreateResourceRequest(null, "Fancy problem", setOf(ClassId("Problem"))))
+        val problem2 = resourceService.create(CreateResourceRequest(null, "not so fancy problem", setOf(ClassId("Problem"))))
+
         val paper = resourceService.create(CreateResourceRequest(null, "paper", setOf(ClassId("Paper"))))
         val contribution1 = resourceService.create(CreateResourceRequest(null, "Contribution 1", setOf(ClassId("Contribution"))))
         val contribution2 = resourceService.create(CreateResourceRequest(null, "Contribution 2", setOf(ClassId("Contribution"))))
@@ -258,6 +261,9 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
             statementService.create(contribution2.id!!.value, PredicateId("HAS_SOURCE_CODE"), it.id!!.value)
         }
 
+        statementService.create(contribution1.id!!.value, PredicateId("P32"), problem1.id!!.value)
+        statementService.create(contribution2.id!!.value, PredicateId("P32"), problem2.id!!.value)
+
         statementService.create(contribution1.id!!.value, PredicateId("HAS_MODEL"), model1.id!!.value)
         statementService.create(contribution2.id!!.value, PredicateId("HAS_MODEL"), model2.id!!.value)
 
@@ -277,9 +283,9 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(evaluationB2E1.id!!.value, PredicateId("HAS_VALUE"), scoreOfM1B2E1.id!!.value)
 
         mockMvc
-            .perform(getRequestTo("/api/datasets/${dataset.id}/summary"))
+            .perform(getRequestTo("/api/datasets/${dataset.id}/problem/${problem1.id}/summary"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", Matchers.hasSize<Int>(3)))
+            .andExpect(jsonPath("$", Matchers.hasSize<Int>(2)))
             .andDo(
                 document(
                     snippet,
@@ -291,6 +297,9 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
     @Test
     fun fetchDatasetSummaryWithoutModels() {
         val dataset = resourceService.create(CreateResourceRequest(null, "some dataset", setOf(ClassId("Dataset"))))
+
+        val problem1 = resourceService.create(CreateResourceRequest(null, "Fancy problem", setOf(ClassId("Problem"))))
+        val problem2 = resourceService.create(CreateResourceRequest(null, "not so fancy problem", setOf(ClassId("Problem"))))
 
         val paper = resourceService.create(CreateResourceRequest(null, "paper", setOf(ClassId("Paper"))))
         val contribution1 = resourceService.create(CreateResourceRequest(null, "Contribution 1", setOf(ClassId("Contribution"))))
@@ -315,6 +324,9 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
 
         statementService.create(paper.id!!.value, PredicateId("P31"), contribution1.id!!.value)
         statementService.create(paper.id!!.value, PredicateId("P31"), contribution2.id!!.value)
+
+        statementService.create(contribution1.id!!.value, PredicateId("P32"), problem1.id!!.value)
+        statementService.create(contribution2.id!!.value, PredicateId("P32"), problem2.id!!.value)
 
         statementService.create(contribution1.id!!.value, PredicateId("HAS_BENCHMARK"), benchmark1.id!!.value)
         statementService.create(contribution2.id!!.value, PredicateId("HAS_BENCHMARK"), benchmark2.id!!.value)
@@ -342,9 +354,9 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(evaluationB2E1.id!!.value, PredicateId("HAS_VALUE"), scoreOfM1B2E1.id!!.value)
 
         mockMvc
-            .perform(getRequestTo("/api/datasets/${dataset.id}/summary"))
+            .perform(getRequestTo("/api/datasets/${dataset.id}/problem/${problem1.id}/summary"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", Matchers.hasSize<Int>(3)))
+            .andExpect(jsonPath("$", Matchers.hasSize<Int>(2)))
             .andDo(
                 document(
                     snippet,

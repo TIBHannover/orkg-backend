@@ -31,6 +31,10 @@
             justify-content: center;
             position: relative;
         }
+        .unsubscribe__msg{
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
         .fixed__footer{
             margin: 10px auto;
             text-align: center;
@@ -48,33 +52,35 @@
 <div class="content">
     <div class="content__heading"><h2>Today's ORKG Summary</h2></div>
     Dear [[${name}]],<p>
-    This is the daily digest mail of ORKG. The following details include a
-    changes to Papers for the Research Fields you are following on ORKG.</p></div>
+    This is the daily digest mail of ORKG. The following details include
+    changes to Papers for the Research Fields you are following on ORKG. In addition, it also includes the newly added/modified comparisons and visualizations.</p></div>
     <div class="details">
         <table>
             <tr>
                 <td><a href="https://www.orkg.org/orkg/papers"><button class="details__button">
-                    <div>Papers</div><div>[[${papers}]]</div></button></a></td>
-                <td><a href="https://www.orkg.org/orkg/comparisons"><button
-                        class="details__button">
-                    <div>Comparisons</div><div>[[${comparisons}]]</div></button></a></td>
-                <td><a href="https://www.orkg.org/orkg/visualizations"><button class="details__button">
-                    <div>Visualizations</div><div>[[${visualizations}]]</div></button></a></td>
-                <td><a href="https://www.orkg.org/orkg/smart-reviews"><button
-                        class="details__button">
-                    <div>Smart Reviews</div><div>[[${smartreviews}]]</div></button></a></td>
+                    <div>Papers</div><div>[[${papers}]]</div></button></a>
+                </td>
+                <td><a href="https://www.orkg.org/orkg/papers"><button class="details__button">
+                    <div>Comparisons</div><div>[[${comparisons}]]</div></button></a>
+                </td>
+                <td><a href="https://www.orkg.org/orkg/papers"><button class="details__button">
+                    <div>Visualizations</div><div>[[${visualizations}]]</div></button></a>
+                </td>
             </tr>
         </table>
     </div>
     <div>
         <div>
-            <span>Here are some of the popular comparisons and visualizations in ORKG that you might find interesting.</span>
+            <span>Here are some of the recently added or modified papers in ORKG that you might find interesting.</span>
         </div>
 
         <div>
             <table>
                 <tr th:each="entry: ${trendingPapers}">
-                    <td th:text="${entry.key}">Paper</td>
+                    <td>
+                        <a th:href="@{'https://www.orkg.org/orkg/paper/'+${entry.key}}" th:text="${entry.value}"/>
+                    </td>
+
                 </tr>
             </table>
         </div>
@@ -82,7 +88,7 @@
     </div>
 
     <div>
-        <span>If you wish to unsubscribe from the ORKG digest, please go to the Notifications in the ORKG website and unsubscribe.</span>
+        <span class="unsubscribe__msg">If you wish to unsubscribe from the ORKG digest, please go to the Notifications in the ORKG website and unsubscribe.</span>
     </div>
     <div class="fixed__footer">Copyright &copy; 2021 ORKG. All Rights Reserved.</div>
 </body>

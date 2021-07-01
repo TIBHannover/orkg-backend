@@ -22,7 +22,7 @@ interface NotificationUpdatesRepository: JpaRepository<NotificationUpdates, UUID
     fun getDailyStatisticsByUser(userId: UUID): List<NotificationAnalytics>
 
     @Modifying
-    @Query(value="Select resource_type as resourceType, COUNT(resource_type), CAST(user_id as varchar) user_id as userId from notification_updates GROUP BY user_id, resource_type",
+    @Query(value="Select resource_type as resourceType, COUNT(resource_type) resourceCount, CAST(user_id as varchar) userId from notification_updates GROUP BY user_id, resource_type",
         nativeQuery = true)
     fun getDailyStatisticsOfAllUsers(): List<NotificationAnalyticsByUser2>
 

@@ -107,9 +107,22 @@ class Neo4jStatsService(
     }
 
     override fun getTopTrendingPapers(): Map<String, String> {
-        val  date = LocalDate.now().minusDays(1)
+        //Should change it to 1 before deployment
+        val  date = LocalDate.now().minusDays(1000)
         val papers = neo4jStatsRepository.getTrendingPapersForEmail(date.toString())
         return getPapersAsMapValues(papers)
+    }
+
+    override fun getRecentComparisonsCount(): Int {
+        //Should change it to 1 before deployment
+        val  date = LocalDate.now().minusDays(1000)
+        return neo4jStatsRepository.getRecentComparisonsCount(date.toString())
+    }
+
+    override fun getRecentVisualizationsCount(): Int {
+        //Should change it to 1 before deployment
+        val  date = LocalDate.now().minusDays(1000)
+        return neo4jStatsRepository.getRecentVisualizationsCount(date.toString())
     }
 
     private fun getPapersAsMapValues(list: List<Neo4jResource>): Map<String, String>{

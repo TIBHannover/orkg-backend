@@ -67,4 +67,8 @@ interface StatsService {
      */
     fun getTopTrendingPapers(): Map<String, String>
 
+    fun getRecentComparisonsCount(): Int
+
+    fun getRecentVisualizationsCount(): Int
+
 }

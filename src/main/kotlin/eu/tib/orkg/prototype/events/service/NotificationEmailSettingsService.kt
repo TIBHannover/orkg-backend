@@ -11,6 +11,8 @@ interface NotificationEmailSettingsService {
         notificationEmailSettingsDTO: NotificationEmailSettingsDTO)
 
     fun getNotificationEmailSettings(userId: UUID): NotificationEmailSettingsDTO
+
+    fun getAllEmailSubscribedUsers(): List<UUID>
 }
 
 data class NotificationEmailSettingsDTO(

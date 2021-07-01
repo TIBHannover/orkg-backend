@@ -9,4 +9,5 @@ import java.util.UUID
 @Repository
 interface NotificationEmailSettingsRepository: JpaRepository<NotificationEmailSettings, UUID> {
     fun findByUserId(userId: UUID): Optional<NotificationEmailSettings>
+    fun findAllByTimeOfPreferenceEquals(time: Int): List<NotificationEmailSettings>
 }

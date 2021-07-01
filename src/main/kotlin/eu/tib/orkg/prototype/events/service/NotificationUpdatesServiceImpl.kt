@@ -84,7 +84,7 @@ data class NotificationAnalyticsByUser(
 
 interface NotificationAnalyticsByUser2{
     fun getResourceType(): String
-    fun getCount(): Int
+    fun getResourceCount(): Int
     fun getUserId(): String
 }
 

@@ -185,6 +185,17 @@ class Neo4jResearchFieldService(
             pageable = pageable).map(Neo4jResource::toResource)
     }
 
+    override fun getImpEntitiesIncludingSubfields(id: ResourceId, classesList: List<String>, pageable: Pageable) {
+        var resultList = mutableListOf<Neo4jResource>()
+        classesList.map {
+            when (it.toString().toUpperCase()){
+                "PAPER" -> resultList.addAll(neo4jResearchFieldRepository.getPapersIncludingSubFields(id, pageable).content)
+                "COMPARISON" -> resultList.addAll(neo4jResearchFieldRepository.getComparisonsIncludingSubFields(id, pageable).content)
+                "VISUALIZATION" -> resultList.addAll(neo4jResearchFieldRepository.)
+            }
+        }
+    }
+
     /*override fun getResearchProblemsExcludingSubFields(id: ResourceId, pageable: Pageable):
         Page<Resource> =
         neo4jResearchFieldRepository.getProblemsExcludingSubFields(

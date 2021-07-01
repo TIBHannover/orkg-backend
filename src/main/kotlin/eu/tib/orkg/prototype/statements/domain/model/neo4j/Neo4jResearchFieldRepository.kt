@@ -89,6 +89,13 @@ interface Neo4jResearchFieldRepository :
     @Query("""MATCH (:Benchmark)<-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(:Paper)-[:RELATED {predicate_id: 'P30'}]->(r:ResearchField) RETURN DISTINCT r""",
         countQuery = """MATCH (:Benchmark)<-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(:Paper)-[:RELATED {predicate_id: 'P30'}]->(r:ResearchField) RETURN COUNT(DISTINCT r) AS cnt""")
     fun findResearchFieldsWithBenchmarks(): Iterable<Neo4jResource>
+
+
+    @Query("""MATCH (research:ResearchField)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(research1:ResearchField{resource_id: {0}}) WITH COLLECT (research) + COLLECT(research1) AS all_research_fields MATCH(orkgcomparisons: Comparison )-[related:RELATED]->(contr:Contribution)<-[:RELATED{predicate_id: "P31"}]-(p:Paper)-[:RELATED {predicate_id: 'P30'}]->(resField) WHERE (NOT EXISTS(orkgcomparisons.featured) OR orkgcomparisons.featured = false) AND (NOT EXISTS(orkgcomparisons.unlisted) OR orkgcomparisons.unlisted = false) AND resField IN all_research_fields WITH DISTINCT orkgcomparisons, orkgcomparisons.resource_id AS resource_id, orkgcomparisons.label AS label, orkgcomparisons.created_by AS created_by, orkgcomparisons.created_at AS created_at RETURN orkgcomparisons""",
+        countQuery = """MATCH (research:ResearchField)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(research1:ResearchField{resource_id: {0}}) WITH COLLECT (research) + COLLECT(research1) AS all_research_fields MATCH(orkgcomparisons: Comparison )-[related:RELATED]->(contr:Contribution)<-[:RELATED{predicate_id: "P31"}]-(p:Paper)-[:RELATED {predicate_id: 'P30'}]->(resField) WHERE (NOT EXISTS(orkgcomparisons.featured) OR orkgcomparisons.featured = false) AND (NOT EXISTS(orkgcomparisons.unlisted) OR orkgcomparisons.unlisted = false) AND resField IN all_research_fields RETURN COUNT(DISTINCT orkgcomparisons) AS cnt""")
+    fun getComparisonsIncludingSubFields(id: ResourceId, pageable: Pageable): Page<Neo4jResource>
+
+
     }
 
 @QueryResult

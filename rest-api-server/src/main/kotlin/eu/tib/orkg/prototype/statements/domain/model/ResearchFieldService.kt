@@ -37,4 +37,7 @@ interface ResearchFieldService {
     // fun getResearchProblemsExcludingSubFields(id: ResourceId, pageable: Pageable): Page<Resource>
 
     fun getResearchProblemsExcludingSubFields(id: ResourceId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
+
+
+    fun getImpEntitiesIncludingSubfields(id: ResourceId, classesList: List<String>, pageable: Pageable)
 }

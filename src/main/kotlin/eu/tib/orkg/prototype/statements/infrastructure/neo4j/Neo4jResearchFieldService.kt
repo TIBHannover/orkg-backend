@@ -193,7 +193,7 @@ class Neo4jResearchFieldService(
     ): Page<Resource> {
         var resultList = mutableListOf<Neo4jResource>()
         classesList.map {
-            when (it.toString().toUpperCase()){
+            when (it.toString().toUpperCase()) {
                 "PAPER" -> resultList.addAll(neo4jResearchFieldRepository.getPapersIncludingSubFieldsWithFlags(id, featured, false, pageable))
                 "COMPARISON" -> resultList.addAll(neo4jResearchFieldRepository.getComparisonsIncludingSubFieldsWithFlags(id, featured, false, pageable).content)
                 "VISUALIZATION" -> resultList.addAll(neo4jResearchFieldRepository.getVisualizationsIncludingSubFieldsWithFlags(id, featured, false, pageable).content)
@@ -204,7 +204,6 @@ class Neo4jResearchFieldService(
         }
 
         return PageImpl(resultList as List<Resource>)
-
     }
 
     override fun withBenchmarks(): List<ResearchField> =

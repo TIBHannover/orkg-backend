@@ -214,7 +214,7 @@ class ResearchFieldController(
         @RequestParam("classes")
         classes: List<String>,
         pageable: Pageable
-    ): ResponseEntity<Page<Resource>>{
+    ): ResponseEntity<Page<Resource>> {
         return ok(service.getEntitiesBasedOnClassesIncludingSubfields(id, classes, featured, pageable))
     }
 }

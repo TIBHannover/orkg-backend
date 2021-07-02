@@ -150,7 +150,7 @@ class Neo4jResearchFieldService(
         unlisted: Boolean,
         pageable: Pageable
     ): Page<Resource> {
-        if (featured) {
+        if (featured or unlisted) {
             return neo4jResearchFieldRepository.getProblemsExcludingSubFieldsWithFlags(
                 id = id,
                 featured = featured,

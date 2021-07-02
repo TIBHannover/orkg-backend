@@ -62,8 +62,8 @@ interface Neo4jResearchFieldRepository :
                     RETURN COUNT(orkgusers) as cnt""")
     fun getContributorIdsExcludingSubFields(id: ResourceId, pageable: Pageable): Page<ContributorId>
 
-    @Query("MATCH(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(r: ResearchField{resource_id:{0}}) WHERE (NOT EXISTS(paper.featured) OR paper.featured = false) AND (NOT EXISTS(paper.unlisted) OR paper.unlisted = false) AND WITH DISTINCT paper, paper.created_at AS created_at, paper.resource_id AS resource_id, paper.label AS label, paper.created_by AS created_by RETURN paper",
-        countQuery = "MATCH(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(r: ResearchField{resource_id:{0}}) WHERE (NOT EXISTS(paper.featured) OR paper.featured = false) AND (NOT EXISTS(paper.unlisted) OR paper.unlisted = false) AND RETURN COUNT(paper) AS cnt")
+    @Query("MATCH(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(r: ResearchField{resource_id:{0}}) WHERE (NOT EXISTS(paper.featured) OR paper.featured = false) AND (NOT EXISTS(paper.unlisted) OR paper.unlisted = false) WITH DISTINCT paper, paper.created_at AS created_at, paper.resource_id AS resource_id, paper.label AS label, paper.created_by AS created_by RETURN paper",
+        countQuery = "MATCH(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(r: ResearchField{resource_id:{0}}) WHERE (NOT EXISTS(paper.featured) OR paper.featured = false) AND (NOT EXISTS(paper.unlisted) OR paper.unlisted = false) RETURN COUNT(paper) AS cnt")
     fun getPapersExcludingSubFields(id: ResourceId, pageable: Pageable): Page<Neo4jResource>
 
     @Query("MATCH(paper:Paper {featured: {1}, unlisted: {2}} )-[:RELATED {predicate_id: 'P30'}]->(r: ResearchField{resource_id:{0}}) WITH DISTINCT paper, paper.created_at AS created_at, paper.resource_id AS resource_id, paper.label AS label, paper.created_by AS created_by RETURN paper",
@@ -90,13 +90,7 @@ interface Neo4jResearchFieldRepository :
         countQuery = """MATCH (:Benchmark)<-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(:Paper)-[:RELATED {predicate_id: 'P30'}]->(r:ResearchField) RETURN COUNT(DISTINCT r) AS cnt""")
     fun findResearchFieldsWithBenchmarks(): Iterable<Neo4jResource>
 
-
-    @Query("""MATCH (research:ResearchField)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(research1:ResearchField{resource_id: {0}}) WITH COLLECT (research) + COLLECT(research1) AS all_research_fields MATCH(orkgcomparisons: Comparison )-[related:RELATED]->(contr:Contribution)<-[:RELATED{predicate_id: "P31"}]-(p:Paper)-[:RELATED {predicate_id: 'P30'}]->(resField) WHERE (NOT EXISTS(orkgcomparisons.featured) OR orkgcomparisons.featured = false) AND (NOT EXISTS(orkgcomparisons.unlisted) OR orkgcomparisons.unlisted = false) AND resField IN all_research_fields WITH DISTINCT orkgcomparisons, orkgcomparisons.resource_id AS resource_id, orkgcomparisons.label AS label, orkgcomparisons.created_by AS created_by, orkgcomparisons.created_at AS created_at RETURN orkgcomparisons""",
-        countQuery = """MATCH (research:ResearchField)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(research1:ResearchField{resource_id: {0}}) WITH COLLECT (research) + COLLECT(research1) AS all_research_fields MATCH(orkgcomparisons: Comparison )-[related:RELATED]->(contr:Contribution)<-[:RELATED{predicate_id: "P31"}]-(p:Paper)-[:RELATED {predicate_id: 'P30'}]->(resField) WHERE (NOT EXISTS(orkgcomparisons.featured) OR orkgcomparisons.featured = false) AND (NOT EXISTS(orkgcomparisons.unlisted) OR orkgcomparisons.unlisted = false) AND resField IN all_research_fields RETURN COUNT(DISTINCT orkgcomparisons) AS cnt""")
-    fun getComparisonsIncludingSubFields(id: ResourceId, pageable: Pageable): Page<Neo4jResource>
-
-
-    }
+}
 
 @QueryResult
 data class ProblemsPerField(

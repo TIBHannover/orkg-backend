@@ -185,23 +185,27 @@ class Neo4jResearchFieldService(
             pageable = pageable).map(Neo4jResource::toResource)
     }
 
-    override fun getImpEntitiesIncludingSubfields(id: ResourceId, classesList: List<String>, pageable: Pageable) {
+    override fun getEntitiesBasedOnClassesIncludingSubfields(
+        id: ResourceId,
+        classesList: List<String>,
+        featured: Boolean,
+        pageable: Pageable
+    ): Page<Resource> {
         var resultList = mutableListOf<Neo4jResource>()
         classesList.map {
             when (it.toString().toUpperCase()){
-                "PAPER" -> resultList.addAll(neo4jResearchFieldRepository.getPapersIncludingSubFields(id, pageable).content)
-                "COMPARISON" -> resultList.addAll(neo4jResearchFieldRepository.getComparisonsIncludingSubFields(id, pageable).content)
-                "VISUALIZATION" -> resultList.addAll(neo4jResearchFieldRepository.)
+                "PAPER" -> resultList.addAll(neo4jResearchFieldRepository.getPapersIncludingSubFieldsWithFlags(id, featured, false, pageable))
+                "COMPARISON" -> resultList.addAll(neo4jResearchFieldRepository.getComparisonsIncludingSubFieldsWithFlags(id, featured, false, pageable).content)
+                "VISUALIZATION" -> resultList.addAll(neo4jResearchFieldRepository.getVisualizationsIncludingSubFieldsWithFlags(id, featured, false, pageable).content)
+                else -> {
+                    resultList.addAll(neo4jResearchFieldRepository.getSmartReviewsIncludingSubFieldsWithFlags(id, featured, false, pageable).content)
+                }
             }
         }
-    }
 
-    /*override fun getResearchProblemsExcludingSubFields(id: ResourceId, pageable: Pageable):
-        Page<Resource> =
-        neo4jResearchFieldRepository.getProblemsExcludingSubFields(
-            id = id,
-            pageable = pageable)
-            .map(Neo4jResource::toResource)*/
+        return PageImpl(resultList as List<Resource>)
+
+    }
 
     override fun withBenchmarks(): List<ResearchField> =
         neo4jResearchFieldRepository.findResearchFieldsWithBenchmarks()

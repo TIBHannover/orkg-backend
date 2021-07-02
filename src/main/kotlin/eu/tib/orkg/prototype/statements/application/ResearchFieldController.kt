@@ -205,4 +205,16 @@ class ResearchFieldController(
             unlisted = unlisted,
             pageable = pageable))
     }
+
+    @GetMapping("/{id}/subfields/")
+    fun getEntitiesBasedOnClassesIncludingSubFields(
+        @PathVariable id: ResourceId,
+        @RequestParam("featured", required = false, defaultValue = "false")
+        featured: Boolean,
+        @RequestParam("classes")
+        classes: List<String>,
+        pageable: Pageable
+    ): ResponseEntity<Page<Resource>>{
+        return ok(service.getEntitiesBasedOnClassesIncludingSubfields(id, classes, featured, pageable))
+    }
 }

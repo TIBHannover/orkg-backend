@@ -89,7 +89,6 @@ interface Neo4jResearchFieldRepository :
     @Query("""MATCH (:Benchmark)<-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(:Paper)-[:RELATED {predicate_id: 'P30'}]->(r:ResearchField) RETURN DISTINCT r""",
         countQuery = """MATCH (:Benchmark)<-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(:Paper)-[:RELATED {predicate_id: 'P30'}]->(r:ResearchField) RETURN COUNT(DISTINCT r) AS cnt""")
     fun findResearchFieldsWithBenchmarks(): Iterable<Neo4jResource>
-
 }
 
 @QueryResult

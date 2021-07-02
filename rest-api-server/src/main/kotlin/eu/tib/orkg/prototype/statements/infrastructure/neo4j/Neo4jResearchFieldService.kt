@@ -112,7 +112,7 @@ class Neo4jResearchFieldService(
         unlisted: Boolean,
         pageable: Pageable
     ):
-        Page<Resource> {
+    Page<Resource> {
         val modifiedFeatured: Boolean = setFeatured(unlisted, featured)
             ?: return neo4jResearchFieldRepository.getPapersExcludingSubFields(
                 id = id,

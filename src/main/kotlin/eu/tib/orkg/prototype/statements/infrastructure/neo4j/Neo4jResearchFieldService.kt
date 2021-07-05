@@ -164,16 +164,39 @@ class Neo4jResearchFieldService(
         id: ResourceId,
         classesList: List<String>,
         featured: Boolean,
+        unlisted: Boolean,
         pageable: Pageable
     ): Page<Resource> {
         var resultList = mutableListOf<Neo4jResource>()
         classesList.map {
             when (it.toUpperCase()) {
-                "PAPER" -> resultList.addAll(neo4jResearchFieldRepository.getPapersIncludingSubFieldsWithFlags(id, featured, false, pageable))
-                "COMPARISON" -> resultList.addAll(neo4jResearchFieldRepository.getComparisonsIncludingSubFieldsWithFlags(id, featured, false, pageable).content)
-                "VISUALIZATION" -> resultList.addAll(neo4jResearchFieldRepository.getVisualizationsIncludingSubFieldsWithFlags(id, featured, false, pageable).content)
+                "PAPER" -> resultList.addAll(neo4jResearchFieldRepository.getPapersIncludingSubFieldsWithFlags(id, featured, unlisted, pageable))
+                "COMPARISON" -> resultList.addAll(neo4jResearchFieldRepository.getComparisonsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
+                "VISUALIZATION" -> resultList.addAll(neo4jResearchFieldRepository.getVisualizationsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
                 else -> {
-                    resultList.addAll(neo4jResearchFieldRepository.getSmartReviewsIncludingSubFieldsWithFlags(id, featured, false, pageable).content)
+                    resultList.addAll(neo4jResearchFieldRepository.getSmartReviewsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
+                }
+            }
+        }
+
+        return PageImpl(resultList as List<Resource>)
+    }
+
+    override fun getEntitiesBasedOnClassesExcludingSubfields(
+        id: ResourceId,
+        classesList: List<String>,
+        featured: Boolean,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<Resource> {
+        var resultList = mutableListOf<Neo4jResource>()
+        classesList.map {
+            when (it.toUpperCase()) {
+                "PAPER" -> resultList.addAll(neo4jResearchFieldRepository.getPapersExcludingSubFieldsWithFlags(id, featured, unlisted, pageable))
+                "COMPARISON" -> resultList.addAll(neo4jResearchFieldRepository.getComparisonsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
+                "VISUALIZATION" -> resultList.addAll(neo4jResearchFieldRepository.getVisualizationsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
+                else -> {
+                    resultList.addAll(neo4jResearchFieldRepository.getSmartReviewsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
                 }
             }
         }

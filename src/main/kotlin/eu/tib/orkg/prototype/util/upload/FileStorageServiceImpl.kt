@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.util.upload
 
 import java.io.File
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.util.UUID
@@ -10,7 +11,6 @@ import org.springframework.core.io.Resource
 import org.springframework.core.io.UrlResource
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
-import java.nio.file.Path
 
 @Service
 class FileStorageServiceImpl : FileStorageService {
@@ -20,7 +20,7 @@ class FileStorageServiceImpl : FileStorageService {
 
     override fun storeFile(file: MultipartFile): Path {
         val fileExtension = file.originalFilename.split(".")[1]
-        val uuidAsFileName = UUID.randomUUID().toString() + "." +fileExtension
+        val uuidAsFileName = UUID.randomUUID().toString() + "." + fileExtension
 
         val path = imageStoragePath + "\\" + uuidAsFileName
             .toCharArray()[0].toString() + "\\" + uuidAsFileName

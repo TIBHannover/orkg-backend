@@ -9,6 +9,14 @@ spring:
     # might need to be copied to other profiles on deployment
     vocab-prefix: 'http://orkg.org/orkg'
     frontend-uri: 'http://localhost:3000'
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2MB
+      max-file-size: 100MB
+      max-request-size: 120MB
+file:
+  upload-dir: C:\\Users\\murthys\\Desktop\\ORKG-Development\\Issue-446-Improvementsforhomepage\\upload
 orkg:
   storage:
     images:

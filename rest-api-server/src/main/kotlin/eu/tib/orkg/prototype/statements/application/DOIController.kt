@@ -83,7 +83,7 @@ class DOIController(
         }
     }
 
-    data class Creator(val creator: String, val orcid: String) {
+    data class Creator(val creator: String, val orcid: String? = "") {
         fun toXML(): String {
             return """<creator>
                         <creatorName nameType="Personal">$creator</creatorName>

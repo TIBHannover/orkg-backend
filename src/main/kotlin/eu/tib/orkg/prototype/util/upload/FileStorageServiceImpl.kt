@@ -25,6 +25,7 @@ class FileStorageServiceImpl : FileStorageService {
         val path = imageStoragePath + "\\" + uuidAsFileName
             .toCharArray()[0].toString() + "\\" + uuidAsFileName
             .toCharArray()[1].toString()
+
         val dirName = File(path)
 
         if (!dirName.exists()) {
@@ -32,7 +33,6 @@ class FileStorageServiceImpl : FileStorageService {
         }
 
         val location = Paths.get(path).toAbsolutePath().normalize()
-
         val uploadLocationPath = location.resolve(uuidAsFileName)
 
         Files.copy(file.inputStream, uploadLocationPath, StandardCopyOption.REPLACE_EXISTING)
@@ -43,6 +43,7 @@ class FileStorageServiceImpl : FileStorageService {
     override fun loadFileAsResource(fileName: String): Resource {
         val fileObject = Files.walk(Paths.get(imageStoragePath)).filter(Files::isRegularFile).findFirst()
         val resource = UrlResource(fileObject.get().toRealPath().normalize().toUri())
+
         if (resource.exists()) {
             return resource
         } else {

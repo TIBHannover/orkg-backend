@@ -162,6 +162,46 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    fun fetchResearchProblemsForADataset() {
+        val paper = resourceService.create(CreateResourceRequest(null, "Paper", setOf(ClassId("Paper"))))
+
+        val dataset = resourceService.create(CreateResourceRequest(null, "Dataset", setOf(ClassId("Dataset"))))
+
+        val benchmark1 = resourceService.create(CreateResourceRequest(null, "Benchmark 1", setOf(ClassId("Benchmark"))))
+        val benchmark2 = resourceService.create(CreateResourceRequest(null, "Benchmark 2", setOf(ClassId("Benchmark"))))
+
+        val cont1 = resourceService.create(CreateResourceRequest(null, "Contribution 1", setOf(ClassId("Contribution"))))
+        val cont2 = resourceService.create(CreateResourceRequest(null, "Contribution 2", setOf(ClassId("Contribution"))))
+
+        val problem1 = resourceService.create(CreateResourceRequest(null, "Problem 1", setOf(ClassId("Problem"))))
+        val problem2 = resourceService.create(CreateResourceRequest(null, "Problem 2", setOf(ClassId("Problem"))))
+
+        statementService.create(benchmark1.id!!.value, PredicateId("HAS_DATASET"), dataset.id!!.value)
+        statementService.create(benchmark2.id!!.value, PredicateId("HAS_DATASET"), dataset.id!!.value)
+
+        statementService.create(cont1.id!!.value, PredicateId("HAS_BENCHMARK"), benchmark1.id!!.value)
+        statementService.create(cont2.id!!.value, PredicateId("HAS_BENCHMARK"), benchmark2.id!!.value)
+
+        statementService.create(cont1.id!!.value, PredicateId("P32"), problem1.id!!.value)
+        statementService.create(cont1.id!!.value, PredicateId("P32"), problem2.id!!.value)
+        statementService.create(cont2.id!!.value, PredicateId("P32"), problem2.id!!.value)
+
+        statementService.create(paper.id!!.value, PredicateId("P31"), cont1.id!!.value)
+        statementService.create(paper.id!!.value, PredicateId("P31"), cont2.id!!.value)
+
+        mockMvc
+            .perform(getRequestTo("/api/datasets/${dataset.id}/problems"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$", Matchers.hasSize<Int>(2)))
+            .andDo(
+                document(
+                    snippet,
+                    researchProblemListResponseFields()
+                )
+            )
+    }
+
+    @Test
     fun fetchDatasetForResearchProblem() {
         val problem = resourceService.create(CreateResourceRequest(null, "Problem with a dataset", setOf(ClassId("Problem"))))
 

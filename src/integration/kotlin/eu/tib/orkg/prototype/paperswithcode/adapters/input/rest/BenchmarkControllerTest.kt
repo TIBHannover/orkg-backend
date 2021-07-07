@@ -381,6 +381,10 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("label").description("Research problem label")
         )
 
+    private fun researchProblemListResponseFields() =
+        responseFields(fieldWithPath("[]").description("A list of research probelms"))
+            .andWithPrefix("[].", researchProblemResponseFields())
+
     private fun benchmarkResponseFields() =
         listOf(
             fieldWithPath("total_papers").description("Total number of papers"),

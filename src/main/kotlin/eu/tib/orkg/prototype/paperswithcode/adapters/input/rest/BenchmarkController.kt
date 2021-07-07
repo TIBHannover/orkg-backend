@@ -6,6 +6,8 @@ import eu.tib.orkg.prototype.paperswithcode.application.domain.DatasetSummary
 import eu.tib.orkg.prototype.paperswithcode.application.port.input.RetrieveBenchmarkUseCase
 import eu.tib.orkg.prototype.paperswithcode.application.port.input.RetrieveDatasetUseCase
 import eu.tib.orkg.prototype.paperswithcode.application.port.input.RetrieveResearchFieldUseCase
+import eu.tib.orkg.prototype.paperswithcode.application.port.input.RetrieveResearchProblemsUseCase
+import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
 import eu.tib.orkg.prototype.statements.application.DatasetNotFound
 import eu.tib.orkg.prototype.statements.application.ResearchFieldNotFound
 import eu.tib.orkg.prototype.statements.application.ResearchProblemNotFound
@@ -19,7 +21,8 @@ import org.springframework.web.bind.annotation.RestController
 class BenchmarkController(
     private val retrieveResearchField: RetrieveResearchFieldUseCase,
     private val retrieveBenchmarks: RetrieveBenchmarkUseCase,
-    private val retrieveDatasets: RetrieveDatasetUseCase
+    private val retrieveDatasets: RetrieveDatasetUseCase,
+    private val retrieveProblems: RetrieveResearchProblemsUseCase
 ) {
     @GetMapping("/api/research-fields/benchmarks")
     fun getResearchFieldsWithBenchmarks(): List<ResearchField> =
@@ -36,6 +39,12 @@ class BenchmarkController(
         retrieveDatasets
             .forResearchProblem(id)
             .orElseThrow { ResearchProblemNotFound(id) }
+
+    @GetMapping("/api/datasets/{id}/problems")
+    fun getResearchProblemsForDataset(@PathVariable id: ResourceId): List<ResearchProblem> =
+        retrieveProblems
+            .forDataset(id)
+            .orElseThrow { DatasetNotFound(id) }
 
     @GetMapping("/api/datasets/{id}/problem/{problemId}/summary")
     fun getDatasetSummary(

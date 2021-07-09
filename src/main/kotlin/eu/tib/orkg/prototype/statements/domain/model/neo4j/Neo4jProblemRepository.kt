@@ -18,16 +18,16 @@ private const val WITH_NODE_PROPERTIES =
     """WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at"""
 
 private const val MATCH_FEATURED_PROBLEM =
-    """MATCH (node) WHERE EXISTS(node.featured) AND node.featured = true AND ANY(collectionFields IN ['Problem'] WHERE collectionFields IN LABELS(node))"""
+    """MATCH (node) WHERE node.featured = true AND ANY(collectionFields IN ['Problem'] WHERE collectionFields IN LABELS(node))"""
 
 private const val MATCH_NONFEATURED_PROBLEM =
-    """MATCH (node) WHERE (NOT EXISTS(node.featured) OR node.featured = false) AND ANY(collectionFields IN ['Problem'] WHERE collectionFields IN LABELS(node))"""
+    """MATCH (node) WHERE node.featured = false AND ANY(collectionFields IN ['Problem'] WHERE collectionFields IN LABELS(node))"""
 
 private const val MATCH_UNLISTED_PROBLEM =
-    """MATCH (node) WHERE EXISTS(node.unlisted) AND node.unlisted = true AND ANY(collectionFields IN ['Problem'] WHERE collectionFields IN LABELS(node))"""
+    """MATCH (node) WHERE node.unlisted = true AND ANY(collectionFields IN ['Problem'] WHERE collectionFields IN LABELS(node))"""
 
 private const val MATCH_LISTED_PROBLEM =
-    """MATCH (node) WHERE (NOT EXISTS(node.unlisted) OR node.unlisted = false) AND ANY(collectionFields IN ['Problem'] WHERE collectionFields IN LABELS(node))"""
+    """MATCH (node) WHERE node.unlisted = false AND ANY(collectionFields IN ['Problem'] WHERE collectionFields IN LABELS(node))"""
 
 interface Neo4jProblemRepository :
     Neo4jRepository<Neo4jResource, Long> {

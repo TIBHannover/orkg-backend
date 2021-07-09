@@ -141,6 +141,7 @@ class Neo4jResearchFieldService(
             unlisted = unlisted,
             pageable = pageable)
             .map(Neo4jResource::toResource)
+
     }
 
     override fun getResearchProblemsExcludingSubFields(
@@ -159,6 +160,7 @@ class Neo4jResearchFieldService(
             featured = modifiedFeatured,
             unlisted = unlisted,
             pageable = pageable).map(Neo4jResource::toResource)
+
     }
 
     override fun getEntitiesBasedOnClassesIncludingSubfields(

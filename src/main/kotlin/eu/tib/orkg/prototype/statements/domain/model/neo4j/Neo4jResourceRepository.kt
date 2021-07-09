@@ -42,16 +42,16 @@ private const val MATCH_UNVERIFIED_PAPER =
     """MATCH (node) WHERE (NOT EXISTS(node.verified) OR node.verified = false) AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
 
 private const val MATCH_FEATURED_PAPER =
-    """MATCH (node) WHERE EXISTS(node.featured) AND node.featured = true AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
+    """MATCH (node) WHERE node.featured = true AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
 
 private const val MATCH_NONFEATURED_PAPER =
-    """MATCH (node) WHERE (NOT EXISTS(node.featured) OR node.featured = false) AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
+    """MATCH (node) WHERE node.featured = false AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
 
 private const val MATCH_UNLISTED_PAPER =
-    """MATCH (node) WHERE EXISTS(node.unlisted) AND node.unlisted = true AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
+    """MATCH (node) WHERE node.unlisted = true AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
 
 private const val MATCH_LISTED_PAPER =
-    """MATCH (node) WHERE (NOT EXISTS(node.unlisted) OR node.unlisted = false) AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
+    """MATCH (node) WHERE OR node.unlisted = false AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
 
 interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     override fun findAll(): Iterable<Neo4jResource>

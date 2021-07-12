@@ -35,7 +35,7 @@ interface PredicateService {
     /**
      * Find a predicate by its ID.
      */
-    fun findById(id: PredicateId): Optional<Predicate>
+    fun findById(id: PredicateId?): Optional<Predicate>
 
     /**
      * Find all predicates matching a label.

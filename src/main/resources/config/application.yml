@@ -15,12 +15,12 @@ spring:
       file-size-threshold: 2MB
       max-file-size: 100MB
       max-request-size: 120MB
-file:
-  upload-dir: C:\\Users\\murthys\\Desktop\\ORKG-Development\\Issue-446-Improvementsforhomepage\\upload
 orkg:
   storage:
     images:
       dir: "${user.dir}/images"
+      file:
+        dir: "${user.dir}/images"
   init:
     setup:
       entities-file: "data/required_entities.json"

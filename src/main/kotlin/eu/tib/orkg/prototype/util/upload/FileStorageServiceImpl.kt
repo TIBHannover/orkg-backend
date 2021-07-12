@@ -7,7 +7,6 @@ import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.util.Date
 import java.util.UUID
-import java.util.logging.Logger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -15,10 +14,9 @@ import org.springframework.web.multipart.MultipartFile
 @Service
 class FileStorageServiceImpl : FileStorageService {
 
-    @Value("\${file.upload-dir}")
+    @Value("\${orkg.storage.images.file.dir}")
     var imageStoragePath: String? = null
 
-    private val logger = Logger.getLogger("File Storage")
     override fun storeFile(file: MultipartFile): Path {
         val uuidAsFileName = generateRandomFilename(file)
 

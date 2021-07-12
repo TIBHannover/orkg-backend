@@ -143,7 +143,7 @@ class Neo4jResearchFieldService(
             }
         }
 
-        return PageImpl(resultList as List<Resource>)
+        return PageImpl(resultList as List<Resource>, pageable, resultList.size.toLong())
     }
 
     override fun getEntitiesBasedOnClassesExcludingSubfields(
@@ -164,8 +164,7 @@ class Neo4jResearchFieldService(
                 }
             }
         }
-
-        return PageImpl(resultList as List<Resource>)
+        return PageImpl(resultList as List<Resource>, pageable, resultList.size.toLong())
     }
 
     override fun withBenchmarks(): List<ResearchField> =

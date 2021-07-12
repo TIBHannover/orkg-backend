@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile
 @Service
 class FileStorageServiceImpl : FileStorageService {
 
-    @Value("\${orkg.storage.images.file.dir}")
+    @Value("\${orkg.storage.images.dir}")
     var imageStoragePath: String? = null
 
     override fun storeFile(file: MultipartFile): Path {

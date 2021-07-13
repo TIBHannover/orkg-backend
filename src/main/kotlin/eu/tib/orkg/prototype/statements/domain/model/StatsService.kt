@@ -14,7 +14,7 @@ interface StatsService {
      *
      * @return the stats summary
      */
-    fun getStats(): Stats
+    fun getStats(extra: List<String>?): Stats
 
     /**
      * Get paper count for each research field

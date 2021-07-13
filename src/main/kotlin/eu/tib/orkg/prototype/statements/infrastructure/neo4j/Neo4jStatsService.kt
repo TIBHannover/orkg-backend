@@ -9,6 +9,8 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.domain.model.StatsService
+import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresObservatoryRepository
+import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresOrganizationRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ChangeLogResponse
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatsRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
@@ -28,12 +30,14 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class Neo4jStatsService(
     private val neo4jStatsRepository: Neo4jStatsRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val observatoryRepository: PostgresObservatoryRepository,
+    private val organizationRepository: PostgresOrganizationRepository
 ) : StatsService {
 
     val internalClassLabels: (String) -> Boolean = { it !in setOf("Thing", "Resource", "AuditableEntity") }
 
-    override fun getStats(): Stats {
+    override fun getStats(extra: List<String>?): Stats {
         val metadata = neo4jStatsRepository.getGraphMetaData()
         val labels = metadata.first()["labels"] as Map<*, *>
         val resourcesCount = extractValue(labels, "Resource")
@@ -42,18 +46,28 @@ class Neo4jStatsService(
         val papersCount = extractValue(labels, "Paper")
         val classesCount = extractValue(labels, "Class")
         val contributionsCount = extractValue(labels, "Contribution")
-        val fieldsCount = neo4jStatsRepository.getResearchFieldsCount()
         val problemsCount = extractValue(labels, "Problem")
+        val comparisonsCount = extractValue(labels, "Comparison")
+        val visualizationsCount = extractValue(labels, "Visualization")
+        val templatesCount = extractValue(labels, "ContributionTemplate")
+        val smartReviewsCount = extractValue(labels, "SmartReview")
+        val extraCounts = extra?.associate { it to extractValue(labels, it) }
+        val fieldsCount = neo4jStatsRepository.getResearchFieldsCount()
         val relationsTypes = metadata.first()["relTypesCount"] as Map<*, *>
         val statementsCount = extractValue(relationsTypes, "RELATED")
+        val userCount = userRepository.count()
+        val observatoriesCount = observatoryRepository.count()
+        val organizationsCount = organizationRepository.count()
         return Stats(statementsCount, resourcesCount, predicatesCount,
             literalsCount, papersCount, classesCount, contributionsCount,
-            fieldsCount, problemsCount)
+            fieldsCount, problemsCount, comparisonsCount, visualizationsCount,
+            templatesCount, smartReviewsCount, userCount, observatoriesCount,
+            organizationsCount, extraCounts)
     }
 
     override fun getFieldsStats(): Map<String, Int> {
         val counts = neo4jStatsRepository.getResearchFieldsPapersCount()
-        return counts.map { it.fieldId to it.papers.toInt() }.toMap()
+        return counts.associate { it.fieldId to it.papers.toInt() }
     }
 
     override fun getObservatoryPapersCount(id: ObservatoryId): Long =

@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserService
-import eu.tib.orkg.prototype.contributions.application.ContributorController
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,12 +16,7 @@ import org.springframework.transaction.annotation.Transactional
 internal class ContributorControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var controller: ContributorController
-
-    @Autowired
     private lateinit var service: UserService
-
-    override fun createController() = controller
 
     @Test
     @DisplayName("When contributor is found Then returns contributor information")

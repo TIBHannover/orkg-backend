@@ -28,12 +28,7 @@ import org.springframework.transaction.annotation.Transactional
 class PredicateControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var controller: PredicateController
-
-    @Autowired
     private lateinit var service: PredicateService
-
-    override fun createController() = controller
 
     @BeforeEach
     fun setup() {

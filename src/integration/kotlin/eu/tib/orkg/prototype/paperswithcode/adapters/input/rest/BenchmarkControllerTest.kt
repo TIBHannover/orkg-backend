@@ -31,9 +31,6 @@ import org.springframework.transaction.annotation.Transactional
 class BenchmarkControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var controller: BenchmarkController
-
-    @Autowired
     private lateinit var statementService: StatementService
 
     @Autowired
@@ -44,8 +41,6 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var predicateService: PredicateService
-
-    override fun createController() = controller
 
     @BeforeEach
     fun setup() {

@@ -31,15 +31,10 @@ import org.springframework.transaction.annotation.Transactional
 class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var controller: ClassController
-
-    @Autowired
     private lateinit var service: ClassService
 
     @Autowired
     private lateinit var resourceService: ResourceService
-
-    override fun createController() = controller
 
     @BeforeEach
     fun setup() {

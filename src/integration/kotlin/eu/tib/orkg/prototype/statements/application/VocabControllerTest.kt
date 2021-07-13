@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.statements.application.rdf.VocabController
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
@@ -19,9 +18,6 @@ import org.springframework.transaction.annotation.Transactional
 class VocabControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var controller: VocabController
-
-    @Autowired
     private lateinit var resourceService: ResourceService
 
     @Autowired
@@ -29,8 +25,6 @@ class VocabControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var classService: ClassService
-
-    override fun createController() = controller
 
     @BeforeEach
     fun setup() {

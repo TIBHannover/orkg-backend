@@ -35,9 +35,6 @@ import org.springframework.transaction.annotation.Transactional
 class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var controller: ResourceController
-
-    @Autowired
     private lateinit var service: ResourceService
 
     @Autowired
@@ -48,8 +45,6 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var statementService: StatementService
-
-    override fun createController() = controller
 
     @BeforeEach
     fun setup() {

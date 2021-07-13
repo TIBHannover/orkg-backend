@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.statements.adapter.input.rest.bulk.BulkStatementController
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
@@ -26,9 +25,6 @@ import org.springframework.transaction.annotation.Transactional
 class BulkStatementControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var controller: BulkStatementController
-
-    @Autowired
     private lateinit var service: StatementService
 
     @Autowired
@@ -36,8 +32,6 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var predicateService: PredicateService
-
-    override fun createController() = controller
 
     @BeforeEach
     fun setup() {

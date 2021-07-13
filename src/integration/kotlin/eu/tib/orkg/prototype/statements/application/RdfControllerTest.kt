@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.statements.application.rdf.RdfController
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
@@ -22,9 +21,6 @@ import org.springframework.transaction.annotation.Transactional
 class RdfControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var controller: RdfController
-
-    @Autowired
     private lateinit var service: ResourceService
 
     @Autowired
@@ -32,8 +28,6 @@ class RdfControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var classService: ClassService
-
-    override fun createController() = controller
 
     @BeforeEach
     fun setup() {

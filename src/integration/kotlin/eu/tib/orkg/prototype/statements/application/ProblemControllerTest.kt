@@ -31,9 +31,6 @@ import org.springframework.transaction.annotation.Transactional
 class ProblemControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var controller: ProblemController
-
-    @Autowired
     private lateinit var resourceService: ResourceService
 
     @Autowired
@@ -47,8 +44,6 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var userService: UserService
-
-    override fun createController() = controller
 
     @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")

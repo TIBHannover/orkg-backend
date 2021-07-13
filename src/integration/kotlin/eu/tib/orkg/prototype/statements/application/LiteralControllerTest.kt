@@ -26,12 +26,7 @@ import org.springframework.transaction.annotation.Transactional
 class LiteralControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var controller: LiteralController
-
-    @Autowired
     private lateinit var service: LiteralService
-
-    override fun createController() = controller
 
     @BeforeEach
     fun setup() {

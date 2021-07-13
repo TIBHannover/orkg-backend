@@ -29,9 +29,6 @@ import org.springframework.transaction.annotation.Transactional
 class PaperControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var controller: PaperController
-
-    @Autowired
     private lateinit var service: PredicateService
 
     @Autowired
@@ -39,8 +36,6 @@ class PaperControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var classService: ClassService
-
-    override fun createController() = controller
 
     @BeforeEach
     fun setup() {

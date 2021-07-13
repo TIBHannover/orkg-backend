@@ -46,9 +46,11 @@ class DatasetService(
         return Optional.of(findDatasets.forResearchProblem(id))
     }
 
-    override fun summaryFor(id: ResourceId): Optional<List<DatasetSummary>> {
+    override fun summaryFor(id: ResourceId, problemId: ResourceId): Optional<List<DatasetSummary>> {
         val dataset = resourceService.findById(id)
         if (!dataset.isPresent) return Optional.empty()
-        return Optional.of(summarizeDataset.by(id))
+        val problem = resourceService.findById(problemId)
+        if (!problem.isPresent) return Optional.empty()
+        return Optional.of(summarizeDataset.byAndProblem(id, problemId))
     }
 }

@@ -1,5 +1,7 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.paperswithcode.application.port.input.RetrieveResearchProblemsUseCase
+import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
 import eu.tib.orkg.prototype.statements.domain.model.ProblemService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -14,8 +16,9 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class Neo4jProblemService(
-    private val neo4jProblemRepository: Neo4jProblemRepository
-) : ProblemService {
+    private val neo4jProblemRepository: Neo4jProblemRepository,
+    private val resourceService: Neo4jResourceService
+) : ProblemService, RetrieveResearchProblemsUseCase {
     override fun findById(id: ResourceId): Optional<Resource> =
         neo4jProblemRepository
             .findById(id)
@@ -72,5 +75,13 @@ class Neo4jProblemService(
                         val papers = it.papers
                     }
             }
+    }
+
+    override fun forDataset(id: ResourceId): Optional<List<ResearchProblem>> {
+        val dataset = resourceService.findById(id)
+        if (!dataset.isPresent) return Optional.empty()
+        return Optional.of(neo4jProblemRepository
+            .findResearchProblemForDataset(id)
+            .map { ResearchProblem(it.resourceId!!, it.label!!) })
     }
 }

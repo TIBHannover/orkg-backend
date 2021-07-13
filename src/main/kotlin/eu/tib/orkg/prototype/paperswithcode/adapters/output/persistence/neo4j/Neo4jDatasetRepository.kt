@@ -26,4 +26,15 @@ OPTIONAL MATCH (md:Model)<-[:RELATED {predicate_id: 'HAS_MODEL'}]-(c)-[:RELATED 
 RETURN p AS paper, month.label AS month, year.label AS year, COLLECT(DISTINCT l.label) AS codes, md.label AS model, mt.label AS metric, s.label AS score
     """)
     fun summarizeDatasetQueryById(id: ResourceId): Iterable<Neo4jBenchmarkUnpacked>
+
+    @Query("""
+MATCH (ds:Dataset {resource_id: {0}})<-[:RELATED {predicate_id: 'HAS_DATASET'}]-(b:Benchmark)<-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]-(c:Contribution)-[:RELATED {predicate_id: 'P32'}]->(:Problem {resource_id: {1}})
+MATCH (b)-[:RELATED {predicate_id: 'HAS_EVALUATION'}]->(e:Evaluation)
+MATCH (s:Literal)<-[:RELATED {predicate_id: 'HAS_VALUE'}]-(e)-[:RELATED {predicate_id: 'HAS_METRIC'}]->(mt:Metric)
+MATCH (c)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper)
+OPTIONAL MATCH (month:Literal)-[:RELATED {predicate_id: 'P28'}]-(p)-[:RELATED {predicate_id: 'P29'}]-(year:Literal)
+OPTIONAL MATCH (md:Model)<-[:RELATED {predicate_id: 'HAS_MODEL'}]-(c)-[:RELATED {predicate_id: 'HAS_SOURCE_CODE'}]->(l:Literal)
+RETURN p AS paper, month.label AS month, year.label AS year, COLLECT(DISTINCT l.label) AS codes, md.label AS model, mt.label AS metric, s.label AS score
+    """)
+    fun summarizeDatasetQueryByIdAndProblemId(id: ResourceId, problemId: ResourceId): Iterable<Neo4jBenchmarkUnpacked>
 }

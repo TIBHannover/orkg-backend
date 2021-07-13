@@ -54,6 +54,10 @@ interface Neo4jProblemRepository :
                         RETURN COUNT (author)""")
     // TODO: Should group on the resource and not on the label. See https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/172#note_378465870
     fun findAuthorsLeaderboardPerProblem(problemId: ResourceId, pageable: Pageable): Page<AuthorPerProblem>
+
+    @Query(value = """MATCH (ds:Dataset {resource_id: {0}})<-[:RELATED {predicate_id: 'HAS_DATASET'}]-(:Benchmark)<-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]-(:Contribution)-[:RELATED {predicate_id: 'P32'}]->(problem:Problem)
+                    RETURN DISTINCT problem""")
+    fun findResearchProblemForDataset(datasetId: ResourceId): Iterable<Neo4jResource>
 }
 
 @QueryResult

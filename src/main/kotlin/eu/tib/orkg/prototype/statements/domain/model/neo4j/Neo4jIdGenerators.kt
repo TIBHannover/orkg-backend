@@ -7,7 +7,6 @@ import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 // T should extend identity class?
@@ -49,9 +48,10 @@ abstract class RepositoryBasedIdGenerator<T, C : Neo4jCounter> : IdentityGenerat
 }
 
 @Component
-class Neo4jResourceIdGenerator : RepositoryBasedIdGenerator<ResourceId, Neo4jResourceIdCounter>() {
-    @Autowired
-    private lateinit var repository: Neo4jResourceIdCounterRepository
+class Neo4jResourceIdGenerator(
+    private val repository: Neo4jResourceIdCounterRepository
+) :
+    RepositoryBasedIdGenerator<ResourceId, Neo4jResourceIdCounter>() {
 
     override fun createCounterNode() = Neo4jResourceIdCounter()
 
@@ -61,9 +61,9 @@ class Neo4jResourceIdGenerator : RepositoryBasedIdGenerator<ResourceId, Neo4jRes
 }
 
 @Component
-class Neo4jPredicateIdGenerator : RepositoryBasedIdGenerator<PredicateId, Neo4jPredicateIdCounter>() {
-    @Autowired
-    private lateinit var repository: Neo4jPredicateIdCounterRepository
+class Neo4jPredicateIdGenerator(
+    private val repository: Neo4jPredicateIdCounterRepository
+) : RepositoryBasedIdGenerator<PredicateId, Neo4jPredicateIdCounter>() {
 
     override fun createCounterNode() = Neo4jPredicateIdCounter()
 
@@ -73,9 +73,9 @@ class Neo4jPredicateIdGenerator : RepositoryBasedIdGenerator<PredicateId, Neo4jP
 }
 
 @Component
-class Neo4jLiteralIdGenerator : RepositoryBasedIdGenerator<LiteralId, Neo4jLiteralIdCounter>() {
-    @Autowired
-    private lateinit var repository: Neo4jLiteralIdCounterRepository
+class Neo4jLiteralIdGenerator(
+    private val repository: Neo4jLiteralIdCounterRepository
+) : RepositoryBasedIdGenerator<LiteralId, Neo4jLiteralIdCounter>() {
 
     override fun createCounterNode() = Neo4jLiteralIdCounter()
 
@@ -85,9 +85,9 @@ class Neo4jLiteralIdGenerator : RepositoryBasedIdGenerator<LiteralId, Neo4jLiter
 }
 
 @Component
-class Neo4jStatementIdGenerator : RepositoryBasedIdGenerator<StatementId, Neo4jStatementIdCounter>() {
-    @Autowired
-    private lateinit var repository: Neo4jStatementIdCounterRepository
+class Neo4jStatementIdGenerator(
+    private val repository: Neo4jStatementIdCounterRepository
+) : RepositoryBasedIdGenerator<StatementId, Neo4jStatementIdCounter>() {
 
     override fun createCounterNode() = Neo4jStatementIdCounter()
 
@@ -97,9 +97,9 @@ class Neo4jStatementIdGenerator : RepositoryBasedIdGenerator<StatementId, Neo4jS
 }
 
 @Component
-class Neo4jClassIdGenerator : RepositoryBasedIdGenerator<ClassId, Neo4jClassIdCounter>() {
-    @Autowired
-    private lateinit var repository: Neo4jClassIdCounterRepository
+class Neo4jClassIdGenerator(
+    private val repository: Neo4jClassIdCounterRepository
+) : RepositoryBasedIdGenerator<ClassId, Neo4jClassIdCounter>() {
 
     override fun createCounterNode() = Neo4jClassIdCounter()
 

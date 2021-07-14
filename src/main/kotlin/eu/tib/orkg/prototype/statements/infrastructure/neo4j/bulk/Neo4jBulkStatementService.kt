@@ -12,28 +12,19 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatement
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
-class Neo4jBulkStatementService :
+class Neo4jBulkStatementService(
+    private val predicateService: PredicateService,
+    private val literalService: LiteralService,
+    private val statementRepository: Neo4jStatementRepository,
+    private val resourceService: ResourceService
+) :
     GetBulkStatementsQuery {
-
-    @Autowired
-    private lateinit var predicateService: PredicateService
-
-    @Autowired
-    private lateinit var resourceService: ResourceService
-
-    @Autowired
-    private lateinit var literalService: LiteralService
-
-    @Autowired
-    private lateinit var statementRepository: Neo4jStatementRepository
-
     override fun getBulkStatementsBySubjects(
         subjects: List<String>,
         pageable: Pageable

@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j
 
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
+import java.util.Locale
 import org.neo4j.ogm.session.Session
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.annotation.QueryResult
@@ -42,7 +43,7 @@ data class PropertyIndex(val label: String, val property: String) :
 data class FullTextIndex(val label: String, val property: String) :
     Neo4jIndex {
     override fun toCypherQuery(): String {
-        val indexName = "full_${label}_$property".toLowerCase()
+        val indexName = "full_${label}_$property".lowercase(Locale.ENGLISH)
         return """CALL db.index.fulltext.createNodeIndex("$indexName", ["$label"], ["$property"])"""
     }
 }

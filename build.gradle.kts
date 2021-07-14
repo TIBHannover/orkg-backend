@@ -27,8 +27,9 @@ plugins {
     id("de.jansauer.printcoverage") version "2.0.0"
     id("org.asciidoctor.jvm.convert") version "3.3.2"
     id("com.palantir.docker") version "0.25.0"
-    id("com.google.cloud.tools.jib") version "2.5.0"
+    id("com.google.cloud.tools.jib") version "3.1.1"
     id("com.diffplug.spotless") version "5.6.1"
+    id("org.barfuin.gradle.taskinfo") version "1.2.0"
 }
 
 apply {
@@ -120,6 +121,12 @@ allOpen {
 tasks {
     val build by existing
     val integrationTest by existing
+
+    // Wire tasks so they always generate a coverage report and print the coverage on build
+    val check by existing { dependsOn(jacocoTestCoverageVerification, jacocoTestReport, printCoverage) }
+    val jacocoTestCoverageVerification by existing { mustRunAfter(test, integrationTest) }
+    val jacocoTestReport by existing { mustRunAfter(test, integrationTest) }
+    val printCoverage by existing { mustRunAfter(jacocoTestCoverageVerification) }
 
     withType(KotlinCompile::class.java).configureEach {
         kotlinOptions.jvmTarget = "${JavaVersion.VERSION_11}"

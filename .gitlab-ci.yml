@@ -40,8 +40,6 @@ build:
     policy: push
   script:
     - ./gradlew --build-cache build
-    - ./gradlew jacocoTestCoverageVerification
-    - ./gradlew jacocoTestReport printCoverage
   coverage: '/^Coverage:\s(\d+\.\d+%)/'
   artifacts:
     when: always

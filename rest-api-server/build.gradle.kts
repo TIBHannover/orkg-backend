@@ -87,7 +87,6 @@ tasks {
     // Wire tasks so they always generate a coverage report and print the coverage on build
     val check by existing { dependsOn(jacocoTestCoverageVerification, jacocoTestReport, printCoverage) }
     val jacocoTestCoverageVerification by existing { mustRunAfter(test, integrationTest) }
-    val jacocoTestReport by existing { mustRunAfter(test, integrationTest) }
     val printCoverage by existing { mustRunAfter(jacocoTestCoverageVerification) }
 
     withType(KotlinCompile::class.java).configureEach {
@@ -106,6 +105,7 @@ tasks {
     }
 
     jacocoTestReport {
+        mustRunAfter(test, integrationTest)
         reports {
             html.required.set(true)
         }

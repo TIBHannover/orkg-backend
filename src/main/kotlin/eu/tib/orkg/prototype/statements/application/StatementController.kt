@@ -133,30 +133,25 @@ class StatementController(
         return created(location).body(body)
     }
 
-    @PutMapping("/{ids}")
+    @PutMapping("/{id}")
     fun edit(
-        @PathVariable ids: List<StatementId>,
+        @PathVariable id: StatementId,
         @RequestBody(required = true) statementEditRequest: StatementEditRequest
-    ): ResponseEntity<List<StatementResponse>> {
+    ): ResponseEntity<StatementResponse> {
+        val foundStatement = statementService.findById(id)
 
-        val updateList = mutableListOf<StatementResponse>()
+        if (!foundStatement.isPresent)
+            return notFound().build()
 
-        ids.forEach { id ->
-            val foundStatement = statementService.findById(id)
-            if (!foundStatement.isPresent)
-                return notFound().build()
+        val toUpdate = statementEditRequest
+            .copy(
+                statementId = id,
+                subjectId = statementEditRequest.subjectId ?: getIdAsString(foundStatement.get().subject),
+                predicateId = statementEditRequest.predicateId ?: foundStatement.get().predicate.id,
+                objectId = statementEditRequest.objectId ?: getIdAsString(foundStatement.get().`object`)
+            )
 
-            val toUpdate = statementEditRequest
-                .copy(
-                    statementId = id,
-                    subjectId = statementEditRequest.subjectId ?: getIdAsString(foundStatement.get().subject),
-                    predicateId = statementEditRequest.predicateId ?: foundStatement.get().predicate.id,
-                    objectId = statementEditRequest.objectId ?: getIdAsString(foundStatement.get().`object`)
-                )
-            updateList.add(statementService.update(toUpdate))
-        }
-
-        return ok(updateList)
+        return ok(statementService.update(toUpdate))
     }
 
     @DeleteMapping("/{id}")

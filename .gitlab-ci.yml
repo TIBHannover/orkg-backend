@@ -23,8 +23,8 @@ before_script:
 cache: &gradle_cache_settings
   key: ${CI_COMMIT_REF_SLUG}   # One cache per branch
   paths:
-    - build
-    - .gradle
+    - ./**/build
+    - ./**/.gradle
   policy: pull-push
 
 stages:
@@ -44,10 +44,10 @@ build:
   artifacts:
     when: always
     paths:
-      - build/reports/
-      - build/libs/orkg-*.jar
+      - rest-api-server/build/reports/
+      - rest-api-server/build/libs/orkg-*.jar
     reports:
-      junit: build/test-results/**/TEST-*.xml
+      junit: rest-api-server/build/test-results/**/TEST-*.xml
   needs: []
 
 # Template job for building all documentation. These jobs rely on the Gradle build cache
@@ -65,7 +65,7 @@ build:
     - apt update && apt install --assume-yes graphviz
     - ./gradlew --build-cache asciidoctor
     - mkdir -p public
-    - cp -r build/docs/asciidoc/* public/
+    - cp -r rest-api-server/build/docs/asciidoc/* public/
 
 # Attempt to build the documentation although we do not deploy it to GitLab Pages.
 # This ensures that everything works as expected and prevents surprises when merging.
@@ -112,8 +112,9 @@ docker-build:
 # (Security) Scanning templates
 include:
   - remote: https://gitlab.com/gitlab-org/gitlab/-/raw/b36fc45ecea531bf149ee3dff39d205d074c4227/lib/gitlab/ci/templates/Security/Container-Scanning.gitlab-ci.yml
-  - template: Dependency-Scanning.gitlab-ci.yml
   - template: Security/Secret-Detection.gitlab-ci.yml
+  # Disabled because the scanner does not work properly with Gradle multi-project builds. Remove dot if fixed. See below.
+  #- template: Dependency-Scanning.gitlab-ci.yml
 
 container_scanning:
   stage: verify
@@ -127,7 +128,8 @@ container_scanning:
       optional: true
       artifacts: false
 
-dependency_scanning:
+# Disabled because the scanner does not work properly with Gradle multi-project builds. Remove dot if fixed. See above.
+.dependency_scanning:
   stage: verify
   needs: []
 

@@ -56,6 +56,64 @@ If everything worked, the hooks will be triggered automatically from now on.
 To disable the hooks, run `pre-commit uninstall`.
 For further information on usage and configuration check the https://pre-commit.com/[homepage].
 
+== Code Organization
+
+The code will be split into several components, represented as Gradle (sub-)projects.
+This ensures two things: different layers will be separated, so they cannot be crossed (which prevents bug), and components can be modified and tested separately, improving build and development speed (faster feedback).
+
+Historically, everything was in one Gradle project (a "module" in IntelliJ IDEA terms).
+When migrating to a multi-project build, all code moved to the `rest-api-server` project.
+
+When the refactoring will be done, this project should only contain the "plumbing" of the application: Loading and connecting all components to provide the REST API as a service.
+This means that all other code will be separated out into their own Gradle projects.
+This will include (at least) all domain cores and adapters.
+
+This documentation will be updated during the refactoring to reflect the current state.
+If it is out of date, this is a defect and should be fixed.
+
+During the migration period, builds will take longer due to additional build steps that are required.
+This will improve once all components are isolated and can be built separately.
+Build speed should be monitored and optimized if it degrades.
+
+=== "Special" components
+
+There are two components in the project that are not directly related to ORKG but still necessary.
+Though not "special" from the perspective of the build, they differ from the rest of the projects in this build.
+The following sections try to explain the implications.
+
+==== The `buildSrc` project
+
+The `buildSrc` project is a special project in Gradle that is built before all other projects are build.
+It is required to avoid duplication:
+All Gradle projects are independent and can have their own list of dependencies.
+This would either require duplicating large chunks of build configuration or symlinking (and thereby coupling) build configuration.
+Both have severe downsides.
+In the first case, all places with an outdated dependency would need to be found.
+In the second case, adding a dependency that is not needed by other projects is not possible.
+
+The easiest way to avoid these problems is to provide a Gradle plug-in that takes care of configuring the build when it is applied.
+This is called a https://docs.gradle.org/current/samples/sample_convention_plugins.html[_convention plug-in_] in Gradle.
+The `buildSrc` directory contains several convention plugins that are used to manage dependencies and ensure projects are configured identically.
+They need to live in `buildSrc`, so they are built and available at the time the projects including them are build.
+
+Building the plugins has two major downsides: The build will take a bit longer, and a change in one of the convention plugins requires the whole project to be re-build.
+(This can be leveraged by extracting and publishing the plug-ins as a separate project.)
+
+==== The `platform` project
+
+When subprojects declare their own dependencies, the dependency resolution might pick of different versions, or –even worse– upgrade to a version you did not want to upgrade to.
+In large projects it is important to keep versions aligned across components.
+This is known as _dependency alignment_.
+Gradle calls the mechanism to do that a https://docs.gradle.org/current/userguide/dependency_version_alignment.html[_platform project_].
+It is similar to a BOM (Bill of Materials) in Maven.
+All projects need to depend on the platform, and the platform depends on all projects.
+The Gradle dependency management will (hopefully) take care of the rest.
+The `platform` project contains the build configuration needed.
+It only consists of build configuration.
+Changing it is only required when adding or removing components.
+
+See https://blog.gradle.org/alignment-with-gradle-module-metadata[this blog article] for a description of the problem and the solution.
+
 == Testing
 
 === Current status

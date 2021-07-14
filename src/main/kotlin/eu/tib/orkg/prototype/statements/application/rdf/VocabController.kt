@@ -12,7 +12,6 @@ import java.net.URI
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.rio.RDFFormat
 import org.eclipse.rdf4j.rio.Rio
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -27,12 +26,9 @@ import org.springframework.web.util.UriComponentsBuilder
 class VocabController(
     private val resourceService: ResourceService,
     private val predicateService: PredicateService,
-    private val classService: ClassService
+    private val classService: ClassService,
+    private val rdfConfiguration: RdfConfiguration
 ) {
-
-    @Autowired
-    private lateinit var rdfConfiguration: RdfConfiguration
-
     @GetMapping(
         "/resource/{id}",
         produces = ["text/plain", "application/n-triples", "application/rdf+xml", "text/n3", "text/turtle", "application/json", "application/turtle", "application/trig", "application/n-quads"]

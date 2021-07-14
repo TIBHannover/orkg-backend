@@ -21,7 +21,6 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementReposit
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThingRepository
 import java.util.Optional
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -29,26 +28,15 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
-class Neo4jStatementService :
+class Neo4jStatementService(
+    private val thingRepository: Neo4jThingRepository,
+    private val resourceService: ResourceService,
+    private val literalService: LiteralService,
+    private val predicateService: PredicateService,
+    private val statementRepository: Neo4jStatementRepository,
+    private val neo4jStatementIdGenerator: Neo4jStatementIdGenerator
+) :
     StatementService {
-
-    @Autowired
-    private lateinit var thingRepository: Neo4jThingRepository
-
-    @Autowired
-    private lateinit var predicateService: PredicateService
-
-    @Autowired
-    private lateinit var resourceService: ResourceService
-
-    @Autowired
-    private lateinit var literalService: LiteralService
-
-    @Autowired
-    private lateinit var statementRepository: Neo4jStatementRepository
-
-    @Autowired
-    private lateinit var neo4jStatementIdGenerator: Neo4jStatementIdGenerator
 
     override fun findAll(pagination: Pageable): Iterable<GeneralStatement> =
         statementRepository.findAll(pagination)

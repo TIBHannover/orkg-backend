@@ -166,9 +166,9 @@ class CorsConfig {
  * Due to autowiring magic/weirdness, the [EnableAuthorizationServer] annotation needs to be removed from the configuration.
  */
 @Configuration
-class AuthorizationServerWorkaround : AuthorizationServerSecurityConfiguration() {
-    @Autowired
-    private lateinit var corsConfigurationSource: CorsConfigurationSource
+class AuthorizationServerWorkaround(
+    private val corsConfigurationSource: CorsConfigurationSource
+) : AuthorizationServerSecurityConfiguration() {
 
     override fun configure(http: HttpSecurity) {
         super.configure(http)

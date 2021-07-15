@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.statements.domain.model
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import java.time.OffsetDateTime
 import org.eclipse.rdf4j.model.Model
 

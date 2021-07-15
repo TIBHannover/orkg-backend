@@ -2,11 +2,10 @@ package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
-import eu.tib.orkg.prototype.statements.application.ExtractionMethod
-import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
 import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryRequest
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -36,7 +35,7 @@ class Neo4jResourceService(
         ContributorId.createUnknownContributor(),
         label,
         ObservatoryId.createUnknownObservatory(),
-        UNKNOWN,
+        ExtractionMethod.UNKNOWN,
         OrganizationId.createUnknownOrganization()
     )
 
@@ -56,7 +55,7 @@ class Neo4jResourceService(
         ContributorId.createUnknownContributor(),
         request,
         ObservatoryId.createUnknownObservatory(),
-        UNKNOWN,
+        ExtractionMethod.UNKNOWN,
         OrganizationId.createUnknownOrganization()
     )
 

@@ -34,6 +34,8 @@ dependencies {
     // Platform alignment for ORKG components
     api(platform(project(":platform")))
 
+    implementation(project(":application:core"))
+
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")

@@ -2,9 +2,10 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
-import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
 import eu.tib.orkg.prototype.statements.application.ObjectController.Constants
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
+import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod.UNKNOWN
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
@@ -283,7 +284,7 @@ class PaperController(
                             // Create orcid literal
                             val orcid = literalService.create(userId, orcidValue)
                             // Add ORCID id to the new resource
-                            statementService.add(userId, author.id.value, Constants.OrcidPredicate, orcid.id!!.value)
+                            statementService.add(userId, author.id!!.value, Constants.OrcidPredicate, orcid.id!!.value)
                         }
                     } else {
                         // create literal and link it

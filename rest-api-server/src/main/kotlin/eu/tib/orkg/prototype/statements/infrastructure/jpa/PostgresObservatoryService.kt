@@ -26,7 +26,7 @@ class PostgresObservatoryService(
         val oId = UUID.randomUUID()
         val org = postgresOrganizationRepository
             .findById(organization.id!!.value)
-            .orElseThrow { OrganizationNotFound(organization.id) } // FIXME: should always have an ID
+            .orElseThrow { OrganizationNotFound(organization.id!!) } // FIXME: should always have an ID
         val newObservatory = ObservatoryEntity().apply {
             id = oId
             this.name = name

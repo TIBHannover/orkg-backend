@@ -9,13 +9,12 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.Organization
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
-import eu.tib.orkg.prototype.util.removeSingleQuotes
-import eu.tib.orkg.prototype.util.replaceWhitespaceWithUnderscores
 import java.io.File
 import java.util.Base64
 import java.util.UUID
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.ResponseEntity
@@ -39,7 +38,7 @@ class OrganizationController(
     var imageStoragePath: String? = null
 
     @PostMapping("/")
-    fun addOrganization(@RequestBody organization: CreateOrganizationRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
+    fun addOrganization(@RequestBody @Valid organization: CreateOrganizationRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         if (!isValidLogo(organization.organizationLogo)) {
             return ResponseEntity.badRequest().body(
                     ErrorMessage(message = "Please upload a valid image"))
@@ -199,13 +198,20 @@ class OrganizationController(
     }
 
     data class CreateOrganizationRequest(
+        @JsonProperty("organization_name")
         val organizationName: String,
+        @JsonProperty("organization_logo")
         var organizationLogo: String,
+        @JsonProperty("created_by")
         val createdBy: ContributorId,
         val url: String,
+        @field:Pattern(
+            regexp = "^[a-zA-Z0-9_]+\$",
+            message = "Only underscores ( _ ), numbers, and letters are allowed in the permalink field"
+        )
         @field:NotBlank
-        @JsonProperty("display_id") // TODO: force passing value after front-end changes
-        val displayId: String = replaceWhitespaceWithUnderscores(removeSingleQuotes(organizationName))
+        @JsonProperty("display_id")
+        val displayId: String
     )
 
     data class ErrorMessage(

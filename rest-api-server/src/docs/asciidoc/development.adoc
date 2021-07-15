@@ -1,0 +1,282 @@
+= Development of ORKG
+include::_default-attributes.adoc[]
+:prewrap!:
+:experimental:
+:fn-idea-license: footnote:[Ultimate Edition is recommended due to Spring integration. TIB/L3S members should contact their group leaders for a license.]
+
+This document contains information relevant to developers of the {orkg} or those interested in contributing.
+It is considered to be "living documentation" and should be updated regularly.
+If there are any inconsistencies, outdated information or plain errors, all of those should be considered bugs and should be reported in our {issues_url}[issue tracker].
+
+== Programming language and libraries
+
+Developers should be familiar with the following languages, frameworks and/or libraries used by the ORKG backend:
+
+* https://kotlinlang.org/[Kotlin] (JVM), the programming language used
+* https://spring.io/projects/spring-boot[Spring Boot] as well as
+** https://spring.io/projects/spring-data[Spring Data], specifically https://spring.io/projects/spring-data-jpa[Spring Data JPA] and https://spring.io/projects/spring-data-neo4j[Spring Data Neo4j]
+** https://spring.io/projects/spring-security[Spring Security], specifically https://spring.io/projects/spring-security-oauth[Spring Security OAuth]
+* https://assertj.github.io/doc/[AssertJ] for testing
+
+== Development environment and tools
+
+Developers are free to choose the tools they feel most comfortable with.
+However, the following tools are recommended:
+
+* https://www.jetbrains.com/idea/[IntelliJ IDEA]{fn-idea-license} for working with the code
+** https://www.jetbrains.com/toolbox-app/[Toolbox App] for installing JetBrains products and managing IDE versions
+* http://sdkman.io/[SDKMAN] for managing JDKs
+* https://www.docker.com/[Docker] and https://docs.docker.com/compose/[Docker Compose] for managing (development) containers
+* https://pre-commit.com/[pre-commit] to never forget running automatic tasks before committing (optional)
+* https://github.com/zaquestion/lab[lab], if you want to interact with GitLab via the command-line (optional)
+
+Developers should also be familiar with https://gradle.org/[Gradle], our build management tool, as well as https://asciidoctor.org/[Asciidoctor], our documentation tool.
+(Both _do not_ need to be installed.)
+
+Gradle is provided with the repository and does _not_ need to be installed separately.
+The `gradlew` wrapper script can be used to call it from the command-line.
+(IntelliJ IDEA will automatically pick it up.)
+
+Asciidoctor is installed via a Gradle plug-in and can be run from Gradle by executing the `asciidoctor` task.
+
+=== Setting up pre-commit
+
+If you use `pre-commit`, you need to run the following command to install the hooks:
+
+    pre-commit install
+
+To test if the installation succeeded, run:
+
+   pre-commit run --all-files
+
+This will download all required hooks on the first run, which can take a couple of minutes, so please be patient.
+(Subsequent calls will be faster due to caching.)
+If everything worked, the hooks will be triggered automatically from now on.
+
+To disable the hooks, run `pre-commit uninstall`.
+For further information on usage and configuration check the https://pre-commit.com/[homepage].
+
+== Code Organization
+
+The code will be split into several components, represented as Gradle (sub-)projects.
+This ensures two things: different layers will be separated, so they cannot be crossed (which prevents bug), and components can be modified and tested separately, improving build and development speed (faster feedback).
+
+Historically, everything was in one Gradle project (a "module" in IntelliJ IDEA terms).
+When migrating to a multi-project build, all code moved to the `rest-api-server` project.
+
+When the refactoring will be done, this project should only contain the "plumbing" of the application: Loading and connecting all components to provide the REST API as a service.
+This means that all other code will be separated out into their own Gradle projects.
+This will include (at least) all domain cores and adapters.
+
+This documentation will be updated during the refactoring to reflect the current state.
+If it is out of date, this is a defect and should be fixed.
+
+During the migration period, builds will take longer due to additional build steps that are required.
+This will improve once all components are isolated and can be built separately.
+Build speed should be monitored and optimized if it degrades.
+
+=== "Special" components
+
+There are two components in the project that are not directly related to ORKG but still necessary.
+Though not "special" from the perspective of the build, they differ from the rest of the projects in this build.
+The following sections try to explain the implications.
+
+==== The `buildSrc` project
+
+The `buildSrc` project is a special project in Gradle that is built before all other projects are build.
+It is required to avoid duplication:
+All Gradle projects are independent and can have their own list of dependencies.
+This would either require duplicating large chunks of build configuration or symlinking (and thereby coupling) build configuration.
+Both have severe downsides.
+In the first case, all places with an outdated dependency would need to be found.
+In the second case, adding a dependency that is not needed by other projects is not possible.
+
+The easiest way to avoid these problems is to provide a Gradle plug-in that takes care of configuring the build when it is applied.
+This is called a https://docs.gradle.org/current/samples/sample_convention_plugins.html[_convention plug-in_] in Gradle.
+The `buildSrc` directory contains several convention plugins that are used to manage dependencies and ensure projects are configured identically.
+They need to live in `buildSrc`, so they are built and available at the time the projects including them are build.
+
+Building the plugins has two major downsides: The build will take a bit longer, and a change in one of the convention plugins requires the whole project to be re-build.
+(This can be leveraged by extracting and publishing the plug-ins as a separate project.)
+
+==== The `platform` project
+
+When subprojects declare their own dependencies, the dependency resolution might pick of different versions, or –even worse– upgrade to a version you did not want to upgrade to.
+In large projects it is important to keep versions aligned across components.
+This is known as _dependency alignment_.
+Gradle calls the mechanism to do that a https://docs.gradle.org/current/userguide/dependency_version_alignment.html[_platform project_].
+It is similar to a BOM (Bill of Materials) in Maven.
+All projects need to depend on the platform, and the platform depends on all projects.
+The Gradle dependency management will (hopefully) take care of the rest.
+The `platform` project contains the build configuration needed.
+It only consists of build configuration.
+Changing it is only required when adding or removing components.
+
+See https://blog.gradle.org/alignment-with-gradle-module-metadata[this blog article] for a description of the problem and the solution.
+
+== Testing
+
+=== Current status
+
+In the prototyping stage, ORKG did not see much testing effort.
+We work to improve the situation continuously by providing tests for newly written code and areas of the code that are modified and currently lack test.
+Developers are expected to provide tests with every merge request.
+
+=== Test organization
+
+There are currently two types of tests: __unit tests__, found in the `test` module, as well as __integration tests__, found in the `integration` module.
+
+_Unit tests_ should make out the largest portions of test, as described in the https://martinfowler.com/articles/practical-test-pyramid.html#TheTestPyramid[test pyramid].
+They should be written in accordance to the FIRST principle (see https://github.com/ghsukumar/SFDC_Best_Practices/wiki/F.I.R.S.T-Principles-of-Unit-Testing[here] and https://agileinaflash.blogspot.com/2009/02/first.html[here]).
+Because test code is code and therefore needs maintenance, only just enough test should be written.
+A good guideline it the one proposed by Sandi Metz, as summarized in https://gist.github.com/Integralist/7944948[this write-up] and https://www.youtube.com/watch?v=URSWYvyc42M[her talk at Rails Conf 2013].
+All code should be written with testability in mind since testability is a good indicator for code quality: clean code is usually easy to test.
+
+Some of the tests in the `test` module could be considered integration tests, as they instantiate some parts of the Spring Boot framework.
+Due to their short runtime, no effort was made (yet) to separate them into a module of their own.
+
+The _integration tests_ are designed to test the full system as closely as possible to the production system.
+They therefore use Docker containers during the test runs, using https://www.testcontainers.org/[TestContainers].
+This results in an increased start-up and run time which slow the testing cycle down and should only be used for testing all components, start to finish.
+They are additionally used to generate the API documentation using https://spring.io/projects/spring-restdocs[Spring REST Docs] to ensure the API is in accordance with the rest of the system.
+
+=== Testing with Spring Boot
+
+Testing in Spring and Spring Boot is a complex topic due to the complexities of the framework.
+To get started, the following articles from the "Reflectoring" blog are a recommended read:
+
+* https://reflectoring.io/unit-testing-spring-boot/[Unit Testing with Spring Boot]
+* https://reflectoring.io/spring-boot-test/[Integration Tests with @SpringBootTest]
+* https://reflectoring.io/spring-boot-web-controller-test/[Testing Spring MVC Web Controllers with @WebMvcTest]
+* https://reflectoring.io/spring-boot-data-jpa-test/[Testing JPA Queries with @DataJpaTest]
+
+Another useful source is the https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-testing[chapter on testing] in the official Spring Boot documentation.
+
+[[tips-and-tricks]]
+== Tips & Tricks
+
+The following sections contain work-flows or tricks for specific tasks that can help during development.
+
+=== Restarting the API container
+
+Sometimes there is a race condition between the containers:
+The backend started already while Neo4j is still starting up.
+This leads to failing connections.
+Although the API will try reconnecting to Neo4j automatically, the timeouts may be longer than you want to wait.
+In this case you can simply restart the API container:
+
+    docker-compose stop api && docker-compose rm -f api && docker-compose up -d api
+
+=== Importing a database dump
+
+NOTE: Dumps are provided to TIB members only. This may change in the future. Or not.
+
+NOTE: You can re-load / setup a database dump with the `reload-dump` script in the `scripts` directory.
+      The following section is still relevant if you want to understand what is happening there.
+      To load a dump, place it in the `dumps` directory and name it `neo4j-dump-latest.dump` (or use a symlink).
+
+Sometimes it is helpful to work on a production database dump, e.g. for debugging.
+To make that work with the Neo4j Community Edition and Docker, a workflow similar to the one below can be used.
+
+. Create a named volume for the dumps.
+(_This only needs to be done once._)
+It allows us to store multiple versions of dumps to choose from but use the same workflow for importing.
++
+[source,shell]
+----
+docker volume create orkg-dumps
+----
+
+. Copy a dump to the volume.
+This uses a temporary container called `dummy` to mount the volume.
+It will be deleted after copying.
++
+`alpine` is a very small Linux distribution.
+The Docker image itself does not matter much, but it is preferred to use something small.
++
+We assume the dump to be named `neo4j-dump-YYYYMMDD.dump` and to reside in the current directory.
+You may need to adjust this to your situation.
++
+[source,shell]
+----
+docker container create --name dummy --volume orkg-dumps:/dumps alpine
+docker cp neo4j-dump-YYYYMMDD.dump dummy:/dumps
+docker rm dummy
+----
+
+. Shut down all running ORKG containers.
+(The only container that needs to be stopped is `neo4j`, but we want to be sure.)
++
+[source,shell]
+----
+docker-compose down
+----
+
+. Import the dump into Neo4j.
+We will create a temporary Neo4j container from which we load the dump.
+Importing the dump will be done interactively from a shell inside the container.
+It needs to be forced because the database already exists and contains data.
++
+You also need to leave the container afterwards.
+This can be done by typing `exit` or pressing kbd:[Ctrl+d].
++
+[source,shell]
+----
+docker run -it --rm --entrypoint /bin/bash --volumes-from orkg-backend_neo4j_1 --volume orkg-dumps:/dumps neo4j:3.5
+neo4j-admin load --from=/dumps/neo4j-dump-YYYYMMDD.dump --force
+# Type "exit" or press Ctrl+d
+----
++
+You should be back at your normal command-line prompt.
+
+. Start everything back up.
+The Neo4j container should now contain the data of the dump.
++
+[source,shell]
+----
+docker-compose up -d
+----
+
+[[tips-intellij]]
+=== IntelliJ IDEA
+
+IntelliJ IDEA is a great tool, but sometimes it needs some configuration.
+This section collects some things that may not be obvious.
+
+[[tips-intellij-gradle]]
+==== Enable Gradle support
+
+Is some cases it can happen that Gradle support is not enabled, especially when you just checked out the project.
+You should check the "Event log" at the lower right corner of the screen for a message to import auto-detected Gradle modules and click the suggested solution.
+
+Select menu:View[Tool Windows > Gradle] and check if the window contains the project, along with its tasks.
+
+[[tips-intellij-jpa]]
+==== Enabling JPA support in Spring
+
+JPA support is enabled by default but might not be configured correctly.
+This leads to red lines in code sections that use JPA, namely the database entities, and IDEA complaining about these errors on every commit although there is no problem.
+To enable JPA support with Spring, you can do the following:
+
+. Add the development database to the project:
+.. Select menu:View[Tool Windows > Database] to open the Database View.
+.. Using the btn:[+] button, select menu:Data Source[PostgreSQL].
+.. Fill in the settings to connect to your local (Docker-based) PostgreSQL database.
+   Most of the defaults should be correct.
+   (If in doubt, "postgres" is most likely the right value.)
+   Install the PostgreSQL driver if you have not done so already.
+   Test the connection using the "Test Connection" button.
+   (Remember that the Docker container needs to be running.)
+   When a connection can be established, save the settings with btn:[OK].
+. Connect the data source to the Persistence manager:
+.. Select menu:View[Tool Windows > Persistence] to open the Persistence View.
+   You should see one entry for the "main" module of the project.
+.. Expand the entries.
+   You should see the "entityManagerFactory" component and a list of all JPA entities defined in the project.
+.. Right-click on "entityManagerFactory" and select "Assign Data Sources…" from the menu.
+.. In the window, click into the empty field in the "Data Source" column.
+   Select the entry of the previously defined data source (labeled "postgres@localhost" by default).
+   Click btn:[OK].
+.. Select and entity and press kbd:[F4] (Go to Source).
+   Verify that the errors on the `@Column` annotations are gone.
+   If you still see errors, try starting the API (`bootRun` task in Gradle) to update your database to the latest schema.

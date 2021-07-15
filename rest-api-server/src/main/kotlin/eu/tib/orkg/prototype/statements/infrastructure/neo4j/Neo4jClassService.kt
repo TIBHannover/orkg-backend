@@ -90,6 +90,8 @@ class Neo4jClassService(
 
         // update all the properties
         found.label = `class`.label
+        if (`class`.uri != null)
+            found.uri = `class`.uri.toString()
 
         return neo4jClassRepository.save(found).toClass()
     }

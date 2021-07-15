@@ -274,6 +274,29 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    fun editLabelAndUri() {
+        val `class` = service.create(CreateClassRequest(id = null, label = "foo", uri = URI("http://example.org/foo"))).id!!
+
+        val newLabel = "bar"
+        val resource = mapOf("label" to newLabel, "uri" to "http://orkg.org/entity/foo")
+
+        mockMvc
+            .perform(putRequestWithBody("/api/classes/$`class`", resource))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.label").value(newLabel))
+            .andExpect(jsonPath("$.uri").value(resource["uri"].toString())) // old value
+            .andDo(
+                document(
+                    snippet,
+                    requestFields(
+                        fieldWithPath("label").description("The updated class label"),
+                        fieldWithPath("uri").ignored()
+                    ), classResponseFields()
+                )
+            )
+    }
+
+    @Test
     fun lookupByClassAndLabel() {
         val id = service.create("research contribution").id!!
         val set = listOf(id).toSet()

@@ -161,16 +161,19 @@ class Neo4jStatementService(
     }
 
     override fun update(statementEditRequest: StatementEditRequest): GeneralStatement {
-        val found = statementRepository.findByStatementId(statementEditRequest.statementId!!).get()
+        var found = statementRepository.findByStatementId(statementEditRequest.statementId!!)
+        if (found.isPresent) {
 
-        // update all the properties
-        found.predicateId = statementEditRequest.predicateId
-        found.subject = thingRepository.findByThingId(statementEditRequest.subjectId).get()
-        found.`object` = thingRepository.findByThingId(statementEditRequest.objectId).get()
+            // update all the properties
+            found.get().predicateId = statementEditRequest.predicateId
+            found.get().subject = thingRepository.findByThingId(statementEditRequest.subjectId).get()
+            found.get().`object` = thingRepository.findByThingId(statementEditRequest.objectId).get()
 
-        statementRepository.save(found)
+            statementRepository.save(found.get())
 
-        return toStatement(found)
+            return toStatement(found.get())
+        }
+        return toStatement(Neo4jStatement())
     }
 
     override fun countStatements(paperId: String): Int =

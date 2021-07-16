@@ -53,3 +53,10 @@ class WhitespaceIgnorantPattern(private val input: String) : StringHelper {
 fun replaceWhitespaceWithUnderscores(input: String): String = input.replace(" ", "_")
 
 fun removeSingleQuotes(input: String): String = input.replace("'", "")
+
+fun escapeLiterals(literal: String): String {
+    return literal
+        .replace("\\", "\\\\")
+        .replace("\"", "\\\"")
+        .replace("(\\r|\\n|\\r\\n)+".toRegex(), "\\\\n")
+}

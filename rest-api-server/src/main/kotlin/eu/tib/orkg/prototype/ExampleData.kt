@@ -153,10 +153,3 @@ class ExampleData(
 }
 
 data class ResearchField(val name: String, val subfields: List<ResearchField> = listOf())
-
-fun escapeLiterals(literal: String): String {
-    return literal
-        .replace("\\", "\\\\")
-        .replace("\"", "\\\"")
-        .replace("(\\r|\\n|\\r\\n)+".toRegex(), "\\\\n")
-}

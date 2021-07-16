@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.escapeLiterals
+import eu.tib.orkg.prototype.util.escapeLiterals
 import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId

@@ -2,7 +2,10 @@ rootProject.name = "orkg-prototype"
 
 include("platform")
 
-include(":application:core")
+include(
+    ":application:shared",
+    ":application:core"
+)
 
 include(":adapters:output:core")
 

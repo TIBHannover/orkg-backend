@@ -2,6 +2,8 @@ package eu.tib.orkg.prototype.core.statements.adapters.output
 
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceRepository
 import eu.tib.orkg.prototype.statements.ports.ResourceRepository
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration

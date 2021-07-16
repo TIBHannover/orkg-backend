@@ -1,9 +1,7 @@
-package eu.tib.orkg.prototype.core.statements.adapters.output
+package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatement
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.escapeLiterals
 import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
@@ -15,7 +13,7 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ObservatoryIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.OrganizationIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ResourceIdConverter
-import java.lang.StringBuilder
+import eu.tib.orkg.prototype.util.escapeLiterals
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
 import org.eclipse.rdf4j.model.vocabulary.RDF
@@ -114,7 +112,7 @@ data class Neo4jResource(
             extractionMethod = extractionMethod,
             organizationId = organizationId
         )
-        //resource.rdf = toRdfModel()
+        resource.rdf = null // toRdfModel()
         return resource
     }
 
@@ -128,7 +126,7 @@ data class Neo4jResource(
      */
     fun assignTo(clazz: String) = labels.add(clazz)
 
-    /*
+
     fun toNTriple(): String {
         val cPrefix = RdfConstants.CLASS_NS
         val rPrefix = RdfConstants.RESOURCE_NS
@@ -158,5 +156,4 @@ data class Neo4jResource(
         }
         return builder.build()
     }
-    */
 }

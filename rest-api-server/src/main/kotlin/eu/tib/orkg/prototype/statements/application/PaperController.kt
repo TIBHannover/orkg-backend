@@ -1,8 +1,20 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.constants.AuthorClass
+import eu.tib.orkg.prototype.constants.AuthorPredicate
+import eu.tib.orkg.prototype.constants.ContributionPredicate
+import eu.tib.orkg.prototype.constants.DoiPredicate
+import eu.tib.orkg.prototype.constants.ID_CONTRIBUTION_CLASS
+import eu.tib.orkg.prototype.constants.ORCID_REGEX
+import eu.tib.orkg.prototype.constants.OrcidPredicate
+import eu.tib.orkg.prototype.constants.PublicationMonthPredicate
+import eu.tib.orkg.prototype.constants.PublicationYearPredicate
+import eu.tib.orkg.prototype.constants.ResearchFieldPredicate
+import eu.tib.orkg.prototype.constants.UrlPredicate
+import eu.tib.orkg.prototype.constants.VenueClass
+import eu.tib.orkg.prototype.constants.VenuePredicate
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
-import eu.tib.orkg.prototype.statements.application.ObjectController.Constants
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod.UNKNOWN
@@ -70,7 +82,7 @@ class PaperController(
             request.paper.contributions!!.forEach {
                 val contributionId = addCompleteContribution(it, request)
                 // Create statement between paper and contribution
-                statementService.add(userId, paperId.value, Constants.ContributionPredicate, contributionId.value)
+                statementService.add(userId, paperId.value, ContributionPredicate, contributionId.value)
             }
         }
         return paperObj
@@ -85,7 +97,7 @@ class PaperController(
         paperRequest: CreatePaperRequest
     ): ResourceId {
         // Convert Paper structure to Object structure
-        val contribution = jsonObject.copy(classes = listOf(Constants.ID_CONTRIBUTION_CLASS))
+        val contribution = jsonObject.copy(classes = listOf(ID_CONTRIBUTION_CLASS))
         val objectRequest = CreateObjectRequest(paperRequest.predicates, contribution)
         // Create contribution resource whether it has data or not
         return objectController.createObject(objectRequest).id!!
@@ -139,13 +151,13 @@ class PaperController(
         // paper doi
         if (request.paper.hasDOI()) {
             val paperDoi = literalService.create(userId, request.paper.doi!!).id!!
-            statementService.add(userId, paperId.value, Constants.DoiPredicate, paperDoi.value)
+            statementService.add(userId, paperId.value, DoiPredicate, paperDoi.value)
         }
 
         // paper URL
         if (request.paper.hasUrl()) {
             val paperUrl = literalService.create(userId, request.paper.url!!).id!!
-            statementService.add(userId, paperId.value, Constants.UrlPredicate, paperUrl.value)
+            statementService.add(userId, paperId.value, UrlPredicate, paperUrl.value)
         }
 
         // paper authors
@@ -156,14 +168,14 @@ class PaperController(
             statementService.add(
                 userId,
                 paperId.value,
-                Constants.PublicationMonthPredicate,
+                PublicationMonthPredicate,
                 literalService.create(userId, request.paper.publicationMonth.toString()).id!!.value
             )
         if (request.paper.hasPublicationYear())
             statementService.add(
                 userId,
                 paperId.value,
-                Constants.PublicationYearPredicate,
+                PublicationYearPredicate,
                 literalService.create(userId, request.paper.publicationYear.toString()).id!!.value
             )
 
@@ -182,7 +194,7 @@ class PaperController(
         statementService.add(
             userId,
             paperId.value,
-            Constants.ResearchFieldPredicate,
+            ResearchFieldPredicate,
             ResourceId(request.paper.researchField).value
         )
         return paperObj
@@ -200,7 +212,7 @@ class PaperController(
         extractionMethod: ExtractionMethod,
         organizationId: OrganizationId
     ) {
-        val venuePredicate = predicateService.findById(Constants.VenuePredicate).get().id!!
+        val venuePredicate = predicateService.findById(VenuePredicate).get().id!!
         val pageable = PageRequest.of(1, 10)
         // Check if resource exists
         var venueResource = resourceService.findAllByLabel(pageable, venue).firstOrNull()
@@ -211,7 +223,7 @@ class PaperController(
                 CreateResourceRequest(
                     null,
                     venue,
-                    setOf(Constants.VenueClass)
+                    setOf(VenueClass)
                 ),
                 observatoryId,
                 extractionMethod,
@@ -239,7 +251,7 @@ class PaperController(
         observatoryId: ObservatoryId,
         organizationId: OrganizationId
     ) {
-        val pattern = Constants.ORCID_REGEX.toRegex()
+        val pattern = ORCID_REGEX.toRegex()
         if (paper.paper.hasAuthors()) {
             paper.paper.authors!!.forEach { it ->
                 if (!it.isExistingAuthor()) {
@@ -258,19 +270,19 @@ class PaperController(
                                 statementService.findAllByObject(
                                     foundOrcid.id!!.value,
                                     PageRequest.of(1, 10) // TODO: Hide values by using default values for the parameters
-                                ).firstOrNull { it.predicate.id == Constants.OrcidPredicate }
+                                ).firstOrNull { it.predicate.id == OrcidPredicate }
                                     ?: throw OrphanOrcidValue(orcidValue)
                             statementService.add(
                                 userId,
                                 paperId.value,
-                                Constants.AuthorPredicate,
+                                AuthorPredicate,
                                 (authorStatement.subject as Resource).id!!.value
                             )
                         } else {
                             // create resource
                             val author = resourceService.create(
                                 userId,
-                                CreateResourceRequest(null, it.label!!, setOf(Constants.AuthorClass)),
+                                CreateResourceRequest(null, it.label!!, setOf(AuthorClass)),
                                 observatoryId,
                                 paper.paper.extractionMethod,
                                 organizationId
@@ -278,25 +290,25 @@ class PaperController(
                             statementService.add(
                                 userId,
                                 paperId.value,
-                                Constants.AuthorPredicate,
+                                AuthorPredicate,
                                 author.id!!.value
                             )
                             // Create orcid literal
                             val orcid = literalService.create(userId, orcidValue)
                             // Add ORCID id to the new resource
-                            statementService.add(userId, author.id!!.value, Constants.OrcidPredicate, orcid.id!!.value)
+                            statementService.add(userId, author.id!!.value, OrcidPredicate, orcid.id!!.value)
                         }
                     } else {
                         // create literal and link it
                         statementService.add(
                             userId,
                             paperId.value,
-                            Constants.AuthorPredicate,
+                            AuthorPredicate,
                             literalService.create(userId, it.label!!).id!!.value
                         )
                     }
                 } else {
-                    statementService.add(userId, paperId.value, Constants.AuthorPredicate, it.id!!)
+                    statementService.add(userId, paperId.value, AuthorPredicate, it.id!!)
                 }
             }
         }

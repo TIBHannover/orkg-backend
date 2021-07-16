@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import eu.tib.orkg.prototype.constants.ID_DOI_PREDICATE
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.application.ObjectController.Constants.ID_DOI_PREDICATE
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.util.Optional
@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
+import org.springframework.stereotype.Repository
 
 /**
  * Partial query that returns the node as well as its ID and relationships.

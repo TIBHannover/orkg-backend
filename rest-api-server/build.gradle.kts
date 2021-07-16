@@ -34,6 +34,7 @@ dependencies {
     // Platform alignment for ORKG components
     api(platform(project(":platform")))
 
+    implementation(project(":application:shared"))
     implementation(project(":application:core"))
     implementation(project(":adapters:output:core"))
 

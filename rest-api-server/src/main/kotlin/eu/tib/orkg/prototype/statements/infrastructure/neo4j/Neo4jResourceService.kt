@@ -15,6 +15,7 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceIdGenerator
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
+import eu.tib.orkg.prototype.statements.ports.ResourceRepository
 import eu.tib.orkg.prototype.util.EscapedRegex
 import eu.tib.orkg.prototype.util.SanitizedWhitespace
 import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
@@ -28,7 +29,8 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class Neo4jResourceService(
     private val neo4jResourceRepository: Neo4jResourceRepository,
-    private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator
+    private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator,
+    private val resourceRepository: ResourceRepository,
 ) : ResourceService {
 
     override fun create(label: String) = create(
@@ -71,9 +73,7 @@ class Neo4jResourceService(
             .findAll(pageable)
             .map(Neo4jResource::toResource)
 
-    override fun findById(id: ResourceId?): Optional<Resource> =
-        neo4jResourceRepository.findByResourceId(id)
-            .map(Neo4jResource::toResource)
+    override fun findById(id: ResourceId?): Optional<Resource> = Optional.ofNullable(resourceRepository.findById(id))
 
     override fun findAllByLabel(pageable: Pageable, label: String): Page<Resource> =
         neo4jResourceRepository.findAllByLabelMatchesRegex(label.toExactSearchString(), pageable) // TODO: See declaration

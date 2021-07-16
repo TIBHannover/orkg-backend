@@ -4,6 +4,8 @@ include("platform")
 
 include(":application:core")
 
+include(":adapters:output:core")
+
 include("rest-api-server")
 
 // Declare default repository settings for all sub-projects.

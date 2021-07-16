@@ -35,6 +35,7 @@ dependencies {
     api(platform(project(":platform")))
 
     implementation(project(":application:core"))
+    implementation(project(":adapters:output:core"))
 
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 

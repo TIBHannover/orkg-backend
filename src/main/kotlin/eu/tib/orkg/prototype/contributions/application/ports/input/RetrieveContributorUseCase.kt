@@ -15,4 +15,6 @@ interface RetrieveContributorUseCase {
      * @return A [Contributor] wrapped in an [Optional], or an empty [Optional] otherwise.
      */
     fun byId(id: ContributorId): Optional<Contributor>
+
+    fun findContributors(): List<Contributor>
 }

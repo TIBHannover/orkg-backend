@@ -14,4 +14,5 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.eclipse.rdf4j:rdf4j-client:3.6.3")
     implementation("org.springframework:spring-web")
+    implementation("org.springframework.data:spring-data-commons")
 }

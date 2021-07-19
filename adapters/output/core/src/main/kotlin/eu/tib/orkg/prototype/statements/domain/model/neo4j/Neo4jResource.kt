@@ -104,7 +104,7 @@ data class Neo4jResource(
         val resource = Resource(
             resourceId,
             label!!,
-            createdAt,
+            createdAt!!,
             classes,
             objectOf.size,
             createdBy = createdBy,

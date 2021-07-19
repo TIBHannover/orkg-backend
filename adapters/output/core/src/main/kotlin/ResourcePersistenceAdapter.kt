@@ -22,6 +22,16 @@ class ResourcePersistenceAdapter(private val neo4jResourceRepository: Neo4jResou
 
 }
 
+private fun Resource.toNeo4jResource(): Neo4jResource =
+    Neo4jResource(
+        resourceId = this.id!!,
+        label = this.label,
+        createdBy = this.createdBy,
+        observatoryId = this.observatoryId,
+        extractionMethod = this.extractionMethod,
+        organizationId = this.organizationId
+    )
+
 @Configuration
 @ComponentScan
 open class SpringConfiguration

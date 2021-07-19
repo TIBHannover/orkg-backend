@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional
 class Neo4jResourceService(
     private val neo4jResourceRepository: Neo4jResourceRepository,
     private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator,
-    private val resourceRepository: ResourceRepository,
+    private val resourceRepository: ResourceRepository
 ) : ResourceService {
 
     override fun create(label: String) = create(
@@ -73,7 +73,7 @@ class Neo4jResourceService(
             .findAll(pageable)
             .map(Neo4jResource::toResource)
 
-    override fun findById(id: ResourceId?): Optional<Resource> = Optional.ofNullable(resourceRepository.findById(id))
+    override fun findById(id: ResourceId?): Optional<Resource> = resourceRepository.findById(id)
 
     override fun findAllByLabel(pageable: Pageable, label: String): Page<Resource> =
         neo4jResourceRepository.findAllByLabelMatchesRegex(label.toExactSearchString(), pageable) // TODO: See declaration

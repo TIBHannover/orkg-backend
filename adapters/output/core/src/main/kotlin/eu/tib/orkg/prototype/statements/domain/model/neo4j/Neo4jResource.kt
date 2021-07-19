@@ -112,7 +112,7 @@ data class Neo4jResource(
             extractionMethod = extractionMethod,
             organizationId = organizationId
         )
-        resource.rdf = null // toRdfModel()
+        resource.rdf = toRdfModel()
         return resource
     }
 

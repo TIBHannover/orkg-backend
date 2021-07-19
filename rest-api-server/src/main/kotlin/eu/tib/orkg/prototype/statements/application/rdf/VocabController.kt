@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
+import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import java.io.StringWriter
@@ -44,7 +45,7 @@ class VocabController(
             .findById(id)
             // TODO: Return meaningful message to the user
             .orElseThrow { IllegalStateException("Could not find resource $id") }
-        val response = getRdfSerialization(resource.rdf, acceptHeader)
+        val response = getRdfSerialization(resource.rdf!!, acceptHeader)
         return ResponseEntity.ok()
             .body(response)
     }
@@ -61,7 +62,7 @@ class VocabController(
         if (!checkAcceptHeader(acceptHeader))
             return createRedirectResponse("predicate", id.value, uriComponentsBuilder)
         val predicate = predicateService.findById(id)
-        val response = getRdfSerialization(predicate.get().rdf, acceptHeader)
+        val response = getRdfSerialization(predicate.get().rdf!!, acceptHeader)
         return ResponseEntity.ok()
             .body(response)
     }
@@ -76,7 +77,7 @@ class VocabController(
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<String> {
         val clazz = classService.findById(id)
-        val response = getRdfSerialization(clazz.get().rdf, acceptHeader)
+        val response = getRdfSerialization(clazz.get().rdf!!, acceptHeader)
         return ResponseEntity.ok()
             .body(response)
     }
@@ -114,7 +115,7 @@ class VocabController(
     }
 
     private fun getRdfSerialization(
-        model: Model?,
+        model: Model,
         accept: String
     ): String {
         val writer = StringWriter()

@@ -10,7 +10,7 @@ data class Resource(
     val id: ResourceId?,
     val label: String,
     @JsonProperty("created_at")
-    val createdAt: OffsetDateTime?,
+    val createdAt: OffsetDateTime = OffsetDateTime.now(),
     val classes: Set<ClassId> = emptySet(),
     val shared: Int = 0,
     @JsonProperty("created_by")

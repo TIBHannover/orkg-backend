@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     kotlin("jvm")
     jacoco
@@ -9,6 +11,12 @@ dependencies {
 }
 
 tasks {
+    withType<KotlinCompile>().configureEach {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
+
     withType(Test::class.java).configureEach {
         useJUnitPlatform()
     }

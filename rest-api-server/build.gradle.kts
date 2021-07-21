@@ -7,7 +7,7 @@ version = "0.5.1-SNAPSHOT"
 val neo4jVersion = "3.5.+" // should match version in Dockerfile
 val springDataNeo4jVersion = "5.3.4"
 val springSecurityOAuthVersion = "2.3.8"
-val testContainersVersion = "1.14.3"
+val testContainersVersion = "1.15.3"
 
 val containerRegistryLocation = "registry.gitlab.com/tibhannover/orkg/orkg-backend"
 val dockerImageTag: String? by project

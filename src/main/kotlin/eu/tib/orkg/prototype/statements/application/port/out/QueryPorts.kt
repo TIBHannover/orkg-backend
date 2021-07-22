@@ -5,7 +5,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
-interface LoadResourceAdapter {
+interface LoadResourcePort {
     fun loadVerifiedResources(pageable: Pageable): Page<Resource>
     fun loadUnverifiedResources(pageable: Pageable): Page<Resource>
 
@@ -27,7 +27,7 @@ interface LoadPaperAdapter {
     fun loadListedPapers(pageable: Pageable): Page<Resource>
 }
 
-interface LoadComparisonAdapter {
+interface LoadComparisonPort {
     fun loadFeaturedComparisons(pageable: Pageable): Page<Resource>
     fun loadNonFeaturedComparisons(pageable: Pageable): Page<Resource>
 
@@ -35,7 +35,7 @@ interface LoadComparisonAdapter {
     fun loadListedComparisons(pageable: Pageable): Page<Resource>
 }
 
-interface LoadContributionAdapter {
+interface LoadContributionPort {
     fun loadFeaturedContributions(pageable: Pageable): Page<Resource>
     fun loadNonFeaturedContributions(pageable: Pageable): Page<Resource>
 
@@ -43,7 +43,7 @@ interface LoadContributionAdapter {
     fun loadListedContributions(pageable: Pageable): Page<Resource>
 }
 
-interface LoadVisualizationAdapter {
+interface LoadVisualizationPort {
     fun loadFeaturedVisualizations(pageable: Pageable): Page<Resource>
     fun loadNonFeaturedVisualizations(pageable: Pageable): Page<Resource>
 
@@ -51,7 +51,7 @@ interface LoadVisualizationAdapter {
     fun loadListedVisualizations(pageable: Pageable): Page<Resource>
 }
 
-interface LoadSmartReviewAdapter {
+interface LoadSmartReviewPort {
     fun loadFeaturedSmartReviews(pageable: Pageable): Page<Resource>
     fun loadNonFeaturedSmartReviews(pageable: Pageable): Page<Resource>
 
@@ -59,7 +59,7 @@ interface LoadSmartReviewAdapter {
     fun loadListedSmartReviews(pageable: Pageable): Page<Resource>
 }
 
-interface LoadProblemAdapter {
+interface LoadProblemPort {
     fun loadFeaturedProblems(pageable: Pageable): Page<Resource>
     fun loadNonFeaturedProblems(pageable: Pageable): Page<Resource>
 
@@ -69,36 +69,36 @@ interface LoadProblemAdapter {
 
 interface GetPaperFlagQuery {
     fun getPaperVerifiedFlag(id: ResourceId): Boolean?
-    fun getFeaturedPaperFlag(id: ResourceId): Boolean?
+    fun getFeaturedPaperFlag(id: ResourceId): Boolean
     fun getUnlistedPaperFlag(id: ResourceId): Boolean?
 }
 
 interface GetResourceFlagQuery {
-    fun getFeaturedResourceFlag(id: ResourceId): Boolean?
+    fun getFeaturedResourceFlag(id: ResourceId): Boolean
     fun getUnlistedResourceFlag(id: ResourceId): Boolean?
 }
 
 interface GetProblemFlagQuery {
-    fun getFeaturedProblemFlag(id: ResourceId): Boolean?
+    fun getFeaturedProblemFlag(id: ResourceId): Boolean
     fun getUnlistedProblemFlag(id: ResourceId): Boolean?
 }
 
 interface GetContributionFlagQuery {
-    fun getFeaturedContributionFlag(id: ResourceId): Boolean?
+    fun getFeaturedContributionFlag(id: ResourceId): Boolean
     fun getUnlistedContributionFlag(id: ResourceId): Boolean?
 }
 
 interface GetComparisonFlagQuery {
-    fun getFeaturedComparisonFlag(id: ResourceId): Boolean?
+    fun getFeaturedComparisonFlag(id: ResourceId): Boolean
     fun getUnlistedComparisonFlag(id: ResourceId): Boolean?
 }
 
 interface GetVisualizationFlagQuery {
-    fun getFeaturedVisualizationFlag(id: ResourceId): Boolean?
+    fun getFeaturedVisualizationFlag(id: ResourceId): Boolean
     fun getUnlistedVisualizationFlag(id: ResourceId): Boolean?
 }
 
 interface GetSmartReviewFlagQuery {
-    fun getFeaturedSmartReviewFlag(id: ResourceId): Boolean?
+    fun getFeaturedSmartReviewFlag(id: ResourceId): Boolean
     fun getUnlistedSmartReviewFlag(id: ResourceId): Boolean?
 }

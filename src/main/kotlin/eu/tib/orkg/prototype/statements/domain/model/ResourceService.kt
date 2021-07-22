@@ -14,12 +14,12 @@ import eu.tib.orkg.prototype.statements.application.port.out.GetPaperFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.GetResourceFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.GetSmartReviewFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.GetVisualizationFlagQuery
-import eu.tib.orkg.prototype.statements.application.port.out.LoadComparisonAdapter
-import eu.tib.orkg.prototype.statements.application.port.out.LoadContributionAdapter
+import eu.tib.orkg.prototype.statements.application.port.out.LoadComparisonPort
+import eu.tib.orkg.prototype.statements.application.port.out.LoadContributionPort
 import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperAdapter
-import eu.tib.orkg.prototype.statements.application.port.out.LoadResourceAdapter
-import eu.tib.orkg.prototype.statements.application.port.out.LoadSmartReviewAdapter
-import eu.tib.orkg.prototype.statements.application.port.out.LoadVisualizationAdapter
+import eu.tib.orkg.prototype.statements.application.port.out.LoadResourcePort
+import eu.tib.orkg.prototype.statements.application.port.out.LoadSmartReviewPort
+import eu.tib.orkg.prototype.statements.application.port.out.LoadVisualizationPort
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
 import java.util.Optional
 import org.springframework.data.domain.Page
@@ -28,16 +28,16 @@ import org.springframework.data.domain.Pageable
 // FIXME: acts as port and adapter now -> separate!
 interface ResourceService :
     MarkAsVerifiedUseCase,
-    LoadResourceAdapter,
+    LoadResourcePort,
     LoadPaperAdapter,
     GetPaperFlagQuery,
     MarkFeaturedService,
     MarkAsUnlistedService,
     GetResourceFlagQuery,
-    LoadComparisonAdapter,
-    LoadContributionAdapter,
-    LoadVisualizationAdapter,
-    LoadSmartReviewAdapter,
+    LoadComparisonPort,
+    LoadContributionPort,
+    LoadVisualizationPort,
+    LoadSmartReviewPort,
     GetContributionFlagQuery,
     GetComparisonFlagQuery,
     GetVisualizationFlagQuery,

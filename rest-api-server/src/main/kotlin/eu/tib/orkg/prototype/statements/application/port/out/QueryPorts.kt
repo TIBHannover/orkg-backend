@@ -90,15 +90,15 @@ interface GetContributionFlagQuery {
 
 interface GetComparisonFlagQuery {
     fun getFeaturedComparisonFlag(id: ResourceId): Boolean
-    fun getUnlistedComparisonFlag(id: ResourceId): Boolean?
+    fun getUnlistedComparisonFlag(id: ResourceId): Boolean
 }
 
 interface GetVisualizationFlagQuery {
     fun getFeaturedVisualizationFlag(id: ResourceId): Boolean
-    fun getUnlistedVisualizationFlag(id: ResourceId): Boolean?
+    fun getUnlistedVisualizationFlag(id: ResourceId): Boolean
 }
 
 interface GetSmartReviewFlagQuery {
     fun getFeaturedSmartReviewFlag(id: ResourceId): Boolean
-    fun getUnlistedSmartReviewFlag(id: ResourceId): Boolean?
+    fun getUnlistedSmartReviewFlag(id: ResourceId): Boolean
 }

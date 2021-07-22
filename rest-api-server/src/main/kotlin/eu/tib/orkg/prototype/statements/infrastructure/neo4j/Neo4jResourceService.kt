@@ -418,19 +418,19 @@ class Neo4jResourceService(
     override fun getFeaturedComparisonFlag(id: ResourceId): Boolean =
         neo4jComparisonRepository.findComparisonByResourceId(id).get().featured
 
-    override fun getUnlistedComparisonFlag(id: ResourceId): Boolean? =
+    override fun getUnlistedComparisonFlag(id: ResourceId): Boolean =
         neo4jComparisonRepository.findComparisonByResourceId(id).get().unlisted
 
     override fun getFeaturedVisualizationFlag(id: ResourceId): Boolean =
         neo4jVisualizationRepository.findVisualizationByResourceId(id).get().featured
 
-    override fun getUnlistedVisualizationFlag(id: ResourceId): Boolean? =
+    override fun getUnlistedVisualizationFlag(id: ResourceId): Boolean =
         neo4jVisualizationRepository.findVisualizationByResourceId(id).get().unlisted
 
     override fun getFeaturedSmartReviewFlag(id: ResourceId): Boolean =
         neo4jSmartReviewRepository.findSmartReviewByResourceId(id).get().featured
 
-    override fun getUnlistedSmartReviewFlag(id: ResourceId): Boolean? =
+    override fun getUnlistedSmartReviewFlag(id: ResourceId): Boolean =
         neo4jSmartReviewRepository.findSmartReviewByResourceId(id).get().unlisted
 
     private fun setFeaturedFlag(resourceId: ResourceId, featured: Boolean): Optional<Resource> {

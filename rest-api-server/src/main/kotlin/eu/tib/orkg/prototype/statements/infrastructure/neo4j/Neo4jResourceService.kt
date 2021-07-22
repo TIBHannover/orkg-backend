@@ -369,7 +369,7 @@ class Neo4jResourceService(
 
     override fun loadNonFeaturedVisualizations(pageable: Pageable):
         Page<Resource> =
-            neo4jVisualizationRepository
+        neo4jVisualizationRepository
             .findAllNonFeaturedVisualizations(pageable)
             .map(Neo4jResource::toResource)
 
@@ -412,25 +412,25 @@ class Neo4jResourceService(
     override fun getFeaturedContributionFlag(id: ResourceId): Boolean =
         neo4jContributionRepository.findContributionByResourceId(id).get().featured
 
-    override fun getUnlistedContributionFlag(id: ResourceId): Boolean =
+    override fun getUnlistedContributionFlag(id: ResourceId): Boolean? =
         neo4jContributionRepository.findContributionByResourceId(id).get().unlisted
 
     override fun getFeaturedComparisonFlag(id: ResourceId): Boolean =
         neo4jComparisonRepository.findComparisonByResourceId(id).get().featured
 
-    override fun getUnlistedComparisonFlag(id: ResourceId): Boolean =
+    override fun getUnlistedComparisonFlag(id: ResourceId): Boolean? =
         neo4jComparisonRepository.findComparisonByResourceId(id).get().unlisted
 
     override fun getFeaturedVisualizationFlag(id: ResourceId): Boolean =
         neo4jVisualizationRepository.findVisualizationByResourceId(id).get().featured
 
-    override fun getUnlistedVisualizationFlag(id: ResourceId): Boolean =
+    override fun getUnlistedVisualizationFlag(id: ResourceId): Boolean? =
         neo4jVisualizationRepository.findVisualizationByResourceId(id).get().unlisted
 
     override fun getFeaturedSmartReviewFlag(id: ResourceId): Boolean =
         neo4jSmartReviewRepository.findSmartReviewByResourceId(id).get().featured
 
-    override fun getUnlistedSmartReviewFlag(id: ResourceId): Boolean =
+    override fun getUnlistedSmartReviewFlag(id: ResourceId): Boolean? =
         neo4jSmartReviewRepository.findSmartReviewByResourceId(id).get().unlisted
 
     private fun setFeaturedFlag(resourceId: ResourceId, featured: Boolean): Optional<Resource> {
@@ -455,12 +455,12 @@ class Neo4jResourceService(
 
     private fun setUnlistedFlag(resourceId: ResourceId, unlisted: Boolean): Optional<Resource> {
         val result = neo4jResourceRepository.findByResourceId(resourceId)
-        if (result.isPresent) {
-            val resource = result.get()
-            resource.unlisted = unlisted
-            return Optional.of(neo4jResourceRepository.save(resource).toResource())
-        }
-        return Optional.empty()
+            if (result.isPresent) {
+                val resource = result.get()
+                resource.unlisted = unlisted
+                return Optional.of(neo4jResourceRepository.save(resource).toResource())
+            }
+            return Optional.empty()
     }
 
     private fun String.toSearchString() = "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"

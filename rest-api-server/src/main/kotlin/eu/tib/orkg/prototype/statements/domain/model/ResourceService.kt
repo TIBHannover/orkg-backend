@@ -16,7 +16,11 @@ import eu.tib.orkg.prototype.statements.application.port.out.GetSmartReviewFlagQ
 import eu.tib.orkg.prototype.statements.application.port.out.GetVisualizationFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.LoadComparisonPort
 import eu.tib.orkg.prototype.statements.application.port.out.LoadContributionPort
+<<<<<<< HEAD:rest-api-server/src/main/kotlin/eu/tib/orkg/prototype/statements/domain/model/ResourceService.kt
 import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperPort
+=======
+import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperAdapter
+>>>>>>> 91252d77 (Address code review comments):src/main/kotlin/eu/tib/orkg/prototype/statements/domain/model/ResourceService.kt
 import eu.tib.orkg.prototype.statements.application.port.out.LoadResourcePort
 import eu.tib.orkg.prototype.statements.application.port.out.LoadSmartReviewPort
 import eu.tib.orkg.prototype.statements.application.port.out.LoadVisualizationPort

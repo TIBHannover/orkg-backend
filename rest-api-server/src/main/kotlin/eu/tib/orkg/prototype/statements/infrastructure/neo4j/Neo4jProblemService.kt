@@ -95,9 +95,6 @@ override fun findById(id: ResourceId): Optional<Resource> =
         return null
     }
 
-    override fun getFeaturedProblemFlag(id: ResourceId): Boolean =
-        neo4jProblemRepository.findById(id).get().featured
-
     override fun getUnlistedProblemFlag(id: ResourceId): Boolean =
         neo4jProblemRepository.findById(id).get().unlisted
 

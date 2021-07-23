@@ -95,14 +95,11 @@ override fun findById(id: ResourceId): Optional<Resource> =
         return null
     }
 
-    override fun getUnlistedProblemFlag(id: ResourceId): Boolean? {
-        val result = neo4jProblemRepository.findById(id)
-        if (result.isPresent) {
-            val problem = result.get()
-            return problem.unlisted ?: false
-        }
-        return null
-    }
+    override fun getFeaturedProblemFlag(id: ResourceId): Boolean =
+        neo4jProblemRepository.findById(id).get().featured
+
+    override fun getUnlistedProblemFlag(id: ResourceId): Boolean =
+        neo4jProblemRepository.findById(id).get().unlisted
 
     override fun loadFeaturedProblems(pageable: Pageable): Page<Resource> =
         neo4jProblemRepository.findAllFeaturedProblems(pageable)

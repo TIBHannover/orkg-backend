@@ -26,11 +26,11 @@ class DOIController(
         // This structure is required by the DataCite API
         val doiMetaData = """{
                 "data": {
-                "id": "$doiPrefix/${doiData.comparisonId}",
+                "id": "$doiPrefix/${doiData.resourceId}",
                 "type": "dois",
                 "attributes": {
                 "event": "${dataciteConfiguration.publish}",
-                "doi": "$doiPrefix/${doiData.comparisonId}",
+                "doi": "$doiPrefix/${doiData.resourceId}",
                 "url": "${doiData.url}",
                 "xml": "${Base64.getEncoder().encodeToString((xmlMetadata).toByteArray())}"
             }
@@ -43,20 +43,22 @@ class DOIController(
     }
 
     data class CreateDOIRequest(
-        @JsonProperty("comparison_id")
-        val comparisonId: String,
+        @JsonProperty("resource_id")
+        val resourceId: String,
         val title: String,
         val subject: String,
         @JsonProperty("related_resources")
         val relatedResources: Set<ResourceId>,
         val description: String,
         val authors: List<Creator>,
-        val url: String
+        val url: String,
+        val type: String,
+        val resourceType: String
     ) {
         fun toXML(doiPrefix: String, relatedPapers: String): String {
             return """<?xml version="1.0" encoding="UTF-8"?>
                         <resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-4" xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.3/metadata.xsd">
-                            <identifier identifierType="DOI">$doiPrefix/$comparisonId</identifier>
+                            <identifier identifierType="DOI">$doiPrefix/$resourceId</identifier>
                             <creators>
                                 ${authors.map(Creator::toXML).joinToString("\n")}
                             </creators>
@@ -69,7 +71,7 @@ class DOIController(
                                 <subject xml:lang="en">$subject</subject>
                             </subjects>
                             <language>en</language>
-                            <resourceType resourceTypeGeneral="Dataset">Comparison</resourceType>
+                            <resourceType resourceTypeGeneral="$resourceType">$type</resourceType>
                             <relatedIdentifiers>
                                 $relatedPapers
                             </relatedIdentifiers>

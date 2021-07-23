@@ -67,10 +67,10 @@ data class Neo4jResource(
     var verified: Boolean? = null
 
     @Property("featured")
-    var featured: Boolean? = null
+    var featured: Boolean = false
 
     @Property("unlisted")
-    var unlisted: Boolean? = null
+    var unlisted: Boolean = false
 
     @Property("organization_id")
     @Convert(OrganizationIdConverter::class)
@@ -98,8 +98,8 @@ data class Neo4jResource(
         observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
         extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
         organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
-        featured: Boolean? = null,
-        unlisted: Boolean? = null
+        featured: Boolean = false,
+        unlisted: Boolean = false
     ) : this(null) {
         this.label = label
         this.resourceId = resourceId

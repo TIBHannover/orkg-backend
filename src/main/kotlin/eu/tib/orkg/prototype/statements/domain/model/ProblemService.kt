@@ -3,14 +3,14 @@ package eu.tib.orkg.prototype.statements.domain.model
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsUnlistedService
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkFeaturedService
 import eu.tib.orkg.prototype.statements.application.port.out.GetProblemFlagQuery
-import eu.tib.orkg.prototype.statements.application.port.out.LoadProblemAdapter
+import eu.tib.orkg.prototype.statements.application.port.out.LoadProblemPort
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ContributorPerProblem
 import java.util.Optional
 import org.springframework.data.domain.Pageable
 
 interface ProblemService :
     GetProblemFlagQuery,
-    LoadProblemAdapter,
+    LoadProblemPort,
     MarkFeaturedService,
     MarkAsUnlistedService {
     fun findById(id: ResourceId): Optional<Resource>

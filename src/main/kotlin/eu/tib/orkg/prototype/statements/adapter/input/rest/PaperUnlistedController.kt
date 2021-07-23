@@ -3,7 +3,7 @@ package eu.tib.orkg.prototype.statements.adapter.input.rest
 import eu.tib.orkg.prototype.statements.application.BaseController
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.port.out.GetPaperFlagQuery
-import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperAdapter
+import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperPort
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.springframework.data.domain.Page
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class PaperUnlistedController(
-    private val adapter: LoadPaperAdapter,
+    private val port: LoadPaperPort,
     private val query: GetPaperFlagQuery
 ) : BaseController() {
 
@@ -24,11 +24,11 @@ class PaperUnlistedController(
 
     @GetMapping("/api/classes/Paper/unlisted/resources/", params = ["unlisted=true"])
     fun loadUnlistedPapers(pageable: Pageable): Page<Resource> {
-        return adapter.loadUnlistedPapers(pageable)
+        return port.loadUnlistedPapers(pageable)
     }
 
     @GetMapping("/api/classes/Paper/unlisted/resources/", params = ["unlisted=false"])
     fun loadListedPapers(pageable: Pageable): Page<Resource> {
-        return adapter.loadListedPapers(pageable)
+        return port.loadListedPapers(pageable)
     }
 }

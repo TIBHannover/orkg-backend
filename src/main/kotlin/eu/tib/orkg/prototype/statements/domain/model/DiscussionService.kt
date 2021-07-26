@@ -44,14 +44,7 @@ class DiscussionService() {
     fun findObservatoryDiscussion(id: String): Optional<String> {
         return try {
             val httpConnection = prepareHttpCall("$discourseUrl/t/$id.json", "GET")
-//<<<<<<< HEAD
             return getRequest(httpConnection)
-//=======
-            //val responseBody = BufferedReader(InputStreamReader(httpConnection.inputStream, "utf-8"))
-                //.readLines()
-                //.joinToString("\n", transform = String::trim)
-            //return Optional.of(responseBody)
-//>>>>>>> master
         } catch (e: Exception) {
             Optional.of(e.message.toString())
         }
@@ -66,7 +59,6 @@ class DiscussionService() {
         con.doOutput = true
         return con
     }
-//<<<<<<< HEAD
 
     private fun getRequest(httpConnection: HttpURLConnection): Optional<String> {
         val responseBody = BufferedReader(InputStreamReader(httpConnection.inputStream, "utf-8"))
@@ -74,6 +66,4 @@ class DiscussionService() {
             .joinToString("\n", transform = String::trim)
         return Optional.of(responseBody)
     }
-//=======
-//>>>>>>> master
 }

@@ -1,5 +1,4 @@
 package eu.tib.orkg.prototype.statements.application
-import eu.tib.orkg.prototype.statements.domain.model.DiscussionService
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.domain.model.DiscussionService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/discussions/")
@@ -21,14 +19,6 @@ class DiscussionController(
 
     @PostMapping("/")
     fun createDiscussionTopic(@RequestBody topic: CreateTopicRequest): String {
-    private val service: DiscussionService,
-    private val resourceService: ResourceService,
-    private val organizationService: OrganizationService,
-    private val contributorService: ContributorService,
-    private val neo4jStatsService: Neo4jStatsService
-) {
-    @PostMapping("/")
-    fun createDiscussionTopic(@RequestBody topic: CreateTopicRequest, uriComponentsBuilder: UriComponentsBuilder): String {
         return service.createDiscussionTopic(topic).orElseThrow()
     }
 

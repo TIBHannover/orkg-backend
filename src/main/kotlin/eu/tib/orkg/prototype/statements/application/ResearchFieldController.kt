@@ -112,7 +112,7 @@ class ResearchFieldController(
     @GetMapping("/{id}/subfields/papers")
     fun getPapersIncludingSubFields(
         @PathVariable id: ResourceId,
-        @RequestParam("featured", required = false, defaultValue = "false")
+        @RequestParam("featured", required = false, defaultValue = "null")
         featured: Boolean,
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,

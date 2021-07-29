@@ -60,16 +60,20 @@ class Neo4jResearchFieldService(
 
     override fun getPapersIncludingSubFields(
         id: ResourceId,
-        featured: Boolean,
+        featured: Boolean?,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<Resource> {
-            return neo4jResearchFieldRepository.getPapersIncludingSubFieldsWithFlags(
-                id = id,
-                featured = featured,
-                unlisted = unlisted,
-                pageable = pageable)
+        if (featured === null) {
+            return neo4jResearchFieldRepository.getPapersIncludingSubFields(
+                id = id, pageable = pageable)
                 .map(Neo4jResource::toResource)
+        }
+        return neo4jResearchFieldRepository.getPapersIncludingSubFieldsWithFlags(
+            id = id,
+            unlisted = unlisted,
+            pageable = pageable)
+            .map(Neo4jResource::toResource)
     }
 
     override fun getComparisonsIncludingSubFields(

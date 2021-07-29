@@ -14,7 +14,7 @@ interface ResearchFieldService {
 
     fun getContributorsIncludingSubFields(id: ResourceId, pageable: Pageable): Page<Contributor>
 
-    fun getPapersIncludingSubFields(id: ResourceId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
+    fun getPapersIncludingSubFields(id: ResourceId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<Resource>
 
     fun getComparisonsIncludingSubFields(id: ResourceId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
 

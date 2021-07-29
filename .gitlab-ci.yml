@@ -23,8 +23,8 @@ before_script:
 cache: &gradle_cache_settings
   key: ${CI_COMMIT_REF_SLUG}   # One cache per branch
   paths:
-    - build
-    - .gradle
+    - ./**/build
+    - ./**/.gradle
   policy: pull-push
 
 stages:
@@ -40,23 +40,23 @@ build:
     policy: push
   script:
     - ./gradlew --build-cache build
-    - ./gradlew jacocoTestCoverageVerification
-    - ./gradlew jacocoTestReport printCoverage
   coverage: '/^Coverage:\s(\d+\.\d+%)/'
   artifacts:
     when: always
     paths:
-      - build/reports/
-      - build/libs/orkg-*.jar
+      - rest-api-server/build/reports/
+      - rest-api-server/build/libs/orkg-*.jar
     reports:
-      junit: build/test-results/**/TEST-*.xml
+      junit: rest-api-server/build/test-results/**/TEST-*.xml
+  needs: []
 
 # Template job for building all documentation. These jobs rely on the Gradle build cache
 # because Spring RestDoc snippets are generated from the test and we do not want re-run those.
 .build-documentation:
   stage: deploy
   needs:
-    - build
+    - job: build
+      artifacts: true
   cache:
     <<: *gradle_cache_settings
     policy: pull
@@ -65,7 +65,7 @@ build:
     - apt update && apt install --assume-yes graphviz
     - ./gradlew --build-cache asciidoctor
     - mkdir -p public
-    - cp -r build/docs/asciidoc/* public/
+    - cp -r rest-api-server/build/docs/asciidoc/* public/
 
 # Attempt to build the documentation although we do not deploy it to GitLab Pages.
 # This ensures that everything works as expected and prevents surprises when merging.
@@ -89,7 +89,7 @@ pages:
   cache:
     <<: *gradle_cache_settings
     policy: pull
-  dependencies:
+  needs:
     - build
   script:
     # Build using Jib (pushed automatically)
@@ -112,13 +112,29 @@ docker-build:
 # (Security) Scanning templates
 include:
   - remote: https://gitlab.com/gitlab-org/gitlab/-/raw/b36fc45ecea531bf149ee3dff39d205d074c4227/lib/gitlab/ci/templates/Security/Container-Scanning.gitlab-ci.yml
-  - template: Dependency-Scanning.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
+  # Disabled because the scanner does not work properly with Gradle multi-project builds. Remove dot if fixed. See below.
+  #- template: Dependency-Scanning.gitlab-ci.yml
 
 container_scanning:
   stage: verify
   variables:
     CI_APPLICATION_REPOSITORY: $CI_REGISTRY_IMAGE
+  needs:
+    - job: docker-build
+      optional: true
+      artifacts: false
+    - job: docker-build-master
+      optional: true
+      artifacts: false
 
-dependency_scanning:
+# Disabled because the scanner does not work properly with Gradle multi-project builds. Remove dot if fixed. See above.
+.dependency_scanning:
   stage: verify
   needs: []
+
+secret_detection:
+  stage: verify
+  needs: []
+  variables:
+    SECRET_DETECTION_EXCLUDED_PATHS: '.gradle'

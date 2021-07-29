@@ -30,12 +30,6 @@ class DiscussionService() {
             }""".toByteArray())
 
             return getRequest(httpConnection)
-//=======
-            //val responseBody = BufferedReader(InputStreamReader(httpConnection.inputStream, "utf-8"))
-                //.readLines()
-                //.joinToString("\n", transform = String::trim)
-            //return Optional.of(responseBody)
-//>>>>>>> master
         } catch (e: Exception) {
             Optional.of(e.message.toString())
         }

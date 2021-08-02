@@ -113,13 +113,8 @@ class ResearchFieldController(
     @GetMapping("/{id}/subfields/papers")
     fun getPapersIncludingSubFields(
         @PathVariable id: ResourceId,
-<<<<<<< HEAD:rest-api-server/src/main/kotlin/eu/tib/orkg/prototype/statements/application/ResearchFieldController.kt
         @Nullable @RequestParam("featured")
-        featured: Boolean?,
-=======
-        @RequestParam("featured", required = false, defaultValue = "null")
-        featured: Boolean,
->>>>>>> 70c5d3be (Add changes to retrieve both featured = true and false in a single query):src/main/kotlin/eu/tib/orkg/prototype/statements/application/ResearchFieldController.kt
+        featured: Boolean?,@
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable

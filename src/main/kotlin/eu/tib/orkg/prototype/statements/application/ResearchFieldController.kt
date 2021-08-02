@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
+import org.springframework.lang.Nullable
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -112,8 +113,8 @@ class ResearchFieldController(
     @GetMapping("/{id}/subfields/papers")
     fun getPapersIncludingSubFields(
         @PathVariable id: ResourceId,
-        @RequestParam("featured", required = false, defaultValue = "null")
-        featured: Boolean,
+        @Nullable @RequestParam("featured")
+        featured: Boolean?,
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable

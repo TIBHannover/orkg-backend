@@ -1,13 +1,13 @@
 package eu.tib.orkg.prototype.statements.ports
 
-import eu.tib.orkg.prototype.contributions.domain.model.Contributor
+import eu.tib.orkg.prototype.paperswithcode.application.port.output.FindResearchFieldsQuery
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import java.util.Optional
 
-interface ResearchFieldRepository {
+interface ResearchFieldRepository : FindResearchFieldsQuery {
 
     fun findById(id: ResourceId): Optional<Resource>
 

@@ -15,5 +15,3 @@ data class Observatory(
     @JsonProperty("display_id")
     val displayId: String? = null
 )
-
-data class ResearchField(var id: String?, var label: String?)

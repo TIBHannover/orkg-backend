@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.core.statements.adapters.output
 
+import eu.tib.orkg.prototype.statements.domain.model.ResearchField
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResearchFieldRepository
@@ -39,7 +40,7 @@ class ResearchFieldPersistenceAdapter(
     override fun getComparisonsIncludingSubFields(id: ResourceId, pageable: Pageable): Page<Resource> =
         neo4jResearchFieldRepository.getComparisonsIncludingSubFields(id, pageable).map(Neo4jResource::toResource)
 
-     override fun getPapersExcludingSubFields(id: ResourceId, pageable: Pageable): Page<Resource> =
+    override fun getPapersExcludingSubFields(id: ResourceId, pageable: Pageable): Page<Resource> =
         neo4jResearchFieldRepository.getPapersExcludingSubFields(id, pageable).map(Neo4jResource::toResource)
 
     override fun getComparisonsExcludingSubFields(id: ResourceId, pageable: Pageable): Page<Resource> =
@@ -48,4 +49,10 @@ class ResearchFieldPersistenceAdapter(
     override fun getResearchProblemsExcludingSubFields(id: ResourceId, pageable: Pageable): Page<Resource> =
         neo4jResearchFieldRepository.getProblemsExcludingSubFields(id, pageable).map(Neo4jResource::toResource)
 
+    override fun withBenchmarks(): List<ResearchField> =
+        neo4jResearchFieldRepository.findResearchFieldsWithBenchmarks()
+            .map(Neo4jResource::toResource)
+            .map(Resource::toResearchField)
 }
+
+private fun Resource.toResearchField(): ResearchField = ResearchField(this.id.toString(), this.label)

@@ -152,4 +152,4 @@ class ExampleData(
         statementService.totalNumberOfStatements() > 0
 }
 
-data class ResearchField(val name: String, val subfields: List<ResearchField> = listOf())
+private data class ResearchField(val name: String, val subfields: List<ResearchField> = listOf())

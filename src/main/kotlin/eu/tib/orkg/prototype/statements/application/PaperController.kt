@@ -122,7 +122,7 @@ class PaperController(
      */
     private fun createNewPaperWithMetadata(userId: ContributorId, request: CreatePaperRequest): Resource {
         val contributor = contributorService.findByIdOrElseUnknown(userId)
-        val organizationId = request.paper.observatoryInfo?.organizationId!!
+        val organizationId = request.paper.observatoryInfo.organizationId!!
         val observatoryId = request.paper.observatoryInfo.observatoryId!!
 
         // paper title
@@ -326,7 +326,7 @@ data class Paper(
     val researchField: String,
     val contributions: List<NamedObject>?,
     val extractionMethod: ExtractionMethod = UNKNOWN,
-    val observatoryInfo: ObservatoryData?
+    val observatoryInfo: ObservatoryData
 ) {
     /**
      * Check if the paper has a published in venue

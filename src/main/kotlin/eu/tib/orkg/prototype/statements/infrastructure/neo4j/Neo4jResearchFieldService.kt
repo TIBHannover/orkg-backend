@@ -71,6 +71,7 @@ class Neo4jResearchFieldService(
         }
         return neo4jResearchFieldRepository.getPapersIncludingSubFieldsWithFlags(
             id = id,
+            featured = featured,
             unlisted = unlisted,
             pageable = pageable)
             .map(Neo4jResource::toResource)

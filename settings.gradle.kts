@@ -7,6 +7,8 @@ include(
     ":application:core"
 )
 
+include(":adapters:input:core")
+
 include(":adapters:output:core")
 
 include("rest-api-server")

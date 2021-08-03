@@ -7,6 +7,9 @@ dependencies {
     constraints {
         api(rootProject)
         api(":application:core")
+        api(":application:shared")
+        api(":adapters:input:core")
+        api(":adapters:output:core")
         api(":rest-api")
     }
 }

@@ -47,6 +47,26 @@ services:
     volumes:
       - 'postgres-data:/var/lib/postgresql/data/pgdata'
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:13.0.1
+    ports:
+      - 127.0.0.1:8888:8080  # Port re-mapped to prevent conflict with API
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      DB_VENDOR: H2
+    networks:
+      - backend
+
+  # Mail server. Can be used in Keycloak to test mail flows.
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - 127.0.0.1:1025:1025  # SMTP
+      - 127.0.0.1:8025:8025  # User interface
+    networks:
+      - backend
+
 networks:
   backend:
 

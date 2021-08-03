@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2021-07-21
+### Fixed
+- Put `@Transient` annotation on field to prevent warnings when querying PwC datasets.
+
+## [0.6.0] - 2021-07-21
+### Fixed
+- Stats endpoint include the missing classes and enable dynamic classes on-the-fly. (Closes: [#317](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/317))
+- Summaries of PWC datasets are now filtered by problem ID. (Closes: [#316](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/316))
+- The endpoint for querying the research problems of an observatory now returns all research problems assigned to the observatory, as well as all research problems of all papers maintained by the observatory. (Closes: [#307](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/307))
+- URIs can now be updated again. (Closes: [#297](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/297))
+- DOIs can now be created even if the author does not have a ORCID ID. (Closes: [#321](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/321))
+- Upgrade TestContainers library to solve build issues on Windows. (Closes: [#324](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/324))
+### Breaking  
+- Making organizations and observatories object properties snake-case. (Closes: [!196](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/196))
+
+## [0.5.0] - 2021-07-12
+### Changed
+- Bundle fetch of statements is now sorted by default on the creation date of the statement in a descending manner.
+- Revert caching of predicates because of unintended side effects (when doing things we really shouldn't do). (Closes: [#319](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/319))
+
+## [0.4.0] - 2021-06-14
+### Changed
+- Return scores in PwC data as their original string value. (Closes: [#310](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/310))
+
 ## [0.3.0] - 2021-05-12
 ### Added
 - New points to support the Papers With Code (PWC) use case. Results from AI publications can now be queried for display in leaderboards. (Closes: [#263](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/263))
@@ -25,12 +49,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Top contributions are now sorted correctly. (Closes: [#265](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/265))
 - The ID generators will now skip over IDs already used by entities due to manual creation, instead of generating an error. (Closes: [#94](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/94))
+- Fixed broken/wrong output in API documentation. The examples should now reflect the real responses everywhere. (Closes: [#274](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/274))
 
 ## [0.1.0] - 2021-03-30
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.3...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.6.1...master
+[0.6.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.6.1
+[0.6.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.6.0
+[0.5.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.5.0
+[0.4.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.4.0
 [0.3.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.3
 [0.2.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.2
 [0.1.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.1

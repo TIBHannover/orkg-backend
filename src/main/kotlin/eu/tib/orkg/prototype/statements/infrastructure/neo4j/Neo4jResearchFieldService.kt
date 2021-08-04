@@ -65,16 +65,16 @@ class Neo4jResearchFieldService(
         pageable: Pageable
     ): Page<Resource> {
         if (featured === null) {
-            return neo4jResearchFieldRepository.getPapersIncludingSubFields(
-                id = id, pageable = pageable)
-                .map(Neo4jResource::toResource)
+            val result = neo4jResearchFieldRepository.getPapersIncludingSubFields(id = id, pageable = pageable)
+            return PageImpl(result.content.map(Neo4jResource::toResource), pageable, result.totalElements)
         }
-        return neo4jResearchFieldRepository.getPapersIncludingSubFieldsWithFlags(
+
+        val result = neo4jResearchFieldRepository.getPapersIncludingSubFieldsWithFlags(
             id = id,
             featured = featured,
             unlisted = unlisted,
             pageable = pageable)
-            .map(Neo4jResource::toResource)
+        return PageImpl(result.content.map(Neo4jResource::toResource), pageable, result.totalElements)
     }
 
     override fun getComparisonsIncludingSubFields(

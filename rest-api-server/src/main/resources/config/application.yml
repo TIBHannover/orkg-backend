@@ -23,18 +23,37 @@ orkg:
     url: "https://api.test.datacite.org/dois"
     publish: "draft"
 ---
+orkg:
+  datasources:
+    neo4j:
+      jdbc-url: "jdbc:neo4j:${spring.data.neo4j.uri}"
+      driver-class-name: org.neo4j.jdbc.bolt.BoltDriver
+      liquibase:
+        url: "jdbc:neo4j:${spring.data.neo4j.uri}"
+        change-log: classpath:/liquibase/neo4j/changelog.xml
+    postgres:
+      jdbc-url: jdbc:postgresql://localhost/postgres
+      username: postgres
+      password: postgres
+      driver-class-name: org.postgresql.Driver
+      liquibase:
+        url: "${spring.datasource.url}"
 spring:
   profiles: development
+  liquibase:
+    # Disable default configuration.
+    # It is not entirely sure if it is needed, but it seemed to conflict with custom ones above.
+    enabled: false
   data:
     neo4j:
       uri: 'bolt://localhost:7687'
       #auto-index: validate
       use-native-types: true
-  datasource:
-    url: 'jdbc:postgresql://localhost/postgres'
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
+  #datasource:
+  #  url: 'jdbc:postgresql://localhost/postgres'
+  #  username: postgres
+  #  password: postgres
+  #  driver-class-name: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
@@ -45,3 +64,4 @@ logging:
   level:
     org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
     org.neo4j.ogm.drivers.bolt.request.BoltRequest: DEBUG
+    org.springframework.jdbc.core.JdbcTemplate: DEBUG

@@ -36,9 +36,11 @@ dependencies {
 
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 
+    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.postgresql:postgresql")
     implementation("org.liquibase:liquibase-core")
+    //implementation("org.liquibase.ext:liquibase-neo4j") // FIXME: This does not work without newer SDN.
     implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
         exclude(module = "neo4j-ogm-http-driver")
     }

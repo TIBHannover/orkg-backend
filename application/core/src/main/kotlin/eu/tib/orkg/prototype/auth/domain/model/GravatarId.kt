@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.auth.domain.model
 
 import java.math.BigInteger
 import java.security.MessageDigest
+import java.util.Locale
 
 /**
  * A ID that can be used to obtain data from Gravatar.
@@ -17,7 +18,7 @@ import java.security.MessageDigest
 data class GravatarId(private val email: String? = null) {
     private val hashed: String by lazy {
         if (email != null) {
-            val processed = email.trim().toLowerCase()
+            val processed = email.trim().lowercase(Locale.ENGLISH)
             val md = MessageDigest.getInstance("MD5")
             return@lazy BigInteger(1, md.digest(processed.toByteArray())).toString(16).padStart(32, '0')
         }

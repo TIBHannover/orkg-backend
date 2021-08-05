@@ -4,13 +4,11 @@ import eu.tib.orkg.prototype.constants.ID_DOI_PREDICATE
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import java.util.Optional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.neo4j.annotation.Query
-import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
-import org.springframework.stereotype.Repository
+import org.springframework.data.neo4j.repository.query.Query
+import java.util.Optional
 
 /**
  * Partial query that returns the node as well as its ID and relationships.
@@ -43,7 +41,7 @@ private const val MATCH_UNVERIFIED_PAPER =
     """MATCH (node) WHERE (NOT EXISTS(node.verified) OR node.verified = false) AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
 
 interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
-    override fun findAll(): Iterable<Neo4jResource>
+    override fun findAll(): List<Neo4jResource>
 
     override fun findById(id: Long?): Optional<Neo4jResource>
 
@@ -143,7 +141,6 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     fun findAllUnverifiedPapers(pageable: Pageable): Page<Neo4jResource>
 }
 
-@QueryResult
 data class ResourceContributors(
     val id: String,
 

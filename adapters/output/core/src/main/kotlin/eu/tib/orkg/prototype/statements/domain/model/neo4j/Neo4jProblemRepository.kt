@@ -1,13 +1,12 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import java.util.Optional
-import java.util.UUID
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.neo4j.annotation.Query
-import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
+import org.springframework.data.neo4j.repository.query.Query
+import java.util.Optional
+import java.util.UUID
 
 interface Neo4jProblemRepository :
     Neo4jRepository<Neo4jResource, Long> {
@@ -60,13 +59,11 @@ interface Neo4jProblemRepository :
     fun findResearchProblemForDataset(datasetId: ResourceId): Iterable<Neo4jResource>
 }
 
-@QueryResult
 data class FieldPerProblem(
     val field: Neo4jResource,
     val freq: Long
 )
 
-@QueryResult
 data class ContributorPerProblem(
     val user: String,
     val freq: Long
@@ -76,7 +73,6 @@ data class ContributorPerProblem(
         get() = contributor == UUID(0, 0)
 }
 
-@QueryResult
 data class AuthorPerProblem(
     val author: String,
     val thing: Neo4jThing,

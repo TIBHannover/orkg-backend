@@ -5,9 +5,7 @@ import eu.tib.orkg.prototype.paperswithcode.application.domain.Dataset
 import eu.tib.orkg.prototype.paperswithcode.application.domain.DatasetSummary
 import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
-import org.springframework.data.neo4j.annotation.QueryResult
 
-@QueryResult
 data class Neo4jBenchmarkSummary(
     val problem: Neo4jResource,
     val totalPapers: Long,
@@ -23,7 +21,6 @@ data class Neo4jBenchmarkSummary(
         )
 }
 
-@QueryResult
 data class Neo4jDataset(
     @field:Transient
     val dataset: Neo4jResource,
@@ -41,7 +38,6 @@ data class Neo4jDataset(
         )
 }
 
-@QueryResult
 data class Neo4jBenchmarkUnpacked(
     val model: String?,
     val score: String,

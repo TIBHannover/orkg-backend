@@ -2,12 +2,11 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import java.util.Optional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.neo4j.annotation.Query
-import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
+import org.springframework.data.neo4j.repository.query.Query
+import java.util.Optional
 
 interface Neo4jResearchFieldRepository :
     Neo4jRepository<Neo4jResource, Long> {
@@ -67,7 +66,6 @@ interface Neo4jResearchFieldRepository :
     fun findResearchFieldsWithBenchmarks(): Iterable<Neo4jResource>
     }
 
-@QueryResult
 data class ProblemsPerField(
     val problem: Neo4jResource,
     val papers: Long

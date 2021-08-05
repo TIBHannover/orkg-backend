@@ -2,48 +2,40 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.util.escapeLiterals
 import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.PredicateIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.StatementIdConverter
-import org.neo4j.ogm.annotation.EndNode
-import org.neo4j.ogm.annotation.GeneratedValue
-import org.neo4j.ogm.annotation.Id
-import org.neo4j.ogm.annotation.Property
-import org.neo4j.ogm.annotation.RelationshipEntity
-import org.neo4j.ogm.annotation.Required
-import org.neo4j.ogm.annotation.StartNode
-import org.neo4j.ogm.annotation.typeconversion.Convert
+import eu.tib.orkg.prototype.util.escapeLiterals
+import org.springframework.data.neo4j.core.convert.ConvertWith
+import org.springframework.data.neo4j.core.schema.GeneratedValue
+import org.springframework.data.neo4j.core.schema.Id
+import org.springframework.data.neo4j.core.schema.Property
+import org.springframework.data.neo4j.core.schema.RelationshipProperties
+import org.springframework.data.neo4j.core.schema.TargetNode
 
-@RelationshipEntity(type = "RELATED")
+@RelationshipProperties
 data class Neo4jStatement(
     @Id
     @GeneratedValue
     var id: Long? = null
 ) : AuditableEntity() {
-    @StartNode
-    @JsonIgnore
-    var subject: Neo4jThing? = null
-
-    @EndNode
+    @TargetNode
     @JsonIgnore
     var `object`: Neo4jThing? = null
 
     @Property("statement_id")
-    @Required
-    @Convert(StatementIdConverter::class)
+    @ConvertWith(converter = StatementIdConverter::class)
     var statementId: StatementId? = null
 
     @Property("predicate_id")
-    @Required
-    @Convert(PredicateIdConverter::class)
+    @ConvertWith(converter = PredicateIdConverter::class)
     var predicateId: PredicateId? = null
 
     @Property("created_by")
-    @Convert(ContributorIdConverter::class)
+    @ConvertWith(converter = ContributorIdConverter::class)
     var createdBy: ContributorId = ContributorId.createUnknownContributor()
 
     constructor(
@@ -55,14 +47,14 @@ data class Neo4jStatement(
     ) :
         this(null) {
         this.statementId = statementId
-        this.subject = subject
         this.predicateId = predicateId
         this.`object` = `object`
         this.createdBy = createdBy
     }
 
     override fun toString(): String {
-        return "{id:$statementId}==(${subject!!.thingId} {${subject!!.label}})-[$predicateId]->(${`object`!!.thingId} {${`object`!!.label}})=="
+        // FIXME: old code: return "{id:$statementId}==(${subject!!.thingId} {${subject!!.label}})-[$predicateId]->(${`object`!!.thingId} {${`object`!!.label}})=="
+        return "{id:$statementId}==(?)-[$predicateId]->(${`object`!!.thingId} {${`object`!!.label}})=="
     }
 
     /**
@@ -70,7 +62,8 @@ data class Neo4jStatement(
      */
     fun toNTriple(): String {
         val pPrefix = RdfConstants.PREDICATE_NS
-        val result = "${serializeThing(subject!!)} <$pPrefix$predicateId> ${serializeThing(`object`!!)} ."
+        // FIXME: old code: val result = "${serializeThing(subject!!)} <$pPrefix$predicateId> ${serializeThing(`object`!!)} ."
+        val result = "? <$pPrefix$predicateId> ${serializeThing(`object`!!)} ."
         if (result[0] == '"')
             // Ignore literal
             // TODO: log this somewhere

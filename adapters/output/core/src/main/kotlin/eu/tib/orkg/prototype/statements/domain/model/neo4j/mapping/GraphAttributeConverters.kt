@@ -8,68 +8,49 @@ import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
-import org.neo4j.ogm.typeconversion.AttributeConverter
+import org.neo4j.driver.Value
+import org.neo4j.driver.Values
+import org.springframework.core.convert.TypeDescriptor
+import org.springframework.core.convert.converter.GenericConverter
+import org.springframework.core.convert.converter.GenericConverter.ConvertiblePair
+import org.springframework.data.neo4j.core.convert.Neo4jPersistentPropertyConverter
 
-class ClassIdConverter :
-    AttributeConverter<ClassId?, String?> {
-    override fun toGraphProperty(value: ClassId?) = if (value != null) "$value" else null
-
-    override fun toEntityAttribute(value: String?) =
-        if (value != null && value.isNotBlank()) ClassId(value) else null
+class ClassIdConverter : Neo4jPersistentPropertyConverter<ClassId> {
+    override fun read(source: Value): ClassId = ClassId(source.asString())
+    override fun write(source: ClassId): Value = Values.value(source.toString())
 }
 
-class ContributorIdConverter :
-    AttributeConverter<ContributorId?, String?> {
-    override fun toGraphProperty(value: ContributorId?) = if (value != null) "$value" else null
-
-    override fun toEntityAttribute(value: String?) =
-        if (value != null && value.isNotBlank()) ContributorId(value) else null
+class ContributorIdConverter : Neo4jPersistentPropertyConverter<ContributorId> {
+    override fun read(source: Value): ContributorId = ContributorId(source.asString())
+    override fun write(source: ContributorId): Value = Values.value(source.toString())
 }
 
-class LiteralIdConverter :
-    AttributeConverter<LiteralId?, String?> {
-    override fun toGraphProperty(value: LiteralId?) = if (value != null) "$value" else null
-
-    override fun toEntityAttribute(value: String?) =
-        if (value != null && value.isNotBlank()) LiteralId(value) else null
+class LiteralIdConverter : Neo4jPersistentPropertyConverter<LiteralId> {
+    override fun write(source: LiteralId): Value = Values.value(source.toString())
+    override fun read(source: Value): LiteralId = LiteralId(source.asString())
 }
 
-class ObservatoryIdConverter :
-    AttributeConverter<ObservatoryId?, String?> {
-    override fun toGraphProperty(value: ObservatoryId?) = if (value != null) "$value" else null
-
-    override fun toEntityAttribute(value: String?) =
-        if (value != null && value.isNotBlank()) ObservatoryId(value) else null
+class ObservatoryIdConverter : Neo4jPersistentPropertyConverter<ObservatoryId> {
+    override fun read(source: Value): ObservatoryId = ObservatoryId(source.asString())
+    override fun write(source: ObservatoryId): Value = Values.value(source.toString())
 }
 
-class OrganizationIdConverter :
-    AttributeConverter<OrganizationId?, String?> {
-    override fun toGraphProperty(value: OrganizationId?) = if (value != null) "$value" else null
-
-    override fun toEntityAttribute(value: String?) =
-        if (value != null && value.isNotBlank()) OrganizationId(value) else null
+class OrganizationIdConverter : Neo4jPersistentPropertyConverter<OrganizationId> {
+    override fun read(source: Value): OrganizationId = OrganizationId(source.asString())
+    override fun write(source: OrganizationId): Value = Values.value(source.toString())
 }
 
-class PredicateIdConverter :
-    AttributeConverter<PredicateId?, String?> {
-    override fun toGraphProperty(value: PredicateId?) = if (value != null) "$value" else null
-
-    override fun toEntityAttribute(value: String?) =
-        if (value != null && value.isNotBlank()) PredicateId(value) else null
+class PredicateIdConverter : Neo4jPersistentPropertyConverter<PredicateId> {
+    override fun read(source: Value): PredicateId = PredicateId(source.asString())
+    override fun write(source: PredicateId): Value = Values.value(source.toString())
 }
 
-class ResourceIdConverter :
-    AttributeConverter<ResourceId?, String?> {
-    override fun toGraphProperty(value: ResourceId?) = if (value != null) "$value" else null
-
-    override fun toEntityAttribute(value: String?) =
-        if (value != null && value.isNotBlank()) ResourceId(value) else null
+class ResourceIdConverter : Neo4jPersistentPropertyConverter<ResourceId> {
+    override fun read(source: Value): ResourceId = ResourceId(source.asString())
+    override fun write(source: ResourceId): Value = Values.value(source.toString())
 }
 
-class StatementIdConverter :
-    AttributeConverter<StatementId?, String?> {
-    override fun toGraphProperty(value: StatementId?) = if (value != null) "$value" else null
-
-    override fun toEntityAttribute(value: String?) =
-        if (value != null && value.isNotBlank()) StatementId(value) else null
+class StatementIdConverter : Neo4jPersistentPropertyConverter<StatementId> {
+    override fun read(source: Value): StatementId = StatementId(source.asString())
+    override fun write(source: StatementId): Value = Values.value(source.toString())
 }

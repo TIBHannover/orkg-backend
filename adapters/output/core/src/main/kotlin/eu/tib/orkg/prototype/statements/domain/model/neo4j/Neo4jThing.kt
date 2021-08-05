@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.statements.domain.model.Thing
-import org.neo4j.ogm.annotation.NodeEntity
+import org.springframework.data.neo4j.core.schema.Node
 
-@NodeEntity(label = "Thing")
+@Node("Thing")
 interface Neo4jThing {
     val thingId: String?
     val label: String?

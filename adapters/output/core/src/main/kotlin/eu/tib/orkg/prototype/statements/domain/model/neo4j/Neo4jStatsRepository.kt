@@ -5,9 +5,8 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.neo4j.annotation.Query
-import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
+import org.springframework.data.neo4j.repository.query.Query
 
 // This is mapped to the result obtained from UNION of several contributions
 typealias ResultObject = Map<String, Any?>
@@ -59,7 +58,6 @@ interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
  * Data class for fetching
  * field statistics
  */
-@QueryResult
 data class FieldsStats(
     val fieldId: String,
     val field: String,
@@ -70,7 +68,6 @@ data class FieldsStats(
  * Data class for fetching
  * Observatory resources
  */
-@QueryResult
 data class ObservatoryResources(
     @JsonProperty("observatory_id")
     val observatoryId: String,
@@ -83,7 +80,6 @@ data class ObservatoryResources(
  * label, time of creation/modification,
  * creator and corresponding classes
  */
-@QueryResult
 data class ChangeLogResponse(
     val id: String,
     val label: String,
@@ -99,7 +95,6 @@ data class ChangeLogResponse(
  * research problem and total number of
  * papers per research problem
  */
-@QueryResult
 data class TrendingResearchProblems(
     val id: String,
     val researchProblem: String,
@@ -111,7 +106,6 @@ data class TrendingResearchProblems(
  * and the number of contributions
  * per contributor
  */
-@QueryResult
 data class TopContributorIdentifiers(
     val id: String,
     val contributions: Long

@@ -3,12 +3,12 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 import eu.tib.orkg.prototype.constants.ID_DOI_PREDICATE
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import java.util.Optional
-import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.Neo4jRepository
+import org.springframework.data.neo4j.repository.query.Query
+import java.util.Optional
 
 interface Neo4jLiteralRepository : Neo4jRepository<Neo4jLiteral, Long> {
-    override fun findAll(): Iterable<Neo4jLiteral>
+    override fun findAll(): List<Neo4jLiteral>
 
     override fun findById(id: Long?): Optional<Neo4jLiteral>
 

@@ -18,16 +18,17 @@ import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
 import org.eclipse.rdf4j.model.vocabulary.RDF
 import org.eclipse.rdf4j.model.vocabulary.RDFS
-import org.neo4j.ogm.annotation.GeneratedValue
-import org.neo4j.ogm.annotation.Id
-import org.neo4j.ogm.annotation.Labels
-import org.neo4j.ogm.annotation.NodeEntity
-import org.neo4j.ogm.annotation.Property
-import org.neo4j.ogm.annotation.Relationship
-import org.neo4j.ogm.annotation.Required
-import org.neo4j.ogm.annotation.typeconversion.Convert
+import org.springframework.data.neo4j.core.convert.ConvertWith
+import org.springframework.data.neo4j.core.schema.DynamicLabels
+import org.springframework.data.neo4j.core.schema.GeneratedValue
+import org.springframework.data.neo4j.core.schema.Id
+import org.springframework.data.neo4j.core.schema.Node
+import org.springframework.data.neo4j.core.schema.Property
+import org.springframework.data.neo4j.core.schema.Relationship
+import org.springframework.data.neo4j.core.schema.Relationship.Direction.INCOMING
+import org.springframework.data.neo4j.core.schema.Relationship.Direction.OUTGOING
 
-@NodeEntity(label = "Resource")
+@Node("Resource")
 data class Neo4jResource(
     @Id
     @GeneratedValue
@@ -35,28 +36,26 @@ data class Neo4jResource(
 ) : Neo4jThing, AuditableEntity() {
 
     @Property("label")
-    @Required
     override var label: String? = null
 
     @Property("resource_id")
-    @Required
-    @Convert(ResourceIdConverter::class)
+    @ConvertWith(converter = ResourceIdConverter::class)
     var resourceId: ResourceId? = null
 
-    @Relationship(type = "RELATED")
+    @Relationship(type = "RELATED", direction = OUTGOING)
     @JsonIgnore
     var resources: MutableSet<Neo4jStatement> = mutableSetOf()
 
-    @Relationship(type = "RELATED", direction = Relationship.INCOMING)
+    @Relationship(type = "RELATED", direction = INCOMING)
     @JsonIgnore
-    var objectOf: MutableSet<Neo4jStatement> = mutableSetOf()
+    var objectOf = mutableSetOf<Neo4jStatement>()
 
     @Property("created_by")
-    @Convert(ContributorIdConverter::class)
+    @ConvertWith(converter = ContributorIdConverter::class)
     var createdBy: ContributorId = ContributorId.createUnknownContributor()
 
     @Property("observatory_id")
-    @Convert(ObservatoryIdConverter::class)
+    @ConvertWith(converter = ObservatoryIdConverter::class)
     var observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory()
 
     @Property("extraction_method")
@@ -66,13 +65,13 @@ data class Neo4jResource(
     var verified: Boolean? = null
 
     @Property("organization_id")
-    @Convert(OrganizationIdConverter::class)
+    @ConvertWith(converter = OrganizationIdConverter::class)
     var organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
 
     /**
      * List of node labels. Labels other than the `Resource` label are mapped to classes.
      */
-    @Labels
+    @DynamicLabels
     private var labels: MutableList<String> = mutableListOf()
 
     /**

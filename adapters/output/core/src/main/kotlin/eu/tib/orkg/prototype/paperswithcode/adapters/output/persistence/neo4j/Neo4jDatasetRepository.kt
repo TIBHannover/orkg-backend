@@ -2,8 +2,8 @@ package eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j
 
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
-import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.Neo4jRepository
+import org.springframework.data.neo4j.repository.query.Query
 
 interface Neo4jDatasetRepository : Neo4jRepository<Neo4jResource, Long> {
 

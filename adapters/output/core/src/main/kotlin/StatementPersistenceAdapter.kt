@@ -94,6 +94,7 @@ class StatementPersistenceAdapter(
     private fun toStatement(statement: Neo4jStatement) =
         GeneralStatement(
             id = statement.statementId!!,
+            // FIXME: old code: subject = refreshObject(statement.subject!!),
             subject = refreshObject(statement.subject!!),
             predicate = predicatePersistenceAdapter.findById(statement.predicateId!!).get(),
             `object` = refreshObject(statement.`object`!!),

@@ -7,34 +7,31 @@ import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.LiteralIdConverter
-import org.neo4j.ogm.annotation.GeneratedValue
-import org.neo4j.ogm.annotation.Id
-import org.neo4j.ogm.annotation.NodeEntity
-import org.neo4j.ogm.annotation.Property
-import org.neo4j.ogm.annotation.Relationship
-import org.neo4j.ogm.annotation.Required
-import org.neo4j.ogm.annotation.typeconversion.Convert
+import org.springframework.data.neo4j.core.convert.ConvertWith
+import org.springframework.data.neo4j.core.schema.GeneratedValue
+import org.springframework.data.neo4j.core.schema.Id
+import org.springframework.data.neo4j.core.schema.Node
+import org.springframework.data.neo4j.core.schema.Property
+import org.springframework.data.neo4j.core.schema.Relationship
 
-@NodeEntity(label = "Literal")
+@Node("Literal")
 data class Neo4jLiteral(
     @Id
     @GeneratedValue
     var id: Long? = null
 ) : Neo4jThing, AuditableEntity() {
     @Property("label")
-    @Required
     override var label: String? = null
 
     @Property("datatype")
     var datatype: String? = "xsd:string"
 
     @Property("literal_id")
-    @Required
-    @Convert(LiteralIdConverter::class)
+    @ConvertWith(converter = LiteralIdConverter::class)
     var literalId: LiteralId? = null
 
     @Property("created_by")
-    @Convert(ContributorIdConverter::class)
+    @ConvertWith(converter = ContributorIdConverter::class)
     var createdBy: ContributorId = ContributorId.createUnknownContributor()
 
     @Relationship(type = "HAS_VALUE_OF")

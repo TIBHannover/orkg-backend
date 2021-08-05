@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
 interface Neo4jClassRepository : Neo4jRepository<Neo4jClass, Long> {
-    override fun findAll(): Iterable<Neo4jClass>
+    override fun findAll(): List<Neo4jClass>
 
     override fun findById(id: Long?): Optional<Neo4jClass>
 

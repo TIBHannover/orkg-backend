@@ -9,9 +9,10 @@ dependencies {
 
     implementation(project(":application:shared"))
 
-    val springDataNeo4jVersion = "5.3.4"
     implementation(platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES))
-    implementation("org.springframework.data:spring-data-neo4j:$springDataNeo4jVersion.RELEASE")
+    implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
+        exclude(module = "neo4j-ogm-http-driver")
+    }
 
     // FIXME: should go after refactoring
     implementation("org.eclipse.rdf4j:rdf4j-client:3.6.3")

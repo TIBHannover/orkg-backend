@@ -3,11 +3,11 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
-import java.util.Optional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.Neo4jRepository
+import org.springframework.data.neo4j.repository.query.Query
+import java.util.Optional
 
 /**
  * Partial query that matches a statement.
@@ -54,7 +54,7 @@ private const val WHERE_OBJECT_ID_IN =
 interface Neo4jStatementRepository :
     Neo4jRepository<Neo4jStatement, Long> {
 
-    override fun findAll(depth: Int): Iterable<Neo4jStatement>
+    fun findAll(depth: Int): Iterable<Neo4jStatement>
 
     override fun findById(id: Long): Optional<Neo4jStatement>
 

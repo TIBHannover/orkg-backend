@@ -2,44 +2,41 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.util.escapeLiterals
 import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.PredicateIdConverter
+import eu.tib.orkg.prototype.util.escapeLiterals
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
 import org.eclipse.rdf4j.model.vocabulary.RDF
 import org.eclipse.rdf4j.model.vocabulary.RDFS
-import org.neo4j.ogm.annotation.GeneratedValue
-import org.neo4j.ogm.annotation.Id
-import org.neo4j.ogm.annotation.NodeEntity
-import org.neo4j.ogm.annotation.Property
-import org.neo4j.ogm.annotation.Relationship
-import org.neo4j.ogm.annotation.Required
-import org.neo4j.ogm.annotation.typeconversion.Convert
+import org.springframework.data.neo4j.core.convert.ConvertWith
+import org.springframework.data.neo4j.core.schema.GeneratedValue
+import org.springframework.data.neo4j.core.schema.Id
+import org.springframework.data.neo4j.core.schema.Node
+import org.springframework.data.neo4j.core.schema.Property
+import org.springframework.data.neo4j.core.schema.Relationship
 
-@NodeEntity(label = "Predicate")
+@Node("Predicate")
 data class Neo4jPredicate(
     @Id
     @GeneratedValue
     var id: Long? = null,
 
     @Property("label")
-    @Required
     override var label: String? = null,
 
     @Property("predicate_id")
-    @Required
-    @Convert(PredicateIdConverter::class)
+    @ConvertWith(converter = PredicateIdConverter::class)
     private var predicateId: PredicateId? = null,
 
     @Property("created_by")
-    @Convert(ContributorIdConverter::class)
+    @ConvertWith(converter = ContributorIdConverter::class)
     var createdBy: ContributorId = ContributorId.createUnknownContributor(),
 
-    @Relationship(type = "RELATED", direction = Relationship.OUTGOING)
+    @Relationship(type = "RELATED", direction = Relationship.Direction.OUTGOING)
     @JsonIgnore
     var subjectOf: MutableSet<Neo4jStatement> = mutableSetOf()
 ) : Neo4jThing, AuditableEntity() {

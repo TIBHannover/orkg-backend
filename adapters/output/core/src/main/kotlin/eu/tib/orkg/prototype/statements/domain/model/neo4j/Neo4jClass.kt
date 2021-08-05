@@ -2,50 +2,46 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.util.escapeLiterals
 import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ClassIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
-import java.lang.StringBuilder
-import java.net.URI
+import eu.tib.orkg.prototype.util.escapeLiterals
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
 import org.eclipse.rdf4j.model.vocabulary.OWL
 import org.eclipse.rdf4j.model.vocabulary.RDF
 import org.eclipse.rdf4j.model.vocabulary.RDFS
-import org.neo4j.ogm.annotation.GeneratedValue
-import org.neo4j.ogm.annotation.Id
-import org.neo4j.ogm.annotation.NodeEntity
-import org.neo4j.ogm.annotation.Property
-import org.neo4j.ogm.annotation.Relationship
-import org.neo4j.ogm.annotation.Required
-import org.neo4j.ogm.annotation.typeconversion.Convert
+import org.springframework.data.neo4j.core.convert.ConvertWith
+import org.springframework.data.neo4j.core.schema.GeneratedValue
+import org.springframework.data.neo4j.core.schema.Id
+import org.springframework.data.neo4j.core.schema.Node
+import org.springframework.data.neo4j.core.schema.Property
+import org.springframework.data.neo4j.core.schema.Relationship
+import java.net.URI
 
-@NodeEntity(label = "Class")
+@Node("Class")
 data class Neo4jClass(
     @Id
     @GeneratedValue
     var id: Long? = null,
-    @Relationship(type = "RELATED", direction = Relationship.OUTGOING)
+    @Relationship(type = "RELATED", direction = Relationship.Direction.OUTGOING)
     @JsonIgnore
     var subjectOf: MutableSet<Neo4jClass> = mutableSetOf()
 ) : Neo4jThing, AuditableEntity() {
     @Property("class_id")
-    @Required
-    @Convert(ClassIdConverter::class)
+    @ConvertWith(converter = ClassIdConverter::class)
     var classId: ClassId? = null
 
     @Property("label")
-    @Required
     override var label: String? = null
 
     @Property("uri")
     var uri: String? = null
 
     @Property("created_by")
-    @Convert(ContributorIdConverter::class)
+    @ConvertWith(converter = ContributorIdConverter::class)
     var createdBy: ContributorId = ContributorId.createUnknownContributor()
 
     constructor(label: String, classId: ClassId, createdBy: ContributorId = ContributorId.createUnknownContributor(), uri: URI?) : this(null) {

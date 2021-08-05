@@ -24,19 +24,15 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter
-import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerSecurityConfiguration
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore
 import org.springframework.security.web.AuthenticationEntryPoint
-import org.springframework.security.web.header.HeaderWriterFilter
 import org.springframework.stereotype.Component
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
-import org.springframework.web.filter.CorsFilter
 
 @Configuration
 class AuthorizationServerConfiguration(
@@ -152,26 +148,5 @@ class CorsConfig {
                 }
             registerCorsConfiguration("/**", configuration)
         }
-    }
-}
-
-/**
- * Work-around for the (broken?) AuthenticationServer.
- *
- * We keep the security configuration of the authorization server by configuring it via the super-class.
- * In addition we add a new [CorsFilter] after the [HeaderWriterFilter];
- * that is the same position as in other filter chains.
- * To ensure that the [CorsFilter] is configured correctly, we autowire our (custom) [CorsConfigurationSource].
- *
- * Due to autowiring magic/weirdness, the [EnableAuthorizationServer] annotation needs to be removed from the configuration.
- */
-@Configuration
-class AuthorizationServerWorkaround(
-    private val corsConfigurationSource: CorsConfigurationSource
-) : AuthorizationServerSecurityConfiguration() {
-
-    override fun configure(http: HttpSecurity) {
-        super.configure(http)
-        http.addFilterAfter(CorsFilter(corsConfigurationSource), HeaderWriterFilter::class.java)
     }
 }

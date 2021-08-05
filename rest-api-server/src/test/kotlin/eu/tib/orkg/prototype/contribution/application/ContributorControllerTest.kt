@@ -1,7 +1,6 @@
 package eu.tib.orkg.prototype.contribution.application
 
 import com.ninjasquad.springmockk.MockkBean
-import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.contributions.application.ContributorController
 import eu.tib.orkg.prototype.contributions.application.ports.input.RetrieveContributorUseCase
@@ -30,7 +29,6 @@ import org.springframework.web.context.WebApplicationContext
 private const val ISO_8601_PATTERN = """^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{1,8}\d?([+-]\d{2}:\d{2}|Z)$"""
 
 @WebMvcTest(controllers = [ContributorController::class])
-@AuthorizationServerUnitTestWorkaround
 class ContributorControllerTest {
 
     private lateinit var mockMvc: MockMvc

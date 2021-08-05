@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype.statements.adapter.input.rest
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
-import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsVerifiedUseCase
@@ -25,7 +24,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
 @WebMvcTest(controllers = [PaperVerificationCommandController::class])
-@AuthorizationServerUnitTestWorkaround
 @DisplayName("Given a Resource")
 class ResourceVerificationControllerTest {
 

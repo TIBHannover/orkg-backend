@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
-import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.LiteralController.LiteralCreateRequest
@@ -30,7 +29,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
 @WebMvcTest(controllers = [LiteralController::class])
-@AuthorizationServerUnitTestWorkaround
 @DisplayName("Given a Literal controller")
 class LiteralControllerTest {
 

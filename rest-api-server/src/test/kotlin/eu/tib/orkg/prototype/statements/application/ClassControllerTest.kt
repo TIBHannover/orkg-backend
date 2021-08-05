@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
-import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -30,7 +29,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
 @WebMvcTest(controllers = [ClassController::class])
-@AuthorizationServerUnitTestWorkaround
 @DisplayName("Given a Class controller")
 class ClassControllerTest {
 

@@ -1,7 +1,6 @@
 package eu.tib.orkg.prototype.auth.rest
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.rest.AuthController.RegisterUserRequest
 import eu.tib.orkg.prototype.auth.service.UserRepository
@@ -25,7 +24,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextS
 import org.springframework.web.context.WebApplicationContext
 
 @WebMvcTest(controllers = [AuthController::class])
-@AuthorizationServerUnitTestWorkaround
 class AuthControllerTest {
 
     private lateinit var mockMvc: MockMvc

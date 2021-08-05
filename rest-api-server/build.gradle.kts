@@ -4,8 +4,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 group = "eu.tib"
 version = "0.6.2-SNAPSHOT"
 
-val neo4jVersion = "3.5.+" // should match version in Dockerfile
-val springDataNeo4jVersion = "5.3.4"
 val springSecurityOAuthVersion = "2.3.8"
 val testContainersVersion = "1.15.3"
 
@@ -47,12 +45,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
         exclude(module = "neo4j-ogm-http-driver")
     }
-    implementation("org.neo4j:neo4j-ogm-bolt-native-types")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.security.oauth:spring-security-oauth2:$springSecurityOAuthVersion.RELEASE")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.data:spring-data-neo4j:$springDataNeo4jVersion.RELEASE")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     // JAXB stuff. Was removed from Java 9. Seems to be needed for OAuth2.
     implementation("javax.xml.bind:jaxb-api:2.3.0")
@@ -69,9 +65,6 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
 
-    testImplementation("org.neo4j:neo4j-ogm-embedded-driver")
-    testImplementation("org.neo4j:neo4j-ogm-embedded-native-types")
-    testImplementation("org.neo4j:neo4j:$neo4jVersion")
     // TestContainers
     testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
     testImplementation("org.testcontainers:junit-jupiter:$testContainersVersion")

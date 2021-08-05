@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import eu.tib.orkg.prototype.graphdb.indexing.domain.model.IndexService
 import eu.tib.orkg.prototype.statements.application.CreateClassRequest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
@@ -21,13 +20,10 @@ class ExampleData(
     private val resourceService: ResourceService,
     private val predicateService: PredicateService,
     private val statementService: StatementService,
-    private val classService: ClassService,
-    private val indexService: IndexService
+    private val classService: ClassService
 ) : ApplicationRunner {
 
     override fun run(args: ApplicationArguments?) {
-        // Create required constraints and indices
-        indexService.verifyIndices()
         if (statementsPresent())
             return
 

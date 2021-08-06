@@ -52,8 +52,8 @@ class ResearchFieldController(
     @GetMapping("/{id}/subfields/research-problems")
     fun getResearchProblemsIncludingSubFields(
         @PathVariable id: ResourceId,
-        @RequestParam("featured", required = false, defaultValue = "false")
-        featured: Boolean,
+        @Nullable @RequestParam("featured")
+        featured: Boolean?,
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable
@@ -90,8 +90,8 @@ class ResearchFieldController(
     @GetMapping("/{id}/subfields/comparisons")
     fun getComparisonsIncludingSubFields(
         @PathVariable id: ResourceId,
-        @RequestParam("featured", required = false, defaultValue = "false")
-        featured: Boolean,
+        @Nullable @RequestParam("featured")
+        featured: Boolean?,
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable
@@ -135,8 +135,8 @@ class ResearchFieldController(
     @GetMapping("/{id}/papers")
     fun getPapersExcludingSubFields(
         @PathVariable id: ResourceId,
-        @RequestParam("featured", required = false, defaultValue = "false")
-        featured: Boolean,
+        @Nullable @RequestParam("featured")
+        featured: Boolean?,
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable
@@ -156,8 +156,8 @@ class ResearchFieldController(
     @GetMapping("/{id}/comparisons")
     fun getComparisonsExcludingSubFields(
         @PathVariable id: ResourceId,
-        @RequestParam("featured", required = false, defaultValue = "false")
-        featured: Boolean,
+        @Nullable @RequestParam("featured")
+        featured: Boolean?,
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable
@@ -193,8 +193,8 @@ class ResearchFieldController(
     @GetMapping("/{id}/research-problems")
     fun getResearchProblemsExcludingSubFields(
         @PathVariable id: ResourceId,
-        @RequestParam("featured", required = false, defaultValue = "false")
-        featured: Boolean,
+        @Nullable @RequestParam("featured")
+        featured: Boolean?,
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable

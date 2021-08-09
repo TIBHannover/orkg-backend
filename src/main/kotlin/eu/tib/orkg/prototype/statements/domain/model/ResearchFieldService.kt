@@ -10,21 +10,21 @@ interface ResearchFieldService {
 
     fun getResearchProblemsOfField(id: ResourceId, pageable: Pageable): Page<Any>
 
-    fun getResearchProblemsIncludingSubFields(id: ResourceId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
+    fun getResearchProblemsIncludingSubFields(id: ResourceId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<Resource>
 
     fun getContributorsIncludingSubFields(id: ResourceId, pageable: Pageable): Page<Contributor>
 
-    fun getPapersIncludingSubFields(id: ResourceId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
+    fun getPapersIncludingSubFields(id: ResourceId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<Resource>
 
-    fun getComparisonsIncludingSubFields(id: ResourceId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
+    fun getComparisonsIncludingSubFields(id: ResourceId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<Resource>
 
     fun getContributorsExcludingSubFields(id: ResourceId, pageable: Pageable): Page<Contributor>
 
-    fun getPapersExcludingSubFields(id: ResourceId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
+    fun getPapersExcludingSubFields(id: ResourceId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<Resource>
 
-    fun getComparisonsExcludingSubFields(id: ResourceId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
+    fun getComparisonsExcludingSubFields(id: ResourceId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<Resource>
 
-    fun getResearchProblemsExcludingSubFields(id: ResourceId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
+    fun getResearchProblemsExcludingSubFields(id: ResourceId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<Resource>
 
     fun getEntitiesBasedOnClassesIncludingSubfields(id: ResourceId, classesList: List<String>, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
 

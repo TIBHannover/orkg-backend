@@ -15,6 +15,7 @@ class GetResourceFlagsService(
     private val loadResourcePort: LoadResourcePort,
     private val loadPaperPort: LoadPaperPort
     ) : GetResourcesQuery, GetPapersQuery {
+
     override fun getVerifiedResources(pageable: Pageable) =
         loadResourcePort.loadVerifiedResources(pageable)
 

@@ -70,35 +70,35 @@ interface LoadProblemPort {
 interface GetPaperFlagQuery {
     fun getPaperVerifiedFlag(id: ResourceId): Boolean?
     fun getFeaturedPaperFlag(id: ResourceId): Boolean
-    fun getUnlistedPaperFlag(id: ResourceId): Boolean
+    fun getUnlistedPaperFlag(id: ResourceId): Boolean?
 }
 
 interface GetResourceFlagQuery {
     fun getFeaturedResourceFlag(id: ResourceId): Boolean
-    fun getUnlistedResourceFlag(id: ResourceId): Boolean
+    fun getUnlistedResourceFlag(id: ResourceId): Boolean?
 }
 
 interface GetProblemFlagQuery {
     fun getFeaturedProblemFlag(id: ResourceId): Boolean
-    fun getUnlistedProblemFlag(id: ResourceId): Boolean
+    fun getUnlistedProblemFlag(id: ResourceId): Boolean?
 }
 
 interface GetContributionFlagQuery {
     fun getFeaturedContributionFlag(id: ResourceId): Boolean
-    fun getUnlistedContributionFlag(id: ResourceId): Boolean
+    fun getUnlistedContributionFlag(id: ResourceId): Boolean?
 }
 
 interface GetComparisonFlagQuery {
     fun getFeaturedComparisonFlag(id: ResourceId): Boolean
-    fun getUnlistedComparisonFlag(id: ResourceId): Boolean
+    fun getUnlistedComparisonFlag(id: ResourceId): Boolean?
 }
 
 interface GetVisualizationFlagQuery {
     fun getFeaturedVisualizationFlag(id: ResourceId): Boolean
-    fun getUnlistedVisualizationFlag(id: ResourceId): Boolean
+    fun getUnlistedVisualizationFlag(id: ResourceId): Boolean?
 }
 
 interface GetSmartReviewFlagQuery {
     fun getFeaturedSmartReviewFlag(id: ResourceId): Boolean
-    fun getUnlistedSmartReviewFlag(id: ResourceId): Boolean
+    fun getUnlistedSmartReviewFlag(id: ResourceId): Boolean?
 }

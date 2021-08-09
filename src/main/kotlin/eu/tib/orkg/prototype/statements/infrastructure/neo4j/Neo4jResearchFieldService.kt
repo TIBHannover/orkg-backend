@@ -24,6 +24,7 @@ class Neo4jResearchFieldService(
     private val neo4jResearchFieldRepository: Neo4jResearchFieldRepository,
     private val userRepository: UserRepository
 ) : ResearchFieldService, RetrieveResearchFieldUseCase {
+
     override fun findById(id: ResourceId): Optional<Resource> =
         neo4jResearchFieldRepository
             .findById(id)

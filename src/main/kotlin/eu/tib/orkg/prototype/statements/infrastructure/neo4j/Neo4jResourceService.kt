@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
+import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryRequest
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -302,17 +303,25 @@ class Neo4jResourceService(
             .findAllListedPapers(pageable)
             .map(Neo4jResource::toResource)
 
-    override fun getFeaturedPaperFlag(id: ResourceId): Boolean =
-        neo4jResourceRepository.findPaperByResourceId(id).get().featured
+    override fun getFeaturedPaperFlag(id: ResourceId): Boolean {
+        val result = neo4jResourceRepository.findPaperByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured
+    }
 
-    override fun getUnlistedPaperFlag(id: ResourceId): Boolean =
-        neo4jResourceRepository.findPaperByResourceId(id).get().unlisted
+    override fun getUnlistedPaperFlag(id: ResourceId): Boolean {
+        val result = neo4jResourceRepository.findPaperByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted
+    }
 
-    override fun getFeaturedResourceFlag(id: ResourceId): Boolean =
-        neo4jResourceRepository.findByResourceId(id).get().featured
+    override fun getFeaturedResourceFlag(id: ResourceId): Boolean {
+        val result = neo4jResourceRepository.findByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured
+    }
 
-    override fun getUnlistedResourceFlag(id: ResourceId): Boolean =
-        neo4jResourceRepository.findByResourceId(id).get().unlisted
+    override fun getUnlistedResourceFlag(id: ResourceId): Boolean {
+        val result = neo4jResourceRepository.findByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured
+    }
 
     override fun loadFeaturedComparisons(pageable: Pageable): Page<Resource> =
         neo4jComparisonRepository
@@ -369,7 +378,7 @@ class Neo4jResourceService(
 
     override fun loadNonFeaturedVisualizations(pageable: Pageable):
         Page<Resource> =
-            neo4jVisualizationRepository
+        neo4jVisualizationRepository
             .findAllNonFeaturedVisualizations(pageable)
             .map(Neo4jResource::toResource)
 
@@ -409,58 +418,65 @@ class Neo4jResourceService(
             .findAllListedSmartReviews(pageable)
             .map(Neo4jResource::toResource)
 
-    override fun getFeaturedContributionFlag(id: ResourceId): Boolean =
-        neo4jContributionRepository.findContributionByResourceId(id).get().featured
+    override fun getFeaturedContributionFlag(id: ResourceId): Boolean {
+        val result = neo4jContributionRepository.findContributionByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured
+    }
 
-    override fun getUnlistedContributionFlag(id: ResourceId): Boolean =
-        neo4jContributionRepository.findContributionByResourceId(id).get().unlisted
+    override fun getUnlistedContributionFlag(id: ResourceId): Boolean? {
+        val result = neo4jContributionRepository.findContributionByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted
+    }
 
-    override fun getFeaturedComparisonFlag(id: ResourceId): Boolean =
-        neo4jComparisonRepository.findComparisonByResourceId(id).get().featured
+    override fun getFeaturedComparisonFlag(id: ResourceId): Boolean {
+        val result = neo4jComparisonRepository.findComparisonByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured
+    }
 
-    override fun getUnlistedComparisonFlag(id: ResourceId): Boolean =
-        neo4jComparisonRepository.findComparisonByResourceId(id).get().unlisted
+    override fun getUnlistedComparisonFlag(id: ResourceId): Boolean? {
+        val result = neo4jComparisonRepository.findComparisonByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted
+    }
 
-    override fun getFeaturedVisualizationFlag(id: ResourceId): Boolean =
-        neo4jVisualizationRepository.findVisualizationByResourceId(id).get().featured
+    override fun getFeaturedVisualizationFlag(id: ResourceId): Boolean {
+        val result = neo4jVisualizationRepository.findVisualizationByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured
+    }
 
-    override fun getUnlistedVisualizationFlag(id: ResourceId): Boolean =
-        neo4jVisualizationRepository.findVisualizationByResourceId(id).get().unlisted
+    override fun getUnlistedVisualizationFlag(id: ResourceId): Boolean? {
+        val result = neo4jVisualizationRepository.findVisualizationByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted
+    }
 
-    override fun getFeaturedSmartReviewFlag(id: ResourceId): Boolean =
-        neo4jSmartReviewRepository.findSmartReviewByResourceId(id).get().featured
+    override fun getFeaturedSmartReviewFlag(id: ResourceId): Boolean {
+        val result = neo4jSmartReviewRepository.findSmartReviewByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured
+    }
 
-    override fun getUnlistedSmartReviewFlag(id: ResourceId): Boolean =
-        neo4jSmartReviewRepository.findSmartReviewByResourceId(id).get().unlisted
+    override fun getUnlistedSmartReviewFlag(id: ResourceId): Boolean? {
+        val result = neo4jSmartReviewRepository.findSmartReviewByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted
+    }
 
     private fun setFeaturedFlag(resourceId: ResourceId, featured: Boolean): Optional<Resource> {
         val result = neo4jResourceRepository.findByResourceId(resourceId)
-        if (result.isPresent) {
-            val resource = result.get()
-            resource.featured = featured
-            return Optional.of(neo4jResourceRepository.save(resource).toResource())
-        }
-        return Optional.empty()
+        val resultObj = result.orElseThrow { ResourceNotFound(resourceId.value) }
+        resultObj.featured = featured
+        return Optional.of(neo4jResourceRepository.save(resultObj).toResource())
     }
 
     private fun setVerifiedFlag(resourceId: ResourceId, verified: Boolean): Optional<Resource> {
         val result = neo4jResourceRepository.findByResourceId(resourceId)
-        if (result.isPresent) {
-            val resource = result.get()
-            resource.verified = verified
-            return Optional.of(neo4jResourceRepository.save(resource).toResource())
-        }
-        return Optional.empty()
+        val resultObj = result.orElseThrow { ResourceNotFound(resourceId.value) }
+        resultObj.verified = verified
+        return Optional.of(neo4jResourceRepository.save(resultObj).toResource())
     }
 
     private fun setUnlistedFlag(resourceId: ResourceId, unlisted: Boolean): Optional<Resource> {
         val result = neo4jResourceRepository.findByResourceId(resourceId)
-        if (result.isPresent) {
-            val resource = result.get()
-            resource.unlisted = unlisted
-            return Optional.of(neo4jResourceRepository.save(resource).toResource())
-        }
-        return Optional.empty()
+        val resultObj = result.orElseThrow { ResourceNotFound(resourceId.value) }
+        resultObj.unlisted = unlisted
+        return Optional.of(neo4jResourceRepository.save(resultObj).toResource())
     }
 
     private fun String.toSearchString() = "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"

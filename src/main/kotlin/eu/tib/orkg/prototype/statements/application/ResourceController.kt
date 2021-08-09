@@ -157,7 +157,7 @@ class ResourceController(
 
     @GetMapping("/{id}/metadata/featured")
     fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean =
-        service.getFeaturedResourceFlag(id) ?: throw ResourceNotFound(id.toString())
+        service.getFeaturedResourceFlag(id)
 
     @GetMapping("/metadata/unlisted", params = ["unlisted=true"])
     fun getUnlistedResources(pageable: Pageable) =

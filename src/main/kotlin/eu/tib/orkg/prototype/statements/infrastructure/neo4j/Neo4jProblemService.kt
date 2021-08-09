@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ProblemService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -77,10 +78,15 @@ class Neo4jProblemService(
             }
     }
 
-    override fun getFeaturedProblemFlag(id: ResourceId): Boolean = neo4jProblemRepository.findById(id).get().featured
+    override fun getFeaturedProblemFlag(id: ResourceId): Boolean {
+        val result = neo4jProblemRepository.findById(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured
+    }
 
-    override fun getUnlistedProblemFlag(id: ResourceId): Boolean =
-        neo4jProblemRepository.findById(id).get().unlisted
+    override fun getUnlistedProblemFlag(id: ResourceId): Boolean {
+        val result = neo4jProblemRepository.findById(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted
+    }
 
     override fun loadFeaturedProblems(pageable: Pageable): Page<Resource> =
         neo4jProblemRepository.findAllFeaturedProblems(pageable)

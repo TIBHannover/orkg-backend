@@ -433,7 +433,7 @@ class Neo4jResourceService(
         return result.orElseThrow { ResourceNotFound(id.toString()) }.featured
     }
 
-    override fun getUnlistedComparisonFlag(id: ResourceId): Boolean {
+    override fun getUnlistedComparisonFlag(id: ResourceId): Boolean? {
         val result = neo4jComparisonRepository.findComparisonByResourceId(id)
         return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted
     }
@@ -443,7 +443,7 @@ class Neo4jResourceService(
         return result.orElseThrow { ResourceNotFound(id.toString()) }.featured
     }
 
-    override fun getUnlistedVisualizationFlag(id: ResourceId): Boolean {
+    override fun getUnlistedVisualizationFlag(id: ResourceId): Boolean? {
         val result = neo4jVisualizationRepository.findVisualizationByResourceId(id)
         return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted
     }
@@ -453,7 +453,7 @@ class Neo4jResourceService(
         return result.orElseThrow { ResourceNotFound(id.toString()) }.featured
     }
 
-    override fun getUnlistedSmartReviewFlag(id: ResourceId): Boolean {
+    override fun getUnlistedSmartReviewFlag(id: ResourceId): Boolean? {
         val result = neo4jSmartReviewRepository.findSmartReviewByResourceId(id)
         return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted
     }

@@ -1,7 +1,11 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+<<<<<<< HEAD:rest-api-server/src/main/kotlin/eu/tib/orkg/prototype/statements/infrastructure/neo4j/Neo4jProblemService.kt
 import eu.tib.orkg.prototype.paperswithcode.application.port.input.RetrieveResearchProblemsUseCase
 import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
+=======
+import eu.tib.orkg.prototype.statements.application.ResourceNotFound
+>>>>>>> e04f3639 (Add exception for unlisted flag):src/main/kotlin/eu/tib/orkg/prototype/statements/infrastructure/neo4j/Neo4jProblemService.kt
 import eu.tib.orkg.prototype.statements.domain.model.ProblemService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -85,18 +89,17 @@ override fun findById(id: ResourceId): Optional<Resource> =
         return Optional.of(neo4jProblemRepository
             .findResearchProblemForDataset(id)
             .map { ResearchProblem(it.resourceId!!, it.label!!) })
-
-    override fun getFeaturedProblemFlag(id: ResourceId): Boolean? {
-        val result = neo4jProblemRepository.findById(id)
-        if (result.isPresent) {
-            val problem = result.get()
-            return problem.featured ?: false
-        }
-        return null
     }
 
-    override fun getUnlistedProblemFlag(id: ResourceId): Boolean =
-        neo4jProblemRepository.findById(id).get().unlisted
+    override fun getFeaturedProblemFlag(id: ResourceId): Boolean {
+        val result = neo4jProblemRepository.findById(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured
+    }
+
+    override fun getUnlistedProblemFlag(id: ResourceId): Boolean {
+        val result = neo4jProblemRepository.findById(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted
+    }
 
     override fun loadFeaturedProblems(pageable: Pageable): Page<Resource> =
         neo4jProblemRepository.findAllFeaturedProblems(pageable)

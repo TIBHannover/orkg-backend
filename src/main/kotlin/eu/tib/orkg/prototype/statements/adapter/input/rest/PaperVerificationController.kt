@@ -3,7 +3,7 @@ package eu.tib.orkg.prototype.statements.adapter.input.rest
 import eu.tib.orkg.prototype.statements.application.BaseController
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.port.out.GetPaperFlagQuery
-import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperAdapter
+import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperPort
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.springframework.data.domain.Page
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class PaperVerificationController(
-    private val adapter: LoadPaperAdapter, // FIXME: should be adapter
+    private val port: LoadPaperPort, // FIXME: should be adapter
     private val query: GetPaperFlagQuery
 ) : BaseController() {
 
@@ -24,11 +24,11 @@ class PaperVerificationController(
 
     @GetMapping("/api/classes/Paper/resources/", params = ["verified=true"])
     fun loadVerifiedPapers(pageable: Pageable): Page<Resource> {
-        return adapter.loadVerifiedPapers(pageable)
+        return port.loadVerifiedPapers(pageable)
     }
 
     @GetMapping("/api/classes/Paper/resources/", params = ["verified=false"])
     fun loadUnverifiedPapers(pageable: Pageable): Page<Resource> {
-        return adapter.loadUnverifiedPapers(pageable)
+        return port.loadUnverifiedPapers(pageable)
     }
 }

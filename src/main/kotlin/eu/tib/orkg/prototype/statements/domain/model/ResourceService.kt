@@ -16,7 +16,7 @@ import eu.tib.orkg.prototype.statements.application.port.out.GetSmartReviewFlagQ
 import eu.tib.orkg.prototype.statements.application.port.out.GetVisualizationFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.LoadComparisonPort
 import eu.tib.orkg.prototype.statements.application.port.out.LoadContributionPort
-import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperAdapter
+import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperPort
 import eu.tib.orkg.prototype.statements.application.port.out.LoadResourcePort
 import eu.tib.orkg.prototype.statements.application.port.out.LoadSmartReviewPort
 import eu.tib.orkg.prototype.statements.application.port.out.LoadVisualizationPort
@@ -29,7 +29,7 @@ import org.springframework.data.domain.Pageable
 interface ResourceService :
     MarkAsVerifiedUseCase,
     LoadResourcePort,
-    LoadPaperAdapter,
+    LoadPaperPort,
     GetPaperFlagQuery,
     MarkFeaturedService,
     MarkAsUnlistedService,

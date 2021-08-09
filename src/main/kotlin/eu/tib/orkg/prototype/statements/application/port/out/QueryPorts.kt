@@ -16,7 +16,7 @@ interface LoadResourcePort {
     fun loadListedResources(pageable: Pageable): Page<Resource>
 }
 
-interface LoadPaperAdapter {
+interface LoadPaperPort {
     fun loadVerifiedPapers(pageable: Pageable): Page<Resource>
     fun loadUnverifiedPapers(pageable: Pageable): Page<Resource>
 

@@ -24,6 +24,7 @@ class Neo4jResearchFieldService(
     private val neo4jResearchFieldRepository: Neo4jResearchFieldRepository,
     private val userRepository: UserRepository
 ) : ResearchFieldService, RetrieveResearchFieldUseCase {
+
     override fun findById(id: ResourceId): Optional<Resource> =
         neo4jResearchFieldRepository
             .findById(id)
@@ -111,8 +112,7 @@ class Neo4jResearchFieldService(
         featured: Boolean?,
         unlisted: Boolean,
         pageable: Pageable
-    ):
-    Page<Resource> {
+    ): Page<Resource> {
         val modifiedFeatured: Boolean = setFeatured(unlisted, featured)
             ?: return neo4jResearchFieldRepository.getPapersExcludingSubFields(
                 id = id,

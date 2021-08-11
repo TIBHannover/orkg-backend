@@ -79,7 +79,7 @@ class Neo4jStatsService(
         neo4jStatsRepository.getObservatoriesPapersAndComparisonsCount()
 
     override fun getTopCurrentContributors(pageable: Pageable, days: Long): Page<TopContributorsWithProfile> {
-        val previousMonthDate: String = calculatePreviousDate(days)
+        val previousMonthDate: String = calculateStartDate(daysAgo = days)
 
         return getContributorsWithProfile(neo4jStatsRepository.getTopCurrentContributorIdsAndContributionsCount(
             previousMonthDate, pageable), pageable)
@@ -103,7 +103,7 @@ class Neo4jStatsService(
         id: ResourceId,
         days: Long
     ): Iterable<TopContributorsWithProfileAndTotalCount> {
-        val previousMonthDate: String = calculatePreviousDate(days)
+        val previousMonthDate: String = calculateStartDate(daysAgo = days)
 
         val values = neo4jStatsRepository.getTopCurContribIdsAndContribCountByResearchFieldId(id, previousMonthDate)
 
@@ -116,7 +116,7 @@ class Neo4jStatsService(
         id: ResourceId,
         days: Long
     ): Iterable<TopContributorsWithProfileAndTotalCount> {
-        val previousMonthDate: String = calculatePreviousDate(days)
+        val previousMonthDate: String = calculateStartDate(daysAgo = days)
 
         val values = neo4jStatsRepository.getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(id, previousMonthDate)
 
@@ -243,17 +243,14 @@ class Neo4jStatsService(
         return counts
     }
 
-    private fun calculatePreviousDate(days: Long): String {
-        // Setting the all-time date to 2010-01-01
-        // This date value is set to retrieve all the contributions from ORKG
-        // It is assumed that no contributions pre-date the hard-coded date
-        var previousMonthDate: LocalDate? = LocalDate.of(2010, 1, 1)
-
-        if (days > 0) {
-            previousMonthDate = LocalDate.now().minusDays(days)
-        }
-        return previousMonthDate.toString()
-    }
+    private fun calculateStartDate(daysAgo: Long): String =
+        if (daysAgo > 0) {
+            LocalDate.now().minusDays(daysAgo)
+        } else {
+            // Setting the all-time date to 2010-01-01. This date value is set to retrieve all the contributions from
+            // ORKG. It is assumed that no contributions pre-date the hard-coded date.
+            LocalDate.of(2010, 1, 1)
+        }.toString()
 }
 
 /**

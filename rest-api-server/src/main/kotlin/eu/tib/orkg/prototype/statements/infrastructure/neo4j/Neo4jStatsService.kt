@@ -34,7 +34,6 @@ class Neo4jStatsService(
     private val observatoryRepository: PostgresObservatoryRepository,
     private val organizationRepository: PostgresOrganizationRepository
 ) : StatsService {
-
     val internalClassLabels: (String) -> Boolean = { it !in setOf("Thing", "Resource", "AuditableEntity") }
 
     override fun getStats(extra: List<String>?): Stats {
@@ -79,10 +78,11 @@ class Neo4jStatsService(
     override fun getObservatoriesPapersAndComparisonsCount(): List<ObservatoryResources> =
         neo4jStatsRepository.getObservatoriesPapersAndComparisonsCount()
 
-    override fun getTopCurrentContributors(pageable: Pageable): Page<TopContributorsWithProfile> {
-        val previousMonthDate: LocalDate = LocalDate.now().minusMonths(1)
+    override fun getTopCurrentContributors(pageable: Pageable, days: Long): Page<TopContributorsWithProfile> {
+        val previousMonthDate: String = calculateStartDate(daysAgo = days)
+
         return getContributorsWithProfile(neo4jStatsRepository.getTopCurrentContributorIdsAndContributionsCount(
-            previousMonthDate.toString(), pageable), pageable)
+            previousMonthDate, pageable), pageable)
     }
 
     override fun getRecentChangeLog(pageable: Pageable): Page<ChangeLog> {
@@ -103,16 +103,22 @@ class Neo4jStatsService(
         id: ResourceId,
         days: Long
     ): Iterable<TopContributorsWithProfileAndTotalCount> {
-        // Setting the all-time date to 2010-01-01
-        // This date value is set to retrieve all the contributions from ORKG
-        // It is assumed that no contributions pre-date the hard-coded date
-        var previousMonthDate: LocalDate? = LocalDate.of(2010, 1, 1)
+        val previousMonthDate: String = calculateStartDate(daysAgo = days)
 
-        if (days > 0) {
-            previousMonthDate = LocalDate.now().minusDays(days)
-        }
+        val values = neo4jStatsRepository.getTopCurContribIdsAndContribCountByResearchFieldId(id, previousMonthDate)
 
-        val values = neo4jStatsRepository.getTopCurContribIdsAndContribCountByResearchFieldId(id, previousMonthDate.toString())
+        val totalContributions = extractAndCalculateContributionDetails(values)
+
+        return getContributorsWithProfileAndTotalCount(totalContributions)
+    }
+
+    override fun getTopCurrentContributorsByResearchFieldExcludeSubFields(
+        id: ResourceId,
+        days: Long
+    ): Iterable<TopContributorsWithProfileAndTotalCount> {
+        val previousMonthDate: String = calculateStartDate(daysAgo = days)
+
+        val values = neo4jStatsRepository.getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(id, previousMonthDate)
 
         val totalContributions = extractAndCalculateContributionDetails(values)
 
@@ -236,6 +242,15 @@ class Neo4jStatsService(
 
         return counts
     }
+
+    private fun calculateStartDate(daysAgo: Long): String =
+        if (daysAgo > 0) {
+            LocalDate.now().minusDays(daysAgo)
+        } else {
+            // Setting the all-time date to 2010-01-01. This date value is set to retrieve all the contributions from
+            // ORKG. It is assumed that no contributions pre-date the hard-coded date.
+            LocalDate.of(2010, 1, 1)
+        }.toString()
 }
 
 /**

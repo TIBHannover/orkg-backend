@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/stats/")
 class StatsController(private val service: StatsService) {
-
     /**
      * Fetch the top statistics of ORKG
      * like paper count, resources count, etc
@@ -101,8 +100,22 @@ class StatsController(private val service: StatsService) {
      */
     @GetMapping("/top/contributors")
     @ResponseStatus(HttpStatus.OK)
-    fun getTopContributors(pageable: Pageable): ResponseEntity<Page<TopContributorsWithProfile>> =
-        ResponseEntity.ok(service.getTopCurrentContributors(pageable))
+    fun getTopContributors(pageable: Pageable, @RequestParam days: Optional<Long>): ResponseEntity<Page<TopContributorsWithProfile>> {
+        if (days.isPresent) {
+            return ResponseEntity.ok(service.getTopCurrentContributors(pageable, days.get()))
+        }
+        return ResponseEntity.ok(service.getTopCurrentContributors(pageable, 0))
+    }
+
+    /**
+     * Fetch the top contributors by research field ID along with
+     * the profile details
+     */
+    @GetMapping("/research-field/{id}/subfields/top/contributors")
+    @ResponseStatus(HttpStatus.OK)
+    fun getTopContributorsByResearchField(@PathVariable id: ResourceId, @RequestParam(required = false, defaultValue = "0") days: Long): ResponseEntity<Iterable<TopContributorsWithProfileAndTotalCount>> {
+        return ResponseEntity.ok(service.getTopCurrentContributorsByResearchField(id, days))
+    }
 
     /**
      * Fetch the top contributors by research field ID along with
@@ -110,10 +123,7 @@ class StatsController(private val service: StatsService) {
      */
     @GetMapping("/research-field/{id}/top/contributors")
     @ResponseStatus(HttpStatus.OK)
-    fun getTopContributorsByResearchField(@PathVariable id: ResourceId, @RequestParam days: Optional<Long>): ResponseEntity<Iterable<TopContributorsWithProfileAndTotalCount>> {
-        if (days.isPresent) {
-            return ResponseEntity.ok(service.getTopCurrentContributorsByResearchField(id, days.get()))
-        }
-        return ResponseEntity.ok(service.getTopCurrentContributorsByResearchField(id, 0))
+    fun getTopContributorsByResearchFieldExcludeSubFields(@PathVariable id: ResourceId, @RequestParam(required = false, defaultValue = "0") days: Long): ResponseEntity<Iterable<TopContributorsWithProfileAndTotalCount>> {
+        return ResponseEntity.ok(service.getTopCurrentContributorsByResearchFieldExcludeSubFields(id, days))
     }
 }

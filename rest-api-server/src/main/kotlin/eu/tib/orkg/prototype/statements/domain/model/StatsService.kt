@@ -39,7 +39,7 @@ interface StatsService {
     /**
      * Get top contributors
      */
-    fun getTopCurrentContributors(pageable: Pageable): Page<TopContributorsWithProfile>
+    fun getTopCurrentContributors(pageable: Pageable, days: Long): Page<TopContributorsWithProfile>
 
     /**
      * Get recent changes in ORKG
@@ -60,4 +60,9 @@ interface StatsService {
      * Get top contributors by research field ID
      */
     fun getTopCurrentContributorsByResearchField(id: ResourceId, days: Long): Iterable<TopContributorsWithProfileAndTotalCount>
+
+    /**
+     * Get top contributors by research field ID excluding sub research fields
+     */
+    fun getTopCurrentContributorsByResearchFieldExcludeSubFields(id: ResourceId, days: Long): Iterable<TopContributorsWithProfileAndTotalCount>
 }

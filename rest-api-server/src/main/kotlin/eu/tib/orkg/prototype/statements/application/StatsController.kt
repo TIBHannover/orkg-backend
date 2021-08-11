@@ -9,7 +9,6 @@ import eu.tib.orkg.prototype.statements.infrastructure.neo4j.ChangeLog
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.TopContributorsWithProfile
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.TopContributorsWithProfileAndTotalCount
 import java.util.Optional
-import java.util.logging.Logger
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -28,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/stats/")
 class StatsController(private val service: StatsService) {
-    private val logger = Logger.getLogger("Stats")
     /**
      * Fetch the top statistics of ORKG
      * like paper count, resources count, etc

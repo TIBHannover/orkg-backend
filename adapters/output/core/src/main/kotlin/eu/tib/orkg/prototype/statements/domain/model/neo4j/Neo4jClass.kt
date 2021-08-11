@@ -14,22 +14,17 @@ import org.eclipse.rdf4j.model.vocabulary.OWL
 import org.eclipse.rdf4j.model.vocabulary.RDF
 import org.eclipse.rdf4j.model.vocabulary.RDFS
 import org.springframework.data.neo4j.core.convert.ConvertWith
-import org.springframework.data.neo4j.core.schema.GeneratedValue
-import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Property
 import org.springframework.data.neo4j.core.schema.Relationship
 import java.net.URI
 
-@Node("Class")
-data class Neo4jClass(
-    @Id
-    @GeneratedValue
-    var id: Long? = null,
+@Node(primaryLabel = "Class")
+class Neo4jClass() : Neo4jThing() {
     @Relationship(type = "RELATED", direction = Relationship.Direction.OUTGOING)
     @JsonIgnore
     var subjectOf: MutableSet<Neo4jClass> = mutableSetOf()
-) : Neo4jThing, AuditableEntity() {
+
     @Property("class_id")
     @ConvertWith(converter = ClassIdConverter::class)
     var classId: ClassId? = null
@@ -44,7 +39,7 @@ data class Neo4jClass(
     @ConvertWith(converter = ContributorIdConverter::class)
     var createdBy: ContributorId = ContributorId.createUnknownContributor()
 
-    constructor(label: String, classId: ClassId, createdBy: ContributorId = ContributorId.createUnknownContributor(), uri: URI?) : this(null) {
+    constructor(label: String, classId: ClassId, createdBy: ContributorId = ContributorId.createUnknownContributor(), uri: URI?) : this() {
         this.label = label
         this.classId = classId
         this.uri = uri?.toString()

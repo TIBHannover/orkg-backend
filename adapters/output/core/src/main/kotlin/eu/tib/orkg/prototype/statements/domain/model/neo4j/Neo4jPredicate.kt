@@ -13,33 +13,32 @@ import org.eclipse.rdf4j.model.util.ModelBuilder
 import org.eclipse.rdf4j.model.vocabulary.RDF
 import org.eclipse.rdf4j.model.vocabulary.RDFS
 import org.springframework.data.neo4j.core.convert.ConvertWith
-import org.springframework.data.neo4j.core.schema.GeneratedValue
-import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Property
 import org.springframework.data.neo4j.core.schema.Relationship
 
-@Node("Predicate")
-data class Neo4jPredicate(
-    @Id
-    @GeneratedValue
-    var id: Long? = null,
-
+@Node(primaryLabel = "Predicate")
+class Neo4jPredicate() : Neo4jThing() {
     @Property("label")
-    override var label: String? = null,
+    override var label: String? = null
 
     @Property("predicate_id")
     @ConvertWith(converter = PredicateIdConverter::class)
-    private var predicateId: PredicateId? = null,
+    private var predicateId: PredicateId? = null
 
     @Property("created_by")
     @ConvertWith(converter = ContributorIdConverter::class)
-    var createdBy: ContributorId = ContributorId.createUnknownContributor(),
+    var createdBy: ContributorId = ContributorId.createUnknownContributor()
 
     @Relationship(type = "RELATED", direction = Relationship.Direction.OUTGOING)
     @JsonIgnore
     var subjectOf: MutableSet<Neo4jStatement> = mutableSetOf()
-) : Neo4jThing, AuditableEntity() {
+
+    constructor(label: String, predicateId: PredicateId, createdBy: ContributorId = ContributorId.createUnknownContributor()) : this() {
+        this.label = label
+        this.predicateId = predicateId
+        this.createdBy = createdBy
+    }
 
     fun toPredicate(): Predicate {
         val pred = Predicate(predicateId, label!!, createdAt!!, createdBy = createdBy)

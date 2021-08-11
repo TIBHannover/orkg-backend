@@ -20,20 +20,14 @@ import org.eclipse.rdf4j.model.vocabulary.RDF
 import org.eclipse.rdf4j.model.vocabulary.RDFS
 import org.springframework.data.neo4j.core.convert.ConvertWith
 import org.springframework.data.neo4j.core.schema.DynamicLabels
-import org.springframework.data.neo4j.core.schema.GeneratedValue
-import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Property
 import org.springframework.data.neo4j.core.schema.Relationship
 import org.springframework.data.neo4j.core.schema.Relationship.Direction.INCOMING
 import org.springframework.data.neo4j.core.schema.Relationship.Direction.OUTGOING
 
-@Node("Resource")
-data class Neo4jResource(
-    @Id
-    @GeneratedValue
-    var id: Long? = null
-) : Neo4jThing, AuditableEntity() {
+@Node(primaryLabel = "Resource")
+class Neo4jResource() : Neo4jThing() {
 
     @Property("label")
     override var label: String? = null
@@ -90,7 +84,7 @@ data class Neo4jResource(
         observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
         extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
         organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
-    ) : this(null) {
+    ) : this() {
         this.label = label
         this.resourceId = resourceId
         this.createdBy = createdBy

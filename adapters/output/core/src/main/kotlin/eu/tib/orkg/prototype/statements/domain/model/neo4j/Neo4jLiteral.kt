@@ -8,18 +8,12 @@ import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.LiteralIdConverter
 import org.springframework.data.neo4j.core.convert.ConvertWith
-import org.springframework.data.neo4j.core.schema.GeneratedValue
-import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Property
 import org.springframework.data.neo4j.core.schema.Relationship
 
-@Node("Literal")
-data class Neo4jLiteral(
-    @Id
-    @GeneratedValue
-    var id: Long? = null
-) : Neo4jThing, AuditableEntity() {
+@Node(primaryLabel = "Literal")
+class Neo4jLiteral() : Neo4jThing() {
     @Property("label")
     override var label: String? = null
 
@@ -49,7 +43,7 @@ data class Neo4jLiteral(
         literalId: LiteralId,
         datatype: String = "xsd:string",
         createdBy: ContributorId = ContributorId.createUnknownContributor()
-    ) : this(null) {
+    ) : this() {
         this.label = label
         this.literalId = literalId
         this.datatype = datatype

@@ -38,6 +38,9 @@ data class Neo4jStatement(
     @ConvertWith(converter = ContributorIdConverter::class)
     var createdBy: ContributorId = ContributorId.createUnknownContributor()
 
+    // FIXME: dummy property to make the code compile
+    var subject: Neo4jThing? = null
+
     constructor(
         statementId: StatementId,
         subject: Neo4jThing,

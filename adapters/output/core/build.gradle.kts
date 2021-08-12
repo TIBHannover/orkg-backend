@@ -14,6 +14,8 @@ dependencies {
         exclude(module = "neo4j-ogm-http-driver")
     }
 
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+
     // FIXME: should go after refactoring
     implementation("org.eclipse.rdf4j:rdf4j-client:3.6.3")
 }

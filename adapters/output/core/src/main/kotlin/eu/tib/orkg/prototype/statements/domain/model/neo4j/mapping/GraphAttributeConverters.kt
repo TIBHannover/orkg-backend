@@ -10,10 +10,14 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import org.neo4j.driver.Value
 import org.neo4j.driver.Values
-import org.springframework.core.convert.TypeDescriptor
-import org.springframework.core.convert.converter.GenericConverter
-import org.springframework.core.convert.converter.GenericConverter.ConvertiblePair
 import org.springframework.data.neo4j.core.convert.Neo4jPersistentPropertyConverter
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
+
+class OffsetDateTimeConverter : Neo4jPersistentPropertyConverter<OffsetDateTime> {
+    override fun read(source: Value): OffsetDateTime = OffsetDateTime.parse(source.asString(), ISO_OFFSET_DATE_TIME)
+    override fun write(source: OffsetDateTime): Value = Values.value(source.format(ISO_OFFSET_DATE_TIME))
+}
 
 class ClassIdConverter : Neo4jPersistentPropertyConverter<ClassId> {
     override fun read(source: Value): ClassId = ClassId(source.asString())

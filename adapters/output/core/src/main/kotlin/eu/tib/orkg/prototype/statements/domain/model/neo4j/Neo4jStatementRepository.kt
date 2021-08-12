@@ -13,42 +13,42 @@ import java.util.Optional
  * Partial query that matches a statement.
  * Queries using this partial query must use `rel` as the binding name for predicates, `sub` for subjects, and `obj` for objects.
  */
-private const val MATCH_STATEMENT =
+internal const val MATCH_STATEMENT =
     """MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Thing`)"""
 
-private const val MATCH_STATEMENT_WITH_LITERAL =
+internal const val MATCH_STATEMENT_WITH_LITERAL =
     """MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Literal`)"""
 
 /**
  * Partial query that returns the statement, with the id and the created at date.
  * Queries using this partial query must use `rel` as the binding name for predicates, `sub` for subjects, and `obj` for objects.
  */
-private const val RETURN_STATEMENT =
+internal const val RETURN_STATEMENT =
     """RETURN rel, sub, obj, rel.statement_id AS id, rel.created_at AS created_at"""
 
 /**
  * Partial query that returns the number of statements (relationships) in [Query.countQuery] queries.
  */
-private const val RETURN_COUNT = "RETURN count(rel) AS count"
+internal const val RETURN_COUNT = "RETURN count(rel) AS count"
 
 /**
  * Partial query that "flattens" the object into "columns" that can be sorted by SDN.
  */
-private const val WITH_SORTABLE_FIELDS =
+internal const val WITH_SORTABLE_FIELDS =
     """WITH sub, obj, rel, rel.created_at AS created_at, rel.created_by AS created_by"""
 
 // Custom queries
 
-private const val BY_SUBJECT_ID =
+internal const val BY_SUBJECT_ID =
     """WHERE sub.`resource_id`={0} OR sub.`literal_id`={0} OR sub.`predicate_id`={0} OR sub.`class_id`={0}"""
 
-private const val BY_OBJECT_ID =
+internal const val BY_OBJECT_ID =
     """WHERE obj.`resource_id`={0} OR obj.`literal_id`={0} OR obj.`predicate_id`={0} OR obj.`class_id`={0}"""
 
-private const val WHERE_SUBJECT_ID_IN =
+internal const val WHERE_SUBJECT_ID_IN =
     """WHERE sub.`resource_id` IN {0} OR sub.`literal_id` IN {0} OR sub.`predicate_id` IN {0} OR sub.`class_id` IN {0}"""
 
-private const val WHERE_OBJECT_ID_IN =
+internal const val WHERE_OBJECT_ID_IN =
     """WHERE obj.`resource_id` IN {0} OR obj.`literal_id` IN {0} OR obj.`predicate_id` IN {0} OR obj.`class_id` IN {0}"""
 
 interface Neo4jStatementRepository :

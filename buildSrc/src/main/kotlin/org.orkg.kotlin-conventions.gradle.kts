@@ -19,6 +19,10 @@ tasks {
 
     withType(Test::class.java).configureEach {
         useJUnitPlatform()
+        reports {
+            junitXml.required.set(true)
+            html.required.set(true)
+        }
     }
 
     jacocoTestReport {

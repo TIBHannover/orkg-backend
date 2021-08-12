@@ -1,21 +1,21 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j.rdf
 
+import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jClass
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jClassRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jPredicate
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jPredicateRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceRepository
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatement
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementRepository
 import eu.tib.orkg.prototype.statements.domain.model.rdf.RdfService
+import eu.tib.orkg.prototype.statements.ports.StatementRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
 class Neo4jRdfService(
-    private val statementRepository: Neo4jStatementRepository,
+    private val statementRepository: StatementRepository,
     private val predicateRepository: Neo4jPredicateRepository,
     private val resourceRepository: Neo4jResourceRepository,
     private val classesRepository: Neo4jClassRepository
@@ -31,7 +31,7 @@ class Neo4jRdfService(
         result += resourceRepository.findAll().joinToString("\n", transform = Neo4jResource::toNTriple)
         result += "\n"
         // dump statements
-        result += statementRepository.findAll().joinToString("\n", transform = Neo4jStatement::toNTriple)
+        result += statementRepository.findAll().joinToString("\n", transform = GeneralStatement::toNTriple)
         result += "\n"
         return result
     }

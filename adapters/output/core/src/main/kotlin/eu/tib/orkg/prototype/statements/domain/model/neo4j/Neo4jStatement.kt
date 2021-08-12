@@ -59,30 +59,4 @@ data class Neo4jStatement(
         // FIXME: old code: return "{id:$statementId}==(${subject!!.thingId} {${subject!!.label}})-[$predicateId]->(${`object`!!.thingId} {${`object`!!.label}})=="
         return "{id:$statementId}==(?)-[$predicateId]->(${`object`!!.thingId} {${`object`!!.label}})=="
     }
-
-    /**
-     * Convert the triple to a statement in NTriple format.
-     */
-    fun toNTriple(): String {
-        val pPrefix = RdfConstants.PREDICATE_NS
-        // FIXME: old code: val result = "${serializeThing(subject!!)} <$pPrefix$predicateId> ${serializeThing(`object`!!)} ."
-        val result = "? <$pPrefix$predicateId> ${serializeThing(`object`!!)} ."
-        if (result[0] == '"')
-            // Ignore literal
-            // TODO: log this somewhere
-            return ""
-        return result
-    }
-
-    private fun serializeThing(thing: Neo4jThing): String {
-        val rPrefix = RdfConstants.RESOURCE_NS
-        val pPrefix = RdfConstants.PREDICATE_NS
-        val cPrefix = RdfConstants.CLASS_NS
-        return when (thing) {
-            is Neo4jResource -> "<$rPrefix${thing.thingId}>"
-            is Neo4jPredicate -> "<$pPrefix${thing.thingId}>"
-            is Neo4jClass -> "<$cPrefix${thing.thingId}>"
-            else -> "\"${escapeLiterals(thing.label!!)}\"^^<http://www.w3.org/2001/XMLSchema#string>"
-        }
-    }
 }

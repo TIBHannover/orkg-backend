@@ -6,7 +6,7 @@ import java.time.OffsetDateTime
 
 data class Literal(
     val id: LiteralId?,
-    val label: String,
+    override val label: String,
     val datatype: String = "xsd:string",
     @JsonProperty("created_at")
     val createdAt: OffsetDateTime?,
@@ -14,4 +14,7 @@ data class Literal(
     val createdBy: ContributorId = ContributorId.createUnknownContributor(),
     // This is added to replace @JsonTypeInfo on the Thing interface
     val _class: String? = "literal"
-) : Thing
+) : Thing {
+    override val thingId: String?
+        get() = id?.toString()
+}

@@ -9,7 +9,7 @@ import org.eclipse.rdf4j.model.Model
 
 data class Class(
     val id: ClassId?,
-    val label: String,
+    override val label: String,
     val uri: URI?,
     @JsonProperty("created_at")
     val createdAt: OffsetDateTime?,
@@ -24,4 +24,6 @@ data class Class(
     @JsonProperty("description")
     var description: String? = null
     fun toClass(): Class = Class(id, label, uri, createdAt, createdBy, _class)
+    override val thingId: String?
+        get() = id?.toString()
 }

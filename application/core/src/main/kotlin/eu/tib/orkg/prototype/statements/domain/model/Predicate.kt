@@ -8,7 +8,7 @@ import org.eclipse.rdf4j.model.Model
 
 data class Predicate(
     val id: PredicateId?,
-    val label: String,
+    override val label: String,
     @JsonProperty("created_at")
     val createdAt: OffsetDateTime?,
     @JsonProperty("created_by")
@@ -21,4 +21,6 @@ data class Predicate(
 
     @JsonProperty("description")
     var description: String? = null
+    override val thingId: String?
+        get() = id?.toString()
 }

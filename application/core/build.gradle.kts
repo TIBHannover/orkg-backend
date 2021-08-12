@@ -8,6 +8,7 @@ plugins {
 
 dependencies {
     api(platform(project(":platform")))
+    implementation(project(":application:shared"))
     // FIXME: work-around for Spring stuff. Remove when refactored.
     // This whole ceremony is so that the Spring plugin does not fiddle with the jar. (It will break kapt.)
     implementation(platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES))

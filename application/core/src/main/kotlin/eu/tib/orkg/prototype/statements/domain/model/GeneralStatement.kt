@@ -3,6 +3,8 @@ package eu.tib.orkg.prototype.statements.domain.model
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.StatementResponse
+import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
+import eu.tib.orkg.prototype.util.escapeLiterals
 import java.time.OffsetDateTime
 
 data class GeneralStatement(
@@ -14,8 +16,32 @@ data class GeneralStatement(
     val createdAt: OffsetDateTime?,
     @JsonProperty("created_by")
     val createdBy: ContributorId = ContributorId.createUnknownContributor()
+) : StatementResponse {
+    /**
+     * Convert the triple to a statement in NTriple format.
+     */
+    fun toNTriple(): String {
+        val pPrefix = RdfConstants.PREDICATE_NS
+        val result = "${serializeThing(subject)} <$pPrefix$predicate.id> ${serializeThing(`object`)} ."
+        if (result[0] == '"')
+        // Ignore literal
+        // TODO: log this somewhere
+            return ""
+        return result
+    }
 
-) : StatementResponse
+    private fun serializeThing(thing: Thing): String {
+        val rPrefix = RdfConstants.RESOURCE_NS
+        val pPrefix = RdfConstants.PREDICATE_NS
+        val cPrefix = RdfConstants.CLASS_NS
+        return when (thing) {
+            is Resource -> "<$rPrefix${thing.thingId}>"
+            is Predicate -> "<$pPrefix${thing.thingId}>"
+            is Class -> "<$cPrefix${thing.thingId}>"
+            else -> "\"${escapeLiterals(thing.label)}\"^^<http://www.w3.org/2001/XMLSchema#string>"
+        }
+    }
+}
 
 data class CreateStatement(
     val id: StatementId? = null,

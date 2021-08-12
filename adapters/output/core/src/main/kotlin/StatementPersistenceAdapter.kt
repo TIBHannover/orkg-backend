@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.MATCH_STATEMENT
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteral
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatement
@@ -14,10 +15,15 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementIdGener
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThingRepository
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.RETURN_STATEMENT
 import eu.tib.orkg.prototype.statements.ports.StatementRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.neo4j.core.Neo4jClient
+import org.springframework.data.neo4j.core.Neo4jTemplate
+import org.springframework.data.neo4j.core.fetchAs
 import org.springframework.stereotype.Component
+import java.time.OffsetDateTime
 import java.util.Optional
 
 @Component
@@ -25,8 +31,17 @@ class StatementPersistenceAdapter(
     private val resourcePersistenceAdapter: ResourcePersistenceAdapter,
     private val predicatePersistenceAdapter: PredicatePersistenceAdapter,
     private val literalPersistenceAdapter: LiteralPersistenceAdapter,
-    private val statementRepository: Neo4jStatementRepository
+    private val statementRepository: Neo4jStatementRepository,
+    private val client: Neo4jClient
 ): StatementRepository {
+
+    override fun findAll(): Iterable<GeneralStatement> {
+        val result = client
+            .query("$MATCH_STATEMENT $RETURN_STATEMENT")
+            .fetchAs<ProjectedStatement>()
+            .all()
+        return result.map { toStatement(it) }
+    }
 
     override fun findAll(pagination: Pageable): Iterable<GeneralStatement> =
         statementRepository.findAll(pagination)
@@ -101,4 +116,27 @@ class StatementPersistenceAdapter(
             createdAt = statement.createdAt!!,
             createdBy = statement.createdBy
         )
+
+    private fun toStatement(statement: ProjectedStatement) =
+        GeneralStatement(
+            id = statement.statementId!!,
+            subject = refreshObject(statement.subject!!),
+            predicate = predicatePersistenceAdapter.findById(statement.predicateId!!).get(),
+            `object` = refreshObject(statement.`object`!!),
+            createdAt = statement.createdAt!!,
+            createdBy = statement.createdBy!!
+        )
+}
+
+internal data class ProjectedStatement(
+    val statementId: StatementId?,
+    val subject: Neo4jThing?,
+    val predicateId: PredicateId?,
+    val `object`: Neo4jThing?,
+    val createdBy: ContributorId?,
+    val createdAt: OffsetDateTime?
+) {
+    override fun toString(): String {
+        return "{id:$statementId}==(${subject!!.thingId} {${subject!!.label}})-[$predicateId]->(${`object`!!.thingId} {${`object`!!.label}})=="
+    }
 }

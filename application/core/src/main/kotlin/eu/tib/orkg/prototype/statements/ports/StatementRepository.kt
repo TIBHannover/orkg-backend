@@ -11,6 +11,8 @@ import java.util.Optional
 
 interface StatementRepository {
 
+    fun findAll(): Iterable<GeneralStatement> // only required by RDF dump
+
     fun findAll(pagination: Pageable): Iterable<GeneralStatement>
 
     fun findById(statementId: StatementId): Optional<GeneralStatement>

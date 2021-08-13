@@ -23,11 +23,16 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.RETURN_COUNT
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.WITH_SORTABLE_FIELDS
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.OffsetDateTimeConverter
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.PredicateIdConverter
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.StatementIdConverter
 import eu.tib.orkg.prototype.statements.ports.StatementRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.core.Neo4jClient
+import org.springframework.data.neo4j.core.convert.ConvertWith
 import org.springframework.data.neo4j.core.fetchAs
 import org.springframework.stereotype.Component
 import java.time.OffsetDateTime
@@ -226,11 +231,15 @@ class StatementPersistenceAdapter(
 }
 
 internal data class ProjectedStatement(
+    @ConvertWith(converter = StatementIdConverter::class)
     val statementId: StatementId,
     val subject: Neo4jThing,
+    @ConvertWith(converter = PredicateIdConverter::class)
     val predicateId: PredicateId,
     val `object`: Neo4jThing,
+    @ConvertWith(converter = ContributorIdConverter::class)
     val createdBy: ContributorId,
+    @ConvertWith(converter = OffsetDateTimeConverter::class)
     val createdAt: OffsetDateTime
 ) {
     override fun toString(): String {

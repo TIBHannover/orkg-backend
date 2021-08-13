@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,6 +26,8 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.ParameterDescriptor
 import org.springframework.restdocs.request.RequestDocumentation
 import org.springframework.restdocs.request.RequestParametersSnippet
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
@@ -32,6 +35,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup
 import org.springframework.web.context.WebApplicationContext
+import org.testcontainers.containers.Neo4jContainer
+import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy
+import org.testcontainers.junit.jupiter.Testcontainers
 
 /**
  * Base class for REST API documentation test.
@@ -40,6 +46,7 @@ import org.springframework.web.context.WebApplicationContext
  * in isolation. Additionally, spring-restdoc will be pre-configured.
  */
 @SpringBootTest
+@Testcontainers
 @ExtendWith(SpringExtension::class, RestDocumentationExtension::class)
 abstract class RestDocumentationBaseTest {
 
@@ -70,6 +77,29 @@ abstract class RestDocumentationBaseTest {
                 )
             )
             .build()
+    }
+
+    companion object {
+        // It is important to not use @Containers here, so we can manage the life-cycle.
+        // We instantiate only one container per test class. Ryuk will manage the shut-down.
+        private val container = Neo4jContainer<Nothing>("neo4j:4.2-community").apply {
+            waitingFor(HostPortWaitStrategy())
+            withoutAuthentication()
+        }
+
+        @JvmStatic
+        @BeforeAll
+        fun startContainer() = container.start()
+
+        @JvmStatic
+        @DynamicPropertySource
+        fun properties(registry: DynamicPropertyRegistry) {
+            with(registry) {
+                add("spring.neo4j.uri", container::getBoltUrl)
+                add("spring.neo4j.authentication.username") { "neo4j" }
+                add("spring.n3o4j.authentication.password", container::getAdminPassword)
+            }
+        }
     }
 
     protected fun getRequestTo(urlTemplate: String): MockHttpServletRequestBuilder =

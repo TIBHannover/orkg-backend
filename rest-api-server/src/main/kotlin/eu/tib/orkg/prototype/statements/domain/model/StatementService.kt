@@ -89,7 +89,7 @@ interface StatementService {
     /**
      * Count statements (for widget)
      */
-    fun countStatements(paperId: String): Int
+    fun countStatements(paperId: String): Long
 
     /**
      * Finds all statements by predicate and the label value of the object

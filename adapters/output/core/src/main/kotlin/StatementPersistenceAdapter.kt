@@ -1,7 +1,13 @@
 package eu.tib.orkg.prototype.core.statements.adapters.output
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.createdAt
+import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.createdBy
 import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.id
+import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.objectId
+import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.predicateId
+import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.statementId
+import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.subjectId
 import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.toCypher
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
@@ -14,24 +20,20 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.MATCH_STATEMENT
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.MATCH_STATEMENT_WITH_LITERAL
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteral
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatement
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementIdGenerator
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThingRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.RETURN_COUNT
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.RETURN_STATEMENT
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.WITH_SORTABLE_FIELDS
 import eu.tib.orkg.prototype.statements.ports.StatementRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.core.Neo4jClient
-import org.springframework.data.neo4j.core.Neo4jTemplate
 import org.springframework.data.neo4j.core.fetchAs
 import org.springframework.stereotype.Component
 import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Optional
+
 
 @Component
 class StatementPersistenceAdapter(
@@ -40,6 +42,52 @@ class StatementPersistenceAdapter(
     private val literalPersistenceAdapter: LiteralPersistenceAdapter,
     private val client: Neo4jClient
 ): StatementRepository {
+    override fun save(statement: GeneralStatement) {
+        val query = """
+            MATCH (sub:Thing), (obj:Thing)
+            WHERE sub.`resource_id`=$subjectId OR sub.`literal_id`=$subjectId OR sub.`predicate_id`=$subjectId OR sub.`class_id`=$subjectId
+              AND obj.`resource_id`=$objectId  OR obj.`literal_id`=$objectId  OR obj.`predicate_id`=$objectId  OR obj.`class_id`=$objectId
+            CREATE (sub)-[rel:RELATED {statement_id: $statementId, predicate_id: $predicateId, created_by: $createdBy, created_at: $createdAt}]->(obj)
+        """.trimIndent()
+        client.query(query)
+            .bind(statement.subject.thingId.toString()).to("subjectId")
+            .bind(statement.`object`.thingId.toString()).to("objectId")
+            .bind(statement.predicate.id.toString()).to("predicateId")
+            .bind(statement.id.toString()).to("statementId")
+            .bind(statement.createdBy.toString()).to("createdBy")
+            .bind(statement.createdAt?.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)).to("createdAt")
+            .run()
+    }
+
+    override fun delete(statement: GeneralStatement) {
+        client.query("MATCH ()->[rel:RELATED]->() WHERE rel.statement_id = ${'$'}id DELETE rel")
+            .bind(statement.id.toString()).to("id")
+            .run()
+    }
+
+    override fun count(): Long = client
+        .query("MATCH ()-[rel:RELATED]->() RETURN count(rel)")
+        .fetchAs<Long>()
+        .one() ?: 0
+
+    override fun countByIdRecursive(id: String): Long {
+        val query =
+            """MATCH (p:`Thing`)-[*]->() WHERE p.`resource_id`=${'$'}id OR p.`literal_id`=${'$'}id OR p.`predicate_id`=${'$'}id OR p.`class_id`=${'$'}id RETURN COUNT(p)"""
+        return client.query(query).fetchAs<Long>().one() ?: 0
+    }
+
+    override fun fetchAsBundle(rootId: String, configuration: Map<String, Any>): List<GeneralStatement> {
+        val query = """
+            MATCH (n:Thing)
+            WHERE n.resource_id = $id OR n.literal_id = $id OR n.class_id = $id OR n.predicate_id = $id
+            CALL apoc.path.subgraphAll(n, ${'$'}configuration)
+            YIELD relationships
+            UNWIND relationships as rel
+            RETURN startNode(rel) as subject, rel as predicate, endNode(rel) as object
+            ORDER BY rel.created_at DESC
+            """
+        return client.query(query).fetchAs<ProjectedStatement>().all().map { toStatement(it) }
+    }
 
     override fun findAll(): Iterable<GeneralStatement> {
         val result = client
@@ -60,7 +108,7 @@ class StatementPersistenceAdapter(
     override fun findById(statementId: StatementId): Optional<GeneralStatement> {
         val result = client
             .query("$MATCH_STATEMENT WHERE rel.statement_id = $id $RETURN_STATEMENT")
-            .bind(statementId).to("id")
+            .bind(statementId.toString()).to("id")
             .fetchAs<ProjectedStatement>()
             .one()
         return Optional.ofNullable(result).map { toStatement(it) }
@@ -152,12 +200,12 @@ class StatementPersistenceAdapter(
 
     private fun toStatement(statement: ProjectedStatement) =
         GeneralStatement(
-            id = statement.statementId!!,
-            subject = refreshObject(statement.subject!!),
-            predicate = predicatePersistenceAdapter.findById(statement.predicateId!!).get(),
-            `object` = refreshObject(statement.`object`!!),
-            createdAt = statement.createdAt!!,
-            createdBy = statement.createdBy!!
+            id = statement.statementId,
+            subject = refreshObject(statement.subject),
+            predicate = predicatePersistenceAdapter.findById(statement.predicateId).get(),
+            `object` = refreshObject(statement.`object`),
+            createdAt = statement.createdAt,
+            createdBy = statement.createdBy
         )
 
     private fun queryCount(query: String, pageable: Pageable, parameters: Map<String, Any> = emptyMap()): Long =
@@ -178,14 +226,17 @@ class StatementPersistenceAdapter(
 }
 
 internal data class ProjectedStatement(
-    val statementId: StatementId?,
-    val subject: Neo4jThing?,
-    val predicateId: PredicateId?,
-    val `object`: Neo4jThing?,
-    val createdBy: ContributorId?,
-    val createdAt: OffsetDateTime?
+    val statementId: StatementId,
+    val subject: Neo4jThing,
+    val predicateId: PredicateId,
+    val `object`: Neo4jThing,
+    val createdBy: ContributorId,
+    val createdAt: OffsetDateTime
 ) {
     override fun toString(): String {
-        return "{id:$statementId}==(${subject!!.thingId} {${subject!!.label}})-[$predicateId]->(${`object`!!.thingId} {${`object`!!.label}})=="
+        return "{id:$statementId}==(${subject.thingId} {${subject.label}})-[$predicateId]->(${`object`.thingId} {${`object`.label}})=="
     }
 }
+
+// Needs to match properties of ProjectedStatement exactly
+private const val RETURN_STATEMENT = """RETURN rel, sub AS subject, obj AS object, rel.statement_id AS statementId, rel.predicate_id AS predicateId, rel.created_at AS created_at, rel.created_by as createdBy"""

@@ -41,6 +41,6 @@ class WidgetController(private val service: ResourceService, private val stateme
         val doi: String?,
         val title: String,
         @JsonProperty("num_statements")
-        val numberOfStatements: Int
+        val numberOfStatements: Long
     )
 }

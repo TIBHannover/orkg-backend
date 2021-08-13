@@ -2,4 +2,4 @@ package eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.protot
 
 import org.springframework.data.domain.Pageable
 
-fun Pageable.toCypher(): String = "OFFSET $offset LIMIT $pageSize"
+fun Pageable.toCypher(): String = "SKIP $offset LIMIT $pageSize"

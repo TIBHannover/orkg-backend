@@ -11,6 +11,16 @@ import java.util.Optional
 
 interface StatementRepository {
 
+    fun save(statement: GeneralStatement)
+
+    fun delete(statement: GeneralStatement)
+
+    fun count(): Long
+
+    fun countByIdRecursive(id: String): Long
+
+    fun fetchAsBundle(rootId: String, configuration: Map<String, Any>): List<GeneralStatement>
+
     fun findAll(): Iterable<GeneralStatement> // only required by RDF dump
 
     fun findAll(pagination: Pageable): Iterable<GeneralStatement>
@@ -27,17 +37,15 @@ interface StatementRepository {
         subjectId: String,
         predicateId: PredicateId,
         pagination: Pageable
-    ): Iterable<GeneralStatement>
+    ): Page<GeneralStatement>
 
     fun findAllByObjectAndPredicate(
         objectId: String,
         predicateId: PredicateId,
         pagination: Pageable
-    ): Iterable<GeneralStatement>
+    ): Page<GeneralStatement>
 
-    fun findAllByPredicateAndLabel(predicateId: PredicateId, literal: String, pagination: Pageable): Iterable<GeneralStatement>
+    fun findAllByPredicateAndLabel(predicateId: PredicateId, literal: String, pagination: Pageable): Page<GeneralStatement>
 
-
-    fun findAllByPredicateAndLabelAndSubjectClass(predicateId: PredicateId, literal: String, subjectClass: ClassId, pagination: Pageable): Iterable<GeneralStatement>
-
+    fun findAllByPredicateAndLabelAndSubjectClass(predicateId: PredicateId, literal: String, subjectClass: ClassId, pagination: Pageable): Page<GeneralStatement>
 }

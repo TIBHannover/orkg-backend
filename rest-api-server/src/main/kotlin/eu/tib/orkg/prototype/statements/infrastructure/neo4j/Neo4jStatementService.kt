@@ -17,9 +17,10 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteral
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatement
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementIdGenerator
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThingRepository
+import eu.tib.orkg.prototype.statements.ports.StatementRepository
+import java.time.OffsetDateTime
 import java.util.Optional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -33,30 +34,25 @@ class Neo4jStatementService(
     private val resourceService: ResourceService,
     private val literalService: LiteralService,
     private val predicateService: PredicateService,
-    private val statementRepository: Neo4jStatementRepository,
+    private val statementRepository: StatementRepository,
     private val neo4jStatementIdGenerator: Neo4jStatementIdGenerator
 ) :
     StatementService {
 
     override fun findAll(pagination: Pageable): Iterable<GeneralStatement> =
         statementRepository.findAll(pagination)
-            .content
-            .map { toStatement(it) }
 
     override fun findById(statementId: StatementId): Optional<GeneralStatement> =
-        statementRepository.findByStatementId(statementId)
-            .map { toStatement(it) }
+        statementRepository.findById(statementId)
 
     override fun findAllBySubject(subjectId: String, pagination: Pageable): Page<GeneralStatement> =
-        statementRepository.findAllBySubject(subjectId, pagination).map { toStatement(it) }
+        statementRepository.findAllBySubject(subjectId, pagination)
 
     override fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable): Page<GeneralStatement> =
-        statementRepository.findAllByPredicateId(predicateId, pagination)
-            .map { toStatement(it) }
+        statementRepository.findAllByPredicate(predicateId, pagination)
 
     override fun findAllByObject(objectId: String, pagination: Pageable): Page<GeneralStatement> =
         statementRepository.findAllByObject(objectId, pagination)
-            .map { toStatement(it) }
 
     override fun findAllBySubjectAndPredicate(
         subjectId: String,
@@ -65,7 +61,6 @@ class Neo4jStatementService(
     ): Page<GeneralStatement> =
         statementRepository
             .findAllBySubjectAndPredicate(subjectId, predicateId, pagination)
-            .map { toStatement(it) }
 
     override fun findAllByObjectAndPredicate(
         objectId: String,
@@ -74,7 +69,6 @@ class Neo4jStatementService(
     ): Page<GeneralStatement> =
         statementRepository
             .findAllByObjectAndPredicate(objectId, predicateId, pagination)
-            .map { toStatement(it) }
 
     override fun create(subject: String, predicate: PredicateId, `object`: String) =
         create(ContributorId.createUnknownContributor(), subject, predicate, `object`)
@@ -87,41 +81,34 @@ class Neo4jStatementService(
     ): GeneralStatement {
         val foundSubject = thingRepository
             .findByThingId(subject)
+            .map(Neo4jThing::toThing)
             .orElseThrow { IllegalStateException("Could not find subject $subject") }
 
         val foundPredicate = predicateService.findById(predicate)
-        if (!foundPredicate.isPresent)
-            throw IllegalArgumentException("predicate could not be found: $predicate")
+            .orElseThrow { IllegalArgumentException("predicate could not be found: $predicate") }
 
         val foundObject = thingRepository
             .findByThingId(`object`)
+            .map(Neo4jThing::toThing)
             .orElseThrow { IllegalStateException("Could not find object: $`object`") }
 
         var id = neo4jStatementIdGenerator.nextIdentity()
 
         // Should be moved to the Generator in the future
-        while (statementRepository.findByStatementId(id).isPresent) {
+        while (statementRepository.findById(id).isPresent) {
             id = neo4jStatementIdGenerator.nextIdentity()
         }
 
-        val persistedStatement = statementRepository.save(
-            Neo4jStatement(
-                statementId = id,
-                predicateId = predicate,
-                subject = foundSubject,
-                `object` = foundObject,
-                createdBy = userId
-            )
+        val statement = GeneralStatement(
+            id = id,
+            predicate = foundPredicate,
+            subject = foundSubject,
+            `object` = foundObject,
+            createdBy = userId,
+            createdAt = OffsetDateTime.now()
         )
-
-        return GeneralStatement(
-            persistedStatement.statementId!!,
-            foundSubject.toThing(),
-            foundPredicate.get(),
-            foundObject.toThing(),
-            persistedStatement.createdAt!!,
-            persistedStatement.createdBy
-        )
+        statementRepository.save(statement)
+        return statement
     }
 
     override fun add(userId: ContributorId, subject: String, predicate: PredicateId, `object`: String) {
@@ -130,24 +117,27 @@ class Neo4jStatementService(
 
         val foundSubject = thingRepository
             .findByThingId(subject)
+            .map(Neo4jThing::toThing)
             .orElseThrow { IllegalStateException("Could not find subject $subject") }
 
-        predicateService.findById(predicate)
+        val foundPredicate = predicateService.findById(predicate)
             .orElseThrow { IllegalArgumentException("Predicate could not be found: $predicate") }
 
         val foundObject = thingRepository
             .findByThingId(`object`)
+            .map(Neo4jThing::toThing)
             .orElseThrow { IllegalStateException("Could not find object: $`object`") }
 
         val id = neo4jStatementIdGenerator.nextIdentity()
 
         statementRepository.save(
-            Neo4jStatement(
-                statementId = id,
-                predicateId = predicate,
+            GeneralStatement(
+                id = id,
+                predicate = foundPredicate,
                 subject = foundSubject,
                 `object` = foundObject,
-                createdBy = userId
+                createdBy = userId,
+                createdAt = OffsetDateTime.now()
             )
         )
     }
@@ -156,27 +146,25 @@ class Neo4jStatementService(
         statementRepository.count()
 
     override fun remove(statementId: StatementId) {
-        val toDelete = statementRepository.findByStatementId(statementId)
+        val toDelete = statementRepository.findById(statementId)
         statementRepository.delete(toDelete.get())
     }
 
     override fun update(statementEditRequest: StatementEditRequest): GeneralStatement {
-        var found = statementRepository.findByStatementId(statementEditRequest.statementId!!)
+        // FIXME: This is very, very broken and needs a rewrite. Clients depend on it, so we need to define semantics around it.
+        val found = statementRepository.findById(statementEditRequest.statementId!!)
         if (found.isPresent) {
-
-            // update all the properties
-            found.get().predicateId = statementEditRequest.predicateId
-            found.get().subject = thingRepository.findByThingId(statementEditRequest.subjectId).get()
-            found.get().`object` = thingRepository.findByThingId(statementEditRequest.objectId).get()
-
-            statementRepository.save(found.get())
-
-            return toStatement(found.get())
+            val new = found.get()
+                .copy(predicate = predicateService.findById(statementEditRequest.predicateId).get())
+                .copy(subject = thingRepository.findByThingId(statementEditRequest.subjectId).get().toThing())
+                .copy(`object` = thingRepository.findByThingId(statementEditRequest.objectId).get().toThing())
+            statementRepository.save(new)
+            return new
         }
-        return toStatement(Neo4jStatement())
+        return found.get()
     }
 
-    override fun countStatements(paperId: String): Int =
+    override fun countStatements(paperId: String): Long =
         statementRepository.countByIdRecursive(paperId)
 
     override fun findAllByPredicateAndLabel(
@@ -184,8 +172,7 @@ class Neo4jStatementService(
         literal: String,
         pagination: Pageable
     ): Page<GeneralStatement> =
-        statementRepository.findAllByPredicateIdAndLabel(predicateId, literal, pagination)
-            .map { toStatement(it) }
+        statementRepository.findAllByPredicateAndLabel(predicateId, literal, pagination)
 
     override fun findAllByPredicateAndLabelAndSubjectClass(
         predicateId: PredicateId,
@@ -193,8 +180,7 @@ class Neo4jStatementService(
         subjectClass: ClassId,
         pagination: Pageable
     ): Page<GeneralStatement> =
-        statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(predicateId, literal, subjectClass, pagination)
-            .map { toStatement(it) }
+        statementRepository.findAllByPredicateAndLabelAndSubjectClass(predicateId, literal, subjectClass, pagination)
 
     override fun fetchAsBundle(
         thingId: String,
@@ -206,11 +192,11 @@ class Neo4jStatementService(
                 thingId,
                 configuration.toApocConfiguration()
             )
-                .map { toStatement(it) }
                 .toMutableList()
         )
 
-    override fun removeAll() = statementRepository.deleteAll()
+    // FIXME: To be removed
+    override fun removeAll() = Unit
 
     private fun refreshObject(thing: Neo4jThing): Thing {
         return when (thing) {

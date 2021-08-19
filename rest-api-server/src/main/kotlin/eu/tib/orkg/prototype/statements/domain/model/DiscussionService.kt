@@ -1,5 +1,5 @@
 package eu.tib.orkg.prototype.statements.domain.model
-import eu.tib.orkg.prototype.statements.application.DiscussionController
+import eu.tib.orkg.prototype.statements.application.CreateTopicRequest
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
@@ -21,7 +21,7 @@ class DiscussionService() {
     @Value("\${orkg.discourse.userName}")
     var discourseUserName: String? = null
 
-    fun createDiscussionTopic(topic: DiscussionController.CreateTopicRequest): Optional<String> {
+    fun createDiscussionTopic(topic: CreateTopicRequest): Optional<String> {
         return try {
             val httpConnection = prepareHttpCall("$discourseUrl/posts.json", "POST")
             httpConnection.outputStream.write("""{

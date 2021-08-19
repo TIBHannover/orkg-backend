@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.statements.domain.model.DiscussionService
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
@@ -33,7 +34,8 @@ class ObservatoryController(
     private val resourceService: ResourceService,
     private val organizationService: OrganizationService,
     private val contributorService: ContributorService,
-    private val neo4jStatsService: Neo4jStatsService
+    private val neo4jStatsService: Neo4jStatsService,
+    private val discussionService: DiscussionService
 ) {
 
     @PostMapping("/")
@@ -132,6 +134,16 @@ class ObservatoryController(
     @GetMapping("stats/observatories")
     fun findObservatoriesWithStats(): List<ObservatoryResources> {
         return neo4jStatsService.getObservatoriesPapersAndComparisonsCount()
+    }
+
+    @PostMapping("/{id}/discussion")
+    fun createDiscussionTopic(@RequestBody topic: CreateTopicRequest): String {
+        return discussionService.createDiscussionTopic(topic).orElseThrow()
+    }
+
+    @GetMapping("{id}/discussion")
+    fun getObservatoryDiscussion(@PathVariable id: String): String {
+        return discussionService.findObservatoryDiscussion(id).orElseThrow()
     }
 
     fun isValidUUID(id: String): Boolean {

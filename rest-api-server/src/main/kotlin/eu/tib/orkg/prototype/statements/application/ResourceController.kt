@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.DiscussionService
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -36,7 +37,8 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/resources/")
 class ResourceController(
     private val service: ResourceService,
-    private val contributorService: ContributorService
+    private val contributorService: ContributorService,
+    private val discussionService: DiscussionService
 ) : BaseController() {
 
     @GetMapping("/{id}")
@@ -135,6 +137,16 @@ class ResourceController(
 
         return ResponseEntity.noContent().build()
     }
+
+    @PostMapping("/{id}/discussion")
+    fun createDiscussionTopic(@RequestBody topic: CreateTopicRequest): String {
+        return discussionService.createDiscussionTopic(topic).orElseThrow()
+    }
+
+    @GetMapping("{id}/discussion")
+    fun getObservatoryDiscussion(@PathVariable id: String): String {
+        return discussionService.findObservatoryDiscussion(id).orElseThrow()
+    }
 }
 
 enum class ExtractionMethod {
@@ -161,4 +173,9 @@ data class UpdateResourceObservatoryRequest(
     val observatoryId: ObservatoryId,
     @JsonProperty("organization_id")
     val organizationId: OrganizationId
+)
+
+data class CreateTopicRequest(
+    val title: String,
+    val raw: String
 )

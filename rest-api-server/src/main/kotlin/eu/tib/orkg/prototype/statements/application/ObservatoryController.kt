@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.domain.model.DiscussionService
@@ -9,6 +10,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.Neo4jStatsService
@@ -137,8 +139,12 @@ class ObservatoryController(
     }
 
     @PostMapping("/{id}/discussion")
-    fun createDiscussionTopic(@RequestBody topic: CreateTopicRequest): String {
-        return discussionService.createDiscussionTopic(topic).orElseThrow()
+    fun createDiscussionTopic(@PathVariable id: ObservatoryId, @RequestBody topic: CreateTopicRequest): String {
+        val response = discussionService.createDiscussionTopic(topic).orElseThrow()
+        val mapper = jacksonObjectMapper()
+        val topicId = mapper.readTree(response)["id"].intValue()
+        service.changeTopicId(id, topicId)
+        return response
     }
 
     @GetMapping("{id}/discussion")

@@ -115,6 +115,14 @@ class PostgresObservatoryService(
         return expand(response)
     }
 
+    override fun changeTopicId(id: ObservatoryId, to: Int): Observatory {
+        val entity = postgresObservatoryRepository.findById(id.value).get().apply {
+            topicId = to
+        }
+        val response = postgresObservatoryRepository.save(entity).toObservatory()
+        return expand(response)
+    }
+
     fun hasResearchField(response: Observatory): Boolean {
         return response.researchField?.id !== null
     }

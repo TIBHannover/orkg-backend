@@ -38,6 +38,9 @@ class ObservatoryEntity() {
     @Column(name = "display_id")
     var displayId: String? = null
 
+    @Column(name = "topic_id")
+    var topicId: Int? = null
+
     @JsonIgnore
     @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     @JoinTable(
@@ -55,6 +58,7 @@ class ObservatoryEntity() {
             researchField = ResearchField(researchField, null),
             members = users!!.map(UserEntity::toContributor).toSet(),
             organizationIds = organizations!!.map { OrganizationId(it.id!!) }.toSet(),
-            displayId = displayId
+            displayId = displayId,
+            topicId=topicId
         )
 }

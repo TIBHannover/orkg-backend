@@ -232,6 +232,13 @@ class Neo4jResourceService(
         return Optional.empty()
     }
 
+    override fun updateResourceTopic(id: ResourceId, topicId: Int): Resource {
+        val found = neo4jResourceRepository.findByResourceId(id).get()
+        found.topicId = topicId
+
+        return neo4jResourceRepository.save(found).toResource()
+    }
+
     private fun String.toSearchString() = "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"
 
     private fun String.toExactSearchString() = "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"

@@ -70,6 +70,9 @@ data class Neo4jResource(
     @Convert(OrganizationIdConverter::class)
     var organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
 
+    @Property("topic_id")
+    var topicId: Int = 0
+
     /**
      * List of node labels. Labels other than the `Resource` label are mapped to classes.
      */
@@ -91,7 +94,8 @@ data class Neo4jResource(
         createdBy: ContributorId = ContributorId.createUnknownContributor(),
         observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
         extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
-        organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
+        organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
+        topicId: Int = 0
     ) : this(null) {
         this.label = label
         this.resourceId = resourceId
@@ -99,6 +103,7 @@ data class Neo4jResource(
         this.observatoryId = observatoryId
         this.extractionMethod = extractionMethod
         this.organizationId = organizationId
+        this.topicId = 0
     }
 
     fun toResource(): Resource {
@@ -111,7 +116,8 @@ data class Neo4jResource(
             createdBy = createdBy,
             observatoryId = observatoryId,
             extractionMethod = extractionMethod,
-            organizationId = organizationId
+            organizationId = organizationId,
+            topicId = topicId
         )
         resource.rdf = toRdfModel()
         return resource

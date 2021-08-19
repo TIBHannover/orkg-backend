@@ -11,6 +11,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
@@ -139,8 +140,12 @@ class ResourceController(
     }
 
     @PostMapping("/{id}/discussion")
-    fun createDiscussionTopic(@RequestBody topic: CreateTopicRequest): String {
-        return discussionService.createDiscussionTopic(topic).orElseThrow()
+    fun createDiscussionTopic(@PathVariable id: ResourceId, @RequestBody topic: CreateTopicRequest): String {
+        val response = discussionService.createDiscussionTopic(topic).orElseThrow()
+        val mapper = jacksonObjectMapper()
+        val topicId = mapper.readTree(response)["id"].intValue()
+        service.updateResourceTopic(id, topicId)
+        return response
     }
 
     @GetMapping("{id}/discussion")

@@ -59,6 +59,6 @@ class ObservatoryEntity() {
             members = users!!.map(UserEntity::toContributor).toSet(),
             organizationIds = organizations!!.map { OrganizationId(it.id!!) }.toSet(),
             displayId = displayId,
-            topicId=topicId
+            topicId = topicId
         )
 }

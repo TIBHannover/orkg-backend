@@ -144,7 +144,7 @@ class ResourceController(
     }
 
     @GetMapping("{id}/discussion")
-    fun getObservatoryDiscussion(@PathVariable id: String): String {
+    fun getResourceDiscussion(@PathVariable id: String): String {
         return discussionService.findObservatoryDiscussion(id).orElseThrow()
     }
 }

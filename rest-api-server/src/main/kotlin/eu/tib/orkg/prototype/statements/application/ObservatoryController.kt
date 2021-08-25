@@ -141,7 +141,7 @@ class ObservatoryController(
     fun createDiscussionTopic(@PathVariable id: ObservatoryId, @RequestBody topic: CreateTopicRequest): String {
         val response = discussionService.createDiscussionTopic(topic).orElseThrow()
         val mapper = jacksonObjectMapper()
-        val topicId = mapper.readTree(response)["id"].intValue()
+        val topicId = mapper.readTree(response)["topic_id"].intValue()
         service.changeTopicId(id, topicId)
         return response
     }

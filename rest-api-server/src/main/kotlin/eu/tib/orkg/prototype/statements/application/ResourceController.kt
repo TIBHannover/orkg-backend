@@ -143,7 +143,7 @@ class ResourceController(
     fun createDiscussionTopic(@PathVariable id: ResourceId, @RequestBody topic: CreateTopicRequest): String {
         val response = discussionService.createDiscussionTopic(topic).orElseThrow()
         val mapper = jacksonObjectMapper()
-        val topicId = mapper.readTree(response)["id"].intValue()
+        val topicId = mapper.readTree(response)["topic_id"].intValue()
         service.updateResourceTopic(id, topicId)
         return response
     }

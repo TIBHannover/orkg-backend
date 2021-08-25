@@ -15,7 +15,7 @@ data class Observatory(
     @JsonProperty("display_id")
     val displayId: String? = null,
     @JsonProperty("topic_id")
-    val topicId: Int? = null
+    val topicId: Int? = 0
 )
 
 data class ResearchField(var id: String?, var label: String?)

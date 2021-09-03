@@ -12,6 +12,7 @@ import java.util.Optional
 interface ResourceRepository {
     fun save(resource: Resource): Resource
 
+    fun count(): Long
 
     /**
      * Find all resources.

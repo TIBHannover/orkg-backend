@@ -15,6 +15,7 @@ dependencies {
         exclude(module = "neo4j-ogm-http-driver")
     }
 
+    testImplementation(testFixtures(project(":application:core")))
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     val testContainersVersion = "1.15.3"

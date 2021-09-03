@@ -20,6 +20,8 @@ class ResourcePersistenceAdapter(private val neo4jResourceRepository: Neo4jResou
     override fun save(resource: Resource): Resource =
         neo4jResourceRepository.save(resource.toNeo4jResource()).toResource()
 
+    override fun count(): Long = neo4jResourceRepository.count()
+
     override fun findAll(pageable: Pageable): Page<Resource> =
         neo4jResourceRepository.findAll(pageable).map(Neo4jResource::toResource)
 
@@ -106,7 +108,7 @@ class ResourcePersistenceAdapter(private val neo4jResourceRepository: Neo4jResou
         neo4jResourceRepository.findProblemsByObservatoryId(id).map(Neo4jResource::toResource)
 }
 
-private fun Resource.toNeo4jResource(): Neo4jResource =
+internal fun Resource.toNeo4jResource(): Neo4jResource =
     Neo4jResource(
         resourceId = this.id!!,
         label = this.label,

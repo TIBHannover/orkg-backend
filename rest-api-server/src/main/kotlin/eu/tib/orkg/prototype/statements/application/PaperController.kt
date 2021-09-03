@@ -122,9 +122,13 @@ class PaperController(
      */
     private fun createNewPaperWithMetadata(userId: ContributorId, request: CreatePaperRequest): Resource {
         val contributor = contributorService.findByIdOrElseUnknown(userId)
-        val organizationId = request.paper.observatoryInfo.organizationId!!
-        val observatoryId = request.paper.observatoryInfo.observatoryId!!
+        var organizationId = OrganizationId.createUnknownOrganization()
+        var observatoryId = ObservatoryId.createUnknownObservatory()
 
+        if (request.paper.hasObservatoryInformation()) {
+            organizationId = request.paper.observatoryInfo?.organizationId!!
+            observatoryId = request.paper.observatoryInfo.observatoryId!!
+        }
         // paper title
         val paperObj = resourceService.create(
             userId,
@@ -326,7 +330,7 @@ data class Paper(
     val researchField: String,
     val contributions: List<NamedObject>?,
     val extractionMethod: ExtractionMethod = UNKNOWN,
-    val observatoryInfo: ObservatoryData
+    val observatoryInfo: ObservatoryData?
 ) {
     /**
      * Check if the paper has a published in venue
@@ -369,6 +373,9 @@ data class Paper(
      */
     fun hasPublicationYear() =
         publicationYear != null
+
+    fun hasObservatoryInformation(): Boolean =
+        observatoryInfo != null
 }
 
 /**

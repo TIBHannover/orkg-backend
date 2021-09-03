@@ -49,9 +49,10 @@ class StatementPersistenceAdapter(
 ): StatementRepository {
     override fun save(statement: GeneralStatement) {
         val query = """
-            MATCH (sub:Thing), (obj:Thing)
-            WHERE sub.`resource_id`=$subjectId OR sub.`literal_id`=$subjectId OR sub.`predicate_id`=$subjectId OR sub.`class_id`=$subjectId
-              AND obj.`resource_id`=$objectId  OR obj.`literal_id`=$objectId  OR obj.`predicate_id`=$objectId  OR obj.`class_id`=$objectId
+            MATCH (sub:Thing)
+              WHERE sub.`resource_id`=$subjectId OR sub.`literal_id`=$subjectId OR sub.`predicate_id`=$subjectId OR sub.`class_id`=$subjectId
+            MATCH (obj:Thing)
+              WHERE obj.`resource_id`=$objectId  OR obj.`literal_id`=$objectId  OR obj.`predicate_id`=$objectId  OR obj.`class_id`=$objectId
             CREATE (sub)-[rel:RELATED {statement_id: $statementId, predicate_id: $predicateId, created_by: $createdBy, created_at: $createdAt}]->(obj)
         """.trimIndent()
         client.query(query)

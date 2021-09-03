@@ -72,7 +72,6 @@ class ResourceController(
         if (resource.id != null && service.findById(resource.id).isPresent)
             return badRequest().body("Resource id <${resource.id}> already exists!")
         val userId = authenticatedUserId()
-        val contributor = contributorService.findById(ContributorId(userId))
         val organizationId = resource.organizationId
         val observatoryId = resource.observatoryId
         val id = service.create(ContributorId(userId), resource, observatoryId, resource.extractionMethod, organizationId).id

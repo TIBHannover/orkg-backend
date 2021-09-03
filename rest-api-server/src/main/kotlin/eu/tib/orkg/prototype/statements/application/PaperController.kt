@@ -121,7 +121,6 @@ class PaperController(
      * i.e., creates the new paper, meta-data
      */
     private fun createNewPaperWithMetadata(userId: ContributorId, request: CreatePaperRequest): Resource {
-        val contributor = contributorService.findByIdOrElseUnknown(userId)
         var organizationId = OrganizationId.createUnknownOrganization()
         var observatoryId = ObservatoryId.createUnknownObservatory()
 

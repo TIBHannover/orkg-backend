@@ -14,6 +14,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
@@ -22,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @DisplayName("Stats Controller")
 @Transactional
-class StatsControllerTest : RestDocumentationBaseTest() {
+class StatsControllerTest(neo4jClient: Neo4jClient) : RestDocumentationBaseTest(neo4jClient) {
 
     @Autowired
     private lateinit var resourceService: ResourceService

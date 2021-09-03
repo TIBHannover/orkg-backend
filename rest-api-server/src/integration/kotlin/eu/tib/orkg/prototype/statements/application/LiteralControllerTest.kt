@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
+import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
@@ -23,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Literal Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-class LiteralControllerTest : RestDocumentationBaseTest() {
+class LiteralControllerTest(neo4jClient: Neo4jClient) : RestDocumentationBaseTest(neo4jClient) {
 
     @Autowired
     private lateinit var service: LiteralService

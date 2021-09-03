@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.auth.service.UserService
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -13,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @DisplayName("Contributor Controller")
 @Transactional
-internal class ContributorControllerTest : RestDocumentationBaseTest() {
+internal class ContributorControllerTest(neo4jClient: Neo4jClient) : RestDocumentationBaseTest(neo4jClient) {
 
     @Autowired
     private lateinit var service: UserService

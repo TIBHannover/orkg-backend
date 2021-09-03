@@ -1,21 +1,20 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
-import eu.tib.orkg.prototype.configuration.Neo4jConfiguration
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
-import org.springframework.context.annotation.Import
-import org.springframework.transaction.annotation.Transactional
+import org.springframework.data.neo4j.core.Neo4jClient
 
 @DataNeo4jTest
-@Transactional
-@Import(Neo4jConfiguration::class)
-class Neo4jResourceTest {
+class Neo4jResourceTest(
+    neo4jClient: Neo4jClient
+) : Neo4jTestContainersBaseTest(neo4jClient) {
 
     @Autowired
     private lateinit var repository: Neo4jResourceRepository

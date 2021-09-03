@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation
 import org.springframework.restdocs.payload.PayloadDocumentation
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -28,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Research Field Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-class ResearchFieldControllerTest : RestDocumentationBaseTest() {
+class ResearchFieldControllerTest(neo4jClient: Neo4jClient) : RestDocumentationBaseTest(neo4jClient) {
 
     @Autowired
     private lateinit var resourceService: ResourceService

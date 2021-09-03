@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.statements.application.CreatePredicateRequest
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
+import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -11,10 +12,13 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.neo4j.core.Neo4jClient
 
 @SpringBootTest
 @DisplayName("Neo4j: Predicate service")
-class Neo4jPredicateServiceTest {
+class Neo4jPredicateServiceTest(
+    neo4jClient: Neo4jClient
+) : Neo4jTestContainersBaseTest(neo4jClient) {
 
     @Autowired
     private lateinit var service: PredicateService

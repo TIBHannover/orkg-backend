@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.core.statements.adapters.output
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ResearchField
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -48,6 +49,19 @@ class ResearchFieldPersistenceAdapter(
 
     override fun getResearchProblemsExcludingSubFields(id: ResourceId, pageable: Pageable): Page<Resource> =
         neo4jResearchFieldRepository.getProblemsExcludingSubFields(id, pageable).map(Neo4jResource::toResource)
+
+    override fun getContributorIdsFromResearchFieldAndIncludeSubfields(
+        id: ResourceId,
+        pageable: Pageable
+    ): Page<ContributorId> =
+        neo4jResearchFieldRepository.getContributorIdsFromResearchFieldAndIncludeSubfields(id, pageable)
+
+    override fun getContributorIdsExcludingSubFields(id: ResourceId, pageable: Pageable): Page<ContributorId> =
+        neo4jResearchFieldRepository.getContributorIdsExcludingSubFields(id, pageable)
+
+    override fun findResearchFieldsWithBenchmarks(): Iterable<Resource> =
+        neo4jResearchFieldRepository.findResearchFieldsWithBenchmarks()
+            .map(Neo4jResource::toResource)
 
     override fun withBenchmarks(): List<ResearchField> =
         neo4jResearchFieldRepository.findResearchFieldsWithBenchmarks()

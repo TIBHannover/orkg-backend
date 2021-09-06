@@ -83,9 +83,13 @@ class ObjectController(
     ): Resource {
         // Get provenance info
         val userId = ContributorId(authenticatedUserId())
-        val contributor = contributorService.findByIdOrElseUnknown(userId)
-        val organizationId = contributor.organizationId
-        val observatoryId = contributor.observatoryId
+        var organizationId = OrganizationId.createUnknownOrganization()
+        var observatoryId = ObservatoryId.createUnknownObservatory()
+
+        if (request.hasObservatoryInformation()) {
+            organizationId = request.observatoryInfo?.organizationId!!
+            observatoryId = request.observatoryInfo.observatoryId!!
+        }
 
         // Handle predicates (temp and existing)
         val predicates: HashMap<String, PredicateId> = HashMap()
@@ -409,7 +413,8 @@ class ObjectController(
 
 data class CreateObjectRequest(
     val predicates: List<HashMap<String, String>>?,
-    val resource: NamedObject
+    val resource: NamedObject,
+    val observatoryInfo: ObservatoryData?
 ) {
     /**
      * Check if the object has a set
@@ -417,6 +422,9 @@ data class CreateObjectRequest(
      */
     fun hasTempPredicates() =
         this.predicates != null && this.predicates.count() > 0
+
+    fun hasObservatoryInformation(): Boolean =
+        observatoryInfo != null
 }
 
 data class NamedObject(

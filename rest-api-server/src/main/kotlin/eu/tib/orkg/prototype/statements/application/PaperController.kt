@@ -85,7 +85,7 @@ class PaperController(
     ): ResourceId {
         // Convert Paper structure to Object structure
         val contribution = jsonObject.copy(classes = listOf(Constants.ID_CONTRIBUTION_CLASS))
-        val objectRequest = CreateObjectRequest(paperRequest.predicates, contribution)
+        val objectRequest = CreateObjectRequest(paperRequest.predicates, contribution, paperRequest.paper.observatoryInfo)
         // Create contribution resource whether it has data or not
         return objectController.createObject(objectRequest).id!!
     }

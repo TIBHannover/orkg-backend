@@ -11,13 +11,16 @@ import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototy
 import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.toCypher
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
+import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.BY_OBJECT_ID
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.BY_SUBJECT_ID
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.MATCH_STATEMENT
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.MATCH_STATEMENT_WITH_LITERAL
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jClass
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteral
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
@@ -28,16 +31,24 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.OffsetDateTim
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.PredicateIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.StatementIdConverter
 import eu.tib.orkg.prototype.statements.ports.StatementRepository
+import org.neo4j.driver.internal.InternalNode
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.data.neo4j.core.convert.ConvertWith
 import org.springframework.data.neo4j.core.fetchAs
+import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.stereotype.Component
+import java.net.URI
+import java.time.LocalDateTime
 import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.util.Collections
 import java.util.Optional
+import java.util.UUID
+import java.util.logging.Logger
 
 
 @Component
@@ -47,6 +58,9 @@ class StatementPersistenceAdapter(
     private val literalPersistenceAdapter: LiteralPersistenceAdapter,
     private val client: Neo4jClient
 ): StatementRepository {
+
+    private val logger = Logger.getLogger("StatementPersistenceAdpater")
+
     override fun save(statement: GeneralStatement) {
         val query = """
             MATCH (sub:Thing)
@@ -66,6 +80,7 @@ class StatementPersistenceAdapter(
     }
 
     override fun delete(statement: GeneralStatement) {
+        logger.info("Deleting ID: ${statement.id?.value}")
         client.query("MATCH ()->[rel:RELATED]->() WHERE rel.statement_id = ${'$'}id DELETE rel")
             .bind(statement.id.toString()).to("id")
             .run()
@@ -92,32 +107,46 @@ class StatementPersistenceAdapter(
             RETURN startNode(rel) as subject, rel as predicate, endNode(rel) as object
             ORDER BY rel.created_at DESC
             """
-        return client.query(query).fetchAs<ProjectedStatement>().all().map { toStatement(it) }
+        return client.query(query).fetch().all().map { extractStatement(it.toMap() as HashMap<String, Any>) }
     }
 
     override fun findAll(): Iterable<GeneralStatement> {
         val result = client
             .query("$MATCH_STATEMENT $RETURN_STATEMENT")
-            .fetchAs<ProjectedStatement>()
+            .fetch()
             .all()
-        return result.map { toStatement(it) }
+        logger.info("Size 1: ${result.size}")
+        return result.map { extractStatement(it.toMap() as HashMap<String, Any>) }
     }
 
     override fun findAll(pagination: Pageable): Iterable<GeneralStatement> {
-        val result = client
+        logger.info("Finding all results")
+        //val tempRes = client.query("$MATCH_STATEMENT $RETURN_STATEMENT").fetch().all()
+        //logger.info("Res: $tempRes")
+        var result = client
             .query("$MATCH_STATEMENT $RETURN_STATEMENT ${pagination.toCypher()}")
-            .fetchAs<ProjectedStatement>()
+            //.query("$MATCH_STATEMENT $RETURN_STATEMENT")
+            //.fetchAs<ProjectedStatement>()
+            .fetch()
             .all()
-        return result.map { toStatement(it) }
+
+
+        logger.info("size:${result.size}")
+        return result.map {
+            extractStatement(it.toMap() as HashMap<String, Any>)
+        }
+
+        //return result.map {   toStatement(it)    }
     }
 
     override fun findById(statementId: StatementId): Optional<GeneralStatement> {
         val result = client
             .query("$MATCH_STATEMENT WHERE rel.statement_id = $id $RETURN_STATEMENT")
             .bind(statementId.toString()).to("id")
-            .fetchAs<ProjectedStatement>()
+            .fetch()
             .one()
-        return Optional.ofNullable(result).map { toStatement(it) }
+        //logger.info("Find By ID: ${result?.statementId?.value}")
+        return Optional.ofNullable(result).map { extractStatement(result.get().toMap() as HashMap<String, Any>) }
     }
 
     override fun findAllBySubject(subjectId: String, pagination: Pageable): Page<GeneralStatement> {
@@ -197,6 +226,7 @@ class StatementPersistenceAdapter(
     }
 
     private fun refreshObject(thing: Neo4jThing): Thing {
+        logger.info("Inside refreshObject: $thing")
         return when (thing) {
             is Neo4jResource -> resourcePersistenceAdapter.findById(thing.resourceId).get()
             is Neo4jLiteral -> literalPersistenceAdapter.findById(thing.literalId).get()
@@ -214,6 +244,178 @@ class StatementPersistenceAdapter(
             createdBy = statement.createdBy
         )
 
+    private fun extractStatement(statement: Map<String, Any?>): GeneralStatement {
+        //Logic based on LABELS of Subject & Object -> call when and add your logic
+        //in else of when -> throw an error
+        //Collection of an unmodifiable map
+        logger.info("ID:${statement.get("statementId")}")
+        logger.info("Subject: ${statement.get("subject")}")
+        logger.info("Predicate: ${statement.get("predicateId")}")
+        logger.info("Object: ${statement.get("object")}")
+
+        //Normal behavior
+        val sub = statement.get("subject") as InternalNode
+        val subjectMap = sub.asMap() //Construct the object ourselves ->
+        logger.info("Sub Node:${sub.asMap()}")
+
+        var subLabels = statement.get("subLabels") as List<String>
+        var objLabels = statement.get("objLabels") as List<String>
+
+        subLabels = subLabels.filter { !it.toLowerCase().equals("thing") && !it.toLowerCase().equals("auditableentity") }
+
+        logger.info("Subject Labels")
+        subLabels.map {
+            logger.info(it)
+        }
+
+
+
+        objLabels = objLabels.filter { !it.toLowerCase().equals("thing") && !it.toLowerCase().equals("auditableentity") }
+        logger.info("Object Labels")
+        objLabels.map {
+            logger.info(it)
+        }
+
+        var subRes: Any = ""
+
+        /*var subjectResult = when {
+            subLabels.contains("Class") -> {
+                Neo4jClass(
+                    label = subjectMap.get("label").toString(),
+                    classId = ClassId(subjectMap.get("class_id").toString()),
+                    uri = subjectMap.get("uri") as URI?,
+                    createdBy = ContributorId(subjectMap.get("created_by").toString())
+                )
+            }
+            else -> {
+                Neo4jResource(
+                    label = subjectMap.get("label").toString(),
+                    resourceId = ResourceId(subjectMap.get("resource_id").toString()),
+                )
+            }
+        }*/
+
+
+
+        val tempSubject = subjectMap.get("class_id")
+
+        when(tempSubject){
+            null -> subRes = Neo4jResource(
+                label = subjectMap.get("label").toString(),
+                resourceId = ResourceId(subjectMap.get("resource_id").toString()),
+            )
+            else -> {
+                subRes = Neo4jClass(
+                    label = subjectMap.get("label").toString(),
+                    classId = ClassId(subjectMap.get("class_id").toString()),
+                    uri = subjectMap.get("uri") as URI?,
+                    createdBy = ContributorId(subjectMap.get("created_by").toString())
+                )
+            }
+
+        }
+
+
+        val obj = statement.get("object") as InternalNode
+        val objectMap = obj.asMap()
+        logger.info("Obj Node:${obj.asMap()}")
+
+        val objectResource = Neo4jResource(label = objectMap.get("label").toString(),
+            resourceId = ResourceId(objectMap.get("resource_id").toString()),
+        )
+
+        var objRes : Any = ""
+
+        val tempObject = objectMap.get("datatype")
+
+        val uuid = UUID.randomUUID()
+        var createdBy = ContributorId(uuid.toString())
+
+        if(statement.get("createdBy") != null) {
+            createdBy = ContributorId(statement.get("createdBy") as String)
+        }
+
+        /*var objectResult = when {
+            objLabels.contains("Literal") -> {
+                Neo4jLiteral(
+                    label = objectMap.get("label").toString(),
+                    literalId = LiteralId(objectMap.get("literal_id").toString()),
+                    datatype = objectMap.get("datatype").toString(),
+                    createdBy = createdBy
+                )
+            }
+            else -> {
+                Neo4jClass(
+                    label = objectMap.get("label").toString(),
+                    classId = ClassId(objectMap.get("class_id").toString()),
+                    uri = objectMap.get("uri") as URI?,
+                    createdBy = createdBy
+                )
+
+            }
+        }*/
+
+        when(tempObject){
+            null -> {
+                objRes = Neo4jClass(
+                    label = objectMap.get("label").toString(),
+                    classId = ClassId(objectMap.get("class_id").toString()),
+                    uri = objectMap.get("uri") as URI?,
+                    createdBy = ContributorId(objectMap.get("created_by").toString())
+                )
+            }
+            else -> {
+                objRes = Neo4jLiteral(
+                    label = objectMap.get("label").toString(),
+                    literalId = LiteralId(objectMap.get("literal_id").toString()),
+                    datatype = objectMap.get("datatype").toString(),
+                    createdBy = ContributorId(objectMap.get("created_by").toString())
+                )
+            }
+        }
+
+
+
+        var subjectThing: Any = ""
+
+        val subClassId = subjectMap.get("class_id")
+
+        when(subClassId){
+            null -> {
+                subjectThing = refreshObject(subRes as Neo4jResource)
+            }
+            else -> {
+                subjectThing = refreshObject(subRes as Neo4jClass)
+            }
+        }
+
+        var objectThing: Any = ""
+
+        val objectDataType = objectMap.get("datatype")
+
+        when(objectDataType){
+            null ->
+                objectThing = refreshObject(objRes as Neo4jClass)
+            else -> {
+                objectThing = refreshObject(objRes as Neo4jLiteral)
+            }
+            //could also be resource or predicate
+            // get list of node labels and then find which type it is
+        }
+        logger.info("Subject Thing: $subjectThing")
+        logger.info("Object Thing: $objectThing")
+
+        return GeneralStatement(
+            id = StatementId(statement.get("statementId") as String),
+            subject = subjectThing,
+            predicate = predicatePersistenceAdapter.findById(PredicateId(statement.get("predicateId") as String))
+                .get(),
+            `object` = objectThing,
+            createdAt = OffsetDateTime.now(),
+            createdBy = createdBy
+        )
+    }
+
     private fun queryCount(query: String, pageable: Pageable, parameters: Map<String, Any> = emptyMap()): Long =
         client.query("$query $RETURN_COUNT ${pageable.toCypher()}")
             .bindAll(parameters)
@@ -226,10 +428,18 @@ class StatementPersistenceAdapter(
     ): List<GeneralStatement> =
         client.query("$query $RETURN_STATEMENT ${pageable.toCypher()}")
             .bindAll(parameters)
-            .fetchAs<ProjectedStatement>()
+            .fetch()
             .all()
-            .map { toStatement(it) }
+            .map { extractStatement(it.toMap() as HashMap<String, Any>) }
 }
+
+
+//value -> THING / Literal
+//THING -> real RDF Resource -> class OR predicates
+//sealed classes for both
+//sealed interfaces for each statement
+//1 INTerface-1 : Value
+//2 INTErface 2: Thing
 
 internal data class ProjectedStatement(
     @ConvertWith(converter = StatementIdConverter::class)
@@ -249,4 +459,4 @@ internal data class ProjectedStatement(
 }
 
 // Needs to match properties of ProjectedStatement exactly
-private const val RETURN_STATEMENT = """RETURN rel, sub AS subject, obj AS object, rel.statement_id AS statementId, rel.predicate_id AS predicateId, rel.created_at AS created_at, rel.created_by as createdBy"""
+private const val RETURN_STATEMENT = """RETURN rel, sub AS subject, obj AS object, rel.statement_id AS statementId, rel.predicate_id AS predicateId, rel.created_at AS createdAt, rel.created_by AS createdBy, labels(sub) AS subLabels, labels(obj) AS objLabels"""

@@ -17,7 +17,7 @@ services:
       - postgres
 
   neo4j:
-    image: neo4j:3.5
+    image: neo4j:4.2-community
     ports:
       - '127.0.0.1:7474:7474' # HTTP
       #- '::1:7474:7474'
@@ -26,7 +26,8 @@ services:
     environment:
       NEO4JLABS_PLUGINS: '["apoc"]'
       NEO4J_AUTH: none
-      NEO4J_dbms_memory_heap_max__size: 8G
+      #NEO4J_dbms_memory_heap_max__size: 1G
+      #NEO4J_dbms_memory_pagecache_size: 512M
     networks:
       - backend
     volumes:

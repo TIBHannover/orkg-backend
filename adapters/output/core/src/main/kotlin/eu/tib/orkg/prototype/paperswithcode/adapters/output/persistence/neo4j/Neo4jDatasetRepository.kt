@@ -1,5 +1,7 @@
 package eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j
 
+import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.id
+import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.problemId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import org.springframework.data.neo4j.repository.Neo4jRepository
@@ -8,7 +10,7 @@ import org.springframework.data.neo4j.repository.query.Query
 interface Neo4jDatasetRepository : Neo4jRepository<Neo4jResource, Long> {
 
     @Query("""
-MATCH (:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(cont:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper)
+MATCH (:Problem {resource_id: $id})<-[:RELATED {predicate_id: 'P32'}]-(cont:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper)
 MATCH (cont)-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]->(:Benchmark)-[:RELATED {predicate_id: 'HAS_DATASET'}]->(ds:Dataset)
 OPTIONAL MATCH (cont)-[:RELATED {predicate_id: 'HAS_SOURCE_CODE'}]->(l:Literal)
 OPTIONAL MATCH (cont)-[:RELATED {predicate_id: 'HAS_MODEL'}]->(m:Model)
@@ -17,7 +19,7 @@ RETURN ds AS dataset, COUNT(DISTINCT m) AS totalModels, COUNT(DISTINCT l) AS tot
     fun findDatasetsByResearchProblem(id: ResourceId): Iterable<Neo4jDataset>
 
     @Query("""
-MATCH (ds:Dataset {resource_id: {0}})<-[:RELATED {predicate_id: 'HAS_DATASET'}]-(b:Benchmark)<-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]-(c:Contribution)
+MATCH (ds:Dataset {resource_id: $id})<-[:RELATED {predicate_id: 'HAS_DATASET'}]-(b:Benchmark)<-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]-(c:Contribution)
 MATCH (b)-[:RELATED {predicate_id: 'HAS_EVALUATION'}]->(e:Evaluation)
 MATCH (s:Literal)<-[:RELATED {predicate_id: 'HAS_VALUE'}]-(e)-[:RELATED {predicate_id: 'HAS_METRIC'}]->(mt:Metric)
 MATCH (c)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper)
@@ -28,7 +30,7 @@ RETURN p AS paper, month.label AS month, year.label AS year, COLLECT(DISTINCT l.
     fun summarizeDatasetQueryById(id: ResourceId): Iterable<Neo4jBenchmarkUnpacked>
 
     @Query("""
-MATCH (ds:Dataset {resource_id: {0}})<-[:RELATED {predicate_id: 'HAS_DATASET'}]-(b:Benchmark)<-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]-(c:Contribution)-[:RELATED {predicate_id: 'P32'}]->(:Problem {resource_id: {1}})
+MATCH (ds:Dataset {resource_id: $id})<-[:RELATED {predicate_id: 'HAS_DATASET'}]-(b:Benchmark)<-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]-(c:Contribution)-[:RELATED {predicate_id: 'P32'}]->(:Problem {resource_id: $problemId})
 MATCH (b)-[:RELATED {predicate_id: 'HAS_EVALUATION'}]->(e:Evaluation)
 MATCH (s:Literal)<-[:RELATED {predicate_id: 'HAS_VALUE'}]-(e)-[:RELATED {predicate_id: 'HAS_METRIC'}]->(mt:Metric)
 MATCH (c)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper)

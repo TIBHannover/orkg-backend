@@ -31,11 +31,9 @@ data class Neo4jStatement(
     var statementId: StatementId? = null
 
     @Property("predicate_id")
-    @ConvertWith(converter = PredicateIdConverter::class)
     var predicateId: PredicateId? = null
 
     @Property("created_by")
-    @ConvertWith(converter = ContributorIdConverter::class)
     var createdBy: ContributorId = ContributorId.createUnknownContributor()
 
     // FIXME: dummy property to make the code compile

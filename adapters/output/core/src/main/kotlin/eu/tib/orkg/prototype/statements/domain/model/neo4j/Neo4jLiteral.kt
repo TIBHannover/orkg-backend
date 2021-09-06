@@ -21,11 +21,9 @@ class Neo4jLiteral() : Neo4jThing() {
     var datatype: String? = "xsd:string"
 
     @Property("literal_id")
-    @ConvertWith(converter = LiteralIdConverter::class)
     var literalId: LiteralId? = null
 
     @Property("created_by")
-    @ConvertWith(converter = ContributorIdConverter::class)
     var createdBy: ContributorId = ContributorId.createUnknownContributor()
 
     @Relationship(type = "HAS_VALUE_OF")

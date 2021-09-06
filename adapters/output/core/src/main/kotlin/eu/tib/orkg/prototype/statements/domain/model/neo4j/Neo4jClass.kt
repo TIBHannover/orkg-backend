@@ -26,7 +26,6 @@ class Neo4jClass() : Neo4jThing() {
     var subjectOf: MutableSet<Neo4jClass> = mutableSetOf()
 
     @Property("class_id")
-    @ConvertWith(converter = ClassIdConverter::class)
     var classId: ClassId? = null
 
     @Property("label")
@@ -36,7 +35,6 @@ class Neo4jClass() : Neo4jThing() {
     var uri: String? = null
 
     @Property("created_by")
-    @ConvertWith(converter = ContributorIdConverter::class)
     var createdBy: ContributorId = ContributorId.createUnknownContributor()
 
     constructor(label: String, classId: ClassId, createdBy: ContributorId = ContributorId.createUnknownContributor(), uri: URI?) : this() {

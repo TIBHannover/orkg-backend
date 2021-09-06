@@ -235,10 +235,8 @@ internal data class ProjectedStatement(
     @ConvertWith(converter = StatementIdConverter::class)
     val statementId: StatementId,
     val subject: Neo4jThing,
-    @ConvertWith(converter = PredicateIdConverter::class)
     val predicateId: PredicateId,
     val `object`: Neo4jThing,
-    @ConvertWith(converter = ContributorIdConverter::class)
     val createdBy: ContributorId,
     @ConvertWith(converter = OffsetDateTimeConverter::class)
     val createdAt: OffsetDateTime

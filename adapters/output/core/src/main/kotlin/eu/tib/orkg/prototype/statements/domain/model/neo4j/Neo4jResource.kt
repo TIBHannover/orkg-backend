@@ -33,7 +33,6 @@ class Neo4jResource() : Neo4jThing() {
     override var label: String? = null
 
     @Property("resource_id")
-    @ConvertWith(converter = ResourceIdConverter::class)
     var resourceId: ResourceId? = null
 
     @Relationship(type = "RELATED", direction = OUTGOING)
@@ -45,11 +44,9 @@ class Neo4jResource() : Neo4jThing() {
     var objectOf = mutableSetOf<Neo4jStatement>()
 
     @Property("created_by")
-    @ConvertWith(converter = ContributorIdConverter::class)
     var createdBy: ContributorId = ContributorId.createUnknownContributor()
 
     @Property("observatory_id")
-    @ConvertWith(converter = ObservatoryIdConverter::class)
     var observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory()
 
     @Property("extraction_method")
@@ -59,7 +56,6 @@ class Neo4jResource() : Neo4jThing() {
     var verified: Boolean? = null
 
     @Property("organization_id")
-    @ConvertWith(converter = OrganizationIdConverter::class)
     var organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
 
     /**

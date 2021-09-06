@@ -23,11 +23,9 @@ class Neo4jPredicate() : Neo4jThing() {
     override var label: String? = null
 
     @Property("predicate_id")
-    @ConvertWith(converter = PredicateIdConverter::class)
     private var predicateId: PredicateId? = null
 
     @Property("created_by")
-    @ConvertWith(converter = ContributorIdConverter::class)
     var createdBy: ContributorId = ContributorId.createUnknownContributor()
 
     @Relationship(type = "RELATED", direction = Relationship.Direction.OUTGOING)

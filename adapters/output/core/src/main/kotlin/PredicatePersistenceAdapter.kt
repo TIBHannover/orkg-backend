@@ -27,6 +27,11 @@ class PredicatePersistenceAdapter(
             .findByPredicateId(id)
             .map(Neo4jPredicate::toPredicate)
 
+    fun findAllById(ids: List<PredicateId>): Iterable<Predicate> =
+        neo4jPredicateRepository
+            .findAllByPredicateIdIn(ids)
+            .map(Neo4jPredicate::toPredicate)
+
     override fun findAllByLabel(label: String, pageable: Pageable): Page<Predicate> =
         neo4jPredicateRepository
             .findAllByLabelMatchesRegex(label.toExactSearchString(), pageable)

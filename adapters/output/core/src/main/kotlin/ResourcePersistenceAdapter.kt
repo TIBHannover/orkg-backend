@@ -29,6 +29,10 @@ class ResourcePersistenceAdapter(private val neo4jResourceRepository: Neo4jResou
         neo4jResourceRepository.findByResourceId(resourceId)
             .map(Neo4jResource::toResource)
 
+    fun findAllById(ids: List<ResourceId>): Iterable<Resource> =
+        neo4jResourceRepository.findAllByResourceIdIn(ids)
+            .map(Neo4jResource::toResource)
+
     override fun findAllByLabel(pageable: Pageable, label: String): Page<Resource> =
         neo4jResourceRepository.findAllByLabel(label, pageable).map(Neo4jResource::toResource)
 

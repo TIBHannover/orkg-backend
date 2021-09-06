@@ -12,6 +12,8 @@ interface Neo4jLiteralRepository : Neo4jRepository<Neo4jLiteral, Long> {
 
     override fun findById(id: Long?): Optional<Neo4jLiteral>
 
+    fun findAllByLiteralIdIn(ids: List<LiteralId>): Iterable<Neo4jLiteral>
+
     fun findByLiteralId(id: LiteralId?): Optional<Neo4jLiteral>
 
     fun findAllByLabel(value: String): Iterable<Neo4jLiteral>

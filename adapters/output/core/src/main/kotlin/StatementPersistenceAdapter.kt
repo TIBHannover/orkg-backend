@@ -11,42 +11,56 @@ import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototy
 import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.toCypher
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
+import eu.tib.orkg.prototype.statements.domain.model.LiteralId
+import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.BY_OBJECT_ID
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.BY_SUBJECT_ID
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.MATCH_STATEMENT
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.MATCH_STATEMENT_WITH_LITERAL
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteral
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.RETURN_COUNT
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.WITH_SORTABLE_FIELDS
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.OffsetDateTimeConverter
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.PredicateIdConverter
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.StatementIdConverter
 import eu.tib.orkg.prototype.statements.ports.StatementRepository
+import org.neo4j.driver.Record
+import org.neo4j.driver.Value
+import org.neo4j.driver.types.TypeSystem
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.core.Neo4jClient
-import org.springframework.data.neo4j.core.convert.ConvertWith
 import org.springframework.data.neo4j.core.fetchAs
 import org.springframework.stereotype.Component
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Optional
 
+internal val TYPE_LABELS = setOf("Class", "Literal", "Predicate", "Resource")
+
+internal val WITH_MAPPED_VALUES = """
+    |WITH sub, rel, obj,
+    | [val in [sub.resource_id, sub.literal_id, sub.predicate_id, sub.class_id] where val is not null][0] AS subject_id,
+    | labels(sub) AS subject_labels,
+    | [val in [obj.resource_id, obj.literal_id, obj.predicate_id, obj.class_id] where val is not null][0] AS object_id,
+    | labels(obj) AS object_labels,
+    | rel.statement_id AS statement_id,
+    | rel.predicate_id AS predicate_id,   
+    | rel.created_at AS created_at,
+    | rel.created_by AS created_by
+    |""".trimMargin().replace("\n", "")
+
+internal const val RETURN_STATEMENT_DATA =
+    "RETURN statement_id, subject_id, subject_labels, predicate_id, object_id, object_labels, created_at, created_by"
+
+typealias ThingLookupTable = Map<String, Thing>
 
 @Component
 class StatementPersistenceAdapter(
     private val resourcePersistenceAdapter: ResourcePersistenceAdapter,
     private val predicatePersistenceAdapter: PredicatePersistenceAdapter,
     private val literalPersistenceAdapter: LiteralPersistenceAdapter,
+    private val classPersistenceAdapter: ClassPersistenceAdapter,
     private val client: Neo4jClient
-): StatementRepository {
+) : StatementRepository {
     override fun save(statement: GeneralStatement) {
         val query = """
             MATCH (sub:Thing)
@@ -66,7 +80,7 @@ class StatementPersistenceAdapter(
     }
 
     override fun delete(statement: GeneralStatement) {
-        client.query("MATCH ()->[rel:RELATED]->() WHERE rel.statement_id = ${'$'}id DELETE rel")
+        client.query("MATCH ()-[rel:RELATED]->() WHERE rel.statement_id = ${'$'}id DELETE rel")
             .bind(statement.id.toString()).to("id")
             .run()
     }
@@ -89,55 +103,85 @@ class StatementPersistenceAdapter(
             CALL apoc.path.subgraphAll(n, ${'$'}configuration)
             YIELD relationships
             UNWIND relationships as rel
-            RETURN startNode(rel) as subject, rel as predicate, endNode(rel) as object
+            WITH startNode(rel) as sub, rel, endNode(rel) as obj
+            $WITH_MAPPED_VALUES
+            $RETURN_STATEMENT_DATA
             ORDER BY rel.created_at DESC
             """
-        return client.query(query).fetchAs<ProjectedStatement>().all().map { toStatement(it) }
+        val result = client.query(query)
+            .bind(configuration).to("configuration")
+            .fetchAs(StatementData::class.java).mappedBy(statementDataMapper)
+            .all()
+        return if (result.isNotEmpty()) {
+            val things = retrieveThings(idsToTypes(result))
+            result.map { it.toGeneralStatement(things) }
+        } else {
+            emptyList()
+        }
     }
 
+    @Deprecated("This function has serious performance implications and should not be used!")
     override fun findAll(): Iterable<GeneralStatement> {
         val result = client
-            .query("$MATCH_STATEMENT $RETURN_STATEMENT")
-            .fetchAs<ProjectedStatement>()
+            .query("$MATCH_STATEMENT $WITH_MAPPED_VALUES $RETURN_STATEMENT_DATA")
+            .fetchAs(StatementData::class.java).mappedBy(statementDataMapper)
             .all()
-        return result.map { toStatement(it) }
+        return if (result.isNotEmpty()) {
+            val things = retrieveThings(idsToTypes(result))
+            result.map { it.toGeneralStatement(things) }
+        } else {
+            emptyList()
+        }
     }
 
+    // FIXME: should return a page?
     override fun findAll(pagination: Pageable): Iterable<GeneralStatement> {
         val result = client
-            .query("$MATCH_STATEMENT $RETURN_STATEMENT ${pagination.toCypher()}")
-            .fetchAs<ProjectedStatement>()
+            .query("$MATCH_STATEMENT $WITH_MAPPED_VALUES $RETURN_STATEMENT_DATA ${pagination.toCypher()}")
+            .fetchAs(StatementData::class.java).mappedBy(statementDataMapper)
             .all()
-        return result.map { toStatement(it) }
+        return if (result.isNotEmpty()) {
+            val things = retrieveThings(idsToTypes(result))
+            result.map { it.toGeneralStatement(things) }
+        } else {
+            emptyList()
+        }
     }
 
     override fun findById(statementId: StatementId): Optional<GeneralStatement> {
         val result = client
-            .query("$MATCH_STATEMENT WHERE rel.statement_id = $id $RETURN_STATEMENT")
+            .query("$MATCH_STATEMENT $WITH_MAPPED_VALUES WHERE statement_id = $id $RETURN_STATEMENT_DATA")
             .bind(statementId.toString()).to("id")
-            .fetchAs<ProjectedStatement>()
+            .fetchAs(StatementData::class.java).mappedBy(statementDataMapper)
             .one()
-        return Optional.ofNullable(result).map { toStatement(it) }
+
+        return if (result.isPresent) {
+            val things = retrieveThings(idsToTypes(listOf(result.get())))
+            result.map { it.toGeneralStatement(things) }
+        } else {
+            Optional.empty<GeneralStatement>()
+        }
     }
 
     override fun findAllBySubject(subjectId: String, pagination: Pageable): Page<GeneralStatement> {
-        val query = "$MATCH_STATEMENT $BY_SUBJECT_ID $WITH_SORTABLE_FIELDS"
-        val count = queryCount(query, pagination)
-        val result = queryStatements(query, pagination)
+        val query = "$MATCH_STATEMENT $WITH_MAPPED_VALUES WHERE subject_id = ${'$'}subjectId"
+        val parameters = mapOf("subjectId" to subjectId)
+        val count = queryCount(query, pagination, parameters)
+        val result = queryStatements(query, pagination, parameters)
         return PageImpl(result, pagination, count)
     }
 
     override fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable): Page<GeneralStatement> {
-        val query = "$MATCH_STATEMENT WHERE rel.predicate_id = ${'$'}predicateId $WITH_SORTABLE_FIELDS"
-        val parameters = mapOf("predicateId" to predicateId)
+        val query = "$MATCH_STATEMENT $WITH_MAPPED_VALUES WHERE predicate_id = ${'$'}predicateId"
+        val parameters = mapOf("predicateId" to predicateId.asString())
         val count = queryCount(query, pagination, parameters)
         val result = queryStatements(query, pagination, parameters)
         return PageImpl(result, pagination, count)
     }
 
     override fun findAllByObject(objectId: String, pagination: Pageable): Page<GeneralStatement> {
-        val query = "$MATCH_STATEMENT $BY_OBJECT_ID $WITH_SORTABLE_FIELDS"
-        val parameters = mapOf("id" to objectId)
+        val query = "$MATCH_STATEMENT $WITH_MAPPED_VALUES WHERE object_id = ${'$'}objectId"
+        val parameters = mapOf("objectId" to objectId)
         val count = queryCount(query, pagination, parameters)
         val result = queryStatements(query, pagination, parameters)
         return PageImpl(result, pagination, count)
@@ -149,8 +193,8 @@ class StatementPersistenceAdapter(
         pagination: Pageable
     ): Page<GeneralStatement> {
         val query =
-            "$MATCH_STATEMENT WHERE (sub.`resource_id`=$id OR sub.`literal_id`=$id OR sub.`predicate_id`=$id OR sub.`class_id`=$id) AND rel.`predicate_id`={1} $WITH_SORTABLE_FIELDS"
-        val parameters = mapOf("id" to subjectId)
+            "$MATCH_STATEMENT $WITH_MAPPED_VALUES WHERE subject_id = ${'$'}subjectId AND predicate_id = ${'$'}predicateId"
+        val parameters = mapOf("subjectId" to subjectId, "predicateId" to predicateId.asString())
         val count = queryCount(query, pagination, parameters)
         val result = queryStatements(query, pagination, parameters)
         return PageImpl(result, pagination, count)
@@ -162,8 +206,8 @@ class StatementPersistenceAdapter(
         pagination: Pageable
     ): Page<GeneralStatement> {
         val query =
-            "$MATCH_STATEMENT WHERE (obj.`resource_id`= $id OR obj.`literal_id`= $id OR obj.`predicate_id`= $id OR obj.`class_id`= $id) AND rel.`predicate_id`= ${'$'}predicateId $WITH_SORTABLE_FIELDS"
-        val parameters = mapOf("id" to objectId, "predicateId" to predicateId)
+            "$MATCH_STATEMENT $WITH_MAPPED_VALUES WHERE object_id = ${'$'}objectId AND predicate_id = ${'$'}predicateId"
+        val parameters = mapOf("objectId" to objectId, "predicateId" to predicateId.asString())
         val count = queryCount(query, pagination, parameters)
         val result = queryStatements(query, pagination, parameters)
         return PageImpl(result, pagination, count)
@@ -175,7 +219,7 @@ class StatementPersistenceAdapter(
         pagination: Pageable
     ): Page<GeneralStatement> {
         val query =
-            "$MATCH_STATEMENT_WITH_LITERAL WHERE rel.`predicate_id`= ${'$'}predicateId AND obj.`label`= ${'$'}label $WITH_SORTABLE_FIELDS"
+            "$MATCH_STATEMENT_WITH_LITERAL $WITH_MAPPED_VALUES WHERE predicate_id = ${'$'}predicateId AND obj.`label`= ${'$'}label"
         val parameters = mapOf("predicateId" to predicateId, "label" to literal)
         val count = queryCount(query, pagination, parameters)
         val result = queryStatements(query, pagination, parameters)
@@ -189,30 +233,85 @@ class StatementPersistenceAdapter(
         pagination: Pageable
     ): Page<GeneralStatement> {
         val query =
-            "$MATCH_STATEMENT_WITH_LITERAL WHERE ${'$'}subjectClass IN labels(sub) AND rel.`predicate_id`= ${'$'}predicateId AND obj.`label`= ${'$'}label $WITH_SORTABLE_FIELDS"
+            "$MATCH_STATEMENT_WITH_LITERAL $WITH_MAPPED_VALUES WHERE ${'$'}subjectClass IN labels(sub) AND predicate_id = ${'$'}predicateId AND obj.`label`= ${'$'}label"
         val parameters = mapOf("subjectClass" to subjectClass, "predicateId" to predicateId, "label" to literal)
         val count = queryCount(query, pagination, parameters)
         val result = queryStatements(query, pagination, parameters)
         return PageImpl(result, pagination, count)
     }
 
-    private fun refreshObject(thing: Neo4jThing): Thing {
-        return when (thing) {
-            is Neo4jResource -> resourcePersistenceAdapter.findById(thing.resourceId).get()
-            is Neo4jLiteral -> literalPersistenceAdapter.findById(thing.literalId).get()
-            else -> thing.toThing()
-        }
+    private data class StatementData(
+        val subjectId: String,
+        val subjectLabels: List<String>,
+        val objectId: String,
+        val objectLabels: List<String>,
+        val statementId: String,
+        val predicateId: String,
+        val createdBy: String,
+        val createdAt: String,
+    ) {
+        val subjectType: String
+            get() = subjectLabels.intersect(TYPE_LABELS).single()
+        val objectType: String
+            get() = objectLabels.intersect(TYPE_LABELS).single()
+
+        fun toGeneralStatement(things: ThingLookupTable) =
+            GeneralStatement(
+                id = StatementId(this.statementId),
+                subject = things[this.subjectId]!!,
+                predicate = things[this.predicateId]!! as Predicate,
+                `object` = things[this.objectId]!!,
+                createdAt = OffsetDateTime.parse(this.createdAt),
+                createdBy = ContributorId(this.createdBy),
+            )
     }
 
-    private fun toStatement(statement: ProjectedStatement) =
-        GeneralStatement(
-            id = statement.statementId,
-            subject = refreshObject(statement.subject),
-            predicate = predicatePersistenceAdapter.findById(statement.predicateId).get(),
-            `object` = refreshObject(statement.`object`),
-            createdAt = statement.createdAt,
-            createdBy = statement.createdBy
+    private fun retrieveThings(byType: Map<String, List<String>>): ThingLookupTable {
+        val things: MutableMap<String, Thing> = HashMap()
+        byType.forEach { (type, ids) ->
+            if (ids.isNotEmpty()) {
+                when (type) {
+                    "Class" -> classPersistenceAdapter
+                        .findAllById(ids.map(::ClassId))
+                        .forEach { things[it.id.toString()] = it }
+                    "Literal" -> literalPersistenceAdapter
+                        .findAllById(ids.map(::LiteralId))
+                        .forEach { things[it.id.toString()] = it }
+                    "Predicate" -> predicatePersistenceAdapter
+                        .findAllById(ids.map(::PredicateId))
+                        .forEach { things[it.id.toString()] = it }
+                    "Resource" -> resourcePersistenceAdapter
+                        .findAllById(ids.map(::ResourceId))
+                        .forEach { things[it.id.toString()] = it }
+                    else -> throw IllegalStateException("Unable to fetch entities of unknown entity type $type.")
+                }
+            }
+        }
+        return things
+    }
+
+    private fun idsToTypes(statements: Collection<StatementData>): Map<String, List<String>> {
+        val entities: MutableMap<String, MutableList<String>> = HashMap()
+        statements.forEach { statement ->
+            entities.getOrPut(statement.subjectType) { mutableListOf() }.add(statement.subjectId)
+            entities.getOrPut(statement.objectType) { mutableListOf() }.add(statement.objectId)
+            entities.getOrPut("Predicate") { mutableListOf() }.add(statement.predicateId)
+        }
+        return entities
+    }
+
+    private val statementDataMapper = { _: TypeSystem, record: Record ->
+        StatementData(
+            subjectId = record["subject_id"].asString(),
+            subjectLabels = record["subject_labels"].asList(Value::asString),
+            objectId = record["object_id"].asString(),
+            objectLabels = record["object_labels"].asList(Value::asString),
+            statementId = record["statement_id"].asString(),
+            predicateId = record["predicate_id"].asString(),
+            createdBy = record["created_by"].asString(),
+            createdAt = record["created_at"].asString(),
         )
+    }
 
     private fun queryCount(query: String, pageable: Pageable, parameters: Map<String, Any> = emptyMap()): Long =
         client.query("$query $RETURN_COUNT ${pageable.toCypher()}")
@@ -223,28 +322,16 @@ class StatementPersistenceAdapter(
         query: String,
         pageable: Pageable,
         parameters: Map<String, Any> = emptyMap()
-    ): List<GeneralStatement> =
-        client.query("$query $RETURN_STATEMENT ${pageable.toCypher()}")
+    ): List<GeneralStatement> {
+        val result = client.query("$query $RETURN_STATEMENT_DATA ${pageable.toCypher()}")
             .bindAll(parameters)
-            .fetchAs<ProjectedStatement>()
+            .fetchAs(StatementData::class.java).mappedBy(statementDataMapper)
             .all()
-            .map { toStatement(it) }
-}
-
-internal data class ProjectedStatement(
-    @ConvertWith(converter = StatementIdConverter::class)
-    val statementId: StatementId,
-    val subject: Neo4jThing,
-    val predicateId: PredicateId,
-    val `object`: Neo4jThing,
-    val createdBy: ContributorId,
-    @ConvertWith(converter = OffsetDateTimeConverter::class)
-    val createdAt: OffsetDateTime
-) {
-    override fun toString(): String {
-        return "{id:$statementId}==(${subject.thingId} {${subject.label}})-[$predicateId]->(${`object`.thingId} {${`object`.label}})=="
+        return if (result.isNotEmpty()) {
+            val things = retrieveThings(idsToTypes(result))
+            result.map { it.toGeneralStatement(things) }
+        } else {
+            emptyList()
+        }
     }
 }
-
-// Needs to match properties of ProjectedStatement exactly
-private const val RETURN_STATEMENT = """RETURN rel, sub AS subject, obj AS object, rel.statement_id AS statementId, rel.predicate_id AS predicateId, rel.created_at AS created_at, rel.created_by as createdBy"""

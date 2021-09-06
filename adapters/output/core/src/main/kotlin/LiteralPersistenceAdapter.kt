@@ -25,6 +25,10 @@ class LiteralPersistenceAdapter(
         neo4jLiteralRepository.findByLiteralId(id)
             .map(Neo4jLiteral::toLiteral)
 
+    fun findAllById(ids: List<LiteralId>): Iterable<Literal> =
+        neo4jLiteralRepository.findAllByLiteralIdIn(ids)
+            .map(Neo4jLiteral::toLiteral)
+
     override fun findAllByLabel(label: String) =
         neo4jLiteralRepository.findAllByLabelMatchesRegex(label.toExactSearchString())
             .map(Neo4jLiteral::toLiteral)

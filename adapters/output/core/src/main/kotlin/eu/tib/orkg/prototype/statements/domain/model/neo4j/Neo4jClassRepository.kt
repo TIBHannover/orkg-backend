@@ -11,6 +11,8 @@ interface Neo4jClassRepository : Neo4jRepository<Neo4jClass, Long> {
 
     override fun findById(id: Long?): Optional<Neo4jClass>
 
+    fun findAllByClassIdIn(ids: List<ClassId>): Iterable<Neo4jClass>
+
     fun findByClassId(id: ClassId?): Optional<Neo4jClass>
 
     fun findAllByLabel(label: String): Iterable<Neo4jClass>

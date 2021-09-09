@@ -56,6 +56,8 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
 
     fun findByResourceId(id: ResourceId?): Optional<Neo4jResource>
 
+    fun findAllByResourceIdIn(ids: List<ResourceId>): Iterable<Neo4jResource>
+
     fun findAllByLabel(label: String, pageable: Pageable): Page<Neo4jResource>
 
     // TODO: Work-around for https://jira.spring.io/browse/DATAGRAPH-1200. Replace with IgnoreCase or ContainsIgnoreCase when fixed.
@@ -64,7 +66,8 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     fun findAllByLabelContaining(part: String, pageable: Pageable): Page<Neo4jResource>
 
     // TODO: limit the selection of sortBy values to (label & id) only because they are explicit in the query
-    @Query(value = """MATCH (node:`Resource`) WHERE $className IN labels(node) WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
+    @Query(
+        value = """MATCH (node:`Resource`) WHERE $className IN labels(node) WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
         countQuery = """MATCH (node:`Resource`) WHERE $className IN labels(node) WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllByClass(@Param("className") `class`: String, pageable: Pageable): Page<Neo4jResource>
 

@@ -11,6 +11,8 @@ interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, Long> {
 
     override fun findById(id: Long?): Optional<Neo4jPredicate>
 
+    fun findAllByPredicateIdIn(ids: List<PredicateId>): Iterable<Neo4jPredicate>
+
     fun findAllByLabel(label: String, pageable: Pageable): Page<Neo4jPredicate>
 
     // TODO: Work-around for https://jira.spring.io/browse/DATAGRAPH-1200. Replace with IgnoreCase or ContainsIgnoreCase when fixed.

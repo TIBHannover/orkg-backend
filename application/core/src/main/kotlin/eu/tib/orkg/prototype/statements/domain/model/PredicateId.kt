@@ -20,6 +20,8 @@ data class PredicateId(val value: String) :
 
     override fun toString() = value
 
+    fun asString(): String = value
+
     override fun compareTo(other: PredicateId) =
         value.compareTo(other.value)
 }

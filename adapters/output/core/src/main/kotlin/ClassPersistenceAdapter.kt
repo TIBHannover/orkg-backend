@@ -29,6 +29,10 @@ class ClassPersistenceAdapter(
         neo4jClassRepository.findAll(pageable)
             .map(Neo4jClass::toClass)
 
+    fun findAllById(ids: List<ClassId>): Iterable<Class> =
+        neo4jClassRepository.findAllByClassIdIn(ids)
+            .map(Neo4jClass::toClass)
+
     override fun findById(id: ClassId): Optional<Class> = Optional.ofNullable(findClassCached(id))
 
     override fun findAllByLabel(label: String): Iterable<Class> =

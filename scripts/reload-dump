@@ -4,7 +4,7 @@
 #
 set -e
 
-neo4j_version=3.5
+neo4j_version=4.2-community
 
 dump_volume=orkg-dumps
 source_dir=orkg-backend

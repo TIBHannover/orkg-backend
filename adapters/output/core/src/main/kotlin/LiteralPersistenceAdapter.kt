@@ -4,7 +4,6 @@ import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteral
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteralIdGenerator
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteralRepository
 import eu.tib.orkg.prototype.statements.ports.LiteralRepository
 import eu.tib.orkg.prototype.util.EscapedRegex
@@ -38,7 +37,7 @@ class LiteralPersistenceAdapter(
             .map(Neo4jLiteral::toLiteral)
 
     override fun findDOIByContributionId(id: ResourceId): Optional<Literal> =
-        neo4jLiteralRepository.findDOIByContributionId(id)
+        neo4jLiteralRepository.findDOIByContributionId(id.toString())
             .map(Neo4jLiteral::toLiteral)
 
     private fun String.toSearchString() = "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"

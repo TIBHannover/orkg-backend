@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.constants.ID_DOI_PREDICATE
+import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.id
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
 import java.util.Optional
@@ -23,6 +23,6 @@ interface Neo4jLiteralRepository : Neo4jRepository<Neo4jLiteral, Long> {
 
     fun findAllByLabelContaining(part: String): Iterable<Neo4jLiteral>
 
-    @Query("""MATCH (n:Paper)-[:RELATED {predicate_id: 'P31'}]->(:Resource {resource_id: {0}}), (n)-[:RELATED {predicate_id: "$ID_DOI_PREDICATE"}]->(L:Literal) RETURN L""")
-    fun findDOIByContributionId(id: ResourceId): Optional<Neo4jLiteral>
+    @Query("""MATCH (n:Paper)-[:RELATED {predicate_id: 'P31'}]->(:Resource {resource_id: $id), (n)-[:RELATED {predicate_id: "$ID_DOI_PREDICATE"}]->(l:Literal) RETURN l""")
+    fun findDOIByContributionId(id: String): Optional<Neo4jLiteral>
 }

@@ -52,7 +52,7 @@ class Neo4jLiteralService(
             .map(Neo4jLiteral::toLiteral)
 
     override fun findDOIByContributionId(id: ResourceId): Optional<Literal> =
-        neo4jLiteralRepository.findDOIByContributionId(id)
+        neo4jLiteralRepository.findDOIByContributionId(id.toString())
             .map(Neo4jLiteral::toLiteral)
 
     override fun update(literal: Literal): Literal {

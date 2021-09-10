@@ -215,7 +215,7 @@ class PaperController(
         val venuePredicate = predicateService.findById(VenuePredicate).get().id!!
         val pageable = PageRequest.of(1, 10)
         // Check if resource exists
-        var venueResource = resourceService.findAllByLabel(pageable, venue).firstOrNull()
+        var venueResource = resourceService.findAllByLabelExactly(pageable, venue).firstOrNull()
         if (venueResource == null) {
             // If not override object with new venue resource
             venueResource = resourceService.create(

@@ -12,6 +12,7 @@ import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototy
 import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.observatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.ports.ResourceRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.repository.Neo4jRepository
@@ -127,9 +128,6 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     @Query("""MATCH (n:Paper {observatory_id: $id})-[*]->(r:Problem) RETURN r UNION ALL MATCH (r:Problem {observatory_id: $observatoryId}) RETURN r""")
     fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Neo4jResource>
 
-    @Query("""MATCH (n:Resource {resource_id: $id}) CALL apoc.path.subgraphAll(n, {relationshipFilter:'>'}) YIELD relationships UNWIND relationships as rel WITH rel AS p, startNode(rel) AS s, endNode(rel) AS o, n WHERE p.created_by <> "00000000-0000-0000-0000-000000000000" and p.created_at>=n.created_at RETURN n.resource_id AS id, (p.created_by) AS createdBy, MAX(p.created_at) AS createdAt ORDER BY createdAt""")
-    fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors>
-
     @Query("""MATCH (n:Resource {resource_id: $id}) RETURN EXISTS ((n)-[:RELATED]-(:Thing)) AS used""")
     fun checkIfResourceHasStatements(id: ResourceId): Boolean
 
@@ -151,12 +149,6 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
         countQuery = """$MATCH_UNVERIFIED_PAPER $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllUnverifiedPapers(pageable: Pageable): Page<Neo4jResource>
+
+    fun deleteByResourceId(id: ResourceId)
 }
-
-data class ResourceContributors(
-    val id: String,
-
-    val createdBy: String,
-
-    val createdAt: String
-)

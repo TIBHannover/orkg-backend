@@ -60,3 +60,7 @@ fun escapeLiterals(literal: String): String {
         .replace("\"", "\\\"")
         .replace("(\\r|\\n|\\r\\n)+".toRegex(), "\\\\n")
 }
+
+fun String.toSearchString() = "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"
+
+fun String.toExactSearchString() = "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"

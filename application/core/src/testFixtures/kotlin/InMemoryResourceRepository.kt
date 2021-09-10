@@ -8,14 +8,17 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.util.Optional
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import java.util.concurrent.atomic.AtomicLong
+import eu.tib.orkg.prototype.util.toSearchString
 
 class InMemoryResourceRepository : ResourceRepository {
 
     private val resources: MutableSet<Resource> = mutableSetOf()
 
-    override fun nextIdentity(): ResourceId {
-        TODO("Not yet implemented")
-    }
+    private val idCounter = AtomicLong(0)
+
+    override fun nextIdentity(): ResourceId = ResourceId(idCounter.getAndIncrement())
 
     override fun save(resource: Resource): Resource {
         resources.add(resource)
@@ -30,9 +33,8 @@ class InMemoryResourceRepository : ResourceRepository {
         TODO("Not yet implemented")
     }
 
-    override fun findById(resourceId: ResourceId?): Optional<Resource> {
-        TODO("Not yet implemented")
-    }
+    override fun findById(resourceId: ResourceId?): Optional<Resource> =
+        Optional.ofNullable(resources.singleOrNull { it.id == resourceId })
 
     override fun findAllByLabelExactly(label: String, pageable: Pageable): Page<Resource> {
         TODO("Not yet implemented")
@@ -46,9 +48,8 @@ class InMemoryResourceRepository : ResourceRepository {
         TODO("Not yet implemented")
     }
 
-    override fun findAllByLabelContaining(part: String, pageable: Pageable): Page<Resource> {
-        TODO("Not yet implemented")
-    }
+    override fun findAllByLabelContaining(part: String, pageable: Pageable): Page<Resource> =
+        resources.filter { it.label.contains(part.toSearchString().toRegex()) }.pagedWith(pageable)
 
     override fun findAllByClass(id: ClassId, pageable: Pageable): Page<Resource> {
         TODO("Not yet implemented")
@@ -159,4 +160,6 @@ class InMemoryResourceRepository : ResourceRepository {
     override fun checkIfResourceHasStatements(id: ResourceId): Boolean {
         TODO("Not yet implemented")
     }
+
+    private fun <T> List<T>.pagedWith(pageable: Pageable) = PageImpl(this, pageable, this.size.toLong())
 }

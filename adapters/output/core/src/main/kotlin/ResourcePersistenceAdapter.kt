@@ -10,9 +10,8 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceIdGenera
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceRepository
 import eu.tib.orkg.prototype.statements.ports.ResourceRepository
 import eu.tib.orkg.prototype.statements.ports.ResourceRepository.ResourceContributors
-import eu.tib.orkg.prototype.util.EscapedRegex
-import eu.tib.orkg.prototype.util.SanitizedWhitespace
-import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
+import eu.tib.orkg.prototype.util.toExactSearchString
+import eu.tib.orkg.prototype.util.toSearchString
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.core.Neo4jClient
@@ -60,7 +59,8 @@ class ResourcePersistenceAdapter(
     }
 
     override fun findAllByLabelContaining(part: String, pageable: Pageable): Page<Resource> =
-        neo4jResourceRepository.findAllByLabelContaining(part.toSearchString(), pageable)
+        // TODO: Work-around because we do not have full-text indexing. Fix if we have.
+        neo4jResourceRepository.findAllByLabelMatchesRegex(part.toSearchString(), pageable)
             .map(Neo4jResource::toResource)
 
     override fun findAllByClass(id: ClassId, pageable: Pageable): Page<Resource> =
@@ -184,12 +184,6 @@ class ResourcePersistenceAdapter(
 
     override fun checkIfResourceHasStatements(id: ResourceId): Boolean =
         neo4jResourceRepository.checkIfResourceHasStatements(id)
-
-    private fun String.toSearchString() =
-        "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"
-
-    private fun String.toExactSearchString() =
-        "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"
 }
 
 internal fun Resource.toNeo4jResource(): Neo4jResource =

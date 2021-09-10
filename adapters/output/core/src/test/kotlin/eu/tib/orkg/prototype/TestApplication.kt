@@ -7,7 +7,12 @@ import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories
 
 @SpringBootApplication
 @EnableNeo4jRepositories(basePackages = ["eu.tib.orkg.prototype.statements.domain.model.neo4j"])
-@ComponentScan(basePackages = ["eu.tib.orkg.prototype.core.statements"]) // FIXME: namespace mismatch, should be aligned
+@ComponentScan(
+    basePackages = [
+        "eu.tib.orkg.prototype.core.statements",
+        "eu.tib.orkg.prototype.statements.domain.model.neo4j"
+    ]
+) // FIXME: namespace mismatch, should be aligned
 internal class TestApplication
 
 internal fun main(args: Array<String>) {

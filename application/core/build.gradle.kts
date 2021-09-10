@@ -20,6 +20,7 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter")
 
+    testFixturesImplementation(project(":application:shared"))
     testFixturesImplementation(platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES))
     testFixturesImplementation("org.springframework.data:spring-data-commons") // for Page/Pageable classes
     testFixturesImplementation("org.assertj:assertj-core")

@@ -69,29 +69,29 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     @Query(
         value = """MATCH (node:`Resource`) WHERE $className IN labels(node) WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
         countQuery = """MATCH (node:`Resource`) WHERE $className IN labels(node) WITH COUNT(node) as cnt RETURN cnt""")
-    fun findAllByClass(@Param("className") `class`: String, pageable: Pageable): Page<Neo4jResource>
+    fun findAllByClass(className: String, pageable: Pageable): Page<Neo4jResource>
 
     @Query(value = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.created_by = $createdBy WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
         countQuery = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.created_by = $createdBy WITH COUNT(node) as cnt RETURN cnt""")
-    fun findAllByClassAndCreatedBy(@Param("className") `class`: String, createdBy: ContributorId, pageable: Pageable): Page<Neo4jResource>
+    fun findAllByClassAndCreatedBy(className: String, createdBy: ContributorId, pageable: Pageable): Page<Neo4jResource>
 
     // TODO: Check if the countQuery can be optimized or joined with the value query
     @Query(value = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.label = $label WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
         countQuery = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.label = $label WITH COUNT(node) as cnt RETURN cnt""")
-    fun findAllByClassAndLabel(@Param("className") `class`: String, label: String, pageable: Pageable): Page<Neo4jResource>
+    fun findAllByClassAndLabel(className: String, label: String, pageable: Pageable): Page<Neo4jResource>
 
     @Query(value = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.label = $label AND node.created_by = $createdBy WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
         countQuery = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.label = $label AND node.created_by = $createdBy WITH COUNT(node) as cnt RETURN cnt""")
-    fun findAllByClassAndLabelAndCreatedBy(@Param("className") `class`: String, label: String, createdBy: ContributorId, pageable: Pageable): Page<Neo4jResource>
+    fun findAllByClassAndLabelAndCreatedBy(className: String, label: String, createdBy: ContributorId, pageable: Pageable): Page<Neo4jResource>
 
     // TODO: move from Slice to Page object
     @Query(value = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.label =~ $label  WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
         countQuery = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.label =~ $label WITH COUNT(node) as cnt RETURN cnt""")
-    fun findAllByClassAndLabelContaining(@Param("className") `class`: String, label: String, pageable: Pageable): Page<Neo4jResource>
+    fun findAllByClassAndLabelContaining(className: String, label: String, pageable: Pageable): Page<Neo4jResource>
 
     @Query(value = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.label =~ $label AND node.created_by = $createdBy WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
         countQuery = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.label =~ $label AND node.created_by = $createdBy WITH COUNT(node) as cnt RETURN cnt""")
-    fun findAllByClassAndLabelContainingAndCreatedBy(@Param("className") `class`: String, label: String, createdBy: ContributorId, pageable: Pageable): Page<Neo4jResource>
+    fun findAllByClassAndLabelContainingAndCreatedBy(className: String, label: String, createdBy: ContributorId, pageable: Pageable): Page<Neo4jResource>
 
     @Query(value = """MATCH (node:`Resource`) WHERE NOT ANY(c in $classes WHERE c IN labels(node)) WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
     countQuery = """MATCH (node:`Resource`) WHERE NOT ANY(c in $classes WHERE c IN labels(node)) WITH COUNT(node) as cnt RETURN cnt""")
@@ -118,13 +118,13 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
 
     fun findAllByLabel(label: String): Iterable<Neo4jResource>
 
-    @Query("""MATCH (n:Paper {observatory_id: $observatoryId}) RETURN n""")
+    @Query("""MATCH (n:Paper {observatory_id: $id}) RETURN n""")
     fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Neo4jResource>
 
-    @Query("""MATCH (n:Comparison {observatory_id: $observatoryId}) RETURN n""")
+    @Query("""MATCH (n:Comparison {observatory_id: $id}) RETURN n""")
     fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<Neo4jResource>
 
-    @Query("""MATCH (n:Paper {observatory_id: $observatoryId})-[*]->(r:Problem) RETURN r UNION ALL MATCH (r:Problem {observatory_id: $observatoryId}) RETURN r""")
+    @Query("""MATCH (n:Paper {observatory_id: $id})-[*]->(r:Problem) RETURN r UNION ALL MATCH (r:Problem {observatory_id: $observatoryId}) RETURN r""")
     fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Neo4jResource>
 
     @Query("""MATCH (n:Resource {resource_id: $id}) CALL apoc.path.subgraphAll(n, {relationshipFilter:'>'}) YIELD relationships UNWIND relationships as rel WITH rel AS p, startNode(rel) AS s, endNode(rel) AS o, n WHERE p.created_by <> "00000000-0000-0000-0000-000000000000" and p.created_at>=n.created_at RETURN n.resource_id AS id, (p.created_by) AS createdBy, MAX(p.created_at) AS createdAt ORDER BY createdAt""")

@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.protot
 
 const val classes = "${'$'}classes"
 const val classId = "${'$'}classId"
-const val className = "${'$'}class"
+const val className = "${'$'}className"
 const val contributorId = "${'$'}contributorId"
 const val createdAt = "${'$'}createdAt"
 const val createdBy = "${'$'}createdBy"

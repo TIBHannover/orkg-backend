@@ -9,14 +9,15 @@ import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototy
 import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.id
 import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.ids
 import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.label
+import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.limit
 import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.observatoryId
+import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.skip
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
-import org.springframework.data.repository.query.Param
 import java.util.Optional
 
 /**
@@ -67,41 +68,40 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
 
     // TODO: limit the selection of sortBy values to (label & id) only because they are explicit in the query
     @Query(
-        value = """MATCH (node:`Resource`) WHERE $className IN labels(node) WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
+        value = """MATCH (node:`Resource`) WHERE $className IN labels(node) WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node) SKIP $skip LIMIT $limit""",
         countQuery = """MATCH (node:`Resource`) WHERE $className IN labels(node) WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllByClass(className: String, pageable: Pageable): Page<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.created_by = $createdBy WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
+    @Query(value = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.created_by = $createdBy WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node) SKIP $skip LIMIT $limit""",
         countQuery = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.created_by = $createdBy WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllByClassAndCreatedBy(className: String, createdBy: ContributorId, pageable: Pageable): Page<Neo4jResource>
 
     // TODO: Check if the countQuery can be optimized or joined with the value query
-    @Query(value = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.label = $label WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
+    @Query(value = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.label = $label WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node) SKIP $skip LIMIT $limit""",
         countQuery = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.label = $label WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllByClassAndLabel(className: String, label: String, pageable: Pageable): Page<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.label = $label AND node.created_by = $createdBy WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
+    @Query(value = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.label = $label AND node.created_by = $createdBy WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node) SKIP $skip LIMIT $limit""",
         countQuery = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.label = $label AND node.created_by = $createdBy WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllByClassAndLabelAndCreatedBy(className: String, label: String, createdBy: ContributorId, pageable: Pageable): Page<Neo4jResource>
 
-    // TODO: move from Slice to Page object
-    @Query(value = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.label =~ $label  WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
+    @Query(value = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.label =~ $label  WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)  SKIP $skip LIMIT $limit""",
         countQuery = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.label =~ $label WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllByClassAndLabelContaining(className: String, label: String, pageable: Pageable): Page<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.label =~ $label AND node.created_by = $createdBy WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
+    @Query(value = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.label =~ $label AND node.created_by = $createdBy WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node) SKIP $skip LIMIT $limit""",
         countQuery = """MATCH (node:`Resource`) WHERE $className IN labels(node) AND node.label =~ $label AND node.created_by = $createdBy WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllByClassAndLabelContainingAndCreatedBy(className: String, label: String, createdBy: ContributorId, pageable: Pageable): Page<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WHERE NOT ANY(c in $classes WHERE c IN labels(node)) WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
+    @Query(value = """MATCH (node:`Resource`) WHERE NOT ANY(c in $classes WHERE c IN labels(node)) WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node) SKIP $skip LIMIT $limit""",
     countQuery = """MATCH (node:`Resource`) WHERE NOT ANY(c in $classes WHERE c IN labels(node)) WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllExcludingClass(classes: List<String>, pageable: Pageable): Page<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WHERE NOT ANY(c in $classes WHERE c IN labels(node)) AND node.label = $label WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
+    @Query(value = """MATCH (node:`Resource`) WHERE NOT ANY(c in $classes WHERE c IN labels(node)) AND node.label = $label WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node) SKIP $skip LIMIT $limit""",
     countQuery = """MATCH (node:`Resource`) WHERE NOT ANY(c in $classes WHERE c IN labels(node)) AND node.label = $label WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllExcludingClassByLabel(classes: List<String>, label: String, pageable: Pageable): Page<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WHERE NOT ANY(c in $classes WHERE c IN labels(node)) AND node.label =~ $label WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
+    @Query(value = """MATCH (node:`Resource`) WHERE NOT ANY(c in $classes WHERE c IN labels(node)) AND node.label =~ $label WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node) SKIP $skip LIMIT $limit""",
     countQuery = """MATCH (node:`Resource`) WHERE NOT ANY(c in $classes WHERE c IN labels(node)) AND node.label =~ $label WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllExcludingClassByLabelContaining(classes: List<String>, label: String, pageable: Pageable): Page<Neo4jResource>
 
@@ -127,9 +127,6 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     @Query("""MATCH (n:Paper {observatory_id: $id})-[*]->(r:Problem) RETURN r UNION ALL MATCH (r:Problem {observatory_id: $observatoryId}) RETURN r""")
     fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Neo4jResource>
 
-    @Query("""MATCH (n:Resource {resource_id: $id}) CALL apoc.path.subgraphAll(n, {relationshipFilter:'>'}) YIELD relationships UNWIND relationships as rel WITH rel AS p, startNode(rel) AS s, endNode(rel) AS o, n WHERE p.created_by <> "00000000-0000-0000-0000-000000000000" and p.created_at>=n.created_at RETURN n.resource_id AS id, (p.created_by) AS createdBy, MAX(p.created_at) AS createdAt ORDER BY createdAt""")
-    fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors>
-
     @Query("""MATCH (n:Resource {resource_id: $id}) RETURN EXISTS ((n)-[:RELATED]-(:Thing)) AS used""")
     fun checkIfResourceHasStatements(id: ResourceId): Boolean
 
@@ -141,22 +138,16 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     fun findPaperByResourceId(id: ResourceId): Optional<Neo4jResource>
 
     @Query(
-        value = """$MATCH_VERIFIED_PAPER $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        value = """$MATCH_VERIFIED_PAPER $WITH_NODE_PROPERTIES $RETURN_NODE SKIP $skip LIMIT $limit""",
         countQuery = """$MATCH_VERIFIED_PAPER $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllVerifiedPapers(pageable: Pageable): Page<Neo4jResource>
 
     @Query(
-        value = """$MATCH_UNVERIFIED_PAPER $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        value = """$MATCH_UNVERIFIED_PAPER $WITH_NODE_PROPERTIES $RETURN_NODE SKIP $skip LIMIT $limit""",
         countQuery = """$MATCH_UNVERIFIED_PAPER $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllUnverifiedPapers(pageable: Pageable): Page<Neo4jResource>
+
+    fun deleteByResourceId(id: ResourceId)
 }
-
-data class ResourceContributors(
-    val id: String,
-
-    val createdBy: String,
-
-    val createdAt: String
-)

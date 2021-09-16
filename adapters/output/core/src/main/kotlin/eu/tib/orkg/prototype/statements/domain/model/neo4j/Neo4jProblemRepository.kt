@@ -2,7 +2,9 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.datasetId
 import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.id
+import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.limit
 import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.problemId
+import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.skip
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -41,7 +43,7 @@ interface Neo4jProblemRepository :
     @Query(value = """MATCH (problem:Problem {resource_id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(contribution:Contribution)
                         WHERE contribution.created_by IS NOT NULL AND contribution.created_by <> '00000000-0000-0000-0000-000000000000'
                         RETURN contribution.created_by AS user, COUNT(contribution.created_by) AS freq
-                        ORDER BY freq DESC""",
+                        ORDER BY freq DESC SKIP $skip LIMIT $limit""",
     countQuery = """MATCH (problem:Problem {resource_id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(contribution:Contribution)
                     WHERE contribution.created_by IS NOT NULL AND contribution.created_by <> '00000000-0000-0000-0000-000000000000'
                     WITH contribution.created_by AS user, COUNT(contribution.created_by) AS freq
@@ -50,7 +52,7 @@ interface Neo4jProblemRepository :
 
     @Query(value = """MATCH (problem:Problem {resource_id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P27'}]->(author: Thing)
                         RETURN author.label AS author, COLLECT(author)[0] AS thing , COUNT(paper.resource_id) AS papers
-                        ORDER BY papers DESC, author""",
+                        ORDER BY papers DESC, author SKIP $skip LIMIT $limit""",
         countQuery = """MATCH (problem:Problem {resource_id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P27'}]->(author: Thing)
                         WITH author.label AS author, COLLECT(author)[0] AS thing , COUNT(paper.resource_id) AS papers
                         RETURN COUNT (author)""")

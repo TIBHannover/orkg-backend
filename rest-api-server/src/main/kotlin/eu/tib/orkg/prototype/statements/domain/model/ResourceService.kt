@@ -8,7 +8,7 @@ import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsVerifiedUseC
 import eu.tib.orkg.prototype.statements.application.port.out.GetPaperVerifiedFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperPort
 import eu.tib.orkg.prototype.statements.application.port.out.LoadResourcePort
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
+import eu.tib.orkg.prototype.statements.ports.ResourceRepository.ResourceContributors
 import java.util.Optional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -50,7 +50,7 @@ interface ResourceService : MarkAsVerifiedUseCase, LoadResourcePort, LoadPaperPo
     /**
      * Find all resources matching a label.
      */
-    fun findAllByLabel(pageable: Pageable, label: String): Page<Resource>
+    fun findAllByLabelExactly(pageable: Pageable, label: String): Page<Resource>
 
     /**
      * Find all resources matching a label partially.
@@ -129,8 +129,5 @@ interface ResourceService : MarkAsVerifiedUseCase, LoadResourcePort, LoadPaperPo
 
     fun delete(id: ResourceId)
 
-    /**
-     * Delete all resources
-     */
     fun removeAll()
 }

@@ -119,7 +119,7 @@ class Neo4jResourceServiceTest(
         service.create("first")
         service.create("second")
 
-        val result = service.findAllByLabel(pagination, "not in the list")
+        val result = service.findAllByLabelExactly(pagination, "not in the list")
 
         assertThat(result).isEmpty()
     }
@@ -133,7 +133,7 @@ class Neo4jResourceServiceTest(
         service.create("yet another")
         val pagination = PageRequest.of(0, 10)
 
-        val result = service.findAllByLabel(pagination, "same")
+        val result = service.findAllByLabelExactly(pagination, "same")
 
         assertThat(result).hasSize(2)
     }
@@ -143,7 +143,7 @@ class Neo4jResourceServiceTest(
     fun shouldNotReturnResourceContainingSubstring() {
         val pagination = PageRequest.of(0, 10)
         service.create("this is part of the test")
-        assertThat(service.findAllByLabel(pagination, "part")).isEmpty()
+        assertThat(service.findAllByLabelExactly(pagination, "part")).isEmpty()
     }
 
     @Test

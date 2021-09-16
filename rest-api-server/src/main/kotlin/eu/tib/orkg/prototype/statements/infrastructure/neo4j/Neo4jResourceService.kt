@@ -11,14 +11,8 @@ import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceIdGenerator
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceRepository
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
 import eu.tib.orkg.prototype.statements.ports.ResourceRepository
-import eu.tib.orkg.prototype.util.EscapedRegex
-import eu.tib.orkg.prototype.util.SanitizedWhitespace
-import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
+import eu.tib.orkg.prototype.statements.ports.ResourceRepository.ResourceContributors
 import java.util.Optional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -28,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class Neo4jResourceService(
-    private val neo4jResourceRepository: Neo4jResourceRepository,
-    private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator,
     private val resourceRepository: ResourceRepository
 ) : ResourceService {
 
@@ -42,15 +34,21 @@ class Neo4jResourceService(
     )
 
     override fun create(userId: ContributorId, label: String, observatoryId: ObservatoryId, extractionMethod: ExtractionMethod, organizationId: OrganizationId): Resource {
-        var resourceId = neo4jResourceIdGenerator.nextIdentity()
+        var resourceId = resourceRepository.nextIdentity()
 
         // Should be moved to the Generator in the future
-        while (neo4jResourceRepository.findByResourceId(resourceId).isPresent) {
-            resourceId = neo4jResourceIdGenerator.nextIdentity()
+        while (resourceRepository.findById(resourceId).isPresent) {
+            resourceId = resourceRepository.nextIdentity()
         }
-
-        return neo4jResourceRepository.save(Neo4jResource(label = label, resourceId = resourceId, createdBy = userId, observatoryId = observatoryId, extractionMethod = extractionMethod, organizationId = organizationId))
-            .toResource()
+        val resource = Resource(
+            id = resourceId,
+            label = label,
+            createdBy = userId,
+            observatoryId = observatoryId,
+            organizationId = organizationId,
+            extractionMethod = extractionMethod
+        )
+        return resourceRepository.save(resource)
     }
 
     override fun create(request: CreateResourceRequest) = create(
@@ -61,150 +59,139 @@ class Neo4jResourceService(
         OrganizationId.createUnknownOrganization()
     )
 
-    override fun create(userId: ContributorId, request: CreateResourceRequest, observatoryId: ObservatoryId, extractionMethod: ExtractionMethod, organizationId: OrganizationId): Resource {
-        val id = request.id ?: neo4jResourceIdGenerator.nextIdentity()
-        val resource = Neo4jResource(label = request.label, resourceId = id, createdBy = userId, observatoryId = observatoryId, extractionMethod = extractionMethod, organizationId = organizationId)
-        request.classes.forEach { resource.assignTo(it.toString()) }
-        return neo4jResourceRepository.save(resource).toResource()
+    override fun create(
+        userId: ContributorId,
+        request: CreateResourceRequest,
+        observatoryId: ObservatoryId,
+        extractionMethod: ExtractionMethod,
+        organizationId: OrganizationId
+    ): Resource {
+        val id = request.id ?: resourceRepository.nextIdentity()
+        val resource = Resource(
+            label = request.label,
+            id = id,
+            createdBy = userId,
+            observatoryId = observatoryId,
+            extractionMethod = extractionMethod,
+            organizationId = organizationId,
+            classes = request.classes
+        )
+        return resourceRepository.save(resource)
     }
 
     override fun findAll(pageable: Pageable): Page<Resource> =
-        neo4jResourceRepository
-            .findAll(pageable)
-            .map(Neo4jResource::toResource)
+        resourceRepository.findAll(pageable)
 
-    override fun findById(id: ResourceId?): Optional<Resource> = resourceRepository.findById(id)
+    override fun findById(id: ResourceId?): Optional<Resource> =
+        resourceRepository.findById(id)
 
-    override fun findAllByLabel(pageable: Pageable, label: String): Page<Resource> =
-        neo4jResourceRepository.findAllByLabelMatchesRegex(label.toExactSearchString(), pageable) // TODO: See declaration
-            .map(Neo4jResource::toResource)
+    override fun findAllByLabelExactly(pageable: Pageable, label: String): Page<Resource> =
+        resourceRepository.findAllByLabelExactly(label, pageable) // TODO: See declaration
 
     override fun findAllByLabelContaining(pageable: Pageable, part: String): Page<Resource> {
-        return neo4jResourceRepository.findAllByLabelMatchesRegex(part.toSearchString(), pageable) // TODO: See declaration
-            .map(Neo4jResource::toResource)
+        return resourceRepository.findAllByLabelContaining(part, pageable) // TODO: See declaration
     }
 
     override fun findAllByClass(pageable: Pageable, id: ClassId): Page<Resource> =
-        neo4jResourceRepository.findAllByClass(id.toString(), pageable)
-            .map(Neo4jResource::toResource)
+        resourceRepository.findAllByClass(id, pageable)
 
     override fun findAllByClassAndCreatedBy(pageable: Pageable, id: ClassId, createdBy: ContributorId): Page<Resource> =
-        neo4jResourceRepository.findAllByClassAndCreatedBy(id.toString(), createdBy, pageable)
-            .map(Neo4jResource::toResource)
+        resourceRepository.findAllByClassAndCreatedBy(id, createdBy, pageable)
 
     override fun findAllByClassAndLabel(pageable: Pageable, id: ClassId, label: String): Page<Resource> =
-        neo4jResourceRepository.findAllByClassAndLabel(id.toString(), label, pageable)
-            .map(Neo4jResource::toResource)
+        resourceRepository.findAllByClassAndLabel(id, label, pageable)
 
     override fun findAllByClassAndLabelAndCreatedBy(pageable: Pageable, id: ClassId, label: String, createdBy: ContributorId): Page<Resource> =
-        neo4jResourceRepository.findAllByClassAndLabelAndCreatedBy(id.toString(), label, createdBy, pageable)
-            .map(Neo4jResource::toResource)
+        resourceRepository.findAllByClassAndLabelAndCreatedBy(id, label, createdBy, pageable)
 
     override fun findAllByClassAndLabelContaining(pageable: Pageable, id: ClassId, part: String): Page<Resource> =
-        neo4jResourceRepository.findAllByClassAndLabelContaining(id.toString(), part.toSearchString(), pageable)
-            .map(Neo4jResource::toResource)
+        resourceRepository.findAllByClassAndLabelContaining(id, part, pageable)
 
     override fun findAllByClassAndLabelContainingAndCreatedBy(pageable: Pageable, id: ClassId, part: String, createdBy: ContributorId): Page<Resource> =
-        neo4jResourceRepository.findAllByClassAndLabelContainingAndCreatedBy(id.toString(), part.toSearchString(), createdBy, pageable)
-            .map(Neo4jResource::toResource)
+        resourceRepository.findAllByClassAndLabelContainingAndCreatedBy(id, part, createdBy, pageable)
 
     override fun findAllExcludingClass(pageable: Pageable, ids: Array<ClassId>): Page<Resource> =
-        neo4jResourceRepository.findAllExcludingClass(ids.map { it.value }, pageable)
-            .map(Neo4jResource::toResource)
+        resourceRepository.findAllExcludingClass(ids, pageable)
 
     override fun findAllExcludingClassByLabel(pageable: Pageable, ids: Array<ClassId>, label: String): Page<Resource> =
-        neo4jResourceRepository.findAllExcludingClassByLabel(ids.map { it.value }, label, pageable)
-            .map(Neo4jResource::toResource)
+        resourceRepository.findAllExcludingClassByLabel(ids, label, pageable)
 
     override fun findAllExcludingClassByLabelContaining(pageable: Pageable, ids: Array<ClassId>, part: String): Page<Resource> =
-        neo4jResourceRepository.findAllExcludingClassByLabelContaining(ids.map { it.value }, part.toSearchString(), pageable)
-            .map(Neo4jResource::toResource)
+        resourceRepository.findAllExcludingClassByLabelContaining(ids, part, pageable)
 
     override fun findByDOI(doi: String): Optional<Resource> =
-        neo4jResourceRepository.findByDOI(doi)
-            .map(Neo4jResource::toResource)
+        resourceRepository.findByDOI(doi)
 
+    // TODO: really single result? exact match?
     override fun findByTitle(title: String?): Optional<Resource> =
-        neo4jResourceRepository.findByLabel(title)
-            .map(Neo4jResource::toResource)
+        resourceRepository.findByLabelExactly(title!!)
 
     override fun findAllByDOI(doi: String): Iterable<Resource> =
-        neo4jResourceRepository.findAllByDOI(doi)
-            .map(Neo4jResource::toResource)
+        resourceRepository.findAllByDOI(doi)
 
+    // FIXME: should be pageable
     override fun findAllByTitle(title: String?): Iterable<Resource> =
-        neo4jResourceRepository.findAllByLabel(title!!)
-            .map(Neo4jResource::toResource)
+        resourceRepository.findAllByLabelExactly(title!!)
 
     override fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Resource> =
-        neo4jResourceRepository.findPapersByObservatoryId(id)
-            .map(Neo4jResource::toResource)
+        resourceRepository.findPapersByObservatoryId(id)
 
     override fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
-        neo4jResourceRepository.findComparisonsByObservatoryId(id)
-            .map(Neo4jResource::toResource)
+        resourceRepository.findComparisonsByObservatoryId(id)
 
     override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
-        neo4jResourceRepository.findProblemsByObservatoryId(id)
-            .map(Neo4jResource::toResource)
+        resourceRepository.findProblemsByObservatoryId(id)
 
     override fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors> =
-        neo4jResourceRepository.findContributorsByResourceId(id)
+        resourceRepository.findContributorsByResourceId(id)
 
     override fun update(request: UpdateResourceRequest): Resource {
         // already checked by service
-        val found = neo4jResourceRepository.findByResourceId(request.id).get()
+        var found = resourceRepository.findById(request.id).get()
 
         // update all the properties
         if (request.label != null)
-            found.label = request.label
+            found = found.copy(label = request.label)
         if (request.classes != null)
-            found.classes = request.classes
+            found = found.copy(classes = request.classes)
 
-        return neo4jResourceRepository.save(found).toResource()
+        return resourceRepository.save(found)
     }
 
     override fun updatePaperObservatory(request: UpdateResourceObservatoryRequest, id: ResourceId): Resource {
-        val found = neo4jResourceRepository.findByResourceId(id).get()
-            found.observatoryId = request.observatoryId
-            found.organizationId = request.organizationId
+        var found = resourceRepository.findById(id).get()
 
-        return neo4jResourceRepository.save(found).toResource()
+        found = found.copy(observatoryId = request.observatoryId)
+        found = found.copy(organizationId = request.organizationId)
+
+        return resourceRepository.save(found)
     }
 
     override fun hasStatements(id: ResourceId) =
-        neo4jResourceRepository.checkIfResourceHasStatements(id)
+        resourceRepository.checkIfResourceHasStatements(id)
 
     override fun delete(id: ResourceId) {
-        val found = neo4jResourceRepository.findByResourceId(id).get()
-        neo4jResourceRepository.delete(found)
+        val found = resourceRepository.findById(id).get()
+        resourceRepository.delete(found.id!!)
     }
 
-    override fun removeAll() = neo4jResourceRepository.deleteAll()
+    override fun removeAll() = Unit
 
     override fun markAsVerified(resourceId: ResourceId) = setVerifiedFlag(resourceId, true)
 
     override fun markAsUnverified(resourceId: ResourceId) = setVerifiedFlag(resourceId, false)
 
     override fun loadVerifiedResources(pageable: Pageable): Page<Resource> =
-        neo4jResourceRepository
-            .findAllByVerifiedIsTrue(pageable)
-            .map(Neo4jResource::toResource)
+        resourceRepository.findAllVerifiedResources(pageable)
 
     override fun loadUnverifiedResources(pageable: Pageable): Page<Resource> =
-        neo4jResourceRepository
-            .findAllByVerifiedIsFalse(pageable)
-            .map(Neo4jResource::toResource)
+        resourceRepository.findAllUnverifiedResources(pageable)
 
     override fun loadVerifiedPapers(pageable: Pageable): Page<Resource> =
-        neo4jResourceRepository
-            .findAllVerifiedPapers(pageable)
-            .map(Neo4jResource::toResource)
+        resourceRepository.findAllVerifiedPapers(pageable)
 
     override fun loadUnverifiedPapers(pageable: Pageable): Page<Resource> =
-        neo4jResourceRepository
-            .findAllUnverifiedPapers(pageable)
-            .map(Neo4jResource::toResource)
+        resourceRepository.findAllUnverifiedPapers(pageable)
 
     /**
      * Get the "verified" flag of a paper resource.
@@ -213,25 +200,20 @@ class Neo4jResourceService(
      * @return The value of the flag, or `null` if the resource is not found or not a paper.
      */
     override fun getPaperVerifiedFlag(id: ResourceId): Boolean? {
-        val result = neo4jResourceRepository.findPaperByResourceId(id)
+        val result = resourceRepository.findPaperByResourceId(id)
         if (result.isPresent) {
-            val paper = result.get()
-            return paper.verified ?: false
+            return result.get().verified
         }
         return null
     }
 
+    // TODO: This should go to the Resource -> behavior
     private fun setVerifiedFlag(resourceId: ResourceId, verified: Boolean): Optional<Resource> {
-        val result = neo4jResourceRepository.findByResourceId(resourceId)
+        val result = resourceRepository.findById(resourceId)
         if (result.isPresent) {
-            val resource = result.get()
-            resource.verified = verified
-            return Optional.of(neo4jResourceRepository.save(resource).toResource())
+            val resource = result.get().copy(verified = verified)
+            return Optional.of(resourceRepository.save(resource))
         }
         return Optional.empty()
     }
-
-    private fun String.toSearchString() = "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"
-
-    private fun String.toExactSearchString() = "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"
 }

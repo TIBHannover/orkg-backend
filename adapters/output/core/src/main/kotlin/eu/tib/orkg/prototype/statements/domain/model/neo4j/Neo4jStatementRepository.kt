@@ -3,8 +3,10 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.id
 import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.ids
 import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.label
+import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.limit
 import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.objectId
 import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.predicateId
+import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.skip
 import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.subjectClass
 import eu.tib.orkg.prototype.core.statements.adapters.output.eu.tib.orkg.prototype.statements.domain.model.neo4j.subjectId
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -65,20 +67,20 @@ interface Neo4jStatementRepository :
 
     fun findByStatementId(id: StatementId): Optional<Neo4jStatement>
 
-    @Query("$MATCH_STATEMENT $BY_SUBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
+    @Query("$MATCH_STATEMENT $BY_SUBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_STATEMENT SKIP $skip LIMIT $limit",
     countQuery = "$MATCH_STATEMENT $BY_SUBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_COUNT")
     fun findAllBySubject(id: String, pagination: Pageable): Page<Neo4jStatement>
 
     fun findAllByPredicateId(predicateId: PredicateId, pagination: Pageable): Page<Neo4jStatement>
 
-    @Query("$MATCH_STATEMENT $BY_OBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
+    @Query("$MATCH_STATEMENT $BY_OBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_STATEMENT SKIP $skip LIMIT $limit",
     countQuery = "$MATCH_STATEMENT $BY_OBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_COUNT")
     fun findAllByObject(id: String, pagination: Pageable): Page<Neo4jStatement>
 
     @Query("""MATCH (p:`Thing`)-[*]->() WHERE p.`resource_id`=$id OR p.`literal_id`=$id OR p.`predicate_id`=$id OR p.`class_id`=$id RETURN COUNT(p)""")
     fun countByIdRecursive(id: String): Int
 
-    @Query("$MATCH_STATEMENT WHERE (obj.`resource_id`=$objectId OR obj.`literal_id`=$objectId OR obj.`predicate_id`=$objectId OR obj.`class_id`=$objectId) AND rel.`predicate_id`=$predicateId $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
+    @Query("$MATCH_STATEMENT WHERE (obj.`resource_id`=$objectId OR obj.`literal_id`=$objectId OR obj.`predicate_id`=$objectId OR obj.`class_id`=$objectId) AND rel.`predicate_id`=$predicateId $WITH_SORTABLE_FIELDS $RETURN_STATEMENT SKIP $skip LIMIT $limit",
     countQuery = "$MATCH_STATEMENT WHERE (obj.`resource_id`=$objectId OR obj.`literal_id`=$objectId OR obj.`predicate_id`=$objectId OR obj.`class_id`=$objectId) AND rel.`predicate_id`=$predicateId $WITH_SORTABLE_FIELDS $RETURN_COUNT")
     fun findAllByObjectAndPredicate(
         objectId: String,
@@ -86,7 +88,7 @@ interface Neo4jStatementRepository :
         pagination: Pageable
     ): Page<Neo4jStatement>
 
-    @Query("$MATCH_STATEMENT WHERE (sub.`resource_id`= $subjectId OR sub.`literal_id`=$subjectId OR sub.`predicate_id`=$subjectId OR sub.`class_id`=$subjectId) AND rel.`predicate_id`=$predicateId $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
+    @Query("$MATCH_STATEMENT WHERE (sub.`resource_id`= $subjectId OR sub.`literal_id`=$subjectId OR sub.`predicate_id`=$subjectId OR sub.`class_id`=$subjectId) AND rel.`predicate_id`=$predicateId $WITH_SORTABLE_FIELDS $RETURN_STATEMENT SKIP $skip LIMIT $limit",
     countQuery = "$MATCH_STATEMENT WHERE (sub.`resource_id`= $subjectId OR sub.`literal_id`=$subjectId OR sub.`predicate_id`=$subjectId OR sub.`class_id`=$subjectId) AND rel.`predicate_id`=$predicateId $WITH_SORTABLE_FIELDS $RETURN_COUNT")
     fun findAllBySubjectAndPredicate(
         subjectId: String,
@@ -95,7 +97,7 @@ interface Neo4jStatementRepository :
     ): Page<Neo4jStatement>
 
     @Query(
-        "$MATCH_STATEMENT_WITH_LITERAL WHERE rel.`predicate_id`= $predicateId AND obj.`label`= $label $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
+        "$MATCH_STATEMENT_WITH_LITERAL WHERE rel.`predicate_id`= $predicateId AND obj.`label`= $label $WITH_SORTABLE_FIELDS $RETURN_STATEMENT SKIP $skip LIMIT $limit",
         countQuery = "$MATCH_STATEMENT_WITH_LITERAL WHERE rel.`predicate_id`= $predicateId AND obj.`label`= $label $WITH_SORTABLE_FIELDS $RETURN_COUNT"
     )
     fun findAllByPredicateIdAndLabel(
@@ -105,7 +107,7 @@ interface Neo4jStatementRepository :
     ): Page<Neo4jStatement>
 
     @Query(
-        "$MATCH_STATEMENT_WITH_LITERAL WHERE $subjectClass IN labels(sub) AND rel.`predicate_id`= $predicateId AND obj.`label`= $label $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
+        "$MATCH_STATEMENT_WITH_LITERAL WHERE $subjectClass IN labels(sub) AND rel.`predicate_id`= $predicateId AND obj.`label`= $label $WITH_SORTABLE_FIELDS $RETURN_STATEMENT SKIP $skip LIMIT $limit",
         countQuery = "$MATCH_STATEMENT_WITH_LITERAL WHERE $subjectClass IN labels(sub) AND rel.`predicate_id`= $predicateId AND obj.`label`= $label $WITH_SORTABLE_FIELDS $RETURN_COUNT"
     )
     fun findAllByPredicateIdAndLabelAndSubjectClass(
@@ -116,7 +118,7 @@ interface Neo4jStatementRepository :
     ): Page<Neo4jStatement>
 
     @Query(
-        """$MATCH_STATEMENT $WHERE_SUBJECT_ID_IN $WITH_SORTABLE_FIELDS $RETURN_STATEMENT""",
+        """$MATCH_STATEMENT $WHERE_SUBJECT_ID_IN $WITH_SORTABLE_FIELDS $RETURN_STATEMENT SKIP $skip LIMIT $limit""",
         countQuery = "$MATCH_STATEMENT $WHERE_OBJECT_ID_IN $WITH_SORTABLE_FIELDS $RETURN_COUNT"
     )
     fun findAllBySubjects(
@@ -125,7 +127,7 @@ interface Neo4jStatementRepository :
     ): Page<Neo4jStatement>
 
     @Query(
-        """$MATCH_STATEMENT $WHERE_OBJECT_ID_IN $WITH_SORTABLE_FIELDS $RETURN_STATEMENT""",
+        """$MATCH_STATEMENT $WHERE_OBJECT_ID_IN $WITH_SORTABLE_FIELDS $RETURN_STATEMENT SKIP $skip LIMIT $limit""",
         countQuery = "$MATCH_STATEMENT $WHERE_OBJECT_ID_IN $WITH_SORTABLE_FIELDS $RETURN_COUNT"
     )
     fun findAllByObjects(

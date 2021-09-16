@@ -10,7 +10,7 @@ import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
+import eu.tib.orkg.prototype.statements.ports.ResourceRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
@@ -61,7 +61,7 @@ class ResourceController(
             }
             else -> when {
                 searchString == null -> service.findAll(pageable)
-                exactMatch -> service.findAllByLabel(pageable, searchString)
+                exactMatch -> service.findAllByLabelExactly(pageable, searchString)
                 else -> service.findAllByLabelContaining(pageable, searchString)
             }
         }
@@ -117,7 +117,7 @@ class ResourceController(
     }
 
     @GetMapping("{id}/contributors")
-    fun findContributorsById(@PathVariable id: ResourceId): Iterable<ResourceContributors> {
+    fun findContributorsById(@PathVariable id: ResourceId): Iterable<ResourceRepository.ResourceContributors> {
         return service.findContributorsByResourceId(id)
     }
 

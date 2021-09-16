@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.domain.model.StatsService
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.TrendingResearchProblems
+import eu.tib.orkg.prototype.statements.ports.TrendingResearchProblems
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.ChangeLog
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.TopContributorsWithProfile
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.TopContributorsWithProfileAndTotalCount

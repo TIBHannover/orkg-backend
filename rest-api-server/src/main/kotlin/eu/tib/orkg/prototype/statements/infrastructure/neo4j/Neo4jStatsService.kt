@@ -11,12 +11,12 @@ import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.domain.model.StatsService
 import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresObservatoryRepository
 import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresOrganizationRepository
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.ChangeLogResponse
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatsRepository
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResultObject
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.TopContributorIdentifiers
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.TrendingResearchProblems
+import eu.tib.orkg.prototype.statements.ports.ChangeLogResponse
+import eu.tib.orkg.prototype.statements.ports.ObservatoryResources
+import eu.tib.orkg.prototype.statements.ports.ResultObject
+import eu.tib.orkg.prototype.statements.ports.TopContributorIdentifiers
+import eu.tib.orkg.prototype.statements.ports.TrendingResearchProblems
+import eu.tib.orkg.prototype.statements.ports.StatsRepository
 import java.lang.IllegalStateException
 import java.time.LocalDate
 import java.util.UUID
@@ -25,20 +25,23 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.logging.Logger
 
 @Service
 @Transactional
 class Neo4jStatsService(
-    private val neo4jStatsRepository: Neo4jStatsRepository,
+    private val statsRepository: StatsRepository,
     private val userRepository: UserRepository,
     private val observatoryRepository: PostgresObservatoryRepository,
-    private val organizationRepository: PostgresOrganizationRepository
+    private val organizationRepository: PostgresOrganizationRepository,
 ) : StatsService {
+
+    private val logger = Logger.getLogger("Logger")
 
     val internalClassLabels: (String) -> Boolean = { it !in setOf("Thing", "Resource", "AuditableEntity") }
 
     override fun getStats(extra: List<String>?): Stats {
-        val metadata = neo4jStatsRepository.getGraphMetaData()
+        val metadata = statsRepository.getGraphMetaData()
         val labels = metadata.first()["labels"] as Map<*, *>
         val resourcesCount = extractValue(labels, "Resource")
         val predicatesCount = extractValue(labels, "Predicate")
@@ -52,7 +55,7 @@ class Neo4jStatsService(
         val templatesCount = extractValue(labels, "ContributionTemplate")
         val smartReviewsCount = extractValue(labels, "SmartReview")
         val extraCounts = extra?.associate { it to extractValue(labels, it) }
-        val fieldsCount = neo4jStatsRepository.getResearchFieldsCount()
+        val fieldsCount = statsRepository.getResearchFieldsCount()
         val relationsTypes = metadata.first()["relTypesCount"] as Map<*, *>
         val statementsCount = extractValue(relationsTypes, "RELATED")
         val userCount = userRepository.count()
@@ -66,38 +69,39 @@ class Neo4jStatsService(
     }
 
     override fun getFieldsStats(): Map<String, Int> {
-        val counts = neo4jStatsRepository.getResearchFieldsPapersCount()
+        val counts = statsRepository.getResearchFieldsPapersCount()
         return counts.associate { it.fieldId to it.papers.toInt() }
     }
 
     override fun getObservatoryPapersCount(id: ObservatoryId): Long =
-        neo4jStatsRepository.getObservatoryPapersCount(id)
+        statsRepository.getObservatoryPapersCount(id)
 
     override fun getObservatoryComparisonsCount(id: ObservatoryId): Long =
-        neo4jStatsRepository.getObservatoryComparisonsCount(id)
+        statsRepository.getObservatoryComparisonsCount(id)
 
-    override fun getObservatoriesPapersAndComparisonsCount(): List<ObservatoryResources> =
-        neo4jStatsRepository.getObservatoriesPapersAndComparisonsCount()
+    override fun getObservatoriesPapersAndComparisonsCount(): Iterable<ObservatoryResources> =
+        statsRepository.getObservatoriesPapersAndComparisonsCount()
 
     override fun getTopCurrentContributors(pageable: Pageable): Page<TopContributorsWithProfile> {
         val previousMonthDate: LocalDate = LocalDate.now().minusMonths(1)
-        return getContributorsWithProfile(neo4jStatsRepository.getTopCurrentContributorIdsAndContributionsCount(
+        return getContributorsWithProfile(statsRepository.getTopCurrentContributorIdsAndContributionsCount(
             previousMonthDate.toString(), pageable), pageable)
     }
 
     override fun getRecentChangeLog(pageable: Pageable): Page<ChangeLog> {
-        val changeLogs = neo4jStatsRepository.getChangeLog(pageable)
+        val changeLogs = statsRepository.getChangeLog(pageable)
 
         return getChangeLogsWithProfile(changeLogs, pageable)
     }
 
     override fun getRecentChangeLogByResearchField(id: ResourceId, pageable: Pageable): Page<ChangeLog> {
-        val changeLogs = neo4jStatsRepository.getChangeLogByResearchField(id, pageable)
+        val changeLogs = statsRepository.getChangeLogByResearchField(id, pageable)
 
         return getChangeLogsWithProfile(changeLogs, pageable)
     }
 
-    override fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems> = neo4jStatsRepository.getTrendingResearchProblems(pageable)
+    override fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems>
+        = statsRepository.getTrendingResearchProblems(pageable)
 
     override fun getTopCurrentContributorsByResearchField(
         id: ResourceId,
@@ -112,8 +116,9 @@ class Neo4jStatsService(
             previousMonthDate = LocalDate.now().minusDays(days)
         }
 
-        val values = neo4jStatsRepository.getTopCurContribIdsAndContribCountByResearchFieldId(id, previousMonthDate.toString())
+        val values = statsRepository.getTopCurContribIdsAndContribCountByResearchFieldId(id, previousMonthDate.toString())
 
+        logger.info("$values")
         val totalContributions = extractAndCalculateContributionDetails(values)
 
         return getContributorsWithProfileAndTotalCount(totalContributions)
@@ -150,7 +155,8 @@ class Neo4jStatsService(
         return PageImpl(refinedTopContributors, pageable, refinedTopContributors.size.toLong())
     }
 
-    private fun getContributorsWithProfileAndTotalCount(topContributors: List<OverallContributions>): List<TopContributorsWithProfileAndTotalCount> {
+    private fun getContributorsWithProfileAndTotalCount(topContributors: List<OverallContributions>):
+        List<TopContributorsWithProfileAndTotalCount> {
         val userIdList = topContributors.map { UUID.fromString(it.id) }.toTypedArray()
 
         val mapValues = userRepository.findByIdIn(userIdList).map(UserEntity::toContributor).groupBy(Contributor::id)
@@ -170,14 +176,16 @@ class Neo4jStatsService(
             0
     }
 
-    private fun extractAndCalculateContributionDetails(values: List<List<Map<String, List<ResultObject>>>>): List<OverallContributions> {
+    private fun extractAndCalculateContributionDetails(values: Iterable<Map<String, Iterable<ResultObject>>>):
+        List<OverallContributions> {
         val mapLookUpResult = mutableMapOf<String, IndividualContributionsCount>()
 
         values.forEachIndexed { index, row ->
             row.forEach { hashMap ->
-                if (hashMap["total"] != null) {
-                    val value = hashMap["total"]
-                    val iter = value?.iterator()
+                if (hashMap!= null) {
+                    val key = hashMap.key
+                    if(key.equals("total")){
+                    val iter = hashMap.value.iterator()
                     while (iter != null && iter.hasNext()) {
                         val mapEntry = iter.next()
                         if (mapEntry["id"] != null) {
@@ -192,6 +200,7 @@ class Neo4jStatsService(
 
                             mapLookUpResult[id] = updateCount(index, counts, cnt)
                         }
+                    }
                     }
                 }
             }

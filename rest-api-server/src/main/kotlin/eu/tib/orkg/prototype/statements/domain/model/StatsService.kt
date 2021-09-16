@@ -1,7 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.TrendingResearchProblems
+import eu.tib.orkg.prototype.statements.ports.TrendingResearchProblems
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.ChangeLog
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.TopContributorsWithProfile
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.TopContributorsWithProfileAndTotalCount
@@ -34,7 +33,7 @@ interface StatsService {
     /**
      * Get paper count and comparison count
      */
-    fun getObservatoriesPapersAndComparisonsCount(): Iterable<ObservatoryResources>
+    fun getObservatoriesPapersAndComparisonsCount(): Iterable<eu.tib.orkg.prototype.statements.ports.ObservatoryResources>
 
     /**
      * Get top contributors

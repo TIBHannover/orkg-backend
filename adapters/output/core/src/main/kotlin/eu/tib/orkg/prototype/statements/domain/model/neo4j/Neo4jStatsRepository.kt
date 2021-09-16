@@ -1,5 +1,5 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
-
+/*
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -35,9 +35,6 @@ interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
     countQuery = "MATCH(sub: Resource) WHERE ('Paper' IN LABELS(sub) OR 'Comparison' IN LABELS(sub) OR 'Problem' IN LABELS(sub) OR 'Contribution' IN LABELS(sub) OR 'Visualization' IN LABELS(sub)) AND (sub.created_by <> '00000000-0000-0000-0000-000000000000' AND sub.created_at > {0} ) RETURN DISTINCT COUNT(sub.created_by) AS cnt")
     fun getTopCurrentContributorIdsAndContributionsCount(date: String, pageable: Pageable): Page<TopContributorIdentifiers>
 
-    /**
-     * This query fetches the contributor IDs from sub research fields as well.
-     */
     @Query("""MATCH (research:ResearchField)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(research1:ResearchField{resource_id: {0}}) WITH (COLLECT(research) + COLLECT(research1)) AS r OPTIONAL MATCH(c:Contribution)<-[:RELATED{predicate_id: 'P31'}]-(p:Paper)-[:RELATED {predicate_id: 'P30'}]->(inner_r) WHERE inner_r in r AND c.created_by IS NOT NULL AND c.created_by <> '00000000-0000-0000-0000-000000000000' AND c.created_at > {1}  WITH  c.created_by AS contribution_creators, COUNT(c.created_by) AS cnt RETURN COLLECT({id:contribution_creators, cnt:cnt}) AS total UNION MATCH (research:ResearchField)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(research1:ResearchField{resource_id: {0}}) WITH (COLLECT(research) + COLLECT(research1)) AS r OPTIONAL MATCH(comparison1: Comparison)-[related:RELATED]->(contribution1:Contribution)<-[:RELATED{predicate_id: 'P31'}]-(p1:Paper)-[:RELATED {predicate_id: 'P30'}]->(inner_r) WHERE inner_r in r AND comparison1.created_by IS NOT NULL AND comparison1.created_by <> '00000000-0000-0000-0000-000000000000' AND comparison1.created_at > {1} WITH  comparison1.created_by AS comparison_creators, COUNT(comparison1.created_by) AS cnt RETURN COLLECT({id:comparison_creators, cnt:cnt}) AS total UNION MATCH (research:ResearchField)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(research1:ResearchField{resource_id: {0}}) WITH (COLLECT(research) + COLLECT(research1)) AS r OPTIONAL MATCH(p1:Paper)-[:RELATED {predicate_id: 'P30'}]->(inner_r) WHERE inner_r in r AND p1.created_by IS NOT NULL AND p1.created_by <> '00000000-0000-0000-0000-000000000000' AND p1.created_at > {1} WITH  p1.created_by AS paper_creators, COUNT(p1.created_by) AS cnt RETURN COLLECT({id:paper_creators, cnt:cnt}) AS total UNION MATCH (research:ResearchField)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(research1:ResearchField{resource_id: {0}}) WITH (COLLECT(research) + COLLECT(research1)) AS r OPTIONAL MATCH (v:Visualization)<-[:RELATED]-(comparison1: Comparison)-[related:RELATED]->(contribution1:Contribution)<-[:RELATED{predicate_id: 'P31'}]-(p1:Paper)-[:RELATED {predicate_id: 'P30'}]->(inner_r) WHERE inner_r in r AND v.created_by IS NOT NULL AND v.created_by <> '00000000-0000-0000-0000-000000000000' AND v.created_at > {1} WITH  v.created_by AS visualization_creators, COUNT(v.created_by) AS cnt RETURN COLLECT({id:visualization_creators, cnt:cnt}) AS total UNION MATCH (research:ResearchField)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(research1:ResearchField{resource_id: {0}}) WITH (COLLECT(research) + COLLECT(research1)) AS r OPTIONAL MATCH (problem:Problem)<-[:RELATED]-(c:Contribution)<-[:RELATED{predicate_id: 'P31'}]-(p:Paper)-[:RELATED {predicate_id: 'P30'}]->(inner_r) WHERE inner_r in r AND problem.created_by IS NOT NULL AND problem.created_by <> '00000000-0000-0000-0000-000000000000' AND problem.created_at > {1} WITH  problem.created_by AS problem_creators, COUNT(problem.created_by) AS cnt RETURN COLLECT({id:problem_creators, cnt:cnt}) AS total""")
     fun getTopCurContribIdsAndContribCountByResearchFieldId(id: ResourceId, date: String): List<List<Map<String, List<ResultObject>>>>
 
@@ -54,20 +51,12 @@ interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
     fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems>
 }
 
-/**
- * Data class for fetching
- * field statistics
- */
 data class FieldsStats(
     val fieldId: String,
     val field: String,
     val papers: Long
 )
 
-/**
- * Data class for fetching
- * Observatory resources
- */
 data class ObservatoryResources(
     @JsonProperty("observatory_id")
     val observatoryId: String,
@@ -75,11 +64,6 @@ data class ObservatoryResources(
     val comparisons: Long = 0
 )
 
-/**
- * Data class comprising of resource ID,
- * label, time of creation/modification,
- * creator and corresponding classes
- */
 data class ChangeLogResponse(
     val id: String,
     val label: String,
@@ -90,23 +74,15 @@ data class ChangeLogResponse(
     val classes: List<String>
 )
 
-/**
- * Data class comprising of resource ID,
- * research problem and total number of
- * papers per research problem
- */
 data class TrendingResearchProblems(
     val id: String,
     val researchProblem: String,
     val papersCount: Long
 )
 
-/**
- * Data class comprising of contributor ID
- * and the number of contributions
- * per contributor
- */
+
 data class TopContributorIdentifiers(
     val id: String,
     val contributions: Long
 )
+*/

@@ -9,7 +9,6 @@ import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.Neo4jStatsService
 import java.util.UUID
 import javax.validation.Valid
@@ -130,9 +129,9 @@ class ObservatoryController(
     }
 
     @GetMapping("stats/observatories")
-    fun findObservatoriesWithStats(): List<ObservatoryResources> {
-        return neo4jStatsService.getObservatoriesPapersAndComparisonsCount()
-    }
+    fun findObservatoriesWithStats(): Iterable<eu.tib.orkg.prototype.statements.ports.ObservatoryResources> =
+        neo4jStatsService.getObservatoriesPapersAndComparisonsCount()
+
 
     fun isValidUUID(id: String): Boolean {
         return try {

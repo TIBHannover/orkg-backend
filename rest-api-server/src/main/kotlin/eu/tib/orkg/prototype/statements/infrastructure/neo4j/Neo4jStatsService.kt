@@ -14,18 +14,18 @@ import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresOrganizationRep
 import eu.tib.orkg.prototype.statements.ports.ChangeLogResponse
 import eu.tib.orkg.prototype.statements.ports.ObservatoryResources
 import eu.tib.orkg.prototype.statements.ports.ResultObject
+import eu.tib.orkg.prototype.statements.ports.StatsRepository
 import eu.tib.orkg.prototype.statements.ports.TopContributorIdentifiers
 import eu.tib.orkg.prototype.statements.ports.TrendingResearchProblems
-import eu.tib.orkg.prototype.statements.ports.StatsRepository
 import java.lang.IllegalStateException
 import java.time.LocalDate
 import java.util.UUID
+import java.util.logging.Logger
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.logging.Logger
 
 @Service
 @Transactional
@@ -33,7 +33,7 @@ class Neo4jStatsService(
     private val statsRepository: StatsRepository,
     private val userRepository: UserRepository,
     private val observatoryRepository: PostgresObservatoryRepository,
-    private val organizationRepository: PostgresOrganizationRepository,
+    private val organizationRepository: PostgresOrganizationRepository
 ) : StatsService {
 
     private val logger = Logger.getLogger("Logger")
@@ -100,8 +100,8 @@ class Neo4jStatsService(
         return getChangeLogsWithProfile(changeLogs, pageable)
     }
 
-    override fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems>
-        = statsRepository.getTrendingResearchProblems(pageable)
+    override fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems> =
+        statsRepository.getTrendingResearchProblems(pageable)
 
     override fun getTopCurrentContributorsByResearchField(
         id: ResourceId,
@@ -182,9 +182,9 @@ class Neo4jStatsService(
 
         values.forEachIndexed { index, row ->
             row.forEach { hashMap ->
-                if (hashMap!= null) {
+                if (hashMap != null) {
                     val key = hashMap.key
-                    if(key.equals("total")){
+                    if (key.equals("total")) {
                     val iter = hashMap.value.iterator()
                     while (iter != null && iter.hasNext()) {
                         val mapEntry = iter.next()

@@ -132,7 +132,6 @@ class ObservatoryController(
     fun findObservatoriesWithStats(): Iterable<eu.tib.orkg.prototype.statements.ports.ObservatoryResources> =
         neo4jStatsService.getObservatoriesPapersAndComparisonsCount()
 
-
     fun isValidUUID(id: String): Boolean {
         return try {
             UUID.fromString(id) != null

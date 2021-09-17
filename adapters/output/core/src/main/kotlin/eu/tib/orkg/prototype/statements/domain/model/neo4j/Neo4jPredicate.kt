@@ -23,7 +23,7 @@ class Neo4jPredicate() : Neo4jThing() {
     override var label: String? = null
 
     @Property("predicate_id")
-    private var predicateId: PredicateId? = null
+    var predicateId: PredicateId? = null
 
     @Property("created_by")
     var createdBy: ContributorId = ContributorId.createUnknownContributor()
@@ -41,6 +41,7 @@ class Neo4jPredicate() : Neo4jThing() {
     fun toPredicate(): Predicate {
         val pred = Predicate(predicateId, label!!, createdAt!!, createdBy = createdBy)
         pred.rdf = toRdfModel()
+        // FIXME: will need re-work, better save as property!
         if (subjectOf.isNotEmpty())
             pred.description = subjectOf.firstOrNull { it.predicateId?.value == "description" }?.`object`?.label
         return pred

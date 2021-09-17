@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.core.statements.adapters.output
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jPredicate
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jPredicateIdGenerator
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jPredicateRepository
 import eu.tib.orkg.prototype.statements.ports.PredicateRepository
 import eu.tib.orkg.prototype.util.EscapedRegex
@@ -15,8 +16,22 @@ import java.util.Optional
 
 @Component
 class PredicatePersistenceAdapter(
-    private val neo4jPredicateRepository: Neo4jPredicateRepository
+    private val neo4jPredicateRepository: Neo4jPredicateRepository,
+    private val neo4jPredicateIdGenerator: Neo4jPredicateIdGenerator,
 ) : PredicateRepository {
+    
+    override fun nextIdentity(): PredicateId = neo4jPredicateIdGenerator.nextIdentity()
+
+    override fun save(predicate: Predicate) {
+        neo4jPredicateRepository.save(
+            Neo4jPredicate().apply {
+                predicateId = predicate.id
+                label = predicate.label
+                createdAt = predicate.createdAt
+                createdBy = predicate.createdBy
+            })
+    }
+
     override fun findAll(pageable: Pageable): Page<Predicate> =
         neo4jPredicateRepository
             .findAll(pageable)
@@ -32,7 +47,7 @@ class PredicatePersistenceAdapter(
             .findAllByPredicateIdIn(ids)
             .map(Neo4jPredicate::toPredicate)
 
-    override fun findAllByLabel(label: String, pageable: Pageable): Page<Predicate> =
+    override fun findAllByLabelExactly(label: String, pageable: Pageable): Page<Predicate> =
         neo4jPredicateRepository
             .findAllByLabelMatchesRegex(label.toExactSearchString(), pageable)
             .map(Neo4jPredicate::toPredicate)

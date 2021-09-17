@@ -8,6 +8,10 @@ import java.util.Optional
 
 interface PredicateRepository {
 
+    fun nextIdentity(): PredicateId
+
+    fun save(predicate: Predicate)
+
     fun findAll(pageable: Pageable): Page<Predicate>
 
     /**
@@ -18,7 +22,7 @@ interface PredicateRepository {
     /**
      * Find all predicates matching a label.
      */
-    fun findAllByLabel(label: String, pageable: Pageable): Page<Predicate>
+    fun findAllByLabelExactly(label: String, pageable: Pageable): Page<Predicate>
 
     /**
      * Find all predicates matching a label partially.

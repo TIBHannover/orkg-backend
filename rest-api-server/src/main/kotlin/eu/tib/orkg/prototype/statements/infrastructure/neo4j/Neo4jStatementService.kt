@@ -6,17 +6,10 @@ import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
-import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
-import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
-import eu.tib.orkg.prototype.statements.domain.model.Thing
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteral
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatement
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementIdGenerator
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThingRepository
 import eu.tib.orkg.prototype.statements.ports.StatementRepository
@@ -31,11 +24,8 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class Neo4jStatementService(
     private val thingRepository: Neo4jThingRepository,
-    private val resourceService: ResourceService,
-    private val literalService: LiteralService,
     private val predicateService: PredicateService,
-    private val statementRepository: StatementRepository,
-    private val neo4jStatementIdGenerator: Neo4jStatementIdGenerator
+    private val statementRepository: StatementRepository
 ) :
     StatementService {
 
@@ -92,11 +82,11 @@ class Neo4jStatementService(
             .map(Neo4jThing::toThing)
             .orElseThrow { IllegalStateException("Could not find object: $`object`") }
 
-        var id = neo4jStatementIdGenerator.nextIdentity()
+        var id = statementRepository.nextIdentity()
 
         // Should be moved to the Generator in the future
         while (statementRepository.findById(id).isPresent) {
-            id = neo4jStatementIdGenerator.nextIdentity()
+            id = statementRepository.nextIdentity()
         }
 
         val statement = GeneralStatement(
@@ -128,7 +118,7 @@ class Neo4jStatementService(
             .map(Neo4jThing::toThing)
             .orElseThrow { IllegalStateException("Could not find object: $`object`") }
 
-        val id = neo4jStatementIdGenerator.nextIdentity()
+        val id = statementRepository.nextIdentity()
 
         statementRepository.save(
             GeneralStatement(
@@ -197,22 +187,4 @@ class Neo4jStatementService(
 
     // FIXME: To be removed
     override fun removeAll() = Unit
-
-    private fun refreshObject(thing: Neo4jThing): Thing {
-        return when (thing) {
-            is Neo4jResource -> resourceService.findById(thing.resourceId).get()
-            is Neo4jLiteral -> literalService.findById(thing.literalId).get()
-            else -> thing.toThing()
-        }
-    }
-
-    private fun toStatement(statement: Neo4jStatement) =
-        GeneralStatement(
-            id = statement.statementId!!,
-            subject = refreshObject(statement.subject!!),
-            predicate = predicateService.findById(statement.predicateId!!).get(),
-            `object` = refreshObject(statement.`object`!!),
-            createdAt = statement.createdAt!!,
-            createdBy = statement.createdBy
-        )
 }

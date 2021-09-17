@@ -11,6 +11,8 @@ import java.util.Optional
 
 interface StatementRepository {
 
+    fun nextIdentity(): StatementId
+
     fun save(statement: GeneralStatement)
 
     fun delete(statement: GeneralStatement)

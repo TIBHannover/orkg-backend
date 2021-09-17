@@ -19,6 +19,7 @@ import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.MATCH_STATEMENT
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.MATCH_STATEMENT_WITH_LITERAL
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementIdGenerator
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.RETURN_COUNT
 import eu.tib.orkg.prototype.statements.ports.StatementRepository
 import org.neo4j.driver.Record
@@ -55,12 +56,15 @@ typealias ThingLookupTable = Map<String, Thing>
 
 @Component
 class StatementPersistenceAdapter(
+    private val statementIdGenerator: Neo4jStatementIdGenerator,
     private val resourcePersistenceAdapter: ResourcePersistenceAdapter,
     private val predicatePersistenceAdapter: PredicatePersistenceAdapter,
     private val literalPersistenceAdapter: LiteralPersistenceAdapter,
     private val classPersistenceAdapter: ClassPersistenceAdapter,
     private val client: Neo4jClient
 ) : StatementRepository {
+    override fun nextIdentity(): StatementId = statementIdGenerator.nextIdentity()
+
     override fun save(statement: GeneralStatement) {
         val query = """
             MATCH (sub:Thing)

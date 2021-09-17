@@ -10,9 +10,8 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThingRepository
 import eu.tib.orkg.prototype.statements.ports.StatementRepository
+import eu.tib.orkg.prototype.statements.ports.ThingRepository
 import java.time.OffsetDateTime
 import java.util.Optional
 import org.springframework.data.domain.Page
@@ -23,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class Neo4jStatementService(
-    private val thingRepository: Neo4jThingRepository,
+    private val thingRepository: ThingRepository,
     private val predicateService: PredicateService,
     private val statementRepository: StatementRepository
 ) :
@@ -70,16 +69,14 @@ class Neo4jStatementService(
         `object`: String
     ): GeneralStatement {
         val foundSubject = thingRepository
-            .findByThingId(subject)
-            .map(Neo4jThing::toThing)
+            .findById(subject)
             .orElseThrow { IllegalStateException("Could not find subject $subject") }
 
         val foundPredicate = predicateService.findById(predicate)
             .orElseThrow { IllegalArgumentException("predicate could not be found: $predicate") }
 
         val foundObject = thingRepository
-            .findByThingId(`object`)
-            .map(Neo4jThing::toThing)
+            .findById(`object`)
             .orElseThrow { IllegalStateException("Could not find object: $`object`") }
 
         var id = statementRepository.nextIdentity()
@@ -106,16 +103,14 @@ class Neo4jStatementService(
         // That saves the extra calls to the database to retrieve the statement again, even if it may not be needed.
 
         val foundSubject = thingRepository
-            .findByThingId(subject)
-            .map(Neo4jThing::toThing)
+            .findById(subject)
             .orElseThrow { IllegalStateException("Could not find subject $subject") }
 
         val foundPredicate = predicateService.findById(predicate)
             .orElseThrow { IllegalArgumentException("Predicate could not be found: $predicate") }
 
         val foundObject = thingRepository
-            .findByThingId(`object`)
-            .map(Neo4jThing::toThing)
+            .findById(`object`)
             .orElseThrow { IllegalStateException("Could not find object: $`object`") }
 
         val id = statementRepository.nextIdentity()
@@ -146,8 +141,8 @@ class Neo4jStatementService(
         if (found.isPresent) {
             val new = found.get()
                 .copy(predicate = predicateService.findById(statementEditRequest.predicateId).get())
-                .copy(subject = thingRepository.findByThingId(statementEditRequest.subjectId).get().toThing())
-                .copy(`object` = thingRepository.findByThingId(statementEditRequest.objectId).get().toThing())
+                .copy(subject = thingRepository.findById(statementEditRequest.subjectId).get())
+                .copy(`object` = thingRepository.findById(statementEditRequest.objectId).get())
             statementRepository.save(new)
             return new
         }

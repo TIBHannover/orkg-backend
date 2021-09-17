@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.contributions.application.ports.input.RetrieveContributorUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
+import eu.tib.orkg.prototype.statements.ports.ContributorRepository
 import java.time.OffsetDateTime
 import java.util.Optional
 import javax.transaction.Transactional
@@ -14,10 +15,11 @@ import org.springframework.stereotype.Service
 @Transactional
 class ContributorService(
     private val userRepository: UserRepository
-) : RetrieveContributorUseCase {
-    fun findById(userId: ContributorId): Optional<Contributor> =
+) : RetrieveContributorUseCase, ContributorRepository {
+    // This is a bit hacky, but we need to separate contributors/users later
+    override fun findById(id: ContributorId): Optional<Contributor> =
         userRepository
-            .findById(userId.value)
+            .findById(id.value)
             .map(UserEntity::toContributor)
 
     /**

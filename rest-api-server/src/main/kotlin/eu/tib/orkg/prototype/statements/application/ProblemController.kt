@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.domain.model.ProblemService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -35,13 +34,7 @@ class ProblemController(
         @PathVariable problemId: ResourceId,
         pageable: Pageable
     ): ResponseEntity<Iterable<Any>> {
-        val contributors = service.findContributorsPerProblem(problemId, pageable).map {
-            val user = contributorService.findById(ContributorId(it.contributor)).get()
-            object {
-                val user = user
-                val contributions = it.freq
-            }
-        }
+        val contributors = service.findContributorsPerProblem(problemId, pageable)
         return ResponseEntity.ok(contributors)
     }
 

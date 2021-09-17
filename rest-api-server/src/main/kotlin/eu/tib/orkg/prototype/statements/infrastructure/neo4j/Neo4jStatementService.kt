@@ -7,9 +7,9 @@ import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
+import eu.tib.orkg.prototype.statements.ports.PredicateRepository
 import eu.tib.orkg.prototype.statements.ports.StatementRepository
 import eu.tib.orkg.prototype.statements.ports.ThingRepository
 import java.time.OffsetDateTime
@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class Neo4jStatementService(
     private val thingRepository: ThingRepository,
-    private val predicateService: PredicateService,
+    private val predicateRepository: PredicateRepository,
     private val statementRepository: StatementRepository
 ) :
     StatementService {
@@ -72,7 +72,7 @@ class Neo4jStatementService(
             .findById(subject)
             .orElseThrow { IllegalStateException("Could not find subject $subject") }
 
-        val foundPredicate = predicateService.findById(predicate)
+        val foundPredicate = predicateRepository.findById(predicate)
             .orElseThrow { IllegalArgumentException("predicate could not be found: $predicate") }
 
         val foundObject = thingRepository
@@ -106,7 +106,7 @@ class Neo4jStatementService(
             .findById(subject)
             .orElseThrow { IllegalStateException("Could not find subject $subject") }
 
-        val foundPredicate = predicateService.findById(predicate)
+        val foundPredicate = predicateRepository.findById(predicate)
             .orElseThrow { IllegalArgumentException("Predicate could not be found: $predicate") }
 
         val foundObject = thingRepository
@@ -140,7 +140,7 @@ class Neo4jStatementService(
         val found = statementRepository.findById(statementEditRequest.statementId!!)
         if (found.isPresent) {
             val new = found.get()
-                .copy(predicate = predicateService.findById(statementEditRequest.predicateId).get())
+                .copy(predicate = predicateRepository.findById(statementEditRequest.predicateId).get())
                 .copy(subject = thingRepository.findById(statementEditRequest.subjectId).get())
                 .copy(`object` = thingRepository.findById(statementEditRequest.objectId).get())
             statementRepository.save(new)

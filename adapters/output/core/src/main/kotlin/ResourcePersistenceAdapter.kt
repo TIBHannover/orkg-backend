@@ -193,5 +193,6 @@ internal fun Resource.toNeo4jResource(): Neo4jResource =
         createdBy = this.createdBy,
         observatoryId = this.observatoryId,
         extractionMethod = this.extractionMethod,
-        organizationId = this.organizationId
+        organizationId = this.organizationId,
+        verified = this.verified
     )

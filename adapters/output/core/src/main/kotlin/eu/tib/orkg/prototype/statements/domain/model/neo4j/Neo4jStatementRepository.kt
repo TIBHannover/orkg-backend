@@ -25,6 +25,9 @@ import java.util.Optional
 internal const val MATCH_STATEMENT =
     """MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Thing`)"""
 
+internal const val MATCH_STATEMENT_BY_ID =
+    """MATCH (sub:`Thing`)-[rel:`RELATED` {statement_id: $id}]->(obj:`Thing`)"""
+
 internal const val MATCH_STATEMENT_WITH_LITERAL =
     """MATCH (sub:`Thing`)-[rel:`RELATED`]->(obj:`Literal`)"""
 

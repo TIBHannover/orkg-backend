@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.fail
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
 import org.springframework.data.domain.PageRequest
@@ -32,20 +33,6 @@ class Neo4jResourceRepositoryTest(
 
         assertThat(resourceRepository.findAll()).hasSize(0)
         assertThat(statementRepository.findAll()).hasSize(0)
-    }
-
-    @Test
-    @DisplayName("should not return null for resources list if none are defined")
-    fun shouldNotReturnNullForResourcesListIfNoneAreDefined() {
-        Neo4jResource(
-            label = "irrelevant",
-            resourceId = ResourceId(1)
-        ).persist()
-
-        val result = resourceRepository.findAll()
-
-        assertThat(result).hasSize(1)
-        assertThat(result.first().resources).isNotNull
     }
 
     @Test
@@ -98,53 +85,8 @@ class Neo4jResourceRepositoryTest(
         )
 
         val result = resourceRepository.findByResourceId(obj.resourceId)
-        assertThat(result.get().objectOf).hasSize(2)
-    }
-
-    @Test
-    @DisplayName("should create connection between two resources")
-    fun shouldCreateConnectionBetweenTwoResources() {
-        val pagination = PageRequest.of(0, 10)
-
-        val sub = resourceRepository.save(
-            Neo4jResource(
-                label = "subject",
-                resourceId = ResourceId(1)
-            )
-        )
-        val obj = resourceRepository.save(
-            Neo4jResource(
-                label = "object",
-                resourceId = ResourceId(2)
-            )
-        )
-
-        // Act
-
-        statementRepository.save(
-            Neo4jStatement(
-                statementId = StatementId(23), // irrelevant
-                subject = sub,
-                `object` = obj,
-                predicateId = PredicateId(42) // irrelevant
-            )
-        )
-
-        assertThat(statementRepository.findAll()).hasSize(1) // TODO: Extract into separate test
-
-        // Assert
-
-        val allFound = resourceRepository.findAllByLabelMatchesRegex("subject", pagination) // TODO: See declaration
-
-        assertThat(allFound).isNotEmpty
-        assertThat(allFound).hasSize(1)
-
-        val found = allFound.first()
-
-        assertThat(found.resources).isNotNull
-        assertThat(found.resources).isNotEmpty
-        assertThat(found.resources).hasSize(1)
-        assertThat(found.resources.first().`object`?.label).isEqualTo("object")
+        fail { "Needs fixing, as property is not available anymore." }
+        // assertThat(result.get().objectOf).hasSize(2)
     }
 
     @Test

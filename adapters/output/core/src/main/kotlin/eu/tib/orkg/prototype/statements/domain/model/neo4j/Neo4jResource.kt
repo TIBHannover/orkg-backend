@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -9,61 +8,44 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ObservatoryIdConverter
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.OrganizationIdConverter
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ResourceIdConverter
 import eu.tib.orkg.prototype.util.escapeLiterals
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
 import org.eclipse.rdf4j.model.vocabulary.RDF
 import org.eclipse.rdf4j.model.vocabulary.RDFS
-import org.springframework.data.neo4j.core.convert.ConvertWith
 import org.springframework.data.neo4j.core.schema.DynamicLabels
 import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Property
-import org.springframework.data.neo4j.core.schema.Relationship
-import org.springframework.data.neo4j.core.schema.Relationship.Direction.INCOMING
-import org.springframework.data.neo4j.core.schema.Relationship.Direction.OUTGOING
 
 @Node(primaryLabel = "Resource")
-class Neo4jResource() : Neo4jThing() {
-
+class Neo4jResource(
     @Property("label")
-    override var label: String? = null
+    override var label: String? = null,
 
     @Property("resource_id")
-    var resourceId: ResourceId? = null
-
-    @Relationship(type = "RELATED", direction = OUTGOING)
-    @JsonIgnore
-    var resources: MutableSet<Neo4jStatement> = mutableSetOf()
-
-    @Relationship(type = "RELATED", direction = INCOMING)
-    @JsonIgnore
-    var objectOf = mutableSetOf<Neo4jStatement>()
+    var resourceId: ResourceId? = null,
 
     @Property("created_by")
-    var createdBy: ContributorId = ContributorId.createUnknownContributor()
+    var createdBy: ContributorId? = ContributorId.createUnknownContributor(),
 
     @Property("observatory_id")
-    var observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory()
+    var observatoryId: ObservatoryId? = ObservatoryId.createUnknownObservatory(),
 
     @Property("extraction_method")
-    var extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
+    var extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
 
     @Property("verified")
-    var verified: Boolean? = null
+    var verified: Boolean? = null,
 
     @Property("organization_id")
-    var organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
+    var organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
 
     /**
      * List of node labels. Labels other than the `Resource` label are mapped to classes.
      */
     @DynamicLabels
     private var labels: MutableList<String> = mutableListOf()
-
+) : Neo4jThing() {
     /**
      * The list of classes that this node belongs to.
      */
@@ -73,33 +55,18 @@ class Neo4jResource() : Neo4jThing() {
             labels = value.map { it.value }.toMutableList()
         }
 
-    constructor(
-        label: String,
-        resourceId: ResourceId,
-        createdBy: ContributorId = ContributorId.createUnknownContributor(),
-        observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
-        extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
-        organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
-    ) : this() {
-        this.label = label
-        this.resourceId = resourceId
-        this.createdBy = createdBy
-        this.observatoryId = observatoryId
-        this.extractionMethod = extractionMethod
-        this.organizationId = organizationId
-    }
-
     fun toResource(): Resource {
         val resource = Resource(
-            resourceId,
-            label!!,
-            createdAt!!,
-            classes,
-            objectOf.size,
-            createdBy = createdBy,
-            observatoryId = observatoryId,
+            id = resourceId,
+            label = label!!,
+            createdAt = createdAt!!,
+            classes = classes,
+            shared = 0, //objectOf.size, // FIXME!
+            createdBy = createdBy ?: ContributorId.createUnknownContributor(),
+            observatoryId = observatoryId ?: ObservatoryId.createUnknownObservatory(),
             extractionMethod = extractionMethod,
-            organizationId = organizationId
+            organizationId = organizationId,
+            verified = verified ?: false
         )
         resource.rdf = toRdfModel()
         return resource
@@ -137,12 +104,14 @@ class Neo4jResource() : Neo4jThing() {
             .add(RDFS.LABEL, label)
             .add(RDF.TYPE, "c:Resource")
         classes.forEach { builder = builder.add(RDF.TYPE, "c:${it.value}") }
+        /*
         resources.forEach {
             builder = if (it.`object` is Neo4jLiteral)
                 builder.add("p:${it.predicateId}", "\"${it.`object`!!.label}\"")
             else
                 builder.add("p:${it.predicateId}", "r:${it.`object`!!.thingId}")
         }
+        */
         return builder.build()
     }
 }

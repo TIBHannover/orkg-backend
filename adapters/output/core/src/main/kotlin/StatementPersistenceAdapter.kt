@@ -18,6 +18,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.MATCH_STATEMENT
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.MATCH_STATEMENT_BY_ID
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.MATCH_STATEMENT_WITH_LITERAL
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementIdGenerator
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.RETURN_COUNT
@@ -154,7 +155,7 @@ class StatementPersistenceAdapter(
 
     override fun findById(statementId: StatementId): Optional<GeneralStatement> {
         val result = client
-            .query("$MATCH_STATEMENT $WITH_MAPPED_VALUES WHERE statement_id = $id $RETURN_STATEMENT_DATA")
+            .query("$MATCH_STATEMENT_BY_ID $WITH_MAPPED_VALUES $RETURN_STATEMENT_DATA")
             .bind(statementId.toString()).to("id")
             .fetchAs(StatementData::class.java).mappedBy(statementDataMapper)
             .one()
@@ -251,8 +252,8 @@ class StatementPersistenceAdapter(
         val objectLabels: List<String>,
         val statementId: String,
         val predicateId: String,
-        val createdBy: String,
-        val createdAt: String,
+        val createdBy: String?,
+        val createdAt: String?,
     ) {
         val subjectType: String
             get() = subjectLabels.intersect(TYPE_LABELS).single()
@@ -266,7 +267,7 @@ class StatementPersistenceAdapter(
                 predicate = things[this.predicateId]!! as Predicate,
                 `object` = things[this.objectId]!!,
                 createdAt = OffsetDateTime.parse(this.createdAt),
-                createdBy = ContributorId(this.createdBy),
+                createdBy = if (this.createdBy != null) ContributorId(this.createdBy) else ContributorId.createUnknownContributor(),
             )
     }
 
@@ -312,8 +313,8 @@ class StatementPersistenceAdapter(
             objectLabels = record["object_labels"].asList(Value::asString),
             statementId = record["statement_id"].asString(),
             predicateId = record["predicate_id"].asString(),
-            createdBy = record["created_by"].asString(),
-            createdAt = record["created_at"].asString(),
+            createdBy = record["created_by"].asString(null),
+            createdAt = record["created_at"].asString(null),
         )
     }
 

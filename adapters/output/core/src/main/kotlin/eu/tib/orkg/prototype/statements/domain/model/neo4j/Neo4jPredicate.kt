@@ -5,17 +5,15 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.PredicateIdConverter
 import eu.tib.orkg.prototype.util.escapeLiterals
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
 import org.eclipse.rdf4j.model.vocabulary.RDF
 import org.eclipse.rdf4j.model.vocabulary.RDFS
-import org.springframework.data.neo4j.core.convert.ConvertWith
 import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Property
 import org.springframework.data.neo4j.core.schema.Relationship
+import java.time.OffsetDateTime
 
 @Node(primaryLabel = "Predicate")
 class Neo4jPredicate() : Neo4jThing() {
@@ -26,7 +24,7 @@ class Neo4jPredicate() : Neo4jThing() {
     var predicateId: PredicateId? = null
 
     @Property("created_by")
-    var createdBy: ContributorId = ContributorId.createUnknownContributor()
+    var createdBy: ContributorId? = ContributorId.createUnknownContributor()
 
     @Relationship(type = "RELATED", direction = Relationship.Direction.OUTGOING)
     @JsonIgnore
@@ -39,7 +37,13 @@ class Neo4jPredicate() : Neo4jThing() {
     }
 
     fun toPredicate(): Predicate {
-        val pred = Predicate(predicateId, label!!, createdAt!!, createdBy = createdBy)
+        val pred = Predicate(
+            id = predicateId,
+            label = label!!,
+            // Some entries to not have dates set. This is before the first recording of a date.
+            createdAt = createdAt ?: OffsetDateTime.parse("2019-12-17T00:00:00.0+00:00"),
+            createdBy = createdBy ?: ContributorId.createUnknownContributor()
+        )
         pred.rdf = toRdfModel()
         // FIXME: will need re-work, better save as property!
         if (subjectOf.isNotEmpty())

@@ -16,6 +16,9 @@ import java.util.Optional
 class LiteralPersistenceAdapter(
     private val neo4jLiteralRepository: Neo4jLiteralRepository
 ): LiteralRepository {
+    override fun save(literal: Literal) {
+        neo4jLiteralRepository.save(literal.toNeo4jLiteral())
+    }
 
     override fun findAll() = neo4jLiteralRepository.findAll()
         .map(Neo4jLiteral::toLiteral)
@@ -45,3 +48,11 @@ class LiteralPersistenceAdapter(
     private fun String.toExactSearchString() = "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"
 
 }
+
+internal fun Literal.toNeo4jLiteral() = Neo4jLiteral(
+    literalId = this.id,
+    label = this.label,
+    datatype = this.datatype,
+    createdAt = this.createdAt,
+    createdBy = this.createdBy
+)

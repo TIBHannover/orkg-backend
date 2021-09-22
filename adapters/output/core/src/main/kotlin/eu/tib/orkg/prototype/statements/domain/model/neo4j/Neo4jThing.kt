@@ -6,7 +6,7 @@ import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
 
 @Node("Thing")
-abstract class Neo4jThing : AuditableEntity() {
+abstract class Neo4jThing {
     @Id
     @GeneratedValue
     var id: Long? = null

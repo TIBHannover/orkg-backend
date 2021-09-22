@@ -6,6 +6,9 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.util.Optional
 
 interface LiteralRepository {
+
+    fun save(literal: Literal)
+
     /**
      * Find all literals.
      */

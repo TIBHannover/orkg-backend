@@ -10,6 +10,8 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import eu.tib.orkg.prototype.statements.ports.StatementRepository
+import eu.tib.orkg.prototype.statements.ports.StatementRepositoryContract
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
@@ -24,8 +26,15 @@ import java.util.UUID
 @DisplayName("An adapter for a Statement Repository")
 internal class StatementPersistenceAdapterTest(
     private val adapterUnderTest: StatementPersistenceAdapter,
+    override val resourceRepository: ResourcePersistenceAdapter,
+    override val predicateRepository: PredicatePersistenceAdapter,
+    override val literalRepository: LiteralPersistenceAdapter,
     private val neo4jClient: Neo4jClient
-) : Neo4jTestContainersBaseTest(neo4jClient) {
+) : Neo4jTestContainersBaseTest(neo4jClient), StatementRepositoryContract {
+
+    override val repositoryUnderTest: StatementRepository
+        get() = adapterUnderTest
+
     @Test
     fun testFindById() {
         val now = OffsetDateTime.now()

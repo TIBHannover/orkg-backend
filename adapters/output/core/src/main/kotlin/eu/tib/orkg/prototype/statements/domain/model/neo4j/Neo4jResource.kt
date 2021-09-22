@@ -8,14 +8,17 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.OffsetDateTimeConverter
 import eu.tib.orkg.prototype.util.escapeLiterals
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
 import org.eclipse.rdf4j.model.vocabulary.RDF
 import org.eclipse.rdf4j.model.vocabulary.RDFS
+import org.springframework.data.neo4j.core.convert.ConvertWith
 import org.springframework.data.neo4j.core.schema.DynamicLabels
 import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Property
+import java.time.OffsetDateTime
 
 @Node(primaryLabel = "Resource")
 class Neo4jResource(
@@ -24,6 +27,10 @@ class Neo4jResource(
 
     @Property("resource_id")
     var resourceId: ResourceId? = null,
+
+    @Property("created_at")
+    @ConvertWith(converter = OffsetDateTimeConverter::class)
+    var createdAt: OffsetDateTime? = OffsetDateTime.now(),
 
     @Property("created_by")
     var createdBy: ContributorId? = ContributorId.createUnknownContributor(),

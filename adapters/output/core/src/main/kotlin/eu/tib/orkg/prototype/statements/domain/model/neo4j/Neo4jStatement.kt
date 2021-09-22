@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.OffsetDateTimeConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.PredicateIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.StatementIdConverter
 import eu.tib.orkg.prototype.util.escapeLiterals
@@ -15,13 +16,14 @@ import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Property
 import org.springframework.data.neo4j.core.schema.RelationshipProperties
 import org.springframework.data.neo4j.core.schema.TargetNode
+import java.time.OffsetDateTime
 
 @RelationshipProperties
 data class Neo4jStatement(
     @Id
     @GeneratedValue
     var id: Long? = null
-) : AuditableEntity() {
+) {
     @TargetNode
     @JsonIgnore
     var `object`: Neo4jThing? = null
@@ -32,6 +34,10 @@ data class Neo4jStatement(
 
     @Property("predicate_id")
     var predicateId: PredicateId? = null
+
+    @Property("created_at")
+    @ConvertWith(converter = OffsetDateTimeConverter::class)
+    var createdAt: OffsetDateTime? = OffsetDateTime.now()
 
     @Property("created_by")
     var createdBy: ContributorId = ContributorId.createUnknownContributor()

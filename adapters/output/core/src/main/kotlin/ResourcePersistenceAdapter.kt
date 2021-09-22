@@ -191,6 +191,7 @@ internal fun Resource.toNeo4jResource(): Neo4jResource =
         resourceId = this.id!!,
         label = this.label,
         createdBy = this.createdBy,
+        createdAt = this.createdAt,
         observatoryId = this.observatoryId,
         extractionMethod = this.extractionMethod,
         organizationId = this.organizationId,

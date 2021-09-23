@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype
 
 import eu.tib.orkg.prototype.auth.service.OrkgUserDetailsService
 import eu.tib.orkg.prototype.auth.service.UserRepository
-import eu.tib.orkg.prototype.configuration.AuthorizationServerConfiguration
+//import eu.tib.orkg.prototype.configuration.AuthorizationServerConfiguration
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.time.OffsetDateTime
@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Import
  * Test classes using this annotation need to also mock [UserRepository].
  */
 @Import(
-    AuthorizationServerConfiguration::class,
+   // AuthorizationServerConfiguration::class,
     OrkgUserDetailsService::class
 )
 annotation class AuthorizationServerUnitTestWorkaround

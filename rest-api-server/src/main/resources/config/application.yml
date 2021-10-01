@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: orkg-backend
   profiles:
     active: development
   # Get rid of "org.postgresql.jdbc.PgConnection.createClob() not implemented" error, see
@@ -45,3 +47,14 @@ logging:
   level:
     org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
     org.neo4j.ogm.drivers.bolt.request.BoltRequest: DEBUG
+
+keycloak:
+  realm: myrealm
+  auth-server-url: http://localhost:8180/auth/
+  ssl-required: external
+  resource: react-test-app
+  use-resource-role-mappings: true
+  principal-attribute: preferred_username
+  public-client: true
+  bearer-only: true
+  autodetect-bearer-only: true

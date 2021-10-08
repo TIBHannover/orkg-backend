@@ -20,6 +20,7 @@ import org.springframework.data.neo4j.core.schema.Property
 import org.springframework.data.neo4j.core.schema.Relationship
 import java.net.URI
 import java.time.OffsetDateTime
+import java.util.logging.Logger
 
 @Node(primaryLabel = "Class")
 class Neo4jClass() : Neo4jThing() {
@@ -41,7 +42,7 @@ class Neo4jClass() : Neo4jThing() {
     var createdAt: OffsetDateTime? = OffsetDateTime.now()
 
     @Property("created_by")
-    var createdBy: ContributorId = ContributorId.createUnknownContributor()
+    var createdBy: ContributorId? = ContributorId.createUnknownContributor()
 
     constructor(label: String, classId: ClassId, createdBy: ContributorId = ContributorId.createUnknownContributor(), uri: URI?) : this() {
         this.label = label
@@ -51,8 +52,15 @@ class Neo4jClass() : Neo4jThing() {
     }
 
     fun toClass(): Class {
+        val logger = Logger.getLogger("class")
+        logger.info("CLass ID: $classId")
+        logger.info("label: $label")
+        logger.info("URI: $uri")
+        logger.info("Created AT: $createdAt")
+        logger.info("created By: $createdBy")
+
         val aURI: URI? = if (uri != null) URI.create(uri!!) else null
-        val clazz = Class(classId!!, label!!, aURI, createdAt!!, createdBy = createdBy)
+        val clazz = Class(classId!!, label!!, aURI, createdAt!!, createdBy = createdBy!!)
         clazz.rdf = toRdfModel()
         if (subjectOf.isNotEmpty())
             clazz.description = subjectOf.firstOrNull { it.classId?.value == "description" }?.label

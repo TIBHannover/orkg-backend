@@ -13,7 +13,6 @@ import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Scope
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
-import org.springframework.security.config.Customizer.withDefaults
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -21,6 +20,8 @@ import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper
 import org.springframework.security.core.session.SessionRegistryImpl
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy
+import org.springframework.web.servlet.config.annotation.CorsRegistry
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 
 @KeycloakConfiguration
@@ -30,14 +31,12 @@ class ResourceServerConfiguration
     : KeycloakWebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity) {
-        http
+        super.configure(http);
+        http.csrf().disable()
             .authorizeRequests()
             .anyRequest().permitAll()
-            .and()
-            .cors(withDefaults())
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-            .csrf().disable()
+            //.and()
+            //.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
     }
 
     @Bean
@@ -68,5 +67,13 @@ class ResourceServerConfiguration
         return KeycloakRestTemplate(KeycloakClientRequestFactory())
     }
 
+    @Bean
+    fun corsConfigurer(): WebMvcConfigurer? {
+        return object : WebMvcConfigurer {
+            override fun addCorsMappings(registry: CorsRegistry) {
+                registry.addMapping("/**").allowedOrigins("*").allowedMethods("*")
+            }
+        }
+    }
 }
 

@@ -30,10 +30,11 @@ abstract class BaseController {
     }
 
     protected fun keycloakAuthenticatedUserId(): UUID{
-        val authentication = SecurityContextHolder.getContext()
-            .authentication as KeycloakAuthenticationToken
+        val authentication = SecurityContextHolder.getContext().authentication
 
-        val principal: Principal = authentication.principal as Principal
+        if (authentication is AnonymousAuthenticationToken) return UUID(0, 0)
+
+        val principal = authentication.principal as KeycloakPrincipal<*>
         var uuid = UUID.randomUUID()
 
         if (principal is KeycloakPrincipal<*>) {

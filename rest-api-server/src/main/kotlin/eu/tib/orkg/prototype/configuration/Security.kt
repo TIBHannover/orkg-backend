@@ -32,6 +32,7 @@ class ResourceServerConfiguration
 
     override fun configure(http: HttpSecurity) {
         super.configure(http);
+
         http.csrf().disable()
             .authorizeRequests()
             .anyRequest().permitAll()

@@ -195,5 +195,6 @@ internal fun Resource.toNeo4jResource(): Neo4jResource =
         observatoryId = this.observatoryId,
         extractionMethod = this.extractionMethod,
         organizationId = this.organizationId,
-        verified = this.verified
+        verified = this.verified,
+        labels = this.classes.map { it.toString() }.toMutableList()
     )

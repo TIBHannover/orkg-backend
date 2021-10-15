@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.ports
 
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.assertj.core.api.Assertions.assertThat
@@ -65,5 +66,18 @@ interface ResourceRepositoryContract {
         assertThat(pagedResult.totalElements).isEqualTo(1)
         assertThat(pagedResult.content.first().id).isEqualTo(expected.id)
         assertThat(pagedResult.content.first().label).isEqualTo(expected.label)
+    }
+
+    @Test
+    @DisplayName("Saves and loads class information")
+    fun saveAndLoadClasses() {
+        val expected = Resource(repository.nextIdentity(), "programming language (PL)", classes= setOf<ClassId>(ClassId("PLG"))).also {
+            repository.save(it)
+        }
+
+        val actual = repository.findById(expected.id).get()
+
+        assertThat(actual.id).isEqualTo(expected.id)
+        assertThat(actual.classes).isEqualTo(setOf(ClassId("PLG")))
     }
 }

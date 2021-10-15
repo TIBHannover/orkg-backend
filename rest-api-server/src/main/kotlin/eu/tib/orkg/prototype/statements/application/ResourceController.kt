@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/resources/")
+@RequestMapping("/api/resources")
 class ResourceController(
     private val service: ResourceService,
     private val contributorService: ContributorService
@@ -72,7 +72,7 @@ class ResourceController(
     fun add(@RequestBody resource: CreateResourceRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         if (resource.id != null && service.findById(resource.id).isPresent)
             return badRequest().body("Resource id <${resource.id}> already exists!")
-        val userId = authenticatedUserId()
+        val userId = keycloakAuthenticatedUserId()
         val contributor = contributorService.findById(ContributorId(userId))
         var observatoryId = ObservatoryId.createUnknownObservatory()
         var organizationId = OrganizationId.createUnknownOrganization()
@@ -140,14 +140,14 @@ class ResourceController(
 
 data class CreateResourceRequest(
     val id: ResourceId?,
-    val label: String,
+    val label: String = "",
     val classes: Set<ClassId> = emptySet(),
     val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
 )
 
 data class UpdateResourceRequest(
     val id: ResourceId?,
-    val label: String?,
+    val label: String? = "",
     val classes: Set<ClassId>?
 )
 

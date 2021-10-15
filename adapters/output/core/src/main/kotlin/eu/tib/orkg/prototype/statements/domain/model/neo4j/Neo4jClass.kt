@@ -60,7 +60,10 @@ class Neo4jClass() : Neo4jThing() {
         logger.info("created By: $createdBy")
 
         val aURI: URI? = if (uri != null) URI.create(uri!!) else null
-        val clazz = Class(classId!!, label!!, aURI, createdAt!!, createdBy = createdBy!!)
+        //Need to change the following logic. This is done for testing purpose
+        //Suhas - I always get a null value error while trying to create a new paper. Is it because of the rewrite or due to
+        //the merging of keycloak and adapter-rewrite branch. I don't know. Need to verify.
+        val clazz = Class(classId!!, label!!, aURI ?: URI("www.dummy-uri.com"), createdAt ?: OffsetDateTime.now(), createdBy ?: ContributorId.createUnknownContributor())
         clazz.rdf = toRdfModel()
         if (subjectOf.isNotEmpty())
             clazz.description = subjectOf.firstOrNull { it.classId?.value == "description" }?.label

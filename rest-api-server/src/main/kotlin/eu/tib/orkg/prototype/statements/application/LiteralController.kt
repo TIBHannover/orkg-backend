@@ -50,7 +50,7 @@ class LiteralController(private val service: LiteralService) : BaseController() 
         @RequestBody @Valid literal: LiteralCreateRequest,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<Literal> {
-        val userId = authenticatedUserId()
+        val userId = keycloakAuthenticatedUserId()
         val id = service.create(ContributorId(userId), literal.label, literal.datatype).id
         val location = uriComponentsBuilder
             .path("api/literals/{id}")
@@ -85,14 +85,14 @@ class LiteralController(private val service: LiteralService) : BaseController() 
 
     data class LiteralCreateRequest(
         // No restriction, as we need to support empty values; at lease for strings. See TIBHannover/orkg/orkg-backend!152.
-        val label: String,
+        val label: String = "",
         @field:NotBlank
         val datatype: String = "xsd:string"
     )
 
     data class LiteralUpdateRequest(
         val id: LiteralId?,
-        val label: String?,
+        val label: String? = "",
         val datatype: String?
     )
 }

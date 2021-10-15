@@ -48,7 +48,7 @@ class PredicateController(private val service: PredicateService) : BaseControlle
     fun add(@RequestBody predicate: CreatePredicateRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         if (predicate.id != null && service.findById(predicate.id).isPresent)
             return ResponseEntity.badRequest().body("Predicate id <${predicate.id}> already exists!")
-        val userId = authenticatedUserId()
+        val userId = keycloakAuthenticatedUserId()
         val id = service.create(ContributorId(userId), predicate).id
 
         val location = uriComponentsBuilder
@@ -77,5 +77,5 @@ class PredicateController(private val service: PredicateService) : BaseControlle
 
 data class CreatePredicateRequest(
     val id: PredicateId?,
-    val label: String
+    val label: String = ""
 )

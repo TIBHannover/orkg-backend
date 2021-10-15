@@ -88,7 +88,7 @@ class ClassController(private val service: ClassService, private val resourceSer
                 throw DuplicateURI(`class`.uri, found.get().id.toString())
         }
 
-        val userId = authenticatedUserId()
+        val userId = keycloakAuthenticatedUserId()
         val id = service.create(ContributorId(userId), `class`).id!!
         val location = uriComponentsBuilder
             .path("api/classes/{id}")
@@ -127,7 +127,7 @@ class ClassController(private val service: ClassService, private val resourceSer
 
 data class CreateClassRequest(
     val id: ClassId?,
-    val label: String,
+    val label: String = "",
     val uri: URI?
 ) {
     /*

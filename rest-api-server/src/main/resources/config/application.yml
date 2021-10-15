@@ -49,13 +49,18 @@ logging:
     org.neo4j.ogm.drivers.bolt.request.BoltRequest: DEBUG
 
 keycloak:
-  realm: myrealm
+  realm: ORKG-REALM
   auth-server-url: http://localhost:8180/auth/
   ssl-required: external
-  resource: react-test-app
+  resource: orkg-frontend-app
   use-resource-role-mappings: true
   principal-attribute: preferred_username
   public-client: true
   bearer-only: true
   autodetect-bearer-only: true
   realm-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6lzbp0SODc8bE8CdTsyBuTTPX6afoQbvDNuuSHmqvXChXY/xwAtpVy9TfVlHiXW6J/dbbNTFAxGNjnhlGHdvXZbq4mhAAhYiUMCqfw3W6Ko5tyjM5bjoWNRylt0Um3AIQ1KfJD6uB6OR86t97guBpbyPvdwzQ3R1LtFuxqrEVvJs0gvNGl3i8Gcw1BP+BzLQuriETjB7JV48u0lOlqBqDTzKmO+WterQoiuTEaZ2CwjOmMdU8dSKuYYbp+/PZvNfHt+HB1f7XrH2G6uMJ9NELBxWjIHNsdEXPweODTNRTJZwOd0P6R86Snkd3WCC12PSZOm77JCnSTOnCuZUXXFr5QIDAQAB
+  cors: true
+server:
+  servlet:
+    session:
+      tracking-modes: cookie

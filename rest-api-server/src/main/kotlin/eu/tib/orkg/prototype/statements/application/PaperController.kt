@@ -79,7 +79,8 @@ class PaperController(
         mergeIfExists: Boolean
     ): Resource {
         logger.info("P-2")
-        val userId = ContributorId(authenticatedUserId())
+        //val userId = ContributorId(authenticatedUserId())
+        val userId = ContributorId(keycloakAuthenticatedUserId())
         logger.info("P-3")
         // check if should be merged or not
         val paperObj = createOrFindPaper(mergeIfExists, request, userId)
@@ -343,7 +344,7 @@ data class CreatePaperRequest(
  */
 data class Paper(
     val title: String,
-    val doi: String?,
+    val doi: String? = "",
     val authors: List<Author>?,
     val publicationMonth: Int?,
     val publicationYear: Int?,
@@ -401,7 +402,7 @@ data class Paper(
  */
 data class Author(
     val id: String?,
-    val label: String?,
+    val label: String? = "",
     val orcid: String?
 ) {
     /**

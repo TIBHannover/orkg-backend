@@ -8,11 +8,11 @@ import java.time.OffsetDateTime
 import org.eclipse.rdf4j.model.Model
 
 data class Class(
-    val id: ClassId?,
-    override val label: String,
-    val uri: URI?,
+    val id: ClassId? = null,
+    override val label: String = "Label",
+    val uri: URI? = null,
     @JsonProperty("created_at")
-    val createdAt: OffsetDateTime?,
+    val createdAt: OffsetDateTime? = OffsetDateTime.now(),
     @JsonProperty("created_by")
     val createdBy: ContributorId = ContributorId.createUnknownContributor(),
     // This is added to replace @JsonTypeInfo on the Thing interface

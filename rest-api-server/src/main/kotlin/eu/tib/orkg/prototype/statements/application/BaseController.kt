@@ -1,9 +1,14 @@
 package eu.tib.orkg.prototype.statements.application
 
-import java.util.UUID
+import org.keycloak.KeycloakPrincipal
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken
 import org.springframework.security.authentication.AnonymousAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
+import java.security.Principal
+import java.util.UUID
+import java.util.logging.Logger
+
 
 /**
  * Base class for all controllers.
@@ -22,5 +27,21 @@ abstract class BaseController {
         val principal = authentication.principal
         val userIdAsString: String = if (principal is UserDetails) principal.username else principal.toString()
         return UUID.fromString(userIdAsString)
+    }
+
+    protected fun keycloakAuthenticatedUserId(): UUID{
+        val authentication = SecurityContextHolder.getContext()
+            .authentication as KeycloakAuthenticationToken
+
+        val principal: Principal = authentication.principal as Principal
+        var uuid = UUID.randomUUID()
+
+        if (principal is KeycloakPrincipal<*>) {
+            uuid = UUID.fromString(principal.keycloakSecurityContext.token.subject!!)
+            val logger = Logger.getLogger("UUID logger")
+            logger.info("UUID:  $uuid")
+        }
+
+        return uuid
     }
 }

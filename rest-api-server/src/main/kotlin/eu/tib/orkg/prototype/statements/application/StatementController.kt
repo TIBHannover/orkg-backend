@@ -118,7 +118,7 @@ class StatementController(
     @ResponseStatus(CREATED)
     fun add(@RequestBody statement: CreateStatement, uriComponentsBuilder: UriComponentsBuilder):
         HttpEntity<StatementResponse> {
-        val userId = authenticatedUserId()
+        val userId = keycloakAuthenticatedUserId()
         val body = statementService.create(
             ContributorId(userId),
             statement.subjectId,

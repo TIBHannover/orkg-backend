@@ -84,7 +84,7 @@ class ObjectController(
         existingResourceId: ResourceId? = null
     ): Resource {
         // Get provenance info
-        val userId = ContributorId(authenticatedUserId())
+        val userId = ContributorId(keycloakAuthenticatedUserId())
         val contributor = contributorService.findByIdOrElseUnknown(userId)
         val organizationId = contributor.organizationId
         val observatoryId = contributor.observatoryId
@@ -405,7 +405,7 @@ data class ObjectStatement(
     val `@temp`: String?,
     val text: String?,
     val datatype: String?,
-    val label: String?,
+    val label: String? = "",
     val values: HashMap<String, List<ObjectStatement>>?
 ) {
 

@@ -253,7 +253,7 @@ class Neo4jStatsService(
  */
 data class ChangeLog(
     val id: String?,
-    val label: String?,
+    val label: String? = "",
     @JsonProperty("created_at")
     val createdAt: String?,
     val classes: List<String>?,

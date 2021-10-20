@@ -61,14 +61,30 @@ class ORKGUserEntity {
         )
 
 
-    fun toContributor() = Contributor(
-        id = ContributorId(this.oldID!!),
-        name = "Testing contributor",
-        joinedAt = OffsetDateTime.of(this.created, ZoneOffset.UTC),
-        organizationId = this.organizationId?.let { OrganizationId(it) } ?: OrganizationId.createUnknownOrganization(),
-        observatoryId = this.observatoryId?.let { ObservatoryId(it) } ?: ObservatoryId.createUnknownObservatory(),
-        email = "testcontributor@test.com")
+    fun toContributor(): Contributor{
+        val newContributorId = if (this.oldID != null){
+            ContributorId(this.oldID!!)
+        }else{
+            ContributorId(this.keycloakID!!)
+        }
+        return Contributor(
+            id = newContributorId,
+            name = "Testing contributor",
+            joinedAt = OffsetDateTime.of(this.created, ZoneOffset.UTC),
+            organizationId = this.organizationId?.let { OrganizationId(it) } ?: OrganizationId.createUnknownOrganization(),
+            observatoryId = this.observatoryId?.let { ObservatoryId(it) } ?: ObservatoryId.createUnknownObservatory(),
+            email = "testcontributor@test.com")
+    }
+
+    /*fun toContributor() =Contributor(
+            id = ContributorId(this.oldID!!),
+            name = "Testing contributor",
+            joinedAt = OffsetDateTime.of(this.created, ZoneOffset.UTC),
+            organizationId = this.organizationId?.let { OrganizationId(it) } ?: OrganizationId.createUnknownOrganization(),
+            observatoryId = this.observatoryId?.let { ObservatoryId(it) } ?: ObservatoryId.createUnknownObservatory(),
+            email = "testcontributor@test.com")*/
 }
+
 
 data class KeycloakUserPrincipal(
     val username: UUID? = null,

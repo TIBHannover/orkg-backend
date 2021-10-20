@@ -27,4 +27,8 @@ interface OrkgUserRepository: JpaRepository<ORKGUserEntity, UUID> {
     fun findByDisplayName(name: String): Optional<ORKGUserEntity>
 
     fun findByEmail(email: String): Optional<ORKGUserEntity>
+
+    @Query("SELECT u from ORKGUserEntity u WHERE u.oldID in ?1 OR u.keycloakID in ?1")
+    fun findUserInOldIDOrKeycloakID(id:UUID): Optional<ORKGUserEntity>
+
 }

@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.auth.rest
+package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.auth.persistence.KeycloakUserProfileDTO
 import eu.tib.orkg.prototype.auth.service.KeycloakEventService
@@ -21,7 +21,7 @@ class KeycloakEventController(
     @PostMapping("/profile")
     fun fetchUserProfileDetails(@RequestBody userProfileDTO:
                                 Map<String, String>){
-
+        logger.info("EVent occurred...")
         if(userProfileDTO != null) {
             val user = KeycloakUserProfileDTO(
                 keycloakId = UUID.fromString(userProfileDTO.get("keycloak_id")),

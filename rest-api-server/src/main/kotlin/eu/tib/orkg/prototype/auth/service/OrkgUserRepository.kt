@@ -34,5 +34,9 @@ interface OrkgUserRepository: JpaRepository<ORKGUserEntity, UUID> {
     @Query("SELECT u from ORKGUserEntity u WHERE u.oldID in ?1 OR u.keycloakID in ?1")
     fun findUserListInOldIDOrKeycloakID(@Param("ids")ids: Array<UUID>): List<ORKGUserEntity>
 
+    fun findByObservatoryId(id: UUID): Iterable<ORKGUserEntity>
+
+    fun findByOrganizationId(id: UUID): Iterable<ORKGUserEntity>
+
 
 }

@@ -40,14 +40,20 @@ class ContributorService(
             )
 
     fun findUsersByOrganizationId(id: OrganizationId): Iterable<Contributor> =
-        userRepository
+        /*userRepository
             .findByOrganizationId(id.value)
-            .map(UserEntity::toContributor)
+            .map(UserEntity::toContributor)*/
+        orkgUserRepository
+            .findByOrganizationId(id.value)
+            .map(ORKGUserEntity::toContributor)
 
     fun findUsersByObservatoryId(id: ObservatoryId): Iterable<Contributor> =
-        userRepository
+        /*userRepository
             .findByObservatoryId(id.value)
-            .map(UserEntity::toContributor)
+            .map(UserEntity::toContributor)*/
+        orkgUserRepository
+            .findByObservatoryId(id.value)
+            .map(ORKGUserEntity::toContributor)
 
     override fun byId(id: ContributorId): Optional<Contributor> = findById(id)
 }

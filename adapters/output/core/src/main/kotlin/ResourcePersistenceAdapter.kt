@@ -143,6 +143,7 @@ class ResourcePersistenceAdapter(
     override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
         neo4jResourceRepository.findProblemsByObservatoryId(id).map(Neo4jResource::toResource)
 
+    //Error here in this query while fetching author
     override fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors> =
         client
             .query(
@@ -157,7 +158,7 @@ class ResourcePersistenceAdapter(
                 ORDER BY createdAt
                 """.trimIndent()
             )
-            .bind(id).to("id")
+            .bind(id.toString()).to("id")
             .fetchAs(ResourceContributors::class.java)
             .mappedBy { _, record ->
                 ResourceContributors(

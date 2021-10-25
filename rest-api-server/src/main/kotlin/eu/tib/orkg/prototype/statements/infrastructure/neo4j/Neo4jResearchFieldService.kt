@@ -1,6 +1,8 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.auth.persistence.ORKGUserEntity
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
+import eu.tib.orkg.prototype.auth.service.OrkgUserRepository
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
@@ -21,7 +23,8 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class Neo4jResearchFieldService(
     private val researchFieldRepository: ResearchFieldRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val orkgUserRepository: OrkgUserRepository
 ) : ResearchFieldService, RetrieveResearchFieldUseCase {
     override fun findById(id: ResourceId): Optional<Resource> =
         researchFieldRepository.findById(id)
@@ -36,7 +39,8 @@ class Neo4jResearchFieldService(
     override fun getContributorsIncludingSubFields(id: ResourceId, pageable: Pageable): Page<Contributor> {
         val contributors = researchFieldRepository.getContributorIdsFromResearchFieldAndIncludeSubfields(id, pageable)
             .map(ContributorId::value)
-        return PageImpl(userRepository.findByIdIn(contributors.content.toTypedArray()).map(UserEntity::toContributor))
+        //return PageImpl(userRepository.findByIdIn(contributors.content.toTypedArray()).map(UserEntity::toContributor))
+        return PageImpl(orkgUserRepository.findUserListInOldIDOrKeycloakID(contributors.content.toTypedArray()).map(ORKGUserEntity::toContributor))
     }
 
     override fun getPapersIncludingSubFields(id: ResourceId, pageable: Pageable): Page<Resource> =
@@ -48,7 +52,8 @@ class Neo4jResearchFieldService(
     override fun getContributorsExcludingSubFields(id: ResourceId, pageable: Pageable): Page<Contributor> {
         val contributors =
             researchFieldRepository.getContributorIdsExcludingSubFields(id, pageable).map(ContributorId::value)
-        return PageImpl(userRepository.findByIdIn(contributors.content.toTypedArray()).map(UserEntity::toContributor))
+        //return PageImpl(userRepository.findByIdIn(contributors.content.toTypedArray()).map(UserEntity::toContributor))
+        return PageImpl(orkgUserRepository.findUserListInOldIDOrKeycloakID(contributors.content.toTypedArray()).map(ORKGUserEntity::toContributor))
     }
 
     override fun getPapersExcludingSubFields(id: ResourceId, pageable: Pageable): Page<Resource> =

@@ -201,7 +201,7 @@ class Neo4jStatementService(
         configuration: BundleConfiguration,
         includeFirst: Boolean
     ): Bundle {
-        return when(includeFirst) {
+        return when (includeFirst) {
             true -> createBundleFirstIncluded(thingId, configuration)
             false -> createBundle(thingId, configuration)
         }

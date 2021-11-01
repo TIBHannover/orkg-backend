@@ -243,7 +243,7 @@ class Neo4jStatementService(
             thingId,
             statementRepository.fetchAsBundle(
                 thingId,
-                configuration.toApocConfiguration()
+                BundleConfiguration.firstLevelConf().toApocConfiguration()
             ).map { toStatement(it) }.toMutableList())
 
     override fun removeAll() = statementRepository.deleteAll()

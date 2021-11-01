@@ -5,17 +5,15 @@ import org.keycloak.adapters.springsecurity.KeycloakConfiguration
 import org.keycloak.adapters.springsecurity.client.KeycloakClientRequestFactory
 import org.keycloak.adapters.springsecurity.client.KeycloakRestTemplate
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter
-import org.keycloak.adapters.springsecurity.management.HttpSessionManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Scope
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper
 import org.springframework.security.core.session.SessionRegistryImpl
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy
@@ -30,20 +28,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 class ResourceServerConfiguration
     : KeycloakWebSecurityConfigurerAdapter() {
 
+
     override fun configure(http: HttpSecurity) {
         super.configure(http);
-
         http.csrf().disable()
             .authorizeRequests()
-            .anyRequest().permitAll()
-            //.and()
-            //.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(HttpSessionManager::class)
-    protected override fun httpSessionManager(): HttpSessionManager? {
-        return HttpSessionManager()
+            .antMatchers(HttpMethod.POST,"/api*").hasAnyRole()
+            .anyRequest()
+            .permitAll()
     }
 
     override fun sessionAuthenticationStrategy(): SessionAuthenticationStrategy {

@@ -41,7 +41,7 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/papers/")
-@CrossOrigin(origins = arrayOf("http://localhost:8080"))
+@CrossOrigin(origins = arrayOf("*"), allowedHeaders=arrayOf("*"))
 class PaperController(
     private val resourceService: ResourceService,
     private val literalService: LiteralService,
@@ -51,8 +51,6 @@ class PaperController(
     private val objectController: ObjectController
 ) : BaseController() {
 
-    private val logger = Logger.getLogger("Paper")
-
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
     fun add(
@@ -60,13 +58,11 @@ class PaperController(
         uriComponentsBuilder: UriComponentsBuilder,
         @RequestParam("mergeIfExists", required = false, defaultValue = "false") mergeIfExists: Boolean
     ): ResponseEntity<Resource> {
-        logger.info("P-1")
         val resource = addPaperContent(paper, mergeIfExists)
         val location = uriComponentsBuilder
             .path("api/resources/")
             .buildAndExpand(resource.id)
             .toUri()
-        logger.info("P-10")
         return ResponseEntity.created(location).body(resource)
     }
 
@@ -78,26 +74,19 @@ class PaperController(
         request: CreatePaperRequest,
         mergeIfExists: Boolean
     ): Resource {
-        logger.info("P-2")
-        //val userId = ContributorId(authenticatedUserId())
         val userId = ContributorId(keycloakAuthenticatedUserId())
-        logger.info("P-3")
         // check if should be merged or not
         val paperObj = createOrFindPaper(mergeIfExists, request, userId)
-        logger.info("P-4")
         val paperId = paperObj.id!!
-        logger.info("P-5")
 
         // paper contribution data
         if (request.paper.hasContributions()) {
             request.paper.contributions!!.forEach {
                 val contributionId = addCompleteContribution(it, request)
                 // Create statement between paper and contribution
-                logger.info("P-6")
                 statementService.add(userId, paperId.value, ContributionPredicate, contributionId.value)
             }
         }
-        logger.info("P-9")
         return paperObj
     }
 
@@ -109,7 +98,6 @@ class PaperController(
         jsonObject: NamedObject,
         paperRequest: CreatePaperRequest
     ): ResourceId {
-        logger.info("P-8")
         // Convert Paper structure to Object structure
         val contribution = jsonObject.copy(classes = listOf(ID_CONTRIBUTION_CLASS))
         val objectRequest = CreateObjectRequest(paperRequest.predicates, contribution)

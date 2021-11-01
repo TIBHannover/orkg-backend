@@ -84,7 +84,7 @@ class PaperController(
         paperRequest: CreatePaperRequest
     ): ResourceId {
         // Always append Contribution class to custom user classes
-        val contributionClasses = (listOf(Constants.ID_CONTRIBUTION_CLASS) + jsonObject.classes!!).toSet().toList()
+        val contributionClasses = (listOf(Constants.ID_CONTRIBUTION_CLASS) + jsonObject.classes.orEmpty()).toSet().toList()
         // Convert Paper structure to Object structure
         val contribution = jsonObject.copy(classes = contributionClasses)
         val objectRequest = CreateObjectRequest(paperRequest.predicates, contribution)

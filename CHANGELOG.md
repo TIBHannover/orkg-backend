@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - White/Black listing of classes in Bundle fetch. (Closes: [#318](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/318))
+### Added
+- Support setting classes for contributions in the paper endpoint. (Closes: [#339](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/339))
 
 ## [0.6.1] - 2021-07-21
 ### Fixed

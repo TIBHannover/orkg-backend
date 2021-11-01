@@ -106,7 +106,7 @@ interface StatementService {
      * Get a bundle of statements
      * which represents the entire sub-graph starting from a [Thing]
      */
-    fun fetchAsBundle(thingId: String, configuration: BundleConfiguration): Bundle
+    fun fetchAsBundle(thingId: String, configuration: BundleConfiguration, includeFirst: Boolean): Bundle
 
     /**
      * Delete all statements

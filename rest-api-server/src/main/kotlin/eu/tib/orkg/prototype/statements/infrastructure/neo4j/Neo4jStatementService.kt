@@ -198,6 +198,25 @@ class Neo4jStatementService(
 
     override fun fetchAsBundle(
         thingId: String,
+        configuration: BundleConfiguration,
+        includeFirst: Boolean
+    ): Bundle {
+        return when (includeFirst) {
+            true -> createBundleFirstIncluded(thingId, configuration)
+            false -> createBundle(thingId, configuration)
+        }
+    }
+
+    /**
+     * Create a bundle where the first level is not included in the statements.
+     *
+     * @param thingId the root thing to start from.
+     * @param configuration the bundle configuration passed down.
+     *
+     * @return returns a Bundle object
+     */
+    private fun createBundle(
+        thingId: String,
         configuration: BundleConfiguration
     ): Bundle =
         Bundle(
@@ -205,10 +224,27 @@ class Neo4jStatementService(
             statementRepository.fetchAsBundle(
                 thingId,
                 configuration.toApocConfiguration()
-            )
-                .map { toStatement(it) }
-                .toMutableList()
-        )
+            ).map { toStatement(it) }.toMutableList())
+
+    /**
+     * Create a bundle including the first level in the statements.
+     * NOTE: this function calls createBundle internally!
+     *
+     * @param thingId the root thing to start from.
+     * @param configuration the bundle configuration passed down.
+     *
+     * @return returns a Bundle object (addition of normal bundle and first level bundle)
+     */
+    private fun createBundleFirstIncluded(
+        thingId: String,
+        configuration: BundleConfiguration
+    ): Bundle =
+        createBundle(thingId, configuration) + Bundle(
+            thingId,
+            statementRepository.fetchAsBundle(
+                thingId,
+                BundleConfiguration.firstLevelConf().toApocConfiguration()
+            ).map { toStatement(it) }.toMutableList())
 
     override fun removeAll() = statementRepository.deleteAll()
 

@@ -25,6 +25,10 @@ plugins {
     id("com.diffplug.spotless")
 }
 
+// SECURITY: Upgrade Log4j to version >= 2.15.0 due to a vulnerability. It is not used in ORKG, this is just
+//           a safety measure. The line should be removed when Spring upgrades to a version higher than this one.
+extra["log4j2.version"] = "2.15.0"
+
 configurations {
     // The Asciidoctor Gradle plug-in does not create it anymore, so we have to...
     create("asciidoctor")

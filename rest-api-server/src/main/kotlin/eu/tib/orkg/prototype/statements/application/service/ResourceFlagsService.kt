@@ -14,8 +14,7 @@ import org.springframework.stereotype.Service
 class GetResourceFlagsService(
     private val loadResourcePort: LoadResourcePort,
     private val loadPaperPort: LoadPaperPort
-    ) : GetResourcesQuery, GetPapersQuery {
-
+) : GetResourcesQuery, GetPapersQuery {
     override fun getVerifiedResources(pageable: Pageable) =
         loadResourcePort.loadVerifiedResources(pageable)
 

@@ -114,7 +114,7 @@ class ResearchFieldController(
     fun getPapersIncludingSubFields(
         @PathVariable id: ResourceId,
         @Nullable @RequestParam("featured")
-        featured: Boolean?,@
+        featured: Boolean?,
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable

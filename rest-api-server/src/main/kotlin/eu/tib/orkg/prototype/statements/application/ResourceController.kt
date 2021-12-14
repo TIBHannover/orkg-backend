@@ -180,6 +180,11 @@ class ResourceController(
     @GetMapping("/{id}/metadata/unlisted")
     fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean =
         service.getUnlistedResourceFlag(id) ?: throw ResourceNotFound(id.toString())
+
+    @GetMapping("/classes")
+    fun getResourcesByClass(@RequestParam(value = "classes") classes: List<String>, pageable: Pageable): Page<Resource> {
+        return service.getResourcesByClasses(classes, pageable)
+    }
 }
 
 enum class ExtractionMethod {

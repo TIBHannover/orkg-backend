@@ -168,4 +168,6 @@ interface ResourceService :
      * Delete all resources
      */
     fun removeAll()
+
+    fun getResourcesByClasses(classes: List<String>, pageable: Pageable): Page<Resource>
 }

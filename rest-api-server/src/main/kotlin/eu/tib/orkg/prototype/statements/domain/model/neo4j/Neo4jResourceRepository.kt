@@ -184,6 +184,10 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
         countQuery = """$MATCH_LISTED_PAPER $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllListedPapers(pageable: Pageable): Page<Neo4jResource>
+
+    @Query(value = """MATCH (node:`Resource`) WHERE ANY(c in {0} WHERE c IN labels(node)) WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
+        countQuery = """MATCH (node:`Resource`) WHERE ANY(c in {0} WHERE c IN labels(node))  WITH COUNT(node) as cnt RETURN cnt""")
+    fun findAllFeaturedResourcesByClass(classes: List<String>, pageable: Pageable): Page<Neo4jResource>
 }
 
 @QueryResult

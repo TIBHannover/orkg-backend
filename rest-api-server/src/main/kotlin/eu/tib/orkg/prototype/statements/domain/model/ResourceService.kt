@@ -169,5 +169,5 @@ interface ResourceService :
      */
     fun removeAll()
 
-    fun getResourcesByClasses(classes: List<String>, pageable: Pageable): Page<Resource>
+    fun getResourcesByClasses(classes: List<String>, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<Resource>
 }

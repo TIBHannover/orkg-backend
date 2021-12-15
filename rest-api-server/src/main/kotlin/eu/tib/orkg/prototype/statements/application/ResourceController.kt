@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity.badRequest
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
+import org.springframework.lang.Nullable
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -182,8 +183,15 @@ class ResourceController(
         service.getUnlistedResourceFlag(id) ?: throw ResourceNotFound(id.toString())
 
     @GetMapping("/classes")
-    fun getResourcesByClass(@RequestParam(value = "classes") classes: List<String>, pageable: Pageable): Page<Resource> {
-        return service.getResourcesByClasses(classes, pageable)
+    fun getResourcesByClass(
+        @RequestParam(value = "classes") classes: List<String>,
+        @Nullable @RequestParam("featured")
+        featured: Boolean?,
+        @RequestParam("unlisted", required = false, defaultValue = "false")
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<Resource> {
+        return service.getResourcesByClasses(classes, featured, unlisted, pageable)
     }
 }
 

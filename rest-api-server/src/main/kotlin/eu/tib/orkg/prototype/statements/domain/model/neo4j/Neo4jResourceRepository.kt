@@ -185,9 +185,13 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     )
     fun findAllListedPapers(pageable: Pageable): Page<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WHERE ANY(c in {0} WHERE c IN labels(node)) WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
-        countQuery = """MATCH (node:`Resource`) WHERE ANY(c in {0} WHERE c IN labels(node))  WITH COUNT(node) as cnt RETURN cnt""")
-    fun findAllFeaturedResourcesByClass(classes: List<String>, pageable: Pageable): Page<Neo4jResource>
+    @Query(value = """MATCH (node:`Resource`) WHERE (ANY(c in {0} WHERE c IN labels(node)) AND node.unlisted={1}) WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
+        countQuery = """MATCH (node:`Resource`) WHERE (ANY(c in {0} WHERE c IN labels(node)) AND node.unlisted={1})  WITH COUNT(node) as cnt RETURN cnt""")
+    fun findAllFeaturedResourcesByClass(classes: List<String>, unlisted: Boolean, pageable: Pageable): Page<Neo4jResource>
+
+    @Query(value = """MATCH (node:`Resource`) WHERE (ANY(c in {0} WHERE c IN labels(node)) AND node.featured={1} AND node.unlisted={2})  WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
+        countQuery = """MATCH (node:`Resource`) WHERE (ANY(c in {0} WHERE c IN labels(node)) AND node.featured={1} AND node.unlisted={2}) WITH COUNT(node) as cnt RETURN cnt""")
+    fun findAllFeaturedResourcesByClass(classes: List<String>, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Neo4jResource>
 }
 
 @QueryResult

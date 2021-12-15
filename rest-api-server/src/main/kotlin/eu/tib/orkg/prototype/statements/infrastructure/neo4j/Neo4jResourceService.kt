@@ -210,8 +210,24 @@ class Neo4jResourceService(
 
     override fun removeAll() = neo4jResourceRepository.deleteAll()
 
-    override fun getResourcesByClasses(classes: List<String>, pageable: Pageable): Page<Resource> =
-        neo4jResourceRepository.findAllFeaturedResourcesByClass(classes, pageable).map(Neo4jResource::toResource)
+    override fun getResourcesByClasses(
+        classes: List<String>,
+        featured: Boolean?,
+        unlisted: Boolean,
+        pageable: Pageable
+    ):
+        Page<Resource> {
+        return if (classes.isNotEmpty()) {
+            when (featured) {
+                null -> neo4jResourceRepository.findAllFeaturedResourcesByClass(
+                    classes, unlisted, pageable).map(Neo4jResource::toResource)
+                else -> neo4jResourceRepository.findAllFeaturedResourcesByClass(
+                    classes, featured, unlisted, pageable).map(Neo4jResource::toResource)
+            }
+        } else {
+            Page.empty()
+        }
+    }
 
     override fun markAsVerified(resourceId: ResourceId) = setVerifiedFlag(resourceId, true)
 

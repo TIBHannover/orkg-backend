@@ -11,6 +11,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResearchFieldRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
+import java.util.Collections
 import java.util.Optional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -180,6 +181,9 @@ class Neo4jResearchFieldService(
             }
         }
 
+        Collections.sort(resultList as List<Neo4jResource>,
+            { o1, o2 -> o2.createdAt!!.compareTo(o1.createdAt) })
+
         return PageImpl(resultList as List<Resource>, pageable, resultList.size.toLong())
     }
 
@@ -201,6 +205,10 @@ class Neo4jResearchFieldService(
                 }
             }
         }
+
+        Collections.sort(resultList as List<Neo4jResource>,
+            { o1, o2 -> o2.createdAt!!.compareTo(o1.createdAt) })
+
         return PageImpl(resultList as List<Resource>, pageable, resultList.size.toLong())
     }
 

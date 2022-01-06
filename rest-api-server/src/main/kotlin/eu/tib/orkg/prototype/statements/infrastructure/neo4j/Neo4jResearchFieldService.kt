@@ -162,6 +162,10 @@ class Neo4jResearchFieldService(
             pageable = pageable).map(Neo4jResource::toResource)
     }
 
+    /**
+     * We are checking for classes named SmartReviewPublished and LiteratureListPublished.
+     * Please check with frontend team before modifying this function
+     */
     override fun getEntitiesBasedOnClassesIncludingSubfields(
         id: ResourceId,
         classesList: List<String>,
@@ -175,7 +179,8 @@ class Neo4jResearchFieldService(
                 "PAPER" -> resultList.addAll(neo4jResearchFieldRepository.getPapersIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
                 "COMPARISON" -> resultList.addAll(neo4jResearchFieldRepository.getComparisonsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
                 "VISUALIZATION" -> resultList.addAll(neo4jResearchFieldRepository.getVisualizationsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
-                "LITERATURELIST" -> resultList.addAll(neo4jResearchFieldRepository.getLiteratureListIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
+                "LITERATURELISTPUBLISHED" -> resultList.addAll(neo4jResearchFieldRepository.getLiteratureListIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
+                "PROBLEM" -> resultList.addAll(neo4jResearchFieldRepository.getProblemsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
                 else -> {
                     resultList.addAll(neo4jResearchFieldRepository.getSmartReviewsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
                 }
@@ -188,6 +193,10 @@ class Neo4jResearchFieldService(
         return PageImpl(resultList as List<Resource>, pageable, resultList.size.toLong())
     }
 
+    /**
+     * We are checking for classes named SmartReviewPublished and LiteratureListPublished.
+     * Please check with frontend team before modifying this function
+     */
     override fun getEntitiesBasedOnClassesExcludingSubfields(
         id: ResourceId,
         classesList: List<String>,
@@ -201,7 +210,8 @@ class Neo4jResearchFieldService(
                 "PAPER" -> resultList.addAll(neo4jResearchFieldRepository.getPapersExcludingSubFieldsWithFlags(id, featured, unlisted, pageable))
                 "COMPARISON" -> resultList.addAll(neo4jResearchFieldRepository.getComparisonsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
                 "VISUALIZATION" -> resultList.addAll(neo4jResearchFieldRepository.getVisualizationsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
-                "LITERATURELIST" -> resultList.addAll(neo4jResearchFieldRepository.getLiteratureListExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
+                "LITERATURELISTPUBLISHED" -> resultList.addAll(neo4jResearchFieldRepository.getLiteratureListExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
+                "PROBLEM" -> resultList.addAll(neo4jResearchFieldRepository.getProblemsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
                 else -> {
                     resultList.addAll(neo4jResearchFieldRepository.getSmartReviewsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
                 }

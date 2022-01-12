@@ -7,10 +7,13 @@ import eu.tib.orkg.prototype.statements.domain.model.ProblemService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ContributorPerProblem
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.DetailsPerProblem
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jProblemRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
+import java.util.Collections
 import java.util.Optional
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -33,6 +36,34 @@ override fun findById(id: ResourceId): Optional<Resource> =
                 val freq = it.freq
             }
         }
+    }
+
+    override fun findFieldsPerProblemAndClasses(
+        problemId: ResourceId,
+        featured: Boolean?,
+        unlisted: Boolean,
+        classesList: List<String>,
+        pageable: Pageable
+    ): Page<DetailsPerProblem> {
+        var resultList = mutableListOf<DetailsPerProblem>()
+        classesList.map {
+            when (it.toUpperCase()) {
+                "PAPER" -> resultList.addAll(neo4jProblemRepository.findPapersByProblems(problemId, featured!!, unlisted, pageable).content)
+                "CONTRIBUTION" -> resultList.addAll(neo4jProblemRepository.findContributionsByProblems(problemId, featured!!, unlisted, pageable).content)
+                "COMPARISON" -> resultList.addAll(neo4jProblemRepository.findComparisonsByProblems(problemId, featured!!, unlisted, pageable).content)
+                "SMARTREVIEWPUBLISHED" -> resultList.addAll(neo4jProblemRepository.findSmartReviewsByProblems(problemId, featured!!, unlisted, pageable).content)
+                "LITERATURELISTPUBLISHED" -> resultList.addAll(neo4jProblemRepository.findLiteratureListsByProblems(problemId, featured!!, unlisted, pageable).content)
+                "VISUALIZATION" -> resultList.addAll(neo4jProblemRepository.findVisualizationsByProblems(problemId, featured!!, unlisted, pageable).content)
+                else -> {
+                    resultList.addAll(neo4jProblemRepository.findResearchFieldsByProblems(problemId, featured!!, unlisted, pageable).content)
+                }
+            }
+        }
+
+        Collections.sort(resultList as List<DetailsPerProblem>,
+            { o1, o2 -> o2.createdAt!!.compareTo(o1.createdAt!!) })
+
+        return PageImpl(resultList as List<DetailsPerProblem>, pageable, resultList.size.toLong())
     }
 
     override fun findTopResearchProblems(): List<Resource> =

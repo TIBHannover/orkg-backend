@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.util.Optional
 import java.util.UUID
@@ -34,6 +35,83 @@ interface Neo4jProblemRepository :
 
     @Query("""MATCH (node:Problem {resource_id: {0}}) RETURN node""")
     fun findById(id: ResourceId): Optional<Neo4jResource>
+
+    @Query("""MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)
+                    RETURN c.resource_id as id, c.label as label, c.created_at as createdAt, c.featured as featured, c.unlisted as unlisted, LABELS(c) as classes, c.created_by as createdBy""",
+    countQuery = """MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)
+                    RETURN COUNT(c)""")
+    fun findContributionsByProblems(
+        problemId: ResourceId,
+        featured: Boolean,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<DetailsPerProblem>
+
+    @Query("""MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)
+                    RETURN paper.resource_id as id, paper.label as label, paper.created_at as createdAt, paper.featured as featured, paper.unlisted as unlisted, LABELS(paper) as classes, paper.created_by as createdBy""",
+    countQuery = """MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)
+                    RETURN COUNT(paper)""")
+    fun findPapersByProblems(
+        problemId: ResourceId,
+        featured: Boolean,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<DetailsPerProblem>
+
+    @Query("""MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(f:ResearchField)
+                    RETURN f.resource_id as id, f.label as label, f.created_at as createdAt, f.featured as featured, f.unlisted as unlisted, LABELS(f) as classes, f.created_by as createdBy""",
+    countQuery = """MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(f:ResearchField)
+                    RETURN COUNT(f)""")
+    fun findResearchFieldsByProblems(
+        problemId: ResourceId,
+        featured: Boolean,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<DetailsPerProblem>
+
+    @Query("""MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'compareContribution'}]-(c:Comparison)
+                    RETURN c.resource_id as id, c.label as label, c.created_at as createdAt, c.featured as featured, c.unlisted as unlisted, LABELS(c) as classes, c.created_by as createdBy""",
+        countQuery = """MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'compareContribution'}]-(c:Comparison)
+                    RETURN COUNT(c)""")
+    fun findComparisonsByProblems(
+        problemId: ResourceId,
+        featured: Boolean,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<DetailsPerProblem>
+
+    @Query("""MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(f:ResearchField)<-[:RELATED{predicate_id: 'HasList'}]-(l:LiteratureList)
+                    RETURN l.resource_id as id, l.label as label, l.created_at as createdAt, l.featured as featured, l.unlisted as unlisted, LABELS(l) as classes, l.created_by as createdBy""",
+        countQuery = """MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(field:ResearchField)<-[:RELATED{predicate_id: 'HasList'}]-(l:LiteratureList)
+                    RETURN COUNT(l)""")
+    fun findLiteratureListsByProblems(
+        problemId: ResourceId,
+        featured: Boolean,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<DetailsPerProblem>
+
+    @Query("""MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(s:SmartReview)
+                    RETURN s.resource_id as id, s.label as label, s.created_at as createdAt, s.featured as featured, s.unlisted as unlisted, LABELS(s) as classes, s.created_by as createdBy""",
+        countQuery = """MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(s:SmartReview)
+                    RETURN COUNT(s)""")
+    fun findSmartReviewsByProblems(
+        problemId: ResourceId,
+        featured: Boolean,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<DetailsPerProblem>
+
+    @Query("""MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)-[:RELATED {predicate_id: 'hasVisualization'}]->(v:Visualization)
+                    RETURN v.resource_id as id, v.label as label, v.created_at as createdAt, v.featured as featured, v.unlisted as unlisted, LABELS(v) as classes, v.created_by as createdBy""",
+        countQuery = """MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)-[:RELATED {predicate_id: 'hasVisualization'}]->(v:Visualization)
+                    RETURN COUNT(v)""")
+    fun findVisualizationsByProblems(
+        problemId: ResourceId,
+        featured: Boolean,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<DetailsPerProblem>
 
     @Query("""MATCH (:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(field:ResearchField)
                     RETURN field, COUNT(paper) AS freq
@@ -108,6 +186,19 @@ interface Neo4jProblemRepository :
 data class FieldPerProblem(
     val field: Neo4jResource,
     val freq: Long
+)
+
+@QueryResult
+data class DetailsPerProblem(
+    val id: String?,
+    val label: String?,
+    @JsonProperty("created_at")
+    val createdAt: String?,
+    val featured: Boolean?,
+    val unlisted: Boolean?,
+    val classes: List<String>,
+    @JsonProperty("created_by")
+    val createdBy: String?
 )
 
 @QueryResult

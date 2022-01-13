@@ -6,7 +6,7 @@ fun String.toSnakeCase(): String =
             when (c) {
                 in 'A'..'Z' -> {
                     it.append("_")
-                    it.append(c.toLowerCase())
+                    it.append(c.lowercase())
                 }
                 else -> {
                     it.append(c)

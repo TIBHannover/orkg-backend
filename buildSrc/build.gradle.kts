@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    val kotlinVersion = "1.4.10"
+    val kotlinVersion = "1.6.10"
     val springBootVersion = "2.3.4.RELEASE"
     // Kotlin conventions
     api("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")

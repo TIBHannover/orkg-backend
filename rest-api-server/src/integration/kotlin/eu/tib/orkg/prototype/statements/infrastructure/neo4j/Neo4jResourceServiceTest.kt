@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
@@ -175,5 +176,27 @@ class Neo4jResourceServiceTest {
         )
         assertThat(found).isNotNull
         assertThat(found.contains(res))
+    }
+
+    @Test
+    fun `when several resources of a class exist with the same label, partial search should return all of them`() {
+        val researchProblemClass = ClassId("Research Problem")
+        val resources = mutableListOf<Resource>()
+        repeat(5) {
+            resources += service.create(
+                CreateResourceRequest(
+                    null,
+                    "Testing the Darwin's naturalisation hypothesis in invasion biology",
+                    setOf(researchProblemClass)
+                )
+            )
+        }
+        assertThat(service.findAll(PageRequest.of(0, 10_000)).totalElements).isEqualTo(5)
+
+        val page = PageRequest.of(0, 10)
+        val found = service.findAllByClassAndLabelContaining(page, researchProblemClass, "Testing the Darwin")
+
+        assertThat(found.totalElements).isEqualTo(5)
+        assertThat(found.content).containsExactlyInAnyOrderElementsOf(resources)
     }
 }

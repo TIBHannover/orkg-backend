@@ -46,22 +46,20 @@ override fun findById(id: ResourceId): Optional<Resource> =
         pageable: Pageable
     ): Page<DetailsPerProblem> {
         var resultList = mutableListOf<DetailsPerProblem>()
-        classesList.map {
-            when (it.toUpperCase()) {
-                "PAPER" -> resultList.addAll(neo4jProblemRepository.findPapersByProblems(problemId, featured!!, unlisted, pageable).content)
-                "CONTRIBUTION" -> resultList.addAll(neo4jProblemRepository.findContributionsByProblems(problemId, featured!!, unlisted, pageable).content)
-                "COMPARISON" -> resultList.addAll(neo4jProblemRepository.findComparisonsByProblems(problemId, featured!!, unlisted, pageable).content)
-                "SMARTREVIEWPUBLISHED" -> resultList.addAll(neo4jProblemRepository.findSmartReviewsByProblems(problemId, featured!!, unlisted, pageable).content)
-                "LITERATURELISTPUBLISHED" -> resultList.addAll(neo4jProblemRepository.findLiteratureListsByProblems(problemId, featured!!, unlisted, pageable).content)
-                "VISUALIZATION" -> resultList.addAll(neo4jProblemRepository.findVisualizationsByProblems(problemId, featured!!, unlisted, pageable).content)
-                else -> {
-                    resultList.addAll(neo4jProblemRepository.findResearchFieldsByProblems(problemId, featured!!, unlisted, pageable).content)
+
+        if (classesList.isNotEmpty()) {
+            classesList.map {
+                if (featured != null) {
+                    getProblemsWithFeatured(it, problemId, featured, unlisted, pageable, resultList)
+                } else {
+                    getProblemsWithoutFeatured(it, problemId, unlisted, pageable, resultList)
                 }
             }
+            Collections.sort(resultList as List<DetailsPerProblem>
+            ) { o1, o2 -> o2.createdAt!!.compareTo(o1.createdAt!!) }
+        }else{
+            return Page.empty()
         }
-
-        Collections.sort(resultList as List<DetailsPerProblem>,
-            { o1, o2 -> o2.createdAt!!.compareTo(o1.createdAt!!) })
 
         return PageImpl(resultList as List<DetailsPerProblem>, pageable, resultList.size.toLong())
     }
@@ -178,5 +176,137 @@ override fun findById(id: ResourceId): Optional<Resource> =
             return Optional.of(neo4jProblemRepository.save(problem).toResource())
         }
         return Optional.empty()
+    }
+
+    private fun getProblemsWithFeatured(
+        classType: String,
+        problemId: ResourceId,
+        featured: Boolean,
+        unlisted: Boolean,
+        pageable: Pageable,
+        resultList: MutableList<DetailsPerProblem>
+    ) {
+            when (classType.toUpperCase()) {
+            "PAPER" -> resultList.addAll(
+                neo4jProblemRepository.findPapersByProblems(
+                    problemId,
+                    featured,
+                    unlisted,
+                    pageable
+                ).content
+            )
+            "CONTRIBUTION" -> resultList.addAll(
+                neo4jProblemRepository.findContributionsByProblems(
+                    problemId,
+                    featured,
+                    unlisted,
+                    pageable
+                ).content
+            )
+            "COMPARISON" -> resultList.addAll(
+                neo4jProblemRepository.findComparisonsByProblems(
+                    problemId,
+                    featured,
+                    unlisted,
+                    pageable
+                ).content
+            )
+            "SMARTREVIEWPUBLISHED" -> resultList.addAll(
+                neo4jProblemRepository.findSmartReviewsByProblems(
+                    problemId,
+                    featured,
+                    unlisted,
+                    pageable
+                ).content
+            )
+            "LITERATURELISTPUBLISHED" -> resultList.addAll(
+                neo4jProblemRepository.findLiteratureListsByProblems(
+                    problemId,
+                    featured,
+                    unlisted,
+                    pageable
+                ).content
+            )
+            "VISUALIZATION" -> resultList.addAll(
+                neo4jProblemRepository.findVisualizationsByProblems(
+                    problemId,
+                    featured,
+                    unlisted,
+                    pageable
+                ).content
+            )
+            else -> {
+                resultList.addAll(
+                    neo4jProblemRepository.findResearchFieldsByProblems(
+                        problemId,
+                        featured,
+                        unlisted,
+                        pageable
+                    ).content
+                )
+            }
+        }
+    }
+
+    private fun getProblemsWithoutFeatured(
+        classType: String,
+        problemId: ResourceId,
+        unlisted: Boolean,
+        pageable: Pageable,
+        resultList: MutableList<DetailsPerProblem>
+    ) {
+        when (classType.toUpperCase()) {
+            "PAPER" -> resultList.addAll(
+                neo4jProblemRepository.findPapersByProblems(
+                    problemId,
+                    unlisted,
+                    pageable
+                ).content
+            )
+            "CONTRIBUTION" -> resultList.addAll(
+                neo4jProblemRepository.findContributionsByProblems(
+                    problemId,
+                    unlisted,
+                    pageable
+                ).content
+            )
+            "COMPARISON" -> resultList.addAll(
+                neo4jProblemRepository.findComparisonsByProblems(
+                    problemId,
+                    unlisted,
+                    pageable
+                ).content
+            )
+            "SMARTREVIEWPUBLISHED" -> resultList.addAll(
+                neo4jProblemRepository.findSmartReviewsByProblems(
+                    problemId,
+                    unlisted,
+                    pageable
+                ).content
+            )
+            "LITERATURELISTPUBLISHED" -> resultList.addAll(
+                neo4jProblemRepository.findLiteratureListsByProblems(
+                    problemId,
+                    unlisted,
+                    pageable
+                ).content
+            )
+            "VISUALIZATION" -> resultList.addAll(
+                neo4jProblemRepository.findVisualizationsByProblems(
+                    problemId,
+                    unlisted,
+                    pageable
+                ).content
+            )
+            else -> {
+                resultList.addAll(
+                    neo4jProblemRepository.findResearchFieldsByProblems(
+                        problemId,
+                        unlisted,
+                        pageable
+                    ).content
+                )
+            }
+        }
     }
 }

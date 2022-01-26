@@ -57,7 +57,7 @@ override fun findById(id: ResourceId): Optional<Resource> =
             }
             Collections.sort(resultList as List<DetailsPerProblem>
             ) { o1, o2 -> o2.createdAt!!.compareTo(o1.createdAt!!) }
-        }else{
+        } else {
             return Page.empty()
         }
 

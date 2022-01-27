@@ -215,6 +215,7 @@ class ResearchFieldController(
     fun getEntitiesBasedOnClassesIncludingSubFields(
         @PathVariable id: ResourceId,
         @RequestParam("featured", required = false, defaultValue = "false")
+        @Nullable
         featured: Boolean,
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,

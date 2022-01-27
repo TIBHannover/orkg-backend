@@ -169,24 +169,16 @@ class Neo4jResearchFieldService(
     override fun getEntitiesBasedOnClassesIncludingSubfields(
         id: ResourceId,
         classesList: List<String>,
-        featured: Boolean,
+        featured: Boolean?,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<Resource> {
         var resultList = mutableListOf<Neo4jResource>()
-        classesList.map {
-            when (it.toUpperCase()) {
-                "PAPER" -> resultList.addAll(neo4jResearchFieldRepository.getPapersIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
-                "COMPARISON" -> resultList.addAll(neo4jResearchFieldRepository.getComparisonsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
-                "VISUALIZATION" -> resultList.addAll(neo4jResearchFieldRepository.getVisualizationsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
-                "LITERATURELISTPUBLISHED" -> resultList.addAll(neo4jResearchFieldRepository.getLiteratureListIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
-                "PROBLEM" -> resultList.addAll(neo4jResearchFieldRepository.getProblemsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
-                else -> {
-                    resultList.addAll(neo4jResearchFieldRepository.getSmartReviewsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
-                }
-            }
+        if (featured == null) {
+            getListIncludingSubFieldsWithoutFeaturedFlag(classesList, id, unlisted, pageable, resultList)
+        } else {
+            getListIncludingSubFieldsWithFlags(classesList, id, featured, unlisted, pageable, resultList)
         }
-
         Collections.sort(resultList as List<Neo4jResource>,
             { o1, o2 -> o2.createdAt!!.compareTo(o1.createdAt) })
 
@@ -200,24 +192,16 @@ class Neo4jResearchFieldService(
     override fun getEntitiesBasedOnClassesExcludingSubfields(
         id: ResourceId,
         classesList: List<String>,
-        featured: Boolean,
+        featured: Boolean?,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<Resource> {
         var resultList = mutableListOf<Neo4jResource>()
-        classesList.map {
-            when (it.toUpperCase()) {
-                "PAPER" -> resultList.addAll(neo4jResearchFieldRepository.getPapersExcludingSubFieldsWithFlags(id, featured, unlisted, pageable))
-                "COMPARISON" -> resultList.addAll(neo4jResearchFieldRepository.getComparisonsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
-                "VISUALIZATION" -> resultList.addAll(neo4jResearchFieldRepository.getVisualizationsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
-                "LITERATURELISTPUBLISHED" -> resultList.addAll(neo4jResearchFieldRepository.getLiteratureListExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
-                "PROBLEM" -> resultList.addAll(neo4jResearchFieldRepository.getProblemsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
-                else -> {
-                    resultList.addAll(neo4jResearchFieldRepository.getSmartReviewsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
-                }
-            }
+        if (featured == null) {
+            getListExcludingSubFieldsWithoutFeaturedFlag(classesList, id, unlisted, pageable, resultList)
+        } else {
+            getListExcludingSubFieldsWithFlags(classesList, id, featured, unlisted, pageable, resultList)
         }
-
         Collections.sort(resultList as List<Neo4jResource>,
             { o1, o2 -> o2.createdAt!!.compareTo(o1.createdAt) })
 
@@ -233,4 +217,90 @@ class Neo4jResearchFieldService(
             true -> false
             false -> featured
         }
+
+    private fun getListIncludingSubFieldsWithoutFeaturedFlag(
+        classesList: List<String>,
+        id: ResourceId,
+        unlisted: Boolean,
+        pageable: Pageable,
+        resultList: MutableList<Neo4jResource>
+    ) {
+        classesList.map { classType ->
+            when (classType.toUpperCase()) {
+                "PAPER" -> resultList.addAll(neo4jResearchFieldRepository.getPapersIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable).content)
+                "COMPARISON" -> resultList.addAll(neo4jResearchFieldRepository.getComparisonsIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable).content)
+                "VISUALIZATION" -> resultList.addAll(neo4jResearchFieldRepository.getVisualizationsIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable).content)
+                "LITERATURELISTPUBLISHED" -> resultList.addAll(neo4jResearchFieldRepository.getLiteratureListIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable).content)
+                "PROBLEM" -> resultList.addAll(neo4jResearchFieldRepository.getProblemsIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable).content)
+                else -> {
+                    resultList.addAll(neo4jResearchFieldRepository.getSmartReviewsIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable).content)
+                }
+            }
+        }
+    }
+
+    private fun getListIncludingSubFieldsWithFlags(
+        classesList: List<String>,
+        id: ResourceId,
+        featured: Boolean,
+        unlisted: Boolean,
+        pageable: Pageable,
+        resultList: MutableList<Neo4jResource>
+    ) {
+        classesList.map { classType ->
+            when (classType.toUpperCase()) {
+                "PAPER" -> resultList.addAll(neo4jResearchFieldRepository.getPapersIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
+                "COMPARISON" -> resultList.addAll(neo4jResearchFieldRepository.getComparisonsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
+                "VISUALIZATION" -> resultList.addAll(neo4jResearchFieldRepository.getVisualizationsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
+                "LITERATURELISTPUBLISHED" -> resultList.addAll(neo4jResearchFieldRepository.getLiteratureListIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
+                "PROBLEM" -> resultList.addAll(neo4jResearchFieldRepository.getProblemsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
+                else -> {
+                    resultList.addAll(neo4jResearchFieldRepository.getSmartReviewsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
+                }
+            }
+        }
+    }
+
+    private fun getListExcludingSubFieldsWithoutFeaturedFlag(
+        classesList: List<String>,
+        id: ResourceId,
+        unlisted: Boolean,
+        pageable: Pageable,
+        resultList: MutableList<Neo4jResource>
+    ) {
+        classesList.map { classType ->
+            when (classType.toUpperCase()) {
+                "PAPER" -> resultList.addAll(neo4jResearchFieldRepository.getPapersExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable).content)
+                "COMPARISON" -> resultList.addAll(neo4jResearchFieldRepository.getComparisonsExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable).content)
+                "VISUALIZATION" -> resultList.addAll(neo4jResearchFieldRepository.getVisualizationsExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable).content)
+                "LITERATURELISTPUBLISHED" -> resultList.addAll(neo4jResearchFieldRepository.getLiteratureListExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable).content)
+                "PROBLEM" -> resultList.addAll(neo4jResearchFieldRepository.getProblemsExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable).content)
+                else -> {
+                    resultList.addAll(neo4jResearchFieldRepository.getSmartReviewsIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable).content)
+                }
+            }
+        }
+    }
+
+    private fun getListExcludingSubFieldsWithFlags(
+        classesList: List<String>,
+        id: ResourceId,
+        featured: Boolean,
+        unlisted: Boolean,
+        pageable: Pageable,
+        resultList: MutableList<Neo4jResource>
+    ) {
+        classesList.map { classType ->
+            when (classType.toUpperCase()) {
+                "PAPER" -> resultList.addAll(neo4jResearchFieldRepository.getPapersExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
+                "COMPARISON" -> resultList.addAll(neo4jResearchFieldRepository.getComparisonsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
+                "VISUALIZATION" -> resultList.addAll(neo4jResearchFieldRepository.getVisualizationsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
+                "LITERATURELISTPUBLISHED" -> resultList.addAll(neo4jResearchFieldRepository.getLiteratureListExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
+                "PROBLEM" -> resultList.addAll(neo4jResearchFieldRepository.getProblemsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
+                else -> {
+                    resultList.addAll(neo4jResearchFieldRepository.getSmartReviewsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
+                }
+            }
+        }
+    }
 }

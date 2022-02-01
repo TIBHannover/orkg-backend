@@ -49,10 +49,9 @@ override fun findById(id: ResourceId): Optional<Resource> =
 
         if (classesList.isNotEmpty()) {
             classesList.map {
-                if (featured != null) {
-                    getProblemsWithFeatured(classesList, problemId, featured, unlisted, pageable, resultList)
-                } else {
-                    getProblemsWithoutFeatured(classesList, problemId, unlisted, pageable, resultList)
+                when (featured) {
+                    null -> getProblemsWithoutFeatured(classesList, problemId, unlisted, pageable, resultList)
+                    else -> getProblemsWithFeatured(classesList, problemId, featured, unlisted, pageable, resultList)
                 }
             }
             Collections.sort(resultList as List<DetailsPerProblem>

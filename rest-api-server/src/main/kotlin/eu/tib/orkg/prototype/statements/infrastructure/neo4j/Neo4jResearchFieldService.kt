@@ -174,11 +174,12 @@ class Neo4jResearchFieldService(
         pageable: Pageable
     ): Page<Resource> {
         var resultList = mutableListOf<Neo4jResource>()
-        if (featured == null) {
-            getListIncludingSubFieldsWithoutFeaturedFlag(classesList, id, unlisted, pageable, resultList)
-        } else {
-            getListIncludingSubFieldsWithFlags(classesList, id, featured, unlisted, pageable, resultList)
+
+        when (featured) {
+            null -> getListIncludingSubFieldsWithoutFeaturedFlag(classesList, id, unlisted, pageable, resultList)
+            else -> getListIncludingSubFieldsWithFlags(classesList, id, featured, unlisted, pageable, resultList)
         }
+
         Collections.sort(resultList as List<Neo4jResource>,
             { o1, o2 -> o2.createdAt!!.compareTo(o1.createdAt) })
 
@@ -197,11 +198,12 @@ class Neo4jResearchFieldService(
         pageable: Pageable
     ): Page<Resource> {
         var resultList = mutableListOf<Neo4jResource>()
-        if (featured == null) {
-            getListExcludingSubFieldsWithoutFeaturedFlag(classesList, id, unlisted, pageable, resultList)
-        } else {
-            getListExcludingSubFieldsWithFlags(classesList, id, featured, unlisted, pageable, resultList)
+
+        when (featured) {
+            null -> getListExcludingSubFieldsWithoutFeaturedFlag(classesList, id, unlisted, pageable, resultList)
+            else -> getListExcludingSubFieldsWithFlags(classesList, id, featured, unlisted, pageable, resultList)
         }
+
         Collections.sort(resultList as List<Neo4jResource>,
             { o1, o2 -> o2.createdAt!!.compareTo(o1.createdAt) })
 

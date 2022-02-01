@@ -46,14 +46,11 @@ override fun findById(id: ResourceId): Optional<Resource> =
         pageable: Pageable
     ): Page<DetailsPerProblem> {
         var resultList = mutableListOf<DetailsPerProblem>()
-
         if (classesList.isNotEmpty()) {
-            classesList.map {
                 when (featured) {
                     null -> getProblemsWithoutFeatured(classesList, problemId, unlisted, pageable, resultList)
                     else -> getProblemsWithFeatured(classesList, problemId, featured, unlisted, pageable, resultList)
                 }
-            }
             Collections.sort(resultList as List<DetailsPerProblem>
             ) { o1, o2 -> o2.createdAt!!.compareTo(o1.createdAt!!) }
         } else {

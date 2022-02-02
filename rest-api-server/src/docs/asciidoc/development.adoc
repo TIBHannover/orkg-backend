@@ -56,6 +56,12 @@ If everything worked, the hooks will be triggered automatically from now on.
 To disable the hooks, run `pre-commit uninstall`.
 For further information on usage and configuration check the https://pre-commit.com/[homepage].
 
+=== Downloading JavaDoc artifacts
+
+If you like reading the documentation inside IDEA, Gradle needs to download the `javadoc` artifacts of all dependencies.
+You can set `downloadJavadoc=true` in your personal Gradle properties file, located at `~/.gradle/gradle.properties`.
+If not set, Gradle is configured to not download the documentation (to be consistent with the default behavior).
+
 == Code Organization
 
 The code will be split into several components, represented as Gradle (sub-)projects.

@@ -12,8 +12,12 @@ val testContainersVersion = "1.15.3"
 val containerRegistryLocation = "registry.gitlab.com/tibhannover/orkg/orkg-backend"
 val dockerImageTag: String? by project
 
+// Support downloading JavaDoc artifacts by enabling it via Gradle properties
+val downloadJavadoc: String? by project
+
 plugins {
     id("org.orkg.spring-conventions")
+    id("idea")
 
     id("org.jetbrains.dokka") version "0.10.1"
     id("com.coditory.integration-test") version "1.2.1"
@@ -32,6 +36,12 @@ extra["log4j2.version"] = "2.15.0"
 configurations {
     // The Asciidoctor Gradle plug-in does not create it anymore, so we have to...
     create("asciidoctor")
+}
+
+idea {
+    module {
+        isDownloadJavadoc = downloadJavadoc?.let(String::toBoolean) ?: false
+    }
 }
 
 dependencies {

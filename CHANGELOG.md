@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.8.0] - 2022-02-03
 ### Added
 - A combined list containing all content types is now provided. (Closes: [#315](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/315))
 
@@ -67,7 +67,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.7.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.8.0...master
+[0.8.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.8.0
 [0.7.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.7.0
 [0.6.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.6.2
 [0.6.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.6.1

@@ -13,22 +13,22 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class PaperVerificationController(
-    private val port: LoadPaperPort, // FIXME: should be adapter
+class PaperUnlistedController(
+    private val port: LoadPaperPort,
     private val query: GetPaperFlagQuery
 ) : BaseController() {
 
-    @GetMapping("/api/papers/{id}/metadata/verified")
-    fun getVerifiedFlag(@PathVariable id: ResourceId): Boolean =
-        query.getPaperVerifiedFlag(id) ?: throw ResourceNotFound(id.toString())
+    @GetMapping("/api/papers/{id}/metadata/unlisted")
+    fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean =
+        query.getUnlistedPaperFlag(id) ?: throw ResourceNotFound(id.toString())
 
-    @GetMapping("/api/classes/Paper/resources/", params = ["verified=true"])
-    fun loadVerifiedPapers(pageable: Pageable): Page<Resource> {
-        return port.loadVerifiedPapers(pageable)
+    @GetMapping("/api/classes/Paper/unlisted/resources/", params = ["unlisted=true"])
+    fun loadUnlistedPapers(pageable: Pageable): Page<Resource> {
+        return port.loadUnlistedPapers(pageable)
     }
 
-    @GetMapping("/api/classes/Paper/resources/", params = ["verified=false"])
-    fun loadUnverifiedPapers(pageable: Pageable): Page<Resource> {
-        return port.loadUnverifiedPapers(pageable)
+    @GetMapping("/api/classes/Paper/unlisted/resources/", params = ["unlisted=false"])
+    fun loadListedPapers(pageable: Pageable): Page<Resource> {
+        return port.loadListedPapers(pageable)
     }
 }

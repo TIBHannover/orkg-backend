@@ -13,22 +13,22 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class PaperVerificationController(
-    private val port: LoadPaperPort, // FIXME: should be adapter
+class PaperFeaturedController(
+    private val port: LoadPaperPort,
     private val query: GetPaperFlagQuery
 ) : BaseController() {
 
-    @GetMapping("/api/papers/{id}/metadata/verified")
-    fun getVerifiedFlag(@PathVariable id: ResourceId): Boolean =
-        query.getPaperVerifiedFlag(id) ?: throw ResourceNotFound(id.toString())
+    @GetMapping("/api/papers/{id}/metadata/featured")
+    fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean =
+        query.getFeaturedPaperFlag(id) ?: throw ResourceNotFound(id.toString())
 
-    @GetMapping("/api/classes/Paper/resources/", params = ["verified=true"])
-    fun loadVerifiedPapers(pageable: Pageable): Page<Resource> {
-        return port.loadVerifiedPapers(pageable)
+    @GetMapping("/api/classes/Paper/featured/resources/", params = ["featured=true"])
+    fun loadFeaturedPapers(pageable: Pageable): Page<Resource> {
+        return port.loadFeaturedPapers(pageable)
     }
 
-    @GetMapping("/api/classes/Paper/resources/", params = ["verified=false"])
-    fun loadUnverifiedPapers(pageable: Pageable): Page<Resource> {
-        return port.loadUnverifiedPapers(pageable)
+    @GetMapping("/api/classes/Paper/featured/resources/", params = ["featured=false"])
+    fun loadNonFeaturedPapers(pageable: Pageable): Page<Resource> {
+        return port.loadNonFeaturedPapers(pageable)
     }
 }

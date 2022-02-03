@@ -66,6 +66,12 @@ data class Neo4jResource(
     @Property("verified")
     var verified: Boolean? = null
 
+    @Property("featured")
+    var featured: Boolean = false
+
+    @Property("unlisted")
+    var unlisted: Boolean = false
+
     @Property("organization_id")
     @Convert(OrganizationIdConverter::class)
     var organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
@@ -91,7 +97,9 @@ data class Neo4jResource(
         createdBy: ContributorId = ContributorId.createUnknownContributor(),
         observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
         extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
-        organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
+        organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
+        featured: Boolean = false,
+        unlisted: Boolean = false
     ) : this(null) {
         this.label = label
         this.resourceId = resourceId
@@ -99,6 +107,8 @@ data class Neo4jResource(
         this.observatoryId = observatoryId
         this.extractionMethod = extractionMethod
         this.organizationId = organizationId
+        this.featured = featured
+        this.unlisted = unlisted
     }
 
     fun toResource(): Resource {
@@ -111,7 +121,9 @@ data class Neo4jResource(
             createdBy = createdBy,
             observatoryId = observatoryId,
             extractionMethod = extractionMethod,
-            organizationId = organizationId
+            organizationId = organizationId,
+            featured = featured,
+            unlisted = unlisted
         )
         resource.rdf = toRdfModel()
         return resource

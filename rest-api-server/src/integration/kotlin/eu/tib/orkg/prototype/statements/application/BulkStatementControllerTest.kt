@@ -179,6 +179,8 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statement.created_by").description("The ID of the user that created the statement. All zeros if unknown."),
             fieldWithPath("[].statement.subject").description("A resource"),
             fieldWithPath("[].statement.subject.id").description("The ID of the subject resource"),
+            fieldWithPath("[].statement.subject.featured").description("Indicates if the entity is marked as 'featured'. Featured entities can be set by the user to appear as one of the top results.").optional().ignored(),
+            fieldWithPath("[].statement.subject.unlisted").description("Indicates if the entity is marked as 'unlisted'. Unlisted entities are visible only to the curators.").optional().ignored(),
             fieldWithPath("[].statement.subject.label").description("The label of the subject resource"),
             fieldWithPath("[].statement.subject._class").description("The type of the subject (resource, literal, etc...)."),
             fieldWithPath("[].statement.subject.created_at").description("The subject creation datetime"),
@@ -191,6 +193,8 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statement.predicate").description("A predicate"),
             fieldWithPath("[].statement.predicate.id").description("The ID of the predicate"),
             fieldWithPath("[].statement.predicate.label").description("The label of the predicate"),
+            fieldWithPath("[].statement.predicate.featured").description("Indicates if the entity is marked as 'featured'. Featured entities can be set by the user to appear as one of the top results.").optional().ignored(),
+            fieldWithPath("[].statement.predicate.unlisted").description("Indicates if the entity is marked as 'unlisted'. Unlisted entities are visible only to the curators.").optional().ignored(),
             fieldWithPath("[].statement.predicate._class").ignored(),
             fieldWithPath("[].statement.predicate.created_at").description("The predicate creation datetime"),
             fieldWithPath("[].statement.predicate.created_by").description("The ID of the user that created the predicate. All zeros if unknown."),
@@ -205,7 +209,9 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statement.object.observatory_id").description("The ID of the observatory that maintains this resource.").optional().ignored(),
             fieldWithPath("[].statement.object.organization_id").description("The ID of the organization that maintains this resource.").optional().ignored(),
             fieldWithPath("[].statement.object.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic".""").optional().ignored(),
-            fieldWithPath("[].statement.object.shared").optional().ignored()
+            fieldWithPath("[].statement.object.shared").optional().ignored(),
+            fieldWithPath("[].statement.object.featured").description("Indicates if the entity is marked as 'featured'. Featured entities can be set by the user to appear as one of the top results.").optional().ignored(),
+            fieldWithPath("[].statement.object.unlisted").description("The unlisted value").optional().ignored()
         )
 
     private fun bulkStatementListResponseFields() =
@@ -225,6 +231,8 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statements.[].subject.organization_id").description("The ID of the organization that maintains this resource."),
             fieldWithPath("[].statements.[].subject.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic"."""),
             fieldWithPath("[].statements.[].subject.shared").description("The number of time this resource has been shared"),
+            fieldWithPath("[].statements.[].subject.featured").description("Indicates if the entity is marked as 'featured'. Featured entities can be set by the user to appear as one of the top results.").optional().ignored(),
+            fieldWithPath("[].statements.[].subject.unlisted").description("Indicates if the entity is marked as 'unlisted'. Unlisted entities are visible only to the curators.").optional().ignored(),
             fieldWithPath("[].statements.[].predicate").description("A predicate"),
             fieldWithPath("[].statements.[].predicate.id").description("The ID of the predicate"),
             fieldWithPath("[].statements.[].predicate.label").description("The label of the predicate"),
@@ -232,6 +240,8 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statements.[].predicate.created_at").description("The predicate creation datetime"),
             fieldWithPath("[].statements.[].predicate.created_by").description("The ID of the user that created the predicate. All zeros if unknown."),
             fieldWithPath("[].statements.[].predicate.description").description("The description of the predicate (Optional).").optional(),
+            fieldWithPath("[].statements.[].predicate.featured").description("Indicates if the entity is marked as 'featured'. Featured entities can be set by the user to appear as one of the top results.").optional().ignored(),
+            fieldWithPath("[].statements.[].predicate.unlisted").description("Indicates if the entity is marked as 'unlisted'. Unlisted entities are visible only to the curators.").optional().ignored(),
             fieldWithPath("[].statements.[].object").description("An object"),
             fieldWithPath("[].statements.[].object.id").description("The ID of the object"),
             fieldWithPath("[].statements.[].object.label").description("The label of the object"),
@@ -242,6 +252,8 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statements.[].object.observatory_id").description("The ID of the observatory that maintains this resource.").optional().ignored(),
             fieldWithPath("[].statements.[].object.organization_id").description("The ID of the organization that maintains this resource.").optional().ignored(),
             fieldWithPath("[].statements.[].object.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic".""").optional().ignored(),
-            fieldWithPath("[].statements.[].object.shared").optional().ignored()
+            fieldWithPath("[].statements.[].object.shared").optional().ignored(),
+            fieldWithPath("[].statements.[].object.featured").optional().ignored(),
+            fieldWithPath("[].statements.[].object.unlisted").optional().ignored()
         )
 }

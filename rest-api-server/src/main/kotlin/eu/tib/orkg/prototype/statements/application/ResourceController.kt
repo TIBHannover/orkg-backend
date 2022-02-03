@@ -12,12 +12,14 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.badRequest
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
+import org.springframework.lang.Nullable
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -134,6 +136,62 @@ class ResourceController(
         service.delete(id)
 
         return ResponseEntity.noContent().build()
+    }
+
+    @GetMapping("/metadata/featured", params = ["featured=true"])
+    fun getFeaturedResources(pageable: Pageable) =
+        service.findAllByFeatured(pageable)
+
+    @GetMapping("/metadata/featured", params = ["featured=false"])
+    fun getNonFeaturedResources(pageable: Pageable) =
+        service.findAllByNonFeatured(pageable)
+
+    @PutMapping("/{id}/metadata/featured")
+    @ResponseStatus(HttpStatus.OK)
+    fun markFeatured(@PathVariable id: ResourceId) {
+        service.markAsFeatured(id).orElseThrow { ResourceNotFound(id.toString()) }
+    }
+    @DeleteMapping("/{id}/metadata/featured")
+    fun unmarkFeatured(@PathVariable id: ResourceId) {
+        service.markAsNonFeatured(id).orElseThrow { ResourceNotFound(id.toString()) }
+    }
+
+    @GetMapping("/{id}/metadata/featured")
+    fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean =
+        service.getFeaturedResourceFlag(id)
+
+    @GetMapping("/metadata/unlisted", params = ["unlisted=true"])
+    fun getUnlistedResources(pageable: Pageable) =
+        service.findAllByUnlisted(pageable)
+
+    @GetMapping("/metadata/unlisted", params = ["unlisted=false"])
+    fun getListedResources(pageable: Pageable) =
+        service.findAllByListed(pageable)
+
+    @PutMapping("/{id}/metadata/unlisted")
+    @ResponseStatus(HttpStatus.OK)
+    fun markUnlisted(@PathVariable id: ResourceId) {
+        service.markAsUnlisted(id).orElseThrow { ResourceNotFound(id.toString()) }
+    }
+    @DeleteMapping("/{id}/metadata/unlisted")
+    fun unmarkUnlisted(@PathVariable id: ResourceId) {
+        service.markAsListed(id).orElseThrow { ResourceNotFound(id.toString()) }
+    }
+
+    @GetMapping("/{id}/metadata/unlisted")
+    fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean =
+        service.getUnlistedResourceFlag(id) ?: throw ResourceNotFound(id.toString())
+
+    @GetMapping("/classes")
+    fun getResourcesByClass(
+        @RequestParam(value = "classes") classes: List<String>,
+        @Nullable @RequestParam("featured")
+        featured: Boolean?,
+        @RequestParam("unlisted", required = false, defaultValue = "false")
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<Resource> {
+        return service.getResourcesByClasses(classes, featured, unlisted, pageable)
     }
 }
 

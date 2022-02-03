@@ -363,7 +363,9 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic"."""),
             fieldWithPath("organization_id").description("The ID of the organization that maintains this resource."),
             fieldWithPath("shared").description("The number of times this resource is shared").optional(),
-            fieldWithPath("_class").description("Class").optional()
+            fieldWithPath("_class").description("Class").optional(),
+            fieldWithPath("featured").description("Featured Value").optional().ignored(),
+            fieldWithPath("unlisted").description("Unlisted Value").optional().ignored()
         )
 
         fun listOfResourcesResponseFields(): ResponseFieldsSnippet =

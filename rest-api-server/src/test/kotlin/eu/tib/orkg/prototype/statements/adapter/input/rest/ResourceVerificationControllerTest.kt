@@ -42,7 +42,7 @@ class ResourceVerificationControllerTest {
     private lateinit var userRepository: UserRepository
 
     @MockkBean
-    private lateinit var resourcePort: LoadResourcePort
+    private lateinit var resourceAdapter: LoadResourcePort
 
     @MockkBean
     private lateinit var service: MarkAsVerifiedUseCase

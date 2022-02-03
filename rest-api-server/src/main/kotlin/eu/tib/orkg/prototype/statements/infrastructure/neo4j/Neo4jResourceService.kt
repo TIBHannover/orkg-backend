@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
+import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryRequest
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -12,9 +13,13 @@ import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jComparisonRepository
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jContributionRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceIdGenerator
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceRepository
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jSmartReviewRepository
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jVisualizationRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
 import eu.tib.orkg.prototype.util.EscapedRegex
 import eu.tib.orkg.prototype.util.SanitizedWhitespace
@@ -29,6 +34,10 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class Neo4jResourceService(
     private val neo4jResourceRepository: Neo4jResourceRepository,
+    private val neo4jComparisonRepository: Neo4jComparisonRepository,
+    private val neo4jContributionRepository: Neo4jContributionRepository,
+    private val neo4jVisualizationRepository: Neo4jVisualizationRepository,
+    private val neo4jSmartReviewRepository: Neo4jSmartReviewRepository,
     private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator
 ) : ResourceService {
 
@@ -137,6 +146,24 @@ class Neo4jResourceService(
         neo4jResourceRepository.findAllByLabel(title!!)
             .map(Neo4jResource::toResource)
 
+    override fun findAllByFeatured(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository.findAllByFeaturedIsTrue(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun findAllByNonFeatured(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository.findAllByFeaturedIsFalse(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun findAllByUnlisted(pageable: Pageable):
+        Page<Resource> =
+        neo4jResourceRepository.findAllByUnlistedIsTrue(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun findAllByListed(pageable: Pageable):
+        Page<Resource> =
+        neo4jResourceRepository.findAllByUnlistedIsFalse(pageable)
+            .map(Neo4jResource::toResource)
+
     override fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Resource> =
         neo4jResourceRepository.findPapersByObservatoryId(id)
             .map(Neo4jResource::toResource)
@@ -183,6 +210,25 @@ class Neo4jResourceService(
 
     override fun removeAll() = neo4jResourceRepository.deleteAll()
 
+    override fun getResourcesByClasses(
+        classes: List<String>,
+        featured: Boolean?,
+        unlisted: Boolean,
+        pageable: Pageable
+    ):
+        Page<Resource> {
+        return if (classes.isNotEmpty()) {
+            when (featured) {
+                null -> neo4jResourceRepository.findAllFeaturedResourcesByClass(
+                    classes, unlisted, pageable).map(Neo4jResource::toResource)
+                else -> neo4jResourceRepository.findAllFeaturedResourcesByClass(
+                    classes, featured, unlisted, pageable).map(Neo4jResource::toResource)
+            }
+        } else {
+            Page.empty()
+        }
+    }
+
     override fun markAsVerified(resourceId: ResourceId) = setVerifiedFlag(resourceId, true)
 
     override fun markAsUnverified(resourceId: ResourceId) = setVerifiedFlag(resourceId, false)
@@ -222,14 +268,234 @@ class Neo4jResourceService(
         return null
     }
 
+    override fun markAsFeatured(resourceId: ResourceId): Optional<Resource> {
+        setUnlistedFlag(resourceId, false)
+        return setFeaturedFlag(resourceId, true)
+    }
+
+    override fun markAsNonFeatured(resourceId: ResourceId) = setFeaturedFlag(resourceId, false)
+
+    override fun markAsUnlisted(resourceId: ResourceId): Optional<Resource> {
+        setFeaturedFlag(resourceId, false)
+        return setUnlistedFlag(resourceId, true)
+    }
+
+    override fun markAsListed(resourceId: ResourceId) = setUnlistedFlag(resourceId, false)
+
+    override fun loadFeaturedPapers(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository
+            .findAllFeaturedPapers(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadNonFeaturedPapers(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository
+            .findAllNonFeaturedPapers(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadFeaturedResources(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository
+            .findAllByVerifiedIsTrue(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadNonFeaturedResources(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository
+            .findAllByVerifiedIsFalse(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadUnlistedResources(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository
+            .findAllByUnlistedIsTrue(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadListedResources(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository
+            .findAllByUnlistedIsFalse(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadUnlistedPapers(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository
+            .findAllUnlistedPapers(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadListedPapers(pageable: Pageable): Page<Resource> =
+        neo4jResourceRepository
+            .findAllListedPapers(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun getFeaturedPaperFlag(id: ResourceId): Boolean {
+        val result = neo4jResourceRepository.findPaperByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured
+    }
+
+    override fun getUnlistedPaperFlag(id: ResourceId): Boolean {
+        val result = neo4jResourceRepository.findPaperByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted
+    }
+
+    override fun getFeaturedResourceFlag(id: ResourceId): Boolean {
+        val result = neo4jResourceRepository.findByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured
+    }
+
+    override fun getUnlistedResourceFlag(id: ResourceId): Boolean {
+        val result = neo4jResourceRepository.findByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured
+    }
+
+    override fun loadFeaturedComparisons(pageable: Pageable): Page<Resource> =
+        neo4jComparisonRepository
+            .findAllFeaturedComparisons(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadNonFeaturedComparisons(pageable: Pageable):
+        Page<Resource> =
+        neo4jComparisonRepository
+            .findAllNonFeaturedComparsions(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadUnlistedComparisons(pageable: Pageable):
+        Page<Resource> =
+        neo4jComparisonRepository
+            .findAllUnlistedComparisons(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadListedComparisons(pageable: Pageable):
+        Page<Resource> =
+        neo4jComparisonRepository
+            .findAllListedComparsions(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadFeaturedContributions(pageable: Pageable):
+        Page<Resource> =
+        neo4jContributionRepository
+            .findAllFeaturedContributions(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadNonFeaturedContributions(pageable: Pageable):
+        Page<Resource> =
+        neo4jContributionRepository
+            .findAllNonFeaturedContributions(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadUnlistedContributions(pageable: Pageable):
+        Page<Resource> =
+        neo4jContributionRepository
+            .findAllUnlistedContributions(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadListedContributions(pageable: Pageable):
+        Page<Resource> =
+        neo4jContributionRepository
+            .findAllListedContributions(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadFeaturedVisualizations(pageable: Pageable):
+        Page<Resource> =
+        neo4jVisualizationRepository
+            .findAllFeaturedVisualizations(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadNonFeaturedVisualizations(pageable: Pageable):
+        Page<Resource> =
+        neo4jVisualizationRepository
+            .findAllNonFeaturedVisualizations(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadUnlistedVisualizations(pageable: Pageable):
+        Page<Resource> =
+        neo4jVisualizationRepository
+            .findAllUnlistedVisualizations(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadListedVisualizations(pageable: Pageable):
+        Page<Resource> =
+        neo4jVisualizationRepository
+            .findAllListedVisualizations(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadFeaturedSmartReviews(pageable: Pageable):
+        Page<Resource> =
+        neo4jSmartReviewRepository
+            .findAllFeaturedSmartReviews(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadNonFeaturedSmartReviews(pageable: Pageable):
+        Page<Resource> =
+        neo4jSmartReviewRepository
+            .findAllNonFeaturedSmartReviews(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadUnlistedSmartReviews(pageable: Pageable):
+        Page<Resource> =
+        neo4jSmartReviewRepository
+            .findAllUnlistedSmartReviews(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun loadListedSmartReviews(pageable: Pageable):
+        Page<Resource> =
+        neo4jSmartReviewRepository
+            .findAllListedSmartReviews(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun getFeaturedContributionFlag(id: ResourceId): Boolean {
+        val result = neo4jContributionRepository.findContributionByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured
+    }
+
+    override fun getUnlistedContributionFlag(id: ResourceId): Boolean? {
+        val result = neo4jContributionRepository.findContributionByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted
+    }
+
+    override fun getFeaturedComparisonFlag(id: ResourceId): Boolean {
+        val result = neo4jComparisonRepository.findComparisonByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured
+    }
+
+    override fun getUnlistedComparisonFlag(id: ResourceId): Boolean? {
+        val result = neo4jComparisonRepository.findComparisonByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted
+    }
+
+    override fun getFeaturedVisualizationFlag(id: ResourceId): Boolean {
+        val result = neo4jVisualizationRepository.findVisualizationByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured
+    }
+
+    override fun getUnlistedVisualizationFlag(id: ResourceId): Boolean? {
+        val result = neo4jVisualizationRepository.findVisualizationByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted
+    }
+
+    override fun getFeaturedSmartReviewFlag(id: ResourceId): Boolean {
+        val result = neo4jSmartReviewRepository.findSmartReviewByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured
+    }
+
+    override fun getUnlistedSmartReviewFlag(id: ResourceId): Boolean? {
+        val result = neo4jSmartReviewRepository.findSmartReviewByResourceId(id)
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted
+    }
+
+    private fun setFeaturedFlag(resourceId: ResourceId, featured: Boolean): Optional<Resource> {
+        val result = neo4jResourceRepository.findByResourceId(resourceId)
+        val resultObj = result.orElseThrow { ResourceNotFound(resourceId.value) }
+        resultObj.featured = featured
+        return Optional.of(neo4jResourceRepository.save(resultObj).toResource())
+    }
+
     private fun setVerifiedFlag(resourceId: ResourceId, verified: Boolean): Optional<Resource> {
         val result = neo4jResourceRepository.findByResourceId(resourceId)
-        if (result.isPresent) {
-            val resource = result.get()
-            resource.verified = verified
-            return Optional.of(neo4jResourceRepository.save(resource).toResource())
-        }
-        return Optional.empty()
+        val resultObj = result.orElseThrow { ResourceNotFound(resourceId.value) }
+        resultObj.verified = verified
+        return Optional.of(neo4jResourceRepository.save(resultObj).toResource())
+    }
+
+    private fun setUnlistedFlag(resourceId: ResourceId, unlisted: Boolean): Optional<Resource> {
+        val result = neo4jResourceRepository.findByResourceId(resourceId)
+        val resultObj = result.orElseThrow { ResourceNotFound(resourceId.value) }
+        resultObj.unlisted = unlisted
+        return Optional.of(neo4jResourceRepository.save(resultObj).toResource())
     }
 
     private fun String.toSearchString() = "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"

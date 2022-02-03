@@ -117,6 +117,8 @@ class PaperControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("created_at").description("The paper creation datetime"),
             fieldWithPath("shared").description("The number of times this resource is shared").optional(),
             fieldWithPath("created_by").description("The user's ID that created the paper"),
-            fieldWithPath("_class").description("The type of the entity").ignored()
+            fieldWithPath("_class").description("The type of the entity").ignored(),
+            fieldWithPath("featured").optional().ignored(),
+            fieldWithPath("unlisted").optional().ignored()
         )
 }

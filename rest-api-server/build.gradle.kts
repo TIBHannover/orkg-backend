@@ -183,7 +183,8 @@ tasks {
                 mapOf(
                     "ij_kotlin_code_style_defaults" to "KOTLIN_OFFICIAL",
                     // Disable some rules to keep the changes minimal
-                    "disabled_rules" to "filename,import-ordering,indent",
+                    "disabled_rules" to "no-wildcard-imports,filename,import-ordering,indent",
+                    "ij_kotlin_imports_layout" to "*,^",
                 )
             )
         }

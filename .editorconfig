@@ -10,6 +10,11 @@ indent_size = 4
 [*.bat]
 end_of_line = crlf
 
+[*.{kt,kts}]
+# IMPORTANT: Changes to this section need to be synced with build.gradle.kts files! (Until Spotless reads this file.)
+ij_kotlin_code_style_defaults = KOTLIN_OFFICIAL
+max_line_length = 120
+
 [*.{xml,yml,yaml}]
 indent_style = space
 indent_size = 2

@@ -150,13 +150,15 @@ tasks {
             )
         )
 
-        sources(delegateClosureOf<PatternSet> {
-            exclude("parts/**")
-            include("*.adoc")
-            include("api-doc/*.adoc")
-            include("architecture/*.adoc")
-            include("references/*.adoc")
-        })
+        sources(
+            delegateClosureOf<PatternSet> {
+                exclude("parts/**")
+                include("*.adoc")
+                include("api-doc/*.adoc")
+                include("architecture/*.adoc")
+                include("references/*.adoc")
+            }
+        )
     }
 
     docker {
@@ -176,7 +178,14 @@ tasks {
 
     spotless {
         kotlin {
-            ktlint()
+            ktlint().userData(
+                // TODO: This should be moved to .editorconfig once the Gradle plug-in supports that.
+                mapOf(
+                    "ij_kotlin_code_style_defaults" to "KOTLIN_OFFICIAL",
+                    // Disable some rules to keep the changes minimal
+                    "disabled_rules" to "filename,import-ordering,indent",
+                )
+            )
         }
         kotlinGradle {
             ktlint()

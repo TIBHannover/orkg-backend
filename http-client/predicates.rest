@@ -1,0 +1,12 @@
+### List all predicates (paged)
+GET {{server_url}}/api/predicates/
+Accept: application/json
+
+### Create a new predicate with a given ID
+POST {{server_url}}/api/predicates/
+Content-Type: application/json
+
+{
+    "id": "my_id",
+    "label": "My fancy property"
+}

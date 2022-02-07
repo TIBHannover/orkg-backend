@@ -123,8 +123,8 @@ class Neo4jClassService(
                     )
                 )
                 // Throwing an exception if IDs are different
-                oClassById.isPresent && oClassByURI.isPresent
-                    && oClassById.get().id != oClassByURI.get().id -> throw Exception("ID mismatch for class ID: ${oClassById.get().id}")
+                oClassById.isPresent && oClassByURI.isPresent &&
+                    oClassById.get().id != oClassByURI.get().id -> throw Exception("ID mismatch for class ID: ${oClassById.get().id}")
             }
         }
     }

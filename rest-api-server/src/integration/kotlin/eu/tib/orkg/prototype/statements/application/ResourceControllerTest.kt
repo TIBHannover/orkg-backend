@@ -66,7 +66,6 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         service.create("research contribution")
         service.create("programming language")
         mockMvc
-
             .perform(getRequestTo("/api/resources/"))
             .andExpect(status().isOk)
             .andDo(

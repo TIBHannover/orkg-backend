@@ -10,13 +10,12 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.ContributorPerProblem
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.DetailsPerProblem
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jProblemRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
-import java.util.Collections
-import java.util.Optional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 @Service
 @Transactional
@@ -42,17 +41,16 @@ override fun findById(id: ResourceId): Optional<Resource> =
         problemId: ResourceId,
         featured: Boolean?,
         unlisted: Boolean,
-        classesList: List<String>,
+        classes: List<String>,
         pageable: Pageable
     ): Page<DetailsPerProblem> {
-        var resultList = mutableListOf<DetailsPerProblem>()
-        if (classesList.isNotEmpty()) {
-                when (featured) {
-                    null -> getProblemsWithoutFeatured(classesList, problemId, unlisted, pageable, resultList)
-                    else -> getProblemsWithFeatured(classesList, problemId, featured, unlisted, pageable, resultList)
-                }
-            Collections.sort(resultList as List<DetailsPerProblem>
-            ) { o1, o2 -> o2.createdAt!!.compareTo(o1.createdAt!!) }
+        val resultList = mutableListOf<DetailsPerProblem>()
+        if (classes.isNotEmpty()) {
+            when (featured) {
+                null -> getProblemsWithoutFeatured(classes, problemId, unlisted, pageable, resultList)
+                else -> getProblemsWithFeatured(classes, problemId, featured, unlisted, pageable, resultList)
+            }
+            resultList.sortBy(DetailsPerProblem::createdAt)
         } else {
             return Page.empty()
         }
@@ -183,21 +181,15 @@ override fun findById(id: ResourceId): Optional<Resource> =
         resultList: MutableList<DetailsPerProblem>
     ) {
         classesList.map { classType ->
-            when (classType.toUpperCase()) {
+            when (classType.uppercase(Locale.getDefault())) {
                 "PAPER" -> resultList.addAll(
                     neo4jProblemRepository.findPapersByProblems(
-                        problemId,
-                        featured,
-                        unlisted,
-                        pageable
+                        problemId, featured, unlisted, pageable
                     ).content
                 )
                 "CONTRIBUTION" -> resultList.addAll(
                     neo4jProblemRepository.findContributionsByProblems(
-                        problemId,
-                        featured,
-                        unlisted,
-                        pageable
+                        problemId, featured, unlisted, pageable
                     ).content
                 )
                 "COMPARISON" -> resultList.addAll(
@@ -254,19 +246,15 @@ override fun findById(id: ResourceId): Optional<Resource> =
         resultList: MutableList<DetailsPerProblem>
     ) {
         classesList.map { classType ->
-            when (classType.toUpperCase()) {
+            when (classType.uppercase(Locale.getDefault())) {
                 "PAPER" -> resultList.addAll(
                     neo4jProblemRepository.findPapersByProblems(
-                        problemId,
-                        unlisted,
-                        pageable
+                        problemId, unlisted, pageable
                     ).content
                 )
                 "CONTRIBUTION" -> resultList.addAll(
                     neo4jProblemRepository.findContributionsByProblems(
-                        problemId,
-                        unlisted,
-                        pageable
+                        problemId, unlisted, pageable
                     ).content
                 )
                 "COMPARISON" -> resultList.addAll(

@@ -11,13 +11,12 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResearchFieldRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
-import java.util.Collections
-import java.util.Optional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 @Service
 @Transactional
@@ -173,17 +172,16 @@ class Neo4jResearchFieldService(
         unlisted: Boolean,
         pageable: Pageable
     ): Page<Resource> {
-        var resultList = mutableListOf<Neo4jResource>()
+        val resultList = mutableListOf<Neo4jResource>()
 
         when (featured) {
             null -> getListIncludingSubFieldsWithoutFeaturedFlag(classesList, id, unlisted, pageable, resultList)
             else -> getListIncludingSubFieldsWithFlags(classesList, id, featured, unlisted, pageable, resultList)
         }
 
-        Collections.sort(resultList as List<Neo4jResource>,
-            { o1, o2 -> o2.createdAt!!.compareTo(o1.createdAt) })
+        resultList.sortWith { o1, o2 -> o2.createdAt!!.compareTo(o1.createdAt) }
 
-        return PageImpl(resultList as List<Resource>, pageable, resultList.size.toLong())
+        return PageImpl(resultList.map(Neo4jResource::toResource), pageable, resultList.size.toLong())
     }
 
     /**
@@ -197,17 +195,16 @@ class Neo4jResearchFieldService(
         unlisted: Boolean,
         pageable: Pageable
     ): Page<Resource> {
-        var resultList = mutableListOf<Neo4jResource>()
+        val resultList = mutableListOf<Neo4jResource>()
 
         when (featured) {
             null -> getListExcludingSubFieldsWithoutFeaturedFlag(classesList, id, unlisted, pageable, resultList)
             else -> getListExcludingSubFieldsWithFlags(classesList, id, featured, unlisted, pageable, resultList)
         }
 
-        Collections.sort(resultList as List<Neo4jResource>,
-            { o1, o2 -> o2.createdAt!!.compareTo(o1.createdAt) })
+        resultList.sortBy(Neo4jResource::createdAt)
 
-        return PageImpl(resultList as List<Resource>, pageable, resultList.size.toLong())
+        return PageImpl(resultList.map(Neo4jResource::toResource), pageable, resultList.size.toLong())
     }
 
     override fun withBenchmarks(): List<ResearchField> =
@@ -228,7 +225,7 @@ class Neo4jResearchFieldService(
         resultList: MutableList<Neo4jResource>
     ) {
         classesList.map { classType ->
-            when (classType.toUpperCase()) {
+            when (classType.uppercase(Locale.getDefault())) {
                 "PAPER" -> resultList.addAll(neo4jResearchFieldRepository.getPapersIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable).content)
                 "COMPARISON" -> resultList.addAll(neo4jResearchFieldRepository.getComparisonsIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable).content)
                 "VISUALIZATION" -> resultList.addAll(neo4jResearchFieldRepository.getVisualizationsIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable).content)
@@ -250,7 +247,7 @@ class Neo4jResearchFieldService(
         resultList: MutableList<Neo4jResource>
     ) {
         classesList.map { classType ->
-            when (classType.toUpperCase()) {
+            when (classType.uppercase(Locale.getDefault())) {
                 "PAPER" -> resultList.addAll(neo4jResearchFieldRepository.getPapersIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
                 "COMPARISON" -> resultList.addAll(neo4jResearchFieldRepository.getComparisonsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
                 "VISUALIZATION" -> resultList.addAll(neo4jResearchFieldRepository.getVisualizationsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
@@ -271,7 +268,7 @@ class Neo4jResearchFieldService(
         resultList: MutableList<Neo4jResource>
     ) {
         classesList.map { classType ->
-            when (classType.toUpperCase()) {
+            when (classType.uppercase(Locale.getDefault())) {
                 "PAPER" -> resultList.addAll(neo4jResearchFieldRepository.getPapersExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable).content)
                 "COMPARISON" -> resultList.addAll(neo4jResearchFieldRepository.getComparisonsExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable).content)
                 "VISUALIZATION" -> resultList.addAll(neo4jResearchFieldRepository.getVisualizationsExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable).content)
@@ -293,7 +290,7 @@ class Neo4jResearchFieldService(
         resultList: MutableList<Neo4jResource>
     ) {
         classesList.map { classType ->
-            when (classType.toUpperCase()) {
+            when (classType.uppercase(Locale.getDefault())) {
                 "PAPER" -> resultList.addAll(neo4jResearchFieldRepository.getPapersExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
                 "COMPARISON" -> resultList.addAll(neo4jResearchFieldRepository.getComparisonsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)
                 "VISUALIZATION" -> resultList.addAll(neo4jResearchFieldRepository.getVisualizationsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable).content)

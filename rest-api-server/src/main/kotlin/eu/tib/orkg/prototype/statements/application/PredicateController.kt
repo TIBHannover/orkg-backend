@@ -1,6 +1,8 @@
 package eu.tib.orkg.prototype.statements.application
 
+import dev.forkhandles.values.ofOrNull
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateService
@@ -46,6 +48,7 @@ class PredicateController(private val service: PredicateService) : BaseControlle
     @PostMapping("/")
     @ResponseStatus(CREATED)
     fun add(@RequestBody predicate: CreatePredicateRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
+        Label.ofOrNull(predicate.label) ?: throw InvalidLabel()
         if (predicate.id != null && service.findById(predicate.id).isPresent)
             return ResponseEntity.badRequest().body("Predicate id <${predicate.id}> already exists!")
         val userId = authenticatedUserId()

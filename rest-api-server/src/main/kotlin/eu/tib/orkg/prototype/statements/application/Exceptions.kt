@@ -58,6 +58,9 @@ class DuplicateURI(uri: URI, id: String) :
 class InvalidUUID(uuid: String, cause: Throwable?) :
     PropertyValidationException("id", "Value \"$uuid\" is not a valid UUID.", cause)
 
+@ResponseStatus(HttpStatus.CONFLICT)
+class InvalidLabel : PropertyValidationException("label", "A label must not be blank or contain newlines.")
+
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class UserNotFound(userId: String) : RuntimeException("""User $userId not found""")
 

@@ -11,6 +11,7 @@ import net.minidev.json.JSONArray
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -252,16 +253,20 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @Disabled("This test reproduces the problem, but is easy to fix at the moment. We also changes the domain rules for labels, see #347.")
     fun lookupResourcesForClass() {
         // Given several research problems with the same name
         val classId = service.create("research problem").id!!
         val set = listOf(classId).toSet()
         val resources = mutableListOf<Resource>()
+        // The regular resource
+        resources += resourceService.create(CreateResourceRequest(null, "Testing the Darwin's naturalisation hypothesis in invasion biology", set))
         repeat(5) {
             resources += resourceService.create(
+                // Other resources, but containing line breaks
                 CreateResourceRequest(
                     null,
-                    "Testing the Darwin's naturalisation hypothesis in invasion biology",
+                    "Testing the Darwin's naturalisation hypothesis in invasion biology\n",
                     set
                 )
             )

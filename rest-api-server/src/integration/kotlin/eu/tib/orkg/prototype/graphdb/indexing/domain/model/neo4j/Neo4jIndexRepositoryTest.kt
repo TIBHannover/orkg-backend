@@ -1,12 +1,11 @@
 package eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j
 
-import eu.tib.orkg.prototype.Neo4jRepositoryTest
+import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
-@Neo4jRepositoryTest
-class Neo4jIndexRepositoryTest {
+class Neo4jIndexRepositoryTest : Neo4jTestContainersBaseTest() {
 
     @Autowired
     private lateinit var indexRepository: Neo4jIndexRepository

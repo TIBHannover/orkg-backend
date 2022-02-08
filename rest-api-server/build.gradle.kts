@@ -85,13 +85,11 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
 
-    testImplementation("org.neo4j:neo4j-ogm-embedded-driver")
-    testImplementation("org.neo4j:neo4j-ogm-embedded-native-types")
-    testImplementation("org.neo4j:neo4j:$neo4jVersion")
     // TestContainers
     testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
     testImplementation("org.testcontainers:junit-jupiter:$testContainersVersion")
     testImplementation("org.testcontainers:postgresql:$testContainersVersion")
+    testImplementation("org.testcontainers:neo4j:$testContainersVersion")
 
     //
     // Documentation

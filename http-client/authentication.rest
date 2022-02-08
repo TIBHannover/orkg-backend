@@ -1,0 +1,21 @@
+### Register a user
+POST {{server_url}}/api/auth/register
+Content-Type: application/json
+
+{
+    "email": "{{username}}",
+    "password": "{{password}}",
+    "matching_password": "{{password}}",
+    "display_name": "Example User"
+}
+
+### Authenticate
+POST {{server_url}}/oauth/token
+Authorization: Basic {{oauth_client_name}} {{oauth_client_secret}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=password&username={{username}}&password={{password}}
+
+> {%
+    client.global.set("access_token", response.body.access_token);
+%}

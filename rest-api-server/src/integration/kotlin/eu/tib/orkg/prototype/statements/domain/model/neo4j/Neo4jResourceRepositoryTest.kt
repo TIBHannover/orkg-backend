@@ -1,10 +1,10 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
-import eu.tib.orkg.prototype.Neo4jRepositoryTest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -12,8 +12,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 
-@Neo4jRepositoryTest
-class Neo4jResourceRepositoryTest {
+class Neo4jResourceRepositoryTest : Neo4jTestContainersBaseTest() {
 
     @Autowired
     private lateinit var resourceRepository: Neo4jResourceRepository
@@ -34,8 +33,7 @@ class Neo4jResourceRepositoryTest {
     @DisplayName("should not return null for resources list if none are defined")
     fun shouldNotReturnNullForResourcesListIfNoneAreDefined() {
         Neo4jResource(
-            label = "irrelevant",
-            resourceId = ResourceId(1)
+            label = "irrelevant", resourceId = ResourceId(1)
         ).persist()
 
         val result = resourceRepository.findAll()
@@ -48,20 +46,16 @@ class Neo4jResourceRepositoryTest {
     @DisplayName("should show is shared resource")
     fun shouldShowIsSharedResource() {
         val sub = Neo4jResource(
-            label = "subject",
-            resourceId = ResourceId(1)
+            label = "subject", resourceId = ResourceId(1)
         ).persist()
         val sub2 = Neo4jResource(
-            label = "subject2",
-            resourceId = ResourceId(2)
+            label = "subject2", resourceId = ResourceId(2)
         ).persist()
         val obj = Neo4jResource(
-            label = "object",
-            resourceId = ResourceId(3)
+            label = "object", resourceId = ResourceId(3)
         ).persist()
         val obj2 = Neo4jResource(
-            label = "object2",
-            resourceId = ResourceId(4)
+            label = "object2", resourceId = ResourceId(4)
         ).persist()
 
         // Act
@@ -69,27 +63,21 @@ class Neo4jResourceRepositoryTest {
         statementRepository.save(
             Neo4jStatement(
                 statementId = StatementId(23), // irrelevant
-                subject = sub,
-                `object` = obj,
-                predicateId = PredicateId(42) // irrelevant
+                subject = sub, `object` = obj, predicateId = PredicateId(42) // irrelevant
             )
         )
 
         statementRepository.save(
             Neo4jStatement(
                 statementId = StatementId(24), // irrelevant
-                subject = sub2,
-                `object` = obj,
-                predicateId = PredicateId(43) // irrelevant
+                subject = sub2, `object` = obj, predicateId = PredicateId(43) // irrelevant
             )
         )
 
         statementRepository.save(
             Neo4jStatement(
                 statementId = StatementId(25), // irrelevant
-                subject = obj,
-                `object` = obj2,
-                predicateId = PredicateId(44) // irrelevant
+                subject = obj, `object` = obj2, predicateId = PredicateId(44) // irrelevant
             )
         )
 
@@ -104,14 +92,12 @@ class Neo4jResourceRepositoryTest {
 
         val sub = resourceRepository.save(
             Neo4jResource(
-                label = "subject",
-                resourceId = ResourceId(1)
+                label = "subject", resourceId = ResourceId(1)
             )
         )
         val obj = resourceRepository.save(
             Neo4jResource(
-                label = "object",
-                resourceId = ResourceId(2)
+                label = "object", resourceId = ResourceId(2)
             )
         )
 
@@ -120,9 +106,7 @@ class Neo4jResourceRepositoryTest {
         statementRepository.save(
             Neo4jStatement(
                 statementId = StatementId(23), // irrelevant
-                subject = sub,
-                `object` = obj,
-                predicateId = PredicateId(42) // irrelevant
+                subject = sub, `object` = obj, predicateId = PredicateId(42) // irrelevant
             )
         )
 

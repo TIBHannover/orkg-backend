@@ -1,10 +1,10 @@
 package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.restdocs.RestDocumentationContextProvider
@@ -25,7 +25,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.ParameterDescriptor
 import org.springframework.restdocs.request.RequestDocumentation
 import org.springframework.restdocs.request.RequestParametersSnippet
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -39,9 +38,8 @@ import org.springframework.web.context.WebApplicationContext
  * It initializes MockMVc with a stand-alone set-up for testing a controller
  * in isolation. Additionally, spring-restdoc will be pre-configured.
  */
-@SpringBootTest
-@ExtendWith(SpringExtension::class, RestDocumentationExtension::class)
-abstract class RestDocumentationBaseTest {
+@ExtendWith(RestDocumentationExtension::class)
+abstract class RestDocumentationBaseTest : Neo4jTestContainersBaseTest() {
 
     protected lateinit var mockMvc: MockMvc
 

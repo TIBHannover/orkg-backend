@@ -3,11 +3,15 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
+import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import java.net.URI
+import net.minidev.json.JSONArray
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -247,6 +251,37 @@ class ClassControllerTest : RestDocumentationBaseTest() {
                 )
             )
     }
+
+    @Test
+    @Disabled("This test reproduces the problem, but is easy to fix at the moment. We also changes the domain rules for labels, see #347.")
+    fun lookupResourcesForClass() {
+        // Given several research problems with the same name
+        val classId = service.create("research problem").id!!
+        val set = listOf(classId).toSet()
+        val resources = mutableListOf<Resource>()
+        // The regular resource
+        resources += resourceService.create(CreateResourceRequest(null, "Testing the Darwin's naturalisation hypothesis in invasion biology", set))
+        repeat(5) {
+            resources += resourceService.create(
+                // Other resources, but containing line breaks
+                CreateResourceRequest(
+                    null,
+                    "Testing the Darwin's naturalisation hypothesis in invasion biology\n",
+                    set
+                )
+            )
+        }
+        val expectedIds = resources.map(Resource::id).map(ResourceId?::toString).reversed().toJSONArray()
+
+        // When queried, should return all of them
+        val query = "Testing the Darwin"
+        mockMvc
+            .perform(getRequestTo("/api/classes/$classId/resources/?desc=true&exact=false&page=0&sort=id,desc&q=$query"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.content..id").value(expectedIds))
+    }
+
+    internal fun List<String>.toJSONArray(): JSONArray = JSONArray().apply { addAll(this@toJSONArray) }
 
     @Test
     fun edit() {

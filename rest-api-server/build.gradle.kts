@@ -91,6 +91,7 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
     testImplementation("org.testcontainers:junit-jupiter:$testContainersVersion")
     testImplementation("org.testcontainers:postgresql:$testContainersVersion")
+    testImplementation("org.testcontainers:neo4j:$testContainersVersion")
 
     //
     // Documentation

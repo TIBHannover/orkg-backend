@@ -158,6 +158,53 @@ To get started, the following articles from the "Reflectoring" blog are a recomm
 
 Another useful source is the https://docs.spring.io/spring-boot/docs/current/reference/html/spring-boot-features.html#boot-features-testing[chapter on testing] in the official Spring Boot documentation.
 
+=== Testing specific components
+
+Generally, unit tests are the way to go.
+If this is not possible, integration or functional tests need to do the job.
+But not all of those are equal.
+The following section contains some tipps on approaching testing of "hard to test" components.
+
+==== Controllers
+
+Controllers are known for accumulating different responsibilities. Among those are:
+
+* (HTTP) request mapping
+* serialization and deserialization
+* input field validation
+* error handling
+
+Because of this, they are known for being hard to test.
+The solution to this issue is two-fold:
+
+. Move responsibilities out of the controller and into the application.
+. Have specific tests for specific responsibilities.
+
+An example of the first point is the fact that all clients need to validate inputs and deal with errors.
+This means that these responsibilities are the concern of the application.
+In a hexagonal architecture, this means the validation is done at the boundaries of the hexagon (API side).
+Similarly, the application needs to communicate errors to the clients.
+The job of the client (such as a controller) is only to translate the errors into the appropriate form, such as HTTP status codes.
+This means that a test can use a mock to verify this behavior.
+It would still be an integration test, but it only needs to bring up enough of the environment for the controller to work, not the whole application.
+In Spring terms, this would mean using the `@WebMvcTest` annotation.
+
+For the second point, it should be obvious that HTTP request mapping and (de)serialization are two different concerns that should be tested separately.
+There is no need to bring up the whole application in order to test the conversion of JSON strings to DTOs.
+Much simpler tests, such as `@JSONTest` in Spring, give sufficient context for testing (de)serialization.
+This prevents mixing of concerns in controller tests, making them harder to test (and change).
+
+Another example is input validation.
+Although the application should not let invalid input in, it might be beneficial to test it within the limits of the framework used.
+(This is basically duplicating validation logic. But that is a different issue.)
+This is usually done by calling controller endpoints with bad inputs and validating the result by checking the mapping (integration testing).
+But it is also possible (in Spring) by instantiating a `Validator` and calling the `validate()` method explicitly on the request DTO.
+This has no external dependencies, and therefore can be done in a unit test.
+
+In general, controllers should not contain any logic (aka "thin controllers").
+Their job is to do the mapping from the domain and its rules to the technology (HTTP requests and responses), and nothing more than that.
+Moving responsibilities out of the controller makes it easier to test and change.
+
 [[tips-and-tricks]]
 == Tips & Tricks
 

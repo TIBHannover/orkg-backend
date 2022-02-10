@@ -3,7 +3,7 @@ package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 import eu.tib.orkg.prototype.statements.application.CreatePredicateRequest
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.domain.model.PredicateService
+import eu.tib.orkg.prototype.statements.services.PredicateService
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 
-class Neo4jPredicateServiceTest : Neo4jTestContainersBaseTest() {
+class PredicateServiceTest : Neo4jTestContainersBaseTest() {
 
     @Autowired
     private lateinit var service: PredicateService

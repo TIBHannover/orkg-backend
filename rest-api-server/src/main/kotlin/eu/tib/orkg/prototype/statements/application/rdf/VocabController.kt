@@ -1,10 +1,10 @@
 package eu.tib.orkg.prototype.statements.application.rdf
 
 import eu.tib.orkg.prototype.configuration.RdfConfiguration
+import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import java.io.StringWriter
@@ -25,7 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/vocab")
 class VocabController(
     private val resourceService: ResourceService,
-    private val predicateService: PredicateService,
+    private val predicateService: PredicateUseCases,
     private val classService: ClassService,
     private val rdfConfiguration: RdfConfiguration
 ) {

@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.application.BundleConfiguration
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
@@ -8,7 +9,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
@@ -32,7 +32,7 @@ class Neo4jStatementService(
     private val thingRepository: Neo4jThingRepository,
     private val resourceService: ResourceService,
     private val literalService: LiteralService,
-    private val predicateService: PredicateService,
+    private val predicateService: PredicateUseCases,
     private val statementRepository: Neo4jStatementRepository,
     private val neo4jStatementIdGenerator: Neo4jStatementIdGenerator
 ) :

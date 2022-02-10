@@ -4,7 +4,6 @@ import eu.tib.orkg.prototype.statements.domain.model.Block
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.IdentityGenerator
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import org.springframework.stereotype.Component
@@ -56,18 +55,6 @@ class Neo4jResourceIdGenerator(
     override fun createCounterNode() = Neo4jResourceIdCounter()
 
     override fun idFromLong(value: Long) = ResourceId(value)
-
-    override fun repository() = repository
-}
-
-@Component
-class Neo4jPredicateIdGenerator(
-    private val repository: Neo4jPredicateIdCounterRepository
-) : RepositoryBasedIdGenerator<PredicateId, Neo4jPredicateIdCounter>() {
-
-    override fun createCounterNode() = Neo4jPredicateIdCounter()
-
-    override fun idFromLong(value: Long) = PredicateId(value)
 
     override fun repository() = repository
 }

@@ -27,15 +27,6 @@ data class Neo4jResourceIdCounter(
 
 interface Neo4jResourceIdCounterRepository : Neo4jIdCounterRepository<Neo4jResourceIdCounter>
 
-@NodeEntity("_PredicateIdCounter")
-data class Neo4jPredicateIdCounter(
-    @Id
-    @GeneratedValue
-    private var id: Long? = null
-) : Neo4jCounter()
-
-interface Neo4jPredicateIdCounterRepository : Neo4jIdCounterRepository<Neo4jPredicateIdCounter>
-
 @NodeEntity("_LiteralIdCounter")
 data class Neo4jLiteralIdCounter(
     @Id

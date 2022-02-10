@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j.bulk
 
+import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.application.port.`in`.GetBulkStatementsQuery
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
-import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.Thing
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class Neo4jBulkStatementService(
-    private val predicateService: PredicateService,
+    private val predicateService: PredicateUseCases,
     private val literalService: LiteralService,
     private val statementRepository: Neo4jStatementRepository,
     private val resourceService: ResourceService

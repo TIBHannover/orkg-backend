@@ -10,11 +10,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @EnableNeo4jRepositories(
     "eu.tib.orkg.prototype.statements.domain.model.neo4j",
     "eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j",
+    "eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal",
     "eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j"
 )
 @EntityScan(
     "eu.tib.orkg.prototype.statements.domain.model.neo4j",
     "eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j",
+    "eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal",
     "eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j"
 )
 class Neo4jConfiguration

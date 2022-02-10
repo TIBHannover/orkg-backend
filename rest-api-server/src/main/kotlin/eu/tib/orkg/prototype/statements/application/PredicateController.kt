@@ -2,10 +2,10 @@ package eu.tib.orkg.prototype.statements.application
 
 import dev.forkhandles.values.ofOrNull
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.domain.model.PredicateService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
@@ -24,7 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/predicates/")
-class PredicateController(private val service: PredicateService) : BaseController() {
+class PredicateController(private val service: PredicateUseCases) : BaseController() {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: PredicateId): Predicate =

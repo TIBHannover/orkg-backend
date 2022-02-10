@@ -5,7 +5,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import org.neo4j.ogm.typeconversion.AttributeConverter
@@ -48,14 +47,6 @@ class OrganizationIdConverter :
 
     override fun toEntityAttribute(value: String?) =
         if (value != null && value.isNotBlank()) OrganizationId(value) else null
-}
-
-class PredicateIdConverter :
-    AttributeConverter<PredicateId?, String?> {
-    override fun toGraphProperty(value: PredicateId?) = if (value != null) "$value" else null
-
-    override fun toEntityAttribute(value: String?) =
-        if (value != null && value.isNotBlank()) PredicateId(value) else null
 }
 
 class ResourceIdConverter :

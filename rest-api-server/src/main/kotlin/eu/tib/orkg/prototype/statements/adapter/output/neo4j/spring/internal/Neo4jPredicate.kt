@@ -1,17 +1,14 @@
-package eu.tib.orkg.prototype.statements.domain.model.neo4j
+package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.escapeLiterals
-import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.AuditableEntity
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatement
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.PredicateIdConverter
-import org.eclipse.rdf4j.model.Model
-import org.eclipse.rdf4j.model.util.ModelBuilder
-import org.eclipse.rdf4j.model.vocabulary.RDF
-import org.eclipse.rdf4j.model.vocabulary.RDFS
+import eu.tib.orkg.prototype.statements.domain.model.toRdfModel
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
 import org.neo4j.ogm.annotation.NodeEntity
@@ -46,7 +43,7 @@ data class Neo4jPredicate(
 
     fun toPredicate(): Predicate {
         val pred = Predicate(predicateId, label!!, createdAt!!, createdBy = createdBy)
-        pred.rdf = toRdfModel()
+        pred.rdf = pred.toRdfModel() // TODO: not ideal, find a better way
         if (subjectOf.isNotEmpty())
             pred.description = subjectOf.firstOrNull { it.predicateId?.value == "description" }?.`object`?.label
         return pred
@@ -56,23 +53,4 @@ data class Neo4jPredicate(
         get() = predicateId?.value
 
     override fun toThing() = toPredicate()
-
-    fun toNTriple(): String {
-        val cPrefix = RdfConstants.CLASS_NS
-        val pPrefix = RdfConstants.PREDICATE_NS
-        return "<$pPrefix$predicateId> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Predicate> .\n" +
-            "<$pPrefix$predicateId> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label!!)}\"^^<http://www.w3.org/2001/XMLSchema#string> ."
-    }
-
-    fun toRdfModel(): Model {
-        val builder = ModelBuilder()
-            .setNamespace("p", RdfConstants.PREDICATE_NS)
-            .setNamespace("c", RdfConstants.CLASS_NS)
-            .setNamespace(RDF.NS)
-            .setNamespace(RDFS.NS)
-            .subject("p:$predicateId")
-            .add(RDFS.LABEL, label)
-            .add(RDF.TYPE, "c:Predicate")
-        return builder.build()
-    }
 }

@@ -11,7 +11,6 @@ import eu.tib.orkg.prototype.statements.services.PredicateService
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -415,7 +414,6 @@ class StatementControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @Disabled("Broken, due to APOC not being in Embedded Neo4j. See GitLab issue #85.")
     fun fetchBundle() {
         val r1 = resourceService.create("one")
         val r2 = resourceService.create("two")
@@ -446,10 +444,10 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                 fieldWithPath("statements").description("The bundle of statements")
             )
         )
-        .and(statementFields())
-        .andWithPrefix("subject.", resourceResponseFields())
-        .andWithPrefix("predicate.", predicateResponseFields())
-        .andWithPrefix("object.", resourceResponseFields())
+        .andWithPrefix("statements[].", statementFields())
+        .andWithPrefix("statements[].subject.", resourceResponseFields())
+        .andWithPrefix("statements[].predicate.", predicateResponseFields())
+        .andWithPrefix("statements[].object.", resourceResponseFields())
 
     private fun statementFields() = listOf(
         fieldWithPath("id").description("The statement ID"),
@@ -470,9 +468,12 @@ class StatementControllerTest : RestDocumentationBaseTest() {
 
     private fun sharedListOfStmtSubPredResponseFields(): ResponseFieldsSnippet =
         responseFields(pageableDetailedFieldParameters()).and(
-            fieldWithPath("content[].id").description("The content ID")).and(
-            fieldWithPath("content[].created_by").description("The content created by")).and(
-            fieldWithPath("content[].created_at").description("The content created at"))
+            fieldWithPath("content[].id").description("The content ID")
+        ).and(
+            fieldWithPath("content[].created_by").description("The content created by")
+        ).and(
+            fieldWithPath("content[].created_at").description("The content created at")
+        )
             .andWithPrefix("content[].", statementFields())
             .andWithPrefix("content[].subject.", resourceResponseFields())
             .andWithPrefix("content[].predicate.", predicateResponseFields())
@@ -485,10 +486,13 @@ class StatementControllerTest : RestDocumentationBaseTest() {
 
     fun statementListResponseFields(): ResponseFieldsSnippet =
         responseFields(pageableDetailedFieldParameters()).and(
-            fieldWithPath("content[].id").description("The content ID")).and(
-            fieldWithPath("content[].created_by").description("The content created by")).and(
-            fieldWithPath("content[].created_at").description("The content created at"))
-    .andWithPrefix("")
+            fieldWithPath("content[].id").description("The content ID")
+        ).and(
+            fieldWithPath("content[].created_by").description("The content created by")
+        ).and(
+            fieldWithPath("content[].created_at").description("The content created at")
+        )
+            .andWithPrefix("")
             .andWithPrefix("content[].object.", resourceResponseFields())
             .andWithPrefix("content[].subject.", resourceResponseFields())
             .andWithPrefix("content[].predicate.", predicateResponseFields())

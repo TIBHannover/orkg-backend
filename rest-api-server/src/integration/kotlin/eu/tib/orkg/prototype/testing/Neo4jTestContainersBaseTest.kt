@@ -24,7 +24,9 @@ abstract class Neo4jTestContainersBaseTest {
         // We instantiate only one container per test class.
         @JvmStatic
         protected val container: Neo4jContainer<*> =
-            Neo4jContainer(DockerImageName.parse("neo4j:$NEO4J_VERSION-community")).withoutAuthentication()
+            Neo4jContainer(DockerImageName.parse("neo4j:$NEO4J_VERSION-community"))
+                .withEnv("NEO4JLABS_PLUGINS", """["apoc"]""")
+                .withoutAuthentication()
 
         // Start the container once per class. This needs to be done via a static method.
         // If @TestInstance(PER_CLASS) is used, Spring fails to set up the application context.

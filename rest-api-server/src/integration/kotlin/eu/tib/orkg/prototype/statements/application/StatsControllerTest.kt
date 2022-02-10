@@ -9,7 +9,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -52,7 +51,6 @@ class StatsControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @Disabled("APOC not available in the embedded Neo4j database, see issue #85")
     fun index() {
         resourceService.create(CreateResourceRequest(ResourceId("R11"), "Research field", setOf()))
         resourceService.create("Python")
@@ -70,30 +68,30 @@ class StatsControllerTest : RestDocumentationBaseTest() {
         literalService.create("We are crazy")
         classService.create("Awesome class")
 
-        mockMvc
-            .perform(getRequestTo("/api/stats/"))
-            .andExpect(status().isOk)
-            .andDo(
-                document(
-                    snippet,
-                    statsResponseFields()
-                )
+        mockMvc.perform(getRequestTo("/api/stats/")).andExpect(status().isOk).andDo(
+            document(
+                snippet, statsResponseFields()
             )
+        )
     }
 
-    private fun statsResponseFields() =
-        responseFields(
-            fieldWithPath("statements").description("The number of statements"),
-            fieldWithPath("resources").description("The number of resources"),
-            fieldWithPath("predicates").description("The number of predicates"),
-            fieldWithPath("literals").description("The number of literals"),
-            fieldWithPath("papers").description("The number of papers"),
-            fieldWithPath("classes").description("The number of classes"),
-            fieldWithPath("contributions").description("The number of research contributions"),
-            fieldWithPath("fields").description("The number of research fields"),
-            fieldWithPath("problems").description("The number of research problems"),
-            fieldWithPath("resourceStatements").description("The number of resources statements"),
-            fieldWithPath("literalStatements").description("The number of literal statements")
-
-        )
+    private fun statsResponseFields() = responseFields(
+        fieldWithPath("statements").description("The number of statements"),
+        fieldWithPath("resources").description("The number of resources"),
+        fieldWithPath("predicates").description("The number of predicates"),
+        fieldWithPath("literals").description("The number of literals"),
+        fieldWithPath("papers").description("The number of papers"),
+        fieldWithPath("classes").description("The number of classes"),
+        fieldWithPath("contributions").description("The number of research contributions"),
+        fieldWithPath("fields").description("The number of research fields"),
+        fieldWithPath("problems").description("The number of research problems"),
+        fieldWithPath("comparisons").description("The number of comparisons"),
+        fieldWithPath("visualizations").description("The number of visualizations"),
+        fieldWithPath("templates").description("The number of templates"),
+        fieldWithPath("smart_reviews").description("The number of smart_reviews"),
+        fieldWithPath("users").description("The number of users"),
+        fieldWithPath("observatories").description("The number of observatories"),
+        fieldWithPath("organizations").description("The number of organizations"),
+        fieldWithPath("extras").description("A dictionary with on-the-fly classes and their corresponding numbers").optional(),
+    )
 }

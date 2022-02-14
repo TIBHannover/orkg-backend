@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
 import eu.tib.orkg.prototype.auth.service.UserRepository
+import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ClassService
-import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import io.mockk.every
 import java.net.URI
 import java.time.OffsetDateTime
@@ -43,11 +43,11 @@ class ClassControllerTest {
     private lateinit var context: WebApplicationContext
 
     @MockkBean
-    private lateinit var classService: ClassService
+    private lateinit var classService: ClassUseCases
 
     @Suppress("unused") // required by ClassController but not used in the test (yet)
     @MockkBean
-    private lateinit var resourceService: ResourceService
+    private lateinit var resourceService: ResourceUseCases
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean

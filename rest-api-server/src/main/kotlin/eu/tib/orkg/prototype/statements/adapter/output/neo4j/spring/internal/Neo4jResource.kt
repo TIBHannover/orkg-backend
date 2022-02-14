@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.statements.domain.model.neo4j
+package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
@@ -13,7 +13,10 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ObservatoryIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.OrganizationIdConverter
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ResourceIdConverter
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.AuditableEntity
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteral
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatement
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import java.lang.StringBuilder
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
@@ -67,10 +70,10 @@ data class Neo4jResource(
     var verified: Boolean? = null
 
     @Property("featured")
-    var featured: Boolean = false
+    var featured: Boolean? = null
 
     @Property("unlisted")
-    var unlisted: Boolean = false
+    var unlisted: Boolean? = null
 
     @Property("organization_id")
     @Convert(OrganizationIdConverter::class)

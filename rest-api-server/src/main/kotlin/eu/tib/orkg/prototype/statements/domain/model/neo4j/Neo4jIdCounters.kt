@@ -18,15 +18,6 @@ interface Neo4jIdCounterRepository<T : Neo4jCounter> : Neo4jRepository<T, Long> 
     override fun <S : T> save(s: S, depth: Int): S
 }
 
-@NodeEntity("_ResourceIdCounter")
-data class Neo4jResourceIdCounter(
-    @Id
-    @GeneratedValue
-    private var id: Long? = null
-) : Neo4jCounter()
-
-interface Neo4jResourceIdCounterRepository : Neo4jIdCounterRepository<Neo4jResourceIdCounter>
-
 @NodeEntity("_LiteralIdCounter")
 data class Neo4jLiteralIdCounter(
     @Id
@@ -44,12 +35,3 @@ data class Neo4jStatementIdCounter(
 ) : Neo4jCounter()
 
 interface Neo4jStatementIdCounterRepository : Neo4jIdCounterRepository<Neo4jStatementIdCounter>
-
-@NodeEntity("_ClassIdCounter")
-data class Neo4jClassIdCounter(
-    @Id
-    @GeneratedValue
-    private var id: Long? = null
-) : Neo4jCounter()
-
-interface Neo4jClassIdCounterRepository : Neo4jIdCounterRepository<Neo4jClassIdCounter>

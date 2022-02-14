@@ -1,10 +1,10 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import org.assertj.core.api.Assertions.assertThat
@@ -35,10 +35,10 @@ import org.springframework.transaction.annotation.Transactional
 class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var service: ResourceService
+    private lateinit var service: ResourceUseCases
 
     @Autowired
-    private lateinit var classService: ClassService
+    private lateinit var classService: ClassUseCases
 
     @Autowired
     private lateinit var predicateService: PredicateService
@@ -227,7 +227,8 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
         mockMvc
             .perform(
-                getRequestTo("/api/resources/?q=Contribution&exclude=$id,$id2"))
+                getRequestTo("/api/resources/?q=Contribution&exclude=$id,$id2")
+            )
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", Matchers.hasSize<Int>(2)))
             .andDo(
@@ -239,7 +240,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                             .optional(),
                         parameterWithName("exclude").description("List of classes to exclude e.g Paper,C0,Contribution (default: not provided)")
                             .optional()
-                        ),
+                    ),
                     listOfDetailedResourcesResponseFields()
                 )
             )
@@ -347,8 +348,9 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     fun listOfDetailedResourcesResponseFields(): ResponseFieldsSnippet {
         return responseFields(pageableDetailedFieldParameters())
-            .andWithPrefix("content[].", resourceResponseFields()
-        ).andWithPrefix("")
+            .andWithPrefix(
+                "content[].", resourceResponseFields()
+            ).andWithPrefix("")
     }
 
     companion object RestDoc {
@@ -363,13 +365,16 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("organization_id").description("The ID of the organization that maintains this resource."),
             fieldWithPath("shared").description("The number of times this resource is shared").optional(),
             fieldWithPath("_class").description("Class").optional(),
+            fieldWithPath("verified").description("Determines if the resource was verified by a curator.").optional()
+                .ignored(),
             fieldWithPath("featured").description("Featured Value").optional().ignored(),
             fieldWithPath("unlisted").description("Unlisted Value").optional().ignored()
         )
 
         fun listOfResourcesResponseFields(): ResponseFieldsSnippet =
             responseFields(
-                fieldWithPath("[]").description("A list of resources"))
+                fieldWithPath("[]").description("A list of resources")
+            )
                 .andWithPrefix("[].", resourceResponseFields())
                 .andWithPrefix("")
     }

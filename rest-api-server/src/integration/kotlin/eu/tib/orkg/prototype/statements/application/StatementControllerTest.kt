@@ -1,11 +1,11 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.application.LiteralControllerTest.RestDoc.literalResponseFields
 import eu.tib.orkg.prototype.statements.application.PredicateControllerTest.RestDoc.predicateResponseFields
 import eu.tib.orkg.prototype.statements.application.ResourceControllerTest.RestDoc.resourceResponseFields
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
-import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import org.assertj.core.api.Assertions.assertThat
@@ -40,7 +40,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
     private lateinit var statementService: StatementService
 
     @Autowired
-    private lateinit var resourceService: ResourceService
+    private lateinit var resourceService: ResourceUseCases
 
     @Autowired
     private lateinit var predicateService: PredicateService

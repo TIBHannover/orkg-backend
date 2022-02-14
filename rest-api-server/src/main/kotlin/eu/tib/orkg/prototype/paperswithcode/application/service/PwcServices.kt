@@ -8,10 +8,10 @@ import eu.tib.orkg.prototype.paperswithcode.application.port.input.RetrieveDatas
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.FindDatasetsQuery
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.SummarizeBenchmarkQuery
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.SummarizeDatasetQuery
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ProblemService
 import eu.tib.orkg.prototype.statements.domain.model.ResearchFieldService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import java.util.Optional
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Service
@@ -38,7 +38,7 @@ class DatasetService(
     private val findDatasets: FindDatasetsQuery,
     private val researchProblemService: ProblemService,
     private val summarizeDataset: SummarizeDatasetQuery,
-    private val resourceService: ResourceService
+    private val resourceService: ResourceUseCases
 ) : RetrieveDatasetUseCase {
     override fun forResearchProblem(id: ResourceId): Optional<List<Dataset>> {
         val problem = researchProblemService.findById(id)

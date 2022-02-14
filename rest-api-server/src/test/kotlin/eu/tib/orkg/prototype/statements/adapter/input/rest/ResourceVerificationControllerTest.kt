@@ -8,7 +8,7 @@ import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsVerifiedUseCase
 import eu.tib.orkg.prototype.statements.application.port.out.LoadResourcePort
 import io.mockk.every
-import java.util.Optional
+import java.util.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested

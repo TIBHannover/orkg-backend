@@ -1,15 +1,13 @@
-package eu.tib.orkg.prototype.statements.domain.model.neo4j
+package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import java.util.Optional
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
 interface Neo4jClassRepository : Neo4jRepository<Neo4jClass, Long> {
     override fun findAll(): Iterable<Neo4jClass>
-
-    override fun findById(id: Long?): Optional<Neo4jClass>
 
     fun findByClassId(id: ClassId?): Optional<Neo4jClass>
 

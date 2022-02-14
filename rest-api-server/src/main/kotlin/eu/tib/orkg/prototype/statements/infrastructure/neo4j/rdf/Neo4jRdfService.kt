@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j.rdf
 
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jClass
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jClassRepository
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClass
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClassRepository
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResourceRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatement
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementRepository

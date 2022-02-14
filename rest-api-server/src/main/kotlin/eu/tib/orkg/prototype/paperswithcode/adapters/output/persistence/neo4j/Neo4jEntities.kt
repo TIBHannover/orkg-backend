@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.paperswithcode.application.domain.BenchmarkSummary
 import eu.tib.orkg.prototype.paperswithcode.application.domain.Dataset
 import eu.tib.orkg.prototype.paperswithcode.application.domain.DatasetSummary
 import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import org.springframework.data.neo4j.annotation.QueryResult
 
 @QueryResult

@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.application.port.out.GetPaperFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperPort
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.GetMapping
@@ -14,12 +15,14 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class PaperFeaturedController(
+    @Qualifier("resourceService")
     private val port: LoadPaperPort,
+    @Qualifier("resourceService")
     private val query: GetPaperFlagQuery
 ) : BaseController() {
 
     @GetMapping("/api/papers/{id}/metadata/featured")
-    fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean =
+    fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean? =
         query.getFeaturedPaperFlag(id) ?: throw ResourceNotFound(id.toString())
 
     @GetMapping("/api/classes/Paper/featured/resources/", params = ["featured=true"])

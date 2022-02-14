@@ -2,6 +2,8 @@ package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.paperswithcode.application.port.input.RetrieveResearchProblemsUseCase
 import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ProblemService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -9,19 +11,18 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ContributorPerProblem
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.DetailsPerProblem
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jProblemRepository
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.*
 
 @Service
 @Transactional
 class Neo4jProblemService(
     private val neo4jProblemRepository: Neo4jProblemRepository,
-    private val resourceService: Neo4jResourceService
+    private val resourceService: ResourceUseCases
 ) : ProblemService, RetrieveResearchProblemsUseCase {
 override fun findById(id: ResourceId): Optional<Resource> =
         neo4jProblemRepository
@@ -112,12 +113,12 @@ override fun findById(id: ResourceId): Optional<Resource> =
 
     override fun getFeaturedProblemFlag(id: ResourceId): Boolean {
         val result = neo4jProblemRepository.findById(id)
-        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured ?: false
     }
 
     override fun getUnlistedProblemFlag(id: ResourceId): Boolean {
         val result = neo4jProblemRepository.findById(id)
-        return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted
+        return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted ?: false
     }
 
     override fun loadFeaturedProblems(pageable: Pageable): Page<Resource> =

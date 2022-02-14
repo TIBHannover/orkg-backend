@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype
 
 import eu.tib.orkg.prototype.configuration.InputInjection
+import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import java.io.FileReader
 import java.net.URI
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component
 @ComponentScan("eu.tib.orkg.prototype.configuration")
 @Profile("development", "docker")
 class DataInitializer(
-    private val classService: ClassService,
+    private val classService: ClassUseCases,
     private val predicateService: CreatePredicateUseCase,
     private val config: InputInjection
 ) : ApplicationRunner {

@@ -1,11 +1,11 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import java.net.URI
 import net.minidev.json.JSONArray
 import org.assertj.core.api.Assertions.assertThat
@@ -35,10 +35,10 @@ import org.springframework.transaction.annotation.Transactional
 class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var service: ClassService
+    private lateinit var service: ClassUseCases
 
     @Autowired
-    private lateinit var resourceService: ResourceService
+    private lateinit var resourceService: ResourceUseCases
 
     @BeforeEach
     fun setup() {
@@ -393,6 +393,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
         fieldWithPath("organization_id").description("The ID of the organization that maintains this resource."),
         fieldWithPath("shared").description("The number of times this resource is shared"),
         fieldWithPath("_class").description("Resource").optional(),
+        fieldWithPath("verified").description("Verified").optional().ignored(),
         fieldWithPath("featured").description("Featured").optional().ignored(),
         fieldWithPath("unlisted").description("Unlisted").optional().ignored()
     )

@@ -5,10 +5,10 @@ import eu.tib.orkg.prototype.statements.application.port.`in`.GetBulkStatementsQ
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteral
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatement
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
@@ -22,7 +22,7 @@ class Neo4jBulkStatementService(
     private val predicateService: PredicateUseCases,
     private val literalService: LiteralService,
     private val statementRepository: Neo4jStatementRepository,
-    private val resourceService: ResourceService
+    private val resourceService: ResourceUseCases
 ) :
     GetBulkStatementsQuery {
     override fun getBulkStatementsBySubjects(

@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
-import java.time.OffsetDateTime
 import org.eclipse.rdf4j.model.Model
+import java.time.OffsetDateTime
 
 data class Resource(
     val id: ResourceId?,
@@ -27,7 +27,8 @@ data class Resource(
     @JsonProperty("featured")
     val featured: Boolean? = null,
     @JsonProperty("unlisted")
-    val unlisted: Boolean? = null
+    val unlisted: Boolean? = null,
+    val verified: Boolean? = null,
 ) : Thing {
     @JsonIgnore
     var rdf: Model? = null

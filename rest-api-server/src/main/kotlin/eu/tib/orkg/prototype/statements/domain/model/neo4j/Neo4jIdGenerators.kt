@@ -1,7 +1,8 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceIdCounter
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceIdCounterRepository
 import eu.tib.orkg.prototype.statements.domain.model.Block
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.IdentityGenerator
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -79,18 +80,6 @@ class Neo4jStatementIdGenerator(
     override fun createCounterNode() = Neo4jStatementIdCounter()
 
     override fun idFromLong(value: Long) = StatementId(value)
-
-    override fun repository() = repository
-}
-
-@Component
-class Neo4jClassIdGenerator(
-    private val repository: Neo4jClassIdCounterRepository
-) : RepositoryBasedIdGenerator<ClassId, Neo4jClassIdCounter>() {
-
-    override fun createCounterNode() = Neo4jClassIdCounter()
-
-    override fun idFromLong(value: Long) = ClassId(value)
 
     override fun repository() = repository
 }

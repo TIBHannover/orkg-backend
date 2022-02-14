@@ -1,10 +1,10 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -16,7 +16,7 @@ import org.springframework.data.domain.PageRequest
 class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
 
     @Autowired
-    private lateinit var service: ResourceService
+    private lateinit var service: ResourceUseCases
 
     @BeforeEach
     fun setup() {

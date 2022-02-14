@@ -9,12 +9,12 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteral
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResource
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatement
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementIdGenerator
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatementRepository
@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class Neo4jStatementService(
     private val thingRepository: Neo4jThingRepository,
-    private val resourceService: ResourceService,
+    private val resourceService: ResourceUseCases,
     private val literalService: LiteralService,
     private val predicateService: PredicateUseCases,
     private val statementRepository: Neo4jStatementRepository,

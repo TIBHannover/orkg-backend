@@ -4,14 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import dev.forkhandles.values.ofOrNull
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResourceContributors
+import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -39,7 +39,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RestController
 @RequestMapping("/api/resources/")
 class ResourceController(
-    private val service: ResourceService,
+    private val service: ResourceUseCases,
     private val contributorService: ContributorService
 ) : BaseController() {
 
@@ -72,7 +72,10 @@ class ResourceController(
 
     @PostMapping("/")
     @ResponseStatus(CREATED)
-    fun add(@RequestBody resource: CreateResourceRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
+    fun add(
+        @RequestBody resource: CreateResourceRequest,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<Any> {
         Label.ofOrNull(resource.label) ?: throw InvalidLabel()
         if (resource.id != null && service.findById(resource.id).isPresent)
             return badRequest().body("Resource id <${resource.id}> already exists!")
@@ -84,7 +87,8 @@ class ResourceController(
             organizationId = contributor.get().organizationId
             observatoryId = contributor.get().observatoryId
         }
-        val id = service.create(ContributorId(userId), resource, observatoryId, resource.extractionMethod, organizationId).id
+        val id =
+            service.create(ContributorId(userId), resource, observatoryId, resource.extractionMethod, organizationId).id
         val location = uriComponentsBuilder
             .path("api/resources/{id}")
             .buildAndExpand(id)
@@ -154,13 +158,14 @@ class ResourceController(
     fun markFeatured(@PathVariable id: ResourceId) {
         service.markAsFeatured(id).orElseThrow { ResourceNotFound(id.toString()) }
     }
+
     @DeleteMapping("/{id}/metadata/featured")
     fun unmarkFeatured(@PathVariable id: ResourceId) {
         service.markAsNonFeatured(id).orElseThrow { ResourceNotFound(id.toString()) }
     }
 
     @GetMapping("/{id}/metadata/featured")
-    fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean =
+    fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean? =
         service.getFeaturedResourceFlag(id)
 
     @GetMapping("/metadata/unlisted", params = ["unlisted=true"])
@@ -176,6 +181,7 @@ class ResourceController(
     fun markUnlisted(@PathVariable id: ResourceId) {
         service.markAsUnlisted(id).orElseThrow { ResourceNotFound(id.toString()) }
     }
+
     @DeleteMapping("/{id}/metadata/unlisted")
     fun unmarkUnlisted(@PathVariable id: ResourceId) {
         service.markAsListed(id).orElseThrow { ResourceNotFound(id.toString()) }

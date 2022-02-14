@@ -116,6 +116,6 @@ class ProblemController(
     }
 
     @GetMapping("/{id}/metadata/unlisted")
-    fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean =
+    fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean? =
         service.getUnlistedProblemFlag(id) ?: throw ResourceNotFound(id.toString())
 }

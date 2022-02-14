@@ -3,11 +3,11 @@ package eu.tib.orkg.prototype
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import eu.tib.orkg.prototype.graphdb.indexing.domain.model.IndexService
+import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.application.CreateClassRequest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ClassService
-import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import java.io.InputStream
 import org.springframework.boot.ApplicationArguments
@@ -18,10 +18,10 @@ import org.springframework.stereotype.Component
 @Component
 @Profile("development", "docker")
 class ExampleData(
-    private val resourceService: ResourceService,
+    private val resourceService: ResourceUseCases,
     private val predicateService: CreatePredicateUseCase,
     private val statementService: StatementService,
-    private val classService: ClassService,
+    private val classService: ClassUseCases,
     private val indexService: IndexService
 ) : ApplicationRunner {
 

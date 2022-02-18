@@ -2,9 +2,9 @@ package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.configuration.DataCiteConfiguration
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.domain.model.DoiService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import java.time.LocalDate
 import java.util.Base64
 import org.springframework.web.bind.annotation.PostMapping
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/dois/")
 class DOIController(
-    private val statementService: StatementService,
+    private val statementService: StatementUseCases,
     private val doiService: DoiService,
     private val dataciteConfiguration: DataCiteConfiguration
 ) {

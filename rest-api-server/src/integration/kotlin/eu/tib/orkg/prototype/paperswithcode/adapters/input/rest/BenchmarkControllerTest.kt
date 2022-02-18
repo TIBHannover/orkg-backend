@@ -1,14 +1,14 @@
 package eu.tib.orkg.prototype.paperswithcode.adapters.input.rest
 
+import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.CreatePredicateRequest
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.RestDocumentationBaseTest
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers
@@ -31,13 +31,13 @@ import org.springframework.transaction.annotation.Transactional
 class BenchmarkControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var statementService: StatementService
+    private lateinit var statementService: StatementUseCases
 
     @Autowired
     private lateinit var resourceService: ResourceUseCases
 
     @Autowired
-    private lateinit var literalService: LiteralService
+    private lateinit var literalService: LiteralUseCases
 
     @Autowired
     private lateinit var predicateService: PredicateService

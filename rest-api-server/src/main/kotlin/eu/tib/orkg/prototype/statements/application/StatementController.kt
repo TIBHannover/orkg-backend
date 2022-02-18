@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -11,7 +12,6 @@ import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
-import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -36,7 +36,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RestController
 @RequestMapping("/api/statements")
 class StatementController(
-    private val statementService: StatementService
+    private val statementService: StatementUseCases
 ) : BaseController() {
 
     @GetMapping("/")

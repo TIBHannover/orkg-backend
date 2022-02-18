@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.domain.model.StatementService
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional
 class BulkStatementControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var service: StatementService
+    private lateinit var service: StatementUseCases
 
     @Autowired
     private lateinit var resourceService: ResourceUseCases

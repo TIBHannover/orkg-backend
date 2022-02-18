@@ -2,10 +2,10 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers
@@ -44,7 +44,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     private lateinit var predicateService: PredicateService
 
     @Autowired
-    private lateinit var statementService: StatementService
+    private lateinit var statementService: StatementUseCases
 
     @BeforeEach
     fun setup() {

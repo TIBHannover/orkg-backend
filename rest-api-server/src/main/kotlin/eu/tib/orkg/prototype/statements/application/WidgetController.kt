@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.domain.model.StatementService
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import org.springframework.http.HttpEntity
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/widgets/")
-class WidgetController(private val service: ResourceUseCases, private val statementService: StatementService) {
+class WidgetController(private val service: ResourceUseCases, private val statementService: StatementUseCases) {
 
     @GetMapping("/")
     fun searchDoi(

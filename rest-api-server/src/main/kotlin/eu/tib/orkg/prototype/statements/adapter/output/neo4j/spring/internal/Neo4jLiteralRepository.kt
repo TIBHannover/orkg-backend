@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.statements.domain.model.neo4j
+package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import eu.tib.orkg.prototype.statements.application.ObjectController.Constants.ID_DOI_PREDICATE
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
@@ -9,8 +9,6 @@ import org.springframework.data.neo4j.repository.Neo4jRepository
 
 interface Neo4jLiteralRepository : Neo4jRepository<Neo4jLiteral, Long> {
     override fun findAll(): Iterable<Neo4jLiteral>
-
-    override fun findById(id: Long?): Optional<Neo4jLiteral>
 
     fun findByLiteralId(id: LiteralId?): Optional<Neo4jLiteral>
 

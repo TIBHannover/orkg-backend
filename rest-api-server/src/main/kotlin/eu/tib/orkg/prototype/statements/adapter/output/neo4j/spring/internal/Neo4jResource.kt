@@ -14,8 +14,6 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ObservatoryIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.OrganizationIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.AuditableEntity
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jLiteral
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatement
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import java.lang.StringBuilder
 import org.eclipse.rdf4j.model.Model

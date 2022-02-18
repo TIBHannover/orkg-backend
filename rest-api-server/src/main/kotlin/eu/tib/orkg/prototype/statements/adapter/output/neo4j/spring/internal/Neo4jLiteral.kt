@@ -1,10 +1,12 @@
-package eu.tib.orkg.prototype.statements.domain.model.neo4j
+package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.AuditableEntity
+import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.LiteralIdConverter
 import org.neo4j.ogm.annotation.GeneratedValue

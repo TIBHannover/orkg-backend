@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
-import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional
 class LiteralControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var service: LiteralService
+    private lateinit var service: LiteralUseCases
 
     @BeforeEach
     fun setup() {

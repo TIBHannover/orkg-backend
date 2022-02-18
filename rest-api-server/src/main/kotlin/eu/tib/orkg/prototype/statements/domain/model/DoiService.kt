@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
@@ -13,7 +14,7 @@ import org.springframework.web.server.ResponseStatusException
 @Service
 @Transactional
 class DoiService(
-    private val literalService: LiteralService
+    private val literalService: LiteralUseCases
 ) {
 
     fun registerDoi(doiData: String, credentials: String, url: String): Optional<String> {

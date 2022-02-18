@@ -21,11 +21,16 @@ import eu.tib.orkg.prototype.statements.domain.model.URIService
 interface ClassUseCases : CreateClassUseCase, RetrieveClassUseCase, UpdateClassUseCase, DeleteClassUseCase,
     URIService<Class>
 
+interface LiteralUseCases : CreateLiteralUseCase, RetrieveLiteralUseCase, UpdateLiteralUseCase, DeleteLiteralUseCase
+
 interface PredicateUseCases : CreatePredicateUseCase, DeletePredicateUseCase, UpdatePredicateUseCase,
     RetrievePredicateUseCase
 
 interface ResourceUseCases : CreateResourceUseCase, RetrieveResourceUseCase, UpdateResourceUseCase,
     DeleteResourceUseCase, OtherResourceUseCases
+
+interface StatementUseCases : CreateStatementUseCase, RetrieveStatementUseCase, UpdateStatementUseCase,
+    DeleteStatementUseCase
 
 // FIXME: we need to refactor those as well
 interface OtherResourceUseCases :

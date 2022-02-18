@@ -1,12 +1,12 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.LiteralControllerTest.RestDoc.literalResponseFields
 import eu.tib.orkg.prototype.statements.application.PredicateControllerTest.RestDoc.predicateResponseFields
 import eu.tib.orkg.prototype.statements.application.ResourceControllerTest.RestDoc.resourceResponseFields
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
-import eu.tib.orkg.prototype.statements.domain.model.LiteralService
-import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize
@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional
 class StatementControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var statementService: StatementService
+    private lateinit var statementService: StatementUseCases
 
     @Autowired
     private lateinit var resourceService: ResourceUseCases
@@ -46,7 +46,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
     private lateinit var predicateService: PredicateService
 
     @Autowired
-    private lateinit var literalService: LiteralService
+    private lateinit var literalService: LiteralUseCases
 
     @BeforeEach
     fun setup() {

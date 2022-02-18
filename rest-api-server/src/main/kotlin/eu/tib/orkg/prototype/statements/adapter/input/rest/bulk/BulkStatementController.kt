@@ -1,12 +1,12 @@
 package eu.tib.orkg.prototype.statements.adapter.input.rest.bulk
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import eu.tib.orkg.prototype.statements.application.StatementResponse
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
-import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/statements")
 class BulkStatementController(
-    private val statementService: StatementService
+    private val statementService: StatementUseCases
 ) {
     @GetMapping("/subjects")
     fun findBySubjects(

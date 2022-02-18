@@ -6,9 +6,9 @@ import eu.tib.orkg.prototype.graphdb.indexing.domain.model.IndexService
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.CreateClassRequest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import java.io.InputStream
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component
 class ExampleData(
     private val resourceService: ResourceUseCases,
     private val predicateService: CreatePredicateUseCase,
-    private val statementService: StatementService,
+    private val statementService: StatementUseCases,
     private val classService: ClassUseCases,
     private val indexService: IndexService
 ) : ApplicationRunner {

@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.assertj.core.api.Assertions.assertThat
@@ -21,7 +21,7 @@ class Neo4jStatementServiceTest : Neo4jTestContainersBaseTest() {
     private lateinit var predicateService: PredicateService
 
     @Autowired
-    private lateinit var service: StatementService
+    private lateinit var service: StatementUseCases
 
     @BeforeEach
     fun setup() {

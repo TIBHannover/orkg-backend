@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
-import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import org.springframework.http.HttpStatus.CREATED
@@ -24,7 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/literals/")
-class LiteralController(private val service: LiteralService) : BaseController() {
+class LiteralController(private val service: LiteralUseCases) : BaseController() {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: LiteralId): Literal =

@@ -5,11 +5,11 @@ import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.application.LiteralController.LiteralCreateRequest
 import eu.tib.orkg.prototype.statements.application.LiteralController.LiteralUpdateRequest
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
-import eu.tib.orkg.prototype.statements.domain.model.LiteralService
 import io.mockk.every
 import io.mockk.verify
 import java.time.OffsetDateTime
@@ -43,7 +43,7 @@ class LiteralControllerTest {
     private lateinit var objectMapper: ObjectMapper
 
     @MockkBean
-    private lateinit var literalService: LiteralService
+    private lateinit var literalService: LiteralUseCases
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean

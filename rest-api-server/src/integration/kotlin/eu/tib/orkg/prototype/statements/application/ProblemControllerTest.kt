@@ -4,12 +4,12 @@ import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.domain.model.StatementService
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -40,7 +40,7 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
     private lateinit var predicateService: PredicateService
 
     @Autowired
-    private lateinit var statementService: StatementService
+    private lateinit var statementService: StatementUseCases
 
     @Autowired
     private lateinit var userService: UserService

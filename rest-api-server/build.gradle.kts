@@ -116,6 +116,15 @@ tasks {
         outputs.dir(snippetsDir)
     }
 
+    named("bootJar", org.springframework.boot.gradle.tasks.bundling.BootJar::class) {
+        enabled = true
+        archiveClassifier.set("boot")
+    }
+
+    named("jar", Jar::class) {
+        enabled = true
+    }
+
     named("dokka", org.jetbrains.dokka.gradle.DokkaTask::class) {
         outputFormat = "html"
         configuration {

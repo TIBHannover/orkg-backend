@@ -42,7 +42,8 @@ class ResearchProblemNotFound(id: ResourceId) : RuntimeException("""Research pro
 class DatasetNotFound(id: ResourceId) : RuntimeException("""Dataset "$id" not found""")
 
 @ResponseStatus(HttpStatus.FORBIDDEN)
-class ResourceCantBeDeleted(id: ResourceId) : RuntimeException("Unable to delete Resource $id because it is used in at least one statement")
+class ResourceCantBeDeleted(id: ResourceId) :
+    RuntimeException("Unable to delete Resource $id because it is used in at least one statement")
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 class ClassNotAllowed(`class`: String) : RuntimeException("This class id ($`class`) is not allowed")
@@ -60,6 +61,8 @@ class InvalidUUID(uuid: String, cause: Throwable?) :
 
 class InvalidLabel : PropertyValidationException("label", "A label must not be blank or contain newlines.")
 
+class InvalidURI : PropertyValidationException("uri", "The provided URI is not a valid URI.")
+
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class UserNotFound(userId: String) : RuntimeException("""User $userId not found""")
 
@@ -69,6 +72,12 @@ class OrcidNotValid(orcid: String) : RuntimeException("ORCID value ($orcid) is n
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 class OrphanOrcidValue(orcid: String) : RuntimeException("ORCID value ($orcid) is not attached to any author!")
 
+class CannotResetURI(id: String) :
+    ForbiddenOperationException("uri", "The class $id already has a URI. It is not allowed to change URIs.")
+
+class URIAlreadyInUse(uri: String) :
+    ForbiddenOperationException("uri", "The URI <$uri> is already in use by another class.")
+
 /**
  * Base class for custom property validation.
  */
@@ -77,6 +86,12 @@ abstract class PropertyValidationException(
     override val message: String,
     override val cause: Throwable? = null
 ) : RuntimeException(cause)
+
+abstract class ForbiddenOperationException(property: String, message: String) :
+    PropertyValidationException(
+        property,
+        message
+    )
 
 /**
  * Exception indicating that a property was blank when it was not supposed to be.

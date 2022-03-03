@@ -1,20 +1,26 @@
 package eu.tib.orkg.prototype.statements.application
 
+import dev.forkhandles.result4k.onFailure
 import dev.forkhandles.values.ofOrNull
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.api.AlreadyInUse
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.InvalidURI
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import java.net.URI
+import javax.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -24,6 +30,8 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import eu.tib.orkg.prototype.statements.api.ClassNotFound as ClassNotFoundProblem
+import eu.tib.orkg.prototype.statements.api.InvalidLabel as InvalidLabelProblem
 
 @RestController
 @RequestMapping("/api/classes/")
@@ -31,15 +39,10 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
     BaseController() {
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: ClassId): Class =
-        service
-            .findById(id)
-            .orElseThrow { ClassNotFound() }
+    fun findById(@PathVariable id: ClassId): Class = service.findById(id).orElseThrow { ClassNotFound() }
 
     @GetMapping("/", params = ["uri"])
-    fun findByURI(@RequestParam uri: URI): Class = service
-            .findByURI(uri)
-            .orElseThrow { ClassNotFound() }
+    fun findByURI(@RequestParam uri: URI): Class = service.findByURI(uri).orElseThrow { ClassNotFound() }
 
     @GetMapping("/{id}/resources/")
     fun findResourcesWithClass(
@@ -53,7 +56,9 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
             when {
                 searchString == null -> resourceService.findAllByClassAndCreatedBy(pageable, id, creator)
                 exactMatch -> resourceService.findAllByClassAndLabelAndCreatedBy(pageable, id, searchString, creator)
-                else -> resourceService.findAllByClassAndLabelContainingAndCreatedBy(pageable, id, searchString, creator)
+                else -> resourceService.findAllByClassAndLabelContainingAndCreatedBy(
+                    pageable, id, searchString, creator
+                )
             }
         } else {
             when {
@@ -81,51 +86,68 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
     @ResponseStatus(CREATED)
     fun add(@RequestBody `class`: CreateClassRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         Label.ofOrNull(`class`.label) ?: throw InvalidLabel()
-        if (`class`.id != null && service.findById(`class`.id).isPresent)
-            throw ClassAlreadyExists(`class`.id.value)
-        if (!`class`.hasValidName())
-            throw ClassNotAllowed(`class`.id!!.value)
+        if (`class`.id != null && service.findById(`class`.id).isPresent) throw ClassAlreadyExists(`class`.id.value)
+        if (!`class`.hasValidName()) throw ClassNotAllowed(`class`.id!!.value)
         if (`class`.uri != null) {
             val found = service.findByURI(`class`.uri)
-            if (found.isPresent)
-                throw DuplicateURI(`class`.uri, found.get().id.toString())
+            if (found.isPresent) throw DuplicateURI(`class`.uri, found.get().id.toString())
         }
 
         val userId = authenticatedUserId()
         val id = service.create(ContributorId(userId), `class`).id!!
-        val location = uriComponentsBuilder
-            .path("api/classes/{id}")
-            .buildAndExpand(id)
-            .toUri()
+        val location = uriComponentsBuilder.path("api/classes/{id}").buildAndExpand(id).toUri()
 
         return created(location).body(service.findById(id).get())
     }
 
     @PutMapping("/{id}")
-    fun update(
+    fun replace(
         @PathVariable id: ClassId,
         @RequestBody `class`: Class
     ): ResponseEntity<Class> {
-        val found = service.findById(id)
-
-        if (!found.isPresent)
-            return ResponseEntity.notFound().build()
-
-        var updatedClass = `class`.copy(id = found.get().id)
-
-        updatedClass = when {
-            updatedClass.label != `class`.label && updatedClass.uri != `class`.uri ->
-                updatedClass.copy(label = `class`.label, uri = `class`.uri)
-            updatedClass.label != `class`.label ->
-                updatedClass.copy(label = `class`.label)
-            updatedClass.uri != `class`.uri ->
-                updatedClass.copy(uri = `class`.uri)
-            else ->
-                updatedClass
+        // We will be very lenient with the ID, meaning we do not validate it. But we correct for it in the response. (For now.)
+        service.replace(id, with = `class`).onFailure {
+            when (it.reason) {
+                ClassNotFoundProblem -> throw ClassNotFound()
+                InvalidLabelProblem -> throw InvalidLabel()
+                InvalidURI -> throw IllegalStateException("An invalid URI got passed when replacing a class. This should not happen. Please report a bug.")
+                UpdateNotAllowed -> throw CannotResetURI(id.value)
+                AlreadyInUse -> throw URIAlreadyInUse(`class`.uri.toString())
+            }
         }
-
-        return ResponseEntity.ok(service.update(updatedClass))
+        return ResponseEntity.ok(`class`.copy(id = id))
     }
+
+    @PatchMapping("/{id}")
+    fun update(
+        @PathVariable id: ClassId,
+        @Valid @RequestBody requestBody: UpdateRequestBody
+    ): ResponseEntity<Any> {
+        if (requestBody.label != null) {
+            service.updateLabel(id, requestBody.label).onFailure {
+                when (it.reason) {
+                    ClassNotFoundProblem -> throw ClassNotFound()
+                    InvalidLabelProblem -> throw InvalidLabel()
+                }
+            }
+        }
+        if (requestBody.uri != null) {
+            service.updateURI(id, requestBody.uri).onFailure {
+                when (it.reason) {
+                    ClassNotFoundProblem -> throw ClassNotFound()
+                    InvalidURI -> throw InvalidURI()
+                    UpdateNotAllowed -> throw CannotResetURI(id.value)
+                    AlreadyInUse -> throw URIAlreadyInUse(requestBody.uri)
+                }
+            }
+        }
+        return ResponseEntity.ok(Unit)
+    }
+
+    data class UpdateRequestBody(
+        val label: String? = null,
+        val uri: String? = null,
+    )
 }
 
 data class CreateClassRequest(

@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Prevent use of newlines in labels. (Closes: [#347](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/347))
+- Removed caching of classes. (Closes: [#368](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/368))
+### Added
+- Support updating selected properties of a class via PATCH. (Closes: [#368](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/369))
 
 ## [0.8.0] - 2022-02-03
 ### Added

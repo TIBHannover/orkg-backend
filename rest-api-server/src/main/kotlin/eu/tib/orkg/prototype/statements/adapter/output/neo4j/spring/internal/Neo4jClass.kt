@@ -9,7 +9,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.AuditableEntity
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
-import java.lang.StringBuilder
 import java.net.URI
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
@@ -58,7 +57,13 @@ data class Neo4jClass(
 
     fun toClass(): Class {
         val aURI: URI? = if (uri != null) URI.create(uri!!) else null
-        val clazz = Class(classId!!, label!!, aURI, createdAt!!, createdBy = createdBy)
+        val clazz = Class(
+            id = classId!!,
+            label = label!!,
+            uri = aURI,
+            createdAt = createdAt!!,
+            createdBy = createdBy,
+        )
         clazz.rdf = toRdfModel()
         if (subjectOf.isNotEmpty())
             clazz.description = subjectOf.firstOrNull { it.classId?.value == "description" }?.label

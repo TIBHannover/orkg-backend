@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.api
 
+import dev.forkhandles.result4k.Result
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.CreateClassRequest
 import eu.tib.orkg.prototype.statements.domain.model.Class
@@ -16,9 +17,26 @@ interface CreateClassUseCase {
 }
 
 interface UpdateClassUseCase {
-    // legacy methods:
-    fun update(`class`: Class): Class
+    fun replace(id: ClassId, with: Class): Result<Unit, ClassUpdateProblem>
+    fun updateLabel(id: ClassId, newLabel: String): Result<Unit, ClassLabelUpdateProblem>
+    fun updateURI(id: ClassId, with: String): Result<Unit, ClassURIUpdateProblem>
 }
+
+sealed interface ClassUpdateProblem
+
+sealed interface ClassLabelUpdateProblem : ClassUpdateProblem
+
+sealed interface ClassURIUpdateProblem : ClassUpdateProblem
+
+object ClassNotFound : ClassLabelUpdateProblem, ClassURIUpdateProblem
+
+object InvalidLabel : ClassLabelUpdateProblem
+
+object InvalidURI : ClassURIUpdateProblem
+
+object UpdateNotAllowed : ClassURIUpdateProblem
+
+object AlreadyInUse : ClassURIUpdateProblem
 
 interface DeleteClassUseCase {
     // legacy methods:

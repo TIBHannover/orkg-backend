@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import java.net.URI
 import java.time.OffsetDateTime
+import java.util.*
 import org.eclipse.rdf4j.model.Model
 
 data class Class(
@@ -25,3 +26,5 @@ data class Class(
     var description: String? = null
     fun toClass(): Class = Class(id, label, uri, createdAt, createdBy, _class)
 }
+
+internal fun Class?.toOptional() = Optional.ofNullable(this)

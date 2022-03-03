@@ -284,19 +284,17 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     internal fun List<String>.toJSONArray(): JSONArray = JSONArray().apply { addAll(this@toJSONArray) }
 
     @Test
-    fun edit() {
-        val `class` = service.create(CreateClassRequest(id = null, label = "foo", uri = URI("http://example.org/foo"))).id!!
+    fun replaceLabel() {
+        val classId = service.create(CreateClassRequest(id = null, label = "foo", uri = URI("https://example.org/foo"))).id!!
 
         val newLabel = "bar"
-        // Set properties that are not supposed to be updated to "null" to prevent regressions.
-        // Make sure to add an assertion for those as well.
-        val resource = mapOf("label" to newLabel, "uri" to null)
+        val resource = mapOf("label" to newLabel, "uri" to "https://example.org/foo")
 
         mockMvc
-            .perform(putRequestWithBody("/api/classes/$`class`", resource))
+            .perform(putRequestWithBody("/api/classes/$classId", resource))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.label").value(newLabel))
-            .andExpect(jsonPath("$.uri").value("http://example.org/foo")) // old value
+            .andExpect(jsonPath("$.uri").value("https://example.org/foo")) // old value
             .andDo(
                 document(
                     snippet,
@@ -309,17 +307,17 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    fun editLabelAndUri() {
-        val `class` = service.create(CreateClassRequest(id = null, label = "foo", uri = URI("http://example.org/foo"))).id!!
+    fun replaceLabelAndURI() {
+        val classId = service.create(CreateClassRequest(id = null, label = "foo", uri = null)).id!!
 
-        val newLabel = "bar"
-        val resource = mapOf("label" to newLabel, "uri" to "http://orkg.org/entity/foo")
+        val newLabel = "new label"
+        val resource = mapOf("label" to newLabel, "uri" to "https://orkg.org/entity/foo")
 
         mockMvc
-            .perform(putRequestWithBody("/api/classes/$`class`", resource))
+            .perform(putRequestWithBody("/api/classes/$classId", resource))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.label").value(newLabel))
-            .andExpect(jsonPath("$.uri").value(resource["uri"].toString())) // old value
+            .andExpect(jsonPath("$.uri").value(resource["uri"].toString()))
             .andDo(
                 document(
                     snippet,

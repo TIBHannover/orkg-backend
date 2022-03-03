@@ -1,18 +1,31 @@
 package eu.tib.orkg.prototype.statements.services
 
+import dev.forkhandles.result4k.Failure
+import dev.forkhandles.result4k.Result
+import dev.forkhandles.result4k.Success
+import dev.forkhandles.values.ofOrNull
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.api.AlreadyInUse
+import eu.tib.orkg.prototype.statements.api.ClassLabelUpdateProblem
+import eu.tib.orkg.prototype.statements.api.ClassNotFound
+import eu.tib.orkg.prototype.statements.api.ClassURIUpdateProblem
+import eu.tib.orkg.prototype.statements.api.ClassUpdateProblem
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.InvalidLabel
+import eu.tib.orkg.prototype.statements.api.InvalidURI
+import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
 import eu.tib.orkg.prototype.statements.application.CreateClassRequest
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.util.EscapedRegex
 import eu.tib.orkg.prototype.util.SanitizedWhitespace
 import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
 import java.net.URI
+import java.net.URISyntaxException
 import java.time.OffsetDateTime
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -23,8 +36,6 @@ import org.springframework.transaction.annotation.Transactional
 class ClassService(
     private val repository: ClassRepository
 ) : ClassUseCases {
-
-    private val classCache: MutableMap<ClassId, Class> = ConcurrentHashMap(64)
 
     override fun create(label: String) = create(ContributorId.createUnknownContributor(), label)
 
@@ -60,17 +71,13 @@ class ClassService(
         return repository.save(newClass)
     }
 
-    override fun exists(id: ClassId): Boolean {
-        // Instead of just asking the database an "exists query", we fetch the full object if it cannot be found.
-        // This is a certain overhead but will keep the cache warm for use in the find() methods, of needed.
-        return findClassCached(id) != null
-    }
+    override fun exists(id: ClassId): Boolean = repository.findByClassId(id).isPresent
 
     override fun findAll() = repository.findAll()
 
     override fun findAll(pageable: Pageable): Page<Class> = repository.findAll(pageable)
 
-    override fun findById(id: ClassId): Optional<Class> = Optional.ofNullable(findClassCached(id))
+    override fun findById(id: ClassId): Optional<Class> = repository.findByClassId(id)
 
     override fun findAllByLabel(label: String): Iterable<Class> =
         repository.findAllByLabelMatchesRegex(label.toExactSearchString()) // TODO: See declaration
@@ -84,16 +91,33 @@ class ClassService(
     override fun findAllByLabelContaining(pageable: Pageable, part: String): Page<Class> =
         repository.findAllByLabelMatchesRegex(part.toSearchString(), pageable) // TODO: See declaration
 
-    override fun update(`class`: Class): Class {
-        // already checked by service
-        val found = repository.findByClassId(`class`.id).get()
-        var updated = found
-        // update all the properties
-        updated = updated.copy(label = `class`.label)
-        if (`class`.uri != null)
-            updated = updated.copy(uri = `class`.uri)
+    override fun replace(id: ClassId, with: Class): Result<Unit, ClassUpdateProblem> {
+        val label = Label.ofOrNull(with.label) ?: return Failure(InvalidLabel)
+        val found = repository.findByClassId(id).orElse(null) ?: return Failure(ClassNotFound)
+        if (found.uri != with.uri && found.uri != null) return Failure(UpdateNotAllowed)
+        with.uri?.let {
+            val possiblyUsed = findByURI(it).orElse(null)
+            if (possiblyUsed != null && possiblyUsed.id != found.id) return Failure(AlreadyInUse)
+        }
+        repository.save(found.copy(id = id, label = label.value, uri = with.uri))
+        return Success(Unit)
+    }
 
-        return repository.save(updated)
+    override fun updateLabel(id: ClassId, newLabel: String): Result<Unit, ClassLabelUpdateProblem> {
+        val label = Label.ofOrNull(newLabel) ?: return Failure(InvalidLabel)
+        val found = repository.findByClassId(id).orElse(null) ?: return Failure(ClassNotFound)
+        if (found.label != label.value) repository.save(found.copy(label = label.value))
+        return Success(Unit)
+    }
+
+    override fun updateURI(id: ClassId, with: String): Result<Unit, ClassURIUpdateProblem> {
+        val uri = with.toURIOrNull() ?: return Failure(InvalidURI)
+        val found = repository.findByClassId(id).orElse(null) ?: return Failure(ClassNotFound)
+        if (found.uri != null) return Failure(UpdateNotAllowed)
+        val possiblyUsed = findByURI(uri).orElse(null)
+        if (possiblyUsed != null && possiblyUsed.id != found.id) return Failure(AlreadyInUse)
+        repository.save(found.copy(uri = uri))
+        return Success(Unit)
     }
 
     override fun removeAll() = repository.deleteAll()
@@ -130,10 +154,17 @@ class ClassService(
                     )
                 )
                 // Throwing an exception if IDs are different
-                oClassById.isPresent && oClassByURI.isPresent &&
-                    oClassById.get().id != oClassByURI.get().id -> throw Exception("ID mismatch for class ID: ${oClassById.get().id}")
+                oClassById.isPresent && oClassByURI.isPresent && oClassById.get().id != oClassByURI.get().id -> throw Exception(
+                    "ID mismatch for class ID: ${oClassById.get().id}"
+                )
             }
         }
+    }
+
+    private fun String.toURIOrNull(): URI? = try {
+        URI(this)
+    } catch (_: URISyntaxException) {
+        null
     }
 
     private fun String.toSearchString() =
@@ -141,17 +172,4 @@ class ClassService(
 
     private fun String.toExactSearchString() =
         "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"
-
-    private fun findClassCached(`class`: ClassId): Class? {
-        val cached = classCache[`class`]
-        if (cached != null)
-            return cached
-        val persisted = repository.findByClassId(`class`)
-        if (persisted.isPresent) {
-            val instance = persisted.get()
-            classCache[`class`] = instance
-            return instance
-        }
-        return null
-    }
 }

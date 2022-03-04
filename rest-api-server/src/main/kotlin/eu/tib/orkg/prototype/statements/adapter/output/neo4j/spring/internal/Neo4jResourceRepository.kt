@@ -144,7 +144,7 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     fun findProblemsByObservatoryId(id: ObservatoryId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
 
     @Query("""MATCH (n:Paper {observatory_id: {0}, unlisted: {1}}) RETURN n.resource_id as id, n.label as label, n.created_at as created_at, n.classes as classes, n.shared as shared, n.created_by as created_by, n._class as _class, n.observatory_id as observatory_id, n.extraction_method as extraction_method, n.organization_id as organization_id, n.featured as featured, n.unlisted as unlisted, n.verified as verified""",
-    countQuery = """"MATCH (n:Paper {observatory_id: {0}, unlisted: {1}}) RETURN COUNT(n)""")
+    countQuery = """MATCH (n:Paper {observatory_id: {0}, unlisted: {1}}) RETURN COUNT(n)""")
     fun findPapersByObservatoryIdWithoutFeatured(id: ObservatoryId, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
 
     @Query("""MATCH (n:Comparison {observatory_id: {0}, unlisted: {1}}) RETURN n.resource_id as id, n.label as label, n.created_at as created_at, n.classes as classes, n.shared as shared, n.created_by as created_by, n._class as _class, n.observatory_id as observatory_id, n.extraction_method as extraction_method, n.organization_id as organization_id, n.featured as featured, n.unlisted as unlisted, n.verified as verified""",

@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.DetailsPerResource
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
@@ -16,13 +17,17 @@ import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
+import org.springframework.lang.Nullable
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
@@ -75,6 +80,18 @@ class ObservatoryController(
     fun findObservatories(): List<Observatory> {
         return service.listObservatories()
     }
+
+    @GetMapping("/{id}/class")
+    fun findResourcesByObservatoryId(
+        @PathVariable id: ObservatoryId,
+        @RequestParam(value = "classes") classes: List<String>,
+        @Nullable @RequestParam("featured")
+        featured: Boolean?,
+        @RequestParam("unlisted", required = false, defaultValue = "false")
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<DetailsPerResource> =
+        service.findMultipleClassesByObservatoryId(id, classes, featured, unlisted, pageable)
 
     @GetMapping("{id}/papers")
     fun findPapersByObservatoryId(@PathVariable id: ObservatoryId): Iterable<Resource> {

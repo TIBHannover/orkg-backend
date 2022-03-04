@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.spi
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.DetailsPerResource
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -38,6 +39,12 @@ interface ResourceRepository {
     fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Resource>
     fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<Resource>
     fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource>
+    fun findPapersByObservatoryId(id: ObservatoryId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
+    fun findComparisonsByObservatoryId(id: ObservatoryId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
+    fun findProblemsByObservatoryId(id: ObservatoryId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
+    fun findPapersByObservatoryId(id: ObservatoryId, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
+    fun findComparisonsByObservatoryId(id: ObservatoryId, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
+    fun findProblemsByObservatoryId(id: ObservatoryId, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
     fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors>
     fun checkIfResourceHasStatements(id: ResourceId): Boolean
     fun findAllByVerifiedIsTrue(pageable: Pageable): Page<Resource>

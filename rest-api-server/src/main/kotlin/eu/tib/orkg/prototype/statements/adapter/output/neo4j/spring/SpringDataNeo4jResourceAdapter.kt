@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.DetailsPerResource
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceIdGenerator
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceRepository
@@ -119,11 +120,53 @@ class SpringDataNeo4jResourceAdapter(
     override fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Resource> =
         neo4jRepository.findPapersByObservatoryId(id).map(Neo4jResource::toResource)
 
+    override fun findPapersByObservatoryId(
+        id: ObservatoryId,
+        featured: Boolean,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<DetailsPerResource> = neo4jRepository.findPapersByObservatoryId(id, featured, unlisted, pageable)
+
+    override fun findPapersByObservatoryId(
+        id: ObservatoryId,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<DetailsPerResource> =
+        neo4jRepository.findPapersByObservatoryIdWithoutFeatured(id, unlisted, pageable)
+
     override fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
         neo4jRepository.findComparisonsByObservatoryId(id).map(Neo4jResource::toResource)
 
+    override fun findComparisonsByObservatoryId(
+        id: ObservatoryId,
+        featured: Boolean,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<DetailsPerResource> = neo4jRepository.findComparisonsByObservatoryId(id, featured, unlisted, pageable)
+
+    override fun findComparisonsByObservatoryId(
+        id: ObservatoryId,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<DetailsPerResource> = neo4jRepository.findComparisonsByObservatoryIdWithoutFeatured(id, unlisted, pageable)
+
     override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
         neo4jRepository.findProblemsByObservatoryId(id).map(Neo4jResource::toResource)
+
+    override fun findProblemsByObservatoryId(
+        id: ObservatoryId,
+        featured: Boolean,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<DetailsPerResource> =
+        neo4jRepository.findProblemsByObservatoryId(id, featured, unlisted, pageable)
+
+    override fun findProblemsByObservatoryId(
+        id: ObservatoryId,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<DetailsPerResource> =
+        neo4jRepository.findProblemsByObservatoryIdWithoutFeatured(id, unlisted, pageable)
 
     override fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors> =
         neo4jRepository.findContributorsByResourceId(id)

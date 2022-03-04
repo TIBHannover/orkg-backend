@@ -1,4 +1,5 @@
 package eu.tib.orkg.prototype.statements.infrastructure.jpa
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.DetailsPerResource
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.application.OrganizationNotFound
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
@@ -10,8 +11,11 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
 import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresObservatoryRepository
 import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresOrganizationRepository
-import java.util.Optional
-import java.util.UUID
+import eu.tib.orkg.prototype.statements.spi.ResourceRepository
+import java.util.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -20,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional
 class PostgresObservatoryService(
     private val postgresObservatoryRepository: PostgresObservatoryRepository,
     private val postgresOrganizationRepository: PostgresOrganizationRepository,
+    private val resourceRepository: ResourceRepository,
     private val resourceService: ResourceUseCases
 ) : ObservatoryService {
     override fun create(name: String, description: String, organization: Organization, researchField: String, displayId: String): Observatory {
@@ -89,6 +94,25 @@ class PostgresObservatoryService(
         return response
     }
 
+    override fun findMultipleClassesByObservatoryId(
+        id: ObservatoryId,
+        classes: List<String>,
+        featured: Boolean?,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<DetailsPerResource> {
+        val resultList = mutableListOf<DetailsPerResource>()
+
+        when (featured) {
+            null -> getListWithoutFeaturedFlag(classes, id, unlisted, pageable, resultList)
+            else -> getListWithFlags(classes, id, featured, unlisted, pageable, resultList)
+        }
+
+        resultList.sortBy(DetailsPerResource::createdAt)
+
+        return PageImpl(resultList, pageable, resultList.size.toLong())
+    }
+
     override fun removeAll() = postgresObservatoryRepository.deleteAll()
 
     override fun changeName(id: ObservatoryId, to: String): Observatory {
@@ -129,4 +153,41 @@ class PostgresObservatoryService(
         if (hasResearchField(response))
             response.withResearchField(response.researchField?.id!!)
         else response
+
+    private fun getListWithoutFeaturedFlag(
+        classesList: List<String>,
+        id: ObservatoryId,
+        unlisted: Boolean,
+        pageable: Pageable,
+        resultList: MutableList<DetailsPerResource>
+    ) {
+        classesList.map { classType ->
+            when (classType.uppercase(Locale.getDefault())) {
+                "PAPER" -> resultList.addAll(resourceRepository.findPapersByObservatoryId(id, unlisted, pageable).content)
+                "COMPARISON" -> resultList.addAll(resourceRepository.findComparisonsByObservatoryId(id, unlisted, pageable).content)
+                else -> {
+                    resultList.addAll(resourceRepository.findProblemsByObservatoryId(id, unlisted, pageable).content)
+                }
+            }
+        }
+    }
+
+    private fun getListWithFlags(
+        classesList: List<String>,
+        id: ObservatoryId,
+        featured: Boolean,
+        unlisted: Boolean,
+        pageable: Pageable,
+        resultList: MutableList<DetailsPerResource>
+    ) {
+        classesList.map { classType ->
+            when (classType.uppercase(Locale.getDefault())) {
+                "PAPER" -> resultList.addAll(resourceRepository.findPapersByObservatoryId(id, featured, unlisted, pageable).content)
+                "COMPARISON" -> resultList.addAll(resourceRepository.findComparisonsByObservatoryId(id, featured, unlisted, pageable).content)
+                else -> {
+                    resultList.addAll(resourceRepository.findProblemsByObservatoryId(id, featured, unlisted, pageable).content)
+                }
+            }
+        }
+    }
 }

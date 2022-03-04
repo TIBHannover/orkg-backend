@@ -1,14 +1,19 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.ObjectController.Constants.ID_DOI_PREDICATE
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import java.util.*
+import org.neo4j.ogm.annotation.Property
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.Query
+import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
 /**
@@ -126,6 +131,30 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     @Query("""MATCH (n:Paper {observatory_id: {0}})-[*]->(r:Problem) RETURN r UNION ALL MATCH (r:Problem {observatory_id: {0}}) RETURN r""")
     fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Neo4jResource>
 
+    @Query("""MATCH (n:Paper {observatory_id: {0}, featured: {1}, unlisted: {2}}) RETURN n.resource_id as id, n.label as label, n.created_at as created_at, n.classes as classes, n.shared as shared, n.created_by as created_by, n._class as _class, n.observatory_id as observatory_id, n.extraction_method as extraction_method, n.organization_id as organization_id, n.featured as featured, n.unlisted as unlisted, n.verified as verified""",
+    countQuery = """MATCH (n:Paper {observatory_id: {0}, featured: {1}, unlisted: {2}}) RETURN COUNT(n)""")
+    fun findPapersByObservatoryId(id: ObservatoryId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
+
+    @Query("""MATCH (n:Comparison {observatory_id: {0}, featured: {1}, unlisted: {2}}) RETURN n.resource_id as id, n.label as label, n.created_at as created_at, n.classes as classes, n.shared as shared, n.created_by as created_by, n._class as _class, n.observatory_id as observatory_id, n.extraction_method as extraction_method, n.organization_id as organization_id, n.featured as featured, n.unlisted as unlisted, n.verified as verified""",
+    countQuery = """MATCH (n:Comparison {observatory_id: {0}, featured: {1}, unlisted: {2}}) RETURN COUNT(n)""")
+    fun findComparisonsByObservatoryId(id: ObservatoryId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
+
+    @Query("""MATCH (n:Paper {observatory_id: {0}, featured: {1}, unlisted: {2}})-[*]->(r:Problem) RETURN r.resource_id as id, r.label as label, r.created_at as created_at, r.classes as classes, r.shared as shared, r.created_by as created_by, r._class as _class, r.observatory_id as observatory_id, r.extraction_method as extraction_method, r.organization_id as organization_id, r.featured as featured, r.unlisted as unlisted, r.verified as verified""",
+    countQuery = """MATCH (n:Paper {observatory_id: {0}, featured: {1}, unlisted: {2}})-[*]->(r:Problem) RETURN COUNT(r)""")
+    fun findProblemsByObservatoryId(id: ObservatoryId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
+
+    @Query("""MATCH (n:Paper {observatory_id: {0}, unlisted: {1}}) RETURN n.resource_id as id, n.label as label, n.created_at as created_at, n.classes as classes, n.shared as shared, n.created_by as created_by, n._class as _class, n.observatory_id as observatory_id, n.extraction_method as extraction_method, n.organization_id as organization_id, n.featured as featured, n.unlisted as unlisted, n.verified as verified""",
+    countQuery = """"MATCH (n:Paper {observatory_id: {0}, unlisted: {1}}) RETURN COUNT(n)""")
+    fun findPapersByObservatoryIdWithoutFeatured(id: ObservatoryId, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
+
+    @Query("""MATCH (n:Comparison {observatory_id: {0}, unlisted: {1}}) RETURN n.resource_id as id, n.label as label, n.created_at as created_at, n.classes as classes, n.shared as shared, n.created_by as created_by, n._class as _class, n.observatory_id as observatory_id, n.extraction_method as extraction_method, n.organization_id as organization_id, n.featured as featured, n.unlisted as unlisted, n.verified as verified""",
+    countQuery = """MATCH (n:Comparison {observatory_id: {0}, unlisted: {1}}) RETURN COUNT(n)""")
+    fun findComparisonsByObservatoryIdWithoutFeatured(id: ObservatoryId, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
+
+    @Query("""MATCH (n:Paper {observatory_id: {0}, unlisted: {1}})-[*]->(r:Problem) RETURN r.resource_id as id, r.label as label, r.created_at as created_at, r.classes as classes, r.shared as shared, r.created_by as created_by, r._class as _class, r.observatory_id as observatory_id, r.extraction_method as extraction_method, r.organization_id as organization_id, r.featured as featured, r.unlisted as unlisted, r.verified as verified""",
+    countQuery = """MATCH (n:Paper {observatory_id: {0}, unlisted: {1}})-[*]->(r:Problem) RETURN COUNT(r)""")
+    fun findProblemsByObservatoryIdWithoutFeatured(id: ObservatoryId, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
+
     @Query("""MATCH (n:Resource {resource_id: {0}}) CALL apoc.path.subgraphAll(n, {relationshipFilter:'>'}) YIELD relationships UNWIND relationships as rel WITH rel AS p, startNode(rel) AS s, endNode(rel) AS o, n WHERE p.created_by <> "00000000-0000-0000-0000-000000000000" and p.created_at>=n.created_at RETURN n.resource_id AS id, (p.created_by) AS createdBy, MAX(p.created_at) AS createdAt ORDER BY createdAt""")
     fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors>
 
@@ -191,3 +220,23 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
         countQuery = """MATCH (node:`Resource`) WHERE (ANY(c in {0} WHERE c IN labels(node)) AND node.featured={1} AND node.unlisted={2}) WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllFeaturedResourcesByClass(classes: List<String>, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Neo4jResource>
 }
+
+@QueryResult
+data class DetailsPerResource(
+    val id: String?,
+    val label: String?,
+    @JsonProperty("created_at")
+    @Property("created_at")
+    val createdAt: String?,
+    @JsonProperty("observatory_id")
+    val observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
+    @JsonProperty("extraction_method")
+    val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
+    @JsonProperty("organization_id")
+    val organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
+    val featured: Boolean?,
+    val unlisted: Boolean?,
+    val classes: List<String>?,
+    @JsonProperty("created_by")
+    val createdBy: String?
+)

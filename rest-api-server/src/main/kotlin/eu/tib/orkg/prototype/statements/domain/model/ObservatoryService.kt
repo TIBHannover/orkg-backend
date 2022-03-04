@@ -1,5 +1,8 @@
 package eu.tib.orkg.prototype.statements.domain.model
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.DetailsPerResource
 import java.util.Optional
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 
 interface ObservatoryService {
     /**
@@ -24,6 +27,14 @@ interface ObservatoryService {
     fun changeResearchField(id: ObservatoryId, to: String): Observatory
 
     fun findObservatoriesByResearchField(researchField: String): List<Observatory>
+
+    fun findMultipleClassesByObservatoryId(
+        id: ObservatoryId,
+        classes: List<String>,
+        featured: Boolean?,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<DetailsPerResource>
 
     /**
      * Remove all observatories

@@ -168,6 +168,21 @@ class SpringDataNeo4jResourceAdapter(
     ): Page<DetailsPerResource> =
         neo4jRepository.findProblemsByObservatoryIdWithoutFeatured(id, unlisted, pageable)
 
+    override fun findVisualizationsByObservatoryId(
+        id: ObservatoryId,
+        featured: Boolean,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<DetailsPerResource> =
+        neo4jRepository.findVisualizationsByObservatoryId(id, featured, unlisted, pageable)
+
+    override fun findVisualizationsByObservatoryId(
+        id: ObservatoryId,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<DetailsPerResource> =
+        neo4jRepository.findVisualizationsByObservatoryIdWithoutFeatured(id, unlisted, pageable)
+
     override fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors> =
         neo4jRepository.findContributorsByResourceId(id)
 

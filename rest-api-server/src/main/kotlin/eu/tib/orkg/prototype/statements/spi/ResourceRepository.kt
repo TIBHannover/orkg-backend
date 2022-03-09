@@ -42,9 +42,11 @@ interface ResourceRepository {
     fun findPapersByObservatoryId(id: ObservatoryId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
     fun findComparisonsByObservatoryId(id: ObservatoryId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
     fun findProblemsByObservatoryId(id: ObservatoryId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
+    fun findVisualizationsByObservatoryId(id: ObservatoryId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
     fun findPapersByObservatoryId(id: ObservatoryId, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
     fun findComparisonsByObservatoryId(id: ObservatoryId, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
     fun findProblemsByObservatoryId(id: ObservatoryId, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
+    fun findVisualizationsByObservatoryId(id: ObservatoryId, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
     fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors>
     fun checkIfResourceHasStatements(id: ResourceId): Boolean
     fun findAllByVerifiedIsTrue(pageable: Pageable): Page<Resource>

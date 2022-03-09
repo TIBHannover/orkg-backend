@@ -143,6 +143,10 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     countQuery = """MATCH (n:Paper {observatory_id: {0}, featured: {1}, unlisted: {2}})-[*]->(r:Problem) RETURN COUNT(r)""")
     fun findProblemsByObservatoryId(id: ObservatoryId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
 
+    @Query("""MATCH (n:Visualization {observatory_id: {0}, featured: {1}, unlisted: {2}}) RETURN n.resource_id as id, n.label as label, n.created_at as created_at, LABELS(n) as classes, n.shared as shared, n.created_by as created_by, n._class as _class, n.observatory_id as observatory_id, n.extraction_method as extraction_method, n.organization_id as organization_id, n.featured as featured, n.unlisted as unlisted, n.verified as verified""",
+    countQuery = """MATCH (n:Visualization {observatory_id: {0}, featured: {1}, unlisted: {2}}) RETURN COUNT(n)""")
+    fun findVisualizationsByObservatoryId(id: ObservatoryId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
+
     @Query("""MATCH (n:Paper {observatory_id: {0}, unlisted: {1}}) RETURN n.resource_id as id, n.label as label, n.created_at as created_at, LABELS(n) as classes, n.shared as shared, n.created_by as created_by, n._class as _class, n.observatory_id as observatory_id, n.extraction_method as extraction_method, n.organization_id as organization_id, n.featured as featured, n.unlisted as unlisted, n.verified as verified""",
     countQuery = """MATCH (n:Paper {observatory_id: {0}, unlisted: {1}}) RETURN COUNT(n)""")
     fun findPapersByObservatoryIdWithoutFeatured(id: ObservatoryId, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
@@ -154,6 +158,10 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     @Query("""MATCH (n:Paper {observatory_id: {0}, unlisted: {1}})-[*]->(r:Problem) RETURN r.resource_id as id, r.label as label, r.created_at as created_at, LABELS(r) as classes, r.shared as shared, r.created_by as created_by, r._class as _class, r.observatory_id as observatory_id, r.extraction_method as extraction_method, r.organization_id as organization_id, r.featured as featured, r.unlisted as unlisted, r.verified as verified""",
     countQuery = """MATCH (n:Paper {observatory_id: {0}, unlisted: {1}})-[*]->(r:Problem) RETURN COUNT(r)""")
     fun findProblemsByObservatoryIdWithoutFeatured(id: ObservatoryId, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
+
+    @Query("""MATCH (n:Visualization {observatory_id: {0}, unlisted: {1}}) RETURN n.resource_id as id, n.label as label, n.created_at as created_at, LABELS(n) as classes, n.shared as shared, n.created_by as created_by, n._class as _class, n.observatory_id as observatory_id, n.extraction_method as extraction_method, n.organization_id as organization_id, n.featured as featured, n.unlisted as unlisted, n.verified as verified""",
+    countQuery = """MATCH (n:Visualization {observatory_id: {0}, unlisted: {1}}) RETURN COUNT(n)""")
+    fun findVisualizationsByObservatoryIdWithoutFeatured(id: ObservatoryId, unlisted: Boolean, pageable: Pageable): Page<DetailsPerResource>
 
     @Query("""MATCH (n:Resource {resource_id: {0}}) CALL apoc.path.subgraphAll(n, {relationshipFilter:'>'}) YIELD relationships UNWIND relationships as rel WITH rel AS p, startNode(rel) AS s, endNode(rel) AS o, n WHERE p.created_by <> "00000000-0000-0000-0000-000000000000" and p.created_at>=n.created_at RETURN n.resource_id AS id, (p.created_by) AS createdBy, MAX(p.created_at) AS createdAt ORDER BY createdAt""")
     fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors>

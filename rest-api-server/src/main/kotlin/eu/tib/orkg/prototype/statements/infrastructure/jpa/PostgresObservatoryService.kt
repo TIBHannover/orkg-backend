@@ -166,7 +166,7 @@ class PostgresObservatoryService(
                 "PAPER" -> resultList.addAll(resourceRepository.findPapersByObservatoryId(id, unlisted, pageable).content)
                 "COMPARISON" -> resultList.addAll(resourceRepository.findComparisonsByObservatoryId(id, unlisted, pageable).content)
                 else -> {
-                    resultList.addAll(resourceRepository.findProblemsByObservatoryId(id, unlisted, pageable).content)
+                    resultList.addAll(resourceRepository.findVisualizationsByObservatoryId(id, unlisted, pageable).content)
                 }
             }
         }
@@ -185,7 +185,7 @@ class PostgresObservatoryService(
                 "PAPER" -> resultList.addAll(resourceRepository.findPapersByObservatoryId(id, featured, unlisted, pageable).content)
                 "COMPARISON" -> resultList.addAll(resourceRepository.findComparisonsByObservatoryId(id, featured, unlisted, pageable).content)
                 else -> {
-                    resultList.addAll(resourceRepository.findProblemsByObservatoryId(id, featured, unlisted, pageable).content)
+                    resultList.addAll(resourceRepository.findVisualizationsByObservatoryId(id, featured, unlisted, pageable).content)
                 }
             }
         }

@@ -10,6 +10,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationType
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize
@@ -157,7 +158,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     }
 
     fun createTestOrganization(userId: ContributorId): OrganizationId {
-        return service.create("test organization", userId, "www.example.org", "test_organization").id!!
+        return service.create("test organization", userId, "www.example.org", "test_organization", OrganizationType.GENERAL).id!!
     }
 
     fun createTestObservatory(organizationId: OrganizationId, resourceId: String): Observatory {

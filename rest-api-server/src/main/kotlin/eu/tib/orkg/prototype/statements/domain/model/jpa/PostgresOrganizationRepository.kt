@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.jpa
 
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationType
 import java.util.Optional
 import java.util.UUID
 import org.springframework.data.jpa.repository.JpaRepository
@@ -11,4 +12,6 @@ interface PostgresOrganizationRepository : JpaRepository<OrganizationEntity, UUI
     fun findByDisplayId(name: String): Optional<OrganizationEntity>
 
     fun findByName(name: String): Optional<OrganizationEntity>
+
+    fun findByType(type: OrganizationType): List<OrganizationEntity>
 }

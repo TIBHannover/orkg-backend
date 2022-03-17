@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed caching of classes. (Closes: [#368](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/368))
 ### Added
 - Support updating selected properties of a class via PATCH. (Closes: [#368](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/369))
+- Support of different types of organizations. (Closes. [#357](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/357))
 
 ## [0.8.0] - 2022-02-03
 ### Added

@@ -62,6 +62,15 @@ fun createLiteral() = Literal(
     createdBy = ContributorId("679ad2bd-ceb3-4f26-80ec-b6eab7a5e8c1"),
 )
 
+fun createStatement(subject: Thing, `object`: Thing) = GeneralStatement(
+    id = StatementId(1),
+    subject = subject,
+    predicate = createPredicate(),
+    `object` = `object`,
+    createdAt = OffsetDateTime.now(),
+    createdBy = ContributorId("34da5516-7901-4b0d-94c5-b062082e11a7")
+)
+
 fun createStatement(subject: Thing, predicate: Predicate, `object`: Thing) = GeneralStatement(
     id = StatementId(1),
     subject = subject,

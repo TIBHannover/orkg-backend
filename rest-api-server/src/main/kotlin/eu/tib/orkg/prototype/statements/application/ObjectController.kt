@@ -84,8 +84,16 @@ class ObjectController(
         // Get provenance info
         val userId = ContributorId(authenticatedUserId())
         val contributor = contributorService.findByIdOrElseUnknown(userId)
-        val organizationId = contributor.organizationId
-        val observatoryId = contributor.observatoryId
+        val organizationId: OrganizationId
+        val observatoryId: ObservatoryId
+        // if comparisons is assigned a conference i.e, organizationId will be available and observatoryId  will not be.
+        if (request.resource.organizationId != OrganizationId.createUnknownOrganization() && request.resource.observatoryId == ObservatoryId.createUnknownObservatory()) {
+            organizationId = request.resource.organizationId
+            observatoryId = request.resource.observatoryId
+        } else {
+            organizationId = contributor.organizationId
+            observatoryId = contributor.observatoryId
+        }
 
         // Handle predicates (temp and existing)
         val predicates: HashMap<String, PredicateId> = HashMap()
@@ -423,7 +431,10 @@ data class NamedObject(
     val name: String,
     val classes: List<String>?,
     val values: HashMap<String, List<ObjectStatement>>?,
-    val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
+    val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
+    val observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
+    val organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
+
 ) {
     /**
      * Check if the object has a set

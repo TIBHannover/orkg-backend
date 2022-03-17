@@ -6,7 +6,7 @@ import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
-import java.util.Optional
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
@@ -36,14 +36,17 @@ class SpringDataNeo4jPredicateAdapter(
     }
 
     override fun save(predicate: Predicate) {
-        neo4jRepository.save(predicate.toNeo4jPredicate())
+        // Need to fetch the internal ID of a (possibly) existing entity to prevent creating a new one.
+        val internalId = neo4jRepository.findByPredicateId(predicate.id).orElse(null)?.id
+        neo4jRepository.save(predicate.toNeo4jPredicate(internalId))
     }
 
     override fun nextIdentity(): PredicateId = idGenerator.nextIdentity()
 }
 
-private fun Predicate.toNeo4jPredicate() = Neo4jPredicate(
-    predicateId = id
+private fun Predicate.toNeo4jPredicate(internalId: Long?) = Neo4jPredicate(
+    id = internalId,
+    predicateId = this@toNeo4jPredicate.id
 ).apply {
     label = this@toNeo4jPredicate.label
     createdBy = this@toNeo4jPredicate.createdBy

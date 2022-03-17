@@ -21,8 +21,11 @@ class SpringDataNeo4jResourceAdapter(
 ) : ResourceRepository {
     override fun nextIdentity(): ResourceId = neo4jResourceIdGenerator.nextIdentity()
 
-    override fun save(resource: Resource): Resource =
-        neo4jRepository.save<Neo4jResource?>(resource.toNeo4jResource()).toResource()
+    override fun save(resource: Resource): Resource {
+        // Need to fetch the internal ID of a (possibly) existing entity to prevent creating a new one.
+        val internalId = neo4jRepository.findByResourceId(resource.id).orElse(null)?.id
+        return neo4jRepository.save(resource.toNeo4jResource(internalId)).toResource()
+    }
 
     override fun delete(id: ResourceId) {
         neo4jRepository.findByResourceId(id).ifPresent {
@@ -186,7 +189,7 @@ class SpringDataNeo4jResourceAdapter(
         .map(Neo4jResource::toResource)
 }
 
-private fun Resource.toNeo4jResource() = Neo4jResource().apply {
+private fun Resource.toNeo4jResource(internalId: Long?) = Neo4jResource(internalId).apply {
     resourceId = this@toNeo4jResource.id
     label = this@toNeo4jResource.label
     createdBy = this@toNeo4jResource.createdBy

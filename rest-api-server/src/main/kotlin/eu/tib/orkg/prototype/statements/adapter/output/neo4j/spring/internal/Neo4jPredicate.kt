@@ -29,7 +29,7 @@ data class Neo4jPredicate(
     @Property("predicate_id")
     @Required
     @Convert(PredicateIdConverter::class)
-    private var predicateId: PredicateId? = null,
+    var predicateId: PredicateId? = null,
 
     @Property("created_by")
     @Convert(ContributorIdConverter::class)

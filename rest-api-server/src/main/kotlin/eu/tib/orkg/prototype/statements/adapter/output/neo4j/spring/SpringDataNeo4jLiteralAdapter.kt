@@ -1,11 +1,11 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteral
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteralIdGenerator
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteralRepository
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteral
-import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteralIdGenerator
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import java.util.*
 import org.springframework.stereotype.Component
@@ -18,7 +18,9 @@ class SpringDataNeo4jLiteralAdapter(
     override fun nextIdentity(): LiteralId = neo4jLiteralIdGenerator.nextIdentity()
 
     override fun save(literal: Literal) {
-        neo4jRepository.save(literal.toNeo4jLiteral())
+        // Need to fetch the internal ID of a (possibly) existing entity to prevent creating a new one.
+        val internalId = neo4jRepository.findByLiteralId(literal.id).orElse(null)?.id
+        neo4jRepository.save(literal.toNeo4jLiteral(internalId))
     }
 
     override fun deleteAll() {
@@ -43,7 +45,7 @@ class SpringDataNeo4jLiteralAdapter(
         neo4jRepository.findDOIByContributionId(id).map(Neo4jLiteral::toLiteral)
 }
 
-private fun Literal.toNeo4jLiteral() = Neo4jLiteral().apply {
+private fun Literal.toNeo4jLiteral(internalId: Long?) = Neo4jLiteral(internalId).apply {
     literalId = this@toNeo4jLiteral.id
     label = this@toNeo4jLiteral.label
     datatype = this@toNeo4jLiteral.datatype

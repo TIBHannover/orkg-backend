@@ -6,6 +6,9 @@ import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jPredicateRepository
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceRepository
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatement
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatementIdGenerator
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatementRepository
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
@@ -15,9 +18,6 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
-import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatement
-import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatementIdGenerator
-import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatementRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.util.*
@@ -37,13 +37,16 @@ class SpringDataNeo4jStatementAdapter(
     override fun nextIdentity(): StatementId = neo4jStatementIdGenerator.nextIdentity()
 
     override fun save(statement: GeneralStatement) {
-        neo4jRepository.save(statement.toNeo4jStatement())
+        // Need to fetch the internal ID of a (possibly) existing entity to prevent creating a new one.
+        val internalId = neo4jRepository.findByStatementId(statement.id!!).orElse(null)?.id
+        neo4jRepository.save(statement.toNeo4jStatement(internalId))
     }
 
     override fun count(): Long = neo4jRepository.count()
 
     override fun delete(statement: GeneralStatement) {
-        neo4jRepository.delete(statement.toNeo4jStatement())
+        val internalId = neo4jRepository.findByStatementId(statement.id!!).orElse(null)?.id
+        neo4jRepository.delete(statement.toNeo4jStatement(internalId))
     }
 
     override fun deleteAll() {
@@ -126,14 +129,15 @@ class SpringDataNeo4jStatementAdapter(
         createdBy = createdBy
     )
 
-    private fun GeneralStatement.toNeo4jStatement(): Neo4jStatement = Neo4jStatement().apply {
-        statementId = this@toNeo4jStatement.id
-        subject = this@toNeo4jStatement.subject.toNeo4jThing()
-        `object` = this@toNeo4jStatement.`object`.toNeo4jThing()
-        predicateId = this@toNeo4jStatement.predicate.id
-        createdBy = this@toNeo4jStatement.createdBy
-        createdAt = this@toNeo4jStatement.createdAt
-    }
+    private fun GeneralStatement.toNeo4jStatement(internalId: Long?): Neo4jStatement =
+        Neo4jStatement(id = internalId).apply {
+            statementId = this@toNeo4jStatement.id
+            subject = this@toNeo4jStatement.subject.toNeo4jThing()
+            `object` = this@toNeo4jStatement.`object`.toNeo4jThing()
+            predicateId = this@toNeo4jStatement.predicate.id
+            createdBy = this@toNeo4jStatement.createdBy
+            createdAt = this@toNeo4jStatement.createdAt
+        }
 
     private fun Thing.toNeo4jThing(): Neo4jThing =
         when (this) {

@@ -16,7 +16,11 @@ class SpringDataNeo4jClassAdapter(
     private val neo4jRepository: Neo4jClassRepository,
     private val neo4jClassIdGenerator: Neo4jClassIdGenerator,
 ) : ClassRepository {
-    override fun save(c: Class): Class = neo4jRepository.save(c.toNeo4jClass()).toClass()
+    override fun save(c: Class): Class {
+        // Need to fetch the internal ID of a (possibly) existing entity to prevent creating a new one.
+        val internalId = neo4jRepository.findByClassId(c.id).orElse(null)?.id
+        return neo4jRepository.save(c.toNeo4jClass(internalId)).toClass()
+    }
 
     override fun findAll(): Iterable<Class> = neo4jRepository.findAll().map(Neo4jClass::toClass)
 
@@ -49,7 +53,7 @@ class SpringDataNeo4jClassAdapter(
     override fun nextIdentity(): ClassId = neo4jClassIdGenerator.nextIdentity()
 }
 
-private fun Class.toNeo4jClass(): Neo4jClass = Neo4jClass().apply {
+private fun Class.toNeo4jClass(internalId: Long?): Neo4jClass = Neo4jClass(internalId).apply {
     classId = this@toNeo4jClass.id
     label = this@toNeo4jClass.label
     uri = this@toNeo4jClass.uri?.toString()

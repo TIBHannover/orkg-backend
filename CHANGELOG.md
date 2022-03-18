@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- The SPI package was missing in the list of packages for entity scanning, leading to crashes when trying to find contributors.
 
 ## [0.9.0] - 2022-03-18
 ### Fixed

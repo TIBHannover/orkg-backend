@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype
 
 import eu.tib.orkg.prototype.auth.service.OrkgUserDetailsService
 import eu.tib.orkg.prototype.auth.service.UserRepository
-import eu.tib.orkg.prototype.configuration.AuthorizationServerConfiguration
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -26,8 +25,8 @@ import org.springframework.context.annotation.Import
  * This is necessary for unit tests that use mocking to properly initialize the application context.
  * Test classes using this annotation need to also mock [UserRepository].
  */
+// Removed AuthorizationServerConfiguration class import - By Suhas (NOt sure whether we need this)
 @Import(
-    AuthorizationServerConfiguration::class,
     OrkgUserDetailsService::class
 )
 annotation class AuthorizationServerUnitTestWorkaround

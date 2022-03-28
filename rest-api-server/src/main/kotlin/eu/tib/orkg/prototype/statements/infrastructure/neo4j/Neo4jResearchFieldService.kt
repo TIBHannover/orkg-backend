@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
-import eu.tib.orkg.prototype.auth.persistence.UserEntity
+import eu.tib.orkg.prototype.auth.persistence.ORKGUserEntity
+import eu.tib.orkg.prototype.auth.service.OrkgUserRepository
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
@@ -22,7 +23,8 @@ import java.util.*
 @Transactional
 class Neo4jResearchFieldService(
     private val neo4jResearchFieldRepository: Neo4jResearchFieldRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val orkgUserRepository: OrkgUserRepository
 ) : ResearchFieldService, RetrieveResearchFieldUseCase {
 
     override fun findById(id: ResourceId): Optional<Resource> =
@@ -62,7 +64,7 @@ class Neo4jResearchFieldService(
 
     override fun getContributorsIncludingSubFields(id: ResourceId, pageable: Pageable): Page<Contributor> {
         val contributors = neo4jResearchFieldRepository.getContributorIdsFromResearchFieldAndIncludeSubfields(id, pageable).map(ContributorId::value)
-        return PageImpl(userRepository.findByIdIn(contributors.content.toTypedArray()).map(UserEntity::toContributor))
+        return PageImpl(orkgUserRepository.findUserListInOldIDOrKeycloakID(contributors.content.toTypedArray()).map(ORKGUserEntity::toContributor))
     }
 
     override fun getPapersIncludingSubFields(
@@ -104,7 +106,8 @@ class Neo4jResearchFieldService(
 
     override fun getContributorsExcludingSubFields(id: ResourceId, pageable: Pageable): Page<Contributor> {
         val contributors = neo4jResearchFieldRepository.getContributorIdsExcludingSubFields(id, pageable).map(ContributorId::value)
-        return PageImpl(userRepository.findByIdIn(contributors.content.toTypedArray()).map(UserEntity::toContributor))
+        return PageImpl(orkgUserRepository.findUserListInOldIDOrKeycloakID(contributors.content.toTypedArray()).map(
+            ORKGUserEntity::toContributor))
     }
 
     override fun getPapersExcludingSubFields(

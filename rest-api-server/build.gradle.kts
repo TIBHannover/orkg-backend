@@ -79,6 +79,19 @@ dependencies {
     implementation("io.github.config4k:config4k:0.4.2") {
         because("Required for parsing the essential entity configuration")
     }
+
+    // Keycloak
+    implementation("org.keycloak:keycloak-spring-boot-starter:13.0.0")
+    implementation("org.keycloak:keycloak-admin-client:13.0.0")
+    implementation("org.keycloak.bom:keycloak-adapter-bom:13.0.0")
+    implementation("org.keycloak:keycloak-core:13.0.0")
+    implementation("org.keycloak:keycloak-server-spi:13.0.0")
+    implementation("org.keycloak:keycloak-server-spi-private:13.0.0")
+
+    // Spring Doc
+    implementation("org.springdoc:springdoc-openapi-ui:1.5.8")
+    implementation("org.springdoc:springdoc-openapi-security:1.5.8")
+
     //
     // Testing
     //

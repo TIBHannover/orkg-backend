@@ -1,7 +1,8 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.auth.persistence.UserEntity
+import eu.tib.orkg.prototype.auth.persistence.ORKGUserEntity
+import eu.tib.orkg.prototype.auth.service.OrkgUserRepository
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
@@ -32,7 +33,8 @@ class Neo4jStatsService(
     private val neo4jStatsRepository: Neo4jStatsRepository,
     private val userRepository: UserRepository,
     private val observatoryRepository: PostgresObservatoryRepository,
-    private val organizationRepository: PostgresOrganizationRepository
+    private val organizationRepository: PostgresOrganizationRepository,
+    private val orkgUserRepository: OrkgUserRepository
 ) : StatsService {
     val internalClassLabels: (String) -> Boolean = { it !in setOf("Thing", "Resource", "AuditableEntity") }
 
@@ -130,8 +132,8 @@ class Neo4jStatsService(
 
         val userIdList = changeLogs.content.map { UUID.fromString(it.createdBy) }.toTypedArray()
 
-        val mapValues = userRepository.findByIdIn(userIdList).map(UserEntity::toContributor).groupBy(Contributor::id)
-
+        // val mapValues = userRepository.findByIdIn(userIdList).map(UserEntity::toContributor).groupBy(Contributor::id)
+        val mapValues = orkgUserRepository.findUserListInOldIDOrKeycloakID(userIdList).map(ORKGUserEntity::toContributor).groupBy(Contributor::id)
         changeLogs.forEach { changeLogResponse ->
             val contributor = mapValues[ContributorId(changeLogResponse.createdBy)]?.first()
             val filteredClasses = changeLogResponse.classes.filter(internalClassLabels)
@@ -145,8 +147,8 @@ class Neo4jStatsService(
     private fun getContributorsWithProfile(topContributors: Page<TopContributorIdentifiers>, pageable: Pageable): Page<TopContributorsWithProfile> {
         val userIdList = topContributors.content.map { UUID.fromString(it.id) }.toTypedArray()
 
-        val mapValues = userRepository.findByIdIn(userIdList).map(UserEntity::toContributor).groupBy(Contributor::id)
-
+        // val mapValues = userRepository.findByIdIn(userIdList).map(UserEntity::toContributor).groupBy(Contributor::id)
+        val mapValues = orkgUserRepository.findUserListInOldIDOrKeycloakID(userIdList).map(ORKGUserEntity::toContributor).groupBy(Contributor::id)
         val refinedTopContributors =
             topContributors.content.map { topContributor ->
                 val contributor = mapValues[ContributorId(topContributor.id)]?.first()
@@ -159,8 +161,8 @@ class Neo4jStatsService(
     private fun getContributorsWithProfileAndTotalCount(topContributors: List<OverallContributions>): List<TopContributorsWithProfileAndTotalCount> {
         val userIdList = topContributors.map { UUID.fromString(it.id) }.toTypedArray()
 
-        val mapValues = userRepository.findByIdIn(userIdList).map(UserEntity::toContributor).groupBy(Contributor::id)
-
+        // val mapValues = userRepository.findByIdIn(userIdList).map(UserEntity::toContributor).groupBy(Contributor::id)
+        val mapValues = orkgUserRepository.findUserListInOldIDOrKeycloakID(userIdList).map(ORKGUserEntity::toContributor).groupBy(Contributor::id)
         return topContributors.map { topContributor ->
             val contributor = mapValues[topContributor.id?.let { ContributorId(it) }]?.first()
             TopContributorsWithProfileAndTotalCount(

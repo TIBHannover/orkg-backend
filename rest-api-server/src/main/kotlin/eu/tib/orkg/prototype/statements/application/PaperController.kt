@@ -16,6 +16,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -26,6 +27,7 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/papers/")
+@CrossOrigin(origins = arrayOf("*"), allowedHeaders = arrayOf("*"))
 class PaperController(
     private val resourceService: ResourceUseCases,
     private val literalService: LiteralUseCases,

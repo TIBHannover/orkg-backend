@@ -118,7 +118,7 @@ data class Neo4jResource(
             label!!,
             createdAt,
             classes,
-            objectOf.size,
+            shared = objectOf.size,
             createdBy = createdBy,
             observatoryId = observatoryId,
             extractionMethod = extractionMethod,

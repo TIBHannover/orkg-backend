@@ -20,7 +20,7 @@ class SpringDataNeo4jLiteralAdapter(
     override fun save(literal: Literal) {
         // Need to fetch the internal ID of a (possibly) existing entity to prevent creating a new one.
         val internalId = neo4jRepository.findByLiteralId(literal.id).orElse(null)?.id
-        neo4jRepository.save(literal.toNeo4jLiteral(internalId))
+        neo4jRepository.save(literal.toNeo4jLiteral())
     }
 
     override fun deleteAll() {
@@ -43,12 +43,13 @@ class SpringDataNeo4jLiteralAdapter(
 
     override fun findDOIByContributionId(id: ResourceId): Optional<Literal> =
         neo4jRepository.findDOIByContributionId(id).map(Neo4jLiteral::toLiteral)
-}
 
-private fun Literal.toNeo4jLiteral(internalId: Long?) = Neo4jLiteral(internalId).apply {
-    literalId = this@toNeo4jLiteral.id
-    label = this@toNeo4jLiteral.label
-    datatype = this@toNeo4jLiteral.datatype
-    createdBy = this@toNeo4jLiteral.createdBy
-    createdBy = this@toNeo4jLiteral.createdBy
+    private fun Literal.toNeo4jLiteral() =
+        neo4jRepository.findByLiteralId(id).orElse(Neo4jLiteral()).apply {
+            literalId = this@toNeo4jLiteral.id
+            label = this@toNeo4jLiteral.label
+            datatype = this@toNeo4jLiteral.datatype
+            createdBy = this@toNeo4jLiteral.createdBy
+            createdBy = this@toNeo4jLiteral.createdBy
+        }
 }

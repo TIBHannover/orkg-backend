@@ -7,12 +7,16 @@ import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.transaction.annotation.Isolation
+import org.springframework.transaction.annotation.Transactional
 
 interface StatementRepository {
     // legacy methods:
     fun nextIdentity(): StatementId
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     fun save(statement: GeneralStatement)
     fun count(): Long
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     fun delete(statement: GeneralStatement)
     fun deleteAll()
     fun findAll(depth: Int): Iterable<GeneralStatement>

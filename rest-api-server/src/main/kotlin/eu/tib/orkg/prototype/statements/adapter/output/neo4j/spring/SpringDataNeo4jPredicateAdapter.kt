@@ -36,19 +36,16 @@ class SpringDataNeo4jPredicateAdapter(
     }
 
     override fun save(predicate: Predicate) {
-        // Need to fetch the internal ID of a (possibly) existing entity to prevent creating a new one.
-        val internalId = neo4jRepository.findByPredicateId(predicate.id).orElse(null)?.id
-        neo4jRepository.save(predicate.toNeo4jPredicate(internalId))
+        neo4jRepository.save(predicate.toNeo4jPredicate())
     }
 
     override fun nextIdentity(): PredicateId = idGenerator.nextIdentity()
-}
 
-private fun Predicate.toNeo4jPredicate(internalId: Long?) = Neo4jPredicate(
-    id = internalId,
-    predicateId = this@toNeo4jPredicate.id
-).apply {
-    label = this@toNeo4jPredicate.label
-    createdBy = this@toNeo4jPredicate.createdBy
-    createdAt = this@toNeo4jPredicate.createdAt
+    private fun Predicate.toNeo4jPredicate() =
+        neo4jRepository.findByPredicateId(id).orElse(Neo4jPredicate()).apply {
+            predicateId = this@toNeo4jPredicate.id
+            label = this@toNeo4jPredicate.label
+            createdBy = this@toNeo4jPredicate.createdBy
+            createdAt = this@toNeo4jPredicate.createdAt
+        }
 }

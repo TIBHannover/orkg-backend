@@ -21,11 +21,7 @@ class SpringDataNeo4jResourceAdapter(
 ) : ResourceRepository {
     override fun nextIdentity(): ResourceId = neo4jResourceIdGenerator.nextIdentity()
 
-    override fun save(resource: Resource): Resource {
-        // Need to fetch the internal ID of a (possibly) existing entity to prevent creating a new one.
-        val internalId = neo4jRepository.findByResourceId(resource.id).orElse(null)?.id
-        return neo4jRepository.save(resource.toNeo4jResource(internalId)).toResource()
-    }
+    override fun save(resource: Resource): Resource = neo4jRepository.save(resource.toNeo4jResource()).toResource()
 
     override fun delete(id: ResourceId) {
         neo4jRepository.findByResourceId(id).ifPresent {
@@ -187,18 +183,20 @@ class SpringDataNeo4jResourceAdapter(
         pageable: Pageable
     ): Page<Resource> = neo4jRepository.findAllFeaturedResourcesByClass(classes, featured, unlisted, pageable)
         .map(Neo4jResource::toResource)
-}
 
-private fun Resource.toNeo4jResource(internalId: Long?) = Neo4jResource(internalId).apply {
-    resourceId = this@toNeo4jResource.id
-    label = this@toNeo4jResource.label
-    createdBy = this@toNeo4jResource.createdBy
-    createdAt = this@toNeo4jResource.createdAt
-    observatoryId = this@toNeo4jResource.observatoryId
-    extractionMethod = this@toNeo4jResource.extractionMethod
-    verified = this@toNeo4jResource.verified
-    featured = this@toNeo4jResource.featured
-    unlisted = this@toNeo4jResource.unlisted
-    organizationId = this@toNeo4jResource.organizationId
-    classes = this@toNeo4jResource.classes
+    private fun Resource.toNeo4jResource() =
+        // We need to fetch the original resource, so "resources" is set properly.
+        neo4jRepository.findByResourceId(id!!).orElse(Neo4jResource()).apply {
+            resourceId = this@toNeo4jResource.id
+            label = this@toNeo4jResource.label
+            createdBy = this@toNeo4jResource.createdBy
+            createdAt = this@toNeo4jResource.createdAt
+            observatoryId = this@toNeo4jResource.observatoryId
+            extractionMethod = this@toNeo4jResource.extractionMethod
+            verified = this@toNeo4jResource.verified
+            featured = this@toNeo4jResource.featured
+            unlisted = this@toNeo4jResource.unlisted
+            organizationId = this@toNeo4jResource.organizationId
+            classes = this@toNeo4jResource.classes
+        }
 }

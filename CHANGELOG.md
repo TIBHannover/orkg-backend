@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed issue that lead to data corruption when saving statements.
 - Labels are allowed to be empty again, as they were before. (Closes: [#372](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/372))
+### Added
+- Handling resource types dynamically while publishing them with DOI. (Closes: [#322](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/322))
 
 ## [0.9.1] - 2022-03-18
 ### Fixed

@@ -9,4 +9,4 @@ value class Label private constructor(override val value: String) : Value<String
     companion object : StringValueFactory<Label>(::Label, isValidLabel)
 }
 
-private val isValidLabel: Validation<String> = { it.isNotBlank().and(it.contains("\n").not()) }
+private val isValidLabel: Validation<String> = { it.isEmpty().or(it.isNotBlank().and(it.contains("\n").not())) }

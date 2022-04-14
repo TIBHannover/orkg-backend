@@ -70,11 +70,13 @@ class PostgresOrganizationService(
         if (organization.type != entity.type)
             entity.type = organization.type
 
-        if (organization.metadata?.date != entity.metadata?.date)
-            entity.metadata?.date = organization.metadata?.date
-
-        if (organization.metadata?.isDoubleBlind != entity.metadata?.isDoubleBlind)
-            entity.metadata?.isDoubleBlind = organization.metadata?.isDoubleBlind
+        if (entity.type == OrganizationType.CONFERENCE && (organization.metadata?.date != entity.metadata?.date || organization.metadata?.isDoubleBlind != entity.metadata?.isDoubleBlind)) {
+            entity.metadata = ConferenceMetadataEntity().apply {
+                id = organization.id.value
+                date = organization.metadata?.date
+                isDoubleBlind = if (organization.metadata?.isDoubleBlind != null) organization.metadata?.isDoubleBlind else false
+            }
+        }
 
         return postgresOrganizationRepository.save(entity).toOrganization()
     }

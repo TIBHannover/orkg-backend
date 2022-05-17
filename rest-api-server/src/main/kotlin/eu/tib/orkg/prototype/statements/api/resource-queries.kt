@@ -49,6 +49,7 @@ interface RetrieveResourceUseCase {
     fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors>
     fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Resource>
     fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource>
+    fun findResourcesByObservatoryIdAndClass(id: ObservatoryId, classes: List<String>, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<Resource>
     fun getResourcesByClasses(
         classes: List<String>,
         featured: Boolean?,

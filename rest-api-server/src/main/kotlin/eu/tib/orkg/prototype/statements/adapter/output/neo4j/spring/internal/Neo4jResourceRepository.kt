@@ -190,4 +190,12 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     @Query(value = """MATCH (node:`Resource`) WHERE (ANY(c in {0} WHERE c IN labels(node)) AND node.featured={1} AND node.unlisted={2})  WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
         countQuery = """MATCH (node:`Resource`) WHERE (ANY(c in {0} WHERE c IN labels(node)) AND node.featured={1} AND node.unlisted={2}) WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllFeaturedResourcesByClass(classes: List<String>, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Neo4jResource>
+
+    @Query(value = """MATCH (node:`Resource`) WHERE (ANY(c in {1} WHERE c IN labels(node))) AND node.observatory_id={0} AND node.featured={2} AND node.unlisted={3}  WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
+        countQuery = """MATCH (node:`Resource`) WHERE (ANY(c in {1} WHERE c IN labels(node))) AND node.observatory_id={0} AND node.featured={2} AND node.unlisted={3} WITH COUNT(node) as cnt RETURN cnt""")
+    fun findAllFeaturedResourcesByObservatoryIdAndClass(id: ObservatoryId, classes: List<String>, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Neo4jResource>
+
+    @Query(value = """MATCH (node:`Resource`) WHERE (ANY(c in {1} WHERE c IN labels(node))) AND node.observatory_id={0} AND node.unlisted={2} WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
+        countQuery = """MATCH (node:`Resource`) WHERE (ANY(c in {1} WHERE c IN labels(node))) AND node.observatory_id={0} AND node.unlisted={2}  WITH COUNT(node) as cnt RETURN cnt""")
+    fun findAllResourcesByObservatoryIdAndClass(id: ObservatoryId, classes: List<String>, unlisted: Boolean, pageable: Pageable): Page<Neo4jResource>
 }

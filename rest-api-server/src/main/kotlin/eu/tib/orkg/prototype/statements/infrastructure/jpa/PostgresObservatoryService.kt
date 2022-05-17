@@ -115,6 +115,28 @@ class PostgresObservatoryService(
         return expand(response)
     }
 
+    override fun updateOrganization(id: ObservatoryId, organizationId: OrganizationId): Observatory {
+        val org = postgresOrganizationRepository
+            .findById(organizationId.value)
+            .orElseThrow { OrganizationNotFound(organizationId) }
+        val entity = postgresObservatoryRepository.findById(id.value).get()
+        entity.organizations?.add(org)
+
+        val response = postgresObservatoryRepository.save(entity).toObservatory()
+        return expand(response)
+    }
+
+    override fun deleteOrganization(id: ObservatoryId, organizationId: OrganizationId): Observatory {
+        val org = postgresOrganizationRepository
+            .findById(organizationId.value)
+            .orElseThrow { OrganizationNotFound(organizationId) }
+        val entity = postgresObservatoryRepository.findById(id.value).get()
+        entity.organizations?.remove(org)
+
+        val response = postgresObservatoryRepository.save(entity).toObservatory()
+        return expand(response)
+    }
+
     fun hasResearchField(response: Observatory): Boolean {
         return response.researchField?.id !== null
     }

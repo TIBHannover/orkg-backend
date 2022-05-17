@@ -4,17 +4,23 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.auth.persistence.RoleEntity
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.UserNotFound
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import java.security.Principal
 import java.util.UUID
 import javax.validation.Valid
+import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
@@ -97,6 +103,25 @@ class UserController(
         return ResponseEntity(NOT_FOUND)
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PutMapping("/observatory")
+    fun updateUserObservatory(@RequestBody @Valid userObservatory: UserObservatoryRequest): ResponseEntity<Any> {
+        val user = userService.findByEmail(userObservatory.userEmail).orElseThrow { throw RuntimeException("No user with email ${userObservatory.userEmail}") }
+        return if (ObservatoryId(user.observatoryId!!) == userObservatory.observatoryId && OrganizationId(user.organizationId!!) == userObservatory.organizationId) {
+            ResponseEntity.badRequest().body(
+                ErrorMessage(message = "User is already a member of an observatory")
+            )
+        } else {
+            ok(userService.addUserObservatory(userObservatory, user).toContributor())
+        }
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @DeleteMapping("{id}/observatory")
+    fun deleteUserObservatory(@PathVariable id: ContributorId) {
+        userService.deleteUserObservatory(id.value)
+    }
+
     /**
      * Decorator for user data.
      * This class prevents user data from leaking by only exposing data that is relevant to the client.
@@ -157,4 +182,19 @@ class UserController(
     ) {
         fun hasMatchingPasswords() = newPassword == newMatchingPassword
     }
+
+    data class UserObservatoryRequest(
+        @field:Email
+        @field:NotBlank
+        @JsonProperty("user_email")
+        val userEmail: String,
+        @JsonProperty("observatory_id")
+        val observatoryId: ObservatoryId,
+        @JsonProperty("organization_id")
+        val organizationId: OrganizationId
+    )
+
+    data class ErrorMessage(
+        val message: String
+    )
 }

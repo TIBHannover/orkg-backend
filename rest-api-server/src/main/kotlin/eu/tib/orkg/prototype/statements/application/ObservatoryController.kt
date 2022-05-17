@@ -17,6 +17,7 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -129,6 +130,26 @@ class ObservatoryController(
         return service.changeResearchField(id, researchFieldId.value)
     }
 
+    @RequestMapping("add/{id}/organization", method = [RequestMethod.POST, RequestMethod.PUT])
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    fun updateObservatoryOrganization(@PathVariable id: ObservatoryId, @RequestBody organizationRequest: UpdateOrganizationRequest): Observatory {
+        service
+            .findById(id)
+            .orElseThrow { ObservatoryNotFound(id) }
+
+        return service.updateOrganization(id, organizationRequest.organizationId)
+    }
+
+    @RequestMapping("delete/{id}/organization", method = [RequestMethod.POST, RequestMethod.PUT])
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    fun deleteObservatoryOrganization(@PathVariable id: ObservatoryId, @RequestBody organizationRequest: UpdateOrganizationRequest): Observatory {
+        service
+            .findById(id)
+            .orElseThrow { ObservatoryNotFound(id) }
+
+        return service.deleteOrganization(id, organizationRequest.organizationId)
+    }
+
     @GetMapping("stats/observatories")
     fun findObservatoriesWithStats(): List<ObservatoryResources> {
         return neo4jStatsService.getObservatoriesPapersAndComparisonsCount()
@@ -163,6 +184,11 @@ class ObservatoryController(
         @field:NotBlank
         @field:Size(min = 1)
         val value: String
+    )
+
+    data class UpdateOrganizationRequest(
+        @JsonProperty("organization_id")
+        val organizationId: OrganizationId
     )
 
     data class ErrorMessage(

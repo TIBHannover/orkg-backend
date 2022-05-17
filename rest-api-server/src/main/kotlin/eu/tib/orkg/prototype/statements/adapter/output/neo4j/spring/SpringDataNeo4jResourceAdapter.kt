@@ -184,6 +184,21 @@ class SpringDataNeo4jResourceAdapter(
     ): Page<Resource> = neo4jRepository.findAllFeaturedResourcesByClass(classes, featured, unlisted, pageable)
         .map(Neo4jResource::toResource)
 
+    override fun findAllFeaturedResourcesByObservatoryIDAndClass(
+        id: ObservatoryId,
+        classes: List<String>,
+        featured: Boolean,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<Resource> = neo4jRepository.findAllFeaturedResourcesByObservatoryIdAndClass(id, classes, featured, unlisted, pageable).map(Neo4jResource::toResource)
+
+    override fun findAllResourcesByObservatoryIDAndClass(
+        id: ObservatoryId,
+        classes: List<String>,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<Resource> = neo4jRepository.findAllResourcesByObservatoryIdAndClass(id, classes, unlisted, pageable).map(Neo4jResource::toResource)
+
     private fun Resource.toNeo4jResource() =
         // We need to fetch the original resource, so "resources" is set properly.
         neo4jRepository.findByResourceId(id!!).orElse(Neo4jResource()).apply {

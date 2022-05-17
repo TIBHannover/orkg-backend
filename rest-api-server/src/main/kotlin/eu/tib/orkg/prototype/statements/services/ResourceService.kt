@@ -186,6 +186,19 @@ class ResourceService(
     override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
         repository.findProblemsByObservatoryId(id)
 
+    override fun findResourcesByObservatoryIdAndClass(
+        id: ObservatoryId,
+        classes: List<String>,
+        featured: Boolean?,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<Resource> {
+        if (featured != null) {
+            return repository.findAllFeaturedResourcesByObservatoryIDAndClass(id, classes, featured, unlisted, pageable)
+        }
+        return repository.findAllResourcesByObservatoryIDAndClass(id, classes, unlisted, pageable)
+    }
+
     override fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors> =
         repository.findContributorsByResourceId(id)
 

@@ -51,7 +51,7 @@ class Neo4jStatsService(
         val templatesCount = extractValue(labels, "ContributionTemplate")
         val smartReviewsCount = extractValue(labels, "SmartReview")
         val extraCounts = extra?.associate { it to extractValue(labels, it) }
-        val fieldsCount = neo4jStatsRepository.getResearchFieldsCount()
+        val fieldsCount = extractValue(labels, "ResearchField")
         val relationsTypes = metadata.first()["relTypesCount"] as Map<*, *>
         val statementsCount = extractValue(relationsTypes, "RELATED")
         val userCount = userRepository.count()

@@ -10,7 +10,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import java.security.Principal
-import java.util.UUID
+import java.util.*
 import javax.validation.Valid
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
@@ -107,7 +107,8 @@ class UserController(
     @PutMapping("/observatory")
     fun updateUserObservatory(@RequestBody @Valid userObservatory: UserObservatoryRequest): ResponseEntity<Any> {
         val user = userService.findByEmail(userObservatory.userEmail).orElseThrow { throw RuntimeException("No user with email ${userObservatory.userEmail}") }
-        return if (ObservatoryId(user.observatoryId!!) == userObservatory.observatoryId && OrganizationId(user.organizationId!!) == userObservatory.organizationId) {
+        return if (user.observatoryId != null && ObservatoryId(user.observatoryId!!) == userObservatory.observatoryId &&
+            user.organizationId != null && OrganizationId(user.organizationId!!) == userObservatory.organizationId) {
             ResponseEntity.badRequest().body(
                 ErrorMessage(message = "User is already a member of an observatory")
             )

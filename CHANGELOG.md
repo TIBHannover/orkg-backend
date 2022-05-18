@@ -8,9 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Fixed issue with the statistics page for counting the number of research fields. (Closes: [#337](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/337))
-
 ### Added
-- Support for adding users and organizations in observatories. (Closes: [#315](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/294))
+- Support for adding users and organizations in observatories. (Closes: [#294](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/294))
 
 ## [0.10.1] - 2022-04-14
 ### Fixed

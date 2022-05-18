@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed issue with the statistics page for counting the number of research fields. (Closes: [#337](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/337))
 ### Added
 - Support for adding users and organizations in observatories. (Closes: [#294](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/294))
+### Changed
+- The "development" profile is no longer the default profile when running the application. However, the `bootRun` target now loads the "development" profile to be compatible with the old behavior.
 
 ## [0.10.1] - 2022-04-14
 ### Fixed

@@ -1,5 +1,6 @@
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.springframework.boot.gradle.tasks.run.BootRun
 
 group = "eu.tib"
 version = "0.10.2-SNAPSHOT"
@@ -121,8 +122,8 @@ tasks {
         archiveClassifier.set("boot")
     }
 
-    named("jar", Jar::class) {
-        enabled = true
+    named("bootRun", BootRun::class.java) {
+        args("--spring.profiles.active=development")
     }
 
     named("dokka", org.jetbrains.dokka.gradle.DokkaTask::class) {

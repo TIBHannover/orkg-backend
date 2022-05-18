@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
 
 interface StatementRepository {
+    fun findAll(): Sequence<GeneralStatement>
     // legacy methods:
     fun nextIdentity(): StatementId
     @Transactional(isolation = Isolation.SERIALIZABLE)

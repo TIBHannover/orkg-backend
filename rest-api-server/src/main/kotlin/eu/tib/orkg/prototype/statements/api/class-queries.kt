@@ -7,9 +7,9 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface RetrieveClassUseCase {
+    fun findAll(): Sequence<Class>
     // legacy methods:
     fun exists(id: ClassId): Boolean
-    fun findAll(): Iterable<Class>
     fun findAll(pageable: Pageable): Page<Class>
     fun findById(id: ClassId): Optional<Class>
     fun findAllByLabel(label: String): Iterable<Class>

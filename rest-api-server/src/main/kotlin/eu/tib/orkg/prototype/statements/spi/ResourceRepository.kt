@@ -10,12 +10,13 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.QueryResult
 
 interface ResourceRepository {
+    fun findAll(): Sequence<Resource>
+
     // legacy methods:
     fun nextIdentity(): ResourceId
     fun save(resource: Resource): Resource
     fun delete(id: ResourceId)
     fun deleteAll()
-    fun findAll(): Iterable<Resource>
     fun findAll(pageable: Pageable): Page<Resource>
     fun findByResourceId(id: ResourceId?): Optional<Resource>
     fun findAllByLabel(label: String, pageable: Pageable): Page<Resource>
@@ -25,8 +26,10 @@ interface ResourceRepository {
     fun findAllByClassAndCreatedBy(`class`: String, createdBy: ContributorId, pageable: Pageable): Page<Resource>
     fun findAllByClassAndLabel(`class`: String, label: String, pageable: Pageable): Page<Resource>
     fun findAllByClassAndLabelAndCreatedBy(`class`: String, label: String, createdBy: ContributorId, pageable: Pageable): Page<Resource>
+
     fun findAllByClassAndLabelContaining(`class`: String, label: String, pageable: Pageable): Page<Resource>
     fun findAllByClassAndLabelContainingAndCreatedBy(`class`: String, label: String, createdBy: ContributorId, pageable: Pageable): Page<Resource>
+
     fun findAllExcludingClass(classes: List<String>, pageable: Pageable): Page<Resource>
     fun findAllExcludingClassByLabel(classes: List<String>, label: String, pageable: Pageable): Page<Resource>
     fun findAllExcludingClassByLabelContaining(classes: List<String>, label: String, pageable: Pageable): Page<Resource>

@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import java.util.*
+import kotlin.streams.asSequence
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
@@ -16,6 +17,9 @@ class SpringDataNeo4jPredicateAdapter(
     private val neo4jRepository: Neo4jPredicateRepository,
     private val idGenerator: Neo4jPredicateIdGenerator
 ) : PredicateRepository {
+    override fun findAll(): Sequence<Predicate> =
+        neo4jRepository.findAllBy().asSequence().map(Neo4jPredicate::toPredicate)
+
     override fun findAll(pageable: Pageable): Page<Predicate> =
         neo4jRepository.findAll(pageable).map(Neo4jPredicate::toPredicate)
 

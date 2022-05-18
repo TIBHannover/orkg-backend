@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.escapeLiterals
 import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -70,32 +69,22 @@ data class Neo4jClass(
         return clazz
     }
 
-    fun toNTriple(): String {
-        val cPrefix = RdfConstants.CLASS_NS
-        val sb = StringBuilder()
-        sb.append("<$cPrefix$classId> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .\n")
-        if (uri != null && !uri.isNullOrEmpty())
-            sb.append("<$cPrefix$classId> <http://www.w3.org/2002/07/owl#equivalentClass> <$uri> .\n")
-        sb.append("<$cPrefix$classId> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label!!)}\"^^<http://www.w3.org/2001/XMLSchema#string> .")
-        return sb.toString()
-    }
-
-    fun toRdfModel(): Model {
-        var builder = ModelBuilder()
-            .setNamespace("c", RdfConstants.CLASS_NS)
-            .setNamespace(RDF.NS)
-            .setNamespace(RDFS.NS)
-            .setNamespace(OWL.NS)
-            .subject("c:$classId")
-            .add(RDFS.LABEL, label)
-            .add(RDF.TYPE, "owl:Class")
-        if (uri != null)
-            builder = builder.add(OWL.EQUIVALENTCLASS, uri)
-        return builder.build()
-    }
-
     override val thingId: String?
         get() = classId?.value
 
     override fun toThing() = toClass()
+}
+
+fun Neo4jClass.toRdfModel(): Model {
+    var builder = ModelBuilder()
+        .setNamespace("c", RdfConstants.CLASS_NS)
+        .setNamespace(RDF.NS)
+        .setNamespace(RDFS.NS)
+        .setNamespace(OWL.NS)
+        .subject("c:$classId")
+        .add(RDFS.LABEL, label)
+        .add(RDF.TYPE, "owl:Class")
+    if (uri != null)
+        builder = builder.add(OWL.EQUIVALENTCLASS, uri)
+    return builder.build()
 }

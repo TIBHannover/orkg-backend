@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import java.util.*
+import java.util.stream.Stream
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.Query
@@ -55,6 +56,8 @@ private const val MATCH_LISTED_PAPER =
 
 interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     override fun findAll(): Iterable<Neo4jResource>
+
+    fun findAllBy(): Stream<Neo4jResource>
 
     fun findByResourceId(id: ResourceId?): Optional<Neo4jResource>
 

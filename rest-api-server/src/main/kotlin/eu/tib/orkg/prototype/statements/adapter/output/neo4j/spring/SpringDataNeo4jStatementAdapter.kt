@@ -21,6 +21,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.util.*
+import kotlin.streams.asSequence
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
@@ -49,6 +50,9 @@ class SpringDataNeo4jStatementAdapter(
     override fun deleteAll() {
         neo4jRepository.deleteAll()
     }
+
+    override fun findAll(): Sequence<GeneralStatement> =
+        neo4jRepository.findAllBy().asSequence().map { it.toStatement() }
 
     override fun findAll(depth: Int): Iterable<GeneralStatement> =
         neo4jRepository.findAll(depth).map { it.toStatement() }

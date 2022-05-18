@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.escapeLiterals
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -15,7 +14,6 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.OrganizationIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.AuditableEntity
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
-import java.lang.StringBuilder
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
 import org.eclipse.rdf4j.model.vocabulary.RDF
@@ -139,34 +137,24 @@ data class Neo4jResource(
      * Assign a class to this `Resource` node.
      */
     fun assignTo(clazz: String) = labels.add(clazz)
+}
 
-    fun toNTriple(): String {
-        val cPrefix = RdfConstants.CLASS_NS
-        val rPrefix = RdfConstants.RESOURCE_NS
-        val sb = StringBuilder()
-        sb.append("<$rPrefix$resourceId> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Resource> .\n")
-        classes.forEach { sb.append("<$rPrefix$resourceId> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <$cPrefix${it.value}> .\n") }
-        sb.append("<$rPrefix$resourceId> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label!!)}\"^^<http://www.w3.org/2001/XMLSchema#string> .")
-        return sb.toString()
+fun Neo4jResource.toRdfModel(): Model {
+    var builder = ModelBuilder()
+        .setNamespace("r", RdfConstants.RESOURCE_NS)
+        .setNamespace("p", RdfConstants.PREDICATE_NS)
+        .setNamespace("c", RdfConstants.CLASS_NS)
+        .setNamespace(RDF.NS)
+        .setNamespace(RDFS.NS)
+    builder = builder.subject("r:$resourceId")
+        .add(RDFS.LABEL, label)
+        .add(RDF.TYPE, "c:Resource")
+    classes.forEach { builder = builder.add(RDF.TYPE, "c:${it.value}") }
+    resources.forEach {
+        builder = if (it.`object` is Neo4jLiteral)
+            builder.add("p:${it.predicateId}", "\"${it.`object`!!.label}\"")
+        else
+            builder.add("p:${it.predicateId}", "r:${it.`object`!!.thingId}")
     }
-
-    fun toRdfModel(): Model {
-        var builder = ModelBuilder()
-            .setNamespace("r", RdfConstants.RESOURCE_NS)
-            .setNamespace("p", RdfConstants.PREDICATE_NS)
-            .setNamespace("c", RdfConstants.CLASS_NS)
-            .setNamespace(RDF.NS)
-            .setNamespace(RDFS.NS)
-        builder = builder.subject("r:$resourceId")
-            .add(RDFS.LABEL, label)
-            .add(RDF.TYPE, "c:Resource")
-        classes.forEach { builder = builder.add(RDF.TYPE, "c:${it.value}") }
-        resources.forEach {
-            builder = if (it.`object` is Neo4jLiteral)
-                builder.add("p:${it.predicateId}", "\"${it.`object`!!.label}\"")
-            else
-                builder.add("p:${it.predicateId}", "r:${it.`object`!!.thingId}")
-        }
-        return builder.build()
-    }
+    return builder.build()
 }

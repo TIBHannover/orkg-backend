@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody
 
 @RestController
 @RequestMapping("/api/rdf")
@@ -20,14 +21,12 @@ class RdfController(
     private val predicateController: PredicateController,
     private val classController: ClassController
 ) {
-    @GetMapping("/dump",
-        produces = ["application/n-triples"]
-    )
-    fun dumpToRdf(): ResponseEntity<String> {
-        return ResponseEntity.ok()
-            .header("Content-Disposition", "attachment; filename=\"dump.nt\"")
-            .body(rdfService.dumpToNTriple())
-    }
+    @GetMapping("/dump", produces = ["application/n-triples"])
+    fun dumpToRdf(): ResponseEntity<StreamingResponseBody> =
+        ResponseEntity.ok().header("Content-Disposition", "attachment; filename=\"dump.nt\"")
+            .body(StreamingResponseBody { outputStream ->
+                rdfService.dumpToNTriple(outputStream)
+            })
 
     @GetMapping("/hints")
     fun getHints(

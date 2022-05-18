@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import java.util.*
+import kotlin.streams.asSequence
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
@@ -18,7 +19,7 @@ class SpringDataNeo4jClassAdapter(
 ) : ClassRepository {
     override fun save(c: Class): Class = neo4jRepository.save(c.toNeo4jClass()).toClass()
 
-    override fun findAll(): Iterable<Class> = neo4jRepository.findAll().map(Neo4jClass::toClass)
+    override fun findAll(): Sequence<Class> = neo4jRepository.findAllBy().asSequence().map(Neo4jClass::toClass)
 
     override fun findAll(pageable: Pageable): Page<Class> = neo4jRepository.findAll(pageable).map(Neo4jClass::toClass)
 

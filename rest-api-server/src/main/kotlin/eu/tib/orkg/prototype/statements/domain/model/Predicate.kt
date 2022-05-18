@@ -32,7 +32,7 @@ fun Predicate.toNTriple(): String {
     val cPrefix = RdfConstants.CLASS_NS
     val pPrefix = RdfConstants.PREDICATE_NS
     return "<$pPrefix$id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Predicate> .\n" +
-        "<$pPrefix$id> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label)}\"^^<http://www.w3.org/2001/XMLSchema#string> ."
+        "<$pPrefix$id> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label)}\"^^<http://www.w3.org/2001/XMLSchema#string> .\n"
 }
 
 fun Predicate.toRdfModel(): Model {

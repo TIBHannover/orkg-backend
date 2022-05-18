@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface PredicateRepository {
+    fun findAll(): Sequence<Predicate>
     // legacy methods:
     fun findAll(pageable: Pageable): Page<Predicate>
     fun findAllByLabel(label: String, pageable: Pageable): Page<Predicate>

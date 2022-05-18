@@ -2,12 +2,14 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import java.util.*
+import java.util.stream.Stream
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
 interface Neo4jClassRepository : Neo4jRepository<Neo4jClass, Long> {
-    override fun findAll(): Iterable<Neo4jClass>
+    // The function name is a bit odd, but findAll() conflicts with pre-defined methods. This is documented to work.
+    fun findAllBy(): Stream<Neo4jClass>
 
     fun findByClassId(id: ClassId?): Optional<Neo4jClass>
 

@@ -102,20 +102,30 @@ class PaperController(
         userId: ContributorId
     ): Resource {
         return if (mergeIfExists) {
-            val byTitle = resourceService.findAllByTitle(request.paper.title)
-            var found: Resource? = null
-            if (byTitle.count() != 0) {
-                found = if (request.paper.hasDOI()) {
-                    // filter on both DOI an title
-                    byTitle.intersect(resourceService.findAllByDOI(request.paper.doi!!)).firstOrNull()
-                } else {
-                    byTitle.firstOrNull()
-                }
-            }
-            found ?: createNewPaperWithMetadata(userId, request)
+            mergePapersIfPossible(userId, request)
         } else {
             createNewPaperWithMetadata(userId, request)
         }
+    }
+
+    /**
+     * Handles the merging logic by looking up papers by title and DOI
+     * otherwise it creates a new paper
+     */
+    private fun mergePapersIfPossible(
+        userId: ContributorId,
+        request: CreatePaperRequest
+    ): Resource {
+        // Do this in a sequential order, first check for DOI and then title, otherwise we create a new paper
+        if (request.paper.hasDOI()) {
+            val byDOI = resourceService.findAllByDOI(request.paper.doi!!)
+            if (byDOI.count() > 0)
+                return byDOI.first()
+        }
+        val byTitle = resourceService.findAllByTitle(request.paper.title)
+        if (byTitle.count() > 0)
+            return byTitle.first()
+        return createNewPaperWithMetadata(userId, request)
     }
 
     /**
@@ -333,19 +343,19 @@ data class Paper(
      * Check if the paper has a published in venue
      */
     fun hasPublishedIn(): Boolean =
-        publishedIn?.isNotEmpty() != null
+        publishedIn?.isNotEmpty() == true
 
     /**
      * Check if the paper has a DOI
      */
     fun hasDOI(): Boolean =
-        doi?.isNotEmpty() != null
+        doi?.isNotEmpty() == true
 
     /**
      * Check if the paper has a URL
      */
     fun hasUrl(): Boolean =
-        url?.isNotEmpty() != null
+        url?.isNotEmpty() == true
 
     /**
      * Check if the paper has contributions

@@ -11,6 +11,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.services.PredicateService
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -45,12 +46,23 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
     @Autowired
     private lateinit var userService: UserService
 
+    @BeforeEach
+    fun setup() {
+        predicateService.removeAll()
+        resourceService.removeAll()
+        classService.removeAll()
+
+        classService.create(CreateClassRequest(ClassId("Problem"), "Problem", null))
+        classService.create(CreateClassRequest(ClassId("Contribution"), "Contribution", null))
+        predicateService.create(CreatePredicateRequest(PredicateId("P32"), "addresses"))
+    }
+
     @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun getUsersPerProblem() {
-        val problemClassId = classService.create(CreateClassRequest(ClassId("Problem"), "Problem", null)).id!!
-        val contributionClassId = classService.create(CreateClassRequest(ClassId("Contribution"), "Contribution", null)).id!!
-        val predicate = predicateService.create(CreatePredicateRequest(PredicateId("P32"), "addresses")).id!!
+        val problemClassId = ClassId("Problem")
+        val contributionClassId = ClassId("Contribution")
+        val predicate = PredicateId("P32")
 
         val problem = resourceService.create(CreateResourceRequest(null, "save the world", setOf(problemClassId))).id!!
 
@@ -71,7 +83,7 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
         statementService.create(contributor, contribution.value, predicate, problem.value)
 
         mockMvc
-            .perform(getRequestTo("/api/problems/$problem/users?items=4"))
+            .perform(getRequestTo("/api/problems/$problem/users?size=4"))
             .andExpect(status().isOk)
             .andDo { println(it.response.contentAsString) }
             .andDo(
@@ -79,7 +91,7 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
                     snippet,
                     requestParameters(
                         parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
-                        parameterWithName("items").description("Number of items to fetch per page (default: 10)").optional()
+                        parameterWithName("size").description("Number of items to fetch per page (default: 10)").optional()
                     ),
                     listOfUsersPerProblemResponseFields()
                 )

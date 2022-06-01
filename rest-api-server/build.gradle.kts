@@ -1,5 +1,4 @@
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 group = "eu.tib"
@@ -108,10 +107,6 @@ tasks {
     val check by existing { dependsOn(jacocoTestCoverageVerification, jacocoTestReport, printCoverage) }
     val jacocoTestCoverageVerification by existing { mustRunAfter(test, integrationTest) }
     val printCoverage by existing { mustRunAfter(jacocoTestCoverageVerification) }
-
-    withType(KotlinCompile::class.java).configureEach {
-        kotlinOptions.jvmTarget = "${JavaVersion.VERSION_11}"
-    }
 
     withType(Test::class.java).configureEach {
         outputs.dir(snippetsDir)

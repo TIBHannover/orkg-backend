@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     `kotlin-dsl`
 }
@@ -20,4 +22,12 @@ dependencies {
         because("""contains "kotlin.jpa" plug-in""")
     }
     api("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
+}
+
+tasks {
+    withType<KotlinCompile>().configureEach {
+        kotlinOptions {
+            jvmTarget = "11"
+        }
+    }
 }

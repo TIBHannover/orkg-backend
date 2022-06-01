@@ -47,7 +47,7 @@ build:
     when: always
     paths:
       - rest-api-server/build/reports/
-      - rest-api-server/build/libs/orkg-*.jar
+      - rest-api-server/build/libs/rest-api-server-*.jar
     reports:
       junit: rest-api-server/build/test-results/**/TEST-*.xml
   needs: []

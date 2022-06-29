@@ -19,12 +19,12 @@ import org.springframework.transaction.annotation.Transactional
 class PostgresOrganizationService(
     private val postgresOrganizationRepository: PostgresOrganizationRepository
 ) : OrganizationService {
-    override fun create(organizationName: String, createdBy: ContributorId, url: String, displayId: String, type: OrganizationType): Organization {
-        return createOrganization(organizationName, createdBy, url, displayId, type).toOrganization()
+    override fun create(organizationName: String, createdBy: ContributorId, url: String, displayId: String, type: OrganizationType, doi: String?): Organization {
+        return createOrganization(organizationName, createdBy, url, displayId, type, doi!!).toOrganization()
     }
 
-    override fun createConference(organizationName: String, createdBy: ContributorId, url: String, displayId: String, type: OrganizationType, metadata: OrganizationController.Metadata): Organization {
-        val organization = createOrganization(organizationName, createdBy, url, displayId, type)
+    override fun createConference(organizationName: String, createdBy: ContributorId, url: String, displayId: String, type: OrganizationType, metadata: OrganizationController.Metadata, doi: String?): Organization {
+        val organization = createOrganization(organizationName, createdBy, url, displayId, type, doi!!)
         organization.metadata = ConferenceMetadataEntity().apply {
                 id = organization.id
                 date = metadata.date
@@ -83,7 +83,7 @@ class PostgresOrganizationService(
 
     override fun removeAll() = postgresOrganizationRepository.deleteAll()
 
-    private fun createOrganization(organizationName: String, createdBy: ContributorId, Url: String, displayId: String, type: OrganizationType): OrganizationEntity {
+    private fun createOrganization(organizationName: String, createdBy: ContributorId, Url: String, displayId: String, type: OrganizationType, doi: String): OrganizationEntity {
         val organizationId = UUID.randomUUID()
         val newOrganization = OrganizationEntity().apply {
             id = organizationId
@@ -92,6 +92,7 @@ class PostgresOrganizationService(
             url = Url
             this.displayId = displayId
             this.type = type
+            this.doi = doi
         }
         return postgresOrganizationRepository.save(newOrganization)
     }

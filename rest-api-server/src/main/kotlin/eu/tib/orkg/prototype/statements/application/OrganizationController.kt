@@ -1,15 +1,20 @@
 package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.statements.domain.model.DoiService
+import eu.tib.orkg.prototype.statements.domain.model.Metadata
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.Organization
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationType
+import java.io.BufferedReader
 import java.io.File
 import java.util.Base64
 import java.util.UUID
@@ -34,7 +39,8 @@ import java.time.LocalDate
 class OrganizationController(
     private val service: OrganizationService,
     private val observatoryService: ObservatoryService,
-    private val contributorService: ContributorService
+    private val contributorService: ContributorService,
+    private val doiService: DoiService
 ) {
     @Value("\${orkg.storage.images.dir}")
     var imageStoragePath: String? = null
@@ -55,7 +61,8 @@ class OrganizationController(
                     organization.createdBy,
                     organization.url,
                     organization.displayId,
-                    OrganizationType.fromOrNull(organization.type)!!
+                    OrganizationType.fromOrNull(organization.type)!!,
+                    organization.doi
                 ))
                 decoder(organization.organizationLogo, response.id)
                 val location = uriComponentsBuilder
@@ -95,7 +102,8 @@ class OrganizationController(
                     organization.url,
                     organization.displayId,
                     OrganizationType.fromOrNull(organization.type)!!,
-                    organization.metadata
+                    organization.metadata,
+                    organization.doi
                 ))
                 decoder(organization.organizationLogo, response.id)
                 val location = uriComponentsBuilder
@@ -140,10 +148,58 @@ class OrganizationController(
         return observatoryService.findObservatoriesByOrganizationId(id)
     }
 
+    @GetMapping("{id}/conferences")
+    fun findConferencesByOrganizationId(@PathVariable id: OrganizationId): MutableSet<Organization> {
+        val response = doiService.prepareGetCall("10.25798/ewpp-vn79")
+        val JSON = jacksonObjectMapper()
+        print(JSON.createParser(response))
+        val test = JSON.readTree(response)
+        var temp = test.get("data")
+        temp = temp.get("attributes").get("relatedIdentifiers") //.findValue("relatedIdentifier")
+        val organizationsList: MutableSet<Organization> = mutableSetOf()
+        var confResponse = ""
+        for (field in temp) {
+            println(field.get("relatedIdentifier"))
+            val doi = field.get("relatedIdentifier").textValue()
+            confResponse = doiService.prepareGetCall(doi)
+            var rep = JSON.readTree(confResponse).get("data").get("attributes")
+            var dates =
+                rep.get("dates").find {it.get("dateInformation").textValue()=="start date"}?.get("date")?.textValue() //.findValue("relatedIdentifier")
+            print(dates)
+            var titles = rep.get("titles").find { it.get("titleType").isEmpty }?.get("title")?.textValue()
+            var reviewProcess = rep.get("descriptions").find { it.get("descriptionType").toString() == "Methods" }
+            println(dates)
+            println(titles)
+            println(reviewProcess)
+            val metadata =
+            organizationsList.add(Organization(id = OrganizationId.createUnknownOrganization(),
+                name = titles,
+                logo = "",
+                createdBy = ContributorId.createUnknownContributor(),
+                homepage = "",
+                observatoryIds = emptySet(),
+                displayId = "",
+                type = OrganizationType.CONFERENCE,
+                metadata = eu.tib.orkg.prototype.statements.domain.model.Metadata(LocalDate.parse(dates), true),
+                doi = doi
+            ))
+        }
+        println("--------------------------")
+        return organizationsList
+    }
+
+    //findConferencesByOrganizationId
+    //fetch conferences from DataCite and return
+
+    //findResearchProblemsByOrganizationId
+
+    //think to cache the data
+
     @GetMapping("{id}/users")
     fun findUsersByOrganizationId(@PathVariable id: OrganizationId): Iterable<Contributor> =
         contributorService.findUsersByOrganizationId(id)
 
+    // find list of conferences from datacite, get doi of conferences and then get list of series of conferences and just return the active conferences
     @GetMapping("/conferences")
     fun findConferences(): Iterable<Organization> {
         val response = service.listConferences()
@@ -322,7 +378,8 @@ class OrganizationController(
         val displayId: String,
         @field:NotBlank
         val type: String,
-        val metadata: Metadata?
+        val metadata: Metadata?,
+        val doi: String?
     )
 
     data class ErrorMessage(

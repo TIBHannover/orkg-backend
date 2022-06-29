@@ -24,7 +24,9 @@ data class Organization(
 
     var type: OrganizationType?,
 
-    var metadata: Metadata?
+    var metadata: Metadata?,
+
+    var doi: String?
 )
 
 data class Metadata(

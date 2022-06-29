@@ -1,5 +1,8 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import eu.tib.orkg.prototype.ResearchField
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -59,5 +62,24 @@ class DoiService(
         }
 
         return doiList.joinToString("\n", transform = { """<relatedIdentifier relationType="References" relatedIdentifierType="DOI">$it</relatedIdentifier>""" })
+    }
+
+    fun prepareGetCall(doi: String): String {
+        val url = URL("https://api.datacite.org/dois/$doi")
+
+        val conn = url.openConnection() as HttpURLConnection
+        conn.requestMethod = "GET"
+        val responseBody = BufferedReader(InputStreamReader(conn.inputStream, "utf-8"))
+            .readLines()
+            .joinToString("\n", transform = String::trim)
+
+        return responseBody
+        //val JSON = jacksonObjectMapper()
+        //print(JSON.createParser(responseBody))
+        //val test = JSON.readTree(responseBody)
+        //var temp = test.get("data")
+        //temp = temp.get("attributes").get("titles") //.findValue("relatedIdentifier")
+        //println(temp[0].get("title"))
+        //return ""
     }
 }

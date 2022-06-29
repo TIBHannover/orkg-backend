@@ -9,9 +9,9 @@ interface OrganizationService {
     /**
      * Create a new organization with a given name.
      */
-    fun create(organizationName: String, createdBy: ContributorId, url: String, displayId: String, type: OrganizationType): Organization
+    fun create(organizationName: String, createdBy: ContributorId, url: String, displayId: String, type: OrganizationType, doi: String?): Organization
 
-    fun createConference(organizationName: String, createdBy: ContributorId, url: String, displayId: String, type: OrganizationType, metadata: OrganizationController.Metadata): Organization
+    fun createConference(organizationName: String, createdBy: ContributorId, url: String, displayId: String, type: OrganizationType, metadata: OrganizationController.Metadata, doi: String?): Organization
 
     fun listOrganizations(): List<Organization>
 

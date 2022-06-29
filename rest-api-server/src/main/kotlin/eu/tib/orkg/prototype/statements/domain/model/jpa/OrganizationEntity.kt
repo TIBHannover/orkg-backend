@@ -55,6 +55,8 @@ class OrganizationEntity() {
     @PrimaryKeyJoinColumn
     var metadata: ConferenceMetadataEntity? = null
 
+    var doi: String? = null
+
     fun toOrganization() =
         Organization(
             id = OrganizationId(id!!),
@@ -65,7 +67,8 @@ class OrganizationEntity() {
             observatoryIds = observatories!!.map { ObservatoryId(it.id!!) }.toSet(),
             displayId = displayId,
             type = type!!,
-            metadata = Metadata(metadata?.date, metadata?.isDoubleBlind)
+            metadata = Metadata(metadata?.date, metadata?.isDoubleBlind),
+            doi = doi
         )
 }
 

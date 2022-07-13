@@ -110,14 +110,16 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     @Query("""UNWIND {0} as r_id MATCH ()-[p:RELATED]->(node:Resource {resource_id: r_id}) WITH r_id, COUNT(p) AS cnt RETURN cnt""")
     fun getIncomingStatementsCount(ids: List<ResourceId>): Iterable<Long>
 
-    @Query("""MATCH (n:Paper)-[:RELATED {predicate_id: "$ID_DOI_PREDICATE"}]->(:Literal {label: {0}}) RETURN n""")
+    @Query("""MATCH (node:Paper)-[:RELATED {predicate_id: "$ID_DOI_PREDICATE"}]->(:Literal {label: {0}}) WHERE not 'PaperDeleted' in labels(node) RETURN node""")
     fun findByDOI(doi: String): Optional<Neo4jResource>
 
-    @Query("""MATCH (n:Paper)-[:RELATED {predicate_id: "$ID_DOI_PREDICATE"}]->(:Literal {label: {0}}) RETURN n""")
+    @Query("""MATCH (node:Paper)-[:RELATED {predicate_id: "$ID_DOI_PREDICATE"}]->(:Literal {label: {0}}) WHERE not 'PaperDeleted' in labels(node) RETURN node""")
     fun findAllByDOI(doi: String): Iterable<Neo4jResource>
 
+    @Query("""MATCH (node:Paper) WHERE not 'PaperDeleted' IN labels(node) AND node.label = {0} RETURN node""")
     fun findByLabel(label: String?): Optional<Neo4jResource>
 
+    @Query("""MATCH (node:Paper) WHERE not 'PaperDeleted' IN labels(node) AND node.label = {0} RETURN node""")
     fun findAllByLabel(label: String): Iterable<Neo4jResource>
 
     @Query("""MATCH (n:Paper {observatory_id: {0}}) RETURN n""")

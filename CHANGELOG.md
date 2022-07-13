@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Fixed issue with unexpected behaviour of add paper with merge flag. (Closes: [#379](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/379))
+### Added
+- Support all entity types in object endpoint request. (Closes: [#387](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/387))
 
 ## [0.11.0] - 2022-05-19
 ### Fixed

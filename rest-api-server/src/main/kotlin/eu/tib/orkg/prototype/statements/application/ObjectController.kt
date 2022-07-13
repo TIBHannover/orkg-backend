@@ -27,6 +27,11 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
+const val RESOURCE_EXISTING_KEY = "resource"
+const val LITERAL_EXISTING_KEY = "literal"
+const val PREDICATE_EXISTING_KEY = "predicate"
+const val CLASS_EXISTING_KEY = "class"
+
 @RestController
 @RequestMapping("/api/objects/")
 class ObjectController(
@@ -167,6 +172,10 @@ class ObjectController(
                             checkIfLiteralExists(jsonObject.`@id`!!)
                         jsonObject.isExistingResource() ->
                             checkIfResourceExists(jsonObject.`@id`!!)
+                        jsonObject.isExistingPredicate() ->
+                            checkIfPredicateExists(jsonObject.`@id`!!)
+                        jsonObject.isExistingClass() ->
+                            checkIfClassExists(jsonObject.`@id`!!)
                     }
                 if (jsonObject.isTyped()) // Check for existing classes
                     jsonObject.classes!!.forEach { checkIfClassExists(it) }
@@ -198,9 +207,11 @@ class ObjectController(
                 when {
                     jsonObject.isExisting() -> { // Add an existing resource or literal
                         when {
-                            jsonObject.isExistingResource() || jsonObject.isExistingLiteral() -> {
-                                // Update existing resources with pre-defined classes
-                                typeResourceBasedOnPredicate(predicateId, jsonObject)
+                            jsonObject.isExistingResource() || jsonObject.isExistingLiteral() || jsonObject.isExistingPredicate() || jsonObject.isExistingClass() -> {
+                                if (jsonObject.isExistingResource()) {
+                                    // Update existing resources with pre-defined classes
+                                    typeResourceBasedOnPredicate(predicateId, jsonObject)
+                                }
                                 statementService.add(userId, subject.value, predicateId!!, jsonObject.`@id`!!)
                             }
                             jsonObject.isTempResource() -> {
@@ -424,7 +435,7 @@ data class CreateObjectRequest(
      * of predicates to be processed
      */
     fun hasTempPredicates() =
-        this.predicates != null && this.predicates.count() > 0
+        this.predicates != null && this.predicates.isNotEmpty()
 }
 
 data class NamedObject(
@@ -441,7 +452,7 @@ data class NamedObject(
      * of statements to be added recursively
      */
     fun hasSubsequentStatements() =
-        this.values != null && this.values.count() > 0
+        this.values != null && this.values.isNotEmpty()
 
     /**
      * Check if the resource is typed
@@ -453,6 +464,7 @@ data class NamedObject(
 
 data class ObjectStatement(
     val `@id`: String?,
+    val `@type`: String?,
     val classes: List<String>?,
     val `@temp`: String?,
     val text: String?,
@@ -462,25 +474,56 @@ data class ObjectStatement(
 ) {
 
     /**
-     * Indicate if the resource is an existing thing
+     * Indicate if the entity is an existing thing
      * i.e., the @id property is used in the json object
      */
     fun isExisting() =
         this.`@id` != null
 
     /**
-     * Check if the resource is existing
-     * and that the id starts with an R
+     * Check if an entity is existing and explicitly typed.
+     * Allowed types are: [class, resource, predicate, literal]
      */
-    fun isExistingResource() =
-        this.isExisting() && this.`@id`!!.startsWith("R")
+    fun isTypedExisting() =
+        this.isExisting() && this.`@type` != null
 
     /**
-     * Check if the literal exists
-     * and that the id starts with an L
+     * Check if the entity is existing as a resource
+     * If it is typed with resource
+     * o/w if the id starts with an R
+     */
+    fun isExistingResource() =
+        this.isExisting() && when (this.`@type`) {
+            null -> this.`@id`!!.startsWith("R")
+            RESOURCE_EXISTING_KEY -> true
+            else -> false
+        }
+
+    /**
+     * Check if the entity is existing as a literal
+     * If it is typed with literal
+     * o/w if the id starts with an L
      */
     fun isExistingLiteral() =
-        this.isExisting() && this.`@id`!!.startsWith("L")
+        this.isExisting() && when (this.`@type`) {
+            null -> this.`@id`!!.startsWith("L")
+            LITERAL_EXISTING_KEY -> true
+            else -> false
+        }
+
+    /**
+     * Check if the entity is existing as a class
+     * If it is typed with class
+     */
+    fun isExistingClass() =
+        this.isTypedExisting() && this.`@type` == CLASS_EXISTING_KEY
+
+    /**
+     * Check if the entity is existing as a predicate
+     * If it is typed with predicate
+     */
+    fun isExistingPredicate() =
+        this.isTypedExisting() && this.`@type` == PREDICATE_EXISTING_KEY
 
     /**
      * Check if the resource is a temp resource
@@ -515,7 +558,7 @@ data class ObjectStatement(
      * of statements to be added recursively
      */
     fun hasSubsequentStatements() =
-        this.values != null && this.values.count() > 0
+        this.values != null && this.values.isNotEmpty()
 }
 
 data class TempResource(

@@ -127,8 +127,8 @@ class PaperControllerTest : RestDocumentationBaseTest() {
                     name = "Contribution 1",
                     classes = emptyList(),
                     values = HashMap(mapOf(
-                        "P32" to listOf(ObjectStatement(`@id` = "R3003", null, null, null, null, null, null)),
-                        "HAS_EVALUATION" to listOf(ObjectStatement(null, null, null, null, null, label = "MOTO", null))
+                        "P32" to listOf(ObjectStatement(`@id` = "R3003", "resource", null, null, null, null, null, null)),
+                        "HAS_EVALUATION" to listOf(ObjectStatement(null, "resource", null, null, null, null, label = "MOTO", null))
                     ))
                 )),
             authors = null,

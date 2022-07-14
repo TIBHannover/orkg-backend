@@ -151,8 +151,9 @@ deployment_trigger:incubating:
     - curl --fail -X POST -F "token=$PIPELINE_TRIGGER_TOKEN" -F "ref=master" -F "variables[ORKG_COMPONENT_NAME]=orkg-rest-api" -F "variables[ORKG_COMPONENT_REF_NAME]=$CI_COMMIT_REF_NAME" https://git.tib.eu/api/v4/projects/1317/trigger/pipeline
   rules:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
-  # Disable cloning and caching
+  # Disable cloning, downloading artifacts and caching
   cache: []
+  dependencies: []
   variables:
     GIT_STRATEGY: none
 
@@ -164,7 +165,8 @@ deployment_trigger:release:
     - curl --fail -X POST -F "token=$PIPELINE_TRIGGER_TOKEN" -F "ref=master" -F "variables[ORKG_COMPONENT_NAME]=orkg-rest-api" -F "variables[ORKG_COMPONENT_RELEASE_VERSION]=$CI_COMMIT_TAG" https://git.tib.eu/api/v4/projects/1317/trigger/pipeline
   rules:
     - if: $CI_COMMIT_TAG != null
-  # Disable cloning and caching
+  # Disable cloning, downloading artifacts and caching
   cache: []
+  dependencies: []
   variables:
     GIT_STRATEGY: none

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Deleted papers do not appear in the list of papers anymore. (Closes: [#382](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/382))
 ### Added
 - Support all entity types in object endpoint request. (Closes: [#387](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/387))
+- Create additional indexes in Neo4j for heavily used nodes, improving query performance.
 
 ## [0.11.0] - 2022-05-19
 ### Fixed

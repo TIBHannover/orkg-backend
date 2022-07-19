@@ -5,8 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
+## [0.12.0] - 2022-07-19
 ### Fixed
 - Fixed issue with unexpected behaviour of add paper with merge flag. (Closes: [#379](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/379))
 - Deleted papers do not appear in the list of papers anymore. (Closes: [#382](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/382))
@@ -108,7 +107,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.11.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.12.0...master
+[0.12.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.12.0
 [0.11.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.11.0
 [0.10.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.10.1
 [0.10.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.10.0

@@ -96,12 +96,14 @@ pages:
   needs:
     - build
   script:
+    # Turn a list of whitespace-separated tags into a comma-separated list, as GitLab gets confused with commas and variable substitutions.
+    - docker_tags=$(echo "$IMAGE_TAGS" | sed 's/ \+/,/g')
     # Build using Jib (pushed automatically)
-    - ./gradlew --build-cache jib -Djib.to.image=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA -Djib.to.tags=$IMAGE_TAG -Djib.to.auth.username=$REGISTRY_USER -Djib.to.auth.password=$REGISTRY_PASSWORD
+    - ./gradlew --build-cache jib -Djib.to.image=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA -Djib.to.tags=$docker_tags -Djib.to.auth.username=$REGISTRY_USER -Djib.to.auth.password=$REGISTRY_PASSWORD
 
 docker-build-master:
   variables:
-    IMAGE_TAG: latest
+    IMAGE_TAGS: latest
   <<: *docker-build-instructions
   only:
     - master
@@ -109,10 +111,7 @@ docker-build-master:
 docker-build:
   extends: .docker-build-instructions
   variables:
-    IMAGE_TAG: $CI_COMMIT_REF_NAME
-  script:
-    - !reference [.docker-build-instructions, script]
-    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:release
+    IMAGE_TAGS: $CI_COMMIT_REF_NAME release
   except:
     - master
 

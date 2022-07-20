@@ -7,7 +7,7 @@ version = "0.12.1-SNAPSHOT"
 val neo4jVersion = "3.5.+" // should match version in Dockerfile
 val springDataNeo4jVersion = "5.3.4"
 val springSecurityOAuthVersion = "2.3.8"
-val testContainersVersion = "1.15.3"
+val testContainersVersion = "1.17.3"
 
 val containerRegistryLocation = "registry.gitlab.com/tibhannover/orkg/orkg-backend"
 val dockerImageTag: String? by project
@@ -75,7 +75,9 @@ dependencies {
     implementation("org.glassfish.jaxb:jaxb-runtime:2.3.0")
     implementation("com.google.code.findbugs:jsr305:3.0.2") // provides @Nullable and other JSR305 annotations
     // RDF
-    implementation("org.eclipse.rdf4j:rdf4j-client:3.6.3")
+    implementation("org.eclipse.rdf4j:rdf4j-client:3.7.7") {
+        exclude(group = "commons-collections", module = "commons-collections") // Version 3, vulnerable
+    }
     implementation("io.github.config4k:config4k:0.4.2") {
         because("Required for parsing the essential entity configuration")
     }
@@ -95,6 +97,34 @@ dependencies {
     // Documentation
     //
     "asciidoctor"("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.4.RELEASE")
+
+    // Security-related adjustments
+    testImplementation("junit:junit") {
+        version {
+            strictly("[4.13.1,5.0[")
+            because("Vulnerable to CVE-2020-15250")
+        }
+    }
+    implementation("commons-beanutils:commons-beanutils") {
+        exclude(group = "commons-collections", module = "commons-collections")
+        version {
+            strictly("[1.9.4,2[")
+            because("Vulnerable to CVE-2019-10086, CVE-2014-0114")
+        }
+    }
+    implementation("org.apache.commons:commons-collections4") {
+        // group is either common-collections or org.apache.commons
+        version {
+            strictly("[4.3,5.0[")
+            because("Vulnerable to Cx78f40514-81ff, CWE-674")
+        }
+    }
+    implementation("org.apache.httpcomponents:httpclient") {
+        version {
+            strictly("[4.5.13,5.0[")
+            because("Vulnerable to CVE-2020-13956")
+        }
+    }
 }
 
 val snippetsDir = file("build/generated-snippets")

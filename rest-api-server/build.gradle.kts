@@ -48,13 +48,12 @@ dependencies {
     // Platform alignment for ORKG components
     api(platform(project(":platform")))
 
-    val forkhandlesVersion = "2.0.0.0"
-    implementation(platform("dev.forkhandles:forkhandles-bom:$forkhandlesVersion"))
+    implementation(platform(libs.forkhandles.bom))
+    implementation(libs.forkhandles.result4k)
+    implementation(libs.forkhandles.values4k)
 
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 
-    implementation("dev.forkhandles:result4k")
-    implementation("dev.forkhandles:values4k")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.postgresql:postgresql")

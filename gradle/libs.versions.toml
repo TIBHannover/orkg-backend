@@ -1,0 +1,13 @@
+[versions]
+forkhandles = "2.0.0.0"
+
+[libraries]
+# BOMs
+forkhandles-bom = { module = "dev.forkhandles:forkhandles-bom", version.ref = "forkhandles" }
+# Libraries
+forkhandles-result4k = { module = "dev.forkhandles:result4k", version.ref = "forkhandles" }
+forkhandles-values4k = { module = "dev.forkhandles:values4k", version.ref = "forkhandles" }
+
+[bundles]
+
+[plugins]

@@ -108,7 +108,7 @@ docker-build-master:
 
 docker-build:
   variables:
-    IMAGE_TAG: $CI_COMMIT_REF_SLUG
+    IMAGE_TAG: $CI_COMMIT_REF_NAME
   <<: *docker-build-instructions
   except:
     - master

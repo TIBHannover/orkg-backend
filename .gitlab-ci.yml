@@ -156,6 +156,8 @@ deployment_trigger:incubating:
   dependencies: []
   variables:
     GIT_STRATEGY: none
+  needs:
+    - docker-build-master
 
 deployment_trigger:release:
   stage: deploy
@@ -170,3 +172,5 @@ deployment_trigger:release:
   dependencies: []
   variables:
     GIT_STRATEGY: none
+  needs:
+    - docker-build

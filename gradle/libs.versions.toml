@@ -6,14 +6,19 @@ testcontainers = "1.17.3"
 # BOMs
 forkhandles-bom = { module = "dev.forkhandles:forkhandles-bom", version.ref = "forkhandles" }
 # Libraries
+annotations-jsr305 = { module = "com.google.code.findbugs:jsr305", version = "3.0.2" }
 forkhandles-result4k = { module = "dev.forkhandles:result4k", version.ref = "forkhandles" }
 forkhandles-values4k = { module = "dev.forkhandles:values4k", version.ref = "forkhandles" }
+javax-activation = { module = "javax.activation:activation", version = "1.1" }
+jaxb-api = { module = "javax.xml.bind:jaxb-api", version = "2.3.0" }
+jaxb-runtime = { module = "org.glassfish.jaxb:jaxb-runtime", version = "2.3.0" }
 testcontainers-core = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
 testcontainers-junit5 = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 testcontainers-neo4j = { module = "org.testcontainers:neo4j", version.ref = "testcontainers" }
 testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 
 [bundles]
+jaxb = ["javax-activation", "jaxb-api", "jaxb-runtime"]
 testcontainers = ["testcontainers-core", "testcontainers-junit5", "testcontainers-postgresql", "testcontainers-neo4j"]
 
 [plugins]

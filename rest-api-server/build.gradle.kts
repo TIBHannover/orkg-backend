@@ -68,10 +68,8 @@ dependencies {
     implementation("org.springframework.data:spring-data-neo4j:$springDataNeo4jVersion.RELEASE")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     // JAXB stuff. Was removed from Java 9. Seems to be needed for OAuth2.
-    implementation("javax.xml.bind:jaxb-api:2.3.0")
-    implementation("javax.activation:activation:1.1")
-    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.0")
-    implementation("com.google.code.findbugs:jsr305:3.0.2") // provides @Nullable and other JSR305 annotations
+    implementation(libs.bundles.jaxb)
+    implementation(libs.annotations.jsr305) // provides @Nullable and other JSR305 annotations
     // RDF
     implementation("org.eclipse.rdf4j:rdf4j-client:3.7.7") {
         exclude(group = "commons-collections", module = "commons-collections") // Version 3, vulnerable

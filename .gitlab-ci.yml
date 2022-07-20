@@ -107,9 +107,12 @@ docker-build-master:
     - master
 
 docker-build:
+  extends: .docker-build-instructions
   variables:
     IMAGE_TAG: $CI_COMMIT_REF_NAME
-  <<: *docker-build-instructions
+  script:
+    - !reference [.docker-build-instructions, script]
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:release
   except:
     - master
 

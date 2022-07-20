@@ -1,5 +1,6 @@
 [versions]
 forkhandles = "2.0.0.0"
+testcontainers = "1.17.3"
 
 [libraries]
 # BOMs
@@ -7,7 +8,12 @@ forkhandles-bom = { module = "dev.forkhandles:forkhandles-bom", version.ref = "f
 # Libraries
 forkhandles-result4k = { module = "dev.forkhandles:result4k", version.ref = "forkhandles" }
 forkhandles-values4k = { module = "dev.forkhandles:values4k", version.ref = "forkhandles" }
+testcontainers-core = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
+testcontainers-junit5 = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+testcontainers-neo4j = { module = "org.testcontainers:neo4j", version.ref = "testcontainers" }
+testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 
 [bundles]
+testcontainers = ["testcontainers-core", "testcontainers-junit5", "testcontainers-postgresql", "testcontainers-neo4j"]
 
 [plugins]

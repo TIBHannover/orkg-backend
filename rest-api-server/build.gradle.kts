@@ -54,7 +54,6 @@ dependencies {
 
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 
-
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.postgresql:postgresql")
     implementation("org.liquibase:liquibase-core")
@@ -85,12 +84,7 @@ dependencies {
     //
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
-
-    // TestContainers
-    testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
-    testImplementation("org.testcontainers:junit-jupiter:$testContainersVersion")
-    testImplementation("org.testcontainers:postgresql:$testContainersVersion")
-    testImplementation("org.testcontainers:neo4j:$testContainersVersion")
+    testImplementation(libs.bundles.testcontainers)
 
     //
     // Documentation

@@ -103,7 +103,7 @@ pages:
 
 docker-build-master:
   variables:
-    IMAGE_TAGS: latest
+    IMAGE_TAGS: latest master
   <<: *docker-build-instructions
   only:
     - master

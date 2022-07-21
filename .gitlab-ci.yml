@@ -166,9 +166,9 @@ deployment_trigger:release:
   image: buildpack-deps:buster-curl
   script:
     - echo "Triggering deployment for release version $CI_COMMIT_TAG"
-    - curl --fail -X POST -F "token=$PIPELINE_TRIGGER_TOKEN" -F "ref=master" -F "variables[ORKG_COMPONENT_NAME]=orkg-rest-api" -F "variables[ORKG_COMPONENT_RELEASE_VERSION]=$CI_COMMIT_TAG" https://git.tib.eu/api/v4/projects/1317/trigger/pipeline
+    - curl --fail -X POST -F "token=$PIPELINE_TRIGGER_TOKEN" -F "ref=master" -F "variables[ORKG_COMPONENT_NAME]=orkg-rest-api" -F "variables[ORKG_COMPONENT_REF_NAME]=$CI_COMMIT_REF_NAME" -F "variables[ORKG_COMPONENT_RELEASE_VERSION]=$CI_COMMIT_TAG" https://git.tib.eu/api/v4/projects/1317/trigger/pipeline
   rules:
-    - if: $CI_COMMIT_TAG != null
+    - if: $CI_COMMIT_TAG
   # Disable cloning, downloading artifacts and caching
   cache: []
   dependencies: []

@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.spi
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
@@ -8,9 +9,12 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
+import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.SoftAssertions
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
+import org.springframework.data.domain.PageRequest
 
 interface ResourceRepositoryContractTest {
     val repository: ResourceRepository
@@ -48,5 +52,22 @@ interface ResourceRepositoryContractTest {
             softly.assertThat(actual.unlisted).`as`("property 'unlisted'").isEqualTo(expected.unlisted)
             softly.assertThat(actual.verified).`as`("property 'verified'").isEqualTo(expected.verified)
         }
+    }
+
+    @Test
+    fun `given several resources, when all retrieved, gets the correct count when paged`() {
+        val times = 23
+        repeat(times) {
+            val r = createResource().copy(id = ResourceId(UUID.randomUUID().toString()))
+            repository.save(r)
+        }
+        assertThat(repository.findAll(PageRequest.of(0, 10)).totalElements).isEqualTo(times.toLong())
+    }
+
+    abstract fun cleanUpAfterEach()
+
+    @AfterEach
+    fun cleanUp() {
+        cleanUpAfterEach()
     }
 }

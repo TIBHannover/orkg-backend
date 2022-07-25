@@ -12,4 +12,8 @@ class SpringDataNeo4jResourceAdapterContractTests : Neo4jTestContainersBaseTest(
 
     override val repository: ResourceRepository
         get() = adapter
+
+    override fun cleanUpAfterEach() {
+        repository.deleteAll()
+    }
 }

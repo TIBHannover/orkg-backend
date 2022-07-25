@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.spi
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import java.util.*
 import org.springframework.data.domain.Page
@@ -12,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional
 
 interface StatementRepository {
     fun findAll(): Sequence<GeneralStatement>
+    fun countStatementsAboutResource(id: ResourceId): Long
+    fun countStatementsAboutResources(resourceIds: Set<ResourceId>): Map<ResourceId, Long>
     // legacy methods:
     fun nextIdentity(): StatementId
     @Transactional(isolation = Isolation.SERIALIZABLE)

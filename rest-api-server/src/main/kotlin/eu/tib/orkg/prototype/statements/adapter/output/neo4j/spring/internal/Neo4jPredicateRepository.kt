@@ -24,4 +24,6 @@ interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, Long> {
     fun findAllByLabelContaining(part: String, pageable: Pageable): Page<Neo4jPredicate>
 
     fun findByPredicateId(id: PredicateId?): Optional<Neo4jPredicate>
+
+    fun findAllByPredicateIdIn(ids: Set<PredicateId>): Iterable<Neo4jPredicate>
 }

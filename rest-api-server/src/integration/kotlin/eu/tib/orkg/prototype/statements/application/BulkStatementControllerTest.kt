@@ -58,10 +58,10 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
         val p1 = predicateService.create("blah")
         val p2 = predicateService.create("blub")
 
-        service.create(r1.id!!.value, p1.id!!, r2.id!!.value)
-        service.create(r1.id!!.value, p2.id!!, r3.id!!.value)
-        service.create(r4.id!!.value, p2.id!!, r3.id!!.value)
-        service.create(r4.id!!.value, p1.id!!, r5.id!!.value)
+        service.create(r1.id.value, p1.id, r2.id.value)
+        service.create(r1.id.value, p2.id, r3.id.value)
+        service.create(r4.id.value, p2.id, r3.id.value)
+        service.create(r4.id.value, p1.id, r5.id.value)
 
         mockMvc
             .perform(getRequestTo("/api/statements/subjects/?ids=${r1.id},${r4.id}"))
@@ -92,11 +92,11 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
         val p1 = predicateService.create("blah")
         val p2 = predicateService.create("blub")
 
-        service.create(r1.id!!.value, p1.id!!, r3.id!!.value)
-        service.create(r1.id!!.value, p1.id!!, r4.id!!.value)
-        service.create(r2.id!!.value, p2.id!!, r4.id!!.value)
-        service.create(r1.id!!.value, p1.id!!, r3.id!!.value)
-        service.create(r3.id!!.value, p2.id!!, r4.id!!.value)
+        service.create(r1.id.value, p1.id, r3.id.value)
+        service.create(r1.id.value, p1.id, r4.id.value)
+        service.create(r2.id.value, p2.id, r4.id.value)
+        service.create(r1.id.value, p1.id, r3.id.value)
+        service.create(r3.id.value, p2.id, r4.id.value)
 
         mockMvc
             .perform(getRequestTo("/api/statements/objects/?ids=${r3.id},${r4.id}"))
@@ -125,8 +125,8 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
         val r1 = resourceService.create("Leibniz")
         val p2 = predicateService.create("head quarter")
         val r2 = resourceService.create("Hanover, Germany")
-        val st1 = service.create(s.id!!.value, p1.id!!, r1.id!!.value)
-        val st2 = service.create(s.id!!.value, p2.id!!, r2.id!!.value)
+        val st1 = service.create(s.id.value, p1.id, r1.id.value)
+        val st2 = service.create(s.id.value, p2.id, r2.id.value)
 
         mockMvc.perform(deleteRequest("/api/statements/?ids=${st1.id},${st2.id}"))
             .andExpect(status().isNoContent)
@@ -148,19 +148,19 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
         val s = resourceService.create("ORKG")
         val p = predicateService.create("created by")
         val o = resourceService.create("Awesome Team")
-        val st = service.create(s.id!!.value, p.id!!, o.id!!.value)
+        val st = service.create(s.id.value, p.id, o.id.value)
 
         val s2 = resourceService.create("Other projects")
         val o2 = resourceService.create("The A-Team")
-        val st2 = service.create(s2.id!!.value, p.id!!, o2.id!!.value)
+        val st2 = service.create(s2.id.value, p.id, o2.id.value)
 
         val newP = predicateService.create("with love from")
         val newO = resourceService.create("Hannover, Germany")
 
         mockMvc.perform(putRequest("/api/statements/?ids=${st.id},${st2.id}"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$[0].statement.predicate.id").value(newP.id!!.toString()))
-            .andExpect(jsonPath("$[1].statement.object.id").value(newO.id!!.toString()))
+            .andExpect(jsonPath("$[0].statement.predicate.id").value(newP.id.toString()))
+            .andExpect(jsonPath("$[1].statement.object.id").value(newO.id.toString()))
             .andDo(
                 document(
                     snippet,

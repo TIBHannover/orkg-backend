@@ -2,12 +2,14 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
-import java.util.Optional
+import java.util.*
 import java.util.stream.Stream
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.Query
+import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
 /**
@@ -73,6 +75,13 @@ interface Neo4jStatementRepository :
     @Query("$MATCH_STATEMENT $BY_OBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
     countQuery = "$MATCH_STATEMENT $BY_OBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_COUNT")
     fun findAllByObject(objectId: String, pagination: Pageable): Page<Neo4jStatement>
+
+    @Query("""MATCH statement=(sub:`Resource`)<-[:`RELATED`]-(:`Thing`) WHERE sub.resource_id in {0} WITH sub.resource_id as resourceId, count(statement) as count RETURN resourceId, count""")
+    fun countStatementsAboutResource(resourceIds: Set<ResourceId>): List<StatementsPerResource>
+
+    /** Count all incoming statements to a resource node. This is used to calculate the "shared" property. */
+    @Query("""MATCH statement=(obj:`Resource` {resource_id: {0}})<-[rel:`RELATED`]-(:`Thing`) RETURN count(statement)""")
+    fun countStatementsByObjectId(id: ResourceId): Long
 
     @Query("""MATCH (p:`Thing`)-[*]->() WHERE p.`resource_id`={0} OR p.`literal_id`={0} OR p.`predicate_id`={0} OR p.`class_id`={0} RETURN COUNT(p)""")
     fun countByIdRecursive(paperId: String): Int
@@ -143,3 +152,9 @@ ORDER BY rel.created_at DESC"""
     )
     fun fetchAsBundle(id: String, configuration: Map<String, Any>): Iterable<Neo4jStatement>
 }
+
+@QueryResult
+data class StatementsPerResource(
+    val resourceId: String,
+    val count: Long
+)

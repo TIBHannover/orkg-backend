@@ -4,7 +4,6 @@ import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.createStatement
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
@@ -70,9 +69,7 @@ class SpringDataNeo4jStatementAdapterTests : Neo4jTestContainersBaseTest() {
         val modified = found.copy(predicate = newPredicate)
         adapter.save(modified)
 
-        // Create an "incoming" statement for the subject and validate "shared" property.
-        // It is important to do it after the modification to see if other changes are picked up properly.
-        // TODO: This should be part of the *representation*, not the domain!
+        // Create an "incoming" statement for the subject.
         val si = createResource().copy(id = ResourceId(1000))
         resourceRepository.save(si)
         val pi = createPredicate().copy(id = PredicateId(1000), label = "incoming")
@@ -80,13 +77,12 @@ class SpringDataNeo4jStatementAdapterTests : Neo4jTestContainersBaseTest() {
         adapter.save(
             createStatement(subject = si, predicate = pi, `object` = s).copy(id = StatementId(1000))
         )
-        assertThat(resourceRepository.findByResourceId(s.id).get().shared).isEqualTo(1)
 
         // Verify that all changes are accounted for:
         assertThat(adapter.findAll(PageRequest.of(0, 10)).totalElements).isEqualTo(5 + 1)
         val actual = adapter.findByStatementId(modifiedId).get()
         // Again, this should not be needed… see above.
-        val expected = modified.copy(subject = (modified.subject as Resource).copy(shared = 1))
+        val expected = modified.copy(subject = modified.subject)
         assertThat(actual).isEqualTo(expected)
     }
 

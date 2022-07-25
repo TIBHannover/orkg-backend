@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
-import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
@@ -14,10 +13,6 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.OrganizationIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.AuditableEntity
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
-import org.eclipse.rdf4j.model.Model
-import org.eclipse.rdf4j.model.util.ModelBuilder
-import org.eclipse.rdf4j.model.vocabulary.RDF
-import org.eclipse.rdf4j.model.vocabulary.RDFS
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
 import org.neo4j.ogm.annotation.Labels
@@ -114,9 +109,8 @@ data class Neo4jResource(
         val resource = Resource(
             resourceId,
             label!!,
-            createdAt,
+            createdAt!!,
             classes,
-            shared = objectOf.size,
             createdBy = createdBy,
             observatoryId = observatoryId,
             extractionMethod = extractionMethod,
@@ -124,7 +118,6 @@ data class Neo4jResource(
             featured = featured,
             unlisted = unlisted
         )
-        resource.rdf = toRdfModel()
         return resource
     }
 
@@ -137,24 +130,4 @@ data class Neo4jResource(
      * Assign a class to this `Resource` node.
      */
     fun assignTo(clazz: String) = labels.add(clazz)
-}
-
-fun Neo4jResource.toRdfModel(): Model {
-    var builder = ModelBuilder()
-        .setNamespace("r", RdfConstants.RESOURCE_NS)
-        .setNamespace("p", RdfConstants.PREDICATE_NS)
-        .setNamespace("c", RdfConstants.CLASS_NS)
-        .setNamespace(RDF.NS)
-        .setNamespace(RDFS.NS)
-    builder = builder.subject("r:$resourceId")
-        .add(RDFS.LABEL, label)
-        .add(RDF.TYPE, "c:Resource")
-    classes.forEach { builder = builder.add(RDF.TYPE, "c:${it.value}") }
-    resources.forEach {
-        builder = if (it.`object` is Neo4jLiteral)
-            builder.add("p:${it.predicateId}", "\"${it.`object`!!.label}\"")
-        else
-            builder.add("p:${it.predicateId}", "r:${it.`object`!!.thingId}")
-    }
-    return builder.build()
 }

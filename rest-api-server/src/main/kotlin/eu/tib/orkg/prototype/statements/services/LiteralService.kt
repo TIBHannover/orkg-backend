@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.api.LiteralRepresentation
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
@@ -19,10 +20,10 @@ import org.springframework.transaction.annotation.Transactional
 class LiteralService(
     private val repository: LiteralRepository,
 ) : LiteralUseCases {
-    override fun create(label: String, datatype: String) =
+    override fun create(label: String, datatype: String): LiteralRepresentation =
         create(ContributorId.createUnknownContributor(), label, datatype)
 
-    override fun create(userId: ContributorId, label: String, datatype: String): Literal {
+    override fun create(userId: ContributorId, label: String, datatype: String): LiteralRepresentation {
         var literalId = repository.nextIdentity()
 
         // Should be moved to the Generator in the future
@@ -37,22 +38,26 @@ class LiteralService(
             createdAt = OffsetDateTime.now(),
         )
         repository.save(newLiteral)
-        return newLiteral
+        return newLiteral.toLiteralRepresentation()
     }
 
-    override fun findAll() = repository.findAll()
+    override fun findAll(): Iterable<LiteralRepresentation> = repository.findAll().map(Literal::toLiteralRepresentation)
 
-    override fun findById(id: LiteralId?): Optional<Literal> = repository.findByLiteralId(id)
+    override fun findById(id: LiteralId?): Optional<LiteralRepresentation> =
+        repository.findByLiteralId(id).map(Literal::toLiteralRepresentation)
 
-    override fun findAllByLabel(label: String) =
-        repository.findAllByLabelMatchesRegex(label.toExactSearchString()) // TODO: See declaration
+    override fun findAllByLabel(label: String): Iterable<LiteralRepresentation> =
+        repository.findAllByLabelMatchesRegex(label.toExactSearchString())
+            .map(Literal::toLiteralRepresentation) // TODO: See declaration
 
-    override fun findAllByLabelContaining(part: String) =
-        repository.findAllByLabelMatchesRegex(part.toSearchString()) // TODO: See declaration
+    override fun findAllByLabelContaining(part: String): Iterable<LiteralRepresentation> =
+        repository.findAllByLabelMatchesRegex(part.toSearchString())
+            .map(Literal::toLiteralRepresentation) // TODO: See declaration
 
-    override fun findDOIByContributionId(id: ResourceId): Optional<Literal> = repository.findDOIByContributionId(id)
+    override fun findDOIByContributionId(id: ResourceId): Optional<LiteralRepresentation> =
+        repository.findDOIByContributionId(id).map(Literal::toLiteralRepresentation)
 
-    override fun update(literal: Literal): Literal {
+    override fun update(literal: Literal): LiteralRepresentation {
         // already checked by service
         var found = repository.findByLiteralId(literal.id).get()
 
@@ -61,7 +66,7 @@ class LiteralService(
         found = found.copy(datatype = literal.datatype)
 
         repository.save(found)
-        return found
+        return found.toLiteralRepresentation()
     }
 
     override fun removeAll() = repository.deleteAll()
@@ -71,4 +76,13 @@ class LiteralService(
 
     private fun String.toExactSearchString() =
         "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"
+}
+
+fun Literal.toLiteralRepresentation(): LiteralRepresentation = object : LiteralRepresentation {
+    override val id: LiteralId = this@toLiteralRepresentation.id!!
+    override val label: String = this@toLiteralRepresentation.label
+    override val datatype: String = this@toLiteralRepresentation.datatype
+    override val jsonClass: String = "literal"
+    override val createdAt: OffsetDateTime = this@toLiteralRepresentation.createdAt
+    override val createdBy: ContributorId = this@toLiteralRepresentation.createdBy
 }

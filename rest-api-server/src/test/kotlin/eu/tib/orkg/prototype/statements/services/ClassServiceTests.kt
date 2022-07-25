@@ -8,7 +8,9 @@ import eu.tib.orkg.prototype.statements.api.AlreadyInUse
 import eu.tib.orkg.prototype.statements.api.ClassNotFound
 import eu.tib.orkg.prototype.statements.api.InvalidLabel
 import eu.tib.orkg.prototype.statements.api.InvalidURI
+import eu.tib.orkg.prototype.statements.api.UpdateClassUseCase.ReplaceCommand
 import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
+import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.toOptional
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
@@ -101,6 +103,7 @@ class ClassServiceTests {
         val differentWithSameURI = createClassWithoutURI().copy(id = ClassId("different"), uri = expectedClass.uri)
         every { repository.findByClassId(ClassId("OK")) } returns Optional.of(originalClass)
         every { service.findByURI(expectedClass.uri!!) } returns differentWithSameURI.toOptional()
+            .map(Class::toClassRepresentation)
         every { repository.save(expectedClass) } returns expectedClass
 
         val actual = service.updateURI(ClassId("OK"), "https://example.org/NEW")
@@ -141,7 +144,7 @@ class ClassServiceTests {
         every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
         every { repository.save(expectedClass) } returns expectedClass
 
-        val actual = service.replace(classToReplace, with = replacingClass)
+        val actual = service.replace(classToReplace, command = replacingClass.toReplaceCommand())
 
         assertThat(actual).isEqualTo(Success(Unit))
         verify(exactly = 1) { repository.save(expectedClass) }
@@ -152,7 +155,7 @@ class ClassServiceTests {
         val classToReplace = ClassId("ToReplace")
         val replacingClass = createClass().copy(label = "invalid\nlabel", uri = URI.create("https://example.com/NEW"))
 
-        val actual = service.replace(classToReplace, with = replacingClass)
+        val actual = service.replace(classToReplace, command = replacingClass.toReplaceCommand())
 
         assertThat(actual).isEqualTo(Failure(InvalidLabel))
         verify(exactly = 0) { repository.save(any()) }
@@ -165,7 +168,7 @@ class ClassServiceTests {
         val existingClass = createClass().copy(id = classToReplace)
         every { repository.findByClassId(classToReplace) } returns existingClass.toOptional()
 
-        val actual = service.replace(classToReplace, with = replacingClass)
+        val actual = service.replace(classToReplace, command = replacingClass.toReplaceCommand())
 
         assertThat(actual).isEqualTo(Failure(UpdateNotAllowed))
         verify(exactly = 0) { repository.save(any()) }
@@ -181,7 +184,7 @@ class ClassServiceTests {
         every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
         every { repository.save(expectedClass) } returns expectedClass
 
-        val actual = service.replace(classToReplace, with = replacingClass)
+        val actual = service.replace(classToReplace, command = replacingClass.toReplaceCommand())
 
         assertThat(actual).isEqualTo(Success(Unit))
         verify(exactly = 1) { repository.save(expectedClass) }
@@ -198,7 +201,7 @@ class ClassServiceTests {
         every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
         every { repository.save(expectedClass) } returns expectedClass
 
-        val actual = service.replace(classToReplace, with = replacingClass)
+        val actual = service.replace(classToReplace, command = replacingClass.toReplaceCommand())
 
         assertThat(actual).isEqualTo(Success(Unit))
         verify(exactly = 1) { repository.save(expectedClass) }
@@ -214,9 +217,10 @@ class ClassServiceTests {
         val differentWithSameURI = createClassWithoutURI().copy(id = ClassId("different"), uri = expectedClass.uri)
         every { repository.findByClassId(classToReplace) } returns existingClass.toOptional()
         every { service.findByURI(expectedClass.uri!!) } returns differentWithSameURI.toOptional()
+            .map(Class::toClassRepresentation)
         every { repository.save(expectedClass) } returns expectedClass
 
-        val actual = service.replace(classToReplace, with = replacingClass)
+        val actual = service.replace(classToReplace, command = replacingClass.toReplaceCommand())
 
         assertThat(actual).isEqualTo(Failure(AlreadyInUse))
         verify(exactly = 0) { repository.save(any()) }
@@ -225,11 +229,12 @@ class ClassServiceTests {
     @Test
     fun `given a class is replaced, when a URI is provided and the class has a different URI, then returns an error`() {
         val classToReplace = ClassId("ToReplace")
-        val replacingClass = createClass().copy(label = "other label", uri = URI.create("https://example.com/NEW"))
+        val replacingClass =
+            createClass().copy(label = "other label", uri = URI.create("https://example.com/NEW")).toReplaceCommand()
         val existingClass = createClass().copy(id = classToReplace)
         every { repository.findByClassId(classToReplace) } returns existingClass.toOptional()
 
-        val actual = service.replace(classToReplace, with = replacingClass)
+        val actual = service.replace(classToReplace, command = replacingClass)
 
         assertThat(actual).isEqualTo(Failure(UpdateNotAllowed))
         verify(exactly = 0) { repository.save(any()) }
@@ -239,14 +244,19 @@ class ClassServiceTests {
     fun `given a class is replaced, when no URI is provided and the class has no URI, then updates and returns success`() {
         val classToReplace = ClassId("ToReplace")
         val existingClass = createClassWithoutURI().copy(id = classToReplace)
-        val replacingClass = createClassWithoutURI().copy(label = "other label")
+        val replacingClass = createClassWithoutURI().copy(label = "other label").toReplaceCommand()
         val expectedClass = existingClass.copy(id = classToReplace, label = replacingClass.label)
         every { repository.findByClassId(classToReplace) } returns existingClass.toOptional()
         every { repository.save(expectedClass) } returns expectedClass
 
-        val actual = service.replace(classToReplace, with = replacingClass)
+        val actual = service.replace(classToReplace, command = replacingClass)
 
         assertThat(actual).isEqualTo(Success(Unit))
         verify(exactly = 1) { repository.save(expectedClass) }
     }
+
+    private fun Class.toReplaceCommand(): ReplaceCommand = ReplaceCommand(
+        label = this.label,
+        uri = this.uri,
+    )
 }

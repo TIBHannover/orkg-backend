@@ -156,7 +156,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun edit() {
-        val predicate = service.create("knows").id!!
+        val predicate = service.create("knows").id
 
         val newLabel = "yaser"
         val resource = mapOf("label" to newLabel)

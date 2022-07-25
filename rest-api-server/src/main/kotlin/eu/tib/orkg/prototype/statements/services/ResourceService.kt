@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
@@ -20,6 +21,7 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jSmartReviewRepos
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jVisualizationRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
+import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.util.EscapedRegex
 import eu.tib.orkg.prototype.util.SanitizedWhitespace
 import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
@@ -37,10 +39,11 @@ class ResourceService(
     private val neo4jContributionRepository: Neo4jContributionRepository,
     private val neo4jVisualizationRepository: Neo4jVisualizationRepository,
     private val neo4jSmartReviewRepository: Neo4jSmartReviewRepository,
-    private val repository: ResourceRepository
+    private val repository: ResourceRepository,
+    private val statementRepository: StatementRepository,
 ) : ResourceUseCases {
 
-    override fun create(label: String) = create(
+    override fun create(label: String): ResourceRepresentation = create(
         ContributorId.createUnknownContributor(),
         label,
         ObservatoryId.createUnknownObservatory(),
@@ -54,7 +57,7 @@ class ResourceService(
         observatoryId: ObservatoryId,
         extractionMethod: ExtractionMethod,
         organizationId: OrganizationId
-    ): Resource {
+    ): ResourceRepresentation {
         var resourceId = repository.nextIdentity()
 
         // Should be moved to the Generator in the future
@@ -71,10 +74,11 @@ class ResourceService(
             organizationId = organizationId,
             createdAt = OffsetDateTime.now(),
         )
-        return repository.save(newResource)
+        repository.save(newResource)
+        return findById(newResource.id).get()
     }
 
-    override fun create(request: CreateResourceRequest) = create(
+    override fun create(request: CreateResourceRequest): ResourceRepresentation = create(
         ContributorId.createUnknownContributor(),
         request,
         ObservatoryId.createUnknownObservatory(),
@@ -88,7 +92,7 @@ class ResourceService(
         observatoryId: ObservatoryId,
         extractionMethod: ExtractionMethod,
         organizationId: OrganizationId
-    ): Resource {
+    ): ResourceRepresentation {
         val id = request.id ?: repository.nextIdentity()
         val resource = Resource(
             label = request.label,
@@ -100,91 +104,131 @@ class ResourceService(
             createdAt = OffsetDateTime.now(),
             classes = request.classes
         )
-        return repository.save(resource)
+        repository.save(resource)
+        return findById(resource.id).get()
     }
 
-    override fun findAll(pageable: Pageable): Page<Resource> = repository.findAll(pageable)
+    override fun findAll(pageable: Pageable): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged { repository.findAll(pageable) }
 
-    override fun findById(id: ResourceId?): Optional<Resource> = repository.findByResourceId(id)
+    override fun findById(id: ResourceId?): Optional<ResourceRepresentation> =
+        retrieveAndConvertOptional { repository.findByResourceId(id) }
 
-    override fun findAllByLabel(pageable: Pageable, label: String): Page<Resource> =
-        repository.findAllByLabelMatchesRegex(
-            label.toExactSearchString(), pageable
-        )
+    override fun findAllByLabel(pageable: Pageable, label: String): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged {
+            repository.findAllByLabelMatchesRegex(label.toExactSearchString(), pageable)
+        }
 
-    override fun findAllByLabelContaining(pageable: Pageable, part: String): Page<Resource> {
-        return repository.findAllByLabelMatchesRegex(
-            part.toSearchString(), pageable
-        )
-    }
+    override fun findAllByLabelContaining(pageable: Pageable, part: String): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged { repository.findAllByLabelMatchesRegex(part.toSearchString(), pageable) }
 
-    override fun findAllByClass(pageable: Pageable, id: ClassId): Page<Resource> =
-        repository.findAllByClass(id.toString(), pageable)
+    override fun findAllByClass(pageable: Pageable, id: ClassId): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged { repository.findAllByClass(id.toString(), pageable) }
 
-    override fun findAllByClassAndCreatedBy(pageable: Pageable, id: ClassId, createdBy: ContributorId): Page<Resource> =
-        repository.findAllByClassAndCreatedBy(id.toString(), createdBy, pageable)
+    override fun findAllByClassAndCreatedBy(
+        pageable: Pageable,
+        id: ClassId,
+        createdBy: ContributorId
+    ): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged { repository.findAllByClassAndCreatedBy(id.toString(), createdBy, pageable) }
 
-    override fun findAllByClassAndLabel(pageable: Pageable, id: ClassId, label: String): Page<Resource> =
-        repository.findAllByClassAndLabel(id.toString(), label, pageable)
+    override fun findAllByClassAndLabel(pageable: Pageable, id: ClassId, label: String): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged { repository.findAllByClassAndLabel(id.toString(), label, pageable) }
 
     override fun findAllByClassAndLabelAndCreatedBy(
         pageable: Pageable,
         id: ClassId,
         label: String,
         createdBy: ContributorId
-    ): Page<Resource> = repository.findAllByClassAndLabelAndCreatedBy(id.toString(), label, createdBy, pageable)
+    ): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged {
+            repository.findAllByClassAndLabelAndCreatedBy(
+                id.toString(),
+                label,
+                createdBy,
+                pageable
+            )
+        }
 
-    override fun findAllByClassAndLabelContaining(pageable: Pageable, id: ClassId, part: String): Page<Resource> =
-        repository.findAllByClassAndLabelContaining(id.toString(), part.toSearchString(), pageable)
+    override fun findAllByClassAndLabelContaining(
+        pageable: Pageable,
+        id: ClassId,
+        part: String
+    ): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged {
+            repository.findAllByClassAndLabelContaining(
+                id.toString(),
+                part.toSearchString(),
+                pageable
+            )
+        }
 
     override fun findAllByClassAndLabelContainingAndCreatedBy(
         pageable: Pageable,
         id: ClassId,
         part: String,
         createdBy: ContributorId
-    ): Page<Resource> = repository.findAllByClassAndLabelContainingAndCreatedBy(
-        id.toString(), part.toSearchString(), createdBy, pageable
-    )
+    ): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged {
+            repository.findAllByClassAndLabelContainingAndCreatedBy(
+                id.toString(),
+                part.toSearchString(),
+                createdBy,
+                pageable
+            )
+        }
 
-    override fun findAllExcludingClass(pageable: Pageable, ids: Array<ClassId>): Page<Resource> =
-        repository.findAllExcludingClass(ids.map { it.value }, pageable)
+    override fun findAllExcludingClass(pageable: Pageable, ids: Array<ClassId>): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged { repository.findAllExcludingClass(ids.map { it.value }, pageable) }
 
-    override fun findAllExcludingClassByLabel(pageable: Pageable, ids: Array<ClassId>, label: String): Page<Resource> =
-        repository.findAllExcludingClassByLabel(ids.map { it.value }, label, pageable)
+    override fun findAllExcludingClassByLabel(
+        pageable: Pageable,
+        ids: Array<ClassId>,
+        label: String
+    ): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged { repository.findAllExcludingClassByLabel(ids.map { it.value }, label, pageable) }
 
     override fun findAllExcludingClassByLabelContaining(
         pageable: Pageable,
         ids: Array<ClassId>,
         part: String
-    ): Page<Resource> = repository.findAllExcludingClassByLabelContaining(
-        ids.map { it.value }, part.toSearchString(), pageable
-    )
+    ): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged {
+            repository.findAllExcludingClassByLabelContaining(ids.map { it.value }, part.toSearchString(), pageable)
+        }
 
-    override fun findByDOI(doi: String): Optional<Resource> = repository.findByDOI(doi)
+    override fun findByDOI(doi: String): Optional<ResourceRepresentation> =
+        retrieveAndConvertOptional { repository.findByDOI(doi) }
 
-    override fun findByTitle(title: String?): Optional<Resource> = repository.findByLabel(title)
+    override fun findByTitle(title: String?): Optional<ResourceRepresentation> =
+        retrieveAndConvertOptional { repository.findByLabel(title) }
 
-    override fun findAllByDOI(doi: String): Iterable<Resource> = repository.findAllByDOI(doi)
+    override fun findAllByDOI(doi: String): Iterable<ResourceRepresentation> =
+        retrieveAndConvertIterable { repository.findAllByDOI(doi) }
 
-    override fun findAllByTitle(title: String?): Iterable<Resource> = repository.findAllByLabel(title!!)
+    override fun findAllByTitle(title: String?): Iterable<ResourceRepresentation> =
+        retrieveAndConvertIterable { repository.findAllByLabel(title!!) }
 
-    override fun findAllByFeatured(pageable: Pageable): Page<Resource> = repository.findAllByFeaturedIsTrue(pageable)
+    override fun findAllByFeatured(pageable: Pageable): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged { repository.findAllByFeaturedIsTrue(pageable) }
 
-    override fun findAllByNonFeatured(pageable: Pageable): Page<Resource> =
-        repository.findAllByFeaturedIsFalse(pageable)
+    override fun findAllByNonFeatured(pageable: Pageable): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged { repository.findAllByFeaturedIsFalse(pageable) }
 
-    override fun findAllByUnlisted(pageable: Pageable): Page<Resource> = repository.findAllByUnlistedIsTrue(pageable)
+    override fun findAllByUnlisted(pageable: Pageable): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged { repository.findAllByUnlistedIsTrue(pageable) }
 
-    override fun findAllByListed(pageable: Pageable): Page<Resource> = repository.findAllByUnlistedIsFalse(pageable)
+    override fun findAllByListed(pageable: Pageable): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged { repository.findAllByUnlistedIsFalse(pageable) }
 
-    override fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Resource> =
-        repository.findPapersByObservatoryId(id)
+    override fun findPapersByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation> =
+        retrieveAndConvertIterable { repository.findPapersByObservatoryId(id) }
 
-    override fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
-        repository.findComparisonsByObservatoryId(id)
+    override fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation> =
+        retrieveAndConvertIterable { repository.findComparisonsByObservatoryId(id) }
 
-    override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
-        repository.findProblemsByObservatoryId(id)
+    override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation> =
+        retrieveAndConvertIterable { repository.findProblemsByObservatoryId(id) }
 
     override fun findResourcesByObservatoryIdAndClass(
         id: ObservatoryId,
@@ -192,32 +236,42 @@ class ResourceService(
         featured: Boolean?,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<Resource> {
-        if (featured != null) {
-            return repository.findAllFeaturedResourcesByObservatoryIDAndClass(id, classes, featured, unlisted, pageable)
+    ): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged {
+            if (featured != null) {
+                repository.findAllFeaturedResourcesByObservatoryIDAndClass(
+                    id,
+                    classes,
+                    featured,
+                    unlisted,
+                    pageable
+                )
+            }
+            repository.findAllResourcesByObservatoryIDAndClass(id, classes, unlisted, pageable)
         }
-        return repository.findAllResourcesByObservatoryIDAndClass(id, classes, unlisted, pageable)
-    }
 
     override fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors> =
         repository.findContributorsByResourceId(id)
 
-    override fun update(request: UpdateResourceRequest): Resource {
+    override fun update(request: UpdateResourceRequest): ResourceRepresentation {
         // already checked by service
         var found = repository.findByResourceId(request.id).get()
 
         // update all the properties
         if (request.label != null) found = found.copy(label = request.label)
         if (request.classes != null) found = found.copy(classes = request.classes)
+        repository.save(found)
 
-        return repository.save(found)
+        return findById(found.id).get()
     }
 
-    override fun updatePaperObservatory(request: UpdateResourceObservatoryRequest, id: ResourceId): Resource {
+    override fun updatePaperObservatory(request: UpdateResourceObservatoryRequest, id: ResourceId): ResourceRepresentation {
         var found = repository.findByResourceId(id).get()
         found = found.copy(observatoryId = request.observatoryId)
         found = found.copy(organizationId = request.organizationId)
-        return repository.save(found)
+        repository.save(found)
+
+        return findById(found.id).get()
     }
 
     override fun hasStatements(id: ResourceId) = repository.checkIfResourceHasStatements(id)
@@ -234,20 +288,21 @@ class ResourceService(
         featured: Boolean?,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<Resource> {
-        return if (classes.isNotEmpty()) {
-            when (featured) {
-                null -> repository.findAllFeaturedResourcesByClass(
-                    classes, unlisted, pageable
-                )
-                else -> repository.findAllFeaturedResourcesByClass(
-                    classes, featured, unlisted, pageable
-                )
+    ): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged {
+            if (classes.isNotEmpty()) {
+                when (featured) {
+                    null -> repository.findAllFeaturedResourcesByClass(
+                        classes, unlisted, pageable
+                    )
+                    else -> repository.findAllFeaturedResourcesByClass(
+                        classes, featured, unlisted, pageable
+                    )
+                }
+            } else {
+                Page.empty()
             }
-        } else {
-            Page.empty()
         }
-    }
 
     override fun markAsVerified(resourceId: ResourceId) = setVerifiedFlag(resourceId, true)
 
@@ -446,4 +501,42 @@ class ResourceService(
 
     private fun String.toExactSearchString() =
         "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"
+
+    private fun countsFor(resources: List<Resource>): Map<ResourceId, Long> {
+        val resourceIds = resources.mapNotNull { it.id }.toSet()
+        return statementRepository.countStatementsAboutResources(resourceIds)
+    }
+
+    private fun retrieveAndConvertPaged(action: () -> Page<Resource>): Page<ResourceRepresentation> {
+        val paged = action()
+        return paged.map { it.toResourceRepresentation(countsFor(paged.content)) }
+    }
+
+    private fun retrieveAndConvertIterable(action: () -> Iterable<Resource>): Iterable<ResourceRepresentation> {
+        val resources = action()
+        return resources.map { it.toResourceRepresentation(countsFor(resources.toList())) }
+    }
+
+    private fun retrieveAndConvertOptional(action: () -> Optional<Resource>): Optional<ResourceRepresentation> =
+        action().map {
+            val count = statementRepository.countStatementsAboutResource(it.id!!)
+            it.toResourceRepresentation(mapOf(it.id to count))
+        }
 }
+
+fun Resource.toResourceRepresentation(usageCounts: StatementCounts): ResourceRepresentation =
+    object : ResourceRepresentation {
+        override val id: ResourceId = this@toResourceRepresentation.id!!
+        override val label: String = this@toResourceRepresentation.label
+        override val classes: Set<ClassId> = this@toResourceRepresentation.classes
+        override val shared: Long = usageCounts[this@toResourceRepresentation.id] ?: 0
+        override val extractionMethod: ExtractionMethod = this@toResourceRepresentation.extractionMethod
+        override val jsonClass: String = "resource"
+        override val createdAt: OffsetDateTime = this@toResourceRepresentation.createdAt
+        override val createdBy: ContributorId = this@toResourceRepresentation.createdBy
+        override val observatoryId: ObservatoryId = this@toResourceRepresentation.observatoryId
+        override val organizationId: OrganizationId = this@toResourceRepresentation.organizationId
+        override val featured: Boolean = this@toResourceRepresentation.featured ?: false
+        override val unlisted: Boolean = this@toResourceRepresentation.unlisted ?: false
+        override val verified: Boolean = this@toResourceRepresentation.verified ?: false
+    }

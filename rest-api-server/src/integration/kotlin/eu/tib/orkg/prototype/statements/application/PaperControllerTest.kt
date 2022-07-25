@@ -144,7 +144,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
 
         val originalPaper = createDummyPaperObject(doi = "")
 
-        val originalId = paperController.add(originalPaper, UriComponentsBuilder.fromUriString("localhost"), false).body!!.id!!.value
+        val originalId = paperController.add(originalPaper, UriComponentsBuilder.fromUriString("localhost"), false).body!!.id.value
 
         val paperWithEmptyDOI = mapOf(
             "paper" to mapOf(
@@ -191,7 +191,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
 
         val originalPaper = createDummyPaperObject()
 
-        val originalId = paperController.add(originalPaper, UriComponentsBuilder.fromUriString("localhost"), false).body!!.id!!.value
+        val originalId = paperController.add(originalPaper, UriComponentsBuilder.fromUriString("localhost"), false).body!!.id.value
 
         val paperWithSameTitle = mapOf(
             "paper" to mapOf(
@@ -238,7 +238,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
 
         val originalPaper = createDummyPaperObject()
 
-        val originalId = paperController.add(originalPaper, UriComponentsBuilder.fromUriString("localhost"), false).body!!.id!!.value
+        val originalId = paperController.add(originalPaper, UriComponentsBuilder.fromUriString("localhost"), false).body!!.id.value
 
         val paperWithSameDOI = mapOf(
             "paper" to mapOf(
@@ -285,7 +285,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
 
         val originalPaper = createDummyPaperObject()
 
-        val originalId = paperController.add(originalPaper, UriComponentsBuilder.fromUriString("localhost"), false).body!!.id!!.value
+        val originalId = paperController.add(originalPaper, UriComponentsBuilder.fromUriString("localhost"), false).body!!.id.value
 
         val paperWithSameTitleAndDOI = mapOf(
             "paper" to mapOf(

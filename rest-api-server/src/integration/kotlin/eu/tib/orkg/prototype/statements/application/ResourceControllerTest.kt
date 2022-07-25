@@ -8,7 +8,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -169,7 +168,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun edit() {
-        val resource = service.create("foo").id!!
+        val resource = service.create("foo").id
 
         val newLabel = "bar"
         val update = mapOf("label" to newLabel)
@@ -192,16 +191,16 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     @Test
     fun editResourceClass() {
         classService.create("class")
-        val resource = service.create(CreateResourceRequest(null, "test", setOf(ClassId("class")))).id!!
+        val resource = service.create(CreateResourceRequest(null, "test", setOf(ClassId("class")))).id
 
         val newClass = classService.create("clazz")
-        val update = mapOf("classes" to listOf(newClass.id!!.value))
+        val update = mapOf("classes" to listOf(newClass.id.value))
 
         mockMvc
             .perform(putRequestWithBody("/api/resources/$resource", update))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.label").value("test"))
-            .andExpect(jsonPath("$.classes[0]").value(newClass.id!!.value))
+            .andExpect(jsonPath("$.classes[0]").value(newClass.id.value))
             .andDo(
                 document(
                     snippet,
@@ -216,12 +215,12 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun excludeByClass() {
-        val id = classService.create("research contribution").id!!
+        val id = classService.create("research contribution").id
         val set = listOf(id).toSet()
         service.create(CreateResourceRequest(null, "Contribution 1", set))
         service.create(CreateResourceRequest(null, "Contribution 2"))
         service.create(CreateResourceRequest(null, "Contribution 3"))
-        val id2 = classService.create("research contribution").id!!
+        val id2 = classService.create("research contribution").id
         val set2 = listOf(id2).toSet()
         service.create(CreateResourceRequest(null, "Paper Contribution 1", set2))
 
@@ -230,7 +229,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                 getRequestTo("/api/resources/?q=Contribution&exclude=$id,$id2")
             )
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.content", Matchers.hasSize<Int>(2)))
+            .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andDo(
                 document(
                     snippet,
@@ -262,7 +261,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     @Test
     @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
     fun deleteResourceSuccess() {
-        val id = service.create("bye bye").id!!
+        val id = service.create("bye bye").id
 
         mockMvc
             .perform(deleteRequest("/api/resources/$id"))
@@ -277,9 +276,9 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     @Test
     @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
     fun deleteResourceForbidden() {
-        val id = service.create("parent").id!!
-        val obj = service.create("son").id!!
-        val rel = predicateService.create("related").id!!
+        val id = service.create("parent").id
+        val obj = service.create("son").id
+        val rel = predicateService.create("related").id
         statementService.create(id.value, rel, obj.value)
 
         mockMvc
@@ -295,7 +294,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     @Test
     @Disabled("throwing an exception with the message (An Authentication object was not found in the SecurityContext)")
     fun deleteResourceWithoutLogin() {
-        val id = service.create("To Delete").id!!
+        val id = service.create("To Delete").id
 
         mockMvc
             .perform(deleteRequest("/api/resources/$id"))
@@ -309,18 +308,18 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun testSharedIndicatorWhenResourcesWithClassExclusion() {
-        val id = classService.create("Class 1").id!!
+        val id = classService.create("Class 1").id
         val set = listOf(id).toSet()
         service.create(CreateResourceRequest(null, "Resource 1", set))
         service.create(CreateResourceRequest(null, "Resource 2", set))
 
-        val resId = service.create(CreateResourceRequest(null, "Resource 3")).id!!
-        val con1 = service.create(CreateResourceRequest(null, "Connection 1")).id!!
-        val con2 = service.create(CreateResourceRequest(null, "Connection 2")).id!!
-        val pred = predicateService.create("Test predicate").id!!
+        val resId = service.create(CreateResourceRequest(null, "Resource 3")).id
+        val con1 = service.create(CreateResourceRequest(null, "Connection 1")).id
+        val con2 = service.create(CreateResourceRequest(null, "Connection 2")).id
+        val pred = predicateService.create("Test predicate").id
         statementService.create(con1.value, pred, resId.value)
         statementService.create(con2.value, pred, resId.value)
-        val id2 = classService.create("Class 2").id!!
+        val id2 = classService.create("Class 2").id
         val set2 = listOf(id2).toSet()
         service.create(CreateResourceRequest(null, "Another Resource", set2))
 

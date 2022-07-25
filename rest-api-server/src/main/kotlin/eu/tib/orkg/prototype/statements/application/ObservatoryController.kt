@@ -9,7 +9,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
-import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
 import eu.tib.orkg.prototype.statements.infrastructure.neo4j.Neo4jStatsService
 import java.util.*
@@ -86,17 +86,17 @@ class ObservatoryController(
     }
 
     @GetMapping("{id}/papers")
-    fun findPapersByObservatoryId(@PathVariable id: ObservatoryId): Iterable<Resource> {
+    fun findPapersByObservatoryId(@PathVariable id: ObservatoryId): Iterable<ResourceRepresentation> {
         return resourceService.findPapersByObservatoryId(id)
     }
 
     @GetMapping("{id}/comparisons")
-    fun findComparisonsByObservatoryId(@PathVariable id: ObservatoryId): Iterable<Resource> {
+    fun findComparisonsByObservatoryId(@PathVariable id: ObservatoryId): Iterable<ResourceRepresentation> {
         return resourceService.findComparisonsByObservatoryId(id)
     }
 
     @GetMapping("{id}/problems")
-    fun findProblemsByObservatoryId(@PathVariable id: ObservatoryId): Iterable<Resource> {
+    fun findProblemsByObservatoryId(@PathVariable id: ObservatoryId): Iterable<ResourceRepresentation> {
         return resourceService.findProblemsByObservatoryId(id)
     }
 
@@ -109,7 +109,7 @@ class ObservatoryController(
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<Resource> {
+    ): Page<ResourceRepresentation> {
         return resourceService.findResourcesByObservatoryIdAndClass(id, classes, featured, unlisted, pageable)
     }
 

@@ -4,14 +4,15 @@ import dev.forkhandles.result4k.onFailure
 import dev.forkhandles.values.ofOrNull
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.AlreadyInUse
+import eu.tib.orkg.prototype.statements.api.ClassRepresentation
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.InvalidURI
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.UpdateClassUseCase
 import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
-import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Label
-import eu.tib.orkg.prototype.statements.domain.model.Resource
 import java.net.URI
 import javax.validation.Valid
 import org.springframework.data.domain.Page
@@ -39,10 +40,10 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
     BaseController() {
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: ClassId): Class = service.findById(id).orElseThrow { ClassNotFound() }
+    fun findById(@PathVariable id: ClassId): ClassRepresentation = service.findById(id).orElseThrow { ClassNotFound() }
 
     @GetMapping("/", params = ["uri"])
-    fun findByURI(@RequestParam uri: URI): Class = service.findByURI(uri).orElseThrow { ClassNotFound() }
+    fun findByURI(@RequestParam uri: URI): ClassRepresentation = service.findByURI(uri).orElseThrow { ClassNotFound() }
 
     @GetMapping("/{id}/resources/")
     fun findResourcesWithClass(
@@ -51,7 +52,7 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         @RequestParam("creator", required = false) creator: ContributorId?,
         pageable: Pageable
-    ): Page<Resource> {
+    ): Page<ResourceRepresentation> {
         return if (creator != null) {
             when {
                 searchString == null -> resourceService.findAllByClassAndCreatedBy(pageable, id, creator)
@@ -74,7 +75,7 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
         @RequestParam("q", required = false) searchString: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         pageable: Pageable
-    ): Page<Class> {
+    ): Page<ClassRepresentation> {
         return when {
             searchString == null -> service.findAll(pageable)
             exactMatch -> service.findAllByLabel(pageable, searchString)
@@ -94,7 +95,7 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
         }
 
         val userId = authenticatedUserId()
-        val id = service.create(ContributorId(userId), `class`).id!!
+        val id = service.create(ContributorId(userId), `class`).id
         val location = uriComponentsBuilder.path("api/classes/{id}").buildAndExpand(id).toUri()
 
         return created(location).body(service.findById(id).get())
@@ -103,19 +104,20 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
     @PutMapping("/{id}")
     fun replace(
         @PathVariable id: ClassId,
-        @RequestBody `class`: Class
-    ): ResponseEntity<Class> {
+        @RequestBody request: ReplaceClassRequest
+    ): ResponseEntity<ClassRepresentation> {
         // We will be very lenient with the ID, meaning we do not validate it. But we correct for it in the response. (For now.)
-        service.replace(id, with = `class`).onFailure {
+        val newValues = UpdateClassUseCase.ReplaceCommand(label = request.label, uri = request.uri)
+        service.replace(id, newValues).onFailure {
             when (it.reason) {
                 ClassNotFoundProblem -> throw ClassNotFound()
                 InvalidLabelProblem -> throw InvalidLabel()
                 InvalidURI -> throw IllegalStateException("An invalid URI got passed when replacing a class. This should not happen. Please report a bug.")
                 UpdateNotAllowed -> throw CannotResetURI(id.value)
-                AlreadyInUse -> throw URIAlreadyInUse(`class`.uri.toString())
+                AlreadyInUse -> throw URIAlreadyInUse(request.uri.toString())
             }
         }
-        return ResponseEntity.ok(`class`.copy(id = id))
+        return ResponseEntity.ok(service.findById(id).get())
     }
 
     @PatchMapping("/{id}")
@@ -148,6 +150,11 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
         val label: String? = null,
         val uri: String? = null,
     )
+
+    data class ReplaceClassRequest(
+        val label: String,
+        val uri: URI? = null,
+    )
 }
 
 data class CreateClassRequest(
@@ -156,7 +163,7 @@ data class CreateClassRequest(
     val uri: URI?
 ) {
     /*
-    Checks if the class has a valid class Id (class name)
+    Checks if the class has a valid class ID (class name)
     a valid class name is either null (auto assigned by the system)
     or a name that is not one of the reserved ones.
      */

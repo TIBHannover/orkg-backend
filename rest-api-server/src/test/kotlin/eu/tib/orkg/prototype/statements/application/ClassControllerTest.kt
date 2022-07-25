@@ -12,8 +12,11 @@ import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.InvalidURI
 import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.UpdateClassUseCase.ReplaceCommand
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.toOptional
+import eu.tib.orkg.prototype.statements.services.toClassRepresentation
 import io.mockk.every
 import io.mockk.verify
 import java.net.URI
@@ -126,13 +129,21 @@ internal class ClassControllerTest {
     @Test
     fun `Given the class is replaced, when service succeeds, then status is 200 OK and class is returned`() {
         val id = ClassId("EXISTS")
-        val replacingClass = createClass().copy(label = "new label")
+        val replacingClass = createClass().copy(id = id, label = "new label")
         val body = objectMapper.writeValueAsString(replacingClass)
-        every { classService.replace(id, with = any()) } returns Success(Unit)
+        every { classService.replace(id, command = any()) } returns Success(Unit)
+        every { classService.findById(id) } returns replacingClass.toOptional().map(Class::toClassRepresentation)
 
-        mockMvc.performPut("/api/classes/$id", body).andExpect(status().isOk)
+        mockMvc.performPut("/api/classes/$id", body)
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(status().isOk)
             .andExpect(jsonPath("\$.id").value(id.toString()))
-        verify(exactly = 1) { classService.replace(any(), any()) }
+        verify(exactly = 1) {
+            classService.replace(
+                id,
+                command = ReplaceCommand(label = replacingClass.label, uri = replacingClass.uri)
+            )
+        }
     }
 
     @Test
@@ -140,7 +151,7 @@ internal class ClassControllerTest {
         val id = ClassId("NON-EXISTENT")
         val replacingClass = createClass().copy(label = "new label")
         val body = objectMapper.writeValueAsString(replacingClass)
-        every { classService.replace(id, with = any()) } returns Failure(ClassNotFoundProblem)
+        every { classService.replace(id, command = any()) } returns Failure(ClassNotFoundProblem)
 
         mockMvc.performPut("/api/classes/$id", body).andExpect(status().isNotFound)
             .andExpect(requestContentIsEmpty())
@@ -151,7 +162,7 @@ internal class ClassControllerTest {
         val id = ClassId("EXISTS")
         val replacingClass = createClass().copy(label = INVALID_LABEL)
         val body = objectMapper.writeValueAsString(replacingClass)
-        every { classService.replace(id, with = any()) } returns Failure(InvalidLabelProblem)
+        every { classService.replace(id, command = any()) } returns Failure(InvalidLabelProblem)
 
         mockMvc.performPut("/api/classes/$id", body)
             .andExpect(status().isBadRequest)
@@ -166,7 +177,7 @@ internal class ClassControllerTest {
         val id = ClassId("EXISTS")
         val replacingClass = createClass().copy(label = "new label", uri = URI.create("https://example.com/NEW#uri"))
         val body = objectMapper.writeValueAsString(replacingClass)
-        every { classService.replace(id, with = any()) } returns Failure(UpdateNotAllowed)
+        every { classService.replace(id, command = any()) } returns Failure(UpdateNotAllowed)
 
         mockMvc.performPut("/api/classes/$id", body)
             .andExpect(status().isForbidden)
@@ -181,7 +192,7 @@ internal class ClassControllerTest {
         val id = ClassId("EXISTS")
         val replacingClass = createClass().copy(label = "new label", uri = URI.create("https://example.com/NEW#uri"))
         val body = objectMapper.writeValueAsString(replacingClass)
-        every { classService.replace(id, with = any()) } returns Failure(AlreadyInUse)
+        every { classService.replace(id, command = any()) } returns Failure(AlreadyInUse)
 
         mockMvc.performPut("/api/classes/$id", body)
             .andExpect(status().isForbidden)
@@ -337,5 +348,5 @@ internal class ClassControllerTest {
         label = "test class",
         createdAt = OffsetDateTime.now(),
         uri = URI.create("http://example.org/exists")
-    )
+    ).toClassRepresentation()
 }

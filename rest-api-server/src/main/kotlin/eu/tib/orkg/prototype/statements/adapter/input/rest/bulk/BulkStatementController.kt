@@ -3,10 +3,9 @@ package eu.tib.orkg.prototype.statements.adapter.input.rest.bulk
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
-import eu.tib.orkg.prototype.statements.application.StatementResponse
-import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
@@ -65,11 +64,11 @@ class BulkStatementController(
 
 data class BulkGetStatementsResponse(
     val id: String,
-    val statements: Page<GeneralStatement>
+    val statements: Page<StatementRepresentation>
 )
 
 data class BulkPutStatementResponse(
     @JsonProperty("id")
     val statementId: StatementId,
-    val statement: StatementResponse
+    val statement: StatementRepresentation
 )

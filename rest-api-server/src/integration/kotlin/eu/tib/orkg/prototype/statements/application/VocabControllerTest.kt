@@ -41,7 +41,7 @@ class VocabControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun resource() {
-        val id = resourceService.create("Resource 1").id!!
+        val id = resourceService.create("Resource 1").id
 
         mockMvc
             .perform(getRequestTo("/api/vocab/resource/$id"))
@@ -55,7 +55,7 @@ class VocabControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun predicate() {
-        val id = predicateService.create("Predicate 1").id!!
+        val id = predicateService.create("Predicate 1").id
 
         mockMvc
             .perform(getRequestTo("/api/vocab/predicate/$id"))
@@ -69,7 +69,7 @@ class VocabControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun clazz() {
-        val id = classService.create("Class 1").id!!
+        val id = classService.create("Class 1").id
 
         mockMvc
             .perform(getRequestTo("/api/vocab/class/$id"))

@@ -1,10 +1,10 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.net.URI
 import net.minidev.json.JSONArray
@@ -236,7 +236,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookupByClass() {
-        val id = service.create("research contribution").id!!
+        val id = service.create("research contribution").id
         val set = listOf(id).toSet()
         resourceService.create(CreateResourceRequest(null, "Contribution 1", set))
         resourceService.create(CreateResourceRequest(null, "Contribution 2", set))
@@ -256,9 +256,9 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     @Disabled("This test reproduces the problem, but is easy to fix at the moment. We also changes the domain rules for labels, see #347.")
     fun lookupResourcesForClass() {
         // Given several research problems with the same name
-        val classId = service.create("research problem").id!!
+        val classId = service.create("research problem").id
         val set = listOf(classId).toSet()
-        val resources = mutableListOf<Resource>()
+        val resources = mutableListOf<ResourceRepresentation>()
         // The regular resource
         resources += resourceService.create(CreateResourceRequest(null, "Testing the Darwin's naturalisation hypothesis in invasion biology", set))
         repeat(5) {
@@ -271,7 +271,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
                 )
             )
         }
-        val expectedIds = resources.map(Resource::id).map(ResourceId?::toString).reversed().toJSONArray()
+        val expectedIds = resources.map(ResourceRepresentation::id).map(ResourceId?::toString).reversed().toJSONArray()
 
         // When queried, should return all of them
         val query = "Testing the Darwin"
@@ -285,7 +285,8 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun replaceLabel() {
-        val classId = service.create(CreateClassRequest(id = null, label = "foo", uri = URI("https://example.org/foo"))).id!!
+        val classId =
+            service.create(CreateClassRequest(id = null, label = "foo", uri = URI("https://example.org/foo"))).id
 
         val newLabel = "bar"
         val resource = mapOf("label" to newLabel, "uri" to "https://example.org/foo")
@@ -308,7 +309,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun replaceLabelAndURI() {
-        val classId = service.create(CreateClassRequest(id = null, label = "foo", uri = null)).id!!
+        val classId = service.create(CreateClassRequest(id = null, label = "foo", uri = null)).id
 
         val newLabel = "new label"
         val resource = mapOf("label" to newLabel, "uri" to "https://orkg.org/entity/foo")
@@ -331,7 +332,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookupByClassAndLabel() {
-        val id = service.create("research contribution").id!!
+        val id = service.create("research contribution").id
         val set = listOf(id).toSet()
         resourceService.create(CreateResourceRequest(null, "Math Contribution 1", set))
         resourceService.create(CreateResourceRequest(null, "Physics Contribution1", set))

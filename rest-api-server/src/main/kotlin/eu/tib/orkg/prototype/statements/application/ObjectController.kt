@@ -12,10 +12,9 @@ import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import java.util.LinkedList
-import java.util.Queue
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
+import java.util.*
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PatchMapping
@@ -48,7 +47,7 @@ class ObjectController(
     fun add(
         @RequestBody obj: CreateObjectRequest,
         uriComponentsBuilder: UriComponentsBuilder
-    ): ResponseEntity<Resource> {
+    ): ResponseEntity<ResourceRepresentation> {
         val resource = createObject(obj)
         val location = uriComponentsBuilder
             .path("api/objects/")
@@ -63,7 +62,7 @@ class ObjectController(
         @PathVariable id: ResourceId,
         @RequestBody obj: CreateObjectRequest,
         uriComponentsBuilder: UriComponentsBuilder
-    ): ResponseEntity<Resource> {
+    ): ResponseEntity<ResourceRepresentation> {
         resourceService
             .findById(id)
             .orElseThrow { ResourceNotFound() }
@@ -85,7 +84,7 @@ class ObjectController(
     fun createObject(
         request: CreateObjectRequest,
         existingResourceId: ResourceId? = null
-    ): Resource {
+    ): ResourceRepresentation {
         // Get provenance info
         val userId = ContributorId(authenticatedUserId())
         val contributor = contributorService.findByIdOrElseUnknown(userId)

@@ -20,7 +20,7 @@ interface ResourceRepositoryContractTest {
     val repository: ResourceRepository
 
     @Test
-    fun whenSavedAndLoadedThenRestoresAllProperties() {
+    fun `when saved and loaded, then restores all properties`() {
         val expected = Resource(
             id = ResourceId("GecWdydH1s"),
             label = "0k6Y85xY9R",

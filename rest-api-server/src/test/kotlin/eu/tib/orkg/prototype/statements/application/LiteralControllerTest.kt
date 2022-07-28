@@ -10,10 +10,12 @@ import eu.tib.orkg.prototype.statements.application.LiteralController.LiteralCre
 import eu.tib.orkg.prototype.statements.application.LiteralController.LiteralUpdateRequest
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
+import eu.tib.orkg.prototype.statements.services.toLiteralRepresentation
+import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import io.mockk.every
 import io.mockk.verify
 import java.time.OffsetDateTime
-import java.util.Optional
+import java.util.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -45,6 +47,9 @@ class LiteralControllerTest {
     @MockkBean
     private lateinit var literalService: LiteralUseCases
 
+    @MockkBean
+    private lateinit var literalRepository: LiteralRepository
+
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var userRepository: UserRepository
@@ -63,7 +68,7 @@ class LiteralControllerTest {
             label = literal.label,
             datatype = literal.datatype,
             createdAt = OffsetDateTime.now()
-        )
+        ).toLiteralRepresentation()
         every { literalService.findById(any()) } returns Optional.of(mockResult)
         every { literalService.create(any(), any(), any()) } returns mockResult
 
@@ -80,10 +85,10 @@ class LiteralControllerTest {
     @Test
     fun whenPUT_AndLabelIsEmpty_ThenSucceed() {
         val literal = createUpdateRequestWithEmptyLabel()
-        val double = createDummyLiteral() // needed so "expected" has the the same timestamp
+        val double = createDummyLiteral() // needed so "expected" has the same timestamp
         val expected = double.copy(label = "")
-        every { literalService.findById(any()) } returns Optional.of(double)
-        every { literalService.update(any()) } returns expected
+        every { literalRepository.findByLiteralId(any()) } returns Optional.of(double)
+        every { literalService.update(any()) } returns expected.toLiteralRepresentation()
 
         mockMvc
             .perform(updateOf(literal, "L1"))
@@ -113,7 +118,7 @@ class LiteralControllerTest {
     @Test
     fun whenPUT_AndDatatypeIsBlank_ThenFailValidation() {
         val literal = createUpdateRequestWithBlankDatatype()
-        every { literalService.findById(any()) } returns Optional.of(createDummyLiteral())
+        every { literalRepository.findByLiteralId(any()) } returns Optional.of(createDummyLiteral())
 
         mockMvc
             .perform(updateOf(literal, "L1"))
@@ -136,7 +141,7 @@ class LiteralControllerTest {
             label = literal.label,
             datatype = literal.datatype,
             createdAt = OffsetDateTime.now()
-        )
+        ).toLiteralRepresentation()
         every { literalService.findById(any()) } returns Optional.of(mockResult)
         every { literalService.create(any(), any(), any()) } returns mockResult
 

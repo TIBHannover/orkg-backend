@@ -1,5 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
+import eu.tib.orkg.prototype.statements.services.toResourceRepresentation
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import org.assertj.core.api.Assertions.assertThat
@@ -15,7 +17,7 @@ import org.springframework.boot.test.json.JacksonTester
 class ResourceJsonTest {
 
     @Autowired
-    private lateinit var json: JacksonTester<Resource>
+    private lateinit var json: JacksonTester<ResourceRepresentation> // FIXME: This whole test might be pointless.
 
     @Test
     fun serializedResourceShouldHaveId() {
@@ -58,8 +60,7 @@ class ResourceJsonTest {
             "label",
             OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3)),
             setOf(ClassId(1), ClassId(2), ClassId(3)),
-            11
-        )
+        ).toResourceRepresentation(mapOf(ResourceId(100) to 11))
 
     private fun serializedResource() = json.write(createResource())
 }

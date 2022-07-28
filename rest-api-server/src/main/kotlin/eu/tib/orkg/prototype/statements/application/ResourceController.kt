@@ -9,8 +9,8 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
-import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -44,10 +44,8 @@ class ResourceController(
 ) : BaseController() {
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: ResourceId): Resource =
-        service
-            .findById(id)
-            .orElseThrow { ResourceNotFound() }
+    fun findById(@PathVariable id: ResourceId): ResourceRepresentation =
+        service.findById(id).orElseThrow { ResourceNotFound() }
 
     @GetMapping("/")
     fun findByLabel(
@@ -55,7 +53,7 @@ class ResourceController(
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         @RequestParam("exclude", required = false, defaultValue = "") excludeClasses: Array<String>,
         pageable: Pageable
-    ): Page<Resource> {
+    ): Page<ResourceRepresentation> {
         return when {
             excludeClasses.isNotEmpty() -> when {
                 searchString == null -> service.findAllExcludingClass(pageable, excludeClasses.map { ClassId(it) }.toTypedArray())
@@ -101,7 +99,7 @@ class ResourceController(
     fun update(
         @PathVariable id: ResourceId,
         @RequestBody request: UpdateResourceRequest
-    ): ResponseEntity<Resource> {
+    ): ResponseEntity<ResourceRepresentation> {
         val found = service.findById(id)
 
         if (!found.isPresent)
@@ -117,7 +115,7 @@ class ResourceController(
     fun updateWithObservatory(
         @PathVariable id: ResourceId,
         @RequestBody request: UpdateResourceObservatoryRequest
-    ): ResponseEntity<Resource> {
+    ): ResponseEntity<ResourceRepresentation> {
         val found = service.findById(id)
         if (!found.isPresent)
             return notFound().build()
@@ -137,7 +135,7 @@ class ResourceController(
         if (!found.isPresent)
             return notFound().build()
 
-        if (service.hasStatements(found.get().id!!))
+        if (service.hasStatements(found.get().id))
             throw ResourceCantBeDeleted(id)
 
         service.delete(id)
@@ -199,7 +197,7 @@ class ResourceController(
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<Resource> {
+    ): Page<ResourceRepresentation> {
         return service.getResourcesByClasses(classes, featured, unlisted, pageable)
     }
 }

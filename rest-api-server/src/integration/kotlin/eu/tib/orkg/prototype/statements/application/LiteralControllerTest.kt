@@ -128,7 +128,7 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun edit() {
-        val resource = service.create("foo", "dt:old").id!!
+        val resource = service.create("foo", "dt:old").id
 
         val update = mapOf("label" to "bar", "datatype" to "dt:new")
 

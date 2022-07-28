@@ -2,18 +2,12 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.AuditableEntity
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import java.net.URI
-import org.eclipse.rdf4j.model.Model
-import org.eclipse.rdf4j.model.util.ModelBuilder
-import org.eclipse.rdf4j.model.vocabulary.OWL
-import org.eclipse.rdf4j.model.vocabulary.RDF
-import org.eclipse.rdf4j.model.vocabulary.RDFS
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
 import org.neo4j.ogm.annotation.NodeEntity
@@ -63,7 +57,6 @@ data class Neo4jClass(
             createdAt = createdAt!!,
             createdBy = createdBy,
         )
-        clazz.rdf = toRdfModel()
         if (subjectOf.isNotEmpty())
             clazz.description = subjectOf.firstOrNull { it.classId?.value == "description" }?.label
         return clazz
@@ -73,18 +66,4 @@ data class Neo4jClass(
         get() = classId?.value
 
     override fun toThing() = toClass()
-}
-
-fun Neo4jClass.toRdfModel(): Model {
-    var builder = ModelBuilder()
-        .setNamespace("c", RdfConstants.CLASS_NS)
-        .setNamespace(RDF.NS)
-        .setNamespace(RDFS.NS)
-        .setNamespace(OWL.NS)
-        .subject("c:$classId")
-        .add(RDFS.LABEL, label)
-        .add(RDF.TYPE, "owl:Class")
-    if (uri != null)
-        builder = builder.add(OWL.EQUIVALENTCLASS, uri)
-    return builder.build()
 }

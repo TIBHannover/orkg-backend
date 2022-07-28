@@ -64,7 +64,7 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
         val contributionClassId = ClassId("Contribution")
         val predicate = PredicateId("P32")
 
-        val problem = resourceService.create(CreateResourceRequest(null, "save the world", setOf(problemClassId))).id!!
+        val problem = resourceService.create(CreateResourceRequest(null, "save the world", setOf(problemClassId))).id
 
         val userEmail = "test@testemail.com"
         if (!userService.findByEmail(userEmail).isPresent)
@@ -78,7 +78,7 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
             ObservatoryId.createUnknownObservatory(),
             ExtractionMethod.MANUAL,
             OrganizationId.createUnknownOrganization()
-        ).id!!
+        ).id
 
         statementService.create(contributor, contribution.value, predicate, problem.value)
 

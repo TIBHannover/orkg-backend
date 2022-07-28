@@ -7,7 +7,6 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.AuditableEntity
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
-import eu.tib.orkg.prototype.statements.domain.model.toRdfModel
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
 import org.neo4j.ogm.annotation.NodeEntity
@@ -42,7 +41,6 @@ data class Neo4jPredicate(
 
     fun toPredicate(): Predicate {
         val pred = Predicate(predicateId, label!!, createdAt!!, createdBy = createdBy)
-        pred.rdf = pred.toRdfModel() // TODO: not ideal, find a better way
         if (subjectOf.isNotEmpty())
             pred.description = subjectOf.firstOrNull { it.predicateId?.value == "description" }?.`object`?.label
         return pred

@@ -2,9 +2,10 @@ package eu.tib.orkg.prototype.statements.application
 
 import dev.forkhandles.values.ofOrNull
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
+import eu.tib.orkg.prototype.statements.api.UpdatePredicateUseCase.ReplaceCommand
 import eu.tib.orkg.prototype.statements.domain.model.Label
-import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -27,17 +28,15 @@ import org.springframework.web.util.UriComponentsBuilder
 class PredicateController(private val service: PredicateUseCases) : BaseController() {
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: PredicateId): Predicate =
-        service
-            .findById(id)
-            .orElseThrow { ResourceNotFound() }
+    fun findById(@PathVariable id: PredicateId): PredicateRepresentation =
+        service.findById(id).orElseThrow { ResourceNotFound() }
 
     @GetMapping("/")
     fun findByLabel(
         @RequestParam("q", required = false) searchString: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         pageable: Pageable
-    ): Page<Predicate> {
+    ): Page<PredicateRepresentation> {
         return when {
             searchString == null -> service.findAll(pageable)
             exactMatch -> service.findAllByLabel(searchString, pageable)
@@ -47,17 +46,17 @@ class PredicateController(private val service: PredicateUseCases) : BaseControll
 
     @PostMapping("/")
     @ResponseStatus(CREATED)
-    fun add(@RequestBody predicate: CreatePredicateRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
+    fun add(
+        @RequestBody predicate: CreatePredicateRequest,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<Any> {
         Label.ofOrNull(predicate.label) ?: throw InvalidLabel()
-        if (predicate.id != null && service.findById(predicate.id).isPresent)
-            return ResponseEntity.badRequest().body("Predicate id <${predicate.id}> already exists!")
+        if (predicate.id != null && service.findById(predicate.id).isPresent) return ResponseEntity.badRequest()
+            .body("Predicate id <${predicate.id}> already exists!")
         val userId = authenticatedUserId()
         val id = service.create(ContributorId(userId), predicate).id
 
-        val location = uriComponentsBuilder
-            .path("api/predicates/{id}")
-            .buildAndExpand(id)
-            .toUri()
+        val location = uriComponentsBuilder.path("api/predicates/{id}").buildAndExpand(id).toUri()
 
         return created(location).body(service.findById(id).get())
     }
@@ -65,17 +64,21 @@ class PredicateController(private val service: PredicateUseCases) : BaseControll
     @PutMapping("/{id}")
     fun update(
         @PathVariable id: PredicateId,
-        @RequestBody predicate: Predicate
-    ): ResponseEntity<Predicate> {
+        @RequestBody predicate: ReplacePredicateRequest
+    ): ResponseEntity<PredicateRepresentation> {
         val found = service.findById(id)
 
-        if (!found.isPresent)
-            return ResponseEntity.notFound().build()
+        if (!found.isPresent) return ResponseEntity.notFound().build()
 
-        val updatedPredicate = predicate.copy(id = found.get().id)
+        service.update(id, ReplaceCommand(label = predicate.label, description = predicate.description))
 
-        return ResponseEntity.ok(service.update(updatedPredicate))
+        return ResponseEntity.ok(findById(id))
     }
+
+    data class ReplacePredicateRequest(
+        val label: String,
+        val description: String? = null,
+    )
 }
 
 data class CreatePredicateRequest(

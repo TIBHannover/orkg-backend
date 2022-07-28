@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClassRepository
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteral
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteralRepository
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jPredicate
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jPredicateRepository
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceRepository
@@ -16,6 +17,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
@@ -25,6 +27,8 @@ import kotlin.streams.asSequence
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
+
+typealias PredicateLookupTable = Map<PredicateId, Predicate>
 
 @Component
 class SpringDataNeo4jStatementAdapter(
@@ -57,8 +61,20 @@ class SpringDataNeo4jStatementAdapter(
     override fun findAll(depth: Int): Iterable<GeneralStatement> =
         neo4jRepository.findAll(depth).map { it.toStatement() }
 
-    override fun findAll(pageable: Pageable): Page<GeneralStatement> =
-        neo4jRepository.findAll(pageable).map { it.toStatement() }
+    override fun findAll(pageable: Pageable): Page<GeneralStatement> {
+        val neo4jStatements = neo4jRepository.findAll(pageable)
+        val predicateIds = neo4jStatements.content.mapNotNull(Neo4jStatement::predicateId).toSet()
+        val table = neo4jPredicateRepository.findAllByPredicateIdIn(predicateIds)
+            .map(Neo4jPredicate::toPredicate)
+            .associateBy { it.id!! }
+        return neo4jStatements.map { it.toStatement(table) }
+    }
+
+    override fun countStatementsAboutResource(id: ResourceId): Long =
+        neo4jRepository.countStatementsByObjectId(id)
+
+    override fun countStatementsAboutResources(resourceIds: Set<ResourceId>): Map<ResourceId, Long> =
+        neo4jRepository.countStatementsAboutResource(resourceIds).associate { ResourceId(it.resourceId) to it.count }
 
     override fun findByStatementId(id: StatementId): Optional<GeneralStatement> =
         neo4jRepository.findByStatementId(id).map { it.toStatement() }
@@ -126,6 +142,16 @@ class SpringDataNeo4jStatementAdapter(
         subject = refreshObject(subject!!),
         predicate = neo4jPredicateRepository.findByPredicateId(predicateId!!).get().toPredicate(),
         `object` = refreshObject(`object`!!),
+        createdAt = createdAt!!,
+        createdBy = createdBy
+    )
+
+    private fun Neo4jStatement.toStatement(lookupTable: PredicateLookupTable): GeneralStatement = GeneralStatement(
+        id = statementId!!,
+        subject = subject!!.toThing(),
+        predicate = lookupTable[predicateId]
+            ?: throw IllegalStateException("Predicate $predicateId not found in lookup table. This is a bug."),
+        `object` = `object`!!.toThing(),
         createdAt = createdAt!!,
         createdBy = createdBy
     )

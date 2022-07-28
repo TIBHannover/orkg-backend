@@ -17,6 +17,8 @@ import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
 import eu.tib.orkg.prototype.statements.application.CreateClassRequest
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.api.ClassRepresentation
+import eu.tib.orkg.prototype.statements.api.UpdateClassUseCase
 import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.util.EscapedRegex
@@ -37,9 +39,9 @@ class ClassService(
     private val repository: ClassRepository
 ) : ClassUseCases {
 
-    override fun create(label: String) = create(ContributorId.createUnknownContributor(), label)
+    override fun create(label: String): ClassRepresentation = create(ContributorId.createUnknownContributor(), label)
 
-    override fun create(userId: ContributorId, label: String): Class {
+    override fun create(userId: ContributorId, label: String): ClassRepresentation {
         val classId = repository.nextIdentity()
         val newClass = Class(
             id = classId,
@@ -48,12 +50,14 @@ class ClassService(
             createdBy = userId,
             uri = null,
         )
-        return repository.save(newClass)
+        repository.save(newClass)
+        return newClass.toClassRepresentation()
     }
 
-    override fun create(request: CreateClassRequest) = create(ContributorId.createUnknownContributor(), request)
+    override fun create(request: CreateClassRequest): ClassRepresentation =
+        create(ContributorId.createUnknownContributor(), request)
 
-    override fun create(userId: ContributorId, request: CreateClassRequest): Class {
+    override fun create(userId: ContributorId, request: CreateClassRequest): ClassRepresentation {
         var id = request.id ?: repository.nextIdentity()
 
         // Should be moved to the Generator in the future
@@ -68,38 +72,45 @@ class ClassService(
             createdBy = userId,
             uri = request.uri,
         )
-        return repository.save(newClass)
+        repository.save(newClass)
+        return newClass.toClassRepresentation()
     }
 
     override fun exists(id: ClassId): Boolean = repository.findByClassId(id).isPresent
 
-    override fun findAll() = repository.findAll()
+    override fun findAll(): Sequence<ClassRepresentation> = repository.findAll().map(Class::toClassRepresentation)
 
-    override fun findAll(pageable: Pageable): Page<Class> = repository.findAll(pageable)
+    override fun findAll(pageable: Pageable): Page<ClassRepresentation> =
+        repository.findAll(pageable).map(Class::toClassRepresentation)
 
-    override fun findById(id: ClassId): Optional<Class> = repository.findByClassId(id)
+    override fun findById(id: ClassId): Optional<ClassRepresentation> =
+        repository.findByClassId(id).map(Class::toClassRepresentation)
 
-    override fun findAllByLabel(label: String): Iterable<Class> =
-        repository.findAllByLabelMatchesRegex(label.toExactSearchString()) // TODO: See declaration
+    override fun findAllByLabel(label: String): Iterable<ClassRepresentation> =
+        repository.findAllByLabelMatchesRegex(label.toExactSearchString())
+            .map(Class::toClassRepresentation) // TODO: See declaration
 
-    override fun findAllByLabel(pageable: Pageable, label: String): Page<Class> =
-        repository.findAllByLabelMatchesRegex(label.toExactSearchString(), pageable) // TODO: See declaration
+    override fun findAllByLabel(pageable: Pageable, label: String): Page<ClassRepresentation> =
+        repository.findAllByLabelMatchesRegex(label.toExactSearchString(), pageable)
+            .map(Class::toClassRepresentation) // TODO: See declaration
 
-    override fun findAllByLabelContaining(part: String): Iterable<Class> =
-        repository.findAllByLabelMatchesRegex(part.toSearchString()) // TODO: See declaration
+    override fun findAllByLabelContaining(part: String): Iterable<ClassRepresentation> =
+        repository.findAllByLabelMatchesRegex(part.toSearchString())
+            .map(Class::toClassRepresentation) // TODO: See declaration
 
-    override fun findAllByLabelContaining(pageable: Pageable, part: String): Page<Class> =
-        repository.findAllByLabelMatchesRegex(part.toSearchString(), pageable) // TODO: See declaration
+    override fun findAllByLabelContaining(pageable: Pageable, part: String): Page<ClassRepresentation> =
+        repository.findAllByLabelMatchesRegex(part.toSearchString(), pageable)
+            .map(Class::toClassRepresentation) // TODO: See declaration
 
-    override fun replace(id: ClassId, with: Class): Result<Unit, ClassUpdateProblem> {
-        val label = Label.ofOrNull(with.label) ?: return Failure(InvalidLabel)
+    override fun replace(id: ClassId, command: UpdateClassUseCase.ReplaceCommand): Result<Unit, ClassUpdateProblem> {
+        val label = Label.ofOrNull(command.label) ?: return Failure(InvalidLabel)
         val found = repository.findByClassId(id).orElse(null) ?: return Failure(ClassNotFound)
-        if (found.uri != with.uri && found.uri != null) return Failure(UpdateNotAllowed)
-        with.uri?.let {
+        if (found.uri != command.uri && found.uri != null) return Failure(UpdateNotAllowed)
+        command.uri?.let {
             val possiblyUsed = findByURI(it).orElse(null)
             if (possiblyUsed != null && possiblyUsed.id != found.id) return Failure(AlreadyInUse)
         }
-        repository.save(found.copy(id = id, label = label.value, uri = with.uri))
+        repository.save(found.copy(id = id, label = label.value, uri = command.uri))
         return Success(Unit)
     }
 
@@ -122,7 +133,8 @@ class ClassService(
 
     override fun removeAll() = repository.deleteAll()
 
-    override fun findByURI(uri: URI): Optional<Class> = repository.findByUri(uri.toString())
+    override fun findByURI(uri: URI): Optional<ClassRepresentation> =
+        repository.findByUri(uri.toString()).map(Class::toClassRepresentation)
 
     override fun createIfNotExists(id: ClassId, label: String, uri: URI?) {
         // Checking if URI is null
@@ -172,4 +184,14 @@ class ClassService(
 
     private fun String.toExactSearchString() =
         "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"
+}
+
+fun Class.toClassRepresentation(): ClassRepresentation = object : ClassRepresentation {
+    override val id: ClassId = this@toClassRepresentation.id!!
+    override val label: String = this@toClassRepresentation.label
+    override val uri: URI? = this@toClassRepresentation.uri
+    override val description: String? = this@toClassRepresentation.description
+    override val jsonClass: String = "class"
+    override val createdAt: OffsetDateTime = this@toClassRepresentation.createdAt
+    override val createdBy: ContributorId = this@toClassRepresentation.createdBy
 }

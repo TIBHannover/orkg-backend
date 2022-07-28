@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
 import eu.tib.orkg.prototype.statements.application.CreatePredicateRequest
-import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
@@ -41,7 +41,7 @@ class PredicateServiceTest : Neo4jTestContainersBaseTest() {
 
         val predicates = service.findAll(PageRequest.of(0, 10))
 
-        val labels = predicates.map(Predicate::label)
+        val labels = predicates.map(PredicateRepresentation::label)
 
         assertThat(predicates).hasSize(2)
         assertThat(labels).containsExactlyInAnyOrder("First Concept", "Second Concept")

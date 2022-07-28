@@ -1,12 +1,10 @@
 package eu.tib.orkg.prototype.statements.application.rdf
 
 import eu.tib.orkg.prototype.configuration.RdfConfiguration
-import eu.tib.orkg.prototype.statements.api.ClassUseCases
-import eu.tib.orkg.prototype.statements.api.PredicateUseCases
-import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.rdf.RdfService
 import java.io.StringWriter
 import java.net.URI
 import org.eclipse.rdf4j.model.Model
@@ -24,10 +22,8 @@ import org.springframework.web.util.UriComponentsBuilder
 @RestController
 @RequestMapping("/api/vocab")
 class VocabController(
-    private val resourceService: ResourceUseCases,
-    private val predicateService: PredicateUseCases,
-    private val classService: ClassUseCases,
-    private val rdfConfiguration: RdfConfiguration
+    private val rdfService: RdfService,
+    private val rdfConfiguration: RdfConfiguration,
 ) {
     @GetMapping(
         "/resource/{id}",
@@ -40,11 +36,10 @@ class VocabController(
     ): ResponseEntity<String> {
         if (!checkAcceptHeader(acceptHeader))
             return createRedirectResponse("resource", id.value, uriComponentsBuilder)
-        val resource = resourceService
-            .findById(id)
+        val model = rdfService.rdfModelFor(id)
             // TODO: Return meaningful message to the user
             .orElseThrow { IllegalStateException("Could not find resource $id") }
-        val response = getRdfSerialization(resource.rdf, acceptHeader)
+        val response = getRdfSerialization(model, acceptHeader)
         return ResponseEntity.ok()
             .body(response)
     }
@@ -60,8 +55,10 @@ class VocabController(
     ): ResponseEntity<String> {
         if (!checkAcceptHeader(acceptHeader))
             return createRedirectResponse("predicate", id.value, uriComponentsBuilder)
-        val predicate = predicateService.findById(id)
-        val response = getRdfSerialization(predicate.get().rdf, acceptHeader)
+        val model = rdfService.rdfModelFor(id)
+            // TODO: Return meaningful message to the user
+            .orElseThrow { IllegalStateException("Could not find predicate $id") }
+        val response = getRdfSerialization(model, acceptHeader)
         return ResponseEntity.ok()
             .body(response)
     }
@@ -75,8 +72,10 @@ class VocabController(
         @RequestHeader("Accept") acceptHeader: String,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<String> {
-        val clazz = classService.findById(id)
-        val response = getRdfSerialization(clazz.get().rdf, acceptHeader)
+        val model = rdfService.rdfModelFor(id)
+            // TODO: Return meaningful message to the user
+            .orElseThrow { IllegalStateException("Could not find class $id") }
+        val response = getRdfSerialization(model, acceptHeader)
         return ResponseEntity.ok()
             .body(response)
     }

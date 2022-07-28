@@ -7,34 +7,33 @@ import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryReq
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
-import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 
 interface CreateResourceUseCase {
     // legacy methods:
-    fun create(label: String): Resource
+    fun create(label: String): ResourceRepresentation
     fun create(
         userId: ContributorId,
         label: String,
         observatoryId: ObservatoryId,
         extractionMethod: ExtractionMethod,
         organizationId: OrganizationId
-    ): Resource
+    ): ResourceRepresentation
 
-    fun create(request: CreateResourceRequest): Resource
+    fun create(request: CreateResourceRequest): ResourceRepresentation
     fun create(
         userId: ContributorId,
         request: CreateResourceRequest,
         observatoryId: ObservatoryId,
         extractionMethod: ExtractionMethod,
         organizationId: OrganizationId
-    ): Resource
+    ): ResourceRepresentation
 }
 
 interface UpdateResourceUseCase {
     // legacy methods:
-    fun update(request: UpdateResourceRequest): Resource
-    fun updatePaperObservatory(request: UpdateResourceObservatoryRequest, id: ResourceId): Resource
+    fun update(request: UpdateResourceRequest): ResourceRepresentation
+    fun updatePaperObservatory(request: UpdateResourceObservatoryRequest, id: ResourceId): ResourceRepresentation
 }
 
 interface DeleteResourceUseCase {

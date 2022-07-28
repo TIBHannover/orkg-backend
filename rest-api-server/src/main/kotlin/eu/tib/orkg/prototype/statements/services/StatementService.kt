@@ -5,13 +5,20 @@ import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.BundleConfiguration
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
+import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
+import eu.tib.orkg.prototype.statements.domain.model.Literal
+import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
+import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
-import eu.tib.orkg.prototype.statements.spi.LiteralRepository
+import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
+import eu.tib.orkg.prototype.statements.domain.model.Thing
+import eu.tib.orkg.prototype.statements.api.ThingRepresentation
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
-import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.ThingRepository
 import java.time.OffsetDateTime
@@ -21,44 +28,46 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+typealias StatementCounts = Map<ResourceId, Long>
+
 @Service
 @Transactional
 class StatementService(
     private val thingRepository: ThingRepository,
-    private val resourceService: ResourceRepository,
-    private val literalService: LiteralRepository,
     private val predicateService: PredicateRepository,
     private val statementRepository: StatementRepository,
 ) : StatementUseCases {
 
-    override fun findAll(pagination: Pageable): Iterable<GeneralStatement> =
-        statementRepository.findAll(pagination).content
+    override fun findAll(pagination: Pageable): Iterable<StatementRepresentation> =
+        retrieveAndConvertIterable { statementRepository.findAll(pagination).content }
 
-    override fun findById(statementId: StatementId): Optional<GeneralStatement> =
-        statementRepository.findByStatementId(statementId)
+    override fun findById(statementId: StatementId): Optional<StatementRepresentation> =
+        retrieveAndConvertSingleStatement { statementRepository.findByStatementId(statementId) }
 
-    override fun findAllBySubject(subjectId: String, pagination: Pageable): Page<GeneralStatement> =
-        statementRepository.findAllBySubject(subjectId, pagination)
+    override fun findAllBySubject(subjectId: String, pagination: Pageable): Page<StatementRepresentation> =
+        retrieveAndConvertPaged { statementRepository.findAllBySubject(subjectId, pagination) }
 
-    override fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable): Page<GeneralStatement> =
-        statementRepository.findAllByPredicateId(predicateId, pagination)
+    override fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable): Page<StatementRepresentation> =
+        retrieveAndConvertPaged { statementRepository.findAllByPredicateId(predicateId, pagination) }
 
-    override fun findAllByObject(objectId: String, pagination: Pageable): Page<GeneralStatement> =
-        statementRepository.findAllByObject(objectId, pagination)
+    override fun findAllByObject(objectId: String, pagination: Pageable): Page<StatementRepresentation> =
+        retrieveAndConvertPaged { statementRepository.findAllByObject(objectId, pagination) }
 
     override fun findAllBySubjectAndPredicate(
         subjectId: String,
         predicateId: PredicateId,
         pagination: Pageable
-    ): Page<GeneralStatement> = statementRepository.findAllBySubjectAndPredicate(subjectId, predicateId, pagination)
+    ): Page<StatementRepresentation> =
+        retrieveAndConvertPaged { statementRepository.findAllBySubjectAndPredicate(subjectId, predicateId, pagination) }
 
     override fun findAllByObjectAndPredicate(
         objectId: String,
         predicateId: PredicateId,
         pagination: Pageable
-    ): Page<GeneralStatement> = statementRepository.findAllByObjectAndPredicate(objectId, predicateId, pagination)
+    ): Page<StatementRepresentation> =
+        retrieveAndConvertPaged { statementRepository.findAllByObjectAndPredicate(objectId, predicateId, pagination) }
 
-    override fun create(subject: String, predicate: PredicateId, `object`: String) =
+    override fun create(subject: String, predicate: PredicateId, `object`: String): StatementRepresentation =
         create(ContributorId.createUnknownContributor(), subject, predicate, `object`)
 
     override fun create(
@@ -66,7 +75,7 @@ class StatementService(
         subject: String,
         predicate: PredicateId,
         `object`: String
-    ): GeneralStatement {
+    ): StatementRepresentation {
         val foundSubject = thingRepository.findByThingId(subject)
             .orElseThrow { IllegalStateException("Could not find subject $subject") }
 
@@ -92,7 +101,7 @@ class StatementService(
             createdAt = OffsetDateTime.now(),
         )
         statementRepository.save(newStatement)
-        return newStatement
+        return findById(newStatement.id!!).get()
     }
 
     override fun add(userId: ContributorId, subject: String, predicate: PredicateId, `object`: String) {
@@ -128,7 +137,7 @@ class StatementService(
         statementRepository.delete(toDelete.get())
     }
 
-    override fun update(statementEditRequest: StatementEditRequest): GeneralStatement {
+    override fun update(statementEditRequest: StatementEditRequest): StatementRepresentation {
         var found = statementRepository.findByStatementId(statementEditRequest.statementId!!)
             .orElseThrow { IllegalStateException("Could not find statement: ${statementEditRequest.statementId}") }
 
@@ -148,7 +157,7 @@ class StatementService(
 
         statementRepository.save(found)
 
-        return found
+        return findById(found.id!!).get()
     }
 
     override fun countStatements(paperId: String): Int = statementRepository.countByIdRecursive(paperId)
@@ -157,15 +166,23 @@ class StatementService(
         predicateId: PredicateId,
         literal: String,
         pagination: Pageable
-    ): Page<GeneralStatement> = statementRepository.findAllByPredicateIdAndLabel(predicateId, literal, pagination)
+    ): Page<StatementRepresentation> =
+        retrieveAndConvertPaged { statementRepository.findAllByPredicateIdAndLabel(predicateId, literal, pagination) }
 
     override fun findAllByPredicateAndLabelAndSubjectClass(
         predicateId: PredicateId,
         literal: String,
         subjectClass: ClassId,
         pagination: Pageable
-    ): Page<GeneralStatement> =
-        statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(predicateId, literal, subjectClass, pagination)
+    ): Page<StatementRepresentation> =
+        retrieveAndConvertPaged {
+            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+                predicateId,
+                literal,
+                subjectClass,
+                pagination
+            )
+        }
 
     override fun fetchAsBundle(
         thingId: String,
@@ -190,9 +207,11 @@ class StatementService(
         thingId: String,
         configuration: BundleConfiguration
     ): Bundle = Bundle(
-        thingId, statementRepository.fetchAsBundle(
-            thingId, configuration.toApocConfiguration()
-        ).toMutableList()
+        thingId, retrieveAndConvertIterable {
+            statementRepository.fetchAsBundle(
+                thingId, configuration.toApocConfiguration()
+            )
+        }.toMutableList()
     )
 
     /**
@@ -208,10 +227,56 @@ class StatementService(
         thingId: String,
         configuration: BundleConfiguration
     ): Bundle = createBundle(thingId, configuration) + Bundle(
-        thingId, statementRepository.fetchAsBundle(
-            thingId, BundleConfiguration.firstLevelConf().toApocConfiguration()
-        ).toMutableList()
+        thingId, retrieveAndConvertIterable {
+            statementRepository.fetchAsBundle(
+                thingId, BundleConfiguration.firstLevelConf().toApocConfiguration()
+            )
+        }.toMutableList()
     )
 
     override fun removeAll() = statementRepository.deleteAll()
+
+    private fun countsFor(statements: List<GeneralStatement>): Map<ResourceId, Long> {
+        val resourceIds =
+            statements.map(GeneralStatement::subject).filterIsInstance<Resource>().mapNotNull { it.id } +
+                statements.map(GeneralStatement::`object`).filterIsInstance<Resource>().mapNotNull { it.id }
+        return statementRepository.countStatementsAboutResources(resourceIds.toSet())
+    }
+
+    private fun retrieveAndConvertSingleStatement(action: () -> Optional<GeneralStatement>): Optional<StatementRepresentation> =
+        action().map {
+            val counts = countsFor(listOf(action().get(), action().get()))
+            it.toRepresentation(counts)
+        }
+
+    private fun retrieveAndConvertPaged(action: () -> Page<GeneralStatement>): Page<StatementRepresentation> {
+        val paged = action()
+        return paged.map { it.toRepresentation(countsFor(paged.content)) }
+    }
+
+    private fun retrieveAndConvertIterable(action: () -> Iterable<GeneralStatement>): Iterable<StatementRepresentation> {
+        val statements = action()
+        return statements.map { it.toRepresentation(countsFor(statements.toList())) }
+    }
+
+    private fun GeneralStatement.toRepresentation(statementCounts: StatementCounts): StatementRepresentation =
+        object : StatementRepresentation {
+            override val id: StatementId = this@toRepresentation.id!!
+            override val subject: ThingRepresentation = this@toRepresentation.subject.toRepresentation(statementCounts)
+            override val predicate: PredicateRepresentation =
+                this@toRepresentation.predicate.toPredicateRepresentation()
+            override val `object`: ThingRepresentation =
+                this@toRepresentation.`object`.toRepresentation(statementCounts)
+            override val createdAt: OffsetDateTime = this@toRepresentation.createdAt!!
+            override val createdBy: ContributorId = this@toRepresentation.createdBy
+        }
 }
+
+fun Thing.toRepresentation(usageCount: StatementCounts): ThingRepresentation =
+    when (this) {
+        is Class -> toClassRepresentation()
+        is Literal -> toLiteralRepresentation()
+        is Predicate -> toPredicateRepresentation()
+        is Resource -> toResourceRepresentation(usageCount)
+        else -> throw IllegalStateException("this should never happen")
+    }

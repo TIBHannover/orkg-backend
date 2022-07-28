@@ -28,7 +28,7 @@ class WidgetController(private val service: ResourceUseCases, private val statem
             service.findAllByTitle(titleString).firstOrNull())
             ?: return notFound().build()
 
-        val totalStatements = statementService.countStatements(found.id!!.value)
+        val totalStatements = statementService.countStatements(found.id.value)
 
         return ok(WidgetInfo(id = found.id.toString(),
                                 doi = searchString,

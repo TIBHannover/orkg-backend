@@ -3,6 +3,8 @@ package eu.tib.orkg.prototype.statements.domain.model
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.escapeLiterals
+import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
+import eu.tib.orkg.prototype.statements.api.ThingRepresentation
 import eu.tib.orkg.prototype.statements.application.StatementResponse
 import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
 import java.time.OffsetDateTime
@@ -16,8 +18,22 @@ data class GeneralStatement(
     val createdAt: OffsetDateTime?,
     @JsonProperty("created_by")
     val createdBy: ContributorId = ContributorId.createUnknownContributor()
-
 ) : StatementResponse
+
+interface StatementRepresentation : StatementProvenanceMetadata {
+    val id: StatementId
+    val subject: ThingRepresentation
+    val predicate: PredicateRepresentation
+    val `object`: ThingRepresentation
+}
+
+interface StatementProvenanceMetadata {
+    @get:JsonProperty("created_at")
+    val createdAt: OffsetDateTime
+
+    @get:JsonProperty("created_by")
+    val createdBy: ContributorId
+}
 
 data class CreateStatement(
     val id: StatementId? = null,
@@ -28,6 +44,7 @@ data class CreateStatement(
     @JsonProperty("object_id")
     val objectId: String
 )
+
 /**
  * Convert the triple to a statement in NTriple format.
  */

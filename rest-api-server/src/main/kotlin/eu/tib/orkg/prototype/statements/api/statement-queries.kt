@@ -3,31 +3,31 @@ package eu.tib.orkg.prototype.statements.api
 import eu.tib.orkg.prototype.statements.application.BundleConfiguration
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface RetrieveStatementUseCase {
     // legacy methods:
-    fun findAll(pagination: Pageable): Iterable<GeneralStatement>
-    fun findById(statementId: StatementId): Optional<GeneralStatement>
-    fun findAllBySubject(subjectId: String, pagination: Pageable): Page<GeneralStatement>
-    fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable): Page<GeneralStatement>
-    fun findAllByObject(objectId: String, pagination: Pageable): Page<GeneralStatement>
+    fun findAll(pagination: Pageable): Iterable<StatementRepresentation>
+    fun findById(statementId: StatementId): Optional<StatementRepresentation>
+    fun findAllBySubject(subjectId: String, pagination: Pageable): Page<StatementRepresentation>
+    fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable): Page<StatementRepresentation>
+    fun findAllByObject(objectId: String, pagination: Pageable): Page<StatementRepresentation>
     fun findAllBySubjectAndPredicate(
         subjectId: String,
         predicateId: PredicateId,
         pagination: Pageable
-    ): Iterable<GeneralStatement>
+    ): Iterable<StatementRepresentation>
 
     fun findAllByObjectAndPredicate(
         objectId: String,
         predicateId: PredicateId,
         pagination: Pageable
-    ): Iterable<GeneralStatement>
+    ): Iterable<StatementRepresentation>
 
     fun totalNumberOfStatements(): Long
     fun countStatements(paperId: String): Int
@@ -35,14 +35,14 @@ interface RetrieveStatementUseCase {
         predicateId: PredicateId,
         literal: String,
         pagination: Pageable
-    ): Iterable<GeneralStatement>
+    ): Page<StatementRepresentation>
 
     fun findAllByPredicateAndLabelAndSubjectClass(
         predicateId: PredicateId,
         literal: String,
         subjectClass: ClassId,
         pagination: Pageable
-    ): Iterable<GeneralStatement>
+    ): Iterable<StatementRepresentation>
 
     fun fetchAsBundle(thingId: String, configuration: BundleConfiguration, includeFirst: Boolean): Bundle
 }

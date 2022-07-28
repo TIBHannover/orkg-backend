@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.assertj.core.api.Assertions.assertThat
@@ -101,7 +101,7 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
         service.create("second")
         val pagination = PageRequest.of(0, 10)
         val resources = service.findAll(pagination)
-        val labels = resources.map(Resource::label)
+        val labels = resources.map(ResourceRepresentation::label)
 
         assertThat(resources).hasSize(2)
         assertThat(labels).containsExactlyInAnyOrder("first", "second")
@@ -168,18 +168,18 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
     @Test
     @DisplayName("should allow regex special chars in resource label")
     fun shouldAllowRegexSpecialCharsInLabel() {
-        val res = service.create("C\$razy LAb(el. he*r?")
+        val res = service.create("C\$razy LAb(el. he*r?").id
         val found = service.findAllByLabelContaining(
             PageRequest.of(1, 10), "LAb(el."
         )
         assertThat(found).isNotNull
-        assertThat(found.contains(res))
+        assertThat(found.map(ResourceRepresentation::id).contains(res))
     }
 
     @Test
     fun `when several resources of a class exist with the same label, partial search should return all of them`() {
         val researchProblemClass = ClassId("Research Problem")
-        val resources = mutableListOf<Resource>()
+        val resources = mutableListOf<ResourceRepresentation>()
         repeat(5) {
             resources += service.create(
                 CreateResourceRequest(
@@ -193,8 +193,9 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
 
         val page = PageRequest.of(0, 10)
         val found = service.findAllByClassAndLabelContaining(page, researchProblemClass, "Testing the Darwin")
+            .map(ResourceRepresentation::id)
 
         assertThat(found.totalElements).isEqualTo(5)
-        assertThat(found.content).containsExactlyInAnyOrderElementsOf(resources)
+        assertThat(found.content).containsExactlyInAnyOrderElementsOf(resources.map(ResourceRepresentation::id))
     }
 }

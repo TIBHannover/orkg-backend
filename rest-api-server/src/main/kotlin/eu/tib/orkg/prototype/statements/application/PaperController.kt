@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
@@ -11,8 +12,8 @@ import eu.tib.orkg.prototype.statements.application.ObjectController.Constants
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
-import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -32,7 +33,8 @@ class PaperController(
     private val predicateService: PredicateUseCases,
     private val statementService: StatementUseCases,
     private val contributorService: ContributorService,
-    private val objectController: ObjectController
+    private val objectController: ObjectController,
+    private val resourceRepository: ResourceRepository, // TODO: remove dependency by pushing code to service
 ) : BaseController() {
 
     @PostMapping("/")
@@ -41,7 +43,7 @@ class PaperController(
         @RequestBody paper: CreatePaperRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         @RequestParam("mergeIfExists", required = false, defaultValue = "false") mergeIfExists: Boolean
-    ): ResponseEntity<Resource> {
+    ): ResponseEntity<ResourceRepresentation> {
         val resource = addPaperContent(paper, mergeIfExists)
         val location = uriComponentsBuilder
             .path("api/resources/")
@@ -57,12 +59,12 @@ class PaperController(
     fun addPaperContent(
         request: CreatePaperRequest,
         mergeIfExists: Boolean
-    ): Resource {
+    ): ResourceRepresentation {
         val userId = ContributorId(authenticatedUserId())
 
         // check if should be merged or not
         val paperObj = createOrFindPaper(mergeIfExists, request, userId)
-        val paperId = paperObj.id!!
+        val paperId = paperObj.id
 
         // paper contribution data
         if (request.paper.hasContributions()) {
@@ -84,12 +86,13 @@ class PaperController(
         paperRequest: CreatePaperRequest
     ): ResourceId {
         // Always append Contribution class to custom user classes
-        val contributionClasses = (listOf(Constants.ID_CONTRIBUTION_CLASS) + jsonObject.classes.orEmpty()).toSet().toList()
+        val contributionClasses =
+            (listOf(Constants.ID_CONTRIBUTION_CLASS) + jsonObject.classes.orEmpty()).toSet().toList()
         // Convert Paper structure to Object structure
         val contribution = jsonObject.copy(classes = contributionClasses)
         val objectRequest = CreateObjectRequest(paperRequest.predicates, contribution)
         // Create contribution resource whether it has data or not
-        return objectController.createObject(objectRequest).id!!
+        return objectController.createObject(objectRequest).id
     }
 
     /**
@@ -100,7 +103,7 @@ class PaperController(
         mergeIfExists: Boolean,
         request: CreatePaperRequest,
         userId: ContributorId
-    ): Resource {
+    ): ResourceRepresentation {
         return if (mergeIfExists) {
             mergePapersIfPossible(userId, request)
         } else {
@@ -115,7 +118,7 @@ class PaperController(
     private fun mergePapersIfPossible(
         userId: ContributorId,
         request: CreatePaperRequest
-    ): Resource {
+    ): ResourceRepresentation {
         // Do this in a sequential order, first check for DOI and then title, otherwise we create a new paper
         if (request.paper.hasDOI()) {
             val byDOI = resourceService.findAllByDOI(request.paper.doi!!)
@@ -132,7 +135,7 @@ class PaperController(
      * Handles the creation of a new paper resource
      * i.e., creates the new paper, meta-data
      */
-    private fun createNewPaperWithMetadata(userId: ContributorId, request: CreatePaperRequest): Resource {
+    private fun createNewPaperWithMetadata(userId: ContributorId, request: CreatePaperRequest): ResourceRepresentation {
         val contributor = contributorService.findByIdOrElseUnknown(userId)
         val organizationId = contributor.organizationId
         val observatoryId = contributor.observatoryId
@@ -145,17 +148,17 @@ class PaperController(
             request.paper.extractionMethod,
             organizationId
         )
-        val paperId = paperObj.id!!
+        val paperId = paperObj.id
 
         // paper doi
         if (request.paper.hasDOI()) {
-            val paperDoi = literalService.create(userId, request.paper.doi!!).id!!
+            val paperDoi = literalService.create(userId, request.paper.doi!!).id
             statementService.add(userId, paperId.value, Constants.DoiPredicate, paperDoi.value)
         }
 
         // paper URL
         if (request.paper.hasUrl()) {
-            val paperUrl = literalService.create(userId, request.paper.url!!).id!!
+            val paperUrl = literalService.create(userId, request.paper.url!!).id
             statementService.add(userId, paperId.value, Constants.UrlPredicate, paperUrl.value)
         }
 
@@ -168,14 +171,14 @@ class PaperController(
                 userId,
                 paperId.value,
                 Constants.PublicationMonthPredicate,
-                literalService.create(userId, request.paper.publicationMonth.toString()).id!!.value
+                literalService.create(userId, request.paper.publicationMonth.toString()).id.value
             )
         if (request.paper.hasPublicationYear())
             statementService.add(
                 userId,
                 paperId.value,
                 Constants.PublicationYearPredicate,
-                literalService.create(userId, request.paper.publicationYear.toString()).id!!.value
+                literalService.create(userId, request.paper.publicationYear.toString()).id.value
             )
 
         // paper published At
@@ -211,13 +214,13 @@ class PaperController(
         extractionMethod: ExtractionMethod,
         organizationId: OrganizationId
     ) {
-        val venuePredicate = predicateService.findById(Constants.VenuePredicate).get().id!!
+        val venuePredicate = predicateService.findById(Constants.VenuePredicate).get().id
         val pageable = PageRequest.of(1, 10)
         // Check if resource exists
-        var venueResource = resourceService.findAllByLabel(pageable, venue).firstOrNull()
+        var venueResource = resourceRepository.findAllByLabel(venue, pageable).firstOrNull()
         if (venueResource == null) {
             // If not override object with new venue resource
-            venueResource = resourceService.create(
+            val representation = resourceService.create(
                 userId,
                 CreateResourceRequest(
                     null,
@@ -228,6 +231,7 @@ class PaperController(
                 extractionMethod,
                 organizationId
             )
+            venueResource = resourceRepository.findByResourceId(representation.id).get()
         }
         // create a statement with the venue resource
         statementService.add(
@@ -267,15 +271,18 @@ class PaperController(
                             // Link existing ORCID
                             val authorStatement =
                                 statementService.findAllByObject(
-                                    foundOrcid.id!!.value,
-                                    PageRequest.of(1, 10) // TODO: Hide values by using default values for the parameters
+                                    foundOrcid.id.value,
+                                    PageRequest.of(
+                                        1,
+                                        10
+                                    ) // TODO: Hide values by using default values for the parameters
                                 ).firstOrNull { it.predicate.id == Constants.OrcidPredicate }
                                     ?: throw OrphanOrcidValue(orcidValue)
                             statementService.add(
                                 userId,
                                 paperId.value,
                                 Constants.AuthorPredicate,
-                                (authorStatement.subject as Resource).id!!.value
+                                (authorStatement.subject as ResourceRepresentation).id.value
                             )
                         } else {
                             // create resource
@@ -290,12 +297,12 @@ class PaperController(
                                 userId,
                                 paperId.value,
                                 Constants.AuthorPredicate,
-                                author.id!!.value
+                                author.id.value
                             )
                             // Create orcid literal
                             val orcid = literalService.create(userId, orcidValue)
                             // Add ORCID id to the new resource
-                            statementService.add(userId, author.id.value, Constants.OrcidPredicate, orcid.id!!.value)
+                            statementService.add(userId, author.id.value, Constants.OrcidPredicate, orcid.id.value)
                         }
                     } else {
                         // create literal and link it
@@ -303,7 +310,7 @@ class PaperController(
                             userId,
                             paperId.value,
                             Constants.AuthorPredicate,
-                            literalService.create(userId, it.label!!).id!!.value
+                            literalService.create(userId, it.label!!).id.value
                         )
                     }
                 } else {

@@ -2,6 +2,8 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.application.service.CreatePaperRequest
+import eu.tib.orkg.prototype.statements.application.service.Paper
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
@@ -136,7 +138,8 @@ class PaperControllerTest : RestDocumentationBaseTest() {
             publishedIn = null,
             url = null,
             extractionMethod = ExtractionMethod.MANUAL
-        ))
+        )
+        )
 
     @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")

@@ -7,11 +7,13 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import io.kotest.assertions.asClue
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.*
-import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.SoftAssertions
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.data.domain.PageRequest
@@ -37,20 +39,18 @@ interface ResourceRepositoryContractTest {
 
         val actual = repository.findByResourceId(expected.id).orElse(null)
 
-        assertThat(actual).isNotNull
-        SoftAssertions.assertSoftly { softly ->
-            softly.assertThat(actual.id).`as`("property 'id'").isEqualTo(expected.id)
-            softly.assertThat(actual.label).`as`("property 'label'").isEqualTo(expected.label)
-            softly.assertThat(actual.createdAt).`as`("property 'createdAt'").isEqualTo(expected.createdAt)
-            softly.assertThat(actual.classes).`as`("property 'classes'")
-                .containsExactlyInAnyOrder(*(expected.classes.toTypedArray()))
-            softly.assertThat(actual.createdBy).`as`("property 'createdBy'").isEqualTo(expected.createdBy)
-            softly.assertThat(actual.observatoryId).`as`("property 'observatoryId'").isEqualTo(expected.observatoryId)
-            softly.assertThat(actual.extractionMethod).`as`("property 'extractionMethod'")
-                .isEqualTo(expected.extractionMethod)
-            softly.assertThat(actual.featured).`as`("property 'featured'").isEqualTo(expected.featured)
-            softly.assertThat(actual.unlisted).`as`("property 'unlisted'").isEqualTo(expected.unlisted)
-            softly.assertThat(actual.verified).`as`("property 'verified'").isEqualTo(expected.verified)
+        actual shouldNotBe null
+        actual.asClue {
+            it.id shouldBe expected.id
+            it.label shouldBe expected.label
+            it.createdAt shouldBe expected.createdAt
+            it.createdBy shouldBe expected.createdBy
+            it.classes shouldContainExactlyInAnyOrder expected.classes
+            it.observatoryId shouldBe expected.observatoryId
+            it.extractionMethod shouldBe expected.extractionMethod
+            it.featured shouldBe expected.featured
+            it.unlisted shouldBe expected.unlisted
+            it.verified shouldBe expected.verified
         }
     }
 
@@ -61,10 +61,10 @@ interface ResourceRepositoryContractTest {
             val r = createResource().copy(id = ResourceId(UUID.randomUUID().toString()))
             repository.save(r)
         }
-        assertThat(repository.findAll(PageRequest.of(0, 10)).totalElements).isEqualTo(times.toLong())
+        repository.findAll(PageRequest.of(0, 10)).totalElements shouldBe times
     }
 
-    abstract fun cleanUpAfterEach()
+    fun cleanUpAfterEach()
 
     @AfterEach
     fun cleanUp() {

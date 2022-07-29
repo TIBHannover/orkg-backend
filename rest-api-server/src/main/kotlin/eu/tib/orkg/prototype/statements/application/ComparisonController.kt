@@ -1,8 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.contenttypes.api.ContentTypeUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.services.ResourceService
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -16,22 +15,22 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/comparisons")
 class ComparisonController(
-    private val neo4jResourceService: ResourceService,
-    private val service: ResourceUseCases
+    private val service: ContentTypeUseCase
 ) {
     @GetMapping("/metadata/featured", params = ["featured=true"])
     fun getFeaturedComparisons(pageable: Pageable) =
-        neo4jResourceService.loadFeaturedComparisons(pageable)
+        service.loadFeaturedComparisons(pageable)
 
     @GetMapping("/metadata/featured", params = ["featured=false"])
     fun getNonFeaturedComparisons(pageable: Pageable) =
-        neo4jResourceService.loadNonFeaturedComparisons(pageable)
+        service.loadNonFeaturedComparisons(pageable)
 
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)
     fun markFeatured(@PathVariable id: ResourceId) {
         service.markAsFeatured(id).orElseThrow { ResourceNotFound(id.toString()) }
     }
+
     @DeleteMapping("/{id}/metadata/featured")
     fun unmarkFeatured(@PathVariable id: ResourceId) {
         service.markAsNonFeatured(id).orElseThrow { ResourceNotFound(id.toString()) }
@@ -43,20 +42,21 @@ class ComparisonController(
 
     @GetMapping("/metadata/unlisted", params = ["unlisted=true"])
     fun getUnlistedComparisons(pageable: Pageable) =
-        neo4jResourceService.loadUnlistedComparisons(pageable)
+        service.loadUnlistedComparisons(pageable)
 
     @GetMapping("/metadata/unlisted", params = ["unlisted=false"])
     fun getListedComparisons(pageable: Pageable) =
-        neo4jResourceService.loadListedComparisons(pageable)
+        service.loadListedComparisons(pageable)
 
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.OK)
     fun markUnlisted(@PathVariable id: ResourceId) {
-        neo4jResourceService.markAsUnlisted(id).orElseThrow { ResourceNotFound(id.toString()) }
+        service.markAsUnlisted(id).orElseThrow { ResourceNotFound(id.toString()) }
     }
+
     @DeleteMapping("/{id}/metadata/unlisted")
     fun unmarkUnlisted(@PathVariable id: ResourceId) {
-        neo4jResourceService.markAsListed(id).orElseThrow { ResourceNotFound(id.toString()) }
+        service.markAsListed(id).orElseThrow { ResourceNotFound(id.toString()) }
     }
 
     @GetMapping("/{id}/metadata/unlisted")

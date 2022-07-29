@@ -2,15 +2,16 @@ package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import dev.forkhandles.values.ofOrNull
+import eu.tib.orkg.prototype.contenttypes.api.ContentTypeUseCase
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -40,7 +41,9 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/resources/")
 class ResourceController(
     private val service: ResourceUseCases,
-    private val contributorService: ContributorService
+    private val contributorService: ContributorService,
+    // TODO: should be removed from resource controller, it is not general functionality. Keeping for compatibility.
+    private val contentTypeService: ContentTypeUseCase
 ) : BaseController() {
 
     @GetMapping("/{id}")
@@ -56,9 +59,20 @@ class ResourceController(
     ): Page<ResourceRepresentation> {
         return when {
             excludeClasses.isNotEmpty() -> when {
-                searchString == null -> service.findAllExcludingClass(pageable, excludeClasses.map { ClassId(it) }.toTypedArray())
-                exactMatch -> service.findAllExcludingClassByLabel(pageable, excludeClasses.map { ClassId(it) }.toTypedArray(), searchString)
-                else -> service.findAllExcludingClassByLabelContaining(pageable, excludeClasses.map { ClassId(it) }.toTypedArray(), searchString)
+                searchString == null -> service.findAllExcludingClass(
+                    pageable,
+                    excludeClasses.map { ClassId(it) }.toTypedArray()
+                )
+                exactMatch -> service.findAllExcludingClassByLabel(
+                    pageable,
+                    excludeClasses.map { ClassId(it) }.toTypedArray(),
+                    searchString
+                )
+                else -> service.findAllExcludingClassByLabelContaining(
+                    pageable,
+                    excludeClasses.map { ClassId(it) }.toTypedArray(),
+                    searchString
+                )
             }
             else -> when {
                 searchString == null -> service.findAll(pageable)
@@ -154,17 +168,17 @@ class ResourceController(
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)
     fun markFeatured(@PathVariable id: ResourceId) {
-        service.markAsFeatured(id).orElseThrow { ResourceNotFound(id.toString()) }
+        contentTypeService.markAsFeatured(id).orElseThrow { ResourceNotFound(id.toString()) }
     }
 
     @DeleteMapping("/{id}/metadata/featured")
     fun unmarkFeatured(@PathVariable id: ResourceId) {
-        service.markAsNonFeatured(id).orElseThrow { ResourceNotFound(id.toString()) }
+        contentTypeService.markAsNonFeatured(id).orElseThrow { ResourceNotFound(id.toString()) }
     }
 
     @GetMapping("/{id}/metadata/featured")
     fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean? =
-        service.getFeaturedResourceFlag(id)
+        contentTypeService.getFeaturedResourceFlag(id)
 
     @GetMapping("/metadata/unlisted", params = ["unlisted=true"])
     fun getUnlistedResources(pageable: Pageable) =
@@ -177,17 +191,17 @@ class ResourceController(
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.OK)
     fun markUnlisted(@PathVariable id: ResourceId) {
-        service.markAsUnlisted(id).orElseThrow { ResourceNotFound(id.toString()) }
+        contentTypeService.markAsUnlisted(id).orElseThrow { ResourceNotFound(id.toString()) }
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")
     fun unmarkUnlisted(@PathVariable id: ResourceId) {
-        service.markAsListed(id).orElseThrow { ResourceNotFound(id.toString()) }
+        contentTypeService.markAsListed(id).orElseThrow { ResourceNotFound(id.toString()) }
     }
 
     @GetMapping("/{id}/metadata/unlisted")
     fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean =
-        service.getUnlistedResourceFlag(id) ?: throw ResourceNotFound(id.toString())
+        contentTypeService.getUnlistedResourceFlag(id) ?: throw ResourceNotFound(id.toString())
 
     @GetMapping("/classes")
     fun getResourcesByClass(

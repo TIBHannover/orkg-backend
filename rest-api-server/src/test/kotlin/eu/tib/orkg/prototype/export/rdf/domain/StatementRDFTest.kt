@@ -1,16 +1,18 @@
-package eu.tib.orkg.prototype.statements.domain.model
+package eu.tib.orkg.prototype.export.rdf.domain
 
 import eu.tib.orkg.prototype.createLiteral
 import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.createStatement
-import eu.tib.orkg.prototype.export.rdf.domain.toNTriple
+import eu.tib.orkg.prototype.statements.domain.model.LiteralId
+import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 @Suppress("HttpUrlsUsage")
-class StatementRDFTests {
+internal class StatementRDFTest {
     @Test
     fun `converts statement with resource object to NTriple format correctly`() {
         val expectedOutput = """
@@ -49,7 +51,9 @@ class StatementRDFTests {
         val statement = createStatement(
             subject = createResource().copy(id = ResourceId(100), label = "subject"),
             predicate = createPredicate().copy(id = PredicateId(200)),
-            `object` = createLiteral().copy(id = LiteralId(300), label = "object", datatype = "http://example.org/myDataType")
+            `object` = createLiteral().copy(
+                id = LiteralId(300), label = "object", datatype = "http://example.org/myDataType"
+            )
         )
         assertThat(statement.toNTriple()).isEqualTo(expectedOutput)
     }

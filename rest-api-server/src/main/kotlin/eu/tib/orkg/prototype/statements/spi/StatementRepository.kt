@@ -11,8 +11,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
 
-interface StatementRepository {
-    fun findAll(): Sequence<GeneralStatement>
+interface StatementRepository : EntityRepository<GeneralStatement> {
     fun countStatementsAboutResource(id: ResourceId): Long
     fun countStatementsAboutResources(resourceIds: Set<ResourceId>): Map<ResourceId, Long>
     // legacy methods:
@@ -24,7 +23,6 @@ interface StatementRepository {
     fun delete(statement: GeneralStatement)
     fun deleteAll()
     fun findAll(depth: Int): Iterable<GeneralStatement>
-    fun findAll(pageable: Pageable): Page<GeneralStatement>
     fun findByStatementId(id: StatementId): Optional<GeneralStatement>
     fun findAllBySubject(subjectId: String, pagination: Pageable): Page<GeneralStatement>
     fun findAllByPredicateId(predicateId: PredicateId, pagination: Pageable): Page<GeneralStatement>

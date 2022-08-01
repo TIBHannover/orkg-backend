@@ -9,8 +9,11 @@ import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
+import kotlin.random.Random
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
@@ -86,8 +89,39 @@ class SpringDataNeo4jStatementAdapterTests : Neo4jTestContainersBaseTest() {
         assertThat(actual).isEqualTo(expected)
     }
 
+    @Test
+    @Tag("regression")
+    @Disabled("This will add minutes to the test times, and does not trigger the problem. :-/")
+    fun `saving and retrieving a lot of statements with the same predicate`() {
+        val predicate = createPredicate().copy(id = PredicateId("P30"))
+        predicateRepository.save(predicate)
+        val resources = (1L..50).map { createResource().copy(id = ResourceId(it), label = randomString()) }
+        resources.forEach { resourceRepository.save(it) }
+        // Create random statements with the same predicate
+        val statements = (1L..2_000 + 100).map {
+            createStatement(
+                subject = resources[Random.nextInt(0, resources.size)],
+                predicate = predicate,
+                `object` = resources[Random.nextInt(0, resources.size)],
+            ).copy(id = StatementId(it))
+        }
+        statements.forEach { statement ->
+            adapter.save(statement)
+        }
+
+        val found = adapter.findAll(PageRequest.of(0, 2_000))
+
+        assertThat(found).hasSize(2_000)
+    }
+
     @AfterEach
     fun workaroundToResetDatabase() {
         adapter.deleteAll()
     }
 }
+
+internal fun randomString(length: Int = 20, charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')) =
+    (1..length)
+        .map { Random.nextInt(0, charPool.size) }
+        .map(charPool::get)
+        .joinToString("")

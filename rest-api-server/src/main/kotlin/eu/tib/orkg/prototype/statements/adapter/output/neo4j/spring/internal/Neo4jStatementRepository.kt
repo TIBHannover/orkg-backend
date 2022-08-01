@@ -5,7 +5,6 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import java.util.*
-import java.util.stream.Stream
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.Query
@@ -56,9 +55,6 @@ private const val WHERE_OBJECT_ID_IN =
 
 interface Neo4jStatementRepository :
     Neo4jRepository<Neo4jStatement, Long> {
-
-    // The function name is a bit odd, but findAll() conflicts with pre-defined methods. This is documented to work.
-    fun findAllBy(): Stream<Neo4jStatement>
 
     override fun findAll(depth: Int): Iterable<Neo4jStatement>
 

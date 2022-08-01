@@ -11,4 +11,7 @@ data class Literal(
     val createdBy: ContributorId = ContributorId.createUnknownContributor(),
     // This is added to replace @JsonTypeInfo on the Thing interface
     val _class: String? = "literal"
-) : Thing
+) : Thing {
+    override val thingId: ThingId
+        get() = ThingId(id!!.value)
+}

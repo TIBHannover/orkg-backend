@@ -18,4 +18,7 @@ data class Resource(
     val featured: Boolean? = null,
     val unlisted: Boolean? = null,
     val verified: Boolean? = null,
-) : Thing
+) : Thing {
+    override val thingId: ThingId
+        get() = ThingId(id!!.value)
+}

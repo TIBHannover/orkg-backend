@@ -16,6 +16,8 @@ data class Class(
 ) : Thing {
     var description: String? = null
     fun toClass(): Class = Class(id, label, uri, createdAt, createdBy, _class)
+    override val thingId: ThingId
+        get() = ThingId(id!!.value)
 }
 
 internal fun Class?.toOptional() = Optional.ofNullable(this)

@@ -83,6 +83,7 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation(libs.bundles.testcontainers)
+    testImplementation(libs.kotest.assertions.core)
 
     //
     // Documentation

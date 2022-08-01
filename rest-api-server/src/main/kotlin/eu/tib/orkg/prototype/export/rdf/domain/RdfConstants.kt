@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.statements.application.rdf
+package eu.tib.orkg.prototype.export.rdf.domain
 
 object RdfConstants {
     const val VOCAB_PREFIX = "http://orkg.org/orkg"

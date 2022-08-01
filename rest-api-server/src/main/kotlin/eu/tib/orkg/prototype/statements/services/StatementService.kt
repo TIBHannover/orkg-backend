@@ -278,5 +278,4 @@ fun Thing.toRepresentation(usageCount: StatementCounts): ThingRepresentation =
         is Literal -> toLiteralRepresentation()
         is Predicate -> toPredicateRepresentation()
         is Resource -> toResourceRepresentation(usageCount)
-        else -> throw IllegalStateException("this should never happen")
     }

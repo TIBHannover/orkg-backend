@@ -12,10 +12,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers.log
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.request
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
@@ -51,15 +48,8 @@ class RdfControllerTest : RestDocumentationBaseTest() {
         service.create("Resource 2")
         service.create("Resource 3")
 
-        // Streaming works asynchronously, so we need to dispatch the request to get the full response.
-        val result = mockMvc
-            .perform(getFileRequestTo("/api/rdf/dump"))
-            .andExpect(request().asyncStarted())
-            .andDo(log())
-            .andReturn()
-
         mockMvc
-            .perform(asyncDispatch(result))
+            .perform(getFileRequestTo("/api/rdf/dump"))
             .andExpect(status().isOk)
             .andExpect(content().string(containsString("Resource 1")))
             .andDo(

@@ -9,15 +9,12 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.QueryResult
 
-interface ResourceRepository {
-    fun findAll(): Sequence<Resource>
-
+interface ResourceRepository : EntityRepository<Resource> {
     // legacy methods:
     fun nextIdentity(): ResourceId
     fun save(resource: Resource): Resource
     fun delete(id: ResourceId)
     fun deleteAll()
-    fun findAll(pageable: Pageable): Page<Resource>
     fun findByResourceId(id: ResourceId?): Optional<Resource>
     fun findAllByLabel(label: String, pageable: Pageable): Page<Resource>
     fun findAllByLabelMatchesRegex(label: String, pageable: Pageable): Page<Resource>

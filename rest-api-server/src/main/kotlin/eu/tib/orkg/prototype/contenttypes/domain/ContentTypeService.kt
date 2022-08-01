@@ -1,7 +1,6 @@
 package eu.tib.orkg.prototype.contenttypes.domain
 
 import eu.tib.orkg.prototype.contenttypes.api.ContentTypeUseCase
-import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -44,7 +43,7 @@ class ContentTypeService(
         resourceRepository.findAllUnlistedResourcesByClassId(Contribution, pageable)
 
     override fun loadListedContributions(pageable: Pageable): Page<Resource> =
-        neo4jContributionRepository.findAllListedContributions(pageable).map(Neo4jResource::toResource)
+        resourceRepository.findAllByClassId(Contribution, pageable)
 
     override fun getFeaturedContributionFlag(id: ResourceId): Boolean {
         val result = neo4jContributionRepository.findContributionByResourceId(id)
@@ -66,7 +65,7 @@ class ContentTypeService(
         resourceRepository.findAllUnlistedResourcesByClassId(Comparison, pageable)
 
     override fun loadListedComparisons(pageable: Pageable): Page<Resource> =
-        neo4jComparisonRepository.findAllListedComparsions(pageable).map(Neo4jResource::toResource)
+        resourceRepository.findAllByClassId(Comparison, pageable)
 
     override fun getFeaturedComparisonFlag(id: ResourceId): Boolean {
         val result = neo4jComparisonRepository.findComparisonByResourceId(id)
@@ -88,7 +87,7 @@ class ContentTypeService(
         resourceRepository.findAllUnlistedResourcesByClassId(Visualization, pageable)
 
     override fun loadListedVisualizations(pageable: Pageable): Page<Resource> =
-        neo4jVisualizationRepository.findAllListedVisualizations(pageable).map(Neo4jResource::toResource)
+        resourceRepository.findAllByClassId(Visualization, pageable)
 
     override fun getFeaturedVisualizationFlag(id: ResourceId): Boolean {
         val result = neo4jVisualizationRepository.findVisualizationByResourceId(id)
@@ -110,7 +109,7 @@ class ContentTypeService(
         resourceRepository.findAllUnlistedResourcesByClassId(SmartReview, pageable)
 
     override fun loadListedSmartReviews(pageable: Pageable): Page<Resource> =
-        neo4jSmartReviewRepository.findAllListedSmartReviews(pageable).map(Neo4jResource::toResource)
+        resourceRepository.findAllByClassId(SmartReview, pageable)
 
     override fun getFeaturedSmartReviewFlag(id: ResourceId): Boolean {
         val result = neo4jSmartReviewRepository.findSmartReviewByResourceId(id)
@@ -251,5 +250,5 @@ class ContentTypeService(
         resourceRepository.findAllUnlistedResourcesByClassId(ResearchProblem, pageable)
 
     override fun loadListedProblems(pageable: Pageable): Page<Resource> =
-        neo4jProblemRepository.findAllListedProblems(pageable).map(Neo4jResource::toResource)
+        resourceRepository.findAllByClassId(ResearchProblem, pageable)
 }

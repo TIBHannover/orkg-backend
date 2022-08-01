@@ -11,13 +11,34 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.QueryResult
 
 interface ResourceRepository : EntityRepository<Resource> {
+    /**
+     * Find all featured resources with the specified class.
+     *
+     * This method will not return resources marked as `unlisted`.
+     */
     fun findAllFeaturedResourcesByClassId(classId: ClassId, pageable: Pageable): Page<Resource> =
         findAllFeaturedResourcesByClassIds(setOf(classId), pageable)
 
+    /**
+     * Find all featured resources with the specified classes.
+     *
+     * This method will not return resources marked as `unlisted`.
+     */
     fun findAllFeaturedResourcesByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource>
+
+    /**
+     * Find all unlisted resources with the specified class.
+     *
+     * This method will also list resources that are marked featured, although this is an invalid state.
+     */
     fun findAllUnlistedResourcesByClassId(classId: ClassId, pageable: Pageable): Page<Resource> =
         findAllUnlistedResourcesByClassIds(setOf(classId), pageable)
 
+    /**
+     * Find all unlisted resources with the specified classes.
+     *
+     * This method will also list resources that are marked featured, although this is an invalid state.
+     */
     fun findAllUnlistedResourcesByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource>
 
     // legacy methods:

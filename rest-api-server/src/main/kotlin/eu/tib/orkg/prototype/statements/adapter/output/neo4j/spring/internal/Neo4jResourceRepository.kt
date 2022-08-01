@@ -157,8 +157,8 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     fun findAllFeaturedByClasses(classes: Set<String>, pageable: Pageable): Page<Neo4jResource>
 
     @Query(
-        value = """$MATCH_RESOURCE $WHERE_CLASS_IN_LABELS AND $UNLISTED_IS_TRUE AND $FEATURED_IS_FALSE $WITH_NODE_PROPERTIES $RETURN_NODE""",
-        countQuery = """$MATCH_RESOURCE $WHERE_CLASS_IN_LABELS AND $UNLISTED_IS_TRUE AND $FEATURED_IS_FALSE $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
+        value = """$MATCH_RESOURCE $WHERE_CLASS_IN_LABELS AND $UNLISTED_IS_TRUE $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        countQuery = """$MATCH_RESOURCE $WHERE_CLASS_IN_LABELS AND $UNLISTED_IS_TRUE $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllUnlistedByClasses(classes: Set<String>, pageable: Pageable): Page<Neo4jResource>
 

@@ -87,7 +87,7 @@ interface ResourceRepositoryContractTest {
             repository.save(it)
         }
 
-        val result = repository.findAllFeaturedResourcesByClassIds(setOf(ClassId("Foo")), PageRequest.of(0, 100)).content
+        val result = repository.findAllFeaturedResourcesByClassId(ClassId("Foo"), PageRequest.of(0, 100)).content
 
         result.asClue {
             it shouldHaveSize 1
@@ -97,7 +97,7 @@ interface ResourceRepositoryContractTest {
 
     @Test
     @Suppress("UNUSED_VARIABLE") // Names are provided to better understand the test setup
-    fun `when searching for unlisted resources, then featured are ignored, because they are mutually exclusive`() {
+    fun `when searching for unlisted resources, then featured status does not matter`() {
         val featured = newResourceWith(1, setOf("Foo")).copy(featured = true, unlisted = false).also {
             repository.save(it)
         }
@@ -117,11 +117,11 @@ interface ResourceRepositoryContractTest {
             repository.save(it)
         }
 
-        val result = repository.findAllUnlistedResourcesByClassIds(setOf(ClassId("Foo")), PageRequest.of(0, 100)).content
+        val result = repository.findAllUnlistedResourcesByClassId(ClassId("Foo"), PageRequest.of(0, 100)).content
 
         result.asClue {
-            it shouldHaveSize 1
-            it.first().id shouldBe unlisted.id
+            it shouldHaveSize 2
+            it.map(Resource::id) shouldContainExactlyInAnyOrder listOf(unlisted.id, inconsistent.id)
         }
     }
 

@@ -6,6 +6,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
 
 class SpringDataNeo4jResourceAdapterTests : Neo4jTestContainersBaseTest() {
 
@@ -20,7 +21,7 @@ class SpringDataNeo4jResourceAdapterTests : Neo4jTestContainersBaseTest() {
         val modified = found.copy(label = "some new label, never seen before")
         adapter.save(modified)
 
-        assertThat(adapter.findAll().toSet().size).isEqualTo(1)
+        assertThat(adapter.findAll(PageRequest.of(0, 10)).toSet().size).isEqualTo(1)
         assertThat(adapter.findByResourceId(resource.id).get().label).isEqualTo("some new label, never seen before")
     }
 

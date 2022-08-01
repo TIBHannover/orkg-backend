@@ -78,8 +78,6 @@ class ClassService(
 
     override fun exists(id: ClassId): Boolean = repository.findByClassId(id).isPresent
 
-    override fun findAll(): Sequence<ClassRepresentation> = repository.findAll().map(Class::toClassRepresentation)
-
     override fun findAll(pageable: Pageable): Page<ClassRepresentation> =
         repository.findAll(pageable).map(Class::toClassRepresentation)
 

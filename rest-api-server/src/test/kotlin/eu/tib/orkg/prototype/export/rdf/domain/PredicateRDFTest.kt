@@ -1,12 +1,11 @@
-package eu.tib.orkg.prototype.statements.domain.model
+package eu.tib.orkg.prototype.export.rdf.domain
 
 import eu.tib.orkg.prototype.createPredicate
-import eu.tib.orkg.prototype.export.rdf.domain.toNTriple
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 @Suppress("HttpUrlsUsage")
-class PredicateRDFTests {
+internal class PredicateRDFTest {
     @Test
     fun `converts to NTriple format correctly`() {
         val expectedOutput = """

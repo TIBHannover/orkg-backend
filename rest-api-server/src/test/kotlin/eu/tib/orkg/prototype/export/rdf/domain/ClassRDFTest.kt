@@ -1,12 +1,12 @@
-package eu.tib.orkg.prototype.statements.domain.model
+package eu.tib.orkg.prototype.export.rdf.domain
 
 import eu.tib.orkg.prototype.createClass
-import eu.tib.orkg.prototype.export.rdf.domain.toNTriple
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 @Suppress("HttpUrlsUsage")
-class ClassRDFTests {
+internal class ClassRDFTest {
     @Test
     fun `converts to NTriple format correctly`() {
         val expectedOutput = """

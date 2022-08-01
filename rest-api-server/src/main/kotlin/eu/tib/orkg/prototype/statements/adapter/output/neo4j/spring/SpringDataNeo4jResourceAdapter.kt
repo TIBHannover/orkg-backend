@@ -10,7 +10,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import java.util.*
-import kotlin.streams.asSequence
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
@@ -33,9 +32,6 @@ class SpringDataNeo4jResourceAdapter(
     override fun deleteAll() {
         neo4jRepository.deleteAll()
     }
-
-    // The function name is a bit odd, but findAll() conflicts with pre-defined methods. This is documented to work.
-    override fun findAll(): Sequence<Resource> = neo4jRepository.findAllBy().asSequence().map(Neo4jResource::toResource)
 
     override fun findAll(pageable: Pageable): Page<Resource> =
         neo4jRepository.findAll(pageable).map(Neo4jResource::toResource)

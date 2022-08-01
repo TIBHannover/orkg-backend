@@ -12,10 +12,12 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-private val Contribution = ClassId("Contribution")
 private val Comparison = ClassId("Comparison")
+private val Contribution = ClassId("Contribution")
+private val LiteratureList = ClassId("LiteratureListPublished")
+private val Paper = ClassId("Paper")
 private val ResearchProblem = ClassId("ResearchProblem")
-private val SmartReview = ClassId("SmartReviewPublished")
+private val Review = ClassId("SmartReviewPublished")
 private val Visualization = ClassId("Visualization")
 
 @Service
@@ -72,20 +74,20 @@ class ContentTypeService(
     override fun getUnlistedVisualizationFlag(id: ResourceId): Boolean = getUnlistedResourceFlag(id, Visualization)
 
     override fun loadFeaturedSmartReviews(pageable: Pageable): Page<Resource> =
-        resourceRepository.findAllFeaturedResourcesByClassId(SmartReview, pageable)
+        resourceRepository.findAllFeaturedResourcesByClassId(Review, pageable)
 
     override fun loadNonFeaturedSmartReviews(pageable: Pageable): Page<Resource> =
-        resourceRepository.findAllNonFeaturedResourcesByClassId(SmartReview, pageable)
+        resourceRepository.findAllNonFeaturedResourcesByClassId(Review, pageable)
 
     override fun loadUnlistedSmartReviews(pageable: Pageable): Page<Resource> =
-        resourceRepository.findAllUnlistedResourcesByClassId(SmartReview, pageable)
+        resourceRepository.findAllUnlistedResourcesByClassId(Review, pageable)
 
     override fun loadListedSmartReviews(pageable: Pageable): Page<Resource> =
-        resourceRepository.findAllByClassId(SmartReview, pageable)
+        resourceRepository.findAllByClassId(Review, pageable)
 
-    override fun getFeaturedSmartReviewFlag(id: ResourceId): Boolean = getFeaturedResourceFlag(id, SmartReview)
+    override fun getFeaturedSmartReviewFlag(id: ResourceId): Boolean = getFeaturedResourceFlag(id, Review)
 
-    override fun getUnlistedSmartReviewFlag(id: ResourceId): Boolean = getUnlistedResourceFlag(id, SmartReview)
+    override fun getUnlistedSmartReviewFlag(id: ResourceId): Boolean = getUnlistedResourceFlag(id, Review)
 
     override fun markAsVerified(resourceId: ResourceId) = setVerifiedFlag(resourceId, true)
 

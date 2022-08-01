@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.contenttypes.domain
 import eu.tib.orkg.prototype.contenttypes.api.ContentTypeUseCase
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jComparisonRepository
@@ -17,6 +18,12 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+private val Contribution = ClassId("Contribution")
+private val Comparison = ClassId("Comparison")
+private val ResearchProblem = ClassId("ResearchProblem")
+private val SmartReview = ClassId("SmartReviewPublished")
+private val Visualization = ClassId("Visualization")
+
 @Service
 @Transactional
 class ContentTypeService(
@@ -28,13 +35,13 @@ class ContentTypeService(
     private val neo4jProblemRepository: Neo4jProblemRepository,
 ) : ContentTypeUseCase {
     override fun loadFeaturedContributions(pageable: Pageable): Page<Resource> =
-        neo4jContributionRepository.findAllFeaturedContributions(pageable).map(Neo4jResource::toResource)
+        resourceRepository.findAllFeaturedResourcesByClassId(Contribution, pageable)
 
     override fun loadNonFeaturedContributions(pageable: Pageable): Page<Resource> =
         neo4jContributionRepository.findAllNonFeaturedContributions(pageable).map(Neo4jResource::toResource)
 
     override fun loadUnlistedContributions(pageable: Pageable): Page<Resource> =
-        neo4jContributionRepository.findAllUnlistedContributions(pageable).map(Neo4jResource::toResource)
+        resourceRepository.findAllUnlistedResourcesByClassId(Contribution, pageable)
 
     override fun loadListedContributions(pageable: Pageable): Page<Resource> =
         neo4jContributionRepository.findAllListedContributions(pageable).map(Neo4jResource::toResource)
@@ -50,13 +57,13 @@ class ContentTypeService(
     }
 
     override fun loadFeaturedComparisons(pageable: Pageable): Page<Resource> =
-        neo4jComparisonRepository.findAllFeaturedComparisons(pageable).map(Neo4jResource::toResource)
+        resourceRepository.findAllFeaturedResourcesByClassId(Comparison, pageable)
 
     override fun loadNonFeaturedComparisons(pageable: Pageable): Page<Resource> =
         neo4jComparisonRepository.findAllNonFeaturedComparsions(pageable).map(Neo4jResource::toResource)
 
     override fun loadUnlistedComparisons(pageable: Pageable): Page<Resource> =
-        neo4jComparisonRepository.findAllUnlistedComparisons(pageable).map(Neo4jResource::toResource)
+        resourceRepository.findAllUnlistedResourcesByClassId(Comparison, pageable)
 
     override fun loadListedComparisons(pageable: Pageable): Page<Resource> =
         neo4jComparisonRepository.findAllListedComparsions(pageable).map(Neo4jResource::toResource)
@@ -72,13 +79,13 @@ class ContentTypeService(
     }
 
     override fun loadFeaturedVisualizations(pageable: Pageable): Page<Resource> =
-        neo4jVisualizationRepository.findAllFeaturedVisualizations(pageable).map(Neo4jResource::toResource)
+        resourceRepository.findAllFeaturedResourcesByClassId(Visualization, pageable)
 
     override fun loadNonFeaturedVisualizations(pageable: Pageable): Page<Resource> =
         neo4jVisualizationRepository.findAllNonFeaturedVisualizations(pageable).map(Neo4jResource::toResource)
 
     override fun loadUnlistedVisualizations(pageable: Pageable): Page<Resource> =
-        neo4jVisualizationRepository.findAllUnlistedVisualizations(pageable).map(Neo4jResource::toResource)
+        resourceRepository.findAllUnlistedResourcesByClassId(Visualization, pageable)
 
     override fun loadListedVisualizations(pageable: Pageable): Page<Resource> =
         neo4jVisualizationRepository.findAllListedVisualizations(pageable).map(Neo4jResource::toResource)
@@ -94,13 +101,13 @@ class ContentTypeService(
     }
 
     override fun loadFeaturedSmartReviews(pageable: Pageable): Page<Resource> =
-        neo4jSmartReviewRepository.findAllFeaturedSmartReviews(pageable).map(Neo4jResource::toResource)
+        resourceRepository.findAllFeaturedResourcesByClassId(SmartReview, pageable)
 
     override fun loadNonFeaturedSmartReviews(pageable: Pageable): Page<Resource> =
         neo4jSmartReviewRepository.findAllNonFeaturedSmartReviews(pageable).map(Neo4jResource::toResource)
 
     override fun loadUnlistedSmartReviews(pageable: Pageable): Page<Resource> =
-        neo4jSmartReviewRepository.findAllUnlistedSmartReviews(pageable).map(Neo4jResource::toResource)
+        resourceRepository.findAllUnlistedResourcesByClassId(SmartReview, pageable)
 
     override fun loadListedSmartReviews(pageable: Pageable): Page<Resource> =
         neo4jSmartReviewRepository.findAllListedSmartReviews(pageable).map(Neo4jResource::toResource)
@@ -235,13 +242,13 @@ class ContentTypeService(
     }
 
     override fun loadFeaturedProblems(pageable: Pageable): Page<Resource> =
-        neo4jProblemRepository.findAllFeaturedProblems(pageable).map(Neo4jResource::toResource)
+        resourceRepository.findAllFeaturedResourcesByClassId(ResearchProblem, pageable)
 
     override fun loadNonFeaturedProblems(pageable: Pageable): Page<Resource> =
         neo4jProblemRepository.findAllNonFeaturedProblems(pageable).map(Neo4jResource::toResource)
 
     override fun loadUnlistedProblems(pageable: Pageable): Page<Resource> =
-        neo4jProblemRepository.findAllUnlistedProblems(pageable).map(Neo4jResource::toResource)
+        resourceRepository.findAllUnlistedResourcesByClassId(ResearchProblem, pageable)
 
     override fun loadListedProblems(pageable: Pageable): Page<Resource> =
         neo4jProblemRepository.findAllListedProblems(pageable).map(Neo4jResource::toResource)

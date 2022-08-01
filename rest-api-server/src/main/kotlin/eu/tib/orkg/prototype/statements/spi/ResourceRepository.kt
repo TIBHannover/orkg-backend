@@ -11,7 +11,13 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.QueryResult
 
 interface ResourceRepository : EntityRepository<Resource> {
+    fun findAllFeaturedResourcesByClassId(classId: ClassId, pageable: Pageable): Page<Resource> =
+        findAllFeaturedResourcesByClassIds(setOf(classId), pageable)
+
     fun findAllFeaturedResourcesByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource>
+    fun findAllUnlistedResourcesByClassId(classId: ClassId, pageable: Pageable): Page<Resource> =
+        findAllUnlistedResourcesByClassIds(setOf(classId), pageable)
+
     fun findAllUnlistedResourcesByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource>
 
     // legacy methods:

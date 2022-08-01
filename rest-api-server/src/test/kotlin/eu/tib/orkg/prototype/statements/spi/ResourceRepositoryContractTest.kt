@@ -67,7 +67,7 @@ interface ResourceRepositoryContractTest {
 
     @Test
     @Suppress("UNUSED_VARIABLE") // Names are provided to better understand the test setup
-    fun `when searching for featured resources, then unlisted are ignored, because they are mutually exclusive`() {
+    fun `when searching for featured resources, then unlisted are not returned`() {
         val featured = newResourceWith(1, setOf("Foo")).copy(featured = true, unlisted = false).also {
             repository.save(it)
         }

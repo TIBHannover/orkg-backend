@@ -97,6 +97,36 @@ interface ResourceRepositoryContractTest {
 
     @Test
     @Suppress("UNUSED_VARIABLE") // Names are provided to better understand the test setup
+    fun `when searching for non-featured resources, then unlisted are not returned`() {
+        val featured = newResourceWith(1, setOf("Foo")).copy(featured = true, unlisted = false).also {
+            repository.save(it)
+        }
+        val notFeatured = newResourceWith(2, setOf("Foo")).copy(featured = false, unlisted = false).also {
+            repository.save(it)
+        }
+        val unlisted = newResourceWith(10, setOf("Foo")).copy(featured = false, unlisted = true).also {
+            repository.save(it)
+        }
+        val listed = newResourceWith(11, setOf("Foo")).copy(featured = false, unlisted = false).also {
+            repository.save(it)
+        }
+        val inconsistent = newResourceWith(9999, setOf("Foo")).copy(featured = true, unlisted = true).also {
+            repository.save(it)
+        }
+        val wrongClass = newResourceWith(8888, setOf("WrongClass")).copy(featured = false, unlisted = false).also {
+            repository.save(it)
+        }
+
+        val result = repository.findAllNonFeaturedResourcesByClassId(ClassId("Foo"), PageRequest.of(0, 100)).content
+
+        result.asClue {
+            it shouldHaveSize 2
+            it.map(Resource::id) shouldContainExactlyInAnyOrder listOf(notFeatured.id, listed.id)
+        }
+    }
+
+    @Test
+    @Suppress("UNUSED_VARIABLE") // Names are provided to better understand the test setup
     fun `when searching for unlisted resources, then featured status does not matter`() {
         val featured = newResourceWith(1, setOf("Foo")).copy(featured = true, unlisted = false).also {
             repository.save(it)

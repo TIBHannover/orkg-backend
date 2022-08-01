@@ -8,6 +8,9 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 class InMemoryClassRepository : ClassRepository {
+
+    private val entities = mutableMapOf<ClassId, Class>()
+
     override fun findAll(pageable: Pageable): Page<Class> {
         TODO("Not yet implemented")
     }
@@ -16,9 +19,7 @@ class InMemoryClassRepository : ClassRepository {
         TODO("Not yet implemented")
     }
 
-    override fun findByClassId(id: ClassId?): Optional<Class> {
-        TODO("Not yet implemented")
-    }
+    override fun findByClassId(id: ClassId?): Optional<Class> = Optional.ofNullable(entities[id!!])
 
     override fun findAllByLabel(label: String): Iterable<Class> {
         TODO("Not yet implemented")

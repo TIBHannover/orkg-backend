@@ -5,12 +5,20 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.services.toExactSearchString
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import java.util.*
+import java.util.concurrent.atomic.AtomicLong
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 
 class InMemoryResourceRepository : ResourceRepository {
+
+    private val idCounter = AtomicLong(1)
+
+    private val entities = mutableMapOf<ResourceId, Resource>()
+
     override fun findAll(pageable: Pageable): Page<Resource> {
         TODO("Not yet implemented")
     }
@@ -31,12 +39,11 @@ class InMemoryResourceRepository : ResourceRepository {
         TODO("Not yet implemented")
     }
 
-    override fun nextIdentity(): ResourceId {
-        TODO("Not yet implemented")
-    }
+    override fun nextIdentity(): ResourceId = ResourceId(idCounter.getAndIncrement())
 
     override fun save(resource: Resource): Resource {
-        TODO("Not yet implemented")
+        entities[resource.id!!] = resource.copy() // Simulate retrieving a new instance by copying
+        return findByResourceId(resource.id).get() // We know it is there
     }
 
     override fun delete(id: ResourceId) {
@@ -47,12 +54,14 @@ class InMemoryResourceRepository : ResourceRepository {
         TODO("Not yet implemented")
     }
 
-    override fun findByResourceId(id: ResourceId?): Optional<Resource> {
-        TODO("Not yet implemented")
-    }
+    override fun findByResourceId(id: ResourceId?): Optional<Resource> = Optional.ofNullable(entities[id])
 
     override fun findAllByLabel(label: String, pageable: Pageable): Page<Resource> {
-        TODO("Not yet implemented")
+        val labels = entities
+            .filter { (id, entry) -> entry.label.matches(label.toExactSearchString().toRegex()) }
+            .map { (id, entry) -> entry }
+            .take(pageable.pageSize)
+        return PageImpl(labels, pageable, labels.size.toLong())
     }
 
     override fun findAllByLabel(label: String): Iterable<Resource> {

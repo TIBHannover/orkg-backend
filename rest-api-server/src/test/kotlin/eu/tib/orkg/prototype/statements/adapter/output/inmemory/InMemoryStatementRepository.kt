@@ -5,12 +5,19 @@ import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.util.*
+import java.util.concurrent.atomic.AtomicLong
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 class InMemoryStatementRepository : StatementRepository {
+
+    private val idCounter = AtomicLong(1)
+
+    private val entities = mutableMapOf<StatementId, GeneralStatement>()
+
     override fun findAll(depth: Int): Iterable<GeneralStatement> {
         TODO("Not yet implemented")
     }
@@ -19,25 +26,20 @@ class InMemoryStatementRepository : StatementRepository {
         TODO("Not yet implemented")
     }
 
-    override fun countStatementsAboutResource(id: ResourceId): Long {
-        TODO("Not yet implemented")
-    }
+    override fun countStatementsAboutResource(id: ResourceId): Long =
+        entities.count { (id, entity) -> entity.subject.thingId == ThingId(id.value) }.toLong()
 
     override fun countStatementsAboutResources(resourceIds: Set<ResourceId>): Map<ResourceId, Long> {
         TODO("Not yet implemented")
     }
 
-    override fun nextIdentity(): StatementId {
-        TODO("Not yet implemented")
-    }
+    override fun nextIdentity(): StatementId = StatementId(idCounter.getAndIncrement())
 
     override fun save(statement: GeneralStatement) {
-        TODO("Not yet implemented")
+        entities[statement.id!!] = statement.copy()
     }
 
-    override fun count(): Long {
-        TODO("Not yet implemented")
-    }
+    override fun count(): Long = entities.size.toLong()
 
     override fun delete(statement: GeneralStatement) {
         TODO("Not yet implemented")

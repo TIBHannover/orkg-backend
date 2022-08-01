@@ -5,6 +5,8 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.createPredicate
+import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.adapter.output.inmemory.InMemoryClassRepository
 import eu.tib.orkg.prototype.statements.adapter.output.inmemory.InMemoryLiteralRepository
 import eu.tib.orkg.prototype.statements.adapter.output.inmemory.InMemoryPredicateRepository
@@ -12,6 +14,9 @@ import eu.tib.orkg.prototype.statements.adapter.output.inmemory.InMemoryResource
 import eu.tib.orkg.prototype.statements.adapter.output.inmemory.InMemoryStatementRepository
 import eu.tib.orkg.prototype.statements.adapter.output.inmemory.InMemoryThingRepository
 import eu.tib.orkg.prototype.statements.application.ObjectController
+import eu.tib.orkg.prototype.statements.application.ObjectController.Constants
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.services.ClassService
 import eu.tib.orkg.prototype.statements.services.LiteralService
 import eu.tib.orkg.prototype.statements.services.PredicateService
@@ -27,7 +32,6 @@ import io.mockk.every
 import io.mockk.mockk
 import java.util.*
 import org.intellij.lang.annotations.Language
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
@@ -37,7 +41,6 @@ class PaperServiceIntegrationTest {
 
     private val userRepository: UserRepository = mockk()
 
-    private val thingRepository: ThingRepository = InMemoryThingRepository()
     private val classRepository: ClassRepository = InMemoryClassRepository()
     private val classService = ClassService(classRepository)
     private val contributorService = ContributorService(userRepository)
@@ -47,6 +50,12 @@ class PaperServiceIntegrationTest {
     private val predicateService = PredicateService(predicateRepository)
     private val resourceRepository: ResourceRepository = InMemoryResourceRepository()
     private val statementRepository: StatementRepository = InMemoryStatementRepository()
+    private val thingRepository: ThingRepository = InMemoryThingRepository(
+        classRepository = classRepository,
+        predicateRepository = predicateRepository,
+        resourceRepository = resourceRepository,
+        literalRepository = literalRepository,
+    )
     private val statementService = StatementService(thingRepository, predicateRepository, statementRepository)
 
     private val resourceService = ResourceService(
@@ -73,7 +82,6 @@ class PaperServiceIntegrationTest {
         objectController = objectController,
     )
 
-    @Disabled("WIP")
     @Test
     @Tag("regression") // see https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/292
     fun `Creating a paper twice should add data to the paper`() {
@@ -84,6 +92,16 @@ class PaperServiceIntegrationTest {
             email = "user@example.org"
             enabled = true
         })
+        createExpectedClasses()
+        createExpectedPredicates()
+        // Data expected by test: // FIXME: problem if ID is in use already
+        resourceRepository.save(
+            createResource().copy(
+                id = ResourceId("R106"),
+                label = "some research field",
+                classes = setOf(ClassId("ResearchField"))
+            )
+        )
 
         // Here goes the test setup:
         val req: CreatePaperRequest = mapper.readValue(exampleDataFromIssue, CreatePaperRequest::class.java)
@@ -92,6 +110,27 @@ class PaperServiceIntegrationTest {
         paperService.addPaperContent(req, mergeIfExists = false, userId)
         paperService.addPaperContent(req, mergeIfExists = false, userId)
         // FIXME: assertion
+    }
+
+    private fun createExpectedClasses() {
+        // TODO: DOI and others
+    }
+
+    private fun createExpectedPredicates() {
+        listOf(
+            Constants.AuthorPredicate,
+            Constants.ContributionPredicate,
+            Constants.DoiPredicate,
+            Constants.AuthorPredicate,
+            Constants.PublicationMonthPredicate,
+            Constants.PublicationYearPredicate,
+            Constants.ResearchFieldPredicate,
+            Constants.OrcidPredicate,
+            Constants.VenuePredicate,
+            Constants.UrlPredicate,
+        ).forEach {
+            predicateRepository.save(createPredicate().copy(id = it))
+        }
     }
 
     //region Example data for issue #292

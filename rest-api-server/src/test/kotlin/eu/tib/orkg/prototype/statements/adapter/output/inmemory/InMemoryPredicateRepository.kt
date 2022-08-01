@@ -8,6 +8,9 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 class InMemoryPredicateRepository : PredicateRepository {
+
+    private val entities = mutableMapOf<PredicateId, Predicate>()
+
     override fun findAll(pageable: Pageable): Page<Predicate> {
         TODO("Not yet implemented")
     }
@@ -24,16 +27,14 @@ class InMemoryPredicateRepository : PredicateRepository {
         TODO("Not yet implemented")
     }
 
-    override fun findByPredicateId(id: PredicateId?): Optional<Predicate> {
-        TODO("Not yet implemented")
-    }
+    override fun findByPredicateId(id: PredicateId?): Optional<Predicate> = Optional.ofNullable(entities[id])
 
     override fun deleteAll() {
         TODO("Not yet implemented")
     }
 
     override fun save(predicate: Predicate) {
-        TODO("Not yet implemented")
+        entities[predicate.id!!] = predicate.copy()
     }
 
     override fun nextIdentity(): PredicateId {

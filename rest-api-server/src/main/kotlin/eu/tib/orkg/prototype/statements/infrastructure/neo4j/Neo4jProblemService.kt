@@ -4,7 +4,6 @@ import eu.tib.orkg.prototype.paperswithcode.application.port.input.RetrieveResea
 import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ProblemService
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -109,68 +108,6 @@ override fun findById(id: ResourceId): Optional<Resource> =
         return Optional.of(neo4jProblemRepository
             .findResearchProblemForDataset(id)
             .map { ResearchProblem(it.resourceId!!, it.label!!) })
-    }
-
-    override fun getFeaturedProblemFlag(id: ResourceId): Boolean {
-        val result = neo4jProblemRepository.findById(id)
-        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured ?: false
-    }
-
-    override fun getUnlistedProblemFlag(id: ResourceId): Boolean {
-        val result = neo4jProblemRepository.findById(id)
-        return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted ?: false
-    }
-
-    override fun loadFeaturedProblems(pageable: Pageable): Page<Resource> =
-        neo4jProblemRepository.findAllFeaturedProblems(pageable)
-            .map(Neo4jResource::toResource)
-
-    override fun loadNonFeaturedProblems(pageable: Pageable): Page<Resource> =
-        neo4jProblemRepository.findAllNonFeaturedProblems(pageable)
-            .map(Neo4jResource::toResource)
-
-    override fun loadUnlistedProblems(pageable: Pageable):
-        Page<Resource> =
-        neo4jProblemRepository.findAllUnlistedProblems(pageable)
-            .map(Neo4jResource::toResource)
-
-    override fun loadListedProblems(pageable: Pageable):
-        Page<Resource> =
-        neo4jProblemRepository.findAllListedProblems(pageable)
-            .map(Neo4jResource::toResource)
-
-    override fun markAsFeatured(resourceId: ResourceId): Optional<Resource> {
-        setUnlistedFlag(resourceId, false)
-        return setFeaturedFlag(resourceId, true)
-    }
-
-    override fun markAsNonFeatured(resourceId: ResourceId) = setFeaturedFlag(resourceId, false)
-
-    override fun markAsUnlisted(resourceId: ResourceId): Optional<Resource> {
-        setFeaturedFlag(resourceId, false)
-        return setUnlistedFlag(resourceId, true)
-    }
-
-    override fun markAsListed(resourceId: ResourceId) = setUnlistedFlag(resourceId, false)
-
-    private fun setFeaturedFlag(resourceId: ResourceId, featured: Boolean): Optional<Resource> {
-        val result = neo4jProblemRepository.findById(resourceId)
-        if (result.isPresent) {
-            val problem = result.get()
-            problem.featured = featured
-            return Optional.of(neo4jProblemRepository.save(problem).toResource())
-        }
-        return Optional.empty()
-    }
-
-    private fun setUnlistedFlag(resourceId: ResourceId, unlisted: Boolean): Optional<Resource> {
-        val result = neo4jProblemRepository.findById(resourceId)
-        if (result.isPresent) {
-            val problem = result.get()
-            problem.unlisted = unlisted
-            return Optional.of(neo4jProblemRepository.save(problem).toResource())
-        }
-        return Optional.empty()
     }
 
     private fun getProblemsWithFeatured(

@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import eu.tib.orkg.prototype.createResource
+import eu.tib.orkg.prototype.export.rdf.domain.toNTriple
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

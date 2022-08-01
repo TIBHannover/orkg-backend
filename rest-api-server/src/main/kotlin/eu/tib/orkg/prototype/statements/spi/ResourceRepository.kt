@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.spi
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -9,15 +10,72 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.QueryResult
 
-interface ResourceRepository {
-    fun findAll(): Sequence<Resource>
+interface ResourceRepository : EntityRepository<Resource> {
+    /**
+     * Find all featured resources with the specified class.
+     *
+     * This method will not return resources marked as `unlisted`.
+     */
+    fun findAllFeaturedResourcesByClassId(classId: ClassId, pageable: Pageable): Page<Resource> =
+        findAllFeaturedResourcesByClassIds(setOf(classId), pageable)
+
+    /**
+     * Find all featured resources with the specified classes.
+     *
+     * This method will not return resources marked as `unlisted`.
+     */
+    fun findAllFeaturedResourcesByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource>
+
+    /**
+     * Find all non-featured resources with the specified class.
+     *
+     * This method will not return resources marked as `unlisted`.
+     */
+    fun findAllNonFeaturedResourcesByClassId(classId: ClassId, pageable: Pageable): Page<Resource> =
+        findAllNonFeaturedResourcesByClassIds(setOf(classId), pageable)
+
+    /**
+     * Find all non-featured resources with the specified class.
+     *
+     * This method will not return resources marked as `unlisted`.
+     */
+    fun findAllNonFeaturedResourcesByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource>
+
+    /**
+     * Find all unlisted resources with the specified class.
+     *
+     * This method will also list resources that are marked featured, although this is an invalid state.
+     */
+    fun findAllUnlistedResourcesByClassId(classId: ClassId, pageable: Pageable): Page<Resource> =
+        findAllUnlistedResourcesByClassIds(setOf(classId), pageable)
+
+    /**
+     * Find all unlisted resources with the specified classes.
+     *
+     * This method will also list resources that are marked featured, although this is an invalid state.
+     */
+    fun findAllUnlistedResourcesByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource>
+
+    /**
+     * Finds all resources with the specified class.
+     *
+     * This method will not return resources marked as `unlisted`.
+     */
+    fun findAllByClassId(classId: ClassId, pageable: Pageable): Page<Resource> =
+        findAllByClassIds(setOf(classId), pageable)
+
+    /**
+     * Finds all resources with the specified classes.
+     *
+     * This method will not return resources marked as `unlisted`.
+     */
+    fun findAllByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource>
 
     // legacy methods:
     fun nextIdentity(): ResourceId
     fun save(resource: Resource): Resource
     fun delete(id: ResourceId)
     fun deleteAll()
-    fun findAll(pageable: Pageable): Page<Resource>
     fun findByResourceId(id: ResourceId?): Optional<Resource>
     fun findAllByLabel(label: String, pageable: Pageable): Page<Resource>
     fun findAllByLabelMatchesRegex(label: String, pageable: Pageable): Page<Resource>

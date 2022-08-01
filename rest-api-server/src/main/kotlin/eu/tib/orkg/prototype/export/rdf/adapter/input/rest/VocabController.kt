@@ -1,10 +1,10 @@
-package eu.tib.orkg.prototype.statements.application.rdf
+package eu.tib.orkg.prototype.export.rdf.adapter.input.rest
 
 import eu.tib.orkg.prototype.configuration.RdfConfiguration
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.rdf.RdfService
+import eu.tib.orkg.prototype.export.rdf.api.ExportRDFUseCase
 import java.io.StringWriter
 import java.net.URI
 import org.eclipse.rdf4j.model.Model
@@ -22,7 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RestController
 @RequestMapping("/api/vocab")
 class VocabController(
-    private val rdfService: RdfService,
+    private val service: ExportRDFUseCase,
     private val rdfConfiguration: RdfConfiguration,
 ) {
     @GetMapping(
@@ -36,7 +36,7 @@ class VocabController(
     ): ResponseEntity<String> {
         if (!checkAcceptHeader(acceptHeader))
             return createRedirectResponse("resource", id.value, uriComponentsBuilder)
-        val model = rdfService.rdfModelFor(id)
+        val model = service.rdfModelFor(id)
             // TODO: Return meaningful message to the user
             .orElseThrow { IllegalStateException("Could not find resource $id") }
         val response = getRdfSerialization(model, acceptHeader)
@@ -55,7 +55,7 @@ class VocabController(
     ): ResponseEntity<String> {
         if (!checkAcceptHeader(acceptHeader))
             return createRedirectResponse("predicate", id.value, uriComponentsBuilder)
-        val model = rdfService.rdfModelFor(id)
+        val model = service.rdfModelFor(id)
             // TODO: Return meaningful message to the user
             .orElseThrow { IllegalStateException("Could not find predicate $id") }
         val response = getRdfSerialization(model, acceptHeader)
@@ -72,7 +72,7 @@ class VocabController(
         @RequestHeader("Accept") acceptHeader: String,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<String> {
-        val model = rdfService.rdfModelFor(id)
+        val model = service.rdfModelFor(id)
             // TODO: Return meaningful message to the user
             .orElseThrow { IllegalStateException("Could not find class $id") }
         val response = getRdfSerialization(model, acceptHeader)

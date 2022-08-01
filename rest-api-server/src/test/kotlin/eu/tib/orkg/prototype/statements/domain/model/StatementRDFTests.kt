@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.createLiteral
 import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.createStatement
+import eu.tib.orkg.prototype.export.rdf.domain.toNTriple
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test

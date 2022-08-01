@@ -4,13 +4,13 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceIdGenerator
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceRepository
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import java.util.*
-import kotlin.streams.asSequence
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
@@ -33,9 +33,6 @@ class SpringDataNeo4jResourceAdapter(
     override fun deleteAll() {
         neo4jRepository.deleteAll()
     }
-
-    // The function name is a bit odd, but findAll() conflicts with pre-defined methods. This is documented to work.
-    override fun findAll(): Sequence<Resource> = neo4jRepository.findAllBy().asSequence().map(Neo4jResource::toResource)
 
     override fun findAll(pageable: Pageable): Page<Resource> =
         neo4jRepository.findAll(pageable).map(Neo4jResource::toResource)
@@ -171,6 +168,16 @@ class SpringDataNeo4jResourceAdapter(
     override fun findAllListedPapers(pageable: Pageable): Page<Resource> =
         neo4jRepository.findAllListedPapers(pageable).map(Neo4jResource::toResource)
 
+    override fun findAllFeaturedResourcesByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource> =
+        neo4jRepository
+            .findAllFeaturedByClasses(classIds.map(ClassId::value).toSet(), pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun findAllNonFeaturedResourcesByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource> =
+        neo4jRepository
+            .findAllNonFeaturedByClasses(classIds.map(ClassId::value).toSet(), pageable)
+            .map(Neo4jResource::toResource)
+
     override fun findAllFeaturedResourcesByClass(
         classes: List<String>,
         unlisted: Boolean,
@@ -185,6 +192,16 @@ class SpringDataNeo4jResourceAdapter(
         pageable: Pageable
     ): Page<Resource> = neo4jRepository.findAllFeaturedResourcesByClass(classes, featured, unlisted, pageable)
         .map(Neo4jResource::toResource)
+
+    override fun findAllUnlistedResourcesByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource> =
+        neo4jRepository
+            .findAllUnlistedByClasses(classIds.map(ClassId::value).toSet(), pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun findAllByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource> =
+        neo4jRepository
+            .findAllByClasses(classIds.map(ClassId::value).toSet(), pageable)
+            .map(Neo4jResource::toResource)
 
     override fun findAllFeaturedResourcesByObservatoryIDAndClass(
         id: ObservatoryId,

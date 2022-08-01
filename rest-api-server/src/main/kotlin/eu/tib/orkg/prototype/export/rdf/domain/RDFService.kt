@@ -1,6 +1,7 @@
-package eu.tib.orkg.prototype.statements.infrastructure.neo4j.rdf
+package eu.tib.orkg.prototype.export.rdf.domain
 
-import eu.tib.orkg.prototype.statements.application.rdf.RdfConstants
+import eu.tib.orkg.prototype.escapeLiterals
+import eu.tib.orkg.prototype.export.rdf.api.ExportRDFUseCase
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
@@ -9,13 +10,12 @@ import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.rdf.RdfService
-import eu.tib.orkg.prototype.statements.domain.model.toNTriple
+import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
-import java.io.OutputStream
+import eu.tib.orkg.prototype.statements.spi.forEach
 import java.util.*
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
@@ -28,19 +28,17 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
-class Neo4jRdfService(
+class RDFService(
     private val statementRepository: StatementRepository,
     private val predicateRepository: PredicateRepository,
     private val resourceRepository: ResourceRepository,
     private val classesRepository: ClassRepository
-) : RdfService {
-    override fun dumpToNTriple(out: OutputStream) {
-        val everything = sequenceOf<String>() + // Just for aligning the code below…
-            classesRepository.findAll().map(Class::toNTriple) +
-            predicateRepository.findAll().map(Predicate::toNTriple) +
-            resourceRepository.findAll().map(Resource::toNTriple) +
-            statementRepository.findAll().map(GeneralStatement::toNTriple)
-        everything.forEach { out.write(it.toByteArray()) }
+) : ExportRDFUseCase {
+    override fun dumpToNTriple(): String = buildString {
+        classesRepository.forEach { append(it.toNTriple()) }
+        predicateRepository.forEach { append(it.toNTriple()) }
+        resourceRepository.forEach { append(it.toNTriple()) }
+        statementRepository.forEach { append(it.toNTriple()) }
     }
 
     override fun rdfModelFor(id: ClassId): Optional<Model> {
@@ -95,5 +93,59 @@ class Neo4jRdfService(
             }.build()
             return Optional.of(model)
         }
+    }
+}
+
+internal fun Class.toNTriple(): String {
+    val cPrefix = RdfConstants.CLASS_NS
+    val sb = StringBuilder()
+    sb.append("<$cPrefix$id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .\n")
+    if (uri != null) sb.append("<$cPrefix$id> <http://www.w3.org/2002/07/owl#equivalentClass> <$uri> .\n")
+    sb.append("<$cPrefix$id> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label)}\"^^<http://www.w3.org/2001/XMLSchema#string> .\n")
+    return sb.toString()
+}
+
+internal fun Predicate.toNTriple(): String {
+    val cPrefix = RdfConstants.CLASS_NS
+    val pPrefix = RdfConstants.PREDICATE_NS
+    return "<$pPrefix$id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Predicate> .\n" + "<$pPrefix$id> <http://www.w3.org/2000/01/rdf-schema#label> \"${
+        escapeLiterals(
+            label
+        )
+    }\"^^<http://www.w3.org/2001/XMLSchema#string> .\n"
+}
+
+internal fun Resource.toNTriple(): String {
+    val cPrefix = RdfConstants.CLASS_NS
+    val rPrefix = RdfConstants.RESOURCE_NS
+    val sb = StringBuilder()
+    sb.append("<$rPrefix$id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Resource> .\n")
+    classes.forEach { sb.append("<$rPrefix$id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <$cPrefix${it.value}> .\n") }
+    sb.append("<$rPrefix$id> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label)}\"^^<http://www.w3.org/2001/XMLSchema#string> .\n")
+    return sb.toString()
+}
+
+/**
+ * Convert the triple to a statement in NTriple format.
+ */
+internal fun GeneralStatement.toNTriple(): String {
+    val pPrefix = RdfConstants.PREDICATE_NS
+    val result = "${serializeThing(subject)} <$pPrefix${predicate.id}> ${serializeThing(`object`)} .\n"
+    if (result[0] == '"')
+    // Ignore literal
+    // TODO: log this somewhere
+        return ""
+    return result
+}
+
+private fun serializeThing(thing: Thing): String {
+    val rPrefix = RdfConstants.RESOURCE_NS
+    val pPrefix = RdfConstants.PREDICATE_NS
+    val cPrefix = RdfConstants.CLASS_NS
+    return when (thing) {
+        is Resource -> "<$rPrefix${thing.id}>"
+        is Predicate -> "<$pPrefix${thing.id}>"
+        is Class -> "<$cPrefix${thing.id}>"
+        is Literal -> "\"${escapeLiterals(thing.label)}\"^^<http://www.w3.org/2001/XMLSchema#string>"
     }
 }

@@ -53,6 +53,16 @@ private const val MATCH_UNLISTED_PAPER =
 private const val MATCH_LISTED_PAPER =
     """MATCH (node) WHERE OR node.unlisted = false AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
 
+private const val MATCH_RESOURCE = """MATCH (node:`Resource`)"""
+
+private const val WHERE_CLASS_IN_LABELS = """WHERE ANY(collectionFields IN {0} WHERE collectionFields IN labels(node))"""
+
+private const val FEATURED_IS_TRUE = """EXISTS(node.featured) AND node.featured = true"""
+private const val FEATURED_IS_FALSE = """(NOT EXISTS(node.featured) OR node.featured = false)"""
+
+private const val UNLISTED_IS_TRUE = """EXISTS(node.unlisted) AND node.unlisted = true"""
+private const val UNLISTED_IS_FALSE = """(NOT EXISTS(node.unlisted) OR node.unlisted = false)"""
+
 interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     override fun findAll(): Iterable<Neo4jResource>
 
@@ -139,6 +149,18 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     fun findAllByVerifiedIsFalse(pageable: Pageable): Page<Neo4jResource>
 
     fun findAllByFeaturedIsTrue(pageable: Pageable): Page<Neo4jResource>
+
+    @Query(
+        value = """$MATCH_RESOURCE $WHERE_CLASS_IN_LABELS AND $FEATURED_IS_TRUE AND $UNLISTED_IS_FALSE $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        countQuery = """$MATCH_RESOURCE $WHERE_CLASS_IN_LABELS AND $FEATURED_IS_TRUE AND $UNLISTED_IS_FALSE $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
+    )
+    fun findAllFeaturedByClasses(classes: Set<String>, pageable: Pageable): Page<Neo4jResource>
+
+    @Query(
+        value = """$MATCH_RESOURCE $WHERE_CLASS_IN_LABELS AND $UNLISTED_IS_TRUE AND $FEATURED_IS_FALSE $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        countQuery = """$MATCH_RESOURCE $WHERE_CLASS_IN_LABELS AND $UNLISTED_IS_TRUE AND $FEATURED_IS_FALSE $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
+    )
+    fun findAllUnlistedByClasses(classes: Set<String>, pageable: Pageable): Page<Neo4jResource>
 
     fun findAllByFeaturedIsFalse(pageable: Pageable): Page<Neo4jResource>
 

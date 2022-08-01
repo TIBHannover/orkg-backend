@@ -9,6 +9,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import io.kotest.assertions.asClue
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import java.time.OffsetDateTime
@@ -63,6 +64,70 @@ interface ResourceRepositoryContractTest {
         }
         repository.findAll(PageRequest.of(0, 10)).totalElements shouldBe times
     }
+
+    @Test
+    @Suppress("UNUSED_VARIABLE") // Names are provided to better understand the test setup
+    fun `when searching for featured resources, then unlisted are ignored, because they are mutually exclusive`() {
+        val featured = newResourceWith(1, setOf("Foo")).copy(featured = true, unlisted = false).also {
+            repository.save(it)
+        }
+        val notFeatured = newResourceWith(2, setOf("Foo")).copy(featured = false, unlisted = false).also {
+            repository.save(it)
+        }
+        val unlisted = newResourceWith(10, setOf("Foo")).copy(featured = false, unlisted = true).also {
+            repository.save(it)
+        }
+        val listed = newResourceWith(11, setOf("Foo")).copy(featured = false, unlisted = false).also {
+            repository.save(it)
+        }
+        val inconsistent = newResourceWith(9999, setOf("Foo")).copy(featured = true, unlisted = true).also {
+            repository.save(it)
+        }
+        val wrongClass = newResourceWith(8888, setOf("WrongClass")).copy(featured = true, unlisted = false).also {
+            repository.save(it)
+        }
+
+        val result = repository.findAllFeaturedResourcesByClassIds(setOf(ClassId("Foo")), PageRequest.of(0, 100)).content
+
+        result.asClue {
+            it shouldHaveSize 1
+            it.first().id shouldBe featured.id
+        }
+    }
+
+    @Test
+    @Suppress("UNUSED_VARIABLE") // Names are provided to better understand the test setup
+    fun `when searching for unlisted resources, then featured are ignored, because they are mutually exclusive`() {
+        val featured = newResourceWith(1, setOf("Foo")).copy(featured = true, unlisted = false).also {
+            repository.save(it)
+        }
+        val notFeatured = newResourceWith(2, setOf("Foo")).copy(featured = false, unlisted = false).also {
+            repository.save(it)
+        }
+        val unlisted = newResourceWith(10, setOf("Foo")).copy(featured = false, unlisted = true).also {
+            repository.save(it)
+        }
+        val listed = newResourceWith(11, setOf("Foo")).copy(featured = false, unlisted = false).also {
+            repository.save(it)
+        }
+        val inconsistent = newResourceWith(9999, setOf("Foo")).copy(featured = true, unlisted = true).also {
+            repository.save(it)
+        }
+        val wrongClass = newResourceWith(8888, setOf("WrongClass")).copy(featured = false, unlisted = true).also {
+            repository.save(it)
+        }
+
+        val result = repository.findAllUnlistedResourcesByClassIds(setOf(ClassId("Foo")), PageRequest.of(0, 100)).content
+
+        result.asClue {
+            it shouldHaveSize 1
+            it.first().id shouldBe unlisted.id
+        }
+    }
+
+    private fun newResourceWith(id: Long, classes: Set<String>) = createResource().copy(
+        id = ResourceId(id), classes = classes.map(::ClassId).toSet()
+    )
 
     fun cleanUpAfterEach()
 

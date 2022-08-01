@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceIdGenerator
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceRepository
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -167,6 +168,11 @@ class SpringDataNeo4jResourceAdapter(
     override fun findAllListedPapers(pageable: Pageable): Page<Resource> =
         neo4jRepository.findAllListedPapers(pageable).map(Neo4jResource::toResource)
 
+    override fun findAllFeaturedResourcesByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource> =
+        neo4jRepository
+            .findAllFeaturedByClasses(classIds.map(ClassId::value).toSet(), pageable)
+            .map(Neo4jResource::toResource)
+
     override fun findAllFeaturedResourcesByClass(
         classes: List<String>,
         unlisted: Boolean,
@@ -181,6 +187,11 @@ class SpringDataNeo4jResourceAdapter(
         pageable: Pageable
     ): Page<Resource> = neo4jRepository.findAllFeaturedResourcesByClass(classes, featured, unlisted, pageable)
         .map(Neo4jResource::toResource)
+
+    override fun findAllUnlistedResourcesByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource> =
+        neo4jRepository
+            .findAllUnlistedByClasses(classIds.map(ClassId::value).toSet(), pageable)
+            .map(Neo4jResource::toResource)
 
     override fun findAllFeaturedResourcesByObservatoryIDAndClass(
         id: ObservatoryId,

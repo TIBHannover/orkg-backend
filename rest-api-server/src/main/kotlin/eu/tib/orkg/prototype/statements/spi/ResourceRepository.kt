@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.spi
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -10,6 +11,9 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.QueryResult
 
 interface ResourceRepository : EntityRepository<Resource> {
+    fun findAllFeaturedResourcesByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource>
+    fun findAllUnlistedResourcesByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource>
+
     // legacy methods:
     fun nextIdentity(): ResourceId
     fun save(resource: Resource): Resource

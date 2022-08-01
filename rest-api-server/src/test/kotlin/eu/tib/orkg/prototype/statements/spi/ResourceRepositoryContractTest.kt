@@ -155,6 +155,28 @@ interface ResourceRepositoryContractTest {
         }
     }
 
+    @Test
+    fun `when searching for resources by class, then unlisted are not returned`() {
+        listOf(
+            newResourceWith(1, setOf("Foo")),
+            newResourceWith(2, setOf("Bar")),
+            newResourceWith(3, setOf("Foo")).copy(unlisted = true),
+            newResourceWith(4, setOf("Foo", "Bar")),
+            newResourceWith(5, setOf("Baz")),
+        ).forEach {
+            repository.save(it)
+        }
+        val classIdsToFind = setOf(ClassId("Foo"), ClassId("Baz"))
+        val expectedIds = listOf(ResourceId(1), ResourceId(4), ResourceId(5))
+
+        val result = repository.findAllByClassIds(classIdsToFind, PageRequest.of(0, 100)).content
+
+        result.asClue {
+            it shouldHaveSize 3
+            it.map(Resource::id) shouldContainExactlyInAnyOrder expectedIds
+        }
+    }
+
     private fun newResourceWith(id: Long, classes: Set<String>) = createResource().copy(
         id = ResourceId(id), classes = classes.map(::ClassId).toSet()
     )

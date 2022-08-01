@@ -168,6 +168,12 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     )
     fun findAllUnlistedByClasses(classes: Set<String>, pageable: Pageable): Page<Neo4jResource>
 
+    @Query(
+        value = """$MATCH_RESOURCE $WHERE_CLASS_IN_LABELS AND $UNLISTED_IS_FALSE $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        countQuery = """$MATCH_RESOURCE $WHERE_CLASS_IN_LABELS AND $UNLISTED_IS_FALSE $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
+    )
+    fun findAllByClasses(classes: Set<String>, pageable: Pageable): Page<Neo4jResource>
+
     fun findAllByFeaturedIsFalse(pageable: Pageable): Page<Neo4jResource>
 
     fun findAllByUnlistedIsTrue(pageable: Pageable): Page<Neo4jResource>

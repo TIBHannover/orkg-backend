@@ -198,6 +198,11 @@ class SpringDataNeo4jResourceAdapter(
             .findAllUnlistedByClasses(classIds.map(ClassId::value).toSet(), pageable)
             .map(Neo4jResource::toResource)
 
+    override fun findAllByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource> =
+        neo4jRepository
+            .findAllByClasses(classIds.map(ClassId::value).toSet(), pageable)
+            .map(Neo4jResource::toResource)
+
     override fun findAllFeaturedResourcesByObservatoryIDAndClass(
         id: ObservatoryId,
         classes: List<String>,

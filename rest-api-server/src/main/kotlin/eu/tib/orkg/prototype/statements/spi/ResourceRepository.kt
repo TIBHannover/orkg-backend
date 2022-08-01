@@ -56,6 +56,21 @@ interface ResourceRepository : EntityRepository<Resource> {
      */
     fun findAllUnlistedResourcesByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource>
 
+    /**
+     * Finds all resources with the specified class.
+     *
+     * This method will not return resources marked as `unlisted`.
+     */
+    fun findAllByClassId(classId: ClassId, pageable: Pageable): Page<Resource> =
+        findAllByClassIds(setOf(classId), pageable)
+
+    /**
+     * Finds all resources with the specified classes.
+     *
+     * This method will not return resources marked as `unlisted`.
+     */
+    fun findAllByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource>
+
     // legacy methods:
     fun nextIdentity(): ResourceId
     fun save(resource: Resource): Resource

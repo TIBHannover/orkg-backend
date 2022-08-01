@@ -8,10 +8,6 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 class InMemoryClassRepository : ClassRepository {
-    override fun findAll(): Sequence<Class> {
-        TODO("Not yet implemented")
-    }
-
     override fun findAll(pageable: Pageable): Page<Class> {
         TODO("Not yet implemented")
     }

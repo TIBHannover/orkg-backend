@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.adapter.output.inmemory
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -10,11 +11,23 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 class InMemoryResourceRepository : ResourceRepository {
-    override fun findAll(): Sequence<Resource> {
+    override fun findAll(pageable: Pageable): Page<Resource> {
         TODO("Not yet implemented")
     }
 
-    override fun findAll(pageable: Pageable): Page<Resource> {
+    override fun findAllFeaturedResourcesByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource> {
+        TODO("Not yet implemented")
+    }
+
+    override fun findAllNonFeaturedResourcesByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource> {
+        TODO("Not yet implemented")
+    }
+
+    override fun findAllUnlistedResourcesByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource> {
+        TODO("Not yet implemented")
+    }
+
+    override fun findAllByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource> {
         TODO("Not yet implemented")
     }
 

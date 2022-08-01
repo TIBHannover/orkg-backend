@@ -11,10 +11,6 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 class InMemoryStatementRepository : StatementRepository {
-    override fun findAll(): Sequence<GeneralStatement> {
-        TODO("Not yet implemented")
-    }
-
     override fun findAll(depth: Int): Iterable<GeneralStatement> {
         TODO("Not yet implemented")
     }

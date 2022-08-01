@@ -1,6 +1,9 @@
 package eu.tib.orkg.prototype.statements.application.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import eu.tib.orkg.prototype.auth.persistence.UserEntity
+import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.adapter.output.inmemory.InMemoryClassRepository
 import eu.tib.orkg.prototype.statements.adapter.output.inmemory.InMemoryLiteralRepository
@@ -8,7 +11,6 @@ import eu.tib.orkg.prototype.statements.adapter.output.inmemory.InMemoryPredicat
 import eu.tib.orkg.prototype.statements.adapter.output.inmemory.InMemoryResourceRepository
 import eu.tib.orkg.prototype.statements.adapter.output.inmemory.InMemoryStatementRepository
 import eu.tib.orkg.prototype.statements.adapter.output.inmemory.InMemoryThingRepository
-import eu.tib.orkg.prototype.statements.adapter.output.inmemory.InMemoryUserRepository
 import eu.tib.orkg.prototype.statements.application.ObjectController
 import eu.tib.orkg.prototype.statements.services.ClassService
 import eu.tib.orkg.prototype.statements.services.LiteralService
@@ -21,18 +23,24 @@ import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.ThingRepository
+import io.mockk.every
+import io.mockk.mockk
 import java.util.*
 import org.intellij.lang.annotations.Language
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
 class PaperServiceIntegrationTest {
 
-    private lateinit var mapper: ObjectMapper
+    private val mapper: ObjectMapper = ObjectMapper().registerModule(KotlinModule())
+
+    private val userRepository: UserRepository = mockk()
 
     private val thingRepository: ThingRepository = InMemoryThingRepository()
     private val classRepository: ClassRepository = InMemoryClassRepository()
-    private val contributorService = ContributorService(InMemoryUserRepository())
+    private val classService = ClassService(classRepository)
+    private val contributorService = ContributorService(userRepository)
     private val literalRepository: LiteralRepository = InMemoryLiteralRepository()
     private val literalService = LiteralService(literalRepository)
     private val predicateRepository: PredicateRepository = InMemoryPredicateRepository()
@@ -42,11 +50,6 @@ class PaperServiceIntegrationTest {
     private val statementService = StatementService(thingRepository, predicateRepository, statementRepository)
 
     private val resourceService = ResourceService(
-        // TODO: The Neo4j*Repositories need to be refactored out. (And also not needed for this test.
-        neo4jComparisonRepository = null!!,
-        neo4jContributionRepository = null!!,
-        neo4jVisualizationRepository = null!!,
-        neo4jSmartReviewRepository = null!!,
         resourceRepository,
         statementRepository,
     )
@@ -56,7 +59,7 @@ class PaperServiceIntegrationTest {
         literalService = literalService,
         predicateService = predicateService,
         statementService = statementService,
-        classService = ClassService(classRepository),
+        classService = classService,
         contributorService = contributorService,
     )
 
@@ -70,14 +73,25 @@ class PaperServiceIntegrationTest {
         objectController = objectController,
     )
 
+    @Disabled("WIP")
     @Test
     @Tag("regression") // see https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/292
     fun `Creating a paper twice should add data to the paper`() {
         val userId = UUID.randomUUID()
+        every { userRepository.findById(userId) } returns Optional.of(UserEntity().apply {
+            id = userId
+            displayName = "Some Testuser"
+            email = "user@example.org"
+            enabled = true
+        })
+
+        // Here goes the test setup:
         val req: CreatePaperRequest = mapper.readValue(exampleDataFromIssue, CreatePaperRequest::class.java)
+
         // Create twice
         paperService.addPaperContent(req, mergeIfExists = false, userId)
         paperService.addPaperContent(req, mergeIfExists = false, userId)
+        // FIXME: assertion
     }
 
     //region Example data for issue #292

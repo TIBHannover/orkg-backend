@@ -26,9 +26,19 @@ interface ResourceRepository : EntityRepository<Resource> {
      */
     fun findAllFeaturedResourcesByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource>
 
+    /**
+     * Find all non-featured resources with the specified class.
+     *
+     * This method will not return resources marked as `unlisted`.
+     */
     fun findAllNonFeaturedResourcesByClassId(classId: ClassId, pageable: Pageable): Page<Resource> =
         findAllNonFeaturedResourcesByClassIds(setOf(classId), pageable)
 
+    /**
+     * Find all non-featured resources with the specified class.
+     *
+     * This method will not return resources marked as `unlisted`.
+     */
     fun findAllNonFeaturedResourcesByClassIds(classIds: Set<ClassId>, pageable: Pageable): Page<Resource>
 
     /**

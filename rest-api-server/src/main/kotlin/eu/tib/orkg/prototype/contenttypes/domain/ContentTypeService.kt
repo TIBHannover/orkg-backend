@@ -5,11 +5,6 @@ import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jComparisonRepository
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jContributionRepository
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jProblemRepository
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jSmartReviewRepository
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jVisualizationRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import java.util.*
 import org.springframework.data.domain.Page
@@ -26,12 +21,7 @@ private val Visualization = ClassId("Visualization")
 @Service
 @Transactional
 class ContentTypeService(
-    private val resourceRepository: ResourceRepository,
-    private val neo4jComparisonRepository: Neo4jComparisonRepository,
-    private val neo4jContributionRepository: Neo4jContributionRepository,
-    private val neo4jVisualizationRepository: Neo4jVisualizationRepository,
-    private val neo4jSmartReviewRepository: Neo4jSmartReviewRepository,
-    private val neo4jProblemRepository: Neo4jProblemRepository,
+    private val resourceRepository: ResourceRepository
 ) : ContentTypeUseCase {
     override fun loadFeaturedContributions(pageable: Pageable): Page<Resource> =
         resourceRepository.findAllFeaturedResourcesByClassId(Contribution, pageable)

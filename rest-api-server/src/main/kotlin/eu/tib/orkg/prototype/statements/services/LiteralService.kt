@@ -70,13 +70,11 @@ class LiteralService(
     }
 
     override fun removeAll() = repository.deleteAll()
-
-    private fun String.toSearchString() =
-        "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"
-
-    private fun String.toExactSearchString() =
-        "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"
 }
+
+fun String.toSearchString() = "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"
+
+fun String.toExactSearchString() = "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"
 
 fun Literal.toLiteralRepresentation(): LiteralRepresentation = object : LiteralRepresentation {
     override val id: LiteralId = this@toLiteralRepresentation.id!!

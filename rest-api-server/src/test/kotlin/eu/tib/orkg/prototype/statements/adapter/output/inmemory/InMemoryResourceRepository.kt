@@ -1,19 +1,27 @@
 package eu.tib.orkg.prototype.statements.adapter.output.inmemory
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.application.service.ObjectService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.services.toExactSearchString
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
+import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 
-class InMemoryResourceRepository : ResourceRepository {
+class InMemoryResourceRepository(
+    // Sometimes, we need to query statements, because we do not have a share database.
+    private val statementRepository: StatementRepository,
+) : ResourceRepository {
 
     private val idCounter = AtomicLong(1)
 
@@ -60,13 +68,15 @@ class InMemoryResourceRepository : ResourceRepository {
         val labels = entities
             .filter { (id, entry) -> entry.label.matches(label.toExactSearchString().toRegex()) }
             .map { (id, entry) -> entry }
+            .drop(pageable.pageNumber * pageable.pageSize)
             .take(pageable.pageSize)
         return PageImpl(labels, pageable, labels.size.toLong())
     }
 
-    override fun findAllByLabel(label: String): Iterable<Resource> {
-        TODO("Not yet implemented")
-    }
+    override fun findAllByLabel(label: String): Iterable<Resource> =
+        entities
+            .filter { (id, entry) -> entry.label.matches(label.toExactSearchString().toRegex()) }
+            .map { (id, entry) -> entry }
 
     override fun findAllByLabelMatchesRegex(label: String, pageable: Pageable): Page<Resource> {
         TODO("Not yet implemented")
@@ -143,7 +153,13 @@ class InMemoryResourceRepository : ResourceRepository {
     }
 
     override fun findAllByDOI(doi: String): Iterable<Resource> {
-        TODO("Not yet implemented")
+        return statementRepository
+            .findAll(PageRequest.of(1, Int.MAX_VALUE))
+            .content
+            .filter { (it.subject as Resource).classes.contains(ClassId("Paper")) }
+            .filter { it.predicate.id == PredicateId(ObjectService.ID_DOI_PREDICATE) }
+            .filter { (it.`object` as Literal).label == doi }
+            .map { it.subject as Resource }
     }
 
     override fun findByLabel(label: String?): Optional<Resource> {

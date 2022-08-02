@@ -48,8 +48,8 @@ class PaperServiceIntegrationTest {
     private val literalService = LiteralService(literalRepository)
     private val predicateRepository: PredicateRepository = InMemoryPredicateRepository()
     private val predicateService = PredicateService(predicateRepository)
-    private val resourceRepository: ResourceRepository = InMemoryResourceRepository()
     private val statementRepository: StatementRepository = InMemoryStatementRepository()
+    private val resourceRepository: ResourceRepository = InMemoryResourceRepository(statementRepository)
     private val thingRepository: ThingRepository = InMemoryThingRepository(
         classRepository = classRepository,
         predicateRepository = predicateRepository,

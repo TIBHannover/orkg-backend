@@ -10,6 +10,8 @@ import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 
 class InMemoryStatementRepository : StatementRepository {
@@ -23,15 +25,15 @@ class InMemoryStatementRepository : StatementRepository {
     }
 
     override fun findAll(pageable: Pageable): Page<GeneralStatement> {
-        TODO("Not yet implemented")
+        val paged = entities.values.drop(pageable.pageNumber * pageable.pageSize).take(pageable.pageSize)
+        return PageImpl(paged, pageable, paged.size.toLong())
     }
 
     override fun countStatementsAboutResource(id: ResourceId): Long =
         entities.count { (id, entity) -> entity.subject.thingId == ThingId(id.value) }.toLong()
 
-    override fun countStatementsAboutResources(resourceIds: Set<ResourceId>): Map<ResourceId, Long> {
-        TODO("Not yet implemented")
-    }
+    override fun countStatementsAboutResources(resourceIds: Set<ResourceId>): Map<ResourceId, Long> =
+        resourceIds.associateWith { countStatementsAboutResource(it) }
 
     override fun nextIdentity(): StatementId = StatementId(idCounter.getAndIncrement())
 

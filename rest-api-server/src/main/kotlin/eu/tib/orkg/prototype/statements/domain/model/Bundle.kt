@@ -12,14 +12,14 @@ data class Bundle(
         bundle.add(statement)
     }
 
-    operator fun contains(statement: GeneralStatement): Boolean {
+    operator fun contains(statement: StatementRepresentation): Boolean {
         return this.bundle.any { it.id == statement.id }
     }
 
     operator fun plus(other: Bundle): Bundle {
         val newBundle = this.copy()
         other.bundle
-            .filter { it !in this.bundle }
+            .filter { it !in this }
             .forEach { newBundle.addStatement(it) }
         // TODO: This is sorting descending to conform to issue (#309)
         newBundle.bundle.sortByDescending { it.createdAt }

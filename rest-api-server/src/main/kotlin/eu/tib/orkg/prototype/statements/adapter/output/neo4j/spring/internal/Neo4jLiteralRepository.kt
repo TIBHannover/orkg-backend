@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
-import eu.tib.orkg.prototype.statements.application.ObjectController.Constants.ID_DOI_PREDICATE
+import eu.tib.orkg.prototype.statements.application.service.ObjectService.Constants.ID_DOI_PREDICATE
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import java.util.Optional
+import java.util.*
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.Neo4jRepository
 

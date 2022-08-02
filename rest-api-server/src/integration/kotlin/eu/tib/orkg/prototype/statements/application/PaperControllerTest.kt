@@ -3,6 +3,8 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.application.service.CreatePaperRequest
+import eu.tib.orkg.prototype.statements.application.service.NamedObject
+import eu.tib.orkg.prototype.statements.application.service.ObjectStatement
 import eu.tib.orkg.prototype.statements.application.service.Paper
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -132,7 +134,8 @@ class PaperControllerTest : RestDocumentationBaseTest() {
                         "P32" to listOf(ObjectStatement(`@id` = "R3003", "resource", null, null, null, null, null, null)),
                         "HAS_EVALUATION" to listOf(ObjectStatement(null, "resource", null, null, null, null, label = "MOTO", null))
                     ))
-                )),
+                )
+            ),
             authors = null,
             publicationMonth = null,
             publishedIn = null,

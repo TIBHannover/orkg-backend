@@ -7,11 +7,8 @@ import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
-import eu.tib.orkg.prototype.statements.application.CreateObjectRequest
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
-import eu.tib.orkg.prototype.statements.application.NamedObject
-import eu.tib.orkg.prototype.statements.application.ObjectController
 import eu.tib.orkg.prototype.statements.application.OrcidNotValid
 import eu.tib.orkg.prototype.statements.application.OrphanOrcidValue
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
@@ -30,7 +27,7 @@ class PaperService(
     private val predicateService: PredicateUseCases,
     private val statementService: StatementUseCases,
     private val contributorService: ContributorService,
-    private val objectController: ObjectController,
+    private val objectService: ObjectService,
     private val resourceRepository: ResourceRepository, // TODO: remove dependency by pushing code to service
 ) {
     /**
@@ -51,12 +48,12 @@ class PaperService(
         // paper contribution data
         if (request.paper.hasContributions()) {
             request.paper.contributions!!.forEach {
-                val contributionId = addCompleteContribution(it, request)
+                val contributionId = addCompleteContribution(it, request, authenticatedUserId)
                 // Create statement between paper and contribution
                 statementService.add(
                     userId,
                     paperId.value,
-                    ObjectController.ContributionPredicate,
+                    ObjectService.ContributionPredicate,
                     contributionId.value
                 )
             }
@@ -70,16 +67,17 @@ class PaperService(
      */
     private fun addCompleteContribution(
         jsonObject: NamedObject,
-        paperRequest: CreatePaperRequest
+        paperRequest: CreatePaperRequest,
+        userId: UUID,
     ): ResourceId {
         // Always append Contribution class to custom user classes
         val contributionClasses =
-            (listOf(ObjectController.ID_CONTRIBUTION_CLASS) + jsonObject.classes.orEmpty()).toSet().toList()
+            (listOf(ObjectService.ID_CONTRIBUTION_CLASS) + jsonObject.classes.orEmpty()).toSet().toList()
         // Convert Paper structure to Object structure
         val contribution = jsonObject.copy(classes = contributionClasses)
         val objectRequest = CreateObjectRequest(paperRequest.predicates, contribution)
         // Create contribution resource whether it has data or not
-        return objectController.createObject(objectRequest).id
+        return objectService.createObject(objectRequest, userId).id
     }
 
     /**
@@ -140,13 +138,13 @@ class PaperService(
         // paper doi
         if (request.paper.hasDOI()) {
             val paperDoi = literalService.create(userId, request.paper.doi!!).id
-            statementService.add(userId, paperId.value, ObjectController.DoiPredicate, paperDoi.value)
+            statementService.add(userId, paperId.value, ObjectService.DoiPredicate, paperDoi.value)
         }
 
         // paper URL
         if (request.paper.hasUrl()) {
             val paperUrl = literalService.create(userId, request.paper.url!!).id
-            statementService.add(userId, paperId.value, ObjectController.UrlPredicate, paperUrl.value)
+            statementService.add(userId, paperId.value, ObjectService.UrlPredicate, paperUrl.value)
         }
 
         // paper authors
@@ -157,14 +155,14 @@ class PaperService(
             statementService.add(
                 userId,
                 paperId.value,
-                ObjectController.PublicationMonthPredicate,
+                ObjectService.PublicationMonthPredicate,
                 literalService.create(userId, request.paper.publicationMonth.toString()).id.value
             )
         if (request.paper.hasPublicationYear())
             statementService.add(
                 userId,
                 paperId.value,
-                ObjectController.PublicationYearPredicate,
+                ObjectService.PublicationYearPredicate,
                 literalService.create(userId, request.paper.publicationYear.toString()).id.value
             )
 
@@ -183,7 +181,7 @@ class PaperService(
         statementService.add(
             userId,
             paperId.value,
-            ObjectController.ResearchFieldPredicate,
+            ObjectService.ResearchFieldPredicate,
             ResourceId(request.paper.researchField).value
         )
         return paperObj
@@ -201,7 +199,7 @@ class PaperService(
         extractionMethod: ExtractionMethod,
         organizationId: OrganizationId
     ) {
-        val venuePredicate = predicateService.findById(ObjectController.VenuePredicate).get().id
+        val venuePredicate = predicateService.findById(ObjectService.VenuePredicate).get().id
         val pageable = PageRequest.of(1, 10)
         // Check if resource exists
         var venueResource = resourceRepository.findAllByLabel(venue, pageable).firstOrNull()
@@ -212,7 +210,7 @@ class PaperService(
                 CreateResourceRequest(
                     null,
                     venue,
-                    setOf(ObjectController.VenueClass)
+                    setOf(ObjectService.VenueClass)
                 ),
                 observatoryId,
                 extractionMethod,
@@ -241,7 +239,7 @@ class PaperService(
         observatoryId: ObservatoryId,
         organizationId: OrganizationId
     ) {
-        val pattern = ObjectController.ORCID_REGEX.toRegex()
+        val pattern = ObjectService.ORCID_REGEX.toRegex()
         if (paper.paper.hasAuthors()) {
             paper.paper.authors!!.forEach { it ->
                 if (!it.isExistingAuthor()) {
@@ -263,19 +261,19 @@ class PaperService(
                                         1,
                                         10
                                     ) // TODO: Hide values by using default values for the parameters
-                                ).firstOrNull { it.predicate.id == ObjectController.OrcidPredicate }
+                                ).firstOrNull { it.predicate.id == ObjectService.OrcidPredicate }
                                     ?: throw OrphanOrcidValue(orcidValue)
                             statementService.add(
                                 userId,
                                 paperId.value,
-                                ObjectController.AuthorPredicate,
+                                ObjectService.AuthorPredicate,
                                 (authorStatement.subject as ResourceRepresentation).id.value
                             )
                         } else {
                             // create resource
                             val author = resourceService.create(
                                 userId,
-                                CreateResourceRequest(null, it.label!!, setOf(ObjectController.AuthorClass)),
+                                CreateResourceRequest(null, it.label!!, setOf(ObjectService.AuthorClass)),
                                 observatoryId,
                                 paper.paper.extractionMethod,
                                 organizationId
@@ -283,7 +281,7 @@ class PaperService(
                             statementService.add(
                                 userId,
                                 paperId.value,
-                                ObjectController.AuthorPredicate,
+                                ObjectService.AuthorPredicate,
                                 author.id.value
                             )
                             // Create orcid literal
@@ -292,7 +290,7 @@ class PaperService(
                             statementService.add(
                                 userId,
                                 author.id.value,
-                                ObjectController.OrcidPredicate,
+                                ObjectService.OrcidPredicate,
                                 orcid.id.value
                             )
                         }
@@ -301,12 +299,12 @@ class PaperService(
                         statementService.add(
                             userId,
                             paperId.value,
-                            ObjectController.AuthorPredicate,
+                            ObjectService.AuthorPredicate,
                             literalService.create(userId, it.label!!).id.value
                         )
                     }
                 } else {
-                    statementService.add(userId, paperId.value, ObjectController.AuthorPredicate, it.id!!)
+                    statementService.add(userId, paperId.value, ObjectService.AuthorPredicate, it.id!!)
                 }
             }
         }

@@ -16,7 +16,8 @@ class InMemoryClassRepository : ClassRepository {
     }
 
     override fun save(c: Class): Class {
-        TODO("Not yet implemented")
+        entities[c.id!!] = c.copy()
+        return findByClassId(c.id!!).get()
     }
 
     override fun findByClassId(id: ClassId?): Optional<Class> = Optional.ofNullable(entities[id!!])

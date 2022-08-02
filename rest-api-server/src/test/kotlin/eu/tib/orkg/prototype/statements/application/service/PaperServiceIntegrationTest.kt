@@ -5,6 +5,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.createClass
 import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.adapter.output.inmemory.InMemoryClassRepository
@@ -13,8 +14,7 @@ import eu.tib.orkg.prototype.statements.adapter.output.inmemory.InMemoryPredicat
 import eu.tib.orkg.prototype.statements.adapter.output.inmemory.InMemoryResourceRepository
 import eu.tib.orkg.prototype.statements.adapter.output.inmemory.InMemoryStatementRepository
 import eu.tib.orkg.prototype.statements.adapter.output.inmemory.InMemoryThingRepository
-import eu.tib.orkg.prototype.statements.application.ObjectController
-import eu.tib.orkg.prototype.statements.application.ObjectController.Constants
+import eu.tib.orkg.prototype.statements.application.service.ObjectService.Constants
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.services.ClassService
@@ -63,7 +63,7 @@ class PaperServiceIntegrationTest {
         statementRepository,
     )
 
-    private val objectController: ObjectController = ObjectController(
+    private val objectService: ObjectService = ObjectService(
         resourceService = resourceService,
         literalService = literalService,
         predicateService = predicateService,
@@ -79,7 +79,7 @@ class PaperServiceIntegrationTest {
         statementService = statementService,
         contributorService = contributorService,
         resourceRepository = resourceRepository,
-        objectController = objectController,
+        objectService = objectService,
     )
 
     @Test
@@ -113,7 +113,13 @@ class PaperServiceIntegrationTest {
     }
 
     private fun createExpectedClasses() {
-        // TODO: DOI and others
+        listOf(
+            Constants.ContributionClass,
+            Constants.AuthorClass,
+            Constants.VenueClass,
+        ).forEach {
+            classRepository.save(createClass().copy(id = it))
+        }
     }
 
     private fun createExpectedPredicates() {

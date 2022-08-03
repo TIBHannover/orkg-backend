@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import eu.tib.orkg.prototype.statements.domain.model.Thing
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThingRepository
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jThing
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jThingRepository
 import eu.tib.orkg.prototype.statements.spi.ThingRepository
 import java.util.*
 import org.springframework.data.domain.Page

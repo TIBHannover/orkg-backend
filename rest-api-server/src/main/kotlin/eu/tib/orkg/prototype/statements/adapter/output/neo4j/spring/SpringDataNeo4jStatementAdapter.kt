@@ -20,7 +20,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jThing
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.util.*
 import org.springframework.data.domain.Page

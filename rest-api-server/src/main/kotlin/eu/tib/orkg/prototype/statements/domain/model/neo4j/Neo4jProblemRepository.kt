@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteral
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.util.Optional
 import java.util.UUID

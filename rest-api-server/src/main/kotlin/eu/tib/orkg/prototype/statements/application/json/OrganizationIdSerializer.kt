@@ -1,12 +1,13 @@
-package eu.tib.orkg.prototype.statements.domain.model
+package eu.tib.orkg.prototype.statements.application.json
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 
-class ObservatoryIdSerializer : JsonSerializer<ObservatoryId>() {
+class OrganizationIdSerializer : JsonSerializer<OrganizationId>() {
     override fun serialize(
-        value: ObservatoryId?,
+        value: OrganizationId?,
         gen: JsonGenerator?,
         serializers: SerializerProvider?
     ) {

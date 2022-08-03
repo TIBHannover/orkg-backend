@@ -1,9 +1,10 @@
-package eu.tib.orkg.prototype.statements.domain.model
+package eu.tib.orkg.prototype.statements.application.json
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import eu.tib.orkg.prototype.statements.application.InvalidUUID
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import java.util.UUID
 
 class ObservatoryIdDeserializer :

@@ -11,8 +11,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ObservatoryIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.OrganizationIdConverter
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.AuditableEntity
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
 import org.neo4j.ogm.annotation.Labels

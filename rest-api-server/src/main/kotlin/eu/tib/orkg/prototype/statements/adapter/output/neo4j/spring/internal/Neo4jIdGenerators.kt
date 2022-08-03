@@ -1,7 +1,4 @@
-package eu.tib.orkg.prototype.statements.domain.model.neo4j
-
-import eu.tib.orkg.prototype.statements.domain.model.Block
-import eu.tib.orkg.prototype.statements.domain.model.IdentityGenerator
+package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 // T should extend identity class?
 abstract class RepositoryBasedIdGenerator<T, C : Neo4jCounter> : IdentityGenerator<T> {

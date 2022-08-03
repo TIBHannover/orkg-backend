@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.AuditableEntity
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import java.net.URI
 import org.neo4j.ogm.annotation.GeneratedValue

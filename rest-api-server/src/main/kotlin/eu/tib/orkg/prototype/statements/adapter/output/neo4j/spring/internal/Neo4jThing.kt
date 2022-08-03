@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.statements.domain.model.neo4j
+package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import org.neo4j.ogm.annotation.NodeEntity

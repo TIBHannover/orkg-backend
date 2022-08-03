@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.statements.domain.model
+package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 data class Block(private val range: LongRange) : Iterator<Long> {
     private var counter = range.first

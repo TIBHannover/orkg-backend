@@ -114,7 +114,8 @@ data class Neo4jResource(
             extractionMethod = extractionMethod,
             organizationId = organizationId,
             featured = featured,
-            unlisted = unlisted
+            unlisted = unlisted,
+            verified = verified,
         )
         return resource
     }

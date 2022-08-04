@@ -16,6 +16,7 @@ import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.forEach
+import java.net.URI
 import java.util.*
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
@@ -50,7 +51,7 @@ class RDFService(
                 setNamespace(RDFS.NS)
                 setNamespace(OWL.NS)
                 subject("c:$id").add(RDFS.LABEL, label).add(RDF.TYPE, "owl:Class")
-                if (uri != null) add(OWL.EQUIVALENTCLASS, uri)
+                if (uri?.isValidForNTriple() == true) add(OWL.EQUIVALENTCLASS, uri)
             }.build()
             return Optional.of(model)
         }
@@ -100,7 +101,7 @@ internal fun Class.toNTriple(): String {
     val cPrefix = RdfConstants.CLASS_NS
     val sb = StringBuilder()
     sb.append("<$cPrefix$id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .\n")
-    if (uri != null) sb.append("<$cPrefix$id> <http://www.w3.org/2002/07/owl#equivalentClass> <$uri> .\n")
+    if (uri?.isValidForNTriple() == true) sb.append("<$cPrefix$id> <${OWL.EQUIVALENTCLASS}> <$uri> .\n")
     sb.append("<$cPrefix$id> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label)}\"^^<http://www.w3.org/2001/XMLSchema#string> .\n")
     return sb.toString()
 }
@@ -136,6 +137,14 @@ internal fun GeneralStatement.toNTriple(): String {
     // TODO: log this somewhere
         return ""
     return result
+}
+
+/**
+ * Checks whether a URI is valid to be included in RDF .nt serialization.
+ */
+internal fun URI.isValidForNTriple(): Boolean {
+    // FIXME: what makes a URI valid to the N-Triple format ? See #349 and #220
+    return !toString().equals("null", ignoreCase = true)
 }
 
 private fun serializeThing(thing: Thing): String {

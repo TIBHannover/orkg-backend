@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   A recent version of Docker Compose is required to be installed. (Closes: [#375](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/375))
 ### Changed
 - The RDF export will not include statements with a `<null>` resource identifier. Although this is valid, it breaks downstream clients. (Closes: [#394](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/394))
+### Removed
+- The `pre-commit` configuration was removed as it was not used anymore and broke a long time ago without anyone noticing.
+  If you still use it, run `pre-commit uninstall` to disable the hooks, as they will not be updated anymore.
 
 ## [0.13.1] - 2022-08-02
 ### Fixed

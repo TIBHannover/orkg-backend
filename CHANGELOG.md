@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - When using Docker Compose, the `api` container will now wait for all databases to be properly started and accepting connections.
   A recent version of Docker Compose is required to be installed. (Closes: [#375](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/375))
+- Creating papers with the same DOI works again, and authors are properly referenced. (Closes: [#292](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/292))
 ### Changed
 - The RDF export will not include statements with a `<null>` resource identifier. Although this is valid, it breaks downstream clients. (Closes: [#394](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/394))
 ### Removed

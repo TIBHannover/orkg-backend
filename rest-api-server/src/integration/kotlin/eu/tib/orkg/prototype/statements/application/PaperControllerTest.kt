@@ -9,8 +9,10 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.not
+import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -326,6 +328,32 @@ class PaperControllerTest : RestDocumentationBaseTest() {
             )
     }
 
+    @Test
+    @Tag("regression")
+    @Tag("issue:292")
+    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    fun `creating a paper twice works as expected`() {
+        resourceService.create(
+            CreateResourceRequest(
+                id = ResourceId("R106"),
+                classes = setOf(ClassId("ResearchField")),
+                label = "Some research field required by the example data"
+            )
+        )
+
+        @Suppress("UNCHECKED_CAST") // This is fine. We know we are dealing with JSON here and do not have "null" keys.
+        val paper: Map<String, Any?> =
+            objectMapper.readValue(exampleDataFromIssue, Map::class.java) as Map<String, Any?>
+
+        // Create the paper twice. It should create two papers.
+        mockMvc
+            .perform(postRequestWithBody("/api/papers/?mergeIfExists=false", paper))
+            .andExpect(status().isCreated)
+        mockMvc
+            .perform(postRequestWithBody("/api/papers/?mergeIfExists=false", paper))
+            .andExpect(status().isCreated)
+    }
+
     private fun paperResponseFields() =
         responseFields(
             fieldWithPath("id").description("The paper ID"),
@@ -343,3 +371,57 @@ class PaperControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("unlisted").optional().ignored()
         )
 }
+
+//region Example data for issue #292
+@Language("json")
+@Suppress("HttpUrlsUsage")
+private val exampleDataFromIssue = """
+    {
+      "paper": {
+        "authors": [
+          {
+            "label": "Robert Challen",
+            "orcid": "http://orcid.org/0000-0002-5504-7768"
+          },
+          {
+            "label": "Ellen Brooks-Pollock",
+            "orcid": "http://orcid.org/0000-0002-5984-4932"
+          },
+          {
+            "label": "Jonathan M Read",
+            "orcid": "http://orcid.org/0000-0002-9697-0962"
+          },
+          {
+            "label": "Louise Dyson",
+            "orcid": "http://orcid.org/0000-0001-9788-4858"
+          },
+          {
+            "label": "Krasimira Tsaneva-Atanasova",
+            "orcid": "http://orcid.org/0000-0002-6294-7051"
+          },
+          {
+            "label": "Leon Danon",
+            "orcid": "http://orcid.org/0000-0002-7076-1871"
+          }
+        ],
+        "contributions": [
+          {
+            "classes": [
+              "Contribution"
+            ],
+            "name": "Contribution 1",
+            "values": {}
+          }
+        ],
+        "doi": "10.1136/bmj.n579",
+        "publicationMonth": 3,
+        "publicationYear": 2021,
+        "publishedIn": "BMJ",
+        "researchField": "R106",
+        "title": "Risk of mortality in patients infected with SARS-CoV-2 variant of concern 202012/1: matched cohort study",
+        "url": ""
+      },
+      "predicates": []
+    }
+    """.trimIndent()
+//endregion

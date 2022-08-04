@@ -257,7 +257,7 @@ class PaperController(
         val pattern = Constants.ORCID_REGEX.toRegex()
         if (paper.paper.hasAuthors()) {
             paper.paper.authors!!.forEach { it ->
-                if (!it.isExistingAuthor()) {
+                if (!it.hasId()) {
                     if (it.hasNameAndOrcid()) {
                         // Check if ORCID is a valid string
                         if (!pattern.matches(it.orcid!!))
@@ -272,10 +272,7 @@ class PaperController(
                             val authorStatement =
                                 statementService.findAllByObject(
                                     foundOrcid.id.value,
-                                    PageRequest.of(
-                                        1,
-                                        10
-                                    ) // TODO: Hide values by using default values for the parameters
+                                    PageRequest.of(0, 10) // TODO: Hide values by using default values for the parameters
                                 ).firstOrNull { it.predicate.id == Constants.OrcidPredicate }
                                     ?: throw OrphanOrcidValue(orcidValue)
                             statementService.add(
@@ -408,6 +405,6 @@ data class Author(
      * Check if the author is an existing resource
      * i.e., the id of the author is not null
      */
-    fun isExistingAuthor() =
+    fun hasId() =
         !id.isNullOrEmpty()
 }

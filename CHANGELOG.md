@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Fetch benchmarks of all research fields for PwC use-case (Described in: [!240](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/240))
+### Changed
+- Change the PwC model for benchmark queries and extract ID constants. (Closes: [#352](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/352))
 
 ## [0.13.3] - 2022-08-05
 ### Changed

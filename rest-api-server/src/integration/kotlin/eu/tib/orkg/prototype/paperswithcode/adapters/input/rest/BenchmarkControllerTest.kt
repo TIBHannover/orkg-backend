@@ -1,15 +1,19 @@
 package eu.tib.orkg.prototype.paperswithcode.adapters.input.rest
 
+import eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j.*
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
+import eu.tib.orkg.prototype.statements.application.CreateClassRequest
 import eu.tib.orkg.prototype.statements.application.CreatePredicateRequest
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.RestDocumentationBaseTest
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.services.ClassService
 import eu.tib.orkg.prototype.statements.services.PredicateService
+import java.net.URI
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
@@ -43,6 +47,9 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
     @Autowired
     private lateinit var predicateService: PredicateService
 
+    @Autowired
+    private lateinit var classService: ClassService
+
     @BeforeEach
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)
@@ -50,24 +57,33 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         resourceService.removeAll()
         predicateService.removeAll()
         statementService.removeAll()
+        classService.removeAll()
 
         assertThat(resourceService.findAll(tempPageable)).hasSize(0)
         assertThat(predicateService.findAll(tempPageable)).hasSize(0)
         assertThat(statementService.findAll(tempPageable)).hasSize(0)
+        assertThat(classService.findAll(tempPageable)).hasSize(0)
 
         predicateService.create(CreatePredicateRequest(PredicateId("P30"), "Has research field"))
         predicateService.create(CreatePredicateRequest(PredicateId("P31"), "Has contribution"))
         predicateService.create(CreatePredicateRequest(PredicateId("P32"), "Has research problem"))
-        predicateService.create(CreatePredicateRequest(PredicateId("HAS_BENCHMARK"), "Has benchmark"))
-        predicateService.create(CreatePredicateRequest(PredicateId("HAS_DATASET"), "Has dataset"))
-        predicateService.create(CreatePredicateRequest(PredicateId("HAS_SOURCE_CODE"), "Has code"))
-        predicateService.create(CreatePredicateRequest(PredicateId("HAS_MODEL"), "Has model"))
-        predicateService.create(CreatePredicateRequest(PredicateId("HAS_EVALUATION"), "Has evaluation"))
-        predicateService.create(CreatePredicateRequest(PredicateId("HAS_METRIC"), "Has metric"))
-        predicateService.create(CreatePredicateRequest(PredicateId("HAS_VALUE"), "Has value"))
+        predicateService.create(CreatePredicateRequest(PredicateId(BENCHMARK_PREDICATE), "Has benchmark"))
+        predicateService.create(CreatePredicateRequest(PredicateId(DATASET_PREDICATE), "Has dataset"))
+        predicateService.create(CreatePredicateRequest(PredicateId(SOURCE_CODE_PREDICATE), "Has code"))
+        predicateService.create(CreatePredicateRequest(PredicateId(MODEL_PREDICATE), "Has model"))
+        predicateService.create(CreatePredicateRequest(PredicateId(QUANTITY_PREDICATE), "Has evaluation"))
+        predicateService.create(CreatePredicateRequest(PredicateId(METRIC_PREDICATE), "Has quantity kind"))
+        predicateService.create(CreatePredicateRequest(PredicateId(QUANTITY_VALUE_PREDICATE), "Has quantity value"))
+        predicateService.create(CreatePredicateRequest(PredicateId(NUMERIC_VALUE_PREDICATE), "Has numeric value"))
+
+        classService.create(CreateClassRequest(ClassId(QUANTITY_CLASS), "Quantity", URI("http://qudt.org/2.1/schema/qudt/Quantity")))
+        classService.create(CreateClassRequest(ClassId(QUANTITY_VALUE_CLASS), "Quantity", URI("http://qudt.org/2.1/schema/qudt/QuantityValue")))
+        classService.create(CreateClassRequest(ClassId(METRIC_CLASS), "Quantity Kind", URI("http://qudt.org/2.1/schema/qudt/QuantityKind")))
+        classService.create(CreateClassRequest(ClassId(DATASET_CLASS), "Dataset", null))
+        classService.create(CreateClassRequest(ClassId(BENCHMARK_CLASS), "Benchmark", null))
+        classService.create(CreateClassRequest(ClassId(MODEL_CLASS), "Model", null))
     }
 
-    // FIXME: Is this the correct place for this call or should it be moved to RF test
     @Test
     fun fetchResearchFieldsWithBenchmarks() {
         val fieldWithBenchmark = resourceService.create(CreateResourceRequest(null, "Field 1", setOf(ClassId("ResearchField"))))
@@ -81,8 +97,8 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         val benchCont2 = resourceService.create(CreateResourceRequest(null, "Contribution of Paper 2", setOf(ClassId("Contribution"))))
         val normalCont1 = resourceService.create(CreateResourceRequest(null, "Contribution of Paper 3", setOf(ClassId("Contribution"))))
 
-        val bench1 = resourceService.create(CreateResourceRequest(null, "Benchmark 1", setOf(ClassId("Benchmark"))))
-        val bench2 = resourceService.create(CreateResourceRequest(null, "Benchmark 2", setOf(ClassId("Benchmark"))))
+        val bench1 = resourceService.create(CreateResourceRequest(null, "Benchmark 1", setOf(ClassId(BENCHMARK_CLASS))))
+        val bench2 = resourceService.create(CreateResourceRequest(null, "Benchmark 2", setOf(ClassId(BENCHMARK_CLASS))))
 
         statementService.create(benchPaper1.id!!.value, PredicateId("P30"), fieldWithBenchmark.id!!.value)
         statementService.create(benchPaper2.id!!.value, PredicateId("P30"), fieldWithBenchmark.id!!.value)
@@ -92,8 +108,8 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(benchPaper2.id!!.value, PredicateId("P31"), benchCont2.id!!.value)
         statementService.create(normalPaper.id!!.value, PredicateId("P31"), normalCont1.id!!.value)
 
-        statementService.create(benchCont1.id!!.value, PredicateId("HAS_BENCHMARK"), bench1.id!!.value)
-        statementService.create(benchCont2.id!!.value, PredicateId("HAS_BENCHMARK"), bench2.id!!.value)
+        statementService.create(benchCont1.id!!.value, PredicateId(BENCHMARK_PREDICATE), bench1.id!!.value)
+        statementService.create(benchCont2.id!!.value, PredicateId(BENCHMARK_PREDICATE), bench2.id!!.value)
 
         mockMvc
             .perform(getRequestTo("/api/research-fields/benchmarks"))
@@ -116,10 +132,10 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
 
         val benchCont = resourceService.create(CreateResourceRequest(null, "Contribution of Paper 1", setOf(ClassId("Contribution"))))
 
-        val benchmark = resourceService.create(CreateResourceRequest(null, "Benchmark 1", setOf(ClassId("Benchmark"))))
+        val benchmark = resourceService.create(CreateResourceRequest(null, "Benchmark 1", setOf(ClassId(BENCHMARK_CLASS))))
 
-        val dataset1 = resourceService.create(CreateResourceRequest(null, "Dataset 1", setOf(ClassId("Dataset"))))
-        val dataset2 = resourceService.create(CreateResourceRequest(null, "Dataset 2", setOf(ClassId("Dataset"))))
+        val dataset1 = resourceService.create(CreateResourceRequest(null, "Dataset 1", setOf(ClassId(DATASET_CLASS))))
+        val dataset2 = resourceService.create(CreateResourceRequest(null, "Dataset 2", setOf(ClassId(DATASET_CLASS))))
 
         val codes = (1..5).map { literalService.create("https://some-code-$it.cool") }
 
@@ -131,14 +147,14 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
 
         statementService.create(benchCont.id!!.value, PredicateId("P32"), problem1.id!!.value)
         statementService.create(benchCont.id!!.value, PredicateId("P32"), problem2.id!!.value)
-        statementService.create(benchCont.id!!.value, PredicateId("HAS_BENCHMARK"), benchmark.id!!.value)
+        statementService.create(benchCont.id!!.value, PredicateId(BENCHMARK_PREDICATE), benchmark.id!!.value)
 
         codes.forEach {
-            statementService.create(benchCont.id!!.value, PredicateId("HAS_SOURCE_CODE"), it.id!!.value)
+            statementService.create(benchCont.id!!.value, PredicateId(SOURCE_CODE_PREDICATE), it.id!!.value)
         }
 
-        statementService.create(benchmark.id!!.value, PredicateId("HAS_DATASET"), dataset1.id!!.value)
-        statementService.create(benchmark.id!!.value, PredicateId("HAS_DATASET"), dataset2.id!!.value)
+        statementService.create(benchmark.id!!.value, PredicateId(DATASET_PREDICATE), dataset1.id!!.value)
+        statementService.create(benchmark.id!!.value, PredicateId(DATASET_PREDICATE), dataset2.id!!.value)
 
         mockMvc
             .perform(getRequestTo("/api/benchmarks/summary/research-field/${fieldWithDataset.id}"))
@@ -165,10 +181,10 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
 
         val benchCont = resourceService.create(CreateResourceRequest(null, "Contribution of Paper 1", setOf(ClassId("Contribution"))))
 
-        val benchmark = resourceService.create(CreateResourceRequest(null, "Benchmark 1", setOf(ClassId("Benchmark"))))
+        val benchmark = resourceService.create(CreateResourceRequest(null, "Benchmark 1", setOf(ClassId(BENCHMARK_CLASS))))
 
-        val dataset1 = resourceService.create(CreateResourceRequest(null, "Dataset 1", setOf(ClassId("Dataset"))))
-        val dataset2 = resourceService.create(CreateResourceRequest(null, "Dataset 2", setOf(ClassId("Dataset"))))
+        val dataset1 = resourceService.create(CreateResourceRequest(null, "Dataset 1", setOf(ClassId(DATASET_CLASS))))
+        val dataset2 = resourceService.create(CreateResourceRequest(null, "Dataset 2", setOf(ClassId(DATASET_CLASS))))
 
         val codes = (1..5).map { literalService.create("https://some-code-$it.cool") }
 
@@ -180,14 +196,14 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
 
         statementService.create(benchCont.id!!.value, PredicateId("P32"), problem1.id!!.value)
         statementService.create(benchCont.id!!.value, PredicateId("P32"), problem2.id!!.value)
-        statementService.create(benchCont.id!!.value, PredicateId("HAS_BENCHMARK"), benchmark.id!!.value)
+        statementService.create(benchCont.id!!.value, PredicateId(BENCHMARK_PREDICATE), benchmark.id!!.value)
 
         codes.forEach {
-            statementService.create(benchCont.id!!.value, PredicateId("HAS_SOURCE_CODE"), it.id!!.value)
+            statementService.create(benchCont.id!!.value, PredicateId(SOURCE_CODE_PREDICATE), it.id!!.value)
         }
 
-        statementService.create(benchmark.id!!.value, PredicateId("HAS_DATASET"), dataset1.id!!.value)
-        statementService.create(benchmark.id!!.value, PredicateId("HAS_DATASET"), dataset2.id!!.value)
+        statementService.create(benchmark.id!!.value, PredicateId(DATASET_PREDICATE), dataset1.id!!.value)
+        statementService.create(benchmark.id!!.value, PredicateId(DATASET_PREDICATE), dataset2.id!!.value)
 
         mockMvc
             .perform(getRequestTo("/api/benchmarks/summary/"))
@@ -210,10 +226,10 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
     fun fetchResearchProblemsForADataset() {
         val paper = resourceService.create(CreateResourceRequest(null, "Paper", setOf(ClassId("Paper"))))
 
-        val dataset = resourceService.create(CreateResourceRequest(null, "Dataset", setOf(ClassId("Dataset"))))
+        val dataset = resourceService.create(CreateResourceRequest(null, "Dataset", setOf(ClassId(DATASET_CLASS))))
 
-        val benchmark1 = resourceService.create(CreateResourceRequest(null, "Benchmark 1", setOf(ClassId("Benchmark"))))
-        val benchmark2 = resourceService.create(CreateResourceRequest(null, "Benchmark 2", setOf(ClassId("Benchmark"))))
+        val benchmark1 = resourceService.create(CreateResourceRequest(null, "Benchmark 1", setOf(ClassId(BENCHMARK_CLASS))))
+        val benchmark2 = resourceService.create(CreateResourceRequest(null, "Benchmark 2", setOf(ClassId(BENCHMARK_CLASS))))
 
         val cont1 = resourceService.create(CreateResourceRequest(null, "Contribution 1", setOf(ClassId("Contribution"))))
         val cont2 = resourceService.create(CreateResourceRequest(null, "Contribution 2", setOf(ClassId("Contribution"))))
@@ -221,11 +237,11 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         val problem1 = resourceService.create(CreateResourceRequest(null, "Problem 1", setOf(ClassId("Problem"))))
         val problem2 = resourceService.create(CreateResourceRequest(null, "Problem 2", setOf(ClassId("Problem"))))
 
-        statementService.create(benchmark1.id!!.value, PredicateId("HAS_DATASET"), dataset.id!!.value)
-        statementService.create(benchmark2.id!!.value, PredicateId("HAS_DATASET"), dataset.id!!.value)
+        statementService.create(benchmark1.id!!.value, PredicateId(DATASET_PREDICATE), dataset.id!!.value)
+        statementService.create(benchmark2.id!!.value, PredicateId(DATASET_PREDICATE), dataset.id!!.value)
 
-        statementService.create(cont1.id!!.value, PredicateId("HAS_BENCHMARK"), benchmark1.id!!.value)
-        statementService.create(cont2.id!!.value, PredicateId("HAS_BENCHMARK"), benchmark2.id!!.value)
+        statementService.create(cont1.id!!.value, PredicateId(BENCHMARK_PREDICATE), benchmark1.id!!.value)
+        statementService.create(cont2.id!!.value, PredicateId(BENCHMARK_PREDICATE), benchmark2.id!!.value)
 
         statementService.create(cont1.id!!.value, PredicateId("P32"), problem1.id!!.value)
         statementService.create(cont1.id!!.value, PredicateId("P32"), problem2.id!!.value)
@@ -256,14 +272,14 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         val contributionOfPaper1 = resourceService.create(CreateResourceRequest(null, "Contribution of Paper 1", setOf(ClassId("Contribution"))))
         val contributionOfPaper2 = resourceService.create(CreateResourceRequest(null, "Contribution of Paper 2", setOf(ClassId("Contribution"))))
 
-        val benchmark1 = resourceService.create(CreateResourceRequest(null, "Benchmark P1", setOf(ClassId("Benchmark"))))
-        val benchmark2 = resourceService.create(CreateResourceRequest(null, "Benchmark P2", setOf(ClassId("Benchmark"))))
+        val benchmark1 = resourceService.create(CreateResourceRequest(null, "Benchmark P1", setOf(ClassId(BENCHMARK_CLASS))))
+        val benchmark2 = resourceService.create(CreateResourceRequest(null, "Benchmark P2", setOf(ClassId(BENCHMARK_CLASS))))
 
         val codes = (1..3).map { literalService.create("https://some-code-$it.cool") }
-        val models = (1..4).map { resourceService.create(CreateResourceRequest(null, "Model $it", setOf(ClassId("Model")))) }
+        val models = (1..4).map { resourceService.create(CreateResourceRequest(null, "Model $it", setOf(ClassId(MODEL_CLASS)))) }
 
-        val dataset1 = resourceService.create(CreateResourceRequest(null, "Dataset 1", setOf(ClassId("Dataset"))))
-        val dataset2 = resourceService.create(CreateResourceRequest(null, "Dataset 2", setOf(ClassId("Dataset"))))
+        val dataset1 = resourceService.create(CreateResourceRequest(null, "Dataset 1", setOf(ClassId(DATASET_CLASS))))
+        val dataset2 = resourceService.create(CreateResourceRequest(null, "Dataset 2", setOf(ClassId(DATASET_CLASS))))
 
         statementService.create(paper1.id!!.value, PredicateId("P31"), contributionOfPaper1.id!!.value)
         statementService.create(paper2.id!!.value, PredicateId("P31"), contributionOfPaper2.id!!.value)
@@ -271,18 +287,18 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(contributionOfPaper1.id!!.value, PredicateId("P32"), problem.id!!.value)
         statementService.create(contributionOfPaper2.id!!.value, PredicateId("P32"), problem.id!!.value)
 
-        statementService.create(contributionOfPaper1.id!!.value, PredicateId("HAS_BENCHMARK"), benchmark1.id!!.value)
-        statementService.create(contributionOfPaper2.id!!.value, PredicateId("HAS_BENCHMARK"), benchmark2.id!!.value)
+        statementService.create(contributionOfPaper1.id!!.value, PredicateId(BENCHMARK_PREDICATE), benchmark1.id!!.value)
+        statementService.create(contributionOfPaper2.id!!.value, PredicateId(BENCHMARK_PREDICATE), benchmark2.id!!.value)
 
         models.forEach {
-            statementService.create(contributionOfPaper1.id!!.value, PredicateId("HAS_MODEL"), it.id!!.value)
+            statementService.create(contributionOfPaper1.id!!.value, PredicateId(MODEL_PREDICATE), it.id!!.value)
         }
         codes.forEach {
-            statementService.create(contributionOfPaper2.id!!.value, PredicateId("HAS_SOURCE_CODE"), it.id!!.value)
+            statementService.create(contributionOfPaper2.id!!.value, PredicateId(SOURCE_CODE_PREDICATE), it.id!!.value)
         }
 
-        statementService.create(benchmark1.id!!.value, PredicateId("HAS_DATASET"), dataset1.id!!.value)
-        statementService.create(benchmark2.id!!.value, PredicateId("HAS_DATASET"), dataset2.id!!.value)
+        statementService.create(benchmark1.id!!.value, PredicateId(DATASET_PREDICATE), dataset1.id!!.value)
+        statementService.create(benchmark2.id!!.value, PredicateId(DATASET_PREDICATE), dataset2.id!!.value)
 
         mockMvc
             .perform(getRequestTo("/api/datasets/research-problem/${problem.id}"))
@@ -304,7 +320,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun fetchDatasetSummary() {
-        val dataset = resourceService.create(CreateResourceRequest(null, "some dataset", setOf(ClassId("Dataset"))))
+        val dataset = resourceService.create(CreateResourceRequest(null, "some dataset", setOf(ClassId(DATASET_CLASS))))
 
         val problem1 = resourceService.create(CreateResourceRequest(null, "Fancy problem", setOf(ClassId("Problem"))))
         val problem2 = resourceService.create(CreateResourceRequest(null, "not so fancy problem", setOf(ClassId("Problem"))))
@@ -313,21 +329,25 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         val contribution1 = resourceService.create(CreateResourceRequest(null, "Contribution 1", setOf(ClassId("Contribution"))))
         val contribution2 = resourceService.create(CreateResourceRequest(null, "Contribution 2", setOf(ClassId("Contribution"))))
 
-        val benchmark1 = resourceService.create(CreateResourceRequest(null, "Benchmark 1", setOf(ClassId("Benchmark"))))
-        val benchmark2 = resourceService.create(CreateResourceRequest(null, "Benchmark 2", setOf(ClassId("Benchmark"))))
+        val benchmark1 = resourceService.create(CreateResourceRequest(null, "Benchmark 1", setOf(ClassId(BENCHMARK_CLASS))))
+        val benchmark2 = resourceService.create(CreateResourceRequest(null, "Benchmark 2", setOf(ClassId(BENCHMARK_CLASS))))
 
         val codes1 = (1..3).map { literalService.create("https://some-code-$it.cool") }
         val codes2 = (1..2).map { literalService.create("https://some-code-$it-$it.cool") }
 
-        val model1 = resourceService.create(CreateResourceRequest(null, "Model 1", setOf(ClassId("Model"))))
-        val model2 = resourceService.create(CreateResourceRequest(null, "Model 2", setOf(ClassId("Model"))))
+        val model1 = resourceService.create(CreateResourceRequest(null, "Model 1", setOf(ClassId(MODEL_CLASS))))
+        val model2 = resourceService.create(CreateResourceRequest(null, "Model 2", setOf(ClassId(MODEL_CLASS))))
 
-        val evaluationB1E1 = resourceService.create(CreateResourceRequest(null, "Evaluation 1", setOf(ClassId("Evaluation"))))
-        val evaluationB1E2 = resourceService.create(CreateResourceRequest(null, "Evaluation 2", setOf(ClassId("Evaluation"))))
-        val evaluationB2E1 = resourceService.create(CreateResourceRequest(null, "Evaluation 1", setOf(ClassId("Evaluation"))))
+        val quantityB1E1 = resourceService.create(CreateResourceRequest(null, "Quantity 1", setOf(ClassId(QUANTITY_CLASS))))
+        val quantityB1E2 = resourceService.create(CreateResourceRequest(null, "Quantity 2", setOf(ClassId(QUANTITY_CLASS))))
+        val quantityB2E1 = resourceService.create(CreateResourceRequest(null, "Quantity 1", setOf(ClassId(QUANTITY_CLASS))))
 
-        val metric1 = resourceService.create(CreateResourceRequest(null, "Metric 1", setOf(ClassId("Metric"))))
-        val metric2 = resourceService.create(CreateResourceRequest(null, "Metric 2", setOf(ClassId("Metric"))))
+        val metric1 = resourceService.create(CreateResourceRequest(null, "Metric 1", setOf(ClassId(METRIC_CLASS))))
+        val metric2 = resourceService.create(CreateResourceRequest(null, "Metric 2", setOf(ClassId(METRIC_CLASS))))
+
+        val quantityValueB1E1 = resourceService.create(CreateResourceRequest(null, "Quantity Value 1", setOf(ClassId(QUANTITY_VALUE_CLASS))))
+        val quantityValueB1E2 = resourceService.create(CreateResourceRequest(null, "Quantity Value 2", setOf(ClassId(QUANTITY_VALUE_CLASS))))
+        val quantityValueB2E1 = resourceService.create(CreateResourceRequest(null, "Quantity Value 3", setOf(ClassId(QUANTITY_VALUE_CLASS))))
 
         val scoreOfM1B1E1 = literalService.create("2.55")
         val scoreOfM1B1E2 = literalService.create("4548")
@@ -336,36 +356,40 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(paper.id!!.value, PredicateId("P31"), contribution1.id!!.value)
         statementService.create(paper.id!!.value, PredicateId("P31"), contribution2.id!!.value)
 
-        statementService.create(contribution1.id!!.value, PredicateId("HAS_BENCHMARK"), benchmark1.id!!.value)
-        statementService.create(contribution2.id!!.value, PredicateId("HAS_BENCHMARK"), benchmark2.id!!.value)
+        statementService.create(contribution1.id!!.value, PredicateId(BENCHMARK_PREDICATE), benchmark1.id!!.value)
+        statementService.create(contribution2.id!!.value, PredicateId(BENCHMARK_PREDICATE), benchmark2.id!!.value)
 
         codes1.forEach {
-            statementService.create(contribution1.id!!.value, PredicateId("HAS_SOURCE_CODE"), it.id!!.value)
+            statementService.create(contribution1.id!!.value, PredicateId(SOURCE_CODE_PREDICATE), it.id!!.value)
         }
         codes2.forEach {
-            statementService.create(contribution2.id!!.value, PredicateId("HAS_SOURCE_CODE"), it.id!!.value)
+            statementService.create(contribution2.id!!.value, PredicateId(SOURCE_CODE_PREDICATE), it.id!!.value)
         }
 
         statementService.create(contribution1.id!!.value, PredicateId("P32"), problem1.id!!.value)
         statementService.create(contribution2.id!!.value, PredicateId("P32"), problem2.id!!.value)
 
-        statementService.create(contribution1.id!!.value, PredicateId("HAS_MODEL"), model1.id!!.value)
-        statementService.create(contribution2.id!!.value, PredicateId("HAS_MODEL"), model2.id!!.value)
+        statementService.create(contribution1.id!!.value, PredicateId(MODEL_PREDICATE), model1.id!!.value)
+        statementService.create(contribution2.id!!.value, PredicateId(MODEL_PREDICATE), model2.id!!.value)
 
-        statementService.create(benchmark1.id!!.value, PredicateId("HAS_EVALUATION"), evaluationB1E1.id!!.value)
-        statementService.create(benchmark1.id!!.value, PredicateId("HAS_EVALUATION"), evaluationB1E2.id!!.value)
-        statementService.create(benchmark2.id!!.value, PredicateId("HAS_EVALUATION"), evaluationB2E1.id!!.value)
+        statementService.create(benchmark1.id!!.value, PredicateId(QUANTITY_PREDICATE), quantityB1E1.id!!.value)
+        statementService.create(benchmark1.id!!.value, PredicateId(QUANTITY_PREDICATE), quantityB1E2.id!!.value)
+        statementService.create(benchmark2.id!!.value, PredicateId(QUANTITY_PREDICATE), quantityB2E1.id!!.value)
 
-        statementService.create(benchmark1.id!!.value, PredicateId("HAS_DATASET"), dataset.id!!.value)
-        statementService.create(benchmark2.id!!.value, PredicateId("HAS_DATASET"), dataset.id!!.value)
+        statementService.create(benchmark1.id!!.value, PredicateId(DATASET_PREDICATE), dataset.id!!.value)
+        statementService.create(benchmark2.id!!.value, PredicateId(DATASET_PREDICATE), dataset.id!!.value)
 
-        statementService.create(evaluationB1E1.id!!.value, PredicateId("HAS_METRIC"), metric1.id!!.value)
-        statementService.create(evaluationB1E2.id!!.value, PredicateId("HAS_METRIC"), metric2.id!!.value)
-        statementService.create(evaluationB2E1.id!!.value, PredicateId("HAS_METRIC"), metric1.id!!.value)
+        statementService.create(quantityB1E1.id!!.value, PredicateId(METRIC_PREDICATE), metric1.id!!.value)
+        statementService.create(quantityB1E2.id!!.value, PredicateId(METRIC_PREDICATE), metric2.id!!.value)
+        statementService.create(quantityB2E1.id!!.value, PredicateId(METRIC_PREDICATE), metric1.id!!.value)
 
-        statementService.create(evaluationB1E1.id!!.value, PredicateId("HAS_VALUE"), scoreOfM1B1E1.id!!.value)
-        statementService.create(evaluationB1E2.id!!.value, PredicateId("HAS_VALUE"), scoreOfM1B1E2.id!!.value)
-        statementService.create(evaluationB2E1.id!!.value, PredicateId("HAS_VALUE"), scoreOfM1B2E1.id!!.value)
+        statementService.create(quantityB1E1.id!!.value, PredicateId(QUANTITY_VALUE_PREDICATE), quantityValueB1E1.id!!.value)
+        statementService.create(quantityB1E2.id!!.value, PredicateId(QUANTITY_VALUE_PREDICATE), quantityValueB1E2.id!!.value)
+        statementService.create(quantityB2E1.id!!.value, PredicateId(QUANTITY_VALUE_PREDICATE), quantityValueB2E1.id!!.value)
+
+        statementService.create(quantityValueB1E1.id!!.value, PredicateId(NUMERIC_VALUE_PREDICATE), scoreOfM1B1E1.id!!.value)
+        statementService.create(quantityValueB1E2.id!!.value, PredicateId(NUMERIC_VALUE_PREDICATE), scoreOfM1B1E2.id!!.value)
+        statementService.create(quantityValueB2E1.id!!.value, PredicateId(NUMERIC_VALUE_PREDICATE), scoreOfM1B2E1.id!!.value)
 
         mockMvc
             .perform(getRequestTo("/api/datasets/${dataset.id}/problem/${problem1.id}/summary"))
@@ -381,7 +405,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun fetchDatasetSummaryWithoutModels() {
-        val dataset = resourceService.create(CreateResourceRequest(null, "some dataset", setOf(ClassId("Dataset"))))
+        val dataset = resourceService.create(CreateResourceRequest(null, "some dataset", setOf(ClassId(DATASET_CLASS))))
 
         val problem1 = resourceService.create(CreateResourceRequest(null, "Fancy problem", setOf(ClassId("Problem"))))
         val problem2 = resourceService.create(CreateResourceRequest(null, "not so fancy problem", setOf(ClassId("Problem"))))
@@ -390,18 +414,18 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         val contribution1 = resourceService.create(CreateResourceRequest(null, "Contribution 1", setOf(ClassId("Contribution"))))
         val contribution2 = resourceService.create(CreateResourceRequest(null, "Contribution 2", setOf(ClassId("Contribution"))))
 
-        val benchmark1 = resourceService.create(CreateResourceRequest(null, "Benchmark 1", setOf(ClassId("Benchmark"))))
-        val benchmark2 = resourceService.create(CreateResourceRequest(null, "Benchmark 2", setOf(ClassId("Benchmark"))))
+        val benchmark1 = resourceService.create(CreateResourceRequest(null, "Benchmark 1", setOf(ClassId(BENCHMARK_CLASS))))
+        val benchmark2 = resourceService.create(CreateResourceRequest(null, "Benchmark 2", setOf(ClassId(BENCHMARK_CLASS))))
 
         val codes1 = (1..3).map { literalService.create("https://some-code-$it.cool") }
         val codes2 = (1..2).map { literalService.create("https://some-code-$it-$it.cool") }
 
-        val evaluationB1E1 = resourceService.create(CreateResourceRequest(null, "Evaluation 1", setOf(ClassId("Evaluation"))))
-        val evaluationB1E2 = resourceService.create(CreateResourceRequest(null, "Evaluation 2", setOf(ClassId("Evaluation"))))
-        val evaluationB2E1 = resourceService.create(CreateResourceRequest(null, "Evaluation 1", setOf(ClassId("Evaluation"))))
+        val quantityB1E1 = resourceService.create(CreateResourceRequest(null, "Quantity 1", setOf(ClassId(QUANTITY_CLASS))))
+        val quantityB1E2 = resourceService.create(CreateResourceRequest(null, "Quantity 2", setOf(ClassId(QUANTITY_CLASS))))
+        val quantityB2E1 = resourceService.create(CreateResourceRequest(null, "Quantity 1", setOf(ClassId(QUANTITY_CLASS))))
 
-        val metric1 = resourceService.create(CreateResourceRequest(null, "Metric 1", setOf(ClassId("Metric"))))
-        val metric2 = resourceService.create(CreateResourceRequest(null, "Metric 2", setOf(ClassId("Metric"))))
+        val metric1 = resourceService.create(CreateResourceRequest(null, "Metric 1", setOf(ClassId(METRIC_CLASS))))
+        val metric2 = resourceService.create(CreateResourceRequest(null, "Metric 2", setOf(ClassId(METRIC_CLASS))))
 
         val scoreOfM1B1E1 = literalService.create("2.55")
         val scoreOfM1B1E2 = literalService.create("4548")
@@ -413,30 +437,38 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(contribution1.id!!.value, PredicateId("P32"), problem1.id!!.value)
         statementService.create(contribution2.id!!.value, PredicateId("P32"), problem2.id!!.value)
 
-        statementService.create(contribution1.id!!.value, PredicateId("HAS_BENCHMARK"), benchmark1.id!!.value)
-        statementService.create(contribution2.id!!.value, PredicateId("HAS_BENCHMARK"), benchmark2.id!!.value)
+        statementService.create(contribution1.id!!.value, PredicateId(BENCHMARK_PREDICATE), benchmark1.id!!.value)
+        statementService.create(contribution2.id!!.value, PredicateId(BENCHMARK_PREDICATE), benchmark2.id!!.value)
+
+        val quantityValueB1E1 = resourceService.create(CreateResourceRequest(null, "Quantity Value 1", setOf(ClassId(QUANTITY_VALUE_CLASS))))
+        val quantityValueB1E2 = resourceService.create(CreateResourceRequest(null, "Quantity Value 2", setOf(ClassId(QUANTITY_VALUE_CLASS))))
+        val quantityValueB2E1 = resourceService.create(CreateResourceRequest(null, "Quantity Value 3", setOf(ClassId(QUANTITY_VALUE_CLASS))))
 
         codes1.forEach {
-            statementService.create(contribution1.id!!.value, PredicateId("HAS_SOURCE_CODE"), it.id!!.value)
+            statementService.create(contribution1.id!!.value, PredicateId(SOURCE_CODE_PREDICATE), it.id!!.value)
         }
         codes2.forEach {
-            statementService.create(contribution2.id!!.value, PredicateId("HAS_SOURCE_CODE"), it.id!!.value)
+            statementService.create(contribution2.id!!.value, PredicateId(SOURCE_CODE_PREDICATE), it.id!!.value)
         }
 
-        statementService.create(benchmark1.id!!.value, PredicateId("HAS_EVALUATION"), evaluationB1E1.id!!.value)
-        statementService.create(benchmark1.id!!.value, PredicateId("HAS_EVALUATION"), evaluationB1E2.id!!.value)
-        statementService.create(benchmark2.id!!.value, PredicateId("HAS_EVALUATION"), evaluationB2E1.id!!.value)
+        statementService.create(benchmark1.id!!.value, PredicateId(QUANTITY_PREDICATE), quantityB1E1.id!!.value)
+        statementService.create(benchmark1.id!!.value, PredicateId(QUANTITY_PREDICATE), quantityB1E2.id!!.value)
+        statementService.create(benchmark2.id!!.value, PredicateId(QUANTITY_PREDICATE), quantityB2E1.id!!.value)
 
-        statementService.create(benchmark1.id!!.value, PredicateId("HAS_DATASET"), dataset.id!!.value)
-        statementService.create(benchmark2.id!!.value, PredicateId("HAS_DATASET"), dataset.id!!.value)
+        statementService.create(benchmark1.id!!.value, PredicateId(DATASET_PREDICATE), dataset.id!!.value)
+        statementService.create(benchmark2.id!!.value, PredicateId(DATASET_PREDICATE), dataset.id!!.value)
 
-        statementService.create(evaluationB1E1.id!!.value, PredicateId("HAS_METRIC"), metric1.id!!.value)
-        statementService.create(evaluationB1E2.id!!.value, PredicateId("HAS_METRIC"), metric2.id!!.value)
-        statementService.create(evaluationB2E1.id!!.value, PredicateId("HAS_METRIC"), metric1.id!!.value)
+        statementService.create(quantityB1E1.id!!.value, PredicateId(METRIC_PREDICATE), metric1.id!!.value)
+        statementService.create(quantityB1E2.id!!.value, PredicateId(METRIC_PREDICATE), metric2.id!!.value)
+        statementService.create(quantityB2E1.id!!.value, PredicateId(METRIC_PREDICATE), metric1.id!!.value)
 
-        statementService.create(evaluationB1E1.id!!.value, PredicateId("HAS_VALUE"), scoreOfM1B1E1.id!!.value)
-        statementService.create(evaluationB1E2.id!!.value, PredicateId("HAS_VALUE"), scoreOfM1B1E2.id!!.value)
-        statementService.create(evaluationB2E1.id!!.value, PredicateId("HAS_VALUE"), scoreOfM1B2E1.id!!.value)
+        statementService.create(quantityB1E1.id!!.value, PredicateId(QUANTITY_VALUE_PREDICATE), quantityValueB1E1.id!!.value)
+        statementService.create(quantityB1E2.id!!.value, PredicateId(QUANTITY_VALUE_PREDICATE), quantityValueB1E2.id!!.value)
+        statementService.create(quantityB2E1.id!!.value, PredicateId(QUANTITY_VALUE_PREDICATE), quantityValueB2E1.id!!.value)
+
+        statementService.create(quantityValueB1E1.id!!.value, PredicateId(NUMERIC_VALUE_PREDICATE), scoreOfM1B1E1.id!!.value)
+        statementService.create(quantityValueB1E2.id!!.value, PredicateId(NUMERIC_VALUE_PREDICATE), scoreOfM1B1E2.id!!.value)
+        statementService.create(quantityValueB2E1.id!!.value, PredicateId(NUMERIC_VALUE_PREDICATE), scoreOfM1B2E1.id!!.value)
 
         mockMvc
             .perform(getRequestTo("/api/datasets/${dataset.id}/problem/${problem1.id}/summary"))

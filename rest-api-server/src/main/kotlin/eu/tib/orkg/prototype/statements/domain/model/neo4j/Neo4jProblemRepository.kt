@@ -1,6 +1,10 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j.BENCHMARK_CLASS
+import eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j.BENCHMARK_PREDICATE
+import eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j.DATASET_CLASS
+import eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j.DATASET_PREDICATE
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteral
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jThing
@@ -227,7 +231,7 @@ interface Neo4jProblemRepository :
     // TODO: Should group on the resource and not on the label. See https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/172#note_378465870
     fun findAuthorsLeaderboardPerProblem(problemId: ResourceId, pageable: Pageable): Page<AuthorPerProblem>
 
-    @Query(value = """MATCH (ds:Dataset {resource_id: {0}})<-[:RELATED {predicate_id: 'HAS_DATASET'}]-(:Benchmark)<-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]-(:Contribution)-[:RELATED {predicate_id: 'P32'}]->(problem:Problem)
+    @Query(value = """MATCH (ds:$DATASET_CLASS {resource_id: {0}})<-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]-(:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(:Contribution)-[:RELATED {predicate_id: 'P32'}]->(problem:Problem)
                     RETURN DISTINCT problem""")
     fun findResearchProblemForDataset(datasetId: ResourceId): Iterable<Neo4jResource>
 

@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j.*
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.util.Optional
@@ -110,8 +111,8 @@ interface Neo4jResearchFieldRepository :
         countQuery = """MATCH (field:ResearchField {resource_id: {0}})<-[:RELATED {predicate_id: 'P30'}]-(paper:Paper)-[:RELATED {predicate_id: 'P31'}]->(cont:Contribution)-[:RELATED {predicate_id: 'P32'}]->(problem:Thing {unlisted: {1}} )  RETURN COUNT(DISTINCT problem) AS cnt""")
     fun getProblemsExcludingSubFieldsWithoutFeaturedFlag(id: ResourceId, unlisted: Boolean, pageable: Pageable): Page<Neo4jResource>
 
-    @Query("""MATCH (:Benchmark)<-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(:Paper)-[:RELATED {predicate_id: 'P30'}]->(r:ResearchField) RETURN DISTINCT r""",
-        countQuery = """MATCH (:Benchmark)<-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(:Paper)-[:RELATED {predicate_id: 'P30'}]->(r:ResearchField) RETURN COUNT(DISTINCT r) AS cnt""")
+    @Query("""MATCH (:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(:Paper)-[:RELATED {predicate_id: 'P30'}]->(r:ResearchField) RETURN DISTINCT r""",
+        countQuery = """MATCH (:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(:Paper)-[:RELATED {predicate_id: 'P30'}]->(r:ResearchField) RETURN COUNT(DISTINCT r) AS cnt""")
     fun findResearchFieldsWithBenchmarks(): Iterable<Neo4jResource>
 
     @Query("""MATCH (research:ResearchField)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(research1:ResearchField{resource_id: {0}}) WITH COLLECT (research) + COLLECT(research1) AS all_research_fields MATCH (v:Visualization {featured: {1}, unlisted: {2}})<-[:RELATED {predicate_id: 'hasVisualization'}]-(comparison1: Comparison)-[related:RELATED {predicate_id: 'hasSubject'}]->(resField) WHERE resField IN all_research_fields WITH DISTINCT v, v.resource_id AS resource_id, v.label AS label, v.created_by AS created_by, v.created_at AS created_at RETURN v""",

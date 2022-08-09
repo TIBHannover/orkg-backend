@@ -9,31 +9,31 @@ interface Neo4jDatasetRepository : Neo4jRepository<Neo4jResource, Long> {
 
     @Query("""
 MATCH (:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(cont:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper)
-MATCH (cont)-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]->(:Benchmark)-[:RELATED {predicate_id: 'HAS_DATASET'}]->(ds:Dataset)
-OPTIONAL MATCH (cont)-[:RELATED {predicate_id: 'HAS_SOURCE_CODE'}]->(l:Literal)
-OPTIONAL MATCH (cont)-[:RELATED {predicate_id: 'HAS_MODEL'}]->(m:Model)
+MATCH (cont)-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]->(:$BENCHMARK_CLASS)-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]->(ds:$DATASET_CLASS)
+OPTIONAL MATCH (cont)-[:RELATED {predicate_id: '$SOURCE_CODE_PREDICATE'}]->(l:Literal)
+OPTIONAL MATCH (cont)-[:RELATED {predicate_id: '$MODEL_PREDICATE'}]->(m:$MODEL_CLASS)
 RETURN ds AS dataset, COUNT(DISTINCT m) AS totalModels, COUNT(DISTINCT l) AS totalCodes, COUNT(DISTINCT p) AS totalPapers
     """)
     fun findDatasetsByResearchProblem(id: ResourceId): Iterable<Neo4jDataset>
 
     @Query("""
-MATCH (ds:Dataset {resource_id: {0}})<-[:RELATED {predicate_id: 'HAS_DATASET'}]-(b:Benchmark)<-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]-(c:Contribution)
-MATCH (b)-[:RELATED {predicate_id: 'HAS_EVALUATION'}]->(e:Evaluation)
-MATCH (s:Literal)<-[:RELATED {predicate_id: 'HAS_VALUE'}]-(e)-[:RELATED {predicate_id: 'HAS_METRIC'}]->(mt:Metric)
+MATCH (ds:$DATASET_CLASS {resource_id: {0}})<-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]-(b:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(c:Contribution)
+MATCH (b)-[:RELATED {predicate_id: '$QUANTITY_PREDICATE'}]->(q:$QUANTITY_CLASS)
+MATCH (s:Literal)<-[:RELATED {predicate_id: '$NUMERIC_VALUE_PREDICATE'}]-(qv:$QUANTITY_VALUE_CLASS)<-[:RELATED {predicate_id: '$QUANTITY_VALUE_PREDICATE'}]-(q)-[:RELATED {predicate_id: '$METRIC_PREDICATE'}]->(mt:$METRIC_CLASS)
 MATCH (c)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper)
 OPTIONAL MATCH (month:Literal)-[:RELATED {predicate_id: 'P28'}]-(p)-[:RELATED {predicate_id: 'P29'}]-(year:Literal)
-OPTIONAL MATCH (md:Model)<-[:RELATED {predicate_id: 'HAS_MODEL'}]-(c)-[:RELATED {predicate_id: 'HAS_SOURCE_CODE'}]->(l:Literal)
+OPTIONAL MATCH (md:$MODEL_CLASS)<-[:RELATED {predicate_id: '$MODEL_PREDICATE'}]-(c)-[:RELATED {predicate_id: '$SOURCE_CODE_PREDICATE'}]->(l:Literal)
 RETURN p AS paper, month.label AS month, year.label AS year, COLLECT(DISTINCT l.label) AS codes, md.label AS model, mt.label AS metric, s.label AS score
     """)
     fun summarizeDatasetQueryById(id: ResourceId): Iterable<Neo4jBenchmarkUnpacked>
 
     @Query("""
-MATCH (ds:Dataset {resource_id: {0}})<-[:RELATED {predicate_id: 'HAS_DATASET'}]-(b:Benchmark)<-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]-(c:Contribution)-[:RELATED {predicate_id: 'P32'}]->(:Problem {resource_id: {1}})
-MATCH (b)-[:RELATED {predicate_id: 'HAS_EVALUATION'}]->(e:Evaluation)
-MATCH (s:Literal)<-[:RELATED {predicate_id: 'HAS_VALUE'}]-(e)-[:RELATED {predicate_id: 'HAS_METRIC'}]->(mt:Metric)
+MATCH (ds:$DATASET_CLASS {resource_id: {0}})<-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]-(b:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(c:Contribution)-[:RELATED {predicate_id: 'P32'}]->(:Problem {resource_id: {1}})
+MATCH (b)-[:RELATED {predicate_id: '$QUANTITY_PREDICATE'}]->(q:$QUANTITY_CLASS)
+MATCH (s:Literal)<-[:RELATED {predicate_id: '$NUMERIC_VALUE_PREDICATE'}]-(qv:$QUANTITY_VALUE_CLASS)<-[:RELATED {predicate_id: '$QUANTITY_VALUE_PREDICATE'}]-(q)-[:RELATED {predicate_id: '$METRIC_PREDICATE'}]->(mt:$METRIC_CLASS)
 MATCH (c)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper)
 OPTIONAL MATCH (month:Literal)-[:RELATED {predicate_id: 'P28'}]-(p)-[:RELATED {predicate_id: 'P29'}]-(year:Literal)
-OPTIONAL MATCH (md:Model)<-[:RELATED {predicate_id: 'HAS_MODEL'}]-(c)-[:RELATED {predicate_id: 'HAS_SOURCE_CODE'}]->(l:Literal)
+OPTIONAL MATCH (md:$MODEL_CLASS)<-[:RELATED {predicate_id: '$MODEL_PREDICATE'}]-(c)-[:RELATED {predicate_id: '$SOURCE_CODE_PREDICATE'}]->(l:Literal)
 RETURN p AS paper, month.label AS month, year.label AS year, COLLECT(DISTINCT l.label) AS codes, md.label AS model, mt.label AS metric, s.label AS score
     """)
     fun summarizeDatasetQueryByIdAndProblemId(id: ResourceId, problemId: ResourceId): Iterable<Neo4jBenchmarkUnpacked>

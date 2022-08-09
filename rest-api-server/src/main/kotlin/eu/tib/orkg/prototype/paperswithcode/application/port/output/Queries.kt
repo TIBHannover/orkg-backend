@@ -8,6 +8,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 
 interface SummarizeBenchmarkQuery {
     fun byResearchField(id: ResourceId): List<BenchmarkSummary>
+    fun getAll(): List<BenchmarkSummary>
 }
 
 interface FindDatasetsQuery {

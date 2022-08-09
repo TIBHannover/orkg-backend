@@ -30,6 +30,11 @@ class BenchmarkService(
             summarizeBenchmark.byResearchField(researchField.get().id!!)
         )
     }
+
+    override fun summary(): Optional<List<BenchmarkSummary>> =
+        Optional.of(
+            summarizeBenchmark.getAll()
+        )
 }
 
 @Primary

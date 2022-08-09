@@ -34,6 +34,12 @@ class BenchmarkController(
             .summariesForResearchField(id)
             .orElseThrow { ResearchFieldNotFound(id) }
 
+    @GetMapping("/api/benchmarks/summary/")
+    fun getBenchmarkSummaries(): List<BenchmarkSummary> =
+        retrieveBenchmarks
+            .summary()
+            .orElseThrow { RuntimeException() }
+
     @GetMapping("/api/datasets/research-problem/{id}")
     fun getDatasetForResearchProblem(@PathVariable id: ResourceId): List<Dataset> =
         retrieveDatasets

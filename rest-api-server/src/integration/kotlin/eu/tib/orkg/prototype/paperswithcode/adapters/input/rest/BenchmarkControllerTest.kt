@@ -11,7 +11,8 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -97,8 +98,8 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/research-fields/benchmarks"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", Matchers.hasSize<Int>(1)))
-            .andExpect(jsonPath("$[0].label", Matchers.equalTo(fieldWithBenchmark.label)))
+            .andExpect(jsonPath("$", hasSize<Int>(1)))
+            .andExpect(jsonPath("$[0].label", equalTo(fieldWithBenchmark.label)))
             .andDo(
                 document(
                     snippet,
@@ -142,12 +143,61 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/benchmarks/summary/research-field/${fieldWithDataset.id}"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", Matchers.hasSize<Int>(2)))
-            .andExpect(jsonPath("$[0].research_problem.id", Matchers.equalTo(problem2.id!!.value)))
-            .andExpect(jsonPath("$[1].research_problem.id", Matchers.equalTo(problem1.id!!.value)))
-            .andExpect(jsonPath("$[0].total_papers", Matchers.equalTo(1)))
-            .andExpect(jsonPath("$[0].total_datasets", Matchers.equalTo(2)))
-            .andExpect(jsonPath("$[0].total_codes", Matchers.equalTo(5)))
+            .andExpect(jsonPath("$", hasSize<Int>(2)))
+            .andExpect(jsonPath("$[0].research_problem.id", equalTo(problem2.id!!.value)))
+            .andExpect(jsonPath("$[1].research_problem.id", equalTo(problem1.id!!.value)))
+            .andExpect(jsonPath("$[0].total_papers", equalTo(1)))
+            .andExpect(jsonPath("$[0].total_datasets", equalTo(2)))
+            .andExpect(jsonPath("$[0].total_codes", equalTo(5)))
+            .andDo(
+                document(
+                    snippet,
+                    benchmarkListResponseFields()
+                )
+            )
+    }
+
+    @Test
+    fun fetchBenchmarkSummaries() {
+        val field1 = resourceService.create(CreateResourceRequest(null, "Field with a dataset #1", setOf(ClassId("ResearchField"))))
+
+        val benchPaper = resourceService.create(CreateResourceRequest(null, "Paper 1", setOf(ClassId("Paper"))))
+
+        val benchCont = resourceService.create(CreateResourceRequest(null, "Contribution of Paper 1", setOf(ClassId("Contribution"))))
+
+        val benchmark = resourceService.create(CreateResourceRequest(null, "Benchmark 1", setOf(ClassId("Benchmark"))))
+
+        val dataset1 = resourceService.create(CreateResourceRequest(null, "Dataset 1", setOf(ClassId("Dataset"))))
+        val dataset2 = resourceService.create(CreateResourceRequest(null, "Dataset 2", setOf(ClassId("Dataset"))))
+
+        val codes = (1..5).map { literalService.create("https://some-code-$it.cool") }
+
+        val problem1 = resourceService.create(CreateResourceRequest(null, "Problem 1", setOf(ClassId("Problem"))))
+        val problem2 = resourceService.create(CreateResourceRequest(null, "Problem 2", setOf(ClassId("Problem"))))
+
+        statementService.create(benchPaper.id!!.value, PredicateId("P30"), field1.id!!.value)
+        statementService.create(benchPaper.id!!.value, PredicateId("P31"), benchCont.id!!.value)
+
+        statementService.create(benchCont.id!!.value, PredicateId("P32"), problem1.id!!.value)
+        statementService.create(benchCont.id!!.value, PredicateId("P32"), problem2.id!!.value)
+        statementService.create(benchCont.id!!.value, PredicateId("HAS_BENCHMARK"), benchmark.id!!.value)
+
+        codes.forEach {
+            statementService.create(benchCont.id!!.value, PredicateId("HAS_SOURCE_CODE"), it.id!!.value)
+        }
+
+        statementService.create(benchmark.id!!.value, PredicateId("HAS_DATASET"), dataset1.id!!.value)
+        statementService.create(benchmark.id!!.value, PredicateId("HAS_DATASET"), dataset2.id!!.value)
+
+        mockMvc
+            .perform(getRequestTo("/api/benchmarks/summary/"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$", hasSize<Int>(2)))
+            .andExpect(jsonPath("$[0].research_problem.id", equalTo(problem2.id!!.value)))
+            .andExpect(jsonPath("$[1].research_problem.id", equalTo(problem1.id!!.value)))
+            .andExpect(jsonPath("$[0].total_papers", equalTo(1)))
+            .andExpect(jsonPath("$[0].total_datasets", equalTo(2)))
+            .andExpect(jsonPath("$[0].total_codes", equalTo(5)))
             .andDo(
                 document(
                     snippet,
@@ -187,7 +237,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/datasets/${dataset.id}/problems"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", Matchers.hasSize<Int>(2)))
+            .andExpect(jsonPath("$", hasSize<Int>(2)))
             .andDo(
                 document(
                     snippet,
@@ -237,13 +287,13 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/datasets/research-problem/${problem.id}"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", Matchers.hasSize<Int>(2)))
-            .andExpect(jsonPath("$[0].total_papers", Matchers.equalTo(1)))
-            .andExpect(jsonPath("$[0].total_models", Matchers.equalTo(0)))
-            .andExpect(jsonPath("$[0].total_codes", Matchers.equalTo(3)))
-            .andExpect(jsonPath("$[1].total_papers", Matchers.equalTo(1)))
-            .andExpect(jsonPath("$[1].total_models", Matchers.equalTo(4)))
-            .andExpect(jsonPath("$[1].total_codes", Matchers.equalTo(0)))
+            .andExpect(jsonPath("$", hasSize<Int>(2)))
+            .andExpect(jsonPath("$[0].total_papers", equalTo(1)))
+            .andExpect(jsonPath("$[0].total_models", equalTo(0)))
+            .andExpect(jsonPath("$[0].total_codes", equalTo(3)))
+            .andExpect(jsonPath("$[1].total_papers", equalTo(1)))
+            .andExpect(jsonPath("$[1].total_models", equalTo(4)))
+            .andExpect(jsonPath("$[1].total_codes", equalTo(0)))
             .andDo(
                 document(
                     snippet,
@@ -320,7 +370,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/datasets/${dataset.id}/problem/${problem1.id}/summary"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", Matchers.hasSize<Int>(2)))
+            .andExpect(jsonPath("$", hasSize<Int>(2)))
             .andDo(
                 document(
                     snippet,
@@ -391,7 +441,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/datasets/${dataset.id}/problem/${problem1.id}/summary"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", Matchers.hasSize<Int>(2)))
+            .andExpect(jsonPath("$", hasSize<Int>(2)))
             .andDo(
                 document(
                     snippet,
@@ -431,6 +481,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
     private fun benchmarkListResponseFields() =
         responseFields(fieldWithPath("[]").description("A list of benchmarks"))
             .andWithPrefix("[].", benchmarkResponseFields())
+            .andWithPrefix("[].research_field.", researchFieldResponseFields())
             .andWithPrefix("[].research_problem.", researchProblemResponseFields())
 
     private fun datasetResponseFields() =

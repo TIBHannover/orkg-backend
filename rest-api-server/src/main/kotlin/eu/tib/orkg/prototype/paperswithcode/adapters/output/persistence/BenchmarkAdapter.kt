@@ -17,4 +17,8 @@ class BenchmarkAdapter(
     override fun byResearchField(id: ResourceId): List<BenchmarkSummary> =
         benchmarkRepository.summarizeBenchmarkByResearchField(id)
             .map(Neo4jBenchmarkSummary::toBenchmarkSummary)
+
+    override fun getAll(): List<BenchmarkSummary> =
+        benchmarkRepository.summarizeBenchmarkGetAll()
+            .map(Neo4jBenchmarkSummary::toBenchmarkSummary)
 }

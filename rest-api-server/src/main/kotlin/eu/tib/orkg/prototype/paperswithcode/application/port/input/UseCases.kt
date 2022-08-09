@@ -10,6 +10,7 @@ import java.util.Optional
 
 interface RetrieveBenchmarkUseCase {
     fun summariesForResearchField(id: ResourceId): Optional<List<BenchmarkSummary>>
+    fun summary(): Optional<List<BenchmarkSummary>>
 }
 
 interface RetrieveDatasetUseCase {

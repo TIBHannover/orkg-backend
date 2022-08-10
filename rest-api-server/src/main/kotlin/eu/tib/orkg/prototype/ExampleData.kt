@@ -8,6 +8,7 @@ import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.CreateClassRequest
+import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import java.io.InputStream
 import org.springframework.boot.ApplicationArguments
@@ -135,13 +136,13 @@ class ExampleData(
         val inStream: InputStream? = javaClass.classLoader.getResourceAsStream("data/ResearchFields.json")
         val fields = mapper.readValue<List<ResearchField>>(inStream!!)
         for (field in fields) {
-            val newField = resourceService.create(field.name).id
+            val newField = resourceService.create(CreateResourceRequest(null, field.name, setOf(ClassId("ResearchField")))).id
             statementService.create(researchField.value, subfieldPredicate, newField.value)
             for (subfield in field.subfields) {
-                val newSubfield = resourceService.create(subfield.name).id
+                val newSubfield = resourceService.create(CreateResourceRequest(null, subfield.name, setOf(ClassId("ResearchField")))).id
                 statementService.create(newField.value, subfieldPredicate, newSubfield.value)
                 for (subSubfield in subfield.subfields) {
-                    val newSubSubfield = resourceService.create(subSubfield.name).id
+                    val newSubSubfield = resourceService.create(CreateResourceRequest(null, subSubfield.name, setOf(ClassId("ResearchField")))).id
                     statementService.create(newSubfield.value, subfieldPredicate, newSubSubfield.value)
                 }
             }

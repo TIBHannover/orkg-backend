@@ -132,6 +132,10 @@ tasks {
 
     withType(Test::class.java).configureEach {
         outputs.dir(snippetsDir)
+        useJUnitPlatform {
+            // Exclude test marked as "development", because those are for features only used in dev, and rather slow.
+            excludeTags = setOf("development")
+        }
     }
 
     named("bootJar", org.springframework.boot.gradle.tasks.bundling.BootJar::class) {

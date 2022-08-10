@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClassRepository
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceRepository
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatement
@@ -24,13 +25,18 @@ class Neo4jResourceRepositoryTest : Neo4jTestContainersBaseTest() {
     @Autowired
     private lateinit var statementRepository: Neo4jStatementRepository
 
+    @Autowired
+    private lateinit var classRepository: Neo4jClassRepository
+
     @BeforeEach
     fun setup() {
         resourceRepository.deleteAll()
         statementRepository.deleteAll()
+        classRepository.deleteAll()
 
         assertThat(resourceRepository.findAll()).hasSize(0)
         assertThat(statementRepository.findAll()).hasSize(0)
+        assertThat(classRepository.findAll()).hasSize(0)
     }
 
     @Test
@@ -142,7 +148,7 @@ class Neo4jResourceRepositoryTest : Neo4jTestContainersBaseTest() {
         resourceRepository.save(Neo4jResource("cat", ResourceId("R2")).also { it.assignTo("C99") })
 
         // without class
-        resourceRepository.save(Neo4jResource("cat", ResourceId("R2")))
+        resourceRepository.save(Neo4jResource("cat", ResourceId("R3")))
 
         val result = resourceRepository.findAllByClass("C0", pagination)
 

@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Change the PwC model for benchmark queries and extract ID constants. (Closes: [#352](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/352))
 ### Fixed
 - Fixed issue with on fresh start script of importing research fields with correct typing. (Closes: [#383](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/383))
+- Research problems are now properly loaded, even if their `featured` and `unlisted` flags are not set.
 
 ## [0.13.3] - 2022-08-05
 ### Changed

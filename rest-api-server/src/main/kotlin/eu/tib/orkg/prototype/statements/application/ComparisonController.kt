@@ -60,6 +60,5 @@ class ComparisonController(
     }
 
     @GetMapping("/{id}/metadata/unlisted")
-    fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean =
-        service.getUnlistedResourceFlag(id) ?: throw ResourceNotFound(id.toString())
+    fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean = service.getUnlistedResourceFlag(id)
 }

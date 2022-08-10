@@ -104,7 +104,7 @@ class ObjectController(
         if (request.hasTempPredicates()) {
             request.predicates!!.forEach {
                 val surrogateId = it[it.keys.first()]!!
-                val predicateId = predicateService.create(userId, it.keys.first()).id!!
+                val predicateId = predicateService.create(userId, it.keys.first()).id
                 predicates[surrogateId] = predicateId
             }
         }
@@ -129,7 +129,7 @@ class ObjectController(
                 observatoryId,
                 request.resource.extractionMethod,
                 organizationId
-            ).id!!
+            ).id
         } else {
             existingResourceId
         }
@@ -228,7 +228,7 @@ class ObjectController(
                             userId,
                             jsonObject.text!!,
                             jsonObject.datatype ?: "xsd:string"
-                        ).id!!
+                        ).id
                         if (jsonObject.`@temp` != null) {
                             tempResources[jsonObject.`@temp`] = newLiteral.value
                         }
@@ -253,7 +253,7 @@ class ObjectController(
                                 observatoryId,
                                 extractionMethod,
                                 organizationId
-                            ).id!!
+                            ).id
                         else
                             resourceService.create(
                                 userId,
@@ -261,7 +261,7 @@ class ObjectController(
                                 observatoryId,
                                 extractionMethod,
                                 organizationId
-                            ).id!!
+                            ).id
                         if (jsonObject.`@temp` != null) {
                             tempResources[jsonObject.`@temp`] = newResource.value
                         }

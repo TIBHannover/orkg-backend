@@ -38,8 +38,7 @@ class ContributionController(
     }
 
     @GetMapping("/{id}/metadata/featured")
-    fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean =
-        service.getFeaturedResourceFlag(id) ?: throw ResourceNotFound(id.toString())
+    fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean = service.getFeaturedResourceFlag(id)
 
     @GetMapping("/metadata/unlisted", params = ["unlisted=true"])
     fun getUnlistedContributions(pageable: Pageable) =
@@ -60,6 +59,5 @@ class ContributionController(
     }
 
     @GetMapping("/{id}/metadata/unlisted")
-    fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean =
-        service.getUnlistedResourceFlag(id) ?: throw ResourceNotFound(id.toString())
+    fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean = service.getUnlistedResourceFlag(id)
 }

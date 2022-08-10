@@ -1,7 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.input.rest
 
 import eu.tib.orkg.prototype.statements.application.BaseController
-import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.port.out.GetPaperFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperPort
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -22,8 +21,7 @@ class PaperUnlistedController(
 ) : BaseController() {
 
     @GetMapping("/api/papers/{id}/metadata/unlisted")
-    fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean =
-        query.getUnlistedPaperFlag(id) ?: throw ResourceNotFound(id.toString())
+    fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean = query.getUnlistedPaperFlag(id)
 
     @GetMapping("/api/classes/Paper/unlisted/resources/", params = ["unlisted=true"])
     fun loadUnlistedPapers(pageable: Pageable): Page<Resource> {

@@ -1,7 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.input.rest
 
 import eu.tib.orkg.prototype.statements.application.BaseController
-import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.port.out.GetPaperFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperPort
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -22,8 +21,7 @@ class PaperFeaturedController(
 ) : BaseController() {
 
     @GetMapping("/api/papers/{id}/metadata/featured")
-    fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean? =
-        query.getFeaturedPaperFlag(id) ?: throw ResourceNotFound(id.toString())
+    fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean? = query.getFeaturedPaperFlag(id)
 
     @GetMapping("/api/classes/Paper/featured/resources/", params = ["featured=true"])
     fun loadFeaturedPapers(pageable: Pageable): Page<Resource> {

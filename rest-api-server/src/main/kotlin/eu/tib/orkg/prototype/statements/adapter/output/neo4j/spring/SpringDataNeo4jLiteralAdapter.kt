@@ -18,8 +18,6 @@ class SpringDataNeo4jLiteralAdapter(
     override fun nextIdentity(): LiteralId = neo4jLiteralIdGenerator.nextIdentity()
 
     override fun save(literal: Literal) {
-        // Need to fetch the internal ID of a (possibly) existing entity to prevent creating a new one.
-        val internalId = neo4jRepository.findByLiteralId(literal.id).orElse(null)?.id
         neo4jRepository.save(literal.toNeo4jLiteral())
     }
 

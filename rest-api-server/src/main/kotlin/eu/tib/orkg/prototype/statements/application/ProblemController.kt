@@ -94,8 +94,7 @@ class ProblemController(
     }
 
     @GetMapping("/{id}/metadata/featured")
-    fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean =
-        service.getFeaturedProblemFlag(id) ?: throw ResourceNotFound(id.toString())
+    fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean = service.getFeaturedProblemFlag(id)
 
     @GetMapping("/metadata/unlisted", params = ["unlisted=true"])
     fun getUnlistedContributions(pageable: Pageable) =
@@ -116,6 +115,5 @@ class ProblemController(
     }
 
     @GetMapping("/{id}/metadata/unlisted")
-    fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean? =
-        service.getUnlistedProblemFlag(id) ?: throw ResourceNotFound(id.toString())
+    fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean? = service.getUnlistedProblemFlag(id)
 }

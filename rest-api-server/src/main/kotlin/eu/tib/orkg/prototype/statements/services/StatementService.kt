@@ -141,6 +141,7 @@ class StatementService(
         var found = statementRepository.findByStatementId(statementEditRequest.statementId!!)
             .orElseThrow { IllegalStateException("Could not find statement: ${statementEditRequest.statementId}") }
 
+        @Suppress("UNUSED_VARIABLE") // It is unused, because commented out. This method needs a re-write.
         val foundSubject = thingRepository.findByThingId(statementEditRequest.subjectId)
             .orElseThrow { IllegalStateException("Could not find subject ${statementEditRequest.subjectId}") }
 

@@ -11,6 +11,7 @@ data class ClassId(val value: String) : Comparable<ClassId> {
 
     init {
         require(value.isNotBlank()) { "ID must not be blank" }
+        require(value.matches(VALID_ID_REGEX)) { "Must only contain alphanumeric characters, dashes and underscores" }
     }
 
     constructor(value: Long) : this("C$value") {

@@ -178,7 +178,7 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
 
     @Test
     fun `when several resources of a class exist with the same label, partial search should return all of them`() {
-        val researchProblemClass = ClassId("Research Problem")
+        val researchProblemClass = ClassId("ResearchProblem")
         val resources = mutableListOf<ResourceRepresentation>()
         repeat(5) {
             resources += service.create(

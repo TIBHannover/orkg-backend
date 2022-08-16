@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Validation of IDs is not properly enforced.
   The only valid characters are digits, numbers, colons, underscores and dashes.
 ### Added
-- Fetch benchmarks of all research fields for PwC use-case (Described in: [!240](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/240))
+- Fetch benchmarks of all research fields for PwC use-case. (See [!240](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/240).)
 ### Changed
 - Change the PwC model for benchmark queries and extract ID constants. (Closes: [#352](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/352))
 ### Fixed

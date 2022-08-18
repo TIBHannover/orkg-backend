@@ -58,13 +58,7 @@ class ClassService(
         create(ContributorId.createUnknownContributor(), request)
 
     override fun create(userId: ContributorId, request: CreateClassRequest): ClassRepresentation {
-        var id = request.id ?: repository.nextIdentity()
-
-        // Should be moved to the Generator in the future
-        while (repository.findByClassId(id).isPresent) {
-            id = repository.nextIdentity()
-        }
-
+        val id = request.id ?: repository.nextIdentity()
         val newClass = Class(
             id = id,
             label = request.label,
@@ -76,7 +70,8 @@ class ClassService(
         return newClass.toClassRepresentation()
     }
 
-    override fun exists(id: ClassId): Boolean = repository.findByClassId(id).isPresent
+    @Transactional(readOnly = true)
+    override fun exists(id: ClassId): Boolean = repository.exists(id)
 
     override fun findAll(pageable: Pageable): Page<ClassRepresentation> =
         repository.findAll(pageable).map(Class::toClassRepresentation)

@@ -67,6 +67,9 @@ class StatementService(
     ): Page<StatementRepresentation> =
         retrieveAndConvertPaged { statementRepository.findAllByObjectAndPredicate(objectId, predicateId, pagination) }
 
+    @Transactional(readOnly = true)
+    override fun exists(id: StatementId): Boolean = statementRepository.exists(id)
+
     override fun create(subject: String, predicate: PredicateId, `object`: String): StatementRepresentation =
         create(ContributorId.createUnknownContributor(), subject, predicate, `object`)
 
@@ -85,13 +88,7 @@ class StatementService(
         val foundObject = thingRepository.findByThingId(`object`)
             .orElseThrow { IllegalStateException("Could not find object: $`object`") }
 
-        var id = statementRepository.nextIdentity()
-
-        // Should be moved to the Generator in the future
-        while (statementRepository.findByStatementId(id).isPresent) {
-            id = statementRepository.nextIdentity()
-        }
-
+        val id = statementRepository.nextIdentity()
         val newStatement = GeneralStatement(
             id = id,
             subject = foundSubject,
@@ -118,7 +115,6 @@ class StatementService(
             .orElseThrow { IllegalStateException("Could not find object: $`object`") }
 
         val id = statementRepository.nextIdentity()
-
         val statement = GeneralStatement(
             id = id,
             predicate = foundPredicate,

@@ -24,12 +24,7 @@ class LiteralService(
         create(ContributorId.createUnknownContributor(), label, datatype)
 
     override fun create(userId: ContributorId, label: String, datatype: String): LiteralRepresentation {
-        var literalId = repository.nextIdentity()
-
-        // Should be moved to the Generator in the future
-        while (repository.findByLiteralId(literalId).isPresent) {
-            literalId = repository.nextIdentity()
-        }
+        val literalId = repository.nextIdentity()
         val newLiteral = Literal(
             label = label,
             id = literalId,
@@ -40,6 +35,9 @@ class LiteralService(
         repository.save(newLiteral)
         return newLiteral.toLiteralRepresentation()
     }
+
+    @Transactional(readOnly = true)
+    override fun exists(id: LiteralId): Boolean = repository.exists(id)
 
     override fun findAll(): Iterable<LiteralRepresentation> = repository.findAll().map(Literal::toLiteralRepresentation)
 

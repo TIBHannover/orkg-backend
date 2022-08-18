@@ -24,6 +24,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.toClassIds
 import java.util.*
 import org.springframework.stereotype.Service
 
@@ -80,19 +81,14 @@ class ObjectService(
         val tempResources: HashMap<String, String> = HashMap()
 
         // Create the resource
-        val resourceId = if (existingResourceId == null) {
-            val classes = if (request.resource.isTyped()) request.resource.classes!!.map { ClassId(it) }.toSet()
-            else emptySet()
-            resourceService.create(
+        val resourceId = existingResourceId
+            ?: resourceService.create(
                 userId,
-                CreateResourceRequest(null, request.resource.name, classes),
+                CreateResourceRequest(null, request.resource.name, request.resource.classes.toClassIds()),
                 observatoryId,
                 request.resource.extractionMethod,
                 organizationId
             ).id
-        } else {
-            existingResourceId
-        }
 
         // Check if the contribution has more statements to add
         if (request.resource.hasSubsequentStatements()) {
@@ -286,7 +282,7 @@ class ObjectService(
      * o/w throw out a suitable exception
      */
     private fun checkIfPredicateExists(predicate: String) {
-        if (!predicateService.findById(PredicateId(predicate)).isPresent) throw PredicateNotFound(predicate)
+        if (!predicateService.exists(PredicateId(predicate))) throw PredicateNotFound(predicate)
     }
 
     /**
@@ -294,7 +290,7 @@ class ObjectService(
      * o/w throw out a suitable exception
      */
     private fun checkIfLiteralExists(literalId: String) {
-        if (!literalService.findById(LiteralId(literalId)).isPresent) throw LiteralNotFound(literalId)
+        if (!literalService.exists(LiteralId(literalId))) throw LiteralNotFound(literalId)
     }
 
     /**
@@ -302,7 +298,7 @@ class ObjectService(
      * o/w throw out a suitable exception
      */
     private fun checkIfResourceExists(resourceId: String) {
-        if (!resourceService.findById(ResourceId(resourceId)).isPresent) throw ResourceNotFound(resourceId)
+        if (!resourceService.exists(ResourceId(resourceId))) throw ResourceNotFound(resourceId)
     }
 
     /**

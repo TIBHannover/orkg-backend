@@ -42,6 +42,8 @@ class ResourceService(
     private val repository: ResourceRepository,
     private val statementRepository: StatementRepository,
 ) : ResourceUseCases {
+    @Transactional(readOnly = true)
+    override fun exists(id: ResourceId): Boolean = repository.exists(id)
 
     override fun create(label: String): ResourceRepresentation = create(
         ContributorId.createUnknownContributor(),
@@ -58,13 +60,7 @@ class ResourceService(
         extractionMethod: ExtractionMethod,
         organizationId: OrganizationId
     ): ResourceRepresentation {
-        var resourceId = repository.nextIdentity()
-
-        // Should be moved to the Generator in the future
-        while (repository.findByResourceId(resourceId).isPresent) {
-            resourceId = repository.nextIdentity()
-        }
-
+        val resourceId = repository.nextIdentity()
         val newResource = Resource(
             label = label,
             id = resourceId,

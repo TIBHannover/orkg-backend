@@ -8,6 +8,8 @@ import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
 interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, Long> {
+    fun existsByPredicateId(id: PredicateId): Boolean
+
     @Deprecated("Migrate to the pageable version.")
     override fun findAll(): Iterable<Neo4jPredicate>
 

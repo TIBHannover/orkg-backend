@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional
 class PredicateService(
     private val repository: PredicateRepository
 ) : PredicateUseCases {
+    @Transactional(readOnly = true)
+    override fun exists(id: PredicateId): Boolean = repository.exists(id)
 
     override fun create(label: String): PredicateRepresentation =
         create(ContributorId.createUnknownContributor(), label)
@@ -38,13 +40,7 @@ class PredicateService(
         create(ContributorId.createUnknownContributor(), request)
 
     override fun create(userId: ContributorId, request: CreatePredicateRequest): PredicateRepresentation {
-        var id = request.id ?: repository.nextIdentity()
-
-        // Should be moved to the Generator in the future
-        while (repository.findByPredicateId(id).isPresent) {
-            id = repository.nextIdentity()
-        }
-
+        val id = request.id ?: repository.nextIdentity()
         val predicate = Predicate(label = request.label, id = id, createdBy = userId, createdAt = OffsetDateTime.now())
         repository.save(predicate)
         return predicate.toPredicateRepresentation()

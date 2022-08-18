@@ -19,6 +19,8 @@ class SpringDataNeo4jPredicateAdapter(
     override fun findAll(pageable: Pageable): Page<Predicate> =
         neo4jRepository.findAll(pageable).map(Neo4jPredicate::toPredicate)
 
+    override fun exists(id: PredicateId): Boolean = neo4jRepository.existsByPredicateId(id)
+
     override fun findAllByLabel(label: String, pageable: Pageable): Page<Predicate> =
         neo4jRepository.findAllByLabel(label, pageable).map(Neo4jPredicate::toPredicate)
 
@@ -39,7 +41,14 @@ class SpringDataNeo4jPredicateAdapter(
         neo4jRepository.save(predicate.toNeo4jPredicate())
     }
 
-    override fun nextIdentity(): PredicateId = idGenerator.nextIdentity()
+    override fun nextIdentity(): PredicateId {
+        // IDs could exist already by manual creation. We need to find the next available one.
+        var id: PredicateId
+        do {
+            id = idGenerator.nextIdentity()
+        } while (neo4jRepository.existsByPredicateId(id))
+        return id
+    }
 
     private fun Predicate.toNeo4jPredicate() =
         neo4jRepository.findByPredicateId(id).orElse(Neo4jPredicate()).apply {

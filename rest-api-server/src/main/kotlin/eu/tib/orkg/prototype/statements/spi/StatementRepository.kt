@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
 
-interface StatementRepository : EntityRepository<GeneralStatement> {
+interface StatementRepository : EntityRepository<GeneralStatement, StatementId> {
     fun countStatementsAboutResource(id: ResourceId): Long
     fun countStatementsAboutResources(resourceIds: Set<ResourceId>): Map<ResourceId, Long>
     // legacy methods:

@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.QueryResult
 
-interface ResourceRepository : EntityRepository<Resource> {
+interface ResourceRepository : EntityRepository<Resource, ResourceId> {
     // legacy methods:
     fun nextIdentity(): ResourceId
     fun save(resource: Resource): Resource

@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface RetrieveStatementUseCase {
+    fun exists(id: StatementId): Boolean
     // legacy methods:
     fun findAll(pagination: Pageable): Iterable<StatementRepresentation>
     fun findById(statementId: StatementId): Optional<StatementRepresentation>

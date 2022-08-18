@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.util.*
 
 interface RetrieveLiteralUseCase {
+    fun exists(id: LiteralId): Boolean
     // legacy methods:
     fun findAll(): Iterable<LiteralRepresentation>
     fun findById(id: LiteralId?): Optional<LiteralRepresentation>

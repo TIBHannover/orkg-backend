@@ -20,6 +20,8 @@ class SpringDataNeo4jClassAdapter(
 
     override fun findAll(pageable: Pageable): Page<Class> = neo4jRepository.findAll(pageable).map(Neo4jClass::toClass)
 
+    override fun exists(id: ClassId): Boolean = neo4jRepository.existsByClassId(id)
+
     override fun findByClassId(id: ClassId?): Optional<Class> =
         neo4jRepository.findByClassId(id).map(Neo4jClass::toClass)
 
@@ -44,7 +46,14 @@ class SpringDataNeo4jClassAdapter(
         neo4jRepository.deleteAll()
     }
 
-    override fun nextIdentity(): ClassId = neo4jClassIdGenerator.nextIdentity()
+    override fun nextIdentity(): ClassId {
+        // IDs could exist already by manual creation. We need to find the next available one.
+        var id: ClassId
+        do {
+            id = neo4jClassIdGenerator.nextIdentity()
+        } while (neo4jRepository.existsByClassId(id))
+        return id
+    }
 
     private fun Class.toNeo4jClass(): Neo4jClass =
         neo4jRepository.findByClassId(id).orElse(Neo4jClass()).apply {

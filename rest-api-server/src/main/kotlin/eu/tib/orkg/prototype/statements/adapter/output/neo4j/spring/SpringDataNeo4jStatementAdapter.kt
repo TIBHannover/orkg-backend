@@ -38,7 +38,14 @@ class SpringDataNeo4jStatementAdapter(
     private val neo4jLiteralRepository: Neo4jLiteralRepository,
     private val neo4jClassRepository: Neo4jClassRepository,
 ) : StatementRepository {
-    override fun nextIdentity(): StatementId = neo4jStatementIdGenerator.nextIdentity()
+    override fun nextIdentity(): StatementId {
+        // IDs could exist already by manual creation. We need to find the next available one.
+        var id: StatementId
+        do {
+            id = neo4jStatementIdGenerator.nextIdentity()
+        } while (neo4jRepository.existsByStatementId(id))
+        return id
+    }
 
     override fun save(statement: GeneralStatement) {
         neo4jRepository.save(statement.toNeo4jStatement())
@@ -124,6 +131,8 @@ class SpringDataNeo4jStatementAdapter(
 
     override fun fetchAsBundle(id: String, configuration: Map<String, Any>): Iterable<GeneralStatement> =
         neo4jRepository.fetchAsBundle(id, configuration).map { it.toStatement() }
+
+    override fun exists(id: StatementId): Boolean = neo4jRepository.existsByStatementId(id)
 
     private fun refreshObject(thing: Neo4jThing): Thing {
         return when (thing) {

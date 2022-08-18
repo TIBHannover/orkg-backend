@@ -19,7 +19,14 @@ class SpringDataNeo4jResourceAdapter(
     private val neo4jRepository: Neo4jResourceRepository,
     private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator,
 ) : ResourceRepository {
-    override fun nextIdentity(): ResourceId = neo4jResourceIdGenerator.nextIdentity()
+    override fun nextIdentity(): ResourceId {
+        // IDs could exist already by manual creation. We need to find the next available one.
+        var id: ResourceId
+        do {
+            id = neo4jResourceIdGenerator.nextIdentity()
+        } while (neo4jRepository.existsByResourceId(id))
+        return id
+    }
 
     override fun save(resource: Resource): Resource = neo4jRepository.save(resource.toNeo4jResource()).toResource()
 
@@ -35,6 +42,8 @@ class SpringDataNeo4jResourceAdapter(
 
     override fun findAll(pageable: Pageable): Page<Resource> =
         neo4jRepository.findAll(pageable).map(Neo4jResource::toResource)
+
+    override fun exists(id: ResourceId): Boolean = neo4jRepository.existsByResourceId(id)
 
     override fun findByResourceId(id: ResourceId?): Optional<Resource> =
         neo4jRepository.findByResourceId(id).map(Neo4jResource::toResource)

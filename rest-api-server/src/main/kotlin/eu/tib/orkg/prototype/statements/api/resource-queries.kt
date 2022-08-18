@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface RetrieveResourceUseCase {
+    fun exists(id: ResourceId): Boolean
     // Legacy methods:
     fun findAll(pageable: Pageable): Page<ResourceRepresentation>
     fun findAllByClass(pageable: Pageable, id: ClassId): Page<ResourceRepresentation>

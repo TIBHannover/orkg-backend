@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface RetrievePredicateUseCase {
+    fun exists(id: PredicateId): Boolean
     // legacy methods:
     fun findAll(pageable: Pageable): Page<PredicateRepresentation>
     fun findById(id: PredicateId?): Optional<PredicateRepresentation>

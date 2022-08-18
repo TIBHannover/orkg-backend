@@ -6,7 +6,7 @@ import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
-interface ClassRepository : EntityRepository<Class> {
+interface ClassRepository : EntityRepository<Class, ClassId> {
     // legacy methods:
     fun save(c: Class): Class
     fun findByClassId(id: ClassId?): Optional<Class>

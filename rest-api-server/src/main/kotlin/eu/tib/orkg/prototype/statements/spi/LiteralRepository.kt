@@ -6,6 +6,8 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.util.*
 
 interface LiteralRepository {
+    fun exists(id: LiteralId): Boolean
+
     // legacy methods:
     fun nextIdentity(): LiteralId
     fun save(literal: Literal)

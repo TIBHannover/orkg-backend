@@ -22,3 +22,5 @@ data class ClassId(val value: String) : Comparable<ClassId> {
 
     override fun compareTo(other: ClassId): Int = value.compareTo(other.value)
 }
+
+fun List<String>?.toClassIds(): Set<ClassId> = this?.map(::ClassId)?.toSet() ?: emptySet()

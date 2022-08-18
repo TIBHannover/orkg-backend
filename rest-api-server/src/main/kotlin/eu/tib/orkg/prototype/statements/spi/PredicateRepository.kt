@@ -6,7 +6,7 @@ import java.util.Optional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
-interface PredicateRepository : EntityRepository<Predicate> {
+interface PredicateRepository : EntityRepository<Predicate, PredicateId> {
     // legacy methods:
     fun findAllByLabel(label: String, pageable: Pageable): Page<Predicate>
     // TODO: Work-around for https://jira.spring.io/browse/DATAGRAPH-1200. Replace with IgnoreCase or ContainsIgnoreCase when fixed.

@@ -54,6 +54,8 @@ private const val MATCH_LISTED_PAPER =
     """MATCH (node) WHERE OR node.unlisted = false AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
 
 interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
+    fun existsByResourceId(id: ResourceId): Boolean
+
     override fun findAll(): Iterable<Neo4jResource>
 
     fun findByResourceId(id: ResourceId?): Optional<Neo4jResource>

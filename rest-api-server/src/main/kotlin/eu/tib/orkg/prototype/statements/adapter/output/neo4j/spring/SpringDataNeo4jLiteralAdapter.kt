@@ -15,7 +15,14 @@ class SpringDataNeo4jLiteralAdapter(
     private val neo4jRepository: Neo4jLiteralRepository,
     private val neo4jLiteralIdGenerator: Neo4jLiteralIdGenerator
 ) : LiteralRepository {
-    override fun nextIdentity(): LiteralId = neo4jLiteralIdGenerator.nextIdentity()
+    override fun nextIdentity(): LiteralId {
+        // IDs could exist already by manual creation. We need to find the next available one.
+        var id: LiteralId
+        do {
+            id = neo4jLiteralIdGenerator.nextIdentity()
+        } while (neo4jRepository.existsByLiteralId(id))
+        return id
+    }
 
     override fun save(literal: Literal) {
         neo4jRepository.save(literal.toNeo4jLiteral())
@@ -41,6 +48,8 @@ class SpringDataNeo4jLiteralAdapter(
 
     override fun findDOIByContributionId(id: ResourceId): Optional<Literal> =
         neo4jRepository.findDOIByContributionId(id).map(Neo4jLiteral::toLiteral)
+
+    override fun exists(id: LiteralId): Boolean = neo4jRepository.existsByLiteralId(id)
 
     private fun Literal.toNeo4jLiteral() =
         neo4jRepository.findByLiteralId(id).orElse(Neo4jLiteral()).apply {

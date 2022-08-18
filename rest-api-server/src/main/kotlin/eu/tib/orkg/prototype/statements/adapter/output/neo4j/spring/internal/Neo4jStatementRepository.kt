@@ -55,6 +55,7 @@ private const val WHERE_OBJECT_ID_IN =
 
 interface Neo4jStatementRepository :
     Neo4jRepository<Neo4jStatement, Long> {
+    fun existsByStatementId(id: StatementId): Boolean
 
     override fun findAll(depth: Int): Iterable<Neo4jStatement>
 

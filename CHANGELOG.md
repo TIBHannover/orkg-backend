@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Use correct casing when returning entities. (Closes: [#398](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/398))
+- Return correct totals when fetching content types for a research problem. (Closes: [#399](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/399))
 ### Added
 - Add existence checks for all entities. (See [!286](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/286).)
 

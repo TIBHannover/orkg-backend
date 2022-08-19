@@ -2,8 +2,8 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
-import eu.tib.orkg.prototype.statements.domain.model.ProblemService
-import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.DetailsPerProblem
 import org.springframework.data.domain.Page
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/problems/")
 class ProblemController(
-    private val service: ProblemService,
+    private val service: RetrieveResearchProblemUseCase, // FIXME
     private val contributorService: ContributorService
 ) {
 
@@ -46,7 +46,7 @@ class ProblemController(
     }
 
     @GetMapping("/top")
-    fun getTopProblems(): ResponseEntity<Iterable<Resource>> {
+    fun getTopProblems(): ResponseEntity<Iterable<ResourceRepresentation>> {
         return ResponseEntity.ok(service.findTopResearchProblems())
     }
 

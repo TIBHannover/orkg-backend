@@ -11,7 +11,7 @@ import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
-import eu.tib.orkg.prototype.statements.infrastructure.neo4j.Neo4jStatsService
+import eu.tib.orkg.prototype.statements.services.StatisticsService
 import java.util.*
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
@@ -39,7 +39,7 @@ class ObservatoryController(
     private val resourceService: ResourceUseCases,
     private val organizationService: OrganizationService,
     private val contributorService: ContributorService,
-    private val neo4jStatsService: Neo4jStatsService
+    private val statisticsService: StatisticsService
 ) {
 
     @PostMapping("/")
@@ -185,7 +185,7 @@ class ObservatoryController(
 
     @GetMapping("stats/observatories")
     fun findObservatoriesWithStats(): List<ObservatoryResources> {
-        return neo4jStatsService.getObservatoriesPapersAndComparisonsCount()
+        return statisticsService.getObservatoriesPapersAndComparisonsCount()
     }
 
     fun isValidUUID(id: String): Boolean {

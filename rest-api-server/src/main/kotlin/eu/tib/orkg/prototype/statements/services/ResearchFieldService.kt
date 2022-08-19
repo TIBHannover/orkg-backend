@@ -1,43 +1,49 @@
-package eu.tib.orkg.prototype.statements.infrastructure.neo4j
+package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.paperswithcode.application.port.input.RetrieveResearchFieldUseCase
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
+import eu.tib.orkg.prototype.statements.api.PagedResourcesGenerator
+import eu.tib.orkg.prototype.statements.api.ResourceGenerator
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ResearchField
-import eu.tib.orkg.prototype.statements.domain.model.ResearchFieldService
-import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResearchFieldRepository
-import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.*
+
+private val ResearchField = ClassId("ResearchField")
 
 @Service
 @Transactional
-class Neo4jResearchFieldService(
+class ResearchFieldService(
     private val neo4jResearchFieldRepository: Neo4jResearchFieldRepository,
-    private val userRepository: UserRepository
-) : ResearchFieldService, RetrieveResearchFieldUseCase {
+    private val userRepository: UserRepository,
+    private val resourceService: ResourceUseCases,
+) : RetrieveResearchFieldUseCase {
 
-    override fun findById(id: ResourceId): Optional<Resource> =
-        neo4jResearchFieldRepository
-            .findById(id)
-            .map(Neo4jResource::toResource)
+    override fun findById(id: ResourceId): Optional<ResourceRepresentation> =
+        Optional.ofNullable(resourceService.findByIdAndClasses(id, setOf(ResearchField)))
 
-    override fun getResearchProblemsOfField(id: ResourceId, pageable: Pageable): Page<Any> {
-        return neo4jResearchFieldRepository.getResearchProblemsOfField(id, pageable)
-            .map {
-                object {
-                    val problem = it.problem.toResource()
-                    val papers = it.papers
-                }
-            }
+    override fun getResearchProblemsOfField(
+        id: ResourceId,
+        pageable: Pageable
+    ): Page<RetrieveResearchFieldUseCase.PaperCountPerResearchProblem> {
+        return neo4jResearchFieldRepository.getResearchProblemsOfField(id, pageable).map {
+            RetrieveResearchFieldUseCase.PaperCountPerResearchProblem(
+                problem = resourceService.map(ResourceGenerator { it.problem.toResource() }),
+                papers = it.papers,
+            )
+        }
     }
 
     override fun getResearchProblemsIncludingSubFields(
@@ -45,19 +51,19 @@ class Neo4jResearchFieldService(
         featured: Boolean?,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<Resource> {
-        val modifiedFeatured: Boolean = setFeatured(unlisted, featured)
-            ?: return neo4jResearchFieldRepository.getProblemsIncludingSubFields(
-                id = id,
-                pageable = pageable)
-                .map(Neo4jResource::toResource)
+    ): Page<ResourceRepresentation> {
+        val modifiedFeatured: Boolean =
+            setFeatured(unlisted, featured) ?: return resourceService.map(PagedResourcesGenerator {
+                neo4jResearchFieldRepository.getProblemsIncludingSubFields(
+                    id = id, pageable = pageable
+                ).map(Neo4jResource::toResource)
+            })
 
-        return neo4jResearchFieldRepository.getProblemsIncludingSubFieldsWithFlags(
-            id = id,
-            featured = modifiedFeatured,
-            unlisted = unlisted,
-            pageable = pageable)
-            .map(Neo4jResource::toResource)
+        return resourceService.map(PagedResourcesGenerator {
+            neo4jResearchFieldRepository.getProblemsIncludingSubFieldsWithFlags(
+                id = id, featured = modifiedFeatured, unlisted = unlisted, pageable = pageable
+            ).map(Neo4jResource::toResource)
+        })
     }
 
     override fun getContributorsIncludingSubFields(id: ResourceId, pageable: Pageable): Page<Contributor> {
@@ -70,16 +76,18 @@ class Neo4jResearchFieldService(
         featured: Boolean?,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<Resource> {
-        val modifiedFeatured: Boolean = setFeatured(unlisted, featured)
-            ?: return neo4jResearchFieldRepository.getPapersIncludingSubFields(
-                id = id, pageable = pageable).map(Neo4jResource::toResource)
-
-        return neo4jResearchFieldRepository.getPapersIncludingSubFieldsWithFlags(
-            id = id,
-            featured = modifiedFeatured,
-            unlisted = unlisted,
-            pageable = pageable).map(Neo4jResource::toResource)
+    ): Page<ResourceRepresentation> {
+        val modifiedFeatured: Boolean =
+            setFeatured(unlisted, featured) ?: return resourceService.map(PagedResourcesGenerator {
+                neo4jResearchFieldRepository.getPapersIncludingSubFields(
+                    id = id, pageable = pageable
+                ).map(Neo4jResource::toResource)
+            })
+        return resourceService.map(PagedResourcesGenerator {
+            neo4jResearchFieldRepository.getPapersIncludingSubFieldsWithFlags(
+                id = id, featured = modifiedFeatured, unlisted = unlisted, pageable = pageable
+            ).map(Neo4jResource::toResource)
+        })
     }
 
     override fun getComparisonsIncludingSubFields(
@@ -87,19 +95,18 @@ class Neo4jResearchFieldService(
         featured: Boolean?,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<Resource> {
-        val modifiedFeatured: Boolean = setFeatured(unlisted, featured)
-            ?: return neo4jResearchFieldRepository.getComparisonsIncludingSubFields(
-                id = id,
-                pageable = pageable)
-                .map(Neo4jResource::toResource)
-
-        return neo4jResearchFieldRepository.getComparisonsIncludingSubFieldsWithFlags(
-            id = id,
-            featured = modifiedFeatured,
-            unlisted = unlisted,
-            pageable = pageable)
-            .map(Neo4jResource::toResource)
+    ): Page<ResourceRepresentation> {
+        val modifiedFeatured: Boolean =
+            setFeatured(unlisted, featured) ?: return resourceService.map(PagedResourcesGenerator {
+                neo4jResearchFieldRepository.getComparisonsIncludingSubFields(
+                    id = id, pageable = pageable
+                ).map(Neo4jResource::toResource)
+            })
+        return resourceService.map(PagedResourcesGenerator {
+            neo4jResearchFieldRepository.getComparisonsIncludingSubFieldsWithFlags(
+                id = id, featured = modifiedFeatured, unlisted = unlisted, pageable = pageable
+            ).map(Neo4jResource::toResource)
+        })
     }
 
     override fun getContributorsExcludingSubFields(id: ResourceId, pageable: Pageable): Page<Contributor> {
@@ -112,35 +119,37 @@ class Neo4jResearchFieldService(
         featured: Boolean?,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<Resource> {
-        val modifiedFeatured: Boolean = setFeatured(unlisted, featured)
-            ?: return neo4jResearchFieldRepository.getPapersExcludingSubFields(
-                id = id,
-                pageable = pageable)
-                .map(Neo4jResource::toResource)
-
-        return neo4jResearchFieldRepository.getPapersExcludingSubFieldsWithFlags(
-            id = id,
-            featured = modifiedFeatured,
-            unlisted = unlisted,
-            pageable = pageable)
-            .map(Neo4jResource::toResource)
+    ): Page<ResourceRepresentation> {
+        val modifiedFeatured: Boolean =
+            setFeatured(unlisted, featured) ?: return resourceService.map(PagedResourcesGenerator {
+                neo4jResearchFieldRepository.getPapersExcludingSubFields(
+                    id = id, pageable = pageable
+                ).map(Neo4jResource::toResource)
+            })
+        return resourceService.map(PagedResourcesGenerator {
+            neo4jResearchFieldRepository.getPapersExcludingSubFieldsWithFlags(
+                id = id, featured = modifiedFeatured, unlisted = unlisted, pageable = pageable
+            ).map(Neo4jResource::toResource)
+        })
     }
 
-    override fun getComparisonsExcludingSubFields(id: ResourceId, featured: Boolean?, unlisted: Boolean, pageable: Pageable):
-        Page<Resource> {
-        val modifiedFeatured: Boolean = setFeatured(unlisted, featured)
-            ?: return neo4jResearchFieldRepository.getComparisonsExcludingSubFields(
-                id = id,
-                pageable = pageable)
-                .map(Neo4jResource::toResource)
-
-        return neo4jResearchFieldRepository.getComparisonsExcludingSubFieldsWithFlags(
-            id = id,
-            featured = modifiedFeatured,
-            unlisted = unlisted,
-            pageable = pageable)
-            .map(Neo4jResource::toResource)
+    override fun getComparisonsExcludingSubFields(
+        id: ResourceId,
+        featured: Boolean?,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<ResourceRepresentation> {
+        val modifiedFeatured: Boolean =
+            setFeatured(unlisted, featured) ?: return resourceService.map(PagedResourcesGenerator {
+                neo4jResearchFieldRepository.getComparisonsExcludingSubFields(
+                    id = id, pageable = pageable
+                ).map(Neo4jResource::toResource)
+            })
+        return resourceService.map(PagedResourcesGenerator {
+            neo4jResearchFieldRepository.getComparisonsExcludingSubFieldsWithFlags(
+                id = id, featured = modifiedFeatured, unlisted = unlisted, pageable = pageable
+            ).map(Neo4jResource::toResource)
+        })
     }
 
     override fun getResearchProblemsExcludingSubFields(
@@ -148,17 +157,18 @@ class Neo4jResearchFieldService(
         featured: Boolean?,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<Resource> {
-        val modifiedFeatured: Boolean = setFeatured(unlisted, featured)
-            ?: return neo4jResearchFieldRepository.getProblemsExcludingSubFields(
-                id = id,
-                pageable = pageable).map(Neo4jResource::toResource)
-
-        return neo4jResearchFieldRepository.getProblemsExcludingSubFieldsWithFlags(
-            id = id,
-            featured = modifiedFeatured,
-            unlisted = unlisted,
-            pageable = pageable).map(Neo4jResource::toResource)
+    ): Page<ResourceRepresentation> {
+        val modifiedFeatured: Boolean =
+            setFeatured(unlisted, featured) ?: return resourceService.map(PagedResourcesGenerator {
+                neo4jResearchFieldRepository.getProblemsExcludingSubFields(
+                    id = id, pageable = pageable
+                ).map(Neo4jResource::toResource)
+            })
+        return resourceService.map(PagedResourcesGenerator {
+            neo4jResearchFieldRepository.getProblemsExcludingSubFieldsWithFlags(
+                id = id, featured = modifiedFeatured, unlisted = unlisted, pageable = pageable
+            ).map(Neo4jResource::toResource)
+        })
     }
 
     /**
@@ -171,7 +181,7 @@ class Neo4jResearchFieldService(
         featured: Boolean?,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<Resource> {
+    ): Page<ResourceRepresentation> {
         val resultList = mutableListOf<Neo4jResource>()
 
         when (featured) {
@@ -181,7 +191,9 @@ class Neo4jResearchFieldService(
 
         resultList.sortWith { o1, o2 -> o2.createdAt!!.compareTo(o1.createdAt) }
 
-        return PageImpl(resultList.map(Neo4jResource::toResource), pageable, resultList.size.toLong())
+        return resourceService.map(PagedResourcesGenerator {
+            PageImpl(resultList.map(Neo4jResource::toResource), pageable, resultList.size.toLong())
+        })
     }
 
     /**
@@ -194,7 +206,7 @@ class Neo4jResearchFieldService(
         featured: Boolean?,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<Resource> {
+    ): Page<ResourceRepresentation> {
         val resultList = mutableListOf<Neo4jResource>()
 
         when (featured) {
@@ -204,7 +216,9 @@ class Neo4jResearchFieldService(
 
         resultList.sortBy(Neo4jResource::createdAt)
 
-        return PageImpl(resultList.map(Neo4jResource::toResource), pageable, resultList.size.toLong())
+        return resourceService.map(PagedResourcesGenerator {
+            PageImpl(resultList.map(Neo4jResource::toResource), pageable, resultList.size.toLong())
+        })
     }
 
     override fun withBenchmarks(): List<ResearchField> =

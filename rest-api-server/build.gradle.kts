@@ -48,6 +48,7 @@ dependencies {
     // Platform alignment for ORKG components
     api(platform(project(":platform")))
 
+    implementation(platform(kotlin("bom", "1.7.10")))
     implementation(platform(libs.forkhandles.bom))
     implementation(libs.forkhandles.result4k)
     implementation(libs.forkhandles.values4k)

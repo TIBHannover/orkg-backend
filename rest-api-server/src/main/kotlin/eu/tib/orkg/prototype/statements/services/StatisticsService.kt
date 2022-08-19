@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.statements.infrastructure.neo4j
+package eu.tib.orkg.prototype.statements.services
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
@@ -8,7 +8,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.Stats
-import eu.tib.orkg.prototype.statements.domain.model.StatsService
+import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
 import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresObservatoryRepository
 import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresOrganizationRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ChangeLogResponse
@@ -28,12 +28,12 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
-class Neo4jStatsService(
+class StatisticsService(
     private val neo4jStatsRepository: Neo4jStatsRepository,
     private val userRepository: UserRepository,
     private val observatoryRepository: PostgresObservatoryRepository,
     private val organizationRepository: PostgresOrganizationRepository
-) : StatsService {
+) : RetrieveStatisticsUseCase {
     val internalClassLabels: (String) -> Boolean = { it !in setOf("Thing", "Resource", "AuditableEntity") }
 
     override fun getStats(extra: List<String>?): Stats {
@@ -135,8 +135,11 @@ class Neo4jStatsService(
         changeLogs.forEach { changeLogResponse ->
             val contributor = mapValues[ContributorId(changeLogResponse.createdBy)]?.first()
             val filteredClasses = changeLogResponse.classes.filter(internalClassLabels)
-            refinedChangeLog.add(ChangeLog(changeLogResponse.id, changeLogResponse.label, changeLogResponse.createdAt,
-                filteredClasses, Profile(contributor?.id, contributor?.name, contributor?.gravatarId, contributor?.avatarURL)))
+            refinedChangeLog.add(
+                ChangeLog(changeLogResponse.id, changeLogResponse.label, changeLogResponse.createdAt,
+                filteredClasses, Profile(contributor?.id, contributor?.name, contributor?.gravatarId, contributor?.avatarURL)
+                )
+            )
         }
 
         return PageImpl(refinedChangeLog, pageable, refinedChangeLog.size.toLong())
@@ -165,7 +168,8 @@ class Neo4jStatsService(
             val contributor = mapValues[topContributor.id?.let { ContributorId(it) }]?.first()
             TopContributorsWithProfileAndTotalCount(
                 topContributor.individualContributionsCount as IndividualContributionsCount,
-                Profile(contributor?.id, contributor?.name, contributor?.gravatarId, contributor?.avatarURL))
+                Profile(contributor?.id, contributor?.name, contributor?.gravatarId, contributor?.avatarURL)
+            )
         }
     }
 

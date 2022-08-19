@@ -33,28 +33,35 @@ private const val WITH_NODE_PROPERTIES =
 
 // Custom queries
 
+private const val HAS_PAPER_CLASS = """ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
+
+private const val HAS_CLASSES_1 = """ANY(collectionFields IN {1} WHERE collectionFields IN LABELS(node))"""
+
 private const val MATCH_PAPER_BY_ID = """MATCH (node:`Resource`:`Paper` {resource_id: {0}})"""
 
 private const val MATCH_VERIFIED_PAPER =
-    """MATCH (node) WHERE EXISTS(node.verified) AND node.verified = true AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
+    """MATCH (node) WHERE EXISTS(node.verified) AND node.verified = true AND $HAS_PAPER_CLASS"""
 
 private const val MATCH_UNVERIFIED_PAPER =
-    """MATCH (node) WHERE (NOT EXISTS(node.verified) OR node.verified = false) AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
+    """MATCH (node) WHERE (NOT EXISTS(node.verified) OR node.verified = false) AND $HAS_PAPER_CLASS"""
 
 private const val MATCH_FEATURED_PAPER =
-    """MATCH (node) WHERE node.featured = true AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
+    """MATCH (node) WHERE node.featured = true AND $HAS_PAPER_CLASS"""
 
 private const val MATCH_NONFEATURED_PAPER =
-    """MATCH (node) WHERE node.featured = false AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
+    """MATCH (node) WHERE node.featured = false AND $HAS_PAPER_CLASS"""
 
 private const val MATCH_UNLISTED_PAPER =
-    """MATCH (node) WHERE node.unlisted = true AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
+    """MATCH (node) WHERE node.unlisted = true AND $HAS_PAPER_CLASS"""
 
 private const val MATCH_LISTED_PAPER =
-    """MATCH (node) WHERE OR node.unlisted = false AND ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
+    """MATCH (node) WHERE OR node.unlisted = false AND $HAS_PAPER_CLASS"""
 
 interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     fun existsByResourceId(id: ResourceId): Boolean
+
+    @Query("""MATCH (node:`Resource` {resource_id: {0}}) WHERE $HAS_CLASSES_1 $WITH_NODE_PROPERTIES $RETURN_NODE""")
+    fun findByIdAndClassesContaining(id: ResourceId, classes: Set<String>): Neo4jResource?
 
     override fun findAll(): Iterable<Neo4jResource>
 

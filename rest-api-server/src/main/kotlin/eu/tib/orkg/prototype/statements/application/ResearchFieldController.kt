@@ -1,11 +1,12 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.domain.model.ResearchFieldService
-import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase.PaperCountPerResearchProblem
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import java.util.Optional
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/research-fields/")
 class ResearchFieldController(
-    private val service: ResearchFieldService,
+    private val service: RetrieveResearchFieldUseCase,
     private val resourceService: ResourceUseCases
 ) {
     /**
@@ -38,7 +39,7 @@ class ResearchFieldController(
     fun getResearchProblemsOfField(
         @PathVariable id: ResourceId,
         pageable: Pageable
-    ): ResponseEntity<Page<Any>> {
+    ): ResponseEntity<Page<PaperCountPerResearchProblem>> {
         resourceService.findById(id)
             .orElseThrow { ResourceNotFound() }
         return ok(service.getResearchProblemsOfField(id, pageable))
@@ -57,7 +58,7 @@ class ResearchFieldController(
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable
-    ): ResponseEntity<Page<Resource>> {
+    ): ResponseEntity<Page<ResourceRepresentation>>? {
         // Add if condition to check if featured is present and pass the variable
         // Do the same for all
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
@@ -95,7 +96,7 @@ class ResearchFieldController(
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable
-    ): ResponseEntity<Page<Resource>> {
+    ): ResponseEntity<Page<ResourceRepresentation>>? {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         return ok(service.getComparisonsIncludingSubFields(
             id = id,
@@ -118,7 +119,7 @@ class ResearchFieldController(
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable
-    ): ResponseEntity<Page<Resource>> {
+    ): ResponseEntity<Page<ResourceRepresentation>>? {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         return ok(service.getPapersIncludingSubFields(
             id = id,
@@ -140,9 +141,10 @@ class ResearchFieldController(
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable
-    ): ResponseEntity<Page<Resource>> {
+    ): ResponseEntity<Page<ResourceRepresentation>>? {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
-        return ok(service.getPapersExcludingSubFields(id = id,
+        return ok(service.getPapersExcludingSubFields(
+            id = id,
             featured = featured,
             unlisted = unlisted,
             pageable = pageable))
@@ -161,7 +163,7 @@ class ResearchFieldController(
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable
-    ): ResponseEntity<Page<Resource>> {
+    ): ResponseEntity<Page<ResourceRepresentation>>? {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         return ok(service.getComparisonsExcludingSubFields(
             id = id,
@@ -198,7 +200,7 @@ class ResearchFieldController(
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable
-    ): ResponseEntity<Page<Resource>> {
+    ): ResponseEntity<Page<ResourceRepresentation>>? {
         resourceService.findById(id).orElseThrow { ResourceNotFound() }
         return ok(service.getResearchProblemsExcludingSubFields(
             id = id,
@@ -222,7 +224,7 @@ class ResearchFieldController(
         @RequestParam("classes")
         classes: List<String>,
         pageable: Pageable
-    ): ResponseEntity<Page<Resource>> {
+    ): ResponseEntity<Page<ResourceRepresentation>>? {
         return ok(service.getEntitiesBasedOnClassesIncludingSubfields(id, classes, featured, unlisted, pageable))
     }
 
@@ -240,7 +242,7 @@ class ResearchFieldController(
         @RequestParam("classes")
         classes: List<String>,
         pageable: Pageable
-    ): ResponseEntity<Page<Resource>> {
+    ): ResponseEntity<Page<ResourceRepresentation>>? {
         return ok(service.getEntitiesBasedOnClassesExcludingSubfields(id, classes, featured, unlisted, pageable))
     }
 }

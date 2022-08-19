@@ -5,9 +5,9 @@ import eu.tib.orkg.prototype.paperswithcode.application.domain.Dataset
 import eu.tib.orkg.prototype.paperswithcode.application.domain.DatasetSummary
 import eu.tib.orkg.prototype.paperswithcode.application.port.input.RetrieveBenchmarkUseCase
 import eu.tib.orkg.prototype.paperswithcode.application.port.input.RetrieveDatasetUseCase
-import eu.tib.orkg.prototype.paperswithcode.application.port.input.RetrieveResearchFieldUseCase
-import eu.tib.orkg.prototype.paperswithcode.application.port.input.RetrieveResearchProblemsUseCase
 import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
 import eu.tib.orkg.prototype.statements.application.DatasetNotFound
 import eu.tib.orkg.prototype.statements.application.ResearchFieldNotFound
 import eu.tib.orkg.prototype.statements.application.ResearchProblemNotFound
@@ -22,7 +22,7 @@ class BenchmarkController(
     private val retrieveResearchField: RetrieveResearchFieldUseCase,
     private val retrieveBenchmarks: RetrieveBenchmarkUseCase,
     private val retrieveDatasets: RetrieveDatasetUseCase,
-    private val retrieveProblems: RetrieveResearchProblemsUseCase
+    private val retrieveProblems: RetrieveResearchProblemUseCase
 ) {
     @GetMapping("/api/research-fields/benchmarks")
     fun getResearchFieldsWithBenchmarks(): List<ResearchField> =

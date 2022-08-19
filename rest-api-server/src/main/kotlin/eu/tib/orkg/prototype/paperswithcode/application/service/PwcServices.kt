@@ -9,8 +9,8 @@ import eu.tib.orkg.prototype.paperswithcode.application.port.output.FindDatasets
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.SummarizeBenchmarkQuery
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.SummarizeDatasetQuery
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.domain.model.ProblemService
-import eu.tib.orkg.prototype.statements.domain.model.ResearchFieldService
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.util.Optional
 import org.springframework.context.annotation.Primary
@@ -20,14 +20,14 @@ import org.springframework.stereotype.Service
 @Service
 class BenchmarkService(
     private val summarizeBenchmark: SummarizeBenchmarkQuery,
-    private val researchFieldService: ResearchFieldService
+    private val researchFieldService: RetrieveResearchFieldUseCase
 ) : RetrieveBenchmarkUseCase {
     override fun summariesForResearchField(id: ResourceId): Optional<List<BenchmarkSummary>> {
         val researchField = researchFieldService.findById(id)
         if (!researchField.isPresent)
             return Optional.empty()
         return Optional.of(
-            summarizeBenchmark.byResearchField(researchField.get().id!!)
+            summarizeBenchmark.byResearchField(researchField.get().id)
         )
     }
 
@@ -41,7 +41,7 @@ class BenchmarkService(
 @Service
 class DatasetService(
     private val findDatasets: FindDatasetsQuery,
-    private val researchProblemService: ProblemService,
+    private val researchProblemService: RetrieveResearchProblemUseCase,
     private val summarizeDataset: SummarizeDatasetQuery,
     private val resourceService: ResourceUseCases
 ) : RetrieveDatasetUseCase {

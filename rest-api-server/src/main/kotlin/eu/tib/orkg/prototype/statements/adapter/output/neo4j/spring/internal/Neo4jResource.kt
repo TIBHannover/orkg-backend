@@ -20,6 +20,8 @@ import org.neo4j.ogm.annotation.Relationship
 import org.neo4j.ogm.annotation.Required
 import org.neo4j.ogm.annotation.typeconversion.Convert
 
+private val ReservedClassIds = setOf(ClassId("Literal"), ClassId("Class"), ClassId("Predicate"), ClassId("Resource"))
+
 @NodeEntity(label = "Resource")
 data class Neo4jResource(
     @Id
@@ -108,7 +110,7 @@ data class Neo4jResource(
             resourceId,
             label!!,
             createdAt!!,
-            classes,
+            classes - ReservedClassIds,
             createdBy = createdBy,
             observatoryId = observatoryId,
             extractionMethod = extractionMethod,

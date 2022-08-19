@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.api
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import java.util.*
@@ -11,6 +12,13 @@ import org.springframework.data.domain.Pageable
 
 interface RetrieveResourceUseCase {
     fun exists(id: ResourceId): Boolean
+    fun findByIdAndClasses(id: ResourceId, classes: Set<ClassId>): ResourceRepresentation?
+
+    // TODO: Needed by problem service. May need better solution.
+    fun map(action: IterableResourcesGenerator): Iterable<ResourceRepresentation>
+    fun map(action: PagedResourcesGenerator): Page<ResourceRepresentation>
+    fun map(action: ResourceGenerator): ResourceRepresentation
+
     // Legacy methods:
     fun findAll(pageable: Pageable): Page<ResourceRepresentation>
     fun findAllByClass(pageable: Pageable, id: ClassId): Page<ResourceRepresentation>
@@ -57,4 +65,16 @@ interface RetrieveResourceUseCase {
         pageable: Pageable
     ): Page<ResourceRepresentation>
     fun hasStatements(id: ResourceId): Boolean
+}
+
+fun interface ResourceGenerator {
+    fun generate(): Resource
+}
+
+fun interface IterableResourcesGenerator {
+    fun generate(): Iterable<Resource>
+}
+
+fun interface PagedResourcesGenerator {
+    fun generate(): Page<Resource>
 }

@@ -4,9 +4,11 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceIdGenerator
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceRepository
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.stringify
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import java.util.*
@@ -19,6 +21,9 @@ class SpringDataNeo4jResourceAdapter(
     private val neo4jRepository: Neo4jResourceRepository,
     private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator,
 ) : ResourceRepository {
+    override fun findByIdAndClasses(id: ResourceId, classes: Set<ClassId>): Resource? =
+        neo4jRepository.findByIdAndClassesContaining(id, classes.stringify())?.toResource()
+
     override fun nextIdentity(): ResourceId {
         // IDs could exist already by manual creation. We need to find the next available one.
         var id: ResourceId

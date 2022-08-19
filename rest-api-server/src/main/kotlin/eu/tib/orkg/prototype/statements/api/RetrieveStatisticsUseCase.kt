@@ -1,14 +1,17 @@
-package eu.tib.orkg.prototype.statements.domain.model
+package eu.tib.orkg.prototype.statements.api
 
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.TrendingResearchProblems
-import eu.tib.orkg.prototype.statements.infrastructure.neo4j.ChangeLog
-import eu.tib.orkg.prototype.statements.infrastructure.neo4j.TopContributorsWithProfile
-import eu.tib.orkg.prototype.statements.infrastructure.neo4j.TopContributorsWithProfileAndTotalCount
+import eu.tib.orkg.prototype.statements.services.ChangeLog
+import eu.tib.orkg.prototype.statements.services.TopContributorsWithProfile
+import eu.tib.orkg.prototype.statements.services.TopContributorsWithProfileAndTotalCount
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
-interface StatsService {
+interface RetrieveStatisticsUseCase {
     /**
      * Get stats
      *

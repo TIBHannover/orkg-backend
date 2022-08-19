@@ -2,6 +2,9 @@ package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
+import eu.tib.orkg.prototype.statements.api.IterableResourcesGenerator
+import eu.tib.orkg.prototype.statements.api.PagedResourcesGenerator
+import eu.tib.orkg.prototype.statements.api.ResourceGenerator
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
@@ -103,6 +106,17 @@ class ResourceService(
         repository.save(resource)
         return findById(resource.id).get()
     }
+
+    override fun findByIdAndClasses(id: ResourceId, classes: Set<ClassId>): ResourceRepresentation? =
+        retrieveAndConvertNullable { repository.findByIdAndClasses(id, classes) }
+
+    override fun map(action: IterableResourcesGenerator): Iterable<ResourceRepresentation> =
+        retrieveAndConvertIterable(action::generate)
+
+    override fun map(action: PagedResourcesGenerator): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged(action::generate)
+
+    override fun map(action: ResourceGenerator): ResourceRepresentation = retrieveAndConvertNullable(action::generate)!!
 
     override fun findAll(pageable: Pageable): Page<ResourceRepresentation> =
         retrieveAndConvertPaged { repository.findAll(pageable) }
@@ -515,6 +529,12 @@ class ResourceService(
 
     private fun retrieveAndConvertOptional(action: () -> Optional<Resource>): Optional<ResourceRepresentation> =
         action().map {
+            val count = statementRepository.countStatementsAboutResource(it.id!!)
+            it.toResourceRepresentation(mapOf(it.id to count))
+        }
+
+    private fun retrieveAndConvertNullable(action: () -> Resource?): ResourceRepresentation? =
+        action()?.let {
             val count = statementRepository.countStatementsAboutResource(it.id!!)
             it.toResourceRepresentation(mapOf(it.id to count))
         }

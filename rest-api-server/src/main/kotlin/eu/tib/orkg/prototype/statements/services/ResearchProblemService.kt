@@ -1,11 +1,16 @@
-package eu.tib.orkg.prototype.statements.infrastructure.neo4j
+package eu.tib.orkg.prototype.statements.services
 
-import eu.tib.orkg.prototype.paperswithcode.application.port.input.RetrieveResearchProblemsUseCase
 import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
+import eu.tib.orkg.prototype.statements.api.IterableResourcesGenerator
+import eu.tib.orkg.prototype.statements.api.ResourceGenerator
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase.FieldCount
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase.PaperCountPerAuthor
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
-import eu.tib.orkg.prototype.statements.domain.model.ProblemService
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ContributorPerProblem
@@ -18,23 +23,22 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+private val ProblemClass = ClassId("Problem")
+
 @Service
 @Transactional
-class Neo4jProblemService(
+class ResearchProblemService(
     private val neo4jProblemRepository: Neo4jProblemRepository,
-    private val resourceService: ResourceUseCases
-) : ProblemService, RetrieveResearchProblemsUseCase {
-override fun findById(id: ResourceId): Optional<Resource> =
-        neo4jProblemRepository
-            .findById(id)
-            .map(Neo4jResource::toResource)
+    private val resourceService: ResourceUseCases,
+) : RetrieveResearchProblemUseCase {
+    override fun findById(id: ResourceId): Optional<ResourceRepresentation> =
+        Optional.ofNullable(resourceService.findByIdAndClasses(id, setOf(ProblemClass)))
 
-    override fun findFieldsPerProblem(problemId: ResourceId): List<Any> {
+    override fun findFieldsPerProblem(problemId: ResourceId): List<FieldCount> {
         return neo4jProblemRepository.findResearchFieldsPerProblem(problemId).map {
-            object {
-                val field = it.field.toResource()
-                val freq = it.freq
-            }
+            FieldCount(
+                field = resourceService.map(ResourceGenerator { it.field.toResource() }), freq = it.freq
+            )
         }
     }
 
@@ -59,15 +63,21 @@ override fun findById(id: ResourceId): Optional<Resource> =
         return PageImpl(resultList as List<DetailsPerProblem>, pageable, resultList.size.toLong())
     }
 
-    override fun findTopResearchProblems(): List<Resource> =
-        findTopResearchProblemsGoingBack(listOf(1, 2, 3, 6), emptyList())
-            .map(Neo4jResource::toResource)
+    override fun findTopResearchProblems(): List<ResourceRepresentation> =
+        resourceService.map(IterableResourcesGenerator {
+            findTopResearchProblemsGoingBack(
+                listOf(1, 2, 3, 6), emptyList()
+            ).map(Neo4jResource::toResource)
+        }).toList()
 
     /*
     Iterate over the list of months, and if no problems are found go back a bit more in time
     and if none found take all time results
      */
-    private fun findTopResearchProblemsGoingBack(listOfMonths: List<Int>, result: List<Neo4jResource>): Iterable<Neo4jResource> {
+    private fun findTopResearchProblemsGoingBack(
+        listOfMonths: List<Int>,
+        result: List<Neo4jResource>
+    ): Iterable<Neo4jResource> {
         val month = listOfMonths.firstOrNull()
         val problems = if (month == null)
             neo4jProblemRepository.findTopResearchProblemsAllTime()
@@ -86,20 +96,18 @@ override fun findById(id: ResourceId): Optional<Resource> =
             .content
     }
 
-    override fun findAuthorsPerProblem(problemId: ResourceId, pageable: Pageable): List<Any> {
-        return neo4jProblemRepository.findAuthorsLeaderboardPerProblem(problemId, pageable)
-            .content
-            .map {
-                if (it.isLiteral)
-                    object {
-                        val author = it.author
-                        val papers = it.papers
-                    }
-                else
-                    object {
-                        val author = it.toAuthorResource.toResource()
-                        val papers = it.papers
-                    }
+    override fun findAuthorsPerProblem(problemId: ResourceId, pageable: Pageable): List<PaperCountPerAuthor> {
+        return neo4jProblemRepository.findAuthorsLeaderboardPerProblem(problemId, pageable).content.map {
+                if (it.isLiteral) PaperCountPerAuthor(
+                    author = it.author,
+                    papers = it.papers,
+                )
+                else PaperCountPerAuthor(
+                    // It is important that this is a ResourceRepresentation! Otherwise, it will break clients.
+                    // This is not ideal, but would need custom serialization code.
+                    author = resourceService.map(ResourceGenerator { it.toAuthorResource.toResource() }),
+                    papers = it.papers,
+                )
             }
     }
 

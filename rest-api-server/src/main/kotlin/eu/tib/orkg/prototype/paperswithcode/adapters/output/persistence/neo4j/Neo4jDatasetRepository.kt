@@ -2,9 +2,11 @@ package eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j
 
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
+@ConditionalOnProperty("orkg.features.pwc-legacy-model", havingValue = "false", matchIfMissing = true)
 interface Neo4jDatasetRepository : Neo4jRepository<Neo4jResource, Long> {
 
     @Query("""

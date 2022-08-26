@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.paperswithcode.application.port.output.FindResearchFieldsQuery
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.api.PagedResourcesGenerator
 import eu.tib.orkg.prototype.statements.api.ResourceGenerator
@@ -27,6 +28,7 @@ private val ResearchField = ClassId("ResearchField")
 @Transactional
 class ResearchFieldService(
     private val neo4jResearchFieldRepository: Neo4jResearchFieldRepository,
+    private val researchFieldsQuery: FindResearchFieldsQuery,
     private val userRepository: UserRepository,
     private val resourceService: ResourceUseCases,
 ) : RetrieveResearchFieldUseCase {
@@ -221,9 +223,7 @@ class ResearchFieldService(
         })
     }
 
-    override fun withBenchmarks(): List<ResearchField> =
-        neo4jResearchFieldRepository.findResearchFieldsWithBenchmarks()
-            .map { ResearchField(it.resourceId!!.value, it.label!!) }
+    override fun withBenchmarks(): List<ResearchField> = researchFieldsQuery.withBenchmarks()
 
     private fun setFeatured(unlisted: Boolean, featured: Boolean?): Boolean? =
         when (unlisted) {

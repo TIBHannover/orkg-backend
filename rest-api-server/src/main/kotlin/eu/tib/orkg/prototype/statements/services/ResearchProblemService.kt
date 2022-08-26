@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.services
 
+import eu.tib.orkg.prototype.paperswithcode.application.port.output.FindResearchProblemQuery
 import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.api.IterableResourcesGenerator
@@ -30,6 +31,7 @@ private val ProblemClass = ClassId("Problem")
 class ResearchProblemService(
     private val neo4jProblemRepository: Neo4jProblemRepository,
     private val resourceService: ResourceUseCases,
+    private val researchProblemQueries: FindResearchProblemQuery,
 ) : RetrieveResearchProblemUseCase {
     override fun findById(id: ResourceId): Optional<ResourceRepresentation> =
         Optional.ofNullable(resourceService.findByIdAndClasses(id, setOf(ProblemClass)))
@@ -114,9 +116,7 @@ class ResearchProblemService(
     override fun forDataset(id: ResourceId): Optional<List<ResearchProblem>> {
         val dataset = resourceService.findById(id)
         if (!dataset.isPresent) return Optional.empty()
-        return Optional.of(neo4jProblemRepository
-            .findResearchProblemForDataset(id)
-            .map { ResearchProblem(it.resourceId!!, it.label!!) })
+        return Optional.of(researchProblemQueries.findResearchProblemForDataset(id))
     }
 
     override fun getFeaturedProblemFlag(id: ResourceId): Boolean {

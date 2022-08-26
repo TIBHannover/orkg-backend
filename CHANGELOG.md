@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Return correct totals when fetching content types for a research problem. (Closes: [#399](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/399))
 ### Added
 - Add existence checks for all entities. (See [!286](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/286).)
+- The old (legacy) model for "Papers with Code" (PwC) data was re-introduced behind a feature flag.
+  To use it, set `orkg.features.pwc-legacy-model=true` in the configuration or via the respective environment variables.
+### Deprecated
+- Although the old legacy model is re-introduced, it is deprecated and will be removed in a future release.
+  Please update all client code.
 
 ## [0.14.0] - 2022-08-16
 ### Security

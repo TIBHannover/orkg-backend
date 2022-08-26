@@ -8,6 +8,7 @@ import eu.tib.orkg.prototype.paperswithcode.application.port.input.RetrieveDatas
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.FindDatasetsQuery
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.SummarizeBenchmarkQuery
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.SummarizeDatasetQuery
+import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
@@ -20,7 +21,8 @@ import org.springframework.stereotype.Service
 @Service
 class BenchmarkService(
     private val summarizeBenchmark: SummarizeBenchmarkQuery,
-    private val researchFieldService: RetrieveResearchFieldUseCase
+    private val researchFieldService: RetrieveResearchFieldUseCase,
+    private val flags: FeatureFlagService,
 ) : RetrieveBenchmarkUseCase {
     override fun summariesForResearchField(id: ResourceId): Optional<List<BenchmarkSummary>> {
         val researchField = researchFieldService.findById(id)
@@ -31,10 +33,10 @@ class BenchmarkService(
         )
     }
 
-    override fun summary(): Optional<List<BenchmarkSummary>> =
-        Optional.of(
-            summarizeBenchmark.getAll()
-        )
+    override fun summary(): Optional<List<BenchmarkSummary>> = if (flags.isPapersWithCodeLegacyModelEnabled())
+        error("This method is not supported in the PwC legacy model! Calling it is a bug!")
+    else
+        Optional.of(summarizeBenchmark.getAll())
 }
 
 @Primary

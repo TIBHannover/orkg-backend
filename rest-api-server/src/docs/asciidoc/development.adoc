@@ -145,16 +145,6 @@ Another useful source is the https://docs.spring.io/spring-boot/docs/current/ref
 
 The following sections contain work-flows or tricks for specific tasks that can help during development.
 
-=== Restarting the API container
-
-Sometimes there is a race condition between the containers:
-The backend started already while Neo4j is still starting up.
-This leads to failing connections.
-Although the API will try reconnecting to Neo4j automatically, the timeouts may be longer than you want to wait.
-In this case you can simply restart the API container:
-
-    docker-compose stop api && docker-compose rm -f api && docker-compose up -d api
-
 === Importing a database dump
 
 NOTE: Dumps are provided to TIB members only. This may change in the future. Or not.
@@ -224,6 +214,51 @@ The Neo4j container should now contain the data of the dump.
 ----
 docker-compose up -d
 ----
+
+[debugging-neo4j-in-tests]
+=== Debugging Neo4j queries and results in tests
+
+Sometimes one needs to debug the state of the database during a test run, or try a modified query.
+Our integration tests use a real Neo4j database while testing, which you can connect to.
+One way to achieve that is to hold the test during runtime and connect to the database while it runs.
+You can use the following sequence to achieve this:
+
+. Add breakpoints in the IDE on interesting points, as normally.
+. Run the specific test you chose with a debug configuration.
+  (Click on the "play" icon next to the test name and select "Debug" (bug symbol) from the menu.)
+. Let the test run until the first breakpoint is reached.
+. Switch to the "Console" tab to see the logs.
+. Find the URL the test database runs on by looking for a message from TestContainers, waiting for the Neo4j database to start, e.g.:
++
+----
+11:49:29.880 [ducttape-0] INFO  org.testcontainers.containers.wait.strategy.HttpWaitStrategy - /sleepy_allen: Waiting for 120 seconds for URL: http://localhost:49514/ (where port 49514 maps to container port 7474)
+----
++
+Because of the dynamic port selection, the port may be different each time.
+Checking for something like `maps to container port 7474` is usually the most stable and works well.
+Open the URL in a browser.
+(Clicking it should work.)
+This will open the interface to the running database.
+. Next, find out the port on which Neo4j accepts BOLT connections by looking for a message from the Neo4j BOLT driver, e.g.:
++
+----
+11:50:02.212 [Test worker] INFO  Driver - Direct driver instance 1084618366 created for server address localhost:49513
+----
++
+Because of the dynamic port selection, the port may be different each time.
+Checking for something like `created for server address` is usually the most stable and works well.
+Copy the hostname and port number.
+. Go to your browser with the Neo4j interface opened, and paste the data you just copied into the field "Connect URL", replacing the default value of `localhost:7687`.
++
+NOTE: It is important that you change the value, because otherwise the interface will connect to your locally running test instance, not the test database!
+. Press "Connect".
+  (The tests do not use authentication, so no need to set the settings.)
+
+You can now use the Neo4j browser interface to inspect or modify the state of the database.
+In parallel, use the debugger to step through the code, as you normally would do.
+
+Be aware that as soon as test ends, the database will be destroyed.
+You need to start this procedure anew for every test run.
 
 [[tips-intellij]]
 === IntelliJ IDEA

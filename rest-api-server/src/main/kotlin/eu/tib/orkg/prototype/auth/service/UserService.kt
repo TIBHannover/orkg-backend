@@ -16,7 +16,7 @@ class UserService(
     private val roleRepository: RoleRepository
 ) {
     fun findByEmail(email: String): Optional<UserEntity> {
-        return repository.findByEmail(email)
+        return repository.findByEmailIgnoreCase(email)
     }
 
     fun findById(id: UUID): Optional<UserEntity> = repository.findById(id)

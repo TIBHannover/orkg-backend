@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Bulk editing statements works again. (Closes: [#308](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/308))
+- Email addresses are now case-insensitive when logging in. (Closes: [#397](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/397))
 ### Added
 - Debugging database issues in tests is now described in the developer documentation.
 

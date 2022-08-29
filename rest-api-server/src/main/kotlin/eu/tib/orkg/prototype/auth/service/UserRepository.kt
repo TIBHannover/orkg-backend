@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface UserRepository :
     JpaRepository<UserEntity, UUID> {
-    fun findByEmail(email: String): Optional<UserEntity>
+    fun findByEmailIgnoreCase(email: String): Optional<UserEntity>
 
     override fun findById(id: UUID): Optional<UserEntity>
 

@@ -12,7 +12,7 @@ class OrkgUserDetailsService(
     private val repository: UserRepository
 ) : UserDetailsService {
     override fun loadUserByUsername(username: String): UserDetails {
-        val user = repository.findByEmail(username)
+        val user = repository.findByEmailIgnoreCase(username)
         if (user.isPresent) {
             return user.get().toUserPrincipal()
         }

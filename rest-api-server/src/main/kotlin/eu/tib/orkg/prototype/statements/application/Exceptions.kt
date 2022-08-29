@@ -21,6 +21,9 @@ class ClassNotFound(id: String? = null) : RuntimeException("Class $id not found"
 class PredicateNotFound(predicate: String) : RuntimeException("Predicate $predicate is not found")
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
+class StatementNotFound(statementId: String) : PropertyValidationException("ids", "Statement $statementId is not found")
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
 class ContributorNotFound(id: ContributorId) : RuntimeException("""Contributor $id not found""")
 
 @ResponseStatus(HttpStatus.NOT_FOUND)

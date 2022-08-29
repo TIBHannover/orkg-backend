@@ -1,5 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import eu.tib.orkg.prototype.statements.adapter.input.rest.bulk.BulkStatementEditRequest
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.services.PredicateService
@@ -32,6 +34,9 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var predicateService: PredicateService
+
+    @Autowired
+    private lateinit var mapper: ObjectMapper
 
     @BeforeEach
     fun setup() {
@@ -142,8 +147,6 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @Disabled("Pending: Discussion with the frontend team regarding return value" +
-        "The output involves nested statements")
     fun editResourceStatements() {
         val s = resourceService.create("ORKG")
         val p = predicateService.create("created by")
@@ -157,7 +160,14 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
         val newP = predicateService.create("with love from")
         val newO = resourceService.create("Hannover, Germany")
 
-        mockMvc.perform(putRequest("/api/statements/?ids=${st.id},${st2.id}"))
+        val payload = mapper.writeValueAsString(
+            BulkStatementEditRequest(
+                predicateId = newP.id,
+                objectId = newO.id.value,
+            )
+        )
+
+        mockMvc.perform(putRequest("/api/statements/?ids=${st.id},${st2.id}").content(payload))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$[0].statement.predicate.id").value(newP.id.toString()))
             .andExpect(jsonPath("$[1].statement.object.id").value(newO.id.toString()))
@@ -167,7 +177,8 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
                     requestParameters(
                         parameterWithName("ids").description("the list of resource Ids to fetch on")
                     ),
-                    bulkStatementListEditResponseFields())
+                    bulkStatementListEditResponseFields()
+                )
             )
     }
 
@@ -190,6 +201,7 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statement.subject.organization_id").description("The ID of the organization that maintains this resource."),
             fieldWithPath("[].statement.subject.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic"."""),
             fieldWithPath("[].statement.subject.shared").description("The number of time this resource has been shared"),
+            fieldWithPath("[].statement.subject.verified").description("Indicates if the resource was verified by curator.").optional(),
             fieldWithPath("[].statement.predicate").description("A predicate"),
             fieldWithPath("[].statement.predicate.id").description("The ID of the predicate"),
             fieldWithPath("[].statement.predicate.label").description("The label of the predicate"),
@@ -211,7 +223,8 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statement.object.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic".""").optional().ignored(),
             fieldWithPath("[].statement.object.shared").optional().ignored(),
             fieldWithPath("[].statement.object.featured").description("Indicates if the entity is marked as 'featured'. Featured entities can be set by the user to appear as one of the top results.").optional().ignored(),
-            fieldWithPath("[].statement.object.unlisted").description("The unlisted value").optional().ignored()
+            fieldWithPath("[].statement.object.unlisted").description("The unlisted value").optional().ignored(),
+            fieldWithPath("[].statement.object.verified").description("Indicates if the resource was verified by curator.").optional(),
         )
 
     private fun bulkStatementListResponseFields() =

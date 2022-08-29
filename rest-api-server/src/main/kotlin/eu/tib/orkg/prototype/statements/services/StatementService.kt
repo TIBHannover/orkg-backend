@@ -18,6 +18,7 @@ import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.api.ThingRepresentation
+import eu.tib.orkg.prototype.statements.application.StatementNotFound
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.ThingRepository
@@ -135,22 +136,26 @@ class StatementService(
 
     override fun update(statementEditRequest: StatementEditRequest): StatementRepresentation {
         var found = statementRepository.findByStatementId(statementEditRequest.statementId!!)
-            .orElseThrow { IllegalStateException("Could not find statement: ${statementEditRequest.statementId}") }
+            .orElseThrow { StatementNotFound(statementEditRequest.statementId.value) }
 
-        @Suppress("UNUSED_VARIABLE") // It is unused, because commented out. This method needs a re-write.
-        val foundSubject = thingRepository.findByThingId(statementEditRequest.subjectId)
-            .orElseThrow { IllegalStateException("Could not find subject ${statementEditRequest.subjectId}") }
+        statementEditRequest.subjectId?.let {
+            @Suppress("UNUSED_VARIABLE") // It is unused, because commented out. This method needs a re-write.
+            val foundSubject = thingRepository.findByThingId(statementEditRequest.subjectId)
+                .orElseThrow { IllegalStateException("Could not find subject ${statementEditRequest.subjectId}") }
+            // found = found.copy(subject = foundSubject) // TODO: does this make sense?
+        }
 
-        val foundPredicate = predicateService.findByPredicateId(statementEditRequest.predicateId)
-            .orElseThrow { IllegalArgumentException("Predicate could not be found: ${statementEditRequest.predicateId}") }
+        statementEditRequest.predicateId?.let {
+            val foundPredicate = predicateService.findByPredicateId(statementEditRequest.predicateId)
+                .orElseThrow { IllegalArgumentException("Predicate could not be found: ${statementEditRequest.predicateId}") }
+            found = found.copy(predicate = foundPredicate)
+        }
 
-        val foundObject = thingRepository.findByThingId(statementEditRequest.objectId)
-            .orElseThrow { IllegalStateException("Could not find object: ${statementEditRequest.objectId}") }
-
-        // update all the properties
-        found = found.copy(predicate = foundPredicate)
-        // found = found.copy(subject = foundSubject) // TODO: does this make sense?
-        found = found.copy(`object` = foundObject)
+        statementEditRequest.objectId?.let {
+            val foundObject = thingRepository.findByThingId(statementEditRequest.objectId)
+                .orElseThrow { IllegalStateException("Could not find object: ${statementEditRequest.objectId}") }
+            found = found.copy(`object` = foundObject)
+        }
 
         statementRepository.save(found)
 

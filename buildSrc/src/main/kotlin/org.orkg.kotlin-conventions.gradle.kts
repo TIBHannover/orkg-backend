@@ -22,7 +22,7 @@ tasks {
         useJUnitPlatform()
     }
 
-    jacocoTestReport {
+    withType<JacocoReport>().configureEach {
         reports {
             xml.required.set(true)
         }

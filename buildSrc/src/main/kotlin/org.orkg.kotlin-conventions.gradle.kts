@@ -18,7 +18,7 @@ tasks {
         }
     }
 
-    withType(Test::class.java).configureEach {
+    withType<Test>().configureEach {
         useJUnitPlatform()
     }
 

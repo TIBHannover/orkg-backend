@@ -129,7 +129,7 @@ tasks {
     val printCoverage by existing { mustRunAfter(jacocoTestReport) }
     val check by existing { dependsOn(printCoverage) }
 
-    withType(Test::class.java).configureEach {
+    withType<Test>().configureEach {
         useJUnitPlatform {
             // Exclude test marked as "development", because those are for features only used in dev, and rather slow.
             excludeTags = setOf("development")
@@ -153,7 +153,6 @@ tasks {
     }
 
     withType<JacocoReport>().configureEach {
-        // mustRunAfter(test, integrationTest)
         reports {
             html.required.set(true)
         }

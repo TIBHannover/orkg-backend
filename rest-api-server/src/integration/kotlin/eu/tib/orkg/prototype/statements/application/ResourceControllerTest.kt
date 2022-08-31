@@ -1,14 +1,19 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.services.LiteralService
 import eu.tib.orkg.prototype.statements.services.PredicateService
+import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
@@ -29,6 +34,7 @@ import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.util.UriComponentsBuilder
 
 @DisplayName("Resource Controller")
 @Transactional
@@ -46,6 +52,15 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var statementService: StatementUseCases
+
+    @Autowired
+    private lateinit var paperController: PaperController
+
+    @Autowired
+    private lateinit var resourceService: ResourceUseCases
+
+    @Autowired
+    private lateinit var userService: UserService
 
     @Autowired
     private lateinit var literalService: LiteralService
@@ -353,6 +368,43 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    fun testPaperContributorsDetails() {
+        predicateService.create(CreatePredicateRequest(PredicateId("P26"), "Has DOI"))
+        predicateService.create(CreatePredicateRequest(PredicateId("P29"), "Has publication year"))
+        predicateService.create(CreatePredicateRequest(PredicateId("P30"), "Has Research field"))
+        predicateService.create(CreatePredicateRequest(PredicateId("P31"), "Has contribution"))
+        predicateService.create(CreatePredicateRequest(PredicateId("P32"), "Has research problem"))
+        predicateService.create(CreatePredicateRequest(PredicateId("HAS_EVALUATION"), "Has evaluation"))
+
+        resourceService.create(CreateResourceRequest(ResourceId("R3003"), "Question Answering over Linked Data"))
+
+        classService.create(CreateClassRequest(ClassId("Paper"), "paper", null))
+        classService.create(CreateClassRequest(ClassId("Contribution"), "Contribution", null))
+
+        val userId = createTestUser()
+        // create resource with different userId, and use it as a research field in the paper
+        resourceService.create(userId, CreateResourceRequest(ResourceId("R20"), "database"), ObservatoryId.createUnknownObservatory(), ExtractionMethod.UNKNOWN, OrganizationId.createUnknownOrganization())
+        val originalPaper = PaperControllerTest().createDummyPaperObject(researchField = "R20")
+        val paperId = paperController.add(originalPaper, UriComponentsBuilder.fromUriString("localhost"), true).body!!.id.value
+        val result = mockMvc
+            .perform(getRequestTo("/api/resources/$paperId/contributors"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$", hasSize<Int>(1)))
+            .andReturn()
+
+        val contributors = objectMapper.readValue<List<ResourceContributors>>(
+            result.response.contentAsString,
+            objectMapper.typeFactory.constructCollectionType(MutableList::class.java, ResourceContributors::class.java)
+        )
+        // research field creator should not be in paper contributors list
+        assertThat(contributors[0].createdBy).isNotEqualTo(userId.value.toString())
+        // must have distinct set i.e, one contributor shouldn't appear more than once for same date
+        // distinct and original list must have same size
+        assertThat(contributors.mapTo(mutableListOf()) { listOf(it.createdAt, it.createdBy) }.distinct().size).isEqualTo(contributors.size)
+    }
+
+    @Test
     fun `fetch resource with the correct formatted label`() {
         val value = "Wow!"
         val id = createTemplateAndTypedResource(value)
@@ -449,6 +501,11 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             .andWithPrefix(
                 "content[].", resourceResponseFields()
             ).andWithPrefix("")
+    }
+
+    fun createTestUser(): ContributorId {
+        userService.registerUser("abc@gmail.com", "123456", "Test user")
+        return ContributorId(userService.findByEmail("abc@gmail.com").get().id!!)
     }
 
     companion object RestDoc {

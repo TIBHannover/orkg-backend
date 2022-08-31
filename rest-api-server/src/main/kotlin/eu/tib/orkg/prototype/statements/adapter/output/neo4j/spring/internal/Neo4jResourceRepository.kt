@@ -137,7 +137,7 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     @Query("""MATCH (n:Paper {observatory_id: {0}})-[*]->(r:Problem) RETURN r UNION ALL MATCH (r:Problem {observatory_id: {0}}) RETURN r""")
     fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Neo4jResource>
 
-    @Query("""MATCH (n:Resource {resource_id: {0}}) CALL apoc.path.subgraphAll(n, {relationshipFilter:'>'}) YIELD relationships UNWIND relationships as rel WITH rel AS p, startNode(rel) AS s, endNode(rel) AS o, n WHERE p.created_by <> "00000000-0000-0000-0000-000000000000" and p.created_at>=n.created_at RETURN n.resource_id AS id, (p.created_by) AS createdBy, MAX(p.created_at) AS createdAt ORDER BY createdAt""")
+    @Query("""MATCH (n:Resource {resource_id: {0}}) CALL apoc.path.subgraphAll(n, {relationshipFilter:'>'}) YIELD relationships UNWIND relationships AS rel WITH rel AS p, startNode(rel) AS s, endNode(rel) AS o, n WITH apoc.date.format(apoc.date.parse(p.created_at, 'ms', 'yyyy-MM-dd'), 'ms', 'yyyy-MM-dd') AS date, p, o, n, s  WITH collect(n.created_by) as createdBy, collect(apoc.date.format(apoc.date.parse(n.created_at, 'ms', 'yyyy-MM-dd'), 'ms', 'yyyy-MM-dd')) as createdAt, p, o, n, s, date WITH createdBy + collect(p.created_by) AS creator, createdAt + collect(date) as date, p, o, n, s WHERE p.created_by <> "00000000-0000-0000-0000-000000000000" AND NOT 'ResearchField' in labels(s) AND NOT 'ResearchField' in labels(o) UNWIND creator as createdBy UNWIND date as createdAt RETURN DISTINCT n.resource_id AS id, createdBy, createdAt ORDER BY createdAt""")
     fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors>
 
     @Query("""MATCH (n:Resource {resource_id: {0}}) RETURN EXISTS ((n)-[:RELATED]-(:Thing)) AS used""")

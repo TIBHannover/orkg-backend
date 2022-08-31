@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.spi
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
@@ -64,7 +65,9 @@ interface ResourceRepository : EntityRepository<Resource, ResourceId> {
     @QueryResult
     data class ResourceContributors(
         val id: String,
+        @JsonProperty("created_by")
         val createdBy: String,
+        @JsonProperty("created_at")
         val createdAt: String
     )
 }

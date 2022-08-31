@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
@@ -44,6 +45,9 @@ class PaperControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var paperController: PaperController
+
+    @Autowired
+    private lateinit var userService: UserService
 
     @BeforeEach
     fun setup() {
@@ -118,11 +122,11 @@ class PaperControllerTest : RestDocumentationBaseTest() {
             )
     }
 
-    private fun createDummyPaperObject(title: String = "long title here", doi: String = "doi.id.here"): CreatePaperRequest =
+    fun createDummyPaperObject(title: String = "long title here", doi: String = "doi.id.here", researchField: String = "R12"): CreatePaperRequest =
         CreatePaperRequest(null, Paper(
             title = title,
             doi = doi,
-            researchField = "R12",
+            researchField = researchField,
             publicationYear = 2015,
             contributions = listOf(
                 NamedObject(

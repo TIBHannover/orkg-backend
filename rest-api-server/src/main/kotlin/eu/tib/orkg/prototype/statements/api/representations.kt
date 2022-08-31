@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
@@ -50,6 +51,8 @@ interface ResourceRepresentation : ThingRepresentation, ResourceProvenanceMetada
     val label: String
     val classes: Set<ClassId>
     val shared: Long
+    @get:JsonProperty("formatted_label")
+    val formattedLabel: FormattedLabel?
 
     @get:JsonProperty("extraction_method")
     val extractionMethod: ExtractionMethod

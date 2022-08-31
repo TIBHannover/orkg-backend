@@ -54,13 +54,23 @@ class ResourceJsonTest {
             .isEqualTo(11)
     }
 
+    @Test
+    fun serializedOfNormalResourceShouldHaveNullFormattedLabel() {
+        assertThat(serializedResource())
+            .extractingJsonPathStringValue("@.formatted_label")
+            .isNull()
+    }
+
     private fun createResource() =
         Resource(
             ResourceId(100),
             "label",
             OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3)),
             setOf(ClassId(1), ClassId(2), ClassId(3)),
-        ).toResourceRepresentation(mapOf(ResourceId(100) to 11))
+        ).toResourceRepresentation(
+            mapOf(ResourceId(100) to 11),
+            emptyMap()
+        )
 
     private fun serializedResource() = json.write(createResource())
 }

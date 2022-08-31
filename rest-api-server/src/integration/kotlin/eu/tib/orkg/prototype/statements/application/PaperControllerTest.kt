@@ -368,7 +368,8 @@ class PaperControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("extraction_method").description("The method of extraction for this paper"),
             fieldWithPath("_class").description("The type of the entity").ignored(),
             fieldWithPath("featured").optional().ignored(),
-            fieldWithPath("unlisted").optional().ignored()
+            fieldWithPath("unlisted").optional().ignored(),
+            fieldWithPath("formatted_label").description("The formatted label of the resource if available").optional()
         )
 }
 

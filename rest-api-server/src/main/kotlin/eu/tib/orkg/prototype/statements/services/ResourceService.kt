@@ -14,6 +14,7 @@ import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryRequest
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -25,6 +26,7 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jVisualizationRep
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
+import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import eu.tib.orkg.prototype.util.EscapedRegex
 import eu.tib.orkg.prototype.util.SanitizedWhitespace
 import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
@@ -35,6 +37,8 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+typealias FormattedLabels = Map<ResourceId, FormattedLabel?>
+
 @Service
 @Transactional
 class ResourceService(
@@ -44,6 +48,7 @@ class ResourceService(
     private val neo4jSmartReviewRepository: Neo4jSmartReviewRepository,
     private val repository: ResourceRepository,
     private val statementRepository: StatementRepository,
+    private val templateRepository: TemplateRepository
 ) : ResourceUseCases {
     @Transactional(readOnly = true)
     override fun exists(id: ResourceId): Boolean = repository.exists(id)
@@ -517,30 +522,34 @@ class ResourceService(
         return statementRepository.countStatementsAboutResources(resourceIds)
     }
 
+    private fun formatLabelFor(resources: List<Resource>): Map<ResourceId, FormattedLabel?> {
+        return resources.associate { it.id!! to templateRepository.formattedLabelFor(it.id, it.classes) }
+    }
+
     private fun retrieveAndConvertPaged(action: () -> Page<Resource>): Page<ResourceRepresentation> {
         val paged = action()
-        return paged.map { it.toResourceRepresentation(countsFor(paged.content)) }
+        return paged.map { it.toResourceRepresentation(countsFor(paged.content), formatLabelFor(paged.content)) }
     }
 
     private fun retrieveAndConvertIterable(action: () -> Iterable<Resource>): Iterable<ResourceRepresentation> {
         val resources = action()
-        return resources.map { it.toResourceRepresentation(countsFor(resources.toList())) }
+        return resources.map { it.toResourceRepresentation(countsFor(resources.toList()), formatLabelFor(resources.toList())) }
     }
 
     private fun retrieveAndConvertOptional(action: () -> Optional<Resource>): Optional<ResourceRepresentation> =
         action().map {
             val count = statementRepository.countStatementsAboutResource(it.id!!)
-            it.toResourceRepresentation(mapOf(it.id to count))
+            it.toResourceRepresentation(mapOf(it.id to count), mapOf(it.id to templateRepository.formattedLabelFor(it.id, it.classes)))
         }
 
     private fun retrieveAndConvertNullable(action: () -> Resource?): ResourceRepresentation? =
         action()?.let {
             val count = statementRepository.countStatementsAboutResource(it.id!!)
-            it.toResourceRepresentation(mapOf(it.id to count))
+            it.toResourceRepresentation(mapOf(it.id to count), formatLabelFor(listOf(it)))
         }
 }
 
-fun Resource.toResourceRepresentation(usageCounts: StatementCounts): ResourceRepresentation =
+fun Resource.toResourceRepresentation(usageCounts: StatementCounts, formattedLabels: FormattedLabels): ResourceRepresentation =
     object : ResourceRepresentation {
         override val id: ResourceId = this@toResourceRepresentation.id!!
         override val label: String = this@toResourceRepresentation.label
@@ -555,4 +564,5 @@ fun Resource.toResourceRepresentation(usageCounts: StatementCounts): ResourceRep
         override val featured: Boolean = this@toResourceRepresentation.featured ?: false
         override val unlisted: Boolean = this@toResourceRepresentation.unlisted ?: false
         override val verified: Boolean = this@toResourceRepresentation.verified ?: false
+        override val formattedLabel: FormattedLabel? = formattedLabels[this@toResourceRepresentation.id]
     }

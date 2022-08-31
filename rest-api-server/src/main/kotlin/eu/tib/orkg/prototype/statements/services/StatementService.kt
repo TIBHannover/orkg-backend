@@ -18,10 +18,12 @@ import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.api.ThingRepresentation
+import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
 import eu.tib.orkg.prototype.statements.application.StatementNotFound
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.ThingRepository
+import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import java.time.OffsetDateTime
 import java.util.*
 import org.springframework.data.domain.Page
@@ -37,6 +39,7 @@ class StatementService(
     private val thingRepository: ThingRepository,
     private val predicateService: PredicateRepository,
     private val statementRepository: StatementRepository,
+    private val templateRepository: TemplateRepository
 ) : StatementUseCases {
 
     override fun findAll(pagination: Pageable): Iterable<StatementRepresentation> =
@@ -245,39 +248,47 @@ class StatementService(
         return statementRepository.countStatementsAboutResources(resourceIds.toSet())
     }
 
+    private fun formatLabelFor(statements: List<GeneralStatement>): Map<ResourceId, FormattedLabel?> {
+        val resources =
+            statements.map(GeneralStatement::subject).filterIsInstance<Resource>() +
+                statements.map(GeneralStatement::`object`).filterIsInstance<Resource>()
+        return resources.associate { it.id!! to templateRepository.formattedLabelFor(it.id, it.classes) }
+    }
+
     private fun retrieveAndConvertSingleStatement(action: () -> Optional<GeneralStatement>): Optional<StatementRepresentation> =
         action().map {
             val counts = countsFor(listOf(action().get(), action().get()))
-            it.toRepresentation(counts)
+            val labels = formatLabelFor(listOf(action().get(), action().get()))
+            it.toRepresentation(counts, labels)
         }
 
     private fun retrieveAndConvertPaged(action: () -> Page<GeneralStatement>): Page<StatementRepresentation> {
         val paged = action()
-        return paged.map { it.toRepresentation(countsFor(paged.content)) }
+        return paged.map { it.toRepresentation(countsFor(paged.content), formatLabelFor(paged.content)) }
     }
 
     private fun retrieveAndConvertIterable(action: () -> Iterable<GeneralStatement>): Iterable<StatementRepresentation> {
         val statements = action()
-        return statements.map { it.toRepresentation(countsFor(statements.toList())) }
+        return statements.map { it.toRepresentation(countsFor(statements.toList()), formatLabelFor(statements.toList())) }
     }
 
-    private fun GeneralStatement.toRepresentation(statementCounts: StatementCounts): StatementRepresentation =
+    private fun GeneralStatement.toRepresentation(statementCounts: StatementCounts, formattedLabels: FormattedLabels): StatementRepresentation =
         object : StatementRepresentation {
             override val id: StatementId = this@toRepresentation.id!!
-            override val subject: ThingRepresentation = this@toRepresentation.subject.toRepresentation(statementCounts)
+            override val subject: ThingRepresentation = this@toRepresentation.subject.toRepresentation(statementCounts, formattedLabels)
             override val predicate: PredicateRepresentation =
                 this@toRepresentation.predicate.toPredicateRepresentation()
             override val `object`: ThingRepresentation =
-                this@toRepresentation.`object`.toRepresentation(statementCounts)
+                this@toRepresentation.`object`.toRepresentation(statementCounts, formattedLabels)
             override val createdAt: OffsetDateTime = this@toRepresentation.createdAt!!
             override val createdBy: ContributorId = this@toRepresentation.createdBy
         }
 }
 
-fun Thing.toRepresentation(usageCount: StatementCounts): ThingRepresentation =
+fun Thing.toRepresentation(usageCount: StatementCounts, formattedLabels: FormattedLabels): ThingRepresentation =
     when (this) {
         is Class -> toClassRepresentation()
         is Literal -> toLiteralRepresentation()
         is Predicate -> toPredicateRepresentation()
-        is Resource -> toResourceRepresentation(usageCount)
+        is Resource -> toResourceRepresentation(usageCount, formattedLabels)
     }

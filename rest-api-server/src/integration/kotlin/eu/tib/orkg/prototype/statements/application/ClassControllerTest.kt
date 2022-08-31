@@ -391,6 +391,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
         fieldWithPath("extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic"."""),
         fieldWithPath("organization_id").description("The ID of the organization that maintains this resource."),
         fieldWithPath("shared").description("The number of times this resource is shared"),
+        fieldWithPath("formatted_label").description("The formatted label of the resource if available").optional(),
         fieldWithPath("_class").description("Resource").optional(),
         fieldWithPath("verified").description("Verified").optional().ignored(),
         fieldWithPath("featured").description("Featured").optional().ignored(),

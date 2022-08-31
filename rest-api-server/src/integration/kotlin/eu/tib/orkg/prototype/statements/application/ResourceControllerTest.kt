@@ -5,7 +5,9 @@ import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.services.LiteralService
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize
@@ -45,6 +47,9 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     @Autowired
     private lateinit var statementService: StatementUseCases
 
+    @Autowired
+    private lateinit var literalService: LiteralService
+
     @BeforeEach
     fun setup() {
         val tempPageable = PageRequest.of(0, 10)
@@ -53,11 +58,13 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         classService.removeAll()
         predicateService.removeAll()
         statementService.removeAll()
+        literalService.removeAll()
 
         assertThat(service.findAll(tempPageable)).hasSize(0)
         assertThat(classService.findAll(tempPageable)).hasSize(0)
         assertThat(predicateService.findAll(tempPageable)).hasSize(0)
         assertThat(statementService.findAll(tempPageable)).hasSize(0)
+        assertThat(literalService.findAll()).hasSize(0)
     }
 
     @Test
@@ -345,6 +352,98 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             )
     }
 
+    @Test
+    fun `fetch resource with the correct formatted label`() {
+        val value = "Wow!"
+        val id = createTemplateAndTypedResource(value)
+
+        mockMvc
+            .perform(getRequestTo("/api/resources/$id"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.formatted_label").value("xx${value}xx"))
+            .andDo(
+                document(
+                    snippet,
+                    responseFields(resourceResponseFields())
+                )
+            )
+    }
+
+    fun createTemplateAndTypedResource(value: String): ResourceId {
+        // create required classes and predicates
+        val templateClass = classService.create(
+            CreateClassRequest(
+                ClassId("ContributionTemplate"),
+                "Contribution Template",
+                null
+            )
+        )
+        val throwAwayClass = classService.create("Templated Class")
+        val templateLabelPredicate = predicateService.create(
+            CreatePredicateRequest(
+                PredicateId("TemplateLabelFormat"),
+                "Template label format"
+            )
+        )
+        val templateClassPredicate = predicateService.create(
+            CreatePredicateRequest(
+                PredicateId("TemplateOfClass"),
+                "Template of class"
+            )
+        )
+        val templateComponentPredicate = predicateService.create(
+            CreatePredicateRequest(
+                PredicateId("TemplateComponent"),
+                "Template component"
+            )
+        )
+        val templateComponentClass = classService.create(
+            CreateClassRequest(
+                ClassId("TemplateComponentClass"),
+                "Template component class",
+                null
+            )
+        )
+        val throwAwayProperty = predicateService.create("Temp property")
+        val templateComponentPropertyPredicate = predicateService.create(
+            CreatePredicateRequest(
+                PredicateId("TemplateComponentProperty"),
+                "Template component property"
+            )
+        )
+        // create the template
+        val template = service.create(
+            CreateResourceRequest(
+                null,
+                "Throw-way template",
+                setOf(ClassId(templateClass.id.value))
+            )
+        )
+        val labelFormat = literalService.create("xx{${throwAwayProperty.id}}xx")
+        statementService.create(template.id.value, templateLabelPredicate.id, labelFormat.id.value)
+        statementService.create(template.id.value, templateClassPredicate.id, throwAwayClass.id.value)
+        val templateComponent = service.create(
+            CreateResourceRequest(
+                null,
+                "component 1",
+                setOf(ClassId(templateComponentClass.id.value))
+            )
+        )
+        statementService.create(template.id.value, templateComponentPredicate.id, templateComponent.id.value)
+        statementService.create(templateComponent.id.value, templateComponentPropertyPredicate.id, throwAwayProperty.id.value)
+        // Create resource and type it
+        val templatedResource = service.create(
+            CreateResourceRequest(
+                null,
+                "Fancy resource",
+                setOf(ClassId(throwAwayClass.id.value))
+            )
+        )
+        val someValue = literalService.create(value)
+        statementService.create(templatedResource.id.value, throwAwayProperty.id, someValue.id.value)
+        return templatedResource.id
+    }
+
     fun listOfDetailedResourcesResponseFields(): ResponseFieldsSnippet {
         return responseFields(pageableDetailedFieldParameters())
             .andWithPrefix(
@@ -367,7 +466,8 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("verified").description("Determines if the resource was verified by a curator.").optional()
                 .ignored(),
             fieldWithPath("featured").description("Featured Value").optional().ignored(),
-            fieldWithPath("unlisted").description("Unlisted Value").optional().ignored()
+            fieldWithPath("unlisted").description("Unlisted Value").optional().ignored(),
+            fieldWithPath("formatted_label").description("The formatted label of the resource if available").optional()
         )
 
         fun listOfResourcesResponseFields(): ResponseFieldsSnippet =

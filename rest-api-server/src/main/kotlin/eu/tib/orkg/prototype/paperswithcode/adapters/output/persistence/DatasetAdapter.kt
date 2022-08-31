@@ -8,11 +8,11 @@ import eu.tib.orkg.prototype.paperswithcode.application.domain.DatasetSummary
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.FindDatasetsQuery
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.SummarizeDatasetQuery
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import org.springframework.context.annotation.Primary
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 
-@Primary
 @Component
+@ConditionalOnProperty("orkg.features.pwc-legacy-model", havingValue = "false", matchIfMissing = true)
 class DatasetAdapter(
     val datasetRepository: Neo4jDatasetRepository
 ) : FindDatasetsQuery, SummarizeDatasetQuery {

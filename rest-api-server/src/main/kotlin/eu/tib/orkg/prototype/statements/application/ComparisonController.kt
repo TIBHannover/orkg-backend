@@ -1,8 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import eu.tib.orkg.prototype.statements.infrastructure.neo4j.Neo4jResourceService
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -16,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/comparisons")
 class ComparisonController(
-    private val neo4jResourceService: Neo4jResourceService,
-    private val service: ResourceService
+    private val neo4jResourceService: ResourceUseCases,
+    private val service: ResourceUseCases
 ) {
     @GetMapping("/metadata/featured", params = ["featured=true"])
     fun getFeaturedComparisons(pageable: Pageable) =
@@ -38,7 +37,7 @@ class ComparisonController(
     }
 
     @GetMapping("/{id}/metadata/featured")
-    fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean =
+    fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean? =
         service.getFeaturedResourceFlag(id)
 
     @GetMapping("/metadata/unlisted", params = ["unlisted=true"])
@@ -60,6 +59,5 @@ class ComparisonController(
     }
 
     @GetMapping("/{id}/metadata/unlisted")
-    fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean =
-        service.getUnlistedResourceFlag(id) ?: throw ResourceNotFound(id.toString())
+    fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean = service.getUnlistedResourceFlag(id)
 }

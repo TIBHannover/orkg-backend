@@ -1,18 +1,18 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
-import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.api.ClassRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.CreateStatement
-import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
-import eu.tib.orkg.prototype.statements.domain.model.Literal
-import eu.tib.orkg.prototype.statements.domain.model.Predicate
+import eu.tib.orkg.prototype.statements.api.LiteralRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
-import eu.tib.orkg.prototype.statements.domain.model.StatementService
-import eu.tib.orkg.prototype.statements.domain.model.Thing
+import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
+import eu.tib.orkg.prototype.statements.api.ThingRepresentation
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpEntity
@@ -36,18 +36,18 @@ import org.springframework.web.util.UriComponentsBuilder
 @RestController
 @RequestMapping("/api/statements")
 class StatementController(
-    private val statementService: StatementService
+    private val statementService: StatementUseCases
 ) : BaseController() {
 
     @GetMapping("/")
     fun findAll(
         pageable: Pageable
-    ): Iterable<StatementResponse> {
+    ): Iterable<StatementRepresentation> {
         return statementService.findAll(pageable)
     }
 
     @GetMapping("/{statementId}")
-    fun findById(@PathVariable statementId: StatementId): HttpEntity<StatementResponse> {
+    fun findById(@PathVariable statementId: StatementId): HttpEntity<StatementRepresentation> {
         val foundStatement =
             statementService.findById(statementId)
         if (foundStatement.isPresent)
@@ -59,7 +59,7 @@ class StatementController(
     fun findBySubject(
         @PathVariable subjectId: String,
         pageable: Pageable
-    ): HttpEntity<Page<GeneralStatement>> {
+    ): HttpEntity<Page<StatementRepresentation>> {
         return ok(statementService.findAllBySubject(subjectId, pageable))
     }
 
@@ -68,7 +68,7 @@ class StatementController(
         @PathVariable subjectId: String,
         @PathVariable predicateId: PredicateId,
         pageable: Pageable
-    ): HttpEntity<Iterable<StatementResponse>> {
+    ): HttpEntity<Iterable<StatementRepresentation>> {
         return ok(statementService.findAllBySubjectAndPredicate(subjectId, predicateId, pageable))
     }
 
@@ -76,7 +76,7 @@ class StatementController(
     fun findByPredicate(
         @PathVariable predicateId: PredicateId,
         pageable: Pageable
-    ): HttpEntity<Iterable<StatementResponse>> {
+    ): HttpEntity<Iterable<StatementRepresentation>> {
         return ok(statementService.findAllByPredicate(predicateId, pageable))
     }
 
@@ -86,7 +86,7 @@ class StatementController(
         @PathVariable literal: String,
         @RequestParam("subjectClass", required = false) subjectClass: ClassId?,
         pageable: Pageable
-    ): HttpEntity<Iterable<StatementResponse>> {
+    ): HttpEntity<Iterable<StatementRepresentation>> {
         val result = when (subjectClass) {
             null -> statementService.findAllByPredicateAndLabel(predicateId, literal, pageable)
             else -> statementService.findAllByPredicateAndLabelAndSubjectClass(
@@ -101,7 +101,7 @@ class StatementController(
     fun findByObject(
         @PathVariable objectId: String,
         pageable: Pageable
-    ): Page<GeneralStatement> {
+    ): Page<StatementRepresentation> {
         return statementService.findAllByObject(objectId, pageable)
     }
 
@@ -110,14 +110,14 @@ class StatementController(
         @PathVariable objectId: String,
         @PathVariable predicateId: PredicateId,
         pageable: Pageable
-    ): HttpEntity<Iterable<StatementResponse>> {
+    ): HttpEntity<Iterable<StatementRepresentation>> {
         return ok(statementService.findAllByObjectAndPredicate(objectId, predicateId, pageable))
     }
 
     @PostMapping("/")
     @ResponseStatus(CREATED)
     fun add(@RequestBody statement: CreateStatement, uriComponentsBuilder: UriComponentsBuilder):
-        HttpEntity<StatementResponse> {
+        HttpEntity<StatementRepresentation> {
         val userId = authenticatedUserId()
         val body = statementService.create(
             ContributorId(userId),
@@ -137,7 +137,7 @@ class StatementController(
     fun edit(
         @PathVariable id: StatementId,
         @RequestBody(required = true) statementEditRequest: StatementEditRequest
-    ): ResponseEntity<StatementResponse> {
+    ): ResponseEntity<StatementRepresentation> {
         val foundStatement = statementService.findById(id)
 
         if (!foundStatement.isPresent)
@@ -163,7 +163,7 @@ class StatementController(
         if (!foundStatement.isPresent)
             return notFound().build()
 
-        statementService.remove(foundStatement.get().id!!)
+        statementService.remove(foundStatement.get().id)
 
         return ResponseEntity.noContent().build()
     }
@@ -190,13 +190,12 @@ class StatementController(
         )
     }
 
-    private fun getIdAsString(thing: Thing): String =
+    private fun getIdAsString(thing: ThingRepresentation): String =
         when (thing) {
-            is Resource -> thing.id!!.value
-            is Literal -> thing.id!!.value
-            is Predicate -> thing.id!!.value
-            is Class -> thing.id!!.value
-            else -> thing.toString()
+            is ResourceRepresentation -> thing.id.value
+            is LiteralRepresentation -> thing.id.value
+            is PredicateRepresentation -> thing.id.value
+            is ClassRepresentation -> thing.id.value
         }
 }
 

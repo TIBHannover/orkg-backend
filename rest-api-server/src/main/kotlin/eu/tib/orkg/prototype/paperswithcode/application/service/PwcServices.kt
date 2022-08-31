@@ -8,10 +8,11 @@ import eu.tib.orkg.prototype.paperswithcode.application.port.input.RetrieveDatas
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.FindDatasetsQuery
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.SummarizeBenchmarkQuery
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.SummarizeDatasetQuery
-import eu.tib.orkg.prototype.statements.domain.model.ProblemService
-import eu.tib.orkg.prototype.statements.domain.model.ResearchFieldService
+import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import java.util.Optional
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Service
@@ -20,25 +21,31 @@ import org.springframework.stereotype.Service
 @Service
 class BenchmarkService(
     private val summarizeBenchmark: SummarizeBenchmarkQuery,
-    private val researchFieldService: ResearchFieldService
+    private val researchFieldService: RetrieveResearchFieldUseCase,
+    private val flags: FeatureFlagService,
 ) : RetrieveBenchmarkUseCase {
     override fun summariesForResearchField(id: ResourceId): Optional<List<BenchmarkSummary>> {
         val researchField = researchFieldService.findById(id)
         if (!researchField.isPresent)
             return Optional.empty()
         return Optional.of(
-            summarizeBenchmark.byResearchField(researchField.get().id!!)
+            summarizeBenchmark.byResearchField(researchField.get().id)
         )
     }
+
+    override fun summary(): Optional<List<BenchmarkSummary>> = if (flags.isPapersWithCodeLegacyModelEnabled())
+        error("This method is not supported in the PwC legacy model! Calling it is a bug!")
+    else
+        Optional.of(summarizeBenchmark.getAll())
 }
 
 @Primary
 @Service
 class DatasetService(
     private val findDatasets: FindDatasetsQuery,
-    private val researchProblemService: ProblemService,
+    private val researchProblemService: RetrieveResearchProblemUseCase,
     private val summarizeDataset: SummarizeDatasetQuery,
-    private val resourceService: ResourceService
+    private val resourceService: ResourceUseCases
 ) : RetrieveDatasetUseCase {
     override fun forResearchProblem(id: ResourceId): Optional<List<Dataset>> {
         val problem = researchProblemService.findById(id)

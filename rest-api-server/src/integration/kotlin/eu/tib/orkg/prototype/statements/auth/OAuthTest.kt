@@ -31,4 +31,12 @@ class OAuthTest {
         val token = OrkgApiClient(port).getAccessToken("user@example.org", "user")
         assertThat(token).isNotNull()
     }
+
+    @Test
+    @Suppress("UsePropertyAccessSyntax")
+    fun `when email address is different between registration and login, it should work nevertheless`() {
+        userService.registerUser("This.User@example.org", "user", "User")
+        val token = OrkgApiClient(port).getAccessToken("this.user@example.org", "user")
+        assertThat(token).isNotNull()
+    }
 }

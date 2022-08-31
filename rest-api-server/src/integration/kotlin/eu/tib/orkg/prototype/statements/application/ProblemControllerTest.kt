@@ -2,15 +2,16 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ClassService
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.domain.model.PredicateService
-import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import eu.tib.orkg.prototype.statements.domain.model.StatementService
+import eu.tib.orkg.prototype.statements.services.PredicateService
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,28 +32,39 @@ import org.springframework.transaction.annotation.Transactional
 class ProblemControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var resourceService: ResourceService
+    private lateinit var resourceService: ResourceUseCases
 
     @Autowired
-    private lateinit var classService: ClassService
+    private lateinit var classService: ClassUseCases
 
     @Autowired
     private lateinit var predicateService: PredicateService
 
     @Autowired
-    private lateinit var statementService: StatementService
+    private lateinit var statementService: StatementUseCases
 
     @Autowired
     private lateinit var userService: UserService
 
+    @BeforeEach
+    fun setup() {
+        predicateService.removeAll()
+        resourceService.removeAll()
+        classService.removeAll()
+
+        classService.create(CreateClassRequest(ClassId("Problem"), "Problem", null))
+        classService.create(CreateClassRequest(ClassId("Contribution"), "Contribution", null))
+        predicateService.create(CreatePredicateRequest(PredicateId("P32"), "addresses"))
+    }
+
     @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun getUsersPerProblem() {
-        val problemClassId = classService.create(CreateClassRequest(ClassId("Problem"), "Problem", null)).id!!
-        val contributionClassId = classService.create(CreateClassRequest(ClassId("Contribution"), "Contribution", null)).id!!
-        val predicate = predicateService.create(CreatePredicateRequest(PredicateId("P32"), "addresses")).id!!
+        val problemClassId = ClassId("Problem")
+        val contributionClassId = ClassId("Contribution")
+        val predicate = PredicateId("P32")
 
-        val problem = resourceService.create(CreateResourceRequest(null, "save the world", setOf(problemClassId))).id!!
+        val problem = resourceService.create(CreateResourceRequest(null, "save the world", setOf(problemClassId))).id
 
         val userEmail = "test@testemail.com"
         if (!userService.findByEmail(userEmail).isPresent)
@@ -66,12 +78,12 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
             ObservatoryId.createUnknownObservatory(),
             ExtractionMethod.MANUAL,
             OrganizationId.createUnknownOrganization()
-        ).id!!
+        ).id
 
         statementService.create(contributor, contribution.value, predicate, problem.value)
 
         mockMvc
-            .perform(getRequestTo("/api/problems/$problem/users?items=4"))
+            .perform(getRequestTo("/api/problems/$problem/users?size=4"))
             .andExpect(status().isOk)
             .andDo { println(it.response.contentAsString) }
             .andDo(
@@ -79,7 +91,7 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
                     snippet,
                     requestParameters(
                         parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
-                        parameterWithName("items").description("Number of items to fetch per page (default: 10)").optional()
+                        parameterWithName("size").description("Number of items to fetch per page (default: 10)").optional()
                     ),
                     listOfUsersPerProblemResponseFields()
                 )

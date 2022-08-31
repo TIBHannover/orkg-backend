@@ -1,5 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import eu.tib.orkg.prototype.statements.api.LiteralRepresentation
+import eu.tib.orkg.prototype.statements.services.toLiteralRepresentation
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import org.assertj.core.api.Assertions.assertThat
@@ -17,9 +19,8 @@ import org.springframework.boot.test.json.JacksonTester
 @DisplayName("Literal JSON Serialization Tests")
 class LiteralJsonTest {
 
-    @Suppress("SpringJavaInjectionPointsAutowiringInspection") // Bug in IDEA, works fine.
     @Autowired
-    private lateinit var json: JacksonTester<Literal>
+    private lateinit var json: JacksonTester<LiteralRepresentation>
 
     @Nested
     @DisplayName("Given a Literal with default values")
@@ -57,7 +58,7 @@ class LiteralJsonTest {
     @DisplayName("Given a Literal with provided values")
     inner class GivenALiteralWithProvidedValues {
 
-        private val serializedLiteral = createLiteral().copy(datatype = "xs:number").serialize()
+        private val serializedLiteral = createLiteral(datatype = "xs:number").serialize()
 
         @Test
         @DisplayName("then the ID should be the same")
@@ -86,12 +87,13 @@ class LiteralJsonTest {
 
     // TODO: Test that "_class" cannot be set or changed
 
-    private fun createLiteral() =
+    private fun createLiteral(datatype: String? = null) =
         Literal(
             id = LiteralId(100),
             label = "label",
-            createdAt = OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3))
-        )
+            createdAt = OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3)),
+            datatype = datatype ?: "xsd:string"
+        ).toLiteralRepresentation()
 
-    private fun Literal.serialize() = json.write(this)
+    private fun LiteralRepresentation.serialize() = json.write(this)
 }

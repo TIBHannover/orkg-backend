@@ -12,6 +12,7 @@ data class StatementId(val value: String) : Comparable<StatementId> {
     init {
         require(value.isNotBlank()) { "ID must not be blank" }
         require(value.startsWith("S")) { "ID must start with \"S\"" }
+        require(value.matches(VALID_ID_REGEX)) { "Must only contain alphanumeric characters, dashes and underscores" }
     }
 
     constructor(value: Long) : this("S$value") {

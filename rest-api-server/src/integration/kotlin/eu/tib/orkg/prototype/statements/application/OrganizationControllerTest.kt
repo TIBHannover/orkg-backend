@@ -2,14 +2,15 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
-import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -39,7 +40,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
     private lateinit var observatoryService: ObservatoryService
 
     @Autowired
-    private lateinit var resourceService: ResourceService
+    private lateinit var resourceService: ResourceUseCases
 
     @BeforeEach
     fun setup() {
@@ -55,7 +56,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
     @Test
     fun index() {
         val userId = createTestUser()
-        service.create("test organization", userId, "www.example.org", "organization-test")
+        service.create("test organization", userId, "www.example.org", "organization-test", OrganizationType.GENERAL)
 
         mockMvc
             .perform(getRequestTo("/api/organizations/"))
@@ -70,7 +71,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun fetch() {
-        val organizationId = service.create("test organization", ContributorId.createUnknownContributor(), "www.example.org", "test-organization").id
+        val organizationId = service.create("test organization", ContributorId.createUnknownContributor(), "www.example.org", "test-organization", OrganizationType.GENERAL).id
 
         mockMvc
             .perform(getRequestTo("/api/organizations/$organizationId"))
@@ -78,7 +79,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    responseFields(organizationResponseFields())
+                    responseFields(organizationResponseFields(OrganizationType))
                 )
             )
     }
@@ -86,7 +87,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
     @Test
     fun lookUpObservatoriesByOrganization() {
         val userId = createTestUser()
-        val organizationId = service.create("test organization", userId, "www.example.org", "organization_test").id
+        val organizationId = service.create("test organization", userId, "www.example.org", "organization_test", OrganizationType.GENERAL).id
         val resource = createTestResource(ContributorId.createUnknownContributor(), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
         observatoryService.create("test observatory", "example description", service.findById(organizationId!!).get(), resource.id.toString(), "test_observatory").id!!
 
@@ -106,23 +107,26 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
         return ContributorId(userService.findByEmail("abc@gmail.com").get().id!!)
     }
 
-    fun createTestResource(userId: ContributorId, organizationId: OrganizationId, observatoryId: ObservatoryId, resourceType: String): Resource {
+    fun createTestResource(userId: ContributorId, organizationId: OrganizationId, observatoryId: ObservatoryId, resourceType: String): ResourceRepresentation {
         return resourceService.create(userId, CreateResourceRequest(null, "test paper", setOf(ClassId(resourceType))), observatoryId, ExtractionMethod.UNKNOWN, organizationId)
     }
 
     companion object RestDoc {
-        private fun organizationResponseFields() = listOf(
+        private fun organizationResponseFields(OrganizationType: OrganizationType.Companion) = listOf(
             fieldWithPath("id").description("The organization ID"),
             fieldWithPath("name").description("The organization name"),
             fieldWithPath("logo").description("The logo of the organization"),
             fieldWithPath("created_by").description("The ID of the user that created the organization."),
             fieldWithPath("homepage").description("The URL of the organization's homepage."),
             fieldWithPath("observatory_ids").description("The list of observatories that belong to this organization"),
-            fieldWithPath("display_id").description("The URL of an organization")
+            fieldWithPath("display_id").description("The URL of an organization"),
+            fieldWithPath("type").description(OrganizationType),
+            fieldWithPath("metadata.date").description("The date of the conference organization"),
+            fieldWithPath("metadata.is_double_blind").description("The review process type of the conference organization")
         )
 
         fun listOfOrganizationsResponseFields(): ResponseFieldsSnippet =
             responseFields(fieldWithPath("[]").description("A list of organizations"))
-                .andWithPrefix("[].", organizationResponseFields())
+                .andWithPrefix("[].", organizationResponseFields(OrganizationType))
     }
 }

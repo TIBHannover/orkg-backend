@@ -1,13 +1,13 @@
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.springframework.boot.gradle.tasks.run.BootRun
 
 group = "eu.tib"
-version = "0.8.1-SNAPSHOT"
+version = "0.16.0"
 
 val neo4jVersion = "3.5.+" // should match version in Dockerfile
 val springDataNeo4jVersion = "5.3.4"
 val springSecurityOAuthVersion = "2.3.8"
-val testContainersVersion = "1.15.3"
+val testContainersVersion = "1.17.3"
 
 val containerRegistryLocation = "registry.gitlab.com/tibhannover/orkg/orkg-backend"
 val dockerImageTag: String? by project
@@ -23,7 +23,6 @@ plugins {
     id("com.coditory.integration-test") version "1.2.1"
     id("de.jansauer.printcoverage") version "2.0.0"
     id("org.asciidoctor.jvm.convert") version "3.3.2"
-    id("com.palantir.docker") version "0.25.0"
     id("com.google.cloud.tools.jib") version "3.1.1"
     id("org.barfuin.gradle.taskinfo") version "1.2.0"
     id("com.diffplug.spotless")
@@ -48,13 +47,12 @@ dependencies {
     // Platform alignment for ORKG components
     api(platform(project(":platform")))
 
-    val forkhandlesVersion = "2.0.0.0"
-    implementation(platform("dev.forkhandles:forkhandles-bom:$forkhandlesVersion"))
+    implementation(platform(kotlin("bom", "1.7.10")))
+    implementation(platform(libs.forkhandles.bom))
+    implementation(libs.forkhandles.result4k)
+    implementation(libs.forkhandles.values4k)
 
     kapt("org.springframework.boot:spring-boot-configuration-processor")
-
-    implementation("dev.forkhandles:result4k")
-    implementation("dev.forkhandles:values4k")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.postgresql:postgresql")
@@ -70,12 +68,12 @@ dependencies {
     implementation("org.springframework.data:spring-data-neo4j:$springDataNeo4jVersion.RELEASE")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     // JAXB stuff. Was removed from Java 9. Seems to be needed for OAuth2.
-    implementation("javax.xml.bind:jaxb-api:2.3.0")
-    implementation("javax.activation:activation:1.1")
-    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.0")
-    implementation("com.google.code.findbugs:jsr305:3.0.2") // provides @Nullable and other JSR305 annotations
+    implementation(libs.bundles.jaxb)
+    implementation(libs.annotations.jsr305) // provides @Nullable and other JSR305 annotations
     // RDF
-    implementation("org.eclipse.rdf4j:rdf4j-client:3.6.3")
+    implementation("org.eclipse.rdf4j:rdf4j-client:3.7.7") {
+        exclude(group = "commons-collections", module = "commons-collections") // Version 3, vulnerable
+    }
     implementation("io.github.config4k:config4k:0.4.2") {
         because("Required for parsing the essential entity configuration")
     }
@@ -84,55 +82,90 @@ dependencies {
     //
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
-
-    // TestContainers
-    testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
-    testImplementation("org.testcontainers:junit-jupiter:$testContainersVersion")
-    testImplementation("org.testcontainers:postgresql:$testContainersVersion")
-    testImplementation("org.testcontainers:neo4j:$testContainersVersion")
+    testImplementation(libs.bundles.testcontainers)
+    testImplementation(libs.kotest.assertions.core)
 
     //
     // Documentation
     //
     "asciidoctor"("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.4.RELEASE")
+
+    // Security-related adjustments
+    testImplementation("junit:junit") {
+        version {
+            strictly("[4.13.1,5.0[")
+            because("Vulnerable to CVE-2020-15250")
+        }
+    }
+    implementation("commons-beanutils:commons-beanutils") {
+        exclude(group = "commons-collections", module = "commons-collections")
+        version {
+            strictly("[1.9.4,2[")
+            because("Vulnerable to CVE-2019-10086, CVE-2014-0114")
+        }
+    }
+    implementation("org.apache.commons:commons-collections4") {
+        // group is either common-collections or org.apache.commons
+        version {
+            strictly("[4.3,5.0[")
+            because("Vulnerable to Cx78f40514-81ff, CWE-674")
+        }
+    }
+    implementation("org.apache.httpcomponents:httpclient") {
+        version {
+            strictly("[4.5.13,5.0[")
+            because("Vulnerable to CVE-2020-13956")
+        }
+    }
 }
 
-val snippetsDir = file("build/generated-snippets")
-
 tasks {
-    val build by existing
-    val integrationTest by existing
-
-    // Wire tasks so they always generate a coverage report and print the coverage on build
-    val check by existing { dependsOn(jacocoTestCoverageVerification, jacocoTestReport, printCoverage) }
-    val jacocoTestCoverageVerification by existing { mustRunAfter(test, integrationTest) }
-    val printCoverage by existing { mustRunAfter(jacocoTestCoverageVerification) }
-
-    withType(KotlinCompile::class.java).configureEach {
-        kotlinOptions.jvmTarget = "${JavaVersion.VERSION_11}"
+    val integrationTest by existing(Test::class) {
+        // Declare snippets generated by Spring RestDoc as output, so that they can be cached.
+        outputs.dir(layout.buildDirectory.dir("generated-snippets")).withPropertyName("snippetsOutputDirectory")
     }
 
-    withType(Test::class.java).configureEach {
-        outputs.dir(snippetsDir)
+    // Wire tasks, so they always generate a coverage report and print the coverage on build
+    val printCoverage by existing { mustRunAfter(jacocoTestReport) }
+    val check by existing { dependsOn(printCoverage) }
+
+    withType<Test>().configureEach {
+        useJUnitPlatform {
+            // Exclude test marked as "development", because those are for features only used in dev, and rather slow.
+            excludeTags = setOf("development")
+        }
     }
 
-    named("dokka", org.jetbrains.dokka.gradle.DokkaTask::class) {
+    named("bootJar", org.springframework.boot.gradle.tasks.bundling.BootJar::class).configure {
+        enabled = true
+        archiveClassifier.set("boot")
+    }
+
+    named("bootRun", BootRun::class.java).configure {
+        args("--spring.profiles.active=development")
+    }
+
+    named("dokka", org.jetbrains.dokka.gradle.DokkaTask::class).configure {
         outputFormat = "html"
         configuration {
             includes = listOf("packages.md")
         }
     }
 
-    jacocoTestReport {
-        mustRunAfter(test, integrationTest)
+    withType<JacocoReport>().configureEach {
         reports {
             html.required.set(true)
         }
     }
 
     named("asciidoctor", AsciidoctorTask::class).configure {
-        inputs.dir(snippetsDir)
-        dependsOn(integrationTest)
+        // Declare all generated Asciidoc snippets as inputs. This connects the tasks, so dependsOn() is not required.
+        // Other outputs are filtered, because they do not affect the output of this task.
+        inputs.files(integrationTest.get().outputs.files.asFileTree.matching { include("**/*.adoc") })
+            .withPathSensitivity(PathSensitivity.RELATIVE)
+            .ignoreEmptyDirectories()
+            .withPropertyName("restdocSnippets")
+
         configurations("asciidoctor")
         // TODO: Use {includedir} in documentation, change strategy afterwards
         baseDirFollowsSourceFile()
@@ -165,37 +198,28 @@ tasks {
             }
         )
     }
+}
 
-    docker {
-        dependsOn(build.get())
-        pull(true)
-        val tag = dockerImageTag ?: "latest"
-        name = "$containerRegistryLocation:$tag"
-        files(bootJar.get().outputs)
-        copySpec.from("build/libs").into("build/libs")
+jib {
+    to {
+        image = containerRegistryLocation
     }
+}
 
-    jib {
-        to {
-            image = containerRegistryLocation
-        }
-    }
-
-    spotless {
-        kotlin {
-            ktlint().userData(
-                // TODO: This should be moved to .editorconfig once the Gradle plug-in supports that.
-                mapOf(
-                    "ij_kotlin_code_style_defaults" to "KOTLIN_OFFICIAL",
-                    // Disable some rules to keep the changes minimal
-                    "disabled_rules" to "no-wildcard-imports,filename,import-ordering,indent",
-                    "ij_kotlin_imports_layout" to "*,^",
-                )
+spotless {
+    kotlin {
+        ktlint().userData(
+            // TODO: This should be moved to .editorconfig once the Gradle plug-in supports that.
+            mapOf(
+                "ij_kotlin_code_style_defaults" to "KOTLIN_OFFICIAL",
+                // Disable some rules to keep the changes minimal
+                "disabled_rules" to "no-wildcard-imports,filename,import-ordering,indent",
+                "ij_kotlin_imports_layout" to "*,^",
             )
-        }
-        kotlinGradle {
-            ktlint()
-        }
+        )
+    }
+    kotlinGradle {
+        ktlint()
     }
 }
 

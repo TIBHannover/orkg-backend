@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.statements.domain.model.ClassService
-import eu.tib.orkg.prototype.statements.domain.model.PredicateService
-import eu.tib.orkg.prototype.statements.domain.model.ResourceService
+import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.services.PredicateService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -18,13 +18,13 @@ import org.springframework.transaction.annotation.Transactional
 class VocabControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var resourceService: ResourceService
+    private lateinit var resourceService: ResourceUseCases
 
     @Autowired
     private lateinit var predicateService: PredicateService
 
     @Autowired
-    private lateinit var classService: ClassService
+    private lateinit var classService: ClassUseCases
 
     @BeforeEach
     fun setup() {
@@ -41,7 +41,7 @@ class VocabControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun resource() {
-        val id = resourceService.create("Resource 1").id!!
+        val id = resourceService.create("Resource 1").id
 
         mockMvc
             .perform(getRequestTo("/api/vocab/resource/$id"))
@@ -55,7 +55,7 @@ class VocabControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun predicate() {
-        val id = predicateService.create("Predicate 1").id!!
+        val id = predicateService.create("Predicate 1").id
 
         mockMvc
             .perform(getRequestTo("/api/vocab/predicate/$id"))
@@ -69,7 +69,7 @@ class VocabControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun clazz() {
-        val id = classService.create("Class 1").id!!
+        val id = classService.create("Class 1").id
 
         mockMvc
             .perform(getRequestTo("/api/vocab/class/$id"))

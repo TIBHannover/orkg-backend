@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     kotlin("jvm")
     jacoco
@@ -9,11 +11,18 @@ dependencies {
 }
 
 tasks {
-    withType(Test::class.java).configureEach {
+
+    withType<KotlinCompile>().configureEach {
+        kotlinOptions {
+            jvmTarget = "11"
+        }
+    }
+
+    withType<Test>().configureEach {
         useJUnitPlatform()
     }
 
-    jacocoTestReport {
+    withType<JacocoReport>().configureEach {
         reports {
             xml.required.set(true)
         }

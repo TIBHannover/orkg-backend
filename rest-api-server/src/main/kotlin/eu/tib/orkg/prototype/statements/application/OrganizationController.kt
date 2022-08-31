@@ -9,6 +9,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.Organization
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationType
 import java.io.File
 import java.util.Base64
 import java.util.UUID
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
+import java.time.LocalDate
 
 @RestController
 @RequestMapping("/api/organizations/")
@@ -38,13 +40,63 @@ class OrganizationController(
     var imageStoragePath: String? = null
 
     @PostMapping("/")
-    fun addOrganization(@RequestBody @Valid organization: CreateOrganizationRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
+    fun addOrganization(
+        @RequestBody @Valid organization: CreateOrganizationRequest,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<Any> {
         if (!isValidLogo(organization.organizationLogo)) {
             return ResponseEntity.badRequest().body(
-                    ErrorMessage(message = "Please upload a valid image"))
+                ErrorMessage(message = "Please upload a valid image")
+            )
         } else {
             return if (service.findByName(organization.organizationName).isEmpty && service.findByDisplayId(organization.displayId).isEmpty) {
-                val response = (service.create(organization.organizationName, organization.createdBy, organization.url, organization.displayId))
+                val response = (service.create(
+                    organization.organizationName,
+                    organization.createdBy,
+                    organization.url,
+                    organization.displayId,
+                    OrganizationType.fromOrNull(organization.type)!!
+                ))
+                decoder(organization.organizationLogo, response.id)
+                val location = uriComponentsBuilder
+                    .path("api/organizations/{id}")
+                    .buildAndExpand(response.id)
+                    .toUri()
+                ResponseEntity.created(location).body(service.findById(response.id!!).get())
+            } else {
+                ResponseEntity.badRequest().body(
+                    ErrorMessage(message = "Organization with same name or URL already exist")
+                )
+            }
+        }
+    }
+
+    @PostMapping("/conference")
+    fun addConference(
+        @RequestBody @Valid organization: CreateOrganizationRequest,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<Any> {
+        val orgType = OrganizationType.fromOrNull(organization.type)!!
+        if (orgType != OrganizationType.CONFERENCE) {
+            return conferenceTypeError()
+        } else if (organization.metadata?.date == null || organization.metadata.isDoubleBlind == null) {
+            return ResponseEntity.badRequest().body(
+                ErrorMessage(message = "Conference metadata is missing")
+            )
+        } else if (!isValidLogo(organization.organizationLogo)) {
+            return ResponseEntity.badRequest().body(
+                ErrorMessage(message = "Please upload a valid image")
+            )
+        } else {
+            return if (service.findByName(organization.organizationName).isEmpty && service.findByDisplayId(organization.displayId).isEmpty) {
+                val response = (service.createConference(
+                    organization.organizationName,
+                    organization.createdBy,
+                    organization.url,
+                    organization.displayId,
+                    OrganizationType.fromOrNull(organization.type)!!,
+                    organization.metadata
+                ))
                 decoder(organization.organizationLogo, response.id)
                 val location = uriComponentsBuilder
                     .path("api/organizations/{id}")
@@ -80,7 +132,6 @@ class OrganizationController(
                 .orElseThrow { OrganizationNotFound(OrganizationId(id)) }
         }
         val logo = encoder(response.id.toString())
-
         return response.copy(logo = logo)
     }
 
@@ -93,8 +144,20 @@ class OrganizationController(
     fun findUsersByOrganizationId(@PathVariable id: OrganizationId): Iterable<Contributor> =
         contributorService.findUsersByOrganizationId(id)
 
+    @GetMapping("/conferences")
+    fun findConferences(): Iterable<Organization> {
+        val response = service.listConferences()
+        response.forEach {
+            it.logo = encoder(it.id.toString())
+        }
+        return response
+    }
+
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateOrganizationName(@PathVariable id: OrganizationId, @RequestBody @Valid name: UpdateRequest): Organization {
+    fun updateOrganizationName(
+        @PathVariable id: OrganizationId,
+        @RequestBody @Valid name: UpdateRequest
+    ): Organization {
         val response = findOrganization(id)
         response.name = name.value
 
@@ -113,8 +176,48 @@ class OrganizationController(
         return updatedOrganization
     }
 
+    @RequestMapping("{id}/type", method = [RequestMethod.POST, RequestMethod.PUT])
+    fun updateOrganizationType(@PathVariable id: OrganizationId, @RequestBody @Valid type: UpdateRequest): Organization {
+        val response = findOrganization(id)
+        response.type = OrganizationType.fromOrNull(type.value)!!
+
+        val updatedOrganization = service.updateOrganization(response)
+        updatedOrganization.logo = encoder(updatedOrganization.id.toString())
+        return updatedOrganization
+    }
+
+    @RequestMapping("{id}/date", method = [RequestMethod.POST, RequestMethod.PUT])
+    fun updateConferenceDate(@PathVariable id: OrganizationId, @RequestBody @Valid date: UpdateRequest): ResponseEntity<Any> {
+        val response = findOrganization(id)
+        return if (response.type == OrganizationType.CONFERENCE) {
+            response.metadata?.date = LocalDate.parse(date.value)
+            val updatedOrganization = service.updateOrganization(response)
+            updatedOrganization.logo = encoder(updatedOrganization.id.toString())
+            ResponseEntity.ok(updatedOrganization)
+        } else {
+            conferenceTypeError()
+        }
+    }
+
+    @RequestMapping("{id}/process", method = [RequestMethod.POST, RequestMethod.PUT])
+    fun updateConferenceProcess(@PathVariable id: OrganizationId, @RequestBody @Valid date: UpdateRequest): ResponseEntity<Any> {
+        val response = findOrganization(id)
+        return if (response.type == OrganizationType.CONFERENCE) {
+            response.metadata?.isDoubleBlind = date.value.toBoolean()
+            val updatedOrganization = service.updateOrganization(response)
+            updatedOrganization.logo = encoder(updatedOrganization.id.toString())
+            ResponseEntity.ok(updatedOrganization)
+        } else {
+            conferenceTypeError()
+        }
+    }
+
     @RequestMapping("{id}/logo", method = [RequestMethod.POST, RequestMethod.PUT])
-    fun updateOrganizationLogo(@PathVariable id: OrganizationId, @RequestBody @Valid submittedLogo: UpdateRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
+    fun updateOrganizationLogo(
+        @PathVariable id: OrganizationId,
+        @RequestBody @Valid submittedLogo: UpdateRequest,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<Any> {
         val response = findOrganization(id)
         val logo = submittedLogo.value
         return if (!isValidLogo(logo)) {
@@ -141,25 +244,23 @@ class OrganizationController(
 
     fun decoder(base64Str: String, name: OrganizationId?) {
         val (mimeType, encodedString) = base64Str.split(",")
-        val (extension, _) = (mimeType.substring(mimeType
-                                .indexOf("/") + 1))
-                                .split(";")
+        val (extension, _) = (mimeType.substring(mimeType.indexOf("/") + 1)).split(";")
 
         writeImage(encodedString, extension, name)
     }
 
-        fun writeImage(image: String, imageExtension: String, name: OrganizationId?) {
-            if (!File(imageStoragePath).isDirectory)
-                File(imageStoragePath).mkdir()
-            // check if logo already exist then delete it
-            File(imageStoragePath).walk().forEach {
-                if (it.name.substringBeforeLast(".") == name.toString()) {
-                    it.delete()
-                }
+    fun writeImage(image: String, imageExtension: String, name: OrganizationId?) {
+        if (!File(imageStoragePath).isDirectory)
+            File(imageStoragePath).mkdir()
+        // check if logo already exist then delete it
+        File(imageStoragePath).walk().forEach {
+            if (it.name.substringBeforeLast(".") == name.toString()) {
+                it.delete()
             }
-            val imagePath = "$imageStoragePath/$name.$imageExtension"
-            val imageByteArray = Base64.getDecoder().decode(image)
-            File(imagePath).writeBytes(imageByteArray)
+        }
+        val imagePath = "$imageStoragePath/$name.$imageExtension"
+        val imageByteArray = Base64.getDecoder().decode(image)
+        File(imagePath).writeBytes(imageByteArray)
     }
 
     fun encoder(id: String): String {
@@ -175,7 +276,8 @@ class OrganizationController(
         }
         return readImage(file, ext)
     }
-        fun readImage(file: String, imageExtension: String): String {
+
+    fun readImage(file: String, imageExtension: String): String {
         if (file != "") {
             val bytes = File(file).readBytes()
             val base64 = Base64.getEncoder().encodeToString(bytes)
@@ -197,6 +299,12 @@ class OrganizationController(
         }
     }
 
+    fun conferenceTypeError(): ResponseEntity<Any> {
+        return ResponseEntity.badRequest().body(
+            ErrorMessage(message = "Must be a conference type")
+        )
+    }
+
     data class CreateOrganizationRequest(
         @JsonProperty("organization_name")
         val organizationName: String,
@@ -211,7 +319,10 @@ class OrganizationController(
         )
         @field:NotBlank
         @JsonProperty("display_id")
-        val displayId: String
+        val displayId: String,
+        @field:NotBlank
+        val type: String,
+        val metadata: Metadata?
     )
 
     data class ErrorMessage(
@@ -222,5 +333,11 @@ class OrganizationController(
         @field:NotBlank
         @field:Size(min = 1)
         val value: String
+    )
+
+    data class Metadata(
+        val date: LocalDate?,
+        @JsonProperty("is_double_blind")
+        val isDoubleBlind: Boolean?
     )
 }

@@ -1,11 +1,13 @@
 package eu.tib.orkg.prototype.core.rest
 
+import eu.tib.orkg.prototype.statements.application.ForbiddenOperationException
 import eu.tib.orkg.prototype.statements.application.PropertyValidationException
 import eu.tib.orkg.prototype.toSnakeCase
 import java.time.OffsetDateTime
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -35,6 +37,15 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
             )
         }
 
+    @ExceptionHandler(ForbiddenOperationException::class)
+    fun handleForbiddenOperationException(ex: ForbiddenOperationException) =
+        buildForbiddenResponse(ex) {
+            // Use a list so that it is compatible to the javax.validation responses
+            listOf(
+                FieldValidationError(field = ex.property, message = ex.message)
+            )
+        }
+
     fun <T> buildBadRequestResponse(
         exception: T,
         block: (ex: T) -> List<FieldValidationError>
@@ -46,6 +57,19 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
             errors = errors
         )
         return ResponseEntity.badRequest().body(payload)
+    }
+
+    fun <T> buildForbiddenResponse(
+        exception: T,
+        block: (ex: T) -> List<FieldValidationError>
+    ): ResponseEntity<Any> {
+        val errors = block(exception)
+        val payload = ValidationFailureResponse(
+            status = FORBIDDEN.value(),
+            error = FORBIDDEN.reasonPhrase,
+            errors = errors
+        )
+        return ResponseEntity(payload, FORBIDDEN)
     }
 
     /**

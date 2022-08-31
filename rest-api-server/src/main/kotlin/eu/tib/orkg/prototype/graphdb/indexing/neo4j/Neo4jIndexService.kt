@@ -89,7 +89,54 @@ class Neo4jIndexService(
             ),
             PropertyIndex(
                 "Class",
-                "label")
+                "label"
+            ),
+            // These need to be property indexes, since resource_id is already part of a unique constraint.
+            PropertyIndex(
+                "Paper",
+                "resource_id"
+            ),
+            PropertyIndex(
+                "Contribution",
+                "resource_id"
+            ),
+            // Contributions are heavily used in SimComp, and sorted by date → index that!
+            PropertyIndex(
+                "Contribution",
+                "created_at"
+            ),
+            PropertyIndex(
+                "Comparison",
+                "resource_id"
+            ),
+            PropertyIndex(
+                "Visualization",
+                "resource_id"
+            ),
+            PropertyIndex(
+                "ResearchField",
+                "resource_id"
+            ),
+            PropertyIndex(
+                "Model",
+                "resource_id"
+            ),
+            PropertyIndex(
+                "Venue",
+                "resource_id"
+            ),
+            PropertyIndex(
+                "Dataset",
+                "resource_id"
+            ),
+            PropertyIndex(
+                "Evaluation",
+                "resource_id"
+            ),
+            PropertyIndex(
+                "Author",
+                "resource_id"
+            ),
         ).forEach { index ->
             try {
                 checkAndCreateConstraint(existingIndexes, index)

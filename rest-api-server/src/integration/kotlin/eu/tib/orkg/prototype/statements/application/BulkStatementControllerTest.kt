@@ -1,8 +1,10 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.statements.domain.model.PredicateService
-import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import eu.tib.orkg.prototype.statements.domain.model.StatementService
+import com.fasterxml.jackson.databind.ObjectMapper
+import eu.tib.orkg.prototype.statements.adapter.input.rest.bulk.BulkStatementEditRequest
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
+import eu.tib.orkg.prototype.statements.services.PredicateService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -25,13 +27,16 @@ import org.springframework.transaction.annotation.Transactional
 class BulkStatementControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var service: StatementService
+    private lateinit var service: StatementUseCases
 
     @Autowired
-    private lateinit var resourceService: ResourceService
+    private lateinit var resourceService: ResourceUseCases
 
     @Autowired
     private lateinit var predicateService: PredicateService
+
+    @Autowired
+    private lateinit var mapper: ObjectMapper
 
     @BeforeEach
     fun setup() {
@@ -58,10 +63,10 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
         val p1 = predicateService.create("blah")
         val p2 = predicateService.create("blub")
 
-        service.create(r1.id!!.value, p1.id!!, r2.id!!.value)
-        service.create(r1.id!!.value, p2.id!!, r3.id!!.value)
-        service.create(r4.id!!.value, p2.id!!, r3.id!!.value)
-        service.create(r4.id!!.value, p1.id!!, r5.id!!.value)
+        service.create(r1.id.value, p1.id, r2.id.value)
+        service.create(r1.id.value, p2.id, r3.id.value)
+        service.create(r4.id.value, p2.id, r3.id.value)
+        service.create(r4.id.value, p1.id, r5.id.value)
 
         mockMvc
             .perform(getRequestTo("/api/statements/subjects/?ids=${r1.id},${r4.id}"))
@@ -92,11 +97,11 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
         val p1 = predicateService.create("blah")
         val p2 = predicateService.create("blub")
 
-        service.create(r1.id!!.value, p1.id!!, r3.id!!.value)
-        service.create(r1.id!!.value, p1.id!!, r4.id!!.value)
-        service.create(r2.id!!.value, p2.id!!, r4.id!!.value)
-        service.create(r1.id!!.value, p1.id!!, r3.id!!.value)
-        service.create(r3.id!!.value, p2.id!!, r4.id!!.value)
+        service.create(r1.id.value, p1.id, r3.id.value)
+        service.create(r1.id.value, p1.id, r4.id.value)
+        service.create(r2.id.value, p2.id, r4.id.value)
+        service.create(r1.id.value, p1.id, r3.id.value)
+        service.create(r3.id.value, p2.id, r4.id.value)
 
         mockMvc
             .perform(getRequestTo("/api/statements/objects/?ids=${r3.id},${r4.id}"))
@@ -125,8 +130,8 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
         val r1 = resourceService.create("Leibniz")
         val p2 = predicateService.create("head quarter")
         val r2 = resourceService.create("Hanover, Germany")
-        val st1 = service.create(s.id!!.value, p1.id!!, r1.id!!.value)
-        val st2 = service.create(s.id!!.value, p2.id!!, r2.id!!.value)
+        val st1 = service.create(s.id.value, p1.id, r1.id.value)
+        val st2 = service.create(s.id.value, p2.id, r2.id.value)
 
         mockMvc.perform(deleteRequest("/api/statements/?ids=${st1.id},${st2.id}"))
             .andExpect(status().isNoContent)
@@ -142,32 +147,38 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @Disabled("Pending: Discussion with the frontend team regarding return value" +
-        "The output involves nested statements")
     fun editResourceStatements() {
         val s = resourceService.create("ORKG")
         val p = predicateService.create("created by")
         val o = resourceService.create("Awesome Team")
-        val st = service.create(s.id!!.value, p.id!!, o.id!!.value)
+        val st = service.create(s.id.value, p.id, o.id.value)
 
         val s2 = resourceService.create("Other projects")
         val o2 = resourceService.create("The A-Team")
-        val st2 = service.create(s2.id!!.value, p.id!!, o2.id!!.value)
+        val st2 = service.create(s2.id.value, p.id, o2.id.value)
 
         val newP = predicateService.create("with love from")
         val newO = resourceService.create("Hannover, Germany")
 
-        mockMvc.perform(putRequest("/api/statements/?ids=${st.id},${st2.id}"))
+        val payload = mapper.writeValueAsString(
+            BulkStatementEditRequest(
+                predicateId = newP.id,
+                objectId = newO.id.value,
+            )
+        )
+
+        mockMvc.perform(putRequest("/api/statements/?ids=${st.id},${st2.id}").content(payload))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$[0].statement.predicate.id").value(newP.id!!.toString()))
-            .andExpect(jsonPath("$[1].statement.object.id").value(newO.id!!.toString()))
+            .andExpect(jsonPath("$[0].statement.predicate.id").value(newP.id.toString()))
+            .andExpect(jsonPath("$[1].statement.object.id").value(newO.id.toString()))
             .andDo(
                 document(
                     snippet,
                     requestParameters(
                         parameterWithName("ids").description("the list of resource Ids to fetch on")
                     ),
-                    bulkStatementListEditResponseFields())
+                    bulkStatementListEditResponseFields()
+                )
             )
     }
 
@@ -182,6 +193,7 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statement.subject.featured").description("Indicates if the entity is marked as 'featured'. Featured entities can be set by the user to appear as one of the top results.").optional().ignored(),
             fieldWithPath("[].statement.subject.unlisted").description("Indicates if the entity is marked as 'unlisted'. Unlisted entities are visible only to the curators.").optional().ignored(),
             fieldWithPath("[].statement.subject.label").description("The label of the subject resource"),
+            fieldWithPath("[].statement.subject.formatted_label").description("The formatted label of the subject resource"),
             fieldWithPath("[].statement.subject._class").description("The type of the subject (resource, literal, etc...)."),
             fieldWithPath("[].statement.subject.created_at").description("The subject creation datetime"),
             fieldWithPath("[].statement.subject.created_by").description("The ID of the user that created the subject. All zeros if unknown."),
@@ -190,6 +202,7 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statement.subject.organization_id").description("The ID of the organization that maintains this resource."),
             fieldWithPath("[].statement.subject.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic"."""),
             fieldWithPath("[].statement.subject.shared").description("The number of time this resource has been shared"),
+            fieldWithPath("[].statement.subject.verified").description("Indicates if the resource was verified by curator.").optional(),
             fieldWithPath("[].statement.predicate").description("A predicate"),
             fieldWithPath("[].statement.predicate.id").description("The ID of the predicate"),
             fieldWithPath("[].statement.predicate.label").description("The label of the predicate"),
@@ -202,6 +215,7 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statement.object").description("An object"),
             fieldWithPath("[].statement.object.id").description("The ID of the object"),
             fieldWithPath("[].statement.object.label").description("The label of the object"),
+            fieldWithPath("[].statement.object.formatted_label").description("The formatted label of the object"),
             fieldWithPath("[].statement.object._class").description("The type of the object (resource, literal, etc...)."),
             fieldWithPath("[].statement.object.created_at").description("The object creation datetime"),
             fieldWithPath("[].statement.object.created_by").description("The ID of the user that created the object. All zeros if unknown."),
@@ -211,7 +225,8 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statement.object.extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic".""").optional().ignored(),
             fieldWithPath("[].statement.object.shared").optional().ignored(),
             fieldWithPath("[].statement.object.featured").description("Indicates if the entity is marked as 'featured'. Featured entities can be set by the user to appear as one of the top results.").optional().ignored(),
-            fieldWithPath("[].statement.object.unlisted").description("The unlisted value").optional().ignored()
+            fieldWithPath("[].statement.object.unlisted").description("The unlisted value").optional().ignored(),
+            fieldWithPath("[].statement.object.verified").description("Indicates if the resource was verified by curator.").optional(),
         )
 
     private fun bulkStatementListResponseFields() =
@@ -223,6 +238,7 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statements.[].subject").description("A resource"),
             fieldWithPath("[].statements.[].subject.id").description("The ID of the subject resource"),
             fieldWithPath("[].statements.[].subject.label").description("The label of the subject resource"),
+            fieldWithPath("[].statements.[].subject.formatted_label").description("The formatted label of the subject resource"),
             fieldWithPath("[].statements.[].subject._class").description("The type of the subject (resource, literal, etc...)."),
             fieldWithPath("[].statements.[].subject.created_at").description("The subject creation datetime"),
             fieldWithPath("[].statements.[].subject.created_by").description("The ID of the user that created the subject. All zeros if unknown."),
@@ -245,6 +261,7 @@ class BulkStatementControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("[].statements.[].object").description("An object"),
             fieldWithPath("[].statements.[].object.id").description("The ID of the object"),
             fieldWithPath("[].statements.[].object.label").description("The label of the object"),
+            fieldWithPath("[].statements.[].object.formatted_label").description("The formatted label of the object"),
             fieldWithPath("[].statements.[].object._class").description("The type of the object (resource, literal, etc...)."),
             fieldWithPath("[].statements.[].object.created_at").description("The object creation datetime"),
             fieldWithPath("[].statements.[].object.created_by").description("The ID of the user that created the object. All zeros if unknown."),

@@ -1,9 +1,10 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.domain.model.Literal
+import eu.tib.orkg.prototype.statements.api.LiteralRepresentation
+import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
-import eu.tib.orkg.prototype.statements.domain.model.LiteralService
+import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import org.springframework.http.HttpStatus.CREATED
@@ -24,10 +25,13 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/literals/")
-class LiteralController(private val service: LiteralService) : BaseController() {
+class LiteralController(
+    private val service: LiteralUseCases,
+    private val repository: LiteralRepository, // FIXME: Work-around, needs rewrite in service
+) : BaseController() {
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: LiteralId): Literal =
+    fun findById(@PathVariable id: LiteralId): LiteralRepresentation =
         service
             .findById(id)
             .orElseThrow { LiteralNotFound() }
@@ -36,20 +40,20 @@ class LiteralController(private val service: LiteralService) : BaseController() 
     fun findByLabel(
         @RequestParam("q", required = false) searchString: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean
-    ) =
+    ): Iterable<LiteralRepresentation> =
         if (searchString == null)
             service.findAll()
         else if (exactMatch)
-                service.findAllByLabel(searchString)
-            else
-                service.findAllByLabelContaining(searchString)
+            service.findAllByLabel(searchString)
+        else
+            service.findAllByLabelContaining(searchString)
 
     @PostMapping("/")
     @ResponseStatus(CREATED)
     fun add(
         @RequestBody @Valid literal: LiteralCreateRequest,
         uriComponentsBuilder: UriComponentsBuilder
-    ): ResponseEntity<Literal> {
+    ): ResponseEntity<LiteralRepresentation> {
         val userId = authenticatedUserId()
         val id = service.create(ContributorId(userId), literal.label, literal.datatype).id
         val location = uriComponentsBuilder
@@ -64,8 +68,8 @@ class LiteralController(private val service: LiteralService) : BaseController() 
     fun update(
         @PathVariable id: LiteralId,
         @RequestBody @Valid request: LiteralUpdateRequest
-    ): ResponseEntity<Literal> {
-        val found = service.findById(id)
+    ): ResponseEntity<LiteralRepresentation> {
+        val found = repository.findByLiteralId(id)
 
         if (!found.isPresent)
             return notFound().build()

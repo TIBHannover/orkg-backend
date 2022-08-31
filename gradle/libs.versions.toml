@@ -1,0 +1,29 @@
+[versions]
+forkhandles = "2.0.0.0"
+kotest = "5.4.0"
+testcontainers = "1.17.3"
+
+[libraries]
+# BOMs
+forkhandles-bom = { module = "dev.forkhandles:forkhandles-bom", version.ref = "forkhandles" }
+# Libraries
+annotations-jsr305 = { module = "com.google.code.findbugs:jsr305", version = "3.0.2" }
+forkhandles-result4k = { module = "dev.forkhandles:result4k", version.ref = "forkhandles" }
+forkhandles-values4k = { module = "dev.forkhandles:values4k", version.ref = "forkhandles" }
+javax-activation = { module = "javax.activation:activation", version = "1.1" }
+jaxb-api = { module = "javax.xml.bind:jaxb-api", version = "2.3.0" }
+jaxb-runtime = { module = "org.glassfish.jaxb:jaxb-runtime", version = "2.3.0" }
+kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
+kotest-runner = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
+testcontainers-core = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
+testcontainers-junit5 = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+testcontainers-neo4j = { module = "org.testcontainers:neo4j", version.ref = "testcontainers" }
+testcontainers-postgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
+
+[bundles]
+jaxb = ["javax-activation", "jaxb-api", "jaxb-runtime"]
+kotest = ["kotest-runner", "kotest-assertions-core", "kotest-property"]
+testcontainers = ["testcontainers-core", "testcontainers-junit5", "testcontainers-postgresql", "testcontainers-neo4j"]
+
+[plugins]

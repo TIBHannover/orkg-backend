@@ -1,14 +1,14 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.ResourceControllerTest.RestDoc.resourceResponseFields
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ClassService
-import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.domain.model.PredicateService
-import eu.tib.orkg.prototype.statements.domain.model.ResourceService
-import eu.tib.orkg.prototype.statements.domain.model.StatementService
+import eu.tib.orkg.prototype.statements.services.PredicateService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -31,16 +31,16 @@ import org.springframework.transaction.annotation.Transactional
 class ResearchFieldControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var resourceService: ResourceService
+    private lateinit var resourceService: ResourceUseCases
 
     @Autowired
     private lateinit var predicateService: PredicateService
 
     @Autowired
-    private lateinit var classService: ClassService
+    private lateinit var classService: ClassUseCases
 
     @Autowired
-    private lateinit var statementService: StatementService
+    private lateinit var statementService: StatementUseCases
 
     @BeforeEach
     fun setup() {
@@ -67,53 +67,53 @@ class ResearchFieldControllerTest : RestDocumentationBaseTest() {
         val fieldResource = resourceService.create(CreateResourceRequest(
             null,
             "Fancy research",
-            setOf(researchFieldClass.id!!)
+            setOf(researchFieldClass.id)
         ))
         // Create Paper
         val paperClass = classService.create(CreateClassRequest(ClassId("Paper"), "Paper", null))
         val paperResource = resourceService.create(CreateResourceRequest(
             null,
             "Paper 1",
-            setOf(paperClass.id!!)
+            setOf(paperClass.id)
         ))
         // Create Contribution
         val contributionClass = classService.create(CreateClassRequest(ClassId("Contribution"), "Contribution", null))
         val contributionResource = resourceService.create(CreateResourceRequest(
             null,
             "Contribution 1",
-            setOf(contributionClass.id!!)
+            setOf(contributionClass.id)
         ))
         // Create Problem
         val problemClass = classService.create(CreateClassRequest(ClassId("Problem"), "Problem", null))
         val problemResource = resourceService.create(CreateResourceRequest(
             null,
             "Problem 1",
-            setOf(problemClass.id!!)
+            setOf(problemClass.id)
         ))
         // Link Contribution -> Problem
         val hasResearchProblemPredicate = findOrCreatePredicate("P32", "has research problem")
         statementService.create(
-            contributionResource.id!!.value,
-            hasResearchProblemPredicate.id!!,
-            problemResource.id!!.value
+            contributionResource.id.value,
+            hasResearchProblemPredicate.id,
+            problemResource.id.value
         )
         // Link Paper -> Contribution
         val hasContributionPredicate = findOrCreatePredicate("P31", "has contribution")
         statementService.create(
-            paperResource.id!!.value,
-            hasContributionPredicate.id!!,
-            contributionResource.id!!.value
+            paperResource.id.value,
+            hasContributionPredicate.id,
+            contributionResource.id.value
         )
         // Link Paper -> Research Field
         val hasResearchFieldPredicate = findOrCreatePredicate("P30", "has research field")
         statementService.create(
-            paperResource.id!!.value,
-            hasResearchFieldPredicate.id!!,
-            fieldResource.id!!.value
+            paperResource.id.value,
+            hasResearchFieldPredicate.id,
+            fieldResource.id.value
         )
 
         mockMvc
-            .perform(getRequestTo("/api/research-fields/${fieldResource.id!!}/problems/"))
+            .perform(getRequestTo("/api/research-fields/${fieldResource.id}/problems/"))
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andDo(
                 MockMvcRestDocumentation.document(
@@ -123,7 +123,7 @@ class ResearchFieldControllerTest : RestDocumentationBaseTest() {
             )
     }
 
-    private fun findOrCreatePredicate(predicateId: String, predicateLabel: String): Predicate {
+    private fun findOrCreatePredicate(predicateId: String, predicateLabel: String): PredicateRepresentation {
         val found = predicateService.findById(PredicateId(predicateId))
         if (found.isPresent)
             return found.get()

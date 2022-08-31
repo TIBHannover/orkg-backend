@@ -1,11 +1,11 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ClassService
-import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceService
 import java.net.URI
 import net.minidev.json.JSONArray
 import org.assertj.core.api.Assertions.assertThat
@@ -35,10 +35,10 @@ import org.springframework.transaction.annotation.Transactional
 class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var service: ClassService
+    private lateinit var service: ClassUseCases
 
     @Autowired
-    private lateinit var resourceService: ResourceService
+    private lateinit var resourceService: ResourceUseCases
 
     @BeforeEach
     fun setup() {
@@ -236,7 +236,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookupByClass() {
-        val id = service.create("research contribution").id!!
+        val id = service.create("research contribution").id
         val set = listOf(id).toSet()
         resourceService.create(CreateResourceRequest(null, "Contribution 1", set))
         resourceService.create(CreateResourceRequest(null, "Contribution 2", set))
@@ -256,9 +256,9 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     @Disabled("This test reproduces the problem, but is easy to fix at the moment. We also changes the domain rules for labels, see #347.")
     fun lookupResourcesForClass() {
         // Given several research problems with the same name
-        val classId = service.create("research problem").id!!
+        val classId = service.create("research problem").id
         val set = listOf(classId).toSet()
-        val resources = mutableListOf<Resource>()
+        val resources = mutableListOf<ResourceRepresentation>()
         // The regular resource
         resources += resourceService.create(CreateResourceRequest(null, "Testing the Darwin's naturalisation hypothesis in invasion biology", set))
         repeat(5) {
@@ -271,7 +271,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
                 )
             )
         }
-        val expectedIds = resources.map(Resource::id).map(ResourceId?::toString).reversed().toJSONArray()
+        val expectedIds = resources.map(ResourceRepresentation::id).map(ResourceId?::toString).reversed().toJSONArray()
 
         // When queried, should return all of them
         val query = "Testing the Darwin"
@@ -284,19 +284,18 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     internal fun List<String>.toJSONArray(): JSONArray = JSONArray().apply { addAll(this@toJSONArray) }
 
     @Test
-    fun edit() {
-        val `class` = service.create(CreateClassRequest(id = null, label = "foo", uri = URI("http://example.org/foo"))).id!!
+    fun replaceLabel() {
+        val classId =
+            service.create(CreateClassRequest(id = null, label = "foo", uri = URI("https://example.org/foo"))).id
 
         val newLabel = "bar"
-        // Set properties that are not supposed to be updated to "null" to prevent regressions.
-        // Make sure to add an assertion for those as well.
-        val resource = mapOf("label" to newLabel, "uri" to null)
+        val resource = mapOf("label" to newLabel, "uri" to "https://example.org/foo")
 
         mockMvc
-            .perform(putRequestWithBody("/api/classes/$`class`", resource))
+            .perform(putRequestWithBody("/api/classes/$classId", resource))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.label").value(newLabel))
-            .andExpect(jsonPath("$.uri").value("http://example.org/foo")) // old value
+            .andExpect(jsonPath("$.uri").value("https://example.org/foo")) // old value
             .andDo(
                 document(
                     snippet,
@@ -309,17 +308,17 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    fun editLabelAndUri() {
-        val `class` = service.create(CreateClassRequest(id = null, label = "foo", uri = URI("http://example.org/foo"))).id!!
+    fun replaceLabelAndURI() {
+        val classId = service.create(CreateClassRequest(id = null, label = "foo", uri = null)).id
 
-        val newLabel = "bar"
-        val resource = mapOf("label" to newLabel, "uri" to "http://orkg.org/entity/foo")
+        val newLabel = "new label"
+        val resource = mapOf("label" to newLabel, "uri" to "https://orkg.org/entity/foo")
 
         mockMvc
-            .perform(putRequestWithBody("/api/classes/$`class`", resource))
+            .perform(putRequestWithBody("/api/classes/$classId", resource))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.label").value(newLabel))
-            .andExpect(jsonPath("$.uri").value(resource["uri"].toString())) // old value
+            .andExpect(jsonPath("$.uri").value(resource["uri"].toString()))
             .andDo(
                 document(
                     snippet,
@@ -333,7 +332,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookupByClassAndLabel() {
-        val id = service.create("research contribution").id!!
+        val id = service.create("research contribution").id
         val set = listOf(id).toSet()
         resourceService.create(CreateResourceRequest(null, "Math Contribution 1", set))
         resourceService.create(CreateResourceRequest(null, "Physics Contribution1", set))
@@ -392,7 +391,9 @@ class ClassControllerTest : RestDocumentationBaseTest() {
         fieldWithPath("extraction_method").description("""Method to extract this resource. Can be one of "unknown", "manual" or "automatic"."""),
         fieldWithPath("organization_id").description("The ID of the organization that maintains this resource."),
         fieldWithPath("shared").description("The number of times this resource is shared"),
+        fieldWithPath("formatted_label").description("The formatted label of the resource if available").optional(),
         fieldWithPath("_class").description("Resource").optional(),
+        fieldWithPath("verified").description("Verified").optional().ignored(),
         fieldWithPath("featured").description("Featured").optional().ignored(),
         fieldWithPath("unlisted").description("Unlisted").optional().ignored()
     )

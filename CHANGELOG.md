@@ -6,8 +6,102 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.16.0] - 2022-08-31
+### Fixed
+- Bulk editing statements works again. (Closes: [#308](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/308))
+- Email addresses are now case-insensitive when logging in. (Closes: [#397](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/397))
+- Attribution information is correct now. (Closes: [#345](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/345))
+### Added
+- Support formatted labels for all resources. (Closes: [#166](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/166))
+- Debugging database issues in tests is now described in the developer documentation.
+
+## [0.15.0] - 2022-08-26
+### Fixed
+- Use correct casing when returning entities. (Closes: [#398](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/398))
+- Return correct totals when fetching content types for a research problem. (Closes: [#399](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/399))
+### Added
+- Add existence checks for all entities. (See [!286](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/286).)
+- The old (legacy) model for "Papers with Code" (PwC) data was re-introduced behind a feature flag.
+  To use it, set `orkg.features.pwc-legacy-model=true` in the configuration or via the respective environment variables.
+### Deprecated
+- Although the old legacy model is re-introduced, it is deprecated and will be removed in a future release.
+  Please update all client code.
+
+## [0.14.0] - 2022-08-16
+### Security
+- Validation of IDs is not properly enforced.
+  The only valid characters are digits, numbers, colons, underscores and dashes.
+### Added
+- Fetch benchmarks of all research fields for PwC use-case. (See [!240](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/240).)
+### Changed
+- Change the PwC model for benchmark queries and extract ID constants. (Closes: [#352](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/352))
+### Fixed
+- Fixed issue with on fresh start script of importing research fields with correct typing. (Closes: [#383](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/383))
+- Research problems are now properly loaded, even if their `featured` and `unlisted` flags are not set.
+
+## [0.13.3] - 2022-08-05
+### Changed
+- Changed error handling in DOI service for better debugging.
+
+## [0.13.2] - 2022-08-04
+### Fixed
+- When using Docker Compose, the `api` container will now wait for all databases to be properly started and accepting connections.
+  A recent version of Docker Compose is required to be installed. (Closes: [#375](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/375))
+- Creating papers with the same DOI works again, and authors are properly referenced. (Closes: [#292](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/292))
+### Changed
+- The RDF export will not include statements with a `<null>` resource identifier. Although this is valid, it breaks downstream clients. (Closes: [#394](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/394))
+### Removed
+- The `pre-commit` configuration was removed as it was not used anymore and broke a long time ago without anyone noticing.
+  If you still use it, run `pre-commit uninstall` to disable the hooks, as they will not be updated anymore.
+
+## [0.13.1] - 2022-08-02
+### Fixed
+- Bundles do not contain duplicate statements anymore. (Closes: [#393](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/393))
+
+## [0.13.0] - 2022-08-01
+### Changed
+- The RDF dumps are no longer streamed due to technical issues.
+
+## [0.12.0] - 2022-07-19
+### Fixed
+- Fixed issue with unexpected behaviour of add paper with merge flag. (Closes: [#379](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/379))
+- Deleted papers do not appear in the list of papers anymore. (Closes: [#382](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/382))
+### Added
+- Support all entity types in object endpoint request. (Closes: [#387](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/387))
+- Create additional indexes in Neo4j for heavily used nodes, improving query performance.
+
+## [0.11.0] - 2022-05-19
+### Fixed
+- Fixed issue with the statistics page for counting the number of research fields. (Closes: [#337](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/337))
+- Fixed memory issue when exporting all data to RDF by streaming the data instead of loading everything into memory first.
+### Added
+- Support for adding users and organizations in observatories. (Closes: [#294](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/294))
+### Changed
+- The "development" profile is no longer the default profile when running the application. However, the `bootRun` target now loads the "development" profile to be compatible with the old behavior.
+
+## [0.10.1] - 2022-04-14
+### Fixed
+- Fixed issue of updating conference metadata. (Closes: [#374](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/374))
+
+## [0.10.0] - 2022-04-13
+### Fixed
+- Fixed issue that lead to data corruption when saving statements.
+- Labels are allowed to be empty again, as they were before. (Closes: [#372](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/372))
+### Added
+- Handling resource types dynamically while publishing them with DOI. (Closes: [#322](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/322))
+
+## [0.9.1] - 2022-03-18
+### Fixed
+- The SPI package was missing in the list of packages for entity scanning, leading to crashes when trying to find contributors.
+
+## [0.9.0] - 2022-03-18
 ### Fixed
 - Prevent use of newlines in labels. (Closes: [#347](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/347))
+- Removed caching of classes. (Closes: [#368](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/368))
+### Added
+- Support updating selected properties of a class via PATCH. (Closes: [#368](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/369))
+- Support of different types of organizations. (Closes. [#357](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/357))
 
 ## [0.8.0] - 2022-02-03
 ### Added
@@ -71,7 +165,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.8.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.16.0...master
+[0.16.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.16.0
+[0.15.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.15.0
+[0.14.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.14.0
+[0.13.3]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.13.3
+[0.13.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.13.2
+[0.13.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.13.1
+[0.13.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.13.0
+[0.12.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.12.0
+[0.11.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.11.0
+[0.10.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.10.1
+[0.10.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.10.0
+[0.9.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.9.1
+[0.9.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.9.0
 [0.8.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.8.0
 [0.7.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.7.0
 [0.6.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.6.2

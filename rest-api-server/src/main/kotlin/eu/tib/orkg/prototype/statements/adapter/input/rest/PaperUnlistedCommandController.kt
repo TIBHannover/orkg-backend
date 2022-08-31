@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/papers")
 class PaperUnlistedCommandController(
-    @Qualifier("neo4jResourceService")
+    @Qualifier("resourceService")
     private val service: MarkAsUnlistedService
 ) {
 

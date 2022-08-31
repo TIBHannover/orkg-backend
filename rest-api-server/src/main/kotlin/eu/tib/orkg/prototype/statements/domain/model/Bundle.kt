@@ -6,13 +6,13 @@ data class Bundle(
     @JsonProperty("root")
     val rootId: String,
     @JsonProperty("statements")
-    var bundle: MutableList<GeneralStatement> = mutableListOf()
+    var bundle: MutableList<StatementRepresentation> = mutableListOf()
 ) {
-    private fun addStatement(statement: GeneralStatement) {
+    private fun addStatement(statement: StatementRepresentation) {
         bundle.add(statement)
     }
 
-    operator fun contains(statement: GeneralStatement): Boolean {
+    operator fun contains(statement: StatementRepresentation): Boolean {
         return this.bundle.any { it.id == statement.id }
     }
 
@@ -22,7 +22,7 @@ data class Bundle(
             .filter { it !in this }
             .forEach { newBundle.addStatement(it) }
         // TODO: This is sorting descending to conform to issue (#309)
-        newBundle.bundle.sortByDescending { it.createdAt!! }
+        newBundle.bundle.sortByDescending { it.createdAt }
         return newBundle
     }
 }

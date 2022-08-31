@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.domain.model
 
 import dev.forkhandles.values.ofOrNull
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatCode
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -23,10 +24,8 @@ internal class LabelTest {
     }
 
     @Test
-    fun `An empty string cannot be converted to a label`() {
-        assertThrows(IllegalArgumentException::class.java) {
-            Label.of("")
-        }
+    fun `An empty string is a valid label`() {
+        assertThatCode { Label.of("") }.doesNotThrowAnyException()
     }
 
     @ParameterizedTest

@@ -11,6 +11,7 @@ data class ClassId(val value: String) : Comparable<ClassId> {
 
     init {
         require(value.isNotBlank()) { "ID must not be blank" }
+        require(value.matches(VALID_ID_REGEX)) { "Must only contain alphanumeric characters, dashes and underscores" }
     }
 
     constructor(value: Long) : this("C$value") {
@@ -21,3 +22,7 @@ data class ClassId(val value: String) : Comparable<ClassId> {
 
     override fun compareTo(other: ClassId): Int = value.compareTo(other.value)
 }
+
+fun List<String>?.toClassIds(): Set<ClassId> = this?.map(::ClassId)?.toSet() ?: emptySet()
+
+fun Set<ClassId>?.stringify(): Set<String> = this?.map(ClassId::value)?.toSet() ?: emptySet()

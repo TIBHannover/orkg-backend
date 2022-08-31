@@ -1,6 +1,13 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j.BENCHMARK_CLASS
+import eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j.BENCHMARK_PREDICATE
+import eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j.DATASET_CLASS
+import eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j.DATASET_PREDICATE
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteral
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.util.Optional
 import java.util.UUID
@@ -37,9 +44,11 @@ interface Neo4jProblemRepository :
     @Query("""MATCH (node:Problem {resource_id: {0}}) RETURN node""")
     fun findById(id: ResourceId): Optional<Neo4jResource>
 
-    @Query("""MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)
+    @Query("""MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)
+                    WHERE COALESCE(p.featured, false) = {1} AND COALESCE(p.unlisted, false) = {2}
                     RETURN c.resource_id as id, c.label as label, c.created_at as created_at, c.featured as featured, c.unlisted as unlisted, LABELS(c) as classes, c.created_by as createdBy""",
-    countQuery = """MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)
+    countQuery = """MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)
+                    WHERE COALESCE(p.featured, false) = {1} AND COALESCE(p.unlisted, false) = {2}
                     RETURN COUNT(c)""")
     fun findContributionsByProblems(
         problemId: ResourceId,
@@ -48,9 +57,11 @@ interface Neo4jProblemRepository :
         pageable: Pageable
     ): Page<DetailsPerProblem>
 
-    @Query("""MATCH (p:Problem {resource_id: {0}, unlisted:{1}})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)
+    @Query("""MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)
+                    WHERE COALESCE(p.unlisted, false) = {1}
                     RETURN c.resource_id as id, c.label as label, c.created_at as created_at, c.featured as featured, c.unlisted as unlisted, LABELS(c) as classes, c.created_by as createdBy""",
-        countQuery = """MATCH (p:Problem {resource_id: {0}, unlisted:{1}})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)
+        countQuery = """MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)
+                    WHERE COALESCE(p.unlisted, false) = {1}
                     RETURN COUNT(c)""")
     fun findContributionsByProblems(
         problemId: ResourceId,
@@ -58,9 +69,11 @@ interface Neo4jProblemRepository :
         pageable: Pageable
     ): Page<DetailsPerProblem>
 
-    @Query("""MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)
+    @Query("""MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)
+                    WHERE COALESCE(p.featured, false) = {1} AND COALESCE(p.unlisted, false) = {2}
                     WITH DISTINCT paper RETURN paper.resource_id as id, paper.label as label, paper.created_at as created_at, paper.featured as featured, paper.unlisted as unlisted, LABELS(paper) as classes, paper.created_by as createdBy""",
-    countQuery = """MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)
+    countQuery = """MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)
+                    WHERE COALESCE(p.featured, false) = {1} AND COALESCE(p.unlisted, false) = {2}
                     RETURN COUNT(DISTINCT paper)""")
     fun findPapersByProblems(
         problemId: ResourceId,
@@ -69,9 +82,11 @@ interface Neo4jProblemRepository :
         pageable: Pageable
     ): Page<DetailsPerProblem>
 
-    @Query("""MATCH (p:Problem {resource_id: {0}, unlisted:{1}})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)
+    @Query("""MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)
+                    WHERE COALESCE(p.unlisted, false) = {1}
                     WITH DISTINCT paper RETURN paper.resource_id as id, paper.label as label, paper.created_at as created_at, paper.featured as featured, paper.unlisted as unlisted, LABELS(paper) as classes, paper.created_by as createdBy""",
-        countQuery = """MATCH (p:Problem {resource_id: {0}, unlisted:{1}})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)
+        countQuery = """MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)
+                    WHERE COALESCE(p.unlisted, false) = {1}
                     RETURN COUNT(DISTINCT paper)""")
     fun findPapersByProblems(
         problemId: ResourceId,
@@ -79,9 +94,11 @@ interface Neo4jProblemRepository :
         pageable: Pageable
     ): Page<DetailsPerProblem>
 
-    @Query("""MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(f:ResearchField)
+    @Query("""MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(f:ResearchField)
+                    WHERE COALESCE(p.featured, false) = {1} AND COALESCE(p.unlisted, false) = {2}
                     RETURN f.resource_id as id, f.label as label, f.created_at as created_at, f.featured as featured, f.unlisted as unlisted, LABELS(f) as classes, f.created_by as createdBy""",
-    countQuery = """MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(f:ResearchField)
+    countQuery = """MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(f:ResearchField)
+                    WHERE COALESCE(p.featured, false) = {1} AND COALESCE(p.unlisted, false) = {2}
                     RETURN COUNT(f)""")
     fun findResearchFieldsByProblems(
         problemId: ResourceId,
@@ -90,9 +107,11 @@ interface Neo4jProblemRepository :
         pageable: Pageable
     ): Page<DetailsPerProblem>
 
-    @Query("""MATCH (p:Problem {resource_id: {0}, unlisted:{1}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(f:ResearchField)
+    @Query("""MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(f:ResearchField)
+                    WHERE COALESCE(p.unlisted, false) = {1}
                     RETURN f.resource_id as id, f.label as label, f.created_at as created_at, f.featured as featured, f.unlisted as unlisted, LABELS(f) as classes, f.created_by as createdBy""",
-        countQuery = """MATCH (p:Problem {resource_id: {0}, unlisted:{1}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(f:ResearchField)
+        countQuery = """MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(f:ResearchField)
+                    WHERE COALESCE(p.unlisted, false) = {1}
                     RETURN COUNT(f)""")
     fun findResearchFieldsByProblems(
         problemId: ResourceId,
@@ -100,9 +119,11 @@ interface Neo4jProblemRepository :
         pageable: Pageable
     ): Page<DetailsPerProblem>
 
-    @Query("""MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'compareContribution'}]-(c:Comparison)
+    @Query("""MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'compareContribution'}]-(c:Comparison)
+                    WHERE COALESCE(p.featured, false) = {1} AND COALESCE(p.unlisted, false) = {2}
                     RETURN DISTINCT c.resource_id as id, c.label as label, c.created_at as created_at, c.featured as featured, c.unlisted as unlisted, LABELS(c) as classes, c.created_by as createdBy""",
-        countQuery = """MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'compareContribution'}]-(c:Comparison)
+        countQuery = """MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'compareContribution'}]-(c:Comparison)
+                    WHERE COALESCE(p.featured, false) = {1} AND COALESCE(p.unlisted, false) = {2}
                     RETURN COUNT(DISTINCT c)""")
     fun findComparisonsByProblems(
         problemId: ResourceId,
@@ -111,9 +132,11 @@ interface Neo4jProblemRepository :
         pageable: Pageable
     ): Page<DetailsPerProblem>
 
-    @Query("""MATCH (p:Problem {resource_id: {0}, unlisted:{1}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'compareContribution'}]-(c:Comparison)
+    @Query("""MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'compareContribution'}]-(c:Comparison)
+                    WHERE COALESCE(p.unlisted, false) = {1}
                     RETURN DISTINCT c.resource_id as id, c.label as label, c.created_at as created_at, c.featured as featured, c.unlisted as unlisted, LABELS(c) as classes, c.created_by as createdBy""",
-        countQuery = """MATCH (p:Problem {resource_id: {0}, unlisted:{1}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'compareContribution'}]-(c:Comparison)
+        countQuery = """MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'compareContribution'}]-(c:Comparison)
+                    WHERE COALESCE(p.unlisted, false) = {1}
                     RETURN COUNT(DISTINCT c)""")
     fun findComparisonsByProblems(
         problemId: ResourceId,
@@ -121,9 +144,11 @@ interface Neo4jProblemRepository :
         pageable: Pageable
     ): Page<DetailsPerProblem>
 
-    @Query("""MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(f:ResearchField)<-[:RELATED{predicate_id: 'HasList'}]-(l:LiteratureList)
+    @Query("""MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(f:ResearchField)<-[:RELATED{predicate_id: 'HasList'}]-(l:LiteratureList)
+                    WHERE COALESCE(p.featured, false) = {1} AND COALESCE(p.unlisted, false) = {2}
                     RETURN DISTINCT l.resource_id as id, l.label as label, l.created_at as created_at, l.featured as featured, l.unlisted as unlisted, LABELS(l) as classes, l.created_by as createdBy""",
-        countQuery = """MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(field:ResearchField)<-[:RELATED{predicate_id: 'HasList'}]-(l:LiteratureList)
+        countQuery = """MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(field:ResearchField)<-[:RELATED{predicate_id: 'HasList'}]-(l:LiteratureList)
+                    WHERE COALESCE(p.featured, false) = {1} AND COALESCE(p.unlisted, false) = {2}
                     RETURN COUNT(DISTINCT l)""")
     fun findLiteratureListsByProblems(
         problemId: ResourceId,
@@ -132,9 +157,11 @@ interface Neo4jProblemRepository :
         pageable: Pageable
     ): Page<DetailsPerProblem>
 
-    @Query("""MATCH (p:Problem {resource_id: {0}, unlisted:{1}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(f:ResearchField)<-[:RELATED{predicate_id: 'HasList'}]-(l:LiteratureList)
+    @Query("""MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(f:ResearchField)<-[:RELATED{predicate_id: 'HasList'}]-(l:LiteratureList)
+                    WHERE COALESCE(p.unlisted, false) = {1}
                     RETURN DISTINCT l.resource_id as id, l.label as label, l.created_at as created_at, l.featured as featured, l.unlisted as unlisted, LABELS(l) as classes, l.created_by as createdBy""",
-        countQuery = """MATCH (p:Problem {resource_id: {0}, unlisted:{1}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(field:ResearchField)<-[:RELATED{predicate_id: 'HasList'}]-(l:LiteratureList)
+        countQuery = """MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(field:ResearchField)<-[:RELATED{predicate_id: 'HasList'}]-(l:LiteratureList)
+                    WHERE COALESCE(p.unlisted, false) = {1}
                     RETURN COUNT(DISTINCT l)""")
     fun findLiteratureListsByProblems(
         problemId: ResourceId,
@@ -142,9 +169,11 @@ interface Neo4jProblemRepository :
         pageable: Pageable
     ): Page<DetailsPerProblem>
 
-    @Query("""MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(s:SmartReview)
+    @Query("""MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(s:SmartReview)
+                    WHERE COALESCE(p.featured, false) = {1} AND COALESCE(p.unlisted, false) = {2}
                     RETURN DISTINCT s.resource_id as id, s.label as label, s.created_at as created_at, s.featured as featured, s.unlisted as unlisted, LABELS(s) as classes, s.created_by as createdBy""",
-        countQuery = """MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(s:SmartReview)
+        countQuery = """MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(s:SmartReview)
+                    WHERE COALESCE(p.featured, false) = {1} AND COALESCE(p.unlisted, false) = {2}
                     RETURN COUNT(DISTINCT s)""")
     fun findSmartReviewsByProblems(
         problemId: ResourceId,
@@ -153,9 +182,11 @@ interface Neo4jProblemRepository :
         pageable: Pageable
     ): Page<DetailsPerProblem>
 
-    @Query("""MATCH (p:Problem {resource_id: {0}, unlisted:{1}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(s:SmartReview)
+    @Query("""MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(s:SmartReview)
+                    WHERE COALESCE(p.unlisted, false) = {1}
                     RETURN DISTINCT s.resource_id as id, s.label as label, s.created_at as created_at, s.featured as featured, s.unlisted as unlisted, LABELS(s) as classes, s.created_by as createdBy""",
-        countQuery = """MATCH (p:Problem {resource_id: {0}, unlisted:{1}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(s:SmartReview)
+        countQuery = """MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(s:SmartReview)
+                    WHERE COALESCE(p.unlisted, false) = {1}
                     RETURN COUNT(DISTINCT s)""")
     fun findSmartReviewsByProblems(
         problemId: ResourceId,
@@ -163,9 +194,11 @@ interface Neo4jProblemRepository :
         pageable: Pageable
     ): Page<DetailsPerProblem>
 
-    @Query("""MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)-[:RELATED {predicate_id: 'hasVisualization'}]->(v:Visualization)
+    @Query("""MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)-[:RELATED {predicate_id: 'hasVisualization'}]->(v:Visualization)
+                    WHERE COALESCE(p.featured, false) = {1} AND COALESCE(p.unlisted, false) = {2}
                     RETURN DISTINCT v.resource_id as id, v.label as label, v.created_at as created_at, v.featured as featured, v.unlisted as unlisted, LABELS(v) as classes, v.created_by as createdBy""",
-        countQuery = """MATCH (p:Problem {resource_id: {0}, featured:{1}, unlisted:{2}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)-[:RELATED {predicate_id: 'hasVisualization'}]->(v:Visualization)
+        countQuery = """MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)-[:RELATED {predicate_id: 'hasVisualization'}]->(v:Visualization)
+                    WHERE COALESCE(p.featured, false) = {1} AND COALESCE(p.unlisted, false) = {2}
                     RETURN COUNT(DISTINCT v)""")
     fun findVisualizationsByProblems(
         problemId: ResourceId,
@@ -174,9 +207,11 @@ interface Neo4jProblemRepository :
         pageable: Pageable
     ): Page<DetailsPerProblem>
 
-    @Query("""MATCH (p:Problem {resource_id: {0}, unlisted:{1}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)-[:RELATED {predicate_id: 'hasVisualization'}]->(v:Visualization)
+    @Query("""MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)-[:RELATED {predicate_id: 'hasVisualization'}]->(v:Visualization)
+                    WHERE COALESCE(p.unlisted, false) = {1}
                     RETURN DISTINCT v.resource_id as id, v.label as label, v.created_at as created_at, v.featured as featured, v.unlisted as unlisted, LABELS(v) as classes, v.created_by as createdBy""",
-        countQuery = """MATCH (p:Problem {resource_id: {0}, unlisted:{1}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)-[:RELATED {predicate_id: 'hasVisualization'}]->(v:Visualization)
+        countQuery = """MATCH (p:Problem {resource_id: {0}})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)-[:RELATED {predicate_id: 'hasVisualization'}]->(v:Visualization)
+                    WHERE COALESCE(p.unlisted, false) = {1}
                     RETURN COUNT(DISTINCT v)""")
     fun findVisualizationsByProblems(
         problemId: ResourceId,
@@ -224,7 +259,7 @@ interface Neo4jProblemRepository :
     // TODO: Should group on the resource and not on the label. See https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/172#note_378465870
     fun findAuthorsLeaderboardPerProblem(problemId: ResourceId, pageable: Pageable): Page<AuthorPerProblem>
 
-    @Query(value = """MATCH (ds:Dataset {resource_id: {0}})<-[:RELATED {predicate_id: 'HAS_DATASET'}]-(:Benchmark)<-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]-(:Contribution)-[:RELATED {predicate_id: 'P32'}]->(problem:Problem)
+    @Query(value = """MATCH (ds:$DATASET_CLASS {resource_id: {0}})<-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]-(:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(:Contribution)-[:RELATED {predicate_id: 'P32'}]->(problem:Problem)
                     RETURN DISTINCT problem""")
     fun findResearchProblemForDataset(datasetId: ResourceId): Iterable<Neo4jResource>
 

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/papers")
 class PaperVerificationCommandController(
-    private val service: MarkAsVerifiedUseCase // FIXME: should be service
+    private val service: MarkAsVerifiedUseCase
 ) {
     @PutMapping("/{id}/metadata/verified")
     @ResponseStatus(HttpStatus.NO_CONTENT)

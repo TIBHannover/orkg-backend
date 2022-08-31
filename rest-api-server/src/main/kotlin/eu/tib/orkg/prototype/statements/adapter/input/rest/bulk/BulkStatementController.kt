@@ -1,12 +1,12 @@
 package eu.tib.orkg.prototype.statements.adapter.input.rest.bulk
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
-import eu.tib.orkg.prototype.statements.application.StatementResponse
-import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
+import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
-import eu.tib.orkg.prototype.statements.domain.model.StatementService
+import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/statements")
 class BulkStatementController(
-    private val statementService: StatementService
+    private val statementService: StatementUseCases
 ) {
     @GetMapping("/subjects")
     fun findBySubjects(
@@ -57,19 +57,38 @@ class BulkStatementController(
     @PutMapping("/")
     fun edit(
         @RequestParam("ids") statementsIds: List<StatementId>,
-        @RequestBody(required = true) statementEditRequest: StatementEditRequest
+        @RequestBody(required = true) statementEditRequest: BulkStatementEditRequest
     ): ResponseEntity<Iterable<BulkPutStatementResponse>> {
-        return ok(statementsIds.map { BulkPutStatementResponse(it, statementService.update(statementEditRequest)) })
+        return ok(statementsIds.map {
+            val request = StatementEditRequest(
+                statementId = it,
+                subjectId = statementEditRequest.subjectId,
+                predicateId = statementEditRequest.predicateId,
+                objectId = statementEditRequest.objectId,
+            )
+            BulkPutStatementResponse(it, statementService.update(request))
+        })
     }
 }
 
 data class BulkGetStatementsResponse(
     val id: String,
-    val statements: Page<GeneralStatement>
+    val statements: Page<StatementRepresentation>
 )
 
 data class BulkPutStatementResponse(
     @JsonProperty("id")
     val statementId: StatementId,
-    val statement: StatementResponse
+    val statement: StatementRepresentation
+)
+
+data class BulkStatementEditRequest(
+    @JsonProperty("subject_id")
+    val subjectId: String? = null,
+
+    @JsonProperty("predicate_id")
+    val predicateId: PredicateId? = null,
+
+    @JsonProperty("object_id")
+    val objectId: String? = null
 )

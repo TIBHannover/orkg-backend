@@ -13,19 +13,24 @@ variables:
 
 .gradle_build_job:
   before_script:
-    # Tell Gradle to write its files to the build directory
-    - export GRADLE_USER_HOME=`pwd`/.gradle
+    # Tell Gradle to write its files to a separate directory within the build directory, so files do not conflict.
+    - export GRADLE_USER_HOME=`pwd`/.gradle-user-home
     # Remove files that might be problematic (recommended by Travis CI)
     - rm -f  ${GRADLE_USER_HOME}/caches/modules-2/modules-2.lock
-    - rm -fr ${GRADLE_USER_HOME}/caches/*/plugin-resolution/
 
 # Ideas taken from https://docs.gitlab.com/ee/ci/caching/ as well as
-#   https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Gradle.gitlab-ci.yml
+#   https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Gradle.gitlab-ci.yml and
+#   https://blog.jdriven.com/2021/11/reuse-gradle-build-cache-on-gitlab/
 cache: &gradle_cache_settings
-  key: ${CI_COMMIT_REF_SLUG}   # One cache per branch
+  key:
+    files:
+      # Only have a single version of the wrapper, and invalidate the cache when the Gradle wrapper version changes.
+      - gradle/wrapper/gradle-wrapper.properties
+    prefix: wrapper
   paths:
-    - ./**/build
-    - ./**/.gradle
+    - .gradle-user-home/caches/             # Gradle Build Cache directories
+    - .gradle-user-home/notifications/      # Prevent welcome message to be shown every time
+    - .gradle-user-home/wrapper/            # Gradle Wrapper binaries
   policy: pull-push
 
 stages:
@@ -39,7 +44,6 @@ build:
   extends: .gradle_build_job
   cache:
     <<: *gradle_cache_settings
-    policy: push
   script:
     - ./gradlew --build-cache build
   coverage: '/^Coverage:\s(\d+\.\d+%)/'
@@ -47,7 +51,7 @@ build:
     when: always
     paths:
       - rest-api-server/build/reports/
-      - rest-api-server/build/libs/orkg-*.jar
+      - rest-api-server/build/libs/rest-api-server-*.jar
     reports:
       junit: rest-api-server/build/test-results/**/TEST-*.xml
   needs: []
@@ -62,7 +66,6 @@ build:
       artifacts: true
   cache:
     <<: *gradle_cache_settings
-    policy: pull
   services: []    # Disable Docker-in-Docker
   script:
     - apt update && apt install --assume-yes graphviz
@@ -96,20 +99,22 @@ pages:
   needs:
     - build
   script:
+    # Turn a list of whitespace-separated tags into a comma-separated list, as GitLab gets confused with commas and variable substitutions.
+    - docker_tags=$(echo "$IMAGE_TAGS" | sed 's/ \+/,/g')
     # Build using Jib (pushed automatically)
-    - ./gradlew --build-cache jib -Djib.to.image=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA -Djib.to.tags=$IMAGE_TAG -Djib.to.auth.username=$REGISTRY_USER -Djib.to.auth.password=$REGISTRY_PASSWORD
+    - ./gradlew --build-cache jib -Djib.to.image=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA -Djib.to.tags=$docker_tags -Djib.to.auth.username=$REGISTRY_USER -Djib.to.auth.password=$REGISTRY_PASSWORD
 
 docker-build-master:
   variables:
-    IMAGE_TAG: latest
+    IMAGE_TAGS: latest master
   <<: *docker-build-instructions
   only:
     - master
 
 docker-build:
+  extends: .docker-build-instructions
   variables:
-    IMAGE_TAG: $CI_COMMIT_REF_SLUG
-  <<: *docker-build-instructions
+    IMAGE_TAGS: $CI_COMMIT_REF_NAME release
   except:
     - master
 
@@ -142,3 +147,35 @@ secret_detection:
   needs: []
   variables:
     SECRET_DETECTION_EXCLUDED_PATHS: '.gradle'
+
+deployment_trigger:incubating:
+  stage: deploy
+  image: buildpack-deps:buster-curl
+  script:
+    - echo "Triggering deployment for branch $CI_COMMIT_REF_NAME"
+    - curl --fail -X POST -F "token=$PIPELINE_TRIGGER_TOKEN" -F "ref=master" -F "variables[ORKG_COMPONENT_NAME]=orkg-rest-api" -F "variables[ORKG_COMPONENT_REF_NAME]=$CI_COMMIT_REF_NAME" https://git.tib.eu/api/v4/projects/1317/trigger/pipeline
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+  # Disable cloning, downloading artifacts and caching
+  cache: []
+  dependencies: []
+  variables:
+    GIT_STRATEGY: none
+  needs:
+    - docker-build-master
+
+deployment_trigger:release:
+  stage: deploy
+  image: buildpack-deps:buster-curl
+  script:
+    - echo "Triggering deployment for release version $CI_COMMIT_TAG"
+    - curl --fail -X POST -F "token=$PIPELINE_TRIGGER_TOKEN" -F "ref=master" -F "variables[ORKG_COMPONENT_NAME]=orkg-rest-api" -F "variables[ORKG_COMPONENT_REF_NAME]=$CI_COMMIT_REF_NAME" -F "variables[ORKG_COMPONENT_RELEASE_VERSION]=$CI_COMMIT_TAG" https://git.tib.eu/api/v4/projects/1317/trigger/pipeline
+  rules:
+    - if: $CI_COMMIT_TAG
+  # Disable cloning, downloading artifacts and caching
+  cache: []
+  dependencies: []
+  variables:
+    GIT_STRATEGY: none
+  needs:
+    - docker-build

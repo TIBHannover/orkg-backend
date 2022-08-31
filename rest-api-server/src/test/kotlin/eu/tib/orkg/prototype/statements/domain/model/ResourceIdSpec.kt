@@ -5,6 +5,8 @@ import org.assertj.core.api.Assertions.assertThatCode
 import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 
 @DisplayName("A subject id")
 class ResourceIdSpec {
@@ -52,5 +54,19 @@ class ResourceIdSpec {
     @DisplayName("should represent internal value when given long")
     fun shouldRepresentInternalValueWhenGivenLong() {
         assertThat(ResourceId(42).toString()).isEqualTo("R42")
+    }
+
+    @Test
+    fun `should forbid injection attacks`() {
+        assertThrows<IllegalArgumentException> {
+            ResourceId("{id: '\\'}; MATCH ( n ) DETACH DELETE n")
+        }
+    }
+
+    @Test
+    fun `should accept alphanumeric, dashes and underscores`() {
+        assertDoesNotThrow {
+            ResourceId("iua:sdne98798-qdas-a-__2eqw8a:sBUAD")
+        }
     }
 }

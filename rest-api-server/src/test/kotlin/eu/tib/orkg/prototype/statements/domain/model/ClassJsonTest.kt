@@ -1,5 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import eu.tib.orkg.prototype.statements.api.ClassRepresentation
+import eu.tib.orkg.prototype.statements.services.toClassRepresentation
 import java.net.URI
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
@@ -16,7 +18,7 @@ import org.springframework.boot.test.json.JacksonTester
 class ClassJsonTest {
 
     @Autowired
-    private lateinit var json: JacksonTester<Class>
+    private lateinit var json: JacksonTester<ClassRepresentation>
 
     @Test
     fun serializedClassShouldHaveId() {
@@ -52,7 +54,7 @@ class ClassJsonTest {
             "label",
             URI("http://example.org/path/to/file#with-fragment"),
             OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3))
-        )
+        ).toClassRepresentation()
 
     private fun serializedClass() = json.write(createClass())
 }

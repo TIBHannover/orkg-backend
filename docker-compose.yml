@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.11'
 
 services:
 
@@ -7,14 +7,17 @@ services:
     environment:
       SPRING_DATASOURCE_URL: 'jdbc:postgresql://postgres/postgres'
       SPRING_DATA_NEO4J_URI: 'bolt://neo4j:7687'
+      SPRING_PROFILES_ACTIVE: development
     ports:
       - '127.0.0.1:8080:8080'
       #- '::1:8080:8080'
     networks:
       - backend
     depends_on:
-      - neo4j
-      - postgres
+      neo4j:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
 
   neo4j:
     image: neo4j:3.5
@@ -27,6 +30,11 @@ services:
       NEO4JLABS_PLUGINS: '["apoc"]'
       NEO4J_AUTH: none
       NEO4J_dbms_memory_heap_max__size: 8G
+    healthcheck:
+      test: [ "CMD", "/var/lib/neo4j/bin/cypher-shell", "-u", "${NEO4J_USERNAME}", "-p", "${NEO4J_PASSWORD}", "MATCH () RETURN count(*) as count" ]
+      interval: 5s
+      timeout: 10s
+      retries: 10
     networks:
       - backend
     volumes:
@@ -42,6 +50,11 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres
       PGDATA: /var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
     networks:
       - backend
     volumes:

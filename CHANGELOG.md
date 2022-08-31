@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.16.0] - 2022-08-31
 ### Fixed
 - Bulk editing statements works again. (Closes: [#308](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/308))
 - Email addresses are now case-insensitive when logging in. (Closes: [#397](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/397))
@@ -163,7 +165,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.15.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.16.0...master
+[0.16.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.16.0
 [0.15.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.15.0
 [0.14.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.14.0
 [0.13.3]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.13.3

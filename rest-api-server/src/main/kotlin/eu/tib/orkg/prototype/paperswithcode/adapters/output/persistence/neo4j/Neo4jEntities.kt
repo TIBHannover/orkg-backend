@@ -11,7 +11,7 @@ import org.springframework.data.neo4j.annotation.QueryResult
 @QueryResult
 data class Neo4jBenchmarkSummary(
     val problem: Neo4jResource,
-    val field: Neo4jResource,
+    val fields: List<Neo4jResource>,
     val totalPapers: Long,
     val totalDatasets: Long,
     val totalCodes: Long
@@ -19,7 +19,8 @@ data class Neo4jBenchmarkSummary(
     fun toBenchmarkSummary() =
         BenchmarkSummary(
             ResearchProblem(problem.resourceId!!, problem.label!!),
-            ResearchField(field.thingId!!, field.label!!),
+            null,
+            fields.map { ResearchField(it.thingId!!, it.label!!) },
             totalPapers.toInt(),
             totalDatasets.toInt(),
             totalCodes.toInt()

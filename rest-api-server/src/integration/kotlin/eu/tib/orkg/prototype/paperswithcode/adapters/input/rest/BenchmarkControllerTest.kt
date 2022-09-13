@@ -35,14 +35,14 @@ import org.springframework.transaction.annotation.Transactional
 
 // This is only required because these are integration tests. In a unit test, we would mock the feature flag service.
 // But for the time were we have both code bases, we need to run both test sets as well.
-@TestPropertySource(properties = ["orkg.features.pwc-legacy-model=false"])
+@TestPropertySource(properties = ["orkg.features.pwc-legacy-model=true"])
 class BenchmarkControllerLegacyTest : BenchmarkControllerTest()
 
 @Suppress("HttpUrlsUsage")
 @DisplayName("Benchmark Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-@TestPropertySource(properties = ["orkg.features.pwc-legacy-model=true"])
+@TestPropertySource(properties = ["orkg.features.pwc-legacy-model=false"])
 class BenchmarkControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
@@ -83,6 +83,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         predicateService.create(CreatePredicateRequest(PredicateId("P30"), "Has research field"))
         predicateService.create(CreatePredicateRequest(PredicateId("P31"), "Has contribution"))
         predicateService.create(CreatePredicateRequest(PredicateId("P32"), "Has research problem"))
+        predicateService.create(CreatePredicateRequest(PredicateId("P36"), "Has sub-field"))
         predicateService.create(CreatePredicateRequest(PredicateId(labelsAndClasses.benchmarkPredicate), "Has benchmark"))
         predicateService.create(CreatePredicateRequest(PredicateId(labelsAndClasses.datasetPredicate), "Has dataset"))
         predicateService.create(CreatePredicateRequest(PredicateId(labelsAndClasses.sourceCodePredicate), "Has code"))
@@ -232,6 +233,72 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
             .andExpect(jsonPath("$", hasSize<Int>(2)))
             .andExpect(jsonPath("$[0].research_problem.id", equalTo(problem2.id.value)))
             .andExpect(jsonPath("$[1].research_problem.id", equalTo(problem1.id.value)))
+            .andExpect(jsonPath("$[0].total_papers", equalTo(1)))
+            .andExpect(jsonPath("$[0].total_datasets", equalTo(2)))
+            .andExpect(jsonPath("$[0].total_codes", equalTo(5)))
+            .andDo(
+                document(
+                    snippet,
+                    benchmarkListResponseFields()
+                )
+            )
+    }
+
+    @Test
+    fun `aggregate problems that belong to multiple RFs when fetching summary`() {
+        assumeFalse(flags.isPapersWithCodeLegacyModelEnabled())
+
+        val field1 = resourceService.create(CreateResourceRequest(null, "Field #1 with a problem #1", setOf(ClassId("ResearchField"))))
+        val field2 = resourceService.create(CreateResourceRequest(null, "Field #2 with a problem #1", setOf(ClassId("ResearchField"))))
+
+        val benchPaper = resourceService.create(CreateResourceRequest(null, "Paper 1", setOf(ClassId("Paper"))))
+        val dummyPaper = resourceService.create(CreateResourceRequest(null, "Paper 2", setOf(ClassId("Paper"))))
+
+        val benchCont = resourceService.create(CreateResourceRequest(null, "Contribution of Paper 1", setOf(ClassId("Contribution"))))
+        val dummyCont = resourceService.create(CreateResourceRequest(null, "Contribution of Paper 2", setOf(ClassId("Contribution"))))
+
+        val benchmark = resourceService.create(CreateResourceRequest(null, "Benchmark #1", setOf(ClassId(labelsAndClasses.benchmarkClass))))
+        val dummyBenchmark = resourceService.create(CreateResourceRequest(null, "Benchmark #2", setOf(ClassId(labelsAndClasses.benchmarkClass))))
+
+        val dataset1 = resourceService.create(CreateResourceRequest(null, "Dataset 1", setOf(ClassId(labelsAndClasses.datasetClass))))
+        val dataset2 = resourceService.create(CreateResourceRequest(null, "Dataset 2", setOf(ClassId(labelsAndClasses.datasetClass))))
+
+        val codes = (1..5).map { literalService.create("https://some-code-$it.cool") }
+
+        val problem1 = resourceService.create(CreateResourceRequest(null, "Problem 1", setOf(ClassId("Problem"))))
+        val problem2 = resourceService.create(CreateResourceRequest(null, "Problem 2", setOf(ClassId("Problem"))))
+
+        statementService.create(benchPaper.id.value, PredicateId("P30"), field1.id.value)
+        statementService.create(dummyPaper.id.value, PredicateId("P30"), field2.id.value)
+
+        statementService.create(benchPaper.id.value, PredicateId("P31"), benchCont.id.value)
+        statementService.create(dummyPaper.id.value, PredicateId("P31"), dummyCont.id.value)
+
+        statementService.create(benchCont.id.value, PredicateId("P32"), problem1.id.value)
+        statementService.create(benchCont.id.value, PredicateId("P32"), problem2.id.value)
+        statementService.create(benchCont.id.value, PredicateId(labelsAndClasses.benchmarkPredicate), benchmark.id.value)
+
+        statementService.create(dummyCont.id.value, PredicateId("P32"), problem1.id.value)
+        statementService.create(dummyCont.id.value, PredicateId(labelsAndClasses.benchmarkPredicate), dummyBenchmark.id.value)
+
+        statementService.create(field1.id.value, PredicateId("P36"), field2.id.value)
+
+        codes.forEach {
+            statementService.create(benchCont.id.value, PredicateId(labelsAndClasses.sourceCodePredicate), it.id.value)
+        }
+
+        statementService.create(benchmark.id.value, PredicateId(labelsAndClasses.datasetPredicate), dataset1.id.value)
+        statementService.create(benchmark.id.value, PredicateId(labelsAndClasses.datasetPredicate), dataset2.id.value)
+
+        statementService.create(dummyBenchmark.id.value, PredicateId(labelsAndClasses.datasetPredicate), dataset2.id.value)
+
+        mockMvc
+            .perform(getRequestTo("/api/benchmarks/summary/"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$", hasSize<Int>(2)))
+            .andExpect(jsonPath("$[0].research_problem.id", equalTo(problem2.id.value)))
+            .andExpect(jsonPath("$[1].research_problem.id", equalTo(problem1.id.value)))
+            .andExpect(jsonPath("$[1].research_fields", hasSize<Int>(2)))
             .andExpect(jsonPath("$[0].total_papers", equalTo(1)))
             .andExpect(jsonPath("$[0].total_datasets", equalTo(2)))
             .andExpect(jsonPath("$[0].total_codes", equalTo(5)))
@@ -577,9 +644,14 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         )
 
     private fun benchmarkListResponseFields() =
-        responseFields(fieldWithPath("[]").description("A list of benchmarks"))
+        responseFields(
+            fieldWithPath("[]").description("A list of benchmarks"),
+            fieldWithPath("[].research_field").description("Legacy RF of a benchmark summary").optional(),
+            fieldWithPath("[].research_fields").description("List of RFs for a benchmark summary").optional()
+        )
             .andWithPrefix("[].", benchmarkResponseFields())
             .andWithPrefix("[].research_field.", researchFieldResponseFields())
+            .andWithPrefix("[].research_fields.[].", researchFieldResponseFields())
             .andWithPrefix("[].research_problem.", researchProblemResponseFields())
 
     private fun datasetResponseFields() =

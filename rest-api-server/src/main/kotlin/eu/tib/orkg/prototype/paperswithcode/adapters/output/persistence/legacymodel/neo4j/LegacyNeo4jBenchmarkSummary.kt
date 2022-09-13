@@ -16,6 +16,7 @@ data class LegacyNeo4jBenchmarkSummary(
         BenchmarkSummary(
             ResearchProblem(problem.resourceId!!, problem.label!!),
             null,
+            emptyList(),
             totalPapers.toInt(),
             totalDatasets.toInt(),
             totalCodes.toInt()

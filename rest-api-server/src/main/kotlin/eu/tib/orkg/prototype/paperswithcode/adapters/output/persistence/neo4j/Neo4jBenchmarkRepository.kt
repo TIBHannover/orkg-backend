@@ -18,8 +18,9 @@ UNWIND fields AS field
 MATCH (field)<-[:RELATED {predicate_id: 'P30'}]-(p:Paper)-[:RELATED {predicate_id: 'P31'}]->(cont:Contribution)
 MATCH (cont)-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]->(:$BENCHMARK_CLASS)-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]->(ds:$DATASET_CLASS)
 MATCH (cont)-[:RELATED {predicate_id: 'P32'}]->(pr:Problem)
+MATCH (f:ResearchField)<-[:RELATED {predicate_id: 'P30'}]-(p)-[:RELATED {predicate_id: 'P31'}]->(cont)-[:RELATED {predicate_id: 'P32'}]->(pr)
 OPTIONAL MATCH (cont)-[:RELATED {predicate_id: '$SOURCE_CODE_PREDICATE'}]->(l:Literal)
-RETURN DISTINCT pr AS problem, field, COUNT(DISTINCT p) AS totalPapers, COUNT(DISTINCT l) AS totalCodes, COUNT(DISTINCT ds) AS totalDatasets"""
+RETURN DISTINCT pr AS problem, COLLECT(DISTINCT f) AS fields, COUNT(DISTINCT p) AS totalPapers, COUNT(DISTINCT l) AS totalCodes, COUNT(DISTINCT ds) AS totalDatasets"""
     )
     fun summarizeBenchmarkByResearchField(id: ResourceId): Iterable<Neo4jBenchmarkSummary>
 
@@ -28,7 +29,7 @@ MATCH (f:ResearchField)<-[:RELATED {predicate_id: 'P30'}]-(p:Paper)-[:RELATED {p
 MATCH (cont)-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]->(:$BENCHMARK_CLASS)-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]->(ds:$DATASET_CLASS)
 MATCH (cont)-[:RELATED {predicate_id: 'P32'}]->(pr:Problem)
 OPTIONAL MATCH (cont)-[:RELATED {predicate_id: '$SOURCE_CODE_PREDICATE'}]->(l:Literal)
-RETURN DISTINCT pr AS problem, f AS field, COUNT(DISTINCT p) AS totalPapers, COUNT(DISTINCT l) AS totalCodes, COUNT(DISTINCT ds) AS totalDatasets  
+RETURN DISTINCT pr AS problem, COLLECT(DISTINCT f) AS fields, COUNT(DISTINCT p) AS totalPapers, COUNT(DISTINCT l) AS totalCodes, COUNT(DISTINCT ds) AS totalDatasets  
     """)
     fun summarizeBenchmarkGetAll(): Iterable<Neo4jBenchmarkSummary>
 }

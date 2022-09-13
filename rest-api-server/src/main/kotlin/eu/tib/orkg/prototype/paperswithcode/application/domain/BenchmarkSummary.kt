@@ -11,6 +11,8 @@ data class BenchmarkSummary(
     @JsonProperty("research_field")
     // TODO: Default value for legacy PwC model. Remove and make non-nullable after migration. Also update API doc.
     val researchField: ResearchField? = null,
+    @JsonProperty("research_fields")
+    val researchFields: List<ResearchField> = emptyList(),
     override val totalPapers: Int,
     override val totalDatasets: Int,
     override val totalCodes: Int

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Aggregate benchmarks per research field. (Closes: [#411](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/411))
+- Searching resources by class and observatory returns the correct results. (Closes: [#410](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/410))
 
 ## [0.16.0] - 2022-08-31
 ### Fixed

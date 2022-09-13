@@ -64,6 +64,55 @@ interface ResourceRepositoryContractTest {
         repository.findAll(PageRequest.of(0, 10)).totalElements shouldBe times
     }
 
+    @Test
+    fun `given a resource with a class, when it is searched by it's observatory ID and class, it should be found`() {
+        val observatoryId = ObservatoryId(UUID.randomUUID())
+        val classes = setOf(ClassId("ToBeFound"), ClassId("Other"))
+        val resource = createResource().copy(
+            id = ResourceId("R1234"),
+            observatoryId = observatoryId,
+            classes = classes,
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource)
+
+        val result = repository.findAllFeaturedResourcesByObservatoryIDAndClass(
+            observatoryId,
+            listOf("ToBeFound"),
+            featured = false,
+            unlisted = false,
+            PageRequest.of(0, 10)
+        )
+
+        result.content.size shouldBe 1
+        result.first().id shouldBe ResourceId("R1234")
+    }
+
+    @Test
+    fun `given a resource with a class, when searched by it's observatory ID and class and featured is true, it should not be found`() {
+        val observatoryId = ObservatoryId(UUID.randomUUID())
+        val classes = setOf(ClassId("ToBeFound"), ClassId("Other"))
+        val resource = createResource().copy(
+            id = ResourceId("R1234"),
+            observatoryId = observatoryId,
+            classes = classes,
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource)
+
+        val result = repository.findAllFeaturedResourcesByObservatoryIDAndClass(
+            observatoryId,
+            listOf("ToBeFound"),
+            featured = true,
+            unlisted = false,
+            PageRequest.of(0, 10)
+        )
+
+        result.content.size shouldBe 0
+    }
+
     fun cleanUpAfterEach()
 
     @AfterEach

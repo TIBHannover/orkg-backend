@@ -57,6 +57,12 @@ private const val MATCH_UNLISTED_PAPER =
 private const val MATCH_LISTED_PAPER =
     """MATCH (node) WHERE OR node.unlisted = false AND $HAS_PAPER_CLASS"""
 
+const val IS_FEATURED_1 = "COALESCE(node.featured, false) = {1}"
+const val IS_FEATURED_2 = "COALESCE(node.featured, false) = {2}"
+const val IS_UNLISTED_1 = "COALESCE(node.unlisted, false) = {1}"
+const val IS_UNLISTED_2 = "COALESCE(node.unlisted, false) = {2}"
+const val IS_UNLISTED_3 = "COALESCE(node.unlisted, false) = {3}"
+
 interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     fun existsByResourceId(id: ResourceId): Boolean
 
@@ -194,19 +200,19 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     )
     fun findAllListedPapers(pageable: Pageable): Page<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WHERE (ANY(c in {0} WHERE c IN labels(node)) AND node.unlisted={1}) WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
-        countQuery = """MATCH (node:`Resource`) WHERE (ANY(c in {0} WHERE c IN labels(node)) AND node.unlisted={1})  WITH COUNT(node) as cnt RETURN cnt""")
+    @Query(value = """MATCH (node:`Resource`) WHERE ANY(c in {0} WHERE c IN labels(node)) AND $IS_UNLISTED_1 WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
+        countQuery = """MATCH (node:`Resource`) WHERE ANY(c in {0} WHERE c IN labels(node)) AND $IS_UNLISTED_1  WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllFeaturedResourcesByClass(classes: List<String>, unlisted: Boolean, pageable: Pageable): Page<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WHERE (ANY(c in {0} WHERE c IN labels(node)) AND node.featured={1} AND node.unlisted={2})  WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
-        countQuery = """MATCH (node:`Resource`) WHERE (ANY(c in {0} WHERE c IN labels(node)) AND node.featured={1} AND node.unlisted={2}) WITH COUNT(node) as cnt RETURN cnt""")
+    @Query(value = """MATCH (node:`Resource`) WHERE ANY(c in {0} WHERE c IN labels(node)) AND $IS_FEATURED_1 AND $IS_UNLISTED_2)  WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
+        countQuery = """MATCH (node:`Resource`) WHERE ANY(c in {0} WHERE c IN labels(node)) AND $IS_FEATURED_1 AND $IS_UNLISTED_2) WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllFeaturedResourcesByClass(classes: List<String>, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WHERE (ANY(c in {1} WHERE c IN labels(node))) AND node.observatory_id={0} AND node.featured={2} AND node.unlisted={3}  WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
-        countQuery = """MATCH (node:`Resource`) WHERE (ANY(c in {1} WHERE c IN labels(node))) AND node.observatory_id={0} AND node.featured={2} AND node.unlisted={3} WITH COUNT(node) as cnt RETURN cnt""")
+    @Query(value = """MATCH (node:`Resource`) WHERE ANY(c in {1} WHERE c IN labels(node)) AND node.observatory_id={0} AND $IS_FEATURED_2 AND $IS_UNLISTED_3  WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
+        countQuery = """MATCH (node:`Resource`) WHERE ANY(c in {1} WHERE c IN labels(node)) AND node.observatory_id={0} AND $IS_FEATURED_2 AND $IS_UNLISTED_3 WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllFeaturedResourcesByObservatoryIdAndClass(id: ObservatoryId, classes: List<String>, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WHERE (ANY(c in {1} WHERE c IN labels(node))) AND node.observatory_id={0} AND node.unlisted={2} WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
-        countQuery = """MATCH (node:`Resource`) WHERE (ANY(c in {1} WHERE c IN labels(node))) AND node.observatory_id={0} AND node.unlisted={2}  WITH COUNT(node) as cnt RETURN cnt""")
+    @Query(value = """MATCH (node:`Resource`) WHERE ANY(c in {1} WHERE c IN labels(node)) AND node.observatory_id={0} AND $IS_UNLISTED_2 WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
+        countQuery = """MATCH (node:`Resource`) WHERE ANY(c in {1} WHERE c IN labels(node)) AND node.observatory_id={0} AND $IS_UNLISTED_2  WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllResourcesByObservatoryIdAndClass(id: ObservatoryId, classes: List<String>, unlisted: Boolean, pageable: Pageable): Page<Neo4jResource>
 }

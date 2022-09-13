@@ -261,8 +261,9 @@ class ResourceService(
                     unlisted,
                     pageable
                 )
+            } else {
+                repository.findAllResourcesByObservatoryIDAndClass(id, classes, unlisted, pageable)
             }
-            repository.findAllResourcesByObservatoryIDAndClass(id, classes, unlisted, pageable)
         }
 
     override fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors> =

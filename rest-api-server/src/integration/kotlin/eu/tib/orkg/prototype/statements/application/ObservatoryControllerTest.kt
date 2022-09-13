@@ -14,6 +14,7 @@ import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationType
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize
+import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -150,6 +151,45 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
                     ResourceControllerTest.listOfResourcesResponseFields()
                 )
             )
+    }
+
+    @Test
+    fun lookUpByObservatoryIdAndClassAndNotFeatured() {
+        val userId = createTestUser()
+        val organizationId = createTestOrganization(userId)
+        val resource = createTestResource(
+            ContributorId.createUnknownContributor(),
+            OrganizationId.createUnknownOrganization(),
+            ObservatoryId.createUnknownObservatory(),
+            "ResearchField"
+        )
+        val observatoryId = createTestObservatory(organizationId, resource.id.toString()).id!!
+        val resourceId = createTestResource(userId, organizationId, observatoryId, "SomeClass").id.value
+
+        mockMvc
+            .perform(getRequestTo("/api/observatories/$observatoryId/class?classes=SomeClass"))
+            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.content[0].id", `is`(resourceId)))
+            .andExpect(status().isOk)
+    }
+
+    @Test
+    fun lookUpByObservatoryIdAndClassAndFeatured() {
+        val userId = createTestUser()
+        val organizationId = createTestOrganization(userId)
+        val resource = createTestResource(
+            ContributorId.createUnknownContributor(),
+            OrganizationId.createUnknownOrganization(),
+            ObservatoryId.createUnknownObservatory(),
+            "ResearchField"
+        )
+        val observatoryId = createTestObservatory(organizationId, resource.id.toString()).id!!
+        createTestResource(userId, organizationId, observatoryId, "SomeClass")
+
+        mockMvc
+            .perform(getRequestTo("/api/observatories/$observatoryId/class?classes=SomeClass&featured=true"))
+            .andExpect(jsonPath("$.content", hasSize<Int>(0)))
+            .andExpect(status().isOk)
     }
 
     fun createTestUser(): ContributorId {

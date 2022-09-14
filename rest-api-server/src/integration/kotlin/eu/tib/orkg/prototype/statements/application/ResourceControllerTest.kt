@@ -12,8 +12,10 @@ import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.services.LiteralService
+import eu.tib.orkg.prototype.statements.services.PaperService
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
+import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
@@ -34,7 +36,6 @@ import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.util.UriComponentsBuilder
 
 @DisplayName("Resource Controller")
 @Transactional
@@ -54,7 +55,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     private lateinit var statementService: StatementUseCases
 
     @Autowired
-    private lateinit var paperController: PaperController
+    private lateinit var paperService: PaperService
 
     @Autowired
     private lateinit var resourceService: ResourceUseCases
@@ -368,7 +369,6 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun testPaperContributorsDetails() {
         predicateService.create(CreatePredicateRequest(PredicateId("P26"), "Has DOI"))
         predicateService.create(CreatePredicateRequest(PredicateId("P29"), "Has publication year"))
@@ -386,7 +386,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         // create resource with different userId, and use it as a research field in the paper
         resourceService.create(userId, CreateResourceRequest(ResourceId("R20"), "database"), ObservatoryId.createUnknownObservatory(), ExtractionMethod.UNKNOWN, OrganizationId.createUnknownOrganization())
         val originalPaper = PaperControllerTest().createDummyPaperObject(researchField = "R20")
-        val paperId = paperController.add(originalPaper, UriComponentsBuilder.fromUriString("localhost"), true).body!!.id.value
+        val paperId = paperService.addPaperContent(originalPaper, true, UUID.randomUUID()).id.value
         val result = mockMvc
             .perform(getRequestTo("/api/resources/$paperId/contributors"))
             .andExpect(status().isOk)

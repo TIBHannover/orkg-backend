@@ -7,7 +7,9 @@ import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.services.PaperService
 import eu.tib.orkg.prototype.statements.services.PredicateService
+import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.not
 import org.intellij.lang.annotations.Language
@@ -27,7 +29,6 @@ import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.util.UriComponentsBuilder
 
 @DisplayName("Paper Controller")
 @Transactional
@@ -44,7 +45,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     private lateinit var classService: ClassUseCases
 
     @Autowired
-    private lateinit var paperController: PaperController
+    private lateinit var paperService: PaperService
 
     @Autowired
     private lateinit var userService: UserService
@@ -150,7 +151,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
 
         val originalPaper = createDummyPaperObject(doi = "")
 
-        val originalId = paperController.add(originalPaper, UriComponentsBuilder.fromUriString("localhost"), false).body!!.id.value
+        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).id.value
 
         val paperWithEmptyDOI = mapOf(
             "paper" to mapOf(
@@ -197,7 +198,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
 
         val originalPaper = createDummyPaperObject()
 
-        val originalId = paperController.add(originalPaper, UriComponentsBuilder.fromUriString("localhost"), false).body!!.id.value
+        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).id.value
 
         val paperWithSameTitle = mapOf(
             "paper" to mapOf(
@@ -244,7 +245,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
 
         val originalPaper = createDummyPaperObject()
 
-        val originalId = paperController.add(originalPaper, UriComponentsBuilder.fromUriString("localhost"), false).body!!.id.value
+        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).id.value
 
         val paperWithSameDOI = mapOf(
             "paper" to mapOf(
@@ -291,7 +292,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
 
         val originalPaper = createDummyPaperObject()
 
-        val originalId = paperController.add(originalPaper, UriComponentsBuilder.fromUriString("localhost"), false).body!!.id.value
+        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).id.value
 
         val paperWithSameTitleAndDOI = mapOf(
             "paper" to mapOf(

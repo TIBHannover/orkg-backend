@@ -16,6 +16,7 @@ import eu.tib.orkg.prototype.statements.services.ClassService
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import java.net.URI
 import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Assumptions.assumeFalse
@@ -296,12 +297,21 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
             .perform(getRequestTo("/api/benchmarks/summary/"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$", hasSize<Int>(2)))
-            .andExpect(jsonPath("$[0].research_problem.id", equalTo(problem2.id.value)))
-            .andExpect(jsonPath("$[1].research_problem.id", equalTo(problem1.id.value)))
-            .andExpect(jsonPath("$[1].research_fields", hasSize<Int>(2)))
-            .andExpect(jsonPath("$[0].total_papers", equalTo(1)))
-            .andExpect(jsonPath("$[0].total_datasets", equalTo(2)))
-            .andExpect(jsonPath("$[0].total_codes", equalTo(5)))
+            .andExpect(jsonPath("$[*].research_problem.id", containsInAnyOrder(problem1.id.value, problem2.id.value)))
+            // Due to limits in JSONPath, we can only filter to the respective object from the list, but not get rid of
+            // the list itself, so we need to deal with that. The list of research fields is embedded into a list, so
+            // by selecting all elements (via "[*]") we get rid of the innermost list. Because that does not work for
+            // the totals, those are checked using a list containing the expected result.
+            // Problem 1:
+            .andExpect(jsonPath("$[?(@.research_problem.id==\"${problem1.id.value}\")].research_fields[*]", hasSize<Int>(2)))
+            .andExpect(jsonPath("$[?(@.research_problem.id==\"${problem1.id.value}\")].total_papers", equalTo(listOf(2))))
+            .andExpect(jsonPath("$[?(@.research_problem.id==\"${problem1.id.value}\")].total_datasets", equalTo(listOf(2))))
+            .andExpect(jsonPath("$[?(@.research_problem.id==\"${problem1.id.value}\")].total_codes", equalTo(listOf(5))))
+            // Problem 2:
+            .andExpect(jsonPath("$[?(@.research_problem.id==\"${problem2.id.value}\")].research_fields[*]", hasSize<Int>(1)))
+            .andExpect(jsonPath("$[?(@.research_problem.id==\"${problem2.id.value}\")].total_papers", equalTo(listOf(1))))
+            .andExpect(jsonPath("$[?(@.research_problem.id==\"${problem2.id.value}\")].total_datasets", equalTo(listOf(2))))
+            .andExpect(jsonPath("$[?(@.research_problem.id==\"${problem2.id.value}\")].total_codes", equalTo(listOf(5))))
             .andDo(
                 document(
                     snippet,

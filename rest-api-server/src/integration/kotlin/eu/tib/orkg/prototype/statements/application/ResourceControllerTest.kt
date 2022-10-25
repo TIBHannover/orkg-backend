@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
@@ -18,6 +19,7 @@ import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContribut
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -33,6 +35,7 @@ import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.security.test.context.support.WithUserDetails
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -40,7 +43,11 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Resource Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
+@TestPropertySource(properties = ["orkg.features.formatted_labels=false"])
 class ResourceControllerTest : RestDocumentationBaseTest() {
+
+    @Autowired
+    private lateinit var flags: FeatureFlagService
 
     @Autowired
     private lateinit var service: ResourceUseCases
@@ -406,6 +413,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun `fetch resource with the correct formatted label`() {
+        assumeTrue(flags.isFormattedLabelsEnabled())
         val value = "Wow!"
         val id = createTemplateAndTypedResource(value)
 

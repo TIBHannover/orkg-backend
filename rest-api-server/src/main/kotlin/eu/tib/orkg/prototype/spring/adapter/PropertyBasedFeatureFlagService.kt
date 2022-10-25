@@ -12,6 +12,8 @@ class PropertyBasedFeatureFlagService(
     private val config: FeatureFlags
 ) : FeatureFlagService {
     override fun isPapersWithCodeLegacyModelEnabled(): Boolean = config.pwcLegacyModel
+
+    override fun isFormattedLabelsEnabled(): Boolean = config.formattedLabels
 }
 
 @ConfigurationProperties(prefix = "orkg.features")
@@ -21,7 +23,9 @@ class PropertyBasedFeatureFlagService(
  */
 data class FeatureFlags(
     /** Use the old (legacy) model for Paper With Code data. */
-    val pwcLegacyModel: Boolean = false
+    val pwcLegacyModel: Boolean = false,
+    /** Disable formatted labels by default - for performance reasons */
+    val formattedLabels: Boolean = false
 )
 
 @Configuration

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.16.2] - 2022-10-25
+### Fixed
+- Urgent: Disable formatted labels by default as it is the main reason for degraded performance. (Closes: [#417](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/417))
+
 ## [0.16.1] - 2022-09-14
 ### Fixed
 - Aggregate benchmarks per research field. (Closes: [#411](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/411))

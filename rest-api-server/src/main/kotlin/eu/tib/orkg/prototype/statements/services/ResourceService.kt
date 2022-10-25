@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.api.IterableResourcesGenerator
 import eu.tib.orkg.prototype.statements.api.PagedResourcesGenerator
@@ -48,7 +49,8 @@ class ResourceService(
     private val neo4jSmartReviewRepository: Neo4jSmartReviewRepository,
     private val repository: ResourceRepository,
     private val statementRepository: StatementRepository,
-    private val templateRepository: TemplateRepository
+    private val templateRepository: TemplateRepository,
+    private val flags: FeatureFlagService
 ) : ResourceUseCases {
     @Transactional(readOnly = true)
     override fun exists(id: ResourceId): Boolean = repository.exists(id)
@@ -523,9 +525,10 @@ class ResourceService(
         return statementRepository.countStatementsAboutResources(resourceIds)
     }
 
-    private fun formatLabelFor(resources: List<Resource>): Map<ResourceId, FormattedLabel?> {
-        return resources.associate { it.id!! to templateRepository.formattedLabelFor(it.id, it.classes) }
-    }
+    private fun formatLabelFor(resources: List<Resource>): Map<ResourceId, FormattedLabel?> =
+        if (flags.isFormattedLabelsEnabled())
+            resources.associate { it.id!! to templateRepository.formattedLabelFor(it.id, it.classes) }
+        else emptyMap()
 
     private fun retrieveAndConvertPaged(action: () -> Page<Resource>): Page<ResourceRepresentation> {
         val paged = action()
@@ -540,7 +543,7 @@ class ResourceService(
     private fun retrieveAndConvertOptional(action: () -> Optional<Resource>): Optional<ResourceRepresentation> =
         action().map {
             val count = statementRepository.countStatementsAboutResource(it.id!!)
-            it.toResourceRepresentation(mapOf(it.id to count), mapOf(it.id to templateRepository.formattedLabelFor(it.id, it.classes)))
+            it.toResourceRepresentation(mapOf(it.id to count), formatLabelFor(listOf(it)))
         }
 
     private fun retrieveAndConvertNullable(action: () -> Resource?): ResourceRepresentation? =

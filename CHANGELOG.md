@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.16.2] - 2022-10-25
+## [0.16.2] - 2022-10-27
 ### Fixed
 - Urgent: Disable formatted labels by default as it is the main reason for degraded performance. (Closes: [#417](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/417))
 
@@ -174,7 +174,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.16.1...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.16.2...master
+[0.16.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.16.2
 [0.16.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.16.1
 [0.16.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.16.0
 [0.15.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.15.0

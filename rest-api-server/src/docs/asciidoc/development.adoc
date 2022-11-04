@@ -102,6 +102,33 @@ Changing it is only required when adding or removing components.
 
 See https://blog.gradle.org/alignment-with-gradle-module-metadata[this blog article] for a description of the problem and the solution.
 
+== Monitoring & Management
+
+The application uses JMX and Spring Boot Actuator for monitoring and management.
+
+=== JMX
+
+When starting the application directly, e.g. via `gradle bootRun`, JMX can be accessed directly via common tools such as https://visualvm.github.io/[VisualVM] or `jconsole` (part of the JDK).
+The application will automatically be detected and listed.
+
+When using the Docker image via Docker Compose, remote JMX access is enabled on port 9090.
+In VisualVM, choose "File" → "Add JMX connection…" and enter `localhost:9090` in the "Connection" field.
+After a few seconds, the list entry should be replaced by the application in information.
+(Notice the "PID: 1". This indicates the container.)
+
+=== Spring Boot Actuator
+
+Several endpoints are exposed via Spring Boot Actuator.
+The index is exposed at http://localhost:8080/actuator.
+Available endpoint can be discovered from here.
+
+JMX is exposed over HTTP via https://jolokia.org[Jolokia] at http://localhost:8080/actuator/jolokia.
+For a better experience, a https://hawt.io/[hawt.io] interface is exposed on http://localhost:8080/actuator/hawtio.
+
+Most settings can be changed on the fly via JMX, e.g. logging levels for debugging.
+
+WARNING: In the default configuration, no authentication is performed, and it will be possible to modify settings via JMX!
+
 == Testing
 
 === Current status

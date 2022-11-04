@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -111,11 +112,15 @@ class ResourceServerConfiguration(
 /**
  * Class to provide an [AuthenticationManager] so OAuth2 can use the `password` grant type.
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 class AuthenticationManagerProvider : WebSecurityConfigurerAdapter() {
     @Bean
     override fun authenticationManagerBean(): AuthenticationManager {
         return super.authenticationManagerBean()
+    }
+
+    override fun configure(http: HttpSecurity) {
+        http.requestMatcher(EndpointRequest.toAnyEndpoint()).authorizeRequests { it.anyRequest().permitAll() }
     }
 }
 

@@ -8,9 +8,16 @@ services:
       SPRING_DATASOURCE_URL: 'jdbc:postgresql://postgres/postgres'
       SPRING_DATA_NEO4J_URI: 'bolt://neo4j:7687'
       SPRING_PROFILES_ACTIVE: development
+      JDK_JAVA_OPTIONS: >-
+        -Dcom.sun.management.jmxremote
+        -Dcom.sun.management.jmxremote.port=9090
+        -Dcom.sun.management.jmxremote.rmi.port=9090
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false
     ports:
       - '127.0.0.1:8080:8080'
       #- '::1:8080:8080'
+      - '127.0.0.1:9090:9090' # JMX
     networks:
       - backend
     depends_on:

@@ -257,21 +257,27 @@ class StatementService(
                 .associate { it.id!! to templateRepository.formattedLabelFor(it.id, it.classes) }
         } else emptyMap()
 
-    private fun retrieveAndConvertSingleStatement(action: () -> Optional<GeneralStatement>): Optional<StatementRepresentation> =
-        action().map {
-            val counts = countsFor(listOf(action().get(), action().get()))
-            val labels = formatLabelFor(listOf(action().get(), action().get()))
+    private fun retrieveAndConvertSingleStatement(action: () -> Optional<GeneralStatement>): Optional<StatementRepresentation> {
+        val instance = action()
+        return instance.map {
+            val counts = countsFor(listOf(instance.get()))
+            val labels = formatLabelFor(listOf(instance.get()))
             it.toRepresentation(counts, labels)
         }
+    }
 
     private fun retrieveAndConvertPaged(action: () -> Page<GeneralStatement>): Page<StatementRepresentation> {
         val paged = action()
-        return paged.map { it.toRepresentation(countsFor(paged.content), formatLabelFor(paged.content)) }
+        val statementCounts = countsFor(paged.content)
+        val formattedLabelCounts = formatLabelFor(paged.content)
+        return paged.map { it.toRepresentation(statementCounts, formattedLabelCounts) }
     }
 
     private fun retrieveAndConvertIterable(action: () -> Iterable<GeneralStatement>): Iterable<StatementRepresentation> {
         val statements = action()
-        return statements.map { it.toRepresentation(countsFor(statements.toList()), formatLabelFor(statements.toList())) }
+        val statementCounts = countsFor(statements.toList())
+        val formattedLabelCounts = formatLabelFor(statements.toList())
+        return statements.map { it.toRepresentation(statementCounts, formattedLabelCounts) }
     }
 
     private fun GeneralStatement.toRepresentation(statementCounts: StatementCounts, formattedLabels: FormattedLabels): StatementRepresentation =

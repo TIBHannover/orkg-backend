@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Fixed a performance regression when converting resources and statements to their JSON representations.
+  The error lead to the lookup table for the resource usage being calculated multiple times instead of once, issuing the same request to the database each time.
 
 ## [0.17.1] - 2022-11-08
 ### Changed

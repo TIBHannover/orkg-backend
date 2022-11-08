@@ -532,12 +532,16 @@ class ResourceService(
 
     private fun retrieveAndConvertPaged(action: () -> Page<Resource>): Page<ResourceRepresentation> {
         val paged = action()
-        return paged.map { it.toResourceRepresentation(countsFor(paged.content), formatLabelFor(paged.content)) }
+        val statementCounts = countsFor(paged.content)
+        val formattedLabelCount = formatLabelFor(paged.content)
+        return paged.map { it.toResourceRepresentation(statementCounts, formattedLabelCount) }
     }
 
     private fun retrieveAndConvertIterable(action: () -> Iterable<Resource>): Iterable<ResourceRepresentation> {
         val resources = action()
-        return resources.map { it.toResourceRepresentation(countsFor(resources.toList()), formatLabelFor(resources.toList())) }
+        val statementCounts = countsFor(resources.toList())
+        val formattedLabelCounts = formatLabelFor(resources.toList())
+        return resources.map { it.toResourceRepresentation(statementCounts, formattedLabelCounts) }
     }
 
     private fun retrieveAndConvertOptional(action: () -> Optional<Resource>): Optional<ResourceRepresentation> =

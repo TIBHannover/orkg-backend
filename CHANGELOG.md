@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - The version of the PostgreSQL driver was updated to fix some connection issues that are known for the version used until now.
+### Fixed
+- The formatted labels feature was not fully disabled in 0.16.2. The remaining places were updated to fully disable it.
 
 ## [0.17.0] - 2022-11-08
 ### Added

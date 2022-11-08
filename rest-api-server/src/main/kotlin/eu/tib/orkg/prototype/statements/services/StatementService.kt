@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.BundleConfiguration
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
@@ -39,7 +40,8 @@ class StatementService(
     private val thingRepository: ThingRepository,
     private val predicateService: PredicateRepository,
     private val statementRepository: StatementRepository,
-    private val templateRepository: TemplateRepository
+    private val templateRepository: TemplateRepository,
+    private val flags: FeatureFlagService
 ) : StatementUseCases {
 
     override fun findAll(pagination: Pageable): Iterable<StatementRepresentation> =
@@ -248,12 +250,12 @@ class StatementService(
         return statementRepository.countStatementsAboutResources(resourceIds.toSet())
     }
 
-    private fun formatLabelFor(statements: List<GeneralStatement>): Map<ResourceId, FormattedLabel?> {
-        val resources =
-            statements.map(GeneralStatement::subject).filterIsInstance<Resource>() +
-                statements.map(GeneralStatement::`object`).filterIsInstance<Resource>()
-        return resources.associate { it.id!! to templateRepository.formattedLabelFor(it.id, it.classes) }
-    }
+    private fun formatLabelFor(statements: List<GeneralStatement>): Map<ResourceId, FormattedLabel?> =
+        if (flags.isFormattedLabelsEnabled()) {
+            (statements.map(GeneralStatement::subject).filterIsInstance<Resource>() +
+                statements.map(GeneralStatement::`object`).filterIsInstance<Resource>())
+                .associate { it.id!! to templateRepository.formattedLabelFor(it.id, it.classes) }
+        } else emptyMap()
 
     private fun retrieveAndConvertSingleStatement(action: () -> Optional<GeneralStatement>): Optional<StatementRepresentation> =
         action().map {

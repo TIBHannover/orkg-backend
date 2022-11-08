@@ -6,12 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.17.0] - 2022-11-08
 ### Added
 - Added monitoring and management capabilities via Spring Boot Actuator and JMX.
 
 ## [0.16.2] - 2022-10-27
-### Fixed
-- Urgent: Disable formatted labels by default as it is the main reason for degraded performance. (Closes: [#417](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/417))
+### Changed
+- Disable formatted labels by default as it is the main reason for degraded performance. (Closes: [#417](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/417))
 
 ## [0.16.1] - 2022-09-14
 ### Fixed
@@ -176,7 +178,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.16.2...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.17.0...master
+[0.17.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.16.2
 [0.16.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.16.2
 [0.16.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.16.1
 [0.16.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.16.0

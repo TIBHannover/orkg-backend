@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.17.2] - 2022-11-08
 ### Fixed
 - Fixed a performance regression when converting resources and statements to their JSON representations.
   The error lead to the lookup table for the resource usage being calculated multiple times instead of once, issuing the same request to the database each time.
@@ -187,9 +189,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.17.1...master
-[0.17.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.16.2
-[0.17.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.16.2
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.17.2...master
+[0.17.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.17.2
+[0.17.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.17.1
+[0.17.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.17.0
 [0.16.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.16.2
 [0.16.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.16.1
 [0.16.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.16.0

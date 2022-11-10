@@ -92,6 +92,7 @@ class StatsControllerTest : RestDocumentationBaseTest() {
         fieldWithPath("users").description("The number of users"),
         fieldWithPath("observatories").description("The number of observatories"),
         fieldWithPath("organizations").description("The number of organizations"),
+        fieldWithPath("orphaned_nodes").description("The number of orphaned nodes"),
         fieldWithPath("extras").description("A dictionary with on-the-fly classes and their corresponding numbers").optional(),
     )
 }

@@ -20,6 +20,8 @@ data class Stats(
     val users: Long,
     val observatories: Long,
     val organizations: Long,
+    @JsonProperty("orphaned_nodes")
+    val orphanedNodes: Long,
     @JsonProperty("extras")
     val extraCounts: Map<String, Long>?
 )

@@ -57,11 +57,12 @@ class StatisticsService(
         val userCount = userRepository.count()
         val observatoriesCount = observatoryRepository.count()
         val organizationsCount = organizationRepository.count()
+        val orphanedNodesCount = neo4jStatsRepository.getOrphanedNodesCount()
         return Stats(statementsCount, resourcesCount, predicatesCount,
             literalsCount, papersCount, classesCount, contributionsCount,
             fieldsCount, problemsCount, comparisonsCount, visualizationsCount,
             templatesCount, smartReviewsCount, userCount, observatoriesCount,
-            organizationsCount, extraCounts)
+            organizationsCount, orphanedNodesCount, extraCounts)
     }
 
     override fun getFieldsStats(): Map<String, Int> {

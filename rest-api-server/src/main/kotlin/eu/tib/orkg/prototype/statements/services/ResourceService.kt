@@ -173,7 +173,7 @@ class ResourceService(
         part: String
     ): Page<ResourceRepresentation> =
         retrieveAndConvertPaged {
-            repository.findAllByClassAndLabelContaining(
+            repository.findAllByClassAndLabelMatchesRegex(
                 id.toString(),
                 part.toSearchString(),
                 pageable
@@ -187,7 +187,7 @@ class ResourceService(
         createdBy: ContributorId
     ): Page<ResourceRepresentation> =
         retrieveAndConvertPaged {
-            repository.findAllByClassAndLabelContainingAndCreatedBy(
+            repository.findAllByClassAndLabelMatchesRegexAndCreatedBy(
                 id.toString(),
                 part.toSearchString(),
                 createdBy,
@@ -211,7 +211,7 @@ class ResourceService(
         part: String
     ): Page<ResourceRepresentation> =
         retrieveAndConvertPaged {
-            repository.findAllExcludingClassByLabelContaining(ids.map { it.value }, part.toSearchString(), pageable)
+            repository.findAllExcludingClassByLabelMatchesRegex(ids.map { it.value }, part.toSearchString(), pageable)
         }
 
     override fun findByDOI(doi: String): Optional<ResourceRepresentation> =
@@ -409,13 +409,13 @@ class ResourceService(
         neo4jComparisonRepository.findAllFeaturedComparisons(pageable).map(Neo4jResource::toResource)
 
     override fun loadNonFeaturedComparisons(pageable: Pageable): Page<Resource> =
-        neo4jComparisonRepository.findAllNonFeaturedComparsions(pageable).map(Neo4jResource::toResource)
+        neo4jComparisonRepository.findAllNonFeaturedComparisons(pageable).map(Neo4jResource::toResource)
 
     override fun loadUnlistedComparisons(pageable: Pageable): Page<Resource> =
         neo4jComparisonRepository.findAllUnlistedComparisons(pageable).map(Neo4jResource::toResource)
 
     override fun loadListedComparisons(pageable: Pageable): Page<Resource> =
-        neo4jComparisonRepository.findAllListedComparsions(pageable).map(Neo4jResource::toResource)
+        neo4jComparisonRepository.findAllListedComparisons(pageable).map(Neo4jResource::toResource)
 
     override fun loadFeaturedContributions(pageable: Pageable): Page<Resource> =
         neo4jContributionRepository.findAllFeaturedContributions(pageable).map(Neo4jResource::toResource)

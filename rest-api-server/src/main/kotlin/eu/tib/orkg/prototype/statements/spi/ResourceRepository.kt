@@ -28,12 +28,12 @@ interface ResourceRepository : EntityRepository<Resource, ResourceId> {
     fun findAllByClassAndLabel(`class`: String, label: String, pageable: Pageable): Page<Resource>
     fun findAllByClassAndLabelAndCreatedBy(`class`: String, label: String, createdBy: ContributorId, pageable: Pageable): Page<Resource>
 
-    fun findAllByClassAndLabelContaining(`class`: String, label: String, pageable: Pageable): Page<Resource>
-    fun findAllByClassAndLabelContainingAndCreatedBy(`class`: String, label: String, createdBy: ContributorId, pageable: Pageable): Page<Resource>
+    fun findAllByClassAndLabelMatchesRegex(`class`: String, label: String, pageable: Pageable): Page<Resource>
+    fun findAllByClassAndLabelMatchesRegexAndCreatedBy(`class`: String, label: String, createdBy: ContributorId, pageable: Pageable): Page<Resource>
 
     fun findAllExcludingClass(classes: List<String>, pageable: Pageable): Page<Resource>
     fun findAllExcludingClassByLabel(classes: List<String>, label: String, pageable: Pageable): Page<Resource>
-    fun findAllExcludingClassByLabelContaining(classes: List<String>, label: String, pageable: Pageable): Page<Resource>
+    fun findAllExcludingClassByLabelMatchesRegex(classes: List<String>, label: String, pageable: Pageable): Page<Resource>
     fun getIncomingStatementsCount(ids: List<ResourceId>): Iterable<Long>
     fun findByDOI(doi: String): Optional<Resource>
     fun findAllByDOI(doi: String): Iterable<Resource>

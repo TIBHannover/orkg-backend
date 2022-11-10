@@ -86,16 +86,16 @@ class SpringDataNeo4jResourceAdapter(
     ): Page<Resource> =
         neo4jRepository.findAllByClassAndCreatedBy(`class`, createdBy, pageable).map(Neo4jResource::toResource)
 
-    override fun findAllByClassAndLabelContaining(`class`: String, label: String, pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllByClassAndLabelContaining(`class`, label, pageable).map(Neo4jResource::toResource)
+    override fun findAllByClassAndLabelMatchesRegex(`class`: String, label: String, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllByClassAndLabelMatchesRegex(`class`, label, pageable).map(Neo4jResource::toResource)
 
-    override fun findAllByClassAndLabelContainingAndCreatedBy(
+    override fun findAllByClassAndLabelMatchesRegexAndCreatedBy(
         `class`: String,
         label: String,
         createdBy: ContributorId,
         pageable: Pageable
     ): Page<Resource> =
-        neo4jRepository.findAllByClassAndLabelContainingAndCreatedBy(`class`, label, createdBy, pageable)
+        neo4jRepository.findAllByClassAndLabelMatchesRegexAndCreatedBy(`class`, label, createdBy, pageable)
             .map(Neo4jResource::toResource)
 
     override fun findAllExcludingClass(classes: List<String>, pageable: Pageable): Page<Resource> =
@@ -108,12 +108,12 @@ class SpringDataNeo4jResourceAdapter(
     ): Page<Resource> =
         neo4jRepository.findAllExcludingClassByLabel(classes, label, pageable).map(Neo4jResource::toResource)
 
-    override fun findAllExcludingClassByLabelContaining(
+    override fun findAllExcludingClassByLabelMatchesRegex(
         classes: List<String>,
         label: String,
         pageable: Pageable
     ): Page<Resource> =
-        neo4jRepository.findAllExcludingClassByLabelContaining(classes, label, pageable).map(Neo4jResource::toResource)
+        neo4jRepository.findAllExcludingClassByLabelMatchesRegex(classes, label, pageable).map(Neo4jResource::toResource)
 
     override fun getIncomingStatementsCount(ids: List<ResourceId>): Iterable<Long> =
         neo4jRepository.getIncomingStatementsCount(ids)

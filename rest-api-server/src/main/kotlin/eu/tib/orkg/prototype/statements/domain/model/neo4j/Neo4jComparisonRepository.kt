@@ -58,7 +58,7 @@ interface Neo4jComparisonRepository :
         value = """$MATCH_NONFEATURED_COMPARISON $WITH_NODE_PROPERTIES $RETURN_NODE""",
         countQuery = """$MATCH_NONFEATURED_COMPARISON $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
-    fun findAllNonFeaturedComparsions(pageable: Pageable): Page<Neo4jResource>
+    fun findAllNonFeaturedComparisons(pageable: Pageable): Page<Neo4jResource>
 
     @Query(
         value = """$MATCH_UNLISTED_COMPARISON $WITH_NODE_PROPERTIES $RETURN_NODE""",
@@ -70,5 +70,5 @@ interface Neo4jComparisonRepository :
         value = """$MATCH_LISTED_COMPARISON $WITH_NODE_PROPERTIES $RETURN_NODE""",
         countQuery = """$MATCH_LISTED_COMPARISON $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
-    fun findAllListedComparsions(pageable: Pageable): Page<Neo4jResource>
+    fun findAllListedComparisons(pageable: Pageable): Page<Neo4jResource>
 }

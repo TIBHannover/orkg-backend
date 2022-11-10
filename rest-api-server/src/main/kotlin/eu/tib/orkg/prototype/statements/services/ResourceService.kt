@@ -308,6 +308,11 @@ class ResourceService(
         pageable: Pageable
     ): Page<ResourceRepresentation> =
         retrieveAndConvertPaged {
+            // f u
+            // 0 0 --> findAllUnlistedIs(false) (ohne unlisted)            // service: findAll
+            // 0 1 --> findAllUnlistedIs(true)
+            // 1 0 --> findAllFeaturedIs(true) + muss gelistet sein
+            // 1 1 --> leer/BRQ
             if (classes.isNotEmpty()) {
                 when (featured) {
                     null -> repository.findAllFeaturedResourcesByClass(

@@ -191,13 +191,14 @@ class ResourceController(
     @GetMapping("/classes")
     fun getResourcesByClass(
         @RequestParam(value = "classes") classes: List<String>,
-        @Nullable @RequestParam("featured")
-        featured: Boolean?,
+        @RequestParam("featured", required = false, defaultValue = "false")
+        featured: Boolean,
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable
     ): Page<ResourceRepresentation> {
-        return service.getResourcesByClasses(classes, featured, unlisted, pageable)
+        // TODO change to bad request instead of empty page on error
+        return service.getResourcesByClasses(classes, featured, unlisted, pageable).orElse(Page.empty())
     }
 }
 

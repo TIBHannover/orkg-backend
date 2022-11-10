@@ -113,6 +113,115 @@ interface ResourceRepositoryContractTest {
         result.content.size shouldBe 0
     }
 
+    @Test
+    fun `do not find non-featured resources`() {
+        val classes = setOf(ClassId("ToBeFound"), ClassId("Other"))
+        val resource = createResource().copy(
+            id = ResourceId("R1234"),
+            classes = classes,
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource)
+
+        val result = repository.findAllFeaturedResourcesByClass(
+            listOf("ToBeFound"),
+            featured = true,
+            PageRequest.of(0, 10)
+        )
+
+        result.content.size shouldBe 0
+    }
+
+    @Test
+    fun `find only featured resources`() {
+        val classes = setOf(ClassId("ToBeFound"), ClassId("Other"))
+        val toBeFound = createResource().copy(
+            id = ResourceId("R1234"),
+            classes = classes,
+            featured = true,
+            unlisted = null
+        )
+        repository.save(toBeFound)
+        val notToBeFound = createResource().copy(
+            id = ResourceId("R2345"),
+            classes = classes,
+            featured = false,
+            unlisted = null
+        )
+        repository.save(notToBeFound)
+
+        val result = repository.findAllFeaturedResourcesByClass(
+            listOf("ToBeFound"),
+            featured = true,
+            PageRequest.of(0, 10)
+        )
+
+        result.content.size shouldBe 1
+        result.first().id shouldBe ResourceId("R1234")
+    }
+
+    @Test
+    fun `do not find featured and unlisted resource`() {
+        val classes = setOf(ClassId("ToBeFound"), ClassId("Other"))
+        val resource = createResource().copy(
+            id = ResourceId("R1234"),
+            classes = classes,
+            featured = true,
+            unlisted = true
+        )
+        repository.save(resource)
+
+        val result = repository.findAllFeaturedResourcesByClass(
+            listOf("ToBeFound"),
+            featured = true,
+            PageRequest.of(0, 10)
+        )
+
+        result.content.size shouldBe 0
+    }
+
+    @Test
+    fun `find unlisted resource`() {
+        val classes = setOf(ClassId("ToBeFound"), ClassId("Other"))
+        val resource = createResource().copy(
+            id = ResourceId("R1234"),
+            classes = classes,
+            featured = null,
+            unlisted = true
+        )
+        repository.save(resource)
+
+        val result = repository.findAllUnlistedResourcesByClass(
+            listOf("ToBeFound"),
+            unlisted = true,
+            PageRequest.of(0, 10)
+        )
+
+        result.content.size shouldBe 1
+        result.first().id shouldBe ResourceId("R1234")
+    }
+
+    @Test
+    fun `do not find unlisted resource`() {
+        val classes = setOf(ClassId("ToBeFound"), ClassId("Other"))
+        val resource = createResource().copy(
+            id = ResourceId("R1234"),
+            classes = classes,
+            featured = null,
+            unlisted = true
+        )
+        repository.save(resource)
+
+        val result = repository.findAllUnlistedResourcesByClass(
+            listOf("ToBeFound"),
+            unlisted = false,
+            PageRequest.of(0, 10)
+        )
+
+        result.content.size shouldBe 0
+    }
+
     fun cleanUpAfterEach()
 
     @AfterEach

@@ -60,10 +60,10 @@ interface RetrieveResourceUseCase {
     fun findResourcesByObservatoryIdAndClass(id: ObservatoryId, classes: List<String>, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
     fun getResourcesByClasses(
         classes: List<String>,
-        featured: Boolean?,
+        featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<ResourceRepresentation>
+    ): Optional<Page<ResourceRepresentation>>
     fun hasStatements(id: ResourceId): Boolean
 }
 

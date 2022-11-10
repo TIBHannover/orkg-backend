@@ -40,6 +40,9 @@ import org.springframework.transaction.annotation.Transactional
 
 typealias FormattedLabels = Map<ResourceId, FormattedLabel?>
 
+private const val PAPER_CLASS = "Paper"
+private val PAPER_CLASS_AS_LIST = listOf(PAPER_CLASS)
+
 @Service
 @Transactional
 class ResourceService(
@@ -264,7 +267,7 @@ class ResourceService(
                     pageable
                 )
             } else {
-                repository.findAllResourcesByObservatoryIDAndClass(id, classes, unlisted, pageable)
+                repository.findAllUnlistedResourcesByObservatoryIDAndClass(id, classes, unlisted, pageable)
             }
         }
 
@@ -303,29 +306,28 @@ class ResourceService(
 
     override fun getResourcesByClasses(
         classes: List<String>,
-        featured: Boolean?,
+        featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged {
-            // f u
-            // 0 0 --> findAllUnlistedIs(false) (ohne unlisted)            // service: findAll
-            // 0 1 --> findAllUnlistedIs(true)
-            // 1 0 --> findAllFeaturedIs(true) + muss gelistet sein
-            // 1 1 --> leer/BRQ
-            if (classes.isNotEmpty()) {
-                when (featured) {
-                    null -> repository.findAllFeaturedResourcesByClass(
-                        classes, unlisted, pageable
-                    )
-                    else -> repository.findAllFeaturedResourcesByClass(
-                        classes, featured, unlisted, pageable
-                    )
+    ): Optional<Page<ResourceRepresentation>> {
+        return if (classes.isNotEmpty()) {
+            if (featured) {
+                if (unlisted) {
+                    Optional.empty()
+                } else {
+                    Optional.of(retrieveAndConvertPaged {
+                        repository.findAllFeaturedResourcesByClass(classes, true, pageable)
+                    })
                 }
             } else {
-                Page.empty()
+                Optional.of(retrieveAndConvertPaged {
+                    repository.findAllUnlistedResourcesByClass(classes, unlisted, pageable)
+                })
             }
+        } else {
+            Optional.empty()
         }
+    }
 
     override fun markAsVerified(resourceId: ResourceId) = setVerifiedFlag(resourceId, true)
 
@@ -370,10 +372,11 @@ class ResourceService(
 
     override fun markAsListed(resourceId: ResourceId) = setUnlistedFlag(resourceId, false)
 
-    override fun loadFeaturedPapers(pageable: Pageable): Page<Resource> = repository.findAllFeaturedPapers(pageable)
+    override fun loadFeaturedPapers(pageable: Pageable): Page<Resource> =
+        repository.findAllFeaturedResourcesByClass(PAPER_CLASS_AS_LIST, true, pageable)
 
     override fun loadNonFeaturedPapers(pageable: Pageable): Page<Resource> =
-        repository.findAllNonFeaturedPapers(pageable)
+        repository.findAllFeaturedResourcesByClass(PAPER_CLASS_AS_LIST, false, pageable)
 
     override fun loadFeaturedResources(pageable: Pageable): Page<Resource> =
         repository.findAllByVerifiedIsTrue(pageable)
@@ -386,9 +389,11 @@ class ResourceService(
 
     override fun loadListedResources(pageable: Pageable): Page<Resource> = repository.findAllByUnlistedIsFalse(pageable)
 
-    override fun loadUnlistedPapers(pageable: Pageable): Page<Resource> = repository.findAllUnlistedPapers(pageable)
+    override fun loadUnlistedPapers(pageable: Pageable): Page<Resource> =
+        repository.findAllUnlistedResourcesByClass(PAPER_CLASS_AS_LIST, true, pageable)
 
-    override fun loadListedPapers(pageable: Pageable): Page<Resource> = repository.findAllListedPapers(pageable)
+    override fun loadListedPapers(pageable: Pageable): Page<Resource> =
+        repository.findAllUnlistedResourcesByClass(PAPER_CLASS_AS_LIST, false, pageable)
 
     override fun getFeaturedPaperFlag(id: ResourceId): Boolean {
         val result = repository.findPaperByResourceId(id)

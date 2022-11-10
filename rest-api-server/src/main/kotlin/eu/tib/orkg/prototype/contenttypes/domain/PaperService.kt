@@ -31,7 +31,6 @@ class PaperService(
         val results = resourceRepository.findAllFeaturedResourcesByClass(
             listOf("Paper"),
             featured = true,
-            unlisted = false,
             pageable
         )
         return results.map { Paper(title = it.label) }

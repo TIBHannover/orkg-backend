@@ -169,32 +169,12 @@ class SpringDataNeo4jResourceAdapter(
     override fun findAllUnverifiedPapers(pageable: Pageable): Page<Resource> =
         neo4jRepository.findAllUnverifiedPapers(pageable).map(Neo4jResource::toResource)
 
-    override fun findAllFeaturedPapers(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllFeaturedPapers(pageable).map(Neo4jResource::toResource)
-
-    override fun findAllNonFeaturedPapers(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllNonFeaturedPapers(pageable).map(Neo4jResource::toResource)
-
-    override fun findAllUnlistedPapers(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllUnlistedPapers(pageable).map(Neo4jResource::toResource)
-
-    override fun findAllListedPapers(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllListedPapers(pageable).map(Neo4jResource::toResource)
-
-    override fun findAllFeaturedResourcesByClass(
-        classes: List<String>,
-        unlisted: Boolean,
-        pageable: Pageable
-    ): Page<Resource> =
-        neo4jRepository.findAllFeaturedResourcesByClass(classes, unlisted, pageable).map(Neo4jResource::toResource)
-
     override fun findAllFeaturedResourcesByClass(
         classes: List<String>,
         featured: Boolean,
-        unlisted: Boolean,
         pageable: Pageable
-    ): Page<Resource> = neo4jRepository.findAllFeaturedResourcesByClass(classes, featured, unlisted, pageable)
-        .map(Neo4jResource::toResource)
+    ): Page<Resource> =
+        neo4jRepository.findAllFeaturedResourcesByClass(classes, featured, pageable).map(Neo4jResource::toResource)
 
     override fun findAllFeaturedResourcesByObservatoryIDAndClass(
         id: ObservatoryId,
@@ -204,12 +184,18 @@ class SpringDataNeo4jResourceAdapter(
         pageable: Pageable
     ): Page<Resource> = neo4jRepository.findAllFeaturedResourcesByObservatoryIdAndClass(id, classes, featured, unlisted, pageable).map(Neo4jResource::toResource)
 
-    override fun findAllResourcesByObservatoryIDAndClass(
+    override fun findAllUnlistedResourcesByClass(
+        classes: List<String>,
+        unlisted: Boolean,
+        pageable: Pageable
+    ): Page<Resource>  = neo4jRepository.findAllUnlistedResourcesByClass(classes, unlisted, pageable).map(Neo4jResource::toResource)
+
+    override fun findAllUnlistedResourcesByObservatoryIDAndClass(
         id: ObservatoryId,
         classes: List<String>,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<Resource> = neo4jRepository.findAllResourcesByObservatoryIdAndClass(id, classes, unlisted, pageable).map(Neo4jResource::toResource)
+    ): Page<Resource> = neo4jRepository.findAllUnlistedResourcesByObservatoryIdAndClass(id, classes, unlisted, pageable).map(Neo4jResource::toResource)
 
     private fun Resource.toNeo4jResource() =
         // We need to fetch the original resource, so "resources" is set properly.

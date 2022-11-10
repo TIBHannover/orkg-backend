@@ -53,14 +53,10 @@ interface ResourceRepository : EntityRepository<Resource, ResourceId> {
     fun findPaperByResourceId(id: ResourceId): Optional<Resource>
     fun findAllVerifiedPapers(pageable: Pageable): Page<Resource>
     fun findAllUnverifiedPapers(pageable: Pageable): Page<Resource>
-    fun findAllFeaturedPapers(pageable: Pageable): Page<Resource>
-    fun findAllNonFeaturedPapers(pageable: Pageable): Page<Resource>
-    fun findAllUnlistedPapers(pageable: Pageable): Page<Resource>
-    fun findAllListedPapers(pageable: Pageable): Page<Resource>
-    fun findAllFeaturedResourcesByClass(classes: List<String>, unlisted: Boolean, pageable: Pageable): Page<Resource>
-    fun findAllFeaturedResourcesByClass(classes: List<String>, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
+    fun findAllFeaturedResourcesByClass(classes: List<String>, featured: Boolean, pageable: Pageable): Page<Resource>
     fun findAllFeaturedResourcesByObservatoryIDAndClass(id: ObservatoryId, classes: List<String>, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
-    fun findAllResourcesByObservatoryIDAndClass(id: ObservatoryId, classes: List<String>, unlisted: Boolean, pageable: Pageable): Page<Resource>
+    fun findAllUnlistedResourcesByClass(classes: List<String>, unlisted: Boolean, pageable: Pageable): Page<Resource>
+    fun findAllUnlistedResourcesByObservatoryIDAndClass(id: ObservatoryId, classes: List<String>, unlisted: Boolean, pageable: Pageable): Page<Resource>
 
     @QueryResult
     data class ResourceContributors(

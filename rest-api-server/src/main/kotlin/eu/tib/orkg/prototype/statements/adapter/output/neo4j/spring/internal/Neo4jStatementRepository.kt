@@ -63,6 +63,8 @@ interface Neo4jStatementRepository :
 
     fun findByStatementId(id: StatementId): Optional<Neo4jStatement>
 
+    fun deleteByStatementId(id: StatementId): Iterable<Long>
+
     @Query("$MATCH_STATEMENT $BY_SUBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
     countQuery = "$MATCH_STATEMENT $BY_SUBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_COUNT")
     fun findAllBySubject(subjectId: String, pagination: Pageable): Page<Neo4jStatement>

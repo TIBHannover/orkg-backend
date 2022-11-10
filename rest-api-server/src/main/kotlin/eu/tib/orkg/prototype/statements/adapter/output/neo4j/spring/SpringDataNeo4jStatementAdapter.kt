@@ -53,8 +53,10 @@ class SpringDataNeo4jStatementAdapter(
 
     override fun count(): Long = neo4jRepository.count()
 
-    override fun delete(statement: GeneralStatement) {
-        neo4jRepository.delete(statement.toNeo4jStatement())
+    override fun delete(statement: GeneralStatement) = deleteByStatementId(statement.id!!)
+
+    override fun deleteByStatementId(id: StatementId) {
+        neo4jRepository.deleteByStatementId(id)
     }
 
     override fun deleteAll() {

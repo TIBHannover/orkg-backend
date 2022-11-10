@@ -21,6 +21,8 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun count(): Long
     @Transactional(isolation = Isolation.SERIALIZABLE)
     fun delete(statement: GeneralStatement)
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    fun deleteByStatementId(id: StatementId)
     fun deleteAll()
     fun findAll(depth: Int): Iterable<GeneralStatement>
     fun findByStatementId(id: StatementId): Optional<GeneralStatement>

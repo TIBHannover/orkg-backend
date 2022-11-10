@@ -135,8 +135,9 @@ class StatementService(
     override fun totalNumberOfStatements(): Long = statementRepository.count()
 
     override fun remove(statementId: StatementId) {
-        val toDelete = statementRepository.findByStatementId(statementId)
-        statementRepository.delete(toDelete.get())
+        if (statementRepository.exists(statementId)) {
+            statementRepository.deleteByStatementId(statementId)
+        }
     }
 
     override fun update(statementEditRequest: StatementEditRequest): StatementRepresentation {

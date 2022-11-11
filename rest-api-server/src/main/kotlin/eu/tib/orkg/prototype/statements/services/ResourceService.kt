@@ -203,7 +203,7 @@ class ResourceService(
         ids: Array<ClassId>,
         label: String
     ): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged { repository.findAllExcludingClassByLabel(ids.map { it.value }, label, pageable) }
+        retrieveAndConvertPaged { repository.findAllExcludingClassByLabelMatchesRegex(ids.map { it.value }, label.toExactSearchString(), pageable) }
 
     override fun findAllExcludingClassByLabelContaining(
         pageable: Pageable,

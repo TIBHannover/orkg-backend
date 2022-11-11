@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- The pagination metadata for endpoints filtering by research fields is now correct. (Closes: [#413](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/413))
 ### Changed
 - Searching for a label with exact matching is now case-insensitive. (Closes: [#362](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/362))
 ### Added

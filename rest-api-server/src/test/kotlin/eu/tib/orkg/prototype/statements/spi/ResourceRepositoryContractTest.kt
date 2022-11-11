@@ -113,6 +113,41 @@ interface ResourceRepositoryContractTest {
         result.content.size shouldBe 0
     }
 
+    @Test
+    fun `given a resource with a class, when searched by it's class and observatory ID, it should be found`() {
+        val observatoryId = ObservatoryId(UUID.randomUUID())
+        val classes = setOf(ClassId("ToBeFound"), ClassId("Other"))
+        val resource = createResource().copy(
+            id = ResourceId("R1234"),
+            observatoryId = observatoryId,
+            classes = classes,
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource)
+
+        val result = repository.findByClassAndObservatoryId("ToBeFound", observatoryId)
+        result.count() shouldBe 1
+        result.first().id shouldBe ResourceId("R1234")
+    }
+
+    @Test
+    fun `given a resource with a class, when searched by it's class and observatory ID, it should not be found`() {
+        val observatoryId = ObservatoryId(UUID.randomUUID())
+        val classes = setOf(ClassId("NotToBeFound"), ClassId("Other"))
+        val resource = createResource().copy(
+            id = ResourceId("R1234"),
+            observatoryId = observatoryId,
+            classes = classes,
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource)
+
+        val result = repository.findByClassAndObservatoryId("ToBeFound", observatoryId)
+        result.count() shouldBe 0
+    }
+
     fun cleanUpAfterEach()
 
     @AfterEach

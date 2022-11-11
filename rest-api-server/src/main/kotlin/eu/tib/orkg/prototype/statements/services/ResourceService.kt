@@ -40,6 +40,9 @@ import org.springframework.transaction.annotation.Transactional
 
 typealias FormattedLabels = Map<ResourceId, FormattedLabel?>
 
+private const val PAPER_CLASS = "Paper"
+private const val COMPARISON_CLASS = "Comparison"
+
 @Service
 @Transactional
 class ResourceService(
@@ -239,10 +242,10 @@ class ResourceService(
         retrieveAndConvertPaged { repository.findAllByUnlistedIsFalse(pageable) }
 
     override fun findPapersByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation> =
-        retrieveAndConvertIterable { repository.findPapersByObservatoryId(id) }
+        retrieveAndConvertIterable { repository.findByClassAndObservatoryId(PAPER_CLASS, id) }
 
     override fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation> =
-        retrieveAndConvertIterable { repository.findComparisonsByObservatoryId(id) }
+        retrieveAndConvertIterable { repository.findByClassAndObservatoryId(COMPARISON_CLASS, id) }
 
     override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation> =
         retrieveAndConvertIterable { repository.findProblemsByObservatoryId(id) }

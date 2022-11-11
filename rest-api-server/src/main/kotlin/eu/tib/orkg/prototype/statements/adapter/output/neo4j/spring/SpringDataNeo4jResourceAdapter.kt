@@ -127,11 +127,8 @@ class SpringDataNeo4jResourceAdapter(
     override fun findByLabel(label: String?): Optional<Resource> =
         neo4jRepository.findByLabel(label).map(Neo4jResource::toResource)
 
-    override fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Resource> =
-        neo4jRepository.findPapersByObservatoryId(id).map(Neo4jResource::toResource)
-
-    override fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
-        neo4jRepository.findComparisonsByObservatoryId(id).map(Neo4jResource::toResource)
+    override fun findByClassAndObservatoryId(`class`: String, id: ObservatoryId): Iterable<Resource> =
+        neo4jRepository.findByClassAndObservatoryId(`class`, id).map(Neo4jResource::toResource)
 
     override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
         neo4jRepository.findProblemsByObservatoryId(id).map(Neo4jResource::toResource)

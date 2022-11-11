@@ -39,8 +39,7 @@ interface ResourceRepository : EntityRepository<Resource, ResourceId> {
     fun findAllByDOI(doi: String): Iterable<Resource>
     fun findByLabel(label: String?): Optional<Resource>
     fun findAllByLabel(label: String): Iterable<Resource>
-    fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Resource>
-    fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<Resource>
+    fun findByClassAndObservatoryId(`class`: String, id: ObservatoryId): Iterable<Resource>
     fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource>
     fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors>
     fun checkIfResourceHasStatements(id: ResourceId): Boolean

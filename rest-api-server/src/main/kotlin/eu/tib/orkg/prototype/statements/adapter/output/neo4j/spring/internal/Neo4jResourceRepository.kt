@@ -134,11 +134,8 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     @Query("""MATCH (node:Paper) WHERE not 'PaperDeleted' IN labels(node) AND node.label = {0} RETURN node""")
     fun findAllByLabel(label: String): Iterable<Neo4jResource>
 
-    @Query("""MATCH (n:Paper {observatory_id: {0}}) RETURN n""")
-    fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Neo4jResource>
-
-    @Query("""MATCH (n:Comparison {observatory_id: {0}}) RETURN n""")
-    fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<Neo4jResource>
+    @Query("""MATCH (n {observatory_id: ${'$'}id}) WHERE ${'$'}class in LABELS(n) RETURN n""")
+    fun findByClassAndObservatoryId(`class`: String, id: ObservatoryId): Iterable<Neo4jResource>
 
     @Query("""MATCH (n:Paper {observatory_id: {0}})-[*]->(r:Problem) RETURN r UNION ALL MATCH (r:Problem {observatory_id: {0}}) RETURN r""")
     fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Neo4jResource>

@@ -2,31 +2,123 @@ package eu.tib.orkg.prototype.statements.services
 
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.createClass
 import eu.tib.orkg.prototype.createClassWithoutURI
 import eu.tib.orkg.prototype.statements.api.AlreadyInUse
 import eu.tib.orkg.prototype.statements.api.ClassNotFound
+import eu.tib.orkg.prototype.statements.api.CreateClassUseCase
 import eu.tib.orkg.prototype.statements.api.InvalidLabel
 import eu.tib.orkg.prototype.statements.api.InvalidURI
 import eu.tib.orkg.prototype.statements.api.UpdateClassUseCase.ReplaceCommand
 import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.Clock
 import eu.tib.orkg.prototype.statements.domain.model.toOptional
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.net.URI
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class ClassServiceTests {
 
     private val repository: ClassRepository = mockk()
+    private val staticClock: Clock = object : Clock {
+        override fun now(): OffsetDateTime = OffsetDateTime.of(2022, 11, 14, 14, 9, 23, 12345, ZoneOffset.ofHours(1))
+    }
 
-    private val service = ClassService(repository)
+    private val service = ClassService(repository, staticClock)
+
+    @Test
+    fun `given a class is created, when no id is given, then it gets an id from the repository`() {
+        val mockClassId = ClassId(1)
+        every { repository.nextIdentity() } returns mockClassId
+        every { repository.save(any()) } returns createClass().copy(id = mockClassId)
+
+        service.create(CreateClassUseCase.CreateCommand(label = "irrelevant", id = null))
+
+        verify(exactly = 1) { repository.nextIdentity() }
+    }
+
+    @Test
+    fun `given a class is created, when an id is given, then it does not get a new id`() {
+        val mockClassId = ClassId(1)
+        every { repository.save(any()) } returns createClass().copy(id = mockClassId)
+
+        service.create(CreateClassUseCase.CreateCommand(label = "irrelevant", id = mockClassId.value))
+
+        verify(exactly = 0) { repository.nextIdentity() }
+    }
+
+    @Test
+    fun `given a class is created, when the id is invalid, then an exception is thrown`() {
+        val exception = assertThrows<IllegalArgumentException> {
+            service.create(CreateClassUseCase.CreateCommand(label = "irrelevant", id = "!invalid"))
+        }
+        assertThat(exception.message).isEqualTo("Must only contain alphanumeric characters, dashes and underscores")
+    }
+
+    @Test
+    fun `given a class is created, when the label is invalid, then an exception is thrown`() {
+        val mockClassId = ClassId(1)
+        every { repository.nextIdentity() } returns mockClassId
+
+        val exception = assertThrows<IllegalArgumentException> {
+            service.create(CreateClassUseCase.CreateCommand(label = " \t "))
+        }
+        assertThat(exception.message).isEqualTo("Invalid label:  \t ")
+    }
+
+    @Test
+    fun `given a class is created, when no contributor is given, the anonymous user id is used`() {
+        val mockClassId = ClassId(1)
+        every { repository.nextIdentity() } returns mockClassId
+        every { repository.save(any()) } returns createClass().copy(id = mockClassId)
+
+        service.create(CreateClassUseCase.CreateCommand(label = "irrelevant"))
+
+        verify(exactly = 1) {
+            repository.save(
+                Class(
+                    id = mockClassId,
+                    label = "irrelevant",
+                    uri = null,
+                    createdAt = staticClock.now(),
+                    createdBy = ContributorId(UUID(0, 0)),
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `given a class is created, when a contributor is given, the contributor id is used`() {
+        val mockClassId = ClassId(1)
+        every { repository.nextIdentity() } returns mockClassId
+        every { repository.save(any()) } returns createClass().copy(id = mockClassId)
+
+        val randomContributorId = ContributorId(UUID.randomUUID())
+        service.create(CreateClassUseCase.CreateCommand(label = "irrelevant", contributorId = randomContributorId))
+
+        verify(exactly = 1) {
+            repository.save(
+                Class(
+                    id = mockClassId,
+                    label = "irrelevant",
+                    uri = null,
+                    createdAt = staticClock.now(),
+                    createdBy = randomContributorId,
+                )
+            )
+        }
+    }
 
     @Test
     fun `given a class does not exist, when updating the label, then it returns an appropriate error`() {

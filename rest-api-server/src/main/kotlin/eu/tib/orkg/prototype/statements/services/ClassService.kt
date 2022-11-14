@@ -18,8 +18,11 @@ import eu.tib.orkg.prototype.statements.application.CreateClassRequest
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.api.ClassRepresentation
+import eu.tib.orkg.prototype.statements.api.CreateClassUseCase
 import eu.tib.orkg.prototype.statements.api.UpdateClassUseCase
+import eu.tib.orkg.prototype.statements.domain.model.Clock
 import eu.tib.orkg.prototype.statements.domain.model.Label
+import eu.tib.orkg.prototype.statements.domain.model.SystemClock
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.util.EscapedRegex
 import eu.tib.orkg.prototype.util.SanitizedWhitespace
@@ -36,38 +39,48 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class ClassService(
-    private val repository: ClassRepository
+    private val repository: ClassRepository,
+    private val clock: Clock = SystemClock(),
 ) : ClassUseCases {
+    override fun create(command: CreateClassUseCase.CreateCommand): ClassId {
+        val id = if (command.id != null) ClassId(command.id) else repository.nextIdentity()
+        val newClass = Class(
+            id = id,
+            label = Label.ofOrNull(command.label)?.value
+                ?: throw IllegalArgumentException("Invalid label: ${command.label}"),
+            uri = command.uri,
+            createdAt = clock.now(),
+            createdBy = command.contributorId ?: ContributorId.createUnknownContributor(),
+        )
+        repository.save(newClass)
+        return newClass.id!!
+    }
 
     override fun create(label: String): ClassRepresentation = create(ContributorId.createUnknownContributor(), label)
 
     override fun create(userId: ContributorId, label: String): ClassRepresentation {
-        val classId = repository.nextIdentity()
-        val newClass = Class(
-            id = classId,
-            label = label,
-            createdAt = OffsetDateTime.now(),
-            createdBy = userId,
-            uri = null,
+        val newClassId = create(
+            CreateClassUseCase.CreateCommand(
+                label = label,
+                contributorId = userId,
+            )
         )
-        repository.save(newClass)
-        return newClass.toClassRepresentation()
+        return repository.findByClassId(newClassId).map(Class::toClassRepresentation).get()
     }
 
     override fun create(request: CreateClassRequest): ClassRepresentation =
         create(ContributorId.createUnknownContributor(), request)
 
     override fun create(userId: ContributorId, request: CreateClassRequest): ClassRepresentation {
-        val id = request.id ?: repository.nextIdentity()
-        val newClass = Class(
-            id = id,
-            label = request.label,
-            createdAt = OffsetDateTime.now(),
-            createdBy = userId,
-            uri = request.uri,
+        val newClassId = create(
+            CreateClassUseCase.CreateCommand(
+                id = request.id?.value,
+                label = request.label,
+                contributorId = userId,
+                uri = request.uri,
+            )
         )
-        repository.save(newClass)
-        return newClass.toClassRepresentation()
+        return repository.findByClassId(newClassId).map(Class::toClassRepresentation).get()
     }
 
     @Transactional(readOnly = true)

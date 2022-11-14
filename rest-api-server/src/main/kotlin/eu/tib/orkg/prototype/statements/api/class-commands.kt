@@ -7,12 +7,21 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import java.net.URI
 
 interface CreateClassUseCase {
+    fun create(command: CreateCommand): ClassId
+
     // legacy methods:
     fun create(label: String): ClassRepresentation
     fun create(userId: ContributorId, label: String): ClassRepresentation
     fun create(request: CreateClassRequest): ClassRepresentation
     fun create(userId: ContributorId, request: CreateClassRequest): ClassRepresentation
     fun createIfNotExists(id: ClassId, label: String, uri: URI?)
+
+    data class CreateCommand(
+        val label: String,
+        val id: String? = null,
+        val contributorId: ContributorId? = null,
+        val uri: URI? = null,
+    )
 }
 
 interface UpdateClassUseCase {

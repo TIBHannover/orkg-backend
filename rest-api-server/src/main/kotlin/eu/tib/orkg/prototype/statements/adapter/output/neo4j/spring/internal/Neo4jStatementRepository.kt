@@ -11,6 +11,17 @@ import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
+private const val configuration = "${'$'}configuration"
+private const val subjectClass = "${'$'}subjectClass"
+private const val literal = "${'$'}literal"
+private const val subjectId = "${'$'}subjectId"
+private const val subjectIds = "${'$'}subjectIds"
+private const val predicateId = "${'$'}predicateId"
+private const val objectId = "${'$'}objectId"
+private const val paperId = "${'$'}paperId"
+private const val id = "${'$'}id"
+private const val resourceIds = "${'$'}resourceIds"
+
 /**
  * Partial query that matches a statement.
  * Queries using this partial query must use `rel` as the binding name for predicates, `sub` for subjects, and `obj` for objects.
@@ -42,16 +53,16 @@ private const val WITH_SORTABLE_FIELDS =
 // Custom queries
 
 private const val BY_SUBJECT_ID =
-    """WHERE sub.`resource_id`={0} OR sub.`literal_id`={0} OR sub.`predicate_id`={0} OR sub.`class_id`={0}"""
+    """WHERE sub.`resource_id`=$subjectId OR sub.`literal_id`=$subjectId OR sub.`predicate_id`=$subjectId OR sub.`class_id`=$subjectId"""
 
 private const val BY_OBJECT_ID =
-    """WHERE obj.`resource_id`={0} OR obj.`literal_id`={0} OR obj.`predicate_id`={0} OR obj.`class_id`={0}"""
+    """WHERE obj.`resource_id`=$objectId OR obj.`literal_id`=$objectId OR obj.`predicate_id`=$objectId OR obj.`class_id`=$objectId"""
 
 private const val WHERE_SUBJECT_ID_IN =
-    """WHERE sub.`resource_id` IN {0} OR sub.`literal_id` IN {0} OR sub.`predicate_id` IN {0} OR sub.`class_id` IN {0}"""
+    """WHERE sub.`resource_id` IN $subjectIds OR sub.`literal_id` IN $subjectIds OR sub.`predicate_id` IN $subjectIds OR sub.`class_id` IN $subjectIds"""
 
 private const val WHERE_OBJECT_ID_IN =
-    """WHERE obj.`resource_id` IN {0} OR obj.`literal_id` IN {0} OR obj.`predicate_id` IN {0} OR obj.`class_id` IN {0}"""
+    """WHERE obj.`resource_id` IN $subjectIds OR obj.`literal_id` IN $subjectIds OR obj.`predicate_id` IN $subjectIds OR obj.`class_id` IN $subjectIds"""
 
 interface Neo4jStatementRepository :
     Neo4jRepository<Neo4jStatement, Long> {
@@ -75,26 +86,26 @@ interface Neo4jStatementRepository :
     countQuery = "$MATCH_STATEMENT $BY_OBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_COUNT")
     fun findAllByObject(objectId: String, pagination: Pageable): Page<Neo4jStatement>
 
-    @Query("""MATCH statement=(sub:`Resource`)<-[:`RELATED`]-(:`Thing`) WHERE sub.resource_id in {0} WITH sub.resource_id as resourceId, count(statement) as count RETURN resourceId, count""")
+    @Query("""MATCH statement=(sub:`Resource`)<-[:`RELATED`]-(:`Thing`) WHERE sub.resource_id in $resourceIds WITH sub.resource_id as resourceId, count(statement) as count RETURN resourceId, count""")
     fun countStatementsAboutResource(resourceIds: Set<ResourceId>): List<StatementsPerResource>
 
     /** Count all incoming statements to a resource node. This is used to calculate the "shared" property. */
-    @Query("""MATCH statement=(obj:`Resource` {resource_id: {0}})<-[rel:`RELATED`]-(:`Thing`) RETURN count(statement)""")
+    @Query("""MATCH statement=(obj:`Resource` {resource_id: $id})<-[rel:`RELATED`]-(:`Thing`) RETURN count(statement)""")
     fun countStatementsByObjectId(id: ResourceId): Long
 
-    @Query("""MATCH (p:`Thing`)-[*]->() WHERE p.`resource_id`={0} OR p.`literal_id`={0} OR p.`predicate_id`={0} OR p.`class_id`={0} RETURN COUNT(p)""")
+    @Query("""MATCH (p:`Thing`)-[*]->() WHERE p.`resource_id`=$paperId OR p.`literal_id`=$paperId OR p.`predicate_id`=$paperId OR p.`class_id`=$paperId RETURN COUNT(p)""")
     fun countByIdRecursive(paperId: String): Int
 
-    @Query("$MATCH_STATEMENT WHERE (obj.`resource_id`={0} OR obj.`literal_id`={0} OR obj.`predicate_id`={0} OR obj.`class_id`={0}) AND rel.`predicate_id`={1} $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
-    countQuery = "$MATCH_STATEMENT WHERE (obj.`resource_id`={0} OR obj.`literal_id`={0} OR obj.`predicate_id`={0} OR obj.`class_id`={0}) AND rel.`predicate_id`={1} $WITH_SORTABLE_FIELDS $RETURN_COUNT")
+    @Query("$MATCH_STATEMENT WHERE (obj.`resource_id`=$objectId OR obj.`literal_id`=$objectId OR obj.`predicate_id`=$objectId OR obj.`class_id`=$objectId) AND rel.`predicate_id`=$predicateId $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
+    countQuery = "$MATCH_STATEMENT WHERE (obj.`resource_id`=$objectId OR obj.`literal_id`=$objectId OR obj.`predicate_id`=$objectId OR obj.`class_id`=$objectId) AND rel.`predicate_id`=$predicateId $WITH_SORTABLE_FIELDS $RETURN_COUNT")
     fun findAllByObjectAndPredicate(
         objectId: String,
         predicateId: PredicateId,
         pagination: Pageable
     ): Page<Neo4jStatement>
 
-    @Query("$MATCH_STATEMENT WHERE (sub.`resource_id`={0} OR sub.`literal_id`={0} OR sub.`predicate_id`={0} OR sub.`class_id`={0}) AND rel.`predicate_id`={1} $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
-    countQuery = "$MATCH_STATEMENT WHERE (sub.`resource_id`={0} OR sub.`literal_id`={0} OR sub.`predicate_id`={0} OR sub.`class_id`={0}) AND rel.`predicate_id`={1} $WITH_SORTABLE_FIELDS $RETURN_COUNT")
+    @Query("$MATCH_STATEMENT WHERE (sub.`resource_id`=$subjectId OR sub.`literal_id`=$subjectId OR sub.`predicate_id`=$subjectId OR sub.`class_id`=$subjectId) AND rel.`predicate_id`=$predicateId $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
+    countQuery = "$MATCH_STATEMENT WHERE (sub.`resource_id`=$subjectId OR sub.`literal_id`=$subjectId OR sub.`predicate_id`=$subjectId OR sub.`class_id`=$subjectId) AND rel.`predicate_id`=$predicateId $WITH_SORTABLE_FIELDS $RETURN_COUNT")
     fun findAllBySubjectAndPredicate(
         subjectId: String,
         predicateId: PredicateId,
@@ -102,8 +113,8 @@ interface Neo4jStatementRepository :
     ): Page<Neo4jStatement>
 
     @Query(
-        "$MATCH_STATEMENT_WITH_LITERAL WHERE rel.`predicate_id`={0} AND obj.`label`={1} $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
-        countQuery = "$MATCH_STATEMENT_WITH_LITERAL WHERE rel.`predicate_id`={0} AND obj.`label`={1} $WITH_SORTABLE_FIELDS $RETURN_COUNT"
+        "$MATCH_STATEMENT_WITH_LITERAL WHERE rel.`predicate_id`=$predicateId AND obj.`label`=$literal $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
+        countQuery = "$MATCH_STATEMENT_WITH_LITERAL WHERE rel.`predicate_id`=$predicateId AND obj.`label`=$literal $WITH_SORTABLE_FIELDS $RETURN_COUNT"
     )
     fun findAllByPredicateIdAndLabel(
         predicateId: PredicateId,
@@ -112,8 +123,8 @@ interface Neo4jStatementRepository :
     ): Page<Neo4jStatement>
 
     @Query(
-        "$MATCH_STATEMENT_WITH_LITERAL WHERE {2} IN labels(sub) AND rel.`predicate_id`={0} AND obj.`label`={1} $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
-        countQuery = "$MATCH_STATEMENT_WITH_LITERAL WHERE {2} IN labels(sub) AND rel.`predicate_id`={0} AND obj.`label`={1} $WITH_SORTABLE_FIELDS $RETURN_COUNT"
+        "$MATCH_STATEMENT_WITH_LITERAL WHERE $subjectClass IN labels(sub) AND rel.`predicate_id`=$predicateId AND obj.`label`=$literal $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
+        countQuery = "$MATCH_STATEMENT_WITH_LITERAL WHERE $subjectClass IN labels(sub) AND rel.`predicate_id`=$predicateId AND obj.`label`=$literal $WITH_SORTABLE_FIELDS $RETURN_COUNT"
     )
     fun findAllByPredicateIdAndLabelAndSubjectClass(
         predicateId: PredicateId,
@@ -142,8 +153,8 @@ interface Neo4jStatementRepository :
 
     @Query(
         """MATCH (n:Thing)
-WHERE n.resource_id = {0} OR n.literal_id = {0} OR n.class_id = {0} OR n.predicate_id = {0}
-CALL apoc.path.subgraphAll(n, {1})
+WHERE n.resource_id = $id OR n.literal_id = $id OR n.class_id = $id OR n.predicate_id = $id
+CALL apoc.path.subgraphAll(n, $configuration)
 YIELD relationships
 UNWIND relationships as rel
 RETURN startNode(rel) as subject, rel as predicate, endNode(rel) as object

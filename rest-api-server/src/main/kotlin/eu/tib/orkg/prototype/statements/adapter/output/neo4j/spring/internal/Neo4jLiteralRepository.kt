@@ -7,6 +7,8 @@ import java.util.*
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
+private const val id = "${'$'}id"
+
 interface Neo4jLiteralRepository : Neo4jRepository<Neo4jLiteral, Long> {
     fun existsByLiteralId(id: LiteralId): Boolean
 
@@ -21,6 +23,6 @@ interface Neo4jLiteralRepository : Neo4jRepository<Neo4jLiteral, Long> {
 
     fun findAllByLabelContaining(part: String): Iterable<Neo4jLiteral>
 
-    @Query("""MATCH (n:Paper)-[:RELATED {predicate_id: 'P31'}]->(:Resource {resource_id: {0}}), (n)-[:RELATED {predicate_id: "$ID_DOI_PREDICATE"}]->(L:Literal) RETURN L""")
+    @Query("""MATCH (n:Paper)-[:RELATED {predicate_id: 'P31'}]->(:Resource {resource_id: $id}), (n)-[:RELATED {predicate_id: "$ID_DOI_PREDICATE"}]->(L:Literal) RETURN L""")
     fun findDOIByContributionId(id: ResourceId): Optional<Neo4jLiteral>
 }

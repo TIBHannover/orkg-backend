@@ -6,13 +6,15 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
+private const val id = "${'$'}id"
+
 @ConditionalOnProperty("orkg.features.pwc-legacy-model", havingValue = "false", matchIfMissing = true)
 interface Neo4jBenchmarkRepository : Neo4jRepository<Neo4jResource, Long> {
 
     @Query("""
-MATCH (:ResearchField {resource_id: {0}})-[:RELATED* {predicate_id: 'P36'}]->(f:ResearchField)
+MATCH (:ResearchField {resource_id: $id})-[:RELATED* {predicate_id: 'P36'}]->(f:ResearchField)
 WITH COLLECT(f) AS fields
-MATCH (f:ResearchField {resource_id: {0}})
+MATCH (f:ResearchField {resource_id: $id})
 WITH fields + f AS fields
 UNWIND fields AS field
 MATCH (field)<-[:RELATED {predicate_id: 'P30'}]-(p:Paper)-[:RELATED {predicate_id: 'P31'}]->(cont:Contribution)

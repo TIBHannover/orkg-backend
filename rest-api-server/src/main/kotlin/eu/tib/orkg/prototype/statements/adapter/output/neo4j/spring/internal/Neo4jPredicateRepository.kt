@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
+private const val ids = "${'$'}ids"
+
 interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, Long> {
     fun existsByPredicateId(id: PredicateId): Boolean
 
@@ -28,6 +30,6 @@ interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, Long> {
     // a query containing a string literal when the set only has one element, which the driver refused as an invalid
     // query (which it is). It only happens under certain circumstances which are not reproducible in a test. I checked
     // the driver version and everything else that came to mind. No idea what is wrong. This seems to work. -- MP
-    @Query("""MATCH (n:`Predicate`) WHERE n.predicate_id in {0} RETURN n""")
+    @Query("""MATCH (n:`Predicate`) WHERE n.predicate_id in $ids RETURN n""")
     fun findAllByPredicateIdIn(ids: Set<PredicateId>): Iterable<Neo4jPredicate>
 }

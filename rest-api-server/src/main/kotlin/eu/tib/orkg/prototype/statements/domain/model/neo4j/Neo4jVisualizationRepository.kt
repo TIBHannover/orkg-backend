@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
+private const val id = "${'$'}id"
+
 /**
  * Partial query that returns the node as well as its ID and relationships.
  * Queries using this partial query must use `node` as the binding name.
@@ -40,7 +42,7 @@ private const val MATCH_UNLISTED_VISUALIZATION =
 private const val MATCH_LISTED_VISUALIZATION =
     """MATCH (node) WHERE (NOT EXISTS(node.unlisted) OR node.unlisted = false) AND ANY(collectionFields IN ['Visualization'] WHERE collectionFields IN LABELS(node))"""
 
-private const val MATCH_VISUALIZATION_BY_ID = """MATCH (node:`Resource`:`Visualization` {resource_id: {0}})"""
+private const val MATCH_VISUALIZATION_BY_ID = """MATCH (node:`Resource`:`Visualization` {resource_id: $id})"""
 
 interface Neo4jVisualizationRepository :
     Neo4jRepository<Neo4jResource, Long> {

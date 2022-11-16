@@ -5,10 +5,12 @@ import java.util.Optional
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
+private const val resourceId = "${'$'}resourceId"
+
 interface Neo4jTemplateRepository : Neo4jRepository<Neo4jResource, Long> {
 
     @Query("""
-MATCH (res:Resource {resource_id: {0}})
+MATCH (res:Resource {resource_id: $resourceId})
 WITH [x IN LABELS(res) WHERE NOT x IN ['Thing', 'Resource', 'AuditableEntity']][0] AS class, res
 MATCH (format:Literal)<-[:RELATED {predicate_id:'TemplateLabelFormat'}]-(template:ContributionTemplate)-[:RELATED {predicate_id:'TemplateOfClass'}]->(cls:Class {class_id: class}) 
 MATCH (res)-[p:RELATED]->(o:Thing)

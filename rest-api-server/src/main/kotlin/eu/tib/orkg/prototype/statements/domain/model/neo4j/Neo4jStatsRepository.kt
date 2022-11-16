@@ -61,7 +61,7 @@ interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
     countQuery = "MATCH (paper: Paper)-[:RELATED {predicate_id: 'P31'}]->(c1: Contribution)-[:RELATED{predicate_id: 'P32'}]-> (r:Problem) WHERE paper.created_by <> '00000000-0000-0000-0000-000000000000' WITH r.resource_id AS id, r.label AS researchProblem, COUNT(paper) AS papersCount, COLLECT(DISTINCT paper.created_by) AS contributor RETURN count(researchProblem) as cnt")
     fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems>
 
-    @Query("""MATCH (n:Thing) WHERE NOT (n)-->() RETURN COUNT(n) AS orphanedNodes""")
+    @Query("""MATCH (n:Thing) WHERE NOT (n)--() RETURN COUNT(n) AS orphanedNodes""")
     fun getOrphanedNodesCount(): Long
 }
 

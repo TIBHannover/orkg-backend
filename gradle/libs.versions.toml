@@ -2,6 +2,7 @@
 forkhandles = "2.0.0.0"
 kotest = "5.4.0"
 testcontainers = "1.17.3"
+spring-boot = "2.3.4.RELEASE"
 
 [libraries]
 # BOMs

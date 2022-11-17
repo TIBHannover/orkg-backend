@@ -9,6 +9,12 @@ neo4j_version=3.5
 dump_volume=orkg-dumps
 source_dir=orkg-backend
 
+docker_compose=$( command -v docker-compose || ([ -x /usr/libexec/docker/cli-plugins/docker-compose ] && echo "docker compose") || echo "" )
+if [ -z "$docker_compose" ]; then
+    echo "ERROR: Unable to find Docker Compose, either as executable or as Docker plug-in."
+    exit 1
+fi
+
 # Load dump into separate volume
 docker volume create "$dump_volume"
 temp_container=$(docker container create --volume "${dump_volume}:/dumps" alpine)
@@ -16,8 +22,8 @@ docker cp -L dumps/neo4j-dump-latest.dump ${temp_container}:/dumps
 docker rm "$temp_container"
 
 # Shutdown and remove Neo4j
-docker-compose stop neo4j
-docker-compose rm -f neo4j
+$docker_compose stop neo4j
+$docker_compose rm -f neo4j
 
 # Trash old database
 docker volume rm "${source_dir}_neo4j-data"
@@ -26,15 +32,15 @@ docker volume rm "${source_dir}_neo4j-data"
 # We initially used:
 #   ( docker-compose up neo4j & ) | grep -q 'Remote interface available at http:'
 # but that does not seem to work in Windows Subsystem for Linux (WSL).
-docker-compose up -d neo4j
-until docker-compose logs neo4j | grep -q 'Remote interface available at http:'; do sleep 1; done
-docker-compose stop neo4j
+$docker_compose up -d neo4j
+until $docker_compose logs neo4j | grep -q 'Remote interface available at http:'; do sleep 1; done
+$docker_compose stop neo4j
 
 # Load dump.
 # The double dash seems to be required to make the script work with "Git Bash" in Windows. :-/
-docker run -i --rm --entrypoint //bin/bash --volumes-from "${source_dir}_neo4j_1" --volume "${dump_volume}:/dumps" neo4j:$neo4j_version <<EOS
+docker run -i --rm --entrypoint //bin/bash --volumes-from "${source_dir}-neo4j-1" --volume "${dump_volume}:/dumps" neo4j:$neo4j_version <<EOS
 neo4j-admin load --from=/dumps/neo4j-dump-latest.dump --force
 EOS
 
 # Bring up database
-docker-compose up -d neo4j
+$docker_compose up -d neo4j

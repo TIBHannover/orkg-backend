@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.18.0] - 2022-11-16
+### Fixed
+- The pagination metadata for endpoints filtering by research fields is now correct. (Closes: [#413](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/413))
+### Changed
+- Searching for a label with exact matching is now case-insensitive. (Closes: [#362](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/362))
 ### Added
 - The number of orphaned nodes in the database is now tracked via the statistics endpoint. (Closes: [#420](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/420))
 
@@ -191,7 +197,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.17.2...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.18.0...master
+[0.18.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.18.0
 [0.17.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.17.2
 [0.17.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.17.1
 [0.17.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.17.0

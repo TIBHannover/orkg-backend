@@ -1,11 +1,19 @@
 package eu.tib.orkg.prototype.contenttypes.domain
 
-sealed interface ContentType
 
-class Contribution : ContentType
+typealias ContentTypeId = String
+
+sealed interface ContentType {
+    val id: ContentTypeId
+}
+
+class Contribution(override val id: ContentTypeId) : ContentType
+
 class Paper(
-    val title: String
+    override val id: ContentTypeId,
+    val title: ContentTypeId,
 ) : ContentType
 
-class ResearchProblem : ContentType
-class Visualization : ContentType
+class ResearchProblem(override val id: ContentTypeId) : ContentType
+
+class Visualization(override val id: ContentTypeId) : ContentType

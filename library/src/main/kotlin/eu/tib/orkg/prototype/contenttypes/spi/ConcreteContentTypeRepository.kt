@@ -7,8 +7,19 @@ import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
+// TODO: maybe need
+// resource repo -> fun findAllByAnyClass(classes: Iterable<String>): Page<Neo4jResource>
+// adapter -> resourceRepo.findAllByAnyClass(setOf(Paper, ...)) // id + classes
 
-interface ContentTypeRepository<T : ContentType> {
+/**
+ * Repository to deal with all content types.
+ */
+interface ContentTypeRepository {
+    fun findLatest(pageable: Pageable): Page<ContentType>
+    fun findLatestFeatured(pageable: Pageable): Page<ContentType>
+}
+
+interface ConcreteContentTypeRepository<T : ContentType> {
     val resourceRepository: ResourceRepository
     val contentTypeClass: String
 
@@ -24,7 +35,7 @@ interface ContentTypeRepository<T : ContentType> {
     fun convert(res: Resource): T
 }
 
-interface PaperRepository : ContentTypeRepository<Paper> {
+interface PaperRepository : ConcreteContentTypeRepository<Paper> {
     fun findByDOI()
 }
 

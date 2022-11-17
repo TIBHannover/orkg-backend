@@ -18,4 +18,4 @@ data class Class(
     fun toClass(): Class = Class(id, label, uri, createdAt, createdBy, _class)
 }
 
-internal fun Class?.toOptional() = Optional.ofNullable(this)
+fun Class?.toOptional() = Optional.ofNullable(this)

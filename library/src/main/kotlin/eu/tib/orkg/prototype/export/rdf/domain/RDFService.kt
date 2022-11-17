@@ -97,7 +97,7 @@ class RDFService(
     }
 }
 
-internal fun Class.toNTriple(): String {
+fun Class.toNTriple(): String {
     val cPrefix = RdfConstants.CLASS_NS
     val sb = StringBuilder()
     sb.append("<$cPrefix$id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .\n")
@@ -106,7 +106,7 @@ internal fun Class.toNTriple(): String {
     return sb.toString()
 }
 
-internal fun Predicate.toNTriple(): String {
+fun Predicate.toNTriple(): String {
     val cPrefix = RdfConstants.CLASS_NS
     val pPrefix = RdfConstants.PREDICATE_NS
     return "<$pPrefix$id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Predicate> .\n" + "<$pPrefix$id> <http://www.w3.org/2000/01/rdf-schema#label> \"${
@@ -116,7 +116,7 @@ internal fun Predicate.toNTriple(): String {
     }\"^^<http://www.w3.org/2001/XMLSchema#string> .\n"
 }
 
-internal fun Resource.toNTriple(): String {
+fun Resource.toNTriple(): String {
     val cPrefix = RdfConstants.CLASS_NS
     val rPrefix = RdfConstants.RESOURCE_NS
     val sb = StringBuilder()
@@ -129,7 +129,7 @@ internal fun Resource.toNTriple(): String {
 /**
  * Convert the triple to a statement in NTriple format.
  */
-internal fun GeneralStatement.toNTriple(): String {
+fun GeneralStatement.toNTriple(): String {
     val pPrefix = RdfConstants.PREDICATE_NS
     val result = "${serializeThing(subject)} <$pPrefix${predicate.id}> ${serializeThing(`object`)} .\n"
     if (result[0] == '"')
@@ -142,7 +142,7 @@ internal fun GeneralStatement.toNTriple(): String {
 /**
  * Checks whether a URI is valid to be included in RDF .nt serialization.
  */
-internal fun URI.isValidForNTriple(): Boolean {
+fun URI.isValidForNTriple(): Boolean {
     // FIXME: what makes a URI valid to the N-Triple format ? See #349 and #220
     return !toString().equals("null", ignoreCase = true)
 }

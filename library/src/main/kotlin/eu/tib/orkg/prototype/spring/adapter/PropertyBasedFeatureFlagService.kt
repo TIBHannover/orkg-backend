@@ -14,6 +14,8 @@ class PropertyBasedFeatureFlagService(
     override fun isPapersWithCodeLegacyModelEnabled(): Boolean = config.pwcLegacyModel
 
     override fun isFormattedLabelsEnabled(): Boolean = config.formattedLabels
+
+    override fun isNeo4jVersion3Enabled(): Boolean = config.useNeo4jVersion3
 }
 
 @ConfigurationProperties(prefix = "orkg.features")
@@ -24,8 +26,10 @@ class PropertyBasedFeatureFlagService(
 data class FeatureFlags(
     /** Use the old (legacy) model for Paper With Code data. */
     val pwcLegacyModel: Boolean = false,
-    /** Disable formatted labels by default - for performance reasons */
-    val formattedLabels: Boolean = false
+    /** Enable support for formatted labels (disabled by default - for performance reasons). */
+    val formattedLabels: Boolean = false,
+    /** Use Neo4j 3.x (legacy) series. */
+    val useNeo4jVersion3: Boolean = true,
 )
 
 @Configuration

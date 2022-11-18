@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import eu.tib.orkg.prototype.graphdb.indexing.domain.model.IndexService
+import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
@@ -23,12 +24,14 @@ class ExampleData(
     private val predicateService: CreatePredicateUseCase,
     private val statementService: StatementUseCases,
     private val classService: ClassUseCases,
-    private val indexService: IndexService
+    private val indexService: IndexService,
+    private val flags: FeatureFlagService,
 ) : ApplicationRunner {
 
     override fun run(args: ApplicationArguments?) {
         // Create required constraints and indices
-        indexService.verifyIndices()
+        if (flags.isNeo4jVersion3Enabled()) indexService.verifyIndices()
+
         if (statementsPresent())
             return
 

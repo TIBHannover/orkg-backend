@@ -37,7 +37,17 @@ import org.springframework.transaction.annotation.Transactional
 // This is only required because these are integration tests. In a unit test, we would mock the feature flag service.
 // But for the time were we have both code bases, we need to run both test sets as well.
 @TestPropertySource(properties = ["orkg.features.pwc-legacy-model=true"])
-class BenchmarkControllerLegacyTest : BenchmarkControllerTest()
+class BenchmarkControllerLegacyTest : BenchmarkControllerTest() {
+    @BeforeEach
+    override fun setup() {
+        super.setup()
+        classService.create(CreateClassRequest(ClassId("Benchmark"), "Benchmark", null))
+        classService.create(CreateClassRequest(ClassId("Dataset"), "Dataset", null))
+        classService.create(CreateClassRequest(ClassId("Evaluation"), "Evaluation", null))
+        classService.create(CreateClassRequest(ClassId("Model"), "Model", null))
+        classService.create(CreateClassRequest(ClassId("Metric"), "Metric", null))
+    }
+}
 
 @Suppress("HttpUrlsUsage")
 @DisplayName("Benchmark Controller")
@@ -65,7 +75,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
     private lateinit var predicateService: PredicateService
 
     @Autowired
-    private lateinit var classService: ClassService
+    protected lateinit var classService: ClassService
 
     @BeforeEach
     fun setup() {
@@ -92,6 +102,11 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         predicateService.create(CreatePredicateRequest(PredicateId(labelsAndClasses.metricPredicate), "Has metric"))
         predicateService.create(CreatePredicateRequest(PredicateId(labelsAndClasses.quantityValuePredicate), "Has quantity value")) // legacy: HAS_VALUE
         predicateService.create(CreatePredicateRequest(PredicateId(labelsAndClasses.quantityPredicate), "Has evaluation"))
+
+        classService.create(CreateClassRequest(ClassId("Paper"), "Paper", null))
+        classService.create(CreateClassRequest(ClassId("Problem"), "Problem", null))
+        classService.create(CreateClassRequest(ClassId("ResearchField"), "ResearchField", null))
+        classService.create(CreateClassRequest(ClassId("Contribution"), "Contribution", null))
 
         if (!flags.isPapersWithCodeLegacyModelEnabled()) {
             predicateService.create(CreatePredicateRequest(PredicateId(labelsAndClasses.numericValuePredicate), "Has numeric value"))

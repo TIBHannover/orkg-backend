@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
@@ -46,15 +47,26 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     @Autowired
     private lateinit var resourceService: ResourceUseCases
 
+    @Autowired
+    private lateinit var classService: ClassUseCases
+
     @BeforeEach
     fun setup() {
         observatoryService.removeAll()
         resourceService.removeAll()
         service.removeAll()
+        classService.removeAll()
 
         assertThat(observatoryService.listObservatories()).hasSize(0)
         assertThat(resourceService.findAll(PageRequest.of(0, 10))).hasSize(0)
         assertThat(service.listOrganizations()).hasSize(0)
+        assertThat(classService.findAll(PageRequest.of(0, 10))).hasSize(0)
+
+        classService.create(CreateClassRequest(ClassId("ResearchField"), "ResearchField", null))
+        classService.create(CreateClassRequest(ClassId("Paper"), "Paper", null))
+        classService.create(CreateClassRequest(ClassId("Comparison"), "Comparison", null))
+        classService.create(CreateClassRequest(ClassId("Problem"), "Problem", null))
+        classService.create(CreateClassRequest(ClassId("SomeClass"), "SomeClass", null))
     }
 
     @Test

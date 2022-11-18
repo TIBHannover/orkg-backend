@@ -11,6 +11,7 @@ import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
+import eu.tib.orkg.prototype.statements.application.InvalidClassCollection
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryRequest
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
@@ -24,6 +25,7 @@ import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jComparisonReposi
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jContributionRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jSmartReviewRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jVisualizationRepository
+import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
@@ -53,7 +55,8 @@ class ResourceService(
     private val repository: ResourceRepository,
     private val statementRepository: StatementRepository,
     private val templateRepository: TemplateRepository,
-    private val flags: FeatureFlagService
+    private val flags: FeatureFlagService,
+    private val classRepository: ClassRepository
 ) : ResourceUseCases {
     @Transactional(readOnly = true)
     override fun exists(id: ResourceId): Boolean = repository.exists(id)
@@ -103,6 +106,9 @@ class ResourceService(
         organizationId: OrganizationId
     ): ResourceRepresentation {
         val id = request.id ?: repository.nextIdentity()
+        if (request.classes.isNotEmpty() && !classRepository.existsAll(request.classes)) {
+            throw InvalidClassCollection(request.classes)
+        }
         val resource = Resource(
             label = request.label,
             id = id,
@@ -280,7 +286,12 @@ class ResourceService(
 
         // update all the properties
         if (request.label != null) found = found.copy(label = request.label)
-        if (request.classes != null) found = found.copy(classes = request.classes)
+        if (request.classes != null) {
+            if (request.classes.isEmpty() || !classRepository.existsAll(request.classes)) {
+                throw InvalidClassCollection(request.classes)
+            }
+            found = found.copy(classes = request.classes)
+        }
         repository.save(found)
 
         return findById(found.id).get()

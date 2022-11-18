@@ -33,7 +33,9 @@ class ObservatoryNotFound(id: ObservatoryId) : RuntimeException("""Observatory "
 class ObservatoryURLNotFound(id: String) : RuntimeException("""Observatory "$id" not found""")
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
-class OrganizationNotFound(id: OrganizationId) : RuntimeException("""Organization "$id" not found""")
+class OrganizationNotFound(id: String) : RuntimeException("""Organization "$id" not found""") {
+    constructor(id: OrganizationId) : this(id.toString())
+}
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class ResearchFieldNotFound(id: ResourceId) : RuntimeException("""Research field "$id" not found""")

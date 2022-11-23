@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.contenttypes.spi
 import eu.tib.orkg.prototype.contenttypes.domain.ContentType
 import eu.tib.orkg.prototype.contenttypes.domain.Paper
 import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -24,15 +25,23 @@ interface ConcreteContentTypeRepository<T : ContentType> {
     val contentTypeClass: String
 
     fun findAllFeaturedIs(featured: Boolean, pageable: Pageable): Page<T> =
-        resourceRepository.findAllFeaturedResourcesByClass(listOf(contentTypeClass), featured, pageable).map(::convert)
+        resourceRepository.findAllFeaturedResourcesByClass(listOf(contentTypeClass), featured, pageable).map(::toContentType)
 
     fun findAllUnlistedIs(unlisted: Boolean, pageable: Pageable): Page<T> =
-        resourceRepository.findAllUnlistedResourcesByClass(listOf(contentTypeClass), unlisted, pageable).map(::convert)
+        resourceRepository.findAllUnlistedResourcesByClass(listOf(contentTypeClass), unlisted, pageable).map(::toContentType)
 
     fun findAll(pageable: Pageable): Page<T> =
-        resourceRepository.findAllByClass(contentTypeClass, pageable).map(::convert)
+        resourceRepository.findAllByClass(contentTypeClass, pageable).map(::toContentType)
 
-    fun convert(res: Resource): T
+    fun findById(id: ResourceId) =
+        resourceRepository.findByResourceId(id)
+
+    fun save(contentType: T) =
+        resourceRepository.save(toResource(contentType))
+
+    fun toContentType(res: Resource): T
+
+    fun toResource(contentType: T): Resource
 }
 
 interface PaperRepository : ConcreteContentTypeRepository<Paper> {
@@ -42,7 +51,11 @@ interface PaperRepository : ConcreteContentTypeRepository<Paper> {
 class PaperRepositoryAdapter(override val resourceRepository: ResourceRepository) : PaperRepository {
     override val contentTypeClass: String = "Paper"
 
-    override fun convert(res: Resource): Paper {
+    override fun toContentType(res: Resource): Paper {
+        TODO("Not yet implemented")
+    }
+
+    override fun toResource(contentType: Paper): Resource {
         TODO("Not yet implemented")
     }
 

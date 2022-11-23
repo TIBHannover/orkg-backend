@@ -18,7 +18,7 @@ class PaperService(
 
     // return paperRepo.findALl()
     override fun findAll(): Page<Paper> {
-         // 1. resource repo -> finden resource mit klasse paper
+        // 1. resource repo -> finden resource mit klasse paper
         // 2. für jede resource -> finde statements mit diesem subject
         // 3. aus statement liste -> generiere paper domain object (title, autoren, jahr der veröff.)
         // 4. return list domain objects
@@ -33,7 +33,7 @@ class PaperService(
             featured = true,
             pageable
         )
-        return results.map { Paper(title = it.label) }
+        return results.map { Paper(title = it.label, id = "Paper") }
     }
 
     override fun findUnlisted(): Page<Paper> {

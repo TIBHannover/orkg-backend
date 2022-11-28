@@ -125,11 +125,11 @@ class OrganizationController(
         val response: Organization = if (isValidUUID(id)) {
             service
                 .findById(OrganizationId(id))
-                .orElseThrow { OrganizationNotFound(OrganizationId(id)) }
+                .orElseThrow { OrganizationNotFound(id) }
         } else {
             service
                 .findByDisplayId(id)
-                .orElseThrow { OrganizationNotFound(OrganizationId(id)) }
+                .orElseThrow { OrganizationNotFound(id) }
         }
         val logo = encoder(response.id.toString())
         return response.copy(logo = logo)

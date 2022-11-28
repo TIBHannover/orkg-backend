@@ -2,7 +2,7 @@ import org.asciidoctor.gradle.jvm.AsciidoctorTask
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 group = "eu.tib"
-version = "0.18.0"
+version = "0.19.0"
 
 val neo4jVersion = "3.5.+" // should match version in Dockerfile
 val springDataNeo4jVersion = "5.3.4"
@@ -79,6 +79,7 @@ dependencies {
     implementation("org.springframework.security.oauth:spring-security-oauth2:$springSecurityOAuthVersion.RELEASE")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("org.springframework.data:spring-data-neo4j:$springDataNeo4jVersion.RELEASE")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     // JAXB stuff. Was removed from Java 9. Seems to be needed for OAuth2.

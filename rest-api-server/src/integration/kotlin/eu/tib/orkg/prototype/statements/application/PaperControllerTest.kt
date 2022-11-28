@@ -76,6 +76,10 @@ class PaperControllerTest : RestDocumentationBaseTest() {
 
         classService.create(CreateClassRequest(ClassId("Paper"), "paper", null))
         classService.create(CreateClassRequest(ClassId("Contribution"), "Contribution", null))
+        classService.create(CreateClassRequest(ClassId("Problem"), "Problem", null))
+        classService.create(CreateClassRequest(ClassId("ResearchField"), "ResearchField", null))
+        classService.create(CreateClassRequest(ClassId("Author"), "Author", null))
+        classService.create(CreateClassRequest(ClassId("Venue"), "Venue", null))
 
         resourceService.create(CreateResourceRequest(ResourceId("R12"), "Computer Science"))
         resourceService.create(CreateResourceRequest(ResourceId("R3003"), "Question Answering over Linked Data"))

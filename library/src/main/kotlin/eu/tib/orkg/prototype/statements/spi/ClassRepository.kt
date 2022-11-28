@@ -18,4 +18,5 @@ interface ClassRepository : EntityRepository<Class, ClassId> {
     fun findByUri(uri: String): Optional<Class>
     fun deleteAll()
     fun nextIdentity(): ClassId
+    fun existsAll(ids: Iterable<ClassId>): Boolean
 }

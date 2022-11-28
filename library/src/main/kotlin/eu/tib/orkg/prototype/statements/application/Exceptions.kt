@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -33,7 +34,9 @@ class ObservatoryNotFound(id: ObservatoryId) : RuntimeException("""Observatory "
 class ObservatoryURLNotFound(id: String) : RuntimeException("""Observatory "$id" not found""")
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
-class OrganizationNotFound(id: OrganizationId) : RuntimeException("""Organization "$id" not found""")
+class OrganizationNotFound(id: String) : RuntimeException("""Organization "$id" not found""") {
+    constructor(id: OrganizationId) : this(id.toString())
+}
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class ResearchFieldNotFound(id: ResourceId) : RuntimeException("""Research field "$id" not found""")
@@ -53,6 +56,10 @@ class ClassNotAllowed(`class`: String) : RuntimeException("This class id ($`clas
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 class ClassAlreadyExists(`class`: String) : RuntimeException("The class with the id ($`class`) already exists")
+
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+class InvalidClassCollection(ids: Iterable<ClassId>) :
+    RuntimeException("The collection of classes $ids contains one or more missing classes")
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 class DuplicateURI(uri: URI, id: String) :

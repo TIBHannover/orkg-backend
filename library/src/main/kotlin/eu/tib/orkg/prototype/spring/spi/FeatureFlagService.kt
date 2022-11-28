@@ -13,6 +13,9 @@ interface FeatureFlagService {
     /** Determine if the old (legacy) model of Papers With Code should be used. */
     fun isPapersWithCodeLegacyModelEnabled(): Boolean
 
-    /** Determine if formatted labels are enabled and appended to resource representation*/
+    /** Determine if formatted labels are enabled and appended to resource representation. */
     fun isFormattedLabelsEnabled(): Boolean
+
+    /** Determine if Neo4j 3.x series is used. */
+    fun isNeo4jVersion3Enabled(): Boolean
 }

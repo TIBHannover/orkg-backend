@@ -186,6 +186,16 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    fun addButClassDoesNotExist() {
+        val resource = mapOf("label" to "foo", "classes" to setOf(ClassId("doesNotExist")))
+
+        mockMvc
+            .perform(postRequestWithBody("/api/resources/", resource))
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
     fun addWithExistingIds() {
         val resource = mapOf("label" to "bar", "id" to "Test")
 
@@ -198,10 +208,11 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun edit() {
-        val resource = service.create("foo").id
+        val oldClass = classService.create("class")
+        val resource = service.create(CreateResourceRequest(null, "foo", setOf(oldClass.id))).id
 
         val newLabel = "bar"
-        val update = mapOf("label" to newLabel)
+        val update = mapOf("label" to newLabel, "classes" to listOf(oldClass.id.value))
 
         mockMvc
             .perform(putRequestWithBody("/api/resources/$resource", update))
@@ -211,7 +222,8 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     requestFields(
-                        fieldWithPath("label").description("The updated resource label")
+                        fieldWithPath("label").description("The updated resource label"),
+                        fieldWithPath("classes").description("The classes to which the resource belongs to").optional()
                     ),
                     responseFields(resourceResponseFields())
                 )
@@ -220,8 +232,8 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun editResourceClass() {
-        classService.create("class")
-        val resource = service.create(CreateResourceRequest(null, "test", setOf(ClassId("class")))).id
+        val oldClass = classService.create("class")
+        val resource = service.create(CreateResourceRequest(null, "test", setOf(oldClass.id))).id
 
         val newClass = classService.create("clazz")
         val update = mapOf("classes" to listOf(newClass.id.value))
@@ -241,6 +253,18 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                     responseFields(resourceResponseFields())
                 )
             )
+    }
+
+    @Test
+    fun editResourceClassesIsEmpty() {
+        val oldClass = classService.create("class")
+        val resource = service.create(CreateResourceRequest(null, "test", setOf(oldClass.id))).id
+
+        val update = mapOf("classes" to emptyList<ClassId>())
+
+        mockMvc
+            .perform(putRequestWithBody("/api/resources/$resource", update))
+            .andExpect(status().isBadRequest)
     }
 
     @Test
@@ -388,6 +412,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
         classService.create(CreateClassRequest(ClassId("Paper"), "paper", null))
         classService.create(CreateClassRequest(ClassId("Contribution"), "Contribution", null))
+        classService.create(CreateClassRequest(ClassId("Problem"), "Problem", null))
 
         val userId = createTestUser()
         // create resource with different userId, and use it as a research field in the paper

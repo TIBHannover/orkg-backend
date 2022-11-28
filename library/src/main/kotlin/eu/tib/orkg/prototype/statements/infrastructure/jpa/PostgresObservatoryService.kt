@@ -43,51 +43,32 @@ class PostgresObservatoryService(
     override fun listObservatories(): List<Observatory> =
         postgresObservatoryRepository.findAll()
             .map(ObservatoryEntity::toObservatory)
-            .onEach {
-            if (hasResearchField(it))
-                it.withResearchField(it.researchField?.id!!)
-            }
+            .map(::expand)
 
     override fun findObservatoriesByOrganizationId(id: OrganizationId): List<Observatory> =
         postgresObservatoryRepository.findByorganizationsId(id.value)
             .map(ObservatoryEntity::toObservatory)
-            .onEach {
-            if (hasResearchField(it))
-                it.withResearchField(it.researchField?.id!!)
-        }
+            .map(::expand)
 
-    override fun findByName(name: String): Optional<Observatory> {
-        val response = postgresObservatoryRepository
-            .findByName(name)
-            .map(ObservatoryEntity::toObservatory)!!
-        return if (response.isPresent && hasResearchField(response.get()))
-            Optional.of(response.get().withResearchField(response.get().researchField?.id!!))
-        else response
-    }
+    override fun findByName(name: String): Optional<Observatory> =
+        postgresObservatoryRepository.findByName(name)
+            .map(ObservatoryEntity::toObservatory)
+            .map(::expand)
 
-    override fun findById(id: ObservatoryId): Optional<Observatory> {
-        val response = postgresObservatoryRepository.findById(id.value).map(ObservatoryEntity::toObservatory).get()
-        return if (hasResearchField(response))
-            Optional.of(response.withResearchField(response.researchField?.id!!))
-        else Optional.of(response)
-    }
+    override fun findById(id: ObservatoryId): Optional<Observatory> =
+        postgresObservatoryRepository.findById(id.value)
+            .map(ObservatoryEntity::toObservatory)
+            .map(::expand)
 
-    override fun findByDisplayId(id: String): Optional<Observatory> {
-        val response = postgresObservatoryRepository.findByDisplayId(id).map(ObservatoryEntity::toObservatory)
-        return if (response.isPresent && hasResearchField(response.get()))
-            Optional.of(response.get().withResearchField(response.get().researchField?.id!!))
-        else response
-    }
+    override fun findByDisplayId(id: String): Optional<Observatory> =
+        postgresObservatoryRepository.findByDisplayId(id)
+            .map(ObservatoryEntity::toObservatory)
+            .map(::expand)
 
-    override fun findObservatoriesByResearchField(researchField: String): List<Observatory> {
-        val response = postgresObservatoryRepository.findByResearchField(researchField).map(ObservatoryEntity::toObservatory)
-
-        response.forEach {
-            if (hasResearchField(it))
-                it.withResearchField(it.researchField?.id!!)
-        }
-        return response
-    }
+    override fun findObservatoriesByResearchField(researchField: String): List<Observatory> =
+        postgresObservatoryRepository.findByResearchField(researchField)
+            .map(ObservatoryEntity::toObservatory)
+            .map(::expand)
 
     override fun removeAll() = postgresObservatoryRepository.deleteAll()
 

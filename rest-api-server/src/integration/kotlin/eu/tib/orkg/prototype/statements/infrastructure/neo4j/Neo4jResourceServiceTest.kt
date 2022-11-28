@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.assertj.core.api.Assertions.assertThat
@@ -18,10 +18,15 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
     @Autowired
     private lateinit var service: ResourceUseCases
 
+    @Autowired
+    private lateinit var classService: ClassUseCases
+
     @BeforeEach
     fun setup() {
         service.removeAll()
+        classService.removeAll()
 
+        assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(0)
         assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(0)
     }
 
@@ -178,7 +183,7 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
 
     @Test
     fun `when several resources of a class exist with the same label, partial search should return all of them`() {
-        val researchProblemClass = ClassId("ResearchProblem")
+        val researchProblemClass = classService.create("ResearchProblem").id
         val resources = mutableListOf<ResourceRepresentation>()
         repeat(5) {
             resources += service.create(

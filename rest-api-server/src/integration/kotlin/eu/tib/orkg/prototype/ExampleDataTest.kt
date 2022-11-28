@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype
 
 import eu.tib.orkg.prototype.graphdb.indexing.domain.model.IndexService
+import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.services.ClassService
 import eu.tib.orkg.prototype.statements.services.PredicateService
@@ -37,10 +38,13 @@ class ExampleDataTest : Neo4jTestContainersBaseTest() {
     @Autowired
     private lateinit var indexService: IndexService
 
+    @Autowired
+    private lateinit var flags: FeatureFlagService
+
     @BeforeEach
     fun setup() {
         cleanup()
-        ExampleData(resourceService, predicateService, statementService, classService, indexService).run(null)
+        ExampleData(resourceService, predicateService, statementService, classService, indexService, flags).run(null)
     }
 
     @AfterEach

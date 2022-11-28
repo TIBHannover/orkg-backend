@@ -9,6 +9,8 @@ import org.springframework.data.neo4j.repository.Neo4jRepository
 interface Neo4jClassRepository : Neo4jRepository<Neo4jClass, Long> {
     fun existsByClassId(id: ClassId): Boolean
 
+    fun existsAllByClassId(ids: Iterable<ClassId>): Boolean
+
     fun findByClassId(id: ClassId?): Optional<Neo4jClass>
 
     fun findAllByLabel(label: String): Iterable<Neo4jClass>

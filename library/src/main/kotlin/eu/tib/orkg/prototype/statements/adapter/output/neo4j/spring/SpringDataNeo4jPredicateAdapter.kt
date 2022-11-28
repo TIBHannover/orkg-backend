@@ -7,11 +7,15 @@ import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import java.util.*
+import org.springframework.cache.annotation.CacheConfig
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
 @Component
+@CacheConfig(cacheNames = ["predicates"])
 class SpringDataNeo4jPredicateAdapter(
     private val neo4jRepository: Neo4jPredicateRepository,
     private val idGenerator: Neo4jPredicateIdGenerator
@@ -30,13 +34,16 @@ class SpringDataNeo4jPredicateAdapter(
     override fun findAllByLabelContaining(part: String, pageable: Pageable): Page<Predicate> =
         neo4jRepository.findAllByLabelContaining(part, pageable).map(Neo4jPredicate::toPredicate)
 
+    @Cacheable(key = "#id")
     override fun findByPredicateId(id: PredicateId?): Optional<Predicate> =
         neo4jRepository.findByPredicateId(id).map(Neo4jPredicate::toPredicate)
 
+    @CacheEvict(allEntries = true)
     override fun deleteAll() {
         neo4jRepository.deleteAll()
     }
 
+    @CacheEvict(key = "#predicate.id")
     override fun save(predicate: Predicate) {
         neo4jRepository.save(predicate.toNeo4jPredicate())
     }

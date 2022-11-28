@@ -52,6 +52,8 @@ class StatsControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun index() {
+        classService.create(CreateClassRequest(ClassId("Paper"), "Paper", null))
+        classService.create("Awesome class")
         resourceService.create(CreateResourceRequest(ResourceId("R11"), "Research field", setOf()))
         resourceService.create("Python")
         resourceService.create("C#")
@@ -66,7 +68,6 @@ class StatsControllerTest : RestDocumentationBaseTest() {
         literalService.create("ORKG rocks")
         literalService.create("Out of this world")
         literalService.create("We are crazy")
-        classService.create("Awesome class")
 
         mockMvc.perform(getRequestTo("/api/stats/")).andExpect(status().isOk).andDo(
             document(

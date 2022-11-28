@@ -11,6 +11,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationType
+import eu.tib.orkg.prototype.statements.services.ClassService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -42,15 +43,22 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
     @Autowired
     private lateinit var resourceService: ResourceUseCases
 
+    @Autowired
+    private lateinit var classService: ClassService
+
     @BeforeEach
     fun setup() {
         service.removeAll()
         observatoryService.removeAll()
         resourceService.removeAll()
+        classService.removeAll()
 
         assertThat(service.listOrganizations()).hasSize(0)
         assertThat(observatoryService.listObservatories()).hasSize(0)
         assertThat(resourceService.findAll(PageRequest.of(0, 10))).hasSize(0)
+        assertThat(classService.findAll(PageRequest.of(0, 10))).hasSize(0)
+
+        classService.create(CreateClassRequest(ClassId("ResearchField"), "ResearchField", null))
     }
 
     @Test

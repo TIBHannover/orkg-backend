@@ -1,17 +1,14 @@
 package eu.tib.orkg.prototype.contenttypes.spi
 
 import eu.tib.orkg.prototype.contenttypes.domain.ContentType
-import eu.tib.orkg.prototype.createResource
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.data.domain.PageRequest
 
-interface ContentTypeRepositoryContractTest<T: ContentType> {
+interface ContentTypeRepositoryContractTest<T : ContentType> {
     val repository: ConcreteContentTypeRepository<T>
 
     // TODO: check if ConcreteContentTypeRepository.toResource and ConcreteContentTypeRepository.toContentType are correct

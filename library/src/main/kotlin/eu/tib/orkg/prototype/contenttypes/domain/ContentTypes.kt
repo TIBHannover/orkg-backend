@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.contenttypes.domain
 
-
 typealias ContentTypeId = String
 
 sealed interface ContentType {

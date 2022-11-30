@@ -22,7 +22,7 @@ class SpringDataNeo4jClassAdapter(
 
     override fun exists(id: ClassId): Boolean = neo4jRepository.existsByClassId(id)
 
-    override fun existsAll(ids: Iterable<ClassId>): Boolean = neo4jRepository.existsAllByClassId(ids)
+    override fun existsAll(ids: Set<ClassId>): Boolean = neo4jRepository.existsAllByClassId(ids)
 
     override fun findByClassId(id: ClassId?): Optional<Class> =
         neo4jRepository.findByClassId(id).map(Neo4jClass::toClass)

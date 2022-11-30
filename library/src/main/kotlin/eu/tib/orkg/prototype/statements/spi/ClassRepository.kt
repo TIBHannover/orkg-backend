@@ -18,5 +18,12 @@ interface ClassRepository : EntityRepository<Class, ClassId> {
     fun findByUri(uri: String): Optional<Class>
     fun deleteAll()
     fun nextIdentity(): ClassId
-    fun existsAll(ids: Iterable<ClassId>): Boolean
+
+    /**
+     * Determine if all classes in a set of given classes exist.
+     *
+     * @param ids The set of class IDs to be checked.
+     * @return `true` if [ids] is non-empty and all classes exist, `false` otherwise.
+     */
+    fun existsAll(ids: Set<ClassId>): Boolean
 }

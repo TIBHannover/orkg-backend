@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.20.0] - 2022-11-30
 ### Fixed
 - Checking for the existence of several classes at once gives the correct result. (Closes: [#433](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/433)) 
 ### Added
@@ -207,7 +209,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.19.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.20.0...master
+[0.20.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.20.0
 [0.19.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.19.0
 [0.18.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.18.0
 [0.17.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.17.2

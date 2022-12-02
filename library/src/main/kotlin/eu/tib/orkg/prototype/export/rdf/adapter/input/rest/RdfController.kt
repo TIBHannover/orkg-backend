@@ -35,7 +35,7 @@ class RdfController(
         return when (type) {
             "property" -> predicateController.findByLabel(searchString, exactMatch, pageable)
             "class" -> classController.findByLabel(searchString, exactMatch, pageable)
-            else -> resourceController.findByLabel(searchString, exactMatch, arrayOf(), pageable)
+            else -> resourceController.findByLabel(searchString, exactMatch, setOf(), setOf(), pageable)
         }
     }
 }

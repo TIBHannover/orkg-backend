@@ -98,22 +98,30 @@ class SpringDataNeo4jResourceAdapter(
         neo4jRepository.findAllByClassAndLabelMatchesRegexAndCreatedBy(`class`, label, createdBy, pageable)
             .map(Neo4jResource::toResource)
 
-    override fun findAllExcludingClass(classes: List<String>, pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllExcludingClass(classes, pageable).map(Neo4jResource::toResource)
+    override fun findAllIncludingAndExcludingClasses(
+        includeClasses: Set<ClassId>,
+        excludeClasses: Set<ClassId>,
+        pageable: Pageable
+    ): Page<Resource> =
+        neo4jRepository.findAllIncludingAndExcludingClasses(includeClasses, excludeClasses, pageable)
+            .map(Neo4jResource::toResource)
 
-    override fun findAllExcludingClassByLabel(
-        classes: List<String>,
+    override fun findAllIncludingAndExcludingClassesByLabel(
+        includeClasses: Set<ClassId>,
+        excludeClasses: Set<ClassId>,
         label: String,
         pageable: Pageable
     ): Page<Resource> =
-        neo4jRepository.findAllExcludingClassByLabel(classes, label, pageable).map(Neo4jResource::toResource)
+        neo4jRepository.findAllIncludingAndExcludingClassesByLabel(includeClasses, excludeClasses, label, pageable).map(Neo4jResource::toResource)
 
-    override fun findAllExcludingClassByLabelMatchesRegex(
-        classes: List<String>,
+    override fun findAllIncludingAndExcludingClassesByLabelMatchesRegex(
+        includeClasses: Set<ClassId>,
+        excludeClasses: Set<ClassId>,
         label: String,
         pageable: Pageable
     ): Page<Resource> =
-        neo4jRepository.findAllExcludingClassByLabelMatchesRegex(classes, label, pageable).map(Neo4jResource::toResource)
+        neo4jRepository.findAllIncludingAndExcludingClassesByLabelMatchesRegex(includeClasses, excludeClasses, label, pageable)
+            .map(Neo4jResource::toResource)
 
     override fun getIncomingStatementsCount(ids: List<ResourceId>): Iterable<Long> =
         neo4jRepository.getIncomingStatementsCount(ids)

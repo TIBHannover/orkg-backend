@@ -88,6 +88,10 @@ class CannotResetURI(id: String) :
 class URIAlreadyInUse(uri: String) :
     ForbiddenOperationException("uri", "The URI <$uri> is already in use by another class.")
 
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+class InvalidClassFilter(id: ClassId) :
+    RuntimeException("The class $id cannot be included and excluded at the same time.")
+
 /**
  * Base class for custom property validation.
  */

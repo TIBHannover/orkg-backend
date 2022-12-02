@@ -51,14 +51,29 @@ class ResourceController(
     fun findByLabel(
         @RequestParam("q", required = false) searchString: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
-        @RequestParam("exclude", required = false, defaultValue = "") excludeClasses: Array<String>,
+        @RequestParam("include", required = false, defaultValue = "") includeClasses: Set<ClassId>,
+        @RequestParam("exclude", required = false, defaultValue = "") excludeClasses: Set<ClassId>,
         pageable: Pageable
-    ): Page<ResourceRepresentation> {
-        return when {
-            excludeClasses.isNotEmpty() -> when {
-                searchString == null -> service.findAllExcludingClass(pageable, excludeClasses.map { ClassId(it) }.toTypedArray())
-                exactMatch -> service.findAllExcludingClassByLabel(pageable, excludeClasses.map { ClassId(it) }.toTypedArray(), searchString)
-                else -> service.findAllExcludingClassByLabelContaining(pageable, excludeClasses.map { ClassId(it) }.toTypedArray(), searchString)
+    ): Page<ResourceRepresentation> =
+        when {
+            excludeClasses.isNotEmpty() || includeClasses.isNotEmpty() -> when {
+                searchString == null -> service.findAllIncludingAndExcludingClasses(
+                    includeClasses,
+                    excludeClasses,
+                    pageable
+                )
+                exactMatch -> service.findAllIncludingAndExcludingClassesByLabel(
+                    includeClasses,
+                    excludeClasses,
+                    searchString,
+                    pageable
+                )
+                else -> service.findAllIncludingAndExcludingClassesByLabelContaining(
+                    includeClasses,
+                    excludeClasses,
+                    searchString,
+                    pageable
+                )
             }
             else -> when {
                 searchString == null -> service.findAll(pageable)
@@ -66,7 +81,6 @@ class ResourceController(
                 else -> service.findAllByLabelContaining(pageable, searchString)
             }
         }
-    }
 
     @PostMapping("/")
     @ResponseStatus(CREATED)

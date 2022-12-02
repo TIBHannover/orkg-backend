@@ -8,6 +8,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import io.kotest.assertions.asClue
+import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -146,6 +147,184 @@ interface ResourceRepositoryContractTest {
 
         val result = repository.findByClassAndObservatoryId("ToBeFound", observatoryId)
         result.count() shouldBe 0
+    }
+
+    @Test
+    fun `given a resource with a class, when searched by including class set, it should be found`() {
+        val resource1 = createResource().copy(
+            id = ResourceId("R1234"),
+            classes = setOf(ClassId("ToBeFound"), ClassId("Other")),
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource1)
+        val resource2 = createResource().copy(
+            id = ResourceId("R2345"),
+            classes = setOf(ClassId("NotToBeFound"), ClassId("Other")),
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource2)
+
+        val result = repository.findAllIncludingAndExcludingClasses(
+            setOf(ClassId("ToBeFound")),
+            setOf(),
+            PageRequest.of(0, 10)
+        )
+        result.totalElements shouldBe 1
+        result.content.first().id shouldBe ResourceId("R1234")
+    }
+
+    @Test
+    fun `given multiple resources with a class, when searched by including class set, they should be found`() {
+        val resource1 = createResource().copy(
+            id = ResourceId("R1234"),
+            classes = setOf(ClassId("ToBeFound"), ClassId("Other")),
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource1)
+        val resource2 = createResource().copy(
+            id = ResourceId("R2345"),
+            classes = setOf(ClassId("ToBeFound"), ClassId("Other")),
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource2)
+
+        val result = repository.findAllIncludingAndExcludingClasses(
+            setOf(ClassId("ToBeFound")),
+            setOf(),
+            PageRequest.of(0, 10)
+        )
+        result.totalElements shouldBe 2
+        result.content.map(Resource::id) shouldContainAll setOf(ResourceId("R1234"), ResourceId("R2345"))
+    }
+
+    @Test
+    fun `given a resource with a class, when searched by excluding class set, it should be found`() {
+        val resource1 = createResource().copy(
+            id = ResourceId("R1234"),
+            classes = setOf(ClassId("ToBeFound"), ClassId("Other")),
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource1)
+        val resource2 = createResource().copy(
+            id = ResourceId("R2345"),
+            classes = setOf(ClassId("NotToBeFound"), ClassId("Other")),
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource2)
+
+        val result = repository.findAllIncludingAndExcludingClasses(
+            setOf(),
+            setOf(ClassId("NotToBeFound")),
+            PageRequest.of(0, 10)
+        )
+        result.totalElements shouldBe 1
+        result.content.first().id shouldBe ResourceId("R1234")
+    }
+
+    @Test
+    fun `given multiple resources with a class, when searched by excluding class set, they should be found`() {
+        val resource1 = createResource().copy(
+            id = ResourceId("R1234"),
+            classes = setOf(ClassId("ToBeFound"), ClassId("Other")),
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource1)
+        val resource2 = createResource().copy(
+            id = ResourceId("R2345"),
+            classes = setOf(ClassId("ToBeFound"), ClassId("Other")),
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource2)
+
+        val result = repository.findAllIncludingAndExcludingClasses(
+            setOf(),
+            setOf(ClassId("NotToBeFound")),
+            PageRequest.of(0, 10)
+        )
+        result.totalElements shouldBe 2
+        result.content.map(Resource::id) shouldContainAll setOf(ResourceId("R1234"), ResourceId("R2345"))
+    }
+
+    @Test
+    fun `given a resource with a class, when searched by its label, including and excluding class, it should be found`() {
+        val resource1 = createResource().copy(
+            id = ResourceId("R1234"),
+            classes = setOf(ClassId("ToBeFound"), ClassId("Other")),
+            label = "12345",
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource1)
+        val resource2 = createResource().copy(
+            id = ResourceId("R2345"),
+            classes = setOf(ClassId("NotToBeFound"), ClassId("Other")),
+            label = "12345",
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource2)
+        val resource3 = createResource().copy(
+            id = ResourceId("R3456"),
+            classes = setOf(ClassId("NotToBeFound"), ClassId("Other")),
+            label = "abcdef",
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource3)
+
+        val result = repository.findAllIncludingAndExcludingClassesByLabelMatchesRegex(
+            setOf(ClassId("ToBeFound")),
+            setOf(ClassId("NotToBeFound")),
+            "12345",
+            PageRequest.of(0, 10)
+        )
+        result.totalElements shouldBe 1
+        result.content.first().id shouldBe ResourceId("R1234")
+    }
+
+    @Test
+    fun `given a resource with a class, when searched by its label (regex), including and excluding class, it should be found`() {
+        val resource1 = createResource().copy(
+            id = ResourceId("R1234"),
+            classes = setOf(ClassId("ToBeFound"), ClassId("Other")),
+            label = "12345",
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource1)
+        val resource2 = createResource().copy(
+            id = ResourceId("R2345"),
+            classes = setOf(ClassId("NotToBeFound"), ClassId("Other")),
+            label = "12345",
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource2)
+        val resource3 = createResource().copy(
+            id = ResourceId("R3456"),
+            classes = setOf(ClassId("NotToBeFound"), ClassId("Other")),
+            label = "abcdef",
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource3)
+
+        val result = repository.findAllIncludingAndExcludingClassesByLabelMatchesRegex(
+            setOf(ClassId("ToBeFound")),
+            setOf(ClassId("NotToBeFound")),
+            """\d+""",
+            PageRequest.of(0, 10)
+        )
+        result.totalElements shouldBe 1
+        result.content.first().id shouldBe ResourceId("R1234")
     }
 
     fun cleanUpAfterEach()

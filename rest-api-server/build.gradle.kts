@@ -20,9 +20,9 @@ plugins {
     kotlin("kapt")
     kotlin("plugin.spring")
     kotlin("plugin.jpa")
-    id("org.springframework.boot") version libs.versions.spring.boot.get()
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
     id("idea")
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.dependency.management)
 
     id("org.jetbrains.dokka") version "0.10.1"
     id("com.coditory.integration-test") version "1.2.1"

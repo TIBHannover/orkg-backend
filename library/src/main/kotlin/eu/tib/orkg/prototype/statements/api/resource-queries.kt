@@ -78,7 +78,6 @@ interface RetrieveResourceUseCase {
         unlisted: Boolean,
         pageable: Pageable
     ): Page<ResourceRepresentation>
-    fun hasStatements(id: ResourceId): Boolean
 }
 
 fun interface ResourceGenerator {

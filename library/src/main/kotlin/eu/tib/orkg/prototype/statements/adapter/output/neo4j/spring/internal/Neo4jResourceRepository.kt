@@ -222,4 +222,8 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     @Query(value = """MATCH (node:`Resource`) WHERE ANY(c in $classes WHERE c IN labels(node)) AND node.observatory_id=$id AND $IS_UNLISTED WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
         countQuery = """MATCH (node:`Resource`) WHERE ANY(c in $classes WHERE c IN labels(node)) AND node.observatory_id=$id AND $IS_UNLISTED  WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllResourcesByObservatoryIdAndClass(id: ObservatoryId, classes: List<String>, unlisted: Boolean, pageable: Pageable): Page<Neo4jResource>
+
+    // The return type has to be Iterable<Long> due to type erasure as java.lang.Long or Iterable<java.lang.Long> is
+    // required by Spring, but we want to use kotlin.Long whenever possible
+    fun deleteByResourceId(id: ResourceId): Iterable<Long>
 }

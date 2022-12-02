@@ -13,6 +13,7 @@ import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
 import eu.tib.orkg.prototype.statements.application.InvalidClassCollection
 import eu.tib.orkg.prototype.statements.application.InvalidClassFilter
+import eu.tib.orkg.prototype.statements.application.ResourceCantBeDeleted
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryRequest
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
@@ -339,11 +340,13 @@ class ResourceService(
         return findById(found.id).get()
     }
 
-    override fun hasStatements(id: ResourceId) = repository.checkIfResourceHasStatements(id)
-
     override fun delete(id: ResourceId) {
-        val found = repository.findByResourceId(id).get()
-        repository.delete(found.id!!)
+        val resource = repository.findByResourceId(id).orElseThrow { ResourceNotFound(id.value) }
+
+        if (repository.checkIfResourceHasStatements(resource.id!!))
+            throw ResourceCantBeDeleted(resource.id)
+
+        repository.deleteByResourceId(resource.id)
     }
 
     override fun removeAll() = repository.deleteAll()

@@ -35,10 +35,8 @@ class SpringDataNeo4jResourceAdapter(
 
     override fun save(resource: Resource): Resource = neo4jRepository.save(resource.toNeo4jResource()).toResource()
 
-    override fun delete(id: ResourceId) {
-        neo4jRepository.findByResourceId(id).ifPresent {
-            neo4jRepository.delete(it)
-        }
+    override fun deleteByResourceId(id: ResourceId) {
+        neo4jRepository.deleteByResourceId(id)
     }
 
     override fun deleteAll() {

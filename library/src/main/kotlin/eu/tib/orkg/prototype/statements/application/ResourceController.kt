@@ -144,16 +144,7 @@ class ResourceController(
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun delete(@PathVariable id: ResourceId): ResponseEntity<Unit> {
-        val found = service.findById(id)
-
-        if (!found.isPresent)
-            return notFound().build()
-
-        if (service.hasStatements(found.get().id))
-            throw ResourceCantBeDeleted(id)
-
         service.delete(id)
-
         return ResponseEntity.noContent().build()
     }
 

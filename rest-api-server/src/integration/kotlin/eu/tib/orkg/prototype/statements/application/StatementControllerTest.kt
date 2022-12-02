@@ -60,7 +60,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         assertThat(statementService.findAll(tempPageable)).hasSize(0)
         assertThat(resourceService.findAll(tempPageable)).hasSize(0)
         assertThat(predicateService.findAll(tempPageable)).hasSize(0)
-        assertThat(literalService.findAll()).hasSize(0)
+        assertThat(literalService.findAll(tempPageable)).hasSize(0)
     }
 
     @Test

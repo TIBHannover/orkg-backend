@@ -87,7 +87,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         assertThat(classService.findAll(tempPageable)).hasSize(0)
         assertThat(predicateService.findAll(tempPageable)).hasSize(0)
         assertThat(statementService.findAll(tempPageable)).hasSize(0)
-        assertThat(literalService.findAll()).hasSize(0)
+        assertThat(literalService.findAll(tempPageable)).hasSize(0)
     }
 
     @Test

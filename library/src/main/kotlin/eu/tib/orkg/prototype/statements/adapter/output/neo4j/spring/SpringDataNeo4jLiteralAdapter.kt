@@ -8,6 +8,8 @@ import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import java.util.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
 @Component
@@ -32,19 +34,20 @@ class SpringDataNeo4jLiteralAdapter(
         neo4jRepository.deleteAll()
     }
 
-    override fun findAll(): Iterable<Literal> = neo4jRepository.findAll().map(Neo4jLiteral::toLiteral)
+    override fun findAll(pageable: Pageable): Page<Literal> =
+        neo4jRepository.findAll(pageable).map(Neo4jLiteral::toLiteral)
 
     override fun findByLiteralId(id: LiteralId?): Optional<Literal> =
         neo4jRepository.findByLiteralId(id).map(Neo4jLiteral::toLiteral)
 
-    override fun findAllByLabel(value: String): Iterable<Literal> =
-        neo4jRepository.findAllByLabel(value).map(Neo4jLiteral::toLiteral)
+    override fun findAllByLabel(value: String, pageable: Pageable): Page<Literal> =
+        neo4jRepository.findAllByLabel(value, pageable).map(Neo4jLiteral::toLiteral)
 
-    override fun findAllByLabelMatchesRegex(label: String): Iterable<Literal> =
-        neo4jRepository.findAllByLabelMatchesRegex(label).map(Neo4jLiteral::toLiteral)
+    override fun findAllByLabelMatchesRegex(label: String, pageable: Pageable): Page<Literal> =
+        neo4jRepository.findAllByLabelMatchesRegex(label, pageable).map(Neo4jLiteral::toLiteral)
 
-    override fun findAllByLabelContaining(part: String): Iterable<Literal> =
-        neo4jRepository.findAllByLabelContaining(part).map(Neo4jLiteral::toLiteral)
+    override fun findAllByLabelContaining(part: String, pageable: Pageable): Page<Literal> =
+        neo4jRepository.findAllByLabelContaining(part, pageable).map(Neo4jLiteral::toLiteral)
 
     override fun findDOIByContributionId(id: ResourceId): Optional<Literal> =
         neo4jRepository.findDOIByContributionId(id).map(Neo4jLiteral::toLiteral)

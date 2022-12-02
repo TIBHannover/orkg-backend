@@ -7,6 +7,9 @@ import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -36,17 +39,26 @@ class LiteralController(
             .findById(id)
             .orElseThrow { LiteralNotFound() }
 
+    // TODO: remove when front-end has migrated to paged method
     @GetMapping("/")
     fun findByLabel(
         @RequestParam("q", required = false) searchString: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean
     ): Iterable<LiteralRepresentation> =
+        findByLabel(searchString, exactMatch, PageRequest.of(0, Int.MAX_VALUE)).content
+
+    @GetMapping("/", params = ["size"])
+    fun findByLabel(
+        @RequestParam("q", required = false) searchString: String?,
+        @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
+        pageable: Pageable
+    ): Page<LiteralRepresentation> =
         if (searchString == null)
-            service.findAll()
+            service.findAll(pageable)
         else if (exactMatch)
-            service.findAllByLabel(searchString)
+            service.findAllByLabel(searchString, pageable)
         else
-            service.findAllByLabelContaining(searchString)
+            service.findAllByLabelContaining(searchString, pageable)
 
     @PostMapping("/")
     @ResponseStatus(CREATED)

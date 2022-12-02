@@ -10,14 +10,15 @@ interface ClassRepositoryContractTest {
 
     @Test
     fun `existAll should be true when all classes exist`() {
-        val ids = (1L..3).map { repository.save(createClass().copy(id = ClassId(it))).id!! }
+        val ids = (1L..3).map(::ClassId).onEach { repository.save(createClass().copy(id = it)) }
 
         assertThat(repository.existsAll(ids.toSet())).isTrue
     }
 
     @Test
     fun `existAll should be false when at least one class does not exist`() {
-        val ids = (1L..3).map { repository.save(createClass().copy(id = ClassId(it))).id!! } + listOf(ClassId(9))
+        val ids = (1L..3).map(::ClassId).onEach { repository.save(createClass().copy(id = it)) }
+            .plus(listOf(ClassId(9)))
 
         assertThat(repository.existsAll(ids.toSet())).isFalse
     }

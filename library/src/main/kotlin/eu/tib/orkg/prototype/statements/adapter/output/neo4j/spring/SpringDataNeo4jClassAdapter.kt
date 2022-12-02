@@ -16,7 +16,9 @@ class SpringDataNeo4jClassAdapter(
     private val neo4jRepository: Neo4jClassRepository,
     private val neo4jClassIdGenerator: Neo4jClassIdGenerator,
 ) : ClassRepository {
-    override fun save(c: Class): Class = neo4jRepository.save(c.toNeo4jClass()).toClass()
+    override fun save(c: Class) {
+        neo4jRepository.save(c.toNeo4jClass())
+    }
 
     override fun findAll(pageable: Pageable): Page<Class> = neo4jRepository.findAll(pageable).map(Neo4jClass::toClass)
 

@@ -10,8 +10,7 @@ val VALID_ID_REGEX: Regex = """^[a-zA-Z0-9:_-]+$""".toRegex()
 
 @JsonDeserialize(using = ResourceIdDeserializer::class)
 @JsonSerialize(using = ResourceIdSerializer::class)
-data class ResourceId(val value: String) :
-    Comparable<ResourceId> {
+data class ResourceId(val value: String) : Comparable<ResourceId>, ThingId {
 
     init {
         require(value.isNotBlank()) { "ID must not be blank" }

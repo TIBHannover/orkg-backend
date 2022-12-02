@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClass
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClassRepository
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteral
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteralRepository
@@ -140,7 +141,8 @@ class SpringDataNeo4jStatementAdapter(
         return when (thing) {
             is Neo4jResource -> neo4jResourceRepository.findByResourceId(thing.resourceId).get().toResource()
             is Neo4jLiteral -> neo4jLiteralRepository.findByLiteralId(thing.literalId).get().toLiteral()
-            else -> thing.toThing()
+            is Neo4jClass -> neo4jClassRepository.findByClassId(thing.classId).get().toClass()
+            is Neo4jPredicate -> neo4jPredicateRepository.findByPredicateId(thing.predicateId).get().toPredicate()
         }
     }
 

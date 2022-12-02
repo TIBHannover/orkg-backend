@@ -72,7 +72,6 @@ dependencies {
     // Monitoring
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.jolokia:jolokia-core")
-    implementation("io.hawt:hawtio-springboot:2.15.1")
     //
     // Testing
     //

@@ -38,6 +38,11 @@ class SpringDataNeo4jPredicateAdapter(
     override fun findByPredicateId(id: PredicateId?): Optional<Predicate> =
         neo4jRepository.findByPredicateId(id).map(Neo4jPredicate::toPredicate)
 
+    @CacheEvict(key = "#id")
+    override fun deleteByPredicateId(id: PredicateId) {
+        neo4jRepository.deleteByPredicateId(id)
+    }
+
     @CacheEvict(allEntries = true)
     override fun deleteAll() {
         neo4jRepository.deleteAll()
@@ -56,6 +61,8 @@ class SpringDataNeo4jPredicateAdapter(
         } while (neo4jRepository.existsByPredicateId(id))
         return id
     }
+
+    override fun usageCount(id: PredicateId) = neo4jRepository.countUsage(id)
 
     private fun Predicate.toNeo4jPredicate() =
         neo4jRepository.findByPredicateId(id).orElse(Neo4jPredicate()).apply {

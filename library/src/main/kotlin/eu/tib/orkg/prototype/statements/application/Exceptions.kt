@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
+import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.net.URI
 import org.springframework.http.HttpStatus
@@ -50,6 +51,10 @@ class DatasetNotFound(id: ResourceId) : RuntimeException("""Dataset "$id" not fo
 @ResponseStatus(HttpStatus.FORBIDDEN)
 class ResourceCantBeDeleted(id: ResourceId) :
     RuntimeException("Unable to delete Resource $id because it is used in at least one statement")
+
+@ResponseStatus(HttpStatus.FORBIDDEN)
+class PredicateCantBeDeleted(id: PredicateId) :
+    RuntimeException("Unable to delete Predicate $id because it is used in at least one statement")
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 class ClassNotAllowed(`class`: String) : RuntimeException("This class id ($`class`) is not allowed")

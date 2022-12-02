@@ -96,6 +96,34 @@ class SpringDataNeo4jPredicateAdapterCachingTests {
         verify(exactly = 2) { mock.findByPredicateId(PredicateId("P1")) }
     }
 
+    @Test
+    fun `deleting a predicate should evict it from the cache`() {
+        val predicate = createPredicate().copy(id = PredicateId("P1"))
+        every { mock.findByPredicateId(PredicateId("P1")) } returns Optional.of(predicate) andThen Optional.of(predicate) andThen {
+            throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
+        }
+        every { adapter.deleteByPredicateId(PredicateId("P1")) } returns Unit
+
+        // Obtain predicate from repository
+        assertThat(adapter.findByPredicateId(PredicateId("P1")).get()).isEqualTo(predicate)
+        // Verify the loading happened
+        verify(exactly = 1) { mock.findByPredicateId(PredicateId("P1")) }
+
+        // Obtain the same predicate again for several times
+        assertThat(adapter.findByPredicateId(PredicateId("P1")).get()).isEqualTo(predicate)
+        assertThat(adapter.findByPredicateId(PredicateId("P1")).get()).isEqualTo(predicate)
+        verify(exactly = 1) { mock.findByPredicateId(PredicateId("P1")) }
+
+        // Delete predicate from repository
+        adapter.deleteByPredicateId(PredicateId("P1"))
+        // Verify the deletion happened
+        verify(exactly = 1) { mock.deleteByPredicateId(PredicateId("P1")) }
+
+        // Verify that the cache was evicted
+        assertThat(adapter.findByPredicateId(PredicateId("P1")).get()).isEqualTo(predicate)
+        verify(exactly = 2) { mock.findByPredicateId(PredicateId("P1")) }
+    }
+
     @Configuration
     @EnableCaching(proxyTargetClass = true)
     class CachingTestConfig {

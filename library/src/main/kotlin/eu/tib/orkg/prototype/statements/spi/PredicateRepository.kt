@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.spi
 
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import java.util.Optional
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
@@ -13,7 +13,9 @@ interface PredicateRepository : EntityRepository<Predicate, PredicateId> {
     fun findAllByLabelMatchesRegex(label: String, pageable: Pageable): Page<Predicate>
     fun findAllByLabelContaining(part: String, pageable: Pageable): Page<Predicate>
     fun findByPredicateId(id: PredicateId?): Optional<Predicate>
+    fun deleteByPredicateId(id: PredicateId)
     fun deleteAll()
     fun save(predicate: Predicate)
     fun nextIdentity(): PredicateId
+    fun usageCount(id: PredicateId): Long
 }

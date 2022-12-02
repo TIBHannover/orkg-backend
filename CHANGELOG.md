@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Checking for the existence of several classes at once gives the correct result. (Closes: [#433](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/433)) 
 ### Added
+- Added delete functionality for predicates. (Closes: [#346](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/346))
 - Obtaining predicates is cached now. (See: [!322](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/322))
 
 ## [0.19.0] - 2022-11-18

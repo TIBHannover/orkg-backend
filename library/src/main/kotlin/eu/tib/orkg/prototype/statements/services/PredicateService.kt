@@ -7,6 +7,8 @@ import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.UpdatePredicateUseCase
 import eu.tib.orkg.prototype.statements.application.CreatePredicateRequest
+import eu.tib.orkg.prototype.statements.application.PredicateCantBeDeleted
+import eu.tib.orkg.prototype.statements.application.PredicateNotFound
 import eu.tib.orkg.prototype.statements.domain.model.Clock
 import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
@@ -120,6 +122,15 @@ class PredicateService(
             )
             repository.save(p)
         }
+    }
+
+    override fun delete(predicateId: PredicateId) {
+        val predicate = findById(predicateId).orElseThrow { PredicateNotFound(predicateId.value) }
+
+        if (repository.usageCount(predicate.id) > 0)
+            throw PredicateCantBeDeleted(predicate.id)
+
+        repository.deleteByPredicateId(predicate.id)
     }
 
     override fun removeAll() = repository.deleteAll()

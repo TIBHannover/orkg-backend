@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -73,6 +75,13 @@ class PredicateController(private val service: PredicateUseCases) : BaseControll
         service.update(id, ReplaceCommand(label = predicate.label, description = predicate.description))
 
         return ResponseEntity.ok(findById(id))
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    fun delete(@PathVariable id: PredicateId): ResponseEntity<Unit> {
+        service.delete(id)
+        return ResponseEntity.noContent().build()
     }
 
     data class ReplacePredicateRequest(

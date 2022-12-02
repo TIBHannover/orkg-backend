@@ -32,5 +32,6 @@ interface UpdatePredicateUseCase {
 
 interface DeletePredicateUseCase {
     // legacy methods:
+    fun delete(predicateId: PredicateId)
     fun removeAll()
 }

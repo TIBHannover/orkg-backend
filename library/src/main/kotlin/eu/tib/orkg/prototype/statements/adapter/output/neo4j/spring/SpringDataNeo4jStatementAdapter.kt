@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClass
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClassRepository
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteral
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteralRepository
@@ -21,6 +22,10 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jThing
+import eu.tib.orkg.prototype.statements.spi.ClassRepository
+import eu.tib.orkg.prototype.statements.spi.LiteralRepository
+import eu.tib.orkg.prototype.statements.spi.PredicateRepository
+import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.util.*
 import org.springframework.data.domain.Page
@@ -37,6 +42,10 @@ class SpringDataNeo4jStatementAdapter(
     private val neo4jPredicateRepository: Neo4jPredicateRepository,
     private val neo4jLiteralRepository: Neo4jLiteralRepository,
     private val neo4jClassRepository: Neo4jClassRepository,
+    private val resourceRepository: ResourceRepository,
+    private val predicateRepository: PredicateRepository,
+    private val literalRepository: LiteralRepository,
+    private val classRepository: ClassRepository,
 ) : StatementRepository {
     override fun nextIdentity(): StatementId {
         // IDs could exist already by manual creation. We need to find the next available one.
@@ -136,19 +145,21 @@ class SpringDataNeo4jStatementAdapter(
 
     override fun exists(id: StatementId): Boolean = neo4jRepository.existsByStatementId(id)
 
-    private fun refreshObject(thing: Neo4jThing): Thing {
+    private fun loadThing(thing: Neo4jThing): Thing {
+        // We call the repositories here, because they are cached. (Or at least can be.)
         return when (thing) {
-            is Neo4jResource -> neo4jResourceRepository.findByResourceId(thing.resourceId).get().toResource()
-            is Neo4jLiteral -> neo4jLiteralRepository.findByLiteralId(thing.literalId).get().toLiteral()
-            else -> thing.toThing()
+            is Neo4jResource -> resourceRepository.findByResourceId(thing.resourceId).get()
+            is Neo4jLiteral -> literalRepository.findByLiteralId(thing.literalId).get()
+            is Neo4jClass -> classRepository.findByClassId(thing.classId).get()
+            is Neo4jPredicate -> predicateRepository.findByPredicateId(thing.predicateId).get()
         }
     }
 
     private fun Neo4jStatement.toStatement(): GeneralStatement = GeneralStatement(
         id = statementId!!,
-        subject = refreshObject(subject!!),
-        predicate = neo4jPredicateRepository.findByPredicateId(predicateId!!).get().toPredicate(),
-        `object` = refreshObject(`object`!!),
+        subject = loadThing(subject!!),
+        predicate = predicateRepository.findByPredicateId(predicateId!!).get(),
+        `object` = loadThing(`object`!!),
         createdAt = createdAt!!,
         createdBy = createdBy
     )
@@ -175,6 +186,8 @@ class SpringDataNeo4jStatementAdapter(
         }
 
     private fun Thing.toNeo4jThing(): Neo4jThing =
+        // The purpose of this method is of technical nature, as the OGM requires a reference to the start and end node.
+        // With direct access to the database, this becomes obsolete, because queries can use the ID directly.
         when (this) {
             is Class -> neo4jClassRepository.findByClassId(this.id).get()
             is Literal -> neo4jLiteralRepository.findByLiteralId(this.id).get()

@@ -4,7 +4,9 @@ import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepositoryContractTest
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
 
+@Transactional
 class SpringDataNeo4jResourceAdapterContractTests : Neo4jTestContainersBaseTest(), ResourceRepositoryContractTest {
 
     @Autowired

@@ -12,6 +12,8 @@ import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
 import eu.tib.orkg.prototype.statements.application.InvalidClassCollection
+import eu.tib.orkg.prototype.statements.application.InvalidClassFilter
+import eu.tib.orkg.prototype.statements.application.ResourceCantBeDeleted
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryRequest
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
@@ -205,24 +207,56 @@ class ResourceService(
             )
         }
 
-    override fun findAllExcludingClass(pageable: Pageable, ids: Array<ClassId>): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged { repository.findAllExcludingClass(ids.map { it.value }, pageable) }
-
-    override fun findAllExcludingClassByLabel(
-        pageable: Pageable,
-        ids: Array<ClassId>,
-        label: String
-    ): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged { repository.findAllExcludingClassByLabelMatchesRegex(ids.map { it.value }, label.toExactSearchString(), pageable) }
-
-    override fun findAllExcludingClassByLabelContaining(
-        pageable: Pageable,
-        ids: Array<ClassId>,
-        part: String
-    ): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged {
-            repository.findAllExcludingClassByLabelMatchesRegex(ids.map { it.value }, part.toSearchString(), pageable)
+    override fun findAllIncludingAndExcludingClasses(
+        includeClasses: Set<ClassId>,
+        excludeClasses: Set<ClassId>,
+        pageable: Pageable
+    ): Page<ResourceRepresentation> {
+        validateClassFilter(includeClasses, excludeClasses)
+        return retrieveAndConvertPaged {
+            repository.findAllIncludingAndExcludingClasses(includeClasses, excludeClasses, pageable)
         }
+    }
+
+    override fun findAllIncludingAndExcludingClassesByLabel(
+        includeClasses: Set<ClassId>,
+        excludeClasses: Set<ClassId>,
+        label: String,
+        pageable: Pageable
+    ): Page<ResourceRepresentation> {
+        validateClassFilter(includeClasses, excludeClasses)
+        return retrieveAndConvertPaged {
+            repository.findAllIncludingAndExcludingClassesByLabelMatchesRegex(
+                includeClasses,
+                excludeClasses,
+                label.toExactSearchString(),
+                pageable
+            )
+        }
+    }
+
+    override fun findAllIncludingAndExcludingClassesByLabelContaining(
+        includeClasses: Set<ClassId>,
+        excludeClasses: Set<ClassId>,
+        part: String,
+        pageable: Pageable
+    ): Page<ResourceRepresentation> {
+        validateClassFilter(includeClasses, excludeClasses)
+        return retrieveAndConvertPaged {
+            repository.findAllIncludingAndExcludingClassesByLabelMatchesRegex(
+                includeClasses,
+                excludeClasses,
+                part.toSearchString(),
+                pageable
+            )
+        }
+    }
+
+    fun validateClassFilter(includeClasses: Set<ClassId>, excludeClasses: Set<ClassId>) {
+        for (includedClass in includeClasses)
+            if (includedClass in excludeClasses)
+                throw InvalidClassFilter(includedClass)
+    }
 
     override fun findByDOI(doi: String): Optional<ResourceRepresentation> =
         retrieveAndConvertOptional { repository.findByDOI(doi) }
@@ -307,11 +341,13 @@ class ResourceService(
         return findById(found.id).get()
     }
 
-    override fun hasStatements(id: ResourceId) = repository.checkIfResourceHasStatements(id)
-
     override fun delete(id: ResourceId) {
-        val found = repository.findByResourceId(id).get()
-        repository.delete(found.id!!)
+        val resource = repository.findByResourceId(id).orElseThrow { ResourceNotFound(id.value) }
+
+        if (repository.checkIfResourceHasStatements(resource.id!!))
+            throw ResourceCantBeDeleted(resource.id)
+
+        repository.deleteByResourceId(resource.id)
     }
 
     override fun removeAll() = repository.deleteAll()

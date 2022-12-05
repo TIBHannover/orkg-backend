@@ -12,6 +12,8 @@ import eu.tib.orkg.prototype.util.SanitizedWhitespace
 import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
 import java.time.OffsetDateTime
 import java.util.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -39,17 +41,18 @@ class LiteralService(
     @Transactional(readOnly = true)
     override fun exists(id: LiteralId): Boolean = repository.exists(id)
 
-    override fun findAll(): Iterable<LiteralRepresentation> = repository.findAll().map(Literal::toLiteralRepresentation)
+    override fun findAll(pageable: Pageable): Page<LiteralRepresentation> =
+        repository.findAll(pageable).map(Literal::toLiteralRepresentation)
 
     override fun findById(id: LiteralId?): Optional<LiteralRepresentation> =
         repository.findByLiteralId(id).map(Literal::toLiteralRepresentation)
 
-    override fun findAllByLabel(label: String): Iterable<LiteralRepresentation> =
-        repository.findAllByLabelMatchesRegex(label.toExactSearchString())
+    override fun findAllByLabel(label: String, pageable: Pageable): Page<LiteralRepresentation> =
+        repository.findAllByLabelMatchesRegex(label.toExactSearchString(), pageable)
             .map(Literal::toLiteralRepresentation) // TODO: See declaration
 
-    override fun findAllByLabelContaining(part: String): Iterable<LiteralRepresentation> =
-        repository.findAllByLabelMatchesRegex(part.toSearchString())
+    override fun findAllByLabelContaining(part: String, pageable: Pageable): Page<LiteralRepresentation> =
+        repository.findAllByLabelMatchesRegex(part.toSearchString(), pageable)
             .map(Literal::toLiteralRepresentation) // TODO: See declaration
 
     override fun findDOIByContributionId(id: ResourceId): Optional<LiteralRepresentation> =

@@ -60,7 +60,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
         assertThat(statementService.findAll(tempPageable)).hasSize(0)
         assertThat(resourceService.findAll(tempPageable)).hasSize(0)
         assertThat(predicateService.findAll(tempPageable)).hasSize(0)
-        assertThat(literalService.findAll()).hasSize(0)
+        assertThat(literalService.findAll(tempPageable)).hasSize(0)
     }
 
     @Test
@@ -437,6 +437,55 @@ class StatementControllerTest : RestDocumentationBaseTest() {
             )
     }
 
+    @Test
+    fun fetchBundleListsAllRelationshipsOnce() {
+        /* Test setup:
+             A → B → C  → D ← F ← E
+                 ↑   ↓↑   ↑
+                BB ← CC → DD
+
+           Expected result (starting from A):
+             - 9 statements (excluding E→F,F→D)
+         */
+
+        val a = resourceService.create("A")
+        val b = resourceService.create("B")
+        val c = resourceService.create("C")
+        val d = resourceService.create("D")
+        val e = resourceService.create("E")
+        val f = resourceService.create("F")
+        val bb = resourceService.create("BB")
+        val cc = resourceService.create("CC")
+        val dd = resourceService.create("DD")
+
+        val p = predicateService.create("relation")
+
+        statementService.create(a.id.value, p.id, b.id.value)
+        statementService.create(b.id.value, p.id, c.id.value)
+        statementService.create(c.id.value, p.id, d.id.value)
+        statementService.create(c.id.value, p.id, cc.id.value)
+        statementService.create(cc.id.value, p.id, c.id.value)
+        statementService.create(cc.id.value, p.id, bb.id.value)
+        statementService.create(cc.id.value, p.id, dd.id.value)
+        statementService.create(bb.id.value, p.id, b.id.value)
+        statementService.create(dd.id.value, p.id, d.id.value)
+        // Inbound, should be excluded
+        statementService.create(e.id.value, p.id, f.id.value)
+        statementService.create(f.id.value, p.id, d.id.value)
+
+        mockMvc
+            .perform(getRequestTo("/api/statements/${a.id}/bundle"))
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.statements", hasSize<Int>(9)))
+            .andDo(
+                document(
+                    snippet,
+                    bundleResponseFields()
+                )
+            )
+    }
+
     private fun bundleResponseFields(): ResponseFieldsSnippet =
         responseFields(
             listOf(
@@ -444,8 +493,8 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                 fieldWithPath("statements").description("The bundle of statements")
             )
         )
-        .andWithPrefix("statements[].", statementFields())
-        .andWithPrefix("statements[].subject.", resourceResponseFields())
+            .andWithPrefix("statements[].", statementFields())
+            .andWithPrefix("statements[].subject.", resourceResponseFields())
         .andWithPrefix("statements[].predicate.", predicateResponseFields())
         .andWithPrefix("statements[].object.", resourceResponseFields())
 

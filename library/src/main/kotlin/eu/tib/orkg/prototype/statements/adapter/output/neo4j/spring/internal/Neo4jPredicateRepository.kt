@@ -1,12 +1,13 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import java.util.Optional
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
+private const val id = "${'$'}id"
 private const val ids = "${'$'}ids"
 
 interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, Long> {
@@ -32,4 +33,11 @@ interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, Long> {
     // the driver version and everything else that came to mind. No idea what is wrong. This seems to work. -- MP
     @Query("""MATCH (n:`Predicate`) WHERE n.predicate_id in $ids RETURN n""")
     fun findAllByPredicateIdIn(ids: Set<PredicateId>): Iterable<Neo4jPredicate>
+
+    @Query("""OPTIONAL MATCH (:Thing)-[r1:RELATED {predicate_id: $id}]->(:Thing) OPTIONAL MATCH (:Predicate {predicate_id: $id})-[r2:RELATED]-(:Thing) WITH COUNT(DISTINCT r1) as relations, COUNT(DISTINCT r2) as nodes RETURN relations + nodes as cnt""")
+    fun countUsage(id: PredicateId): Long
+
+    // The return type has to be Iterable<Long> due to type erasure as java.lang.Long or Iterable<java.lang.Long> is
+    // required by Spring, but we want to use kotlin.Long whenever possible
+    fun deleteByPredicateId(id: PredicateId): Iterable<Long>
 }

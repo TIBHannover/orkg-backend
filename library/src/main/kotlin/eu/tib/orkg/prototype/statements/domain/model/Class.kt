@@ -15,6 +15,7 @@ data class Class(
     val _class: String? = "class"
 ) : Thing {
     var description: String? = null
+    override val thingId: ThingId = id!!
     fun toClass(): Class = Class(id, label, uri, createdAt, createdBy, _class)
 }
 

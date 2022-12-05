@@ -41,7 +41,7 @@ class ClassServiceTests {
     fun `given a class is created, when no id is given, then it gets an id from the repository`() {
         val mockClassId = ClassId(1)
         every { repository.nextIdentity() } returns mockClassId
-        every { repository.save(any()) } returns createClass().copy(id = mockClassId)
+        every { repository.save(any()) } returns Unit
 
         service.create(CreateClassUseCase.CreateCommand(label = "irrelevant", id = null))
 
@@ -51,7 +51,7 @@ class ClassServiceTests {
     @Test
     fun `given a class is created, when an id is given, then it does not get a new id`() {
         val mockClassId = ClassId(1)
-        every { repository.save(any()) } returns createClass().copy(id = mockClassId)
+        every { repository.save(any()) } returns Unit
 
         service.create(CreateClassUseCase.CreateCommand(label = "irrelevant", id = mockClassId.value))
 
@@ -81,7 +81,7 @@ class ClassServiceTests {
     fun `given a class is created, when no contributor is given, the anonymous user id is used`() {
         val mockClassId = ClassId(1)
         every { repository.nextIdentity() } returns mockClassId
-        every { repository.save(any()) } returns createClass().copy(id = mockClassId)
+        every { repository.save(any()) } returns Unit
 
         service.create(CreateClassUseCase.CreateCommand(label = "irrelevant"))
 
@@ -102,7 +102,7 @@ class ClassServiceTests {
     fun `given a class is created, when a contributor is given, the contributor id is used`() {
         val mockClassId = ClassId(1)
         every { repository.nextIdentity() } returns mockClassId
-        every { repository.save(any()) } returns createClass().copy(id = mockClassId)
+        every { repository.save(any()) } returns Unit
 
         val randomContributorId = ContributorId(UUID.randomUUID())
         service.create(CreateClassUseCase.CreateCommand(label = "irrelevant", contributorId = randomContributorId))
@@ -135,7 +135,7 @@ class ClassServiceTests {
         val originalClass = createClass()
         val expectedClass = originalClass.copy(label = "new label")
         every { repository.findByClassId(ClassId("OK")) } returns Optional.of(originalClass)
-        every { repository.save(expectedClass) } returns expectedClass
+        every { repository.save(expectedClass) } returns Unit
 
         val actual = service.updateLabel(ClassId("OK"), "new label")
 
@@ -180,7 +180,7 @@ class ClassServiceTests {
         val expectedClass = originalClass.copy(uri = URI.create("https://example.org/NEW"))
         every { repository.findByClassId(ClassId("OK")) } returns Optional.of(originalClass)
         every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
-        every { repository.save(expectedClass) } returns expectedClass
+        every { repository.save(expectedClass) } returns Unit
 
         val actual = service.updateURI(ClassId("OK"), "https://example.org/NEW")
 
@@ -196,7 +196,7 @@ class ClassServiceTests {
         every { repository.findByClassId(ClassId("OK")) } returns Optional.of(originalClass)
         every { service.findByURI(expectedClass.uri!!) } returns differentWithSameURI.toOptional()
             .map(Class::toClassRepresentation)
-        every { repository.save(expectedClass) } returns expectedClass
+        every { repository.save(expectedClass) } returns Unit
 
         val actual = service.updateURI(ClassId("OK"), "https://example.org/NEW")
 
@@ -234,7 +234,7 @@ class ClassServiceTests {
         val expectedClass = originalClass.copy(id = classToReplace, label = replacingClass.label)
         every { repository.findByClassId(classToReplace) } returns Optional.of(originalClass)
         every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
-        every { repository.save(expectedClass) } returns expectedClass
+        every { repository.save(expectedClass) } returns Unit
 
         val actual = service.replace(classToReplace, command = replacingClass.toReplaceCommand())
 
@@ -274,7 +274,7 @@ class ClassServiceTests {
         val expectedClass = existingClass.copy(id = classToReplace, label = replacingClass.label)
         every { repository.findByClassId(classToReplace) } returns existingClass.toOptional()
         every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
-        every { repository.save(expectedClass) } returns expectedClass
+        every { repository.save(expectedClass) } returns Unit
 
         val actual = service.replace(classToReplace, command = replacingClass.toReplaceCommand())
 
@@ -291,7 +291,7 @@ class ClassServiceTests {
         val expectedClass = existingClass.copy(id = classToReplace, uri = replacingClass.uri)
         every { repository.findByClassId(classToReplace) } returns existingClass.toOptional()
         every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
-        every { repository.save(expectedClass) } returns expectedClass
+        every { repository.save(expectedClass) } returns Unit
 
         val actual = service.replace(classToReplace, command = replacingClass.toReplaceCommand())
 
@@ -310,7 +310,7 @@ class ClassServiceTests {
         every { repository.findByClassId(classToReplace) } returns existingClass.toOptional()
         every { service.findByURI(expectedClass.uri!!) } returns differentWithSameURI.toOptional()
             .map(Class::toClassRepresentation)
-        every { repository.save(expectedClass) } returns expectedClass
+        every { repository.save(expectedClass) } returns Unit
 
         val actual = service.replace(classToReplace, command = replacingClass.toReplaceCommand())
 
@@ -339,7 +339,7 @@ class ClassServiceTests {
         val replacingClass = createClassWithoutURI().copy(label = "other label").toReplaceCommand()
         val expectedClass = existingClass.copy(id = classToReplace, label = replacingClass.label)
         every { repository.findByClassId(classToReplace) } returns existingClass.toOptional()
-        every { repository.save(expectedClass) } returns expectedClass
+        every { repository.save(expectedClass) } returns Unit
 
         val actual = service.replace(classToReplace, command = replacingClass)
 

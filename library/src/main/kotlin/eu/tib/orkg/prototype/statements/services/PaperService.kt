@@ -231,7 +231,7 @@ class PaperService(
                         val indexClean = it.orcid.lastIndexOf('/')
                         val orcidValue = if (indexClean == -1) it.orcid else it.orcid.substring(indexClean + 1)
                         // Check if the orcid exists in the system or not
-                        val foundOrcid = literalService.findAllByLabel(orcidValue).firstOrNull()
+                        val foundOrcid = literalService.findAllByLabel(orcidValue, PageRequest.of(0, 1)).firstOrNull()
                         if (foundOrcid != null) {
                             // Link existing ORCID
                             val authorStatement = statementService.findAllByObject(

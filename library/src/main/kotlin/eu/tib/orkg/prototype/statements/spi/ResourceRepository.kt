@@ -17,7 +17,7 @@ interface ResourceRepository : EntityRepository<Resource, ResourceId> {
     // legacy methods:
     fun nextIdentity(): ResourceId
     fun save(resource: Resource): Resource
-    fun delete(id: ResourceId)
+    fun deleteByResourceId(id: ResourceId)
     fun deleteAll()
     fun findByResourceId(id: ResourceId?): Optional<Resource>
     fun findAllByLabel(label: String, pageable: Pageable): Page<Resource>
@@ -31,9 +31,9 @@ interface ResourceRepository : EntityRepository<Resource, ResourceId> {
     fun findAllByClassAndLabelMatchesRegex(`class`: String, label: String, pageable: Pageable): Page<Resource>
     fun findAllByClassAndLabelMatchesRegexAndCreatedBy(`class`: String, label: String, createdBy: ContributorId, pageable: Pageable): Page<Resource>
 
-    fun findAllExcludingClass(classes: List<String>, pageable: Pageable): Page<Resource>
-    fun findAllExcludingClassByLabel(classes: List<String>, label: String, pageable: Pageable): Page<Resource>
-    fun findAllExcludingClassByLabelMatchesRegex(classes: List<String>, label: String, pageable: Pageable): Page<Resource>
+    fun findAllIncludingAndExcludingClasses(includeClasses: Set<ClassId>, excludeClasses: Set<ClassId>, pageable: Pageable): Page<Resource>
+    fun findAllIncludingAndExcludingClassesByLabel(includeClasses: Set<ClassId>, excludeClasses: Set<ClassId>, label: String, pageable: Pageable): Page<Resource>
+    fun findAllIncludingAndExcludingClassesByLabelMatchesRegex(includeClasses: Set<ClassId>, excludeClasses: Set<ClassId>, label: String, pageable: Pageable): Page<Resource>
     fun getIncomingStatementsCount(ids: List<ResourceId>): Iterable<Long>
     fun findByDOI(doi: String): Optional<Resource>
     fun findAllByDOI(doi: String): Iterable<Resource>

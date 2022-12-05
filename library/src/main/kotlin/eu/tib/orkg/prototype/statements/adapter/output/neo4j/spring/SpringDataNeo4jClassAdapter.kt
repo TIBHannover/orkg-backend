@@ -16,13 +16,15 @@ class SpringDataNeo4jClassAdapter(
     private val neo4jRepository: Neo4jClassRepository,
     private val neo4jClassIdGenerator: Neo4jClassIdGenerator,
 ) : ClassRepository {
-    override fun save(c: Class): Class = neo4jRepository.save(c.toNeo4jClass()).toClass()
+    override fun save(c: Class) {
+        neo4jRepository.save(c.toNeo4jClass())
+    }
 
     override fun findAll(pageable: Pageable): Page<Class> = neo4jRepository.findAll(pageable).map(Neo4jClass::toClass)
 
     override fun exists(id: ClassId): Boolean = neo4jRepository.existsByClassId(id)
 
-    override fun existsAll(ids: Iterable<ClassId>): Boolean = neo4jRepository.existsAllByClassId(ids)
+    override fun existsAll(ids: Set<ClassId>): Boolean = neo4jRepository.existsAllByClassId(ids)
 
     override fun findByClassId(id: ClassId?): Optional<Class> =
         neo4jRepository.findByClassId(id).map(Neo4jClass::toClass)

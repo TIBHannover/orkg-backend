@@ -12,8 +12,8 @@ plugins {
     kotlin("kapt")
     kotlin("plugin.spring")
     kotlin("plugin.jpa")
-    id("org.springframework.boot") version libs.versions.spring.boot.get() apply false
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    alias(libs.plugins.spring.boot) apply false
+    alias(libs.plugins.spring.dependency.management)
 
     id("idea")
 
@@ -72,7 +72,6 @@ dependencies {
     // Monitoring
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.jolokia:jolokia-core")
-    implementation("io.hawt:hawtio-springboot:2.15.1")
     //
     // Testing
     //

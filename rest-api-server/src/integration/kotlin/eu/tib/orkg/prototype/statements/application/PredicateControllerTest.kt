@@ -1,10 +1,13 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,6 +32,12 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var service: PredicateService
+
+    @Autowired
+    private lateinit var resourceService: ResourceUseCases
+
+    @Autowired
+    private lateinit var statementService: StatementUseCases
 
     @BeforeEach
     fun setup() {
@@ -172,6 +181,67 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
                         fieldWithPath("label").description("The updated predicate label")
                     ),
                     responseFields(predicateResponseFields())
+                )
+            )
+    }
+
+    @Test
+    @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
+    fun deletePredicateNotFound() {
+        mockMvc
+            .perform(deleteRequest("/api/predicates/NONEXISTENT"))
+            .andExpect(status().isNotFound)
+            .andDo(
+                document(
+                    snippet
+                )
+            )
+    }
+
+    @Test
+    @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
+    fun deletePredicateSuccess() {
+        val id = service.create("bye bye").id
+
+        mockMvc
+            .perform(deleteRequest("/api/predicates/$id"))
+            .andExpect(status().isNoContent)
+            .andDo(
+                document(
+                    snippet
+                )
+            )
+    }
+
+    @Test
+    @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
+    fun deletePredicateForbidden() {
+        val id = resourceService.create("parent").id
+        val obj = resourceService.create("son").id
+        val rel = service.create("related").id
+        statementService.create(id.value, rel, obj.value)
+
+        mockMvc
+            .perform(deleteRequest("/api/predicates/$rel"))
+            .andExpect(status().isForbidden)
+            .andDo(
+                document(
+                    snippet
+                )
+            )
+    }
+
+    @Test
+    @Disabled("throwing an exception with the message (An Authentication object was not found in the SecurityContext)")
+    fun deletePredicateWithoutLogin() {
+        val id = service.create("To Delete").id
+
+        mockMvc
+            .perform(deleteRequest("/api/predicates/$id"))
+            .andExpect(status().isUnauthorized)
+            .andDo(
+                document(
+                    snippet
                 )
             )
     }

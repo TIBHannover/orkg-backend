@@ -35,10 +35,8 @@ class SpringDataNeo4jResourceAdapter(
 
     override fun save(resource: Resource): Resource = neo4jRepository.save(resource.toNeo4jResource()).toResource()
 
-    override fun delete(id: ResourceId) {
-        neo4jRepository.findByResourceId(id).ifPresent {
-            neo4jRepository.delete(it)
-        }
+    override fun deleteByResourceId(id: ResourceId) {
+        neo4jRepository.deleteByResourceId(id)
     }
 
     override fun deleteAll() {
@@ -98,22 +96,30 @@ class SpringDataNeo4jResourceAdapter(
         neo4jRepository.findAllByClassAndLabelMatchesRegexAndCreatedBy(`class`, label, createdBy, pageable)
             .map(Neo4jResource::toResource)
 
-    override fun findAllExcludingClass(classes: List<String>, pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllExcludingClass(classes, pageable).map(Neo4jResource::toResource)
+    override fun findAllIncludingAndExcludingClasses(
+        includeClasses: Set<ClassId>,
+        excludeClasses: Set<ClassId>,
+        pageable: Pageable
+    ): Page<Resource> =
+        neo4jRepository.findAllIncludingAndExcludingClasses(includeClasses, excludeClasses, pageable)
+            .map(Neo4jResource::toResource)
 
-    override fun findAllExcludingClassByLabel(
-        classes: List<String>,
+    override fun findAllIncludingAndExcludingClassesByLabel(
+        includeClasses: Set<ClassId>,
+        excludeClasses: Set<ClassId>,
         label: String,
         pageable: Pageable
     ): Page<Resource> =
-        neo4jRepository.findAllExcludingClassByLabel(classes, label, pageable).map(Neo4jResource::toResource)
+        neo4jRepository.findAllIncludingAndExcludingClassesByLabel(includeClasses, excludeClasses, label, pageable).map(Neo4jResource::toResource)
 
-    override fun findAllExcludingClassByLabelMatchesRegex(
-        classes: List<String>,
+    override fun findAllIncludingAndExcludingClassesByLabelMatchesRegex(
+        includeClasses: Set<ClassId>,
+        excludeClasses: Set<ClassId>,
         label: String,
         pageable: Pageable
     ): Page<Resource> =
-        neo4jRepository.findAllExcludingClassByLabelMatchesRegex(classes, label, pageable).map(Neo4jResource::toResource)
+        neo4jRepository.findAllIncludingAndExcludingClassesByLabelMatchesRegex(includeClasses, excludeClasses, label, pageable)
+            .map(Neo4jResource::toResource)
 
     override fun getIncomingStatementsCount(ids: List<ResourceId>): Iterable<Long> =
         neo4jRepository.getIncomingStatementsCount(ids)
@@ -192,7 +198,7 @@ class SpringDataNeo4jResourceAdapter(
         classes: List<String>,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<Resource> = neo4jRepository.findAllUnlistedResourcesByObservatoryIdAndClass(id, classes, unlisted, pageable).map(Neo4jResource::toResource)
+    ): Page<Resource> = neo4jRepository.findAllResourcesByObservatoryIdAndClass(id, classes, unlisted, pageable).map(Neo4jResource::toResource)
 
     private fun Resource.toNeo4jResource() =
         // We need to fetch the original resource, so "resources" is set properly.

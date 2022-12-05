@@ -2,7 +2,7 @@ import org.asciidoctor.gradle.jvm.AsciidoctorTask
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 group = "eu.tib"
-version = "0.19.0"
+version = "0.21.0"
 
 val neo4jVersion = "3.5.+" // should match version in Dockerfile
 val springDataNeo4jVersion = "5.3.4"
@@ -20,9 +20,9 @@ plugins {
     kotlin("kapt")
     kotlin("plugin.spring")
     kotlin("plugin.jpa")
-    id("org.springframework.boot") version libs.versions.spring.boot.get()
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
     id("idea")
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.dependency.management)
 
     id("org.jetbrains.dokka") version "0.10.1"
     id("com.coditory.integration-test") version "1.2.1"
@@ -95,7 +95,6 @@ dependencies {
     // Monitoring
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.jolokia:jolokia-core")
-    implementation("io.hawt:hawtio-springboot:2.15.1")
     //
     // Testing
     //

@@ -87,7 +87,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         assertThat(classService.findAll(tempPageable)).hasSize(0)
         assertThat(predicateService.findAll(tempPageable)).hasSize(0)
         assertThat(statementService.findAll(tempPageable)).hasSize(0)
-        assertThat(literalService.findAll()).hasSize(0)
+        assertThat(literalService.findAll(tempPageable)).hasSize(0)
     }
 
     @Test
@@ -270,12 +270,12 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     @Test
     fun excludeByClass() {
         val id = classService.create("research contribution").id
-        val set = listOf(id).toSet()
+        val set = setOf(id)
         service.create(CreateResourceRequest(null, "Contribution 1", set))
         service.create(CreateResourceRequest(null, "Contribution 2"))
         service.create(CreateResourceRequest(null, "Contribution 3"))
         val id2 = classService.create("research contribution").id
-        val set2 = listOf(id2).toSet()
+        val set2 = setOf(id2)
         service.create(CreateResourceRequest(null, "Paper Contribution 1", set2))
 
         mockMvc
@@ -292,11 +292,56 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                         parameterWithName("exact").description("Whether it is an exact string lookup or just containment")
                             .optional(),
                         parameterWithName("exclude").description("List of classes to exclude e.g Paper,C0,Contribution (default: not provided)")
+                            .optional(),
+                        parameterWithName("include").description("List of classes to include e.g Paper,C0,Contribution (default: not provided)")
                             .optional()
                     ),
                     listOfDetailedResourcesResponseFields()
                 )
             )
+    }
+
+    @Test
+    fun includeByClass() {
+        val id = classService.create("research contribution").id
+        val set = setOf(id)
+        service.create(CreateResourceRequest(null, "Contribution 1", set))
+        service.create(CreateResourceRequest(null, "Contribution 2"))
+        service.create(CreateResourceRequest(null, "Contribution 3"))
+        val id2 = classService.create("research contribution").id
+        val set2 = setOf(id2)
+        service.create(CreateResourceRequest(null, "Paper Contribution 1", set2))
+
+        mockMvc
+            .perform(
+                getRequestTo("/api/resources/?q=Contribution&include=$id")
+            )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
+            .andDo(
+                document(
+                    snippet,
+                    pageableRequestParameters(
+                        parameterWithName("q").description("A search term that must be contained in the label"),
+                        parameterWithName("exact").description("Whether it is an exact string lookup or just containment")
+                            .optional(),
+                        parameterWithName("exclude").description("List of classes to exclude e.g Paper,C0,Contribution (default: not provided)")
+                            .optional(),
+                        parameterWithName("include").description("List of classes to include e.g Paper,C0,Contribution (default: not provided)")
+                            .optional()
+                    ),
+                    listOfDetailedResourcesResponseFields()
+                )
+            )
+    }
+
+    @Test
+    fun includeAndExcludeByClassError() {
+        mockMvc
+            .perform(
+                getRequestTo("/api/resources/?q=Contribution&include=Error,NoError&exclude=Error")
+            )
+            .andExpect(status().isBadRequest)
     }
 
     @Test
@@ -363,7 +408,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     @Test
     fun testSharedIndicatorWhenResourcesWithClassExclusion() {
         val id = classService.create("Class 1").id
-        val set = listOf(id).toSet()
+        val set = setOf(id)
         service.create(CreateResourceRequest(null, "Resource 1", set))
         service.create(CreateResourceRequest(null, "Resource 2", set))
 
@@ -374,7 +419,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         statementService.create(con1.value, pred, resId.value)
         statementService.create(con2.value, pred, resId.value)
         val id2 = classService.create("Class 2").id
-        val set2 = listOf(id2).toSet()
+        val set2 = setOf(id2)
         service.create(CreateResourceRequest(null, "Another Resource", set2))
 
         mockMvc

@@ -47,9 +47,23 @@ interface RetrieveResourceUseCase {
     fun findAllByNonFeatured(pageable: Pageable): Page<ResourceRepresentation>
     fun findAllByTitle(title: String?): Iterable<ResourceRepresentation>
     fun findAllByUnlisted(pageable: Pageable): Page<ResourceRepresentation>
-    fun findAllExcludingClass(pageable: Pageable, ids: Array<ClassId>): Page<ResourceRepresentation>
-    fun findAllExcludingClassByLabel(pageable: Pageable, ids: Array<ClassId>, label: String): Page<ResourceRepresentation>
-    fun findAllExcludingClassByLabelContaining(pageable: Pageable, ids: Array<ClassId>, part: String): Page<ResourceRepresentation>
+    fun findAllIncludingAndExcludingClasses(
+        includeClasses: Set<ClassId>,
+        excludeClasses: Set<ClassId>,
+        pageable: Pageable
+    ): Page<ResourceRepresentation>
+    fun findAllIncludingAndExcludingClassesByLabel(
+        includeClasses: Set<ClassId>,
+        excludeClasses: Set<ClassId>,
+        label: String,
+        pageable: Pageable
+    ): Page<ResourceRepresentation>
+    fun findAllIncludingAndExcludingClassesByLabelContaining(
+        includeClasses: Set<ClassId>,
+        excludeClasses: Set<ClassId>,
+        part: String,
+        pageable: Pageable
+    ): Page<ResourceRepresentation>
     fun findByDOI(doi: String): Optional<ResourceRepresentation>
     fun findById(id: ResourceId?): Optional<ResourceRepresentation>
     fun findByTitle(title: String?): Optional<ResourceRepresentation>
@@ -64,7 +78,6 @@ interface RetrieveResourceUseCase {
         unlisted: Boolean,
         pageable: Pageable
     ): Optional<Page<ResourceRepresentation>>
-    fun hasStatements(id: ResourceId): Boolean
 }
 
 fun interface ResourceGenerator {

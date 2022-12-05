@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteral
+import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -14,6 +15,7 @@ internal class Neo4jLiteralTest {
     inner class GivenANeo4jLiteral {
 
         private val neo4jLiteral = Neo4jLiteral().apply {
+            literalId = LiteralId(1)
             label = "irrelevant"
         }
 
@@ -42,6 +44,7 @@ internal class Neo4jLiteralTest {
     inner class GivenANeo4jLiteralWithNonDefaultValues {
 
         private val neo4jLiteral = Neo4jLiteral().apply {
+            literalId = LiteralId(1)
             label = "irrelevant"
             datatype = NON_DEFAULT_DATATYPE
         }

@@ -27,14 +27,12 @@ management:
     enabled-by-default: false
     web:
       exposure:
-        include: health,info,jolokia,hawtio,liquibase,loggers,env
+        include: health,info,jolokia,liquibase,loggers,env
     jmx:
       exposure:
         include: '*'
   endpoint:
     env:
-      enabled: true
-    hawtio:
       enabled: true
     health:
       enabled: true

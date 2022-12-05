@@ -2,8 +2,14 @@ package eu.tib.orkg.prototype.contenttypes.domain
 
 import eu.tib.orkg.prototype.contenttypes.api.PaperUseCases
 import eu.tib.orkg.prototype.contenttypes.spi.PaperRepository
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.application.ExtractionMethod
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
+import java.time.OffsetDateTime
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
@@ -33,7 +39,28 @@ class PaperService(
             featured = true,
             pageable
         )
-        return results.map { Paper(title = it.label, id = "Paper") }
+        return results.map {Paper(
+            title = it.label,
+            id = "Paper",
+            researchField = ResourceId("test"),
+            identifiers = mapOf(),
+            publicationInfo = PublicationInfo(
+                publishedMonth = 1,
+                publishedYear = 2022,
+                publishedIn = null,
+                downloadUrl = null
+            ),
+            authors = listOf(),
+            contributors = listOf(),
+            observatories = listOf(),
+            organizations = listOf(),
+            extractionMethod = it.extractionMethod,
+            createdAt = it.createdAt,
+            createdBy = it.createdBy,
+            featured = it.featured ?: false,
+            unlisted = it.unlisted ?: false,
+            verified = it.verified ?: false
+        ) }
     }
 
     override fun findUnlisted(): Page<Paper> {

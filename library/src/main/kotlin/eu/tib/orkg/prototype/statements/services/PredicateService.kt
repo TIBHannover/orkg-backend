@@ -1,12 +1,19 @@
 package eu.tib.orkg.prototype.statements.services
 
+import dev.forkhandles.values.ofOrNull
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.UpdatePredicateUseCase
 import eu.tib.orkg.prototype.statements.application.CreatePredicateRequest
+import eu.tib.orkg.prototype.statements.application.PredicateCantBeDeleted
+import eu.tib.orkg.prototype.statements.application.PredicateNotFound
+import eu.tib.orkg.prototype.statements.domain.model.Clock
+import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.SystemClock
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.util.EscapedRegex
 import eu.tib.orkg.prototype.util.SanitizedWhitespace
@@ -21,29 +28,63 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class PredicateService(
-    private val repository: PredicateRepository
+    private val repository: PredicateRepository,
+    private val clock: Clock = SystemClock()
 ) : PredicateUseCases {
     @Transactional(readOnly = true)
     override fun exists(id: PredicateId): Boolean = repository.exists(id)
 
-    override fun create(label: String): PredicateRepresentation =
-        create(ContributorId.createUnknownContributor(), label)
-
-    override fun create(userId: ContributorId, label: String): PredicateRepresentation {
-        val id = repository.nextIdentity()
-        val predicate = Predicate(id, label, OffsetDateTime.now(), userId)
+    override fun create(command: CreatePredicateUseCase.CreateCommand): PredicateId {
+        val id = if (command.id != null) PredicateId(command.id) else repository.nextIdentity()
+        val predicate = Predicate(
+            id = id,
+            label = Label.ofOrNull(command.label)?.value
+                ?: throw IllegalArgumentException("Invalid label: ${command.label}"),
+            createdAt = clock.now(),
+            createdBy = command.contributorId ?: ContributorId.createUnknownContributor()
+        )
         repository.save(predicate)
-        return repository.findByPredicateId(predicate.id).map(Predicate::toPredicateRepresentation).get()
+        return id
     }
 
-    override fun create(request: CreatePredicateRequest): PredicateRepresentation =
-        create(ContributorId.createUnknownContributor(), request)
+    override fun create(label: String): PredicateRepresentation {
+        val newPredicateId = create(
+            CreatePredicateUseCase.CreateCommand(
+                label = label
+            )
+        )
+        return repository.findByPredicateId(newPredicateId).map(Predicate::toPredicateRepresentation).get()
+    }
+
+    override fun create(userId: ContributorId, label: String): PredicateRepresentation {
+        val newPredicateId = create(
+            CreatePredicateUseCase.CreateCommand(
+                label = label,
+                contributorId = userId
+            )
+        )
+        return repository.findByPredicateId(newPredicateId).map(Predicate::toPredicateRepresentation).get()
+    }
+
+    override fun create(request: CreatePredicateRequest): PredicateRepresentation {
+        val newPredicateId = create(
+            CreatePredicateUseCase.CreateCommand(
+                label = request.label,
+                id = request.id?.value
+            )
+        )
+        return repository.findByPredicateId(newPredicateId).map(Predicate::toPredicateRepresentation).get()
+    }
 
     override fun create(userId: ContributorId, request: CreatePredicateRequest): PredicateRepresentation {
-        val id = request.id ?: repository.nextIdentity()
-        val predicate = Predicate(label = request.label, id = id, createdBy = userId, createdAt = OffsetDateTime.now())
-        repository.save(predicate)
-        return predicate.toPredicateRepresentation()
+        val newPredicateId = create(
+            CreatePredicateUseCase.CreateCommand(
+                label = request.label,
+                id = request.id?.value,
+                contributorId = userId
+            )
+        )
+        return repository.findByPredicateId(newPredicateId).map(Predicate::toPredicateRepresentation).get()
     }
 
     override fun findAll(pageable: Pageable): Page<PredicateRepresentation> =
@@ -81,6 +122,15 @@ class PredicateService(
             )
             repository.save(p)
         }
+    }
+
+    override fun delete(predicateId: PredicateId) {
+        val predicate = findById(predicateId).orElseThrow { PredicateNotFound(predicateId.value) }
+
+        if (repository.usageCount(predicate.id) > 0)
+            throw PredicateCantBeDeleted(predicate.id)
+
+        repository.deleteByPredicateId(predicate.id)
     }
 
     override fun removeAll() = repository.deleteAll()

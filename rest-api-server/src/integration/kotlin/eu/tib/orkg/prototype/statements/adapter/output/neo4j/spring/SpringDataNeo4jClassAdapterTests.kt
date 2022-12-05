@@ -1,6 +1,8 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import eu.tib.orkg.prototype.createClass
+import eu.tib.orkg.prototype.statements.spi.ClassRepository
+import eu.tib.orkg.prototype.statements.spi.ClassRepositoryContractTest
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -8,10 +10,13 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 
-class SpringDataNeo4jClassAdapterTests : Neo4jTestContainersBaseTest() {
+class SpringDataNeo4jClassAdapterTests : Neo4jTestContainersBaseTest(), ClassRepositoryContractTest {
 
     @Autowired
     private lateinit var adapter: SpringDataNeo4jClassAdapter
+
+    override val repository: ClassRepository
+        get() = adapter
 
     @Test
     fun `saving, loading and saving modified works`() {

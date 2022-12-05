@@ -3,11 +3,13 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
+import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
@@ -32,7 +34,7 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
     fun setup() {
         service.removeAll()
 
-        assertThat(service.findAll()).hasSize(0)
+        assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(0)
     }
 
     @Test
@@ -43,6 +45,7 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/literals/"))
             .andExpect(status().isOk)
+            .andExpect(jsonPath("$").isArray)
             .andDo(
                 document(
                     snippet,
@@ -60,6 +63,7 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/literals/?q=research"))
             .andExpect(status().isOk)
+            .andExpect(jsonPath("$").isArray)
             .andDo(
                 document(
                     snippet,
@@ -80,6 +84,7 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/literals/?q=PL)"))
             .andExpect(status().isOk)
+            .andExpect(jsonPath("$").isArray)
             .andDo(
                 document(
                     snippet,
@@ -87,6 +92,72 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
                         parameterWithName("q").description("A search term that must be contained in the label")
                     ),
                     listOfLiteralsResponseFields()
+                )
+            )
+    }
+
+    @Test
+    fun indexPaged() {
+        service.create("research contribution")
+        service.create("programming language")
+
+        mockMvc
+            .perform(getRequestTo("/api/literals/?size=5"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.content", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.number").value(0)) // page number
+            .andExpect(jsonPath("$.totalElements").value(2))
+            .andDo(
+                document(
+                    snippet,
+                    pageableRequestParameters(),
+                    pagedLiteralResponseFields()
+                )
+            )
+    }
+
+    @Test
+    fun lookupPaged() {
+        service.create("research contribution")
+        service.create("programming language")
+        service.create("research topic")
+
+        mockMvc
+            .perform(getRequestTo("/api/literals/?q=research&size=5"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.content", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.number").value(0)) // page number
+            .andExpect(jsonPath("$.totalElements").value(2))
+            .andDo(
+                document(
+                    snippet,
+                    pageableRequestParameters(
+                        parameterWithName("q").description("A search term that must be contained in the label")
+                    ),
+                    pagedLiteralResponseFields()
+                )
+            )
+    }
+
+    @Test
+    fun lookupWithSpecialCharsPaged() {
+        service.create("research contribution")
+        service.create("programming language (PL)")
+        service.create("research topic")
+
+        mockMvc
+            .perform(getRequestTo("/api/literals/?q=PL&size=5"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.number").value(0)) // page number
+            .andExpect(jsonPath("$.totalElements").value(1))
+            .andDo(
+                document(
+                    snippet,
+                    pageableRequestParameters(
+                        parameterWithName("q").description("A search term that must be contained in the label")
+                    ),
+                    pagedLiteralResponseFields()
                 )
             )
     }
@@ -145,6 +216,12 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
                 )
             )
     }
+
+    fun pagedLiteralResponseFields(): ResponseFieldsSnippet =
+        responseFields(pageableDetailedFieldParameters())
+            .andWithPrefix(
+                "content[].", literalResponseFields()
+            ).andWithPrefix("")
 
     companion object RestDoc {
         fun ofCreateAndUpdateRequests() = listOf(

@@ -27,7 +27,7 @@ class Paper(
     val organizations: List<OrganizationId>,
     val extractionMethod: ExtractionMethod,
     val createdAt: OffsetDateTime,
-    val createdBy: OffsetDateTime,
+    val createdBy: ContributorId,
     val featured: Boolean,
     val unlisted: Boolean,
     val verified: Boolean

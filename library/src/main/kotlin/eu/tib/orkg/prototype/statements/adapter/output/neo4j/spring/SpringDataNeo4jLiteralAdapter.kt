@@ -8,11 +8,18 @@ import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import java.util.*
+import org.springframework.cache.annotation.CacheConfig
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
+const val LITERAL_ID_TO_LITERAL_CACHE = "literal-id-to-literal"
+const val LITERAL_ID_TO_LITERAL_EXISTS_CACHE = "literal-id-to-literal-exists"
+
 @Component
+@CacheConfig(cacheNames = [LITERAL_ID_TO_LITERAL_CACHE, LITERAL_ID_TO_LITERAL_EXISTS_CACHE])
 class SpringDataNeo4jLiteralAdapter(
     private val neo4jRepository: Neo4jLiteralRepository,
     private val neo4jLiteralIdGenerator: Neo4jLiteralIdGenerator
@@ -26,10 +33,12 @@ class SpringDataNeo4jLiteralAdapter(
         return id
     }
 
+    @CacheEvict(key = "#literal.id", cacheNames = [LITERAL_ID_TO_LITERAL_CACHE])
     override fun save(literal: Literal) {
         neo4jRepository.save(literal.toNeo4jLiteral())
     }
 
+    @CacheEvict(allEntries = true)
     override fun deleteAll() {
         neo4jRepository.deleteAll()
     }
@@ -37,6 +46,7 @@ class SpringDataNeo4jLiteralAdapter(
     override fun findAll(pageable: Pageable): Page<Literal> =
         neo4jRepository.findAll(pageable).map(Neo4jLiteral::toLiteral)
 
+    @Cacheable(key = "#id", cacheNames = [LITERAL_ID_TO_LITERAL_CACHE])
     override fun findByLiteralId(id: LiteralId?): Optional<Literal> =
         neo4jRepository.findByLiteralId(id).map(Neo4jLiteral::toLiteral)
 
@@ -52,6 +62,7 @@ class SpringDataNeo4jLiteralAdapter(
     override fun findDOIByContributionId(id: ResourceId): Optional<Literal> =
         neo4jRepository.findDOIByContributionId(id).map(Neo4jLiteral::toLiteral)
 
+    @Cacheable(key = "#id", cacheNames = [LITERAL_ID_TO_LITERAL_EXISTS_CACHE])
     override fun exists(id: LiteralId): Boolean = neo4jRepository.existsByLiteralId(id)
 
     private fun Literal.toNeo4jLiteral() =

@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Caching support is now available when fetching classes, predicates, or literals from their repository, as well as on existence checks. (See [!338](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/338), [!340](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/340), [!342](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/342))
 ### Changed
 - Paged endpoints were limited to 2500 elements per requested page.
   This limit can be changed by setting a different value, e.g. via the environment variable `SPRING_DATA_WEB_PAGEABLE_MAX_PAGE_SIZE`.

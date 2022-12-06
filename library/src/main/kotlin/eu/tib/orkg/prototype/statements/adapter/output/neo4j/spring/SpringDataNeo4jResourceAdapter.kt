@@ -12,11 +12,18 @@ import eu.tib.orkg.prototype.statements.domain.model.stringify
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import java.util.*
+import org.springframework.cache.annotation.CacheConfig
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
+const val RESOURCE_ID_TO_RESOURCE_CACHE = "resource-id-to-resource"
+const val RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE = "resource-id-to-resource-exists"
+
 @Component
+@CacheConfig(cacheNames = [RESOURCE_ID_TO_RESOURCE_CACHE, RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE])
 class SpringDataNeo4jResourceAdapter(
     private val neo4jRepository: Neo4jResourceRepository,
     private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator,
@@ -33,12 +40,15 @@ class SpringDataNeo4jResourceAdapter(
         return id
     }
 
+    @CacheEvict(key = "#resource.id", cacheNames = [RESOURCE_ID_TO_RESOURCE_CACHE])
     override fun save(resource: Resource): Resource = neo4jRepository.save(resource.toNeo4jResource()).toResource()
 
+    @CacheEvict(key = "#id", cacheNames = [RESOURCE_ID_TO_RESOURCE_CACHE, RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE])
     override fun deleteByResourceId(id: ResourceId) {
         neo4jRepository.deleteByResourceId(id)
     }
 
+    @CacheEvict(allEntries = true)
     override fun deleteAll() {
         neo4jRepository.deleteAll()
     }
@@ -46,8 +56,10 @@ class SpringDataNeo4jResourceAdapter(
     override fun findAll(pageable: Pageable): Page<Resource> =
         neo4jRepository.findAll(pageable).map(Neo4jResource::toResource)
 
+    @Cacheable(key = "#id", cacheNames = [RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE])
     override fun exists(id: ResourceId): Boolean = neo4jRepository.existsByResourceId(id)
 
+    @Cacheable(key = "#id", cacheNames = [RESOURCE_ID_TO_RESOURCE_CACHE])
     override fun findByResourceId(id: ResourceId?): Optional<Resource> =
         neo4jRepository.findByResourceId(id).map(Neo4jResource::toResource)
 

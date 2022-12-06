@@ -7,25 +7,35 @@ import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import java.util.*
+import org.springframework.cache.annotation.CacheConfig
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
+const val CLASS_ID_TO_CLASS_CACHE = "class-id-to-class"
+const val CLASS_ID_TO_CLASS_EXISTS_CACHE = "class-id-to-class-exists"
+
 @Component
+@CacheConfig(cacheNames = [CLASS_ID_TO_CLASS_CACHE, CLASS_ID_TO_CLASS_EXISTS_CACHE])
 class SpringDataNeo4jClassAdapter(
     private val neo4jRepository: Neo4jClassRepository,
     private val neo4jClassIdGenerator: Neo4jClassIdGenerator,
 ) : ClassRepository {
+    @CacheEvict(key = "#c.id", cacheNames = [CLASS_ID_TO_CLASS_CACHE])
     override fun save(c: Class) {
         neo4jRepository.save(c.toNeo4jClass())
     }
 
     override fun findAll(pageable: Pageable): Page<Class> = neo4jRepository.findAll(pageable).map(Neo4jClass::toClass)
 
+    @Cacheable(key = "#id", cacheNames = [CLASS_ID_TO_CLASS_EXISTS_CACHE])
     override fun exists(id: ClassId): Boolean = neo4jRepository.existsByClassId(id)
 
     override fun existsAll(ids: Set<ClassId>): Boolean = neo4jRepository.existsAllByClassId(ids)
 
+    @Cacheable(key = "#id", cacheNames = [CLASS_ID_TO_CLASS_CACHE])
     override fun findByClassId(id: ClassId?): Optional<Class> =
         neo4jRepository.findByClassId(id).map(Neo4jClass::toClass)
 
@@ -46,6 +56,7 @@ class SpringDataNeo4jClassAdapter(
 
     override fun findByUri(uri: String): Optional<Class> = neo4jRepository.findByUri(uri).map(Neo4jClass::toClass)
 
+    @CacheEvict(allEntries = true)
     override fun deleteAll() {
         neo4jRepository.deleteAll()
     }

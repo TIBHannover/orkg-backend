@@ -39,7 +39,7 @@ class PaperService(
             featured = true,
             pageable
         )
-        return results.map {Paper(
+        return results.map { Paper(
             title = it.label,
             id = "Paper",
             researchField = ResourceId("test"),
@@ -59,7 +59,8 @@ class PaperService(
             createdBy = it.createdBy,
             featured = it.featured ?: false,
             unlisted = it.unlisted ?: false,
-            verified = it.verified ?: false
+            verified = it.verified ?: false,
+            deleted = false
         ) }
     }
 

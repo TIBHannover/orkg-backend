@@ -23,7 +23,7 @@ import org.neo4j.ogm.annotation.typeconversion.Convert
 private val ReservedClassIds = setOf(ClassId("Literal"), ClassId("Class"), ClassId("Predicate"), ClassId("Resource"))
 
 @NodeEntity(label = "Resource")
-class Neo4jResource(
+data class Neo4jResource(
     @Id
     @GeneratedValue
     var id: Long? = null

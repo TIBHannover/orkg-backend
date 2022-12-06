@@ -58,6 +58,7 @@ interface PaperRepository : ConcreteContentTypeRepository<Paper> {
     fun findByDOI()
 }
 
+private val PAPER_DELETED_CLASS_ID = ClassId("PaperDeleted")
 private val HAS_RESEARCH_FIELD = PredicateId("P30")
 private val HAS_CONTRIBUTION = PredicateId("P31")
 private val HAS_PUBLICATION_YEAR = PredicateId("P29")
@@ -98,7 +99,7 @@ class PaperRepositoryAdapter(
             featured = resource.featured ?: false,
             unlisted = resource.unlisted ?: false,
             verified = resource.verified ?: false,
-            deleted = ClassId("PaperDeleted") in resource.classes
+            deleted = PAPER_DELETED_CLASS_ID in resource.classes
         )
     }
 

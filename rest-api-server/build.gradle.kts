@@ -98,6 +98,7 @@ dependencies {
     // Monitoring
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.jolokia:jolokia-core")
+    implementation("io.micrometer:micrometer-registry-jmx")
     //
     // Testing
     //

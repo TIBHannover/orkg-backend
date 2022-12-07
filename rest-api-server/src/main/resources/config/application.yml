@@ -10,6 +10,8 @@ spring:
     frontend-uri: 'http://localhost:3000'
   jmx:
     enabled: true
+  cache:
+    caffeine.spec: maximumSize=5000,expireAfterAccess=10m
 orkg:
   storage:
     images:

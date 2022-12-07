@@ -5,7 +5,7 @@ import java.time.OffsetDateTime
 
 data class Predicate(
     val id: PredicateId?,
-    val label: String,
+    override val label: String,
     val createdAt: OffsetDateTime,
     val createdBy: ContributorId = ContributorId.createUnknownContributor(),
     // This is added to replace @JsonTypeInfo on the Thing interface

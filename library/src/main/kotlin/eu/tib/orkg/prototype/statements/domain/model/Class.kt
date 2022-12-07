@@ -7,7 +7,7 @@ import java.util.*
 
 data class Class(
     val id: ClassId?,
-    val label: String,
+    override val label: String,
     val uri: URI?,
     val createdAt: OffsetDateTime,
     val createdBy: ContributorId = ContributorId.createUnknownContributor(),

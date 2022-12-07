@@ -6,7 +6,7 @@ import java.time.OffsetDateTime
 
 data class Resource(
     val id: ResourceId?,
-    val label: String,
+    override val label: String,
     val createdAt: OffsetDateTime,
     val classes: Set<ClassId> = emptySet(),
     val createdBy: ContributorId = ContributorId.createUnknownContributor(),

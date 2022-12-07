@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 class SpringDataNeo4jThingAdapter(
     private val neo4jRepository: Neo4jThingRepository
 ) : ThingRepository {
-    override fun findByThingId(id: String?): Optional<Thing> =
+    override fun findByThingId(id: String): Optional<Thing> =
         neo4jRepository.findByThingId(id).map(Neo4jThing::toThing)
 
     override fun findAll(): Iterable<Thing> = neo4jRepository.findAll().map(Neo4jThing::toThing)

@@ -39,7 +39,7 @@ class SpringDataNeo4jPredicateAdapterCachingTests {
     @BeforeEach
     fun resetState() {
         // Reset the cache. Throw NPE if we cannot find the cache, most likely because the name is wrong.
-        cacheManager.getCache("predicates")!!.clear()
+        cacheManager.getCache(PREDICATE_ID_TO_PREDICATE_CACHE)!!.clear()
 
         // Obtain access to the proxied object, which is our mock created in the configuration below.
         mock = AopTestUtils.getTargetObject(adapter)
@@ -128,7 +128,7 @@ class SpringDataNeo4jPredicateAdapterCachingTests {
     @EnableCaching(proxyTargetClass = true)
     class CachingTestConfig {
         @Bean
-        fun cacheManager(): CacheManager = ConcurrentMapCacheManager("predicates")
+        fun cacheManager(): CacheManager = ConcurrentMapCacheManager(PREDICATE_ID_TO_PREDICATE_CACHE)
 
         @Bean
         fun mockedAdapter(): PredicateRepository = mockk<SpringDataNeo4jPredicateAdapter>()

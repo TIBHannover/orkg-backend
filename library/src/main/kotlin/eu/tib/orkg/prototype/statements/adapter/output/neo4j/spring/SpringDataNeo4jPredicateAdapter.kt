@@ -14,8 +14,10 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
+const val PREDICATE_ID_TO_PREDICATE_CACHE = "predicate-id-to-predicate"
+
 @Component
-@CacheConfig(cacheNames = ["predicates"])
+@CacheConfig(cacheNames = [PREDICATE_ID_TO_PREDICATE_CACHE])
 class SpringDataNeo4jPredicateAdapter(
     private val neo4jRepository: Neo4jPredicateRepository,
     private val idGenerator: Neo4jPredicateIdGenerator

@@ -29,7 +29,9 @@ plugins {
     id("de.jansauer.printcoverage") version "2.0.0"
     id("org.asciidoctor.jvm.convert") version "3.3.2"
     id("com.google.cloud.tools.jib") version "3.1.1"
-    id("org.barfuin.gradle.taskinfo") version "1.2.0"
+    // The taskinfo plugin currently does not work with Gradle 7.6: https://gitlab.com/barfuin/gradle-taskinfo/-/issues/20
+    // It was used only occasionally for debugging, and can be re-enabled again later (if needed).
+    // id("org.barfuin.gradle.taskinfo") version "1.2.0"
     id("com.diffplug.spotless")
 }
 

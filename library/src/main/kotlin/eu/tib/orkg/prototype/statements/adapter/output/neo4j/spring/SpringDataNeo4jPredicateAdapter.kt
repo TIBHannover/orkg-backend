@@ -10,6 +10,7 @@ import java.util.*
 import org.springframework.cache.annotation.CacheConfig
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
+import org.springframework.cache.annotation.Caching
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
@@ -40,17 +41,32 @@ class SpringDataNeo4jPredicateAdapter(
     override fun findByPredicateId(id: PredicateId?): Optional<Predicate> =
         neo4jRepository.findByPredicateId(id).map(Neo4jPredicate::toPredicate)
 
-    @CacheEvict(key = "#id")
+    @Caching(
+        evict = [
+            CacheEvict(key = "#id"),
+            CacheEvict(key = "#id.value", cacheNames = [THING_ID_TO_THING_CACHE]),
+        ]
+    )
     override fun deleteByPredicateId(id: PredicateId) {
         neo4jRepository.deleteByPredicateId(id)
     }
 
-    @CacheEvict(allEntries = true)
+    @Caching(
+        evict = [
+            CacheEvict(allEntries = true),
+            CacheEvict(allEntries = true, cacheNames = [THING_ID_TO_THING_CACHE]),
+        ]
+    )
     override fun deleteAll() {
         neo4jRepository.deleteAll()
     }
 
-    @CacheEvict(key = "#predicate.id")
+    @Caching(
+        evict = [
+            CacheEvict(key = "#predicate.id"),
+            CacheEvict(key = "#predicate.id.value", cacheNames = [THING_ID_TO_THING_CACHE]),
+        ]
+    )
     override fun save(predicate: Predicate) {
         neo4jRepository.save(predicate.toNeo4jPredicate())
     }

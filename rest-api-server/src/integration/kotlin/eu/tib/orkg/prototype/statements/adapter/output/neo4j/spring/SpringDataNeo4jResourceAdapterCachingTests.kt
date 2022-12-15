@@ -24,6 +24,12 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.util.AopTestUtils
 
+private val allCacheNames: Array<out String> = arrayOf(
+    RESOURCE_ID_TO_RESOURCE_CACHE,
+    RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE,
+    THING_ID_TO_THING_CACHE,
+)
+
 @ContextConfiguration
 @ExtendWith(SpringExtension::class)
 class SpringDataNeo4jResourceAdapterCachingTests {
@@ -38,9 +44,10 @@ class SpringDataNeo4jResourceAdapterCachingTests {
 
     @BeforeEach
     fun resetState() {
-        // Reset the cache. Throw NPE if we cannot find the cache, most likely because the name is wrong.
-        cacheManager.getCache(RESOURCE_ID_TO_RESOURCE_CACHE)!!.clear()
-        cacheManager.getCache(RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE)!!.clear()
+        allCacheNames.forEach { name ->
+            // Reset the cache. Throw NPE if we cannot find the cache, most likely because the name is wrong.
+            cacheManager.getCache(name)!!.clear()
+        }
 
         // Obtain access to the proxied object, which is our mock created in the configuration below.
         mock = AopTestUtils.getTargetObject(adapter)
@@ -189,7 +196,7 @@ class SpringDataNeo4jResourceAdapterCachingTests {
     @EnableCaching(proxyTargetClass = true)
     class CachingTestConfig {
         @Bean
-        fun cacheManager(): CacheManager = ConcurrentMapCacheManager(RESOURCE_ID_TO_RESOURCE_CACHE, RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE)
+        fun cacheManager(): CacheManager = ConcurrentMapCacheManager(*allCacheNames)
 
         @Bean
         fun mockedAdapter(): ResourceRepository = mockk<SpringDataNeo4jResourceAdapter>()

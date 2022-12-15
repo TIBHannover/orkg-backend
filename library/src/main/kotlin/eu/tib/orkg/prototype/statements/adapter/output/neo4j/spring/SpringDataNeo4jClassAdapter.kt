@@ -10,6 +10,7 @@ import java.util.*
 import org.springframework.cache.annotation.CacheConfig
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
+import org.springframework.cache.annotation.Caching
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
@@ -23,7 +24,12 @@ class SpringDataNeo4jClassAdapter(
     private val neo4jRepository: Neo4jClassRepository,
     private val neo4jClassIdGenerator: Neo4jClassIdGenerator,
 ) : ClassRepository {
-    @CacheEvict(key = "#c.id", cacheNames = [CLASS_ID_TO_CLASS_CACHE])
+    @Caching(
+        evict = [
+            CacheEvict(key = "#c.id", cacheNames = [CLASS_ID_TO_CLASS_CACHE]),
+            CacheEvict(key = "#c.id.value", cacheNames = [THING_ID_TO_THING_CACHE]),
+        ]
+    )
     override fun save(c: Class) {
         neo4jRepository.save(c.toNeo4jClass())
     }
@@ -56,7 +62,12 @@ class SpringDataNeo4jClassAdapter(
 
     override fun findByUri(uri: String): Optional<Class> = neo4jRepository.findByUri(uri).map(Neo4jClass::toClass)
 
-    @CacheEvict(allEntries = true)
+    @Caching(
+        evict = [
+            CacheEvict(allEntries = true),
+            CacheEvict(allEntries = true, cacheNames = [THING_ID_TO_THING_CACHE]),
+        ]
+    )
     override fun deleteAll() {
         neo4jRepository.deleteAll()
     }

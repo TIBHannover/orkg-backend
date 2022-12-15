@@ -15,6 +15,7 @@ import java.util.*
 import org.springframework.cache.annotation.CacheConfig
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
+import org.springframework.cache.annotation.Caching
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
@@ -40,15 +41,30 @@ class SpringDataNeo4jResourceAdapter(
         return id
     }
 
-    @CacheEvict(key = "#resource.id", cacheNames = [RESOURCE_ID_TO_RESOURCE_CACHE])
+    @Caching(
+        evict = [
+            CacheEvict(key = "#resource.id", cacheNames = [RESOURCE_ID_TO_RESOURCE_CACHE]),
+            CacheEvict(key = "#resource.id.value", cacheNames = [THING_ID_TO_THING_CACHE]),
+        ]
+    )
     override fun save(resource: Resource): Resource = neo4jRepository.save(resource.toNeo4jResource()).toResource()
 
-    @CacheEvict(key = "#id", cacheNames = [RESOURCE_ID_TO_RESOURCE_CACHE, RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE])
+    @Caching(
+        evict = [
+            CacheEvict(key = "#id"),
+            CacheEvict(key = "#id.value", cacheNames = [THING_ID_TO_THING_CACHE]),
+        ]
+    )
     override fun deleteByResourceId(id: ResourceId) {
         neo4jRepository.deleteByResourceId(id)
     }
 
-    @CacheEvict(allEntries = true)
+    @Caching(
+        evict = [
+            CacheEvict(allEntries = true),
+            CacheEvict(allEntries = true, cacheNames = [THING_ID_TO_THING_CACHE]),
+        ]
+    )
     override fun deleteAll() {
         neo4jRepository.deleteAll()
     }

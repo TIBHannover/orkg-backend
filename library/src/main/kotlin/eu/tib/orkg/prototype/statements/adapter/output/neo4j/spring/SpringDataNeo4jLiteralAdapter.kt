@@ -11,6 +11,7 @@ import java.util.*
 import org.springframework.cache.annotation.CacheConfig
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
+import org.springframework.cache.annotation.Caching
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
@@ -33,12 +34,22 @@ class SpringDataNeo4jLiteralAdapter(
         return id
     }
 
-    @CacheEvict(key = "#literal.id", cacheNames = [LITERAL_ID_TO_LITERAL_CACHE])
+    @Caching(
+        evict = [
+            CacheEvict(key = "#literal.id", cacheNames = [LITERAL_ID_TO_LITERAL_CACHE]),
+            CacheEvict(key = "#literal.id.value", cacheNames = [THING_ID_TO_THING_CACHE]),
+        ]
+    )
     override fun save(literal: Literal) {
         neo4jRepository.save(literal.toNeo4jLiteral())
     }
 
-    @CacheEvict(allEntries = true)
+    @Caching(
+        evict = [
+            CacheEvict(allEntries = true),
+            CacheEvict(allEntries = true, cacheNames = [THING_ID_TO_THING_CACHE]),
+        ]
+    )
     override fun deleteAll() {
         neo4jRepository.deleteAll()
     }

@@ -8,6 +8,7 @@ import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.LITERAL_ID_T
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.PREDICATE_ID_TO_PREDICATE_CACHE
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.RESOURCE_ID_TO_RESOURCE_CACHE
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.THING_ID_TO_THING_CACHE
 import org.springframework.cache.CacheManager
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.cache.caffeine.CaffeineCacheManager
@@ -37,6 +38,7 @@ class CacheConfiguration {
                 LITERAL_ID_TO_LITERAL_CACHE, LITERAL_ID_TO_LITERAL_EXISTS_CACHE,
                 PREDICATE_ID_TO_PREDICATE_CACHE,
                 RESOURCE_ID_TO_RESOURCE_CACHE, RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE,
+                THING_ID_TO_THING_CACHE,
             )
         )
     }

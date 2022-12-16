@@ -45,6 +45,9 @@ class SpringDataNeo4jClassAdapter(
     override fun findByClassId(id: ClassId?): Optional<Class> =
         neo4jRepository.findByClassId(id).map(Neo4jClass::toClass)
 
+    override fun findAllByClassId(id: Iterable<ClassId>, pageable: Pageable): Page<Class> =
+        neo4jRepository.findAllByClassIdIn(id, pageable).map(Neo4jClass::toClass)
+
     override fun findAllByLabel(label: String): Iterable<Class> =
         neo4jRepository.findAllByLabel(label).map(Neo4jClass::toClass)
 

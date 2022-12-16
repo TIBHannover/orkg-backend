@@ -18,6 +18,8 @@ interface Neo4jClassRepository : Neo4jRepository<Neo4jClass, Long> {
 
     fun findByClassId(id: ClassId?): Optional<Neo4jClass>
 
+    fun findAllByClassIdIn(ids: Iterable<ClassId>, pageable: Pageable): Page<Neo4jClass>
+
     fun findAllByLabel(label: String): Iterable<Neo4jClass>
 
     fun findAllByLabel(label: String, pageable: Pageable): Page<Neo4jClass>

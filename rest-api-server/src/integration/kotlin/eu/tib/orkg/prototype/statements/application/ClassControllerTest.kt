@@ -104,6 +104,22 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    fun lookupByIds() {
+        val id1 = service.create("class1").id
+        val id2 = service.create("class2").id
+
+        mockMvc
+            .perform(getRequestTo("/api/classes/?ids=$id1,$id2"))
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    snippet,
+                    classListDetailedResponseFields()
+                )
+            )
+    }
+
+    @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun add() {
         val `class` = mapOf("label" to "foo", "uri" to "http://example.org/bar")

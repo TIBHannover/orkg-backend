@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed an issue that allowed users to register multiple times with the same email address in different casing. (See [!354](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/354))
 ### Added
 - Caching support for `Thing`s. (See [!255](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/355))
+- Added endpoint to lookup multiple classes by id. (See: [!321](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/321))
 
 ## [0.22.0] - 2022-12-07
 ### Added

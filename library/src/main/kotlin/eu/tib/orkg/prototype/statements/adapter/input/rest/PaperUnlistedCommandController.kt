@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.adapter.input.rest
 
-import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsUnlistedService
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.springframework.beans.factory.annotation.Qualifier
@@ -18,14 +17,14 @@ class PaperUnlistedCommandController(
     @Qualifier("resourceService")
     private val service: MarkAsUnlistedService
 ) {
-
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun markUnlisted(@PathVariable id: ResourceId) {
-        service.markAsUnlisted(id).orElseThrow { ResourceNotFound(id.toString()) }
+        service.markAsUnlisted(id)
     }
+
     @DeleteMapping("/{id}/metadata/unlisted")
     fun markListed(@PathVariable id: ResourceId) {
-        service.markAsListed(id).orElseThrow { ResourceNotFound(id.toString()) }
+        service.markAsListed(id)
     }
 }

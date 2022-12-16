@@ -47,7 +47,9 @@ class SpringDataNeo4jResourceAdapter(
             CacheEvict(key = "#resource.id.value", cacheNames = [THING_ID_TO_THING_CACHE]),
         ]
     )
-    override fun save(resource: Resource): Resource = neo4jRepository.save(resource.toNeo4jResource()).toResource()
+    override fun save(resource: Resource) {
+        neo4jRepository.save(resource.toNeo4jResource())
+    }
 
     @Caching(
         evict = [

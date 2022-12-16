@@ -147,40 +147,6 @@ class ResearchProblemService(
         neo4jProblemRepository.findAllListedProblems(pageable)
             .map(Neo4jResource::toResource)
 
-    override fun markAsFeatured(resourceId: ResourceId): Optional<Resource> {
-        setUnlistedFlag(resourceId, false)
-        return setFeaturedFlag(resourceId, true)
-    }
-
-    override fun markAsNonFeatured(resourceId: ResourceId) = setFeaturedFlag(resourceId, false)
-
-    override fun markAsUnlisted(resourceId: ResourceId): Optional<Resource> {
-        setFeaturedFlag(resourceId, false)
-        return setUnlistedFlag(resourceId, true)
-    }
-
-    override fun markAsListed(resourceId: ResourceId) = setUnlistedFlag(resourceId, false)
-
-    private fun setFeaturedFlag(resourceId: ResourceId, featured: Boolean): Optional<Resource> {
-        val result = neo4jProblemRepository.findById(resourceId)
-        if (result.isPresent) {
-            val problem = result.get()
-            problem.featured = featured
-            return Optional.of(neo4jProblemRepository.save(problem).toResource())
-        }
-        return Optional.empty()
-    }
-
-    private fun setUnlistedFlag(resourceId: ResourceId, unlisted: Boolean): Optional<Resource> {
-        val result = neo4jProblemRepository.findById(resourceId)
-        if (result.isPresent) {
-            val problem = result.get()
-            problem.unlisted = unlisted
-            return Optional.of(neo4jProblemRepository.save(problem).toResource())
-        }
-        return Optional.empty()
-    }
-
     private fun getProblemsWithFeatured(
         classesList: List<String>,
         problemId: ResourceId,

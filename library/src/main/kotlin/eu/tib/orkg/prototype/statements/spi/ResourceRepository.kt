@@ -16,7 +16,7 @@ interface ResourceRepository : EntityRepository<Resource, ResourceId> {
 
     // legacy methods:
     fun nextIdentity(): ResourceId
-    fun save(resource: Resource): Resource
+    fun save(resource: Resource)
     fun deleteByResourceId(id: ResourceId)
     fun deleteAll()
     fun findByResourceId(id: ResourceId?): Optional<Resource>

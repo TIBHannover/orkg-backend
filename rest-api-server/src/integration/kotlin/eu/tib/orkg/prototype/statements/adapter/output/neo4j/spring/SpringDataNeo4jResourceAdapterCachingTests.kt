@@ -90,7 +90,7 @@ class SpringDataNeo4jResourceAdapterCachingTests {
         every { mock.exists(ResourceId("R1")) } returns true andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
-        every { mock.save(modified) } returns modified
+        every { mock.save(modified) } returns Unit
 
         // Obtain resource from repository
         assertThat(adapter.findByResourceId(ResourceId("R1")).get()).isEqualTo(resource)

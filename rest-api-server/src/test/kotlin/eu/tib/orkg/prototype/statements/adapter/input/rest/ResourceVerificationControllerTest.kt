@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
 import eu.tib.orkg.prototype.auth.service.UserRepository
-import eu.tib.orkg.prototype.createResource
+import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsVerifiedUseCase
 import eu.tib.orkg.prototype.statements.application.port.out.LoadResourcePort
 import io.mockk.every
@@ -60,20 +60,22 @@ class ResourceVerificationControllerTest {
         inner class ResourceDoesNotExist {
             @Test
             fun `Then the controller returns 404 Not Found`() {
-                every { service.markAsVerified(any()) } returns Optional.empty()
+                every { service.markAsVerified(any()) } throws ResourceNotFound()
                 mockMvc.perform(markVerifiedRequest("unknown")).andExpect(status().isNotFound)
             }
         }
+
         @Nested
         @DisplayName("And it exists")
         inner class ResourceDoesExist {
             @Test
             fun `Then the controller returns 204 No Content`() {
-                every { service.markAsVerified(any()) } returns Optional.of(createResource())
+                every { service.markAsVerified(any()) } returns Unit
                 mockMvc.perform(markVerifiedRequest("R1")).andExpect(status().isNoContent)
             }
         }
     }
+
     @Nested
     @DisplayName("When it is marked as unverified")
     inner class WhenMarkedUnverified {
@@ -82,16 +84,17 @@ class ResourceVerificationControllerTest {
         inner class ResourceDoesNotExist {
             @Test
             fun `Then the controller returns 404 Not Found`() {
-                every { service.markAsUnverified(any()) } returns Optional.empty()
+                every { service.markAsUnverified(any()) } throws ResourceNotFound()
                 mockMvc.perform(markUnverifiedRequest("unknown")).andExpect(status().isNotFound)
             }
         }
+
         @Nested
         @DisplayName("And it exists")
         inner class ResourceDoesExist {
             @Test
             fun `Then the controller returns 204 No Content`() {
-                every { service.markAsUnverified(any()) } returns Optional.of(createResource())
+                every { service.markAsUnverified(any()) } returns Unit
                 mockMvc.perform(markUnverifiedRequest("R1")).andExpect(status().isNoContent)
             }
         }

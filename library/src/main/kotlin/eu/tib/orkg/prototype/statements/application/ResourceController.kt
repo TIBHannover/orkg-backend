@@ -159,12 +159,12 @@ class ResourceController(
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)
     fun markFeatured(@PathVariable id: ResourceId) {
-        service.markAsFeatured(id).orElseThrow { ResourceNotFound(id.toString()) }
+        service.markAsFeatured(id)
     }
 
     @DeleteMapping("/{id}/metadata/featured")
     fun unmarkFeatured(@PathVariable id: ResourceId) {
-        service.markAsNonFeatured(id).orElseThrow { ResourceNotFound(id.toString()) }
+        service.markAsNonFeatured(id)
     }
 
     @GetMapping("/{id}/metadata/featured")
@@ -182,12 +182,12 @@ class ResourceController(
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.OK)
     fun markUnlisted(@PathVariable id: ResourceId) {
-        service.markAsUnlisted(id).orElseThrow { ResourceNotFound(id.toString()) }
+        service.markAsUnlisted(id)
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")
     fun unmarkUnlisted(@PathVariable id: ResourceId) {
-        service.markAsListed(id).orElseThrow { ResourceNotFound(id.toString()) }
+        service.markAsListed(id)
     }
 
     @GetMapping("/{id}/metadata/unlisted")

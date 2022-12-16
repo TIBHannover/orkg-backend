@@ -401,19 +401,39 @@ class ResourceService(
         return null
     }
 
-    override fun markAsFeatured(resourceId: ResourceId): Optional<Resource> {
-        setUnlistedFlag(resourceId, false)
-        return setFeaturedFlag(resourceId, true)
+    override fun markAsFeatured(resourceId: ResourceId) {
+        val resource = repository.findByResourceId(resourceId).orElseThrow { ResourceNotFound(resourceId.value) }
+        val modified = resource.copy(
+            unlisted = false,
+            featured = true
+        )
+        repository.save(modified)
     }
 
-    override fun markAsNonFeatured(resourceId: ResourceId) = setFeaturedFlag(resourceId, false)
-
-    override fun markAsUnlisted(resourceId: ResourceId): Optional<Resource> {
-        setFeaturedFlag(resourceId, false)
-        return setUnlistedFlag(resourceId, true)
+    override fun markAsNonFeatured(resourceId: ResourceId) {
+        val resource = repository.findByResourceId(resourceId).orElseThrow { ResourceNotFound(resourceId.value) }
+        val modified = resource.copy(
+            featured = false
+        )
+        repository.save(modified)
     }
 
-    override fun markAsListed(resourceId: ResourceId) = setUnlistedFlag(resourceId, false)
+    override fun markAsUnlisted(resourceId: ResourceId) {
+        val resource = repository.findByResourceId(resourceId).orElseThrow { ResourceNotFound(resourceId.value) }
+        val modified = resource.copy(
+            unlisted = true,
+            featured = false
+        )
+        repository.save(modified)
+    }
+
+    override fun markAsListed(resourceId: ResourceId) {
+        val resource = repository.findByResourceId(resourceId).orElseThrow { ResourceNotFound(resourceId.value) }
+        val modified = resource.copy(
+            unlisted = false,
+        )
+        repository.save(modified)
+    }
 
     override fun loadFeaturedPapers(pageable: Pageable): Page<Resource> = repository.findAllFeaturedPapers(pageable)
 
@@ -543,25 +563,12 @@ class ResourceService(
         return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted ?: false
     }
 
-    private fun setFeaturedFlag(resourceId: ResourceId, featured: Boolean): Optional<Resource> {
-        val result = repository.findByResourceId(resourceId)
-        var resultObj = result.orElseThrow { ResourceNotFound(resourceId.value) }
-        resultObj = resultObj.copy(featured = featured)
-        return Optional.of(repository.save(resultObj))
-    }
-
-    private fun setVerifiedFlag(resourceId: ResourceId, verified: Boolean): Optional<Resource> {
-        val result = repository.findByResourceId(resourceId)
-        var resultObj = result.orElseThrow { ResourceNotFound(resourceId.value) }
-        resultObj = resultObj.copy(verified = verified)
-        return Optional.of(repository.save(resultObj))
-    }
-
-    private fun setUnlistedFlag(resourceId: ResourceId, unlisted: Boolean): Optional<Resource> {
-        val result = repository.findByResourceId(resourceId)
-        var resultObj = result.orElseThrow { ResourceNotFound(resourceId.value) }
-        resultObj = resultObj.copy(unlisted = unlisted)
-        return Optional.of(repository.save(resultObj))
+    private fun setVerifiedFlag(resourceId: ResourceId, verified: Boolean) {
+        val resource = repository.findByResourceId(resourceId).orElseThrow { ResourceNotFound(resourceId.value) }
+        val modified = resource.copy(
+            verified = verified
+        )
+        repository.save(modified)
     }
 
     private fun String.toSearchString() =

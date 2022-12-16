@@ -6,7 +6,7 @@ import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.rest.AuthController.RegisterUserRequest
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.auth.service.UserService
-import java.util.Optional
+import java.util.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyString
@@ -26,7 +26,7 @@ import org.springframework.web.context.WebApplicationContext
 
 @WebMvcTest(controllers = [AuthController::class])
 @AuthorizationServerUnitTestWorkaround
-class AuthControllerTest {
+class AuthControllerUnitTest {
 
     private lateinit var mockMvc: MockMvc
 
@@ -194,6 +194,23 @@ class AuthControllerTest {
             .perform(registrationOf(user))
             .andExpect(status().isOk)
             .andReturn()
+
+        then(userService).should(times(1)).registerUser("user@example.org", "irrelevant", "irrelevant")
+    }
+
+    @Test
+    fun whenEmailHasCapitalLettersToLowerCase_ThenCallRegistration() {
+        val user = RegisterUserRequest(
+            email = "USER@EXAMPLE.ORG",
+            password = "irrelevant",
+            matchingPassword = "irrelevant",
+            displayName = "irrelevant"
+        )
+        given(userService.findByEmail(anyString())).willReturn(Optional.empty())
+
+        mockMvc
+            .perform(registrationOf(user))
+            .andExpect(status().isOk)
 
         then(userService).should(times(1)).registerUser("user@example.org", "irrelevant", "irrelevant")
     }

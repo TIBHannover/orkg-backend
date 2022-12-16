@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Security
+- Fixed an issue that allowed users to register multiple times with the same email address in different casing. (See [!354](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/354))
 ### Added
 - Caching support for `Thing`s. (See [!255](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/355))
 

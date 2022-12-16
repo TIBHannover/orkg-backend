@@ -26,7 +26,7 @@ class UserService(
         val role = roleRepository.findByName("ROLE_USER")
         val newUser = UserEntity().apply {
             id = userId
-            email = anEmail
+            email = anEmail.lowercase()
             password = passwordEncoder.encode(aPassword)
             displayName = aDisplayName
             enabled = true

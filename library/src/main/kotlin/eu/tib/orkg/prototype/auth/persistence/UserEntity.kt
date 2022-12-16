@@ -7,13 +7,15 @@ import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneOffset.UTC
-import java.util.UUID
+import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.JoinTable
 import javax.persistence.ManyToMany
+import javax.persistence.PrePersist
+import javax.persistence.PreUpdate
 import javax.persistence.Table
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
@@ -30,6 +32,7 @@ class UserEntity {
 
     @NotBlank
     @Email
+    @Column(columnDefinition = "citext")
     var email: String? = null
 
     @NotBlank
@@ -58,6 +61,12 @@ class UserEntity {
         inverseJoinColumns = [JoinColumn(name = "role_id")]
     )
     var roles: MutableSet<RoleEntity> = mutableSetOf()
+
+    @PrePersist
+    @PreUpdate
+    private fun validate() {
+        email = email?.lowercase()
+    }
 
     fun toUserPrincipal(): UserDetails =
         UserPrincipal(

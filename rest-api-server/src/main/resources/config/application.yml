@@ -10,14 +10,9 @@ spring:
     frontend-uri: 'http://localhost:3000'
   jmx:
     enabled: true
+coffee-boots:
   cache:
-    cache-names: >
-      class-id-to-class,class-id-to-class-exists,
-      literal-id-to-literal,literal-id-to-literal-exists,
-      predicate-id-to-predicate,
-      resource-id-to-resource,resource-id-to-resource-exists,
-      thing-id-to-thing
-    caffeine.spec: maximumSize=5000,expireAfterAccess=10m,recordStats
+    basic-spec: maximumSize=5000,expireAfterAccess=10m,recordStats
 orkg:
   storage:
     images:

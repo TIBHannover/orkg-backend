@@ -43,6 +43,7 @@ class ObservatoryController(
 ) {
 
     @PostMapping("/")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun addObservatory(
         @RequestBody @Valid observatory: CreateObservatoryRequest,
         uriComponentsBuilder: UriComponentsBuilder
@@ -125,6 +126,7 @@ class ObservatoryController(
     }
 
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateObservatoryName(@PathVariable id: ObservatoryId, @RequestBody @Valid name: UpdateRequest): Observatory {
         service
             .findById(id)
@@ -134,6 +136,7 @@ class ObservatoryController(
     }
 
     @RequestMapping("{id}/description", method = [RequestMethod.POST, RequestMethod.PUT])
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateObservatoryDescription(
         @PathVariable id: ObservatoryId,
         @RequestBody @Valid description: UpdateRequest
@@ -146,6 +149,7 @@ class ObservatoryController(
     }
 
     @RequestMapping("{id}/research_field", method = [RequestMethod.POST, RequestMethod.PUT])
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateObservatoryResearchField(
         @PathVariable id: ObservatoryId,
         @RequestBody @Valid researchFieldId: UpdateRequest

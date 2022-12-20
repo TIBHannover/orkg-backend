@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Security
+- Fixed an issue that allowed users to register and modify organizations and observatories without authorization. (Closes: [#441](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/441))
 
 ## [0.23.0] - 2022-12-16
 ### Security

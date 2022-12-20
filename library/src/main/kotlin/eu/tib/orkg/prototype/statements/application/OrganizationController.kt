@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 import java.time.LocalDate
+import org.springframework.security.access.prepost.PreAuthorize
 
 @RestController
 @RequestMapping("/api/organizations/")
@@ -40,6 +41,7 @@ class OrganizationController(
     var imageStoragePath: String? = null
 
     @PostMapping("/")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun addOrganization(
         @RequestBody @Valid organization: CreateOrganizationRequest,
         uriComponentsBuilder: UriComponentsBuilder
@@ -72,6 +74,7 @@ class OrganizationController(
     }
 
     @PostMapping("/conference")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun addConference(
         @RequestBody @Valid organization: CreateOrganizationRequest,
         uriComponentsBuilder: UriComponentsBuilder
@@ -154,6 +157,7 @@ class OrganizationController(
     }
 
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateOrganizationName(
         @PathVariable id: OrganizationId,
         @RequestBody @Valid name: UpdateRequest
@@ -167,6 +171,7 @@ class OrganizationController(
     }
 
     @RequestMapping("{id}/url", method = [RequestMethod.POST, RequestMethod.PUT])
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateOrganizationUrl(@PathVariable id: OrganizationId, @RequestBody @Valid url: UpdateRequest): Organization {
         val response = findOrganization(id)
         response.homepage = url.value
@@ -177,6 +182,7 @@ class OrganizationController(
     }
 
     @RequestMapping("{id}/type", method = [RequestMethod.POST, RequestMethod.PUT])
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateOrganizationType(@PathVariable id: OrganizationId, @RequestBody @Valid type: UpdateRequest): Organization {
         val response = findOrganization(id)
         response.type = OrganizationType.fromOrNull(type.value)!!
@@ -187,6 +193,7 @@ class OrganizationController(
     }
 
     @RequestMapping("{id}/date", method = [RequestMethod.POST, RequestMethod.PUT])
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateConferenceDate(@PathVariable id: OrganizationId, @RequestBody @Valid date: UpdateRequest): ResponseEntity<Any> {
         val response = findOrganization(id)
         return if (response.type == OrganizationType.CONFERENCE) {
@@ -200,6 +207,7 @@ class OrganizationController(
     }
 
     @RequestMapping("{id}/process", method = [RequestMethod.POST, RequestMethod.PUT])
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateConferenceProcess(@PathVariable id: OrganizationId, @RequestBody @Valid date: UpdateRequest): ResponseEntity<Any> {
         val response = findOrganization(id)
         return if (response.type == OrganizationType.CONFERENCE) {
@@ -213,6 +221,7 @@ class OrganizationController(
     }
 
     @RequestMapping("{id}/logo", method = [RequestMethod.POST, RequestMethod.PUT])
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateOrganizationLogo(
         @PathVariable id: OrganizationId,
         @RequestBody @Valid submittedLogo: UpdateRequest,

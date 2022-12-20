@@ -97,7 +97,6 @@ dependencies {
     // Caching
     implementation("com.github.ben-manes.caffeine:caffeine")
     implementation("org.springframework.boot:spring-boot-starter-cache")
-    implementation("io.github.stepio.coffee-boots:coffee-boots:3.0.0")
     // Monitoring
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.jolokia:jolokia-core")

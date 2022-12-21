@@ -21,6 +21,7 @@ plugins {
     kotlin("plugin.spring")
     kotlin("plugin.jpa")
     id("idea")
+    id("jacoco-report-aggregation")
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.spring.dependency.management)
 
@@ -158,8 +159,11 @@ tasks {
     }
 
     // Wire tasks, so they always generate a coverage report and print the coverage on build
-    val printCoverage by existing { mustRunAfter(jacocoTestReport) }
-    val check by existing { dependsOn(printCoverage) }
+    val check by existing {
+        dependsOn(named<JacocoReport>("testCodeCoverageReport"))
+    }
+    val printCoverage by existing { mustRunAfter(check) }
+    val build by existing { dependsOn(printCoverage) }
 
     withType<Test>().configureEach {
         useJUnitPlatform {

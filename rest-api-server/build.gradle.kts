@@ -40,6 +40,8 @@ plugins {
 //           a safety measure. The line should be removed when Spring upgrades to a version higher than this one.
 extra["log4j2.version"] = "2.15.0"
 extra["postgresql.version"] = "42.2.25"
+// Upgrade Kotlin Coroutines for Kotest
+extra["kotlin-coroutines.version"] = "1.6.0"
 
 allOpen {
     annotation("javax.persistence.Entity")
@@ -114,7 +116,7 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation(libs.bundles.testcontainers)
-    testImplementation(libs.kotest.assertions.core)
+    testImplementation(libs.bundles.kotest)
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         // Disable JUnit 4 (aka Vintage)
         exclude(group = "junit", module = "junit")

@@ -10,13 +10,13 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 
 class InMemoryClassRepository : ClassRepository {
-    private val entities: MutableSet<Class> = mutableSetOf()
+    private val entities: MutableMap<ClassId, Class> = mutableMapOf()
 
     override fun save(c: Class) {
-        entities += c
+        entities[c.id!!] = c
     }
 
-    override fun findByClassId(id: ClassId?): Optional<Class> = Optional.of(entities.single { it.id == id })
+    override fun findByClassId(id: ClassId?): Optional<Class> = Optional.ofNullable(entities[id!!])
 
     override fun findAllByClassId(id: Iterable<ClassId>, pageable: Pageable): Page<Class> {
         TODO("Not yet implemented")
@@ -54,12 +54,11 @@ class InMemoryClassRepository : ClassRepository {
         TODO("Not yet implemented")
     }
 
-    override fun existsAll(ids: Set<ClassId>): Boolean {
-        TODO("Not yet implemented")
-    }
+    override fun existsAll(ids: Set<ClassId>): Boolean =
+        if (ids.isNotEmpty()) entities.keys.containsAll(ids) else false
 
     override fun findAll(pageable: Pageable) = PageImpl(
-        entities
+        entities.values
             .sortedBy(Class::createdAt)
             .drop(pageable.pageNumber * pageable.pageSize)
             .take(pageable.pageSize),

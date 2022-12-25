@@ -3,11 +3,13 @@ package eu.tib.orkg.prototype.statements.spi
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.statements.domain.model.Class
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import org.orkg.statements.testing.createClass
 import org.springframework.data.domain.PageRequest
 
 fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec {
@@ -43,6 +45,16 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
                 // it.description shouldBe it.description
             }
         }
+        it("updates an already existing class") {
+            val original = createClass()
+            repository.save(original)
+            val found = repository.findByClassId(original.id).get()
+            val modified = found.copy(label = "some new label, never seen before")
+            repository.save(modified)
+
+            repository.findAll(PageRequest.of(0, Int.MAX_VALUE)).toSet().size shouldBe 1
+            repository.findByClassId(original.id).get().label shouldBe "some new label, never seen before"
+        }
     }
     context("loading several classes") {
         val classes = fabricator.random<List<Class>>()
@@ -61,6 +73,24 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
             result.content.zipWithNext { a, b ->
                 a.createdAt shouldBeLessThan b.createdAt
             }
+        }
+    }
+    context("existence checks for multiple classes") {
+        it("returns true when all classes exist") {
+            val ids = (1L..3).map(::ClassId).onEach {
+                repository.save(createClass(id = it))
+            }
+
+            repository.existsAll(ids.toSet()) shouldBe true
+        }
+        it("returns false when at least one class does not exist") {
+            val ids = (1L..3).map(::ClassId).onEach { repository.save(createClass(id = it)) }
+                .plus(listOf(ClassId(9)))
+
+            repository.existsAll(ids.toSet()) shouldBe false
+        }
+        it("returns false when the set of IDs is empty") {
+            repository.existsAll(emptySet()) shouldBe false
         }
     }
 }

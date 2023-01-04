@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.toOptional
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import java.util.*
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 class InMemoryClassRepository : InMemoryRepository<ClassId, Class>(
@@ -24,11 +25,15 @@ class InMemoryClassRepository : InMemoryRepository<ClassId, Class>(
     override fun findAllByLabel(label: String, pageable: Pageable) =
         findAllFilteredAndPaged(pageable) { it.label == label }
 
-    override fun findAllByLabelMatchesRegex(label: String) =
-        entities.values.filter { it.label.matches(Regex(label)) }
+    override fun findAllByLabelMatchesRegex(label: String): List<Class> {
+        val regex = Regex(label)
+        return entities.values.filter { it.label.matches(regex) }
+    }
 
-    override fun findAllByLabelMatchesRegex(label: String, pageable: Pageable) =
-        findAllFilteredAndPaged(pageable) { it.label.matches(Regex(label)) }
+    override fun findAllByLabelMatchesRegex(label: String, pageable: Pageable): Page<Class> {
+        val regex = Regex(label)
+        return findAllFilteredAndPaged(pageable) { it.label.matches(regex) }
+    }
 
     override fun findAllByLabelContaining(part: String) =
         entities.values.filter { it.label.contains(part) }

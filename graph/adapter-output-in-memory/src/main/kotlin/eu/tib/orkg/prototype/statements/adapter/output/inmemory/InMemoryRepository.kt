@@ -23,17 +23,13 @@ abstract class InMemoryRepository<ID, T>(
         val total = entities.values
             .filter(predicate)
             .sortedWith(defaultComparator)
-        if (total.isEmpty()) return Page.empty()
         val content = total
             .drop(pageable.pageNumber * pageable.pageSize)
             .take(pageable.pageSize)
-        return when {
-            content.isEmpty() -> Page.empty()
-            else -> PageImpl(
-                content,
-                PageRequest.of(pageable.pageNumber, content.size),
-                total.size.toLong()
-            )
-        }
+        return PageImpl(
+            content,
+            PageRequest.of(pageable.pageNumber, pageable.pageSize),
+            total.size.toLong()
+        )
     }
 }

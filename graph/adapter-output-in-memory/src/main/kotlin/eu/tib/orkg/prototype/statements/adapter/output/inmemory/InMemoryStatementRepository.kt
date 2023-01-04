@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.adapter.output.inmemory
 
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
+import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
@@ -74,23 +75,23 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         it.predicate.id == predicateId && it.subject.thingId.toString() == subjectId
     }
 
-    // FIXME: rename to findAllByPredicateIdAndObjectLabel
+    // FIXME: rename to findAllByPredicateIdAndLiteralObjectLabel
     override fun findAllByPredicateIdAndLabel(
         predicateId: PredicateId,
         literal: String,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
-        it.predicate.id == predicateId && it.`object`.label == literal
+        it.predicate.id == predicateId && it.`object` is Literal && it.`object`.label == literal
     }
 
-    // FIXME: rename to findAllByPredicateIdAndObjectLabelAndSubjectClass
+    // FIXME: rename to findAllByPredicateIdAndLiteralObjectLabelAndSubjectClass
     override fun findAllByPredicateIdAndLabelAndSubjectClass(
         predicateId: PredicateId,
         literal: String,
         subjectClass: ClassId,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
-        it.predicate.id == predicateId && it.`object`.label == literal && it.subject.thingId == subjectClass
+        it.predicate.id == predicateId && it.`object` is Literal && it.`object`.label == literal && it.subject.thingId == subjectClass
     }
 
     override fun findAllBySubjects(
@@ -123,7 +124,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         entities.filter { id == it.value.`object`.thingId }.count().toLong()
 
     override fun countStatementsAboutResources(resourceIds: Set<ResourceId>) =
-        resourceIds.associateWith(::countStatementsAboutResource)
+        resourceIds.associateWith(::countStatementsAboutResource).filter { it.value > 0 }
 
     override fun nextIdentity(): StatementId {
         var id = StatementId(entities.size.toLong())

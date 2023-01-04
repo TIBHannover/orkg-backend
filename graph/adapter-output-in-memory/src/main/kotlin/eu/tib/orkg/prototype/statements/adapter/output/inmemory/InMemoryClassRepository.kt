@@ -42,7 +42,7 @@ class InMemoryClassRepository : InMemoryRepository<ClassId, Class>(
 
     override fun nextIdentity(): ClassId {
         var id = ClassId(entities.size.toLong())
-        while(entities.contains(id)) {
+        while(id in entities) {
             id = ClassId(id.value.toLong() + 1)
         }
         return id

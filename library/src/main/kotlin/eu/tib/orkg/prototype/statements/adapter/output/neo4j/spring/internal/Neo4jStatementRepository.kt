@@ -16,6 +16,7 @@ private const val subjectClass = "${'$'}subjectClass"
 private const val literal = "${'$'}literal"
 private const val subjectId = "${'$'}subjectId"
 private const val subjectIds = "${'$'}subjectIds"
+private const val objectIds = "${'$'}objectIds"
 private const val predicateId = "${'$'}predicateId"
 private const val objectId = "${'$'}objectId"
 private const val paperId = "${'$'}paperId"
@@ -62,7 +63,7 @@ private const val WHERE_SUBJECT_ID_IN =
     """WHERE sub.`resource_id` IN $subjectIds OR sub.`literal_id` IN $subjectIds OR sub.`predicate_id` IN $subjectIds OR sub.`class_id` IN $subjectIds"""
 
 private const val WHERE_OBJECT_ID_IN =
-    """WHERE obj.`resource_id` IN $subjectIds OR obj.`literal_id` IN $subjectIds OR obj.`predicate_id` IN $subjectIds OR obj.`class_id` IN $subjectIds"""
+    """WHERE obj.`resource_id` IN $objectIds OR obj.`literal_id` IN $objectIds OR obj.`predicate_id` IN $objectIds OR obj.`class_id` IN $objectIds"""
 
 interface Neo4jStatementRepository :
     Neo4jRepository<Neo4jStatement, Long> {
@@ -147,7 +148,7 @@ interface Neo4jStatementRepository :
         countQuery = "$MATCH_STATEMENT $WHERE_OBJECT_ID_IN $WITH_SORTABLE_FIELDS $RETURN_COUNT"
     )
     fun findAllByObjects(
-        subjectIds: List<String>,
+        objectIds: List<String>,
         pagination: Pageable
     ): Page<Neo4jStatement>
 

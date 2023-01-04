@@ -5,13 +5,11 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import java.util.*
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 
-class InMemoryClassRepository : ClassRepository {
-    private val entities: MutableMap<ClassId, Class> = mutableMapOf()
-
+class InMemoryClassRepository : InMemoryRepository<ClassId, Class>(
+    compareBy(Class::createdAt)
+), ClassRepository {
     override fun save(c: Class) {
         entities[c.id!!] = c
     }
@@ -56,17 +54,4 @@ class InMemoryClassRepository : ClassRepository {
 
     override fun existsAll(ids: Set<ClassId>): Boolean =
         if (ids.isNotEmpty()) entities.keys.containsAll(ids) else false
-
-    override fun findAll(pageable: Pageable) = PageImpl(
-        entities.values
-            .sortedBy(Class::createdAt)
-            .drop(pageable.pageNumber * pageable.pageSize)
-            .take(pageable.pageSize),
-        PageRequest.of(pageable.pageNumber, pageable.pageSize),
-        entities.size.toLong()
-    )
-
-    override fun exists(id: ClassId): Boolean {
-        TODO("Not yet implemented")
-    }
 }

@@ -26,36 +26,36 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun deleteAll()
     fun findAll(depth: Int): Iterable<GeneralStatement>
     fun findByStatementId(id: StatementId): Optional<GeneralStatement>
-    fun findAllBySubject(subjectId: String, pagination: Pageable): Page<GeneralStatement>
-    fun findAllByPredicateId(predicateId: PredicateId, pagination: Pageable): Page<GeneralStatement>
-    fun findAllByObject(objectId: String, pagination: Pageable): Page<GeneralStatement>
+    fun findAllBySubject(subjectId: String, pageable: Pageable): Page<GeneralStatement>
+    fun findAllByPredicateId(predicateId: PredicateId, pageable: Pageable): Page<GeneralStatement>
+    fun findAllByObject(objectId: String, pageable: Pageable): Page<GeneralStatement>
     fun countByIdRecursive(paperId: String): Int
     fun findAllByObjectAndPredicate(
         objectId: String,
         predicateId: PredicateId,
-        pagination: Pageable
+        pageable: Pageable
     ): Page<GeneralStatement>
 
     fun findAllBySubjectAndPredicate(
         subjectId: String,
         predicateId: PredicateId,
-        pagination: Pageable
+        pageable: Pageable
     ): Page<GeneralStatement>
 
     fun findAllByPredicateIdAndLabel(
         predicateId: PredicateId,
         literal: String,
-        pagination: Pageable
+        pageable: Pageable
     ): Page<GeneralStatement>
 
     fun findAllByPredicateIdAndLabelAndSubjectClass(
         predicateId: PredicateId,
         literal: String,
         subjectClass: ClassId,
-        pagination: Pageable
+        pageable: Pageable
     ): Page<GeneralStatement>
 
-    fun findAllBySubjects(subjectIds: List<String>, pagination: Pageable): Page<GeneralStatement>
-    fun findAllByObjects(subjectIds: List<String>, pagination: Pageable): Page<GeneralStatement>
+    fun findAllBySubjects(subjectIds: List<String>, pageable: Pageable): Page<GeneralStatement>
+    fun findAllByObjects(objectIds: List<String>, pageable: Pageable): Page<GeneralStatement>
     fun fetchAsBundle(id: String, configuration: Map<String, Any>): Iterable<GeneralStatement>
 }

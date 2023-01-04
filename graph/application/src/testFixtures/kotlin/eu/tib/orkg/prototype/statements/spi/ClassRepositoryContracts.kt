@@ -10,6 +10,7 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.orkg.statements.testing.createClass
+import org.orkg.statements.testing.withCustomMappings
 import org.springframework.data.domain.PageRequest
 
 fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec {
@@ -22,7 +23,7 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
             collectionSizes = 12..12,
             nullableStrategy = FabricatorConfig.NullableStrategy.NeverSetToNull // FIXME: because "id" is nullable
         ).withStandardMappings()
-    )
+    ).withCustomMappings()
 
     describe("saving a class") {
         it("saves and loads all properties correctly") {
@@ -38,8 +39,6 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
                 it.uri shouldBe expected.uri
                 it.createdAt shouldBe expected.createdAt
                 it.createdBy shouldBe expected.createdBy
-                it.createdBy shouldBe expected.createdBy
-                it.createdAt shouldBe expected.createdAt
                 it._class shouldBe "class"
                 it.thingId shouldBe expected.thingId
                 // it.description shouldBe it.description

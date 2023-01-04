@@ -90,52 +90,52 @@ class SpringDataNeo4jStatementAdapter(
     override fun findByStatementId(id: StatementId): Optional<GeneralStatement> =
         neo4jRepository.findByStatementId(id).map { it.toStatement() }
 
-    override fun findAllBySubject(subjectId: String, pagination: Pageable): Page<GeneralStatement> =
-        neo4jRepository.findAllBySubject(subjectId, pagination).map { it.toStatement() }
+    override fun findAllBySubject(subjectId: String, pageable: Pageable): Page<GeneralStatement> =
+        neo4jRepository.findAllBySubject(subjectId, pageable).map { it.toStatement() }
 
-    override fun findAllByPredicateId(predicateId: PredicateId, pagination: Pageable): Page<GeneralStatement> =
-        neo4jRepository.findAllByPredicateId(predicateId, pagination).map { it.toStatement() }
+    override fun findAllByPredicateId(predicateId: PredicateId, pageable: Pageable): Page<GeneralStatement> =
+        neo4jRepository.findAllByPredicateId(predicateId, pageable).map { it.toStatement() }
 
-    override fun findAllByObject(objectId: String, pagination: Pageable): Page<GeneralStatement> =
-        neo4jRepository.findAllByObject(objectId, pagination).map { it.toStatement() }
+    override fun findAllByObject(objectId: String, pageable: Pageable): Page<GeneralStatement> =
+        neo4jRepository.findAllByObject(objectId, pageable).map { it.toStatement() }
 
     override fun countByIdRecursive(paperId: String): Int = neo4jRepository.countByIdRecursive(paperId)
 
     override fun findAllByObjectAndPredicate(
         objectId: String,
         predicateId: PredicateId,
-        pagination: Pageable
+        pageable: Pageable
     ): Page<GeneralStatement> =
-        neo4jRepository.findAllByObjectAndPredicate(objectId, predicateId, pagination).map { it.toStatement() }
+        neo4jRepository.findAllByObjectAndPredicate(objectId, predicateId, pageable).map { it.toStatement() }
 
     override fun findAllBySubjectAndPredicate(
         subjectId: String,
         predicateId: PredicateId,
-        pagination: Pageable
+        pageable: Pageable
     ): Page<GeneralStatement> =
-        neo4jRepository.findAllBySubjectAndPredicate(subjectId, predicateId, pagination).map { it.toStatement() }
+        neo4jRepository.findAllBySubjectAndPredicate(subjectId, predicateId, pageable).map { it.toStatement() }
 
     override fun findAllByPredicateIdAndLabel(
         predicateId: PredicateId,
         literal: String,
-        pagination: Pageable
+        pageable: Pageable
     ): Page<GeneralStatement> =
-        neo4jRepository.findAllByPredicateIdAndLabel(predicateId, literal, pagination).map { it.toStatement() }
+        neo4jRepository.findAllByPredicateIdAndLabel(predicateId, literal, pageable).map { it.toStatement() }
 
     override fun findAllByPredicateIdAndLabelAndSubjectClass(
         predicateId: PredicateId,
         literal: String,
         subjectClass: ClassId,
-        pagination: Pageable
+        pageable: Pageable
     ): Page<GeneralStatement> =
-        neo4jRepository.findAllByPredicateIdAndLabelAndSubjectClass(predicateId, literal, subjectClass, pagination)
+        neo4jRepository.findAllByPredicateIdAndLabelAndSubjectClass(predicateId, literal, subjectClass, pageable)
             .map { it.toStatement() }
 
-    override fun findAllBySubjects(subjectIds: List<String>, pagination: Pageable): Page<GeneralStatement> =
-        neo4jRepository.findAllBySubjects(subjectIds, pagination).map { it.toStatement() }
+    override fun findAllBySubjects(subjectIds: List<String>, pageable: Pageable): Page<GeneralStatement> =
+        neo4jRepository.findAllBySubjects(subjectIds, pageable).map { it.toStatement() }
 
-    override fun findAllByObjects(subjectIds: List<String>, pagination: Pageable): Page<GeneralStatement> =
-        neo4jRepository.findAllByObjects(subjectIds, pagination).map { it.toStatement() }
+    override fun findAllByObjects(objectIds: List<String>, pageable: Pageable): Page<GeneralStatement> =
+        neo4jRepository.findAllByObjects(objectIds, pageable).map { it.toStatement() }
 
     override fun fetchAsBundle(id: String, configuration: Map<String, Any>): Iterable<GeneralStatement> =
         neo4jRepository.fetchAsBundle(id, configuration).map { it.toStatement() }

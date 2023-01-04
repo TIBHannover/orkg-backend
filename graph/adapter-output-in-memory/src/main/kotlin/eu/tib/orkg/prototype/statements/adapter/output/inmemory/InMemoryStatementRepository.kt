@@ -109,7 +109,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
     }
 
     override fun fetchAsBundle(id: String, configuration: Map<String, Any>): Iterable<GeneralStatement> {
-        TODO("Not yet implemented")
+        TODO("This method can be removed?")
     }
 
     override fun deleteAll() {
@@ -117,7 +117,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
     }
 
     override fun findAll(depth: Int): Iterable<GeneralStatement> {
-        TODO("Can be removed")
+        TODO("This method should be removed")
     }
 
     override fun countStatementsAboutResource(id: ResourceId) =
@@ -128,7 +128,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
 
     override fun nextIdentity(): StatementId {
         var id = StatementId(entities.size.toLong())
-        while(entities.contains(id)) {
+        while(id in entities) {
             id = StatementId(id.value.toLong() + 1)
         }
         return id

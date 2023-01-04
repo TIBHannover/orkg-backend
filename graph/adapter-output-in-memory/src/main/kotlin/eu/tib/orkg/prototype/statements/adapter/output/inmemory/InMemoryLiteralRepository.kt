@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import java.util.*
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 class InMemoryLiteralRepository : InMemoryRepository<LiteralId, Literal>(
@@ -12,7 +13,7 @@ class InMemoryLiteralRepository : InMemoryRepository<LiteralId, Literal>(
 ), LiteralRepository {
     override fun nextIdentity(): LiteralId {
         var id = LiteralId(entities.size.toLong())
-        while(entities.contains(id)) {
+        while(id in entities) {
             id = LiteralId(id.value.toLong() + 1)
         }
         return id
@@ -31,13 +32,15 @@ class InMemoryLiteralRepository : InMemoryRepository<LiteralId, Literal>(
     override fun findAllByLabel(value: String, pageable: Pageable) =
         findAllFilteredAndPaged(pageable) { it.label == value }
 
-    override fun findAllByLabelMatchesRegex(label: String, pageable: Pageable) =
-        findAllFilteredAndPaged(pageable) { it.label.matches(Regex(label)) }
+    override fun findAllByLabelMatchesRegex(label: String, pageable: Pageable): Page<Literal> {
+        val regex = Regex(label)
+        return findAllFilteredAndPaged(pageable) { it.label.matches(regex) }
+    }
 
     override fun findAllByLabelContaining(part: String, pageable: Pageable) =
         findAllFilteredAndPaged(pageable) { it.label.contains(part) }
 
     override fun findDOIByContributionId(id: ResourceId): Optional<Literal> {
-        TODO("This method should not be in this repository")
+        TODO("This method should be moved to the StatementRepository (or ContributionRepository?)")
     }
 }

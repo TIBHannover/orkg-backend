@@ -267,20 +267,27 @@ class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
             true
         }
 
-    // TODO: Create a method with featured and unlisted parameter (see above)
+    // TODO: Check if usage is correct because name is findAllFeaturedResourcesByClass and not findAllUnlistedResourcesByClass
     override fun findAllFeaturedResourcesByClass(
         classes: List<String>,
         unlisted: Boolean,
         pageable: Pageable
-    ) = findAllByClassAndFlags(pageable, classes = classes.map(::ClassId).toSet(), unlisted = unlisted)
+    ) = findAllFilteredAndPaged(pageable) {
+        it.unlisted == unlisted && it.classes.any { id ->
+            id.value in classes
+        }
+    }
 
-    // TODO: Create a method with featured and unlisted parameter (see 2 above)
     override fun findAllFeaturedResourcesByClass(
         classes: List<String>,
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
-    ) = findAllByClassAndFlags(pageable, classes = classes.map(::ClassId).toSet(), unlisted = unlisted, featured = featured)
+    ) = findAllFilteredAndPaged(pageable) {
+        it.unlisted == unlisted  && it.featured == featured && it.classes.any { id ->
+            id.value in classes
+        }
+    }
 
     override fun findAllFeaturedResourcesByObservatoryIDAndClass(
         id: ObservatoryId,

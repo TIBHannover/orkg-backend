@@ -85,3 +85,7 @@ fun Fabrikate.withCustomMappings(): Fabrikate {
     }
     return this
 }
+
+inline fun <reified T : Any> Fabrikate.random(size: Int): List<T> {
+    return (0 until size).map { random() }
+}

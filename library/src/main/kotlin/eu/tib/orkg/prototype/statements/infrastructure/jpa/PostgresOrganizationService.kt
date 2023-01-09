@@ -1,12 +1,10 @@
 package eu.tib.orkg.prototype.statements.infrastructure.jpa
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.application.OrganizationController
 import eu.tib.orkg.prototype.statements.domain.model.Organization
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationType
-import eu.tib.orkg.prototype.statements.domain.model.jpa.ConferenceMetadataEntity
 import eu.tib.orkg.prototype.statements.domain.model.jpa.OrganizationEntity
 import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresOrganizationRepository
 import java.util.Optional
@@ -22,19 +20,9 @@ class PostgresOrganizationService(
     override fun create(organizationName: String, createdBy: ContributorId, url: String, displayId: String, type: OrganizationType): Organization {
         return createOrganization(organizationName, createdBy, url, displayId, type).toOrganization()
     }
-
-    override fun createConference(organizationName: String, createdBy: ContributorId, url: String, displayId: String, type: OrganizationType, metadata: OrganizationController.Metadata): Organization {
-        val organization = createOrganization(organizationName, createdBy, url, displayId, type)
-        organization.metadata = ConferenceMetadataEntity().apply {
-                id = organization.id
-                date = metadata.date
-                isDoubleBlind = metadata.isDoubleBlind
-            }
-        return postgresOrganizationRepository.save(organization).toOrganization()
-    }
-
     override fun listOrganizations(): List<Organization> {
-        return postgresOrganizationRepository.findAll()
+        return postgresOrganizationRepository
+            .findByType(OrganizationType.GENERAL)
             .map(OrganizationEntity::toOrganization)
     }
 
@@ -69,14 +57,6 @@ class PostgresOrganizationService(
 
         if (organization.type != entity.type)
             entity.type = organization.type
-
-        if (entity.type == OrganizationType.CONFERENCE && (organization.metadata?.date != entity.metadata?.date || organization.metadata?.isDoubleBlind != entity.metadata?.isDoubleBlind)) {
-            entity.metadata = ConferenceMetadataEntity().apply {
-                id = organization.id.value
-                date = organization.metadata?.date
-                isDoubleBlind = if (organization.metadata?.isDoubleBlind != null) organization.metadata?.isDoubleBlind else false
-            }
-        }
 
         return postgresOrganizationRepository.save(entity).toOrganization()
     }

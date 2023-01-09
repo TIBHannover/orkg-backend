@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.domain.model.ConferenceSeriesId
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
@@ -87,6 +88,9 @@ class OrcidNotValid(orcid: String) : RuntimeException("ORCID value ($orcid) is n
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 class OrphanOrcidValue(orcid: String) : RuntimeException("ORCID value ($orcid) is not attached to any author!")
 
+@ResponseStatus(HttpStatus.NOT_FOUND)
+class ConferenceNotFound(id: ConferenceSeriesId) : RuntimeException("""Conference "$id" not found""")
+
 class CannotResetURI(id: String) :
     ForbiddenOperationException("uri", "The class $id already has a URI. It is not allowed to change URIs.")
 
@@ -96,6 +100,12 @@ class URIAlreadyInUse(uri: String) :
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 class InvalidClassFilter(id: ClassId) :
     RuntimeException("The class $id cannot be included and excluded at the same time.")
+
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+class NameAlreadyExist(message: String) : ForbiddenOperationException("name", message)
+
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+class InvalidImage() : ForbiddenOperationException("image", "Please upload a valid image")
 
 /**
  * Base class for custom property validation.

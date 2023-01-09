@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.24.0] - 2023-01-09
+### Added
+- Support for conference series. (Closes: [#401](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/401))
+
 ## [0.23.2] - 2022-12-21
 ### Changed
 - Caches can now be configured individually (via [Coffee-Boots](https://github.com/stepio/coffee-boots)). (See: [!363](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/363))
@@ -240,7 +244,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.23.2...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.24.0...master
+[0.24.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.24.0
 [0.23.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.23.2
 [0.23.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.23.1
 [0.23.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.23.0

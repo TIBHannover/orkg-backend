@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.spi
 
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import io.kotest.assertions.asClue
@@ -10,6 +11,7 @@ import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import org.orkg.statements.testing.createClass
 import org.orkg.statements.testing.createLiteral
 import org.orkg.statements.testing.withCustomMappings
 import org.springframework.data.domain.PageRequest
@@ -155,7 +157,9 @@ fun <R : LiteralRepository> literalRepositoryContract(
     }
 
     it("delete all literals") {
-        val ids = (1L .. 3L).map(::LiteralId).onEach { repository.save( createLiteral(id = it)) }
+        repeat(3) {
+            repository.save(createLiteral(id = LiteralId(it.toLong())))
+        }
         // LiteralRepository has no count method
         repository.findAll(PageRequest.of(0, Int.MAX_VALUE)).totalElements shouldBe 3
         repository.deleteAll()

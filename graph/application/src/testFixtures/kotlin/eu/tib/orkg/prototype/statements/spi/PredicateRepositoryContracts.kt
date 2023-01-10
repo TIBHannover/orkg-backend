@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.spi
 
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
+import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import io.kotest.assertions.asClue
@@ -10,6 +11,7 @@ import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import org.orkg.statements.testing.createLiteral
 import org.orkg.statements.testing.createPredicate
 import org.orkg.statements.testing.withCustomMappings
 import org.springframework.data.domain.PageRequest
@@ -164,9 +166,9 @@ fun <R : PredicateRepository> predicateRepositoryContract(repository: R) = descr
     }
 
     it("delete all predicates") {
-        val ids = (1L..3L).map(::PredicateId).onEach { repository.save(
-            createPredicate(id = it)
-        ) }
+        repeat(3) {
+            repository.save(createPredicate(id = PredicateId(it.toLong())))
+        }
         // PredicateRepository has no count method
         repository.findAll(PageRequest.of(0, Int.MAX_VALUE)).totalElements shouldBe 3
         repository.deleteAll()

@@ -253,7 +253,9 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
     }
 
     it("delete all classes") {
-        val ids = (1L .. 3L).map(::ClassId).onEach { repository.save(createClass(id = it)) }
+        repeat(3) {
+            repository.save(createClass(id = ClassId(it.toLong())))
+        }
         // ClassRepository has no count method
         repository.findAll(PageRequest.of(0, Int.MAX_VALUE)).totalElements shouldBe 3
         repository.deleteAll()

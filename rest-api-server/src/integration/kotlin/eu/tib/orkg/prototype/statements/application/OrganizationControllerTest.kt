@@ -128,9 +128,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("homepage").description("The URL of the organization's homepage."),
             fieldWithPath("observatory_ids").description("The list of observatories that belong to this organization"),
             fieldWithPath("display_id").description("The URL of an organization"),
-            fieldWithPath("type").description(OrganizationType),
-            fieldWithPath("metadata.date").description("The date of the conference organization"),
-            fieldWithPath("metadata.is_double_blind").description("The review process type of the conference organization")
+            fieldWithPath("type").description(OrganizationType)
         )
 
         fun listOfOrganizationsResponseFields(): ResponseFieldsSnippet =

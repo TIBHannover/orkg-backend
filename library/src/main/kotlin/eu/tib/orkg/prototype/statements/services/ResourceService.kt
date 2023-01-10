@@ -562,6 +562,13 @@ class ResourceService(
         val result = neo4jSmartReviewRepository.findSmartReviewByResourceId(id)
         return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted ?: false
     }
+    override fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged { repository.findComparisonsByOrganizationId(id, pageable) }
+
+    override fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged { repository.findProblemsByOrganizationId(id, pageable) }
+
+    override fun hasStatements(id: ResourceId): Boolean = repository.checkIfResourceHasStatements(id)
 
     private fun setVerifiedFlag(resourceId: ResourceId, verified: Boolean) {
         val resource = repository.findByResourceId(resourceId).orElseThrow { ResourceNotFound(resourceId.value) }

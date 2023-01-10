@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.services.ObjectService.Constants.ID_DOI_PREDICATE
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
@@ -226,4 +227,12 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     // The return type has to be Iterable<Long> due to type erasure as java.lang.Long or Iterable<java.lang.Long> is
     // required by Spring, but we want to use kotlin.Long whenever possible
     fun deleteByResourceId(id: ResourceId): Iterable<Long>
+
+    @Query(value = """MATCH (n:Comparison {organization_id: $id }) RETURN n""",
+        countQuery = """MATCH (n:Comparison {organization_id: $id }) RETURN COUNT(n)""")
+    fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Neo4jResource>
+
+    @Query(value = """MATCH (n:Comparison {organization_id: $id })-[r:RELATED {predicate_id: 'compareContribution'}]->(rc:Contribution)-[rr:RELATED {predicate_id: 'P32'}]->(p:Problem) RETURN DISTINCT p""",
+        countQuery = """MATCH (n:Comparison {organization_id: $id })-[r:RELATED {predicate_id: 'compareContribution'}]->(rc:Contribution)-[rr:RELATED {predicate_id: 'P32'}]->(p:Problem) RETURN count(DISTINCT p)""")
+    fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Neo4jResource>
 }

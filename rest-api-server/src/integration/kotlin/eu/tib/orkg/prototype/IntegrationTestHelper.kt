@@ -7,6 +7,8 @@ import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.net.URI
@@ -36,12 +38,12 @@ fun CreateClassUseCase.createClass(
 
 fun CreatePredicateUseCase.createPredicates(vararg predicates: Pair<String, String>) =
     predicates.forEach {
-        createPredicate(id = it.first, label = it.second)
+        createPredicate(label = it.second, id = it.first)
     }
 
 fun CreatePredicateUseCase.createPredicates(vararg predicates: String) =
     predicates.forEach {
-        createPredicate(id = it, label = it)
+        createPredicate(label = it, id = it)
     }
 
 fun CreatePredicateUseCase.createPredicate(
@@ -65,4 +67,22 @@ fun CreateResourceUseCase.createResource(
         extractionMethod = extractionMethod ?: ExtractionMethod.UNKNOWN
     )
     return this.create(request).id
+}
+
+fun CreateResourceUseCase.createResource(
+    classes: Set<String> = setOf(),
+    id: String? = null,
+    label: String? = null,
+    extractionMethod: ExtractionMethod? = null,
+    userId: ContributorId = ContributorId.createUnknownContributor(),
+    observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
+    organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
+): ResourceId {
+    val request = CreateResourceRequest(
+        id = Optional.ofNullable(id).map(::ResourceId).orElse(null),
+        label = label ?: "label",
+        classes = classes.map(::ClassId).toSet(),
+        extractionMethod = extractionMethod ?: ExtractionMethod.UNKNOWN
+    )
+    return this.create(userId, request, observatoryId, request.extractionMethod, organizationId).id
 }

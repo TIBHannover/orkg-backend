@@ -44,13 +44,16 @@ fun CreatePredicateUseCase.createPredicates(vararg predicates: String) =
         createPredicate(id = it, label = it)
     }
 
-fun CreatePredicateUseCase.createPredicate(id: String, label: String): PredicateId =
+fun CreatePredicateUseCase.createPredicate(
+    label: String,
+    id: String? = null
+): PredicateId =
     this.create(CreatePredicateUseCase.CreateCommand(label, id, ContributorId.createUnknownContributor()))
 
 // Resources
 
 fun CreateResourceUseCase.createResource(
-    classes: Set<String>,
+    classes: Set<String> = setOf(),
     id: String? = null,
     label: String? = null,
     extractionMethod: ExtractionMethod? = null

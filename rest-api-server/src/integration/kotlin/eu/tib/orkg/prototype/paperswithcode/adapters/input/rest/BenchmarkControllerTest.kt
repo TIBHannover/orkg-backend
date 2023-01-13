@@ -105,7 +105,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         classService.createClasses("Paper", "Problem", "ResearchField", "Contribution")
 
         if (!flags.isPapersWithCodeLegacyModelEnabled()) {
-            predicateService.createPredicate(labelsAndClasses.numericValuePredicate, "Has numeric value")
+            predicateService.createPredicate(id = labelsAndClasses.numericValuePredicate, label = "Has numeric value")
 
             classService.createClass(
                 labelsAndClasses.quantityClass,

@@ -2,13 +2,14 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
+import eu.tib.orkg.prototype.createClasses
+import eu.tib.orkg.prototype.createObservatory
+import eu.tib.orkg.prototype.createOrganization
+import eu.tib.orkg.prototype.createResource
+import eu.tib.orkg.prototype.createUser
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationType
 import eu.tib.orkg.prototype.statements.services.ClassService
@@ -58,13 +59,13 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
         assertThat(resourceService.findAll(PageRequest.of(0, 10))).hasSize(0)
         assertThat(classService.findAll(PageRequest.of(0, 10))).hasSize(0)
 
-        classService.create(CreateClassRequest(ClassId("ResearchField"), "ResearchField", null))
+        classService.createClasses("ResearchField")
     }
 
     @Test
     fun index() {
-        val userId = createTestUser()
-        service.create("test organization", userId, "www.example.org", "organization-test", OrganizationType.GENERAL)
+        val userId = userService.createUser()
+        service.createOrganization(createdBy = ContributorId(userId))
 
         mockMvc
             .perform(getRequestTo("/api/organizations/"))
@@ -79,7 +80,8 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun fetch() {
-        val organizationId = service.create("test organization", ContributorId.createUnknownContributor(), "www.example.org", "test-organization", OrganizationType.GENERAL).id
+        val userId = userService.createUser()
+        val organizationId = service.createOrganization(createdBy = ContributorId(userId))
 
         mockMvc
             .perform(getRequestTo("/api/organizations/$organizationId"))
@@ -94,10 +96,12 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookUpObservatoriesByOrganization() {
-        val userId = createTestUser()
-        val organizationId = service.create("test organization", userId, "www.example.org", "organization_test", OrganizationType.GENERAL).id
-        val resource = createTestResource(ContributorId.createUnknownContributor(), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
-        observatoryService.create("test observatory", "example description", service.findById(organizationId!!).get(), resource.id.toString(), "test_observatory").id!!
+        val userId = userService.createUser()
+        val organizationId = service.createOrganization(createdBy = ContributorId(userId))
+        val researchField = resourceService.createResource(
+            classes = setOf("ResearchField")
+        )
+        observatoryService.createObservatory(organizationId, researchField)
 
         mockMvc
             .perform(getRequestTo("/api/organizations/$organizationId/observatories"))
@@ -108,15 +112,6 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
                     ObservatoryControllerTest.listOfObservatoriesResponseFields()
                 )
             )
-    }
-
-    fun createTestUser(): ContributorId {
-        userService.registerUser("abc@gmail.com", "123456", "Test user")
-        return ContributorId(userService.findByEmail("abc@gmail.com").get().id!!)
-    }
-
-    fun createTestResource(userId: ContributorId, organizationId: OrganizationId, observatoryId: ObservatoryId, resourceType: String): ResourceRepresentation {
-        return resourceService.create(userId, CreateResourceRequest(null, "test paper", setOf(ClassId(resourceType))), observatoryId, ExtractionMethod.UNKNOWN, organizationId)
     }
 
     companion object RestDoc {

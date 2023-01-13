@@ -3,13 +3,13 @@ package eu.tib.orkg.prototype.statements.application
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
 import eu.tib.orkg.prototype.statements.services.StatisticsService
 import java.util.*
@@ -37,7 +37,6 @@ import org.springframework.web.util.UriComponentsBuilder
 class ObservatoryController(
     private val service: ObservatoryService,
     private val resourceService: ResourceUseCases,
-    private val organizationService: OrganizationService,
     private val contributorService: ContributorService,
     private val statisticsService: StatisticsService
 ) {
@@ -49,11 +48,10 @@ class ObservatoryController(
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<Any> {
         return if (service.findByName(observatory.observatoryName).isEmpty && service.findByDisplayId(observatory.displayId).isEmpty) {
-            val organizationEntity = organizationService.findById(observatory.organizationId)
             val id = service.create(
                 observatory.observatoryName,
                 observatory.description,
-                organizationEntity.get(),
+                observatory.organizationId,
                 observatory.researchField,
                 observatory.displayId
             ).id
@@ -207,7 +205,7 @@ class ObservatoryController(
         val organizationId: OrganizationId,
         val description: String,
         @JsonProperty("research_field")
-        val researchField: String,
+        val researchField: ResourceId,
         @field:Pattern(
             regexp = "^[a-zA-Z0-9_]+$",
             message = "Only underscores ( _ ), numbers, and letters are allowed in the permalink field"

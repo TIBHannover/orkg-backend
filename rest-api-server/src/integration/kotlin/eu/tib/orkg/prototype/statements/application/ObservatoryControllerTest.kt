@@ -2,20 +2,18 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.createClasses
+import eu.tib.orkg.prototype.createObservatory
+import eu.tib.orkg.prototype.createOrganization
+import eu.tib.orkg.prototype.createResource
+import eu.tib.orkg.prototype.createUser
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.Observatory
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationType
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize
-import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -62,19 +60,17 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
         assertThat(service.listOrganizations()).hasSize(0)
         assertThat(classService.findAll(PageRequest.of(0, 10))).hasSize(0)
 
-        classService.create(CreateClassRequest(ClassId("ResearchField"), "ResearchField", null))
-        classService.create(CreateClassRequest(ClassId("Paper"), "Paper", null))
-        classService.create(CreateClassRequest(ClassId("Comparison"), "Comparison", null))
-        classService.create(CreateClassRequest(ClassId("Problem"), "Problem", null))
-        classService.create(CreateClassRequest(ClassId("SomeClass"), "SomeClass", null))
+        classService.createClasses("ResearchField", "Paper", "Comparison", "Problem", "SomeClass")
     }
 
     @Test
     fun index() {
-        val userId = createTestUser()
-        val organizationId = createTestOrganization(userId)
-        val resource = createTestResource(ContributorId.createUnknownContributor(), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
-        createTestObservatory(organizationId, resource.id.toString())
+        val userId = userService.createUser()
+        val organizationId = service.createOrganization(createdBy = ContributorId(userId))
+        val researchField = resourceService.createResource(
+            classes = setOf("ResearchField")
+        )
+        observatoryService.createObservatory(organizationId, researchField)
 
         mockMvc
             .perform(getRequestTo("/api/observatories/"))
@@ -89,10 +85,12 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun fetch() {
-        val userId = createTestUser()
-        val organizationId = createTestOrganization(userId)
-        val resource = createTestResource(ContributorId.createUnknownContributor(), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
-        val observatoryId = createTestObservatory(organizationId, resource.id.toString()).id
+        val userId = userService.createUser()
+        val organizationId = service.createOrganization(createdBy = ContributorId(userId))
+        val researchField = resourceService.createResource(
+            classes = setOf("ResearchField")
+        )
+        val observatoryId = observatoryService.createObservatory(organizationId, researchField)
 
         mockMvc
             .perform(getRequestTo("/api/observatories/$observatoryId"))
@@ -107,11 +105,17 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookUpPapersByObservatoryId() {
-        val userId = createTestUser()
-        val organizationId = createTestOrganization(userId)
-        val resource = createTestResource(ContributorId.createUnknownContributor(), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
-        val observatoryId = createTestObservatory(organizationId, resource.id.toString()).id!!
-        createTestResource(userId, organizationId, observatoryId, "Paper")
+        val userId = userService.createUser()
+        val organizationId = service.createOrganization(createdBy = ContributorId(userId))
+        val researchField = resourceService.createResource(
+            classes = setOf("ResearchField")
+        )
+        val observatoryId = observatoryService.createObservatory(organizationId, researchField)
+        resourceService.createResource(
+            classes = setOf("Paper"),
+            organizationId = organizationId,
+            observatoryId = observatoryId
+        )
 
         mockMvc
             .perform(getRequestTo("/api/observatories/$observatoryId/papers"))
@@ -127,11 +131,17 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookUpComparisonsByObservatoryId() {
-        val userId = createTestUser()
-        val organizationId = createTestOrganization(userId)
-        val resource = createTestResource(ContributorId.createUnknownContributor(), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
-        val observatoryId = createTestObservatory(organizationId, resource.id.toString()).id!!
-        createTestResource(userId, organizationId, observatoryId, "Comparison")
+        val userId = userService.createUser()
+        val organizationId = service.createOrganization(createdBy = ContributorId(userId))
+        val researchField = resourceService.createResource(
+            classes = setOf("ResearchField")
+        )
+        val observatoryId = observatoryService.createObservatory(organizationId, researchField)
+        resourceService.createResource(
+            classes = setOf("Comparison"),
+            organizationId = organizationId,
+            observatoryId = observatoryId
+        )
 
         mockMvc
             .perform(getRequestTo("/api/observatories/$observatoryId/comparisons"))
@@ -147,11 +157,17 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookUpProblemsByObservatoryId() {
-        val userId = createTestUser()
-        val organizationId = createTestOrganization(userId)
-        val resource = createTestResource(ContributorId.createUnknownContributor(), OrganizationId.createUnknownOrganization(), ObservatoryId.createUnknownObservatory(), "ResearchField")
-        val observatoryId = createTestObservatory(organizationId, resource.id.toString()).id!!
-        createTestResource(userId, organizationId, observatoryId, "Problem")
+        val userId = userService.createUser()
+        val organizationId = service.createOrganization(createdBy = ContributorId(userId))
+        val researchField = resourceService.createResource(
+            classes = setOf("ResearchField")
+        )
+        val observatoryId = observatoryService.createObservatory(organizationId, researchField)
+        resourceService.createResource(
+            classes = setOf("Problem"),
+            organizationId = organizationId,
+            observatoryId = observatoryId
+        )
 
         mockMvc
             .perform(getRequestTo("/api/observatories/$observatoryId/problems"))
@@ -167,65 +183,44 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookUpByObservatoryIdAndClassAndNotFeatured() {
-        val userId = createTestUser()
-        val organizationId = createTestOrganization(userId)
-        val resource = createTestResource(
-            ContributorId.createUnknownContributor(),
-            OrganizationId.createUnknownOrganization(),
-            ObservatoryId.createUnknownObservatory(),
-            "ResearchField"
+        val userId = userService.createUser()
+        val organizationId = service.createOrganization(createdBy = ContributorId(userId))
+        val researchField = resourceService.createResource(
+            classes = setOf("ResearchField")
         )
-        val observatoryId = createTestObservatory(organizationId, resource.id.toString()).id!!
-        val resourceId = createTestResource(userId, organizationId, observatoryId, "SomeClass").id.value
+        val observatoryId = observatoryService.createObservatory(organizationId, researchField)
+        val resourceId = resourceService.createResource(
+            classes = setOf("SomeClass"),
+            organizationId = organizationId,
+            observatoryId = observatoryId
+        )
 
         mockMvc
             .perform(getRequestTo("/api/observatories/$observatoryId/class?classes=SomeClass"))
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
-            .andExpect(jsonPath("$.content[0].id", `is`(resourceId)))
+            .andExpect(jsonPath("$.content[0].id").value(resourceId.value))
             .andExpect(status().isOk)
     }
 
     @Test
     fun lookUpByObservatoryIdAndClassAndFeatured() {
-        val userId = createTestUser()
-        val organizationId = createTestOrganization(userId)
-        val resource = createTestResource(
-            ContributorId.createUnknownContributor(),
-            OrganizationId.createUnknownOrganization(),
-            ObservatoryId.createUnknownObservatory(),
-            "ResearchField"
+        val userId = userService.createUser()
+        val organizationId = service.createOrganization(createdBy = ContributorId(userId))
+        val researchField = resourceService.createResource(
+            classes = setOf("ResearchField")
         )
-        val observatoryId = createTestObservatory(organizationId, resource.id.toString()).id!!
-        createTestResource(userId, organizationId, observatoryId, "SomeClass")
+        val observatoryId = observatoryService.createObservatory(organizationId, researchField)
+        resourceService.createResource(
+            classes = setOf("SomeClass"),
+            organizationId = organizationId,
+            observatoryId = observatoryId
+        )
 
         mockMvc
             .perform(getRequestTo("/api/observatories/$observatoryId/class?classes=SomeClass&featured=true"))
             .andExpect(jsonPath("$.content", hasSize<Int>(0)))
             .andExpect(status().isOk)
     }
-
-    fun createTestUser(): ContributorId {
-        userService.registerUser("abc@gmail.com", "123456", "Test user")
-        return ContributorId(userService.findByEmail("abc@gmail.com").get().id!!)
-    }
-
-    fun createTestOrganization(userId: ContributorId): OrganizationId {
-        return service.create("test organization", userId, "www.example.org", "test_organization", OrganizationType.GENERAL).id!!
-    }
-
-    fun createTestObservatory(organizationId: OrganizationId, resourceId: String): Observatory {
-        return observatoryService.create("test observatory", "example description", service.findById(organizationId).get(), resourceId, "test-observatory")
-    }
-
-    fun createTestResource(userId: ContributorId, organizationId: OrganizationId, observatoryId: ObservatoryId, resourceType: String): ResourceRepresentation {
-        return resourceService.create(userId, CreateResourceRequest(null, "test paper", setOf(ClassId(resourceType))), observatoryId, ExtractionMethod.UNKNOWN, organizationId)
-    }
-
-    fun listOfObservatoriesResponseFields2(): ResponseFieldsSnippet =
-        responseFields(
-            pageableDetailedFieldParameters()
-        ).andWithPrefix("content[].", observatoryResponseFields())
-            .andWithPrefix("")
 
     companion object RestDoc {
         private fun observatoryResponseFields() = listOf(

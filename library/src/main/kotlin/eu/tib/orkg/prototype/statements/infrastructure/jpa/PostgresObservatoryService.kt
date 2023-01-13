@@ -4,7 +4,6 @@ import eu.tib.orkg.prototype.statements.application.OrganizationNotFound
 import eu.tib.orkg.prototype.statements.domain.model.Observatory
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
-import eu.tib.orkg.prototype.statements.domain.model.Organization
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
@@ -22,16 +21,16 @@ class PostgresObservatoryService(
     private val postgresOrganizationRepository: PostgresOrganizationRepository,
     private val resourceService: ResourceUseCases
 ) : ObservatoryService {
-    override fun create(name: String, description: String, organization: Organization, researchField: String, displayId: String): Observatory {
+    override fun create(name: String, description: String, organizationId: OrganizationId, researchField: ResourceId, displayId: String): Observatory {
         val oId = UUID.randomUUID()
         val org = postgresOrganizationRepository
-            .findById(organization.id!!.value)
-            .orElseThrow { OrganizationNotFound(organization.id) } // FIXME: should always have an ID
+            .findById(organizationId.value)
+            .orElseThrow { OrganizationNotFound(organizationId) } // FIXME: should always have an ID
         val newObservatory = ObservatoryEntity().apply {
             id = oId
             this.name = name
             this.description = description
-            this.researchField = researchField
+            this.researchField = researchField.value
             organizations = mutableSetOf(org)
             this.displayId = displayId
         }

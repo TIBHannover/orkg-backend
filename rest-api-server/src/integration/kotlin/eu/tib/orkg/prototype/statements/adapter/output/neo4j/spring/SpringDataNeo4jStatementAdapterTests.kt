@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.createStatement
+import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
@@ -105,7 +106,7 @@ class SpringDataNeo4jStatementAdapterTests : Neo4jTestContainersBaseTest() {
                 `object` = resources[Random.nextInt(0, resources.size)],
             ).copy(id = StatementId(it))
         }
-        statements.forEach { statement ->
+        statements.forEach { statement: GeneralStatement ->
             adapter.save(statement)
         }
 

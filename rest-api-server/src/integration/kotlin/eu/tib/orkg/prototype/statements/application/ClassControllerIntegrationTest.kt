@@ -1,10 +1,10 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.createClass
+import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.net.URI
 import net.minidev.json.JSONArray
@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Class Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-class ClassControllerTest : RestDocumentationBaseTest() {
+class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var service: ClassUseCases
@@ -53,8 +53,8 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun index() {
-        service.create("research contribution")
-        service.create("programming language")
+        service.createClass(label = "research contribution")
+        service.createClass(label = "programming language")
 
         mockMvc
             .perform(getRequestTo("/api/classes/"))
@@ -69,7 +69,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun fetch() {
-        val id = service.create("research contribution").id
+        val id = service.createClass(label = "research contribution")
 
         mockMvc
             .perform(getRequestTo("/api/classes/$id"))
@@ -85,16 +85,19 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     @Test
     fun fetchByURI() {
         // Arrange
-        service.create(CreateClassRequest(ClassId("dummy"), "dummy label", URI.create("http://example.org/exists")))
+        val id = "dummy"
+        val label = "dummy label"
+        val uri = URI.create("http://example.org/exists")
+        service.createClass(id = id, label = label, uri = uri)
 
         // Act and Assert
         mockMvc
             .perform(getRequestTo("/api/classes/?uri=http://example.org/exists"))
             .andExpect(status().isOk)
             .andDo(MockMvcResultHandlers.print())
-            .andExpect(jsonPath("\$.id").value("dummy"))
-            .andExpect(jsonPath("\$.label").value("dummy label"))
-            .andExpect(jsonPath("\$.uri").value("http://example.org/exists"))
+            .andExpect(jsonPath("$.id").value(id))
+            .andExpect(jsonPath("$.label").value(label))
+            .andExpect(jsonPath("$.uri").value(uri.toString()))
             .andDo(
                 document(
                     snippet,
@@ -105,8 +108,8 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookupByIds() {
-        val id1 = service.create("class1").id
-        val id2 = service.create("class2").id
+        val id1 = service.createClass(label = "class1")
+        val id2 = service.createClass(label = "class2")
 
         mockMvc
             .perform(getRequestTo("/api/classes/?ids=$id1,$id2"))
@@ -145,8 +148,8 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun addExistingId() {
-        service.create(CreateClassRequest(id = ClassId("dummy"), label = "foo", uri = null))
-        val duplicateClass = mapOf("label" to "bar", "id" to "dummy")
+        val id = service.createClass(label = "foo")
+        val duplicateClass = mapOf("label" to "bar", "id" to "$id")
 
         mockMvc
             .perform(postRequestWithBody("/api/classes/", duplicateClass))
@@ -165,12 +168,9 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun addExistingURI() {
-        service.create(
-            CreateClassRequest(
-                id = ClassId("some-id"),
-                label = "foo",
-                uri = URI.create("http://example.org/in-use")
-            )
+        service.createClass(
+            label = "foo",
+            uri = URI.create("http://example.org/in-use")
         )
         val duplicateClass = mapOf(
             "label" to "bar",
@@ -212,9 +212,9 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookup() {
-        service.create("research contribution")
-        service.create("programming language")
-        service.create("research topic")
+        service.createClass(label = "research contribution")
+        service.createClass(label = "programming language")
+        service.createClass(label = "research topic")
 
         mockMvc
             .perform(getRequestTo("/api/classes/?q=research"))
@@ -232,9 +232,9 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookupWithSpecialChars() {
-        service.create("research contribution")
-        service.create("programming language (PL)")
-        service.create("research topic")
+        service.createClass(label = "research contribution")
+        service.createClass(label = "programming language (PL)")
+        service.createClass(label = "research topic")
 
         mockMvc
             .perform(getRequestTo("/api/classes/?q=PL)"))
@@ -252,10 +252,16 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookupByClass() {
-        val id = service.create("research contribution").id
-        val set = listOf(id).toSet()
-        resourceService.create(CreateResourceRequest(null, "Contribution 1", set))
-        resourceService.create(CreateResourceRequest(null, "Contribution 2", set))
+        val id = service.createClass(label = "research contribution")
+        val classes = setOf(id.value)
+        resourceService.createResource(
+            classes = classes,
+            label = "Contribution 1"
+        )
+        resourceService.createResource(
+            classes = classes,
+            label = "Contribution 2"
+        )
 
         mockMvc
             .perform(getRequestTo("/api/classes/$id/resources/"))
@@ -272,22 +278,22 @@ class ClassControllerTest : RestDocumentationBaseTest() {
     @Disabled("This test reproduces the problem, but is easy to fix at the moment. We also changes the domain rules for labels, see #347.")
     fun lookupResourcesForClass() {
         // Given several research problems with the same name
-        val classId = service.create("research problem").id
-        val set = listOf(classId).toSet()
-        val resources = mutableListOf<ResourceRepresentation>()
+        val classId = service.createClass(label = "research problem")
+        val classes = setOf(classId.value)
+        val resources = mutableListOf<ResourceId>()
         // The regular resource
-        resources += resourceService.create(CreateResourceRequest(null, "Testing the Darwin's naturalisation hypothesis in invasion biology", set))
+        resources += resourceService.createResource(
+            classes = classes,
+            label = "Testing the Darwin's naturalisation hypothesis in invasion biology"
+        )
         repeat(5) {
-            resources += resourceService.create(
+            resources += resourceService.createResource(
                 // Other resources, but containing line breaks
-                CreateResourceRequest(
-                    null,
-                    "Testing the Darwin's naturalisation hypothesis in invasion biology\n",
-                    set
-                )
+                classes = classes,
+                label = "Testing the Darwin's naturalisation hypothesis in invasion biology\n"
             )
         }
-        val expectedIds = resources.map(ResourceRepresentation::id).map(ResourceId?::toString).reversed().toJSONArray()
+        val expectedIds = resources.map(ResourceId::toString).reversed().toJSONArray()
 
         // When queried, should return all of them
         val query = "Testing the Darwin"
@@ -301,9 +307,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun replaceLabel() {
-        val classId =
-            service.create(CreateClassRequest(id = null, label = "foo", uri = URI("https://example.org/foo"))).id
-
+        val classId = service.createClass(label = "foo", uri = URI("https://example.org/foo"))
         val newLabel = "bar"
         val resource = mapOf("label" to newLabel, "uri" to "https://example.org/foo")
 
@@ -325,8 +329,7 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun replaceLabelAndURI() {
-        val classId = service.create(CreateClassRequest(id = null, label = "foo", uri = null)).id
-
+        val classId = service.createClass(label = "foo")
         val newLabel = "new label"
         val resource = mapOf("label" to newLabel, "uri" to "https://orkg.org/entity/foo")
 
@@ -348,11 +351,11 @@ class ClassControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookupByClassAndLabel() {
-        val id = service.create("research contribution").id
-        val set = listOf(id).toSet()
-        resourceService.create(CreateResourceRequest(null, "Math Contribution 1", set))
-        resourceService.create(CreateResourceRequest(null, "Physics Contribution1", set))
-        resourceService.create(CreateResourceRequest(null, "Math Contribution 2", set))
+        val id = service.createClass(label = "research contribution")
+        val classes = setOf(id.value)
+        resourceService.createResource(classes, label = "Math Contribution 1")
+        resourceService.createResource(classes, label = "Physics Contribution 1")
+        resourceService.createResource(classes, label = "Math Contribution 2")
 
         mockMvc
             .perform(getRequestTo("/api/classes/$id/resources/?q=Math"))

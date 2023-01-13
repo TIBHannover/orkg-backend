@@ -25,8 +25,8 @@ fun CreateClassUseCase.createClasses(vararg classes: String) =
     }
 
 fun CreateClassUseCase.createClass(
-    id: String,
     label: String,
+    id: String? = null,
     contributorId: ContributorId? = null,
     uri: URI? = null
 ): ClassId =

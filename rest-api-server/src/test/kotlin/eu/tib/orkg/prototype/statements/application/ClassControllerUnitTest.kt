@@ -50,7 +50,7 @@ internal const val INVALID_URI = "invalid\nuri"
 @WebMvcTest(controllers = [ClassController::class])
 @AuthorizationServerUnitTestWorkaround
 @DisplayName("Given a Class controller")
-internal class ClassControllerTest {
+internal class ClassControllerUnitTest {
 
     private lateinit var mockMvc: MockMvc
 

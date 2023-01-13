@@ -1,11 +1,13 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.createClass
+import eu.tib.orkg.prototype.createClasses
+import eu.tib.orkg.prototype.createPredicate
+import eu.tib.orkg.prototype.createPredicates
+import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -52,18 +54,24 @@ class StatsControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun index() {
-        classService.create(CreateClassRequest(ClassId("Paper"), "Paper", null))
-        classService.create("Awesome class")
-        resourceService.create(CreateResourceRequest(ResourceId("R11"), "Research field", setOf()))
-        resourceService.create("Python")
-        resourceService.create("C#")
-        resourceService.create(CreateResourceRequest(null, "Paper 212", setOf(ClassId("Paper"))))
-        resourceService.create(CreateResourceRequest(null, "Paper 222", setOf(ClassId("Paper"))))
-        resourceService.create(CreateResourceRequest(null, "Paper 432", setOf(ClassId("Paper"))))
-        predicateService.create("DOI")
-        predicateService.create("yields")
-        predicateService.create(CreatePredicateRequest(PredicateId("P32"), "has research problem"))
-        predicateService.create(CreatePredicateRequest(PredicateId("P31"), "has contribution"))
+        classService.createClasses("Paper")
+        classService.createClass(label = "Awesome class")
+        resourceService.createResource(
+            id = "R11",
+            label = "Research field"
+        )
+        resourceService.createResource(label = "Python")
+        resourceService.createResource(label = "C#")
+        resourceService.createResource(classes = setOf("Paper"), label = "Paper 212")
+        resourceService.createResource(classes = setOf("Paper"), label = "Paper 222")
+        resourceService.createResource(classes = setOf("Paper"), label = "Paper 432")
+
+        predicateService.createPredicates(
+            "P32" to "has research problem",
+            "P31" to "has contribution"
+        )
+        predicateService.createPredicate(label = "DOI")
+        predicateService.createPredicate(label = "yields")
         literalService.create("Springer")
         literalService.create("ORKG rocks")
         literalService.create("Out of this world")

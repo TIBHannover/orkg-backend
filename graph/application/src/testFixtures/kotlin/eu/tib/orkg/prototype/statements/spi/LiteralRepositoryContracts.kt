@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype.statements.spi
 
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import io.kotest.assertions.asClue
@@ -11,7 +10,6 @@ import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import org.orkg.statements.testing.createClass
 import org.orkg.statements.testing.createLiteral
 import org.orkg.statements.testing.withCustomMappings
 import org.springframework.data.domain.PageRequest

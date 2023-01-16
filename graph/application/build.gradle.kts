@@ -4,6 +4,7 @@
 plugins {
     id("org.orkg.kotlin-conventions")
     id("java-test-fixtures")
+    alias(libs.plugins.spotless)
 }
 
 dependencies {

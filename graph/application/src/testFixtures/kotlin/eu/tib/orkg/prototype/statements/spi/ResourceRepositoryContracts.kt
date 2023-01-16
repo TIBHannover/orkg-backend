@@ -14,16 +14,11 @@ import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.kotest.property.Arb
-import io.kotest.property.Exhaustive
-import io.kotest.property.arbitrary.bind
-import io.kotest.property.exhaustive.exhaustive
 import kotlin.math.ceil
 import org.orkg.statements.testing.createResource
 import org.orkg.statements.testing.random
 import org.orkg.statements.testing.withCustomMappings
 import org.springframework.data.domain.PageRequest
-import org.testcontainers.shaded.com.google.common.collect.Lists
 
 fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describeSpec {
     beforeTest {

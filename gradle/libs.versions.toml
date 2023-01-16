@@ -2,6 +2,7 @@
 forkhandles = "2.0.0.0"
 kotest = "5.4.0"
 testcontainers = "1.17.3"
+spotless = "6.2.1"
 spring-boot = "2.3.4.RELEASE"
 spring-dependency-management = "1.0.11.RELEASE"
 
@@ -32,5 +33,6 @@ kotest = ["kotest-runner", "kotest-assertions-core", "kotest-property", "kotest-
 testcontainers = ["testcontainers-core", "testcontainers-junit5", "testcontainers-postgresql", "testcontainers-neo4j"]
 
 [plugins]
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }

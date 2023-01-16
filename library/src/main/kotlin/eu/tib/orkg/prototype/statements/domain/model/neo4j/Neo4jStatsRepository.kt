@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

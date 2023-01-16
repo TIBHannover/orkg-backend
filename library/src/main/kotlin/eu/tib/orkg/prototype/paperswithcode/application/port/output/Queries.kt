@@ -4,9 +4,8 @@ import eu.tib.orkg.prototype.paperswithcode.application.domain.BenchmarkSummary
 import eu.tib.orkg.prototype.paperswithcode.application.domain.Dataset
 import eu.tib.orkg.prototype.paperswithcode.application.domain.DatasetSummary
 import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
-import eu.tib.orkg.prototype.statements.domain.model.ResearchField
+import eu.tib.orkg.prototype.community.domain.model.ResearchField
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import java.util.*
 
 interface SummarizeBenchmarkQuery {
     fun byResearchField(id: ResourceId): List<BenchmarkSummary>

@@ -1,10 +1,11 @@
-package eu.tib.orkg.prototype.statements.domain.model.jpa
+package eu.tib.orkg.prototype.community.adapter.output.jpa.internal
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
-import eu.tib.orkg.prototype.statements.domain.model.Observatory
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.Observatory
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
-import eu.tib.orkg.prototype.statements.domain.model.ResearchField
+import eu.tib.orkg.prototype.community.domain.model.ResearchField
+import eu.tib.orkg.prototype.statements.domain.model.jpa.OrganizationEntity
 import java.util.UUID
 import javax.persistence.CascadeType
 import javax.persistence.Column

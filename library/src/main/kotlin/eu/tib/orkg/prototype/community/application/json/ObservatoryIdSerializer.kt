@@ -1,9 +1,9 @@
-package eu.tib.orkg.prototype.statements.application.json
+package eu.tib.orkg.prototype.community.application.json
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 
 class ObservatoryIdSerializer : JsonSerializer<ObservatoryId>() {
     override fun serialize(

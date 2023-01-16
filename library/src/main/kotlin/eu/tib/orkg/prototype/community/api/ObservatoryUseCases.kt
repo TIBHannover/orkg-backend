@@ -1,7 +1,11 @@
-package eu.tib.orkg.prototype.statements.domain.model
+package eu.tib.orkg.prototype.community.api
+import eu.tib.orkg.prototype.community.domain.model.Observatory
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.util.Optional
 
-interface ObservatoryService {
+interface ObservatoryUseCases {
     /**
      * Create a new observatory with a given name.
      */

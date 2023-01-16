@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.api
 
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
-import eu.tib.orkg.prototype.statements.domain.model.ResearchField
+import eu.tib.orkg.prototype.community.domain.model.ResearchField
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.util.Optional
 import org.springframework.data.domain.Page

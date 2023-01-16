@@ -1,13 +1,13 @@
-package eu.tib.orkg.prototype.statements.infrastructure.jpa
+package eu.tib.orkg.prototype.community.services
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.application.OrganizationNotFound
-import eu.tib.orkg.prototype.statements.domain.model.Observatory
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
+import eu.tib.orkg.prototype.community.domain.model.Observatory
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.jpa.ObservatoryEntity
-import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresObservatoryRepository
+import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.ObservatoryEntity
+import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresObservatoryRepository
 import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresOrganizationRepository
 import java.util.Optional
 import java.util.UUID
@@ -20,7 +20,7 @@ class PostgresObservatoryService(
     private val postgresObservatoryRepository: PostgresObservatoryRepository,
     private val postgresOrganizationRepository: PostgresOrganizationRepository,
     private val resourceService: ResourceUseCases
-) : ObservatoryService {
+) : ObservatoryUseCases {
     override fun create(name: String, description: String, organizationId: OrganizationId, researchField: ResourceId, displayId: String): Observatory {
         val oId = UUID.randomUUID()
         val org = postgresOrganizationRepository
@@ -45,7 +45,7 @@ class PostgresObservatoryService(
             .map(::expand)
 
     override fun findObservatoriesByOrganizationId(id: OrganizationId): List<Observatory> =
-        postgresObservatoryRepository.findByorganizationsId(id.value)
+        postgresObservatoryRepository.findByOrganizationsId(id.value)
             .map(ObservatoryEntity::toObservatory)
             .map(::expand)
 

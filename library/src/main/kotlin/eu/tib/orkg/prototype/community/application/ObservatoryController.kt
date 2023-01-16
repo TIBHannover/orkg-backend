@@ -1,13 +1,13 @@
-package eu.tib.orkg.prototype.statements.application
+package eu.tib.orkg.prototype.community.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.domain.model.Observatory
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
+import eu.tib.orkg.prototype.community.domain.model.Observatory
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
@@ -35,7 +35,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RestController
 @RequestMapping("/api/observatories/")
 class ObservatoryController(
-    private val service: ObservatoryService,
+    private val service: ObservatoryUseCases,
     private val resourceService: ResourceUseCases,
     private val contributorService: ContributorService,
     private val statisticsService: StatisticsService

@@ -1,6 +1,7 @@
-package eu.tib.orkg.prototype.statements.application
+package eu.tib.orkg.prototype.community.application
 
 import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.createClasses
 import eu.tib.orkg.prototype.createObservatory
@@ -9,23 +10,22 @@ import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.createUser
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.application.ResourceControllerTest
+import eu.tib.orkg.prototype.statements.application.RestDocumentationBaseTest
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
-import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.Matchers.hasSize
+import org.assertj.core.api.Assertions.*
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*
+import org.springframework.restdocs.payload.PayloadDocumentation.*
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.transaction.annotation.Transactional
 
 @DisplayName("Observatory Controller")
@@ -40,7 +40,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     private lateinit var service: OrganizationService
 
     @Autowired
-    private lateinit var observatoryService: ObservatoryService
+    private lateinit var observatoryService: ObservatoryUseCases
 
     @Autowired
     private lateinit var resourceService: ResourceUseCases

@@ -1,8 +1,10 @@
-package eu.tib.orkg.prototype.statements.domain.model.jpa
+package eu.tib.orkg.prototype.community.domain.model.jpa
 
+import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.ObservatoryEntity
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
-import java.util.UUID
-import org.assertj.core.api.Assertions.assertThat
+import eu.tib.orkg.prototype.statements.domain.model.jpa.OrganizationEntity
+import java.util.*
+import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test

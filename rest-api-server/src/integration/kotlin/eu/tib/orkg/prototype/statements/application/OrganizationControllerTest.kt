@@ -9,7 +9,8 @@ import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.createUser
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
+import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
+import eu.tib.orkg.prototype.community.application.ObservatoryControllerTest
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationType
 import eu.tib.orkg.prototype.statements.services.ClassService
@@ -39,7 +40,7 @@ class OrganizationControllerTest : RestDocumentationBaseTest() {
     private lateinit var service: OrganizationService
 
     @Autowired
-    private lateinit var observatoryService: ObservatoryService
+    private lateinit var observatoryService: ObservatoryUseCases
 
     @Autowired
     private lateinit var resourceService: ResourceUseCases

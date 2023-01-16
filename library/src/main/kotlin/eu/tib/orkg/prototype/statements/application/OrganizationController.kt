@@ -6,8 +6,8 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.domain.model.Observatory
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
+import eu.tib.orkg.prototype.community.domain.model.Observatory
+import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.statements.domain.model.Organization
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
@@ -36,7 +36,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/organizations/")
 class OrganizationController(
     private val service: OrganizationService,
-    private val observatoryService: ObservatoryService,
+    private val observatoryService: ObservatoryUseCases,
     private val contributorService: ContributorService,
     private val resourceService: ResourceUseCases
 ) {

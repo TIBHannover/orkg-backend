@@ -1,9 +1,8 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.domain.model.ConferenceSeriesId
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.ConferenceSeriesId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -28,12 +27,6 @@ class StatementNotFound(statementId: String) : PropertyValidationException("ids"
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class ContributorNotFound(id: ContributorId) : RuntimeException("""Contributor $id not found""")
-
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class ObservatoryNotFound(id: ObservatoryId) : RuntimeException("""Observatory "$id" not found""")
-
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class ObservatoryURLNotFound(id: String) : RuntimeException("""Observatory "$id" not found""")
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class OrganizationNotFound(id: String) : RuntimeException("""Organization "$id" not found""") {

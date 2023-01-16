@@ -8,8 +8,8 @@ import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationType
@@ -111,7 +111,7 @@ fun OrganizationService.createOrganization(
 
 // Observatories
 
-fun ObservatoryService.createObservatory(
+fun ObservatoryUseCases.createObservatory(
     organizationId: OrganizationId,
     researchField: ResourceId,
     name: String = "Test Observatory",

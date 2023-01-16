@@ -19,5 +19,5 @@ data class Resource(
     val unlisted: Boolean? = null,
     val verified: Boolean? = null,
 ) : Thing {
-    override val thingId: ThingId = id!!
+    override val thingId: ThingId = ThingId.of(id!!.value)
 }

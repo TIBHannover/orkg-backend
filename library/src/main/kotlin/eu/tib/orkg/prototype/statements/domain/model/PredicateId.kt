@@ -7,7 +7,7 @@ import eu.tib.orkg.prototype.statements.application.json.PredicateIdSerializer
 
 @JsonDeserialize(using = PredicateIdDeserializer::class)
 @JsonSerialize(using = PredicateIdSerializer::class)
-data class PredicateId(val value: String) : Comparable<PredicateId>, ThingId {
+data class PredicateId(val value: String) : Comparable<PredicateId> {
 
     init {
         require(value.isNotBlank()) { "ID must not be blank" }

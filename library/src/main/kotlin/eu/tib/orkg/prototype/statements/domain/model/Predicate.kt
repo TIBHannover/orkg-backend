@@ -12,5 +12,5 @@ data class Predicate(
     val _class: String? = "predicate"
 ) : Thing {
     var description: String? = null
-    override val thingId: ThingId = id!!
+    override val thingId: ThingId = ThingId.of(id!!.value)
 }

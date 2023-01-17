@@ -198,6 +198,12 @@ fun <
             repository.deleteByStatementId(expected.id!!)
             repository.findByStatementId(expected.id!!).isPresent shouldBe false
         }
+        it("does not throw if statement does not exist") {
+            val id = StatementId("S123456789")
+            repository.findByStatementId(id).isPresent shouldBe false
+
+            repository.deleteByStatementId(id)
+        }
     }
 
     it("delete all statements") {

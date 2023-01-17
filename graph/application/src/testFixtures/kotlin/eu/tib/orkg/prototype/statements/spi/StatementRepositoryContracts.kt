@@ -91,6 +91,8 @@ fun <
             )
             saveStatement(original)
             val found = repository.findByStatementId(original.id!!).get()
+            found shouldBe original
+
             val modifiedSubject = createResource(ResourceId(3))
             val modified = found.copy(subject = modifiedSubject)
             saveStatement(modified)

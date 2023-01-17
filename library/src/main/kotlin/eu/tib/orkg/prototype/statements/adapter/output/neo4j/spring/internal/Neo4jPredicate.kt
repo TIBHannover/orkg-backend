@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
+import java.time.OffsetDateTime
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
 import org.neo4j.ogm.annotation.NodeEntity
@@ -32,13 +33,21 @@ data class Neo4jPredicate(
     @Convert(ContributorIdConverter::class)
     var createdBy: ContributorId = ContributorId.createUnknownContributor(),
 
+    @Property("created_at")
+    var createdAt: OffsetDateTime? = null,
+
     @Relationship(type = "RELATED", direction = Relationship.OUTGOING)
     @JsonIgnore
     var subjectOf: MutableSet<Neo4jStatement> = mutableSetOf()
-) : Neo4jThing, AuditableEntity() {
+) : Neo4jThing {
 
     fun toPredicate(): Predicate {
-        val pred = Predicate(predicateId, label!!, createdAt!!, createdBy = createdBy)
+        val pred = Predicate(
+            id = predicateId,
+            label = label!!,
+            createdAt = createdAt ?: OffsetDateTime.now(), // TODO: Remove after script to set values was run.
+            createdBy = createdBy
+        )
         if (subjectOf.isNotEmpty())
             pred.description = subjectOf.firstOrNull { it.predicateId?.value == "description" }?.`object`?.label
         return pred

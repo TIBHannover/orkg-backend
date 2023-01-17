@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.LiteralIdConverter
+import java.time.OffsetDateTime
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
 import org.neo4j.ogm.annotation.NodeEntity
@@ -20,7 +21,7 @@ data class Neo4jLiteral(
     @Id
     @GeneratedValue
     var id: Long? = null
-) : Neo4jThing, AuditableEntity() {
+) : Neo4jThing {
     @Property("label")
     @Required
     override var label: String? = null
@@ -36,6 +37,9 @@ data class Neo4jLiteral(
     @Property("created_by")
     @Convert(ContributorIdConverter::class)
     var createdBy: ContributorId = ContributorId.createUnknownContributor()
+
+    @Property("created_at")
+    var createdAt: OffsetDateTime? = null
 
     @Relationship(type = "HAS_VALUE_OF")
     @JsonIgnore
@@ -60,7 +64,13 @@ data class Neo4jLiteral(
     }
 
     fun toLiteral() =
-        Literal(id = literalId, label = label!!, datatype = datatype!!, createdAt = createdAt!!, createdBy = createdBy)
+        Literal(
+            id = literalId,
+            label = label!!,
+            datatype = datatype!!,
+            createdAt = createdAt ?: OffsetDateTime.now(), // TODO: Remove after script to set values was run.
+            createdBy = createdBy
+        )
 
     override val thingId: String?
         get() = literalId?.value

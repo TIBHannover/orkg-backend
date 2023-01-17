@@ -11,6 +11,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ObservatoryIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.OrganizationIdConverter
+import java.time.OffsetDateTime
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
 import org.neo4j.ogm.annotation.Labels
@@ -27,7 +28,7 @@ data class Neo4jResource(
     @Id
     @GeneratedValue
     var id: Long? = null
-) : Neo4jThing, AuditableEntity() {
+) : Neo4jThing {
 
     @Property("label")
     @Required
@@ -49,6 +50,9 @@ data class Neo4jResource(
     @Property("created_by")
     @Convert(ContributorIdConverter::class)
     var createdBy: ContributorId = ContributorId.createUnknownContributor()
+
+    @Property("created_at")
+    var createdAt: OffsetDateTime? = null
 
     @Property("observatory_id")
     @Convert(ObservatoryIdConverter::class)
@@ -109,7 +113,7 @@ data class Neo4jResource(
         val resource = Resource(
             resourceId,
             label!!,
-            createdAt!!,
+            createdAt ?: OffsetDateTime.now(), // TODO: Remove after script to set values was run.
             classes - ReservedClassIds,
             createdBy = createdBy,
             observatoryId = observatoryId,

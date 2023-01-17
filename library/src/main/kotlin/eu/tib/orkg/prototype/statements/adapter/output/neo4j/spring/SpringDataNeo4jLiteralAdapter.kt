@@ -81,7 +81,7 @@ class SpringDataNeo4jLiteralAdapter(
             literalId = this@toNeo4jLiteral.id
             label = this@toNeo4jLiteral.label
             datatype = this@toNeo4jLiteral.datatype
-            createdBy = this@toNeo4jLiteral.createdBy
+            createdAt = this@toNeo4jLiteral.createdAt
             createdBy = this@toNeo4jLiteral.createdBy
         }
 }

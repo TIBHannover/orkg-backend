@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.StatementIdConverter
+import java.time.OffsetDateTime
 import org.neo4j.ogm.annotation.EndNode
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
@@ -20,7 +21,7 @@ data class Neo4jStatement(
     @Id
     @GeneratedValue
     var id: Long? = null
-) : AuditableEntity() {
+) {
     @StartNode
     @JsonIgnore
     var subject: Neo4jThing? = null
@@ -42,6 +43,9 @@ data class Neo4jStatement(
     @Property("created_by")
     @Convert(ContributorIdConverter::class)
     var createdBy: ContributorId = ContributorId.createUnknownContributor()
+
+    @Property("created_at")
+    var createdAt: OffsetDateTime? = null
 
     constructor(
         statementId: StatementId,

@@ -34,7 +34,7 @@ class StatisticsService(
     private val observatoryRepository: PostgresObservatoryRepository,
     private val organizationRepository: PostgresOrganizationRepository
 ) : RetrieveStatisticsUseCase {
-    val internalClassLabels: (String) -> Boolean = { it !in setOf("Thing", "Resource", "AuditableEntity") }
+    val internalClassLabels: (String) -> Boolean = { it !in setOf("Thing", "Resource") }
 
     override fun getStats(extra: List<String>?): Stats {
         val metadata = neo4jStatsRepository.getGraphMetaData()

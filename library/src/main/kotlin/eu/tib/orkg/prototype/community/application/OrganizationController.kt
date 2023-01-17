@@ -1,17 +1,17 @@
-package eu.tib.orkg.prototype.statements.application
+package eu.tib.orkg.prototype.community.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
+import eu.tib.orkg.prototype.community.domain.model.Observatory
+import eu.tib.orkg.prototype.community.domain.model.Organization
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationType
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.community.api.OrganizationUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.community.domain.model.Observatory
-import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
-import eu.tib.orkg.prototype.statements.domain.model.Organization
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationType
 import java.io.File
 import java.util.*
 import javax.validation.Valid
@@ -35,7 +35,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RestController
 @RequestMapping("/api/organizations/")
 class OrganizationController(
-    private val service: OrganizationService,
+    private val service: OrganizationUseCases,
     private val observatoryService: ObservatoryUseCases,
     private val contributorService: ContributorService,
     private val resourceService: ResourceUseCases

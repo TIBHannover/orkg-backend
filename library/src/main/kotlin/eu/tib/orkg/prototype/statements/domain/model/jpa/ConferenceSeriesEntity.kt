@@ -1,9 +1,10 @@
 package eu.tib.orkg.prototype.statements.domain.model.jpa
 
+import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.OrganizationEntity
 import eu.tib.orkg.prototype.statements.domain.model.ConferenceSeries
 import eu.tib.orkg.prototype.statements.domain.model.ConferenceSeriesId
 import eu.tib.orkg.prototype.statements.domain.model.Metadata
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PeerReviewType
 import java.util.*
 import javax.persistence.Column

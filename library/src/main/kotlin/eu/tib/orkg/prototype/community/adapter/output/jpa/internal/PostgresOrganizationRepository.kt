@@ -1,6 +1,6 @@
-package eu.tib.orkg.prototype.statements.domain.model.jpa
+package eu.tib.orkg.prototype.community.adapter.output.jpa.internal
 
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationType
+import eu.tib.orkg.prototype.community.domain.model.OrganizationType
 import java.util.Optional
 import java.util.UUID
 import org.springframework.data.jpa.repository.JpaRepository

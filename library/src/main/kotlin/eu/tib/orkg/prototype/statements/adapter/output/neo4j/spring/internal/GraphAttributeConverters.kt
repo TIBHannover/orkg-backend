@@ -3,7 +3,7 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import org.neo4j.ogm.typeconversion.AttributeConverter
 

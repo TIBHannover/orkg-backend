@@ -1,16 +1,16 @@
 package eu.tib.orkg.prototype.community.services
-import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.application.OrganizationNotFound
-import eu.tib.orkg.prototype.community.domain.model.Observatory
-import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.ObservatoryEntity
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresObservatoryRepository
-import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresOrganizationRepository
-import java.util.Optional
-import java.util.UUID
+import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
+import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
+import eu.tib.orkg.prototype.community.application.OrganizationNotFound
+import eu.tib.orkg.prototype.community.domain.model.Observatory
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import java.util.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

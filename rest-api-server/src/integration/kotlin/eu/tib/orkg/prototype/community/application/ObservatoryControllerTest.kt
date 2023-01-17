@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.community.application
 
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
+import eu.tib.orkg.prototype.community.api.OrganizationUseCases
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.createClasses
 import eu.tib.orkg.prototype.createObservatory
@@ -13,7 +14,6 @@ import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.application.ResourceControllerTest
 import eu.tib.orkg.prototype.statements.application.RestDocumentationBaseTest
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
 import org.assertj.core.api.Assertions.*
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeEach
@@ -37,7 +37,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
     private lateinit var userService: UserService
 
     @Autowired
-    private lateinit var service: OrganizationService
+    private lateinit var service: OrganizationUseCases
 
     @Autowired
     private lateinit var observatoryService: ObservatoryUseCases

@@ -10,9 +10,9 @@ import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationType
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.community.api.OrganizationUseCases
+import eu.tib.orkg.prototype.community.domain.model.OrganizationType
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.net.URI
@@ -101,7 +101,7 @@ fun UserService.createUser(
 
 // Organizations
 
-fun OrganizationService.createOrganization(
+fun OrganizationUseCases.createOrganization(
     createdBy: ContributorId,
     organizationName: String = "Test Organization",
     url: String = "https://www.example.org",

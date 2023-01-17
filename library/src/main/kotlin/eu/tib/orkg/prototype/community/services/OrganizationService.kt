@@ -1,12 +1,12 @@
-package eu.tib.orkg.prototype.statements.infrastructure.jpa
+package eu.tib.orkg.prototype.community.services
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.domain.model.Organization
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationService
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationType
-import eu.tib.orkg.prototype.statements.domain.model.jpa.OrganizationEntity
-import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresOrganizationRepository
+import eu.tib.orkg.prototype.community.domain.model.Organization
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.community.api.OrganizationUseCases
+import eu.tib.orkg.prototype.community.domain.model.OrganizationType
+import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.OrganizationEntity
+import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import java.util.Optional
 import java.util.UUID
 import org.springframework.stereotype.Service
@@ -14,9 +14,9 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
-class PostgresOrganizationService(
+class OrganizationService(
     private val postgresOrganizationRepository: PostgresOrganizationRepository
-) : OrganizationService {
+) : OrganizationUseCases {
     override fun create(organizationName: String, createdBy: ContributorId, url: String, displayId: String, type: OrganizationType): Organization {
         return createOrganization(organizationName, createdBy, url, displayId, type).toOrganization()
     }

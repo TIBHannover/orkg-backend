@@ -1,15 +1,15 @@
 package eu.tib.orkg.prototype.statements.infrastructure.jpa
 
 import eu.tib.orkg.prototype.statements.application.ConferenceSeriesController
-import eu.tib.orkg.prototype.statements.application.OrganizationNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ConferenceSeriesService
 import eu.tib.orkg.prototype.statements.domain.model.ConferenceSeries
 import eu.tib.orkg.prototype.statements.domain.model.ConferenceSeriesId
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PeerReviewType
 import eu.tib.orkg.prototype.statements.domain.model.jpa.ConferenceSeriesEntity
 import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresConferenceSeriesRepository
-import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresOrganizationRepository
+import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
+import eu.tib.orkg.prototype.community.application.OrganizationNotFound
 import java.util.Optional
 import java.util.UUID
 import org.springframework.stereotype.Service

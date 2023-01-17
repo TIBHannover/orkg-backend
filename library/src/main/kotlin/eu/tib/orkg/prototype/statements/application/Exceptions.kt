@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ConferenceSeriesId
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.net.URI
@@ -27,11 +26,6 @@ class StatementNotFound(statementId: String) : PropertyValidationException("ids"
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class ContributorNotFound(id: ContributorId) : RuntimeException("""Contributor $id not found""")
-
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class OrganizationNotFound(id: String) : RuntimeException("""Organization "$id" not found""") {
-    constructor(id: OrganizationId) : this(id.toString())
-}
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class ResearchFieldNotFound(id: ResourceId) : RuntimeException("""Research field "$id" not found""")
@@ -93,12 +87,6 @@ class URIAlreadyInUse(uri: String) :
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 class InvalidClassFilter(id: ClassId) :
     RuntimeException("The class $id cannot be included and excluded at the same time.")
-
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-class NameAlreadyExist(message: String) : ForbiddenOperationException("name", message)
-
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-class InvalidImage() : ForbiddenOperationException("image", "Please upload a valid image")
 
 /**
  * Base class for custom property validation.

@@ -1,23 +1,24 @@
 package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.statements.domain.model.ConferenceSeriesService
+import eu.tib.orkg.prototype.community.application.NameAlreadyExist
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.ConferenceSeries
 import eu.tib.orkg.prototype.statements.domain.model.ConferenceSeriesId
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
-import java.util.UUID
+import eu.tib.orkg.prototype.statements.domain.model.ConferenceSeriesService
+import java.time.LocalDate
+import java.util.*
 import javax.validation.Valid
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
-import java.time.LocalDate
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
 
 @RestController
 @RequestMapping("/api/conference-series/")

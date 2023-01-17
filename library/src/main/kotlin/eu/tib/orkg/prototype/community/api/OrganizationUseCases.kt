@@ -1,9 +1,12 @@
-package eu.tib.orkg.prototype.statements.domain.model
+package eu.tib.orkg.prototype.community.api
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.Organization
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationType
 import java.util.Optional
 
-interface OrganizationService {
+interface OrganizationUseCases {
 
     /**
      * Create a new organization with a given name.

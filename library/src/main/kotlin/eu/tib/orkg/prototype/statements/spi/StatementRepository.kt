@@ -8,8 +8,6 @@ import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.transaction.annotation.Isolation
-import org.springframework.transaction.annotation.Transactional
 
 interface StatementRepository : EntityRepository<GeneralStatement, StatementId> {
     fun countStatementsAboutResource(id: ResourceId): Long

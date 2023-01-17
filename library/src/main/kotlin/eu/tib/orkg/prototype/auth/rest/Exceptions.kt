@@ -1,14 +1,20 @@
 package eu.tib.orkg.prototype.auth.rest
 
-import org.springframework.http.HttpStatus.BAD_REQUEST
-import org.springframework.web.bind.annotation.ResponseStatus
+import eu.tib.orkg.prototype.statements.application.SimpleMessageException
+import java.util.*
+import org.springframework.http.HttpStatus
 
-@ResponseStatus(BAD_REQUEST)
-abstract class UserRegistrationException(message: String) : RuntimeException(message)
+abstract class UserRegistrationException(
+    override val message: String,
+    val status: HttpStatus = HttpStatus.BAD_REQUEST
+) : RuntimeException(message)
 
-class PasswordsDoNotMatch : UserRegistrationException("The provided passwords do not match")
+class PasswordsDoNotMatch : UserRegistrationException("The provided passwords do not match.")
 
 class UserAlreadyRegistered(email: String) :
-    UserRegistrationException("A user with email $email is already registered")
+    UserRegistrationException("A user with email $email is already registered.")
 
-class CurrentPasswordInvalid : UserRegistrationException("The provided current password is not correct")
+class CurrentPasswordInvalid : UserRegistrationException("The provided current password is not correct.")
+
+class UserNotFound(userId: UUID) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """No user with ID $userId""")

@@ -47,23 +47,23 @@ class ObservatoryController(
         @RequestBody @Valid observatory: CreateObservatoryRequest,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<Any> {
-        return if (service.findByName(observatory.observatoryName).isEmpty && service.findByDisplayId(observatory.displayId).isEmpty) {
-            val id = service.create(
-                observatory.observatoryName,
-                observatory.description,
-                observatory.organizationId,
-                observatory.researchField,
-                observatory.displayId
-            ).id
-            val location = uriComponentsBuilder
-                .path("api/observatories/{id}")
-                .buildAndExpand(id)
-                .toUri()
-            ResponseEntity.created(location).body(service.findById(id!!).get())
-        } else
-            ResponseEntity.badRequest().body(
-                ErrorMessage(message = "Observatory with same name or URL already exist")
-            )
+        if (service.findByName(observatory.observatoryName).isPresent) {
+            throw ObservatoryAlreadyExists.withName(observatory.observatoryName)
+        } else if (service.findByDisplayId(observatory.displayId).isPresent) {
+            throw ObservatoryAlreadyExists.withDisplayId(observatory.displayId)
+        }
+        val id = service.create(
+            observatory.observatoryName,
+            observatory.description,
+            observatory.organizationId,
+            observatory.researchField,
+            observatory.displayId
+        ).id
+        val location = uriComponentsBuilder
+            .path("api/observatories/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return ResponseEntity.created(location).body(service.findById(id!!).get())
     }
 
     @GetMapping("/{id}")
@@ -224,9 +224,5 @@ class ObservatoryController(
     data class UpdateOrganizationRequest(
         @JsonProperty("organization_id")
         val organizationId: OrganizationId
-    )
-
-    data class ErrorMessage(
-        val message: String
     )
 }

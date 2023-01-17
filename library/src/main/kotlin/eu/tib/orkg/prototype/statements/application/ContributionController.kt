@@ -31,6 +31,7 @@ class ContributionController(
     fun markFeatured(@PathVariable id: ResourceId) {
         service.markAsFeatured(id)
     }
+
     @DeleteMapping("/{id}/metadata/featured")
     fun unmarkFeatured(@PathVariable id: ResourceId) {
         service.markAsNonFeatured(id)

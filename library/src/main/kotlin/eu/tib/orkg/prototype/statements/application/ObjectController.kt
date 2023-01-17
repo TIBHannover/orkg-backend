@@ -53,7 +53,7 @@ class ObjectController(
     ): ResponseEntity<ResourceRepresentation> {
         resourceService
             .findById(id)
-            .orElseThrow { ResourceNotFound() }
+            .orElseThrow { ResourceNotFound(id) }
         val resource = service.createObject(obj, id, authenticatedUserId())
         val location = uriComponentsBuilder
             .path("api/objects/")

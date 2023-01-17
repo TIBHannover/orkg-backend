@@ -31,7 +31,7 @@ class PredicateController(private val service: PredicateUseCases) : BaseControll
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: PredicateId): PredicateRepresentation =
-        service.findById(id).orElseThrow { ResourceNotFound() }
+        service.findById(id).orElseThrow { PredicateNotFound(id) }
 
     @GetMapping("/")
     fun findByLabel(
@@ -53,8 +53,7 @@ class PredicateController(private val service: PredicateUseCases) : BaseControll
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<Any> {
         Label.ofOrNull(predicate.label) ?: throw InvalidLabel()
-        if (predicate.id != null && service.findById(predicate.id).isPresent) return ResponseEntity.badRequest()
-            .body("Predicate id <${predicate.id}> already exists!")
+        if (predicate.id != null && service.findById(predicate.id).isPresent) throw PredicateAlreadyExists(predicate.id)
         val userId = authenticatedUserId()
         val id = service.create(ContributorId(userId), predicate).id
 

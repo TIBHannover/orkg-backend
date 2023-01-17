@@ -10,9 +10,9 @@ import eu.tib.orkg.prototype.createClass
 import eu.tib.orkg.prototype.statements.api.AlreadyInUse
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.InvalidURI
-import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateClassUseCase.ReplaceCommand
+import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.toOptional
@@ -36,7 +36,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -87,7 +86,7 @@ internal class ClassControllerUnitTest {
             mockMvc
                 .perform(performGetByURI("http://example.org/exists"))
                 .andExpect(status().isOk)
-                .andExpect(jsonPath("\$.uri").value("http://example.org/exists"))
+                .andExpect(jsonPath("$.uri").value("http://example.org/exists"))
         }
 
         @Test
@@ -102,12 +101,14 @@ internal class ClassControllerUnitTest {
 
             mockMvc
                 .perform(performPost(body))
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isBadRequest)
-                .andExpect(jsonPath("\$.status").value(400))
-                .andExpect(jsonPath("\$.errors.length()").value(1))
-                .andExpect(jsonPath("\$.errors[0].field").value("uri"))
-                .andExpect(jsonPath("\$.errors[0].message").value("The URI <http://example.org/exists> is already assigned to class with ID C1."))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors.length()").value(1))
+                .andExpect(jsonPath("$.errors[0].field").value("uri"))
+                .andExpect(jsonPath("$.errors[0].message").value("""The URI <http://example.org/exists> is already assigned to class with ID "C1"."""))
+                .andExpect(jsonPath("$.error").value("Bad Request"))
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.path").value("/api/classes/"))
         }
     }
 
@@ -122,7 +123,11 @@ internal class ClassControllerUnitTest {
             mockMvc
                 .perform(performGetByURI("http://example.org/non-existent"))
                 .andExpect(status().isNotFound)
-                .andExpect(requestContentIsEmpty())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.message").value("""Class with URI "http://example.org/non-existent" not found."""))
+                .andExpect(jsonPath("$.error").value("Not Found"))
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.path").value("/api/classes/"))
         }
     }
 
@@ -153,8 +158,13 @@ internal class ClassControllerUnitTest {
         val body = objectMapper.writeValueAsString(replacingClass)
         every { classService.replace(id, command = any()) } returns Failure(ClassNotFoundProblem)
 
-        mockMvc.performPut("/api/classes/$id", body).andExpect(status().isNotFound)
-            .andExpect(requestContentIsEmpty())
+        mockMvc.performPut("/api/classes/$id", body)
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(404))
+            .andExpect(jsonPath("$.message").value("""Class "$id" not found."""))
+            .andExpect(jsonPath("$.error").value("Not Found"))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.path").value("/api/classes/$id"))
     }
 
     @Test
@@ -166,10 +176,13 @@ internal class ClassControllerUnitTest {
 
         mockMvc.performPut("/api/classes/$id", body)
             .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("\$.status").value(400))
-            .andExpect(jsonPath("\$.errors.length()").value(1))
-            .andExpect(jsonPath("\$.errors[0].field").value("label"))
-            .andExpect(jsonPath("\$.errors[0].message").value("A label must not be blank or contain newlines."))
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.errors.length()").value(1))
+            .andExpect(jsonPath("$.errors[0].field").value("label"))
+            .andExpect(jsonPath("$.errors[0].message").value("A label must not be blank or contain newlines."))
+            .andExpect(jsonPath("$.error").value("Bad Request"))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.path").value("/api/classes/$id"))
     }
 
     @Test
@@ -181,10 +194,13 @@ internal class ClassControllerUnitTest {
 
         mockMvc.performPut("/api/classes/$id", body)
             .andExpect(status().isForbidden)
-            .andExpect(jsonPath("\$.status").value(403))
-            .andExpect(jsonPath("\$.errors.length()").value(1))
-            .andExpect(jsonPath("\$.errors[0].field").value("uri"))
-            .andExpect(jsonPath("\$.errors[0].message").value("The class EXISTS already has a URI. It is not allowed to change URIs."))
+            .andExpect(jsonPath("$.status").value(403))
+            .andExpect(jsonPath("$.errors.length()").value(1))
+            .andExpect(jsonPath("$.errors[0].field").value("uri"))
+            .andExpect(jsonPath("$.errors[0].message").value("""The class "EXISTS" already has a URI. It is not allowed to change URIs."""))
+            .andExpect(jsonPath("$.error").value("Forbidden"))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.path").value("/api/classes/$id"))
     }
 
     @Test
@@ -196,10 +212,13 @@ internal class ClassControllerUnitTest {
 
         mockMvc.performPut("/api/classes/$id", body)
             .andExpect(status().isForbidden)
-            .andExpect(jsonPath("\$.status").value(403))
-            .andExpect(jsonPath("\$.errors.length()").value(1))
-            .andExpect(jsonPath("\$.errors[0].field").value("uri"))
-            .andExpect(jsonPath("\$.errors[0].message").value("The URI <https://example.com/NEW#uri> is already in use by another class."))
+            .andExpect(jsonPath("$.status").value(403))
+            .andExpect(jsonPath("$.errors.length()").value(1))
+            .andExpect(jsonPath("$.errors[0].field").value("uri"))
+            .andExpect(jsonPath("$.errors[0].message").value("The URI <https://example.com/NEW#uri> is already in use by another class."))
+            .andExpect(jsonPath("$.error").value("Forbidden"))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.path").value("/api/classes/$id"))
     }
 
     @Test
@@ -210,8 +229,13 @@ internal class ClassControllerUnitTest {
             classService.updateLabel(id, "some label")
         } returns Failure(ClassNotFoundProblem)
 
-        mockMvc.performPatch("/api/classes/$id", body).andExpect(status().isNotFound)
-            .andExpect(requestContentIsEmpty())
+        mockMvc.performPatch("/api/classes/$id", body)
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(404))
+            .andExpect(jsonPath("$.message").value("""Class "$id" not found."""))
+            .andExpect(jsonPath("$.error").value("Not Found"))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.path").value("/api/classes/$id"))
     }
 
     @Test
@@ -240,10 +264,13 @@ internal class ClassControllerUnitTest {
 
         mockMvc.performPatch("/api/classes/$id", body)
             .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("\$.status").value(400))
-            .andExpect(jsonPath("\$.errors.length()").value(1))
-            .andExpect(jsonPath("\$.errors[0].field").value("label"))
-            .andExpect(jsonPath("\$.errors[0].message").value("A label must not be blank or contain newlines."))
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.errors.length()").value(1))
+            .andExpect(jsonPath("$.errors[0].field").value("label"))
+            .andExpect(jsonPath("$.errors[0].message").value("A label must not be blank or contain newlines."))
+            .andExpect(jsonPath("$.error").value("Bad Request"))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.path").value("/api/classes/$id"))
     }
 
     @Test
@@ -256,8 +283,13 @@ internal class ClassControllerUnitTest {
             )
         } returns Failure(ClassNotFoundProblem)
 
-        mockMvc.performPatch("/api/classes/$id", body).andExpect(status().isNotFound)
-            .andExpect(requestContentIsEmpty())
+        mockMvc.performPatch("/api/classes/$id", body)
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(404))
+            .andExpect(jsonPath("$.message").value("""Class "$id" not found."""))
+            .andExpect(jsonPath("$.error").value("Not Found"))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.path").value("/api/classes/$id"))
     }
 
     @Test
@@ -278,10 +310,13 @@ internal class ClassControllerUnitTest {
 
         mockMvc.performPatch("/api/classes/$id", body)
             .andExpect(status().isForbidden)
-            .andExpect(jsonPath("\$.status").value(403))
-            .andExpect(jsonPath("\$.errors.length()").value(1))
-            .andExpect(jsonPath("\$.errors[0].field").value("uri"))
-            .andExpect(jsonPath("\$.errors[0].message").value("The class EXISTS already has a URI. It is not allowed to change URIs."))
+            .andExpect(jsonPath("$.status").value(403))
+            .andExpect(jsonPath("$.errors.length()").value(1))
+            .andExpect(jsonPath("$.errors[0].field").value("uri"))
+            .andExpect(jsonPath("$.errors[0].message").value("""The class "EXISTS" already has a URI. It is not allowed to change URIs."""))
+            .andExpect(jsonPath("$.error").value("Forbidden"))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.path").value("/api/classes/$id"))
     }
 
     @Test
@@ -292,10 +327,13 @@ internal class ClassControllerUnitTest {
 
         mockMvc.performPatch("/api/classes/$id", body)
             .andExpect(status().isForbidden)
-            .andExpect(jsonPath("\$.status").value(403))
-            .andExpect(jsonPath("\$.errors.length()").value(1))
-            .andExpect(jsonPath("\$.errors[0].field").value("uri"))
-            .andExpect(jsonPath("\$.errors[0].message").value("The URI <https://example.org/some/new#URI> is already in use by another class."))
+            .andExpect(jsonPath("$.status").value(403))
+            .andExpect(jsonPath("$.errors.length()").value(1))
+            .andExpect(jsonPath("$.errors[0].field").value("uri"))
+            .andExpect(jsonPath("$.errors[0].message").value("The URI <https://example.org/some/new#URI> is already in use by another class."))
+            .andExpect(jsonPath("$.error").value("Forbidden"))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.path").value("/api/classes/$id"))
     }
 
     @Test
@@ -306,10 +344,13 @@ internal class ClassControllerUnitTest {
 
         mockMvc.performPatch("/api/classes/$id", body)
             .andExpect(status().isBadRequest)
-            .andExpect(jsonPath("\$.status").value(400))
-            .andExpect(jsonPath("\$.errors.length()").value(1))
-            .andExpect(jsonPath("\$.errors[0].field").value("uri"))
-            .andExpect(jsonPath("\$.errors[0].message").value("The provided URI is not a valid URI."))
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.errors.length()").value(1))
+            .andExpect(jsonPath("$.errors[0].field").value("uri"))
+            .andExpect(jsonPath("$.errors[0].message").value("The provided URI is not a valid URI."))
+            .andExpect(jsonPath("$.error").value("Bad Request"))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.path").value("/api/classes/$id"))
     }
 
     @Test
@@ -329,8 +370,6 @@ internal class ClassControllerUnitTest {
     private fun MockMvc.performPut(urlTemplate: String, body: String): ResultActions = perform(
         put(urlTemplate).contentType(MediaType.APPLICATION_JSON).characterEncoding("UTF-8").content(body)
     )
-
-    private fun requestContentIsEmpty() = content().string("")
 
     private fun performGetByURI(uri: String) =
         get("/api/classes/?uri=$uri")

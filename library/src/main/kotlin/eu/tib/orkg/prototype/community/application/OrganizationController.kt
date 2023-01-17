@@ -51,25 +51,24 @@ class OrganizationController(
     ): ResponseEntity<Any> {
         if (!isValidLogo(organization.organizationLogo)) {
             throw InvalidImage()
-        } else {
-            return if (service.findByName(organization.organizationName).isEmpty && service.findByDisplayId(organization.displayId).isEmpty) {
-                val response = (service.create(
-                    organization.organizationName,
-                    organization.createdBy,
-                    organization.url,
-                    organization.displayId,
-                    OrganizationType.fromOrNull(organization.type)!!
-                ))
-                decoder(organization.organizationLogo, response.id)
-                val location = uriComponentsBuilder
-                    .path("api/organizations/{id}")
-                    .buildAndExpand(response.id)
-                    .toUri()
-                ResponseEntity.created(location).body(service.findById(response.id!!).get())
-            } else {
-                throw NameAlreadyExist("Organization with same name or URL already exist")
-            }
+        } else if (service.findByName(organization.organizationName).isPresent) {
+            throw OrganizationAlreadyExists.withName(organization.organizationName)
+        } else if (service.findByDisplayId(organization.displayId).isPresent) {
+            throw OrganizationAlreadyExists.withDisplayId(organization.displayId)
         }
+        val response = service.create(
+            organization.organizationName,
+            organization.createdBy,
+            organization.url,
+            organization.displayId,
+            OrganizationType.fromOrNull(organization.type)!!
+        )
+        decoder(organization.organizationLogo, response.id)
+        val location = uriComponentsBuilder
+            .path("api/organizations/{id}")
+            .buildAndExpand(response.id)
+            .toUri()
+        return ResponseEntity.created(location).body(service.findById(response.id!!).get())
     }
 
     @GetMapping("/")
@@ -168,18 +167,16 @@ class OrganizationController(
     ): ResponseEntity<Any> {
         val response = findOrganization(id)
         val logo = submittedLogo.value
-        return if (!isValidLogo(logo)) {
-            throw InvalidImage()
-        } else {
-            decoder(logo, response.id)
-            response.logo = logo
 
-            val location = uriComponentsBuilder
-                .path("api/organizations/{id}")
-                .buildAndExpand(response.id)
-                .toUri()
-            ResponseEntity.created(location).body(response)
-        }
+        if (!isValidLogo(logo)) throw InvalidImage()
+        decoder(logo, response.id)
+        response.logo = logo
+
+        val location = uriComponentsBuilder
+            .path("api/organizations/{id}")
+            .buildAndExpand(response.id)
+            .toUri()
+        return ResponseEntity.created(location).body(response)
     }
 
     fun findOrganization(id: OrganizationId): Organization {
@@ -255,7 +252,7 @@ class OrganizationController(
         @JsonProperty("display_id")
         val displayId: String,
         @field:NotBlank
-        val type: String,
+        val type: String
     )
 
     data class UpdateRequest(

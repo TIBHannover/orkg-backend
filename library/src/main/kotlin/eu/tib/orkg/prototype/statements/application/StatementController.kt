@@ -47,13 +47,8 @@ class StatementController(
     }
 
     @GetMapping("/{statementId}")
-    fun findById(@PathVariable statementId: StatementId): HttpEntity<StatementRepresentation> {
-        val foundStatement =
-            statementService.findById(statementId)
-        if (foundStatement.isPresent)
-            return ok(foundStatement.get())
-        return notFound().build()
-    }
+    fun findById(@PathVariable statementId: StatementId): StatementRepresentation =
+        statementService.findById(statementId).orElseThrow { StatementNotFound(statementId) }
 
     @GetMapping("/subject/{subjectId}")
     fun findBySubject(

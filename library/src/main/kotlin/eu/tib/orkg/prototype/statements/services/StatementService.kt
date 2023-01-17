@@ -2,29 +2,32 @@ package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
+import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
+import eu.tib.orkg.prototype.statements.api.ThingRepresentation
 import eu.tib.orkg.prototype.statements.application.BundleConfiguration
+import eu.tib.orkg.prototype.statements.application.StatementObjectNotFound
+import eu.tib.orkg.prototype.statements.application.StatementPredicateNotFound
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
+import eu.tib.orkg.prototype.statements.application.StatementNotFound
+import eu.tib.orkg.prototype.statements.application.StatementSubjectNotFound
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.Thing
-import eu.tib.orkg.prototype.statements.api.ThingRepresentation
-import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
-import eu.tib.orkg.prototype.statements.application.StatementNotFound
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
-import eu.tib.orkg.prototype.statements.spi.ThingRepository
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
+import eu.tib.orkg.prototype.statements.spi.ThingRepository
 import java.time.OffsetDateTime
 import java.util.*
 import org.springframework.data.domain.Page
@@ -86,13 +89,13 @@ class StatementService(
         `object`: String
     ): StatementRepresentation {
         val foundSubject = thingRepository.findByThingId(subject)
-            .orElseThrow { IllegalStateException("Could not find subject $subject") }
+            .orElseThrow { StatementSubjectNotFound(subject) }
 
         val foundPredicate = predicateService.findByPredicateId(predicate)
-            .orElseThrow { IllegalArgumentException("predicate could not be found: $predicate") }
+            .orElseThrow { StatementPredicateNotFound(predicate) }
 
         val foundObject = thingRepository.findByThingId(`object`)
-            .orElseThrow { IllegalStateException("Could not find object: $`object`") }
+            .orElseThrow { StatementObjectNotFound(`object`) }
 
         val id = statementRepository.nextIdentity()
         val newStatement = GeneralStatement(
@@ -112,13 +115,13 @@ class StatementService(
         // That saves the extra calls to the database to retrieve the statement again, even if it may not be needed.
 
         val foundSubject = thingRepository.findByThingId(subject)
-            .orElseThrow { IllegalStateException("Could not find subject $subject") }
+            .orElseThrow { StatementSubjectNotFound(subject) }
 
         val foundPredicate = predicateService.findByPredicateId(predicate)
-            .orElseThrow { IllegalArgumentException("Predicate could not be found: $predicate") }
+            .orElseThrow { StatementPredicateNotFound(predicate) }
 
         val foundObject = thingRepository.findByThingId(`object`)
-            .orElseThrow { IllegalStateException("Could not find object: $`object`") }
+            .orElseThrow { StatementObjectNotFound(`object`) }
 
         val id = statementRepository.nextIdentity()
         val statement = GeneralStatement(
@@ -147,19 +150,19 @@ class StatementService(
         statementEditRequest.subjectId?.let {
             @Suppress("UNUSED_VARIABLE") // It is unused, because commented out. This method needs a re-write.
             val foundSubject = thingRepository.findByThingId(statementEditRequest.subjectId)
-                .orElseThrow { IllegalStateException("Could not find subject ${statementEditRequest.subjectId}") }
+                .orElseThrow { StatementSubjectNotFound(statementEditRequest.subjectId) }
             // found = found.copy(subject = foundSubject) // TODO: does this make sense?
         }
 
         statementEditRequest.predicateId?.let {
             val foundPredicate = predicateService.findByPredicateId(statementEditRequest.predicateId)
-                .orElseThrow { IllegalArgumentException("Predicate could not be found: ${statementEditRequest.predicateId}") }
+                .orElseThrow { StatementPredicateNotFound(statementEditRequest.predicateId) }
             found = found.copy(predicate = foundPredicate)
         }
 
         statementEditRequest.objectId?.let {
             val foundObject = thingRepository.findByThingId(statementEditRequest.objectId)
-                .orElseThrow { IllegalStateException("Could not find object: ${statementEditRequest.objectId}") }
+                .orElseThrow { StatementObjectNotFound(statementEditRequest.objectId) }
             found = found.copy(`object` = foundObject)
         }
 

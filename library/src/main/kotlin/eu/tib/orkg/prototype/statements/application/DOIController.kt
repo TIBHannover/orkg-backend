@@ -37,7 +37,7 @@ class DOIController(
 
         return doiService
             .registerDoi(doiMetaData, dataciteConfiguration.encodeCredentials()!!, dataciteConfiguration.url!!)
-            .orElseThrow()
+            .orElseThrow { DOIRegistrationError("$doiPrefix/${doiData.resourceId}") }
     }
 
     data class CreateDOIRequest(

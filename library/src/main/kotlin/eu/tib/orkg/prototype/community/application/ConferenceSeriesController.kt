@@ -29,22 +29,23 @@ class ConferenceSeriesController(
         @RequestBody @Valid conference: ConferenceSeriesRequest,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<Any> {
-         return if (service.findByName(conference.name).isEmpty && service.findByDisplayId(conference.displayId).isEmpty) {
-             val response = service.create(
-                 conference.organizationId,
-                 conference.name,
-                 conference.url,
-                 conference.displayId,
-                 conference.metadata
-                 )
-                val location = uriComponentsBuilder
-                    .path("api/conference-series/{id}")
-                    .buildAndExpand(response.id)
-                    .toUri()
-                ResponseEntity.created(location).body(service.findById(response.id).get())
-            } else {
-                throw NameAlreadyExist("Conference with same name or URL already exist")
-            }
+        if (service.findByName(conference.name).isPresent) {
+            throw ConferenceAlreadyExists.withName(conference.name)
+        } else if (service.findByDisplayId(conference.displayId).isPresent) {
+            throw ConferenceAlreadyExists.withDisplayId(conference.displayId)
+        }
+        val response = service.create(
+            conference.organizationId,
+            conference.name,
+            conference.url,
+            conference.displayId,
+            conference.metadata
+        )
+        val location = uriComponentsBuilder
+           .path("api/conference-series/{id}")
+           .buildAndExpand(response.id)
+           .toUri()
+        return ResponseEntity.created(location).body(service.findById(response.id).get())
     }
 
     @GetMapping("/")
@@ -56,11 +57,11 @@ class ConferenceSeriesController(
         val response: ConferenceSeries = if (id.isValidUUID(id)) {
             service
                 .findById(ConferenceSeriesId(id))
-                .orElseThrow { ConferenceNotFound(ConferenceSeriesId(id)) }
+                .orElseThrow { ConferenceNotFound(id) }
         } else {
             service
                 .findByDisplayId(id)
-                .orElseThrow { ConferenceNotFound(ConferenceSeriesId(id)) }
+                .orElseThrow { ConferenceNotFound(id) }
         }
         return response
     }

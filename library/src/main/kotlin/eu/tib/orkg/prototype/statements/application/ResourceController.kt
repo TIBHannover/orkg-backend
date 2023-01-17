@@ -17,7 +17,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
-import org.springframework.http.ResponseEntity.badRequest
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
@@ -45,7 +44,7 @@ class ResourceController(
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: ResourceId): ResourceRepresentation =
-        service.findById(id).orElseThrow { ResourceNotFound() }
+        service.findById(id).orElseThrow { ResourceNotFound(id) }
 
     @GetMapping("/")
     fun findByLabel(
@@ -89,8 +88,7 @@ class ResourceController(
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<Any> {
         Label.ofOrNull(resource.label) ?: throw InvalidLabel()
-        if (resource.id != null && service.findById(resource.id).isPresent)
-            return badRequest().body("Resource id <${resource.id}> already exists!")
+        if (resource.id != null && service.findById(resource.id).isPresent) throw ResourceAlreadyExists(resource.id)
         val userId = authenticatedUserId()
         val contributor = contributorService.findById(ContributorId(userId))
         var observatoryId = ObservatoryId.createUnknownObservatory()

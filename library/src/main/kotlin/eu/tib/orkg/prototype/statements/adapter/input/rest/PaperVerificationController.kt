@@ -23,7 +23,7 @@ class PaperVerificationController(
 
     @GetMapping("/api/papers/{id}/metadata/verified")
     fun getVerifiedFlag(@PathVariable id: ResourceId): Boolean =
-        query.getPaperVerifiedFlag(id) ?: throw ResourceNotFound(id.toString())
+        query.getPaperVerifiedFlag(id) ?: throw ResourceNotFound(id)
 
     @GetMapping("/api/classes/Paper/resources/", params = ["verified=true"])
     fun loadVerifiedPapers(pageable: Pageable): Page<Resource> {

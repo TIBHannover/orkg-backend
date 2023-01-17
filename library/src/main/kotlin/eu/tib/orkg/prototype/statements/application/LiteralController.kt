@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
-import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -37,7 +36,7 @@ class LiteralController(
     fun findById(@PathVariable id: LiteralId): LiteralRepresentation =
         service
             .findById(id)
-            .orElseThrow { LiteralNotFound() }
+            .orElseThrow { LiteralNotFound(id) }
 
     // TODO: remove when front-end has migrated to paged method
     @GetMapping("/")
@@ -81,22 +80,17 @@ class LiteralController(
         @PathVariable id: LiteralId,
         @RequestBody @Valid request: LiteralUpdateRequest
     ): ResponseEntity<LiteralRepresentation> {
-        val found = repository.findByLiteralId(id)
-
-        if (!found.isPresent)
-            return notFound().build()
-
-        var updatedLiteral = found.get()
+        var literal = repository.findByLiteralId(id).orElseThrow { LiteralNotFound(id) }
 
         if (request.label != null) {
-            updatedLiteral = updatedLiteral.copy(label = request.label)
+            literal = literal.copy(label = request.label)
         }
 
         if (request.datatype != null) {
             if (request.datatype.isBlank()) throw PropertyIsBlank("datatype")
-            updatedLiteral = updatedLiteral.copy(datatype = request.datatype)
+            literal = literal.copy(datatype = request.datatype)
         }
-        return ok(service.update(updatedLiteral))
+        return ok(service.update(literal))
     }
 
     data class LiteralCreateRequest(

@@ -3,26 +3,66 @@ package eu.tib.orkg.prototype.community.application
 import eu.tib.orkg.prototype.community.domain.model.ConferenceSeriesId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.statements.application.ForbiddenOperationException
+import eu.tib.orkg.prototype.statements.application.PropertyValidationException
+import eu.tib.orkg.prototype.statements.application.SimpleMessageException
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.ResponseStatus
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class ObservatoryNotFound(id: ObservatoryId) : RuntimeException("""Observatory "$id" not found""")
+class ObservatoryNotFound(id: ObservatoryId) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Observatory "$id" not found.""")
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class ObservatoryURLNotFound(id: String) : RuntimeException("""Observatory "$id" not found""")
+class ObservatoryURLNotFound(id: String) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Observatory "$id" not found.""")
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-class NameAlreadyExist(message: String) : ForbiddenOperationException("name", message)
+class UserIsAlreadyMemberOfObservatory(id: ObservatoryId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """User is already a member of observatory "$id".""")
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-class InvalidImage() : ForbiddenOperationException("image", "Please upload a valid image")
-
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class OrganizationNotFound(id: String) : RuntimeException("""Organization "$id" not found""") {
+class OrganizationNotFound : SimpleMessageException {
+    constructor(id: String) : super(HttpStatus.NOT_FOUND, """Organization "$id" not found.""")
     constructor(id: OrganizationId) : this(id.toString())
 }
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class ConferenceNotFound(id: ConferenceSeriesId) : RuntimeException("""Conference "$id" not found""")
+class OrganizationAlreadyExists private constructor(
+    status: HttpStatus,
+    message: String
+) : SimpleMessageException(status, message) {
+    companion object {
+        fun withName(name: String) =
+            OrganizationAlreadyExists(HttpStatus.BAD_REQUEST, """Organization with name "$name" already exists.""")
+        fun withDisplayId(displayId: String) =
+            OrganizationAlreadyExists(HttpStatus.BAD_REQUEST, """Organization with display id "$displayId" already exists.""")
+    }
+}
+
+class UserIsAlreadyMemberOfOrganization(id: OrganizationId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """User is already a member of organization "$id".""")
+
+class InvalidImage : PropertyValidationException("image", """Invalid image.""")
+
+class ObservatoryAlreadyExists private constructor(
+    status: HttpStatus,
+    message: String
+) : SimpleMessageException(status, message) {
+    companion object {
+        fun withName(name: String) =
+            ObservatoryAlreadyExists(HttpStatus.BAD_REQUEST, """Observatory with name "$name" already exists.""")
+        fun withDisplayId(displayId: String) =
+            ObservatoryAlreadyExists(HttpStatus.BAD_REQUEST, """Observatory with display id "$displayId" already exists.""")
+    }
+}
+
+class ConferenceAlreadyExists private constructor(
+    status: HttpStatus,
+    message: String
+) : SimpleMessageException(status, message) {
+    companion object {
+        fun withName(name: String) =
+            ConferenceAlreadyExists(HttpStatus.BAD_REQUEST, """Conference with name "$name" already exists.""")
+        fun withDisplayId(displayId: String) =
+            ConferenceAlreadyExists(HttpStatus.BAD_REQUEST, """Conference with display id "$displayId" already exists.""")
+    }
+}
+
+class ConferenceNotFound : SimpleMessageException {
+    constructor(id: String) : super(HttpStatus.NOT_FOUND, """Conference "$id" not found.""")
+    constructor(id: ConferenceSeriesId) : this(id.toString())
+}

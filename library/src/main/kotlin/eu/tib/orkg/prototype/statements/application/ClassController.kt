@@ -40,10 +40,10 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
     BaseController() {
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: ClassId): ClassRepresentation = service.findById(id).orElseThrow { ClassNotFound() }
+    fun findById(@PathVariable id: ClassId): ClassRepresentation = service.findById(id).orElseThrow { ClassNotFound(id) }
 
     @GetMapping("/", params = ["uri"])
-    fun findByURI(@RequestParam uri: URI): ClassRepresentation = service.findByURI(uri).orElseThrow { ClassNotFound() }
+    fun findByURI(@RequestParam uri: URI): ClassRepresentation = service.findByURI(uri).orElseThrow { ClassNotFound(uri) }
 
     @GetMapping("/", params = ["ids"])
     fun findByIds(@RequestParam ids: List<ClassId>, pageable: Pageable): Page<ClassRepresentation> =
@@ -114,7 +114,7 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
         val newValues = UpdateClassUseCase.ReplaceCommand(label = request.label, uri = request.uri)
         service.replace(id, newValues).onFailure {
             when (it.reason) {
-                ClassNotFoundProblem -> throw ClassNotFound()
+                ClassNotFoundProblem -> throw ClassNotFound(id)
                 InvalidLabelProblem -> throw InvalidLabel()
                 InvalidURI -> throw IllegalStateException("An invalid URI got passed when replacing a class. This should not happen. Please report a bug.")
                 UpdateNotAllowed -> throw CannotResetURI(id.value)
@@ -132,7 +132,7 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
         if (requestBody.label != null) {
             service.updateLabel(id, requestBody.label).onFailure {
                 when (it.reason) {
-                    ClassNotFoundProblem -> throw ClassNotFound()
+                    ClassNotFoundProblem -> throw ClassNotFound(id)
                     InvalidLabelProblem -> throw InvalidLabel()
                 }
             }
@@ -140,7 +140,7 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
         if (requestBody.uri != null) {
             service.updateURI(id, requestBody.uri).onFailure {
                 when (it.reason) {
-                    ClassNotFoundProblem -> throw ClassNotFound()
+                    ClassNotFoundProblem -> throw ClassNotFound(id)
                     InvalidURI -> throw InvalidURI()
                     UpdateNotAllowed -> throw CannotResetURI(id.value)
                     AlreadyInUse -> throw URIAlreadyInUse(requestBody.uri)

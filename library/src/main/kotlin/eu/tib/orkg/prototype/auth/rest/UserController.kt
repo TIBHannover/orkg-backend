@@ -8,6 +8,8 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.UserNotFound
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
+import eu.tib.orkg.prototype.community.application.UserIsAlreadyMemberOfObservatory
+import eu.tib.orkg.prototype.community.application.UserIsAlreadyMemberOfOrganization
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import java.security.Principal
 import java.util.*
@@ -15,7 +17,6 @@ import javax.validation.Valid
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
-import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
@@ -38,10 +39,9 @@ class UserController(
     fun lookupUserDetails(principal: Principal?): ResponseEntity<UserDetails> {
         if (principal?.name == null)
             return ResponseEntity(UNAUTHORIZED)
-        val user = userService.findById(UUID.fromString(principal.name))
-        if (user.isPresent)
-            return ok(UserDetails(user.get()))
-        return ResponseEntity(NOT_FOUND)
+        val id = UUID.fromString(principal.name)
+        val user = userService.findById(id).orElseThrow { UserNotFound(id) }
+        return ok(UserDetails(user))
     }
 
     /**
@@ -52,39 +52,33 @@ class UserController(
      */
     @GetMapping("/{id}")
     fun lookupUser(@PathVariable id: UUID): ResponseEntity<UserDetails> {
-        val contributor = userService.findById(id).orElseThrow { UserNotFound("$id") }
+        val contributor = userService.findById(id).orElseThrow { UserNotFound(id) }
         return ok(UserDetails(contributor))
     }
 
     @PutMapping("/")
     fun updateUserDetails(@RequestBody @Valid updatedDetails: UserDetailsUpdateRequest, principal: Principal?): ResponseEntity<UserDetails> {
         if (principal?.name == null)
-            return ResponseEntity((UNAUTHORIZED))
-        val foundUser = userService.findById(UUID.fromString(principal.name))
-        if (foundUser.isPresent) {
-            val currentUser = foundUser.get()
-            val id = currentUser.id!!
-            userService.updateName(id, updatedDetails.displayName)
-            return ok(UserDetails(currentUser))
-        }
-        return ResponseEntity(NOT_FOUND)
+            return ResponseEntity(UNAUTHORIZED)
+        val id = UUID.fromString(principal.name)
+        val user = userService.findById(id).orElseThrow { UserNotFound(id) }
+        userService.updateName(user.id!!, updatedDetails.displayName)
+        return ok(UserDetails(user))
     }
 
     @PutMapping("/password")
     fun updatePassword(@RequestBody @Valid updatedPassword: PasswordDTO, principal: Principal?): ResponseEntity<Any> {
         if (principal?.name == null)
-            return ResponseEntity((UNAUTHORIZED))
+            return ResponseEntity(UNAUTHORIZED)
         if (!updatedPassword.hasMatchingPasswords())
             throw PasswordsDoNotMatch()
 
-        val foundUser = userService.findById(UUID.fromString(principal.name))
-        if (foundUser.isPresent) {
-            val currentUser = foundUser.get()
-            if (userService.checkPassword(currentUser.id!!, updatedPassword.currentPassword)) {
-                userService.updatePassword(currentUser.id!!, updatedPassword.newPassword)
-            } else {
-                throw CurrentPasswordInvalid()
-            }
+        val id = UUID.fromString(principal.name)
+        val user = userService.findById(id).orElseThrow { UserNotFound(id) }
+        if (userService.checkPassword(user.id!!, updatedPassword.currentPassword)) {
+            userService.updatePassword(user.id!!, updatedPassword.newPassword)
+        } else {
+            throw CurrentPasswordInvalid()
         }
         return ok(UpdatedUserResponse("success"))
     }
@@ -92,29 +86,24 @@ class UserController(
     @PutMapping("/role")
     fun updateUserRoleToOwner(principal: Principal?): ResponseEntity<Any> {
         if (principal?.name == null)
-            return ResponseEntity((UNAUTHORIZED))
-        val foundUser = userService.findById(UUID.fromString(principal.name))
-        if (foundUser.isPresent) {
-            val currentUser = foundUser.get()
-            val id = currentUser.id!!
-            userService.updateRole(id)
-            return ok(UserDetails(currentUser))
-        }
-        return ResponseEntity(NOT_FOUND)
+            return ResponseEntity(UNAUTHORIZED)
+        val id = UUID.fromString(principal.name)
+        val user = userService.findById(id).orElseThrow { UserNotFound(id) }
+        userService.updateRole(id)
+        return ok(UserDetails(user))
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping("/observatory")
     fun updateUserObservatory(@RequestBody @Valid userObservatory: UserObservatoryRequest): ResponseEntity<Any> {
-        val user = userService.findByEmail(userObservatory.userEmail).orElseThrow { throw RuntimeException("No user with email ${userObservatory.userEmail}") }
-        return if (user.observatoryId != null && ObservatoryId(user.observatoryId!!) == userObservatory.observatoryId &&
-            user.organizationId != null && OrganizationId(user.organizationId!!) == userObservatory.organizationId) {
-            ResponseEntity.badRequest().body(
-                ErrorMessage(message = "User is already a member of an observatory")
-            )
-        } else {
-            ok(userService.addUserObservatory(userObservatory, user).toContributor())
+        val user = userService.findByEmail(userObservatory.userEmail).orElseThrow { UserNotFound(userObservatory.userEmail) }
+        if (user.observatoryId == userObservatory.observatoryId.value) {
+            throw UserIsAlreadyMemberOfObservatory(userObservatory.observatoryId)
         }
+        if (user.organizationId == userObservatory.organizationId.value) {
+            throw UserIsAlreadyMemberOfOrganization(userObservatory.organizationId)
+        }
+        return ok(userService.addUserObservatory(userObservatory, user).toContributor())
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -193,9 +182,5 @@ class UserController(
         val observatoryId: ObservatoryId,
         @JsonProperty("organization_id")
         val organizationId: OrganizationId
-    )
-
-    data class ErrorMessage(
-        val message: String
     )
 }

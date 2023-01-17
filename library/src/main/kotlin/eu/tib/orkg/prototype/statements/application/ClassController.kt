@@ -45,6 +45,10 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
     @GetMapping("/", params = ["uri"])
     fun findByURI(@RequestParam uri: URI): ClassRepresentation = service.findByURI(uri).orElseThrow { ClassNotFound() }
 
+    @GetMapping("/", params = ["ids"])
+    fun findByIds(@RequestParam ids: List<ClassId>, pageable: Pageable): Page<ClassRepresentation> =
+        service.findAllById(ids, pageable)
+
     @GetMapping("/{id}/resources/")
     fun findResourcesWithClass(
         @PathVariable id: ClassId,

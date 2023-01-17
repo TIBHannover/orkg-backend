@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.DetailsPerProblem
+import eu.tib.orkg.prototype.statements.services.ResourceService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/problems/")
 class ProblemController(
     private val service: RetrieveResearchProblemUseCase, // FIXME
+    private val resourceService: ResourceService,
     private val contributorService: ContributorService
 ) {
 
@@ -86,11 +88,11 @@ class ProblemController(
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)
     fun markFeatured(@PathVariable id: ResourceId) {
-        service.markAsFeatured(id).orElseThrow { ResourceNotFound(id.toString()) }
+        resourceService.markAsFeatured(id)
     }
     @DeleteMapping("/{id}/metadata/featured")
     fun unmarkFeatured(@PathVariable id: ResourceId) {
-        service.markAsNonFeatured(id).orElseThrow { ResourceNotFound(id.toString()) }
+        resourceService.markAsNonFeatured(id)
     }
 
     @GetMapping("/{id}/metadata/featured")
@@ -107,11 +109,12 @@ class ProblemController(
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.OK)
     fun markUnlisted(@PathVariable id: ResourceId) {
-        service.markAsUnlisted(id).orElseThrow { ResourceNotFound(id.toString()) }
+        resourceService.markAsUnlisted(id)
     }
+
     @DeleteMapping("/{id}/metadata/unlisted")
     fun unmarkUnlisted(@PathVariable id: ResourceId) {
-        service.markAsListed(id).orElseThrow { ResourceNotFound(id.toString()) }
+        resourceService.markAsListed(id)
     }
 
     @GetMapping("/{id}/metadata/unlisted")

@@ -1,7 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.application.OrganizationController
 import java.util.Optional
 
 interface OrganizationService {
@@ -10,8 +9,6 @@ interface OrganizationService {
      * Create a new organization with a given name.
      */
     fun create(organizationName: String, createdBy: ContributorId, url: String, displayId: String, type: OrganizationType): Organization
-
-    fun createConference(organizationName: String, createdBy: ContributorId, url: String, displayId: String, type: OrganizationType, metadata: OrganizationController.Metadata): Organization
 
     fun listOrganizations(): List<Organization>
 

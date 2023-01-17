@@ -2,7 +2,8 @@ package eu.tib.orkg.prototype.statements.api
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
@@ -78,6 +79,9 @@ interface RetrieveResourceUseCase {
         unlisted: Boolean,
         pageable: Pageable
     ): Optional<Page<ResourceRepresentation>>
+    fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation>
+    fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation>
+    fun hasStatements(id: ResourceId): Boolean
 }
 
 fun interface ResourceGenerator {

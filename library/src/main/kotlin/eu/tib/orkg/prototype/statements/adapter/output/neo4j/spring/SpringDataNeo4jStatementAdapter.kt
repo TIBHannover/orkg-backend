@@ -1,12 +1,9 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
-import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClass
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClassRepository
-import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteral
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteralRepository
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jPredicate
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jPredicateRepository
-import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceRepository
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatement
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatementIdGenerator
@@ -145,21 +142,11 @@ class SpringDataNeo4jStatementAdapter(
 
     override fun exists(id: StatementId): Boolean = neo4jRepository.existsByStatementId(id)
 
-    private fun loadThing(thing: Neo4jThing): Thing {
-        // We call the repositories here, because they are cached. (Or at least can be.)
-        return when (thing) {
-            is Neo4jResource -> resourceRepository.findByResourceId(thing.resourceId).get()
-            is Neo4jLiteral -> literalRepository.findByLiteralId(thing.literalId).get()
-            is Neo4jClass -> classRepository.findByClassId(thing.classId).get()
-            is Neo4jPredicate -> predicateRepository.findByPredicateId(thing.predicateId).get()
-        }
-    }
-
     private fun Neo4jStatement.toStatement(): GeneralStatement = GeneralStatement(
         id = statementId!!,
-        subject = loadThing(subject!!),
+        subject = subject!!.toThing(),
         predicate = predicateRepository.findByPredicateId(predicateId!!).get(),
-        `object` = loadThing(`object`!!),
+        `object` = `object`!!.toThing(),
         createdAt = createdAt!!,
         createdBy = createdBy
     )

@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.24.0] - 2023-01-09
+### Added
+- Support for conference series. (Closes: [#401](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/401))
+
+## [0.23.2] - 2022-12-21
+### Changed
+- Caches can now be configured individually (via [Coffee-Boots](https://github.com/stepio/coffee-boots)). (See: [!363](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/363))
+
+## [0.23.1] - 2022-12-20
+### Security
+- Fixed an issue that allowed users to register and modify organizations and observatories without authorization. (Closes: [#441](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/441))
+
+## [0.23.0] - 2022-12-16
+### Security
+- Fixed an issue that allowed users to register multiple times with the same email address in different casing. (See [!354](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/354))
+### Added
+- Caching support for `Thing`s. (See [!255](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/355))
+- Added endpoint to lookup multiple classes by id. (See: [!321](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/321))
+
+## [0.22.0] - 2022-12-07
+### Added
+- Caching support is now available when fetching classes, predicates, or literals from their repository, as well as on existence checks.
+  [Caffeine](https://github.com/ben-manes/caffeine) is the default caching provider.
+  (See [!338](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/338), [!340](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/340), [!342](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/342))
+- Metrics collected via [Micrometer](https://micrometer.io/) are exposed via JMX for monitoring.
+### Changed
+- Paged endpoints were limited to 2500 elements per requested page.
+  This limit can be changed by setting a different value, e.g. via the environment variable `SPRING_DATA_WEB_PAGEABLE_MAX_PAGE_SIZE`.
+
 ## [0.21.0] - 2022-12-02
 ### Added
 - Deleting predicates is supported. (Closes: [#346](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/346))
@@ -215,7 +244,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.21.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.24.0...master
+[0.24.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.24.0
+[0.23.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.23.2
+[0.23.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.23.1
+[0.23.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.23.0
+[0.22.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.22.0
 [0.21.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.21.0
 [0.20.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.20.0
 [0.19.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.19.0

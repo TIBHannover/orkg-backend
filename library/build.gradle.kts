@@ -69,6 +69,10 @@ dependencies {
     implementation("io.github.config4k:config4k:0.4.2") {
         because("Required for parsing the essential entity configuration")
     }
+    // Caching
+    implementation("com.github.ben-manes.caffeine:caffeine")
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+    implementation("io.github.stepio.coffee-boots:coffee-boots:3.0.0")
     // Monitoring
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.jolokia:jolokia-core")
@@ -87,6 +91,7 @@ dependencies {
         // exclude(module = "mockito-core")
     }
     testImplementation("com.ninja-squad:springmockk:2.0.1")
+    testImplementation("com.redfin:contractual:3.0.0")
 
     // Security-related adjustments
     testImplementation("junit:junit") {

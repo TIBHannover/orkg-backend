@@ -10,6 +10,7 @@ interface ClassRepository : EntityRepository<Class, ClassId> {
     // legacy methods:
     fun save(c: Class)
     fun findByClassId(id: ClassId?): Optional<Class>
+    fun findAllByClassId(id: Iterable<ClassId>, pageable: Pageable): Page<Class>
     fun findAllByLabel(label: String): Iterable<Class>
     fun findAllByLabel(label: String, pageable: Pageable): Page<Class>
     fun findAllByLabelMatchesRegex(label: String): Iterable<Class>

@@ -9,6 +9,7 @@ interface RetrieveClassUseCase {
     fun exists(id: ClassId): Boolean
     // legacy methods:
     fun findAll(pageable: Pageable): Page<ClassRepresentation>
+    fun findAllById(ids: Iterable<ClassId>, pageable: Pageable): Page<ClassRepresentation>
     fun findById(id: ClassId): Optional<ClassRepresentation>
     fun findAllByLabel(label: String): Iterable<ClassRepresentation>
     fun findAllByLabel(pageable: Pageable, label: String): Page<ClassRepresentation>

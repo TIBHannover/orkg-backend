@@ -24,6 +24,8 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.util.AopTestUtils
 
+private val allCacheNames: Array<out String> = arrayOf(PREDICATE_ID_TO_PREDICATE_CACHE, THING_ID_TO_THING_CACHE)
+
 @ContextConfiguration
 @ExtendWith(SpringExtension::class)
 class SpringDataNeo4jPredicateAdapterCachingTests {
@@ -38,8 +40,10 @@ class SpringDataNeo4jPredicateAdapterCachingTests {
 
     @BeforeEach
     fun resetState() {
-        // Reset the cache. Throw NPE if we cannot find the cache, most likely because the name is wrong.
-        cacheManager.getCache("predicates")!!.clear()
+        allCacheNames.forEach { name ->
+            // Reset the cache. Throw NPE if we cannot find the cache, most likely because the name is wrong.
+            cacheManager.getCache(name)!!.clear()
+        }
 
         // Obtain access to the proxied object, which is our mock created in the configuration below.
         mock = AopTestUtils.getTargetObject(adapter)
@@ -128,7 +132,7 @@ class SpringDataNeo4jPredicateAdapterCachingTests {
     @EnableCaching(proxyTargetClass = true)
     class CachingTestConfig {
         @Bean
-        fun cacheManager(): CacheManager = ConcurrentMapCacheManager("predicates")
+        fun cacheManager(): CacheManager = ConcurrentMapCacheManager(*allCacheNames)
 
         @Bean
         fun mockedAdapter(): PredicateRepository = mockk<SpringDataNeo4jPredicateAdapter>()

@@ -7,7 +7,7 @@ import java.util.*
 
 data class Class(
     val id: ClassId?,
-    val label: String,
+    override val label: String,
     val uri: URI?,
     val createdAt: OffsetDateTime,
     val createdBy: ContributorId = ContributorId.createUnknownContributor(),
@@ -15,7 +15,7 @@ data class Class(
     val _class: String? = "class"
 ) : Thing {
     var description: String? = null
-    override val thingId: ThingId = id!!
+    override val thingId: ThingId = ThingId.of(id!!.value)
     fun toClass(): Class = Class(id, label, uri, createdAt, createdBy, _class)
 }
 

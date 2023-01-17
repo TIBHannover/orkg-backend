@@ -2,6 +2,7 @@ spring:
   # Get rid of "org.postgresql.jdbc.PgConnection.createClob() not implemented" error, see
   # https://hibernate.atlassian.net/browse/HHH-12368
   jpa.properties.hibernate.jdbc.lob.non_contextual_creation: true
+  data.web.pageable.max-page-size: 2500
   rdf:
     # Vocab prefix not used, still hard coded
     # might need to be copied to other profiles on deployment
@@ -9,6 +10,9 @@ spring:
     frontend-uri: 'http://localhost:3000'
   jmx:
     enabled: true
+coffee-boots:
+  cache:
+    basic-spec: maximumSize=5000,expireAfterAccess=10m,recordStats
 orkg:
   storage:
     images:
@@ -27,7 +31,7 @@ management:
     enabled-by-default: false
     web:
       exposure:
-        include: health,info,jolokia,liquibase,loggers,env
+        include: health,info,jolokia,liquibase,loggers,env,metrics
     jmx:
       exposure:
         include: '*'
@@ -43,6 +47,8 @@ management:
     liquibase:
       enabled: true
     loggers:
+      enabled: true
+    metrics:
       enabled: true
 hawtio:
   authenticationEnabled: false

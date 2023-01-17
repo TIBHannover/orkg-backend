@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable
 
 interface ThingRepository {
     // legacy methods:
-    fun findByThingId(id: String?): Optional<Thing>
+    fun findByThingId(id: String): Optional<Thing>
     fun findAll(): Iterable<Thing>
     fun findAll(pageable: Pageable): Page<Thing>
 }

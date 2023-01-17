@@ -1,12 +1,12 @@
 package eu.tib.orkg.prototype.contenttypes.services
 
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.contenttypes.domain.Paper
 import eu.tib.orkg.prototype.contenttypes.spi.PaperRepository
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -37,28 +37,28 @@ class PaperService(
     private val repository: PaperRepository,
     private val statementRepository: StatementRepository
 ) : PaperUseCases {
-    override fun findPaper(id: ResourceId) =
+    override fun findPaper(id: ResourceId): Optional<PaperResponse> =
         repository.findById(id).map(::expand)
 
-    fun expand(paper: Paper): PaperResponse {
+    private fun expand(paper: Paper): PaperResponse {
         val resource = paper.resource
         val statements = StatementHelper(resource.id!!, statementRepository).gatherStatements()
         return PaperResponse(
             title = resource.label,
-            id = resource.id,
-            researchField = statements.first(HAS_RESEARCH_FIELD).get().id!!,
+            id = ThingId.of(resource.id.value),
+            researchField = ResourceId(statements.first(HAS_RESEARCH_FIELD).get().thingId.value),
             identifiers = PaperIdentifiers(
                 doi = statements.first(HAS_DOI).get().label
             ),
             publicationInfo = PublicationInfo(
-                publishedMonth = statements.first(HAS_PUBLICATION_MONTH).get().label?.toInt(),
+                publishedMonth = statements.first(HAS_PUBLICATION_MONTH).get().label.toInt(),
                 publishedYear = statements.first(HAS_PUBLICATION_YEAR).get().label.toLong(),
                 publishedIn = statements.first(HAS_VENUE).get().label, // TODO Resource ID maybe?
                 downloadUrl = null
             ),
             authors = statements.all(HAS_AUTHOR).get().map { it.thingId },
             contributors = listOf(), // TODO how to get all?
-            contributions = statements.all(HAS_CONTRIBUTION).get().map { it.id!! },
+            contributions = statements.all(HAS_CONTRIBUTION).get().map { ResourceId(it.thingId.value) },
             observatories = listOf(resource.observatoryId),
             organizations = listOf(resource.organizationId),
             extractionMethod = resource.extractionMethod,

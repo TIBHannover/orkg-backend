@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import java.time.LocalDate
 
 data class Organization(
     val id: OrganizationId?,
@@ -22,15 +22,7 @@ data class Organization(
     @JsonProperty("display_id")
     var displayId: String?,
 
-    var type: OrganizationType?,
-
-    var metadata: Metadata?
-)
-
-data class Metadata(
-    var date: LocalDate?,
-    @JsonProperty("is_double_blind")
-    var isDoubleBlind: Boolean?
+    var type: OrganizationType?
 )
 
 enum class OrganizationType {

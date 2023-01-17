@@ -19,7 +19,7 @@ import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryReq
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -406,19 +406,39 @@ class ResourceService(
         return null
     }
 
-    override fun markAsFeatured(resourceId: ResourceId): Optional<Resource> {
-        setUnlistedFlag(resourceId, false)
-        return setFeaturedFlag(resourceId, true)
+    override fun markAsFeatured(resourceId: ResourceId) {
+        val resource = repository.findByResourceId(resourceId).orElseThrow { ResourceNotFound(resourceId.value) }
+        val modified = resource.copy(
+            unlisted = false,
+            featured = true
+        )
+        repository.save(modified)
     }
 
-    override fun markAsNonFeatured(resourceId: ResourceId) = setFeaturedFlag(resourceId, false)
-
-    override fun markAsUnlisted(resourceId: ResourceId): Optional<Resource> {
-        setFeaturedFlag(resourceId, false)
-        return setUnlistedFlag(resourceId, true)
+    override fun markAsNonFeatured(resourceId: ResourceId) {
+        val resource = repository.findByResourceId(resourceId).orElseThrow { ResourceNotFound(resourceId.value) }
+        val modified = resource.copy(
+            featured = false
+        )
+        repository.save(modified)
     }
 
-    override fun markAsListed(resourceId: ResourceId) = setUnlistedFlag(resourceId, false)
+    override fun markAsUnlisted(resourceId: ResourceId) {
+        val resource = repository.findByResourceId(resourceId).orElseThrow { ResourceNotFound(resourceId.value) }
+        val modified = resource.copy(
+            unlisted = true,
+            featured = false
+        )
+        repository.save(modified)
+    }
+
+    override fun markAsListed(resourceId: ResourceId) {
+        val resource = repository.findByResourceId(resourceId).orElseThrow { ResourceNotFound(resourceId.value) }
+        val modified = resource.copy(
+            unlisted = false,
+        )
+        repository.save(modified)
+    }
 
     override fun loadFeaturedPapers(pageable: Pageable): Page<Resource> =
         repository.findAllFeaturedResourcesByClass(PAPER_CLASS_AS_LIST, true, pageable)
@@ -550,26 +570,20 @@ class ResourceService(
         val result = neo4jSmartReviewRepository.findSmartReviewByResourceId(id)
         return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted ?: false
     }
+    override fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged { repository.findComparisonsByOrganizationId(id, pageable) }
 
-    private fun setFeaturedFlag(resourceId: ResourceId, featured: Boolean): Optional<Resource> {
-        val result = repository.findByResourceId(resourceId)
-        var resultObj = result.orElseThrow { ResourceNotFound(resourceId.value) }
-        resultObj = resultObj.copy(featured = featured)
-        return Optional.of(repository.save(resultObj))
-    }
+    override fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged { repository.findProblemsByOrganizationId(id, pageable) }
 
-    private fun setVerifiedFlag(resourceId: ResourceId, verified: Boolean): Optional<Resource> {
-        val result = repository.findByResourceId(resourceId)
-        var resultObj = result.orElseThrow { ResourceNotFound(resourceId.value) }
-        resultObj = resultObj.copy(verified = verified)
-        return Optional.of(repository.save(resultObj))
-    }
+    override fun hasStatements(id: ResourceId): Boolean = repository.checkIfResourceHasStatements(id)
 
-    private fun setUnlistedFlag(resourceId: ResourceId, unlisted: Boolean): Optional<Resource> {
-        val result = repository.findByResourceId(resourceId)
-        var resultObj = result.orElseThrow { ResourceNotFound(resourceId.value) }
-        resultObj = resultObj.copy(unlisted = unlisted)
-        return Optional.of(repository.save(resultObj))
+    private fun setVerifiedFlag(resourceId: ResourceId, verified: Boolean) {
+        val resource = repository.findByResourceId(resourceId).orElseThrow { ResourceNotFound(resourceId.value) }
+        val modified = resource.copy(
+            verified = verified
+        )
+        repository.save(modified)
     }
 
     private fun String.toSearchString() =

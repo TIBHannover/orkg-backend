@@ -2,14 +2,9 @@ package eu.tib.orkg.prototype.contenttypes.domain
 
 import eu.tib.orkg.prototype.contenttypes.api.PaperUseCases
 import eu.tib.orkg.prototype.contenttypes.spi.PaperRepository
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.application.ExtractionMethod
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
-import java.time.OffsetDateTime
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 

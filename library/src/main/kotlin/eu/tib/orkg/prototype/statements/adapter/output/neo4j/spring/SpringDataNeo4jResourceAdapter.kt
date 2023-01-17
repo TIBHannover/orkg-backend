@@ -5,18 +5,27 @@ import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceIdGenerator
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceRepository
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.stringify
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import java.util.*
+import org.springframework.cache.annotation.CacheConfig
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
+import org.springframework.cache.annotation.Caching
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
+const val RESOURCE_ID_TO_RESOURCE_CACHE = "resource-id-to-resource"
+const val RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE = "resource-id-to-resource-exists"
+
 @Component
+@CacheConfig(cacheNames = [RESOURCE_ID_TO_RESOURCE_CACHE, RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE])
 class SpringDataNeo4jResourceAdapter(
     private val neo4jRepository: Neo4jResourceRepository,
     private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator,
@@ -33,12 +42,32 @@ class SpringDataNeo4jResourceAdapter(
         return id
     }
 
-    override fun save(resource: Resource): Resource = neo4jRepository.save(resource.toNeo4jResource()).toResource()
+    @Caching(
+        evict = [
+            CacheEvict(key = "#resource.id", cacheNames = [RESOURCE_ID_TO_RESOURCE_CACHE]),
+            CacheEvict(key = "#resource.id.value", cacheNames = [THING_ID_TO_THING_CACHE]),
+        ]
+    )
+    override fun save(resource: Resource) {
+        neo4jRepository.save(resource.toNeo4jResource())
+    }
 
+    @Caching(
+        evict = [
+            CacheEvict(key = "#id"),
+            CacheEvict(key = "#id.value", cacheNames = [THING_ID_TO_THING_CACHE]),
+        ]
+    )
     override fun deleteByResourceId(id: ResourceId) {
         neo4jRepository.deleteByResourceId(id)
     }
 
+    @Caching(
+        evict = [
+            CacheEvict(allEntries = true),
+            CacheEvict(allEntries = true, cacheNames = [THING_ID_TO_THING_CACHE]),
+        ]
+    )
     override fun deleteAll() {
         neo4jRepository.deleteAll()
     }
@@ -46,8 +75,10 @@ class SpringDataNeo4jResourceAdapter(
     override fun findAll(pageable: Pageable): Page<Resource> =
         neo4jRepository.findAll(pageable).map(Neo4jResource::toResource)
 
+    @Cacheable(key = "#id", cacheNames = [RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE])
     override fun exists(id: ResourceId): Boolean = neo4jRepository.existsByResourceId(id)
 
+    @Cacheable(key = "#id", cacheNames = [RESOURCE_ID_TO_RESOURCE_CACHE])
     override fun findByResourceId(id: ResourceId?): Optional<Resource> =
         neo4jRepository.findByResourceId(id).map(Neo4jResource::toResource)
 
@@ -200,6 +231,11 @@ class SpringDataNeo4jResourceAdapter(
         pageable: Pageable
     ): Page<Resource> = neo4jRepository.findAllResourcesByObservatoryIdAndClass(id, classes, unlisted, pageable).map(Neo4jResource::toResource)
 
+    override fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findComparisonsByOrganizationId(id, pageable).map(Neo4jResource::toResource)
+
+    override fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findProblemsByOrganizationId(id, pageable).map(Neo4jResource::toResource)
     private fun Resource.toNeo4jResource() =
         // We need to fetch the original resource, so "resources" is set properly.
         neo4jRepository.findByResourceId(id!!).orElse(Neo4jResource()).apply {

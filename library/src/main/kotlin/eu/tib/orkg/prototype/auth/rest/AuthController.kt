@@ -23,14 +23,15 @@ class AuthController(
     @PostMapping("/register")
     @ResponseStatus(OK)
     fun registerUser(@RequestBody @Valid request: RegisterUserRequest): ResponseEntity<*> {
-        val user = userService.findByEmail(request.email)
+        val email = request.email.lowercase()
+        val user = userService.findByEmail(email)
         if (user.isPresent)
             throw UserAlreadyRegistered(request.email)
 
         if (request.password != request.matchingPassword)
             throw PasswordsDoNotMatch()
 
-        userService.registerUser(request.email, request.password, request.displayName)
+        userService.registerUser(email, request.password, request.displayName)
 
         return successResponse()
     }

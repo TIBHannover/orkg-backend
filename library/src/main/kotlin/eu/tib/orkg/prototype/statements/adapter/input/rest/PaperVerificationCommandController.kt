@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.adapter.input.rest
 
-import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsVerifiedUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.springframework.http.HttpStatus
@@ -19,16 +18,12 @@ class PaperVerificationCommandController(
     @PutMapping("/{id}/metadata/verified")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun markVerified(@PathVariable id: ResourceId) {
-        service
-            .markAsVerified(id)
-            .orElseThrow { ResourceNotFound(id.toString()) }
+        service.markAsVerified(id)
     }
 
     @DeleteMapping("/{id}/metadata/verified")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun unmarkVerified(@PathVariable id: ResourceId) {
-        service
-            .markAsUnverified(id)
-            .orElseThrow { ResourceNotFound(id.toString()) }
+        service.markAsUnverified(id)
     }
 }

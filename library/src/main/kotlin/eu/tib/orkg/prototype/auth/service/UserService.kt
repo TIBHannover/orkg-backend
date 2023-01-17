@@ -21,12 +21,12 @@ class UserService(
 
     fun findById(id: UUID): Optional<UserEntity> = repository.findById(id)
 
-    fun registerUser(anEmail: String, aPassword: String, aDisplayName: String?) {
+    fun registerUser(anEmail: String, aPassword: String, aDisplayName: String?): UUID {
         val userId = UUID.randomUUID()
         val role = roleRepository.findByName("ROLE_USER")
         val newUser = UserEntity().apply {
             id = userId
-            email = anEmail
+            email = anEmail.lowercase()
             password = passwordEncoder.encode(aPassword)
             displayName = aDisplayName
             enabled = true
@@ -34,6 +34,7 @@ class UserService(
                 roles.add(role.get())
         }
         repository.save(newUser)
+        return userId
     }
 
     fun checkPassword(userId: UUID, aPassword: String): Boolean {

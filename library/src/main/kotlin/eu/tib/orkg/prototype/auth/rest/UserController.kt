@@ -6,8 +6,8 @@ import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.UserNotFound
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryService
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import java.security.Principal
 import java.util.*
@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/user")
 class UserController(
     private val userService: UserService,
-    private val observatoryService: ObservatoryService
+    private val observatoryService: ObservatoryUseCases
 ) {
     @GetMapping("/")
     fun lookupUserDetails(principal: Principal?): ResponseEntity<UserDetails> {

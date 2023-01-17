@@ -29,16 +29,6 @@ class PredicateIdSpec {
     }
 
     @Test
-    @DisplayName("should be equal to another instance of the same id")
-    fun twoInstancesShouldBeEqual() {
-        val one = PredicateId(1)
-        val other = PredicateId(1)
-
-        assertThat(one).isNotSameAs(other)
-        assertThat(one).isEqualTo(other)
-    }
-
-    @Test
     @DisplayName("should be equal to a clone of the same id")
     fun twoClonesShouldBeEqual() {
         val one = PredicateId(1)

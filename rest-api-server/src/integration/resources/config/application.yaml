@@ -2,6 +2,7 @@ spring:
   # Get rid of "org.postgresql.jdbc.PgConnection.createClob() not implemented" error, see
   # https://hibernate.atlassian.net/browse/HHH-12368
   jpa.properties.hibernate.jdbc.lob.non_contextual_creation: true
+  data.web.pageable.max-page-size: 2500
   datasource:
     # Start Postgres via TestContainers. (The hostname, port number and database name are ignored.)
     url: 'jdbc:tc:postgresql:11://localhost/db'

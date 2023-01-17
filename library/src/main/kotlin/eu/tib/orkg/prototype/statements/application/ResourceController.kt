@@ -7,7 +7,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Label
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
@@ -158,12 +158,12 @@ class ResourceController(
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)
     fun markFeatured(@PathVariable id: ResourceId) {
-        service.markAsFeatured(id).orElseThrow { ResourceNotFound(id.toString()) }
+        service.markAsFeatured(id)
     }
 
     @DeleteMapping("/{id}/metadata/featured")
     fun unmarkFeatured(@PathVariable id: ResourceId) {
-        service.markAsNonFeatured(id).orElseThrow { ResourceNotFound(id.toString()) }
+        service.markAsNonFeatured(id)
     }
 
     @GetMapping("/{id}/metadata/featured")
@@ -181,12 +181,12 @@ class ResourceController(
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.OK)
     fun markUnlisted(@PathVariable id: ResourceId) {
-        service.markAsUnlisted(id).orElseThrow { ResourceNotFound(id.toString()) }
+        service.markAsUnlisted(id)
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")
     fun unmarkUnlisted(@PathVariable id: ResourceId) {
-        service.markAsListed(id).orElseThrow { ResourceNotFound(id.toString()) }
+        service.markAsListed(id)
     }
 
     @GetMapping("/{id}/metadata/unlisted")

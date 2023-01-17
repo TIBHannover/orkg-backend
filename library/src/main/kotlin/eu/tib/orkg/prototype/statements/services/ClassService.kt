@@ -89,6 +89,9 @@ class ClassService(
     override fun findAll(pageable: Pageable): Page<ClassRepresentation> =
         repository.findAll(pageable).map(Class::toClassRepresentation)
 
+    override fun findAllById(ids: Iterable<ClassId>, pageable: Pageable): Page<ClassRepresentation> =
+        repository.findAllByClassId(ids, pageable).map(Class::toClassRepresentation)
+
     override fun findById(id: ClassId): Optional<ClassRepresentation> =
         repository.findByClassId(id).map(Class::toClassRepresentation)
 

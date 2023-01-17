@@ -2,7 +2,7 @@ import org.asciidoctor.gradle.jvm.AsciidoctorTask
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 group = "eu.tib"
-version = "0.21.0"
+version = "0.24.0"
 
 val neo4jVersion = "3.5.+" // should match version in Dockerfile
 val springDataNeo4jVersion = "5.3.4"
@@ -21,6 +21,7 @@ plugins {
     kotlin("plugin.spring")
     kotlin("plugin.jpa")
     id("idea")
+    id("jacoco-report-aggregation")
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.spring.dependency.management)
 
@@ -29,7 +30,9 @@ plugins {
     id("de.jansauer.printcoverage") version "2.0.0"
     id("org.asciidoctor.jvm.convert") version "3.3.2"
     id("com.google.cloud.tools.jib") version "3.1.1"
-    id("org.barfuin.gradle.taskinfo") version "1.2.0"
+    // The taskinfo plugin currently does not work with Gradle 7.6: https://gitlab.com/barfuin/gradle-taskinfo/-/issues/20
+    // It was used only occasionally for debugging, and can be re-enabled again later (if needed).
+    // id("org.barfuin.gradle.taskinfo") version "1.2.0"
     id("com.diffplug.spotless")
 }
 
@@ -59,7 +62,12 @@ dependencies {
     // Platform alignment for ORKG components
     api(platform(project(":platform")))
 
+    // This is supposed to go away at some point:
     implementation(project(":library"))
+    // This project is essentially a "configuration" project in Spring's sense, so we depend on all components:
+    implementation(project(":graph:application"))
+    implementation(project(":graph:adapter-input-rest-spring-mvc"))
+    implementation(project(":graph:adapter-output-spring-data-neo4j-ogm"))
 
     implementation(platform(kotlin("bom", "1.7.10")))
     implementation(platform(libs.forkhandles.bom))
@@ -92,9 +100,14 @@ dependencies {
     implementation("io.github.config4k:config4k:0.4.2") {
         because("Required for parsing the essential entity configuration")
     }
+    // Caching
+    implementation("com.github.ben-manes.caffeine:caffeine")
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+    implementation("io.github.stepio.coffee-boots:coffee-boots:3.0.0")
     // Monitoring
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.jolokia:jolokia-core")
+    implementation("io.micrometer:micrometer-registry-jmx")
     //
     // Testing
     //
@@ -152,8 +165,11 @@ tasks {
     }
 
     // Wire tasks, so they always generate a coverage report and print the coverage on build
-    val printCoverage by existing { mustRunAfter(jacocoTestReport) }
-    val check by existing { dependsOn(printCoverage) }
+    val check by existing {
+        dependsOn(named<JacocoReport>("testCodeCoverageReport"))
+    }
+    val printCoverage by existing { mustRunAfter(check) }
+    val build by existing { dependsOn(printCoverage) }
 
     withType<Test>().configureEach {
         useJUnitPlatform {

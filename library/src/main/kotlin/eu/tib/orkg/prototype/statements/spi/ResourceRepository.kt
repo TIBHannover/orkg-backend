@@ -3,7 +3,8 @@ package eu.tib.orkg.prototype.statements.spi
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.util.*
@@ -16,7 +17,7 @@ interface ResourceRepository : EntityRepository<Resource, ResourceId> {
 
     // legacy methods:
     fun nextIdentity(): ResourceId
-    fun save(resource: Resource): Resource
+    fun save(resource: Resource)
     fun deleteByResourceId(id: ResourceId)
     fun deleteAll()
     fun findByResourceId(id: ResourceId?): Optional<Resource>
@@ -56,6 +57,8 @@ interface ResourceRepository : EntityRepository<Resource, ResourceId> {
     fun findAllFeaturedResourcesByObservatoryIDAndClass(id: ObservatoryId, classes: List<String>, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
     fun findAllUnlistedResourcesByClass(classes: List<String>, unlisted: Boolean, pageable: Pageable): Page<Resource>
     fun findAllUnlistedResourcesByObservatoryIDAndClass(id: ObservatoryId, classes: List<String>, unlisted: Boolean, pageable: Pageable): Page<Resource>
+    fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
+    fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
 
     @QueryResult
     data class ResourceContributors(

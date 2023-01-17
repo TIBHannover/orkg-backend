@@ -42,6 +42,10 @@ fun <
 ) = describeSpec {
     beforeTest {
         repository.deleteAll()
+        classRepository.deleteAll()
+        literalRepository.deleteAll()
+        resourceRepository.deleteAll()
+        predicateRepository.deleteAll()
     }
 
     val fabricator = Fabrikate(

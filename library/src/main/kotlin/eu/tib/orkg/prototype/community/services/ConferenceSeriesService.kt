@@ -1,28 +1,27 @@
-package eu.tib.orkg.prototype.statements.infrastructure.jpa
+package eu.tib.orkg.prototype.community.services
 
-import eu.tib.orkg.prototype.statements.application.ConferenceSeriesController
-import eu.tib.orkg.prototype.statements.domain.model.ConferenceSeriesService
-import eu.tib.orkg.prototype.statements.domain.model.ConferenceSeries
-import eu.tib.orkg.prototype.statements.domain.model.ConferenceSeriesId
-import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.statements.domain.model.PeerReviewType
-import eu.tib.orkg.prototype.statements.domain.model.jpa.ConferenceSeriesEntity
-import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresConferenceSeriesRepository
+import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.ConferenceSeriesEntity
+import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresConferenceSeriesRepository
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
+import eu.tib.orkg.prototype.community.api.ConferenceSeriesUseCases
+import eu.tib.orkg.prototype.community.application.ConferenceSeriesController
 import eu.tib.orkg.prototype.community.application.OrganizationNotFound
-import java.util.Optional
-import java.util.UUID
-import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
+import eu.tib.orkg.prototype.community.domain.model.ConferenceSeries
+import eu.tib.orkg.prototype.community.domain.model.ConferenceSeriesId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.community.domain.model.PeerReviewType
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
-class PostgresConferenceSeriesService(
+class ConferenceSeriesService(
     private val postgresConferenceSeriesRepository: PostgresConferenceSeriesRepository,
     private val postgresOrganizationRepository: PostgresOrganizationRepository
-) : ConferenceSeriesService {
+) : ConferenceSeriesUseCases {
     override fun create(id: OrganizationId, name: String, url: String, displayId: String, metadata: ConferenceSeriesController.Metadata): ConferenceSeries {
         val seriesId = UUID.randomUUID()
         val org = postgresOrganizationRepository

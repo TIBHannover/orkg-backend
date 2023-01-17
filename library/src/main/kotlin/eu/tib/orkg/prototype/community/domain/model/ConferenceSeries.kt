@@ -1,7 +1,6 @@
-package eu.tib.orkg.prototype.statements.domain.model
+package eu.tib.orkg.prototype.community.domain.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import java.time.LocalDate
 
 data class ConferenceSeries(

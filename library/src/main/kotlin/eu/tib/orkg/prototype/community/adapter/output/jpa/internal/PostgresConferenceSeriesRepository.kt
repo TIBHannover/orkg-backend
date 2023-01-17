@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.statements.domain.model.jpa
+package eu.tib.orkg.prototype.community.adapter.output.jpa.internal
 
 import java.util.Optional
 import java.util.UUID

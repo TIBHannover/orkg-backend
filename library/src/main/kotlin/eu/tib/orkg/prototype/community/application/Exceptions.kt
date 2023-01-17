@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.community.application
 
+import eu.tib.orkg.prototype.community.domain.model.ConferenceSeriesId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.application.ForbiddenOperationException
@@ -22,3 +23,6 @@ class InvalidImage() : ForbiddenOperationException("image", "Please upload a val
 class OrganizationNotFound(id: String) : RuntimeException("""Organization "$id" not found""") {
     constructor(id: OrganizationId) : this(id.toString())
 }
+
+@ResponseStatus(HttpStatus.NOT_FOUND)
+class ConferenceNotFound(id: ConferenceSeriesId) : RuntimeException("""Conference "$id" not found""")

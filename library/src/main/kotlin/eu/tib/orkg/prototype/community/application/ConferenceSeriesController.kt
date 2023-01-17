@@ -1,11 +1,10 @@
-package eu.tib.orkg.prototype.statements.application
+package eu.tib.orkg.prototype.community.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.community.application.NameAlreadyExist
+import eu.tib.orkg.prototype.community.api.ConferenceSeriesUseCases
+import eu.tib.orkg.prototype.community.domain.model.ConferenceSeries
+import eu.tib.orkg.prototype.community.domain.model.ConferenceSeriesId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.statements.domain.model.ConferenceSeries
-import eu.tib.orkg.prototype.statements.domain.model.ConferenceSeriesId
-import eu.tib.orkg.prototype.statements.domain.model.ConferenceSeriesService
 import java.time.LocalDate
 import java.util.*
 import javax.validation.Valid
@@ -23,7 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RestController
 @RequestMapping("/api/conference-series/")
 class ConferenceSeriesController(
-    private val service: ConferenceSeriesService
+    private val service: ConferenceSeriesUseCases
 ) {
     @RequestMapping("/", method = [RequestMethod.POST, RequestMethod.PUT])
     fun addConferenceSeries(

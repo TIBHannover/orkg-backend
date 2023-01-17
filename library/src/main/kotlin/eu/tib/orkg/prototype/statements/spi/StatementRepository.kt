@@ -16,12 +16,9 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun countStatementsAboutResources(resourceIds: Set<ResourceId>): Map<ResourceId, Long>
     // legacy methods:
     fun nextIdentity(): StatementId
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     fun save(statement: GeneralStatement)
     fun count(): Long
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     fun delete(statement: GeneralStatement)
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     fun deleteByStatementId(id: StatementId)
     fun deleteAll()
     fun findAll(depth: Int): Iterable<GeneralStatement>

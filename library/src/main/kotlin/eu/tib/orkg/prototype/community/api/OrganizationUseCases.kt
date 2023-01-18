@@ -1,10 +1,13 @@
 package eu.tib.orkg.prototype.community.api
 
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.community.domain.model.Organization
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationType
-import java.util.Optional
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.files.domain.model.Image
+import eu.tib.orkg.prototype.files.domain.model.ImageData
+import java.util.*
+import javax.activation.MimeType
 
 interface OrganizationUseCases {
 
@@ -24,6 +27,10 @@ interface OrganizationUseCases {
     fun listConferences(): List<Organization>
 
     fun updateOrganization(organization: Organization): Organization
+
+    fun findLogo(id: OrganizationId): Optional<Image>
+
+    fun updateLogo(id: OrganizationId, imageData: ImageData, mimeType: MimeType, contributor: ContributorId)
 
     /**
      * Delete all organizations

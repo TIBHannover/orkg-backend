@@ -33,6 +33,9 @@ class OrganizationAlreadyExists private constructor(
     }
 }
 
+class LogoNotFound(id: OrganizationId) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Logo for organization "$id" not found.""")
+
 class UserIsAlreadyMemberOfOrganization(id: OrganizationId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """User is already a member of organization "$id".""")
 
@@ -66,3 +69,6 @@ class ConferenceNotFound : SimpleMessageException {
     constructor(id: String) : super(HttpStatus.NOT_FOUND, """Conference "$id" not found.""")
     constructor(id: ConferenceSeriesId) : this(id.toString())
 }
+
+class InvalidImageEncoding :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Invalid image encoding.""")

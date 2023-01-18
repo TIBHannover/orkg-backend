@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.community.domain.model.Organization
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationType
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.files.domain.model.ImageId
 import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -50,6 +51,9 @@ class OrganizationEntity() {
     @JoinColumn(name = "organization_id", insertable = false, updatable = false)
     var conferenceSeries: MutableSet<ConferenceSeriesEntity>? = mutableSetOf()
 
+    @Column(name = "logo_id")
+    var logoId: UUID? = null
+
     fun toOrganization() =
         Organization(
             id = OrganizationId(id!!),
@@ -59,6 +63,7 @@ class OrganizationEntity() {
             homepage = url,
             observatoryIds = observatories!!.map { ObservatoryId(it.id!!) }.toSet(),
             displayId = displayId,
-            type = type!!
+            type = type!!,
+            logoId = if (logoId != null) ImageId(logoId!!) else null
         )
 }

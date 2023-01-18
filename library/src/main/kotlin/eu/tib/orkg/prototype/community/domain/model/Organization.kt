@@ -1,7 +1,10 @@
 package eu.tib.orkg.prototype.community.domain.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.files.domain.model.ImageId
+import java.util.*
 
 data class Organization(
     val id: OrganizationId?,
@@ -21,7 +24,10 @@ data class Organization(
     @JsonProperty("display_id")
     var displayId: String?,
 
-    var type: OrganizationType?
+    var type: OrganizationType?,
+
+    @JsonIgnore
+    val logoId: ImageId?
 )
 
 enum class OrganizationType {

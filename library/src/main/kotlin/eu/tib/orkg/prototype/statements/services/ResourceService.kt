@@ -321,7 +321,7 @@ class ResourceService(
         // update all the properties
         if (request.label != null) found = found.copy(label = request.label)
         if (request.classes != null) {
-            if (request.classes.isEmpty() || !classRepository.existsAll(request.classes)) {
+            if (request.classes.isNotEmpty() && !classRepository.existsAll(request.classes)) {
                 throw InvalidClassCollection(request.classes)
             }
             found = found.copy(classes = request.classes)

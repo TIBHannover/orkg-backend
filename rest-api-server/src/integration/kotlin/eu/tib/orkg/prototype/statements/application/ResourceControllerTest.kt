@@ -279,6 +279,19 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
         mockMvc
             .perform(putRequestWithBody("/api/resources/$resource", update))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.classes", hasSize<Int>(0)))
+    }
+
+    @Test
+    fun editResourceClassesAreInvalid() {
+        val oldClass = classService.createClass(label = "class")
+        val resource = service.createResource(classes = setOf(oldClass.value), label = "test")
+
+        val update = mapOf("classes" to setOf(ClassId("DoesNotExist")))
+
+        mockMvc
+            .perform(putRequestWithBody("/api/resources/$resource", update))
             .andExpect(status().isBadRequest)
     }
 

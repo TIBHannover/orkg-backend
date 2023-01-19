@@ -91,7 +91,7 @@ class OrganizationService(
         else Optional.empty()
     }
 
-    override fun updateLogo(id: OrganizationId, imageData: ImageData, mimeType: MimeType, contributor: ContributorId) {
+    override fun updateLogo(id: OrganizationId, imageData: ImageData, mimeType: MimeType, contributor: ContributorId?) {
         val organization = postgresOrganizationRepository.findById(id.value)
             .orElseThrow { OrganizationNotFound(id) }
         val command = CreateImageUseCase.CreateCommand(imageData, mimeType, contributor)

@@ -8,6 +8,6 @@ data class Image(
     val id: ImageId,
     val data: ImageData,
     val mimeType: MimeType,
-    val createdBy: ContributorId,
+    val createdBy: ContributorId?,
     val createdAt: OffsetDateTime
 )

@@ -11,6 +11,6 @@ interface CreateImageUseCase {
     data class CreateCommand(
         val data: ImageData,
         val mimeType: MimeType,
-        val createdBy: ContributorId
+        val createdBy: ContributorId?
     )
 }

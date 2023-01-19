@@ -30,7 +30,7 @@ interface OrganizationUseCases {
 
     fun findLogo(id: OrganizationId): Optional<Image>
 
-    fun updateLogo(id: OrganizationId, imageData: ImageData, mimeType: MimeType, contributor: ContributorId)
+    fun updateLogo(id: OrganizationId, imageData: ImageData, mimeType: MimeType, contributor: ContributorId?)
 
     /**
      * Delete all organizations

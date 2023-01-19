@@ -34,7 +34,7 @@ class SpringJpaPostgresImageAdapter(
             id = this@toImageEntity.id.value
             data = this@toImageEntity.data.bytes
             mimeType = this@toImageEntity.mimeType.toString()
-            createdBy = this@toImageEntity.createdBy.value
+            createdBy = this@toImageEntity.createdBy?.value
             createdAt = this@toImageEntity.createdAt
         }
 }

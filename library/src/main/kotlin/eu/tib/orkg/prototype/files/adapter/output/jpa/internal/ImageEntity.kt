@@ -38,7 +38,7 @@ class ImageEntity {
         id = ImageId(id!!),
         data = ImageData(data!!),
         mimeType = MimeType(mimeType!!),
-        createdBy = ContributorId(createdBy!!),
+        createdBy = if (createdBy != null) ContributorId(createdBy!!) else null,
         createdAt = createdAt!!
     )
 }

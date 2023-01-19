@@ -32,6 +32,7 @@ import org.apache.commons.io.IOUtils
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.ok
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -127,36 +128,36 @@ class OrganizationController(
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateOrganizationName(
         @PathVariable id: OrganizationId,
-        @RequestBody @Valid name: UpdateRequest
-    ): Organization {
+        @RequestBody @Valid name: UpdateRequest,
+    ): ResponseEntity<Any> {
         val response = findOrganization(id)
         response.name = name.value
-
-        val updatedOrganization = service.updateOrganization(response)
-        expandLogo(updatedOrganization)
-        return updatedOrganization
+        service.updateOrganization(response)
+        return ok().body(response)
     }
 
     @RequestMapping("{id}/url", method = [RequestMethod.POST, RequestMethod.PUT])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    fun updateOrganizationUrl(@PathVariable id: OrganizationId, @RequestBody @Valid url: UpdateRequest): Organization {
+    fun updateOrganizationUrl(
+        @PathVariable id: OrganizationId,
+        @RequestBody @Valid url: UpdateRequest
+    ): ResponseEntity<Any> {
         val response = findOrganization(id)
         response.homepage = url.value
-
-        val updatedOrganization = service.updateOrganization(response)
-        expandLogo(updatedOrganization)
-        return updatedOrganization
+        service.updateOrganization(response)
+        return ok().body(response)
     }
 
     @RequestMapping("{id}/type", method = [RequestMethod.POST, RequestMethod.PUT])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    fun updateOrganizationType(@PathVariable id: OrganizationId, @RequestBody @Valid type: UpdateRequest): Organization {
+    fun updateOrganizationType(
+        @PathVariable id: OrganizationId,
+        @RequestBody @Valid type: UpdateRequest
+    ): ResponseEntity<Any> {
         val response = findOrganization(id)
         response.type = OrganizationType.fromOrNull(type.value)!!
-
-        val updatedOrganization = service.updateOrganization(response)
-        expandLogo(updatedOrganization)
-        return updatedOrganization
+        service.updateOrganization(response)
+        return ok().body(response)
     }
 
     @RequestMapping("{id}/logo", method = [RequestMethod.POST, RequestMethod.PUT])

@@ -26,7 +26,7 @@ interface OrganizationUseCases {
 
     fun listConferences(): List<Organization>
 
-    fun updateOrganization(organization: Organization): Organization
+    fun updateOrganization(organization: Organization)
 
     fun findLogo(id: OrganizationId): Optional<Image>
 

@@ -27,6 +27,7 @@ class OrganizationService(
     override fun create(organizationName: String, createdBy: ContributorId, url: String, displayId: String, type: OrganizationType): Organization {
         return createOrganization(organizationName, createdBy, url, displayId, type).toOrganization()
     }
+
     override fun listOrganizations(): List<Organization> {
         return postgresOrganizationRepository
             .findByType(OrganizationType.GENERAL)
@@ -53,7 +54,7 @@ class OrganizationService(
             .findByDisplayId(name)
             .map(OrganizationEntity::toOrganization)
 
-    override fun updateOrganization(organization: Organization): Organization {
+    override fun updateOrganization(organization: Organization) {
         val entity = postgresOrganizationRepository.findById(organization.id!!.value).get()
 
         if (organization.name != entity.name)
@@ -65,7 +66,7 @@ class OrganizationService(
         if (organization.type != entity.type)
             entity.type = organization.type
 
-        return postgresOrganizationRepository.save(entity).toOrganization()
+        postgresOrganizationRepository.save(entity)
     }
 
     override fun removeAll() = postgresOrganizationRepository.deleteAll()

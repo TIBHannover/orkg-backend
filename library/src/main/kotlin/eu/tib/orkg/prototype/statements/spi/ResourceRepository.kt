@@ -61,8 +61,10 @@ interface ResourceRepository : EntityRepository<Resource, ResourceId> {
     fun findAllFeaturedResourcesByClass(classes: List<String>, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
     fun findAllFeaturedResourcesByObservatoryIDAndClass(id: ObservatoryId, classes: List<String>, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
     fun findAllResourcesByObservatoryIDAndClass(id: ObservatoryId, classes: List<String>, unlisted: Boolean, pageable: Pageable): Page<Resource>
+    fun findAllContributorIds(pageable: Pageable): Page<ContributorId>
     fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
     fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
+
     @QueryResult
     data class ResourceContributors(
         val id: String,

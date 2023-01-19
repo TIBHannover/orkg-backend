@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application.port.out
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import org.springframework.data.domain.Page
@@ -101,4 +102,8 @@ interface GetVisualizationFlagQuery {
 interface GetSmartReviewFlagQuery {
     fun getFeaturedSmartReviewFlag(id: ResourceId): Boolean
     fun getUnlistedSmartReviewFlag(id: ResourceId): Boolean
+}
+
+interface GetContributorsQuery {
+    fun findAllContributorIds(pageable: Pageable): Page<ContributorId>
 }

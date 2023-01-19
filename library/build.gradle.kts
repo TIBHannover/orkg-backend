@@ -76,6 +76,8 @@ dependencies {
     // Monitoring
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.jolokia:jolokia-core")
+    // Data Faker
+    implementation("net.datafaker:datafaker:1.7.0")
     //
     // Testing
     //

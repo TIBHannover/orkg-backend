@@ -9,7 +9,14 @@ interface ObservatoryUseCases {
     /**
      * Create a new observatory with a given name.
      */
-    fun create(name: String, description: String, organizationId: OrganizationId, researchField: ResourceId, displayId: String): Observatory
+    fun create(
+        id: ObservatoryId?,
+        name: String,
+        description: String,
+        organizationId: OrganizationId,
+        researchField: ResourceId?,
+        displayId: String
+    ): Observatory
 
     fun listObservatories(): List<Observatory>
 

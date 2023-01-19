@@ -22,14 +22,14 @@ class ConferenceSeriesService(
     private val postgresConferenceSeriesRepository: PostgresConferenceSeriesRepository,
     private val postgresOrganizationRepository: PostgresOrganizationRepository
 ) : ConferenceSeriesUseCases {
-    override fun create(id: OrganizationId, name: String, url: String, displayId: String, metadata: ConferenceSeriesController.Metadata): ConferenceSeries {
-        val seriesId = UUID.randomUUID()
+    override fun create(id: ConferenceSeriesId?, organizationId: OrganizationId, name: String, url: String, displayId: String, metadata: ConferenceSeriesController.Metadata): ConferenceSeries {
+        val seriesId = id ?: ConferenceSeriesId(UUID.randomUUID())
         val org = postgresOrganizationRepository
-            .findById(id.value)
-            .orElseThrow { OrganizationNotFound(id) }
+            .findById(organizationId.value)
+            .orElseThrow { OrganizationNotFound(organizationId) }
         val newSeries = ConferenceSeriesEntity().apply {
             organization = org
-            this.id = seriesId
+            this.id = seriesId.value
             this.name = name
             this.displayId = displayId
             this.url = url

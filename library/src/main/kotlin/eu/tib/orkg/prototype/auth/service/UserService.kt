@@ -3,8 +3,9 @@ package eu.tib.orkg.prototype.auth.service
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.rest.UserController
 import eu.tib.orkg.prototype.auth.rest.UserNotFound
-import java.util.Optional
-import java.util.UUID
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import java.util.*
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -22,11 +23,11 @@ class UserService(
 
     fun findById(id: UUID): Optional<UserEntity> = repository.findById(id)
 
-    fun registerUser(anEmail: String, aPassword: String, aDisplayName: String?): UUID {
-        val userId = UUID.randomUUID()
+    fun registerUser(anEmail: String, aPassword: String, aDisplayName: String?, userId: UUID? = null): UUID {
+        val id = userId ?: UUID.randomUUID()
         val role = roleRepository.findByName("ROLE_USER")
         val newUser = UserEntity().apply {
-            id = userId
+            this.id = id
             email = anEmail.lowercase()
             password = passwordEncoder.encode(aPassword)
             displayName = aDisplayName
@@ -35,7 +36,7 @@ class UserService(
                 roles.add(role.get())
         }
         repository.save(newUser)
-        return userId
+        return id
     }
 
     fun checkPassword(userId: UUID, aPassword: String): Boolean {
@@ -66,6 +67,13 @@ class UserService(
         contributor.observatoryId = observatory.observatoryId.value
         contributor.organizationId = observatory.organizationId.value
         return repository.save(contributor)
+    }
+
+    fun updateOrganizationAndObservatory(userId: UUID, organizationId: OrganizationId?, observatoryId: ObservatoryId?) {
+        val user = repository.findById(userId).orElseThrow { throw RuntimeException("No user with ID $userId") }
+        user.organizationId = organizationId?.value
+        user.observatoryId = observatoryId?.value
+        repository.save(user)
     }
 
     fun deleteUserObservatory(contributor: UUID) {

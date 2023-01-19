@@ -14,7 +14,14 @@ interface OrganizationUseCases {
     /**
      * Create a new organization with a given name.
      */
-    fun create(organizationName: String, createdBy: ContributorId, url: String, displayId: String, type: OrganizationType): Organization
+    fun create(
+        id: OrganizationId?,
+        organizationName: String,
+        createdBy: ContributorId,
+        url: String,
+        displayId: String,
+        type: OrganizationType
+    ): Organization
 
     fun listOrganizations(): List<Organization>
 

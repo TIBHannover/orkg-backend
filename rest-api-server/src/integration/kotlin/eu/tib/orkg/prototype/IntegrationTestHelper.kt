@@ -1,6 +1,11 @@
 package eu.tib.orkg.prototype
 
 import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
+import eu.tib.orkg.prototype.community.api.OrganizationUseCases
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationType
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.CreateClassUseCase
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
@@ -8,11 +13,6 @@ import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
-import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.community.api.OrganizationUseCases
-import eu.tib.orkg.prototype.community.domain.model.OrganizationType
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.net.URI
@@ -106,8 +106,9 @@ fun OrganizationUseCases.createOrganization(
     organizationName: String = "Test Organization",
     url: String = "https://www.example.org",
     displayId: String = organizationName.toDisplayId(),
-    type: OrganizationType = OrganizationType.GENERAL
-) = this.create(organizationName, createdBy, url, displayId, type).id!!
+    type: OrganizationType = OrganizationType.GENERAL,
+    id: OrganizationId? = null
+) = this.create(id, organizationName, createdBy, url, displayId, type).id!!
 
 // Observatories
 
@@ -116,7 +117,8 @@ fun ObservatoryUseCases.createObservatory(
     researchField: ResourceId,
     name: String = "Test Observatory",
     description: String = "Example description",
-    displayId: String = name.toDisplayId()
-) = this.create(name, description, organizationId, researchField, displayId).id!!
+    displayId: String = name.toDisplayId(),
+    id: ObservatoryId? = null
+) = this.create(id, name, description, organizationId, researchField, displayId).id!!
 
 private fun String.toDisplayId() = this.lowercase().replace(Regex("[^a-zA-Z0-9_]"), "_")

@@ -21,16 +21,23 @@ class PostgresObservatoryService(
     private val postgresOrganizationRepository: PostgresOrganizationRepository,
     private val resourceService: ResourceUseCases
 ) : ObservatoryUseCases {
-    override fun create(name: String, description: String, organizationId: OrganizationId, researchField: ResourceId, displayId: String): Observatory {
-        val oId = UUID.randomUUID()
+    override fun create(
+        id: ObservatoryId?,
+        name: String,
+        description: String,
+        organizationId: OrganizationId,
+        researchField: ResourceId?,
+        displayId: String
+    ): Observatory {
+        val observatoryId = id ?: ObservatoryId(UUID.randomUUID())
         val org = postgresOrganizationRepository
             .findById(organizationId.value)
             .orElseThrow { OrganizationNotFound(organizationId) } // FIXME: should always have an ID
         val newObservatory = ObservatoryEntity().apply {
-            id = oId
+            this.id = observatoryId.value
             this.name = name
             this.description = description
-            this.researchField = researchField.value
+            this.researchField = researchField?.value
             organizations = mutableSetOf(org)
             this.displayId = displayId
         }

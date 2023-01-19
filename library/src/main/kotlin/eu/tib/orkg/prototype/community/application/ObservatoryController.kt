@@ -53,6 +53,7 @@ class ObservatoryController(
             throw ObservatoryAlreadyExists.withDisplayId(observatory.displayId)
         }
         val id = service.create(
+            id = null,
             observatory.observatoryName,
             observatory.description,
             observatory.organizationId,

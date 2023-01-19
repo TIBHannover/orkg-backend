@@ -24,8 +24,15 @@ class OrganizationService(
     private val postgresOrganizationRepository: PostgresOrganizationRepository,
     private val imageService: ImageUseCases
 ) : OrganizationUseCases {
-    override fun create(organizationName: String, createdBy: ContributorId, url: String, displayId: String, type: OrganizationType): Organization {
-        return createOrganization(organizationName, createdBy, url, displayId, type).toOrganization()
+    override fun create(
+        id: OrganizationId?,
+        organizationName: String,
+        createdBy: ContributorId,
+        url: String,
+        displayId: String,
+        type: OrganizationType
+    ): Organization {
+        return createOrganization(id, organizationName, createdBy, url, displayId, type).toOrganization()
     }
 
     override fun listOrganizations(): List<Organization> {
@@ -71,10 +78,17 @@ class OrganizationService(
 
     override fun removeAll() = postgresOrganizationRepository.deleteAll()
 
-    private fun createOrganization(organizationName: String, createdBy: ContributorId, Url: String, displayId: String, type: OrganizationType): OrganizationEntity {
-        val organizationId = UUID.randomUUID()
+    private fun createOrganization(
+        id: OrganizationId?,
+        organizationName: String,
+        createdBy: ContributorId,
+        Url: String,
+        displayId: String,
+        type: OrganizationType
+    ): OrganizationEntity {
+        val organizationId = id ?: OrganizationId(UUID.randomUUID())
         val newOrganization = OrganizationEntity().apply {
-            id = organizationId
+            this.id = organizationId.value
             name = organizationName
             this.createdBy = createdBy.value
             url = Url

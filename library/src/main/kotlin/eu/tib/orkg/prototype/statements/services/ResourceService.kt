@@ -372,6 +372,8 @@ class ResourceService(
             }
         }
 
+    override fun findAllContributorIds(pageable: Pageable) = repository.findAllContributorIds(pageable)
+
     override fun markAsVerified(resourceId: ResourceId) = setVerifiedFlag(resourceId, true)
 
     override fun markAsUnverified(resourceId: ResourceId) = setVerifiedFlag(resourceId, false)

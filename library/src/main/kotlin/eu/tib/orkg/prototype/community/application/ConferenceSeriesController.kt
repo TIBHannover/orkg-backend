@@ -35,6 +35,7 @@ class ConferenceSeriesController(
             throw ConferenceAlreadyExists.withDisplayId(conference.displayId)
         }
         val response = service.create(
+            id = null,
             conference.organizationId,
             conference.name,
             conference.url,

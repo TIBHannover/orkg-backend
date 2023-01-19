@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable
 
 interface ConferenceSeriesUseCases {
 
-    fun create(id: OrganizationId, name: String, url: String, displayId: String, metadata: ConferenceSeriesController.Metadata): ConferenceSeries
+    fun create(id: ConferenceSeriesId?, organizationId: OrganizationId, name: String, url: String, displayId: String, metadata: ConferenceSeriesController.Metadata): ConferenceSeries
 
     fun listConferenceSeries(pageable: Pageable): Page<ConferenceSeries>
 

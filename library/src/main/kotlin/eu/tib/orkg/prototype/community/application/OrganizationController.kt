@@ -67,6 +67,7 @@ class OrganizationController(
             throw OrganizationAlreadyExists.withDisplayId(organization.displayId)
         }
         val response = service.create(
+            id = null,
             organization.organizationName,
             organization.createdBy,
             organization.url,

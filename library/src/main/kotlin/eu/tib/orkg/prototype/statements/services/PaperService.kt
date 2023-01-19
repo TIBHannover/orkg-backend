@@ -31,7 +31,7 @@ class PaperService(
     private val statementService: StatementUseCases,
     private val contributorService: ContributorService,
     private val objectService: ObjectService,
-    private val resourceRepository: ResourceRepository, // TODO: remove dependency by pushing code to service
+    private val resourceRepository: ResourceRepository,
 ) {
     /**
      * Main entry point, to create paper and check contributions
@@ -190,7 +190,7 @@ class PaperService(
         organizationId: OrganizationId
     ) {
         val venuePredicate = predicateService.findById(ObjectService.VenuePredicate).get().id
-        val pageable = PageRequest.of(1, 10)
+        val pageable = PageRequest.of(0, 1)
         // Check if resource exists
         var venueResource = resourceRepository.findAllByLabel(venue, pageable).firstOrNull()
         if (venueResource == null) {

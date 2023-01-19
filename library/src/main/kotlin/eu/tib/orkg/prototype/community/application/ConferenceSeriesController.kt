@@ -57,11 +57,11 @@ class ConferenceSeriesController(
         val response: ConferenceSeries = if (id.isValidUUID(id)) {
             service
                 .findById(ConferenceSeriesId(id))
-                .orElseThrow { ConferenceNotFound(id) }
+                .orElseThrow { ConferenceSeriesNotFound(id) }
         } else {
             service
                 .findByDisplayId(id)
-                .orElseThrow { ConferenceNotFound(id) }
+                .orElseThrow { ConferenceSeriesNotFound(id) }
         }
         return response
     }

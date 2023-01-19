@@ -3,8 +3,8 @@ package eu.tib.orkg.prototype.community.application
 import eu.tib.orkg.prototype.community.domain.model.ConferenceSeriesId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.statements.application.PropertyValidationException
-import eu.tib.orkg.prototype.statements.application.SimpleMessageException
+import eu.tib.orkg.prototype.shared.PropertyValidationException
+import eu.tib.orkg.prototype.shared.SimpleMessageException
 import org.springframework.http.HttpStatus
 
 class ObservatoryNotFound(id: ObservatoryId) :
@@ -65,8 +65,8 @@ class ConferenceAlreadyExists private constructor(
     }
 }
 
-class ConferenceNotFound : SimpleMessageException {
-    constructor(id: String) : super(HttpStatus.NOT_FOUND, """Conference "$id" not found.""")
+class ConferenceSeriesNotFound : SimpleMessageException {
+    constructor(id: String) : super(HttpStatus.NOT_FOUND, """Conference series "$id" not found.""")
     constructor(id: ConferenceSeriesId) : this(id.toString())
 }
 

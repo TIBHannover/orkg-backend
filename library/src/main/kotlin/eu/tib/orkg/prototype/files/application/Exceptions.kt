@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.files.application
 
-import eu.tib.orkg.prototype.statements.application.SimpleMessageException
+import eu.tib.orkg.prototype.shared.SimpleMessageException
 import javax.activation.MimeType
 import org.springframework.http.HttpStatus
 

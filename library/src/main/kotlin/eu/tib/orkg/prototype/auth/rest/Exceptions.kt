@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.auth.rest
 
-import eu.tib.orkg.prototype.statements.application.SimpleMessageException
+import eu.tib.orkg.prototype.shared.SimpleMessageException
 import java.util.*
 import org.springframework.http.HttpStatus
 

@@ -1,10 +1,10 @@
 package eu.tib.orkg.prototype.core.rest
 
 import eu.tib.orkg.prototype.auth.rest.UserRegistrationException
-import eu.tib.orkg.prototype.statements.application.ForbiddenOperationException
-import eu.tib.orkg.prototype.statements.application.LoggedMessageException
-import eu.tib.orkg.prototype.statements.application.PropertyValidationException
-import eu.tib.orkg.prototype.statements.application.SimpleMessageException
+import eu.tib.orkg.prototype.shared.ForbiddenOperationException
+import eu.tib.orkg.prototype.shared.LoggedMessageException
+import eu.tib.orkg.prototype.shared.PropertyValidationException
+import eu.tib.orkg.prototype.shared.SimpleMessageException
 import eu.tib.orkg.prototype.toSnakeCase
 import java.time.OffsetDateTime
 import javax.servlet.http.HttpServletRequest

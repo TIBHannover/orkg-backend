@@ -1,6 +1,10 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.shared.ForbiddenOperationException
+import eu.tib.orkg.prototype.shared.LoggedMessageException
+import eu.tib.orkg.prototype.shared.PropertyValidationException
+import eu.tib.orkg.prototype.shared.SimpleMessageException
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
@@ -116,33 +120,6 @@ class DOIServiceUnavailable : LoggedMessageException {
     constructor(responseMessage: String, errorResponse: String) :
         super(HttpStatus.SERVICE_UNAVAILABLE, """DOI service returned "$responseMessage" with error response: $errorResponse""")
 }
-
-/**
- * Base class for custom property validation.
- */
-abstract class PropertyValidationException(
-    open val property: String,
-    override val message: String,
-    override val cause: Throwable? = null
-) : RuntimeException(cause)
-
-abstract class ForbiddenOperationException(property: String, message: String) :
-    PropertyValidationException(
-        property,
-        message
-    )
-
-abstract class SimpleMessageException(
-    open val status: HttpStatus,
-    override val message: String,
-    override val cause: Throwable? = null
-) : RuntimeException(message, cause)
-
-abstract class LoggedMessageException(
-    override var status: HttpStatus,
-    override val message: String,
-    override val cause: Throwable? = null
-) : SimpleMessageException(status, message, cause)
 
 /**
  * Exception indicating that a property was blank when it was not supposed to be.

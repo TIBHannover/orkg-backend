@@ -930,9 +930,9 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             result.totalPages shouldBe 3
             result.totalElements shouldBe 11
         }
-        xit("sorts the results by creation date by default") {
+        it("sorts the results by default") {
             result.content.zipWithNext { a, b ->
-                // FIXME a.createdAt shouldBeLessThan b.createdAt
+                a.value shouldBeLessThan b.value
             }
         }
     }

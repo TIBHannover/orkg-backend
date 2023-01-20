@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.Neo4jRepository
+import org.springframework.transaction.annotation.Transactional
 
 private const val featured = "${'$'}featured"
 private const val unlisted = "${'$'}unlisted"
@@ -230,6 +231,7 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
 
     // The return type has to be Iterable<Long> due to type erasure as java.lang.Long or Iterable<java.lang.Long> is
     // required by Spring, but we want to use kotlin.Long whenever possible
+    @Transactional
     fun deleteByResourceId(id: ResourceId): Iterable<Long>
 
     @Query(value = """MATCH (n:Comparison {organization_id: $id }) RETURN n""",

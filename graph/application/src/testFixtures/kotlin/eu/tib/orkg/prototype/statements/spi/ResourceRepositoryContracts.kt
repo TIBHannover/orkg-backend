@@ -902,7 +902,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
 
     context("finding all contributor ids") {
         val unknownContributor = ContributorId.createUnknownContributor()
-        val resources = fabricator.random<List<Resource>>().toMutableList()
+        val resources = fabricator.random<MutableList<Resource>>()
         resources[0] = resources[0].copy(
             createdBy = unknownContributor
         )
@@ -913,7 +913,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             .map { it.createdBy }
             .distinct()
             .filter { it != unknownContributor }
-            .sortedBy { it.value }
+            .sortedBy { it.value.toString() }
             .drop(5)
             .take(5)
             .toList()
@@ -932,9 +932,9 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             result.totalPages shouldBe 3
             result.totalElements shouldBe 11
         }
-        it("sorts the results by default") {
+        it("sorts the results lexicographically by default") {
             result.content.zipWithNext { a, b ->
-                a.value shouldBeLessThan b.value
+                a.value.toString() shouldBeLessThan b.value.toString()
             }
         }
     }

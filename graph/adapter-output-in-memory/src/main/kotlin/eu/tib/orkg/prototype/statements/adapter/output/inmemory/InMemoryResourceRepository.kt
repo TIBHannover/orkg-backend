@@ -319,7 +319,7 @@ class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
             .map { it.createdBy }
             .distinct()
             .filter { it.value != unknownUUID }
-            .sortedBy { it.value }
+            .sortedBy { it.value.toString() }
             .paged(pageable)
 
     // TODO: Create a method with a generic class parameter

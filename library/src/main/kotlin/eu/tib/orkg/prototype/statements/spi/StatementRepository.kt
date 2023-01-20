@@ -8,12 +8,14 @@ import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.transaction.annotation.Transactional
 
 interface StatementRepository : EntityRepository<GeneralStatement, StatementId> {
     fun countStatementsAboutResource(id: ResourceId): Long
     fun countStatementsAboutResources(resourceIds: Set<ResourceId>): Map<ResourceId, Long>
     // legacy methods:
     fun nextIdentity(): StatementId
+    @Transactional
     fun save(statement: GeneralStatement)
     fun count(): Long
     fun delete(statement: GeneralStatement)

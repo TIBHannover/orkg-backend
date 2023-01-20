@@ -44,6 +44,7 @@ class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
     override fun findByResourceId(id: ResourceId?) =
         Optional.ofNullable(entities[id])
 
+    // TODO: rename to findAllPapersByLabel or replace with a generic method with a classes parameter
     override fun findAllByLabel(label: String, pageable: Pageable) =
         findAllFilteredAndPaged(pageable) { it.label == label }
 
@@ -164,6 +165,7 @@ class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
         TODO("This method should be moved to the StatementRepository (or PaperRepository?)")
     }
 
+    // TODO: rename to findPaperByLabel or replace with a generic method with a classes parameter
     override fun findByLabel(label: String?) =
         Optional.ofNullable(entities.values.firstOrNull { it.label == label })
 

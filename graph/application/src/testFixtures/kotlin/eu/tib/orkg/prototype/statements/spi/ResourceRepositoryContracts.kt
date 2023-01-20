@@ -109,7 +109,9 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
     }
 
     it("delete all resources") {
-        val ids = (1L..3L).map(::ResourceId).onEach { repository.save(createResource(id = it)) }
+        repeat(3) {
+            repository.save(createResource(id = ResourceId(it.toLong())))
+        }
         // ResourceRepository has no count method
         repository.findAll(PageRequest.of(0, Int.MAX_VALUE)).totalElements shouldBe 3
         repository.deleteAll()

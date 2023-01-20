@@ -2,10 +2,10 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.createResource
+import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
-import eu.tib.orkg.prototype.statements.services.PredicateService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional
 class PredicateControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var service: PredicateService
+    private lateinit var service: PredicateUseCases
 
     @Autowired
     private lateinit var resourceService: ResourceUseCases

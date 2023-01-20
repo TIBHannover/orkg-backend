@@ -7,14 +7,14 @@ import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.LiteralUseCases
+import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.services.LiteralService
 import eu.tib.orkg.prototype.statements.services.PaperService
-import eu.tib.orkg.prototype.statements.services.PredicateService
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat
@@ -56,7 +56,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     private lateinit var classService: ClassUseCases
 
     @Autowired
-    private lateinit var predicateService: PredicateService
+    private lateinit var predicateService: PredicateUseCases
 
     @Autowired
     private lateinit var statementService: StatementUseCases
@@ -65,13 +65,10 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     private lateinit var paperService: PaperService
 
     @Autowired
-    private lateinit var resourceService: ResourceUseCases
-
-    @Autowired
     private lateinit var userService: UserService
 
     @Autowired
-    private lateinit var literalService: LiteralService
+    private lateinit var literalService: LiteralUseCases
 
     @BeforeEach
     fun setup() {
@@ -486,7 +483,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         predicateService.createPredicate(label = "Has research problem", id = "P32")
         predicateService.createPredicate(label = "Has evaluation", id = "HAS_EVALUATION")
 
-        resourceService.createResource(id = "R3003", label = "Question Answering over Linked Data")
+        service.createResource(id = "R3003", label = "Question Answering over Linked Data")
 
         classService.createClass(id = "Paper", label = "paper")
         classService.createClass(id = "Contribution", label = "Contribution")
@@ -494,12 +491,11 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
         val userId = createTestUser()
         // create resource with different userId, and use it as a research field in the paper
-        resourceService.createResource(
+        service.createResource(
             id = "R20",
             label = "database",
             userId = userId
         )
-
         val originalPaper = PaperControllerTest().createDummyPaperObject(researchField = "R20")
         val paperId = paperService.addPaperContent(originalPaper, true, UUID.randomUUID()).id.value
         val result = mockMvc

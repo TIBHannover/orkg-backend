@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.paperswithcode.application.domain
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
-import eu.tib.orkg.prototype.statements.domain.model.ResearchField
+import eu.tib.orkg.prototype.community.domain.model.ResearchField
 
 /** Simple DTO for the benchmark response. */
 data class BenchmarkSummary(

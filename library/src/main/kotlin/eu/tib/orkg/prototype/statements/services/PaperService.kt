@@ -15,8 +15,8 @@ import eu.tib.orkg.prototype.statements.application.NamedObject
 import eu.tib.orkg.prototype.statements.application.OrcidNotValid
 import eu.tib.orkg.prototype.statements.application.OrphanOrcidValue
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import java.util.*
@@ -31,7 +31,7 @@ class PaperService(
     private val statementService: StatementUseCases,
     private val contributorService: ContributorService,
     private val objectService: ObjectService,
-    private val resourceRepository: ResourceRepository, // TODO: remove dependency by pushing code to service
+    private val resourceRepository: ResourceRepository,
 ) {
     /**
      * Main entry point, to create paper and check contributions
@@ -190,7 +190,7 @@ class PaperService(
         organizationId: OrganizationId
     ) {
         val venuePredicate = predicateService.findById(ObjectService.VenuePredicate).get().id
-        val pageable = PageRequest.of(1, 10)
+        val pageable = PageRequest.of(0, 1)
         // Check if resource exists
         var venueResource = resourceRepository.findAllByLabel(venue, pageable).firstOrNull()
         if (venueResource == null) {

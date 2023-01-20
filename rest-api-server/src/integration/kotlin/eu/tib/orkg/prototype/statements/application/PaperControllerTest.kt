@@ -1,14 +1,14 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.createClasses
+import eu.tib.orkg.prototype.createPredicates
+import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.services.PaperService
-import eu.tib.orkg.prototype.statements.services.PredicateService
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.not
@@ -36,7 +36,7 @@ import org.springframework.transaction.annotation.Transactional
 class PaperControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var predicateService: PredicateService
+    private lateinit var predicateService: PredicateUseCases
 
     @Autowired
     private lateinit var resourceService: ResourceUseCases
@@ -62,33 +62,29 @@ class PaperControllerTest : RestDocumentationBaseTest() {
         assertThat(resourceService.findAll(tempPageable)).hasSize(0)
         assertThat(classService.findAll(tempPageable)).hasSize(0)
 
-        predicateService.create(CreatePredicateRequest(PredicateId("P26"), "Has DOI"))
-        predicateService.create(CreatePredicateRequest(PredicateId("P27"), "Has Author"))
-        predicateService.create(CreatePredicateRequest(PredicateId("P28"), "Has publication month"))
-        predicateService.create(CreatePredicateRequest(PredicateId("P29"), "Has publication year"))
-        predicateService.create(CreatePredicateRequest(PredicateId("P30"), "Has Research field"))
-        predicateService.create(CreatePredicateRequest(PredicateId("P31"), "Has contribution"))
-        predicateService.create(CreatePredicateRequest(PredicateId("P32"), "Has research problem"))
-        predicateService.create(CreatePredicateRequest(PredicateId("HAS_EVALUATION"), "Has evaluation"))
-        predicateService.create(CreatePredicateRequest(PredicateId("url"), "Has url"))
-        predicateService.create(CreatePredicateRequest(PredicateId("HAS_ORCID"), "Has ORCID"))
-        predicateService.create(CreatePredicateRequest(PredicateId("HAS_VENUE"), "Has Venue"))
+        predicateService.createPredicates(
+            "P26" to "Has DOI",
+            "P27" to "Has Author",
+            "P28" to "Has publication month",
+            "P29" to "Has publication year",
+            "P30" to "Has Research field",
+            "P31" to "Has contribution",
+            "P32" to "Has research problem",
+            "HAS_EVALUATION" to "Has evaluation",
+            "url" to "Has url",
+            "HAS_ORCID" to "Has ORCID",
+            "HAS_VENUE" to "Has Venue"
+        )
 
-        classService.create(CreateClassRequest(ClassId("Paper"), "paper", null))
-        classService.create(CreateClassRequest(ClassId("Contribution"), "Contribution", null))
-        classService.create(CreateClassRequest(ClassId("Problem"), "Problem", null))
-        classService.create(CreateClassRequest(ClassId("ResearchField"), "ResearchField", null))
-        classService.create(CreateClassRequest(ClassId("Author"), "Author", null))
-        classService.create(CreateClassRequest(ClassId("Venue"), "Venue", null))
+        classService.createClasses("Paper", "Contribution", "Problem", "ResearchField", "Author", "Venue")
 
-        resourceService.create(CreateResourceRequest(ResourceId("R12"), "Computer Science"))
-        resourceService.create(CreateResourceRequest(ResourceId("R3003"), "Question Answering over Linked Data"))
+        resourceService.createResource(id = "R12", label = "Computer Science")
+        resourceService.createResource(id = "R3003", label = "Question Answering over Linked Data")
     }
 
     @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun add() {
-
         val paper = mapOf(
             "paper" to mapOf(
                 "title" to "test",
@@ -152,7 +148,6 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun `shouldn't merge if DOI is empty`() {
-
         val originalPaper = createDummyPaperObject(doi = "")
 
         val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).id.value
@@ -199,7 +194,6 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun `merge papers that exists on title`() {
-
         val originalPaper = createDummyPaperObject()
 
         val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).id.value
@@ -246,7 +240,6 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun `merge papers that exists on doi`() {
-
         val originalPaper = createDummyPaperObject()
 
         val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).id.value
@@ -293,7 +286,6 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun `merge papers if both title and DOI exist`() {
-
         val originalPaper = createDummyPaperObject()
 
         val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).id.value
@@ -342,12 +334,10 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     @Tag("issue:292")
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun `creating a paper twice works as expected`() {
-        resourceService.create(
-            CreateResourceRequest(
-                id = ResourceId("R106"),
-                classes = setOf(ClassId("ResearchField")),
-                label = "Some research field required by the example data"
-            )
+        resourceService.createResource(
+            id = "R106",
+            classes = setOf("ResearchField"),
+            label = "Some research field required by the example data"
         )
 
         @Suppress("UNCHECKED_CAST") // This is fine. We know we are dealing with JSON here and do not have "null" keys.

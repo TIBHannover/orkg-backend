@@ -90,6 +90,7 @@ class ProblemController(
     fun markFeatured(@PathVariable id: ResourceId) {
         resourceService.markAsFeatured(id)
     }
+
     @DeleteMapping("/{id}/metadata/featured")
     fun unmarkFeatured(@PathVariable id: ResourceId) {
         resourceService.markAsNonFeatured(id)

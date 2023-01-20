@@ -1,14 +1,15 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.createClasses
+import eu.tib.orkg.prototype.createPredicates
+import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
-import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
+import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.ResourceControllerTest.RestDoc.resourceResponseFields
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.services.PredicateService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -34,7 +35,7 @@ class ResearchFieldControllerTest : RestDocumentationBaseTest() {
     private lateinit var resourceService: ResourceUseCases
 
     @Autowired
-    private lateinit var predicateService: PredicateService
+    private lateinit var predicateService: PredicateUseCases
 
     @Autowired
     private lateinit var classService: ClassUseCases
@@ -55,65 +56,61 @@ class ResearchFieldControllerTest : RestDocumentationBaseTest() {
         assertThat(predicateService.findAll(tempPageable)).hasSize(0)
         assertThat(classService.findAll(tempPageable)).hasSize(0)
         assertThat(statementService.findAll(tempPageable)).hasSize(0)
+
+        predicateService.createPredicates(
+            "P30" to "Has research field",
+            "P31" to "Has contribution",
+            "P32" to "Has research problem"
+        )
+
+        classService.createClasses("Paper", "Problem", "ResearchField", "Contribution")
     }
 
     @Test
     @Disabled("Because of the ID problem of Predicates")
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun getProblemsPerField() {
-
         // Create Research Field
-        val researchFieldClass = classService.create(CreateClassRequest(ClassId("ResearchField"), "Research Field", null))
-        val fieldResource = resourceService.create(CreateResourceRequest(
-            null,
-            "Fancy research",
-            setOf(researchFieldClass.id)
-        ))
+        val fieldResource = resourceService.createResource(
+            classes = setOf("ResearchField"),
+            label = "Fancy research",
+        )
         // Create Paper
-        val paperClass = classService.create(CreateClassRequest(ClassId("Paper"), "Paper", null))
-        val paperResource = resourceService.create(CreateResourceRequest(
-            null,
-            "Paper 1",
-            setOf(paperClass.id)
-        ))
+        val paperResource = resourceService.createResource(
+            classes = setOf("Paper"),
+            label = "Paper 1",
+        )
         // Create Contribution
-        val contributionClass = classService.create(CreateClassRequest(ClassId("Contribution"), "Contribution", null))
-        val contributionResource = resourceService.create(CreateResourceRequest(
-            null,
-            "Contribution 1",
-            setOf(contributionClass.id)
-        ))
+        val contributionResource = resourceService.createResource(
+            classes = setOf("Contribution"),
+            label = "Contribution 1",
+        )
         // Create Problem
-        val problemClass = classService.create(CreateClassRequest(ClassId("Problem"), "Problem", null))
-        val problemResource = resourceService.create(CreateResourceRequest(
-            null,
-            "Problem 1",
-            setOf(problemClass.id)
-        ))
+        val problemResource = resourceService.createResource(
+            classes = setOf("Problem"),
+            label = "Problem 1",
+        )
         // Link Contribution -> Problem
-        val hasResearchProblemPredicate = findOrCreatePredicate("P32", "has research problem")
         statementService.create(
-            contributionResource.id.value,
-            hasResearchProblemPredicate.id,
-            problemResource.id.value
+            contributionResource.value,
+            PredicateId("P32"), // has research problem
+            problemResource.value
         )
         // Link Paper -> Contribution
-        val hasContributionPredicate = findOrCreatePredicate("P31", "has contribution")
         statementService.create(
-            paperResource.id.value,
-            hasContributionPredicate.id,
-            contributionResource.id.value
+            paperResource.value,
+            PredicateId("P31"), // has contribution
+            contributionResource.value
         )
         // Link Paper -> Research Field
-        val hasResearchFieldPredicate = findOrCreatePredicate("P30", "has research field")
         statementService.create(
-            paperResource.id.value,
-            hasResearchFieldPredicate.id,
-            fieldResource.id.value
+            paperResource.value,
+            PredicateId("P30"), // has research field
+            fieldResource.value
         )
 
         mockMvc
-            .perform(getRequestTo("/api/research-fields/${fieldResource.id}/problems/"))
+            .perform(getRequestTo("/api/research-fields/$fieldResource/problems/"))
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andDo(
                 MockMvcRestDocumentation.document(
@@ -123,19 +120,12 @@ class ResearchFieldControllerTest : RestDocumentationBaseTest() {
             )
     }
 
-    private fun findOrCreatePredicate(predicateId: String, predicateLabel: String): PredicateRepresentation {
-        val found = predicateService.findById(PredicateId(predicateId))
-        if (found.isPresent)
-            return found.get()
-        return predicateService.create(CreatePredicateRequest(PredicateId(predicateId), predicateLabel))
-    }
-
     private fun researchProblemsPerResearchFieldFields(): ResponseFieldsSnippet =
         PayloadDocumentation.responseFields(
             listOf(
-            fieldWithPath("[]").description("A list of problems."),
-            fieldWithPath("[].problem").description("The problem resource"),
-            fieldWithPath("[].papers").description("The number of papers addressing this problem")
+                fieldWithPath("[]").description("A list of problems."),
+                fieldWithPath("[].problem").description("The problem resource"),
+                fieldWithPath("[].papers").description("The number of papers addressing this problem")
             )
         )
         .andWithPrefix("[].problem.", resourceResponseFields())

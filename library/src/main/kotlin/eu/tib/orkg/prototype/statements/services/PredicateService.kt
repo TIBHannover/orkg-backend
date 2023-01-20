@@ -125,7 +125,7 @@ class PredicateService(
     }
 
     override fun delete(predicateId: PredicateId) {
-        val predicate = findById(predicateId).orElseThrow { PredicateNotFound(predicateId.value) }
+        val predicate = findById(predicateId).orElseThrow { PredicateNotFound(predicateId) }
 
         if (repository.usageCount(predicate.id) > 0)
             throw PredicateCantBeDeleted(predicate.id)

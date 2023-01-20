@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import java.net.URI
+import java.time.OffsetDateTime
 import org.neo4j.ogm.annotation.GeneratedValue
 import org.neo4j.ogm.annotation.Id
 import org.neo4j.ogm.annotation.NodeEntity
@@ -22,7 +23,7 @@ data class Neo4jClass(
     @Relationship(type = "RELATED", direction = Relationship.OUTGOING)
     @JsonIgnore
     var subjectOf: MutableSet<Neo4jClass> = mutableSetOf()
-) : Neo4jThing, AuditableEntity() {
+) : Neo4jThing {
     @Property("class_id")
     @Required
     @Convert(ClassIdConverter::class)
@@ -46,13 +47,16 @@ data class Neo4jClass(
         this.createdBy = createdBy
     }
 
+    @Property("created_at")
+    var createdAt: OffsetDateTime? = null
+
     fun toClass(): Class {
         val aURI: URI? = if (uri != null) URI.create(uri!!) else null
         val clazz = Class(
             id = classId!!,
             label = label!!,
             uri = aURI,
-            createdAt = createdAt!!,
+            createdAt = createdAt ?: OffsetDateTime.now(), // TODO: Remove after script to set values was run.
             createdBy = createdBy,
         )
         if (subjectOf.isNotEmpty())

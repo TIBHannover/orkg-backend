@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence
 
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.FindResearchFieldsQuery
-import eu.tib.orkg.prototype.statements.domain.model.ResearchField
+import eu.tib.orkg.prototype.community.domain.model.ResearchField
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResearchFieldRepository
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component

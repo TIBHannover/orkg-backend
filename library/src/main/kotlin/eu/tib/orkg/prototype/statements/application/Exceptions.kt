@@ -1,126 +1,125 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.domain.model.ConferenceSeriesId
+import eu.tib.orkg.prototype.shared.ForbiddenOperationException
+import eu.tib.orkg.prototype.shared.LoggedMessageException
+import eu.tib.orkg.prototype.shared.PropertyValidationException
+import eu.tib.orkg.prototype.shared.SimpleMessageException
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
+import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import java.net.URI
+import java.util.*
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.ResponseStatus
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class ResourceNotFound(id: String? = null) : RuntimeException("Resource $id not found")
-
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class LiteralNotFound(id: String? = null) : RuntimeException("Literal $id not found")
-
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class ClassNotFound(id: String? = null) : RuntimeException("Class $id not found")
-
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class PredicateNotFound(predicate: String) : RuntimeException("Predicate $predicate is not found")
-
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class StatementNotFound(statementId: String) : PropertyValidationException("ids", "Statement $statementId is not found")
-
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class ContributorNotFound(id: ContributorId) : RuntimeException("""Contributor $id not found""")
-
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class ObservatoryNotFound(id: ObservatoryId) : RuntimeException("""Observatory "$id" not found""")
-
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class ObservatoryURLNotFound(id: String) : RuntimeException("""Observatory "$id" not found""")
-
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class OrganizationNotFound(id: String) : RuntimeException("""Organization "$id" not found""") {
-    constructor(id: OrganizationId) : this(id.toString())
+class ResourceNotFound : SimpleMessageException {
+    constructor(id: String) : super(HttpStatus.NOT_FOUND, """Resource "$id" not found.""")
+    constructor(id: ResourceId) : this(id.value)
 }
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class ResearchFieldNotFound(id: ResourceId) : RuntimeException("""Research field "$id" not found""")
+class LiteralNotFound : SimpleMessageException {
+    constructor(id: String) : super(HttpStatus.NOT_FOUND, """Literal "$id" not found.""")
+    constructor(id: LiteralId) : this(id.value)
+}
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class ResearchProblemNotFound(id: ResourceId) : RuntimeException("""Research problem "$id" not found""")
+class ClassNotFound : SimpleMessageException {
+    constructor(id: ClassId) : this(id.value)
+    constructor(id: String) : super(HttpStatus.NOT_FOUND, """Class "$id" not found.""")
+    constructor(uri: URI) : super(HttpStatus.NOT_FOUND, """Class with URI "$uri" not found.""")
+}
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class DatasetNotFound(id: ResourceId) : RuntimeException("""Dataset "$id" not found""")
+class PredicateNotFound : SimpleMessageException {
+    constructor(id: String) : super(HttpStatus.NOT_FOUND, """Predicate "$id" not found.""")
+    constructor(id: PredicateId) : this(id.value)
+}
 
-@ResponseStatus(HttpStatus.FORBIDDEN)
+class StatementNotFound : SimpleMessageException {
+    constructor(id: String) : super(HttpStatus.NOT_FOUND, """Statement "$id" not found.""")
+    constructor(id: StatementId) : this(id.value)
+}
+
+class ContributorNotFound(id: ContributorId) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Contributor "$id" not found.""")
+
+class ResearchFieldNotFound(id: ResourceId) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Research field "$id" not found.""")
+
+class ResearchProblemNotFound(id: ResourceId) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Research problem "$id" not found.""")
+
+class DatasetNotFound(id: ResourceId) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Dataset "$id" not found.""")
+
 class ResourceCantBeDeleted(id: ResourceId) :
-    RuntimeException("Unable to delete Resource $id because it is used in at least one statement")
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Unable to delete resource "$id" because it is used in at least one statement.""")
 
-@ResponseStatus(HttpStatus.FORBIDDEN)
 class PredicateCantBeDeleted(id: PredicateId) :
-    RuntimeException("Unable to delete Predicate $id because it is used in at least one statement")
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Unable to delete predicate "$id" because it is used in at least one statement.""")
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-class ClassNotAllowed(`class`: String) : RuntimeException("This class id ($`class`) is not allowed")
+class ClassNotAllowed(`class`: String) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Class id "$`class`" is not allowed.""")
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-class ClassAlreadyExists(`class`: String) : RuntimeException("The class with the id ($`class`) already exists")
+class ClassAlreadyExists(`class`: String) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Class "$`class`" already exists.""")
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
+class ResourceAlreadyExists(id: ResourceId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Resource "$id" already exists.""")
+
+class PredicateAlreadyExists(id: PredicateId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Predicate "$id" already exists.""")
+
 class InvalidClassCollection(ids: Iterable<ClassId>) :
-    RuntimeException("The collection of classes $ids contains one or more missing classes")
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """The collection of classes "$ids" contains one or more invalid classes.""")
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
 class DuplicateURI(uri: URI, id: String) :
-    PropertyValidationException("uri", "The URI <$uri> is already assigned to class with ID $id.")
+    PropertyValidationException("uri", """The URI <$uri> is already assigned to class with ID "$id".""")
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
 class InvalidUUID(uuid: String, cause: Throwable?) :
-    PropertyValidationException("id", "Value \"$uuid\" is not a valid UUID.", cause)
+    PropertyValidationException("id", """Value "$uuid" is not a valid UUID.""", cause)
 
 class InvalidLabel : PropertyValidationException("label", "A label must not be blank or contain newlines.")
 
 class InvalidURI : PropertyValidationException("uri", "The provided URI is not a valid URI.")
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class UserNotFound(userId: String) : RuntimeException("""User $userId not found""")
+class UserNotFound : SimpleMessageException {
+    constructor(userId: UUID) : super(HttpStatus.BAD_REQUEST, """User "$userId" not found.""")
+    constructor(email: String) : super(HttpStatus.BAD_REQUEST, """User with email "$email" not found.""")
+}
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-class OrcidNotValid(orcid: String) : RuntimeException("ORCID value ($orcid) is not valid identifier")
+class OrcidNotValid(orcid: String) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """The ORCID "$orcid" is not valid.""")
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-class OrphanOrcidValue(orcid: String) : RuntimeException("ORCID value ($orcid) is not attached to any author!")
-
-@ResponseStatus(HttpStatus.NOT_FOUND)
-class ConferenceNotFound(id: ConferenceSeriesId) : RuntimeException("""Conference "$id" not found""")
+class OrphanOrcidValue(orcid: String) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """The ORCID "$orcid" is not attached to any author.""")
 
 class CannotResetURI(id: String) :
-    ForbiddenOperationException("uri", "The class $id already has a URI. It is not allowed to change URIs.")
+    ForbiddenOperationException("uri", """The class "$id" already has a URI. It is not allowed to change URIs.""")
 
 class URIAlreadyInUse(uri: String) :
-    ForbiddenOperationException("uri", "The URI <$uri> is already in use by another class.")
+    ForbiddenOperationException("uri", """The URI <$uri> is already in use by another class.""")
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
 class InvalidClassFilter(id: ClassId) :
-    RuntimeException("The class $id cannot be included and excluded at the same time.")
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """The class "$id" cannot be included and excluded at the same time.""")
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-class NameAlreadyExist(message: String) : ForbiddenOperationException("name", message)
+class StatementSubjectNotFound(id: String) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Subject "$id" not found.""")
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-class InvalidImage() : ForbiddenOperationException("image", "Please upload a valid image")
+class StatementPredicateNotFound(id: PredicateId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Predicate "$id" not found.""")
 
-/**
- * Base class for custom property validation.
- */
-abstract class PropertyValidationException(
-    open val property: String,
-    override val message: String,
-    override val cause: Throwable? = null
-) : RuntimeException(cause)
+class StatementObjectNotFound(id: String) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Object "$id" not found.""")
 
-abstract class ForbiddenOperationException(property: String, message: String) :
-    PropertyValidationException(
-        property,
-        message
-    )
+class DOIRegistrationError(doi: String) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Unable to register DOI "$doi".""")
+
+class DOIServiceUnavailable : LoggedMessageException {
+    constructor(cause: Throwable) : super(HttpStatus.SERVICE_UNAVAILABLE, """DOI service unavailable""", cause)
+    constructor(responseMessage: String, errorResponse: String) :
+        super(HttpStatus.SERVICE_UNAVAILABLE, """DOI service returned "$responseMessage" with error response: $errorResponse""")
+}
 
 /**
  * Exception indicating that a property was blank when it was not supposed to be.

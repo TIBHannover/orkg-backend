@@ -121,12 +121,12 @@ class ResearchProblemService(
 
     override fun getFeaturedProblemFlag(id: ResourceId): Boolean {
         val result = neo4jProblemRepository.findById(id)
-        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured ?: false
+        return result.orElseThrow { ResourceNotFound(id) }.featured ?: false
     }
 
     override fun getUnlistedProblemFlag(id: ResourceId): Boolean {
         val result = neo4jProblemRepository.findById(id)
-        return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted ?: false
+        return result.orElseThrow { ResourceNotFound(id) }.unlisted ?: false
     }
 
     override fun loadFeaturedProblems(pageable: Pageable): Page<Resource> =

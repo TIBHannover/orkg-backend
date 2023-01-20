@@ -76,6 +76,8 @@ dependencies {
     // Monitoring
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.jolokia:jolokia-core")
+    // Data Faker
+    implementation("net.datafaker:datafaker:1.7.0")
     //
     // Testing
     //
@@ -91,6 +93,7 @@ dependencies {
         // exclude(module = "mockito-core")
     }
     testImplementation("com.ninja-squad:springmockk:2.0.1")
+    testImplementation("com.redfin:contractual:3.0.0")
 
     // Security-related adjustments
     testImplementation("junit:junit") {

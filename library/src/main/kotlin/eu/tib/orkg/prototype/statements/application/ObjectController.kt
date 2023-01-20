@@ -2,8 +2,8 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.services.ObjectService
@@ -53,7 +53,7 @@ class ObjectController(
     ): ResponseEntity<ResourceRepresentation> {
         resourceService
             .findById(id)
-            .orElseThrow { ResourceNotFound() }
+            .orElseThrow { ResourceNotFound(id) }
         val resource = service.createObject(obj, id, authenticatedUserId())
         val location = uriComponentsBuilder
             .path("api/objects/")

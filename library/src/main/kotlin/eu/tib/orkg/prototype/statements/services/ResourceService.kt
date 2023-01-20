@@ -19,8 +19,8 @@ import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryReq
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jComparisonRepository
@@ -321,7 +321,7 @@ class ResourceService(
         // update all the properties
         if (request.label != null) found = found.copy(label = request.label)
         if (request.classes != null) {
-            if (request.classes.isEmpty() || !classRepository.existsAll(request.classes)) {
+            if (request.classes.isNotEmpty() && !classRepository.existsAll(request.classes)) {
                 throw InvalidClassCollection(request.classes)
             }
             found = found.copy(classes = request.classes)
@@ -341,7 +341,7 @@ class ResourceService(
     }
 
     override fun delete(id: ResourceId) {
-        val resource = repository.findByResourceId(id).orElseThrow { ResourceNotFound(id.value) }
+        val resource = repository.findByResourceId(id).orElseThrow { ResourceNotFound(id) }
 
         if (repository.checkIfResourceHasStatements(resource.id!!))
             throw ResourceCantBeDeleted(resource.id)
@@ -371,6 +371,8 @@ class ResourceService(
                 Page.empty()
             }
         }
+
+    override fun findAllContributorIds(pageable: Pageable) = repository.findAllContributorIds(pageable)
 
     override fun markAsVerified(resourceId: ResourceId) = setVerifiedFlag(resourceId, true)
 
@@ -402,7 +404,7 @@ class ResourceService(
     }
 
     override fun markAsFeatured(resourceId: ResourceId) {
-        val resource = repository.findByResourceId(resourceId).orElseThrow { ResourceNotFound(resourceId.value) }
+        val resource = repository.findByResourceId(resourceId).orElseThrow { ResourceNotFound(resourceId) }
         val modified = resource.copy(
             unlisted = false,
             featured = true
@@ -411,7 +413,7 @@ class ResourceService(
     }
 
     override fun markAsNonFeatured(resourceId: ResourceId) {
-        val resource = repository.findByResourceId(resourceId).orElseThrow { ResourceNotFound(resourceId.value) }
+        val resource = repository.findByResourceId(resourceId).orElseThrow { ResourceNotFound(resourceId) }
         val modified = resource.copy(
             featured = false
         )
@@ -419,7 +421,7 @@ class ResourceService(
     }
 
     override fun markAsUnlisted(resourceId: ResourceId) {
-        val resource = repository.findByResourceId(resourceId).orElseThrow { ResourceNotFound(resourceId.value) }
+        val resource = repository.findByResourceId(resourceId).orElseThrow { ResourceNotFound(resourceId) }
         val modified = resource.copy(
             unlisted = true,
             featured = false
@@ -428,9 +430,9 @@ class ResourceService(
     }
 
     override fun markAsListed(resourceId: ResourceId) {
-        val resource = repository.findByResourceId(resourceId).orElseThrow { ResourceNotFound(resourceId.value) }
+        val resource = repository.findByResourceId(resourceId).orElseThrow { ResourceNotFound(resourceId) }
         val modified = resource.copy(
-            unlisted = false,
+            unlisted = false
         )
         repository.save(modified)
     }
@@ -457,22 +459,22 @@ class ResourceService(
 
     override fun getFeaturedPaperFlag(id: ResourceId): Boolean {
         val result = repository.findPaperByResourceId(id)
-        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured ?: false
+        return result.orElseThrow { ResourceNotFound(id) }.featured ?: false
     }
 
     override fun getUnlistedPaperFlag(id: ResourceId): Boolean {
         val result = repository.findPaperByResourceId(id)
-        return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted ?: false
+        return result.orElseThrow { ResourceNotFound(id) }.unlisted ?: false
     }
 
     override fun getFeaturedResourceFlag(id: ResourceId): Boolean {
         val result = repository.findByResourceId(id)
-        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured ?: false
+        return result.orElseThrow { ResourceNotFound(id) }.featured ?: false
     }
 
     override fun getUnlistedResourceFlag(id: ResourceId): Boolean {
         val result = repository.findByResourceId(id)
-        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured ?: false
+        return result.orElseThrow { ResourceNotFound(id) }.featured ?: false
     }
 
     override fun loadFeaturedComparisons(pageable: Pageable): Page<Resource> =
@@ -525,42 +527,42 @@ class ResourceService(
 
     override fun getFeaturedContributionFlag(id: ResourceId): Boolean {
         val result = neo4jContributionRepository.findContributionByResourceId(id)
-        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured ?: false
+        return result.orElseThrow { ResourceNotFound(id) }.featured ?: false
     }
 
     override fun getUnlistedContributionFlag(id: ResourceId): Boolean {
         val result = neo4jContributionRepository.findContributionByResourceId(id)
-        return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted ?: false
+        return result.orElseThrow { ResourceNotFound(id) }.unlisted ?: false
     }
 
     override fun getFeaturedComparisonFlag(id: ResourceId): Boolean {
         val result = neo4jComparisonRepository.findComparisonByResourceId(id)
-        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured ?: false
+        return result.orElseThrow { ResourceNotFound(id) }.featured ?: false
     }
 
     override fun getUnlistedComparisonFlag(id: ResourceId): Boolean {
         val result = neo4jComparisonRepository.findComparisonByResourceId(id)
-        return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted ?: false
+        return result.orElseThrow { ResourceNotFound(id) }.unlisted ?: false
     }
 
     override fun getFeaturedVisualizationFlag(id: ResourceId): Boolean {
         val result = neo4jVisualizationRepository.findVisualizationByResourceId(id)
-        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured ?: false
+        return result.orElseThrow { ResourceNotFound(id) }.featured ?: false
     }
 
     override fun getUnlistedVisualizationFlag(id: ResourceId): Boolean {
         val result = neo4jVisualizationRepository.findVisualizationByResourceId(id)
-        return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted ?: false
+        return result.orElseThrow { ResourceNotFound(id) }.unlisted ?: false
     }
 
     override fun getFeaturedSmartReviewFlag(id: ResourceId): Boolean {
         val result = neo4jSmartReviewRepository.findSmartReviewByResourceId(id)
-        return result.orElseThrow { ResourceNotFound(id.toString()) }.featured ?: false
+        return result.orElseThrow { ResourceNotFound(id) }.featured ?: false
     }
 
     override fun getUnlistedSmartReviewFlag(id: ResourceId): Boolean {
         val result = neo4jSmartReviewRepository.findSmartReviewByResourceId(id)
-        return result.orElseThrow { ResourceNotFound(id.toString()) }.unlisted ?: false
+        return result.orElseThrow { ResourceNotFound(id) }.unlisted ?: false
     }
     override fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation> =
         retrieveAndConvertPaged { repository.findComparisonsByOrganizationId(id, pageable) }
@@ -571,11 +573,10 @@ class ResourceService(
     override fun hasStatements(id: ResourceId): Boolean = repository.checkIfResourceHasStatements(id)
 
     private fun setVerifiedFlag(resourceId: ResourceId, verified: Boolean) {
-        val resource = repository.findByResourceId(resourceId).orElseThrow { ResourceNotFound(resourceId.value) }
-        val modified = resource.copy(
-            verified = verified
-        )
-        repository.save(modified)
+        val result = repository.findByResourceId(resourceId)
+        var resultObj = result.orElseThrow { ResourceNotFound(resourceId) }
+        resultObj = resultObj.copy(verified = verified)
+        repository.save(resultObj)
     }
 
     private fun String.toSearchString() =

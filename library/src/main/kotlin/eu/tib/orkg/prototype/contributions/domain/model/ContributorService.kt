@@ -3,8 +3,8 @@ package eu.tib.orkg.prototype.contributions.domain.model
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.contributions.application.ports.input.RetrieveContributorUseCase
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import java.time.OffsetDateTime
 import java.util.Optional
 import javax.transaction.Transactional

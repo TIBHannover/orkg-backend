@@ -3,23 +3,22 @@ package eu.tib.orkg.prototype.statements.services
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserRepository
+import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresObservatoryRepository
+import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.Stats
-import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
-import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresObservatoryRepository
-import eu.tib.orkg.prototype.statements.domain.model.jpa.PostgresOrganizationRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ChangeLogResponse
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatsRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResultObject
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.TopContributorIdentifiers
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.TrendingResearchProblems
-import java.lang.IllegalStateException
 import java.time.LocalDate
-import java.util.UUID
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -34,7 +33,7 @@ class StatisticsService(
     private val observatoryRepository: PostgresObservatoryRepository,
     private val organizationRepository: PostgresOrganizationRepository
 ) : RetrieveStatisticsUseCase {
-    val internalClassLabels: (String) -> Boolean = { it !in setOf("Thing", "Resource", "AuditableEntity") }
+    val internalClassLabels: (String) -> Boolean = { it !in setOf("Thing", "Resource") }
 
     override fun getStats(extra: List<String>?): Stats {
         val metadata = neo4jStatsRepository.getGraphMetaData()

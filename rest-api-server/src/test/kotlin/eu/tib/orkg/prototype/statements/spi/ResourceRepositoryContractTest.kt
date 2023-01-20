@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import io.kotest.assertions.asClue
@@ -325,6 +325,49 @@ interface ResourceRepositoryContractTest {
         )
         result.totalElements shouldBe 1
         result.content.first().id shouldBe ResourceId("R1234")
+    }
+
+    @Test
+    fun `given multiple resources, find all contributor ids`() {
+        val classes = setOf(ClassId("ToBeFound"), ClassId("Other"))
+        val contributorId1 = ContributorId("dc8b2055-c14a-4e9f-9fcd-e0b79cf1f834")
+        val contributorId2 = ContributorId("4e08d9e4-e16c-42f1-9e9b-294579bdff1d")
+        val resource1 = createResource().copy(
+            id = ResourceId("R1234"),
+            createdBy = contributorId1,
+            classes = classes,
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource1)
+        val resource2 = createResource().copy(
+            id = ResourceId("R2345"),
+            createdBy = contributorId1,
+            classes = classes,
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource2)
+        val resource3 = createResource().copy(
+            id = ResourceId("R3456"),
+            createdBy = contributorId2,
+            classes = classes,
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource3)
+        val resource4 = createResource().copy(
+            id = ResourceId("R4567"),
+            createdBy = ContributorId.createUnknownContributor(),
+            classes = classes,
+            featured = null,
+            unlisted = null
+        )
+        repository.save(resource4)
+
+        val result = repository.findAllContributorIds(PageRequest.of(0, Int.MAX_VALUE))
+        result.totalElements shouldBe 2
+        result.content shouldContainAll setOf(contributorId1, contributorId2)
     }
 
     fun cleanUpAfterEach()

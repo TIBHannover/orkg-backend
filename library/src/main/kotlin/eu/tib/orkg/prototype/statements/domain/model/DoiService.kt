@@ -1,8 +1,11 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
+import eu.tib.orkg.prototype.statements.application.DOIServiceUnavailable
 import java.io.BufferedReader
+import java.io.InputStream
 import java.io.InputStreamReader
+import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
@@ -32,18 +35,19 @@ class DoiService(
     }
 
     private fun doiRegisterRequest(doiData: String, httpConnection: HttpURLConnection): Optional<String> {
-        httpConnection.outputStream.write(doiData.toByteArray(charset("utf-8")))
-        val responseBody = try {
-            BufferedReader(InputStreamReader(httpConnection.inputStream, "utf-8"))
-                .readLines()
-                .joinToString("\n", transform = String::trim)
+        httpConnection.outputStream.write(doiData.toByteArray(Charsets.UTF_8))
+        try {
+            val responseBody = readAllLines(httpConnection.inputStream)
+
+            if (httpConnection.responseCode == HttpURLConnection.HTTP_CREATED) {
+                return Optional.of(responseBody)
+            } else if (httpConnection.responseCode == HttpURLConnection.HTTP_BAD_REQUEST) {
+                return Optional.empty()
+            }
+
+            throw DOIServiceUnavailable(httpConnection.responseMessage, readAllLines(httpConnection.errorStream))
         } catch (e: Exception) {
-            throw RuntimeException("Error reading DOI response from ${httpConnection.url}.", e)
-        }
-        if (httpConnection.responseCode == HttpURLConnection.HTTP_CREATED) {
-            return Optional.of(responseBody)
-        } else {
-            throw RuntimeException("Error establishing connection to ${httpConnection.url}. Response: $responseBody")
+            throw DOIServiceUnavailable(e)
         }
     }
 
@@ -59,3 +63,8 @@ class DoiService(
         return doiList.joinToString("\n", transform = { """<relatedIdentifier relationType="References" relatedIdentifierType="DOI">$it</relatedIdentifier>""" })
     }
 }
+
+private fun readAllLines(inputStream: InputStream): String =
+    BufferedReader(InputStreamReader(inputStream, Charsets.UTF_8))
+        .readLines()
+        .joinToString("\n", transform = String::trim)

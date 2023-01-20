@@ -2,19 +2,19 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.createClass
+import eu.tib.orkg.prototype.createPredicate
+import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.LiteralUseCases
+import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.services.LiteralService
 import eu.tib.orkg.prototype.statements.services.PaperService
-import eu.tib.orkg.prototype.statements.services.PredicateService
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat
@@ -56,7 +56,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     private lateinit var classService: ClassUseCases
 
     @Autowired
-    private lateinit var predicateService: PredicateService
+    private lateinit var predicateService: PredicateUseCases
 
     @Autowired
     private lateinit var statementService: StatementUseCases
@@ -65,13 +65,10 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     private lateinit var paperService: PaperService
 
     @Autowired
-    private lateinit var resourceService: ResourceUseCases
-
-    @Autowired
     private lateinit var userService: UserService
 
     @Autowired
-    private lateinit var literalService: LiteralService
+    private lateinit var literalService: LiteralUseCases
 
     @BeforeEach
     fun setup() {
@@ -92,8 +89,8 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun index() {
-        service.create("research contribution")
-        service.create("programming language")
+        service.createResource(label = "research contribution")
+        service.createResource(label = "programming language")
         mockMvc
             .perform(getRequestTo("/api/resources/"))
             .andExpect(status().isOk)
@@ -108,9 +105,9 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookup() {
-        service.create("research contribution")
-        service.create("programming language")
-        service.create("research topic")
+        service.createResource(label = "research contribution")
+        service.createResource(label = "programming language")
+        service.createResource(label = "research topic")
 
         mockMvc
             .perform(getRequestTo("/api/resources/?q=research"))
@@ -119,8 +116,10 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     requestParameters(
-                        parameterWithName("q").description("A search term that must be contained in the label"),
-                        parameterWithName("exact").description("Whether it is an exact string lookup or just containment")
+                        parameterWithName("q")
+                            .description("A search term that must be contained in the label"),
+                        parameterWithName("exact")
+                            .description("Whether it is an exact string lookup or just containment")
                             .optional()
                     ),
                     listOfDetailedResourcesResponseFields()
@@ -130,9 +129,9 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookupWithSpecialChars() {
-        service.create("research contribution")
-        service.create("programming language (PL)")
-        service.create("research topic")
+        service.createResource(label = "research contribution")
+        service.createResource(label = "programming language (PL)")
+        service.createResource(label = "research topic")
 
         mockMvc
             .perform(getRequestTo("/api/resources/?q=PL)"))
@@ -141,8 +140,10 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     requestParameters(
-                        parameterWithName("q").description("A search term that must be contained in the label"),
-                        parameterWithName("exact").description("Whether it is an exact string lookup or just containment")
+                        parameterWithName("q")
+                            .description("A search term that must be contained in the label"),
+                        parameterWithName("exact")
+                            .description("Whether it is an exact string lookup or just containment")
                             .optional()
                     ),
                     listOfDetailedResourcesResponseFields()
@@ -152,7 +153,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun fetch() {
-        val id = service.create("research contribution").id
+        val id = service.createResource(label = "research contribution")
 
         mockMvc
             .perform(getRequestTo("/api/resources/$id"))
@@ -177,7 +178,8 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     requestFields(
-                        fieldWithPath("label").description("The resource label")
+                        fieldWithPath("label")
+                            .description("The resource label")
                     ),
                     createdResponseHeaders(),
                     responseFields(resourceResponseFields())
@@ -188,7 +190,10 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun addButClassDoesNotExist() {
-        val resource = mapOf("label" to "foo", "classes" to setOf(ClassId("doesNotExist")))
+        val resource = mapOf(
+            "label" to "foo",
+            "classes" to setOf(ClassId("doesNotExist"))
+        )
 
         mockMvc
             .perform(postRequestWithBody("/api/resources/", resource))
@@ -199,7 +204,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     fun addWithExistingIds() {
         val resource = mapOf("label" to "bar", "id" to "Test")
 
-        service.create(CreateResourceRequest(ResourceId("Test"), "foo"))
+        service.createResource(id = "Test", label = "foo")
 
         mockMvc
             .perform(postRequestWithBody("/api/resources/", resource))
@@ -208,11 +213,10 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun edit() {
-        val oldClass = classService.create("class")
-        val resource = service.create(CreateResourceRequest(null, "foo", setOf(oldClass.id))).id
-
+        val oldClass = classService.createClass(label = "class")
+        val resource = service.createResource(classes = setOf(oldClass.value), label = "foo")
         val newLabel = "bar"
-        val update = mapOf("label" to newLabel, "classes" to listOf(oldClass.id.value))
+        val update = mapOf("label" to newLabel, "classes" to setOf(oldClass))
 
         mockMvc
             .perform(putRequestWithBody("/api/resources/$resource", update))
@@ -222,8 +226,11 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     requestFields(
-                        fieldWithPath("label").description("The updated resource label"),
-                        fieldWithPath("classes").description("The classes to which the resource belongs to").optional()
+                        fieldWithPath("label")
+                            .description("The updated resource label"),
+                        fieldWithPath("classes")
+                            .description("The classes to which the resource belongs to")
+                            .optional()
                     ),
                     responseFields(resourceResponseFields())
                 )
@@ -232,8 +239,8 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun editResourceClass() {
-        val oldClass = classService.create("class")
-        val resource = service.create(CreateResourceRequest(null, "test", setOf(oldClass.id))).id
+        val oldClass = classService.createClass(label = "class")
+        val resource = service.createResource(classes = setOf(oldClass.value), label = "test")
 
         val newClass = classService.create("clazz")
         val update = mapOf("classes" to listOf(newClass.id.value))
@@ -247,8 +254,13 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     requestFields(
-                        fieldWithPath("label").type(String).description("The updated resource label").optional(),
-                        fieldWithPath("classes").description("The classes to which the resource belongs to").optional()
+                        fieldWithPath("label")
+                            .type(String)
+                            .description("The updated resource label")
+                            .optional(),
+                        fieldWithPath("classes")
+                            .description("The classes to which the resource belongs to"
+                            ).optional()
                     ),
                     responseFields(resourceResponseFields())
                 )
@@ -257,10 +269,23 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun editResourceClassesIsEmpty() {
-        val oldClass = classService.create("class")
-        val resource = service.create(CreateResourceRequest(null, "test", setOf(oldClass.id))).id
+        val oldClass = classService.createClass(label = "class")
+        val resource = service.createResource(classes = setOf(oldClass.value), label = "test")
 
         val update = mapOf("classes" to emptyList<ClassId>())
+
+        mockMvc
+            .perform(putRequestWithBody("/api/resources/$resource", update))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.classes", hasSize<Int>(0)))
+    }
+
+    @Test
+    fun editResourceClassesAreInvalid() {
+        val oldClass = classService.createClass(label = "class")
+        val resource = service.createResource(classes = setOf(oldClass.value), label = "test")
+
+        val update = mapOf("classes" to setOf(ClassId("DoesNotExist")))
 
         mockMvc
             .perform(putRequestWithBody("/api/resources/$resource", update))
@@ -269,15 +294,12 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun excludeByClass() {
-        val id = classService.create("research contribution").id
-        val set = setOf(id)
-        service.create(CreateResourceRequest(null, "Contribution 1", set))
-        service.create(CreateResourceRequest(null, "Contribution 2"))
-        service.create(CreateResourceRequest(null, "Contribution 3"))
-        val id2 = classService.create("research contribution").id
-        val set2 = setOf(id2)
-        service.create(CreateResourceRequest(null, "Paper Contribution 1", set2))
-
+        val id = classService.createClass(label = "research contribution")
+        service.createResource(classes = setOf(id.value), label = "Contribution 1")
+        service.createResource(label = "Contribution 2")
+        service.createResource(label = "Contribution 3")
+        val id2 = classService.createClass(label = "research contribution")
+        service.createResource(classes = setOf(id2.value), label = "Paper Contribution 1")
         mockMvc
             .perform(
                 getRequestTo("/api/resources/?q=Contribution&exclude=$id,$id2")
@@ -288,12 +310,16 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     pageableRequestParameters(
-                        parameterWithName("q").description("A search term that must be contained in the label"),
-                        parameterWithName("exact").description("Whether it is an exact string lookup or just containment")
+                        parameterWithName("q")
+                            .description("A search term that must be contained in the label"),
+                        parameterWithName("exact")
+                            .description("Whether it is an exact string lookup or just containment")
                             .optional(),
-                        parameterWithName("exclude").description("List of classes to exclude e.g Paper,C0,Contribution (default: not provided)")
+                        parameterWithName("exclude")
+                            .description("List of classes to exclude e.g Paper,C0,Contribution (default: not provided)")
                             .optional(),
-                        parameterWithName("include").description("List of classes to include e.g Paper,C0,Contribution (default: not provided)")
+                        parameterWithName("include")
+                            .description("List of classes to include e.g Paper,C0,Contribution (default: not provided)")
                             .optional()
                     ),
                     listOfDetailedResourcesResponseFields()
@@ -303,14 +329,12 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun includeByClass() {
-        val id = classService.create("research contribution").id
-        val set = setOf(id)
-        service.create(CreateResourceRequest(null, "Contribution 1", set))
-        service.create(CreateResourceRequest(null, "Contribution 2"))
-        service.create(CreateResourceRequest(null, "Contribution 3"))
-        val id2 = classService.create("research contribution").id
-        val set2 = setOf(id2)
-        service.create(CreateResourceRequest(null, "Paper Contribution 1", set2))
+        val id = classService.createClass(label = "research contribution")
+        service.createResource(classes = setOf(id.value), label = "Contribution 1")
+        service.createResource(label = "Contribution 2")
+        service.createResource(label = "Contribution 3")
+        val id2 = classService.createClass(label = "research contribution")
+        service.createResource(classes = setOf(id2.value), label = "Paper Contribution 1")
 
         mockMvc
             .perform(
@@ -322,12 +346,16 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     pageableRequestParameters(
-                        parameterWithName("q").description("A search term that must be contained in the label"),
-                        parameterWithName("exact").description("Whether it is an exact string lookup or just containment")
+                        parameterWithName("q")
+                            .description("A search term that must be contained in the label"),
+                        parameterWithName("exact")
+                            .description("Whether it is an exact string lookup or just containment")
                             .optional(),
-                        parameterWithName("exclude").description("List of classes to exclude e.g Paper,C0,Contribution (default: not provided)")
+                        parameterWithName("exclude")
+                            .description("List of classes to exclude e.g Paper,C0,Contribution (default: not provided)")
                             .optional(),
-                        parameterWithName("include").description("List of classes to include e.g Paper,C0,Contribution (default: not provided)")
+                        parameterWithName("include")
+                            .description("List of classes to include e.g Paper,C0,Contribution (default: not provided)")
                             .optional()
                     ),
                     listOfDetailedResourcesResponseFields()
@@ -360,7 +388,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     @Test
     @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
     fun deleteResourceSuccess() {
-        val id = service.create("bye bye").id
+        val id = service.createResource(label = "bye bye")
 
         mockMvc
             .perform(deleteRequest("/api/resources/$id"))
@@ -375,13 +403,13 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     @Test
     @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
     fun deleteResourceForbidden() {
-        val id = service.create("parent").id
-        val obj = service.create("son").id
-        val rel = predicateService.create("related").id
-        statementService.create(id.value, rel, obj.value)
+        val subject = service.createResource(label = "parent")
+        val `object` = service.createResource(label = "son")
+        val predicate = predicateService.createPredicate(label = "related")
+        statementService.create(subject.value, predicate, `object`.value)
 
         mockMvc
-            .perform(deleteRequest("/api/resources/$id"))
+            .perform(deleteRequest("/api/resources/$subject"))
             .andExpect(status().isForbidden)
             .andDo(
                 document(
@@ -393,7 +421,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     @Test
     @Disabled("throwing an exception with the message (An Authentication object was not found in the SecurityContext)")
     fun deleteResourceWithoutLogin() {
-        val id = service.create("To Delete").id
+        val id = service.createResource(label = "To Delete")
 
         mockMvc
             .perform(deleteRequest("/api/resources/$id"))
@@ -407,20 +435,19 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun testSharedIndicatorWhenResourcesWithClassExclusion() {
-        val id = classService.create("Class 1").id
-        val set = setOf(id)
-        service.create(CreateResourceRequest(null, "Resource 1", set))
-        service.create(CreateResourceRequest(null, "Resource 2", set))
+        val id = classService.createClass(label = "Class 1")
+        val classes = setOf(id.value)
+        service.createResource(classes = classes, label = "Resource 1")
+        service.createResource(classes = classes, label = "Resource 2")
 
-        val resId = service.create(CreateResourceRequest(null, "Resource 3")).id
-        val con1 = service.create(CreateResourceRequest(null, "Connection 1")).id
-        val con2 = service.create(CreateResourceRequest(null, "Connection 2")).id
-        val pred = predicateService.create("Test predicate").id
-        statementService.create(con1.value, pred, resId.value)
-        statementService.create(con2.value, pred, resId.value)
-        val id2 = classService.create("Class 2").id
-        val set2 = setOf(id2)
-        service.create(CreateResourceRequest(null, "Another Resource", set2))
+        val resId = service.createResource(label = "Resource 3")
+        val con1 = service.createResource(label = "Connection 1")
+        val con2 = service.createResource(label = "Connection 2")
+        val predicate = predicateService.createPredicate(label = "Test predicate")
+        statementService.create(con1.value, predicate, resId.value)
+        statementService.create(con2.value, predicate, resId.value)
+        val id2 = classService.createClass(label = "Class 2")
+        service.createResource(classes = setOf(id2.value), label = "Another Resource")
 
         mockMvc
             .perform(getRequestTo("/api/resources/?q=Resource&exclude=$id"))
@@ -432,11 +459,14 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     pageableRequestParameters(
-                        parameterWithName("q").description("A search term that must be contained in the label")
+                        parameterWithName("q")
+                            .description("A search term that must be contained in the label")
                             .optional(),
-                        parameterWithName("exact").description("Whether it is an exact string lookup or just containment")
+                        parameterWithName("exact")
+                            .description("Whether it is an exact string lookup or just containment")
                             .optional(),
-                        parameterWithName("exclude").description("List of classes to exclude e.g Paper,C0,Contribution (default: not provided)")
+                        parameterWithName("exclude")
+                            .description("List of classes to exclude e.g Paper,C0,Contribution (default: not provided)")
                             .optional()
                     ),
                     listOfDetailedResourcesResponseFields()
@@ -446,22 +476,26 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun testPaperContributorsDetails() {
-        predicateService.create(CreatePredicateRequest(PredicateId("P26"), "Has DOI"))
-        predicateService.create(CreatePredicateRequest(PredicateId("P29"), "Has publication year"))
-        predicateService.create(CreatePredicateRequest(PredicateId("P30"), "Has Research field"))
-        predicateService.create(CreatePredicateRequest(PredicateId("P31"), "Has contribution"))
-        predicateService.create(CreatePredicateRequest(PredicateId("P32"), "Has research problem"))
-        predicateService.create(CreatePredicateRequest(PredicateId("HAS_EVALUATION"), "Has evaluation"))
+        predicateService.createPredicate(label = "Has DOI", id = "P26")
+        predicateService.createPredicate(label = "Has publication year", id = "P29")
+        predicateService.createPredicate(label = "Has Research field", id = "P30")
+        predicateService.createPredicate(label = "Has contribution", id = "P31")
+        predicateService.createPredicate(label = "Has research problem", id = "P32")
+        predicateService.createPredicate(label = "Has evaluation", id = "HAS_EVALUATION")
 
-        resourceService.create(CreateResourceRequest(ResourceId("R3003"), "Question Answering over Linked Data"))
+        service.createResource(id = "R3003", label = "Question Answering over Linked Data")
 
-        classService.create(CreateClassRequest(ClassId("Paper"), "paper", null))
-        classService.create(CreateClassRequest(ClassId("Contribution"), "Contribution", null))
-        classService.create(CreateClassRequest(ClassId("Problem"), "Problem", null))
+        classService.createClass(id = "Paper", label = "paper")
+        classService.createClass(id = "Contribution", label = "Contribution")
+        classService.createClass(id = "Problem", label = "Problem")
 
         val userId = createTestUser()
         // create resource with different userId, and use it as a research field in the paper
-        resourceService.create(userId, CreateResourceRequest(ResourceId("R20"), "database"), ObservatoryId.createUnknownObservatory(), ExtractionMethod.UNKNOWN, OrganizationId.createUnknownOrganization())
+        service.createResource(
+            id = "R20",
+            label = "database",
+            userId = userId
+        )
         val originalPaper = PaperControllerTest().createDummyPaperObject(researchField = "R20")
         val paperId = paperService.addPaperContent(originalPaper, true, UUID.randomUUID()).id.value
         val result = mockMvc
@@ -501,77 +535,54 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
 
     fun createTemplateAndTypedResource(value: String): ResourceId {
         // create required classes and predicates
-        val templateClass = classService.create(
-            CreateClassRequest(
-                ClassId("ContributionTemplate"),
-                "Contribution Template",
-                null
-            )
+        val templateClass = classService.createClass(
+            id = "ContributionTemplate",
+            label = "Contribution Template"
         )
-        val throwAwayClass = classService.create("Templated Class")
-        val templateLabelPredicate = predicateService.create(
-            CreatePredicateRequest(
-                PredicateId("TemplateLabelFormat"),
-                "Template label format"
-            )
+        val throwAwayClass = classService.createClass(label = "Templated Class")
+        val templateLabelPredicate = predicateService.createPredicate(
+            id = "TemplateLabelFormat",
+            label = "Template label format"
         )
-        val templateClassPredicate = predicateService.create(
-            CreatePredicateRequest(
-                PredicateId("TemplateOfClass"),
-                "Template of class"
-            )
+        val templateClassPredicate = predicateService.createPredicate(
+            id = "TemplateOfClass",
+            label = "Template of class"
         )
-        val templateComponentPredicate = predicateService.create(
-            CreatePredicateRequest(
-                PredicateId("TemplateComponent"),
-                "Template component"
-            )
+        val templateComponentPredicate = predicateService.createPredicate(
+            id = "TemplateComponent",
+            label = "Template component"
         )
-        val templateComponentClass = classService.create(
-            CreateClassRequest(
-                ClassId("TemplateComponentClass"),
-                "Template component class",
-                null
-            )
+        val templateComponentClass = classService.createClass(
+            id = "TemplateComponentClass",
+            label = "Template component class"
         )
         val throwAwayProperty = predicateService.create("Temp property")
-        val templateComponentPropertyPredicate = predicateService.create(
-            CreatePredicateRequest(
-                PredicateId("TemplateComponentProperty"),
-                "Template component property"
-            )
+        val templateComponentPropertyPredicate = predicateService.createPredicate(
+            id = "TemplateComponentProperty",
+            label = "Template component property"
         )
         // create the template
-        val template = service.create(
-            CreateResourceRequest(
-                null,
-                "Throw-way template",
-                setOf(ClassId(templateClass.id.value))
-            )
+        val template = service.createResource(
+            classes = setOf(templateClass.value),
+            label = "Throw-way template"
         )
         val labelFormat = literalService.create("xx{${throwAwayProperty.id}}xx")
-        statementService.create(template.id.value, templateLabelPredicate.id, labelFormat.id.value)
-        statementService.create(template.id.value, templateClassPredicate.id, throwAwayClass.id.value)
-        val templateComponent = service.create(
-            CreateResourceRequest(
-                null,
-                "component 1",
-                setOf(ClassId(templateComponentClass.id.value))
-            )
+        statementService.create(template.value, templateLabelPredicate, labelFormat.id.value)
+        statementService.create(template.value, templateClassPredicate, throwAwayClass.value)
+        val templateComponent = service.createResource(
+            classes = setOf(templateComponentClass.value),
+            label = "component 1"
         )
-        statementService.create(template.id.value, templateComponentPredicate.id, templateComponent.id.value)
-        statementService.create(templateComponent.id.value, templateComponentPropertyPredicate.id, throwAwayProperty.id.value)
+        statementService.create(template.value, templateComponentPredicate, templateComponent.value)
+        statementService.create(templateComponent.value, templateComponentPropertyPredicate, throwAwayProperty.id.value)
         // Create resource and type it
-        val templatedResource = service.create(
-            CreateResourceRequest(
-                null,
-                "Fancy resource",
-                setOf(ClassId(throwAwayClass.id.value))
-            )
+        val templatedResource = service.createResource(
+            classes = setOf(throwAwayClass.value),
+            label = "Fancy resource"
         )
         val someValue = literalService.create(value)
-        statementService.create(templatedResource.id.value, throwAwayProperty.id, someValue.id.value)
-        return templatedResource.id
+        statementService.create(templatedResource.value, throwAwayProperty.id, someValue.id.value)
+        return templatedResource
     }
 
     fun listOfDetailedResourcesResponseFields(): ResponseFieldsSnippet {

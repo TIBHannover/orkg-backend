@@ -7,7 +7,7 @@ import eu.tib.orkg.prototype.statements.application.json.ClassIdSerializer
 
 @JsonDeserialize(using = ClassIdDeserializer::class)
 @JsonSerialize(using = ClassIdSerializer::class)
-data class ClassId(val value: String) : Comparable<ClassId>, ThingId {
+data class ClassId(val value: String) : Comparable<ClassId> {
 
     init {
         require(value.isNotBlank()) { "ID must not be blank" }

@@ -105,26 +105,26 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         classService.createClasses("Paper", "Problem", "ResearchField", "Contribution")
 
         if (!flags.isPapersWithCodeLegacyModelEnabled()) {
-            predicateService.createPredicate(labelsAndClasses.numericValuePredicate, "Has numeric value")
+            predicateService.createPredicate(id = labelsAndClasses.numericValuePredicate, label = "Has numeric value")
 
             classService.createClass(
-                labelsAndClasses.quantityClass,
                 label = "Quantity",
+                labelsAndClasses.quantityClass,
                 uri = URI("http://qudt.org/2.1/schema/qudt/Quantity")
             )
             classService.createClass(
-                labelsAndClasses.quantityValueClass,
                 label = "Quantity",
+                labelsAndClasses.quantityValueClass,
                 uri = URI("http://qudt.org/2.1/schema/qudt/QuantityValue")
             )
             classService.createClass(
-                labelsAndClasses.metricClass,
                 label = "Quantity Kind",
+                labelsAndClasses.metricClass,
                 uri = URI("http://qudt.org/2.1/schema/qudt/QuantityKind")
             )
-            classService.createClass(labelsAndClasses.datasetClass, "Dataset")
-            classService.createClass(labelsAndClasses.benchmarkClass, "Benchmark")
-            classService.createClass(labelsAndClasses.modelClass, "Model")
+            classService.createClass("Dataset", labelsAndClasses.datasetClass)
+            classService.createClass("Benchmark", labelsAndClasses.benchmarkClass)
+            classService.createClass("Model", labelsAndClasses.modelClass)
         }
     }
 

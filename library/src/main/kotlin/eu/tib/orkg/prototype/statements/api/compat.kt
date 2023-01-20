@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsVerifiedUseC
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkFeaturedService
 import eu.tib.orkg.prototype.statements.application.port.out.GetComparisonFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.GetContributionFlagQuery
+import eu.tib.orkg.prototype.statements.application.port.out.GetContributorsQuery
 import eu.tib.orkg.prototype.statements.application.port.out.GetPaperFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.GetResourceFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.GetSmartReviewFlagQuery
@@ -47,4 +48,5 @@ interface OtherResourceUseCases :
     GetContributionFlagQuery,
     GetComparisonFlagQuery,
     GetVisualizationFlagQuery,
-    GetSmartReviewFlagQuery
+    GetSmartReviewFlagQuery,
+    GetContributorsQuery

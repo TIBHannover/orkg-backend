@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsVerifiedUseCase
 import eu.tib.orkg.prototype.statements.application.port.out.LoadResourcePort
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import io.mockk.every
 import java.util.*
 import org.junit.jupiter.api.BeforeEach
@@ -60,8 +61,9 @@ class ResourceVerificationControllerTest {
         inner class ResourceDoesNotExist {
             @Test
             fun `Then the controller returns 404 Not Found`() {
-                every { service.markAsVerified(any()) } throws ResourceNotFound()
-                mockMvc.perform(markVerifiedRequest("unknown")).andExpect(status().isNotFound)
+                val id = ResourceId("unknown")
+                every { service.markAsVerified(any()) } throws ResourceNotFound(id)
+                mockMvc.perform(markVerifiedRequest(id.value)).andExpect(status().isNotFound)
             }
         }
 
@@ -84,8 +86,9 @@ class ResourceVerificationControllerTest {
         inner class ResourceDoesNotExist {
             @Test
             fun `Then the controller returns 404 Not Found`() {
-                every { service.markAsUnverified(any()) } throws ResourceNotFound()
-                mockMvc.perform(markUnverifiedRequest("unknown")).andExpect(status().isNotFound)
+                val id = ResourceId("unknown")
+                every { service.markAsUnverified(any()) } throws ResourceNotFound(id)
+                mockMvc.perform(markUnverifiedRequest(id.value)).andExpect(status().isNotFound)
             }
         }
 

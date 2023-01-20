@@ -12,6 +12,7 @@ dependencies {
     testFixturesApi(libs.bundles.kotest)
     testFixturesApi("org.springframework.data:spring-data-commons")
     testFixturesImplementation(libs.forkhandles.fabrikate4k)
+    testFixturesImplementation(libs.forkhandles.values4k)
 }
 
 testing {

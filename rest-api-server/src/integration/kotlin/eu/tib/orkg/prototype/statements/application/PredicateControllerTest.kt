@@ -1,10 +1,11 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.createPredicate
+import eu.tib.orkg.prototype.createResource
+import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.services.PredicateService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -31,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional
 class PredicateControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var service: PredicateService
+    private lateinit var service: PredicateUseCases
 
     @Autowired
     private lateinit var resourceService: ResourceUseCases
@@ -48,8 +49,8 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun index() {
-        service.create("has name")
-        service.create("knows")
+        service.createPredicate(label = "has name")
+        service.createPredicate(label = "knows")
 
         mockMvc
             .perform(getRequestTo("/api/predicates/"))
@@ -70,7 +71,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun fetch() {
-        val id = service.create("has name").id
+        val id = service.createPredicate(label = "has name")
 
         mockMvc
             .perform(getRequestTo("/api/predicates/$id"))
@@ -85,9 +86,9 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookup() {
-        service.create("has name")
-        service.create("gave name to")
-        service.create("knows")
+        service.createPredicate(label = "has name")
+        service.createPredicate(label = "gave name to")
+        service.createPredicate(label = "knows")
 
         mockMvc
             .perform(getRequestTo("/api/predicates/?q=name"))
@@ -105,9 +106,9 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookupWithSpecialChars() {
-        service.create("has name")
-        service.create("gave name to")
-        service.create("know(s)")
+        service.createPredicate(label = "has name")
+        service.createPredicate(label = "gave name to")
+        service.createPredicate(label = "know(s)")
 
         mockMvc
             .perform(getRequestTo("/api/predicates/?q=know("))
@@ -146,7 +147,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
     @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun addExistingId() {
-        service.create(CreatePredicateRequest(id = PredicateId("dummy"), label = "foo"))
+        service.createPredicate(id = "dummy", label = "foo")
         val duplicatePredicate = mapOf("id" to "dummy", "label" to "bar")
 
         mockMvc
@@ -165,7 +166,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun edit() {
-        val predicate = service.create("knows").id
+        val predicate = service.createPredicate(label = "knows")
 
         val newLabel = "yaser"
         val resource = mapOf("label" to newLabel)
@@ -201,7 +202,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
     @Test
     @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
     fun deletePredicateSuccess() {
-        val id = service.create("bye bye").id
+        val id = service.createPredicate(label = "bye bye")
 
         mockMvc
             .perform(deleteRequest("/api/predicates/$id"))
@@ -216,13 +217,13 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
     @Test
     @WithUserDetails("admin", userDetailsServiceBeanName = "mockUserDetailsService")
     fun deletePredicateForbidden() {
-        val id = resourceService.create("parent").id
-        val obj = resourceService.create("son").id
-        val rel = service.create("related").id
-        statementService.create(id.value, rel, obj.value)
+        val subject = resourceService.createResource(label = "subject")
+        val `object` = resourceService.createResource(label = "child")
+        val predicate = service.createPredicate(label = "related")
+        statementService.create(subject.value, predicate, `object`.value)
 
         mockMvc
-            .perform(deleteRequest("/api/predicates/$rel"))
+            .perform(deleteRequest("/api/predicates/$predicate"))
             .andExpect(status().isForbidden)
             .andDo(
                 document(
@@ -234,7 +235,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
     @Test
     @Disabled("throwing an exception with the message (An Authentication object was not found in the SecurityContext)")
     fun deletePredicateWithoutLogin() {
-        val id = service.create("To Delete").id
+        val id = service.createPredicate(label = "To Delete")
 
         mockMvc
             .perform(deleteRequest("/api/predicates/$id"))

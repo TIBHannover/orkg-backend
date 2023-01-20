@@ -2,15 +2,15 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.auth.service.UserService
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.createClasses
+import eu.tib.orkg.prototype.createPredicate
+import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.services.PredicateService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -38,7 +38,7 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
     private lateinit var classService: ClassUseCases
 
     @Autowired
-    private lateinit var predicateService: PredicateService
+    private lateinit var predicateService: PredicateUseCases
 
     @Autowired
     private lateinit var statementService: StatementUseCases
@@ -52,19 +52,19 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
         resourceService.removeAll()
         classService.removeAll()
 
-        classService.create(CreateClassRequest(ClassId("Problem"), "Problem", null))
-        classService.create(CreateClassRequest(ClassId("Contribution"), "Contribution", null))
-        predicateService.create(CreatePredicateRequest(PredicateId("P32"), "addresses"))
+        classService.createClasses("Problem", "Contribution")
+        predicateService.createPredicate(id = "P32", label = "addresses")
     }
 
     @Test
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun getUsersPerProblem() {
-        val problemClassId = ClassId("Problem")
-        val contributionClassId = ClassId("Contribution")
         val predicate = PredicateId("P32")
 
-        val problem = resourceService.create(CreateResourceRequest(null, "save the world", setOf(problemClassId))).id
+        val problem = resourceService.createResource(
+            classes = setOf("Problem"),
+            label = "save the world"
+        )
 
         val userEmail = "test@testemail.com"
         if (!userService.findByEmail(userEmail).isPresent)
@@ -72,13 +72,12 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
         val uuid = userService.findByEmail(userEmail).get().id!!
         val contributor = ContributorId(uuid)
 
-        val contribution = resourceService.create(
-            contributor,
-            CreateResourceRequest(null, "Be healthy", setOf(contributionClassId)),
-            ObservatoryId.createUnknownObservatory(),
-            ExtractionMethod.MANUAL,
-            OrganizationId.createUnknownOrganization()
-        ).id
+        val contribution = resourceService.createResource(
+            classes = setOf("Contribution"),
+            label = "Be healthy",
+            userId = contributor,
+            extractionMethod = ExtractionMethod.MANUAL
+        )
 
         statementService.create(contributor, contribution.value, predicate, problem.value)
 

@@ -2,8 +2,8 @@ package eu.tib.orkg.prototype.auth.persistence
 
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.statements.domain.model.OrganizationId
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneOffset.UTC

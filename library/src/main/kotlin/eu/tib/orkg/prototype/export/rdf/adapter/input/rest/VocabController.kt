@@ -5,6 +5,9 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.export.rdf.api.ExportRDFUseCase
+import eu.tib.orkg.prototype.statements.application.ClassNotFound
+import eu.tib.orkg.prototype.statements.application.PredicateNotFound
+import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import java.io.StringWriter
 import java.net.URI
 import org.eclipse.rdf4j.model.Model
@@ -38,7 +41,7 @@ class VocabController(
             return createRedirectResponse("resource", id.value, uriComponentsBuilder)
         val model = service.rdfModelFor(id)
             // TODO: Return meaningful message to the user
-            .orElseThrow { IllegalStateException("Could not find resource $id") }
+            .orElseThrow { ResourceNotFound(id) }
         val response = getRdfSerialization(model, acceptHeader)
         return ResponseEntity.ok()
             .body(response)
@@ -57,7 +60,7 @@ class VocabController(
             return createRedirectResponse("predicate", id.value, uriComponentsBuilder)
         val model = service.rdfModelFor(id)
             // TODO: Return meaningful message to the user
-            .orElseThrow { IllegalStateException("Could not find predicate $id") }
+            .orElseThrow { PredicateNotFound(id) }
         val response = getRdfSerialization(model, acceptHeader)
         return ResponseEntity.ok()
             .body(response)
@@ -74,7 +77,7 @@ class VocabController(
     ): ResponseEntity<String> {
         val model = service.rdfModelFor(id)
             // TODO: Return meaningful message to the user
-            .orElseThrow { IllegalStateException("Could not find class $id") }
+            .orElseThrow { ClassNotFound(id) }
         val response = getRdfSerialization(model, acceptHeader)
         return ResponseEntity.ok()
             .body(response)

@@ -1,5 +1,11 @@
 package eu.tib.orkg.prototype
 
+import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
+import eu.tib.orkg.prototype.community.api.OrganizationUseCases
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationType
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.CreateClassUseCase
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
@@ -25,8 +31,8 @@ fun CreateClassUseCase.createClasses(vararg classes: String) =
     }
 
 fun CreateClassUseCase.createClass(
-    id: String,
     label: String,
+    id: String? = null,
     contributorId: ContributorId? = null,
     uri: URI? = null
 ): ClassId =
@@ -36,21 +42,24 @@ fun CreateClassUseCase.createClass(
 
 fun CreatePredicateUseCase.createPredicates(vararg predicates: Pair<String, String>) =
     predicates.forEach {
-        createPredicate(id = it.first, label = it.second)
+        createPredicate(label = it.second, id = it.first)
     }
 
 fun CreatePredicateUseCase.createPredicates(vararg predicates: String) =
     predicates.forEach {
-        createPredicate(id = it, label = it)
+        createPredicate(label = it, id = it)
     }
 
-fun CreatePredicateUseCase.createPredicate(id: String, label: String): PredicateId =
+fun CreatePredicateUseCase.createPredicate(
+    label: String,
+    id: String? = null
+): PredicateId =
     this.create(CreatePredicateUseCase.CreateCommand(label, id, ContributorId.createUnknownContributor()))
 
 // Resources
 
 fun CreateResourceUseCase.createResource(
-    classes: Set<String>,
+    classes: Set<String> = setOf(),
     id: String? = null,
     label: String? = null,
     extractionMethod: ExtractionMethod? = null
@@ -63,3 +72,53 @@ fun CreateResourceUseCase.createResource(
     )
     return this.create(request).id
 }
+
+fun CreateResourceUseCase.createResource(
+    classes: Set<String> = setOf(),
+    id: String? = null,
+    label: String? = null,
+    extractionMethod: ExtractionMethod? = null,
+    userId: ContributorId = ContributorId.createUnknownContributor(),
+    observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
+    organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
+): ResourceId {
+    val request = CreateResourceRequest(
+        id = Optional.ofNullable(id).map(::ResourceId).orElse(null),
+        label = label ?: "label",
+        classes = classes.map(::ClassId).toSet(),
+        extractionMethod = extractionMethod ?: ExtractionMethod.UNKNOWN
+    )
+    return this.create(userId, request, observatoryId, request.extractionMethod, organizationId).id
+}
+
+// Users
+
+fun UserService.createUser(
+    anEmail: String = "user@example.org",
+    aPassword: String = "123456",
+    aDisplayName: String = "Example User"
+) = this.registerUser(anEmail, aPassword, aDisplayName)
+
+// Organizations
+
+fun OrganizationUseCases.createOrganization(
+    createdBy: ContributorId,
+    organizationName: String = "Test Organization",
+    url: String = "https://www.example.org",
+    displayId: String = organizationName.toDisplayId(),
+    type: OrganizationType = OrganizationType.GENERAL,
+    id: OrganizationId? = null
+) = this.create(id, organizationName, createdBy, url, displayId, type).id!!
+
+// Observatories
+
+fun ObservatoryUseCases.createObservatory(
+    organizationId: OrganizationId,
+    researchField: ResourceId,
+    name: String = "Test Observatory",
+    description: String = "Example description",
+    displayId: String = name.toDisplayId(),
+    id: ObservatoryId? = null
+) = this.create(id, name, description, organizationId, researchField, displayId).id!!
+
+private fun String.toDisplayId() = this.lowercase().replace(Regex("[^a-zA-Z0-9_]"), "_")

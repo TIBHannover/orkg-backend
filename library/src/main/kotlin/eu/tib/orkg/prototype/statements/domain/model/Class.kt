@@ -13,11 +13,12 @@ data class Class(
     val createdBy: ContributorId = ContributorId.createUnknownContributor(),
 ) : Thing {
     var description: String? = null
-    override val thingId: ThingId = id!!
 
     // This is added to replace @JsonTypeInfo on the Thing interface
     @Suppress("PropertyName")
     val _class: String = "class"
+
+    override val thingId: ThingId = ThingId.of(id!!.value)
 }
 
 fun Class?.toOptional() = Optional.ofNullable(this)

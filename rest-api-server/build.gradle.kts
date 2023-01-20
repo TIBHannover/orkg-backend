@@ -190,6 +190,17 @@ tasks {
         args("--spring.profiles.active=development")
     }
 
+    register("populatePostgresDatabase").configure {
+        group = "datagen"
+        description = "Populates the postgres database with live data and randomly generates required user information."
+        doFirst {
+            named<BootRun>("bootRun").configure {
+                args("--spring.profiles.active=development,datagen")
+            }
+        }
+        finalizedBy("bootRun")
+    }
+
     named("dokka", org.jetbrains.dokka.gradle.DokkaTask::class).configure {
         outputFormat = "html"
         configuration {

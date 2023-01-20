@@ -76,18 +76,18 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                 val actual = repository.findByIdAndClasses(expected.id!!, expected.classes)
                 actual shouldBe expected
             }
-            it("returns null when a class is missing") {
-                val resource: Resource = fabricator.random()
-                repository.save(resource)
-                val classes = resource.classes + ClassId("missing")
-                val actual = repository.findByIdAndClasses(resource.id!!, classes)
-                actual shouldBe null
-            }
-            it("returns the correct result when class list is empty") {
+            it("returns the correct result when only some classes match") {
                 val expected: Resource = fabricator.random()
                 repository.save(expected)
-                val actual = repository.findByIdAndClasses(expected.id!!, setOf())
+                val classes = expected.classes + ClassId("missing")
+                val actual = repository.findByIdAndClasses(expected.id!!, classes)
                 actual shouldBe expected
+            }
+            it("returns the correct result when class list is empty") {
+                val resource: Resource = fabricator.random()
+                repository.save(resource)
+                val actual = repository.findByIdAndClasses(resource.id!!, setOf())
+                actual shouldBe null
             }
             it("returns null when the resource is not found") {
                 val actual = repository.findByIdAndClasses(ResourceId("missing"), setOf())
@@ -895,6 +895,45 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                     }
                 }
             }}
+        }
+    }
+
+    context("finding all contributor ids") {
+        val unknownContributor = ContributorId.createUnknownContributor()
+        val resources = fabricator.random<List<Resource>>().toMutableList()
+        resources[0] = resources[0].copy(
+            createdBy = unknownContributor
+        )
+        resources.forEach(repository::save)
+
+        val expected = resources
+            .asSequence()
+            .map { it.createdBy }
+            .distinct()
+            .filter { it != unknownContributor }
+            .sortedBy { it.value }
+            .drop(5)
+            .take(5)
+            .toList()
+
+        // Explicitly requesting second page here
+        val result = repository.findAllContributorIds(PageRequest.of(1, 5))
+        it("returns the correct result") {
+            result shouldNotBe null
+            result.content shouldNotBe null
+            result.content.size shouldBe expected.size
+            result.content shouldContainAll expected
+        }
+        it("pages the results correctly") {
+            result.size shouldBe 5
+            result.number shouldBe 1 // 0-indexed
+            result.totalPages shouldBe 3
+            result.totalElements shouldBe 11
+        }
+        xit("sorts the results by creation date by default") {
+            result.content.zipWithNext { a, b ->
+                // FIXME a.createdAt shouldBeLessThan b.createdAt
+            }
         }
     }
 }

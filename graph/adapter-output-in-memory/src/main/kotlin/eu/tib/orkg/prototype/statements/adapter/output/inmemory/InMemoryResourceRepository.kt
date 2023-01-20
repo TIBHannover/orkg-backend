@@ -1,23 +1,25 @@
 package eu.tib.orkg.prototype.statements.adapter.output.inmemory
 
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import java.util.*
-import java.util.function.Predicate
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 private val paperClass = ClassId("Paper")
+private val comparisonClass = ClassId("Comparison")
+private val unknownUUID = UUID(0, 0)
 
 class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
     compareBy(Resource::createdAt)
 ), ResourceRepository {
     override fun findByIdAndClasses(id: ResourceId, classes: Set<ClassId>): Resource? =
-        entities[id]?.takeIf { it.classes.containsAll(classes) }
+        entities[id]?.takeIf { it.classes.any {`class` -> `class` in classes } }
 
     override fun nextIdentity(): ResourceId {
         var id = ResourceId(entities.size.toLong())
@@ -310,5 +312,23 @@ class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
         it.unlisted == unlisted && it.observatoryId == id && it.classes.any { id ->
             id.value in classes
         }
+    }
+
+    override fun findAllContributorIds(pageable: Pageable) =
+        entities.values
+            .map { it.createdBy }
+            .distinct()
+            .filter { it.value != unknownUUID }
+            .sortedBy { it.value }
+            .paged(pageable)
+
+    // TODO: Create a method with a generic class parameter
+    override fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable) =
+        findAllFilteredAndPaged(pageable) {
+            comparisonClass in it.classes && it.organizationId == id
+        }
+
+    override fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> {
+        TODO("This method should be moved to the StatementRepository")
     }
 }

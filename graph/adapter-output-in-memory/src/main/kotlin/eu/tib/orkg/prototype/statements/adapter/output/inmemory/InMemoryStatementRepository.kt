@@ -31,18 +31,18 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         Optional.ofNullable(entities[id])
 
     override fun findAllBySubject(subjectId: String, pageable: Pageable) =
-        findAllFilteredAndPaged(pageable) { it.subject.thingId.toString() == subjectId }
+        findAllFilteredAndPaged(pageable) { it.subject.thingId.value == subjectId }
 
     override fun findAllByPredicateId(predicateId: PredicateId, pageable: Pageable) =
         findAllFilteredAndPaged(pageable) { it.predicate.id == predicateId }
 
     override fun findAllByObject(objectId: String, pageable: Pageable) =
-        findAllFilteredAndPaged(pageable) { it.`object`.thingId.toString() == objectId }
+        findAllFilteredAndPaged(pageable) { it.`object`.thingId.value == objectId }
 
     override fun countByIdRecursive(paperId: String): Int {
         val visited = mutableSetOf<StatementId>()
         val frontier = ArrayDeque(entities.values.filter {
-            it.subject.thingId.toString() == paperId
+            it.subject.thingId.value == paperId
         })
         var count = 0
         while (frontier.isNotEmpty()) {
@@ -50,7 +50,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
             if (statement.id !in visited) {
                 entities.values
                     .filter {
-                        statement.`object`.thingId.toString() == it.subject.thingId.toString() && it.id !in visited
+                        statement.`object`.thingId.value == it.subject.thingId.value && it.id !in visited
                     }
                     .forEach(frontier::add)
                 count++
@@ -64,7 +64,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         predicateId: PredicateId,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
-        it.predicate.id == predicateId && it.`object`.thingId.toString() == objectId
+        it.predicate.id == predicateId && it.`object`.thingId.value == objectId
     }
 
     override fun findAllBySubjectAndPredicate(
@@ -72,7 +72,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         predicateId: PredicateId,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
-        it.predicate.id == predicateId && it.subject.thingId.toString() == subjectId
+        it.predicate.id == predicateId && it.subject.thingId.value == subjectId
     }
 
     // FIXME: rename to findAllByPredicateIdAndLiteralObjectLabel
@@ -91,21 +91,21 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         subjectClass: ClassId,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
-        it.predicate.id == predicateId && it.`object` is Literal && it.`object`.label == literal && it.subject.thingId == subjectClass
+        it.predicate.id == predicateId && it.`object` is Literal && it.`object`.label == literal && ClassId(it.subject.thingId.value) == subjectClass
     }
 
     override fun findAllBySubjects(
         subjectIds: List<String>,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
-        subjectIds.contains(it.subject.thingId.toString())
+        subjectIds.contains(it.subject.thingId.value)
     }
 
     override fun findAllByObjects(
         objectIds: List<String>,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
-        objectIds.contains(it.`object`.thingId.toString())
+        objectIds.contains(it.`object`.thingId.value)
     }
 
     override fun fetchAsBundle(id: String, configuration: Map<String, Any>): Iterable<GeneralStatement> {
@@ -121,7 +121,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
     }
 
     override fun countStatementsAboutResource(id: ResourceId) =
-        entities.filter { id == it.value.`object`.thingId }.count().toLong()
+        entities.filter { id.value == it.value.`object`.thingId.value }.count().toLong()
 
     override fun countStatementsAboutResources(resourceIds: Set<ResourceId>) =
         resourceIds.associateWith(::countStatementsAboutResource).filter { it.value > 0 }

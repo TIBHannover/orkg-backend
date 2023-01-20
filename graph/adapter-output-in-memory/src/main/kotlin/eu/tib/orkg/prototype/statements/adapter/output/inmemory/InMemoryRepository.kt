@@ -19,17 +19,19 @@ abstract class InMemoryRepository<ID, T>(
     protected fun findAllFilteredAndPaged(
         pageable: Pageable,
         predicate: (T) -> Boolean
-    ): Page<T> {
-        val total = entities.values
-            .filter(predicate)
-            .sortedWith(defaultComparator)
-        val content = total
-            .drop(pageable.pageNumber * pageable.pageSize)
-            .take(pageable.pageSize)
-        return PageImpl(
-            content,
-            PageRequest.of(pageable.pageNumber, pageable.pageSize),
-            total.size.toLong()
-        )
-    }
+    ) = entities.values
+        .filter(predicate)
+        .sortedWith(defaultComparator)
+        .paged(pageable)
+}
+
+fun <T> List<T>.paged(pageable: Pageable): PageImpl<T> {
+    val content = this
+        .drop(pageable.pageNumber * pageable.pageSize)
+        .take(pageable.pageSize)
+    return PageImpl(
+        content,
+        PageRequest.of(pageable.pageNumber, pageable.pageSize),
+        this.size.toLong()
+    )
 }

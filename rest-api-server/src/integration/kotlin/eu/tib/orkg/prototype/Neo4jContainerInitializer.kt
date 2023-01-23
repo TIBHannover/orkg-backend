@@ -24,6 +24,7 @@ class Neo4jContainerInitializer : ApplicationContextInitializer<ConfigurableAppl
     }
 
     private fun settingsForSDN5(neo4j: Neo4jContainer<*>) = listOf(
+        "spring.test.database.replace=none",  // Prevent all extending tests from starting an in-memory database
         "spring.data.neo4j.uri=${neo4j.boltUrl}",
         "spring.data.neo4j.username=neo4j",
         "spring.data.neo4j.password=${neo4j.adminPassword}",

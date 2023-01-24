@@ -6,8 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Searching for a venue during paper creation works correctly now. (See: [!380](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/380))
 ### Changed
 - Error responses are unified to make them better consumable for clients. (Closes: [#78](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/78), [#298](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/298), [#332](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/332), [#434](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/434))
+- Logos were removed from the response when updating organizations. (See: [!358](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/358))
+- The `Auditable` entity / node label was removed. It was an internal implementation detail, and no know clients depend on it. (See: [!352](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/352))
+### Added
+- It is now possible to generate dummy data for missing entries in the Postgres database during development by executing the `populatePostgresDatabase` Gradle task. (Closes: [#237](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/237))
+- Added an image repository that stores images in the database. (See: [!357](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/357))
 
 ## [0.24.0] - 2023-01-09
 ### Added

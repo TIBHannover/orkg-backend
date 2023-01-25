@@ -25,13 +25,13 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jComparisonRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jContributionRepository
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jVisualizationRepository
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import eu.tib.orkg.prototype.statements.spi.SmartReviewRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
+import eu.tib.orkg.prototype.statements.spi.VisualizationRepository
 import eu.tib.orkg.prototype.util.EscapedRegex
 import eu.tib.orkg.prototype.util.SanitizedWhitespace
 import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
@@ -52,7 +52,7 @@ private const val COMPARISON_CLASS = "Comparison"
 class ResourceService(
     private val neo4jComparisonRepository: Neo4jComparisonRepository,
     private val neo4jContributionRepository: Neo4jContributionRepository,
-    private val neo4jVisualizationRepository: Neo4jVisualizationRepository,
+    private val visualizationRepository: VisualizationRepository,
     private val smartReviewRepository: SmartReviewRepository,
     private val repository: ResourceRepository,
     private val statementRepository: StatementRepository,
@@ -502,16 +502,16 @@ class ResourceService(
         neo4jContributionRepository.findAllListedContributions(pageable).map(Neo4jResource::toResource)
 
     override fun loadFeaturedVisualizations(pageable: Pageable): Page<Resource> =
-        neo4jVisualizationRepository.findAllFeaturedVisualizations(pageable).map(Neo4jResource::toResource)
+        visualizationRepository.findAllFeaturedVisualizations(pageable)
 
     override fun loadNonFeaturedVisualizations(pageable: Pageable): Page<Resource> =
-        neo4jVisualizationRepository.findAllNonFeaturedVisualizations(pageable).map(Neo4jResource::toResource)
+        visualizationRepository.findAllNonFeaturedVisualizations(pageable)
 
     override fun loadUnlistedVisualizations(pageable: Pageable): Page<Resource> =
-        neo4jVisualizationRepository.findAllUnlistedVisualizations(pageable).map(Neo4jResource::toResource)
+        visualizationRepository.findAllUnlistedVisualizations(pageable)
 
     override fun loadListedVisualizations(pageable: Pageable): Page<Resource> =
-        neo4jVisualizationRepository.findAllListedVisualizations(pageable).map(Neo4jResource::toResource)
+        visualizationRepository.findAllListedVisualizations(pageable)
 
     override fun loadFeaturedSmartReviews(pageable: Pageable): Page<Resource> =
         smartReviewRepository.findAllFeaturedSmartReviews(pageable)
@@ -546,12 +546,12 @@ class ResourceService(
     }
 
     override fun getFeaturedVisualizationFlag(id: ResourceId): Boolean {
-        val result = neo4jVisualizationRepository.findVisualizationByResourceId(id)
+        val result = visualizationRepository.findVisualizationByResourceId(id)
         return result.orElseThrow { ResourceNotFound(id) }.featured ?: false
     }
 
     override fun getUnlistedVisualizationFlag(id: ResourceId): Boolean {
-        val result = neo4jVisualizationRepository.findVisualizationByResourceId(id)
+        val result = visualizationRepository.findVisualizationByResourceId(id)
         return result.orElseThrow { ResourceNotFound(id) }.unlisted ?: false
     }
 

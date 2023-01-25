@@ -2,19 +2,19 @@ package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.UserRepository
+import eu.tib.orkg.prototype.community.domain.model.ResearchField
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.FindResearchFieldsQuery
-import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.api.PagedResourcesGenerator
 import eu.tib.orkg.prototype.statements.api.ResourceGenerator
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.community.domain.model.ResearchField
+import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jResearchFieldRepository
+import eu.tib.orkg.prototype.statements.spi.ResearchFieldRepository
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -27,7 +27,7 @@ private val ResearchField = ClassId("ResearchField")
 @Service
 @Transactional
 class ResearchFieldService(
-    private val neo4jResearchFieldRepository: Neo4jResearchFieldRepository,
+    private val researchFieldRepository: ResearchFieldRepository,
     private val researchFieldsQuery: FindResearchFieldsQuery,
     private val userRepository: UserRepository,
     private val resourceService: ResourceUseCases,
@@ -40,9 +40,9 @@ class ResearchFieldService(
         id: ResourceId,
         pageable: Pageable
     ): Page<RetrieveResearchFieldUseCase.PaperCountPerResearchProblem> {
-        return neo4jResearchFieldRepository.getResearchProblemsOfField(id, pageable).map {
+        return researchFieldRepository.getResearchProblemsOfField(id, pageable).map {
             RetrieveResearchFieldUseCase.PaperCountPerResearchProblem(
-                problem = resourceService.map(ResourceGenerator { it.problem.toResource() }),
+                problem = resourceService.map(ResourceGenerator { it.problem }),
                 papers = it.papers,
             )
         }
@@ -56,20 +56,20 @@ class ResearchFieldService(
     ): Page<ResourceRepresentation> {
         val modifiedFeatured: Boolean =
             setFeatured(unlisted, featured) ?: return resourceService.map(PagedResourcesGenerator {
-                neo4jResearchFieldRepository.getProblemsIncludingSubFields(
+                researchFieldRepository.getProblemsIncludingSubFields(
                     id = id, pageable = pageable
-                ).map(Neo4jResource::toResource)
+                )
             })
 
         return resourceService.map(PagedResourcesGenerator {
-            neo4jResearchFieldRepository.getProblemsIncludingSubFieldsWithFlags(
+            researchFieldRepository.getProblemsIncludingSubFieldsWithFlags(
                 id = id, featured = modifiedFeatured, unlisted = unlisted, pageable = pageable
-            ).map(Neo4jResource::toResource)
+            )
         })
     }
 
     override fun getContributorsIncludingSubFields(id: ResourceId, pageable: Pageable): Page<Contributor> {
-        val contributors = neo4jResearchFieldRepository.getContributorIdsFromResearchFieldAndIncludeSubfields(id, pageable).map(ContributorId::value)
+        val contributors = researchFieldRepository.getContributorIdsFromResearchFieldAndIncludeSubfields(id, pageable).map(ContributorId::value)
         return PageImpl(userRepository.findByIdIn(contributors.content.toTypedArray()).map(UserEntity::toContributor))
     }
 
@@ -81,14 +81,14 @@ class ResearchFieldService(
     ): Page<ResourceRepresentation> {
         val modifiedFeatured: Boolean =
             setFeatured(unlisted, featured) ?: return resourceService.map(PagedResourcesGenerator {
-                neo4jResearchFieldRepository.getPapersIncludingSubFields(
+                researchFieldRepository.getPapersIncludingSubFields(
                     id = id, pageable = pageable
-                ).map(Neo4jResource::toResource)
+                )
             })
         return resourceService.map(PagedResourcesGenerator {
-            neo4jResearchFieldRepository.getPapersIncludingSubFieldsWithFlags(
+            researchFieldRepository.getPapersIncludingSubFieldsWithFlags(
                 id = id, featured = modifiedFeatured, unlisted = unlisted, pageable = pageable
-            ).map(Neo4jResource::toResource)
+            )
         })
     }
 
@@ -100,19 +100,19 @@ class ResearchFieldService(
     ): Page<ResourceRepresentation> {
         val modifiedFeatured: Boolean =
             setFeatured(unlisted, featured) ?: return resourceService.map(PagedResourcesGenerator {
-                neo4jResearchFieldRepository.getComparisonsIncludingSubFields(
+                researchFieldRepository.getComparisonsIncludingSubFields(
                     id = id, pageable = pageable
-                ).map(Neo4jResource::toResource)
+                )
             })
         return resourceService.map(PagedResourcesGenerator {
-            neo4jResearchFieldRepository.getComparisonsIncludingSubFieldsWithFlags(
+            researchFieldRepository.getComparisonsIncludingSubFieldsWithFlags(
                 id = id, featured = modifiedFeatured, unlisted = unlisted, pageable = pageable
-            ).map(Neo4jResource::toResource)
+            )
         })
     }
 
     override fun getContributorsExcludingSubFields(id: ResourceId, pageable: Pageable): Page<Contributor> {
-        val contributors = neo4jResearchFieldRepository.getContributorIdsExcludingSubFields(id, pageable).map(ContributorId::value)
+        val contributors = researchFieldRepository.getContributorIdsExcludingSubFields(id, pageable).map(ContributorId::value)
         return PageImpl(userRepository.findByIdIn(contributors.content.toTypedArray()).map(UserEntity::toContributor))
     }
 
@@ -124,14 +124,14 @@ class ResearchFieldService(
     ): Page<ResourceRepresentation> {
         val modifiedFeatured: Boolean =
             setFeatured(unlisted, featured) ?: return resourceService.map(PagedResourcesGenerator {
-                neo4jResearchFieldRepository.getPapersExcludingSubFields(
+                researchFieldRepository.getPapersExcludingSubFields(
                     id = id, pageable = pageable
-                ).map(Neo4jResource::toResource)
+                )
             })
         return resourceService.map(PagedResourcesGenerator {
-            neo4jResearchFieldRepository.getPapersExcludingSubFieldsWithFlags(
+            researchFieldRepository.getPapersExcludingSubFieldsWithFlags(
                 id = id, featured = modifiedFeatured, unlisted = unlisted, pageable = pageable
-            ).map(Neo4jResource::toResource)
+            )
         })
     }
 
@@ -143,14 +143,14 @@ class ResearchFieldService(
     ): Page<ResourceRepresentation> {
         val modifiedFeatured: Boolean =
             setFeatured(unlisted, featured) ?: return resourceService.map(PagedResourcesGenerator {
-                neo4jResearchFieldRepository.getComparisonsExcludingSubFields(
+                researchFieldRepository.getComparisonsExcludingSubFields(
                     id = id, pageable = pageable
-                ).map(Neo4jResource::toResource)
+                )
             })
         return resourceService.map(PagedResourcesGenerator {
-            neo4jResearchFieldRepository.getComparisonsExcludingSubFieldsWithFlags(
+            researchFieldRepository.getComparisonsExcludingSubFieldsWithFlags(
                 id = id, featured = modifiedFeatured, unlisted = unlisted, pageable = pageable
-            ).map(Neo4jResource::toResource)
+            )
         })
     }
 
@@ -162,14 +162,14 @@ class ResearchFieldService(
     ): Page<ResourceRepresentation> {
         val modifiedFeatured: Boolean =
             setFeatured(unlisted, featured) ?: return resourceService.map(PagedResourcesGenerator {
-                neo4jResearchFieldRepository.getProblemsExcludingSubFields(
+                researchFieldRepository.getProblemsExcludingSubFields(
                     id = id, pageable = pageable
-                ).map(Neo4jResource::toResource)
+                )
             })
         return resourceService.map(PagedResourcesGenerator {
-            neo4jResearchFieldRepository.getProblemsExcludingSubFieldsWithFlags(
+            researchFieldRepository.getProblemsExcludingSubFieldsWithFlags(
                 id = id, featured = modifiedFeatured, unlisted = unlisted, pageable = pageable
-            ).map(Neo4jResource::toResource)
+            )
         })
     }
 
@@ -189,11 +189,11 @@ class ResearchFieldService(
             else -> getListIncludingSubFieldsWithFlags(classesList, id, featured, unlisted, pageable)
         }
         val resultList = pages.map { it.content }.flatten().sortedWith { o1, o2 ->
-            o2.createdAt!!.compareTo(o1.createdAt)
+            o2.createdAt.compareTo(o1.createdAt)
         }
         val totalElements = pages.sumOf { it.totalElements }
         return resourceService.map(PagedResourcesGenerator {
-            PageImpl(resultList.map(Neo4jResource::toResource), pageable, totalElements)
+            PageImpl(resultList, pageable, totalElements)
         })
     }
 
@@ -212,10 +212,10 @@ class ResearchFieldService(
             null -> getListExcludingSubFieldsWithoutFeaturedFlag(classesList, id, unlisted, pageable)
             else -> getListExcludingSubFieldsWithFlags(classesList, id, featured, unlisted, pageable)
         }
-        val resultList = pages.map { it.content }.flatten().sortedBy(Neo4jResource::createdAt)
+        val resultList = pages.map { it.content }.flatten().sortedBy(Resource::createdAt)
         val totalElements = pages.sumOf { it.totalElements }
         return resourceService.map(PagedResourcesGenerator {
-            PageImpl(resultList.map(Neo4jResource::toResource), pageable, totalElements)
+            PageImpl(resultList, pageable, totalElements)
         })
     }
 
@@ -232,15 +232,15 @@ class ResearchFieldService(
         id: ResourceId,
         unlisted: Boolean,
         pageable: Pageable
-    ): List<Page<Neo4jResource>> {
+    ): List<Page<Resource>> {
         return classesList.map { classType ->
             when (classType.uppercase(Locale.getDefault())) {
-                "PAPER" -> neo4jResearchFieldRepository.getPapersIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
-                "COMPARISON" -> neo4jResearchFieldRepository.getComparisonsIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
-                "VISUALIZATION" -> neo4jResearchFieldRepository.getVisualizationsIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
-                "LITERATURELISTPUBLISHED" -> neo4jResearchFieldRepository.getLiteratureListIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
-                "PROBLEM" -> neo4jResearchFieldRepository.getProblemsIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
-                else -> neo4jResearchFieldRepository.getSmartReviewsIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
+                "PAPER" -> researchFieldRepository.getPapersIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
+                "COMPARISON" -> researchFieldRepository.getComparisonsIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
+                "VISUALIZATION" -> researchFieldRepository.getVisualizationsIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
+                "LITERATURELISTPUBLISHED" -> researchFieldRepository.getLiteratureListIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
+                "PROBLEM" -> researchFieldRepository.getProblemsIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
+                else -> researchFieldRepository.getSmartReviewsIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
             }
         }
     }
@@ -251,15 +251,15 @@ class ResearchFieldService(
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
-    ): List<Page<Neo4jResource>> {
+    ): List<Page<Resource>> {
         return classesList.map { classType ->
             when (classType.uppercase(Locale.getDefault())) {
-                "PAPER" -> neo4jResearchFieldRepository.getPapersIncludingSubFieldsWithFlags(id, featured, unlisted, pageable)
-                "COMPARISON" -> neo4jResearchFieldRepository.getComparisonsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable)
-                "VISUALIZATION" -> neo4jResearchFieldRepository.getVisualizationsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable)
-                "LITERATURELISTPUBLISHED" -> neo4jResearchFieldRepository.getLiteratureListIncludingSubFieldsWithFlags(id, featured, unlisted, pageable)
-                "PROBLEM" -> neo4jResearchFieldRepository.getProblemsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable)
-                else -> neo4jResearchFieldRepository.getSmartReviewsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable)
+                "PAPER" -> researchFieldRepository.getPapersIncludingSubFieldsWithFlags(id, featured, unlisted, pageable)
+                "COMPARISON" -> researchFieldRepository.getComparisonsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable)
+                "VISUALIZATION" -> researchFieldRepository.getVisualizationsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable)
+                "LITERATURELISTPUBLISHED" -> researchFieldRepository.getLiteratureListIncludingSubFieldsWithFlags(id, featured, unlisted, pageable)
+                "PROBLEM" -> researchFieldRepository.getProblemsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable)
+                else -> researchFieldRepository.getSmartReviewsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable)
             }
         }
     }
@@ -269,15 +269,15 @@ class ResearchFieldService(
         id: ResourceId,
         unlisted: Boolean,
         pageable: Pageable
-    ): List<Page<Neo4jResource>> {
+    ): List<Page<Resource>> {
         return classesList.map { classType ->
             when (classType.uppercase(Locale.getDefault())) {
-                "PAPER" -> neo4jResearchFieldRepository.getPapersExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
-                "COMPARISON" -> neo4jResearchFieldRepository.getComparisonsExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
-                "VISUALIZATION" -> neo4jResearchFieldRepository.getVisualizationsExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
-                "LITERATURELISTPUBLISHED" -> neo4jResearchFieldRepository.getLiteratureListExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
-                "PROBLEM" -> neo4jResearchFieldRepository.getProblemsExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
-                else -> neo4jResearchFieldRepository.getSmartReviewsIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
+                "PAPER" -> researchFieldRepository.getPapersExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
+                "COMPARISON" -> researchFieldRepository.getComparisonsExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
+                "VISUALIZATION" -> researchFieldRepository.getVisualizationsExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
+                "LITERATURELISTPUBLISHED" -> researchFieldRepository.getLiteratureListExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
+                "PROBLEM" -> researchFieldRepository.getProblemsExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
+                else -> researchFieldRepository.getSmartReviewsIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
             }
         }
     }
@@ -288,15 +288,15 @@ class ResearchFieldService(
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
-    ): List<Page<Neo4jResource>> {
+    ): List<Page<Resource>> {
         return classesList.map { classType ->
             when (classType.uppercase(Locale.getDefault())) {
-                "PAPER" -> neo4jResearchFieldRepository.getPapersExcludingSubFieldsWithFlags(id, featured, unlisted, pageable)
-                "COMPARISON" -> neo4jResearchFieldRepository.getComparisonsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable)
-                "VISUALIZATION" -> neo4jResearchFieldRepository.getVisualizationsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable)
-                "LITERATURELISTPUBLISHED" -> neo4jResearchFieldRepository.getLiteratureListExcludingSubFieldsWithFlags(id, featured, unlisted, pageable)
-                "PROBLEM" -> neo4jResearchFieldRepository.getProblemsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable)
-                else -> neo4jResearchFieldRepository.getSmartReviewsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable)
+                "PAPER" -> researchFieldRepository.getPapersExcludingSubFieldsWithFlags(id, featured, unlisted, pageable)
+                "COMPARISON" -> researchFieldRepository.getComparisonsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable)
+                "VISUALIZATION" -> researchFieldRepository.getVisualizationsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable)
+                "LITERATURELISTPUBLISHED" -> researchFieldRepository.getLiteratureListExcludingSubFieldsWithFlags(id, featured, unlisted, pageable)
+                "PROBLEM" -> researchFieldRepository.getProblemsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable)
+                else -> researchFieldRepository.getSmartReviewsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable)
             }
         }
     }

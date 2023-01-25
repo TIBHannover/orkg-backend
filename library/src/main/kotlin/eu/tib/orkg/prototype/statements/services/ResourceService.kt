@@ -1,5 +1,7 @@
 package eu.tib.orkg.prototype.statements.services
 
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
@@ -19,17 +21,15 @@ import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryReq
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
-import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jComparisonRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jContributionRepository
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jSmartReviewRepository
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jVisualizationRepository
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
+import eu.tib.orkg.prototype.statements.spi.SmartReviewRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import eu.tib.orkg.prototype.util.EscapedRegex
@@ -53,7 +53,7 @@ class ResourceService(
     private val neo4jComparisonRepository: Neo4jComparisonRepository,
     private val neo4jContributionRepository: Neo4jContributionRepository,
     private val neo4jVisualizationRepository: Neo4jVisualizationRepository,
-    private val neo4jSmartReviewRepository: Neo4jSmartReviewRepository,
+    private val smartReviewRepository: SmartReviewRepository,
     private val repository: ResourceRepository,
     private val statementRepository: StatementRepository,
     private val templateRepository: TemplateRepository,
@@ -514,16 +514,16 @@ class ResourceService(
         neo4jVisualizationRepository.findAllListedVisualizations(pageable).map(Neo4jResource::toResource)
 
     override fun loadFeaturedSmartReviews(pageable: Pageable): Page<Resource> =
-        neo4jSmartReviewRepository.findAllFeaturedSmartReviews(pageable).map(Neo4jResource::toResource)
+        smartReviewRepository.findAllFeaturedSmartReviews(pageable)
 
     override fun loadNonFeaturedSmartReviews(pageable: Pageable): Page<Resource> =
-        neo4jSmartReviewRepository.findAllNonFeaturedSmartReviews(pageable).map(Neo4jResource::toResource)
+        smartReviewRepository.findAllNonFeaturedSmartReviews(pageable)
 
     override fun loadUnlistedSmartReviews(pageable: Pageable): Page<Resource> =
-        neo4jSmartReviewRepository.findAllUnlistedSmartReviews(pageable).map(Neo4jResource::toResource)
+        smartReviewRepository.findAllUnlistedSmartReviews(pageable)
 
     override fun loadListedSmartReviews(pageable: Pageable): Page<Resource> =
-        neo4jSmartReviewRepository.findAllListedSmartReviews(pageable).map(Neo4jResource::toResource)
+        smartReviewRepository.findAllListedSmartReviews(pageable)
 
     override fun getFeaturedContributionFlag(id: ResourceId): Boolean {
         val result = neo4jContributionRepository.findContributionByResourceId(id)
@@ -556,12 +556,12 @@ class ResourceService(
     }
 
     override fun getFeaturedSmartReviewFlag(id: ResourceId): Boolean {
-        val result = neo4jSmartReviewRepository.findSmartReviewByResourceId(id)
+        val result = smartReviewRepository.findSmartReviewByResourceId(id)
         return result.orElseThrow { ResourceNotFound(id) }.featured ?: false
     }
 
     override fun getUnlistedSmartReviewFlag(id: ResourceId): Boolean {
-        val result = neo4jSmartReviewRepository.findSmartReviewByResourceId(id)
+        val result = smartReviewRepository.findSmartReviewByResourceId(id)
         return result.orElseThrow { ResourceNotFound(id) }.unlisted ?: false
     }
     override fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation> =

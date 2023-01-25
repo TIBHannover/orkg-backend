@@ -4,7 +4,6 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
-import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.api.IterableResourcesGenerator
 import eu.tib.orkg.prototype.statements.api.PagedResourcesGenerator
 import eu.tib.orkg.prototype.statements.api.ResourceGenerator
@@ -23,8 +22,8 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jComparisonRepository
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
+import eu.tib.orkg.prototype.statements.spi.ComparisonRepository
 import eu.tib.orkg.prototype.statements.spi.ContributionRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
@@ -50,7 +49,7 @@ private const val COMPARISON_CLASS = "Comparison"
 @Service
 @Transactional
 class ResourceService(
-    private val neo4jComparisonRepository: Neo4jComparisonRepository,
+    private val comparisonRepository: ComparisonRepository,
     private val contributionRepository: ContributionRepository,
     private val visualizationRepository: VisualizationRepository,
     private val smartReviewRepository: SmartReviewRepository,
@@ -478,16 +477,16 @@ class ResourceService(
     }
 
     override fun loadFeaturedComparisons(pageable: Pageable): Page<Resource> =
-        neo4jComparisonRepository.findAllFeaturedComparisons(pageable).map(Neo4jResource::toResource)
+        comparisonRepository.findAllFeaturedComparisons(pageable)
 
     override fun loadNonFeaturedComparisons(pageable: Pageable): Page<Resource> =
-        neo4jComparisonRepository.findAllNonFeaturedComparisons(pageable).map(Neo4jResource::toResource)
+        comparisonRepository.findAllNonFeaturedComparisons(pageable)
 
     override fun loadUnlistedComparisons(pageable: Pageable): Page<Resource> =
-        neo4jComparisonRepository.findAllUnlistedComparisons(pageable).map(Neo4jResource::toResource)
+        comparisonRepository.findAllUnlistedComparisons(pageable)
 
     override fun loadListedComparisons(pageable: Pageable): Page<Resource> =
-        neo4jComparisonRepository.findAllListedComparisons(pageable).map(Neo4jResource::toResource)
+        comparisonRepository.findAllListedComparisons(pageable)
 
     override fun loadFeaturedContributions(pageable: Pageable): Page<Resource> =
         contributionRepository.findAllFeaturedContributions(pageable)
@@ -536,12 +535,12 @@ class ResourceService(
     }
 
     override fun getFeaturedComparisonFlag(id: ResourceId): Boolean {
-        val result = neo4jComparisonRepository.findComparisonByResourceId(id)
+        val result = comparisonRepository.findComparisonByResourceId(id)
         return result.orElseThrow { ResourceNotFound(id) }.featured ?: false
     }
 
     override fun getUnlistedComparisonFlag(id: ResourceId): Boolean {
-        val result = neo4jComparisonRepository.findComparisonByResourceId(id)
+        val result = comparisonRepository.findComparisonByResourceId(id)
         return result.orElseThrow { ResourceNotFound(id) }.unlisted ?: false
     }
 

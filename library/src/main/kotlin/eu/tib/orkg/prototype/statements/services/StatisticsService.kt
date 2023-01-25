@@ -11,12 +11,12 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.Stats
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.ChangeLogResponse
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jStatsRepository
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.ObservatoryResources
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.ResultObject
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.TopContributorIdentifiers
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.TrendingResearchProblems
+import eu.tib.orkg.prototype.statements.spi.ChangeLogResponse
+import eu.tib.orkg.prototype.statements.spi.ObservatoryResources
+import eu.tib.orkg.prototype.statements.spi.ResultObject
+import eu.tib.orkg.prototype.statements.spi.StatsRepository
+import eu.tib.orkg.prototype.statements.spi.TopContributorIdentifiers
+import eu.tib.orkg.prototype.statements.spi.TrendingResearchProblems
 import java.time.LocalDate
 import java.util.*
 import org.springframework.data.domain.Page
@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class StatisticsService(
-    private val neo4jStatsRepository: Neo4jStatsRepository,
+    private val statsRepository: StatsRepository,
     private val userRepository: UserRepository,
     private val observatoryRepository: PostgresObservatoryRepository,
     private val organizationRepository: PostgresOrganizationRepository
@@ -36,7 +36,7 @@ class StatisticsService(
     val internalClassLabels: (String) -> Boolean = { it !in setOf("Thing", "Resource") }
 
     override fun getStats(extra: List<String>?): Stats {
-        val metadata = neo4jStatsRepository.getGraphMetaData()
+        val metadata = statsRepository.getGraphMetaData()
         val labels = metadata.first()["labels"] as Map<*, *>
         val resourcesCount = extractValue(labels, "Resource")
         val predicatesCount = extractValue(labels, "Predicate")
@@ -56,7 +56,7 @@ class StatisticsService(
         val userCount = userRepository.count()
         val observatoriesCount = observatoryRepository.count()
         val organizationsCount = organizationRepository.count()
-        val orphanedNodesCount = neo4jStatsRepository.getOrphanedNodesCount()
+        val orphanedNodesCount = statsRepository.getOrphanedNodesCount()
         return Stats(statementsCount, resourcesCount, predicatesCount,
             literalsCount, papersCount, classesCount, contributionsCount,
             fieldsCount, problemsCount, comparisonsCount, visualizationsCount,
@@ -65,39 +65,39 @@ class StatisticsService(
     }
 
     override fun getFieldsStats(): Map<String, Int> {
-        val counts = neo4jStatsRepository.getResearchFieldsPapersCount()
+        val counts = statsRepository.getResearchFieldsPapersCount()
         return counts.associate { it.fieldId to it.papers.toInt() }
     }
 
     override fun getObservatoryPapersCount(id: ObservatoryId): Long =
-        neo4jStatsRepository.getObservatoryPapersCount(id)
+        statsRepository.getObservatoryPapersCount(id)
 
     override fun getObservatoryComparisonsCount(id: ObservatoryId): Long =
-        neo4jStatsRepository.getObservatoryComparisonsCount(id)
+        statsRepository.getObservatoryComparisonsCount(id)
 
     override fun getObservatoriesPapersAndComparisonsCount(): List<ObservatoryResources> =
-        neo4jStatsRepository.getObservatoriesPapersAndComparisonsCount()
+        statsRepository.getObservatoriesPapersAndComparisonsCount()
 
     override fun getTopCurrentContributors(pageable: Pageable, days: Long): Page<TopContributorsWithProfile> {
         val previousMonthDate: String = calculateStartDate(daysAgo = days)
 
-        return getContributorsWithProfile(neo4jStatsRepository.getTopCurrentContributorIdsAndContributionsCount(
+        return getContributorsWithProfile(statsRepository.getTopCurrentContributorIdsAndContributionsCount(
             previousMonthDate, pageable), pageable)
     }
 
     override fun getRecentChangeLog(pageable: Pageable): Page<ChangeLog> {
-        val changeLogs = neo4jStatsRepository.getChangeLog(pageable)
+        val changeLogs = statsRepository.getChangeLog(pageable)
 
         return getChangeLogsWithProfile(changeLogs, pageable)
     }
 
     override fun getRecentChangeLogByResearchField(id: ResourceId, pageable: Pageable): Page<ChangeLog> {
-        val changeLogs = neo4jStatsRepository.getChangeLogByResearchField(id, pageable)
+        val changeLogs = statsRepository.getChangeLogByResearchField(id, pageable)
 
         return getChangeLogsWithProfile(changeLogs, pageable)
     }
 
-    override fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems> = neo4jStatsRepository.getTrendingResearchProblems(pageable)
+    override fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems> = statsRepository.getTrendingResearchProblems(pageable)
 
     override fun getTopCurrentContributorsByResearchField(
         id: ResourceId,
@@ -105,7 +105,7 @@ class StatisticsService(
     ): Iterable<TopContributorsWithProfileAndTotalCount> {
         val previousMonthDate: String = calculateStartDate(daysAgo = days)
 
-        val values = neo4jStatsRepository.getTopCurContribIdsAndContribCountByResearchFieldId(id, previousMonthDate)
+        val values = statsRepository.getTopCurContribIdsAndContribCountByResearchFieldId(id, previousMonthDate)
 
         val totalContributions = extractAndCalculateContributionDetails(values)
 
@@ -118,7 +118,7 @@ class StatisticsService(
     ): Iterable<TopContributorsWithProfileAndTotalCount> {
         val previousMonthDate: String = calculateStartDate(daysAgo = days)
 
-        val values = neo4jStatsRepository.getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(id, previousMonthDate)
+        val values = statsRepository.getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(id, previousMonthDate)
 
         val totalContributions = extractAndCalculateContributionDetails(values)
 

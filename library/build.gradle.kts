@@ -80,6 +80,7 @@ dependencies {
     //
     // Testing
     //
+    testImplementation(platform("org.junit:junit-bom:5.8.2"))
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation(libs.bundles.testcontainers)

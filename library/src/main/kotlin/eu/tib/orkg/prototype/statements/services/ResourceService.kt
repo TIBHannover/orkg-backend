@@ -24,8 +24,8 @@ import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jComparisonRepository
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jContributionRepository
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
+import eu.tib.orkg.prototype.statements.spi.ContributionRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import eu.tib.orkg.prototype.statements.spi.SmartReviewRepository
@@ -51,7 +51,7 @@ private const val COMPARISON_CLASS = "Comparison"
 @Transactional
 class ResourceService(
     private val neo4jComparisonRepository: Neo4jComparisonRepository,
-    private val neo4jContributionRepository: Neo4jContributionRepository,
+    private val contributionRepository: ContributionRepository,
     private val visualizationRepository: VisualizationRepository,
     private val smartReviewRepository: SmartReviewRepository,
     private val repository: ResourceRepository,
@@ -490,16 +490,16 @@ class ResourceService(
         neo4jComparisonRepository.findAllListedComparisons(pageable).map(Neo4jResource::toResource)
 
     override fun loadFeaturedContributions(pageable: Pageable): Page<Resource> =
-        neo4jContributionRepository.findAllFeaturedContributions(pageable).map(Neo4jResource::toResource)
+        contributionRepository.findAllFeaturedContributions(pageable)
 
     override fun loadNonFeaturedContributions(pageable: Pageable): Page<Resource> =
-        neo4jContributionRepository.findAllNonFeaturedContributions(pageable).map(Neo4jResource::toResource)
+        contributionRepository.findAllNonFeaturedContributions(pageable)
 
     override fun loadUnlistedContributions(pageable: Pageable): Page<Resource> =
-        neo4jContributionRepository.findAllUnlistedContributions(pageable).map(Neo4jResource::toResource)
+        contributionRepository.findAllUnlistedContributions(pageable)
 
     override fun loadListedContributions(pageable: Pageable): Page<Resource> =
-        neo4jContributionRepository.findAllListedContributions(pageable).map(Neo4jResource::toResource)
+        contributionRepository.findAllListedContributions(pageable)
 
     override fun loadFeaturedVisualizations(pageable: Pageable): Page<Resource> =
         visualizationRepository.findAllFeaturedVisualizations(pageable)
@@ -526,12 +526,12 @@ class ResourceService(
         smartReviewRepository.findAllListedSmartReviews(pageable)
 
     override fun getFeaturedContributionFlag(id: ResourceId): Boolean {
-        val result = neo4jContributionRepository.findContributionByResourceId(id)
+        val result = contributionRepository.findContributionByResourceId(id)
         return result.orElseThrow { ResourceNotFound(id) }.featured ?: false
     }
 
     override fun getUnlistedContributionFlag(id: ResourceId): Boolean {
-        val result = neo4jContributionRepository.findContributionByResourceId(id)
+        val result = contributionRepository.findContributionByResourceId(id)
         return result.orElseThrow { ResourceNotFound(id) }.unlisted ?: false
     }
 

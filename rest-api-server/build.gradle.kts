@@ -1,4 +1,5 @@
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 group = "eu.tib"
@@ -23,7 +24,6 @@ plugins {
     id("idea")
     id("jacoco-report-aggregation")
     alias(libs.plugins.spring.boot)
-    alias(libs.plugins.spring.dependency.management)
 
     id("org.jetbrains.dokka") version "0.10.1"
     id("com.coditory.integration-test") version "1.2.1"
@@ -35,11 +35,6 @@ plugins {
     // id("org.barfuin.gradle.taskinfo") version "1.2.0"
     id("com.diffplug.spotless")
 }
-
-// SECURITY: Upgrade Log4j to version >= 2.15.0 due to a vulnerability. It is not used in ORKG, this is just
-//           a safety measure. The line should be removed when Spring upgrades to a version higher than this one.
-extra["log4j2.version"] = "2.15.0"
-extra["postgresql.version"] = "42.2.25"
 
 allOpen {
     annotation("javax.persistence.Entity")
@@ -62,6 +57,12 @@ dependencies {
     // Platform alignment for ORKG components
     api(platform(project(":platform")))
 
+    api(platform(SpringBootPlugin.BOM_COORDINATES))
+    kapt(platform(SpringBootPlugin.BOM_COORDINATES))
+
+    // Upgrade for security reasons. Can be removed after Spring upgrade.
+    implementation(platform("org.apache.logging.log4j:log4j-bom:2.19.0"))
+
     // This is supposed to go away at some point:
     implementation(project(":library"))
     // This project is essentially a "configuration" project in Spring's sense, so we depend on all components:
@@ -73,6 +74,8 @@ dependencies {
     implementation(platform(libs.forkhandles.bom))
     implementation(libs.forkhandles.result4k)
     implementation(libs.forkhandles.values4k)
+
+    implementation(platform(libs.bytebuddy.bom))
 
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 
@@ -123,7 +126,6 @@ dependencies {
         // exclude(module = "mockito-core")
     }
     testImplementation("com.ninja-squad:springmockk:2.0.1")
-
     //
     // Documentation
     //
@@ -154,6 +156,13 @@ dependencies {
         version {
             strictly("[4.5.13,5.0[")
             because("Vulnerable to CVE-2020-13956")
+        }
+    }
+    constraints {
+        implementation("org.postgresql:postgresql") {
+            version {
+                require("42.2.25")
+            }
         }
     }
 }

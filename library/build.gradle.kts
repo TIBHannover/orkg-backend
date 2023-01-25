@@ -13,7 +13,6 @@ plugins {
     kotlin("plugin.spring")
     kotlin("plugin.jpa")
     alias(libs.plugins.spring.boot) apply false
-    alias(libs.plugins.spring.dependency.management)
 
     id("idea")
 
@@ -21,11 +20,6 @@ plugins {
     id("com.coditory.integration-test") version "1.2.1"
     id("com.diffplug.spotless")
 }
-
-// SECURITY: Upgrade Log4j to version >= 2.15.0 due to a vulnerability. It is not used in ORKG, this is just
-//           a safety measure. The line should be removed when Spring upgrades to a version higher than this one.
-extra["log4j2.version"] = "2.15.0"
-extra["postgresql.version"] = "42.2.25"
 
 allOpen {
     annotation("javax.persistence.Entity")
@@ -39,10 +33,15 @@ dependencies {
 
     api(platform(SpringBootPlugin.BOM_COORDINATES))
 
+    // Upgrade for security reasons. Can be removed after Spring upgrade.
+    implementation(platform("org.apache.logging.log4j:log4j-bom:2.19.0"))
+
     implementation(platform(kotlin("bom", "1.7.10")))
     implementation(platform(libs.forkhandles.bom))
     implementation(libs.forkhandles.result4k)
     implementation(libs.forkhandles.values4k)
+
+    implementation(platform(libs.bytebuddy.bom))
 
     kapt("org.springframework.boot:spring-boot-configuration-processor:${libs.versions.spring.boot.get()}")
 
@@ -120,6 +119,13 @@ dependencies {
         version {
             strictly("[4.5.13,5.0[")
             because("Vulnerable to CVE-2020-13956")
+        }
+    }
+    constraints {
+        implementation("org.postgresql:postgresql") {
+            version {
+                require("42.2.25")
+            }
         }
     }
 }

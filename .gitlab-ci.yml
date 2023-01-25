@@ -1,4 +1,4 @@
-image: azul/zulu-openjdk-debian:11
+image: azul/zulu-openjdk-debian:17
 
 # Enable Docker-in-Docker (DinD) for TestContainers and Docker image builds.
 services:

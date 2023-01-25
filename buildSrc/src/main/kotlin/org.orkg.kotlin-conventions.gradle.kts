@@ -11,13 +11,6 @@ dependencies {
 }
 
 tasks {
-
-    withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            jvmTarget = "11"
-        }
-    }
-
     withType<Test>().configureEach {
         useJUnitPlatform()
     }
@@ -32,5 +25,13 @@ tasks {
     withType<AbstractArchiveTask>().configureEach {
         isPreserveFileTimestamps = false
         isReproducibleFileOrder = true
+    }
+}
+
+kotlin {
+    jvmToolchain {
+        (this as JavaToolchainSpec).apply {
+            languageVersion.set(JavaLanguageVersion.of(11))
+        }
     }
 }

@@ -8,13 +8,14 @@ spring-dependency-management = "1.0.11.RELEASE"
 [libraries]
 # BOMs
 forkhandles-bom = { module = "dev.forkhandles:forkhandles-bom", version.ref = "forkhandles" }
+bytebuddy-bom = { module = "net.bytebuddy:byte-buddy-parent", version = "1.12.21" }
 # Libraries
 annotations-jsr305 = { module = "com.google.code.findbugs:jsr305", version = "3.0.2" }
 forkhandles-result4k = { module = "dev.forkhandles:result4k", version.ref = "forkhandles" }
 forkhandles-values4k = { module = "dev.forkhandles:values4k", version.ref = "forkhandles" }
 javax-activation = { module = "javax.activation:activation", version = "1.1" }
 jaxb-api = { module = "javax.xml.bind:jaxb-api", version = "2.3.0" }
-jaxb-runtime = { module = "org.glassfish.jaxb:jaxb-runtime", version = "2.3.0" }
+jaxb-runtime = { module = "org.glassfish.jaxb:jaxb-runtime", version = "2.3.7" }
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
@@ -30,4 +31,3 @@ testcontainers = ["testcontainers-core", "testcontainers-junit5", "testcontainer
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
-spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }

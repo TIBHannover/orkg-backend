@@ -4,8 +4,7 @@ import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
 import eu.tib.orkg.prototype.statements.application.port.out.GetProblemFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.LoadProblemPort
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.ContributorPerProblem
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.DetailsPerProblem
+import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.*
 import java.util.Optional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

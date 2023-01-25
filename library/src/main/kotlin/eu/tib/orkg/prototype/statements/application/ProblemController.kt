@@ -5,8 +5,8 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.DetailsPerProblem
 import eu.tib.orkg.prototype.statements.services.ResourceService
+import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus

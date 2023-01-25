@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.FindResearchProblemQuery
 import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
-import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.api.IterableResourcesGenerator
 import eu.tib.orkg.prototype.statements.api.ResourceGenerator
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
@@ -14,9 +13,9 @@ import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.ContributorPerProblem
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.DetailsPerProblem
-import eu.tib.orkg.prototype.statements.domain.model.neo4j.Neo4jProblemRepository
+import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository
+import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.ContributorPerProblem
+import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.DetailsPerProblem
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -29,7 +28,7 @@ private val ProblemClass = ClassId("Problem")
 @Service
 @Transactional
 class ResearchProblemService(
-    private val neo4jProblemRepository: Neo4jProblemRepository,
+    private val researchProblemRepository: ResearchProblemRepository,
     private val resourceService: ResourceUseCases,
     private val researchProblemQueries: FindResearchProblemQuery,
 ) : RetrieveResearchProblemUseCase {
@@ -37,9 +36,9 @@ class ResearchProblemService(
         Optional.ofNullable(resourceService.findByIdAndClasses(id, setOf(ProblemClass)))
 
     override fun findFieldsPerProblem(problemId: ResourceId): List<FieldCount> {
-        return neo4jProblemRepository.findResearchFieldsPerProblem(problemId).map {
+        return researchProblemRepository.findResearchFieldsPerProblem(problemId).map {
             FieldCount(
-                field = resourceService.map(ResourceGenerator { it.field.toResource() }), freq = it.freq
+                field = resourceService.map(ResourceGenerator { it.field }), freq = it.freq
             )
         }
     }
@@ -69,7 +68,7 @@ class ResearchProblemService(
         resourceService.map(IterableResourcesGenerator {
             findTopResearchProblemsGoingBack(
                 listOf(1, 2, 3, 6), emptyList()
-            ).map(Neo4jResource::toResource)
+            )
         }).toList()
 
     /*
@@ -78,13 +77,13 @@ class ResearchProblemService(
      */
     private fun findTopResearchProblemsGoingBack(
         listOfMonths: List<Int>,
-        result: List<Neo4jResource>
-    ): Iterable<Neo4jResource> {
+        result: List<Resource>
+    ): Iterable<Resource> {
         val month = listOfMonths.firstOrNull()
         val problems = if (month == null)
-            neo4jProblemRepository.findTopResearchProblemsAllTime()
+            researchProblemRepository.findTopResearchProblemsAllTime()
         else
-            neo4jProblemRepository.findTopResearchProblemsGoingBack(month)
+            researchProblemRepository.findTopResearchProblemsGoingBack(month)
         val newResult = result.plus(problems).distinct()
         return if (newResult.count() >= 5)
             newResult.take(5)
@@ -93,13 +92,13 @@ class ResearchProblemService(
     }
 
     override fun findContributorsPerProblem(problemId: ResourceId, pageable: Pageable): List<ContributorPerProblem> {
-        return neo4jProblemRepository
+        return researchProblemRepository
             .findContributorsLeaderboardPerProblem(problemId, pageable)
             .content
     }
 
     override fun findAuthorsPerProblem(problemId: ResourceId, pageable: Pageable): List<PaperCountPerAuthor> {
-        return neo4jProblemRepository.findAuthorsLeaderboardPerProblem(problemId, pageable).content.map {
+        return researchProblemRepository.findAuthorsLeaderboardPerProblem(problemId, pageable).content.map {
                 if (it.isLiteral) PaperCountPerAuthor(
                     author = it.author,
                     papers = it.papers,
@@ -107,7 +106,7 @@ class ResearchProblemService(
                 else PaperCountPerAuthor(
                     // It is important that this is a ResourceRepresentation! Otherwise, it will break clients.
                     // This is not ideal, but would need custom serialization code.
-                    author = resourceService.map(ResourceGenerator { it.toAuthorResource.toResource() }),
+                    author = resourceService.map(ResourceGenerator { it.toAuthorResource }),
                     papers = it.papers,
                 )
             }
@@ -120,32 +119,26 @@ class ResearchProblemService(
     }
 
     override fun getFeaturedProblemFlag(id: ResourceId): Boolean {
-        val result = neo4jProblemRepository.findById(id)
+        val result = researchProblemRepository.findById(id)
         return result.orElseThrow { ResourceNotFound(id) }.featured ?: false
     }
 
     override fun getUnlistedProblemFlag(id: ResourceId): Boolean {
-        val result = neo4jProblemRepository.findById(id)
+        val result = researchProblemRepository.findById(id)
         return result.orElseThrow { ResourceNotFound(id) }.unlisted ?: false
     }
 
     override fun loadFeaturedProblems(pageable: Pageable): Page<Resource> =
-        neo4jProblemRepository.findAllFeaturedProblems(pageable)
-            .map(Neo4jResource::toResource)
+        researchProblemRepository.findAllFeaturedProblems(pageable)
 
     override fun loadNonFeaturedProblems(pageable: Pageable): Page<Resource> =
-        neo4jProblemRepository.findAllNonFeaturedProblems(pageable)
-            .map(Neo4jResource::toResource)
+        researchProblemRepository.findAllNonFeaturedProblems(pageable)
 
-    override fun loadUnlistedProblems(pageable: Pageable):
-        Page<Resource> =
-        neo4jProblemRepository.findAllUnlistedProblems(pageable)
-            .map(Neo4jResource::toResource)
+    override fun loadUnlistedProblems(pageable: Pageable): Page<Resource> =
+        researchProblemRepository.findAllUnlistedProblems(pageable)
 
-    override fun loadListedProblems(pageable: Pageable):
-        Page<Resource> =
-        neo4jProblemRepository.findAllListedProblems(pageable)
-            .map(Neo4jResource::toResource)
+    override fun loadListedProblems(pageable: Pageable): Page<Resource> =
+        researchProblemRepository.findAllListedProblems(pageable)
 
     private fun getProblemsWithFeatured(
         classesList: List<String>,
@@ -159,43 +152,43 @@ class ResearchProblemService(
         classesList.forEach { classType ->
             when (classType.uppercase(Locale.getDefault())) {
                 "PAPER" -> {
-                    val result = neo4jProblemRepository.findPapersByProblems(problemId, featured, unlisted, pageable)
+                    val result = researchProblemRepository.findPapersByProblems(problemId, featured, unlisted, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 "CONTRIBUTION" -> {
                     val result =
-                        neo4jProblemRepository.findContributionsByProblems(problemId, featured, unlisted, pageable)
+                        researchProblemRepository.findContributionsByProblems(problemId, featured, unlisted, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 "COMPARISON" -> {
                     val result =
-                        neo4jProblemRepository.findComparisonsByProblems(problemId, featured, unlisted, pageable)
+                        researchProblemRepository.findComparisonsByProblems(problemId, featured, unlisted, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 "SMARTREVIEWPUBLISHED" -> {
                     val result =
-                        neo4jProblemRepository.findSmartReviewsByProblems(problemId, featured, unlisted, pageable)
+                        researchProblemRepository.findSmartReviewsByProblems(problemId, featured, unlisted, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 "LITERATURELISTPUBLISHED" -> {
                     val result =
-                        neo4jProblemRepository.findLiteratureListsByProblems(problemId, featured, unlisted, pageable)
+                        researchProblemRepository.findLiteratureListsByProblems(problemId, featured, unlisted, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 "VISUALIZATION" -> {
                     val result =
-                        neo4jProblemRepository.findVisualizationsByProblems(problemId, featured, unlisted, pageable)
+                        researchProblemRepository.findVisualizationsByProblems(problemId, featured, unlisted, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 else -> {
                     val result =
-                        neo4jProblemRepository.findResearchFieldsByProblems(problemId, featured, unlisted, pageable)
+                        researchProblemRepository.findResearchFieldsByProblems(problemId, featured, unlisted, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
@@ -214,37 +207,37 @@ class ResearchProblemService(
         classesList.forEach { classType ->
             when (classType.uppercase(Locale.getDefault())) {
                 "PAPER" -> {
-                    val result = neo4jProblemRepository.findPapersByProblems(problemId, unlisted, pageable)
+                    val result = researchProblemRepository.findPapersByProblems(problemId, unlisted, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 "CONTRIBUTION" -> {
-                    val result = neo4jProblemRepository.findContributionsByProblems(problemId, unlisted, pageable)
+                    val result = researchProblemRepository.findContributionsByProblems(problemId, unlisted, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 "COMPARISON" -> {
-                    val result = neo4jProblemRepository.findComparisonsByProblems(problemId, unlisted, pageable)
+                    val result = researchProblemRepository.findComparisonsByProblems(problemId, unlisted, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 "SMARTREVIEWPUBLISHED" -> {
-                    val result = neo4jProblemRepository.findSmartReviewsByProblems(problemId, unlisted, pageable)
+                    val result = researchProblemRepository.findSmartReviewsByProblems(problemId, unlisted, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 "LITERATURELISTPUBLISHED" -> {
-                    val result = neo4jProblemRepository.findLiteratureListsByProblems(problemId, unlisted, pageable)
+                    val result = researchProblemRepository.findLiteratureListsByProblems(problemId, unlisted, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 "VISUALIZATION" -> {
-                    val result = neo4jProblemRepository.findVisualizationsByProblems(problemId, unlisted, pageable)
+                    val result = researchProblemRepository.findVisualizationsByProblems(problemId, unlisted, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 else -> {
-                    val result = neo4jProblemRepository.findResearchFieldsByProblems(problemId, unlisted, pageable)
+                    val result = researchProblemRepository.findResearchFieldsByProblems(problemId, unlisted, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }

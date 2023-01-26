@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j
 
+import eu.tib.orkg.prototype.graphdb.indexing.domain.model.Neo4jIndex
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
-import java.util.Locale
 import org.neo4j.ogm.session.Session
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.annotation.QueryResult
@@ -23,28 +23,6 @@ class IndexRepositoryImpl(private val ogmSession: Session) :
 
     override fun createIndex(index: Neo4jIndex) {
         ogmSession.query(index.toCypherQuery(), emptyMap<String, Any>())
-    }
-}
-
-interface Neo4jIndex {
-    fun toCypherQuery(): String
-}
-
-data class UniqueIndex(private val label: String, private val property: String) :
-    Neo4jIndex {
-    override fun toCypherQuery() = """CREATE CONSTRAINT ON (n:$label) ASSERT n.$property IS UNIQUE;"""
-}
-
-data class PropertyIndex(val label: String, val property: String) :
-    Neo4jIndex {
-    override fun toCypherQuery() = """CREATE INDEX ON :$label($property);"""
-}
-
-data class FullTextIndex(val label: String, val property: String) :
-    Neo4jIndex {
-    override fun toCypherQuery(): String {
-        val indexName = "full_${label}_$property".lowercase(Locale.ENGLISH)
-        return """CALL db.index.fulltext.createNodeIndex("$indexName", ["$label"], ["$property"])"""
     }
 }
 

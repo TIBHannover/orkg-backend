@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j
 
+import eu.tib.orkg.prototype.graphdb.indexing.domain.model.PropertyIndex
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test

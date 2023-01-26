@@ -1,11 +1,11 @@
 package eu.tib.orkg.prototype.graphdb.indexing.neo4j
 
+import eu.tib.orkg.prototype.graphdb.indexing.domain.model.FullTextIndex
 import eu.tib.orkg.prototype.graphdb.indexing.domain.model.IndexService
-import eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j.FullTextIndex
-import eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j.Neo4jIndex
+import eu.tib.orkg.prototype.graphdb.indexing.domain.model.Neo4jIndex
+import eu.tib.orkg.prototype.graphdb.indexing.domain.model.PropertyIndex
+import eu.tib.orkg.prototype.graphdb.indexing.domain.model.UniqueIndex
 import eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j.Neo4jIndexRepository
-import eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j.PropertyIndex
-import eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j.UniqueIndex
 import org.neo4j.driver.exceptions.DatabaseException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

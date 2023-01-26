@@ -68,7 +68,7 @@ data class Neo4jLiteral(
             id = literalId,
             label = label!!,
             datatype = datatype!!,
-            createdAt = createdAt ?: OffsetDateTime.now(), // TODO: Remove after script to set values was run.
+            createdAt = createdAt!!,
             createdBy = createdBy
         )
 

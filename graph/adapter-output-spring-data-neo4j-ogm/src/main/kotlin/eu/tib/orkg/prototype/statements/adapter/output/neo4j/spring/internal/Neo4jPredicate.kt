@@ -45,7 +45,7 @@ data class Neo4jPredicate(
         val pred = Predicate(
             id = predicateId,
             label = label!!,
-            createdAt = createdAt ?: OffsetDateTime.now(), // TODO: Remove after script to set values was run.
+            createdAt = createdAt!!,
             createdBy = createdBy
         )
         if (subjectOf.isNotEmpty())

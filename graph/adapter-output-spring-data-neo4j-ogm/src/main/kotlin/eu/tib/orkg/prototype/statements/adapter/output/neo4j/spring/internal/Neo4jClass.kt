@@ -56,7 +56,7 @@ data class Neo4jClass(
             id = classId!!,
             label = label!!,
             uri = aURI,
-            createdAt = createdAt ?: OffsetDateTime.now(), // TODO: Remove after script to set values was run.
+            createdAt = createdAt!!,
             createdBy = createdBy,
         )
         if (subjectOf.isNotEmpty())

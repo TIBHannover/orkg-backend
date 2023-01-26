@@ -1,11 +1,11 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
@@ -109,11 +109,11 @@ data class Neo4jResource(
         this.unlisted = unlisted
     }
 
-    fun toResource(): Resource {
-        val resource = Resource(
+    fun toResource() =
+        Resource(
             resourceId,
             label!!,
-            createdAt ?: OffsetDateTime.now(), // TODO: Remove after script to set values was run.
+            createdAt!!,
             classes - ReservedClassIds,
             createdBy = createdBy,
             observatoryId = observatoryId,
@@ -123,8 +123,6 @@ data class Neo4jResource(
             unlisted = unlisted,
             verified = verified,
         )
-        return resource
-    }
 
     override val thingId: String?
         get() = resourceId?.value

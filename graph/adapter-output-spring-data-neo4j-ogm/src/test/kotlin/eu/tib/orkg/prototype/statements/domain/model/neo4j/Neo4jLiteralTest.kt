@@ -18,6 +18,7 @@ internal class Neo4jLiteralTest {
         private val neo4jLiteral = Neo4jLiteral().apply {
             literalId = LiteralId(1)
             label = "irrelevant"
+            createdAt = OffsetDateTime.now() // Prevent NPE
         }
 
         @Test

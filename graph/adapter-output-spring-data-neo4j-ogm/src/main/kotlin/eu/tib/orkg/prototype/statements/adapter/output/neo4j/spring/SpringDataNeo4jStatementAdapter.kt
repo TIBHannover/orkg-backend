@@ -24,7 +24,6 @@ import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
-import java.time.OffsetDateTime
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -148,7 +147,7 @@ class SpringDataNeo4jStatementAdapter(
         subject = subject!!.toThing(),
         predicate = predicateRepository.findByPredicateId(predicateId!!).get(),
         `object` = `object`!!.toThing(),
-        createdAt = createdAt ?: OffsetDateTime.now(), // TODO: Remove after script to set values was run.
+        createdAt = createdAt!!,
         createdBy = createdBy
     )
 
@@ -158,7 +157,7 @@ class SpringDataNeo4jStatementAdapter(
         predicate = lookupTable[predicateId]
             ?: throw IllegalStateException("Predicate $predicateId not found in lookup table. This is a bug."),
         `object` = `object`!!.toThing(),
-        createdAt = createdAt ?: OffsetDateTime.now(), // TODO: Remove after script to set values was run.
+        createdAt = createdAt!!,
         createdBy = createdBy
     )
 

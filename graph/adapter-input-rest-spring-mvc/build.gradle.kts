@@ -14,5 +14,7 @@ testing {
 }
 
 dependencies {
+    api(platform(project(":platform")))
+
     api(project(":graph:application"))
 }

@@ -12,3 +12,7 @@ testing {
         }
     }
 }
+
+dependencies {
+    api(platform(project(":platform")))
+}

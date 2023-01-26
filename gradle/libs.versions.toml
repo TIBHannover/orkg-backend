@@ -1,14 +1,19 @@
 [versions]
 forkhandles = "2.0.0.0"
+junit5 = "5.8.2"
 kotest = "5.4.0"
+kotlinx-coroutines = "1.6.4"
 testcontainers = "1.17.3"
 spring-boot = "2.3.4.RELEASE"
 spring-dependency-management = "1.0.11.RELEASE"
 
 [libraries]
 # BOMs
-forkhandles-bom = { module = "dev.forkhandles:forkhandles-bom", version.ref = "forkhandles" }
 bytebuddy-bom = { module = "net.bytebuddy:byte-buddy-parent", version = "1.12.21" }
+forkhandles-bom = { module = "dev.forkhandles:forkhandles-bom", version.ref = "forkhandles" }
+junit5-bom = { module = "org.junit:junit-bom", version.ref = "junit5" }
+kotlinx-coroutines-bom = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-bom", version.ref = "kotlinx-coroutines" }
+spring-boot-bom = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
 # Libraries
 annotations-jsr305 = { module = "com.google.code.findbugs:jsr305", version = "3.0.2" }
 forkhandles-result4k = { module = "dev.forkhandles:result4k", version.ref = "forkhandles" }

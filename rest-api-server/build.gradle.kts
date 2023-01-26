@@ -1,5 +1,4 @@
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
-import org.springframework.boot.gradle.plugin.SpringBootPlugin
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 group = "eu.tib"
@@ -57,8 +56,7 @@ dependencies {
     // Platform alignment for ORKG components
     api(platform(project(":platform")))
 
-    api(platform(SpringBootPlugin.BOM_COORDINATES))
-    kapt(platform(SpringBootPlugin.BOM_COORDINATES))
+    kapt(platform(project(":platform")))
 
     // Upgrade for security reasons. Can be removed after Spring upgrade.
     implementation(platform("org.apache.logging.log4j:log4j-bom:2.19.0"))
@@ -70,12 +68,8 @@ dependencies {
     implementation(project(":graph:adapter-input-rest-spring-mvc"))
     implementation(project(":graph:adapter-output-spring-data-neo4j-ogm"))
 
-    implementation(platform(kotlin("bom", "1.7.10")))
-    implementation(platform(libs.forkhandles.bom))
     implementation(libs.forkhandles.result4k)
     implementation(libs.forkhandles.values4k)
-
-    implementation(platform(libs.bytebuddy.bom))
 
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 
@@ -114,7 +108,6 @@ dependencies {
     //
     // Testing
     //
-    testImplementation(platform("org.junit:junit-bom:5.8.2"))
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation(libs.bundles.testcontainers)
@@ -131,41 +124,6 @@ dependencies {
     // Documentation
     //
     "asciidoctor"("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.4.RELEASE")
-
-    // Security-related adjustments
-    testImplementation("junit:junit") {
-        version {
-            strictly("[4.13.1,5.0[")
-            because("Vulnerable to CVE-2020-15250")
-        }
-    }
-    implementation("commons-beanutils:commons-beanutils") {
-        exclude(group = "commons-collections", module = "commons-collections")
-        version {
-            strictly("[1.9.4,2[")
-            because("Vulnerable to CVE-2019-10086, CVE-2014-0114")
-        }
-    }
-    implementation("org.apache.commons:commons-collections4") {
-        // group is either common-collections or org.apache.commons
-        version {
-            strictly("[4.3,5.0[")
-            because("Vulnerable to Cx78f40514-81ff, CWE-674")
-        }
-    }
-    implementation("org.apache.httpcomponents:httpclient") {
-        version {
-            strictly("[4.5.13,5.0[")
-            because("Vulnerable to CVE-2020-13956")
-        }
-    }
-    constraints {
-        implementation("org.postgresql:postgresql") {
-            version {
-                require("42.2.25")
-            }
-        }
-    }
 }
 
 tasks {

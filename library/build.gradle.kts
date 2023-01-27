@@ -71,7 +71,7 @@ dependencies {
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation(libs.bundles.testcontainers)
-    testImplementation(libs.kotest.assertions.core)
+    testImplementation(libs.bundles.kotest)
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         // Disable JUnit 4 (aka Vintage)
         exclude(group = "junit", module = "junit")

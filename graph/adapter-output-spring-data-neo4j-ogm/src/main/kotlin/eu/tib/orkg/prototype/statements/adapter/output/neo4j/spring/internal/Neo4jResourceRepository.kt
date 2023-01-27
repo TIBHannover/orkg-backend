@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.Neo4jRepository
+import org.springframework.transaction.annotation.Transactional
 
 private const val featured = "${'$'}featured"
 private const val unlisted = "${'$'}unlisted"
@@ -212,8 +213,8 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
         countQuery = """MATCH (node:`Resource`) WHERE ANY(c in $classes WHERE c IN labels(node)) AND $IS_UNLISTED  WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllFeaturedResourcesByClass(classes: List<String>, unlisted: Boolean, pageable: Pageable): Page<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WHERE ANY(c in $classes WHERE c IN labels(node)) AND $IS_FEATURED AND $IS_UNLISTED)  WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
-        countQuery = """MATCH (node:`Resource`) WHERE ANY(c in $classes WHERE c IN labels(node)) AND $IS_FEATURED AND $IS_UNLISTED) WITH COUNT(node) as cnt RETURN cnt""")
+    @Query(value = """MATCH (node:`Resource`) WHERE ANY(c in $classes WHERE c IN labels(node)) AND $IS_FEATURED AND $IS_UNLISTED  WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
+        countQuery = """MATCH (node:`Resource`) WHERE ANY(c in $classes WHERE c IN labels(node)) AND $IS_FEATURED AND $IS_UNLISTED WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllFeaturedResourcesByClass(classes: List<String>, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Neo4jResource>
 
     @Query(value = """MATCH (node:`Resource`) WHERE ANY(c in $classes WHERE c IN labels(node)) AND node.observatory_id=$id AND $IS_FEATURED AND $IS_UNLISTED  WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)""",
@@ -224,12 +225,13 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
         countQuery = """MATCH (node:`Resource`) WHERE ANY(c in $classes WHERE c IN labels(node)) AND node.observatory_id=$id AND $IS_UNLISTED  WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllResourcesByObservatoryIdAndClass(id: ObservatoryId, classes: List<String>, unlisted: Boolean, pageable: Pageable): Page<Neo4jResource>
 
-    @Query(value = """MATCH (n:`Resource`) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" RETURN DISTINCT n.created_by""",
+    @Query(value = """MATCH (n:`Resource`) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" RETURN DISTINCT n.created_by ORDER BY n.created_by ASC""",
         countQuery = """MATCH (n:`Resource`) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" RETURN COUNT(DISTINCT n.created_by) as cnt""")
     fun findAllContributorIds(pageable: Pageable): Page<ContributorId>
 
     // The return type has to be Iterable<Long> due to type erasure as java.lang.Long or Iterable<java.lang.Long> is
     // required by Spring, but we want to use kotlin.Long whenever possible
+    @Transactional
     fun deleteByResourceId(id: ResourceId): Iterable<Long>
 
     @Query(value = """MATCH (n:Comparison {organization_id: $id }) RETURN n""",

@@ -16,6 +16,7 @@ private const val subjectClass = "${'$'}subjectClass"
 private const val literal = "${'$'}literal"
 private const val subjectId = "${'$'}subjectId"
 private const val subjectIds = "${'$'}subjectIds"
+private const val objectIds = "${'$'}objectIds"
 private const val predicateId = "${'$'}predicateId"
 private const val objectId = "${'$'}objectId"
 private const val paperId = "${'$'}paperId"
@@ -62,7 +63,7 @@ private const val WHERE_SUBJECT_ID_IN =
     """WHERE sub.`resource_id` IN $subjectIds OR sub.`literal_id` IN $subjectIds OR sub.`predicate_id` IN $subjectIds OR sub.`class_id` IN $subjectIds"""
 
 private const val WHERE_OBJECT_ID_IN =
-    """WHERE obj.`resource_id` IN $subjectIds OR obj.`literal_id` IN $subjectIds OR obj.`predicate_id` IN $subjectIds OR obj.`class_id` IN $subjectIds"""
+    """WHERE obj.`resource_id` IN $objectIds OR obj.`literal_id` IN $objectIds OR obj.`predicate_id` IN $objectIds OR obj.`class_id` IN $objectIds"""
 
 interface Neo4jStatementRepository :
     Neo4jRepository<Neo4jStatement, Long> {
@@ -74,7 +75,8 @@ interface Neo4jStatementRepository :
 
     fun findByStatementId(id: StatementId): Optional<Neo4jStatement>
 
-    fun deleteByStatementId(id: StatementId): Iterable<Long>
+    @Query("""MATCH ()-[s:`RELATED`]->() WHERE s.statement_id = $id DELETE s""")
+    fun deleteByStatementId(id: StatementId)
 
     @Query("$MATCH_STATEMENT $BY_SUBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
     countQuery = "$MATCH_STATEMENT $BY_SUBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_COUNT")
@@ -123,8 +125,8 @@ interface Neo4jStatementRepository :
     ): Page<Neo4jStatement>
 
     @Query(
-        "$MATCH_STATEMENT_WITH_LITERAL WHERE $subjectClass IN labels(sub) AND rel.`predicate_id`=$predicateId AND obj.`label`=$literal $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
-        countQuery = "$MATCH_STATEMENT_WITH_LITERAL WHERE $subjectClass IN labels(sub) AND rel.`predicate_id`=$predicateId AND obj.`label`=$literal $WITH_SORTABLE_FIELDS $RETURN_COUNT"
+        "$MATCH_STATEMENT_WITH_LITERAL WHERE sub.class_id=$subjectClass AND rel.`predicate_id`=$predicateId AND obj.`label`=$literal $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
+        countQuery = "$MATCH_STATEMENT_WITH_LITERAL WHERE sub.class_id=$subjectClass AND rel.`predicate_id`=$predicateId AND obj.`label`=$literal $WITH_SORTABLE_FIELDS $RETURN_COUNT"
     )
     fun findAllByPredicateIdAndLabelAndSubjectClass(
         predicateId: PredicateId,
@@ -135,7 +137,7 @@ interface Neo4jStatementRepository :
 
     @Query(
         """$MATCH_STATEMENT $WHERE_SUBJECT_ID_IN $WITH_SORTABLE_FIELDS $RETURN_STATEMENT""",
-        countQuery = "$MATCH_STATEMENT $WHERE_OBJECT_ID_IN $WITH_SORTABLE_FIELDS $RETURN_COUNT"
+        countQuery = "$MATCH_STATEMENT $WHERE_SUBJECT_ID_IN $WITH_SORTABLE_FIELDS $RETURN_COUNT"
     )
     fun findAllBySubjects(
         subjectIds: List<String>,
@@ -147,7 +149,7 @@ interface Neo4jStatementRepository :
         countQuery = "$MATCH_STATEMENT $WHERE_OBJECT_ID_IN $WITH_SORTABLE_FIELDS $RETURN_COUNT"
     )
     fun findAllByObjects(
-        subjectIds: List<String>,
+        objectIds: List<String>,
         pagination: Pageable
     ): Page<Neo4jStatement>
 

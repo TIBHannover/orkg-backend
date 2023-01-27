@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.testing
 import java.math.BigInteger
 import javax.persistence.EntityManager
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -40,7 +41,6 @@ abstract class PostgresTestContainersBaseTest {
 
         // Start the container once per class. This needs to be done via a static method.
         // If @TestInstance(PER_CLASS) is used, Spring fails to set up the application context.
-        // Ryuk will manage the shut-down, so shutdown method is required.
         @JvmStatic
         @BeforeAll
         fun startContainer() = container.start()
@@ -58,6 +58,11 @@ abstract class PostgresTestContainersBaseTest {
                 add("spring.jpa.show-sql") { true }
             }
         }
+
+        // Ryuk will NOT manage the shut-down, so shutdown method is required.
+        @JvmStatic
+        @AfterAll
+        fun stopContainer() = container.stop()
     }
 
     @Autowired

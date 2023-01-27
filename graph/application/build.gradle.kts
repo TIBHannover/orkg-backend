@@ -3,6 +3,16 @@
 
 plugins {
     id("org.orkg.kotlin-conventions")
+    id("java-test-fixtures")
+    alias(libs.plugins.spotless)
+}
+
+dependencies {
+    testFixturesApi(project(":library"))
+    testFixturesApi(libs.bundles.kotest)
+    testFixturesApi("org.springframework.data:spring-data-commons")
+    testFixturesImplementation(libs.forkhandles.fabrikate4k)
+    testFixturesImplementation(libs.forkhandles.values4k)
 }
 
 testing {

@@ -9,8 +9,6 @@ data class Literal(
     val datatype: String = "xsd:string",
     val createdAt: OffsetDateTime,
     val createdBy: ContributorId = ContributorId.createUnknownContributor(),
-    // This is added to replace @JsonTypeInfo on the Thing interface
-    val _class: String? = "literal"
 ) : Thing {
     override val thingId: ThingId = ThingId.of(id!!.value)
 }

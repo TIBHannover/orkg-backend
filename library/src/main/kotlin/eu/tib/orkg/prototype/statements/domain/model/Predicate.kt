@@ -8,8 +8,6 @@ data class Predicate(
     override val label: String,
     val createdAt: OffsetDateTime,
     val createdBy: ContributorId = ContributorId.createUnknownContributor(),
-    // This is added to replace @JsonTypeInfo on the Thing interface
-    val _class: String? = "predicate"
 ) : Thing {
     var description: String? = null
     override val thingId: ThingId = ThingId.of(id!!.value)

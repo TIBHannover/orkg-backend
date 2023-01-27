@@ -12,8 +12,6 @@ data class Resource(
     val createdAt: OffsetDateTime,
     val classes: Set<ClassId> = emptySet(),
     val createdBy: ContributorId = ContributorId.createUnknownContributor(),
-    // This is added to replace @JsonTypeInfo on the Thing interface
-    val _class: String? = "resource",
     val observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
     val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     val organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),

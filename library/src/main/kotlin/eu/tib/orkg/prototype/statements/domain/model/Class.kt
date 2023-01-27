@@ -11,12 +11,9 @@ data class Class(
     val uri: URI?,
     val createdAt: OffsetDateTime,
     val createdBy: ContributorId = ContributorId.createUnknownContributor(),
-    // This is added to replace @JsonTypeInfo on the Thing interface
-    val _class: String? = "class"
 ) : Thing {
     var description: String? = null
     override val thingId: ThingId = ThingId.of(id!!.value)
-    fun toClass(): Class = Class(id, label, uri, createdAt, createdBy, _class)
 }
 
 fun Class?.toOptional() = Optional.ofNullable(this)

@@ -108,10 +108,11 @@ dependencies {
     //
     // Testing
     //
+    testImplementation(testFixtures(project(":graph:application")))
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation(libs.bundles.testcontainers)
-    testImplementation(libs.kotest.assertions.core)
+    testImplementation(libs.bundles.kotest)
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         // Disable JUnit 4 (aka Vintage)
         exclude(group = "junit", module = "junit")
@@ -120,6 +121,8 @@ dependencies {
         // exclude(module = "mockito-core")
     }
     testImplementation("com.ninja-squad:springmockk:2.0.1")
+    testImplementation("com.redfin:contractual:3.0.0")
+
     //
     // Documentation
     //

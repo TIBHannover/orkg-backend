@@ -1,7 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import eu.tib.orkg.prototype.Neo4jContainerInitializer
-import eu.tib.orkg.prototype.configuration.CacheConfiguration
 import eu.tib.orkg.prototype.configuration.Neo4jConfiguration
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.classRepositoryContract
@@ -16,7 +15,7 @@ import org.springframework.test.context.ContextConfiguration
 @Ignored("Workaround for Docker container issue active (\"all in one\"). Remove when solved.")
 @DataNeo4jTest
 @ContextConfiguration(classes = [SpringDataNeo4jClassAdapter::class], initializers = [Neo4jContainerInitializer::class])
-@Import(Neo4jConfiguration::class, CacheConfiguration::class)
+@Import(Neo4jConfiguration::class)
 @ComponentScan(basePackages = ["eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal"])
 internal class SpringDataNeo4jClassAdapterContractTests(
     @Autowired private val springDataNeo4jClassAdapter: ClassRepository,

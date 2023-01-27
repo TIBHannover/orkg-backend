@@ -18,6 +18,7 @@ dependencies {
     // Declare constraints on all components that need alignment (aka. our modules)
     constraints {
         api(project(":library"))
+        api(project(":testing:spring"))
         api(project(":graph:application"))
         api(project(":graph:adapter-input-rest-spring-mvc"))
         api(project(":graph:adapter-output-spring-data-neo4j-ogm"))

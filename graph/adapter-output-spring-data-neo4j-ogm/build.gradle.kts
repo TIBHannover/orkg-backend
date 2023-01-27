@@ -1,8 +1,6 @@
 // JVM Test Suite is still incubating, but expected to be stable soon, so disabling the warning.
 @file:Suppress("UnstableApiUsage")
 
-import org.springframework.boot.gradle.plugin.SpringBootPlugin
-
 
 plugins {
     id("org.orkg.kotlin-conventions")
@@ -15,7 +13,14 @@ testing {
         val test by getting(JvmTestSuite::class) {
             useJUnitJupiter()
             dependencies {
-                implementation("org.assertj:assertj-core")
+                implementation(testFixtures(project(":testing:spring")))
+                implementation(testFixtures(project(":graph:application")))
+                implementation("org.springframework.boot:spring-boot-starter-test") {
+                    exclude(group = "junit", module = "junit")
+                    exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+                    exclude(module = "mockito-core")
+                }
+                implementation("com.ninja-squad:springmockk:2.0.1")
             }
         }
     }

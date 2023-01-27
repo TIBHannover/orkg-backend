@@ -1,10 +1,9 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import eu.tib.orkg.prototype.Neo4jContainerInitializer
-import eu.tib.orkg.prototype.configuration.CacheConfiguration
 import eu.tib.orkg.prototype.configuration.Neo4jConfiguration
-import eu.tib.orkg.prototype.statements.spi.LiteralRepository
-import eu.tib.orkg.prototype.statements.spi.literalRepositoryContract
+import eu.tib.orkg.prototype.statements.spi.PredicateRepository
+import eu.tib.orkg.prototype.statements.spi.predicateRepositoryContract
 import io.kotest.core.annotation.Ignored
 import io.kotest.core.spec.style.DescribeSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,11 +14,11 @@ import org.springframework.test.context.ContextConfiguration
 
 @Ignored("Workaround for Docker container issue active (\"all in one\"). Remove when solved.")
 @DataNeo4jTest
-@ContextConfiguration(classes = [SpringDataNeo4jLiteralAdapter::class], initializers = [Neo4jContainerInitializer::class])
-@Import(Neo4jConfiguration::class, CacheConfiguration::class)
+@ContextConfiguration(classes = [SpringDataNeo4jPredicateAdapter::class], initializers = [Neo4jContainerInitializer::class])
+@Import(Neo4jConfiguration::class)
 @ComponentScan(basePackages = ["eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal"])
-internal class SpringDataNeo4jLiteralAdapterContractTests(
-    @Autowired private val springDataNeo4jLiteralAdapter: LiteralRepository,
+internal class SpringDataNeo4jPredicateAdapterContractTests(
+    @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository,
 ) : DescribeSpec({
-    include(literalRepositoryContract(springDataNeo4jLiteralAdapter))
+    include(predicateRepositoryContract(springDataNeo4jPredicateAdapter))
 })

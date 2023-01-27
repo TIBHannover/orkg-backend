@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
-import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import io.mockk.clearMocks
@@ -14,6 +13,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.orkg.statements.testing.createPredicate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.CacheManager
 import org.springframework.cache.annotation.EnableCaching

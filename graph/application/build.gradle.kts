@@ -8,6 +8,8 @@ plugins {
 }
 
 dependencies {
+    api(platform(project(":platform")))
+
     testFixturesApi(project(":library"))
     testFixturesApi(libs.bundles.kotest)
     testFixturesApi("org.springframework.data:spring-data-commons")
@@ -21,8 +23,4 @@ testing {
             useJUnitJupiter()
         }
     }
-}
-
-dependencies {
-    api(platform(project(":platform")))
 }

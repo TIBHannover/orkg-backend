@@ -1,9 +1,5 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
-import eu.tib.orkg.prototype.createClass
-import eu.tib.orkg.prototype.createLiteral
-import eu.tib.orkg.prototype.createPredicate
-import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
@@ -24,6 +20,10 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.orkg.statements.testing.createClass
+import org.orkg.statements.testing.createLiteral
+import org.orkg.statements.testing.createPredicate
+import org.orkg.statements.testing.createResource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.CacheManager
 import org.springframework.cache.annotation.EnableCaching

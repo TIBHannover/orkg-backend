@@ -108,6 +108,7 @@ dependencies {
     //
     // Testing
     //
+    testImplementation(testFixtures(project(":testing:spring")))
     testImplementation(testFixtures(project(":graph:application")))
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")

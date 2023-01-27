@@ -2,6 +2,7 @@ rootProject.name = "orkg-prototype"
 
 include("platform")
 include("library")
+include("testing:spring")
 include(
     // The module containing the domain code will be called "application", because it will also contain application
     // services. This name might also reflect better that we may be able to split it out as a separate application (or

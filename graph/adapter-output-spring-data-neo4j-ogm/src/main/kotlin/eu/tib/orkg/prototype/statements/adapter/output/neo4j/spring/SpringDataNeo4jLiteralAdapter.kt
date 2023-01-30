@@ -70,9 +70,6 @@ class SpringDataNeo4jLiteralAdapter(
     override fun findAllByLabelContaining(part: String, pageable: Pageable): Page<Literal> =
         neo4jRepository.findAllByLabelContaining(part, pageable).map(Neo4jLiteral::toLiteral)
 
-    override fun findDOIByContributionId(id: ResourceId): Optional<Literal> =
-        neo4jRepository.findDOIByContributionId(id).map(Neo4jLiteral::toLiteral)
-
     @Cacheable(key = "#id", cacheNames = [LITERAL_ID_TO_LITERAL_EXISTS_CACHE])
     override fun exists(id: LiteralId): Boolean = neo4jRepository.existsByLiteralId(id)
 

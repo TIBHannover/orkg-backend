@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
+import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.util.EscapedRegex
 import eu.tib.orkg.prototype.util.SanitizedWhitespace
 import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class LiteralService(
     private val repository: LiteralRepository,
+    private val statementRepository: StatementRepository,
 ) : LiteralUseCases {
     override fun create(label: String, datatype: String): LiteralRepresentation =
         create(ContributorId.createUnknownContributor(), label, datatype)
@@ -56,7 +58,7 @@ class LiteralService(
             .map(Literal::toLiteralRepresentation) // TODO: See declaration
 
     override fun findDOIByContributionId(id: ResourceId): Optional<LiteralRepresentation> =
-        repository.findDOIByContributionId(id).map(Literal::toLiteralRepresentation)
+        statementRepository.findDOIByContributionId(id).map(Literal::toLiteralRepresentation)
 
     override fun update(literal: Literal): LiteralRepresentation {
         // already checked by service

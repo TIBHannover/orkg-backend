@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype.statements.spi
 
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -19,5 +18,4 @@ interface LiteralRepository {
     fun findAllByLabel(value: String, pageable: Pageable): Page<Literal>
     fun findAllByLabelMatchesRegex(label: String, pageable: Pageable): Page<Literal>
     fun findAllByLabelContaining(part: String, pageable: Pageable): Page<Literal>
-    fun findDOIByContributionId(id: ResourceId): Optional<Literal>
 }

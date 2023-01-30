@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClassRepository
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteral
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteralRepository
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jPredicate
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jPredicateRepository
@@ -144,6 +145,9 @@ class SpringDataNeo4jStatementAdapter(
         neo4jRepository.fetchAsBundle(id, configuration).map { it.toStatement() }
 
     override fun exists(id: StatementId): Boolean = neo4jRepository.existsByStatementId(id)
+
+    override fun findDOIByContributionId(id: ResourceId): Optional<Literal> =
+        neo4jRepository.findDOIByContributionId(id).map(Neo4jLiteral::toLiteral)
 
     private fun Neo4jStatement.toStatement(): GeneralStatement = GeneralStatement(
         id = statementId!!,

@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.statements.spi
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.statements.domain.model.Class
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
@@ -585,6 +584,56 @@ fun <
             saveStatement(statement)
             val id = repository.nextIdentity()
             repository.findByStatementId(id).isPresent shouldBe false
+        }
+    }
+
+    describe("finding a doi") {
+        context("by contribution id") {
+            val statements = mutableListOf<GeneralStatement>()
+            val hasContribution = createPredicate(
+                id = PredicateId("P31")
+            )
+            val hasDOI = createPredicate(
+                id = PredicateId("P26")
+            )
+            repeat(2) {
+                val paper = createResource(
+                    id = fabricator.random(),
+                    classes = setOf(ThingId("Paper"))
+                )
+                val contribution = createResource(
+                    id = fabricator.random(),
+                )
+                val doi = createLiteral(
+                    id = fabricator.random(),
+                    label = fabricator.random()
+                )
+                val paperHasContribution = createStatement(
+                    id = fabricator.random(),
+                    subject = paper,
+                    predicate = hasContribution,
+                    `object` = contribution
+                )
+                val paperHasDoi = createStatement(
+                    id = fabricator.random(),
+                    subject = paper,
+                    predicate = hasDOI,
+                    `object` = doi
+                )
+                statements.add(paperHasContribution)
+                statements.add(paperHasDoi)
+            }
+
+            it("returns the correct result") {
+                val contribution = statements[0].`object` as Resource
+                statements.forEach(saveStatement)
+
+                val expected = statements[1].`object`
+                val actual = repository.findDOIByContributionId(contribution.id!!)
+
+                actual.isPresent shouldBe true
+                actual.get() shouldBe expected
+            }
         }
     }
 }

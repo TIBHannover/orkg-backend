@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.spi
 
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
+import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
@@ -55,4 +56,5 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun findAllBySubjects(subjectIds: List<String>, pageable: Pageable): Page<GeneralStatement>
     fun findAllByObjects(objectIds: List<String>, pageable: Pageable): Page<GeneralStatement>
     fun fetchAsBundle(id: String, configuration: Map<String, Any>): Iterable<GeneralStatement>
+    fun findDOIByContributionId(id: ResourceId): Optional<Literal>
 }

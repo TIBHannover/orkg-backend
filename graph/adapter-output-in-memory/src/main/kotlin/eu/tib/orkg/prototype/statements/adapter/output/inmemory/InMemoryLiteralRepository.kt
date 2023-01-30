@@ -39,8 +39,4 @@ class InMemoryLiteralRepository : InMemoryRepository<LiteralId, Literal>(
 
     override fun findAllByLabelContaining(part: String, pageable: Pageable) =
         findAllFilteredAndPaged(pageable) { it.label.contains(part) }
-
-    override fun findDOIByContributionId(id: ResourceId): Optional<Literal> {
-        TODO("This method should be moved to the StatementRepository (or ContributionRepository?)")
-    }
 }

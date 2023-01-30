@@ -5,9 +5,9 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ObservatoryIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.OrganizationIdConverter
@@ -21,7 +21,12 @@ import org.neo4j.ogm.annotation.Relationship
 import org.neo4j.ogm.annotation.Required
 import org.neo4j.ogm.annotation.typeconversion.Convert
 
-private val ReservedClassIds = setOf(ClassId("Literal"), ClassId("Class"), ClassId("Predicate"), ClassId("Resource"))
+private val ReservedClassIds = setOf(
+    ThingId("Literal"),
+    ThingId("Class"),
+    ThingId("Predicate"),
+    ThingId("Resource")
+)
 
 @NodeEntity(label = "Resource")
 data class Neo4jResource(
@@ -83,8 +88,8 @@ data class Neo4jResource(
     /**
      * The list of classes that this node belongs to.
      */
-    var classes: Set<ClassId>
-        get() = labels.map(::ClassId).toSet()
+    var classes: Set<ThingId>
+        get() = labels.map { ThingId(it) }.toSet()
         set(value) {
             labels = value.map { it.value }.toMutableList()
         }

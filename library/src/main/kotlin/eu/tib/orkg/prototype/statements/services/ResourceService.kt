@@ -18,7 +18,7 @@ import eu.tib.orkg.prototype.statements.application.ResourceCantBeDeleted
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryRequest
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -124,7 +124,7 @@ class ResourceService(
         return findById(resource.id).get()
     }
 
-    override fun findByIdAndClasses(id: ResourceId, classes: Set<ClassId>): ResourceRepresentation? =
+    override fun findByIdAndClasses(id: ResourceId, classes: Set<ThingId>): ResourceRepresentation? =
         retrieveAndConvertNullable { repository.findByIdAndClasses(id, classes) }
 
     override fun map(action: IterableResourcesGenerator): Iterable<ResourceRepresentation> =
@@ -149,22 +149,22 @@ class ResourceService(
     override fun findAllByLabelContaining(pageable: Pageable, part: String): Page<ResourceRepresentation> =
         retrieveAndConvertPaged { repository.findAllByLabelMatchesRegex(part.toSearchString(), pageable) }
 
-    override fun findAllByClass(pageable: Pageable, id: ClassId): Page<ResourceRepresentation> =
+    override fun findAllByClass(pageable: Pageable, id: ThingId): Page<ResourceRepresentation> =
         retrieveAndConvertPaged { repository.findAllByClass(id.toString(), pageable) }
 
     override fun findAllByClassAndCreatedBy(
         pageable: Pageable,
-        id: ClassId,
+        id: ThingId,
         createdBy: ContributorId
     ): Page<ResourceRepresentation> =
         retrieveAndConvertPaged { repository.findAllByClassAndCreatedBy(id.toString(), createdBy, pageable) }
 
-    override fun findAllByClassAndLabel(pageable: Pageable, id: ClassId, label: String): Page<ResourceRepresentation> =
+    override fun findAllByClassAndLabel(pageable: Pageable, id: ThingId, label: String): Page<ResourceRepresentation> =
         retrieveAndConvertPaged { repository.findAllByClassAndLabel(id.toString(), label, pageable) }
 
     override fun findAllByClassAndLabelAndCreatedBy(
         pageable: Pageable,
-        id: ClassId,
+        id: ThingId,
         label: String,
         createdBy: ContributorId
     ): Page<ResourceRepresentation> =
@@ -179,7 +179,7 @@ class ResourceService(
 
     override fun findAllByClassAndLabelContaining(
         pageable: Pageable,
-        id: ClassId,
+        id: ThingId,
         part: String
     ): Page<ResourceRepresentation> =
         retrieveAndConvertPaged {
@@ -192,7 +192,7 @@ class ResourceService(
 
     override fun findAllByClassAndLabelContainingAndCreatedBy(
         pageable: Pageable,
-        id: ClassId,
+        id: ThingId,
         part: String,
         createdBy: ContributorId
     ): Page<ResourceRepresentation> =
@@ -206,8 +206,8 @@ class ResourceService(
         }
 
     override fun findAllIncludingAndExcludingClasses(
-        includeClasses: Set<ClassId>,
-        excludeClasses: Set<ClassId>,
+        includeClasses: Set<ThingId>,
+        excludeClasses: Set<ThingId>,
         pageable: Pageable
     ): Page<ResourceRepresentation> {
         validateClassFilter(includeClasses, excludeClasses)
@@ -217,8 +217,8 @@ class ResourceService(
     }
 
     override fun findAllIncludingAndExcludingClassesByLabel(
-        includeClasses: Set<ClassId>,
-        excludeClasses: Set<ClassId>,
+        includeClasses: Set<ThingId>,
+        excludeClasses: Set<ThingId>,
         label: String,
         pageable: Pageable
     ): Page<ResourceRepresentation> {
@@ -234,8 +234,8 @@ class ResourceService(
     }
 
     override fun findAllIncludingAndExcludingClassesByLabelContaining(
-        includeClasses: Set<ClassId>,
-        excludeClasses: Set<ClassId>,
+        includeClasses: Set<ThingId>,
+        excludeClasses: Set<ThingId>,
         part: String,
         pageable: Pageable
     ): Page<ResourceRepresentation> {
@@ -250,7 +250,7 @@ class ResourceService(
         }
     }
 
-    fun validateClassFilter(includeClasses: Set<ClassId>, excludeClasses: Set<ClassId>) {
+    fun validateClassFilter(includeClasses: Set<ThingId>, excludeClasses: Set<ThingId>) {
         for (includedClass in includeClasses)
             if (includedClass in excludeClasses)
                 throw InvalidClassFilter(includedClass)
@@ -625,7 +625,7 @@ fun Resource.toResourceRepresentation(usageCounts: StatementCounts, formattedLab
     object : ResourceRepresentation {
         override val id: ResourceId = this@toResourceRepresentation.id!!
         override val label: String = this@toResourceRepresentation.label
-        override val classes: Set<ClassId> = this@toResourceRepresentation.classes
+        override val classes: Set<ThingId> = this@toResourceRepresentation.classes
         override val shared: Long = usageCounts[this@toResourceRepresentation.id] ?: 0
         override val extractionMethod: ExtractionMethod = this@toResourceRepresentation.extractionMethod
         override val jsonClass: String = "resource"

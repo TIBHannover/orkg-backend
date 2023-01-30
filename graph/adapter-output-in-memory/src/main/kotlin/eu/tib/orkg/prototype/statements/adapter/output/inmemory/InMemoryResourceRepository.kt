@@ -3,22 +3,22 @@ package eu.tib.orkg.prototype.statements.adapter.output.inmemory
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
-private val paperClass = ClassId("Paper")
-private val comparisonClass = ClassId("Comparison")
+private val paperClass = ThingId("Paper")
+private val comparisonClass = ThingId("Comparison")
 private val unknownUUID = UUID(0, 0)
 
 class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
     compareBy(Resource::createdAt)
 ), ResourceRepository {
-    override fun findByIdAndClasses(id: ResourceId, classes: Set<ClassId>): Resource? =
+    override fun findByIdAndClasses(id: ResourceId, classes: Set<ThingId>): Resource? =
         entities[id]?.takeIf { it.classes.any {`class` -> `class` in classes } }
 
     override fun nextIdentity(): ResourceId {
@@ -58,7 +58,7 @@ class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
         findAllFilteredAndPaged(pageable) { it.label.contains(part) }
 
     override fun findAllByClass(`class`: String, pageable: Pageable): Page<Resource> {
-        val classId = ClassId(`class`)
+        val classId = ThingId(`class`)
         return findAllFilteredAndPaged(pageable) { it.classes.contains(classId) }
     }
 
@@ -67,14 +67,14 @@ class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
         createdBy: ContributorId,
         pageable: Pageable
     ): Page<Resource> {
-        val classId = ClassId(`class`)
+        val classId = ThingId(`class`)
         return findAllFilteredAndPaged(pageable) {
             it.createdBy == createdBy && it.classes.contains(classId)
         }
     }
 
     override fun findAllByClassAndLabel(`class`: String, label: String, pageable: Pageable): Page<Resource> {
-        val classId = ClassId(`class`)
+        val classId = ThingId(`class`)
         return findAllFilteredAndPaged(pageable) {
             it.label == label && it.classes.contains(classId)
         }
@@ -86,7 +86,7 @@ class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
         createdBy: ContributorId,
         pageable: Pageable
     ): Page<Resource> {
-        val classId = ClassId(`class`)
+        val classId = ThingId(`class`)
         return findAllFilteredAndPaged(pageable) {
             it.createdBy == createdBy && it.label == label && it.classes.contains(classId)
         }
@@ -97,7 +97,7 @@ class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
         label: String,
         pageable: Pageable
     ): Page<Resource> {
-        val classId = ClassId(`class`)
+        val classId = ThingId(`class`)
         val regex = Regex(label)
         return findAllFilteredAndPaged(pageable) {
             it.label.matches(regex) && it.classes.contains(classId)
@@ -110,7 +110,7 @@ class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
         createdBy: ContributorId,
         pageable: Pageable
     ): Page<Resource> {
-        val classId = ClassId(`class`)
+        val classId = ThingId(`class`)
         val regex = Regex(label)
         return findAllFilteredAndPaged(pageable) {
             it.label.matches(regex) && it.classes.contains(classId) && it.createdBy == createdBy
@@ -118,8 +118,8 @@ class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
     }
 
     override fun findAllIncludingAndExcludingClasses(
-        includeClasses: Set<ClassId>,
-        excludeClasses: Set<ClassId>,
+        includeClasses: Set<ThingId>,
+        excludeClasses: Set<ThingId>,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
         it.classes.containsAll(includeClasses) && it.classes.none { id ->
@@ -128,8 +128,8 @@ class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
     }
 
     override fun findAllIncludingAndExcludingClassesByLabel(
-        includeClasses: Set<ClassId>,
-        excludeClasses: Set<ClassId>,
+        includeClasses: Set<ThingId>,
+        excludeClasses: Set<ThingId>,
         label: String,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
@@ -139,8 +139,8 @@ class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
     }
 
     override fun findAllIncludingAndExcludingClassesByLabelMatchesRegex(
-        includeClasses: Set<ClassId>,
-        excludeClasses: Set<ClassId>,
+        includeClasses: Set<ThingId>,
+        excludeClasses: Set<ThingId>,
         label: String,
         pageable: Pageable
     ): Page<Resource> {
@@ -171,7 +171,7 @@ class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
 
     // TODO: rename to findAllByClassAndObservatoryId
     override fun findByClassAndObservatoryId(`class`: String, id: ObservatoryId): Iterable<Resource> {
-        val classId = ClassId(`class`)
+        val classId = ThingId(`class`)
         return entities.values.filter { classId in it.classes && it.observatoryId == id }
     }
 
@@ -251,7 +251,7 @@ class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
 
     private fun findAllByClassAndFlags(
         pageable: Pageable,
-        classes: Set<ClassId>? = null,
+        classes: Set<ThingId>? = null,
         unlisted: Boolean? = null,
         featured: Boolean? = null,
         verified: Boolean? = null

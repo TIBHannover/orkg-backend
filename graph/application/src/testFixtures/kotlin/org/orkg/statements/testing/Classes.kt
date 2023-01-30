@@ -3,11 +3,12 @@ package org.orkg.statements.testing
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
 import java.time.OffsetDateTime
 
 fun createClass(
-    id: ClassId = ClassId("OK"),
+    id: ThingId = ThingId("OK"),
     label: String = "some label",
     createdAt: OffsetDateTime = OffsetDateTime.now(),
     uri: URI? = URI.create("https://example.org/OK"),

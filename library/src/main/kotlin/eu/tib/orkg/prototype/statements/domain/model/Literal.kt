@@ -10,5 +10,5 @@ data class Literal(
     val createdAt: OffsetDateTime,
     val createdBy: ContributorId = ContributorId.createUnknownContributor(),
 ) : Thing {
-    override val thingId: ThingId = ThingId.of(id!!.value)
+    override val thingId: ThingId = ThingId(id!!.value)
 }

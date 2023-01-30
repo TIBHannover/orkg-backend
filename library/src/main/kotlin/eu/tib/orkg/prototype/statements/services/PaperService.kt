@@ -14,10 +14,10 @@ import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.NamedObject
 import eu.tib.orkg.prototype.statements.application.OrcidNotValid
 import eu.tib.orkg.prototype.statements.application.OrphanOrcidValue
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import java.util.*
 import org.springframework.data.domain.PageRequest
@@ -126,7 +126,7 @@ class PaperService(
         // paper title
         val paperObj = resourceService.create(
             userId,
-            CreateResourceRequest(null, request.paper.title, setOf(ClassId("Paper"))),
+            CreateResourceRequest(null, request.paper.title, setOf(ThingId("Paper"))),
             observatoryId,
             request.paper.extractionMethod,
             organizationId

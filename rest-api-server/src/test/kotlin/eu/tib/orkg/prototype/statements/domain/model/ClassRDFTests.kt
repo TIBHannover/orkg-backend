@@ -14,7 +14,7 @@ class ClassRDFTests {
             |<http://orkg.org/orkg/class/C100> <http://www.w3.org/2000/01/rdf-schema#label> "some dummy label"^^<http://www.w3.org/2001/XMLSchema#string> .
             |
         """.trimMargin()
-        val `class` = createClass().copy(id = ClassId(100), label = "some dummy label", uri = null)
+        val `class` = createClass().copy(id = ThingId("C100"), label = "some dummy label", uri = null)
         assertThat(`class`.toNTriple()).isEqualTo(expectedOutput)
     }
 
@@ -26,7 +26,7 @@ class ClassRDFTests {
             |<http://orkg.org/orkg/class/C100> <http://www.w3.org/2000/01/rdf-schema#label> "some dummy label"^^<http://www.w3.org/2001/XMLSchema#string> .
             |
         """.trimMargin()
-        val `class` = createClass().copy(id = ClassId(100), label = "some dummy label")
+        val `class` = createClass().copy(id = ThingId("C100"), label = "some dummy label")
         assertThat(`class`.toNTriple()).isEqualTo(expectedOutput)
     }
 }

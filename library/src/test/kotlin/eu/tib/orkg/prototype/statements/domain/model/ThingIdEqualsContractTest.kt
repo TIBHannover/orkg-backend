@@ -8,9 +8,9 @@ internal class ThingIdEqualsContractTest : EqualsContract<ThingId> {
     private val equalID = "SOME_ID"
     private val differentID = "another_id"
 
-    override fun getInstance(): ThingId = ThingId.of(equalID)
+    override fun getInstance(): ThingId = ThingId(equalID)
 
-    override fun getEqualInstanceSupplier(): Supplier<ThingId> = Supplier { ThingId.of(equalID) }
+    override fun getEqualInstanceSupplier(): Supplier<ThingId> = Supplier { ThingId(equalID) }
 
-    override fun getNonEqualInstance(): ThingId = ThingId.of(differentID)
+    override fun getNonEqualInstance(): ThingId = ThingId(differentID)
 }

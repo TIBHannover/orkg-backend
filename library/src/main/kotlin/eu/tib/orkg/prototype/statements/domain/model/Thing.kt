@@ -1,20 +1,28 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-import dev.forkhandles.values.StringValueFactory
-import dev.forkhandles.values.Validation
-import dev.forkhandles.values.Value
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import eu.tib.orkg.prototype.statements.application.json.ThingIdDeserializer
+import eu.tib.orkg.prototype.statements.application.json.ThingIdSerializer
 
 sealed interface Thing {
     val thingId: ThingId
     val label: String
 }
 
-@JvmInline
-value class ThingId private constructor(override val value: String) : Value<String> {
-    companion object : StringValueFactory<ThingId>(::ThingId, { it.isNotBlank().and(it.matches(VALID_ID_REGEX)) })
-}
+@JsonDeserialize(using = ThingIdDeserializer::class)
+@JsonSerialize(using = ThingIdSerializer::class)
+data class ThingId(val value: String) : Comparable<ThingId> {
 
-val x: Validation<String> = { false }
+    init {
+        require(value.isNotBlank()) { "ID must not be blank" }
+        require(value.matches(VALID_ID_REGEX)) { "Must only contain alphanumeric characters, dashes and underscores" }
+    }
+
+    override fun toString() = value
+
+    override fun compareTo(other: ThingId) = value.compareTo(other.value)
+}
 
 @Suppress("RegExpSimplifiable")
 val VALID_ID_REGEX: Regex = """^[a-zA-Z0-9:_-]+$""".toRegex()

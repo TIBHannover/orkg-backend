@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -131,7 +132,7 @@ interface Neo4jStatementRepository :
     fun findAllByPredicateIdAndLabelAndSubjectClass(
         predicateId: PredicateId,
         literal: String,
-        subjectClass: ClassId,
+        subjectClass: ThingId,
         pagination: Pageable
     ): Page<Neo4jStatement>
 

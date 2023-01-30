@@ -18,13 +18,12 @@ import eu.tib.orkg.prototype.statements.application.PredicateNotFound
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.TempResource
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.toClassIds
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.stereotype.Service
 
@@ -84,7 +83,7 @@ class ObjectService(
         val resourceId = existingResourceId
             ?: resourceService.create(
                 userId,
-                CreateResourceRequest(null, request.resource.name, request.resource.classes.toClassIds()),
+                CreateResourceRequest(null, request.resource.name, request.resource.classes.toThingIds()),
                 observatoryId,
                 request.resource.extractionMethod,
                 organizationId
@@ -190,15 +189,15 @@ class ObjectService(
                     }
                     jsonObject.isNewResource() -> { // create new resource
                         // Check for classes of resource
-                        val classes = mutableListOf<ClassId>()
+                        val classes = mutableListOf<ThingId>()
                         // add attached classes
                         if (jsonObject.isTyped()) {
                             jsonObject.classes!!.forEach {
-                                classes.add(ClassId(it))
+                                classes.add(ThingId(it))
                             }
                         }
                         // add pre-defined classes
-                        MAP_PREDICATE_CLASSES[predicateId!!.value]?.let { ClassId(it) }?.let { classes.add(it) }
+                        MAP_PREDICATE_CLASSES[predicateId!!.value]?.let { ThingId(it) }?.let { classes.add(it) }
                         // Create resource
                         val newResource = if (classes.isNotEmpty()) resourceService.create(
                             userId,
@@ -269,7 +268,7 @@ class ObjectService(
         predicateId: PredicateId?,
         resource: ObjectStatement
     ) {
-        MAP_PREDICATE_CLASSES[predicateId!!.value]?.let { ClassId(it) }?.let {
+        MAP_PREDICATE_CLASSES[predicateId!!.value]?.let { ThingId(it) }?.let {
             val res = resourceService.findById(ResourceId(resource.`@id`!!)).get()
             val newClasses = res.classes.toMutableSet()
             newClasses.add(it)
@@ -305,7 +304,7 @@ class ObjectService(
      * Check if a class exists, otherwise throw out suitable exception.
      */
     private fun checkIfClassExists(it: String) {
-        if (!classService.exists(ClassId(it))) throw ClassNotFound(it)
+        if (!classService.exists(ThingId(it))) throw ClassNotFound.withId(it)
     }
 
     /**
@@ -361,10 +360,12 @@ class ObjectService(
         val OrcidPredicate = PredicateId(ID_ORCID_PREDICATE)
         val VenuePredicate = PredicateId(ID_VENUE_PREDICATE)
         val UrlPredicate = PredicateId(ID_URL_PREDICATE)
-        val ContributionClass = ClassId(ID_CONTRIBUTION_CLASS)
-        val AuthorClass = ClassId(ID_AUTHOR_CLASS)
-        val VenueClass = ClassId(ID_VENUE_CLASS)
+        val ContributionClass = ThingId(ID_CONTRIBUTION_CLASS)
+        val AuthorClass = ThingId(ID_AUTHOR_CLASS)
+        val VenueClass = ThingId(ID_VENUE_CLASS)
     }
 
     // </editor-fold>
+
+    private fun List<String>?.toThingIds(): Set<ThingId> = this?.map { ThingId(it) }?.toSet() ?: emptySet()
 }

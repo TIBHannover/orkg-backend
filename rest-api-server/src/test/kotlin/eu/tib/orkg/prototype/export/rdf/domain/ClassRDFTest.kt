@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.export.rdf.domain
 
 import eu.tib.orkg.prototype.createClass
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -15,7 +15,7 @@ internal class ClassRDFTest {
             |<http://orkg.org/orkg/class/C100> <http://www.w3.org/2000/01/rdf-schema#label> "some dummy label"^^<http://www.w3.org/2001/XMLSchema#string> .
             |
         """.trimMargin()
-        val `class` = createClass().copy(id = ClassId(100), label = "some dummy label", uri = null)
+        val `class` = createClass().copy(id = ThingId("C100"), label = "some dummy label", uri = null)
         assertThat(`class`.toNTriple()).isEqualTo(expectedOutput)
     }
 
@@ -26,7 +26,7 @@ internal class ClassRDFTest {
             |<http://orkg.org/orkg/class/C100> <http://www.w3.org/2000/01/rdf-schema#label> "some dummy label"^^<http://www.w3.org/2001/XMLSchema#string> .
             |
         """.trimMargin()
-        val `class` = createClass().copy(id = ClassId(100), label = "some dummy label", uri = URI("null"))
+        val `class` = createClass().copy(id = ThingId("C100"), label = "some dummy label", uri = URI("null"))
         assertThat(`class`.toNTriple()).isEqualTo(expectedOutput)
     }
 
@@ -38,7 +38,7 @@ internal class ClassRDFTest {
             |<http://orkg.org/orkg/class/C100> <http://www.w3.org/2000/01/rdf-schema#label> "some dummy label"^^<http://www.w3.org/2001/XMLSchema#string> .
             |
         """.trimMargin()
-        val `class` = createClass().copy(id = ClassId(100), label = "some dummy label")
+        val `class` = createClass().copy(id = ThingId("C100"), label = "some dummy label")
         assertThat(`class`.toNTriple()).isEqualTo(expectedOutput)
     }
 }

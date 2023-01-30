@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype
 
 import eu.tib.orkg.prototype.graphdb.indexing.domain.model.IndexService
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.ClassService
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import eu.tib.orkg.prototype.statements.services.ResourceService
@@ -70,8 +70,8 @@ class ExampleDataTest : Neo4jTestContainersBaseTest() {
     @Test
     fun `research fields are typed correctly`() {
         assertThat(
-            resourceService.findAllByClass(PageRequest.of(0, 10), ClassId("ResearchField"))
-                .all { it -> ClassId("ResearchField") in it.classes }
+            resourceService.findAllByClass(PageRequest.of(0, 10), ThingId("ResearchField"))
+                .all { ThingId("ResearchField") in it.classes }
         )
     }
 }

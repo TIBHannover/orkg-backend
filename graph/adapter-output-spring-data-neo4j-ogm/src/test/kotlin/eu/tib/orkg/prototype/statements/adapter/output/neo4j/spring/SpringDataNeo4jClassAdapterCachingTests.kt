@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import io.mockk.clearMocks
 import io.mockk.confirmVerified
@@ -62,78 +62,78 @@ class SpringDataNeo4jClassAdapterCachingTests {
 
     @Test
     fun `fetching a class by ID should be cached`() {
-        val `class` = createClass().copy(id = ClassId("C1"))
-        every { mock.findByClassId(ClassId("C1")) } returns Optional.of(`class`) andThen {
+        val `class` = createClass().copy(id = ThingId("C1"))
+        every { mock.findByClassId(ThingId("C1")) } returns Optional.of(`class`) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
 
         // Obtain class from repository
-        assertThat(adapter.findByClassId(ClassId("C1")).get()).isEqualTo(`class`)
+        assertThat(adapter.findByClassId(ThingId("C1")).get()).isEqualTo(`class`)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByClassId(ClassId("C1")) }
+        verify(exactly = 1) { mock.findByClassId(ThingId("C1")) }
 
         // Obtain the same class again for several times
-        assertThat(adapter.findByClassId(ClassId("C1")).get()).isEqualTo(`class`)
-        assertThat(adapter.findByClassId(ClassId("C1")).get()).isEqualTo(`class`)
+        assertThat(adapter.findByClassId(ThingId("C1")).get()).isEqualTo(`class`)
+        assertThat(adapter.findByClassId(ThingId("C1")).get()).isEqualTo(`class`)
 
-        verify(exactly = 1) { mock.findByClassId(ClassId("C1")) }
+        verify(exactly = 1) { mock.findByClassId(ThingId("C1")) }
     }
 
     @Test
     fun `saving a class should evict it from the id-to-class cache`() {
-        val `class` = createClass().copy(id = ClassId("C1"))
+        val `class` = createClass().copy(id = ThingId("C1"))
         val modified = `class`.copy(label = "new label")
-        every { mock.findByClassId(ClassId("C1")) } returns Optional.of(`class`) andThen Optional.of(modified) andThen {
+        every { mock.findByClassId(ThingId("C1")) } returns Optional.of(`class`) andThen Optional.of(modified) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
-        every { mock.exists(ClassId("C1")) } returns true andThen {
+        every { mock.exists(ThingId("C1")) } returns true andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { mock.save(modified) } returns Unit
 
         // Obtain class from repository
-        assertThat(adapter.findByClassId(ClassId("C1")).get()).isEqualTo(`class`)
+        assertThat(adapter.findByClassId(ThingId("C1")).get()).isEqualTo(`class`)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByClassId(ClassId("C1")) }
+        verify(exactly = 1) { mock.findByClassId(ThingId("C1")) }
 
         // Check class existence in repository
-        assertThat(adapter.exists(ClassId("C1"))).isTrue
+        assertThat(adapter.exists(ThingId("C1"))).isTrue
         // Verify the loading happened
-        verify(exactly = 1) { mock.exists(ClassId("C1")) }
+        verify(exactly = 1) { mock.exists(ThingId("C1")) }
 
         // Save a modified version
         adapter.save(modified)
         verify { mock.save(modified) } // required because of confirmVerified()
 
         // Obtaining the class again
-        assertThat(adapter.findByClassId(ClassId("C1")).get())
+        assertThat(adapter.findByClassId(ThingId("C1")).get())
             .`as`("obtaining the updated version from the cache")
             .isEqualTo(modified)
         // Verify the loading happened (again)
-        verify(exactly = 2) { mock.findByClassId(ClassId("C1")) }
+        verify(exactly = 2) { mock.findByClassId(ThingId("C1")) }
 
         // Check class existence again
-        assertThat(adapter.exists(ClassId("C1"))).isTrue
+        assertThat(adapter.exists(ThingId("C1"))).isTrue
         // Verify the loading did not happen again
-        verify(exactly = 1) { mock.exists(ClassId("C1")) }
+        verify(exactly = 1) { mock.exists(ThingId("C1")) }
     }
 
     @Test
     fun `exists check of a class by ID should be cached`() {
-        every { mock.exists(ClassId("C1")) } returns true andThen {
+        every { mock.exists(ThingId("C1")) } returns true andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
 
         // Check class existence in repository
-        assertThat(adapter.exists(ClassId("C1"))).isTrue
+        assertThat(adapter.exists(ThingId("C1"))).isTrue
         // Verify the loading happened
-        verify(exactly = 1) { mock.exists(ClassId("C1")) }
+        verify(exactly = 1) { mock.exists(ThingId("C1")) }
 
         // Check existence of class again for several times
-        assertThat(adapter.exists(ClassId("C1"))).isTrue
-        assertThat(adapter.exists(ClassId("C1"))).isTrue
+        assertThat(adapter.exists(ThingId("C1"))).isTrue
+        assertThat(adapter.exists(ThingId("C1"))).isTrue
 
-        verify(exactly = 1) { mock.exists(ClassId("C1")) }
+        verify(exactly = 1) { mock.exists(ThingId("C1")) }
     }
 
     @Configuration

@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.util.*
 import org.springframework.data.domain.Pageable
@@ -88,10 +89,10 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
     override fun findAllByPredicateIdAndLabelAndSubjectClass(
         predicateId: PredicateId,
         literal: String,
-        subjectClass: ClassId,
+        subjectClass: ThingId,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
-        it.predicate.id == predicateId && it.`object` is Literal && it.`object`.label == literal && ClassId(it.subject.thingId.value) == subjectClass
+        it.predicate.id == predicateId && it.`object` is Literal && it.`object`.label == literal && it.subject.thingId == subjectClass
     }
 
     override fun findAllBySubjects(

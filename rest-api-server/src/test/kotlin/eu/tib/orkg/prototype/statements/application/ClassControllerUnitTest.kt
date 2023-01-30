@@ -14,7 +14,7 @@ import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateClassUseCase.ReplaceCommand
 import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
 import eu.tib.orkg.prototype.statements.domain.model.Class
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.toOptional
 import eu.tib.orkg.prototype.statements.services.toClassRepresentation
 import io.mockk.every
@@ -133,7 +133,7 @@ internal class ClassControllerUnitTest {
 
     @Test
     fun `Given the class is replaced, when service succeeds, then status is 200 OK and class is returned`() {
-        val id = ClassId("EXISTS")
+        val id = ThingId("EXISTS")
         val replacingClass = createClass().copy(id = id, label = "new label")
         val body = objectMapper.writeValueAsString(replacingClass)
         every { classService.replace(id, command = any()) } returns Success(Unit)
@@ -153,7 +153,7 @@ internal class ClassControllerUnitTest {
 
     @Test
     fun `Given the class is replaced, when service reports class cannot be found, then status is 404 NOT FOUND`() {
-        val id = ClassId("NON-EXISTENT")
+        val id = ThingId("NON-EXISTENT")
         val replacingClass = createClass().copy(label = "new label")
         val body = objectMapper.writeValueAsString(replacingClass)
         every { classService.replace(id, command = any()) } returns Failure(ClassNotFoundProblem)
@@ -169,7 +169,7 @@ internal class ClassControllerUnitTest {
 
     @Test
     fun `Given the class is replaced, when service reports label is invalid, then status is 400 BAD REQUEST and returns error information`() {
-        val id = ClassId("EXISTS")
+        val id = ThingId("EXISTS")
         val replacingClass = createClass().copy(label = INVALID_LABEL)
         val body = objectMapper.writeValueAsString(replacingClass)
         every { classService.replace(id, command = any()) } returns Failure(InvalidLabelProblem)
@@ -187,7 +187,7 @@ internal class ClassControllerUnitTest {
 
     @Test
     fun `Given the class is replaced, when service reports changing URI is not allowed, then status is 403 FORBIDDEN and returns error information`() {
-        val id = ClassId("EXISTS")
+        val id = ThingId("EXISTS")
         val replacingClass = createClass().copy(label = "new label", uri = URI.create("https://example.com/NEW#uri"))
         val body = objectMapper.writeValueAsString(replacingClass)
         every { classService.replace(id, command = any()) } returns Failure(UpdateNotAllowed)
@@ -205,7 +205,7 @@ internal class ClassControllerUnitTest {
 
     @Test
     fun `Given the class is replaced, when service reports URI is in use, then status is 403 FORBIDDEN and returns error information`() {
-        val id = ClassId("EXISTS")
+        val id = ThingId("EXISTS")
         val replacingClass = createClass().copy(label = "new label", uri = URI.create("https://example.com/NEW#uri"))
         val body = objectMapper.writeValueAsString(replacingClass)
         every { classService.replace(id, command = any()) } returns Failure(AlreadyInUse)
@@ -223,7 +223,7 @@ internal class ClassControllerUnitTest {
 
     @Test
     fun `Given the class label is patched, when service reports class cannot be found, then status is 404 NOT FOUND`() {
-        val id = ClassId("NON-EXISTENT")
+        val id = ThingId("NON-EXISTENT")
         val body = mapOf("label" to "some label")
         every {
             classService.updateLabel(id, "some label")
@@ -240,7 +240,7 @@ internal class ClassControllerUnitTest {
 
     @Test
     fun `Given the class label is patched, when service succeeds, then status is 200 OK`() {
-        val id = ClassId("EXISTS")
+        val id = ThingId("EXISTS")
         val body = mapOf("label" to "some label")
         every { classService.updateLabel(id, "some label") } returns Success(Unit)
 
@@ -258,7 +258,7 @@ internal class ClassControllerUnitTest {
 
     @Test
     fun `Given the class label is patched, when service reports the label is invalid, then status is 400 BAD REQUEST and returns error information`() {
-        val id = ClassId("EXISTS")
+        val id = ThingId("EXISTS")
         val body = mapOf("label" to INVALID_LABEL)
         every { classService.updateLabel(id, INVALID_LABEL) } returns Failure(InvalidLabelProblem)
 
@@ -275,7 +275,7 @@ internal class ClassControllerUnitTest {
 
     @Test
     fun `Given the class URI is patched, when service reports class cannot be found, then status is 404 NOT FOUND`() {
-        val id = ClassId("NON-EXISTENT")
+        val id = ThingId("NON-EXISTENT")
         val body = mapOf("uri" to "https://example.org")
         every {
             classService.updateURI(
@@ -294,17 +294,17 @@ internal class ClassControllerUnitTest {
 
     @Test
     fun `Given the class URI is patched and a valid URI is provided, when service succeeds, then status is 200 OK`() {
-        val id = ClassId("EXISTS")
+        val id = ThingId("EXISTS")
         val body = mapOf("uri" to "https://example.org/some/new#URI")
         every { classService.updateURI(id, "https://example.org/some/new#URI") } returns Success(Unit)
 
         mockMvc.performPatch("/api/classes/$id", body).andExpect(status().isOk)
-        verify(exactly = 1) { classService.updateURI(any(), any()) }
+        verify(exactly = 1) { classService.updateURI(id, any()) }
     }
 
     @Test
     fun `Given the class URI is patched, when service reports updating is not allowed, then status is 403 FORBIDDEN and returns error information`() {
-        val id = ClassId("EXISTS")
+        val id = ThingId("EXISTS")
         val body = mapOf("uri" to INVALID_URI)
         every { classService.updateURI(id, INVALID_URI) } returns Failure(UpdateNotAllowed)
 
@@ -321,7 +321,7 @@ internal class ClassControllerUnitTest {
 
     @Test
     fun `Given the class URI is patched, when service reports URI is in use, then status is 403 FORBIDDEN and returns error information`() {
-        val id = ClassId("EXISTS")
+        val id = ThingId("EXISTS")
         val body = mapOf("uri" to "https://example.org/some/new#URI")
         every { classService.updateURI(id, "https://example.org/some/new#URI") } returns Failure(AlreadyInUse)
 
@@ -338,7 +338,7 @@ internal class ClassControllerUnitTest {
 
     @Test
     fun `Given the class URI is patched, when service reports URI is invalid, then status is 400 BAD REQUEST and returns error information`() {
-        val id = ClassId("EXISTS")
+        val id = ThingId("EXISTS")
         val body = mapOf("uri" to INVALID_URI)
         every { classService.updateURI(id, INVALID_URI) } returns Failure(InvalidURI)
 
@@ -383,7 +383,7 @@ internal class ClassControllerUnitTest {
             .content(objectMapper.writeValueAsString(body))
 
     private fun mockReply() = Class(
-        id = ClassId("C1"),
+        id = ThingId("C1"),
         label = "test class",
         createdAt = OffsetDateTime.now(),
         uri = URI.create("http://example.org/exists")

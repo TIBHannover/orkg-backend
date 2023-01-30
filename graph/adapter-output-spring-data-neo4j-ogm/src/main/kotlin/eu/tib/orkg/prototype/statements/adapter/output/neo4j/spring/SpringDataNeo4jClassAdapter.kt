@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClassIdGenerator
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClassRepository
 import eu.tib.orkg.prototype.statements.domain.model.Class
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import java.util.*
 import org.springframework.cache.annotation.CacheConfig
@@ -37,16 +37,17 @@ class SpringDataNeo4jClassAdapter(
     override fun findAll(pageable: Pageable): Page<Class> = neo4jRepository.findAll(pageable).map(Neo4jClass::toClass)
 
     @Cacheable(key = "#id", cacheNames = [CLASS_ID_TO_CLASS_EXISTS_CACHE])
-    override fun exists(id: ClassId): Boolean = neo4jRepository.existsByClassId(id)
+    override fun exists(id: ThingId): Boolean = neo4jRepository.existsByClassId(id.toClassId())
 
-    override fun existsAll(ids: Set<ClassId>): Boolean = neo4jRepository.existsAllByClassId(ids)
+    override fun existsAll(ids: Set<ThingId>): Boolean =
+        neo4jRepository.existsAllByClassId(ids.toClassIds())
 
     @Cacheable(key = "#id", cacheNames = [CLASS_ID_TO_CLASS_CACHE])
-    override fun findByClassId(id: ClassId?): Optional<Class> =
-        neo4jRepository.findByClassId(id).map(Neo4jClass::toClass)
+    override fun findByClassId(id: ThingId?): Optional<Class> =
+        neo4jRepository.findByClassId(id?.toClassId()).map(Neo4jClass::toClass)
 
-    override fun findAllByClassId(id: Iterable<ClassId>, pageable: Pageable): Page<Class> =
-        neo4jRepository.findAllByClassIdIn(id, pageable).map(Neo4jClass::toClass)
+    override fun findAllByClassId(id: Iterable<ThingId>, pageable: Pageable): Page<Class> =
+        neo4jRepository.findAllByClassIdIn(id.toClassIds(), pageable).map(Neo4jClass::toClass)
 
     override fun findAllByLabel(label: String): Iterable<Class> =
         neo4jRepository.findAllByLabel(label).map(Neo4jClass::toClass)
@@ -75,18 +76,18 @@ class SpringDataNeo4jClassAdapter(
         neo4jRepository.deleteAll()
     }
 
-    override fun nextIdentity(): ClassId {
+    override fun nextIdentity(): ThingId {
         // IDs could exist already by manual creation. We need to find the next available one.
-        var id: ClassId
+        var id: ThingId
         do {
             id = neo4jClassIdGenerator.nextIdentity()
-        } while (neo4jRepository.existsByClassId(id))
+        } while (neo4jRepository.existsByClassId(id.toClassId()))
         return id
     }
 
     private fun Class.toNeo4jClass(): Neo4jClass =
-        neo4jRepository.findByClassId(id).orElse(Neo4jClass()).apply {
-            classId = this@toNeo4jClass.id
+        neo4jRepository.findByClassId(id.toClassId()).orElse(Neo4jClass()).apply {
+            classId = this@toNeo4jClass.id.toClassId()
             label = this@toNeo4jClass.label
             uri = this@toNeo4jClass.uri?.toString()
             createdBy = this@toNeo4jClass.createdBy

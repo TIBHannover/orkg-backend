@@ -2,10 +2,10 @@ package eu.tib.orkg.prototype.statements.api
 
 import eu.tib.orkg.prototype.statements.application.BundleConfiguration
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -41,7 +41,7 @@ interface RetrieveStatementUseCase {
     fun findAllByPredicateAndLabelAndSubjectClass(
         predicateId: PredicateId,
         literal: String,
-        subjectClass: ClassId,
+        subjectClass: ThingId,
         pagination: Pageable
     ): Iterable<StatementRepresentation>
 

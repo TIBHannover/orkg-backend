@@ -2,8 +2,8 @@ package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceRepository
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -42,6 +42,6 @@ class Neo4jResourceTest : Neo4jTestContainersBaseTest() {
 
         val persistedResource = repository.save(resource)
 
-        assertThat(persistedResource.classes).containsExactlyInAnyOrder(ClassId("Foo"), ClassId("Bar"))
+        assertThat(persistedResource.classes).containsExactlyInAnyOrder(ThingId("Foo"), ThingId("Bar"))
     }
 }

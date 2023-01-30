@@ -1,14 +1,14 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceIdGenerator
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceRepository
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.stringify
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
@@ -30,7 +30,7 @@ class SpringDataNeo4jResourceAdapter(
     private val neo4jRepository: Neo4jResourceRepository,
     private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator,
 ) : ResourceRepository {
-    override fun findByIdAndClasses(id: ResourceId, classes: Set<ClassId>): Resource? =
+    override fun findByIdAndClasses(id: ResourceId, classes: Set<ThingId>): Resource? =
         neo4jRepository.findByIdAndClassesContaining(id, classes.stringify())?.toResource()
 
     override fun nextIdentity(): ResourceId {
@@ -128,29 +128,40 @@ class SpringDataNeo4jResourceAdapter(
             .map(Neo4jResource::toResource)
 
     override fun findAllIncludingAndExcludingClasses(
-        includeClasses: Set<ClassId>,
-        excludeClasses: Set<ClassId>,
+        includeClasses: Set<ThingId>,
+        excludeClasses: Set<ThingId>,
         pageable: Pageable
     ): Page<Resource> =
-        neo4jRepository.findAllIncludingAndExcludingClasses(includeClasses, excludeClasses, pageable)
-            .map(Neo4jResource::toResource)
+        neo4jRepository.findAllIncludingAndExcludingClasses(
+            includeClasses.toClassIds(),
+            excludeClasses.toClassIds(),
+            pageable
+        ).map(Neo4jResource::toResource)
 
     override fun findAllIncludingAndExcludingClassesByLabel(
-        includeClasses: Set<ClassId>,
-        excludeClasses: Set<ClassId>,
+        includeClasses: Set<ThingId>,
+        excludeClasses: Set<ThingId>,
         label: String,
         pageable: Pageable
     ): Page<Resource> =
-        neo4jRepository.findAllIncludingAndExcludingClassesByLabel(includeClasses, excludeClasses, label, pageable).map(Neo4jResource::toResource)
+        neo4jRepository.findAllIncludingAndExcludingClassesByLabel(
+            includeClasses.toClassIds(),
+            excludeClasses.toClassIds(),
+            label, pageable
+        ).map(Neo4jResource::toResource)
 
     override fun findAllIncludingAndExcludingClassesByLabelMatchesRegex(
-        includeClasses: Set<ClassId>,
-        excludeClasses: Set<ClassId>,
+        includeClasses: Set<ThingId>,
+        excludeClasses: Set<ThingId>,
         label: String,
         pageable: Pageable
     ): Page<Resource> =
-        neo4jRepository.findAllIncludingAndExcludingClassesByLabelMatchesRegex(includeClasses, excludeClasses, label, pageable)
-            .map(Neo4jResource::toResource)
+        neo4jRepository.findAllIncludingAndExcludingClassesByLabelMatchesRegex(
+            includeClasses.toClassIds(),
+            excludeClasses.toClassIds(),
+            label,
+            pageable
+        ).map(Neo4jResource::toResource)
 
     override fun getIncomingStatementsCount(ids: List<ResourceId>): Iterable<Long> =
         neo4jRepository.getIncomingStatementsCount(ids)

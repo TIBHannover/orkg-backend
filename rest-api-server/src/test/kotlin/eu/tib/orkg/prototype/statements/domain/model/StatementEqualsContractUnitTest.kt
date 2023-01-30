@@ -22,7 +22,7 @@ internal class StatementEqualsContractUnitTest : EqualsContract<GeneralStatement
 
     private val subjectResource = createResource(id = ResourceId(1234))
     private val predicate = createPredicate(id = PredicateId(5555))
-    private val objectResource = createClass(id = ClassId(9886)) // to use a different Thing
+    private val objectResource = createClass(id = ThingId("9886")) // to use a different Thing
 
     override fun getInstance(): GeneralStatement = GeneralStatement(
         id = StatementId(equalID),
@@ -81,7 +81,7 @@ internal class NastyBugOnStatementEqualsContractUnitTest : EqualsContract<Genera
         createdBy = ContributorId("eb947286-8a26-f089-ef2c-d8a511607f9f")
     )
     private val objectResource = Class(
-        id = ClassId("C9041462869371419946"),
+        id = ThingId("C9041462869371419946"),
         label = "5ACqHV4e6",
         uri = URI.create("https://agf1.com"),
         createdAt = OffsetDateTime.parse("1976-02-06T23:39:51Z"),

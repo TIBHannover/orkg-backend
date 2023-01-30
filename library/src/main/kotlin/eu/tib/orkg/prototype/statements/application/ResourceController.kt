@@ -2,15 +2,15 @@ package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import dev.forkhandles.values.ofOrNull
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
-import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.domain.model.Label
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -50,8 +50,8 @@ class ResourceController(
     fun findByLabel(
         @RequestParam("q", required = false) searchString: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
-        @RequestParam("include", required = false, defaultValue = "") includeClasses: Set<ClassId>,
-        @RequestParam("exclude", required = false, defaultValue = "") excludeClasses: Set<ClassId>,
+        @RequestParam("include", required = false, defaultValue = "") includeClasses: Set<ThingId>,
+        @RequestParam("exclude", required = false, defaultValue = "") excludeClasses: Set<ThingId>,
         pageable: Pageable
     ): Page<ResourceRepresentation> =
         when {
@@ -213,14 +213,14 @@ enum class ExtractionMethod {
 data class CreateResourceRequest(
     val id: ResourceId?,
     val label: String,
-    val classes: Set<ClassId> = emptySet(),
+    val classes: Set<ThingId> = emptySet(),
     val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
 )
 
 data class UpdateResourceRequest(
     val id: ResourceId?,
     val label: String?,
-    val classes: Set<ClassId>?
+    val classes: Set<ThingId>?
 )
 
 data class UpdateResourceObservatoryRequest(

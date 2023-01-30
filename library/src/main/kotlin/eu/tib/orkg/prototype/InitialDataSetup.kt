@@ -3,8 +3,8 @@ package eu.tib.orkg.prototype
 import eu.tib.orkg.prototype.configuration.InputInjection
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.io.FileReader
 import java.net.URI
 import org.slf4j.LoggerFactory
@@ -51,7 +51,7 @@ class DataInitializer(
             val classURI: URI? = createClassCommand.uri?.let { URI.create(it) }
 
             classService.createIfNotExists(
-                ClassId(createClassCommand.id),
+                ThingId(createClassCommand.id),
                 createClassCommand.label,
                 classURI
             )

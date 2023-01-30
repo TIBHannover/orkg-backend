@@ -13,7 +13,6 @@ import eu.tib.orkg.prototype.statements.application.StatementNotFound
 import eu.tib.orkg.prototype.statements.application.StatementSubjectNotFound
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.Class
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
@@ -24,6 +23,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.Thing
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
@@ -183,7 +183,7 @@ class StatementService(
     override fun findAllByPredicateAndLabelAndSubjectClass(
         predicateId: PredicateId,
         literal: String,
-        subjectClass: ClassId,
+        subjectClass: ThingId,
         pagination: Pageable
     ): Page<StatementRepresentation> =
         retrieveAndConvertPaged {

@@ -11,7 +11,7 @@ import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateClassUseCase
 import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Label
 import java.net.URI
 import javax.validation.Valid
@@ -40,18 +40,18 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
     BaseController() {
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: ClassId): ClassRepresentation = service.findById(id).orElseThrow { ClassNotFound(id) }
+    fun findById(@PathVariable id: ThingId): ClassRepresentation = service.findById(id).orElseThrow { ClassNotFound.withThingId(id) }
 
     @GetMapping("/", params = ["uri"])
-    fun findByURI(@RequestParam uri: URI): ClassRepresentation = service.findByURI(uri).orElseThrow { ClassNotFound(uri) }
+    fun findByURI(@RequestParam uri: URI): ClassRepresentation = service.findByURI(uri).orElseThrow { ClassNotFound.withURI(uri) }
 
     @GetMapping("/", params = ["ids"])
-    fun findByIds(@RequestParam ids: List<ClassId>, pageable: Pageable): Page<ClassRepresentation> =
+    fun findByIds(@RequestParam ids: List<ThingId>, pageable: Pageable): Page<ClassRepresentation> =
         service.findAllById(ids, pageable)
 
     @GetMapping("/{id}/resources/")
     fun findResourcesWithClass(
-        @PathVariable id: ClassId,
+        @PathVariable id: ThingId,
         @RequestParam("q", required = false) searchString: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         @RequestParam("creator", required = false) creator: ContributorId?,
@@ -107,14 +107,14 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
 
     @PutMapping("/{id}")
     fun replace(
-        @PathVariable id: ClassId,
+        @PathVariable id: ThingId,
         @RequestBody request: ReplaceClassRequest
     ): ResponseEntity<ClassRepresentation> {
         // We will be very lenient with the ID, meaning we do not validate it. But we correct for it in the response. (For now.)
         val newValues = UpdateClassUseCase.ReplaceCommand(label = request.label, uri = request.uri)
         service.replace(id, newValues).onFailure {
             when (it.reason) {
-                ClassNotFoundProblem -> throw ClassNotFound(id)
+                ClassNotFoundProblem -> throw ClassNotFound.withThingId(id)
                 InvalidLabelProblem -> throw InvalidLabel()
                 InvalidURI -> throw IllegalStateException("An invalid URI got passed when replacing a class. This should not happen. Please report a bug.")
                 UpdateNotAllowed -> throw CannotResetURI(id.value)
@@ -126,13 +126,13 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
 
     @PatchMapping("/{id}")
     fun update(
-        @PathVariable id: ClassId,
+        @PathVariable id: ThingId,
         @Valid @RequestBody requestBody: UpdateRequestBody
     ): ResponseEntity<Any> {
         if (requestBody.label != null) {
             service.updateLabel(id, requestBody.label).onFailure {
                 when (it.reason) {
-                    ClassNotFoundProblem -> throw ClassNotFound(id)
+                    ClassNotFoundProblem -> throw ClassNotFound.withThingId(id)
                     InvalidLabelProblem -> throw InvalidLabel()
                 }
             }
@@ -140,7 +140,7 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
         if (requestBody.uri != null) {
             service.updateURI(id, requestBody.uri).onFailure {
                 when (it.reason) {
-                    ClassNotFoundProblem -> throw ClassNotFound(id)
+                    ClassNotFoundProblem -> throw ClassNotFound.withThingId(id)
                     InvalidURI -> throw InvalidURI()
                     UpdateNotAllowed -> throw CannotResetURI(id.value)
                     AlreadyInUse -> throw URIAlreadyInUse(requestBody.uri)
@@ -162,7 +162,7 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
 }
 
 data class CreateClassRequest(
-    val id: ClassId?,
+    val id: ThingId?,
     val label: String,
     val uri: URI?
 ) {

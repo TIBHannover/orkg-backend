@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
@@ -120,7 +120,7 @@ class SpringDataNeo4jThingAdapterCachingTests {
     @Test
     fun `saving a class should evict it from the thing-id cache`() {
         val thingId = "R1"
-        val `class` = createClass().copy(id = ClassId(thingId))
+        val `class` = createClass().copy(id = ThingId(thingId))
         val modified = `class`.copy(label = "new label")
         every { mock.findByThingId(thingId) } returns Optional.of(`class`) andThen Optional.of(modified) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")

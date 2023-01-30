@@ -10,9 +10,9 @@ import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase.FieldCount
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase.PaperCountPerAuthor
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository
 import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.ContributorPerProblem
 import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.DetailsPerProblem
@@ -23,7 +23,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-private val ProblemClass = ClassId("Problem")
+private val ProblemClass = ThingId("Problem")
 
 @Service
 @Transactional

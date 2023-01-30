@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.export.rdf.domain
 import eu.tib.orkg.prototype.escapeLiterals
 import eu.tib.orkg.prototype.export.rdf.api.ExportRDFUseCase
 import eu.tib.orkg.prototype.statements.domain.model.Class
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
@@ -11,6 +10,7 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
@@ -42,7 +42,7 @@ class RDFService(
         statementRepository.forEach { append(it.toNTriple()) }
     }
 
-    override fun rdfModelFor(id: ClassId): Optional<Model> {
+    override fun rdfModelFor(id: ThingId): Optional<Model> {
         val clazz = classesRepository.findByClassId(id).orElse(null) ?: return Optional.empty()
         with(clazz) {
             val model = ModelBuilder().apply {

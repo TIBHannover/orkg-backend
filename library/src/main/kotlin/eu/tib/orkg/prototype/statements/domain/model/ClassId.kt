@@ -25,4 +25,4 @@ data class ClassId(val value: String) : Comparable<ClassId> {
 
 fun List<String>?.toClassIds(): Set<ClassId> = this?.map(::ClassId)?.toSet() ?: emptySet()
 
-fun Set<ClassId>?.stringify(): Set<String> = this?.map(ClassId::value)?.toSet() ?: emptySet()
+fun Set<ThingId>?.stringify(): Set<String> = this?.map(ThingId::value)?.toSet() ?: emptySet()

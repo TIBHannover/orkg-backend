@@ -17,7 +17,7 @@ internal class ClassEqualsContractTest : EqualsContract<Class> {
     private val uri = "https://example.org/foo/bar?param=value"
 
     override fun getInstance(): Class = Class(
-        id = ClassId(equalID),
+        id = ThingId(equalID),
         label = "some label",
         createdAt = OffsetDateTime.parse(timeStamp),
         createdBy = ContributorId(contributorUUID),
@@ -26,7 +26,7 @@ internal class ClassEqualsContractTest : EqualsContract<Class> {
 
     override fun getEqualInstanceSupplier(): Supplier<Class> = Supplier {
         Class(
-            id = ClassId(equalID),
+            id = ThingId(equalID),
             label = "some label",
             createdAt = OffsetDateTime.parse(timeStamp),
             createdBy = ContributorId(contributorUUID),
@@ -35,7 +35,7 @@ internal class ClassEqualsContractTest : EqualsContract<Class> {
     }
 
     override fun getNonEqualInstance(): Class = Class(
-        id = ClassId(differentID),
+        id = ThingId(differentID),
         label = "some label",
         createdAt = OffsetDateTime.parse(timeStamp),
         createdBy = ContributorId(contributorUUID),

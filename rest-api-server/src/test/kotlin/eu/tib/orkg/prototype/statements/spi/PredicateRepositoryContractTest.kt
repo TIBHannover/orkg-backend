@@ -3,9 +3,9 @@ package eu.tib.orkg.prototype.statements.spi
 import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.createStatement
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
@@ -37,7 +37,7 @@ interface PredicateRepositoryContractTest {
 
     @Test
     fun `given a predicate is used in a statement, count its usage, should be 1`() {
-        val classes = setOf(ClassId("Thing"))
+        val classes = setOf(ThingId("Thing"))
         val subject = createResource().copy(
             id = ResourceId("R1234"),
             classes = classes,
@@ -63,7 +63,7 @@ interface PredicateRepositoryContractTest {
 
     @Test
     fun `given a predicate is used as a subject, count its usage, should be 1`() {
-        val classes = setOf(ClassId("Thing"))
+        val classes = setOf(ThingId("Thing"))
         val subjectPredicate = createPredicate().copy(
             id = PredicateId(1)
         )
@@ -88,7 +88,7 @@ interface PredicateRepositoryContractTest {
 
     @Test
     fun `given a predicate is as an object, count its usage, should be 1`() {
-        val classes = setOf(ClassId("Thing"))
+        val classes = setOf(ThingId("Thing"))
         val subject = createResource().copy(
             id = ResourceId("R1234"),
             classes = classes,

@@ -8,21 +8,21 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.AlreadyInUse
 import eu.tib.orkg.prototype.statements.api.ClassLabelUpdateProblem
 import eu.tib.orkg.prototype.statements.api.ClassNotFound
+import eu.tib.orkg.prototype.statements.api.ClassRepresentation
 import eu.tib.orkg.prototype.statements.api.ClassURIUpdateProblem
 import eu.tib.orkg.prototype.statements.api.ClassUpdateProblem
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.CreateClassUseCase
 import eu.tib.orkg.prototype.statements.api.InvalidLabel
 import eu.tib.orkg.prototype.statements.api.InvalidURI
+import eu.tib.orkg.prototype.statements.api.UpdateClassUseCase
 import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
 import eu.tib.orkg.prototype.statements.application.CreateClassRequest
 import eu.tib.orkg.prototype.statements.domain.model.Class
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.api.ClassRepresentation
-import eu.tib.orkg.prototype.statements.api.CreateClassUseCase
-import eu.tib.orkg.prototype.statements.api.UpdateClassUseCase
 import eu.tib.orkg.prototype.statements.domain.model.Clock
 import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.statements.domain.model.SystemClock
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.util.EscapedRegex
 import eu.tib.orkg.prototype.util.SanitizedWhitespace
@@ -42,8 +42,8 @@ class ClassService(
     private val repository: ClassRepository,
     private val clock: Clock = SystemClock(),
 ) : ClassUseCases {
-    override fun create(command: CreateClassUseCase.CreateCommand): ClassId {
-        val id = if (command.id != null) ClassId(command.id) else repository.nextIdentity()
+    override fun create(command: CreateClassUseCase.CreateCommand): ThingId {
+        val id = if (command.id != null) ThingId(command.id) else repository.nextIdentity()
         val newClass = Class(
             id = id,
             label = Label.ofOrNull(command.label)?.value
@@ -53,7 +53,7 @@ class ClassService(
             createdBy = command.contributorId ?: ContributorId.createUnknownContributor(),
         )
         repository.save(newClass)
-        return newClass.id!!
+        return newClass.id
     }
 
     override fun create(label: String): ClassRepresentation = create(ContributorId.createUnknownContributor(), label)
@@ -72,7 +72,7 @@ class ClassService(
         create(ContributorId.createUnknownContributor(), request)
 
     override fun create(userId: ContributorId, request: CreateClassRequest): ClassRepresentation {
-        val newClassId = create(
+        val newThingId = create(
             CreateClassUseCase.CreateCommand(
                 id = request.id?.value,
                 label = request.label,
@@ -80,19 +80,19 @@ class ClassService(
                 uri = request.uri,
             )
         )
-        return repository.findByClassId(newClassId).map(Class::toClassRepresentation).get()
+        return repository.findByClassId(newThingId).map(Class::toClassRepresentation).get()
     }
 
     @Transactional(readOnly = true)
-    override fun exists(id: ClassId): Boolean = repository.exists(id)
+    override fun exists(id: ThingId): Boolean = repository.exists(id)
 
     override fun findAll(pageable: Pageable): Page<ClassRepresentation> =
         repository.findAll(pageable).map(Class::toClassRepresentation)
 
-    override fun findAllById(ids: Iterable<ClassId>, pageable: Pageable): Page<ClassRepresentation> =
+    override fun findAllById(ids: Iterable<ThingId>, pageable: Pageable): Page<ClassRepresentation> =
         repository.findAllByClassId(ids, pageable).map(Class::toClassRepresentation)
 
-    override fun findById(id: ClassId): Optional<ClassRepresentation> =
+    override fun findById(id: ThingId): Optional<ClassRepresentation> =
         repository.findByClassId(id).map(Class::toClassRepresentation)
 
     override fun findAllByLabel(label: String): Iterable<ClassRepresentation> =
@@ -111,7 +111,7 @@ class ClassService(
         repository.findAllByLabelMatchesRegex(part.toSearchString(), pageable)
             .map(Class::toClassRepresentation) // TODO: See declaration
 
-    override fun replace(id: ClassId, command: UpdateClassUseCase.ReplaceCommand): Result<Unit, ClassUpdateProblem> {
+    override fun replace(id: ThingId, command: UpdateClassUseCase.ReplaceCommand): Result<Unit, ClassUpdateProblem> {
         val label = Label.ofOrNull(command.label) ?: return Failure(InvalidLabel)
         val found = repository.findByClassId(id).orElse(null) ?: return Failure(ClassNotFound)
         if (found.uri != command.uri && found.uri != null) return Failure(UpdateNotAllowed)
@@ -123,14 +123,14 @@ class ClassService(
         return Success(Unit)
     }
 
-    override fun updateLabel(id: ClassId, newLabel: String): Result<Unit, ClassLabelUpdateProblem> {
+    override fun updateLabel(id: ThingId, newLabel: String): Result<Unit, ClassLabelUpdateProblem> {
         val label = Label.ofOrNull(newLabel) ?: return Failure(InvalidLabel)
         val found = repository.findByClassId(id).orElse(null) ?: return Failure(ClassNotFound)
         if (found.label != label.value) repository.save(found.copy(label = label.value))
         return Success(Unit)
     }
 
-    override fun updateURI(id: ClassId, with: String): Result<Unit, ClassURIUpdateProblem> {
+    override fun updateURI(id: ThingId, with: String): Result<Unit, ClassURIUpdateProblem> {
         val uri = with.toURIOrNull() ?: return Failure(InvalidURI)
         val found = repository.findByClassId(id).orElse(null) ?: return Failure(ClassNotFound)
         if (found.uri != null) return Failure(UpdateNotAllowed)
@@ -145,7 +145,7 @@ class ClassService(
     override fun findByURI(uri: URI): Optional<ClassRepresentation> =
         repository.findByUri(uri.toString()).map(Class::toClassRepresentation)
 
-    override fun createIfNotExists(id: ClassId, label: String, uri: URI?) {
+    override fun createIfNotExists(id: ThingId, label: String, uri: URI?) {
         // Checking if URI is null
         if (uri == null) {
             // check only for ID
@@ -196,7 +196,7 @@ class ClassService(
 }
 
 fun Class.toClassRepresentation(): ClassRepresentation = object : ClassRepresentation {
-    override val id: ClassId = this@toClassRepresentation.id!!
+    override val id: ThingId = this@toClassRepresentation.id
     override val label: String = this@toClassRepresentation.label
     override val uri: URI? = this@toClassRepresentation.uri
     override val description: String? = this@toClassRepresentation.description

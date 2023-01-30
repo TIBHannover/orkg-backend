@@ -50,7 +50,7 @@ class ClassJsonTest {
 
     private fun createClass() =
         Class(
-            ClassId(100),
+            ThingId("C100"),
             "label",
             URI("http://example.org/path/to/file#with-fragment"),
             OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3))

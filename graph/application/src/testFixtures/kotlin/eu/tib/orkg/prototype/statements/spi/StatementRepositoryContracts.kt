@@ -12,6 +12,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
@@ -452,7 +453,7 @@ fun <
         context("by predicate id and object label and subject class id") {
             val expectedCount = 3
             val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
-            val subject = createClass(id = ClassId(1))
+            val subject = createClass(id = ThingId("1"))
             val predicate = createPredicate(id = PredicateId(1))
             val literal = createLiteral(label = "label to find")
             (0 until expectedCount).forEach {
@@ -475,7 +476,7 @@ fun <
             val result = repository.findAllByPredicateIdAndLabelAndSubjectClass(
                 predicate.id!!,
                 literal.label,
-                subject.id!!,
+                subject.id,
                 PageRequest.of(0, 5)
             )
 

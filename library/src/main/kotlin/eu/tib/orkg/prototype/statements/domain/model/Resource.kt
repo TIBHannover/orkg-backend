@@ -10,7 +10,7 @@ data class Resource(
     val id: ResourceId?,
     override val label: String,
     val createdAt: OffsetDateTime,
-    val classes: Set<ClassId> = emptySet(),
+    val classes: Set<ThingId> = emptySet(),
     val createdBy: ContributorId = ContributorId.createUnknownContributor(),
     val observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
     val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
@@ -19,5 +19,5 @@ data class Resource(
     val unlisted: Boolean? = null,
     val verified: Boolean? = null,
 ) : Thing {
-    override val thingId: ThingId = ThingId.of(id!!.value)
+    override val thingId: ThingId = ThingId(id!!.value)
 }

@@ -13,6 +13,7 @@ import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import eu.tib.orkg.prototype.statements.api.ThingRepresentation
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpEntity
@@ -79,7 +80,7 @@ class StatementController(
     fun findByPredicateAndLiteralAndSubjectClass(
         @PathVariable predicateId: PredicateId,
         @PathVariable literal: String,
-        @RequestParam("subjectClass", required = false) subjectClass: ClassId?,
+        @RequestParam("subjectClass", required = false) subjectClass: ThingId?,
         pageable: Pageable
     ): HttpEntity<Iterable<StatementRepresentation>> {
         val result = when (subjectClass) {

@@ -4,6 +4,7 @@ import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
@@ -79,13 +80,13 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
 
     context("existence checks for multiple classes") {
         it("returns true when all classes exist") {
-            val ids = (1L..3).map(::ClassId).onEach { repository.save(createClass(id = it)) }
+            val ids = (1..3).map { ThingId("$it") }.onEach { repository.save(createClass(id = it)) }
 
             repository.existsAll(ids.toSet()) shouldBe true
         }
         it("returns false when at least one class does not exist") {
-            val ids = (1L..3).map(::ClassId).onEach { repository.save(createClass(id = it)) }
-                .plus(listOf(ClassId(9)))
+            val ids = (1..3).map { ThingId("$it") }.onEach { repository.save(createClass(id = it)) }
+                .plus(listOf(ThingId("9")))
 
             repository.existsAll(ids.toSet()) shouldBe false
         }
@@ -102,7 +103,7 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
 
             val expected = classes.take(expectedCount)
             val result = repository.findAllByClassId(
-                expected.map { it.id!! },
+                expected.map { it.id },
                 PageRequest.of(0, 5)
             )
 
@@ -252,7 +253,7 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
 
     it("delete all classes") {
         repeat(3) {
-            repository.save(createClass(id = ClassId(it.toLong())))
+            repository.save(createClass(id = ThingId("$it")))
         }
         // ClassRepository has no count method
         repository.findAll(PageRequest.of(0, Int.MAX_VALUE)).totalElements shouldBe 3

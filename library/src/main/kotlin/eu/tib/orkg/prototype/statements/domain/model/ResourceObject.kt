@@ -22,7 +22,7 @@ data class ResourceObject(
     val label: String,
     @JsonProperty("created_at")
     val createdAt: OffsetDateTime?,
-    val classes: Set<ClassId> = emptySet(),
+    val classes: Set<ThingId> = emptySet(),
     val shared: Int = 0,
     @JsonProperty("created_by")
     val createdBy: ContributorId = ContributorId.createUnknownContributor()

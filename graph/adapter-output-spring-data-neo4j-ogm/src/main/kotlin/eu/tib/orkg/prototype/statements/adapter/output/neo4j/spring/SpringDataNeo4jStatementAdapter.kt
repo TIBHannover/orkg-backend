@@ -19,6 +19,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jThing
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
@@ -127,7 +128,7 @@ class SpringDataNeo4jStatementAdapter(
     override fun findAllByPredicateIdAndLabelAndSubjectClass(
         predicateId: PredicateId,
         literal: String,
-        subjectClass: ClassId,
+        subjectClass: ThingId,
         pageable: Pageable
     ): Page<GeneralStatement> =
         neo4jRepository.findAllByPredicateIdAndLabelAndSubjectClass(predicateId, literal, subjectClass, pageable)
@@ -178,7 +179,7 @@ class SpringDataNeo4jStatementAdapter(
         // The purpose of this method is of technical nature, as the OGM requires a reference to the start and end node.
         // With direct access to the database, this becomes obsolete, because queries can use the ID directly.
         when (this) {
-            is Class -> neo4jClassRepository.findByClassId(this.id).get()
+            is Class -> neo4jClassRepository.findByClassId(this.id.toClassId()).get()
             is Literal -> neo4jLiteralRepository.findByLiteralId(this.id).get()
             is Predicate -> neo4jPredicateRepository.findByPredicateId(this.id).get()
             is Resource -> neo4jResourceRepository.findByResourceId(this.id).get()

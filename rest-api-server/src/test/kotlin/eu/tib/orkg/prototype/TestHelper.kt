@@ -12,7 +12,6 @@ import eu.tib.orkg.prototype.files.domain.model.Image
 import eu.tib.orkg.prototype.files.domain.model.ImageData
 import eu.tib.orkg.prototype.files.domain.model.ImageId
 import eu.tib.orkg.prototype.statements.domain.model.Class
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
@@ -22,6 +21,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.io.BufferedReader
 import java.net.URI
 import java.net.URLConnection
@@ -50,7 +50,7 @@ annotation class AuthorizationServerUnitTestWorkaround
 fun createResource() = Resource(ResourceId(1), "Default Label", OffsetDateTime.now())
 
 fun createClass(): Class = Class(
-    id = ClassId("OK"),
+    id = ThingId("OK"),
     label = "some label",
     createdAt = OffsetDateTime.now(),
     uri = URI.create("https://example.org/OK"),

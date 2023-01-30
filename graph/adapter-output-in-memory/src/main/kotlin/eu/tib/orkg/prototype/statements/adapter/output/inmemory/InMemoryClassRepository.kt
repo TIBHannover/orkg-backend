@@ -2,23 +2,24 @@ package eu.tib.orkg.prototype.statements.adapter.output.inmemory
 
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.toOptional
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
-class InMemoryClassRepository : InMemoryRepository<ClassId, Class>(
+class InMemoryClassRepository : InMemoryRepository<ThingId, Class>(
     compareBy(Class::createdAt)
 ), ClassRepository {
     override fun save(c: Class) {
-        entities[c.id!!] = c
+        entities[c.id] = c
     }
 
-    override fun findByClassId(id: ClassId?): Optional<Class> = Optional.ofNullable(entities[id!!])
+    override fun findByClassId(id: ThingId?): Optional<Class> = Optional.ofNullable(entities[id!!])
 
-    override fun findAllByClassId(id: Iterable<ClassId>, pageable: Pageable) =
-        findAllFilteredAndPaged(pageable) { id.contains(it.id!!) }
+    override fun findAllByClassId(id: Iterable<ThingId>, pageable: Pageable) =
+        findAllFilteredAndPaged(pageable) { id.contains(it.id) }
 
     override fun findAllByLabel(label: String) = entities.values.filter { it.label == label }
 
@@ -45,14 +46,14 @@ class InMemoryClassRepository : InMemoryRepository<ClassId, Class>(
         entities.clear()
     }
 
-    override fun nextIdentity(): ClassId {
-        var id = ClassId(entities.size.toLong())
+    override fun nextIdentity(): ThingId {
+        var id = ThingId(entities.size.toString())
         while(id in entities) {
-            id = ClassId(id.value.toLong() + 1)
+            id = ThingId("${id.value.toLong() + 1}")
         }
         return id
     }
 
-    override fun existsAll(ids: Set<ClassId>): Boolean =
+    override fun existsAll(ids: Set<ThingId>): Boolean =
         if (ids.isNotEmpty()) entities.keys.containsAll(ids) else false
 }

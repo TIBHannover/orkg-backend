@@ -12,9 +12,9 @@ import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
 import java.util.*
 
@@ -35,7 +35,7 @@ fun CreateClassUseCase.createClass(
     id: String? = null,
     contributorId: ContributorId? = null,
     uri: URI? = null
-): ClassId =
+): ThingId =
     this.create(CreateClassUseCase.CreateCommand(label, id, contributorId, uri))
 
 // Predicates
@@ -67,7 +67,7 @@ fun CreateResourceUseCase.createResource(
     val request = CreateResourceRequest(
         id = Optional.ofNullable(id).map(::ResourceId).orElse(null),
         label = label ?: "label",
-        classes = classes.map(::ClassId).toSet(),
+        classes = classes.map(::ThingId).toSet(),
         extractionMethod = extractionMethod ?: ExtractionMethod.UNKNOWN
     )
     return this.create(request).id
@@ -85,7 +85,7 @@ fun CreateResourceUseCase.createResource(
     val request = CreateResourceRequest(
         id = Optional.ofNullable(id).map(::ResourceId).orElse(null),
         label = label ?: "label",
-        classes = classes.map(::ClassId).toSet(),
+        classes = classes.map(::ThingId).toSet(),
         extractionMethod = extractionMethod ?: ExtractionMethod.UNKNOWN
     )
     return this.create(userId, request, observatoryId, request.extractionMethod, organizationId).id

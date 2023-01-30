@@ -4,7 +4,7 @@ import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import io.kotest.assertions.asClue
@@ -78,7 +78,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             it("returns the correct result when only some classes match") {
                 val expected: Resource = fabricator.random()
                 repository.save(expected)
-                val classes = expected.classes + ClassId("missing")
+                val classes = expected.classes + ThingId("missing")
                 val actual = repository.findByIdAndClasses(expected.id!!, classes)
                 actual shouldBe expected
             }
@@ -235,7 +235,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
         context("by class") {
             val expectedCount = 3
             val resources = fabricator.random<List<Resource>>().toMutableList()
-            val `class` = fabricator.random<ClassId>()
+            val `class` = fabricator.random<ThingId>()
             (0 until 3).forEach {
                 resources[it] = resources[it].copy(classes = resources[it].classes + `class`)
             }
@@ -265,7 +265,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
         context("by class and contributor") {
             val expectedCount = 3
             val resources = fabricator.random<List<Resource>>().toMutableList()
-            val `class` = fabricator.random<ClassId>()
+            val `class` = fabricator.random<ThingId>()
             val contributor = fabricator.random<ContributorId>()
             (0 until 6).forEach {
                 resources[it] = resources[it].copy(classes = resources[it].classes + `class`)
@@ -303,7 +303,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
         context("by class and label") {
             val expectedCount = 3
             val resources = fabricator.random<List<Resource>>().toMutableList()
-            val `class` = fabricator.random<ClassId>()
+            val `class` = fabricator.random<ThingId>()
             val label = fabricator.random<String>()
             (0 until 6).forEach {
                 resources[it] = resources[it].copy(classes = resources[it].classes + `class`)
@@ -341,7 +341,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
         context("by class, label and contributor") {
             val expectedCount = 2
             val resources = fabricator.random<List<Resource>>().toMutableList()
-            val `class` = fabricator.random<ClassId>()
+            val `class` = fabricator.random<ThingId>()
             val label = fabricator.random<String>()
             val contributor = fabricator.random<ContributorId>()
             (0 until 6).forEach {
@@ -384,7 +384,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
         context("by class and label regex") {
             val expectedCount = 3
             val resources = fabricator.random<List<Resource>>().toMutableList()
-            val `class` = fabricator.random<ClassId>()
+            val `class` = fabricator.random<ThingId>()
             (0 until 6).forEach {
                 resources[it] = resources[it].copy(classes = resources[it].classes + `class`)
             }
@@ -421,7 +421,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
         context("by class, label regex and contributor") {
             val expectedCount = 2
             val resources = fabricator.random<List<Resource>>().toMutableList()
-            val `class` = fabricator.random<ClassId>()
+            val `class` = fabricator.random<ThingId>()
             val contributor = fabricator.random<ContributorId>()
             (0 until 6).forEach {
                 resources[it] = resources[it].copy(classes = resources[it].classes + `class`)
@@ -461,8 +461,8 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             }
         }
         context("by including and excluding classes") {
-            val including = setOf<ClassId>(fabricator.random(), fabricator.random())
-            val excluding = setOf<ClassId>(fabricator.random(), fabricator.random())
+            val including = setOf<ThingId>(fabricator.random(), fabricator.random())
+            val excluding = setOf<ThingId>(fabricator.random(), fabricator.random())
             val expected = mutableSetOf<Resource>()
             val resources = fabricator.random<List<Resource>>().mapIndexed map@ { index, resource ->
                 if (index < 9) {
@@ -684,8 +684,8 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
         }
         context("by class and unlisted flag") {
             val expectedCount = 3
-            val resources = fabricator.random<List<Resource>>().toMutableList()
-            val classes = (0L .. 3L).map(::ClassId)
+            val resources = fabricator.random<MutableList<Resource>>()
+            val classes = (0 until 3).map { ThingId("ThingId$it") }
             (0 until 6).forEach {
                 resources[it] = resources[it].copy(
                     classes = resources[it].classes + classes,
@@ -748,7 +748,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             }
         }
         context("by classes and unlisted flag and featured flag") {
-            val classes = (0L .. 3L).map(::ClassId)
+            val classes = (0 until 3).map { ThingId("$it") }
             val resources = fabricator.random<List<Resource>>().mapIndexed { index, it ->
                 val c = classes.take(index % 3)
                 val unlisted = index >= 6
@@ -797,7 +797,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             }}}
         }
         context("by classes and unlisted flag and featured flag and observatory id") {
-            val classes = (0L .. 3L).map(::ClassId)
+            val classes = (0 until 3).map { ThingId("$it") }
             val observatoryId = fabricator.random<ObservatoryId>()
             val resources = fabricator.random<Resource>(24).mapIndexed { index, it ->
                 val c = classes.take(index % 3)
@@ -850,7 +850,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             }}}
         }
         context("by classes and unlisted flag and observatory id") {
-            val classes = (0L .. 3L).map(::ClassId)
+            val classes = (0 until 3).map { ThingId("$it") }
             val observatoryId = fabricator.random<ObservatoryId>()
             val resources = fabricator.random<List<Resource>>().mapIndexed { index, it ->
                 val c = classes.take(index % 3)

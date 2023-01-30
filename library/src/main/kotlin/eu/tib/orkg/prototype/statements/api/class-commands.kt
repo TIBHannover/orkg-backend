@@ -3,18 +3,18 @@ package eu.tib.orkg.prototype.statements.api
 import dev.forkhandles.result4k.Result
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.CreateClassRequest
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
 
 interface CreateClassUseCase {
-    fun create(command: CreateCommand): ClassId
+    fun create(command: CreateCommand): ThingId
 
     // legacy methods:
     fun create(label: String): ClassRepresentation
     fun create(userId: ContributorId, label: String): ClassRepresentation
     fun create(request: CreateClassRequest): ClassRepresentation
     fun create(userId: ContributorId, request: CreateClassRequest): ClassRepresentation
-    fun createIfNotExists(id: ClassId, label: String, uri: URI?)
+    fun createIfNotExists(id: ThingId, label: String, uri: URI?)
 
     data class CreateCommand(
         val label: String,
@@ -25,9 +25,9 @@ interface CreateClassUseCase {
 }
 
 interface UpdateClassUseCase {
-    fun replace(id: ClassId, command: ReplaceCommand): Result<Unit, ClassUpdateProblem>
-    fun updateLabel(id: ClassId, newLabel: String): Result<Unit, ClassLabelUpdateProblem>
-    fun updateURI(id: ClassId, with: String): Result<Unit, ClassURIUpdateProblem>
+    fun replace(id: ThingId, command: ReplaceCommand): Result<Unit, ClassUpdateProblem>
+    fun updateLabel(id: ThingId, newLabel: String): Result<Unit, ClassLabelUpdateProblem>
+    fun updateURI(id: ThingId, with: String): Result<Unit, ClassURIUpdateProblem>
 
     data class ReplaceCommand(
         val label: String,

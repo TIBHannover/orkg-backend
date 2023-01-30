@@ -7,13 +7,14 @@ import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.time.OffsetDateTime
 
 fun createResource(
     id: ResourceId? = ResourceId(1),
     label: String = "Default Label",
     createdAt: OffsetDateTime = OffsetDateTime.now(),
-    classes: Set<ClassId> = emptySet(),
+    classes: Set<ThingId> = emptySet(),
     createdBy: ContributorId = ContributorId.createUnknownContributor(),
     observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
     extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,

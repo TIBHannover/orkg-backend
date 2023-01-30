@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.api
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -13,7 +13,7 @@ import org.springframework.data.domain.Pageable
 
 interface RetrieveResourceUseCase {
     fun exists(id: ResourceId): Boolean
-    fun findByIdAndClasses(id: ResourceId, classes: Set<ClassId>): ResourceRepresentation?
+    fun findByIdAndClasses(id: ResourceId, classes: Set<ThingId>): ResourceRepresentation?
 
     // TODO: Needed by problem service. May need better solution.
     fun map(action: IterableResourcesGenerator): Iterable<ResourceRepresentation>
@@ -22,20 +22,20 @@ interface RetrieveResourceUseCase {
 
     // Legacy methods:
     fun findAll(pageable: Pageable): Page<ResourceRepresentation>
-    fun findAllByClass(pageable: Pageable, id: ClassId): Page<ResourceRepresentation>
-    fun findAllByClassAndCreatedBy(pageable: Pageable, id: ClassId, createdBy: ContributorId): Page<ResourceRepresentation>
-    fun findAllByClassAndLabel(pageable: Pageable, id: ClassId, label: String): Page<ResourceRepresentation>
+    fun findAllByClass(pageable: Pageable, id: ThingId): Page<ResourceRepresentation>
+    fun findAllByClassAndCreatedBy(pageable: Pageable, id: ThingId, createdBy: ContributorId): Page<ResourceRepresentation>
+    fun findAllByClassAndLabel(pageable: Pageable, id: ThingId, label: String): Page<ResourceRepresentation>
     fun findAllByClassAndLabelAndCreatedBy(
         pageable: Pageable,
-        id: ClassId,
+        id: ThingId,
         label: String,
         createdBy: ContributorId
     ): Page<ResourceRepresentation>
 
-    fun findAllByClassAndLabelContaining(pageable: Pageable, id: ClassId, part: String): Page<ResourceRepresentation>
+    fun findAllByClassAndLabelContaining(pageable: Pageable, id: ThingId, part: String): Page<ResourceRepresentation>
     fun findAllByClassAndLabelContainingAndCreatedBy(
         pageable: Pageable,
-        id: ClassId,
+        id: ThingId,
         part: String,
         createdBy: ContributorId
     ): Page<ResourceRepresentation>
@@ -49,19 +49,19 @@ interface RetrieveResourceUseCase {
     fun findAllByTitle(title: String?): Iterable<ResourceRepresentation>
     fun findAllByUnlisted(pageable: Pageable): Page<ResourceRepresentation>
     fun findAllIncludingAndExcludingClasses(
-        includeClasses: Set<ClassId>,
-        excludeClasses: Set<ClassId>,
+        includeClasses: Set<ThingId>,
+        excludeClasses: Set<ThingId>,
         pageable: Pageable
     ): Page<ResourceRepresentation>
     fun findAllIncludingAndExcludingClassesByLabel(
-        includeClasses: Set<ClassId>,
-        excludeClasses: Set<ClassId>,
+        includeClasses: Set<ThingId>,
+        excludeClasses: Set<ThingId>,
         label: String,
         pageable: Pageable
     ): Page<ResourceRepresentation>
     fun findAllIncludingAndExcludingClassesByLabelContaining(
-        includeClasses: Set<ClassId>,
-        excludeClasses: Set<ClassId>,
+        includeClasses: Set<ThingId>,
+        excludeClasses: Set<ThingId>,
         part: String,
         pageable: Pageable
     ): Page<ResourceRepresentation>

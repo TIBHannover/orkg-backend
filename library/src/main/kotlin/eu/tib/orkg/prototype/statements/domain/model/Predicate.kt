@@ -10,5 +10,5 @@ data class Predicate(
     val createdBy: ContributorId = ContributorId.createUnknownContributor(),
 ) : Thing {
     var description: String? = null
-    override val thingId: ThingId = ThingId.of(id!!.value)
+    override val thingId: ThingId = ThingId(id!!.value)
 }

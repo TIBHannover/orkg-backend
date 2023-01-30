@@ -10,7 +10,7 @@ import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.CreateClassRequest
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.io.InputStream
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
@@ -126,7 +126,7 @@ class ExampleData(
         //
         // Class
         //
-        classService.create(CreateClassRequest(ClassId("Paper"), "Paper", null))
+        classService.create(CreateClassRequest(ThingId("Paper"), "Paper", null))
 
         //
         // Resource
@@ -139,13 +139,16 @@ class ExampleData(
         val inStream: InputStream? = javaClass.classLoader.getResourceAsStream("data/ResearchFields.json")
         val fields = mapper.readValue<List<ResearchField>>(inStream!!)
         for (field in fields) {
-            val newField = resourceService.create(CreateResourceRequest(null, field.name, setOf(ClassId("ResearchField")))).id
+            val newField = resourceService.create(CreateResourceRequest(null, field.name,
+                setOf(ThingId("ResearchField")))).id
             statementService.create(researchField.value, subfieldPredicate, newField.value)
             for (subfield in field.subfields) {
-                val newSubfield = resourceService.create(CreateResourceRequest(null, subfield.name, setOf(ClassId("ResearchField")))).id
+                val newSubfield = resourceService.create(CreateResourceRequest(null, subfield.name,
+                    setOf(ThingId("ResearchField")))).id
                 statementService.create(newField.value, subfieldPredicate, newSubfield.value)
                 for (subSubfield in subfield.subfields) {
-                    val newSubSubfield = resourceService.create(CreateResourceRequest(null, subSubfield.name, setOf(ClassId("ResearchField")))).id
+                    val newSubSubfield = resourceService.create(CreateResourceRequest(null, subSubfield.name,
+                        setOf(ThingId("ResearchField")))).id
                     statementService.create(newSubfield.value, subfieldPredicate, newSubSubfield.value)
                 }
             }

@@ -14,6 +14,7 @@ import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.PaperService
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import java.util.*
@@ -192,7 +193,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
     fun addButClassDoesNotExist() {
         val resource = mapOf(
             "label" to "foo",
-            "classes" to setOf(ClassId("doesNotExist"))
+            "classes" to setOf(ThingId("doesNotExist"))
         )
 
         mockMvc
@@ -285,7 +286,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         val oldClass = classService.createClass(label = "class")
         val resource = service.createResource(classes = setOf(oldClass.value), label = "test")
 
-        val update = mapOf("classes" to setOf(ClassId("DoesNotExist")))
+        val update = mapOf("classes" to setOf(ThingId("DoesNotExist")))
 
         mockMvc
             .perform(putRequestWithBody("/api/resources/$resource", update))

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import java.net.URI
 import java.time.OffsetDateTime
@@ -53,7 +54,7 @@ data class Neo4jClass(
     fun toClass(): Class {
         val aURI: URI? = if (uri != null) URI.create(uri!!) else null
         val clazz = Class(
-            id = classId!!,
+            id = ThingId(classId?.value!!),
             label = label!!,
             uri = aURI,
             createdAt = createdAt!!,

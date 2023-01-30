@@ -5,11 +5,11 @@ import eu.tib.orkg.prototype.shared.ForbiddenOperationException
 import eu.tib.orkg.prototype.shared.LoggedMessageException
 import eu.tib.orkg.prototype.shared.PropertyValidationException
 import eu.tib.orkg.prototype.shared.SimpleMessageException
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
 import java.util.*
 import org.springframework.http.HttpStatus
@@ -24,10 +24,15 @@ class LiteralNotFound : SimpleMessageException {
     constructor(id: LiteralId) : this(id.value)
 }
 
-class ClassNotFound : SimpleMessageException {
-    constructor(id: ClassId) : this(id.value)
-    constructor(id: String) : super(HttpStatus.NOT_FOUND, """Class "$id" not found.""")
-    constructor(uri: URI) : super(HttpStatus.NOT_FOUND, """Class with URI "$uri" not found.""")
+class ClassNotFound private constructor(
+    override val status: HttpStatus,
+    override val message: String
+) : SimpleMessageException(status, message, null) {
+    companion object {
+        fun withThingId(id: ThingId) = withId(id.value)
+        fun withId(id: String) = ClassNotFound(HttpStatus.NOT_FOUND, """Class "$id" not found.""")
+        fun withURI(uri: URI) = ClassNotFound(HttpStatus.NOT_FOUND, """Class with URI "$uri" not found.""")
+    }
 }
 
 class PredicateNotFound : SimpleMessageException {
@@ -70,7 +75,7 @@ class ResourceAlreadyExists(id: ResourceId) :
 class PredicateAlreadyExists(id: PredicateId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Predicate "$id" already exists.""")
 
-class InvalidClassCollection(ids: Iterable<ClassId>) :
+class InvalidClassCollection(ids: Iterable<ThingId>) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """The collection of classes "$ids" contains one or more invalid classes.""")
 
 class DuplicateURI(uri: URI, id: String) :
@@ -100,7 +105,7 @@ class CannotResetURI(id: String) :
 class URIAlreadyInUse(uri: String) :
     ForbiddenOperationException("uri", """The URI <$uri> is already in use by another class.""")
 
-class InvalidClassFilter(id: ClassId) :
+class InvalidClassFilter(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """The class "$id" cannot be included and excluded at the same time.""")
 
 class StatementSubjectNotFound(id: String) :

@@ -5,10 +5,10 @@ import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceRepository
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatement
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatementRepository
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -154,7 +154,7 @@ class Neo4jResourceRepositoryTest : Neo4jTestContainersBaseTest() {
 
         assertThat(result).hasSize(1)
         assertThat(result).containsExactlyInAnyOrder(resourceToBeFound)
-        assertThat(result.first().classes).containsExactlyInAnyOrder(ClassId("C0"))
+        assertThat(result.first().classes).containsExactlyInAnyOrder(ThingId("C0"))
     }
 
     fun Neo4jResource.persist(): Neo4jResource = resourceRepository.save(this)

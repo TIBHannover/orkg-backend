@@ -22,7 +22,7 @@ data class LiteralObject(
     val label: String,
     @JsonProperty("created_at")
     val createdAt: OffsetDateTime?,
-    val classes: Set<ClassId> = emptySet(),
+    val classes: Set<ThingId> = emptySet(),
     @JsonProperty("created_by")
     val createdBy: ContributorId = ContributorId.createUnknownContributor()
 )

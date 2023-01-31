@@ -11,6 +11,7 @@ include(
     "graph:application",
     "graph:adapter-input-rest-spring-mvc",
     "graph:adapter-output-spring-data-neo4j-ogm",
+    "graph:adapter-output-spring-data-neo4j-sdn6",
     "graph:adapter-output-in-memory",
 )
 include("rest-api-server")

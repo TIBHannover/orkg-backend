@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.ClassIdConverter
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.ContributorIdConverter
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.LiteralIdConverter
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.OffsetDateTimeConverter
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Bean
@@ -21,6 +22,7 @@ class Neo4jConfiguration {
     fun neo4jConversions() = Neo4jConversions(
         setOf(
             ClassIdConverter(),
+            LiteralIdConverter(),
             ContributorIdConverter(),
             OffsetDateTimeConverter()
         )

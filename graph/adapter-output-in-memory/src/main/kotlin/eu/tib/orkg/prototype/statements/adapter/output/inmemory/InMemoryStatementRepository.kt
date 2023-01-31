@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.adapter.output.inmemory
 
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
@@ -12,7 +11,7 @@ import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.util.*
 import org.springframework.data.domain.Pageable
 
-private val paperClass = ClassId("Paper")
+private val paperClass = ThingId("Paper")
 private val hasContribution = PredicateId("P31")
 private val hasDOI = PredicateId("P26")
 
@@ -134,7 +133,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
 
     override fun findDOIByContributionId(id: ResourceId): Optional<Literal> =
         Optional.ofNullable(entities.values.find {
-            it.subject is Resource && paperClass in (it.subject as Resource).classes.map { ClassId(it.value) }
+            it.subject is Resource && paperClass in (it.subject as Resource).classes
                 && it.predicate.id == hasContribution
                 && it.`object`.thingId.value == id.value
         }?.let {

@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import org.neo4j.driver.Value
@@ -13,7 +14,7 @@ import org.springframework.core.convert.converter.GenericConverter.ConvertiblePa
 class ClassIdConverter : GenericConverter {
     override fun getConvertibleTypes(): MutableSet<ConvertiblePair> = mutableSetOf(
         ConvertiblePair(ClassId::class.java, Value::class.java),
-        ConvertiblePair(Value::class.java, ClassId::class.java)
+        ConvertiblePair(Value::class.java, ClassId::class.java),
     )
 
     override fun convert(source: Any?, sourceType: TypeDescriptor, targetType: TypeDescriptor): Any? {
@@ -32,7 +33,7 @@ class ClassIdConverter : GenericConverter {
 class ContributorIdConverter : GenericConverter {
     override fun getConvertibleTypes(): MutableSet<ConvertiblePair> = mutableSetOf(
         ConvertiblePair(ContributorId::class.java, Value::class.java),
-        ConvertiblePair(Value::class.java, ContributorId::class.java)
+        ConvertiblePair(Value::class.java, ContributorId::class.java),
     )
 
     override fun convert(source: Any?, sourceType: TypeDescriptor, targetType: TypeDescriptor): Any? {
@@ -51,7 +52,7 @@ class ContributorIdConverter : GenericConverter {
 class OffsetDateTimeConverter : GenericConverter {
     override fun getConvertibleTypes(): MutableSet<ConvertiblePair> = mutableSetOf(
         ConvertiblePair(OffsetDateTime::class.java, Value::class.java),
-        ConvertiblePair(Value::class.java, OffsetDateTime::class.java)
+        ConvertiblePair(Value::class.java, OffsetDateTime::class.java),
     )
 
     override fun convert(source: Any?, sourceType: TypeDescriptor, targetType: TypeDescriptor): Any? {
@@ -67,4 +68,23 @@ class OffsetDateTimeConverter : GenericConverter {
 
     private fun convertFromNeo4jValue(source: Value?): OffsetDateTime? =
         OffsetDateTime.parse(source?.asString(), ISO_OFFSET_DATE_TIME)
+}
+
+class LiteralIdConverter : GenericConverter {
+    override fun getConvertibleTypes(): MutableSet<ConvertiblePair> = mutableSetOf(
+        ConvertiblePair(LiteralId::class.java, Value::class.java),
+        ConvertiblePair(Value::class.java, LiteralId::class.java),
+    )
+
+    override fun convert(source: Any?, sourceType: TypeDescriptor, targetType: TypeDescriptor): Any? {
+        return if (LiteralId::class.java.isAssignableFrom(sourceType.type)) {
+            convertToNeo4jValue(source)
+        } else {
+            convertFromNeo4jValue(source as Value)
+        }
+    }
+
+    private fun convertToNeo4jValue(source: Any?): Value? = Values.value(source?.toString())
+
+    private fun convertFromNeo4jValue(source: Value?): LiteralId? = source?.asString()?.let { LiteralId(it) }
 }

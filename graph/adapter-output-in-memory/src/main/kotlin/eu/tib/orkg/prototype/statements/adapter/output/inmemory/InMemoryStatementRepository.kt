@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.adapter.output.inmemory
 
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
+import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -146,6 +147,13 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
                 it.`object` as Literal
             }
         })
+
+    override fun countPredicateUsage(id: PredicateId): Long =
+        entities.values.count {
+            it.subject is Predicate && (it.subject as Predicate).id == id
+                || it.predicate.id == id
+                || it.`object` is Predicate && (it.`object` as Predicate).id == id
+        }.toLong()
 
     override fun nextIdentity(): StatementId {
         var id = StatementId(entities.size.toLong())

@@ -80,8 +80,6 @@ class SpringDataNeo4jPredicateAdapter(
         return id
     }
 
-    override fun usageCount(id: PredicateId) = neo4jRepository.countUsage(id)
-
     private fun Predicate.toNeo4jPredicate() =
         neo4jRepository.findByPredicateId(id).orElse(Neo4jPredicate()).apply {
             predicateId = this@toNeo4jPredicate.id

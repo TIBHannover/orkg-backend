@@ -1,11 +1,15 @@
 package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
+import eu.tib.orkg.prototype.statements.application.PredicateCantBeDeleted
 import eu.tib.orkg.prototype.statements.domain.model.Clock
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
+import eu.tib.orkg.prototype.statements.spi.StatementRepository
+import io.kotest.assertions.throwables.shouldThrow
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -19,11 +23,12 @@ import org.junit.jupiter.api.assertThrows
 class PredicateServiceTests {
 
     private val repository: PredicateRepository = mockk()
+    private val statementRepository: StatementRepository = mockk()
     private val staticClock: Clock = object : Clock {
         override fun now(): OffsetDateTime = OffsetDateTime.of(2022, 11, 29, 11, 20, 33, 12345, ZoneOffset.ofHours(1))
     }
 
-    private val service = PredicateService(repository, staticClock)
+    private val service = PredicateService(repository, statementRepository, staticClock)
 
     @Test
     fun `given a predicate is created, when no id is given, then it gets an id from the repository`() {
@@ -104,5 +109,32 @@ class PredicateServiceTests {
                 )
             )
         }
+    }
+
+    @Test
+    fun `given a predicate is being deleted, when it is still used in a statement, an appropriate error is thrown`() {
+        val mockPredicate = createPredicate()
+
+        every { repository.findByPredicateId(mockPredicate.id) } returns Optional.of(mockPredicate)
+        every { statementRepository.countPredicateUsage(mockPredicate.id!!) } returns 1
+
+        shouldThrow<PredicateCantBeDeleted> {
+            service.delete(mockPredicate.id!!)
+        }
+
+        verify(exactly = 0) { repository.deleteByPredicateId(any()) }
+    }
+
+    @Test
+    fun `given a predicate is being deleted, when it is not used in a statement, it gets deleted`() {
+        val mockPredicate = createPredicate()
+
+        every { repository.findByPredicateId(mockPredicate.id) } returns Optional.of(mockPredicate)
+        every { statementRepository.countPredicateUsage(mockPredicate.id!!) } returns 0
+        every { repository.deleteByPredicateId(mockPredicate.id!!) } returns Unit
+
+        service.delete(mockPredicate.id!!)
+
+        verify(exactly = 1) { repository.deleteByPredicateId(mockPredicate.id!!) }
     }
 }

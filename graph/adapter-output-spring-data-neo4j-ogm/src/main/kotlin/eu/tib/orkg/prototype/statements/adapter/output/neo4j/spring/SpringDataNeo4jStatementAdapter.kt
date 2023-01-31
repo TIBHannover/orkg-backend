@@ -149,6 +149,8 @@ class SpringDataNeo4jStatementAdapter(
     override fun findDOIByContributionId(id: ResourceId): Optional<Literal> =
         neo4jRepository.findDOIByContributionId(id).map(Neo4jLiteral::toLiteral)
 
+    override fun countPredicateUsage(id: PredicateId) = neo4jRepository.countPredicateUsage(id)
+
     private fun Neo4jStatement.toStatement(): GeneralStatement = GeneralStatement(
         id = statementId!!,
         subject = subject!!.toThing(),

@@ -637,4 +637,48 @@ fun <
             }
         }
     }
+
+    describe("counting predicate usage") {
+        context("when no statements exist") {
+            it("returns the correct result") {
+                val actual = repository.countPredicateUsage(PredicateId("Missing"))
+                actual shouldBe 0
+            }
+        }
+        context("when used in a statement") {
+            context("as a predicate") {
+                it("returns the correct result") {
+                    val statement = fabricator.random<GeneralStatement>()
+                    saveStatement(statement)
+
+                    val actual = repository.countPredicateUsage(statement.predicate.id!!)
+                    actual shouldBe 1
+                }
+            }
+            context("as a subject") {
+                it("returns the correct result") {
+                    val subject = fabricator.random<Predicate>()
+                    val statement = fabricator.random<GeneralStatement>().copy(
+                        subject = subject
+                    )
+                    saveStatement(statement)
+
+                    val actual = repository.countPredicateUsage(subject.id!!)
+                    actual shouldBe 1
+                }
+            }
+            context("as a subject") {
+                it("returns the correct result") {
+                    val `object` = fabricator.random<Predicate>()
+                    val statement = fabricator.random<GeneralStatement>().copy(
+                        `object` = `object`
+                    )
+                    saveStatement(statement)
+
+                    val actual = repository.countPredicateUsage(`object`.id!!)
+                    actual shouldBe 1
+                }
+            }
+        }
+    }
 }

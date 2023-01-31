@@ -57,4 +57,5 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun findAllByObjects(objectIds: List<String>, pageable: Pageable): Page<GeneralStatement>
     fun fetchAsBundle(id: String, configuration: Map<String, Any>): Iterable<GeneralStatement>
     fun findDOIByContributionId(id: ResourceId): Optional<Literal>
+    fun countPredicateUsage(id: PredicateId): Long
 }

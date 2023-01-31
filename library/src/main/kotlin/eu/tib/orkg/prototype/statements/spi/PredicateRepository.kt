@@ -17,5 +17,4 @@ interface PredicateRepository : EntityRepository<Predicate, PredicateId> {
     fun deleteAll()
     fun save(predicate: Predicate)
     fun nextIdentity(): PredicateId
-    fun usageCount(id: PredicateId): Long
 }

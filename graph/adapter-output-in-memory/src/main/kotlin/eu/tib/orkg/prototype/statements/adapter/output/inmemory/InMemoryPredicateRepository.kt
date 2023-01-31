@@ -42,8 +42,4 @@ class InMemoryPredicateRepository : InMemoryRepository<PredicateId, Predicate>(
         }
         return id
     }
-
-    override fun usageCount(id: PredicateId): Long {
-        TODO("This method should be moved to the StatementRepository")
-    }
 }

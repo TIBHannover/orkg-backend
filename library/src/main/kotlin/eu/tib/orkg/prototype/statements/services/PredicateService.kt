@@ -15,6 +15,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.SystemClock
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
+import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.util.EscapedRegex
 import eu.tib.orkg.prototype.util.SanitizedWhitespace
 import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
@@ -29,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class PredicateService(
     private val repository: PredicateRepository,
+    private val statementRepository: StatementRepository,
     private val clock: Clock = SystemClock()
 ) : PredicateUseCases {
     @Transactional(readOnly = true)
@@ -127,7 +129,7 @@ class PredicateService(
     override fun delete(predicateId: PredicateId) {
         val predicate = findById(predicateId).orElseThrow { PredicateNotFound(predicateId) }
 
-        if (repository.usageCount(predicate.id) > 0)
+        if (statementRepository.countPredicateUsage(predicate.id) > 0)
             throw PredicateCantBeDeleted(predicate.id)
 
         repository.deleteByPredicateId(predicate.id)

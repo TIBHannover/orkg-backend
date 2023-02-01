@@ -1,11 +1,8 @@
 package eu.tib.orkg.prototype.statements.adapter.output.inmemory
 
-<<<<<<< Updated upstream
-=======
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Class
->>>>>>> Stashed changes
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
@@ -22,15 +19,12 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 private val paperClass = ThingId("Paper")
-<<<<<<< Updated upstream
-=======
 private val paperDeletedClass = ThingId("PaperDeleted")
 private val problemClass = ThingId("Problem")
 private val comparisonClass = ThingId("Comparison")
 private val contributionClass = ThingId("Contribution")
 private val researchProblemClass = ThingId("ResearchProblem")
 private val researchFieldClass = ThingId("ResearchField")
->>>>>>> Stashed changes
 private val hasContribution = PredicateId("P31")
 private val hasResearchProblem = PredicateId("P32")
 private val hasDOI = PredicateId("P26")
@@ -168,14 +162,13 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
             }
         })
 
-<<<<<<< Updated upstream
     override fun countPredicateUsage(id: PredicateId): Long =
         entities.values.count {
             it.subject is Predicate && (it.subject as Predicate).id == id
                 || it.predicate.id == id
                 || it.`object` is Predicate && (it.`object` as Predicate).id == id
         }.toLong()
-=======
+
     // TODO: rename to countIncomingStatements
     override fun getIncomingStatementsCount(ids: List<ResourceId>): Iterable<Long> =
         ids.map { id -> entities.values.count { it.`object`.thingId.value == id.value }.toLong() }
@@ -231,7 +224,6 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
                     && it.`object` is Resource && problemClass in (it.`object` as Resource).classes
             }.map { it.`object` as Resource }
         }.flatten().distinct().paged(pageable)
->>>>>>> Stashed changes
 
     override fun nextIdentity(): StatementId {
         var id = StatementId(entities.size.toLong())

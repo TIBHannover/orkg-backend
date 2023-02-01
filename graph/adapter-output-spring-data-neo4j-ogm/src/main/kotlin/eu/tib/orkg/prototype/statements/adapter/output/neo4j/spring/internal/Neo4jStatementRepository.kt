@@ -1,11 +1,14 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.ObjectService
 import java.util.*
+import eu.tib.orkg.prototype.statements.spi.StatementRepository.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.Query
@@ -23,6 +26,8 @@ private const val objectId = "${'$'}objectId"
 private const val paperId = "${'$'}paperId"
 private const val id = "${'$'}id"
 private const val resourceIds = "${'$'}resourceIds"
+private const val doi = "${'$'}doi"
+private const val ids = "${'$'}ids"
 
 /**
  * Partial query that matches a statement.
@@ -170,6 +175,52 @@ ORDER BY rel.created_at DESC"""
 
     @Query("""OPTIONAL MATCH (:Thing)-[r1:RELATED {predicate_id: $id}]->(:Thing) OPTIONAL MATCH (:Predicate {predicate_id: $id})-[r2:RELATED]-(:Thing) WITH COUNT(DISTINCT r1) as relations, COUNT(DISTINCT r2) as nodes RETURN relations + nodes as cnt""")
     fun countPredicateUsage(id: PredicateId): Long
+
+    @Query("""UNWIND $ids as r_id MATCH ()-[p:RELATED]->(node:Resource {resource_id: r_id}) WITH r_id, COUNT(p) AS cnt RETURN cnt""")
+    fun getIncomingStatementsCount(ids: List<ResourceId>): Iterable<Long>
+
+    @Query("""MATCH (node:Paper)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(:Literal {label: $doi}) WHERE not 'PaperDeleted' in labels(node) RETURN node""")
+    fun findByDOI(doi: String): Optional<Neo4jResource>
+
+    @Query("""MATCH (node:Paper)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(:Literal {label: $doi}) WHERE not 'PaperDeleted' in labels(node) RETURN node""")
+    fun findAllByDOI(doi: String): Iterable<Neo4jResource>
+
+    @Query("""MATCH (n:Paper {observatory_id: $id})-[*]->(r:Problem) RETURN r UNION ALL MATCH (r:Problem {observatory_id: $id}) RETURN r""")
+    fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Neo4jResource>
+
+    @Query("""MATCH (n:Resource {resource_id: "$id"})
+CALL apoc.path.subgraphAll(n, {relationshipFilter: ">", labelFilter: "-ResearchField|-ResearchProblem|-Paper"})
+YIELD relationships
+UNWIND relationships AS rel
+WITH rel AS p, endNode(rel) AS o, n
+WITH COLLECT(p) + COLLECT(o) + n as nodes
+WITH DISTINCT nodes
+UNWIND nodes as node
+WITH node
+WHERE node.created_by <> "00000000-0000-0000-0000-000000000000"
+WITH DISTINCT node.created_by AS created_by, node.created_at AS created_at
+RETURN created_by, created_at
+ORDER BY created_at DESC""",
+        countQuery = """MATCH (n:Resource {resource_id: "$id"})
+CALL apoc.path.subgraphAll(n, {relationshipFilter: ">", labelFilter: "-ResearchField|-ResearchProblem|-Paper"})
+YIELD relationships
+UNWIND relationships AS rel
+WITH rel AS p, endNode(rel) AS o, n
+WITH COLLECT(p) + COLLECT(o) + n as nodes
+WITH DISTINCT nodes
+UNWIND nodes as node
+WITH node
+WHERE node.created_by <> "00000000-0000-0000-0000-000000000000"
+WITH DISTINCT node.created_by AS created_by, node.created_at AS created_at
+RETURN COUNT(created_by) as cnt""")
+    fun findContributorsByResourceId(id: ResourceId, pageable: Pageable): Page<ResourceContributor>
+
+    @Query("""MATCH (n:Resource {resource_id: $id}) RETURN EXISTS ((n)-[:RELATED]-(:Thing)) AS used""")
+    fun checkIfResourceHasStatements(id: ResourceId): Boolean
+
+    @Query(value = """MATCH (n:Comparison {organization_id: $id })-[r:RELATED {predicate_id: 'compareContribution'}]->(rc:Contribution)-[rr:RELATED {predicate_id: 'P32'}]->(p:Problem) RETURN DISTINCT p""",
+        countQuery = """MATCH (n:Comparison {organization_id: $id })-[r:RELATED {predicate_id: 'compareContribution'}]->(rc:Contribution)-[rr:RELATED {predicate_id: 'P32'}]->(p:Problem) RETURN count(DISTINCT p)""")
+    fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Neo4jResource>
 }
 
 @QueryResult

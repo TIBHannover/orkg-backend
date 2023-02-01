@@ -1,16 +1,19 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClassRepository
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteral
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteralRepository
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jPredicate
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jPredicateRepository
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceRepository
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatement
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatementIdGenerator
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatementRepository
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.Class
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
@@ -19,15 +22,16 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
-import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
+import eu.tib.orkg.prototype.statements.spi.StatementRepository.ResourceContributor
 import java.util.*
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
@@ -150,6 +154,27 @@ class SpringDataNeo4jStatementAdapter(
         neo4jRepository.findDOIByContributionId(id).map(Neo4jLiteral::toLiteral)
 
     override fun countPredicateUsage(id: PredicateId) = neo4jRepository.countPredicateUsage(id)
+
+    override fun getIncomingStatementsCount(ids: List<ResourceId>): Iterable<Long> =
+        neo4jRepository.getIncomingStatementsCount(ids)
+
+    override fun findByDOI(doi: String): Optional<Resource> =
+        neo4jRepository.findByDOI(doi).map(Neo4jResource::toResource)
+
+    override fun findAllByDOI(doi: String): Iterable<Resource> =
+        neo4jRepository.findAllByDOI(doi).map(Neo4jResource::toResource)
+
+    override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
+        neo4jRepository.findProblemsByObservatoryId(id).map(Neo4jResource::toResource)
+
+    override fun findContributorsByResourceId(id: ResourceId, pageable: Pageable): Page<ResourceContributor> =
+        neo4jRepository.findContributorsByResourceId(id, pageable)
+
+    override fun checkIfResourceHasStatements(id: ResourceId): Boolean =
+        neo4jRepository.checkIfResourceHasStatements(id)
+
+    override fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findProblemsByOrganizationId(id, pageable).map(Neo4jResource::toResource)
 
     private fun Neo4jStatement.toStatement(): GeneralStatement = GeneralStatement(
         id = statementId!!,

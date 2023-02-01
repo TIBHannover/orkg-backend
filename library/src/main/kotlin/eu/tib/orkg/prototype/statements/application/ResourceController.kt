@@ -11,7 +11,7 @@ import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
+import eu.tib.orkg.prototype.statements.spi.StatementRepository.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -135,8 +135,8 @@ class ResourceController(
     }
 
     @GetMapping("{id}/contributors")
-    fun findContributorsById(@PathVariable id: ResourceId): Iterable<ResourceContributors> {
-        return service.findContributorsByResourceId(id)
+    fun findContributorsById(@PathVariable id: ResourceId, pageable: Pageable): Page<ResourceContributor> {
+        return service.findContributorsByResourceId(id, pageable)
     }
 
     @DeleteMapping("/{id}")

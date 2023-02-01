@@ -11,7 +11,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.stringify
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
-import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import java.util.*
 import org.springframework.cache.annotation.CacheConfig
 import org.springframework.cache.annotation.CacheEvict
@@ -163,29 +162,11 @@ class SpringDataNeo4jResourceAdapter(
             pageable
         ).map(Neo4jResource::toResource)
 
-    override fun getIncomingStatementsCount(ids: List<ResourceId>): Iterable<Long> =
-        neo4jRepository.getIncomingStatementsCount(ids)
-
-    override fun findByDOI(doi: String): Optional<Resource> =
-        neo4jRepository.findByDOI(doi).map(Neo4jResource::toResource)
-
-    override fun findAllByDOI(doi: String): Iterable<Resource> =
-        neo4jRepository.findAllByDOI(doi).map(Neo4jResource::toResource)
-
     override fun findByLabel(label: String?): Optional<Resource> =
         neo4jRepository.findByLabel(label).map(Neo4jResource::toResource)
 
     override fun findByClassAndObservatoryId(`class`: String, id: ObservatoryId): Iterable<Resource> =
         neo4jRepository.findByClassAndObservatoryId(`class`, id).map(Neo4jResource::toResource)
-
-    override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
-        neo4jRepository.findProblemsByObservatoryId(id).map(Neo4jResource::toResource)
-
-    override fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors> =
-        neo4jRepository.findContributorsByResourceId(id)
-
-    override fun checkIfResourceHasStatements(id: ResourceId): Boolean =
-        neo4jRepository.checkIfResourceHasStatements(id)
 
     override fun findAllByVerifiedIsTrue(pageable: Pageable): Page<Resource> =
         neo4jRepository.findAllByVerifiedIsTrue(pageable).map(Neo4jResource::toResource)
@@ -260,9 +241,6 @@ class SpringDataNeo4jResourceAdapter(
 
     override fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
         neo4jRepository.findComparisonsByOrganizationId(id, pageable).map(Neo4jResource::toResource)
-
-    override fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
-        neo4jRepository.findProblemsByOrganizationId(id, pageable).map(Neo4jResource::toResource)
 
     private fun Resource.toNeo4jResource() =
         // We need to fetch the original resource, so "resources" is set properly.

@@ -22,7 +22,7 @@ const val CLASS_ID_TO_CLASS_EXISTS_CACHE = "class-id-to-class-exists"
 @CacheConfig(cacheNames = [CLASS_ID_TO_CLASS_CACHE, CLASS_ID_TO_CLASS_EXISTS_CACHE])
 class SpringDataNeo4jClassAdapter(
     private val neo4jRepository: Neo4jClassRepository,
-    private val neo4jThingIdGenerator: Neo4jClassIdGenerator,
+    private val neo4jClassIdGenerator: Neo4jClassIdGenerator,
 ) : ClassRepository {
     @Caching(
         evict = [
@@ -79,7 +79,7 @@ class SpringDataNeo4jClassAdapter(
         // IDs could exist already by manual creation. We need to find the next available one.
         var id: ThingId
         do {
-            id = neo4jThingIdGenerator.nextIdentity()
+            id = neo4jClassIdGenerator.nextIdentity()
         } while (neo4jRepository.existsByClassId(id.toClassId()))
         return id
     }

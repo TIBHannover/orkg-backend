@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.AttributeConverter
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
+import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.*
 import org.springframework.boot.autoconfigure.domain.EntityScan
@@ -22,6 +23,7 @@ class Neo4jConfiguration {
             AttributeConverter(ClassId::class, ::ClassId),
             AttributeConverter(LiteralId::class, ::LiteralId),
             AttributeConverter(ContributorId::class, ::ContributorId),
+            AttributeConverter(PredicateId::class, ::PredicateId),
             AttributeConverter(
                 kClass = OffsetDateTime::class,
                 deserializer = { OffsetDateTime.parse(it, ISO_OFFSET_DATE_TIME) },

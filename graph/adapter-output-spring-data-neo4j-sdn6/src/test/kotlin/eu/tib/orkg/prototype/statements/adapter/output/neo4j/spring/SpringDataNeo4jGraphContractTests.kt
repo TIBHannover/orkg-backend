@@ -3,8 +3,10 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 import eu.tib.orkg.prototype.Neo4jContainerInitializer
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
+import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.classRepositoryContract
 import eu.tib.orkg.prototype.statements.spi.literalRepositoryContract
+import eu.tib.orkg.prototype.statements.spi.predicateRepositoryContract
 import io.kotest.core.spec.style.DescribeSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
@@ -18,7 +20,7 @@ import org.springframework.test.context.ContextConfiguration
     classes = [
 //        SpringDataNeo4jStatementAdapter::class,
 //        SpringDataNeo4jResourceAdapter::class,
-//        SpringDataNeo4jPredicateAdapter::class,
+        SpringDataNeo4jPredicateAdapter::class,
         SpringDataNeo4jLiteralAdapter::class,
         SpringDataNeo4jClassAdapter::class
     ],
@@ -33,11 +35,11 @@ internal class SpringDataNeo4jGraphContractTests(
     @Autowired private val springDataNeo4jClassAdapter: ClassRepository,
     @Autowired private val springDataNeo4jLiteralAdapter: LiteralRepository,
 //    @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,
-//    @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository
+    @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository,
 ) : DescribeSpec({
     include(classRepositoryContract(springDataNeo4jClassAdapter))
     include(literalRepositoryContract(springDataNeo4jLiteralAdapter))
-//    include(predicateRepositoryContract(springDataNeo4jPredicateAdapter))
+    include(predicateRepositoryContract(springDataNeo4jPredicateAdapter))
 //    include(resourceRepositoryContract(springDataNeo4jResourceAdapter))
 //    include(
 //        statementRepositoryContract(

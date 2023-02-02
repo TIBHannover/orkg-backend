@@ -177,7 +177,7 @@ ORDER BY rel.created_at DESC"""
     @Query("""OPTIONAL MATCH (:Thing)-[r1:RELATED {predicate_id: $id}]->(:Thing) OPTIONAL MATCH (:Predicate {predicate_id: $id})-[r2:RELATED]-(:Thing) WITH COUNT(DISTINCT r1) as relations, COUNT(DISTINCT r2) as nodes RETURN relations + nodes as cnt""")
     fun countPredicateUsage(id: PredicateId): Long
 
-    @Query("""MATCH (node:Paper)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(:Literal {label: $doi}) WHERE not 'PaperDeleted' in labels(node) RETURN node""")
+    @Query("""MATCH (node:Paper)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(:Literal {label: $doi}) WHERE not 'PaperDeleted' in labels(node) RETURN node LIMIT 1""")
     fun findByDOI(doi: String): Optional<Neo4jResource>
 
     // TODO: Update endpoint to use pagination once we upgraded to Neo4j 4.0

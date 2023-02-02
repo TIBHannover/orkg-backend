@@ -41,7 +41,7 @@ class ResearchFieldController(
         pageable: Pageable
     ): ResponseEntity<Page<PaperCountPerResearchProblem>> {
         resourceService.findById(id)
-            .orElseThrow { ResourceNotFound(id) }
+            .orElseThrow { ResourceNotFound.withId(id) }
         return ok(service.getResearchProblemsOfField(id, pageable))
     }
 
@@ -61,7 +61,7 @@ class ResearchFieldController(
     ): ResponseEntity<Page<ResourceRepresentation>>? {
         // Add if condition to check if featured is present and pass the variable
         // Do the same for all
-        resourceService.findById(id).orElseThrow { ResourceNotFound(id) }
+        resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return ok(service.getResearchProblemsIncludingSubFields(
             id = id,
             featured = featured,
@@ -79,7 +79,7 @@ class ResearchFieldController(
         @PathVariable id: ResourceId,
         pageable: Pageable
     ): ResponseEntity<Page<Contributor>> {
-        resourceService.findById(id).orElseThrow { ResourceNotFound(id) }
+        resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return ok(service.getContributorsIncludingSubFields(id, pageable))
     }
 
@@ -97,7 +97,7 @@ class ResearchFieldController(
         unlisted: Boolean,
         pageable: Pageable
     ): ResponseEntity<Page<ResourceRepresentation>>? {
-        resourceService.findById(id).orElseThrow { ResourceNotFound(id) }
+        resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return ok(service.getComparisonsIncludingSubFields(
             id = id,
             featured = featured,
@@ -120,7 +120,7 @@ class ResearchFieldController(
         unlisted: Boolean,
         pageable: Pageable
     ): ResponseEntity<Page<ResourceRepresentation>>? {
-        resourceService.findById(id).orElseThrow { ResourceNotFound(id) }
+        resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return ok(service.getPapersIncludingSubFields(
             id = id,
             featured = featured,
@@ -142,7 +142,7 @@ class ResearchFieldController(
         unlisted: Boolean,
         pageable: Pageable
     ): ResponseEntity<Page<ResourceRepresentation>>? {
-        resourceService.findById(id).orElseThrow { ResourceNotFound(id) }
+        resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return ok(service.getPapersExcludingSubFields(
             id = id,
             featured = featured,
@@ -164,7 +164,7 @@ class ResearchFieldController(
         unlisted: Boolean,
         pageable: Pageable
     ): ResponseEntity<Page<ResourceRepresentation>>? {
-        resourceService.findById(id).orElseThrow { ResourceNotFound(id) }
+        resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return ok(service.getComparisonsExcludingSubFields(
             id = id,
             featured = featured,
@@ -184,7 +184,7 @@ class ResearchFieldController(
         featured: Optional<Boolean>,
         pageable: Pageable
     ): ResponseEntity<Page<Contributor>> {
-        resourceService.findById(id).orElseThrow { ResourceNotFound(id) }
+        resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return ok(service.getContributorsExcludingSubFields(id, pageable))
     }
 
@@ -201,7 +201,7 @@ class ResearchFieldController(
         unlisted: Boolean,
         pageable: Pageable
     ): ResponseEntity<Page<ResourceRepresentation>>? {
-        resourceService.findById(id).orElseThrow { ResourceNotFound(id) }
+        resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
         return ok(service.getResearchProblemsExcludingSubFields(
             id = id,
             featured = featured,

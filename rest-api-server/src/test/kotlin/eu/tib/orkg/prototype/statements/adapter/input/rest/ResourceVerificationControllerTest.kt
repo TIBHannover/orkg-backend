@@ -62,7 +62,7 @@ class ResourceVerificationControllerTest {
             @Test
             fun `Then the controller returns 404 Not Found`() {
                 val id = ResourceId("unknown")
-                every { service.markAsVerified(any()) } throws ResourceNotFound(id)
+                every { service.markAsVerified(any()) } throws ResourceNotFound.withId(id)
                 mockMvc.perform(markVerifiedRequest(id.value)).andExpect(status().isNotFound)
             }
         }
@@ -87,7 +87,7 @@ class ResourceVerificationControllerTest {
             @Test
             fun `Then the controller returns 404 Not Found`() {
                 val id = ResourceId("unknown")
-                every { service.markAsUnverified(any()) } throws ResourceNotFound(id)
+                every { service.markAsUnverified(any()) } throws ResourceNotFound.withId(id)
                 mockMvc.perform(markUnverifiedRequest(id.value)).andExpect(status().isNotFound)
             }
         }

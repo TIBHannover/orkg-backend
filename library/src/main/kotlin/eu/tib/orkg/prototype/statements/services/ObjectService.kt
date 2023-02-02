@@ -297,7 +297,7 @@ class ObjectService(
      * o/w throw out a suitable exception
      */
     private fun checkIfResourceExists(resourceId: String) {
-        if (!resourceService.exists(ResourceId(resourceId))) throw ResourceNotFound(resourceId)
+        if (!resourceService.exists(ResourceId(resourceId))) throw ResourceNotFound.withId(resourceId)
     }
 
     /**

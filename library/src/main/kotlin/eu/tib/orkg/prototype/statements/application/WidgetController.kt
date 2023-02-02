@@ -23,7 +23,7 @@ class WidgetController(private val service: ResourceUseCases, private val statem
 
         require(searchString != null || titleString != null) { "doi and title is missing" }
         val found = (if (searchString != null)
-            service.findAllByDOI(searchString).firstOrNull()
+            service.findByDOI(searchString).orElse(null)
         else
             service.findAllByTitle(titleString).firstOrNull())
             ?: return notFound().build()

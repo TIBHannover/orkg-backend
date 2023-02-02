@@ -40,7 +40,6 @@ interface RetrieveResourceUseCase {
         createdBy: ContributorId
     ): Page<ResourceRepresentation>
 
-    fun findAllByDOI(doi: String): Iterable<ResourceRepresentation>
     fun findAllByFeatured(pageable: Pageable): Page<ResourceRepresentation>
     fun findAllByLabel(pageable: Pageable, label: String): Page<ResourceRepresentation>
     fun findAllByLabelContaining(pageable: Pageable, part: String): Page<ResourceRepresentation>

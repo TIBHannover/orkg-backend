@@ -154,14 +154,8 @@ class SpringDataNeo4jStatementAdapter(
 
     override fun countPredicateUsage(id: PredicateId) = neo4jRepository.countPredicateUsage(id)
 
-    override fun getIncomingStatementsCount(ids: List<ResourceId>): Iterable<Long> =
-        neo4jRepository.getIncomingStatementsCount(ids)
-
     override fun findByDOI(doi: String): Optional<Resource> =
         neo4jRepository.findByDOI(doi).map(Neo4jResource::toResource)
-
-    override fun findAllByDOI(doi: String): Iterable<Resource> =
-        neo4jRepository.findAllByDOI(doi).map(Neo4jResource::toResource)
 
     override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
         neo4jRepository.findProblemsByObservatoryId(id).map(Neo4jResource::toResource)

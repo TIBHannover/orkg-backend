@@ -12,8 +12,9 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
-import eu.tib.orkg.prototype.statements.spi.StatementRepository.*
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -169,23 +170,18 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
                 || it.`object` is Predicate && (it.`object` as Predicate).id == id
         }.toLong()
 
-    // TODO: rename to countIncomingStatements
-    override fun getIncomingStatementsCount(ids: List<ResourceId>): Iterable<Long> =
-        ids.map { id -> entities.values.count { it.`object`.thingId.value == id.value }.toLong() }
-
-    override fun findByDOI(doi: String): Optional<Resource> = Optional.ofNullable(findAllByDOI(doi).firstOrNull())
-
-    override fun findAllByDOI(doi: String): Iterable<Resource> =
-        entities.values.filter {
+    override fun findByDOI(doi: String): Optional<Resource> =
+        Optional.ofNullable(entities.values.find {
             it.subject is Resource && with(it.subject as Resource) {
                 paperClass in classes && paperDeletedClass !in classes
             }   && it.predicate.id == hasDOI
                 && it.`object` is Literal && it.`object`.label == doi
-        }.map { it.subject as Resource }
+        }).map { it.subject as Resource }
 
     // TODO: rename to findAllProblemsByObservatoryId
     override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
-        entities.values.asSequence().filter {
+        // FIXME: Create a union with all Problems that are not used in statements
+        entities.values.filter {
             it.subject is Resource && with(it.subject as Resource) {
                 paperClass in classes && observatoryId == id
             }
@@ -195,7 +191,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
                     problemClass in classes && observatoryId == id
                 }
             }.map { it.`object` as Resource }
-        }.flatten().distinct().toList()
+        }.flatten().distinct()
 
     // TODO: rename to findAllContributorsByResourceId
     override fun findContributorsByResourceId(id: ResourceId, pageable: Pageable): Page<ResourceContributor> =
@@ -203,11 +199,17 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
             it.`object` !is Resource || (it.`object` as Resource).classes.none { `class` ->
                 `class` == paperClass || `class` == researchProblemClass || `class` == researchFieldClass
             }
-        }.map { setOf(
-            it.subject.toResourceContributor(),
-            it.predicate.toResourceContributor(),
-            it.`object`.toResourceContributor())
-        }.flatten().distinct().sortedBy { it.createdAt }.paged(pageable)
+        }.asSequence().map {
+            setOf(
+                it.subject.toResourceContributor(),
+                it.`object`.toResourceContributor(),
+                ResourceContributor(it.createdBy.toString(), it.createdAt!!.format(ISO_OFFSET_DATE_TIME))
+            )
+        }.flatten().distinct()
+            .filter { it.createdBy != "00000000-0000-0000-0000-000000000000" }
+            .sortedByDescending { it.createdAt }
+            .toList()
+            .paged(pageable)
 
     override fun checkIfResourceHasStatements(id: ResourceId): Boolean =
         entities.values.any { it.subject.thingId.value == id.value || it.`object`.thingId.value == id.value }
@@ -245,7 +247,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
             val statement = frontier.pop()
             visited.add(statement)
             frontier.addAll(entities.values.filter {
-                it.subject == statement.`object` && statement !in visited && expansionFilter(it)
+                it.subject == statement.`object` && it !in visited && expansionFilter(it)
             })
         }
         return visited
@@ -253,9 +255,9 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
 
     private fun Thing.toResourceContributor() =
         when (this) {
-            is Class -> ResourceContributor(createdBy, createdAt)
-            is Resource -> ResourceContributor(createdBy, createdAt)
-            is Predicate -> ResourceContributor(createdBy, createdAt)
-            is Literal -> ResourceContributor(createdBy, createdAt)
+            is Class -> ResourceContributor(createdBy.value.toString(), createdAt.format(ISO_OFFSET_DATE_TIME))
+            is Resource -> ResourceContributor(createdBy.value.toString(), createdAt.format(ISO_OFFSET_DATE_TIME))
+            is Predicate -> ResourceContributor(createdBy.value.toString(), createdAt.format(ISO_OFFSET_DATE_TIME))
+            is Literal -> ResourceContributor(createdBy.value.toString(), createdAt.format(ISO_OFFSET_DATE_TIME))
         }
 }

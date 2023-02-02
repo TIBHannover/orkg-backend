@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.statements.spi
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
@@ -11,7 +10,6 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import java.time.OffsetDateTime
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -65,9 +63,7 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun fetchAsBundle(id: String, configuration: Map<String, Any>): Iterable<GeneralStatement>
     fun findDOIByContributionId(id: ResourceId): Optional<Literal>
     fun countPredicateUsage(id: PredicateId): Long
-    fun getIncomingStatementsCount(ids: List<ResourceId>): Iterable<Long>
     fun findByDOI(doi: String): Optional<Resource>
-    fun findAllByDOI(doi: String): Iterable<Resource>
     fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource>
     fun findContributorsByResourceId(id: ResourceId, pageable: Pageable): Page<ResourceContributor>
     fun checkIfResourceHasStatements(id: ResourceId): Boolean

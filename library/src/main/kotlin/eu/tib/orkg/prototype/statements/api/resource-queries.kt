@@ -6,7 +6,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.spi.StatementRepository.ResourceContributor
+import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

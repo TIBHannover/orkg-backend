@@ -72,12 +72,12 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun findContributorsByResourceId(id: ResourceId, pageable: Pageable): Page<ResourceContributor>
     fun checkIfResourceHasStatements(id: ResourceId): Boolean
     fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
-
-    @QueryResult
-    data class ResourceContributor(
-        @JsonProperty("created_by")
-        val createdBy: ContributorId,
-        @JsonProperty("created_at")
-        val createdAt: OffsetDateTime
-    )
 }
+
+@QueryResult
+data class ResourceContributor(
+    @JsonProperty("created_by")
+    val createdBy: String, // FIXME: This should be ContributorId
+    @JsonProperty("created_at")
+    val createdAt: String // FIXME: This should be OffsetDateTime
+)

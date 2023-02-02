@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.ObjectService
+import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import java.util.*
 import eu.tib.orkg.prototype.statements.spi.StatementRepository.*
 import org.springframework.data.domain.Page
@@ -188,7 +189,7 @@ ORDER BY rel.created_at DESC"""
     @Query("""MATCH (n:Paper {observatory_id: $id})-[*]->(r:Problem) RETURN r UNION ALL MATCH (r:Problem {observatory_id: $id}) RETURN r""")
     fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Neo4jResource>
 
-    @Query("""MATCH (n:Resource {resource_id: "$id"})
+    @Query("""MATCH (n:Resource {resource_id: $id})
 CALL apoc.path.subgraphAll(n, {relationshipFilter: ">", labelFilter: "-ResearchField|-ResearchProblem|-Paper"})
 YIELD relationships
 UNWIND relationships AS rel
@@ -198,10 +199,10 @@ WITH DISTINCT nodes
 UNWIND nodes as node
 WITH node
 WHERE node.created_by <> "00000000-0000-0000-0000-000000000000"
-WITH DISTINCT node.created_by AS created_by, node.created_at AS created_at
-RETURN created_by, created_at
-ORDER BY created_at DESC""",
-        countQuery = """MATCH (n:Resource {resource_id: "$id"})
+WITH DISTINCT node.created_by AS createdBy, node.created_at AS createdAt
+RETURN createdBy, createdAt
+ORDER BY createdAt DESC""",
+        countQuery = """MATCH (n:Resource {resource_id: $id})
 CALL apoc.path.subgraphAll(n, {relationshipFilter: ">", labelFilter: "-ResearchField|-ResearchProblem|-Paper"})
 YIELD relationships
 UNWIND relationships AS rel
@@ -211,8 +212,8 @@ WITH DISTINCT nodes
 UNWIND nodes as node
 WITH node
 WHERE node.created_by <> "00000000-0000-0000-0000-000000000000"
-WITH DISTINCT node.created_by AS created_by, node.created_at AS created_at
-RETURN COUNT(created_by) as cnt""")
+WITH DISTINCT node.created_by AS createdBy, node.created_at AS createdAt
+RETURN COUNT(createdBy) as cnt""")
     fun findContributorsByResourceId(id: ResourceId, pageable: Pageable): Page<ResourceContributor>
 
     @Query("""MATCH (n:Resource {resource_id: $id}) RETURN EXISTS ((n)-[:RELATED]-(:Thing)) AS used""")

@@ -5,7 +5,6 @@ import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
-import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -16,6 +15,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.maps.shouldContainExactly
 import io.kotest.matchers.shouldBe
@@ -678,6 +678,110 @@ fun <
                     val actual = repository.countPredicateUsage(`object`.id!!)
                     actual shouldBe 1
                 }
+            }
+        }
+    }
+
+    context("counting incoming statements for a resource") {
+        it("returns the correct result") {
+            val statement1 = fabricator.random<GeneralStatement>().copy(
+                `object` = createResource(id = ResourceId("1"))
+            )
+            val statement2 = fabricator.random<GeneralStatement>().copy(
+                `object` = statement1.`object`
+            )
+            val statement3 = fabricator.random<GeneralStatement>().copy(
+                `object` = createResource(id = ResourceId("2"))
+            )
+            val statement4 = fabricator.random<GeneralStatement>().copy(
+                `object` = statement3.`object`
+            )
+            val statement5 = fabricator.random<GeneralStatement>().copy(
+                `object` = statement3.`object`
+            )
+            saveStatement(statement1)
+            saveStatement(statement2)
+            saveStatement(statement3)
+            saveStatement(statement4)
+            saveStatement(statement5)
+
+            val actual = repository.getIncomingStatementsCount(
+                listOf(ResourceId("1"), ResourceId("2"), ResourceId("Missing"))
+            )
+            actual.count() shouldBe 3
+            actual shouldContainExactly listOf(2L, 3L, 0L)
+        }
+    }
+
+    context("counting incoming statements for a resource") {
+        it("returns the correct result") {
+            val statement1 = fabricator.random<GeneralStatement>().copy(
+                `object` = createResource(id = ResourceId("1"))
+            )
+            val statement2 = fabricator.random<GeneralStatement>().copy(
+                `object` = statement1.`object`
+            )
+            val statement3 = fabricator.random<GeneralStatement>().copy(
+                `object` = createResource(id = ResourceId("2"))
+            )
+            val statement4 = fabricator.random<GeneralStatement>().copy(
+                `object` = statement3.`object`
+            )
+            val statement5 = fabricator.random<GeneralStatement>().copy(
+                `object` = statement3.`object`
+            )
+            saveStatement(statement1)
+            saveStatement(statement2)
+            saveStatement(statement3)
+            saveStatement(statement4)
+            saveStatement(statement5)
+
+            val actual = repository.getIncomingStatementsCount(
+                listOf(ResourceId("1"), ResourceId("2"), ResourceId("Missing"))
+            )
+            actual.count() shouldBe 3
+            actual shouldContainExactly listOf(2L, 3L, 0L)
+        }
+    }
+
+    describe("finding a paper") {
+        val doi = fabricator.random<String>()
+        val hasDoi = createPredicate(id = PredicateId("P26"))
+        context("by doi") {
+            it("returns the correct result") {
+                val paper = createResource(classes = setOf(ThingId("Paper")))
+                val paperHasDoi = createStatement(
+                    subject = paper,
+                    predicate = hasDoi,
+                    `object` = createLiteral(label = doi)
+                )
+                saveStatement(paperHasDoi)
+
+                val actual = repository.findByDOI(doi)
+                actual.isPresent shouldBe true
+                actual.get() shouldBe paper
+            }
+            it("does not return deleted papers") {
+                val paper = createResource(
+                    classes = setOf(ThingId("Paper"), ThingId("PaperDeleted"))
+                )
+                val paperHasDoi = createStatement(
+                    subject = paper,
+                    predicate = hasDoi,
+                    `object` = createLiteral(label = doi)
+                )
+                saveStatement(paperHasDoi)
+
+                val actual = repository.findByDOI(doi)
+                actual.isPresent shouldBe false
+            }
+        }
+    }
+
+    describe("finding several a papers") {
+        context("by doi") {
+            it("returns the correct result") {
+
             }
         }
     }

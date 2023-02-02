@@ -60,7 +60,7 @@ class OrganizationController(
         @RequestBody @Valid organization: CreateOrganizationRequest,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<Any> {
-        val decodedLogo = organization.organizationLogo.decodeBase64()
+        val decodedLogo = EncodedImage(organization.organizationLogo).decodeBase64()
         if (service.findByName(organization.organizationName).isPresent) {
             throw OrganizationAlreadyExists.withName(organization.organizationName)
         } else if (service.findByDisplayId(organization.displayId).isPresent) {
@@ -165,17 +165,17 @@ class OrganizationController(
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateOrganizationLogo(
         @PathVariable id: OrganizationId,
-        @RequestBody @Valid submittedLogo: EncodedImage,
+        @RequestBody @Valid submittedLogo: String,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<Any> {
         val userId = authenticatedUserId()
-        val image = submittedLogo.decodeBase64()
+        val image = EncodedImage(submittedLogo).decodeBase64()
         service.updateLogo(id, image.data, image.mimeType, ContributorId(userId))
         val location = uriComponentsBuilder
             .path("api/organizations/{id}/logo")
             .buildAndExpand(id)
             .toUri()
-        return ResponseEntity.created(location).body(submittedLogo.value)
+        return ResponseEntity.created(location).body(submittedLogo)
     }
 
     @GetMapping("{id}/logo")
@@ -208,7 +208,7 @@ class OrganizationController(
         @JsonProperty("organization_name")
         val organizationName: String,
         @JsonProperty("organization_logo")
-        var organizationLogo: EncodedImage,
+        var organizationLogo: String,
         @JsonProperty("created_by")
         val createdBy: ContributorId,
         val url: String,
@@ -235,8 +235,7 @@ class OrganizationController(
     )
 }
 
-@JvmInline
-value class EncodedImage(val value: String) {
+class EncodedImage(val value: String) {
     fun decodeBase64(): OrganizationController.RawImage {
         val matcher = encodedImagePattern.matcher(value)
         if (!matcher.matches()) {

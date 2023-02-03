@@ -135,40 +135,13 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             }
             val expected = resources.take(expectedCount)
 
-            context("without pagination") {
-                // Disabled because the method only finds resources with class Paper
-                xit("returns the correct result") {
-                    resources.forEach(repository::save)
-                    val result = repository.findAllByLabel("label to find")
-                    result shouldNotBe null
-                    result.count() shouldBe expectedCount
-                    result shouldContainAll expected
-                }
-            }
-            context("with pagination") {
+            // Disabled because the method only finds resources with class Paper
+            xit("returns the correct result") {
                 resources.forEach(repository::save)
-                val result = repository.findAllByLabel(
-                    "label to find",
-                    PageRequest.of(0, 5)
-                )
-
-                it("returns the correct result") {
-                    result shouldNotBe null
-                    result.content shouldNotBe null
-                    result.content.size shouldBe expectedCount
-                    result.content shouldContainAll expected
-                }
-                it("pages the result correctly") {
-                    result.size shouldBe 5
-                    result.number shouldBe 0
-                    result.totalPages shouldBe 1
-                    result.totalElements shouldBe expectedCount
-                }
-                xit("sorts the results by creation date by default") {
-                    result.content.zipWithNext { a, b ->
-                        a.createdAt shouldBeLessThan b.createdAt
-                    }
-                }
+                val result = repository.findAllByLabel("label to find")
+                result shouldNotBe null
+                result.count() shouldBe expectedCount
+                result shouldContainAll expected
             }
         }
         context("by label regex") {

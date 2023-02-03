@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 private val paperClass = ThingId("Paper")
+private val paperDeletedClass = ThingId("PaperDeleted")
 private val comparisonClass = ThingId("Comparison")
 private val unknownUUID = UUID(0, 0)
 
@@ -45,11 +46,8 @@ class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
         Optional.ofNullable(entities[id])
 
     // TODO: rename to findAllPapersByLabel or replace with a generic method with a classes parameter
-    override fun findAllByLabel(label: String, pageable: Pageable) =
-        findAllFilteredAndPaged(pageable) { it.label == label }
-
     override fun findAllByLabel(label: String) =
-        entities.values.filter { it.label == label }
+        entities.values.filter { it.label == label && paperClass in it.classes && paperDeletedClass !in it.classes}
 
     override fun findAllByLabelMatchesRegex(label: String, pageable: Pageable) =
         findAllFilteredAndPaged(pageable) { it.label.matches(Regex(label)) }

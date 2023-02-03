@@ -19,7 +19,6 @@ interface ResourceRepository : EntityRepository<Resource, ResourceId> {
     fun deleteByResourceId(id: ResourceId)
     fun deleteAll()
     fun findByResourceId(id: ResourceId?): Optional<Resource>
-    fun findAllByLabel(label: String, pageable: Pageable): Page<Resource>
     fun findAllByLabelMatchesRegex(label: String, pageable: Pageable): Page<Resource>
     fun findAllByLabelContaining(part: String, pageable: Pageable): Page<Resource>
     fun findAllByClass(`class`: String, pageable: Pageable): Page<Resource>

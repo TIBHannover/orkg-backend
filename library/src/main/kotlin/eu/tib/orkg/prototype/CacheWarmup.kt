@@ -18,7 +18,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Component
 
 @Component
-@Profile("development", "docker")
+@Profile("production")
 class CacheWarmup(
     private val resourceService: ResourceUseCases,
     private val predicateService: PredicateUseCases,

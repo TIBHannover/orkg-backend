@@ -2,10 +2,11 @@ package eu.tib.orkg.prototype.statements.spi
 
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
-import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -16,11 +17,14 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
+import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.maps.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter.*
 import org.orkg.statements.testing.createClass
 import org.orkg.statements.testing.createLiteral
 import org.orkg.statements.testing.createPredicate
@@ -678,6 +682,244 @@ fun <
                     val actual = repository.countPredicateUsage(`object`.id!!)
                     actual shouldBe 1
                 }
+            }
+        }
+    }
+
+    describe("finding a paper") {
+        val doi = fabricator.random<String>()
+        val hasDoi = createPredicate(id = PredicateId("P26"))
+        context("by doi") {
+            it("returns the correct result") {
+                val paper = createResource(classes = setOf(ThingId("Paper")))
+                val paperHasDoi = createStatement(
+                    subject = paper,
+                    predicate = hasDoi,
+                    `object` = createLiteral(label = doi)
+                )
+                saveStatement(paperHasDoi)
+
+                val actual = repository.findByDOI(doi)
+                actual.isPresent shouldBe true
+                actual.get() shouldBe paper
+            }
+            it("does not return deleted papers") {
+                val paper = createResource(
+                    classes = setOf(ThingId("Paper"), ThingId("PaperDeleted"))
+                )
+                val paperHasDoi = createStatement(
+                    subject = paper,
+                    predicate = hasDoi,
+                    `object` = createLiteral(label = doi)
+                )
+                saveStatement(paperHasDoi)
+
+                val actual = repository.findByDOI(doi)
+                actual.isPresent shouldBe false
+            }
+        }
+    }
+
+    describe("finding several research problems") {
+        context("by observatory id") {
+            val observatoryId = fabricator.random<ObservatoryId>()
+            val expected = (0 until 2).map {
+                val contribution = createResource(id = fabricator.random())
+                val researchProblem = createResource(
+                    id = fabricator.random(),
+                    classes = setOf(ThingId("Problem")),
+                    observatoryId = observatoryId
+                )
+                val paper = createResource(
+                    id = fabricator.random(),
+                    classes = setOf(ThingId("Paper")),
+                    observatoryId = observatoryId
+                )
+                val paperHasContribution = createStatement(
+                    id = fabricator.random(),
+                    subject = paper,
+                    `object` = contribution
+                )
+                val contributionHasResearchProblem = createStatement(
+                    id = fabricator.random(),
+                    subject = contribution,
+                    `object` = researchProblem
+                )
+                saveStatement(paperHasContribution)
+                saveStatement(contributionHasResearchProblem)
+                researchProblem
+            }
+
+            val result = repository.findProblemsByObservatoryId(observatoryId)
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.count() shouldBe 2
+                result shouldContainAll expected
+            }
+
+//            val result = repository.findProblemsByObservatoryId(observatoryId, PageRequest.of(0, 5))
+//
+//            it("returns the correct result") {
+//                result shouldNotBe null
+//                result.content shouldNotBe null
+//                result.content.size shouldBe 2
+//                result.content shouldContainAll expected
+//            }
+//            it("pages the result correctly") {
+//                result.size shouldBe 5
+//                result.number shouldBe 0
+//                result.totalPages shouldBe 1
+//                result.totalElements shouldBe 2
+//            }
+//            xit("sorts the results by creation date by default") {
+//                result.content.zipWithNext { a, b ->
+//                    a.createdAt shouldBeLessThan b.createdAt
+//                }
+//            }
+        }
+        context("by organization id") {
+            val organizationId = fabricator.random<OrganizationId>()
+            val compareContribution = fabricator.random<Predicate>().copy(
+                id = PredicateId("compareContribution")
+            )
+            val hasResearchProblem = fabricator.random<Predicate>().copy(
+                id = PredicateId("P32")
+            )
+            val expected = (0 until 2).map {
+                val contribution = createResource(
+                    id = fabricator.random(),
+                    classes = setOf(ThingId("Contribution"))
+                )
+                val researchProblem = createResource(
+                    id = fabricator.random(),
+                    classes = setOf(ThingId("Problem"))
+                )
+                val comparison = createResource(
+                    id = fabricator.random(),
+                    classes = setOf(ThingId("Comparison")),
+                    organizationId = organizationId
+                )
+                val comparisonHasContribution = createStatement(
+                    id = fabricator.random(),
+                    subject = comparison,
+                    predicate = compareContribution,
+                    `object` = contribution
+                )
+                val contributionHasResearchProblem = createStatement(
+                    id = fabricator.random(),
+                    subject = contribution,
+                    predicate = hasResearchProblem,
+                    `object` = researchProblem
+                )
+                saveStatement(comparisonHasContribution)
+                saveStatement(contributionHasResearchProblem)
+                researchProblem
+            }
+
+            val result = repository.findProblemsByOrganizationId(organizationId, PageRequest.of(0, 5))
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe 2
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 5
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe 2
+            }
+            xit("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
+    }
+
+    describe("finding several contributors") {
+        context("by resource id") {
+            val resource = fabricator.random<Resource>()
+
+            setOf("ResearchField", "ResearchProblem", "Paper").forEach {
+                val resourceForIt = fabricator.random<Resource>().copy(
+                    classes = setOf(ThingId(it))
+                )
+                val resourceRelatesToIt = fabricator.random<GeneralStatement>().copy(
+                    subject = resource,
+                    `object` = resourceForIt
+                )
+                saveStatement(resourceRelatesToIt)
+            }
+
+            // Relate to some other Resource
+            val otherResource = fabricator.random<Resource>()
+            val resourceRelatesToOtherResource = fabricator.random<GeneralStatement>().copy(
+                subject = resource,
+                `object` = otherResource
+            )
+            saveStatement(resourceRelatesToOtherResource)
+
+            // Relate otherResource to another Resource
+            val anotherResource = fabricator.random<Resource>()
+            val otherResourceRelatesToAnotherResource = fabricator.random<GeneralStatement>().copy(
+                subject = otherResource,
+                `object` = anotherResource
+            )
+            saveStatement(otherResourceRelatesToAnotherResource)
+
+            val expected = setOf(
+                resource.createdBy to resource.createdAt,
+                otherResource.createdBy to otherResource.createdAt,
+                resourceRelatesToOtherResource.createdBy to resourceRelatesToOtherResource.createdAt,
+                anotherResource.createdBy to anotherResource.createdAt,
+                otherResourceRelatesToAnotherResource.createdBy to otherResourceRelatesToAnotherResource.createdAt
+            ).map { ResourceContributor(it.first.toString(), it.second!!.format(ISO_OFFSET_DATE_TIME)) }
+
+            val result = repository.findContributorsByResourceId(resource.id!!, PageRequest.of(0, 5))
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe 5
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 5
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe 5
+            }
+            it("sorts the results by creation date by default") {
+                result.content.map {
+                    OffsetDateTime.parse(it.createdAt, ISO_OFFSET_DATE_TIME)
+                }.zipWithNext { a, b ->
+                    a shouldBeGreaterThan b
+                }
+            }
+        }
+    }
+
+    describe("checking if a resource is used in a statement") {
+        context("when no statements exist") {
+            it("returns the correct result") {
+                val resource = fabricator.random<Resource>()
+                // Resource has to exist for neo4j repos
+                resourceRepository.save(resource)
+                repository.checkIfResourceHasStatements(resource.id!!) shouldBe false
+            }
+        }
+        context("when a statements exist") {
+            it("returns the correct result") {
+                val statement = fabricator.random<GeneralStatement>().copy(
+                    subject = fabricator.random<Resource>(),
+                    `object` = fabricator.random<Resource>()
+                )
+                saveStatement(statement)
+                repository.checkIfResourceHasStatements((statement.subject as Resource).id!!) shouldBe true
+                repository.checkIfResourceHasStatements((statement.`object` as Resource).id!!) shouldBe true
             }
         }
     }

@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.spi
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
@@ -10,7 +9,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.neo4j.annotation.QueryResult
 
 interface ResourceRepository : EntityRepository<Resource, ResourceId> {
     fun findByIdAndClasses(id: ResourceId, classes: Set<ThingId>): Resource?
@@ -35,15 +33,9 @@ interface ResourceRepository : EntityRepository<Resource, ResourceId> {
     fun findAllIncludingAndExcludingClasses(includeClasses: Set<ThingId>, excludeClasses: Set<ThingId>, pageable: Pageable): Page<Resource>
     fun findAllIncludingAndExcludingClassesByLabel(includeClasses: Set<ThingId>, excludeClasses: Set<ThingId>, label: String, pageable: Pageable): Page<Resource>
     fun findAllIncludingAndExcludingClassesByLabelMatchesRegex(includeClasses: Set<ThingId>, excludeClasses: Set<ThingId>, label: String, pageable: Pageable): Page<Resource>
-    fun getIncomingStatementsCount(ids: List<ResourceId>): Iterable<Long>
-    fun findByDOI(doi: String): Optional<Resource>
-    fun findAllByDOI(doi: String): Iterable<Resource>
     fun findByLabel(label: String?): Optional<Resource>
     fun findAllByLabel(label: String): Iterable<Resource>
     fun findByClassAndObservatoryId(`class`: String, id: ObservatoryId): Iterable<Resource>
-    fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource>
-    fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors>
-    fun checkIfResourceHasStatements(id: ResourceId): Boolean
     fun findAllByVerifiedIsTrue(pageable: Pageable): Page<Resource>
     fun findAllByVerifiedIsFalse(pageable: Pageable): Page<Resource>
     fun findAllByFeaturedIsTrue(pageable: Pageable): Page<Resource>
@@ -63,14 +55,4 @@ interface ResourceRepository : EntityRepository<Resource, ResourceId> {
     fun findAllResourcesByObservatoryIDAndClass(id: ObservatoryId, classes: List<String>, unlisted: Boolean, pageable: Pageable): Page<Resource>
     fun findAllContributorIds(pageable: Pageable): Page<ContributorId>
     fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
-    fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
-
-    @QueryResult
-    data class ResourceContributors(
-        val id: String,
-        @JsonProperty("created_by")
-        val createdBy: String,
-        @JsonProperty("created_at")
-        val createdAt: String
-    )
 }

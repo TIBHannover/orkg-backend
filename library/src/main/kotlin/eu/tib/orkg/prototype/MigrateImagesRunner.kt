@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype
 import eu.tib.orkg.prototype.community.api.OrganizationUseCases
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.files.domain.model.ImageData
+import eu.tib.orkg.prototype.statements.api.UpdateOrganizationUseCases
 import java.io.File
 import javax.activation.MimeType
 import org.apache.logging.log4j.LogManager
@@ -28,10 +29,11 @@ class MigrateImagesRunner(
         File(imagePath!!).listFiles()?.forEach {
             try {
                 val (organizationId, mimeType) = it.name.split(".")
+                val imageData = ImageData(it.readBytes())
+                val image = UpdateOrganizationUseCases.RawImage(imageData, MimeType("image/$mimeType"))
                 organizationService.updateLogo(
                     id = OrganizationId(organizationId),
-                    imageData = ImageData(it.readBytes()),
-                    mimeType = MimeType("image/$mimeType"),
+                    image = image,
                     contributor = null
                 )
                 it.delete()

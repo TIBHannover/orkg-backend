@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype
 
 import eu.tib.orkg.prototype.auth.service.OrkgUserDetailsService
 import eu.tib.orkg.prototype.auth.service.UserRepository
-import eu.tib.orkg.prototype.community.application.OrganizationController
 import eu.tib.orkg.prototype.community.domain.model.Organization
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationType
@@ -11,6 +10,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.files.domain.model.Image
 import eu.tib.orkg.prototype.files.domain.model.ImageData
 import eu.tib.orkg.prototype.files.domain.model.ImageId
+import eu.tib.orkg.prototype.statements.api.UpdateOrganizationUseCases.RawImage
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
@@ -116,11 +116,11 @@ fun loadImage(
     return Image(id, image.data, image.mimeType, createdBy, createdAt)
 }
 
-fun loadRawImage(uri: URI): OrganizationController.RawImage {
+fun loadRawImage(uri: URI): RawImage {
     uri.inputStream.use {
         val mimeType = MimeType(URLConnection.guessContentTypeFromStream(it))
         val data = ImageData(it.readBytes())
-        return OrganizationController.RawImage(data, mimeType)
+        return RawImage(data, mimeType)
     }
 }
 

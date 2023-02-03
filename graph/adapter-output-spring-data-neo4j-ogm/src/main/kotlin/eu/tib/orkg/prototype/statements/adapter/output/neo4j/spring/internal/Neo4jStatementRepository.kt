@@ -165,6 +165,12 @@ ORDER BY rel.created_at DESC"""
     )
     fun fetchAsBundle(id: String, configuration: Map<String, Any>): Iterable<Neo4jStatement>
 
+    @Query(
+        """MATCH ()-[r:RELATED]->() RETURN r.predicate_id as id, COUNT(r) as count ORDER BY count DESC, id""",
+        countQuery = """MATCH ()-[r:RELATED]->() RETURN COUNT(DISTINCT r.predicate_id) as cnt"""
+    )
+    fun countPredicateUsage(pageable: Pageable): Page<Neo4jPredicateUsageCount>
+
     @Query("""MATCH (n:Paper)-[:RELATED {predicate_id: 'P31'}]->(:Resource {resource_id: $id}), (n)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(L:Literal) RETURN L""")
     fun findDOIByContributionId(id: ResourceId): Optional<Neo4jLiteral>
 
@@ -175,5 +181,11 @@ ORDER BY rel.created_at DESC"""
 @QueryResult
 data class StatementsPerResource(
     val resourceId: String,
+    val count: Long
+)
+
+@QueryResult
+data class Neo4jPredicateUsageCount(
+    val id: String,
     val count: Long
 )

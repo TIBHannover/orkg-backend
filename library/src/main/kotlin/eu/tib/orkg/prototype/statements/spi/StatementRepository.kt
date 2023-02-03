@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.spi
 
+import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase.*
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
@@ -56,6 +57,7 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun findAllBySubjects(subjectIds: List<String>, pageable: Pageable): Page<GeneralStatement>
     fun findAllByObjects(objectIds: List<String>, pageable: Pageable): Page<GeneralStatement>
     fun fetchAsBundle(id: String, configuration: Map<String, Any>): Iterable<GeneralStatement>
+    fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount>
     fun findDOIByContributionId(id: ResourceId): Optional<Literal>
     fun countPredicateUsage(id: PredicateId): Long
 }

@@ -206,6 +206,9 @@ class StatementService(
         }
     }
 
+    override fun countPredicateUsage(pageable: Pageable) =
+        statementRepository.countPredicateUsage(pageable)
+
     /**
      * Create a bundle where the first level is not included in the statements.
      *

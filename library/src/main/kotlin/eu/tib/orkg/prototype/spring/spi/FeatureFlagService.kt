@@ -18,4 +18,7 @@ interface FeatureFlagService {
 
     /** Determine if Neo4j 3.x series is used. */
     fun isNeo4jVersion3Enabled(): Boolean
+
+    /** Determine if cache warmup is enabled **/
+    fun isCacheWarmupEnabled(): Boolean
 }

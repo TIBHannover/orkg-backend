@@ -46,4 +46,11 @@ interface RetrieveStatementUseCase {
     ): Iterable<StatementRepresentation>
 
     fun fetchAsBundle(thingId: String, configuration: BundleConfiguration, includeFirst: Boolean): Bundle
+
+    fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount>
+
+    data class PredicateUsageCount(
+        val id: PredicateId,
+        val count: Long
+    )
 }

@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.inmemory
 
+import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase.*
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
@@ -10,6 +11,7 @@ import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.util.*
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 private val paperClass = ThingId("Paper")
@@ -116,6 +118,19 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
 
     override fun fetchAsBundle(id: String, configuration: Map<String, Any>): Iterable<GeneralStatement> {
         TODO("This method can be removed?")
+    }
+
+    override fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount> {
+        val predicateIdToUsageCount = mutableMapOf<PredicateId, Long>()
+        entities.values.forEach {
+            predicateIdToUsageCount.compute(it.predicate.id!!) { _, value ->
+                if (value == null) 1
+                else value + 1
+            }
+        }
+        return predicateIdToUsageCount.entries.map { PredicateUsageCount(it.key, it.value) }
+            .sortedWith(compareByDescending<PredicateUsageCount> { it.count }.thenBy { it.id })
+            .paged(pageable)
     }
 
     override fun deleteAll() {

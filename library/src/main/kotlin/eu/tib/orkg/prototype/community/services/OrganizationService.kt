@@ -11,10 +11,9 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.files.api.CreateImageUseCase
 import eu.tib.orkg.prototype.files.api.ImageUseCases
 import eu.tib.orkg.prototype.files.domain.model.Image
-import eu.tib.orkg.prototype.files.domain.model.ImageData
 import eu.tib.orkg.prototype.files.domain.model.ImageId
+import eu.tib.orkg.prototype.statements.api.UpdateOrganizationUseCases
 import java.util.*
-import javax.activation.MimeType
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -105,11 +104,34 @@ class OrganizationService(
         else Optional.empty()
     }
 
-    override fun updateLogo(id: OrganizationId, imageData: ImageData, mimeType: MimeType, contributor: ContributorId?) {
+    override fun updateLogo(id: OrganizationId, image: UpdateOrganizationUseCases.RawImage, contributor: ContributorId?) {
         val organization = postgresOrganizationRepository.findById(id.value)
             .orElseThrow { OrganizationNotFound(id) }
-        val command = CreateImageUseCase.CreateCommand(imageData, mimeType, contributor)
+        val command = CreateImageUseCase.CreateCommand(image.data, image.mimeType, contributor)
         organization.logoId = imageService.create(command).value
+        postgresOrganizationRepository.save(organization)
+    }
+
+    override fun update(
+        contributorId: ContributorId,
+        command: UpdateOrganizationUseCases.UpdateOrganizationRequest
+    ) {
+        val organization = postgresOrganizationRepository.findById(command.id.value)
+            .orElseThrow { OrganizationNotFound(command.id) }
+            .apply {
+                name = command.name ?: name
+                url = command.url ?: url
+                type = command.type ?: type
+                if (command.logo != null) {
+                    logoId = imageService.create(
+                        CreateImageUseCase.CreateCommand(
+                            command.logo.data,
+                            command.logo.mimeType,
+                            contributorId
+                        )
+                    ).value
+                }
+            }
         postgresOrganizationRepository.save(organization)
     }
 }

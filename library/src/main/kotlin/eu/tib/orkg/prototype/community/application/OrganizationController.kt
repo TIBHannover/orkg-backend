@@ -18,8 +18,10 @@ import eu.tib.orkg.prototype.files.domain.model.Image
 import eu.tib.orkg.prototype.files.domain.model.ImageData
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.UpdateOrganizationUseCases
 import eu.tib.orkg.prototype.statements.application.BaseController
 import java.io.ByteArrayInputStream
+import java.time.OffsetDateTime
 import java.util.*
 import javax.activation.MimeType
 import javax.activation.MimeTypeParseException
@@ -32,15 +34,18 @@ import org.apache.commons.io.IOUtils
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.util.UriComponentsBuilder
 
 private val encodedImagePattern = Regex("""^data:(.*);base64,([A-Za-z0-9+/]+=*)$""").toPattern()
@@ -60,7 +65,7 @@ class OrganizationController(
         @RequestBody @Valid organization: CreateOrganizationRequest,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<Any> {
-        val decodedLogo = organization.organizationLogo.decodeBase64()
+        val decodedLogo = EncodedImage(organization.organizationLogo).decodeBase64()
         if (service.findByName(organization.organizationName).isPresent) {
             throw OrganizationAlreadyExists.withName(organization.organizationName)
         } else if (service.findByDisplayId(organization.displayId).isPresent) {
@@ -125,6 +130,34 @@ class OrganizationController(
         return resourceService.findProblemsByOrganizationId(id, pageable)
     }
 
+    @PatchMapping("{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    fun updateOrganization(
+        @PathVariable id: OrganizationId,
+        @RequestBody @Valid request: UpdateOrganizationRequest
+    ): ResponseEntity<Any> {
+        val userId = authenticatedUserId()
+        service.update(ContributorId(userId), UpdateOrganizationUseCases.UpdateOrganizationRequest(
+            id = id,
+            name = request.name,
+            url = request.url,
+            type = request.type,
+            logo = request.logo?.let {
+                val bytes = request.logo.bytes
+                val mimeType = try {
+                    MimeType(request.logo.contentType)
+                } catch (e: MimeTypeParseException) {
+                    throw InvalidMimeType(request.logo.contentType, e)
+                }
+                UpdateOrganizationUseCases.RawImage(
+                    data = ImageData(bytes),
+                    mimeType = mimeType
+                )
+            }
+        ))
+        return noContent().build()
+    }
+
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateOrganizationName(
@@ -165,17 +198,17 @@ class OrganizationController(
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateOrganizationLogo(
         @PathVariable id: OrganizationId,
-        @RequestBody @Valid submittedLogo: EncodedImage,
+        @RequestBody @Valid submittedLogo: String,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<Any> {
         val userId = authenticatedUserId()
-        val image = submittedLogo.decodeBase64()
-        service.updateLogo(id, image.data, image.mimeType, ContributorId(userId))
+        val image = EncodedImage(submittedLogo).decodeBase64()
+        service.updateLogo(id, image, ContributorId(userId))
         val location = uriComponentsBuilder
             .path("api/organizations/{id}/logo")
             .buildAndExpand(id)
             .toUri()
-        return ResponseEntity.created(location).body(submittedLogo.value)
+        return ResponseEntity.created(location).body(submittedLogo)
     }
 
     @GetMapping("{id}/logo")
@@ -208,7 +241,7 @@ class OrganizationController(
         @JsonProperty("organization_name")
         val organizationName: String,
         @JsonProperty("organization_logo")
-        var organizationLogo: EncodedImage,
+        var organizationLogo: String,
         @JsonProperty("created_by")
         val createdBy: ContributorId,
         val url: String,
@@ -229,15 +262,20 @@ class OrganizationController(
         val value: String
     )
 
-    data class RawImage(
-        val data: ImageData,
-        val mimeType: MimeType
+    data class UpdateOrganizationRequest(
+        @field:Size(min = 1)
+        val name: String?,
+        @field:Size(min = 1)
+        val url: String?,
+        val type: OrganizationType?,
+        val date: OffsetDateTime?,
+        val logo: MultipartFile?
     )
 }
 
 @JvmInline
 value class EncodedImage(val value: String) {
-    fun decodeBase64(): OrganizationController.RawImage {
+    fun decodeBase64(): UpdateOrganizationUseCases.RawImage {
         val matcher = encodedImagePattern.matcher(value)
         if (!matcher.matches()) {
             throw InvalidImageEncoding()
@@ -254,7 +292,7 @@ value class EncodedImage(val value: String) {
         } catch (e: IllegalArgumentException) {
             throw InvalidImageData()
         }
-        return OrganizationController.RawImage(data, mimeType)
+        return UpdateOrganizationUseCases.RawImage(data, mimeType)
     }
 }
 

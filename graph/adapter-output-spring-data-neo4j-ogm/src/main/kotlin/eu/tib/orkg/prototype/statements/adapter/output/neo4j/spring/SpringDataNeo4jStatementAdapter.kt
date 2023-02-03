@@ -13,6 +13,7 @@ import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatementIdGenerator
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatementRepository
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jThing
+import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
@@ -29,10 +30,10 @@ import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
-import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
+import java.util.*
 
 typealias PredicateLookupTable = Map<PredicateId, Predicate>
 
@@ -148,6 +149,11 @@ class SpringDataNeo4jStatementAdapter(
         neo4jRepository.fetchAsBundle(id, configuration).map { it.toStatement() }
 
     override fun exists(id: StatementId): Boolean = neo4jRepository.existsByStatementId(id)
+
+    override fun countPredicateUsage(pageable: Pageable): Page<RetrieveStatementUseCase.PredicateUsageCount> =
+        neo4jRepository.countPredicateUsage(pageable).map {
+            RetrieveStatementUseCase.PredicateUsageCount(PredicateId(it.id), it.count)
+        }
 
     override fun findDOIByContributionId(id: ResourceId): Optional<Literal> =
         neo4jRepository.findDOIByContributionId(id).map(Neo4jLiteral::toLiteral)

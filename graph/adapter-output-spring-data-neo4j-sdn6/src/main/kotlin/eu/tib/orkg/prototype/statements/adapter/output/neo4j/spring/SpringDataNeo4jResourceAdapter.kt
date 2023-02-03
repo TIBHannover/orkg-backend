@@ -242,7 +242,7 @@ class SpringDataNeo4jResourceAdapter(
             .map(Neo4jResource::toResource)
 
     override fun findAllContributorIds(pageable: Pageable): Page<ContributorId> =
-        neo4jRepository.findAllContributorIds(pageable).map { ContributorId(it.value!!) }
+        neo4jRepository.findAllContributorIds(pageable).map(::ContributorId)
 
     override fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
         neo4jRepository.findComparisonsByOrganizationId(id, pageable).map(Neo4jResource::toResource)

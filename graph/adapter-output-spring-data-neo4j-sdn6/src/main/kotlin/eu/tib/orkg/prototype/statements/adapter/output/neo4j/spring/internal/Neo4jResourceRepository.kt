@@ -21,6 +21,7 @@ private const val label = "${'$'}label"
 private const val createdBy = "${'$'}createdBy"
 private const val `class` = "${'$'}`class`"
 private const val id = "${'$'}id"
+private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
 
 /**
  * Partial query that returns the node as well as its ID and relationships.
@@ -40,7 +41,7 @@ private const val RETURN_NODE_COUNT = """RETURN count(node)"""
  * Queries using this partial query must use `node` as the binding name.
  */
 private const val WITH_NODE_PROPERTIES =
-    """WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at"""
+    """WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at, node.created_by AS created_by"""
 
 // Custom queries
 
@@ -200,9 +201,9 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, ResourceId> {
     fun findAllResourcesByObservatoryIdAndClass(id: ObservatoryId, classes: List<String>, unlisted: Boolean, pageable: Pageable): Page<Neo4jResource>
 
 //    @Query(value = """MATCH (n:`Resource`) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" RETURN DISTINCT n.created_by ORDER BY n.created_by ASC""",
-    @Query(value = """MATCH (node:`Resource`) WHERE node.created_by <> "00000000-0000-0000-0000-000000000000" $WITH_NODE_PROPERTIES, node.created_by AS created_by RETURN DISTINCT created_by AS value ORDER BY created_by ASC""",
+    @Query(value = """MATCH (node:`Resource`) WHERE node.created_by <> "00000000-0000-0000-0000-000000000000" $WITH_NODE_PROPERTIES RETURN DISTINCT created_by AS value ORDER BY created_by ASC $PAGE_PARAMS""",
         countQuery = """MATCH (n:`Resource`) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" RETURN COUNT(DISTINCT n.created_by) as cnt""")
-    fun findAllContributorIds(pageable: Pageable): Page<ValueResult> // FIXME: This should be ContributorId
+    fun findAllContributorIds(pageable: Pageable): Page<String> // FIXME: This should be ContributorId
 
     // The return type has to be Iterable<Long> due to type erasure as java.lang.Long or Iterable<java.lang.Long> is
     // required by Spring, but we want to use kotlin.Long whenever possible

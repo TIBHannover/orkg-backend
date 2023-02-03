@@ -14,9 +14,6 @@ coffee-boots:
   cache:
     basic-spec: maximumSize=5000,expireAfterAccess=10m,recordStats
 orkg:
-  storage:
-    images:
-      dir: "${user.dir}/images"
   init:
     setup:
       entities-file: "data/required_entities.json"

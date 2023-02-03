@@ -3,9 +3,6 @@ package eu.tib.orkg.prototype.statements.application
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
-import org.springframework.http.HttpEntity
-import org.springframework.http.ResponseEntity.notFound
-import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -13,27 +10,30 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/widgets/")
-class WidgetController(private val service: ResourceUseCases, private val statementService: StatementUseCases) {
-
+class WidgetController(
+    private val service: ResourceUseCases,
+    private val statementService: StatementUseCases
+) {
     @GetMapping("/")
     fun searchDoi(
-        @RequestParam("doi", required = false) searchString: String?,
-        @RequestParam("title", required = false) titleString: String?
-    ): HttpEntity<WidgetInfo> {
+        @RequestParam(required = false) doi: String?,
+        @RequestParam(required = false) title: String?
+    ): WidgetInfo {
+        if (doi != null && title != null)
+            throw TooManyParameters.requiresExactlyOneOf("doi", "title")
+        val resource = when {
+            doi != null -> service.findByDOI(doi).orElseThrow { ResourceNotFound.withDOI(doi) }
+            title != null -> service.findByTitle(title).orElseThrow { ResourceNotFound.withLabel(title) }
+            else -> throw MissingParameter.requiresAtLeastOneOf("doi", "title")
+        }
+        val totalStatements = statementService.countStatements(resource.id.value)
 
-        require(searchString != null || titleString != null) { "doi and title is missing" }
-        val found = (if (searchString != null)
-            service.findAllByDOI(searchString).firstOrNull()
-        else
-            service.findAllByTitle(titleString).firstOrNull())
-            ?: return notFound().build()
-
-        val totalStatements = statementService.countStatements(found.id.value)
-
-        return ok(WidgetInfo(id = found.id.toString(),
-                                doi = searchString,
-                                title = found.label,
-                                numberOfStatements = totalStatements))
+        return WidgetInfo(
+            id = resource.id.toString(),
+            doi = doi,
+            title = resource.label,
+            numberOfStatements = totalStatements
+        )
     }
 
     data class WidgetInfo(

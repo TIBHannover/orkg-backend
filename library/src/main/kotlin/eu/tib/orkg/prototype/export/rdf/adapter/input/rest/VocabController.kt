@@ -41,7 +41,7 @@ class VocabController(
             return createRedirectResponse("resource", id.value, uriComponentsBuilder)
         val model = service.rdfModelFor(id)
             // TODO: Return meaningful message to the user
-            .orElseThrow { ResourceNotFound(id) }
+            .orElseThrow { ResourceNotFound.withId(id) }
         val response = getRdfSerialization(model, acceptHeader)
         return ResponseEntity.ok()
             .body(response)

@@ -16,6 +16,8 @@ class PropertyBasedFeatureFlagService(
     override fun isFormattedLabelsEnabled(): Boolean = config.formattedLabels
 
     override fun isNeo4jVersion3Enabled(): Boolean = config.useNeo4jVersion3
+
+    override fun isCacheWarmupEnabled(): Boolean = config.cacheWarmup
 }
 
 @ConfigurationProperties(prefix = "orkg.features")
@@ -30,6 +32,8 @@ data class FeatureFlags(
     val formattedLabels: Boolean = false,
     /** Use Neo4j 3.x (legacy) series. */
     val useNeo4jVersion3: Boolean = true,
+    /** Enable cache warmup. */
+    val cacheWarmup: Boolean = true
 )
 
 @Configuration

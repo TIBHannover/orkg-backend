@@ -4,6 +4,7 @@ import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase.PredicateUsageCount
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
@@ -17,14 +18,14 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
-import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
+import io.kotest.matchers.longs.shouldBeGreaterThanOrEqual
 import io.kotest.matchers.maps.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter.*
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import org.orkg.statements.testing.createClass
 import org.orkg.statements.testing.createLiteral
 import org.orkg.statements.testing.createPredicate
@@ -643,44 +644,98 @@ fun <
     }
 
     describe("counting predicate usage") {
-        context("when no statements exist") {
-            it("returns the correct result") {
-                val actual = repository.countPredicateUsage(PredicateId("Missing"))
-                actual shouldBe 0
+        context("for a single predicate") {
+            context("when no statements exist") {
+                it("returns the correct result") {
+                    val actual = repository.countPredicateUsage(PredicateId("Missing"))
+                    actual shouldBe 0
+                }
+            }
+            context("when used in a statement") {
+                context("as a predicate") {
+                    it("returns the correct result") {
+                        val statement = fabricator.random<GeneralStatement>()
+                        saveStatement(statement)
+
+                        val actual = repository.countPredicateUsage(statement.predicate.id!!)
+                        actual shouldBe 1
+                    }
+                }
+                context("as a subject") {
+                    it("returns the correct result") {
+                        val subject = fabricator.random<Predicate>()
+                        val statement = fabricator.random<GeneralStatement>().copy(
+                            subject = subject
+                        )
+                        saveStatement(statement)
+
+                        val actual = repository.countPredicateUsage(subject.id!!)
+                        actual shouldBe 1
+                    }
+                }
+                context("as a subject") {
+                    it("returns the correct result") {
+                        val `object` = fabricator.random<Predicate>()
+                        val statement = fabricator.random<GeneralStatement>().copy(
+                            `object` = `object`
+                        )
+                        saveStatement(statement)
+
+                        val actual = repository.countPredicateUsage(`object`.id!!)
+                        actual shouldBe 1
+                    }
+                }
             }
         }
-        context("when used in a statement") {
-            context("as a predicate") {
-                it("returns the correct result") {
-                    val statement = fabricator.random<GeneralStatement>()
-                    saveStatement(statement)
+        context("for all predicates") {
+            context("when no statements exist") {
+                val result = repository.countPredicateUsage(PageRequest.of(0, 5))
 
-                    val actual = repository.countPredicateUsage(statement.predicate.id!!)
-                    actual shouldBe 1
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe 0
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 0
+                    result.totalElements shouldBe 0
                 }
             }
-            context("as a subject") {
-                it("returns the correct result") {
-                    val subject = fabricator.random<Predicate>()
-                    val statement = fabricator.random<GeneralStatement>().copy(
-                        subject = subject
-                    )
-                    saveStatement(statement)
+            context("when several statements exist") {
+                val statements = fabricator.random<MutableList<GeneralStatement>>()
+                statements[1] = statements[1].copy(
+                    predicate = statements[0].predicate
+                )
+                statements[2] = statements[2].copy(
+                    predicate = statements[0].predicate
+                )
+                statements.forEach(saveStatement)
 
-                    val actual = repository.countPredicateUsage(subject.id!!)
-                    actual shouldBe 1
+                val expected = statements.drop(3)
+                    .map { PredicateUsageCount(it.predicate.id!!, 1) }
+                    .plus(PredicateUsageCount(statements[0].predicate.id!!, 3))
+                    .sortedWith(compareByDescending<PredicateUsageCount> { it.count }.thenBy { it.id })
+
+                val result = repository.countPredicateUsage(PageRequest.of(0, 5))
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe 5
+                    result.content shouldContainAll expected.take(5)
                 }
-            }
-            context("as a subject") {
-                it("returns the correct result") {
-                    val `object` = fabricator.random<Predicate>()
-                    val statement = fabricator.random<GeneralStatement>().copy(
-                        `object` = `object`
-                    )
-                    saveStatement(statement)
-
-                    val actual = repository.countPredicateUsage(`object`.id!!)
-                    actual shouldBe 1
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 2
+                    result.totalElements shouldBe 10
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.count shouldBeGreaterThanOrEqual b.count
+                    }
                 }
             }
         }

@@ -5,11 +5,10 @@ import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationType
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.files.domain.model.Image
-import eu.tib.orkg.prototype.files.domain.model.ImageData
+import eu.tib.orkg.prototype.statements.api.UpdateOrganizationUseCases
 import java.util.*
-import javax.activation.MimeType
 
-interface OrganizationUseCases {
+interface OrganizationUseCases : UpdateOrganizationUseCases {
 
     /**
      * Create a new organization with a given name.
@@ -37,7 +36,7 @@ interface OrganizationUseCases {
 
     fun findLogo(id: OrganizationId): Optional<Image>
 
-    fun updateLogo(id: OrganizationId, imageData: ImageData, mimeType: MimeType, contributor: ContributorId?)
+    fun updateLogo(id: OrganizationId, image: UpdateOrganizationUseCases.RawImage, contributor: ContributorId?)
 
     /**
      * Delete all organizations

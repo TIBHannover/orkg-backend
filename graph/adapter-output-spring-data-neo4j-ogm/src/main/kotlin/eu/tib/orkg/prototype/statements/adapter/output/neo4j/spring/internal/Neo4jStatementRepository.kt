@@ -198,8 +198,6 @@ WITH rel AS p, endNode(rel) AS o, n
 WITH COLLECT(p) + COLLECT(o) + n as nodes
 WITH DISTINCT nodes
 UNWIND nodes as node
-WITH node
-WHERE node.created_by <> "00000000-0000-0000-0000-000000000000"
 WITH DISTINCT node.created_by AS createdBy, node.created_at AS createdAt
 RETURN createdBy, createdAt
 ORDER BY createdAt DESC""",
@@ -211,8 +209,6 @@ WITH rel AS p, endNode(rel) AS o, n
 WITH COLLECT(p) + COLLECT(o) + n as nodes
 WITH DISTINCT nodes
 UNWIND nodes as node
-WITH node
-WHERE node.created_by <> "00000000-0000-0000-0000-000000000000"
 WITH DISTINCT node.created_by AS createdBy, node.created_at AS createdAt
 RETURN COUNT(createdBy) as cnt""")
     fun findContributorsByResourceId(id: ResourceId, pageable: Pageable): Page<ResourceContributor>

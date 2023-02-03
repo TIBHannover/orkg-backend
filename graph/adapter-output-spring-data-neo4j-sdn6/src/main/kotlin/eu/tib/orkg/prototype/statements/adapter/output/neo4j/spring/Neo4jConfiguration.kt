@@ -4,7 +4,6 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.AttributeConverter
-import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.ValueResult
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
@@ -31,7 +30,6 @@ class Neo4jConfiguration {
             AttributeConverter(ResourceId::class, ::ResourceId),
             AttributeConverter(OrganizationId::class, ::OrganizationId),
             AttributeConverter(ObservatoryId::class, ::ObservatoryId),
-//            AttributeConverter(ValueResult::class, { string -> ValueResult().apply { value = string } }),
             AttributeConverter(
                 kClass = OffsetDateTime::class,
                 deserializer = { OffsetDateTime.parse(it, ISO_OFFSET_DATE_TIME) },

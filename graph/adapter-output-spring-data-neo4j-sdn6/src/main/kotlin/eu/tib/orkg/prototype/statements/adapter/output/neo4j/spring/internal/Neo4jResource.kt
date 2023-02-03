@@ -8,7 +8,6 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.time.OffsetDateTime
-import org.springframework.data.neo4j.core.convert.ConvertWith
 import org.springframework.data.neo4j.core.schema.DynamicLabels
 import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
@@ -37,7 +36,6 @@ class Neo4jResource: Neo4jThing {
 //    var objectOf: MutableSet<Neo4jStatement> = mutableSetOf()
 
     @Property("created_by")
-    @ConvertWith(converter = ContributorIdConverter::class)
     var createdBy: ContributorId = ContributorId.createUnknownContributor()
 
     @Property("created_at")

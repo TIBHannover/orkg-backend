@@ -41,7 +41,7 @@ private const val RETURN_NODE_COUNT = """RETURN count(node)"""
  * Queries using this partial query must use `node` as the binding name.
  */
 private const val WITH_NODE_PROPERTIES =
-    """WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at, node.created_by AS created_by"""
+    """WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at"""
 
 // Custom queries
 

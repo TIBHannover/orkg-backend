@@ -44,7 +44,7 @@ class ResourceController(
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: ResourceId): ResourceRepresentation =
-        service.findById(id).orElseThrow { ResourceNotFound(id) }
+        service.findById(id).orElseThrow { ResourceNotFound.withId(id) }
 
     @GetMapping("/")
     fun findByLabel(

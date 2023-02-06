@@ -14,9 +14,15 @@ import java.net.URI
 import java.util.*
 import org.springframework.http.HttpStatus
 
-class ResourceNotFound : SimpleMessageException {
-    constructor(id: String) : super(HttpStatus.NOT_FOUND, """Resource "$id" not found.""")
-    constructor(id: ResourceId) : this(id.value)
+class ResourceNotFound private constructor(
+    override val message: String
+) : SimpleMessageException(HttpStatus.NOT_FOUND, message) {
+    companion object {
+        fun withId(id: ResourceId) = withId(id.value)
+        fun withId(id: String) = ResourceNotFound("""Resource "$id" not found.""")
+        fun withDOI(doi: String) = ResourceNotFound("""Resource with DOI "$doi" not found.""")
+        fun withLabel(label: String) = ResourceNotFound("""Resource with label "$label" not found.""")
+    }
 }
 
 class LiteralNotFound : SimpleMessageException {
@@ -25,13 +31,12 @@ class LiteralNotFound : SimpleMessageException {
 }
 
 class ClassNotFound private constructor(
-    override val status: HttpStatus,
     override val message: String
-) : SimpleMessageException(status, message, null) {
+) : SimpleMessageException(HttpStatus.NOT_FOUND, message) {
     companion object {
         fun withThingId(id: ThingId) = withId(id.value)
-        fun withId(id: String) = ClassNotFound(HttpStatus.NOT_FOUND, """Class "$id" not found.""")
-        fun withURI(uri: URI) = ClassNotFound(HttpStatus.NOT_FOUND, """Class with URI "$uri" not found.""")
+        fun withId(id: String) = ClassNotFound("""Class "$id" not found.""")
+        fun withURI(uri: URI) = ClassNotFound("""Class with URI "$uri" not found.""")
     }
 }
 
@@ -125,6 +130,29 @@ class DOIServiceUnavailable : LoggedMessageException {
     constructor(responseMessage: String, errorResponse: String) :
         super(HttpStatus.SERVICE_UNAVAILABLE, """DOI service returned "$responseMessage" with error response: $errorResponse""")
 }
+
+class MissingParameter private constructor(
+    override val message: String
+) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, null) {
+    companion object {
+        fun requiresAll(parameter: String, vararg parameters: String) =
+            MissingParameter("Missing parameters: All parameters out of ${formatParameters(parameter, *parameters)} are required.")
+        fun requiresAtLeastOneOf(parameter: String, vararg parameters: String) =
+            MissingParameter("Missing parameter: At least one parameter out of ${formatParameters(parameter, *parameters)} is required.")
+    }
+}
+
+class TooManyParameters private constructor(
+    override val message: String
+) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, null) {
+    companion object {
+        fun requiresExactlyOneOf(first: String, second: String, vararg parameters: String) =
+            TooManyParameters("Too many parameters: Only exactly one out of ${formatParameters(first, second, *parameters)} is allowed.")
+    }
+}
+
+private fun formatParameters(vararg parameters: String) =
+    setOf(*parameters).joinToString { "\"$it\"" }
 
 /**
  * Exception indicating that a property was blank when it was not supposed to be.

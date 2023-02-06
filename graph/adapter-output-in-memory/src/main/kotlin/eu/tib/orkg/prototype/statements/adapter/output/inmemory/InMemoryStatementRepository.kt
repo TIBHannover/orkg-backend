@@ -213,16 +213,14 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
             it.`object` !is Resource || (it.`object` as Resource).classes.none { `class` ->
                 `class` == paperClass || `class` == researchProblemClass || `class` == researchFieldClass
             }
-        }.asSequence().map {
+        }.map {
             setOf(
                 it.subject.toResourceContributor(),
                 it.`object`.toResourceContributor(),
                 ResourceContributor(it.createdBy.toString(), it.createdAt!!.format(ISO_OFFSET_DATE_TIME))
             )
         }.flatten().distinct()
-            .filter { it.createdBy != "00000000-0000-0000-0000-000000000000" }
             .sortedByDescending { it.createdAt }
-            .toList()
             .paged(pageable)
 
     override fun checkIfResourceHasStatements(id: ResourceId): Boolean =

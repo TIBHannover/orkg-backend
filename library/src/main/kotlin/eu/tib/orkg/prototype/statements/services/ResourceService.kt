@@ -18,15 +18,15 @@ import eu.tib.orkg.prototype.statements.application.ResourceCantBeDeleted
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryRequest
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
-import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.ComparisonRepository
 import eu.tib.orkg.prototype.statements.spi.ContributionRepository
+import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
-import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import eu.tib.orkg.prototype.statements.spi.SmartReviewRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
@@ -257,13 +257,10 @@ class ResourceService(
     }
 
     override fun findByDOI(doi: String): Optional<ResourceRepresentation> =
-        retrieveAndConvertOptional { repository.findByDOI(doi) }
+        retrieveAndConvertOptional { statementRepository.findByDOI(doi) }
 
     override fun findByTitle(title: String?): Optional<ResourceRepresentation> =
         retrieveAndConvertOptional { repository.findByLabel(title) }
-
-    override fun findAllByDOI(doi: String): Iterable<ResourceRepresentation> =
-        retrieveAndConvertIterable { repository.findAllByDOI(doi) }
 
     override fun findAllByTitle(title: String?): Iterable<ResourceRepresentation> =
         retrieveAndConvertIterable { repository.findAllByLabel(title!!) }
@@ -287,7 +284,7 @@ class ResourceService(
         retrieveAndConvertIterable { repository.findByClassAndObservatoryId(COMPARISON_CLASS, id) }
 
     override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation> =
-        retrieveAndConvertIterable { repository.findProblemsByObservatoryId(id) }
+        retrieveAndConvertIterable { statementRepository.findProblemsByObservatoryId(id) }
 
     override fun findResourcesByObservatoryIdAndClass(
         id: ObservatoryId,
@@ -310,8 +307,8 @@ class ResourceService(
             }
         }
 
-    override fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors> =
-        repository.findContributorsByResourceId(id)
+    override fun findContributorsByResourceId(id: ResourceId, pageable: Pageable): Page<ResourceContributor> =
+        statementRepository.findContributorsByResourceId(id, pageable)
 
     override fun update(request: UpdateResourceRequest): ResourceRepresentation {
         // already checked by service
@@ -342,7 +339,7 @@ class ResourceService(
     override fun delete(id: ResourceId) {
         val resource = repository.findByResourceId(id).orElseThrow { ResourceNotFound.withId(id) }
 
-        if (repository.checkIfResourceHasStatements(resource.id!!))
+        if (statementRepository.checkIfResourceHasStatements(resource.id!!))
             throw ResourceCantBeDeleted(resource.id)
 
         repository.deleteByResourceId(resource.id)
@@ -571,9 +568,9 @@ class ResourceService(
         retrieveAndConvertPaged { repository.findComparisonsByOrganizationId(id, pageable) }
 
     override fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged { repository.findProblemsByOrganizationId(id, pageable) }
+        retrieveAndConvertPaged { statementRepository.findProblemsByOrganizationId(id, pageable) }
 
-    override fun hasStatements(id: ResourceId): Boolean = repository.checkIfResourceHasStatements(id)
+    override fun hasStatements(id: ResourceId): Boolean = statementRepository.checkIfResourceHasStatements(id)
 
     private fun setVerifiedFlag(resourceId: ResourceId, verified: Boolean) {
         val result = repository.findByResourceId(resourceId)

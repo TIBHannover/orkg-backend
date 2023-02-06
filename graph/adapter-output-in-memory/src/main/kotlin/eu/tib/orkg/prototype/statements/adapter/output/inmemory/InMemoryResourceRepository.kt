@@ -152,19 +152,6 @@ class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
         }
     }
 
-    // TODO: rename to countIncomingStatements
-    override fun getIncomingStatementsCount(ids: List<ResourceId>): Iterable<Long> {
-        TODO("This method should be moved to the StatementRepository")
-    }
-
-    override fun findByDOI(doi: String): Optional<Resource> {
-        TODO("This method should be moved to the StatementRepository (or PaperRepository?)")
-    }
-
-    override fun findAllByDOI(doi: String): Iterable<Resource> {
-        TODO("This method should be moved to the StatementRepository (or PaperRepository?)")
-    }
-
     // TODO: rename to findPaperByLabel or replace with a generic method with a classes parameter
     override fun findByLabel(label: String?) =
         Optional.ofNullable(entities.values.firstOrNull { it.label == label })
@@ -173,20 +160,6 @@ class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
     override fun findByClassAndObservatoryId(`class`: String, id: ObservatoryId): Iterable<Resource> {
         val classId = ThingId(`class`)
         return entities.values.filter { classId in it.classes && it.observatoryId == id }
-    }
-
-    // TODO: rename to findAllProblemsByObservatoryId
-    override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource> {
-        TODO("This method should be moved to the StatementRepository (or ProblemRepository?)")
-    }
-
-    // TODO: rename to findAllContributorsByResourceId
-    override fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceRepository.ResourceContributors> {
-        TODO("This method should be moved to the StatementRepository")
-    }
-
-    override fun checkIfResourceHasStatements(id: ResourceId): Boolean {
-        TODO("This method should be moved to the StatementRepository")
     }
 
     // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
@@ -329,8 +302,4 @@ class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
         findAllFilteredAndPaged(pageable) {
             comparisonClass in it.classes && it.organizationId == id
         }
-
-    override fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> {
-        TODO("This method should be moved to the StatementRepository")
-    }
 }

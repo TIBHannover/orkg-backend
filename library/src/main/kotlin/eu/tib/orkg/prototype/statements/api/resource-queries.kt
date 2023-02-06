@@ -1,12 +1,12 @@
 package eu.tib.orkg.prototype.statements.api
 
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -40,7 +40,6 @@ interface RetrieveResourceUseCase {
         createdBy: ContributorId
     ): Page<ResourceRepresentation>
 
-    fun findAllByDOI(doi: String): Iterable<ResourceRepresentation>
     fun findAllByFeatured(pageable: Pageable): Page<ResourceRepresentation>
     fun findAllByLabel(pageable: Pageable, label: String): Page<ResourceRepresentation>
     fun findAllByLabelContaining(pageable: Pageable, part: String): Page<ResourceRepresentation>
@@ -69,7 +68,7 @@ interface RetrieveResourceUseCase {
     fun findById(id: ResourceId?): Optional<ResourceRepresentation>
     fun findByTitle(title: String?): Optional<ResourceRepresentation>
     fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation>
-    fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors>
+    fun findContributorsByResourceId(id: ResourceId, pageable: Pageable): Page<ResourceContributor>
     fun findPapersByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation>
     fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation>
     fun findResourcesByObservatoryIdAndClass(id: ObservatoryId, classes: List<String>, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>

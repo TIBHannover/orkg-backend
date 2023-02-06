@@ -1,7 +1,6 @@
 package eu.tib.orkg.prototype.statements.api
 
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
@@ -66,8 +65,8 @@ interface RetrieveStatementUseCase {
 data class BundleConfiguration(
     val minLevel: Int?,
     val maxLevel: Int?,
-    val blacklist: List<ClassId>,
-    val whitelist: List<ClassId>
+    val blacklist: List<ThingId>,
+    val whitelist: List<ThingId>
 ) {
     companion object Factory {
         fun firstLevelConf(): BundleConfiguration =

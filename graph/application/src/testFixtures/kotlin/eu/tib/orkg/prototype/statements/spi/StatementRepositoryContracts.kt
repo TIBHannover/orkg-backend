@@ -4,6 +4,7 @@ import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.statements.api.BundleConfiguration
 import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase.PredicateUsageCount
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
@@ -576,6 +577,99 @@ fun <
             xit("sorts the results by creation date by default") {
                 result.content.zipWithNext { a, b ->
                     a.createdAt!! shouldBeLessThan b.createdAt!!
+                }
+            }
+        }
+        context("as a bundle") {
+            context("with a minimum level of hops") {
+                val statement1 = fabricator.random<GeneralStatement>()
+                val statement2 = fabricator.random<GeneralStatement>().copy(
+                    subject = statement1.`object`
+                )
+                saveStatement(statement1)
+                saveStatement(statement2)
+                val result = repository.fetchAsBundle(
+                    statement1.subject.thingId.value,
+                    BundleConfiguration(
+                        minLevel = 1,
+                        maxLevel = null,
+                        blacklist = emptyList(),
+                        whitelist = emptyList()
+                    )
+                )
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.count() shouldBe 1
+                    result.first() shouldBe statement2
+                }
+            }
+            context("with a maximum level of hops") {
+                val statement1 = fabricator.random<GeneralStatement>()
+                val statement2 = fabricator.random<GeneralStatement>().copy(
+                    subject = statement1.`object`
+                )
+                saveStatement(statement1)
+                saveStatement(statement2)
+                val result = repository.fetchAsBundle(
+                    statement1.subject.thingId.value,
+                    BundleConfiguration(
+                        minLevel = null,
+                        maxLevel = 1,
+                        blacklist = emptyList(),
+                        whitelist = emptyList()
+                    )
+                )
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.count() shouldBe 1
+                    result.first() shouldBe statement1
+                }
+            }
+            context("with a blacklist for classes") {
+                val statement1 = fabricator.random<GeneralStatement>()
+                val statement2 = fabricator.random<GeneralStatement>().copy(
+                    subject = statement1.`object`,
+                    `object` = fabricator.random<Resource>()
+                )
+                saveStatement(statement1)
+                saveStatement(statement2)
+                val result = repository.fetchAsBundle(
+                    statement1.subject.thingId.value,
+                    BundleConfiguration(
+                        minLevel = null,
+                        maxLevel = null,
+                        blacklist = (statement2.`object` as Resource).classes.take(2),
+                        whitelist = emptyList()
+                    )
+                )
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.count() shouldBe 1
+                    result.first() shouldBe statement1
+                }
+            }
+            context("with a whitelist for classes") {
+                val statement1 = fabricator.random<GeneralStatement>().copy(
+                    `object` = fabricator.random<Resource>()
+                )
+                val statement2 = fabricator.random<GeneralStatement>().copy(
+                    subject = statement1.`object`
+                )
+                saveStatement(statement1)
+                saveStatement(statement2)
+                val result = repository.fetchAsBundle(
+                    statement1.subject.thingId.value,
+                    BundleConfiguration(
+                        minLevel = null,
+                        maxLevel = null,
+                        blacklist = emptyList(),
+                        whitelist = (statement1.`object` as Resource).classes.take(2)
+                    )
+                )
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.count() shouldBe 1
+                    result.first() shouldBe statement1
                 }
             }
         }

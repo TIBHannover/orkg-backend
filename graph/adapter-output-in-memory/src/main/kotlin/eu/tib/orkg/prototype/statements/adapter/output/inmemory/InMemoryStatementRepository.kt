@@ -131,9 +131,41 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         objectIds.contains(it.`object`.thingId.value)
     }
 
-    override fun fetchAsBundle(id: String, configuration: BundleConfiguration): Iterable<GeneralStatement> {
-        TODO("This depends on apoc-specific configurations")
-    }
+    override fun fetchAsBundle(id: String, configuration: BundleConfiguration): Iterable<GeneralStatement> =
+        entities.values.find { it.subject.thingId.value == id }?.let {
+            val exclude = mutableSetOf<GeneralStatement>()
+            findSubgraph(it.subject.thingId) { statement, level ->
+                if (configuration.minLevel != null && level <= configuration.minLevel!!) {
+                    // Filter statements out later because we do not want to stop the graph traversal
+                    exclude.add(statement)
+                }
+                if (configuration.maxLevel != null && level > configuration.maxLevel!!) {
+                    return@findSubgraph false
+                } else if (statement.`object` is Resource) {
+                    with(statement.`object` as Resource) {
+                        if (configuration.blacklist.isNotEmpty()
+                            && (classes.containsAny(configuration.blacklist)
+                                || configuration.blacklist.contains(ThingId("Resource")))
+                        ) {
+                            return@findSubgraph false
+                        } else if (configuration.whitelist.isNotEmpty()
+                            && !classes.containsAny(configuration.whitelist)
+                            && configuration.whitelist.contains(ThingId("Resource"))
+                        ) {
+                            return@findSubgraph false
+                        }
+                    }
+                } else if (configuration.whitelist.isNotEmpty()) {
+                    return@findSubgraph when (statement.`object`) {
+                        is Literal -> configuration.whitelist.contains(ThingId("Literal"))
+                        is Predicate -> configuration.whitelist.contains(ThingId("Predicate"))
+                        is Class -> configuration.whitelist.contains(ThingId("Class"))
+                        else -> false
+                    }
+                }
+                return@findSubgraph true
+            }.filter { statement -> statement !in exclude }
+        } ?: emptySet()
 
     override fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount> {
         val predicateIdToUsageCount = mutableMapOf<PredicateId, Long>()
@@ -206,8 +238,8 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
 
     // TODO: rename to findAllContributorsByResourceId
     override fun findContributorsByResourceId(id: ResourceId, pageable: Pageable): Page<ResourceContributor> =
-        findSubgraph(ThingId(id.value)) {
-            it.`object` !is Resource || (it.`object` as Resource).classes.none { `class` ->
+        findSubgraph(ThingId(id.value)) { statement, _ ->
+            statement.`object` !is Resource || (statement.`object` as Resource).classes.none { `class` ->
                 `class` == paperClass || `class` == researchProblemClass || `class` == researchFieldClass
             }
         }.map {
@@ -246,18 +278,24 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
 
     private fun findSubgraph(
         root: ThingId,
-        expansionFilter: (GeneralStatement) -> Boolean = { true }
+        expansionFilter: (GeneralStatement, Int) -> Boolean = { _, _ -> true }
     ): Set<GeneralStatement> {
         val visited = mutableSetOf<GeneralStatement>()
-        val frontier = entities.values.filterTo(Stack()) {
-            it.subject.thingId == root && expansionFilter(it)
+        val frontier = entities.values.filter {
+            it.subject.thingId == root && expansionFilter(it, 1)
+        }.mapTo(Stack()) {
+            it to 1
         }
         while (frontier.isNotEmpty()) {
-            val statement = frontier.pop()
+            val (statement, level) = frontier.pop()
             visited.add(statement)
-            frontier.addAll(entities.values.filter {
-                it.subject == statement.`object` && it !in visited && expansionFilter(it)
-            })
+            frontier.addAll(
+                entities.values.filter {
+                    it.subject == statement.`object` && it !in visited && expansionFilter(it, level + 1)
+                }.map {
+                    it to level + 1
+                }
+            )
         }
         return visited
     }
@@ -269,4 +307,6 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
             is Predicate -> ResourceContributor(createdBy.value.toString(), createdAt.format(ISO_OFFSET_DATE_TIME))
             is Literal -> ResourceContributor(createdBy.value.toString(), createdAt.format(ISO_OFFSET_DATE_TIME))
         }
+
+    private fun <T: Any> Iterable<T>.containsAny(other: Iterable<T>): Boolean = any(other::contains)
 }

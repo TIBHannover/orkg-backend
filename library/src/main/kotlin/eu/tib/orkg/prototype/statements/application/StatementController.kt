@@ -2,18 +2,17 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.BundleConfiguration
-import eu.tib.orkg.prototype.statements.api.StatementUseCases
-import eu.tib.orkg.prototype.statements.domain.model.Bundle
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.api.ClassRepresentation
-import eu.tib.orkg.prototype.statements.domain.model.CreateStatement
 import eu.tib.orkg.prototype.statements.api.LiteralRepresentation
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
+import eu.tib.orkg.prototype.statements.api.ThingRepresentation
+import eu.tib.orkg.prototype.statements.domain.model.Bundle
+import eu.tib.orkg.prototype.statements.domain.model.CreateStatement
+import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
-import eu.tib.orkg.prototype.statements.api.ThingRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -170,8 +169,8 @@ class StatementController(
         @PathVariable thingId: String,
         @RequestParam("minLevel", required = false) minLevel: Int?,
         @RequestParam("maxLevel", required = false) maxLevel: Int?,
-        @RequestParam("blacklist", required = false, defaultValue = "") blacklist: List<ClassId>,
-        @RequestParam("whitelist", required = false, defaultValue = "") whitelist: List<ClassId>,
+        @RequestParam("blacklist", required = false, defaultValue = "") blacklist: List<ThingId>,
+        @RequestParam("whitelist", required = false, defaultValue = "") whitelist: List<ThingId>,
         @RequestParam("includeFirst", required = false, defaultValue = "true") includeFirst: Boolean
     ): HttpEntity<Bundle> {
         return ok(

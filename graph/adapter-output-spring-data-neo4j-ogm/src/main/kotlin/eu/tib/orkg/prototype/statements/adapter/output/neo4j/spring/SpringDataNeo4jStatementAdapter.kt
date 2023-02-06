@@ -21,10 +21,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.spi.ClassRepository
-import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
-import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.util.*
 import org.springframework.data.domain.Page
@@ -41,10 +38,7 @@ class SpringDataNeo4jStatementAdapter(
     private val neo4jPredicateRepository: Neo4jPredicateRepository,
     private val neo4jLiteralRepository: Neo4jLiteralRepository,
     private val neo4jClassRepository: Neo4jClassRepository,
-    private val resourceRepository: ResourceRepository,
     private val predicateRepository: PredicateRepository,
-    private val literalRepository: LiteralRepository,
-    private val classRepository: ClassRepository,
 ) : StatementRepository {
     override fun nextIdentity(): StatementId {
         // IDs could exist already by manual creation. We need to find the next available one.
@@ -72,9 +66,6 @@ class SpringDataNeo4jStatementAdapter(
     override fun deleteAll() {
         neo4jRepository.deleteAll()
     }
-
-    override fun findAll(depth: Int): Iterable<GeneralStatement> =
-        neo4jRepository.findAll(depth).map { it.toStatement() }
 
     override fun findAll(pageable: Pageable): Page<GeneralStatement> {
         val neo4jStatements = neo4jRepository.findAll(pageable)

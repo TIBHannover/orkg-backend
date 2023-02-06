@@ -23,7 +23,6 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun delete(statement: GeneralStatement)
     fun deleteByStatementId(id: StatementId)
     fun deleteAll()
-    fun findAll(depth: Int): Iterable<GeneralStatement>
     fun findByStatementId(id: StatementId): Optional<GeneralStatement>
     fun findAllBySubject(subjectId: String, pageable: Pageable): Page<GeneralStatement>
     fun findAllByPredicateId(predicateId: PredicateId, pageable: Pageable): Page<GeneralStatement>

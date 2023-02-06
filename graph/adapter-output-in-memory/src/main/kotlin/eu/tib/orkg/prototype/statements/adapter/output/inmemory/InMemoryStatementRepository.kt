@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.inmemory
 
+import eu.tib.orkg.prototype.statements.api.BundleConfiguration
 import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase.PredicateUsageCount
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
@@ -116,7 +117,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         objectIds.contains(it.`object`.thingId.value)
     }
 
-    override fun fetchAsBundle(id: String, configuration: Map<String, Any>): Iterable<GeneralStatement> {
+    override fun fetchAsBundle(id: String, configuration: BundleConfiguration): Iterable<GeneralStatement> {
         TODO("This depends on apoc-specific configurations")
     }
 

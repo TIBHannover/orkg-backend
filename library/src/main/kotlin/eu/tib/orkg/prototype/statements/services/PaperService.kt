@@ -190,17 +190,14 @@ class PaperService(
         organizationId: OrganizationId
     ) {
         val venuePredicate = predicateService.findById(ObjectService.VenuePredicate).get().id
-        val pageable = PageRequest.of(0, 1)
         // Check if resource exists
-        var venueResource = resourceRepository.findAllByLabel(venue, pageable).firstOrNull()
-        if (venueResource == null) {
-            // If not override object with new venue resource
+        val venueResource = resourceRepository.findByLabel(venue).orElseGet {
             val representation = resourceService.create(
                 userId, CreateResourceRequest(
                     null, venue, setOf(ObjectService.VenueClass)
                 ), observatoryId, extractionMethod, organizationId
             )
-            venueResource = resourceRepository.findByResourceId(representation.id).get()
+            resourceRepository.findByResourceId(representation.id).get()
         }
         // create a statement with the venue resource
         statementService.add(

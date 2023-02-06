@@ -81,8 +81,6 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
 
     fun findByResourceId(id: ResourceId?): Optional<Neo4jResource>
 
-    fun findAllByLabel(label: String, pageable: Pageable): Page<Neo4jResource>
-
     // TODO: Work-around for https://jira.spring.io/browse/DATAGRAPH-1200. Replace with IgnoreCase or ContainsIgnoreCase when fixed.
     fun findAllByLabelMatchesRegex(label: String, pageable: Pageable): Page<Neo4jResource>
 

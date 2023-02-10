@@ -22,7 +22,7 @@ class Neo4jClass : Neo4jThing {
     override var label: String? = null
 
     @Relationship(type = "RELATED", direction = Direction.OUTGOING)
-    var subjectOf: MutableSet<Neo4jClass> = mutableSetOf()
+    var subjectOf: List<Neo4jClass> = mutableListOf()
 
     @Property("uri")
     var uri: String? = null

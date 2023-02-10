@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import org.springframework.stereotype.Component
 
 @Component
-class NeoNeo4jPredicateIdGenerator(
+class Neo4jPredicateIdGenerator(
     private val repository: Neo4jPredicateIdCounterRepository
 ) : RepositoryBasedIdGenerator<PredicateId, Neo4jPredicateIdCounter>() {
 

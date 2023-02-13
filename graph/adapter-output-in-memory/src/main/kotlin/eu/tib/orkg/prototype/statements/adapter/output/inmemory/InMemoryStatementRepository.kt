@@ -131,7 +131,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
     }
 
     override fun fetchAsBundle(id: String, configuration: Map<String, Any>): Iterable<GeneralStatement> {
-        TODO("This method can be removed?")
+        TODO("This depends on apoc-specific configurations")
     }
 
     override fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount> {
@@ -149,10 +149,6 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
 
     override fun deleteAll() {
         entities.clear()
-    }
-
-    override fun findAll(depth: Int): Iterable<GeneralStatement> {
-        TODO("This method should be removed")
     }
 
     override fun countStatementsAboutResource(id: ResourceId) =

@@ -1,12 +1,10 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.services.ObjectService.Constants.ID_DOI_PREDICATE
-import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -16,8 +14,6 @@ import org.springframework.transaction.annotation.Transactional
 
 private const val featured = "${'$'}featured"
 private const val unlisted = "${'$'}unlisted"
-private const val doi = "${'$'}doi"
-private const val ids = "${'$'}ids"
 private const val classes = "${'$'}classes"
 private const val includeClasses = "${'$'}includeClasses"
 private const val excludeClasses = "${'$'}excludeClasses"
@@ -131,15 +127,6 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     countQuery = """MATCH (node:`Resource`) WHERE NOT ANY(c in $excludeClasses WHERE c IN labels(node)) AND ALL(c in $includeClasses WHERE c IN labels(node)) AND node.label =~ $label WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllIncludingAndExcludingClassesByLabelMatchesRegex(includeClasses: Set<ClassId>, excludeClasses: Set<ClassId>, label: String, pageable: Pageable): Page<Neo4jResource>
 
-    @Query("""UNWIND $ids as r_id MATCH ()-[p:RELATED]->(node:Resource {resource_id: r_id}) WITH r_id, COUNT(p) AS cnt RETURN cnt""")
-    fun getIncomingStatementsCount(ids: List<ResourceId>): Iterable<Long>
-
-    @Query("""MATCH (node:Paper)-[:RELATED {predicate_id: "$ID_DOI_PREDICATE"}]->(:Literal {label: $doi}) WHERE not 'PaperDeleted' in labels(node) RETURN node LIMIT 1""")
-    fun findByDOI(doi: String): Optional<Neo4jResource>
-
-    @Query("""MATCH (node:Paper)-[:RELATED {predicate_id: "$ID_DOI_PREDICATE"}]->(:Literal {label: $doi}) WHERE not 'PaperDeleted' in labels(node) RETURN node""")
-    fun findAllByDOI(doi: String): Iterable<Neo4jResource>
-
     @Query("""MATCH (node:Paper) WHERE not 'PaperDeleted' IN labels(node) AND node.label = $label RETURN node LIMIT 1""")
     fun findByLabel(label: String?): Optional<Neo4jResource>
 
@@ -148,15 +135,6 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
 
     @Query("""MATCH (n {observatory_id: ${'$'}id}) WHERE ${'$'}class in LABELS(n) RETURN n""")
     fun findByClassAndObservatoryId(`class`: String, id: ObservatoryId): Iterable<Neo4jResource>
-
-    @Query("""MATCH (n:Paper {observatory_id: $id})-[*]->(r:Problem) RETURN r UNION ALL MATCH (r:Problem {observatory_id: $id}) RETURN r""")
-    fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Neo4jResource>
-
-    @Query("""MATCH (n:Resource {resource_id: $id}) CALL apoc.path.subgraphAll(n, {relationshipFilter:'>'}) YIELD relationships UNWIND relationships AS rel WITH rel AS p, startNode(rel) AS s, endNode(rel) AS o, n WITH apoc.date.format(apoc.date.parse(p.created_at, 'ms', 'yyyy-MM-dd'), 'ms', 'yyyy-MM-dd') AS date, p, o, n, s  WITH collect(n.created_by) as createdBy, collect(apoc.date.format(apoc.date.parse(n.created_at, 'ms', 'yyyy-MM-dd'), 'ms', 'yyyy-MM-dd')) as createdAt, p, o, n, s, date WITH createdBy + collect(p.created_by) AS creator, createdAt + collect(date) as date, p, o, n, s WHERE p.created_by <> "00000000-0000-0000-0000-000000000000" AND NOT 'ResearchField' in labels(s) AND NOT 'ResearchField' in labels(o) UNWIND creator as createdBy UNWIND date as createdAt RETURN DISTINCT n.resource_id AS id, createdBy, createdAt ORDER BY createdAt""")
-    fun findContributorsByResourceId(id: ResourceId): Iterable<ResourceContributors>
-
-    @Query("""MATCH (n:Resource {resource_id: $id}) RETURN EXISTS ((n)-[:RELATED]-(:Thing)) AS used""")
-    fun checkIfResourceHasStatements(id: ResourceId): Boolean
 
     fun findAllByVerifiedIsTrue(pageable: Pageable): Page<Neo4jResource>
 
@@ -237,8 +215,4 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     @Query(value = """MATCH (n:Comparison {organization_id: $id }) RETURN n""",
         countQuery = """MATCH (n:Comparison {organization_id: $id }) RETURN COUNT(n)""")
     fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Neo4jResource>
-
-    @Query(value = """MATCH (n:Comparison {organization_id: $id })-[r:RELATED {predicate_id: 'compareContribution'}]->(rc:Contribution)-[rr:RELATED {predicate_id: 'P32'}]->(p:Problem) RETURN DISTINCT p""",
-        countQuery = """MATCH (n:Comparison {organization_id: $id })-[r:RELATED {predicate_id: 'compareContribution'}]->(rc:Contribution)-[rr:RELATED {predicate_id: 'P32'}]->(p:Problem) RETURN count(DISTINCT p)""")
-    fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Neo4jResource>
 }

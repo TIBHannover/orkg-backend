@@ -106,8 +106,8 @@ class PaperService(
     ): ResourceRepresentation {
         // Do this in a sequential order, first check for DOI and then title, otherwise we create a new paper
         if (request.paper.hasDOI()) {
-            val byDOI = resourceService.findAllByDOI(request.paper.doi!!)
-            if (byDOI.count() > 0) return byDOI.first()
+            val byDOI = resourceService.findByDOI(request.paper.doi!!)
+            if (byDOI.isPresent) return byDOI.get()
         }
         val byTitle = resourceService.findAllByTitle(request.paper.title)
         if (byTitle.count() > 0) return byTitle.first()

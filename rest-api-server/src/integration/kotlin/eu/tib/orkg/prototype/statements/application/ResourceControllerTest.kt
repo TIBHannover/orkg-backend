@@ -16,7 +16,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.PaperService
-import eu.tib.orkg.prototype.statements.spi.ResourceRepository.ResourceContributors
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize
@@ -473,47 +472,6 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
                     listOfDetailedResourcesResponseFields()
                 )
             )
-    }
-
-    @Test
-    fun testPaperContributorsDetails() {
-        predicateService.createPredicate(label = "Has DOI", id = "P26")
-        predicateService.createPredicate(label = "Has publication year", id = "P29")
-        predicateService.createPredicate(label = "Has Research field", id = "P30")
-        predicateService.createPredicate(label = "Has contribution", id = "P31")
-        predicateService.createPredicate(label = "Has research problem", id = "P32")
-        predicateService.createPredicate(label = "Has evaluation", id = "HAS_EVALUATION")
-
-        service.createResource(id = "R3003", label = "Question Answering over Linked Data")
-
-        classService.createClass(id = "Paper", label = "paper")
-        classService.createClass(id = "Contribution", label = "Contribution")
-        classService.createClass(id = "Problem", label = "Problem")
-
-        val userId = createTestUser()
-        // create resource with different userId, and use it as a research field in the paper
-        service.createResource(
-            id = "R20",
-            label = "database",
-            userId = userId
-        )
-        val originalPaper = PaperControllerTest().createDummyPaperObject(researchField = "R20")
-        val paperId = paperService.addPaperContent(originalPaper, true, UUID.randomUUID()).id.value
-        val result = mockMvc
-            .perform(getRequestTo("/api/resources/$paperId/contributors"))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$", hasSize<Int>(1)))
-            .andReturn()
-
-        val contributors = objectMapper.readValue<List<ResourceContributors>>(
-            result.response.contentAsString,
-            objectMapper.typeFactory.constructCollectionType(MutableList::class.java, ResourceContributors::class.java)
-        )
-        // research field creator should not be in paper contributors list
-        assertThat(contributors[0].createdBy).isNotEqualTo(userId.value.toString())
-        // must have distinct set i.e, one contributor shouldn't appear more than once for same date
-        // distinct and original list must have same size
-        assertThat(contributors.mapTo(mutableListOf()) { listOf(it.createdAt, it.createdBy) }.distinct().size).isEqualTo(contributors.size)
     }
 
     @Test

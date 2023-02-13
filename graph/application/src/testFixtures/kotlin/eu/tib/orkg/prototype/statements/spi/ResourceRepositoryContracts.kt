@@ -893,6 +893,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
 
         // Explicitly requesting second page here
         val result = repository.findAllContributorIds(PageRequest.of(1, 5))
+
         it("returns the correct result") {
             result shouldNotBe null
             result.content shouldNotBe null

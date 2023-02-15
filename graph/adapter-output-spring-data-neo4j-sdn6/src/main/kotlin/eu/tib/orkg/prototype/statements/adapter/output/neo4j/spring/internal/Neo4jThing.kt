@@ -1,12 +1,22 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import eu.tib.orkg.prototype.statements.domain.model.Thing
+import org.springframework.data.neo4j.core.schema.GeneratedValue
+import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
+import org.springframework.data.neo4j.core.schema.Property
 
 @Node("Thing")
-sealed interface Neo4jThing {
-    val thingId: String?
-    val label: String?
+abstract class Neo4jThing {
+    // We need this property for the ThingRepository
+    @Id
+    @GeneratedValue
+    var id: Long? = null
 
-    fun toThing(): Thing
+    @Property("label")
+    var label: String? = null
+
+    abstract val thingId: String?
+
+    abstract fun toThing(): Thing
 }

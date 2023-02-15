@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 
 private const val ids = "${'$'}ids"
 
-interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, PredicateId> {
+interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, Long> {
     fun existsByPredicateId(id: PredicateId): Boolean
 
     override fun findAll(pageable: Pageable): Page<Neo4jPredicate>

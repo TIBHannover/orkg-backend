@@ -72,7 +72,7 @@ private const val MATCH_LISTED_PAPER =
 const val IS_FEATURED = "COALESCE(node.featured, false) = $featured"
 const val IS_UNLISTED = "COALESCE(node.unlisted, false) = $unlisted"
 
-interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, ResourceId> {
+interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     fun existsByResourceId(id: ResourceId): Boolean
 
     @Query("""MATCH (node:`Resource` {resource_id: $id}) WHERE $HAS_CLASSES $WITH_NODE_PROPERTIES $RETURN_NODE""")

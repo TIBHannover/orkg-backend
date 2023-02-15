@@ -9,7 +9,7 @@ import org.springframework.data.neo4j.repository.query.Query
 
 private const val ids = "${'$'}ids"
 
-interface Neo4jClassRepository : Neo4jRepository<Neo4jClass, ClassId> {
+interface Neo4jClassRepository : Neo4jRepository<Neo4jClass, Long> {
     fun existsByClassId(id: ClassId): Boolean
 
     // Set operations are a bit tricky in Cypher. It only knows lists, and order matters there. APOC to the rescue!

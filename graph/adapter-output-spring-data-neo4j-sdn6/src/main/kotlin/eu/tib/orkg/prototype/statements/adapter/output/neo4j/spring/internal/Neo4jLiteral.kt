@@ -10,13 +10,9 @@ import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Property
 
 @Node("Literal")
-class Neo4jLiteral : Neo4jThing {
-    @Id
+class Neo4jLiteral : Neo4jThing() {
     @Property("literal_id")
     var literalId: LiteralId? = null
-
-    @Property("label")
-    override var label: String? = null
 
     @Property("datatype")
     var datatype: String? = "xsd:string"

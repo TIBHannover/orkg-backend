@@ -10,14 +10,9 @@ import org.springframework.data.neo4j.core.schema.Property
 import org.springframework.data.neo4j.core.schema.Relationship.*
 
 @Node("Predicate")
-class Neo4jPredicate : Neo4jThing {
-
-    @Id
+class Neo4jPredicate : Neo4jThing() {
     @Property("predicate_id")
     var predicateId: PredicateId? = null
-
-    @Property("label")
-    override var label: String? = null
 
     @Property("created_by")
     var createdBy: ContributorId = ContributorId.createUnknownContributor()

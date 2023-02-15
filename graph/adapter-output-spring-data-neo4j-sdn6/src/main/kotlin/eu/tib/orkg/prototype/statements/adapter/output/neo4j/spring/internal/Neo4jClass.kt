@@ -13,13 +13,9 @@ import org.springframework.data.neo4j.core.schema.Relationship
 import org.springframework.data.neo4j.core.schema.Relationship.Direction
 
 @Node("Class")
-class Neo4jClass : Neo4jThing {
-    @Id
+class Neo4jClass : Neo4jThing() {
     @Property("class_id")
     var classId: ClassId? = null
-
-    @Property("label")
-    override var label: String? = null
 
     @Relationship(type = "RELATED", direction = Direction.OUTGOING)
     var subjectOf: MutableSet<Neo4jClass> = mutableSetOf()

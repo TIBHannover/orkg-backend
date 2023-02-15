@@ -4,6 +4,8 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
+import eu.tib.orkg.prototype.statements.domain.model.Thing
+import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.time.OffsetDateTime
 import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
@@ -40,5 +42,5 @@ class Neo4jLiteral : Neo4jThing() {
     override val thingId: String?
         get() = literalId?.value
 
-    override fun toThing() = toLiteral()
+    override fun toThing(statementRepository: StatementRepository): Thing = toLiteral()
 }

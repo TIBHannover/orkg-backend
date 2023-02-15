@@ -268,6 +268,13 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
             }.map { it.`object` as Resource }
         }.flatten().distinct().paged(pageable)
 
+    override fun findClassDescription(id: ThingId): Optional<String> =
+        Optional.ofNullable(entities.values.firstOrNull {
+            it.subject.thingId == id && it.subject is Class
+                && it.predicate.id == PredicateId("description")
+                && it.`object` is Literal
+        }).map { it.`object`.label }
+
     override fun nextIdentity(): StatementId {
         var id = StatementId(entities.size.toLong())
         while(id in entities) {

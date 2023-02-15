@@ -6,7 +6,9 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.time.OffsetDateTime
 import org.springframework.data.neo4j.core.schema.DynamicLabels
 import org.springframework.data.neo4j.core.schema.Node
@@ -80,5 +82,5 @@ class Neo4jResource: Neo4jThing() {
     override val thingId: String?
         get() = resourceId?.value
 
-    override fun toThing() = toResource()
+    override fun toThing(statementRepository: StatementRepository): Thing = toResource()
 }

@@ -3,6 +3,8 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.Thing
+import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.time.OffsetDateTime
 import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Property
@@ -29,5 +31,5 @@ class Neo4jPredicate : Neo4jThing() {
     override val thingId: String?
         get() = predicateId?.value
 
-    override fun toThing() = toPredicate()
+    override fun toThing(statementRepository: StatementRepository): Thing = toPredicate()
 }

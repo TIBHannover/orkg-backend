@@ -70,6 +70,7 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun findContributorsByResourceId(id: ResourceId, pageable: Pageable): Page<ResourceContributor>
     fun checkIfResourceHasStatements(id: ResourceId): Boolean
     fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
+    fun findClassDescription(id: ThingId): Optional<String>
 }
 
 @QueryResult

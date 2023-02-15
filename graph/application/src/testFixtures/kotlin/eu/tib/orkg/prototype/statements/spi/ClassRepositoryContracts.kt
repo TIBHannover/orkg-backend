@@ -4,6 +4,10 @@ import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
+import eu.tib.orkg.prototype.statements.domain.model.Literal
+import eu.tib.orkg.prototype.statements.domain.model.Predicate
+import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
@@ -16,7 +20,15 @@ import org.orkg.statements.testing.createClass
 import org.orkg.statements.testing.withCustomMappings
 import org.springframework.data.domain.PageRequest
 
-fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec {
+fun <
+    C : ClassRepository,
+    S : StatementRepository,
+    L : LiteralRepository
+> classRepositoryContract(
+    repository: C,
+    statementRepository: S,
+    literalRepository: L
+) = describeSpec {
     beforeTest {
         repository.deleteAll()
     }
@@ -43,7 +55,8 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
                 it.createdAt shouldBe expected.createdAt
                 it.createdBy shouldBe expected.createdBy
                 it.thingId shouldBe expected.thingId
-                it.description shouldBe it.description
+                // Do not check the description, as it is saved via a statement
+                // it.description shouldBe it.description
             }
         }
         it("updates an already existing class") {
@@ -55,6 +68,31 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
 
             repository.findAll(PageRequest.of(0, Int.MAX_VALUE)).toSet().size shouldBe 1
             repository.findByClassId(original.id).get().label shouldBe "some new label, never seen before"
+        }
+    }
+
+    describe("loading a class") {
+        it("loads the delegated description correctly") {
+            val `class` = fabricator.random<Class>()
+            val predicate = fabricator.random<Predicate>().copy(
+                id = PredicateId("description")
+            )
+            val literal = fabricator.random<Literal>()
+            val statement = fabricator.random<GeneralStatement>().copy(
+                subject = `class`,
+                predicate = predicate,
+                `object` = literal
+            )
+            repository.save(`class`)
+            literalRepository.save(literal)
+            statementRepository.save(statement)
+
+            val actual = repository.findByClassId(`class`.id)
+
+            actual.isPresent shouldBe true
+            actual.get().asClue {
+                it.description shouldBe literal.label
+            }
         }
     }
 

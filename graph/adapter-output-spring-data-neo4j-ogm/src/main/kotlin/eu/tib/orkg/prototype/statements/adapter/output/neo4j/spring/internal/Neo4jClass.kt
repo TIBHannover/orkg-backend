@@ -60,8 +60,8 @@ data class Neo4jClass(
             createdAt = createdAt!!,
             createdBy = createdBy,
         )
-        if (subjectOf.isNotEmpty())
-            clazz.description = subjectOf.firstOrNull { it.classId?.value == "description" }?.label
+//        if (subjectOf.isNotEmpty())
+//            clazz.description = subjectOf.firstOrNull { it.classId?.value == "description" }?.label
         return clazz
     }
 

@@ -509,6 +509,20 @@ class SpringDataNeo4jStatementAdapter(
             .paged(pageable, countQuery)
     }
 
+    override fun findClassDescription(id: ThingId): Optional<String> {
+        val l = name("l")
+        val query = match(
+                node("Class", "Thing")
+                    .withProperties("class_id", literalOf<String>(id.value))
+                    .relationshipTo(node("Literal").named(l), RELATED)
+                    .withProperties("predicate_id", literalOf<String>("description"))
+            ).returning(l.property("label"))
+            .build()
+        return Optional.ofNullable(neo4jClient.query(query.cypher)
+            .fetchAs<String>()
+            .one())
+    }
+
     private fun findAllFilteredAndPaged(
         pageable: Pageable,
         subject: CNode = node("Thing"),

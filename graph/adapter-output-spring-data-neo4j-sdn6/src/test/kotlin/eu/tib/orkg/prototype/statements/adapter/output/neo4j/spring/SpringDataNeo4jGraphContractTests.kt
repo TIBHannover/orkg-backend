@@ -41,7 +41,13 @@ internal class SpringDataNeo4jGraphContractTests(
     @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,
     @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository,
 ) : DescribeSpec({
-    include(classRepositoryContract(springDataNeo4jClassAdapter))
+    include(
+        classRepositoryContract(
+            springDataNeo4jClassAdapter,
+            springDataNeo4jStatementAdapter,
+            springDataNeo4jLiteralAdapter
+        )
+    )
     include(literalRepositoryContract(springDataNeo4jLiteralAdapter))
     include(predicateRepositoryContract(springDataNeo4jPredicateAdapter))
     include(resourceRepositoryContract(springDataNeo4jResourceAdapter))

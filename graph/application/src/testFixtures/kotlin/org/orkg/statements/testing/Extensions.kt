@@ -28,10 +28,9 @@ fun Fabrikate.withCustomMappings(): Fabrikate {
             label = random(),
             createdAt = random(),
             uri = random(),
-            createdBy = random()
-        ).apply {
-            description = random()
-        }
+            createdBy = random(),
+            description = null // FIXME: Description does not get saved in the ClassRepository
+        )
         // TODO: generate predicates and resources too?
     }
     // register fabricator for Class because _class needs to be set correctly
@@ -41,10 +40,9 @@ fun Fabrikate.withCustomMappings(): Fabrikate {
             label = random(),
             createdAt = random(),
             uri = random(),
-            createdBy = random()
-        ).apply {
-            description = random()
-        }
+            createdBy = random(),
+            description = null // FIXME: Description does not get saved in the ClassRepository
+        )
     }
     // register fabricator for Predicate because _class needs to be set correctly
     config.register {

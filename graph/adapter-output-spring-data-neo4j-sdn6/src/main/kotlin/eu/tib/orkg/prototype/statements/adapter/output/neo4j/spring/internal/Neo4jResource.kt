@@ -9,7 +9,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.time.OffsetDateTime
 import org.springframework.data.neo4j.core.schema.DynamicLabels
-import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Property
 
@@ -21,19 +20,9 @@ private val ReservedClassIds = setOf(
 )
 
 @Node("Resource")
-class Neo4jResource: Neo4jThing {
-    @Id
+class Neo4jResource: Neo4jThing() {
     @Property("resource_id")
     var resourceId: ResourceId? = null
-
-    @Property("label")
-    override var label: String? = null
-
-//    @Relationship(type = "RELATED")
-//    var resources: MutableSet<Neo4jStatement> = mutableSetOf()
-
-//    @Relationship(type = "RELATED", direction = Relationship.INCOMING)
-//    var objectOf: MutableSet<Neo4jStatement> = mutableSetOf()
 
     @Property("created_by")
     var createdBy: ContributorId = ContributorId.createUnknownContributor()

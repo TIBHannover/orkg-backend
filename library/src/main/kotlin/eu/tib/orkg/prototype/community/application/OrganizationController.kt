@@ -198,17 +198,18 @@ class OrganizationController(
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateOrganizationLogo(
         @PathVariable id: OrganizationId,
-        @RequestBody @Valid submittedLogo: String,
+        @RequestBody @Valid submittedLogo: UpdateRequest,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<Any> {
         val userId = authenticatedUserId()
-        val image = EncodedImage(submittedLogo).decodeBase64()
+        val organization = service.findById(id).orElseThrow { OrganizationNotFound(id) }
+        val image = EncodedImage(submittedLogo.value).decodeBase64()
         service.updateLogo(id, image, ContributorId(userId))
         val location = uriComponentsBuilder
             .path("api/organizations/{id}/logo")
             .buildAndExpand(id)
             .toUri()
-        return ResponseEntity.created(location).body(submittedLogo)
+        return ResponseEntity.created(location).body(organization)
     }
 
     @GetMapping("{id}/logo")

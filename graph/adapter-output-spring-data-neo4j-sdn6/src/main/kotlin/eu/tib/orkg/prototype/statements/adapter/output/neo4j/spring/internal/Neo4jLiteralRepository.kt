@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
-interface Neo4jLiteralRepository : Neo4jRepository<Neo4jLiteral, LiteralId> {
+interface Neo4jLiteralRepository : Neo4jRepository<Neo4jLiteral, Long> {
     fun existsByLiteralId(id: LiteralId): Boolean
 
     fun findByLiteralId(id: LiteralId?): Optional<Neo4jLiteral>

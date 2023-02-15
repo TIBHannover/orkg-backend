@@ -11,13 +11,9 @@ import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Property
 
 @Node("Class")
-class Neo4jClass : Neo4jThing {
-    @Id
+class Neo4jClass : Neo4jThing() {
     @Property("class_id")
     var classId: ClassId? = null
-
-    @Property("label")
-    override var label: String? = null
 
     @Property("uri")
     var uri: String? = null

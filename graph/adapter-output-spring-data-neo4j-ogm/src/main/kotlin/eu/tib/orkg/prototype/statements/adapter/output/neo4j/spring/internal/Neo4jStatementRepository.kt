@@ -199,6 +199,7 @@ WITH COLLECT(p) + COLLECT(o) + n as nodes
 WITH DISTINCT nodes
 UNWIND nodes as node
 WITH DISTINCT node.created_by AS createdBy, node.created_at AS createdAt
+WHERE createdBy IS NOT NULL
 RETURN createdBy, createdAt
 ORDER BY createdAt DESC""",
         countQuery = """MATCH (n:Resource {resource_id: $id})
@@ -210,6 +211,7 @@ WITH COLLECT(p) + COLLECT(o) + n as nodes
 WITH DISTINCT nodes
 UNWIND nodes as node
 WITH DISTINCT node.created_by AS createdBy, node.created_at AS createdAt
+WHERE createdBy IS NOT NULL
 RETURN COUNT(createdBy) as cnt""")
     fun findContributorsByResourceId(id: ResourceId, pageable: Pageable): Page<ResourceContributor>
 

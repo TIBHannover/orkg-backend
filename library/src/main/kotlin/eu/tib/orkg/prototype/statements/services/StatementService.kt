@@ -2,14 +2,14 @@ package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
+import eu.tib.orkg.prototype.statements.api.BundleConfiguration
 import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.ThingRepresentation
-import eu.tib.orkg.prototype.statements.application.BundleConfiguration
-import eu.tib.orkg.prototype.statements.application.StatementObjectNotFound
-import eu.tib.orkg.prototype.statements.application.StatementPredicateNotFound
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import eu.tib.orkg.prototype.statements.application.StatementNotFound
+import eu.tib.orkg.prototype.statements.application.StatementObjectNotFound
+import eu.tib.orkg.prototype.statements.application.StatementPredicateNotFound
 import eu.tib.orkg.prototype.statements.application.StatementSubjectNotFound
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.Class
@@ -222,9 +222,7 @@ class StatementService(
         configuration: BundleConfiguration
     ): Bundle = Bundle(
         thingId, retrieveAndConvertIterable {
-            statementRepository.fetchAsBundle(
-                thingId, configuration.toApocConfiguration()
-            )
+            statementRepository.fetchAsBundle(thingId, configuration)
         }.toMutableList()
     )
 
@@ -242,9 +240,7 @@ class StatementService(
         configuration: BundleConfiguration
     ): Bundle = createBundle(thingId, configuration) + Bundle(
         thingId, retrieveAndConvertIterable {
-            statementRepository.fetchAsBundle(
-                thingId, BundleConfiguration.firstLevelConf().toApocConfiguration()
-            )
+            statementRepository.fetchAsBundle(thingId, BundleConfiguration.firstLevelConf())
         }.toMutableList()
     )
 

@@ -13,6 +13,7 @@ import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatementIdGenerator
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatementRepository
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jThing
+import eu.tib.orkg.prototype.statements.api.BundleConfiguration
 import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
@@ -136,8 +137,8 @@ class SpringDataNeo4jStatementAdapter(
     override fun findAllByObjects(objectIds: List<String>, pageable: Pageable): Page<GeneralStatement> =
         neo4jRepository.findAllByObjects(objectIds, pageable).map { it.toStatement() }
 
-    override fun fetchAsBundle(id: String, configuration: Map<String, Any>): Iterable<GeneralStatement> =
-        neo4jRepository.fetchAsBundle(id, configuration).map { it.toStatement() }
+    override fun fetchAsBundle(id: String, configuration: BundleConfiguration): Iterable<GeneralStatement> =
+        neo4jRepository.fetchAsBundle(id, configuration.toApocConfiguration()).map { it.toStatement() }
 
     override fun exists(id: StatementId): Boolean = neo4jRepository.existsByStatementId(id)
 
@@ -205,4 +206,29 @@ class SpringDataNeo4jStatementAdapter(
             is Predicate -> neo4jPredicateRepository.findByPredicateId(this.id).get()
             is Resource -> neo4jResourceRepository.findByResourceId(this.id).get()
         }
+
+    private fun BundleConfiguration.toApocConfiguration(): Map<String, Any> {
+        val conf = mutableMapOf<String, Any>(
+            "relationshipFilter" to ">",
+            "bfs" to true
+        )
+        // configure min and max levels
+        if (maxLevel != null)
+            conf["maxLevel"] = maxLevel!!
+        if (minLevel != null)
+            conf["minLevel"] = minLevel!!
+        // configure blacklisting and whitelisting classes
+        var labelFilter = ""
+        if (blacklist.isNotEmpty())
+            labelFilter = blacklist.joinToString(prefix = "-", separator = "|-")
+        if (whitelist.isNotEmpty()) {
+            var positiveLabels = whitelist.joinToString(prefix = "+", separator = "|+")
+            if (labelFilter.isNotBlank())
+                positiveLabels += "|$labelFilter"
+            labelFilter = positiveLabels
+        }
+        if (blacklist.isNotEmpty() || whitelist.isNotEmpty())
+            conf["labelFilter"] = labelFilter
+        return conf
+    }
 }

@@ -33,7 +33,7 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun findAllBySubject(subjectId: String, pageable: Pageable): Page<GeneralStatement>
     fun findAllByPredicateId(predicateId: PredicateId, pageable: Pageable): Page<GeneralStatement>
     fun findAllByObject(objectId: String, pageable: Pageable): Page<GeneralStatement>
-    fun countByIdRecursive(paperId: String): Int
+    fun countByIdRecursive(id: String): Long
     fun findAllByObjectAndPredicate(
         objectId: String,
         predicateId: PredicateId,

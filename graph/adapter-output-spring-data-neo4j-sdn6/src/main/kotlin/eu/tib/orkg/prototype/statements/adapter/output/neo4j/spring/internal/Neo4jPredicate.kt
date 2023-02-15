@@ -7,7 +7,6 @@ import java.time.OffsetDateTime
 import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Property
-import org.springframework.data.neo4j.core.schema.Relationship
 import org.springframework.data.neo4j.core.schema.Relationship.*
 
 @Node("Predicate")
@@ -26,20 +25,15 @@ class Neo4jPredicate : Neo4jThing {
     @Property("created_at")
     var createdAt: OffsetDateTime? = null
 
-    @Relationship(type = "RELATED", direction = Direction.OUTGOING)
-    var subjectOf: MutableSet<Neo4jStatement> = mutableSetOf()
+//    @Relationship(type = "RELATED", direction = Direction.OUTGOING)
+//    var subjectOf: MutableList<Neo4jStatement> = mutableListOf()
 
-    fun toPredicate(): Predicate {
-        val predicate = Predicate(
-            id = predicateId,
-            label = label!!,
-            createdAt = createdAt!!,
-            createdBy = createdBy
-        )
-        if (subjectOf.isNotEmpty())
-            predicate.description = subjectOf.firstOrNull { it.predicateId?.value == "description" }?.`object`?.label
-        return predicate
-    }
+    fun toPredicate() = Predicate(
+        id = predicateId,
+        label = label!!,
+        createdAt = createdAt!!,
+        createdBy = createdBy
+    )
 
     override val thingId: String?
         get() = predicateId?.value

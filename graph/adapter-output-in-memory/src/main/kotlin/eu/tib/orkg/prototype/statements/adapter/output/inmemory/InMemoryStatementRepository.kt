@@ -62,12 +62,12 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
     override fun findAllByObject(objectId: String, pageable: Pageable) =
         findAllFilteredAndPaged(pageable) { it.`object`.thingId.value == objectId }
 
-    override fun countByIdRecursive(paperId: String): Int {
+    override fun countByIdRecursive(id: String): Long {
         val visited = mutableSetOf<StatementId>()
         val frontier = ArrayDeque(entities.values.filter {
-            it.subject.thingId.value == paperId
+            it.subject.thingId.value == id
         })
-        var count = 0
+        var count = 0L
         while (frontier.isNotEmpty()) {
             val statement = frontier.pop()
             if (statement.id !in visited) {

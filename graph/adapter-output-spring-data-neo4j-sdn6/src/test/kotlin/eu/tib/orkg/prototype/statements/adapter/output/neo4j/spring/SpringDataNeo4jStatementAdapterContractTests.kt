@@ -15,7 +15,7 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.ContextConfiguration
 
-//@Ignored("Workaround for Docker container issue active (\"all in one\"). Remove when solved.")
+@Ignored("Workaround for Docker container issue active (\"all in one\"). Remove when solved.")
 @DataNeo4jTest
 @ContextConfiguration(
     classes = [

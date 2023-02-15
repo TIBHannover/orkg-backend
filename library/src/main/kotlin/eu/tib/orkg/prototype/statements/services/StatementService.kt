@@ -171,7 +171,7 @@ class StatementService(
         return findById(found.id!!).get()
     }
 
-    override fun countStatements(paperId: String): Int = statementRepository.countByIdRecursive(paperId)
+    override fun countStatements(paperId: String): Long = statementRepository.countByIdRecursive(paperId)
 
     override fun findAllByPredicateAndLabel(
         predicateId: PredicateId,

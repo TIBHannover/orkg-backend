@@ -9,8 +9,6 @@ import java.time.OffsetDateTime
 import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Property
-import org.springframework.data.neo4j.core.schema.Relationship
-import org.springframework.data.neo4j.core.schema.Relationship.Direction
 
 @Node("Class")
 class Neo4jClass : Neo4jThing {
@@ -21,9 +19,6 @@ class Neo4jClass : Neo4jThing {
     @Property("label")
     override var label: String? = null
 
-    @Relationship(type = "RELATED", direction = Direction.OUTGOING)
-    var subjectOf: List<Neo4jClass> = mutableListOf()
-
     @Property("uri")
     var uri: String? = null
 
@@ -33,19 +28,13 @@ class Neo4jClass : Neo4jThing {
     @Property("created_at")
     var createdAt: OffsetDateTime? = null
 
-    fun toClass(): Class {
-        val aURI: URI? = if (uri != null) URI.create(uri!!) else null
-        val clazz = Class(
-            id = ThingId(classId!!.value),
-            label = label!!,
-            uri = aURI,
-            createdAt = createdAt!!,
-            createdBy = createdBy,
-        )
-        if (subjectOf.isNotEmpty())
-            clazz.description = subjectOf.firstOrNull { it.classId?.value == "description" }?.label
-        return clazz
-    }
+    fun toClass() = Class(
+        id = ThingId(classId!!.value),
+        label = label!!,
+        uri = if (uri != null) URI.create(uri!!) else null,
+        createdAt = createdAt!!,
+        createdBy = createdBy,
+    )
 
     override val thingId: String?
         get() = classId?.value

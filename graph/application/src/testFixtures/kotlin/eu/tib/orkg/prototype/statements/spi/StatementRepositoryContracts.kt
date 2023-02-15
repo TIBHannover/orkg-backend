@@ -1060,7 +1060,7 @@ fun <
                 repository.checkIfResourceHasStatements(resource.id!!) shouldBe false
             }
         }
-        context("when a statements exist") {
+        context("when a statement exists") {
             it("returns the correct result") {
                 val statement = fabricator.random<GeneralStatement>().copy(
                     subject = fabricator.random<Resource>(),

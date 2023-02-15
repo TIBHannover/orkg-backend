@@ -103,7 +103,7 @@ interface Neo4jStatementRepository :
     fun countStatementsByObjectId(id: ResourceId): Long
 
     @Query("""MATCH (p:`Thing`)-[*]->() WHERE p.`resource_id`=$paperId OR p.`literal_id`=$paperId OR p.`predicate_id`=$paperId OR p.`class_id`=$paperId RETURN COUNT(p)""")
-    fun countByIdRecursive(paperId: String): Int
+    fun countByIdRecursive(paperId: String): Long
 
     @Query("$MATCH_STATEMENT WHERE (obj.`resource_id`=$objectId OR obj.`literal_id`=$objectId OR obj.`predicate_id`=$objectId OR obj.`class_id`=$objectId) AND rel.`predicate_id`=$predicateId $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
     countQuery = "$MATCH_STATEMENT WHERE (obj.`resource_id`=$objectId OR obj.`literal_id`=$objectId OR obj.`predicate_id`=$objectId OR obj.`class_id`=$objectId) AND rel.`predicate_id`=$predicateId $WITH_SORTABLE_FIELDS $RETURN_COUNT")

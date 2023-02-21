@@ -10,7 +10,7 @@ class Neo4jClassIdGenerator(
 
     override fun createCounterNode() = Neo4jClassIdCounter()
 
-    override fun idFromLong(value: Long) = ThingId(value.toString())
+    override fun idFromLong(value: Long) = ThingId("C$value")
 
     override fun repository() = repository
 }

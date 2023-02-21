@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - All entities now report the correct creation timestamps. (Closes: [#438](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/438))
+- Class ID generation works correctly now. (See: [!433](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/433))
 
 ## [0.25.0] - 2023-01-24
 ### Fixed

@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.statements.spi
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.statements.domain.model.Class
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
@@ -11,6 +10,7 @@ import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.string.shouldNotMatch
 import java.net.URI
 import org.orkg.statements.testing.createClass
 import org.orkg.statements.testing.withCustomMappings
@@ -261,9 +261,14 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
         repository.findAll(PageRequest.of(0, Int.MAX_VALUE)).totalElements shouldBe 0
     }
 
-    context("requesting a new identity") {
-        it("returns a valid id") {
-            repository.nextIdentity() shouldNotBe null
+    describe("requesting a new identity") {
+        context("returns a valid id") {
+            it("that is not blank")  {
+                repository.nextIdentity().value shouldNotMatch """\s+"""
+            }
+            it("that is prefixed with 'C'") {
+                repository.nextIdentity().value[0] shouldBe 'C'
+            }
         }
         it("returns an id that is not yet in the repository") {
             val `class` = createClass(id = repository.nextIdentity())

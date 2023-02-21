@@ -459,7 +459,7 @@ fun <
         context("by predicate id and object label and subject class id") {
             val expectedCount = 3
             val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
-            val subject = createClass(id = ThingId("1"))
+            val subject = createClass(id = ThingId("C1"))
             val predicate = createPredicate(id = PredicateId(1))
             val literal = createLiteral(label = "label to find")
             (0 until expectedCount).forEach {

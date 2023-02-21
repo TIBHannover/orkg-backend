@@ -47,9 +47,10 @@ class InMemoryClassRepository : InMemoryRepository<ThingId, Class>(
     }
 
     override fun nextIdentity(): ThingId {
-        var id = ThingId(entities.size.toString())
+        var count = entities.size.toLong()
+        var id = ThingId("C$count")
         while(id in entities) {
-            id = ThingId("${id.value.toLong() + 1}")
+            id = ThingId("C${++count}")
         }
         return id
     }

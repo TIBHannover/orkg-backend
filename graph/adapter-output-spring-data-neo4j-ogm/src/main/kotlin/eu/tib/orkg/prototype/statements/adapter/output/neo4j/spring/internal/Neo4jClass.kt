@@ -54,7 +54,7 @@ data class Neo4jClass(
     fun toClass(): Class {
         val aURI: URI? = if (uri != null) URI.create(uri!!) else null
         val clazz = Class(
-            id = ThingId(classId?.value!!),
+            id = ThingId(classId!!.value),
             label = label!!,
             uri = aURI,
             createdAt = createdAt!!,

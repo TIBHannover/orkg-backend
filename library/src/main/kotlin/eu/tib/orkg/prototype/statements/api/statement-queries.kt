@@ -30,7 +30,7 @@ interface RetrieveStatementUseCase {
     ): Iterable<StatementRepresentation>
 
     fun totalNumberOfStatements(): Long
-    fun countStatements(paperId: String): Int
+    fun countStatements(paperId: String): Long
     fun findAllByPredicateAndLabel(
         predicateId: PredicateId,
         literal: String,

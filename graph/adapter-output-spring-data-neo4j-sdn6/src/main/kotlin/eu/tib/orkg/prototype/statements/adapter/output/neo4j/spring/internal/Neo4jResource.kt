@@ -24,12 +24,6 @@ class Neo4jResource: Neo4jThing() {
     @Property("resource_id")
     var resourceId: ResourceId? = null
 
-//    @Relationship(type = "RELATED")
-//    var resources: MutableSet<Neo4jStatement> = mutableSetOf()
-
-//    @Relationship(type = "RELATED", direction = Relationship.INCOMING)
-//    var objectOf: MutableSet<Neo4jStatement> = mutableSetOf()
-
     @Property("created_by")
     var createdBy: ContributorId = ContributorId.createUnknownContributor()
 

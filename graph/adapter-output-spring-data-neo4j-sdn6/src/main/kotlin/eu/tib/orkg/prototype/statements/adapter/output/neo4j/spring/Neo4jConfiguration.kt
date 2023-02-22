@@ -8,6 +8,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.*
 import org.springframework.boot.autoconfigure.domain.EntityScan
@@ -30,6 +31,7 @@ class Neo4jConfiguration {
             AttributeConverter(ResourceId::class, ::ResourceId),
             AttributeConverter(OrganizationId::class, ::OrganizationId),
             AttributeConverter(ObservatoryId::class, ::ObservatoryId),
+            AttributeConverter(StatementId::class, ::StatementId),
             AttributeConverter(
                 kClass = OffsetDateTime::class,
                 deserializer = { OffsetDateTime.parse(it, ISO_OFFSET_DATE_TIME) },

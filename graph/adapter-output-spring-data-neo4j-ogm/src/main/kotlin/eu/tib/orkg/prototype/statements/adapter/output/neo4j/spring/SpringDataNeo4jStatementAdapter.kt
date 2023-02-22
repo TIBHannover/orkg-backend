@@ -99,7 +99,7 @@ class SpringDataNeo4jStatementAdapter(
     override fun findAllByObject(objectId: String, pageable: Pageable): Page<GeneralStatement> =
         neo4jRepository.findAllByObject(objectId, pageable).map { it.toStatement() }
 
-    override fun countByIdRecursive(paperId: String): Int = neo4jRepository.countByIdRecursive(paperId)
+    override fun countByIdRecursive(id: String): Long = neo4jRepository.countByIdRecursive(id)
 
     override fun findAllByObjectAndPredicate(
         objectId: String,

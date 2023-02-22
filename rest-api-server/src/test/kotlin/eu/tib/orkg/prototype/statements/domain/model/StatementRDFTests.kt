@@ -34,7 +34,7 @@ class StatementRDFTests {
         val statement = createStatement(
             subject = createResource().copy(id = ResourceId(100), label = "subject"),
             predicate = createPredicate().copy(id = PredicateId(200)),
-            `object` = createLiteral().copy(id = LiteralId(300), label = "object")
+            `object` = createLiteral().copy(id = ThingId("L300"), label = "object")
         )
         assertThat(statement.toNTriple()).isEqualTo(expectedOutput)
     }
@@ -49,7 +49,7 @@ class StatementRDFTests {
         val statement = createStatement(
             subject = createResource().copy(id = ResourceId(100), label = "subject"),
             predicate = createPredicate().copy(id = PredicateId(200)),
-            `object` = createLiteral().copy(id = LiteralId(300), label = "object", datatype = "http://example.org/myDataType")
+            `object` = createLiteral().copy(id = ThingId("L300"), label = "object", datatype = "http://example.org/myDataType")
         )
         assertThat(statement.toNTriple()).isEqualTo(expectedOutput)
     }

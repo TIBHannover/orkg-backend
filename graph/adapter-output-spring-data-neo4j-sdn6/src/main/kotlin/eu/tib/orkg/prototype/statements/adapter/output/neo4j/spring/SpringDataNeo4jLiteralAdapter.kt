@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteralIdGenerator
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteralRepository
 import eu.tib.orkg.prototype.statements.domain.model.Literal
-import eu.tib.orkg.prototype.statements.domain.model.LiteralId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import java.util.*
 import org.springframework.cache.annotation.CacheConfig
@@ -24,12 +24,12 @@ class SpringDataNeo4jLiteralAdapter(
     private val neo4jRepository: Neo4jLiteralRepository,
     private val neo4jLiteralIdGenerator: Neo4jLiteralIdGenerator
 ) : LiteralRepository {
-    override fun nextIdentity(): LiteralId {
+    override fun nextIdentity(): ThingId {
         // IDs could exist already by manual creation. We need to find the next available one.
-        var id: LiteralId
+        var id: ThingId
         do {
             id = neo4jLiteralIdGenerator.nextIdentity()
-        } while (neo4jRepository.existsByLiteralId(id))
+        } while (neo4jRepository.existsByLiteralId(id.toLiteralId()))
         return id
     }
 
@@ -57,8 +57,8 @@ class SpringDataNeo4jLiteralAdapter(
         neo4jRepository.findAll(pageable).map(Neo4jLiteral::toLiteral)
 
     @Cacheable(key = "#id", cacheNames = [LITERAL_ID_TO_LITERAL_CACHE])
-    override fun findByLiteralId(id: LiteralId?): Optional<Literal> =
-        neo4jRepository.findByLiteralId(id).map(Neo4jLiteral::toLiteral)
+    override fun findByLiteralId(id: ThingId): Optional<Literal> =
+        neo4jRepository.findByLiteralId(id.toLiteralId()).map(Neo4jLiteral::toLiteral)
 
     override fun findAllByLabel(value: String, pageable: Pageable): Page<Literal> =
         neo4jRepository.findAllByLabel(value, pageable).map(Neo4jLiteral::toLiteral)
@@ -70,11 +70,11 @@ class SpringDataNeo4jLiteralAdapter(
         neo4jRepository.findAllByLabelContaining(part, pageable).map(Neo4jLiteral::toLiteral)
 
     @Cacheable(key = "#id", cacheNames = [LITERAL_ID_TO_LITERAL_EXISTS_CACHE])
-    override fun exists(id: LiteralId): Boolean = neo4jRepository.existsByLiteralId(id)
+    override fun exists(id: ThingId): Boolean = neo4jRepository.existsByLiteralId(id.toLiteralId())
 
     private fun Literal.toNeo4jLiteral() =
-        neo4jRepository.findByLiteralId(id).orElse(Neo4jLiteral()).apply {
-            literalId = this@toNeo4jLiteral.id
+        neo4jRepository.findByLiteralId(id.toLiteralId()).orElse(Neo4jLiteral()).apply {
+            literalId = this@toNeo4jLiteral.id.toLiteralId()
             label = this@toNeo4jLiteral.label
             datatype = this@toNeo4jLiteral.datatype
             createdAt = this@toNeo4jLiteral.createdAt

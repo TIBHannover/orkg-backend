@@ -4,9 +4,9 @@ import eu.tib.orkg.prototype.createLiteral
 import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.createStatement
-import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -36,7 +36,7 @@ internal class StatementRDFTest {
         val statement = createStatement(
             subject = createResource().copy(id = ResourceId(100), label = "subject"),
             predicate = createPredicate().copy(id = PredicateId(200)),
-            `object` = createLiteral().copy(id = LiteralId(300), label = "object")
+            `object` = createLiteral().copy(id = ThingId("L300"), label = "object")
         )
         assertThat(statement.toNTriple()).isEqualTo(expectedOutput)
     }
@@ -52,7 +52,7 @@ internal class StatementRDFTest {
             subject = createResource().copy(id = ResourceId(100), label = "subject"),
             predicate = createPredicate().copy(id = PredicateId(200)),
             `object` = createLiteral().copy(
-                id = LiteralId(300), label = "object", datatype = "http://example.org/myDataType"
+                id = ThingId("L300"), label = "object", datatype = "http://example.org/myDataType"
             )
         )
         assertThat(statement.toNTriple()).isEqualTo(expectedOutput)

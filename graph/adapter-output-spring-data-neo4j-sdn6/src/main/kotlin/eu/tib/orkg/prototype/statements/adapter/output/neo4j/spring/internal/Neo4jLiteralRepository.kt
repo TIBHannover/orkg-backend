@@ -9,7 +9,7 @@ import org.springframework.data.neo4j.repository.Neo4jRepository
 interface Neo4jLiteralRepository : Neo4jRepository<Neo4jLiteral, Long> {
     fun existsByLiteralId(id: LiteralId): Boolean
 
-    fun findByLiteralId(id: LiteralId?): Optional<Neo4jLiteral>
+    fun findByLiteralId(id: LiteralId): Optional<Neo4jLiteral>
 
     fun findAllByLabel(value: String, pageable: Pageable): Page<Neo4jLiteral>
 

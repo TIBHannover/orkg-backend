@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.LiteralIdConverter
 import java.time.OffsetDateTime
@@ -65,7 +66,7 @@ data class Neo4jLiteral(
 
     fun toLiteral() =
         Literal(
-            id = literalId,
+            id = ThingId(literalId!!.value),
             label = label!!,
             datatype = datatype!!,
             createdAt = createdAt!!,

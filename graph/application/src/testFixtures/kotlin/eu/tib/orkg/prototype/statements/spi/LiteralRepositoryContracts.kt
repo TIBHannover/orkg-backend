@@ -3,13 +3,14 @@ package eu.tib.orkg.prototype.statements.spi
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.statements.domain.model.Literal
-import eu.tib.orkg.prototype.statements.domain.model.LiteralId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.string.shouldNotMatch
 import org.orkg.statements.testing.createLiteral
 import org.orkg.statements.testing.withCustomMappings
 import org.springframework.data.domain.PageRequest
@@ -33,7 +34,7 @@ fun <R : LiteralRepository> literalRepositoryContract(
             val expected: Literal = fabricator.random()
             repository.save(expected)
 
-            val actual = repository.findByLiteralId(expected.id!!).orElse(null)
+            val actual = repository.findByLiteralId(expected.id).orElse(null)
 
             actual shouldNotBe null
             actual.asClue {
@@ -47,13 +48,13 @@ fun <R : LiteralRepository> literalRepositoryContract(
         it("updates an already existing statement") {
             val original: Literal = fabricator.random()
             repository.save(original)
-            val found = repository.findByLiteralId(original.id!!).get()
+            val found = repository.findByLiteralId(original.id).get()
             val modifiedLabel = "modified label"
             val modified = found.copy(label = modifiedLabel)
             repository.save(modified)
 
             repository.findAll(PageRequest.of(0, Int.MAX_VALUE)).toSet().size shouldBe 1
-            repository.findByLiteralId(original.id!!).get().label shouldBe modifiedLabel
+            repository.findByLiteralId(original.id).get().label shouldBe modifiedLabel
         }
     }
 
@@ -155,7 +156,7 @@ fun <R : LiteralRepository> literalRepositoryContract(
 
     it("delete all literals") {
         repeat(3) {
-            repository.save(createLiteral(id = LiteralId(it.toLong())))
+            repository.save(createLiteral(id = ThingId("$it")))
         }
         // LiteralRepository has no count method
         repository.findAll(PageRequest.of(0, Int.MAX_VALUE)).totalElements shouldBe 3
@@ -163,9 +164,14 @@ fun <R : LiteralRepository> literalRepositoryContract(
         repository.findAll(PageRequest.of(0, Int.MAX_VALUE)).totalElements shouldBe 0
     }
 
-    context("requesting a new identity") {
-        it("returns a valid id") {
-            repository.nextIdentity() shouldNotBe null
+    describe("requesting a new identity") {
+        context("returns a valid id") {
+            it("that is not blank")  {
+                repository.nextIdentity().value shouldNotMatch """\s+"""
+            }
+            it("that is prefixed with 'L'") {
+                repository.nextIdentity().value[0] shouldBe 'L'
+            }
         }
         it("returns an id that is not yet in the repository") {
             val literal = createLiteral(id = repository.nextIdentity())

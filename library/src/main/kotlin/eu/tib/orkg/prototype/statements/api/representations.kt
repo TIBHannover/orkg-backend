@@ -6,7 +6,6 @@ import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
-import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -16,7 +15,7 @@ import java.time.OffsetDateTime
 sealed interface ThingRepresentation
 
 interface LiteralRepresentation : ThingRepresentation, ProvenanceMetadata {
-    val id: LiteralId
+    val id: ThingId
     val label: String
     val datatype: String
 

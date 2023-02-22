@@ -9,7 +9,7 @@ import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.application.LiteralController.LiteralCreateRequest
 import eu.tib.orkg.prototype.statements.application.LiteralController.LiteralUpdateRequest
 import eu.tib.orkg.prototype.statements.domain.model.Literal
-import eu.tib.orkg.prototype.statements.domain.model.LiteralId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.toLiteralRepresentation
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import io.mockk.every
@@ -64,7 +64,7 @@ class LiteralControllerTest {
     fun whenPOST_AndLabelIsEmptyString_ThenSucceed() {
         val literal = createCreateRequestWithEmptyLabel()
         val mockResult = Literal(
-            id = LiteralId(1),
+            id = ThingId("L1"),
             label = literal.label,
             datatype = literal.datatype,
             createdAt = OffsetDateTime.now()
@@ -137,7 +137,7 @@ class LiteralControllerTest {
             datatype = "irrelevant"
         )
         val mockResult = Literal(
-            id = LiteralId(1),
+            id = ThingId("L1"),
             label = literal.label,
             datatype = literal.datatype,
             createdAt = OffsetDateTime.now()
@@ -182,7 +182,7 @@ class LiteralControllerTest {
 
     private fun createDummyLiteral(): Literal {
         return Literal(
-            id = LiteralId(1),
+            id = ThingId("L1"),
             label = "irrelevant",
             datatype = "irrelevant",
             createdAt = OffsetDateTime.now()

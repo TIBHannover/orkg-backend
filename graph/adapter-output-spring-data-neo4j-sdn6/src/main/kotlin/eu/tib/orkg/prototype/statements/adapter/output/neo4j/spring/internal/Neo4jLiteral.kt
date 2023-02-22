@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.time.OffsetDateTime
 import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
@@ -30,7 +31,7 @@ class Neo4jLiteral : Neo4jThing() {
 
     fun toLiteral() =
         Literal(
-            id = literalId,
+            id = ThingId(literalId!!.value),
             label = label!!,
             datatype = datatype!!,
             createdAt = createdAt!!,

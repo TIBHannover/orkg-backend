@@ -14,7 +14,6 @@ import eu.tib.orkg.prototype.statements.api.UpdateOrganizationUseCases.RawImage
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
-import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -67,7 +66,7 @@ fun createPredicate() = Predicate(
 )
 
 fun createLiteral() = Literal(
-    id = LiteralId(1),
+    id = ThingId("L1"),
     label = "some literal value",
     datatype = "xsd:string",
     createdAt = OffsetDateTime.now(),

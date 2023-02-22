@@ -5,7 +5,6 @@ import eu.tib.orkg.prototype.shared.ForbiddenOperationException
 import eu.tib.orkg.prototype.shared.LoggedMessageException
 import eu.tib.orkg.prototype.shared.PropertyValidationException
 import eu.tib.orkg.prototype.shared.SimpleMessageException
-import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
@@ -27,7 +26,7 @@ class ResourceNotFound private constructor(
 
 class LiteralNotFound : SimpleMessageException {
     constructor(id: String) : super(HttpStatus.NOT_FOUND, """Literal "$id" not found.""")
-    constructor(id: LiteralId) : this(id.value)
+    constructor(id: ThingId) : this(id.value)
 }
 
 class ClassNotFound private constructor(

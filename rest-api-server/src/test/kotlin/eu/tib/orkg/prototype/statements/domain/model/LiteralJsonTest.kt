@@ -89,7 +89,7 @@ class LiteralJsonTest {
 
     private fun createLiteral(datatype: String? = null) =
         Literal(
-            id = LiteralId(100),
+            id = ThingId("L100"),
             label = "label",
             createdAt = OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3)),
             datatype = datatype ?: "xsd:string"

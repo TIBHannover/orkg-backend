@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.LiteralRepresentation
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.domain.model.Literal
-import eu.tib.orkg.prototype.statements.domain.model.LiteralId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
@@ -41,12 +41,12 @@ class LiteralService(
     }
 
     @Transactional(readOnly = true)
-    override fun exists(id: LiteralId): Boolean = repository.exists(id)
+    override fun exists(id: ThingId): Boolean = repository.exists(id)
 
     override fun findAll(pageable: Pageable): Page<LiteralRepresentation> =
         repository.findAll(pageable).map(Literal::toLiteralRepresentation)
 
-    override fun findById(id: LiteralId?): Optional<LiteralRepresentation> =
+    override fun findById(id: ThingId): Optional<LiteralRepresentation> =
         repository.findByLiteralId(id).map(Literal::toLiteralRepresentation)
 
     override fun findAllByLabel(label: String, pageable: Pageable): Page<LiteralRepresentation> =
@@ -82,7 +82,7 @@ class LiteralService(
 }
 
 fun Literal.toLiteralRepresentation(): LiteralRepresentation = object : LiteralRepresentation {
-    override val id: LiteralId = this@toLiteralRepresentation.id!!
+    override val id: ThingId = this@toLiteralRepresentation.id
     override val label: String = this@toLiteralRepresentation.label
     override val datatype: String = this@toLiteralRepresentation.datatype
     override val jsonClass: String = "literal"

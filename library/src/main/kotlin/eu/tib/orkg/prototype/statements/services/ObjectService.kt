@@ -1,5 +1,7 @@
 package eu.tib.orkg.prototype.statements.services
 
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
@@ -18,9 +20,6 @@ import eu.tib.orkg.prototype.statements.application.PredicateNotFound
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.TempResource
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
-import eu.tib.orkg.prototype.statements.domain.model.LiteralId
-import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -289,7 +288,7 @@ class ObjectService(
      * o/w throw out a suitable exception
      */
     private fun checkIfLiteralExists(literalId: String) {
-        if (!literalService.exists(LiteralId(literalId))) throw LiteralNotFound(literalId)
+        if (!literalService.exists(ThingId(literalId))) throw LiteralNotFound(literalId)
     }
 
     /**

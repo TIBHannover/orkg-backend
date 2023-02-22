@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
-import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -146,7 +145,7 @@ class SpringDataNeo4jThingAdapterCachingTests {
     @Test
     fun `saving a literal should evict it from the thing-id cache`() {
         val thingId = "R1"
-        val literal = createLiteral().copy(id = LiteralId(thingId))
+        val literal = createLiteral().copy(id = ThingId(thingId))
         val modified = literal.copy(label = "new label")
         every { mock.findByThingId(thingId) } returns Optional.of(literal) andThen Optional.of(modified) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")

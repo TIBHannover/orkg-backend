@@ -3,7 +3,7 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.LiteralRepresentation
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
-import eu.tib.orkg.prototype.statements.domain.model.LiteralId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
@@ -33,7 +33,7 @@ class LiteralController(
 ) : BaseController() {
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: LiteralId): LiteralRepresentation =
+    fun findById(@PathVariable id: ThingId): LiteralRepresentation =
         service
             .findById(id)
             .orElseThrow { LiteralNotFound(id) }
@@ -77,7 +77,7 @@ class LiteralController(
 
     @PutMapping("/{id}")
     fun update(
-        @PathVariable id: LiteralId,
+        @PathVariable id: ThingId,
         @RequestBody @Valid request: LiteralUpdateRequest
     ): ResponseEntity<LiteralRepresentation> {
         var literal = repository.findByLiteralId(id).orElseThrow { LiteralNotFound(id) }
@@ -101,7 +101,7 @@ class LiteralController(
     )
 
     data class LiteralUpdateRequest(
-        val id: LiteralId?,
+        val id: ThingId?,
         val label: String?,
         val datatype: String?
     )

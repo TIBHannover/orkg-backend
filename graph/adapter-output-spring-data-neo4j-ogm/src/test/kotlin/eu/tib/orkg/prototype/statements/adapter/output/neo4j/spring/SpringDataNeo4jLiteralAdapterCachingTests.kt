@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
-import eu.tib.orkg.prototype.statements.domain.model.LiteralId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import io.mockk.clearMocks
 import io.mockk.confirmVerified
@@ -62,78 +62,78 @@ class SpringDataNeo4jLiteralAdapterCachingTests {
 
     @Test
     fun `fetching a literal by ID should be cached`() {
-        val literal = createLiteral().copy(id = LiteralId("L1"))
-        every { mock.findByLiteralId(LiteralId("L1")) } returns Optional.of(literal) andThen {
+        val literal = createLiteral().copy(id = ThingId("L1"))
+        every { mock.findByLiteralId(ThingId("L1")) } returns Optional.of(literal) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
 
         // Obtain literal from repository
-        assertThat(adapter.findByLiteralId(LiteralId("L1")).get()).isEqualTo(literal)
+        assertThat(adapter.findByLiteralId(ThingId("L1")).get()).isEqualTo(literal)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByLiteralId(LiteralId("L1")) }
+        verify(exactly = 1) { mock.findByLiteralId(ThingId("L1")) }
 
         // Obtain the same literal again for several times
-        assertThat(adapter.findByLiteralId(LiteralId("L1")).get()).isEqualTo(literal)
-        assertThat(adapter.findByLiteralId(LiteralId("L1")).get()).isEqualTo(literal)
+        assertThat(adapter.findByLiteralId(ThingId("L1")).get()).isEqualTo(literal)
+        assertThat(adapter.findByLiteralId(ThingId("L1")).get()).isEqualTo(literal)
 
-        verify(exactly = 1) { mock.findByLiteralId(LiteralId("L1")) }
+        verify(exactly = 1) { mock.findByLiteralId(ThingId("L1")) }
     }
 
     @Test
     fun `saving a literal should evict it from the id-to-literal cache`() {
-        val literal = createLiteral().copy(id = LiteralId("L1"))
+        val literal = createLiteral().copy(id = ThingId("L1"))
         val modified = literal.copy(label = "new label")
-        every { mock.findByLiteralId(LiteralId("L1")) } returns Optional.of(literal) andThen Optional.of(modified) andThen {
+        every { mock.findByLiteralId(ThingId("L1")) } returns Optional.of(literal) andThen Optional.of(modified) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
-        every { mock.exists(LiteralId("L1")) } returns true andThen {
+        every { mock.exists(ThingId("L1")) } returns true andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { mock.save(modified) } returns Unit
 
         // Obtain literal from repository
-        assertThat(adapter.findByLiteralId(LiteralId("L1")).get()).isEqualTo(literal)
+        assertThat(adapter.findByLiteralId(ThingId("L1")).get()).isEqualTo(literal)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByLiteralId(LiteralId("L1")) }
+        verify(exactly = 1) { mock.findByLiteralId(ThingId("L1")) }
 
         // Check literal existence in repository
-        assertThat(adapter.exists(LiteralId("L1"))).isTrue
+        assertThat(adapter.exists(ThingId("L1"))).isTrue
         // Verify the loading happened
-        verify(exactly = 1) { mock.exists(LiteralId("L1")) }
+        verify(exactly = 1) { mock.exists(ThingId("L1")) }
 
         // Save a modified version
         adapter.save(modified)
         verify { mock.save(modified) } // required because of confirmVerified()
 
         // Obtaining the literal again
-        assertThat(adapter.findByLiteralId(LiteralId("L1")).get())
+        assertThat(adapter.findByLiteralId(ThingId("L1")).get())
             .`as`("obtaining the updated version from the cache")
             .isEqualTo(modified)
         // Verify the loading happened (again)
-        verify(exactly = 2) { mock.findByLiteralId(LiteralId("L1")) }
+        verify(exactly = 2) { mock.findByLiteralId(ThingId("L1")) }
 
         // Check literal existence again
-        assertThat(adapter.exists(LiteralId("L1"))).isTrue
+        assertThat(adapter.exists(ThingId("L1"))).isTrue
         // Verify the loading did not happen again
-        verify(exactly = 1) { mock.exists(LiteralId("L1")) }
+        verify(exactly = 1) { mock.exists(ThingId("L1")) }
     }
 
     @Test
     fun `exists check of a literal by ID should be cached`() {
-        every { mock.exists(LiteralId("L1")) } returns true andThen {
+        every { mock.exists(ThingId("L1")) } returns true andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
 
         // Check literal existence in repository
-        assertThat(adapter.exists(LiteralId("L1"))).isTrue
+        assertThat(adapter.exists(ThingId("L1"))).isTrue
         // Verify the loading happened
-        verify(exactly = 1) { mock.exists(LiteralId("L1")) }
+        verify(exactly = 1) { mock.exists(ThingId("L1")) }
 
         // Check existence of literal again for several times
-        assertThat(adapter.exists(LiteralId("L1"))).isTrue
-        assertThat(adapter.exists(LiteralId("L1"))).isTrue
+        assertThat(adapter.exists(ThingId("L1"))).isTrue
+        assertThat(adapter.exists(ThingId("L1"))).isTrue
 
-        verify(exactly = 1) { mock.exists(LiteralId("L1")) }
+        verify(exactly = 1) { mock.exists(ThingId("L1")) }
     }
 
     @Configuration

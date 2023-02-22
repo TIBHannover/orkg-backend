@@ -202,7 +202,7 @@ class SpringDataNeo4jStatementAdapter(
         // With direct access to the database, this becomes obsolete, because queries can use the ID directly.
         when (this) {
             is Class -> neo4jClassRepository.findByClassId(this.id.toClassId()).get()
-            is Literal -> neo4jLiteralRepository.findByLiteralId(this.id).get()
+            is Literal -> neo4jLiteralRepository.findByLiteralId(this.id.toLiteralId()).get()
             is Predicate -> neo4jPredicateRepository.findByPredicateId(this.id).get()
             is Resource -> neo4jResourceRepository.findByResourceId(this.id).get()
         }

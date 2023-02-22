@@ -41,6 +41,8 @@ private val reservedClassIds = setOf(
 
 internal fun ThingId.toClassId() = ClassId(value)
 
+internal fun ThingId.toLiteralId() = LiteralId(value)
+
 internal fun Set<ThingId>.toClassIds() = map { it.toClassId() }.toSet()
 
 internal fun Iterable<ThingId>.toClassIds() = map { it.toClassId() }
@@ -83,7 +85,7 @@ internal data class ResourceMapper(val name: String) : BiFunction<TypeSystem, Re
 }
 
 internal fun Node.toLiteral() = Literal(
-    id = LiteralId(this["literal_id"].asString()),
+    id = ThingId(this["literal_id"].asString()),
     label = this["label"].asString(),
     datatype = this["datatype"]?.asString() ?: "xsd:string",
     createdAt = this["created_at"].toOffsetDateTime(),

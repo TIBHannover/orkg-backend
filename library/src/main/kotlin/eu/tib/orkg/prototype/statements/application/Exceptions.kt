@@ -5,7 +5,6 @@ import eu.tib.orkg.prototype.shared.ForbiddenOperationException
 import eu.tib.orkg.prototype.shared.LoggedMessageException
 import eu.tib.orkg.prototype.shared.PropertyValidationException
 import eu.tib.orkg.prototype.shared.SimpleMessageException
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -41,7 +40,7 @@ class ClassNotFound private constructor(
 
 class PredicateNotFound : SimpleMessageException {
     constructor(id: String) : super(HttpStatus.NOT_FOUND, """Predicate "$id" not found.""")
-    constructor(id: PredicateId) : this(id.value)
+    constructor(id: ThingId) : this(id.value)
 }
 
 class StatementNotFound : SimpleMessageException {
@@ -64,7 +63,7 @@ class DatasetNotFound(id: ResourceId) :
 class ResourceCantBeDeleted(id: ResourceId) :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Unable to delete resource "$id" because it is used in at least one statement.""")
 
-class PredicateCantBeDeleted(id: PredicateId) :
+class PredicateCantBeDeleted(id: ThingId) :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Unable to delete predicate "$id" because it is used in at least one statement.""")
 
 class ClassNotAllowed(`class`: String) :
@@ -76,7 +75,7 @@ class ClassAlreadyExists(`class`: String) :
 class ResourceAlreadyExists(id: ResourceId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Resource "$id" already exists.""")
 
-class PredicateAlreadyExists(id: PredicateId) :
+class PredicateAlreadyExists(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Predicate "$id" already exists.""")
 
 class InvalidClassCollection(ids: Iterable<ThingId>) :
@@ -115,7 +114,7 @@ class InvalidClassFilter(id: ThingId) :
 class StatementSubjectNotFound(id: String) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Subject "$id" not found.""")
 
-class StatementPredicateNotFound(id: PredicateId) :
+class StatementPredicateNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Predicate "$id" not found.""")
 
 class StatementObjectNotFound(id: String) :

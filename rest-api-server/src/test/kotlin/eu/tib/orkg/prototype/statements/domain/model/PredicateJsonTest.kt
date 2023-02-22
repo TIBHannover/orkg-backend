@@ -42,7 +42,7 @@ class PredicateJsonTest {
 
     private fun createPredicate() =
         Predicate(
-            PredicateId(100),
+            ThingId("P100"),
             "label",
             OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3))
         ).toPredicateRepresentation()

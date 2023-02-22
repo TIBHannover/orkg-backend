@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
@@ -171,7 +170,7 @@ class SpringDataNeo4jThingAdapterCachingTests {
     @Test
     fun `saving a predicate should evict it from the thing-id cache`() {
         val thingId = "R1"
-        val predicate = createPredicate().copy(id = PredicateId(thingId))
+        val predicate = createPredicate().copy(id = ThingId(thingId))
         val modified = predicate.copy(label = "new label")
         every { mock.findByThingId(thingId) } returns Optional.of(predicate) andThen Optional.of(modified) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
@@ -224,11 +223,11 @@ class SpringDataNeo4jThingAdapterCachingTests {
     @Test
     fun `deleting a predicate should evict it from the thing cache`() {
         val thingId = "R1"
-        val predicate = createPredicate().copy(id = PredicateId(thingId))
+        val predicate = createPredicate().copy(id = ThingId(thingId))
         every { mock.findByThingId(thingId) } returns Optional.of(predicate) andThen Optional.of(predicate) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
-        every { predicateMock.deleteByPredicateId(predicate.id!!) } returns Unit
+        every { predicateMock.deleteByPredicateId(predicate.id) } returns Unit
 
         // Obtain predicate from Thing repository
         assertThat(adapter.findByThingId(thingId).get()).isEqualTo(predicate)
@@ -241,9 +240,9 @@ class SpringDataNeo4jThingAdapterCachingTests {
         verify(exactly = 1) { mock.findByThingId(thingId) }
 
         // Delete predicate from repository
-        predicateAdapter.deleteByPredicateId(predicate.id!!)
+        predicateAdapter.deleteByPredicateId(predicate.id)
         // Verify the deletion happened
-        verify(exactly = 1) { predicateMock.deleteByPredicateId(predicate.id!!) }
+        verify(exactly = 1) { predicateMock.deleteByPredicateId(predicate.id) }
 
         // Verify that the cache was evicted
         assertThat(adapter.findByThingId(thingId).get()).isEqualTo(predicate)

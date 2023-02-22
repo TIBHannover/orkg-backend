@@ -4,11 +4,11 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import java.time.OffsetDateTime
 
 data class Predicate(
-    val id: PredicateId?,
+    val id: ThingId,
     override val label: String,
     val createdAt: OffsetDateTime,
     val createdBy: ContributorId = ContributorId.createUnknownContributor(),
 ) : Thing {
     var description: String? = null
-    override val thingId: ThingId = ThingId(id!!.value)
+    override val thingId: ThingId = ThingId(id.value)
 }

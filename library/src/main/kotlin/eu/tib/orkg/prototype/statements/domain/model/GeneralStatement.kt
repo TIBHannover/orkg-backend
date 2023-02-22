@@ -38,7 +38,7 @@ data class CreateStatement(
     @JsonProperty("subject_id")
     val subjectId: String,
     @JsonProperty("predicate_id")
-    val predicateId: PredicateId,
+    val predicateId: ThingId,
     @JsonProperty("object_id")
     val objectId: String
 )

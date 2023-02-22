@@ -6,7 +6,7 @@ import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.application.PredicateCantBeDeleted
 import eu.tib.orkg.prototype.statements.domain.model.Clock
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import io.kotest.assertions.throwables.shouldThrow
@@ -32,7 +32,7 @@ class PredicateServiceTests {
 
     @Test
     fun `given a predicate is created, when no id is given, then it gets an id from the repository`() {
-        val mockPredicateId = PredicateId(1)
+        val mockPredicateId = ThingId("P1")
         every { repository.nextIdentity() } returns mockPredicateId
         every { repository.save(any()) } returns Unit
 
@@ -43,7 +43,7 @@ class PredicateServiceTests {
 
     @Test
     fun `given a predicate is created, when an id is given, then it does not get a new id`() {
-        val mockPredicateId = PredicateId(1)
+        val mockPredicateId = ThingId("P1")
         every { repository.save(any()) } returns Unit
 
         service.create(CreatePredicateUseCase.CreateCommand(label = "irrelevant", id = mockPredicateId.value))
@@ -61,7 +61,7 @@ class PredicateServiceTests {
 
     @Test
     fun `given a predicate is created, when the label is invalid, then an exception is thrown`() {
-        val mockPredicateId = PredicateId(1)
+        val mockPredicateId = ThingId("P1")
         every { repository.nextIdentity() } returns mockPredicateId
 
         val exception = assertThrows<IllegalArgumentException> {
@@ -72,7 +72,7 @@ class PredicateServiceTests {
 
     @Test
     fun `given a predicate is created, when no contributor is given, the anonymous user id is used`() {
-        val mockPredicateId = PredicateId(1)
+        val mockPredicateId = ThingId("P1")
         every { repository.nextIdentity() } returns mockPredicateId
         every { repository.save(any()) } returns Unit
 
@@ -92,7 +92,7 @@ class PredicateServiceTests {
 
     @Test
     fun `given a predicate is created, when a contributor is given, the contributor id is used`() {
-        val mockPredicateId = PredicateId(1)
+        val mockPredicateId = ThingId("P1")
         every { repository.nextIdentity() } returns mockPredicateId
         every { repository.save(any()) } returns Unit
 
@@ -116,10 +116,10 @@ class PredicateServiceTests {
         val mockPredicate = createPredicate()
 
         every { repository.findByPredicateId(mockPredicate.id) } returns Optional.of(mockPredicate)
-        every { statementRepository.countPredicateUsage(mockPredicate.id!!) } returns 1
+        every { statementRepository.countPredicateUsage(mockPredicate.id) } returns 1
 
         shouldThrow<PredicateCantBeDeleted> {
-            service.delete(mockPredicate.id!!)
+            service.delete(mockPredicate.id)
         }
 
         verify(exactly = 0) { repository.deleteByPredicateId(any()) }
@@ -130,11 +130,11 @@ class PredicateServiceTests {
         val mockPredicate = createPredicate()
 
         every { repository.findByPredicateId(mockPredicate.id) } returns Optional.of(mockPredicate)
-        every { statementRepository.countPredicateUsage(mockPredicate.id!!) } returns 0
-        every { repository.deleteByPredicateId(mockPredicate.id!!) } returns Unit
+        every { statementRepository.countPredicateUsage(mockPredicate.id) } returns 0
+        every { repository.deleteByPredicateId(mockPredicate.id) } returns Unit
 
-        service.delete(mockPredicate.id!!)
+        service.delete(mockPredicate.id)
 
-        verify(exactly = 1) { repository.deleteByPredicateId(mockPredicate.id!!) }
+        verify(exactly = 1) { repository.deleteByPredicateId(mockPredicate.id) }
     }
 }

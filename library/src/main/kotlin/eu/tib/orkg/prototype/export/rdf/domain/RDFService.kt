@@ -6,7 +6,6 @@ import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
@@ -42,7 +41,7 @@ class RDFService(
         statementRepository.forEach { append(it.toNTriple()) }
     }
 
-    override fun rdfModelFor(id: ThingId): Optional<Model> {
+    override fun rdfModelForClass(id: ThingId): Optional<Model> {
         val clazz = classesRepository.findByClassId(id).orElse(null) ?: return Optional.empty()
         with(clazz) {
             val model = ModelBuilder().apply {
@@ -57,7 +56,7 @@ class RDFService(
         }
     }
 
-    override fun rdfModelFor(id: PredicateId): Optional<Model> {
+    override fun rdfModelForPredicate(id: ThingId): Optional<Model> {
         val predicate = predicateRepository.findByPredicateId(id).orElse(null) ?: return Optional.empty()
         with(predicate) {
             val model = ModelBuilder().apply {
@@ -71,7 +70,7 @@ class RDFService(
         }
     }
 
-    override fun rdfModelFor(id: ResourceId): Optional<Model> {
+    override fun rdfModelForResource(id: ResourceId): Optional<Model> {
         val resource = resourceRepository.findByResourceId(id).orElse(null) ?: return Optional.empty()
         val statements =
             statementRepository.findAllBySubject(resource.id!!.value, PageRequest.of(0, Int.MAX_VALUE)) // FIXME

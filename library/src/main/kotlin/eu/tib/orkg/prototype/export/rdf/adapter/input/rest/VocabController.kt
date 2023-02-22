@@ -5,7 +5,6 @@ import eu.tib.orkg.prototype.export.rdf.api.ExportRDFUseCase
 import eu.tib.orkg.prototype.statements.application.ClassNotFound
 import eu.tib.orkg.prototype.statements.application.PredicateNotFound
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.io.StringWriter
@@ -39,7 +38,7 @@ class VocabController(
     ): ResponseEntity<String> {
         if (!checkAcceptHeader(acceptHeader))
             return createRedirectResponse("resource", id.value, uriComponentsBuilder)
-        val model = service.rdfModelFor(id)
+        val model = service.rdfModelForResource(id)
             // TODO: Return meaningful message to the user
             .orElseThrow { ResourceNotFound.withId(id) }
         val response = getRdfSerialization(model, acceptHeader)
@@ -52,13 +51,13 @@ class VocabController(
         produces = ["text/plain", "application/n-triples", "application/rdf+xml", "text/n3", "text/turtle", "application/json", "application/turtle", "application/trig", "application/n-quads"]
     )
     fun predicate(
-        @PathVariable id: PredicateId,
+        @PathVariable id: ThingId,
         @RequestHeader("Accept") acceptHeader: String,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<String> {
         if (!checkAcceptHeader(acceptHeader))
             return createRedirectResponse("predicate", id.value, uriComponentsBuilder)
-        val model = service.rdfModelFor(id)
+        val model = service.rdfModelForPredicate(id)
             // TODO: Return meaningful message to the user
             .orElseThrow { PredicateNotFound(id) }
         val response = getRdfSerialization(model, acceptHeader)
@@ -75,7 +74,7 @@ class VocabController(
         @RequestHeader("Accept") acceptHeader: String,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<String> {
-        val model = service.rdfModelFor(id)
+        val model = service.rdfModelForClass(id)
             // TODO: Return meaningful message to the user
             .orElseThrow { ClassNotFound.withThingId(id) }
         val response = getRdfSerialization(model, acceptHeader)

@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
 import eu.tib.orkg.prototype.statements.application.CreatePredicateRequest
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.assertj.core.api.Assertions.assertThat
@@ -27,7 +27,7 @@ class PredicateServiceTest : Neo4jTestContainersBaseTest() {
     @Test
     @DisplayName("should create predicate from request")
     fun shouldCreatePredicateFromRequest() {
-        val resource = service.create(CreatePredicateRequest(PredicateId("someID"), "Some Concept"))
+        val resource = service.create(CreatePredicateRequest(ThingId("someID"), "Some Concept"))
 
         assertThat(resource.id.toString()).isEqualTo("someID")
         assertThat(resource.label).isEqualTo("Some Concept")
@@ -36,8 +36,8 @@ class PredicateServiceTest : Neo4jTestContainersBaseTest() {
     @Test
     @DisplayName("should find created predicates")
     fun shouldFindCreatedPredicates() {
-        service.create(CreatePredicateRequest(PredicateId("firstID"), "First Concept"))
-        service.create(CreatePredicateRequest(PredicateId("secondID"), "Second Concept"))
+        service.create(CreatePredicateRequest(ThingId("firstID"), "First Concept"))
+        service.create(CreatePredicateRequest(ThingId("secondID"), "Second Concept"))
 
         val predicates = service.findAll(PageRequest.of(0, 10))
 

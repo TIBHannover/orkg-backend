@@ -12,7 +12,6 @@ import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
@@ -53,7 +52,7 @@ fun CreatePredicateUseCase.createPredicates(vararg predicates: String) =
 fun CreatePredicateUseCase.createPredicate(
     label: String,
     id: String? = null
-): PredicateId =
+): ThingId =
     this.create(CreatePredicateUseCase.CreateCommand(label, id, ContributorId.createUnknownContributor()))
 
 // Resources

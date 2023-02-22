@@ -43,6 +43,8 @@ internal fun ThingId.toClassId() = ClassId(value)
 
 internal fun ThingId.toLiteralId() = LiteralId(value)
 
+internal fun ThingId.toPredicateId() = PredicateId(value)
+
 internal fun Set<ThingId>.toClassIds() = map { it.toClassId() }.toSet()
 
 internal fun Iterable<ThingId>.toClassIds() = map { it.toClassId() }
@@ -65,7 +67,7 @@ internal data class StatementMapper(
         return GeneralStatement(
             id = StatementId(relation["statement_id"].asString()),
             // This could be fetched directly in findByXYZ
-            predicate = predicateRepository.findByPredicateId(PredicateId(relation["predicate_id"].asString())).get(),
+            predicate = predicateRepository.findByPredicateId(ThingId(relation["predicate_id"].asString())).get(),
             createdAt = relation["created_at"].toOffsetDateTime(),
             createdBy = relation["created_by"].toContributorId(),
             subject = record[subject].asNode().toThing(),
@@ -123,7 +125,7 @@ internal fun Node.toResource() = Resource(
 )
 
 internal fun Node.toPredicate() = Predicate(
-    id = PredicateId(this["predicate_id"].asString()),
+    id = ThingId(this["predicate_id"].asString()),
     label = this["label"].asString(),
     createdAt = this["created_at"].toOffsetDateTime(),
     createdBy = this["created_by"].toContributorId(),

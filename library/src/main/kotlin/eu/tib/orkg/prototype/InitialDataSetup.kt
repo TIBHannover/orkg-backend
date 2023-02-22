@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype
 import eu.tib.orkg.prototype.configuration.InputInjection
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.io.FileReader
 import java.net.URI
@@ -64,7 +63,7 @@ class DataInitializer(
     private fun createPredicates(predicateList: List<CreatePredicatesCommand>) {
         predicateList.forEach { createPredicateCommand ->
             predicateService.createIfNotExists(
-                PredicateId(createPredicateCommand.id),
+                ThingId(createPredicateCommand.id),
                 createPredicateCommand.label)
         }
     }

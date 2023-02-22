@@ -10,7 +10,6 @@ import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
@@ -269,7 +268,7 @@ fun <
         context("by predicate id") {
             val expectedCount = 3
             val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
-            val predicate = createPredicate(id = PredicateId(1))
+            val predicate = createPredicate(id = ThingId("P1"))
             (0 until expectedCount).forEach {
                 statements[it] = statements[it].copy(
                     predicate = predicate
@@ -279,7 +278,7 @@ fun <
             val expected = statements.take(expectedCount)
 
             val result = repository.findAllByPredicateId(
-                predicate.id!!,
+                predicate.id,
                 PageRequest.of(0, 5)
             )
 
@@ -340,7 +339,7 @@ fun <
             val expectedCount = 3
             val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
             val `object` = createResource(id = ResourceId(1))
-            val predicate = createPredicate(id = PredicateId(1))
+            val predicate = createPredicate(id = ThingId("P1"))
             (0 until expectedCount).forEach {
                 statements[it] = statements[it].copy(
                     `object` = `object`,
@@ -352,7 +351,7 @@ fun <
 
             val result = repository.findAllByObjectAndPredicate(
                 `object`.id.toString(),
-                predicate.id!!,
+                predicate.id,
                 PageRequest.of(0, 5)
             )
 
@@ -378,7 +377,7 @@ fun <
             val expectedCount = 3
             val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
             val subject = createResource(id = ResourceId(1))
-            val predicate = createPredicate(id = PredicateId(1))
+            val predicate = createPredicate(id = ThingId("P1"))
             (0 until expectedCount).forEach {
                 statements[it] = statements[it].copy(
                     subject = subject,
@@ -390,7 +389,7 @@ fun <
 
             val result = repository.findAllBySubjectAndPredicate(
                 subject.id.toString(),
-                predicate.id!!,
+                predicate.id,
                 PageRequest.of(0, 5)
             )
 
@@ -416,7 +415,7 @@ fun <
             val expectedCount = 3
             val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
             val literal = createLiteral(label = "label to find")
-            val predicate = createPredicate(id = PredicateId(1))
+            val predicate = createPredicate(id = ThingId("P1"))
             (0 until expectedCount).forEach {
                 statements[it] = statements[it].copy(
                     `object` = literal,
@@ -433,7 +432,7 @@ fun <
             val expected = statements.take(expectedCount)
 
             val result = repository.findAllByPredicateIdAndLabel(
-                predicate.id!!,
+                predicate.id,
                 literal.label,
                 PageRequest.of(0, 5)
             )
@@ -460,7 +459,7 @@ fun <
             val expectedCount = 3
             val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
             val subject = createClass(id = ThingId("C1"))
-            val predicate = createPredicate(id = PredicateId(1))
+            val predicate = createPredicate(id = ThingId("P1"))
             val literal = createLiteral(label = "label to find")
             (0 until expectedCount).forEach {
                 statements[it] = statements[it].copy(
@@ -480,7 +479,7 @@ fun <
             val expected = statements.take(expectedCount)
 
             val result = repository.findAllByPredicateIdAndLabelAndSubjectClass(
-                predicate.id!!,
+                predicate.id,
                 literal.label,
                 subject.id,
                 PageRequest.of(0, 5)
@@ -691,10 +690,10 @@ fun <
         context("by contribution id") {
             val statements = mutableListOf<GeneralStatement>()
             val hasContribution = createPredicate(
-                id = PredicateId("P31")
+                id = ThingId("P31")
             )
             val hasDOI = createPredicate(
-                id = PredicateId("P26")
+                id = ThingId("P26")
             )
             repeat(2) {
                 val paper = createResource(
@@ -741,7 +740,7 @@ fun <
         context("for a single predicate") {
             context("when no statements exist") {
                 it("returns the correct result") {
-                    val actual = repository.countPredicateUsage(PredicateId("Missing"))
+                    val actual = repository.countPredicateUsage(ThingId("Missing"))
                     actual shouldBe 0
                 }
             }
@@ -751,7 +750,7 @@ fun <
                         val statement = fabricator.random<GeneralStatement>()
                         saveStatement(statement)
 
-                        val actual = repository.countPredicateUsage(statement.predicate.id!!)
+                        val actual = repository.countPredicateUsage(statement.predicate.id)
                         actual shouldBe 1
                     }
                 }
@@ -763,7 +762,7 @@ fun <
                         )
                         saveStatement(statement)
 
-                        val actual = repository.countPredicateUsage(subject.id!!)
+                        val actual = repository.countPredicateUsage(subject.id)
                         actual shouldBe 1
                     }
                 }
@@ -775,7 +774,7 @@ fun <
                         )
                         saveStatement(statement)
 
-                        val actual = repository.countPredicateUsage(`object`.id!!)
+                        val actual = repository.countPredicateUsage(`object`.id)
                         actual shouldBe 1
                     }
                 }
@@ -808,8 +807,8 @@ fun <
                 statements.forEach(saveStatement)
 
                 val expected = statements.drop(3)
-                    .map { PredicateUsageCount(it.predicate.id!!, 1) }
-                    .plus(PredicateUsageCount(statements[0].predicate.id!!, 3))
+                    .map { PredicateUsageCount(it.predicate.id, 1) }
+                    .plus(PredicateUsageCount(statements[0].predicate.id, 3))
                     .sortedWith(compareByDescending<PredicateUsageCount> { it.count }.thenBy { it.id })
 
                 val result = repository.countPredicateUsage(PageRequest.of(0, 5))
@@ -837,7 +836,7 @@ fun <
 
     describe("finding a paper") {
         val doi = fabricator.random<String>()
-        val hasDoi = createPredicate(id = PredicateId("P26"))
+        val hasDoi = createPredicate(id = ThingId("P26"))
         context("by doi") {
             it("returns the correct result") {
                 val paper = createResource(classes = setOf(ThingId("Paper")))
@@ -930,10 +929,10 @@ fun <
         context("by organization id") {
             val organizationId = fabricator.random<OrganizationId>()
             val compareContribution = fabricator.random<Predicate>().copy(
-                id = PredicateId("compareContribution")
+                id = ThingId("compareContribution")
             )
             val hasResearchProblem = fabricator.random<Predicate>().copy(
-                id = PredicateId("P32")
+                id = ThingId("P32")
             )
             val expected = (0 until 2).map {
                 val contribution = createResource(

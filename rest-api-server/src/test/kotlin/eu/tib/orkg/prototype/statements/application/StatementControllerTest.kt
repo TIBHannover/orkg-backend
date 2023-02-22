@@ -5,7 +5,7 @@ import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.mockk.every
 import java.util.*
 import org.junit.jupiter.api.BeforeEach
@@ -84,7 +84,7 @@ internal class StatementControllerTest {
             "object_id" to `object`
         )
 
-        every { statementService.create(any(), any(), any(), any()) } throws StatementPredicateNotFound(PredicateId(predicate))
+        every { statementService.create(any(), any(), any(), any()) } throws StatementPredicateNotFound(ThingId(predicate))
 
         mockMvc.perform(performPost(body))
             .andExpect(status().isBadRequest)

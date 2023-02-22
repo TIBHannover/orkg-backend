@@ -3,10 +3,10 @@ package eu.tib.orkg.prototype.statements.adapter.input.rest.bulk
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
@@ -87,7 +87,7 @@ data class BulkStatementEditRequest(
     val subjectId: String? = null,
 
     @JsonProperty("predicate_id")
-    val predicateId: PredicateId? = null,
+    val predicateId: ThingId? = null,
 
     @JsonProperty("object_id")
     val objectId: String? = null

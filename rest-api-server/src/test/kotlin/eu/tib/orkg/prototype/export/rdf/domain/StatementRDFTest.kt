@@ -4,7 +4,6 @@ import eu.tib.orkg.prototype.createLiteral
 import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.createStatement
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.assertj.core.api.Assertions.assertThat
@@ -21,7 +20,7 @@ internal class StatementRDFTest {
         """.trimMargin()
         val statement = createStatement(
             subject = createResource().copy(id = ResourceId(100), label = "subject"),
-            predicate = createPredicate().copy(id = PredicateId(200)),
+            predicate = createPredicate().copy(id = ThingId("P200")),
             `object` = createResource().copy(id = ResourceId(300), label = "object")
         )
         assertThat(statement.toNTriple()).isEqualTo(expectedOutput)
@@ -35,7 +34,7 @@ internal class StatementRDFTest {
         """.trimMargin()
         val statement = createStatement(
             subject = createResource().copy(id = ResourceId(100), label = "subject"),
-            predicate = createPredicate().copy(id = PredicateId(200)),
+            predicate = createPredicate().copy(id = ThingId("P200")),
             `object` = createLiteral().copy(id = ThingId("L300"), label = "object")
         )
         assertThat(statement.toNTriple()).isEqualTo(expectedOutput)
@@ -50,7 +49,7 @@ internal class StatementRDFTest {
         """.trimMargin()
         val statement = createStatement(
             subject = createResource().copy(id = ResourceId(100), label = "subject"),
-            predicate = createPredicate().copy(id = PredicateId(200)),
+            predicate = createPredicate().copy(id = ThingId("P200")),
             `object` = createLiteral().copy(
                 id = ThingId("L300"), label = "object", datatype = "http://example.org/myDataType"
             )

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import java.time.OffsetDateTime
 import org.neo4j.ogm.annotation.GeneratedValue
@@ -43,7 +44,7 @@ data class Neo4jPredicate(
 
     fun toPredicate(): Predicate {
         val pred = Predicate(
-            id = predicateId,
+            id = ThingId(predicateId!!.value),
             label = label!!,
             createdAt = createdAt!!,
             createdBy = createdBy

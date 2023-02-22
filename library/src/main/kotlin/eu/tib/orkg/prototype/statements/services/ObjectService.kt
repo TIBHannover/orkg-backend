@@ -20,7 +20,6 @@ import eu.tib.orkg.prototype.statements.application.PredicateNotFound
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.TempResource
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
@@ -63,7 +62,7 @@ class ObjectService(
         }
 
         // Handle predicates (temp and existing)
-        val predicates: HashMap<String, PredicateId> = HashMap()
+        val predicates: HashMap<String, ThingId> = HashMap()
         if (request.hasTempPredicates()) {
             request.predicates!!.forEach {
                 val surrogateId = it[it.keys.first()]!!
@@ -113,7 +112,7 @@ class ObjectService(
      */
     fun checkObjectStatements(
         data: HashMap<String, List<ObjectStatement>>,
-        predicates: HashMap<String, PredicateId>
+        predicates: HashMap<String, ThingId>
     ) {
         for ((predicate, value) in data) {
             val predicateId = extractPredicate(predicate, predicates)
@@ -141,7 +140,7 @@ class ObjectService(
         subject: ResourceId,
         data: HashMap<String, List<ObjectStatement>>,
         tempResources: HashMap<String, String>,
-        predicates: HashMap<String, PredicateId>,
+        predicates: HashMap<String, ThingId>,
         resourceQueue: Queue<TempResource>,
         userId: ContributorId,
         recursive: Boolean = false,
@@ -264,7 +263,7 @@ class ObjectService(
      * Type an existing resource with the range of the predicate if required
      */
     private fun typeResourceBasedOnPredicate(
-        predicateId: PredicateId?,
+        predicateId: ThingId?,
         resource: ObjectStatement
     ) {
         MAP_PREDICATE_CLASSES[predicateId!!.value]?.let { ThingId(it) }?.let {
@@ -280,7 +279,7 @@ class ObjectService(
      * o/w throw out a suitable exception
      */
     private fun checkIfPredicateExists(predicate: String) {
-        if (!predicateService.exists(PredicateId(predicate))) throw PredicateNotFound(predicate)
+        if (!predicateService.exists(ThingId(predicate))) throw PredicateNotFound(predicate)
     }
 
     /**
@@ -308,14 +307,14 @@ class ObjectService(
 
     /**
      * Find a predicate in the temp list of predicates
-     * or create a new PredicateId object for it
+     * or create a new ThingId object for it
      */
     private fun extractPredicate(
         predicate: String,
-        predicates: HashMap<String, PredicateId>
-    ): PredicateId? {
+        predicates: HashMap<String, ThingId>
+    ): ThingId? {
         return if (predicate.startsWith("_")) predicates[predicate]
-        else PredicateId(predicate)
+        else ThingId(predicate)
     }
 
     // </editor-fold>
@@ -350,15 +349,15 @@ class ObjectService(
             "^\\s*(?:(?:https?://)?orcid.org/)?([0-9]{4})-?([0-9]{4})-?([0-9]{4})-?(([0-9]{4})|([0-9]{3}X))\\s*\$"
 
         // Properties
-        val ContributionPredicate = PredicateId(ID_CONTRIBUTION_PREDICATE)
-        val DoiPredicate = PredicateId(ID_DOI_PREDICATE)
-        val AuthorPredicate = PredicateId(ID_AUTHOR_PREDICATE)
-        val PublicationMonthPredicate = PredicateId(ID_PUBDATE_MONTH_PREDICATE)
-        val PublicationYearPredicate = PredicateId(ID_PUBDATE_YEAR_PREDICATE)
-        val ResearchFieldPredicate = PredicateId(ID_RESEARCH_FIELD_PREDICATE)
-        val OrcidPredicate = PredicateId(ID_ORCID_PREDICATE)
-        val VenuePredicate = PredicateId(ID_VENUE_PREDICATE)
-        val UrlPredicate = PredicateId(ID_URL_PREDICATE)
+        val ContributionPredicate = ThingId(ID_CONTRIBUTION_PREDICATE)
+        val DoiPredicate = ThingId(ID_DOI_PREDICATE)
+        val AuthorPredicate = ThingId(ID_AUTHOR_PREDICATE)
+        val PublicationMonthPredicate = ThingId(ID_PUBDATE_MONTH_PREDICATE)
+        val PublicationYearPredicate = ThingId(ID_PUBDATE_YEAR_PREDICATE)
+        val ResearchFieldPredicate = ThingId(ID_RESEARCH_FIELD_PREDICATE)
+        val OrcidPredicate = ThingId(ID_ORCID_PREDICATE)
+        val VenuePredicate = ThingId(ID_VENUE_PREDICATE)
+        val UrlPredicate = ThingId(ID_URL_PREDICATE)
         val ContributionClass = ThingId(ID_CONTRIBUTION_CLASS)
         val AuthorClass = ThingId(ID_AUTHOR_CLASS)
         val VenueClass = ThingId(ID_VENUE_CLASS)

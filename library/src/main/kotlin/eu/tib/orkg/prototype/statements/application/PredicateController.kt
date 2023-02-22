@@ -6,7 +6,7 @@ import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.UpdatePredicateUseCase.ReplaceCommand
 import eu.tib.orkg.prototype.statements.domain.model.Label
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
@@ -30,7 +30,7 @@ import org.springframework.web.util.UriComponentsBuilder
 class PredicateController(private val service: PredicateUseCases) : BaseController() {
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: PredicateId): PredicateRepresentation =
+    fun findById(@PathVariable id: ThingId): PredicateRepresentation =
         service.findById(id).orElseThrow { PredicateNotFound(id) }
 
     @GetMapping("/")
@@ -64,7 +64,7 @@ class PredicateController(private val service: PredicateUseCases) : BaseControll
 
     @PutMapping("/{id}")
     fun update(
-        @PathVariable id: PredicateId,
+        @PathVariable id: ThingId,
         @RequestBody predicate: ReplacePredicateRequest
     ): ResponseEntity<PredicateRepresentation> {
         val found = service.findById(id)
@@ -78,7 +78,7 @@ class PredicateController(private val service: PredicateUseCases) : BaseControll
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    fun delete(@PathVariable id: PredicateId): ResponseEntity<Unit> {
+    fun delete(@PathVariable id: ThingId): ResponseEntity<Unit> {
         service.delete(id)
         return ResponseEntity.noContent().build()
     }
@@ -90,6 +90,6 @@ class PredicateController(private val service: PredicateUseCases) : BaseControll
 }
 
 data class CreatePredicateRequest(
-    val id: PredicateId?,
+    val id: ThingId?,
     val label: String
 )

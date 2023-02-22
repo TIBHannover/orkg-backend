@@ -12,8 +12,8 @@ import eu.tib.orkg.prototype.statements.application.PredicateNotFound
 import eu.tib.orkg.prototype.statements.domain.model.Clock
 import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.SystemClock
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.util.EscapedRegex
@@ -34,10 +34,10 @@ class PredicateService(
     private val clock: Clock = SystemClock()
 ) : PredicateUseCases {
     @Transactional(readOnly = true)
-    override fun exists(id: PredicateId): Boolean = repository.exists(id)
+    override fun exists(id: ThingId): Boolean = repository.exists(id)
 
-    override fun create(command: CreatePredicateUseCase.CreateCommand): PredicateId {
-        val id = if (command.id != null) PredicateId(command.id) else repository.nextIdentity()
+    override fun create(command: CreatePredicateUseCase.CreateCommand): ThingId {
+        val id = if (command.id != null) ThingId(command.id) else repository.nextIdentity()
         val predicate = Predicate(
             id = id,
             label = Label.ofOrNull(command.label)?.value
@@ -50,49 +50,49 @@ class PredicateService(
     }
 
     override fun create(label: String): PredicateRepresentation {
-        val newPredicateId = create(
+        val newThingId = create(
             CreatePredicateUseCase.CreateCommand(
                 label = label
             )
         )
-        return repository.findByPredicateId(newPredicateId).map(Predicate::toPredicateRepresentation).get()
+        return repository.findByPredicateId(newThingId).map(Predicate::toPredicateRepresentation).get()
     }
 
     override fun create(userId: ContributorId, label: String): PredicateRepresentation {
-        val newPredicateId = create(
+        val newThingId = create(
             CreatePredicateUseCase.CreateCommand(
                 label = label,
                 contributorId = userId
             )
         )
-        return repository.findByPredicateId(newPredicateId).map(Predicate::toPredicateRepresentation).get()
+        return repository.findByPredicateId(newThingId).map(Predicate::toPredicateRepresentation).get()
     }
 
     override fun create(request: CreatePredicateRequest): PredicateRepresentation {
-        val newPredicateId = create(
+        val newThingId = create(
             CreatePredicateUseCase.CreateCommand(
                 label = request.label,
                 id = request.id?.value
             )
         )
-        return repository.findByPredicateId(newPredicateId).map(Predicate::toPredicateRepresentation).get()
+        return repository.findByPredicateId(newThingId).map(Predicate::toPredicateRepresentation).get()
     }
 
     override fun create(userId: ContributorId, request: CreatePredicateRequest): PredicateRepresentation {
-        val newPredicateId = create(
+        val newThingId = create(
             CreatePredicateUseCase.CreateCommand(
                 label = request.label,
                 id = request.id?.value,
                 contributorId = userId
             )
         )
-        return repository.findByPredicateId(newPredicateId).map(Predicate::toPredicateRepresentation).get()
+        return repository.findByPredicateId(newThingId).map(Predicate::toPredicateRepresentation).get()
     }
 
     override fun findAll(pageable: Pageable): Page<PredicateRepresentation> =
         repository.findAll(pageable).map(Predicate::toPredicateRepresentation)
 
-    override fun findById(id: PredicateId?): Optional<PredicateRepresentation> =
+    override fun findById(id: ThingId): Optional<PredicateRepresentation> =
         repository.findByPredicateId(id).map(Predicate::toPredicateRepresentation)
 
     override fun findAllByLabel(label: String, pageable: Pageable): Page<PredicateRepresentation> =
@@ -103,7 +103,7 @@ class PredicateService(
         repository.findAllByLabelMatchesRegex(part.toSearchString(), pageable)
             .map(Predicate::toPredicateRepresentation) // TODO: See declaration
 
-    override fun update(id: PredicateId, command: UpdatePredicateUseCase.ReplaceCommand) {
+    override fun update(id: ThingId, command: UpdatePredicateUseCase.ReplaceCommand) {
         var found = repository.findByPredicateId(id).get()
 
         // update all the properties
@@ -112,7 +112,7 @@ class PredicateService(
         repository.save(found)
     }
 
-    override fun createIfNotExists(id: PredicateId, label: String) {
+    override fun createIfNotExists(id: ThingId, label: String) {
         val oPredicate = repository.findByPredicateId(id)
 
         if (oPredicate.isEmpty) {
@@ -126,7 +126,7 @@ class PredicateService(
         }
     }
 
-    override fun delete(predicateId: PredicateId) {
+    override fun delete(predicateId: ThingId) {
         val predicate = findById(predicateId).orElseThrow { PredicateNotFound(predicateId) }
 
         if (statementRepository.countPredicateUsage(predicate.id) > 0)
@@ -145,7 +145,7 @@ class PredicateService(
 }
 
 fun Predicate.toPredicateRepresentation(): PredicateRepresentation = object : PredicateRepresentation {
-    override val id: PredicateId = this@toPredicateRepresentation.id!!
+    override val id: ThingId = this@toPredicateRepresentation.id
     override val label: String = this@toPredicateRepresentation.label
     override val description: String? = this@toPredicateRepresentation.description
     override val jsonClass: String = "predicate"

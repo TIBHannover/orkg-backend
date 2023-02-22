@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import io.mockk.clearMocks
 import io.mockk.confirmVerified
@@ -59,73 +59,73 @@ class SpringDataNeo4jPredicateAdapterCachingTests {
 
     @Test
     fun `fetching a predicate by ID should be cached`() {
-        val predicate = createPredicate().copy(id = PredicateId("P1"))
-        every { mock.findByPredicateId(PredicateId("P1")) } returns Optional.of(predicate) andThen {
+        val predicate = createPredicate().copy(id = ThingId("P1"))
+        every { mock.findByPredicateId(ThingId("P1")) } returns Optional.of(predicate) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
 
         // Obtain predicate from repository
-        assertThat(adapter.findByPredicateId(PredicateId("P1")).get()).isEqualTo(predicate)
+        assertThat(adapter.findByPredicateId(ThingId("P1")).get()).isEqualTo(predicate)
         // Verify the loading happened
-        verify { mock.findByPredicateId(PredicateId("P1")) }
+        verify { mock.findByPredicateId(ThingId("P1")) }
 
         // Obtain the same predicate again for several times
-        assertThat(adapter.findByPredicateId(PredicateId("P1")).get()).isEqualTo(predicate)
-        assertThat(adapter.findByPredicateId(PredicateId("P1")).get()).isEqualTo(predicate)
+        assertThat(adapter.findByPredicateId(ThingId("P1")).get()).isEqualTo(predicate)
+        assertThat(adapter.findByPredicateId(ThingId("P1")).get()).isEqualTo(predicate)
     }
 
     @Test
     fun `saving a predicate should evict it from the cache`() {
-        val predicate = createPredicate().copy(id = PredicateId("P1"))
+        val predicate = createPredicate().copy(id = ThingId("P1"))
         val modified = predicate.copy(label = "new label")
-        every { mock.findByPredicateId(PredicateId("P1")) } returns Optional.of(predicate) andThen Optional.of(modified) andThen {
+        every { mock.findByPredicateId(ThingId("P1")) } returns Optional.of(predicate) andThen Optional.of(modified) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { mock.save(modified) } returns Unit
 
         // Obtain predicate from repository
-        assertThat(adapter.findByPredicateId(PredicateId("P1")).get()).isEqualTo(predicate)
+        assertThat(adapter.findByPredicateId(ThingId("P1")).get()).isEqualTo(predicate)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByPredicateId(PredicateId("P1")) }
+        verify(exactly = 1) { mock.findByPredicateId(ThingId("P1")) }
 
         // Save a modified version
         adapter.save(modified)
         verify { mock.save(modified) } // required because of confirmVerified()
 
         // Obtaining the predicate again
-        assertThat(adapter.findByPredicateId(PredicateId("P1")).get())
+        assertThat(adapter.findByPredicateId(ThingId("P1")).get())
             .`as`("obtaining the updated version from the cache")
             .isEqualTo(modified)
         // Verify the loading happened (again)
-        verify(exactly = 2) { mock.findByPredicateId(PredicateId("P1")) }
+        verify(exactly = 2) { mock.findByPredicateId(ThingId("P1")) }
     }
 
     @Test
     fun `deleting a predicate should evict it from the cache`() {
-        val predicate = createPredicate().copy(id = PredicateId("P1"))
-        every { mock.findByPredicateId(PredicateId("P1")) } returns Optional.of(predicate) andThen Optional.of(predicate) andThen {
+        val predicate = createPredicate().copy(id = ThingId("P1"))
+        every { mock.findByPredicateId(ThingId("P1")) } returns Optional.of(predicate) andThen Optional.of(predicate) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
-        every { adapter.deleteByPredicateId(PredicateId("P1")) } returns Unit
+        every { adapter.deleteByPredicateId(ThingId("P1")) } returns Unit
 
         // Obtain predicate from repository
-        assertThat(adapter.findByPredicateId(PredicateId("P1")).get()).isEqualTo(predicate)
+        assertThat(adapter.findByPredicateId(ThingId("P1")).get()).isEqualTo(predicate)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByPredicateId(PredicateId("P1")) }
+        verify(exactly = 1) { mock.findByPredicateId(ThingId("P1")) }
 
         // Obtain the same predicate again for several times
-        assertThat(adapter.findByPredicateId(PredicateId("P1")).get()).isEqualTo(predicate)
-        assertThat(adapter.findByPredicateId(PredicateId("P1")).get()).isEqualTo(predicate)
-        verify(exactly = 1) { mock.findByPredicateId(PredicateId("P1")) }
+        assertThat(adapter.findByPredicateId(ThingId("P1")).get()).isEqualTo(predicate)
+        assertThat(adapter.findByPredicateId(ThingId("P1")).get()).isEqualTo(predicate)
+        verify(exactly = 1) { mock.findByPredicateId(ThingId("P1")) }
 
         // Delete predicate from repository
-        adapter.deleteByPredicateId(PredicateId("P1"))
+        adapter.deleteByPredicateId(ThingId("P1"))
         // Verify the deletion happened
-        verify(exactly = 1) { mock.deleteByPredicateId(PredicateId("P1")) }
+        verify(exactly = 1) { mock.deleteByPredicateId(ThingId("P1")) }
 
         // Verify that the cache was evicted
-        assertThat(adapter.findByPredicateId(PredicateId("P1")).get()).isEqualTo(predicate)
-        verify(exactly = 2) { mock.findByPredicateId(PredicateId("P1")) }
+        assertThat(adapter.findByPredicateId(ThingId("P1")).get()).isEqualTo(predicate)
+        verify(exactly = 2) { mock.findByPredicateId(ThingId("P1")) }
     }
 
     @Configuration

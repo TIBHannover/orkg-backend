@@ -19,7 +19,6 @@ import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
@@ -33,7 +32,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
-typealias PredicateLookupTable = Map<PredicateId, Predicate>
+typealias PredicateLookupTable = Map<ThingId, Predicate>
 
 @Component
 class SpringDataNeo4jStatementAdapter(
@@ -77,7 +76,7 @@ class SpringDataNeo4jStatementAdapter(
         val predicateIds = neo4jStatements.content.mapNotNull(Neo4jStatement::predicateId).toSet()
         val table = neo4jPredicateRepository.findAllByPredicateIdIn(predicateIds)
             .map(Neo4jPredicate::toPredicate)
-            .associateBy { it.id!! }
+            .associateBy { it.id }
         return neo4jStatements.map { it.toStatement(table) }
     }
 
@@ -93,8 +92,8 @@ class SpringDataNeo4jStatementAdapter(
     override fun findAllBySubject(subjectId: String, pageable: Pageable): Page<GeneralStatement> =
         neo4jRepository.findAllBySubject(subjectId, pageable).map { it.toStatement() }
 
-    override fun findAllByPredicateId(predicateId: PredicateId, pageable: Pageable): Page<GeneralStatement> =
-        neo4jRepository.findAllByPredicateId(predicateId, pageable).map { it.toStatement() }
+    override fun findAllByPredicateId(predicateId: ThingId, pageable: Pageable): Page<GeneralStatement> =
+        neo4jRepository.findAllByPredicateId(predicateId.toPredicateId(), pageable).map { it.toStatement() }
 
     override fun findAllByObject(objectId: String, pageable: Pageable): Page<GeneralStatement> =
         neo4jRepository.findAllByObject(objectId, pageable).map { it.toStatement() }
@@ -103,32 +102,32 @@ class SpringDataNeo4jStatementAdapter(
 
     override fun findAllByObjectAndPredicate(
         objectId: String,
-        predicateId: PredicateId,
+        predicateId: ThingId,
         pageable: Pageable
     ): Page<GeneralStatement> =
-        neo4jRepository.findAllByObjectAndPredicate(objectId, predicateId, pageable).map { it.toStatement() }
+        neo4jRepository.findAllByObjectAndPredicate(objectId, predicateId.toPredicateId(), pageable).map { it.toStatement() }
 
     override fun findAllBySubjectAndPredicate(
         subjectId: String,
-        predicateId: PredicateId,
+        predicateId: ThingId,
         pageable: Pageable
     ): Page<GeneralStatement> =
-        neo4jRepository.findAllBySubjectAndPredicate(subjectId, predicateId, pageable).map { it.toStatement() }
+        neo4jRepository.findAllBySubjectAndPredicate(subjectId, predicateId.toPredicateId(), pageable).map { it.toStatement() }
 
     override fun findAllByPredicateIdAndLabel(
-        predicateId: PredicateId,
+        predicateId: ThingId,
         literal: String,
         pageable: Pageable
     ): Page<GeneralStatement> =
-        neo4jRepository.findAllByPredicateIdAndLabel(predicateId, literal, pageable).map { it.toStatement() }
+        neo4jRepository.findAllByPredicateIdAndLabel(predicateId.toPredicateId(), literal, pageable).map { it.toStatement() }
 
     override fun findAllByPredicateIdAndLabelAndSubjectClass(
-        predicateId: PredicateId,
+        predicateId: ThingId,
         literal: String,
         subjectClass: ThingId,
         pageable: Pageable
     ): Page<GeneralStatement> =
-        neo4jRepository.findAllByPredicateIdAndLabelAndSubjectClass(predicateId, literal, subjectClass, pageable)
+        neo4jRepository.findAllByPredicateIdAndLabelAndSubjectClass(predicateId.toPredicateId(), literal, subjectClass, pageable)
             .map { it.toStatement() }
 
     override fun findAllBySubjects(subjectIds: List<String>, pageable: Pageable): Page<GeneralStatement> =
@@ -144,13 +143,13 @@ class SpringDataNeo4jStatementAdapter(
 
     override fun countPredicateUsage(pageable: Pageable): Page<RetrieveStatementUseCase.PredicateUsageCount> =
         neo4jRepository.countPredicateUsage(pageable).map {
-            RetrieveStatementUseCase.PredicateUsageCount(PredicateId(it.id), it.count)
+            RetrieveStatementUseCase.PredicateUsageCount(ThingId(it.id), it.count)
         }
 
     override fun findDOIByContributionId(id: ResourceId): Optional<Literal> =
         neo4jRepository.findDOIByContributionId(id).map(Neo4jLiteral::toLiteral)
 
-    override fun countPredicateUsage(id: PredicateId) = neo4jRepository.countPredicateUsage(id)
+    override fun countPredicateUsage(id: ThingId) = neo4jRepository.countPredicateUsage(id.toPredicateId())
 
     override fun findByDOI(doi: String): Optional<Resource> =
         neo4jRepository.findByDOI(doi).map(Neo4jResource::toResource)
@@ -170,7 +169,7 @@ class SpringDataNeo4jStatementAdapter(
     private fun Neo4jStatement.toStatement(): GeneralStatement = GeneralStatement(
         id = statementId!!,
         subject = subject!!.toThing(),
-        predicate = predicateRepository.findByPredicateId(predicateId!!).get(),
+        predicate = predicateRepository.findByPredicateId(ThingId(predicateId!!.value)).get(),
         `object` = `object`!!.toThing(),
         createdAt = createdAt!!,
         createdBy = createdBy
@@ -179,7 +178,7 @@ class SpringDataNeo4jStatementAdapter(
     private fun Neo4jStatement.toStatement(lookupTable: PredicateLookupTable): GeneralStatement = GeneralStatement(
         id = statementId!!,
         subject = subject!!.toThing(),
-        predicate = lookupTable[predicateId]
+        predicate = lookupTable[ThingId(predicateId!!.value)]
             ?: throw IllegalStateException("Predicate $predicateId not found in lookup table. This is a bug."),
         `object` = `object`!!.toThing(),
         createdAt = createdAt!!,
@@ -192,7 +191,7 @@ class SpringDataNeo4jStatementAdapter(
             statementId = this@toNeo4jStatement.id
             subject = this@toNeo4jStatement.subject.toNeo4jThing()
             `object` = this@toNeo4jStatement.`object`.toNeo4jThing()
-            predicateId = this@toNeo4jStatement.predicate.id
+            predicateId = this@toNeo4jStatement.predicate.id.toPredicateId()
             createdBy = this@toNeo4jStatement.createdBy
             createdAt = this@toNeo4jStatement.createdAt
         }
@@ -203,7 +202,7 @@ class SpringDataNeo4jStatementAdapter(
         when (this) {
             is Class -> neo4jClassRepository.findByClassId(this.id.toClassId()).get()
             is Literal -> neo4jLiteralRepository.findByLiteralId(this.id.toLiteralId()).get()
-            is Predicate -> neo4jPredicateRepository.findByPredicateId(this.id).get()
+            is Predicate -> neo4jPredicateRepository.findByPredicateId(this.id.toPredicateId()).get()
             is Resource -> neo4jResourceRepository.findByResourceId(this.id).get()
         }
 

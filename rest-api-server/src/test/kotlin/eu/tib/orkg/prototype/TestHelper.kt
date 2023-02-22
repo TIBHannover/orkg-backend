@@ -15,7 +15,6 @@ import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
@@ -59,7 +58,7 @@ fun createClass(): Class = Class(
 internal fun createClassWithoutURI(): Class = createClass().copy(uri = null)
 
 fun createPredicate() = Predicate(
-    id = PredicateId(1),
+    id = ThingId("P1"),
     label = "some predicate label",
     createdAt = OffsetDateTime.now(),
     createdBy = ContributorId("a56cfd65-8d29-4eae-a252-1b806fe88d3c"),

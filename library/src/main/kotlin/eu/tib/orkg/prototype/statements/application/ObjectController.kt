@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.services.ObjectService
 import org.springframework.http.HttpStatus
@@ -202,7 +202,7 @@ data class ObjectStatement(
 
 data class TempResource(
     val subject: ResourceId,
-    val predicate: PredicateId,
+    val predicate: ThingId,
     val `object`: String
 )
 

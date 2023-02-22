@@ -9,7 +9,7 @@ import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.ResourceControllerTest.RestDoc.resourceResponseFields
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
@@ -93,19 +93,19 @@ class ResearchFieldControllerTest : RestDocumentationBaseTest() {
         // Link Contribution -> Problem
         statementService.create(
             contributionResource.value,
-            PredicateId("P32"), // has research problem
+            ThingId("P32"), // has research problem
             problemResource.value
         )
         // Link Paper -> Contribution
         statementService.create(
             paperResource.value,
-            PredicateId("P31"), // has contribution
+            ThingId("P31"), // has contribution
             contributionResource.value
         )
         // Link Paper -> Research Field
         statementService.create(
             paperResource.value,
-            PredicateId("P30"), // has research field
+            ThingId("P30"), // has research field
             fieldResource.value
         )
 

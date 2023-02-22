@@ -8,7 +8,6 @@ import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
@@ -28,10 +27,10 @@ private val comparisonClass = ThingId("Comparison")
 private val contributionClass = ThingId("Contribution")
 private val researchProblemClass = ThingId("ResearchProblem")
 private val researchFieldClass = ThingId("ResearchField")
-private val hasContribution = PredicateId("P31")
-private val hasResearchProblem = PredicateId("P32")
-private val hasDOI = PredicateId("P26")
-private val compareContribution = PredicateId("compareContribution")
+private val hasContribution = ThingId("P31")
+private val hasResearchProblem = ThingId("P32")
+private val hasDOI = ThingId("P26")
+private val compareContribution = ThingId("compareContribution")
 
 class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralStatement>(
     compareBy(GeneralStatement::createdAt)
@@ -56,7 +55,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
     override fun findAllBySubject(subjectId: String, pageable: Pageable) =
         findAllFilteredAndPaged(pageable) { it.subject.thingId.value == subjectId }
 
-    override fun findAllByPredicateId(predicateId: PredicateId, pageable: Pageable) =
+    override fun findAllByPredicateId(predicateId: ThingId, pageable: Pageable) =
         findAllFilteredAndPaged(pageable) { it.predicate.id == predicateId }
 
     override fun findAllByObject(objectId: String, pageable: Pageable) =
@@ -84,7 +83,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
 
     override fun findAllByObjectAndPredicate(
         objectId: String,
-        predicateId: PredicateId,
+        predicateId: ThingId,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
         it.predicate.id == predicateId && it.`object`.thingId.value == objectId
@@ -92,7 +91,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
 
     override fun findAllBySubjectAndPredicate(
         subjectId: String,
-        predicateId: PredicateId,
+        predicateId: ThingId,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
         it.predicate.id == predicateId && it.subject.thingId.value == subjectId
@@ -100,7 +99,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
 
     // FIXME: rename to findAllByPredicateIdAndLiteralObjectLabel
     override fun findAllByPredicateIdAndLabel(
-        predicateId: PredicateId,
+        predicateId: ThingId,
         literal: String,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
@@ -109,7 +108,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
 
     // FIXME: rename to findAllByPredicateIdAndLiteralObjectLabelAndSubjectClass
     override fun findAllByPredicateIdAndLabelAndSubjectClass(
-        predicateId: PredicateId,
+        predicateId: ThingId,
         literal: String,
         subjectClass: ThingId,
         pageable: Pageable
@@ -168,9 +167,9 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         } ?: emptySet()
 
     override fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount> {
-        val predicateIdToUsageCount = mutableMapOf<PredicateId, Long>()
+        val predicateIdToUsageCount = mutableMapOf<ThingId, Long>()
         entities.values.forEach {
-            predicateIdToUsageCount.compute(it.predicate.id!!) { _, value ->
+            predicateIdToUsageCount.compute(it.predicate.id) { _, value ->
                 if (value == null) 1
                 else value + 1
             }
@@ -206,7 +205,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
             }
         })
 
-    override fun countPredicateUsage(id: PredicateId): Long =
+    override fun countPredicateUsage(id: ThingId): Long =
         entities.values.count {
             it.subject is Predicate && (it.subject as Predicate).id == id
                 || it.predicate.id == id

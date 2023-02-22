@@ -21,7 +21,7 @@ internal class StatementEqualsContractUnitTest : EqualsContract<GeneralStatement
     private val contributorUUID = UUID.randomUUID()
 
     private val subjectResource = createResource(id = ResourceId(1234))
-    private val predicate = createPredicate(id = PredicateId(5555))
+    private val predicate = createPredicate(id = ThingId("P5555"))
     private val objectResource = createClass(id = ThingId("9886")) // to use a different Thing
 
     override fun getInstance(): GeneralStatement = GeneralStatement(
@@ -47,7 +47,7 @@ internal class StatementEqualsContractUnitTest : EqualsContract<GeneralStatement
     override fun getNonEqualInstance(): GeneralStatement = GeneralStatement(
         id = StatementId(differentID),
         subject = createResource(id = ResourceId(2345)),
-        predicate = createPredicate(id = PredicateId(6666)),
+        predicate = createPredicate(id = ThingId("P6666")),
         `object` = createResource(id = ResourceId(8865)),
         createdAt = OffsetDateTime.parse(timeStamp),
         createdBy = ContributorId(UUID.randomUUID()),
@@ -75,7 +75,7 @@ internal class NastyBugOnStatementEqualsContractUnitTest : EqualsContract<Genera
         verified = null
     )
     private val predicate = Predicate(
-        id = PredicateId("P3524282998320858989"),
+        id = ThingId("P3524282998320858989"),
         label = "ViHVP",
         createdAt = OffsetDateTime.parse("2017-11-08T08:30:05Z"),
         createdBy = ContributorId("eb947286-8a26-f089-ef2c-d8a511607f9f")
@@ -111,7 +111,7 @@ internal class NastyBugOnStatementEqualsContractUnitTest : EqualsContract<Genera
     override fun getNonEqualInstance(): GeneralStatement = GeneralStatement(
         id = StatementId(differentID),
         subject = createResource(id = ResourceId(2345)),
-        predicate = createPredicate(id = PredicateId(6666)),
+        predicate = createPredicate(id = ThingId("P6666")),
         `object` = createResource(id = ResourceId(8865)),
         createdAt = OffsetDateTime.parse(timeStamp),
         createdBy = ContributorId(UUID.randomUUID()),

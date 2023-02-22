@@ -15,7 +15,7 @@ internal class PredicateEqualsContractTest : EqualsContract<Predicate> {
     private val contributorUUID = UUID.randomUUID()
 
     override fun getInstance(): Predicate = Predicate(
-        id = PredicateId(equalID),
+        id = ThingId(equalID),
         label = "some label",
         createdAt = OffsetDateTime.parse(timeStamp),
         createdBy = ContributorId(contributorUUID),
@@ -23,7 +23,7 @@ internal class PredicateEqualsContractTest : EqualsContract<Predicate> {
 
     override fun getEqualInstanceSupplier(): Supplier<Predicate> = Supplier {
         Predicate(
-            id = PredicateId(equalID),
+            id = ThingId(equalID),
             label = "some label",
             createdAt = OffsetDateTime.parse(timeStamp),
             createdBy = ContributorId(contributorUUID),
@@ -31,7 +31,7 @@ internal class PredicateEqualsContractTest : EqualsContract<Predicate> {
     }
 
     override fun getNonEqualInstance(): Predicate = Predicate(
-        id = PredicateId(differentID),
+        id = ThingId(differentID),
         label = "some label",
         createdAt = OffsetDateTime.parse(timeStamp),
         createdBy = ContributorId(contributorUUID),

@@ -7,7 +7,6 @@ import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
 import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.slf4j.LoggerFactory
@@ -53,7 +52,7 @@ class CacheWarmup(
 
     private fun warmupHome() {
         val featuredResearchField = statsService.getFieldsStats().toList().maxByOrNull { it.second }?.first!!
-        statementService.findAllBySubjectAndPredicate(featuredResearchField, PredicateId("P36"), PageRequest.of(0, 9999))
+        statementService.findAllBySubjectAndPredicate(featuredResearchField, ThingId("P36"), PageRequest.of(0, 9999))
         listOf(true, false).forEach { featured ->
             researchFieldService.getEntitiesBasedOnClassesIncludingSubfields(
                 id = ResourceId(featuredResearchField),
@@ -119,7 +118,7 @@ class CacheWarmup(
         statementService.findAllBySubject(id.value, PageRequest.of(0, 9999)).forEach {
             val `object` = it.`object`
             if (`object` is ResourceRepresentation && (ThingId("ComparisonRelatedFigure") in `object`.classes ||
-                    it.predicate.id == PredicateId("hasPreviousVersion"))
+                    it.predicate.id == ThingId("hasPreviousVersion"))
             ) {
                 statementService.findAllBySubject(`object`.id.value, PageRequest.of(0, 9999))
             }
@@ -129,12 +128,12 @@ class CacheWarmup(
     private fun fetchVisualization(id: ResourceId) {
         statementService.findAllByObjectAndPredicate(
             objectId = id.value,
-            predicateId = PredicateId("hasVisualization"),
+            predicateId = ThingId("hasVisualization"),
             pagination = PageRequest.of(0, 5)
         )
         statementService.findAllBySubjectAndPredicate(
             subjectId = id.value,
-            predicateId = PredicateId("hasSubject"),
+            predicateId = ThingId("hasSubject"),
             pagination = PageRequest.of(0, 5)
         )
     }
@@ -142,7 +141,7 @@ class CacheWarmup(
     private fun fetchAssociatedPapers(id: ResourceId) {
         statementService.findAllBySubjectAndPredicate(
             subjectId = id.value,
-            predicateId = PredicateId("HasPaper"),
+            predicateId = ThingId("HasPaper"),
             pagination = PageRequest.of(0, 9999)
         ).forEach { hasPaperStatement ->
             val paper = hasPaperStatement.`object`

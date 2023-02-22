@@ -17,7 +17,6 @@ import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
@@ -56,7 +55,7 @@ class StatementService(
     override fun findAllBySubject(subjectId: String, pagination: Pageable): Page<StatementRepresentation> =
         retrieveAndConvertPaged { statementRepository.findAllBySubject(subjectId, pagination) }
 
-    override fun findAllByPredicate(predicateId: PredicateId, pagination: Pageable): Page<StatementRepresentation> =
+    override fun findAllByPredicate(predicateId: ThingId, pagination: Pageable): Page<StatementRepresentation> =
         retrieveAndConvertPaged { statementRepository.findAllByPredicateId(predicateId, pagination) }
 
     override fun findAllByObject(objectId: String, pagination: Pageable): Page<StatementRepresentation> =
@@ -64,14 +63,14 @@ class StatementService(
 
     override fun findAllBySubjectAndPredicate(
         subjectId: String,
-        predicateId: PredicateId,
+        predicateId: ThingId,
         pagination: Pageable
     ): Page<StatementRepresentation> =
         retrieveAndConvertPaged { statementRepository.findAllBySubjectAndPredicate(subjectId, predicateId, pagination) }
 
     override fun findAllByObjectAndPredicate(
         objectId: String,
-        predicateId: PredicateId,
+        predicateId: ThingId,
         pagination: Pageable
     ): Page<StatementRepresentation> =
         retrieveAndConvertPaged { statementRepository.findAllByObjectAndPredicate(objectId, predicateId, pagination) }
@@ -79,13 +78,13 @@ class StatementService(
     @Transactional(readOnly = true)
     override fun exists(id: StatementId): Boolean = statementRepository.exists(id)
 
-    override fun create(subject: String, predicate: PredicateId, `object`: String): StatementRepresentation =
+    override fun create(subject: String, predicate: ThingId, `object`: String): StatementRepresentation =
         create(ContributorId.createUnknownContributor(), subject, predicate, `object`)
 
     override fun create(
         userId: ContributorId,
         subject: String,
-        predicate: PredicateId,
+        predicate: ThingId,
         `object`: String
     ): StatementRepresentation {
         val foundSubject = thingRepository.findByThingId(subject)
@@ -110,7 +109,7 @@ class StatementService(
         return findById(newStatement.id!!).get()
     }
 
-    override fun add(userId: ContributorId, subject: String, predicate: PredicateId, `object`: String) {
+    override fun add(userId: ContributorId, subject: String, predicate: ThingId, `object`: String) {
         // This method mostly exists for performance reasons. We just create the statement but do not return anything.
         // That saves the extra calls to the database to retrieve the statement again, even if it may not be needed.
 
@@ -174,14 +173,14 @@ class StatementService(
     override fun countStatements(paperId: String): Long = statementRepository.countByIdRecursive(paperId)
 
     override fun findAllByPredicateAndLabel(
-        predicateId: PredicateId,
+        predicateId: ThingId,
         literal: String,
         pagination: Pageable
     ): Page<StatementRepresentation> =
         retrieveAndConvertPaged { statementRepository.findAllByPredicateIdAndLabel(predicateId, literal, pagination) }
 
     override fun findAllByPredicateAndLabelAndSubjectClass(
-        predicateId: PredicateId,
+        predicateId: ThingId,
         literal: String,
         subjectClass: ThingId,
         pagination: Pageable

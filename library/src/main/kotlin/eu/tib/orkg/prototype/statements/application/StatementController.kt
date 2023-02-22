@@ -10,7 +10,6 @@ import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.ThingRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.CreateStatement
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -62,7 +61,7 @@ class StatementController(
     @GetMapping("/subject/{subjectId}/predicate/{predicateId}")
     fun findBySubjectAndPredicate(
         @PathVariable subjectId: String,
-        @PathVariable predicateId: PredicateId,
+        @PathVariable predicateId: ThingId,
         pageable: Pageable
     ): HttpEntity<Iterable<StatementRepresentation>> {
         return ok(statementService.findAllBySubjectAndPredicate(subjectId, predicateId, pageable))
@@ -70,7 +69,7 @@ class StatementController(
 
     @GetMapping("/predicate/{predicateId}")
     fun findByPredicate(
-        @PathVariable predicateId: PredicateId,
+        @PathVariable predicateId: ThingId,
         pageable: Pageable
     ): HttpEntity<Iterable<StatementRepresentation>> {
         return ok(statementService.findAllByPredicate(predicateId, pageable))
@@ -78,7 +77,7 @@ class StatementController(
 
     @GetMapping("/predicate/{predicateId}/literal/{literal}")
     fun findByPredicateAndLiteralAndSubjectClass(
-        @PathVariable predicateId: PredicateId,
+        @PathVariable predicateId: ThingId,
         @PathVariable literal: String,
         @RequestParam("subjectClass", required = false) subjectClass: ThingId?,
         pageable: Pageable
@@ -104,7 +103,7 @@ class StatementController(
     @GetMapping("/object/{objectId}/predicate/{predicateId}")
     fun findByObjectAndPredicate(
         @PathVariable objectId: String,
-        @PathVariable predicateId: PredicateId,
+        @PathVariable predicateId: ThingId,
         pageable: Pageable
     ): HttpEntity<Iterable<StatementRepresentation>> {
         return ok(statementService.findAllByObjectAndPredicate(objectId, predicateId, pageable))

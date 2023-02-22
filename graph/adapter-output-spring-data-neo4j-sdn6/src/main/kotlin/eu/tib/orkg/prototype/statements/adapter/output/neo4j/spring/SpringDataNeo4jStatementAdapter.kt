@@ -7,7 +7,6 @@ import eu.tib.orkg.prototype.statements.api.BundleConfiguration
 import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase.PredicateUsageCount
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
@@ -75,7 +74,7 @@ class SpringDataNeo4jStatementAdapter(
             ).create(
                 subject.relationshipTo(`object`, RELATED).withProperties(
                     "statement_id", literalOf<String>(statement.id?.value),
-                    "predicate_id", literalOf<String>(statement.predicate.id?.value),
+                    "predicate_id", literalOf<String>(statement.predicate.id.value),
                     "created_by", literalOf<String>(statement.createdBy.value.toString()),
                     "created_at", literalOf<String>(statement.createdAt?.format(ISO_OFFSET_DATE_TIME))
                 )
@@ -192,7 +191,7 @@ class SpringDataNeo4jStatementAdapter(
                 .or(subject.property("class_id").eq(subjectIdLiteral))
         }
 
-    override fun findAllByPredicateId(predicateId: PredicateId, pageable: Pageable): Page<GeneralStatement> =
+    override fun findAllByPredicateId(predicateId: ThingId, pageable: Pageable): Page<GeneralStatement> =
         findAllFilteredAndPaged(pageable) { _, relation, _ ->
             relation.property("predicate_id").eq(literalOf<String>(predicateId.value))
         }
@@ -226,7 +225,7 @@ class SpringDataNeo4jStatementAdapter(
 
     override fun findAllByObjectAndPredicate(
         objectId: String,
-        predicateId: PredicateId,
+        predicateId: ThingId,
         pageable: Pageable
     ): Page<GeneralStatement> =
         findAllFilteredAndPaged(pageable) { _, relation, `object` ->
@@ -240,7 +239,7 @@ class SpringDataNeo4jStatementAdapter(
 
     override fun findAllBySubjectAndPredicate(
         subjectId: String,
-        predicateId: PredicateId,
+        predicateId: ThingId,
         pageable: Pageable
     ): Page<GeneralStatement> =
         findAllFilteredAndPaged(pageable) { subject, relation, _ ->
@@ -253,7 +252,7 @@ class SpringDataNeo4jStatementAdapter(
         }
 
     override fun findAllByPredicateIdAndLabel(
-        predicateId: PredicateId,
+        predicateId: ThingId,
         literal: String,
         pageable: Pageable
     ): Page<GeneralStatement> =
@@ -266,7 +265,7 @@ class SpringDataNeo4jStatementAdapter(
         }
 
     override fun findAllByPredicateIdAndLabelAndSubjectClass(
-        predicateId: PredicateId,
+        predicateId: ThingId,
         literal: String,
         subjectClass: ThingId,
         pageable: Pageable
@@ -350,7 +349,7 @@ class SpringDataNeo4jStatementAdapter(
             .build()
         return neo4jClient.query(query.cypher)
             .fetchAs(PredicateUsageCount::class.java)
-            .mappedBy { _, record -> PredicateUsageCount(PredicateId(record[id].asString()), record[c].asLong()) }
+            .mappedBy { _, record -> PredicateUsageCount(ThingId(record[id].asString()), record[c].asLong()) }
             .paged(pageable, countQuery)
     }
 
@@ -371,7 +370,7 @@ class SpringDataNeo4jStatementAdapter(
             .one()
     }
 
-    override fun countPredicateUsage(id: PredicateId): Long {
+    override fun countPredicateUsage(id: ThingId): Long {
         val idLiteral = literalOf<String>(id.value)
         val r1 = name("r1")
         val r2 = name("r2")

@@ -3,13 +3,14 @@ package eu.tib.orkg.prototype.statements.spi
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.string.shouldNotMatch
 import org.orkg.statements.testing.createPredicate
 import org.orkg.statements.testing.withCustomMappings
 import org.springframework.data.domain.PageRequest
@@ -157,14 +158,14 @@ fun <R : PredicateRepository> predicateRepositoryContract(repository: R) = descr
         it("by predicate id removes it from the repository") {
             val expected = fabricator.random<Predicate>()
             repository.save(expected)
-            repository.deleteByPredicateId(expected.id!!)
-            repository.findByPredicateId(expected.id!!).isPresent shouldBe false
+            repository.deleteByPredicateId(expected.id)
+            repository.findByPredicateId(expected.id).isPresent shouldBe false
         }
     }
 
     it("delete all predicates") {
         repeat(3) {
-            repository.save(createPredicate(id = PredicateId(it.toLong())))
+            repository.save(createPredicate(id = ThingId("P$it")))
         }
         // PredicateRepository has no count method
         repository.findAll(PageRequest.of(0, Int.MAX_VALUE)).totalElements shouldBe 3
@@ -173,8 +174,13 @@ fun <R : PredicateRepository> predicateRepositoryContract(repository: R) = descr
     }
 
     context("requesting a new identity") {
-        it("returns a valid id") {
-            repository.nextIdentity() shouldNotBe null
+        context("returns a valid id") {
+            it("that is not blank")  {
+                repository.nextIdentity().value shouldNotMatch """\s+"""
+            }
+            it("that is prefixed with 'P'") {
+                repository.nextIdentity().value[0] shouldBe 'P'
+            }
         }
         it("returns an id that is not yet in the repository") {
             val predicate = createPredicate(id = repository.nextIdentity())

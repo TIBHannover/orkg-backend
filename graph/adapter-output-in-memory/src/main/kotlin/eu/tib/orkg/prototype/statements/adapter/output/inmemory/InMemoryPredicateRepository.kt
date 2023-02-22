@@ -1,13 +1,13 @@
 package eu.tib.orkg.prototype.statements.adapter.output.inmemory
 
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
-class InMemoryPredicateRepository : InMemoryRepository<PredicateId, Predicate>(
+class InMemoryPredicateRepository : InMemoryRepository<ThingId, Predicate>(
     compareBy(Predicate::createdAt)
 ), PredicateRepository {
     override fun findAllByLabel(label: String, pageable: Pageable) =
@@ -21,9 +21,9 @@ class InMemoryPredicateRepository : InMemoryRepository<PredicateId, Predicate>(
     override fun findAllByLabelContaining(part: String, pageable: Pageable) =
         findAllFilteredAndPaged(pageable) { it.label.contains(part) }
 
-    override fun findByPredicateId(id: PredicateId?) = Optional.ofNullable(entities[id!!])
+    override fun findByPredicateId(id: ThingId) = Optional.ofNullable(entities[id])
 
-    override fun deleteByPredicateId(id: PredicateId) {
+    override fun deleteByPredicateId(id: ThingId) {
         entities.remove(id)
     }
 
@@ -32,13 +32,14 @@ class InMemoryPredicateRepository : InMemoryRepository<PredicateId, Predicate>(
     }
 
     override fun save(predicate: Predicate) {
-        entities[predicate.id!!] = predicate
+        entities[predicate.id] = predicate
     }
 
-    override fun nextIdentity(): PredicateId {
-        var id = PredicateId(entities.size.toLong())
+    override fun nextIdentity(): ThingId {
+        var count = entities.size.toLong()
+        var id = ThingId("P$count")
         while(id in entities) {
-            id = PredicateId(id.value.toLong() + 1)
+            id = ThingId("P${++count}")
         }
         return id
     }

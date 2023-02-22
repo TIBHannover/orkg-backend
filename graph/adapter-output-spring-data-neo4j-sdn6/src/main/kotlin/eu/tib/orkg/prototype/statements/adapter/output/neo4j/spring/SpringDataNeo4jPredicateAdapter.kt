@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jPredicateIdGenerator
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jPredicateRepository
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import java.util.*
 import org.springframework.cache.annotation.CacheConfig
@@ -26,7 +26,7 @@ class SpringDataNeo4jPredicateAdapter(
     override fun findAll(pageable: Pageable): Page<Predicate> =
         neo4jRepository.findAll(pageable).map(Neo4jPredicate::toPredicate)
 
-    override fun exists(id: PredicateId): Boolean = neo4jRepository.existsByPredicateId(id)
+    override fun exists(id: ThingId): Boolean = neo4jRepository.existsByPredicateId(id.toPredicateId())
 
     override fun findAllByLabel(label: String, pageable: Pageable): Page<Predicate> =
         neo4jRepository.findAllByLabel(label, pageable).map(Neo4jPredicate::toPredicate)
@@ -38,8 +38,8 @@ class SpringDataNeo4jPredicateAdapter(
         neo4jRepository.findAllByLabelContaining(part, pageable).map(Neo4jPredicate::toPredicate)
 
     @Cacheable(key = "#id")
-    override fun findByPredicateId(id: PredicateId?): Optional<Predicate> =
-        neo4jRepository.findByPredicateId(id).map(Neo4jPredicate::toPredicate)
+    override fun findByPredicateId(id: ThingId): Optional<Predicate> =
+        neo4jRepository.findByPredicateId(id.toPredicateId()).map(Neo4jPredicate::toPredicate)
 
     @Caching(
         evict = [
@@ -47,8 +47,8 @@ class SpringDataNeo4jPredicateAdapter(
             CacheEvict(key = "#id.value", cacheNames = [THING_ID_TO_THING_CACHE]),
         ]
     )
-    override fun deleteByPredicateId(id: PredicateId) {
-        neo4jRepository.deleteByPredicateId(id)
+    override fun deleteByPredicateId(id: ThingId) {
+        neo4jRepository.deleteByPredicateId(id.toPredicateId())
     }
 
     @Caching(
@@ -71,18 +71,18 @@ class SpringDataNeo4jPredicateAdapter(
         neo4jRepository.save(predicate.toNeo4jPredicate())
     }
 
-    override fun nextIdentity(): PredicateId {
+    override fun nextIdentity(): ThingId {
         // IDs could exist already by manual creation. We need to find the next available one.
-        var id: PredicateId
+        var id: ThingId
         do {
             id = idGenerator.nextIdentity()
-        } while (neo4jRepository.existsByPredicateId(id))
+        } while (neo4jRepository.existsByPredicateId(id.toPredicateId()))
         return id
     }
 
     private fun Predicate.toNeo4jPredicate() =
-        neo4jRepository.findByPredicateId(id).orElse(Neo4jPredicate()).apply {
-            predicateId = this@toNeo4jPredicate.id
+        neo4jRepository.findByPredicateId(id.toPredicateId()).orElse(Neo4jPredicate()).apply {
+            predicateId = this@toNeo4jPredicate.id.toPredicateId()
             label = this@toNeo4jPredicate.label
             createdBy = this@toNeo4jPredicate.createdBy
             createdAt = this@toNeo4jPredicate.createdAt

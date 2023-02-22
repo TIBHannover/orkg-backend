@@ -7,7 +7,6 @@ import eu.tib.orkg.prototype.statements.api.BundleConfiguration
 import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase.*
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
@@ -31,29 +30,29 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun deleteAll()
     fun findByStatementId(id: StatementId): Optional<GeneralStatement>
     fun findAllBySubject(subjectId: String, pageable: Pageable): Page<GeneralStatement>
-    fun findAllByPredicateId(predicateId: PredicateId, pageable: Pageable): Page<GeneralStatement>
+    fun findAllByPredicateId(predicateId: ThingId, pageable: Pageable): Page<GeneralStatement>
     fun findAllByObject(objectId: String, pageable: Pageable): Page<GeneralStatement>
     fun countByIdRecursive(id: String): Long
     fun findAllByObjectAndPredicate(
         objectId: String,
-        predicateId: PredicateId,
+        predicateId: ThingId,
         pageable: Pageable
     ): Page<GeneralStatement>
 
     fun findAllBySubjectAndPredicate(
         subjectId: String,
-        predicateId: PredicateId,
+        predicateId: ThingId,
         pageable: Pageable
     ): Page<GeneralStatement>
 
     fun findAllByPredicateIdAndLabel(
-        predicateId: PredicateId,
+        predicateId: ThingId,
         literal: String,
         pageable: Pageable
     ): Page<GeneralStatement>
 
     fun findAllByPredicateIdAndLabelAndSubjectClass(
-        predicateId: PredicateId,
+        predicateId: ThingId,
         literal: String,
         subjectClass: ThingId,
         pageable: Pageable
@@ -64,7 +63,7 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun fetchAsBundle(id: String, configuration: BundleConfiguration): Iterable<GeneralStatement>
     fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount>
     fun findDOIByContributionId(id: ResourceId): Optional<Literal>
-    fun countPredicateUsage(id: PredicateId): Long
+    fun countPredicateUsage(id: ThingId): Long
     fun findByDOI(doi: String): Optional<Resource>
     fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource>
     fun findContributorsByResourceId(id: ResourceId, pageable: Pageable): Page<ResourceContributor>

@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.adapter.input.rest
 
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsUnlistedService
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -19,12 +19,12 @@ class PaperUnlistedCommandController(
 ) {
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun markUnlisted(@PathVariable id: ResourceId) {
+    fun markUnlisted(@PathVariable id: ThingId) {
         service.markAsUnlisted(id)
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")
-    fun markListed(@PathVariable id: ResourceId) {
+    fun markListed(@PathVariable id: ThingId) {
         service.markAsListed(id)
     }
 }

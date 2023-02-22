@@ -7,7 +7,7 @@ import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import java.time.OffsetDateTime
 
 data class Resource(
-    val id: ResourceId?,
+    val id: ThingId,
     override val label: String,
     val createdAt: OffsetDateTime,
     val classes: Set<ThingId> = emptySet(),
@@ -19,5 +19,5 @@ data class Resource(
     val unlisted: Boolean? = null,
     val verified: Boolean? = null,
 ) : Thing {
-    override val thingId: ThingId = ThingId(id!!.value)
+    override val thingId: ThingId = ThingId(id.value)
 }

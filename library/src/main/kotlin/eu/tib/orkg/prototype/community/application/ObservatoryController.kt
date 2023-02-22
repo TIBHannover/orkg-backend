@@ -9,7 +9,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.StatisticsService
 import eu.tib.orkg.prototype.statements.spi.ObservatoryResources
 import java.util.*
@@ -206,7 +206,7 @@ class ObservatoryController(
         val organizationId: OrganizationId,
         val description: String,
         @JsonProperty("research_field")
-        val researchField: ResourceId,
+        val researchField: ThingId,
         @field:Pattern(
             regexp = "^[a-zA-Z0-9_]+$",
             message = "Only underscores ( _ ), numbers, and letters are allowed in the permalink field"

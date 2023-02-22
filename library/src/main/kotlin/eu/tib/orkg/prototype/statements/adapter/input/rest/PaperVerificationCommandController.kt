@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.adapter.input.rest
 
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsVerifiedUseCase
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -17,13 +17,13 @@ class PaperVerificationCommandController(
 ) {
     @PutMapping("/{id}/metadata/verified")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun markVerified(@PathVariable id: ResourceId) {
+    fun markVerified(@PathVariable id: ThingId) {
         service.markAsVerified(id)
     }
 
     @DeleteMapping("/{id}/metadata/verified")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun unmarkVerified(@PathVariable id: ResourceId) {
+    fun unmarkVerified(@PathVariable id: ThingId) {
         service.markAsUnverified(id)
     }
 }

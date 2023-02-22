@@ -1,11 +1,10 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
-import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.services.ObjectService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -47,7 +46,7 @@ class ObjectController(
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     fun add(
-        @PathVariable id: ResourceId,
+        @PathVariable id: ThingId,
         @RequestBody obj: CreateObjectRequest,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<ResourceRepresentation> {
@@ -201,7 +200,7 @@ data class ObjectStatement(
 }
 
 data class TempResource(
-    val subject: ResourceId,
+    val subject: ThingId,
     val predicate: ThingId,
     val `object`: String
 )

@@ -5,7 +5,6 @@ import eu.tib.orkg.prototype.shared.ForbiddenOperationException
 import eu.tib.orkg.prototype.shared.LoggedMessageException
 import eu.tib.orkg.prototype.shared.PropertyValidationException
 import eu.tib.orkg.prototype.shared.SimpleMessageException
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
@@ -16,7 +15,7 @@ class ResourceNotFound private constructor(
     override val message: String
 ) : SimpleMessageException(HttpStatus.NOT_FOUND, message) {
     companion object {
-        fun withId(id: ResourceId) = withId(id.value)
+        fun withId(id: ThingId) = withId(id.value)
         fun withId(id: String) = ResourceNotFound("""Resource "$id" not found.""")
         fun withDOI(doi: String) = ResourceNotFound("""Resource with DOI "$doi" not found.""")
         fun withLabel(label: String) = ResourceNotFound("""Resource with label "$label" not found.""")
@@ -51,16 +50,16 @@ class StatementNotFound : SimpleMessageException {
 class ContributorNotFound(id: ContributorId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Contributor "$id" not found.""")
 
-class ResearchFieldNotFound(id: ResourceId) :
+class ResearchFieldNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Research field "$id" not found.""")
 
-class ResearchProblemNotFound(id: ResourceId) :
+class ResearchProblemNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Research problem "$id" not found.""")
 
-class DatasetNotFound(id: ResourceId) :
+class DatasetNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Dataset "$id" not found.""")
 
-class ResourceCantBeDeleted(id: ResourceId) :
+class ResourceCantBeDeleted(id: ThingId) :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Unable to delete resource "$id" because it is used in at least one statement.""")
 
 class PredicateCantBeDeleted(id: ThingId) :
@@ -72,7 +71,7 @@ class ClassNotAllowed(`class`: String) :
 class ClassAlreadyExists(`class`: String) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Class "$`class`" already exists.""")
 
-class ResourceAlreadyExists(id: ResourceId) :
+class ResourceAlreadyExists(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Resource "$id" already exists.""")
 
 class PredicateAlreadyExists(id: ThingId) :

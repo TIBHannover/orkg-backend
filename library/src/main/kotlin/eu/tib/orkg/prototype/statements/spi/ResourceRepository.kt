@@ -4,21 +4,20 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
-interface ResourceRepository : EntityRepository<Resource, ResourceId> {
-    fun findByIdAndClasses(id: ResourceId, classes: Set<ThingId>): Resource?
+interface ResourceRepository : EntityRepository<Resource, ThingId> {
+    fun findByIdAndClasses(id: ThingId, classes: Set<ThingId>): Resource?
 
     // legacy methods:
-    fun nextIdentity(): ResourceId
+    fun nextIdentity(): ThingId
     fun save(resource: Resource)
-    fun deleteByResourceId(id: ResourceId)
+    fun deleteByResourceId(id: ThingId)
     fun deleteAll()
-    fun findByResourceId(id: ResourceId?): Optional<Resource>
+    fun findByResourceId(id: ThingId): Optional<Resource>
     fun findAllByLabelMatchesRegex(label: String, pageable: Pageable): Page<Resource>
     fun findAllByLabelContaining(part: String, pageable: Pageable): Page<Resource>
     fun findAllByClass(`class`: String, pageable: Pageable): Page<Resource>
@@ -41,7 +40,7 @@ interface ResourceRepository : EntityRepository<Resource, ResourceId> {
     fun findAllByFeaturedIsFalse(pageable: Pageable): Page<Resource>
     fun findAllByUnlistedIsTrue(pageable: Pageable): Page<Resource>
     fun findAllByUnlistedIsFalse(pageable: Pageable): Page<Resource>
-    fun findPaperByResourceId(id: ResourceId): Optional<Resource>
+    fun findPaperByResourceId(id: ThingId): Optional<Resource>
     fun findAllVerifiedPapers(pageable: Pageable): Page<Resource>
     fun findAllUnverifiedPapers(pageable: Pageable): Page<Resource>
     fun findAllFeaturedPapers(pageable: Pageable): Page<Resource>

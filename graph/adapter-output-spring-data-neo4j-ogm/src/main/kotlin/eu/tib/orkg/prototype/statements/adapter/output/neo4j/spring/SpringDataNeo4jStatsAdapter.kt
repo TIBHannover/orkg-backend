@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatsRepository
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ChangeLogResponse
 import eu.tib.orkg.prototype.statements.spi.FieldsStats
 import eu.tib.orkg.prototype.statements.spi.ObservatoryResources
@@ -40,22 +40,22 @@ class SpringDataNeo4jStatsAdapter(
         neo4jRepository.getTopCurrentContributorIdsAndContributionsCount(date, pageable)
 
     override fun getTopCurContribIdsAndContribCountByResearchFieldId(
-        id: ResourceId,
+        id: ThingId,
         date: String
     ): List<List<Map<String, List<ResultObject>>>> =
-        neo4jRepository.getTopCurContribIdsAndContribCountByResearchFieldId(id, date)
+        neo4jRepository.getTopCurContribIdsAndContribCountByResearchFieldId(id.toResourceId(), date)
 
     override fun getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(
-        id: ResourceId,
+        id: ThingId,
         date: String
     ): List<List<Map<String, List<ResultObject>>>> =
-        neo4jRepository.getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(id, date)
+        neo4jRepository.getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(id.toResourceId(), date)
 
     override fun getChangeLog(pageable: Pageable): Page<ChangeLogResponse> =
         neo4jRepository.getChangeLog(pageable)
 
-    override fun getChangeLogByResearchField(id: ResourceId, pageable: Pageable): Page<ChangeLogResponse> =
-        neo4jRepository.getChangeLogByResearchField(id, pageable)
+    override fun getChangeLogByResearchField(id: ThingId, pageable: Pageable): Page<ChangeLogResponse> =
+        neo4jRepository.getChangeLogByResearchField(id.toResourceId(), pageable)
 
     override fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems> =
         neo4jRepository.getTrendingResearchProblems(pageable)

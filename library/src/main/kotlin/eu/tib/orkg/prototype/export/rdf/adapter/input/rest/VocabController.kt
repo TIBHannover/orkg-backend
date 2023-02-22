@@ -5,7 +5,6 @@ import eu.tib.orkg.prototype.export.rdf.api.ExportRDFUseCase
 import eu.tib.orkg.prototype.statements.application.ClassNotFound
 import eu.tib.orkg.prototype.statements.application.PredicateNotFound
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.io.StringWriter
 import java.net.URI
@@ -32,7 +31,7 @@ class VocabController(
         produces = ["text/plain", "application/n-triples", "application/rdf+xml", "text/n3", "text/turtle", "application/json", "application/turtle", "application/trig", "application/n-quads"]
     )
     fun resource(
-        @PathVariable id: ResourceId,
+        @PathVariable id: ThingId,
         @RequestHeader("Accept") acceptHeader: String,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<String> {

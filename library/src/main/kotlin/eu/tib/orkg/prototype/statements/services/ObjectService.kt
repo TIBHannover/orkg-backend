@@ -20,7 +20,6 @@ import eu.tib.orkg.prototype.statements.application.PredicateNotFound
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.TempResource
 import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.stereotype.Service
@@ -44,7 +43,7 @@ class ObjectService(
      */
     fun createObject(
         request: CreateObjectRequest,
-        existingResourceId: ResourceId? = null,
+        existingThingId: ThingId? = null,
         userUUID: UUID,
     ): ResourceRepresentation {
         // Get provenance info
@@ -78,7 +77,7 @@ class ObjectService(
         val tempResources: HashMap<String, String> = HashMap()
 
         // Create the resource
-        val resourceId = existingResourceId
+        val resourceId = existingThingId
             ?: resourceService.create(
                 userId,
                 CreateResourceRequest(null, request.resource.name, request.resource.classes.toThingIds()),
@@ -137,7 +136,7 @@ class ObjectService(
      * do this recursively for all subsequent statements
      */
     fun goThroughStatementsRecursively(
-        subject: ResourceId,
+        subject: ThingId,
         data: HashMap<String, List<ObjectStatement>>,
         tempResources: HashMap<String, String>,
         predicates: HashMap<String, ThingId>,
@@ -267,7 +266,7 @@ class ObjectService(
         resource: ObjectStatement
     ) {
         MAP_PREDICATE_CLASSES[predicateId!!.value]?.let { ThingId(it) }?.let {
-            val res = resourceService.findById(ResourceId(resource.`@id`!!)).get()
+            val res = resourceService.findById(ThingId(resource.`@id`!!)).get()
             val newClasses = res.classes.toMutableSet()
             newClasses.add(it)
             resourceService.update(UpdateResourceRequest(res.id, null, newClasses))
@@ -295,7 +294,7 @@ class ObjectService(
      * o/w throw out a suitable exception
      */
     private fun checkIfResourceExists(resourceId: String) {
-        if (!resourceService.exists(ResourceId(resourceId))) throw ResourceNotFound.withId(resourceId)
+        if (!resourceService.exists(ThingId(resourceId))) throw ResourceNotFound.withId(resourceId)
     }
 
     /**

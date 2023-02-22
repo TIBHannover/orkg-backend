@@ -4,7 +4,8 @@ import eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.legacymo
 import eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.legacymodel.neo4j.LegacyNeo4jBenchmarkSummary
 import eu.tib.orkg.prototype.paperswithcode.application.domain.BenchmarkSummary
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.SummarizeBenchmarkQuery
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.toResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 
@@ -13,8 +14,8 @@ import org.springframework.stereotype.Component
 class LegacyBenchmarkAdapter(
     val legacyBenchmarkRepository: LegacyNeo4jBenchmarkRepository,
 ) : SummarizeBenchmarkQuery {
-    override fun byResearchField(id: ResourceId): List<BenchmarkSummary> =
-        legacyBenchmarkRepository.summarizeBenchmarkByResearchField(id)
+    override fun byResearchField(id: ThingId): List<BenchmarkSummary> =
+        legacyBenchmarkRepository.summarizeBenchmarkByResearchField(id.toResourceId())
             .map(LegacyNeo4jBenchmarkSummary::toBenchmarkSummaryLegacy)
 
     override fun getAll(): List<BenchmarkSummary> =

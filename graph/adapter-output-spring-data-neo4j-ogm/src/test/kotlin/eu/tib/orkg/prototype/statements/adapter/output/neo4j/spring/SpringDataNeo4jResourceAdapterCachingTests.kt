@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import io.mockk.clearMocks
 import io.mockk.confirmVerified
@@ -63,133 +63,133 @@ class SpringDataNeo4jResourceAdapterCachingTests {
 
     @Test
     fun `fetching a resource by ID should be cached`() {
-        val resource = createResource().copy(id = ResourceId("R1"))
-        every { mock.findByResourceId(ResourceId("R1")) } returns Optional.of(resource) andThen {
+        val resource = createResource().copy(id = ThingId("R1"))
+        every { mock.findByResourceId(ThingId("R1")) } returns Optional.of(resource) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
 
         // Obtain resource from repository
-        assertThat(adapter.findByResourceId(ResourceId("R1")).get()).isEqualTo(resource)
+        assertThat(adapter.findByResourceId(ThingId("R1")).get()).isEqualTo(resource)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByResourceId(ResourceId("R1")) }
+        verify(exactly = 1) { mock.findByResourceId(ThingId("R1")) }
 
         // Obtain the same resource again for several times
-        assertThat(adapter.findByResourceId(ResourceId("R1")).get()).isEqualTo(resource)
-        assertThat(adapter.findByResourceId(ResourceId("R1")).get()).isEqualTo(resource)
+        assertThat(adapter.findByResourceId(ThingId("R1")).get()).isEqualTo(resource)
+        assertThat(adapter.findByResourceId(ThingId("R1")).get()).isEqualTo(resource)
 
-        verify(exactly = 1) { mock.findByResourceId(ResourceId("R1")) }
+        verify(exactly = 1) { mock.findByResourceId(ThingId("R1")) }
     }
 
     @Test
     fun `saving a resource should evict it from the id-to-resource cache`() {
-        val resource = createResource().copy(id = ResourceId("R1"))
+        val resource = createResource().copy(id = ThingId("R1"))
         val modified = resource.copy(label = "new label")
-        every { mock.findByResourceId(ResourceId("R1")) } returns Optional.of(resource) andThen Optional.of(modified) andThen {
+        every { mock.findByResourceId(ThingId("R1")) } returns Optional.of(resource) andThen Optional.of(modified) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
-        every { mock.exists(ResourceId("R1")) } returns true andThen {
+        every { mock.exists(ThingId("R1")) } returns true andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { mock.save(modified) } returns Unit
 
         // Obtain resource from repository
-        assertThat(adapter.findByResourceId(ResourceId("R1")).get()).isEqualTo(resource)
+        assertThat(adapter.findByResourceId(ThingId("R1")).get()).isEqualTo(resource)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByResourceId(ResourceId("R1")) }
+        verify(exactly = 1) { mock.findByResourceId(ThingId("R1")) }
 
         // Check resource existence in repository
-        assertThat(adapter.exists(ResourceId("R1"))).isTrue
+        assertThat(adapter.exists(ThingId("R1"))).isTrue
         // Verify the loading happened
-        verify(exactly = 1) { mock.exists(ResourceId("R1")) }
+        verify(exactly = 1) { mock.exists(ThingId("R1")) }
 
         // Save a modified version
         adapter.save(modified)
         verify { mock.save(modified) } // required because of confirmVerified()
 
         // Obtaining the resource again
-        assertThat(adapter.findByResourceId(ResourceId("R1")).get())
+        assertThat(adapter.findByResourceId(ThingId("R1")).get())
             .`as`("obtaining the updated version from the cache")
             .isEqualTo(modified)
         // Verify the loading happened (again)
-        verify(exactly = 2) { mock.findByResourceId(ResourceId("R1")) }
+        verify(exactly = 2) { mock.findByResourceId(ThingId("R1")) }
 
         // Check resource existence again
-        assertThat(adapter.exists(ResourceId("R1"))).isTrue
+        assertThat(adapter.exists(ThingId("R1"))).isTrue
         // Verify the loading did not happen again
-        verify(exactly = 1) { mock.exists(ResourceId("R1")) }
+        verify(exactly = 1) { mock.exists(ThingId("R1")) }
     }
 
     @Test
     fun `exists check of a resource by ID should be cached`() {
-        every { mock.exists(ResourceId("R1")) } returns true andThen {
+        every { mock.exists(ThingId("R1")) } returns true andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
 
         // Check resource existence in repository
-        assertThat(adapter.exists(ResourceId("R1"))).isTrue
+        assertThat(adapter.exists(ThingId("R1"))).isTrue
         // Verify the loading happened
-        verify(exactly = 1) { mock.exists(ResourceId("R1")) }
+        verify(exactly = 1) { mock.exists(ThingId("R1")) }
 
         // Check existence of resource again for several times
-        assertThat(adapter.exists(ResourceId("R1"))).isTrue
-        assertThat(adapter.exists(ResourceId("R1"))).isTrue
+        assertThat(adapter.exists(ThingId("R1"))).isTrue
+        assertThat(adapter.exists(ThingId("R1"))).isTrue
 
-        verify(exactly = 1) { mock.exists(ResourceId("R1")) }
+        verify(exactly = 1) { mock.exists(ThingId("R1")) }
     }
 
     @Test
     fun `deleting a resource should evict it from the id-to-resource cache`() {
-        val resource = createResource().copy(id = ResourceId("R1"))
-        every { mock.findByResourceId(ResourceId("R1")) } returns Optional.of(resource) andThen Optional.of(resource) andThen {
+        val resource = createResource().copy(id = ThingId("R1"))
+        every { mock.findByResourceId(ThingId("R1")) } returns Optional.of(resource) andThen Optional.of(resource) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
-        every { adapter.deleteByResourceId(ResourceId("R1")) } returns Unit
+        every { adapter.deleteByResourceId(ThingId("R1")) } returns Unit
 
         // Obtain predicate from repository
-        assertThat(adapter.findByResourceId(ResourceId("R1")).get()).isEqualTo(resource)
+        assertThat(adapter.findByResourceId(ThingId("R1")).get()).isEqualTo(resource)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByResourceId(ResourceId("R1")) }
+        verify(exactly = 1) { mock.findByResourceId(ThingId("R1")) }
 
         // Obtain the same predicate again for several times
-        assertThat(adapter.findByResourceId(ResourceId("R1")).get()).isEqualTo(resource)
-        assertThat(adapter.findByResourceId(ResourceId("R1")).get()).isEqualTo(resource)
-        verify(exactly = 1) { mock.findByResourceId(ResourceId("R1")) }
+        assertThat(adapter.findByResourceId(ThingId("R1")).get()).isEqualTo(resource)
+        assertThat(adapter.findByResourceId(ThingId("R1")).get()).isEqualTo(resource)
+        verify(exactly = 1) { mock.findByResourceId(ThingId("R1")) }
 
         // Delete predicate from repository
-        adapter.deleteByResourceId(ResourceId("R1"))
+        adapter.deleteByResourceId(ThingId("R1"))
         // Verify the deletion happened
-        verify(exactly = 1) { mock.deleteByResourceId(ResourceId("R1")) }
+        verify(exactly = 1) { mock.deleteByResourceId(ThingId("R1")) }
 
         // Verify that the cache was evicted
-        assertThat(adapter.findByResourceId(ResourceId("R1")).get()).isEqualTo(resource)
-        verify(exactly = 2) { mock.findByResourceId(ResourceId("R1")) }
+        assertThat(adapter.findByResourceId(ThingId("R1")).get()).isEqualTo(resource)
+        verify(exactly = 2) { mock.findByResourceId(ThingId("R1")) }
     }
 
     @Test
     fun `deleting a resource should evict it from the id-to-resource-exists cache`() {
-        every { mock.exists(ResourceId("R1")) } returns true andThen false andThen {
+        every { mock.exists(ThingId("R1")) } returns true andThen false andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
-        every { adapter.deleteByResourceId(ResourceId("R1")) } returns Unit
+        every { adapter.deleteByResourceId(ThingId("R1")) } returns Unit
 
         // Obtain predicate from repository
-        assertThat(adapter.exists(ResourceId("R1"))).isTrue
+        assertThat(adapter.exists(ThingId("R1"))).isTrue
         // Verify the loading happened
-        verify(exactly = 1) { mock.exists(ResourceId("R1")) }
+        verify(exactly = 1) { mock.exists(ThingId("R1")) }
 
         // Obtain the same predicate again for several times
-        assertThat(adapter.exists(ResourceId("R1"))).isTrue
-        assertThat(adapter.exists(ResourceId("R1"))).isTrue
-        verify(exactly = 1) { mock.exists(ResourceId("R1")) }
+        assertThat(adapter.exists(ThingId("R1"))).isTrue
+        assertThat(adapter.exists(ThingId("R1"))).isTrue
+        verify(exactly = 1) { mock.exists(ThingId("R1")) }
 
         // Delete predicate from repository
-        adapter.deleteByResourceId(ResourceId("R1"))
+        adapter.deleteByResourceId(ThingId("R1"))
         // Verify the deletion happened
-        verify(exactly = 1) { mock.deleteByResourceId(ResourceId("R1")) }
+        verify(exactly = 1) { mock.deleteByResourceId(ThingId("R1")) }
 
         // Verify that the cache was evicted
-        assertThat(adapter.exists(ResourceId("R1"))).isFalse
-        verify(exactly = 2) { mock.exists(ResourceId("R1")) }
+        assertThat(adapter.exists(ThingId("R1"))).isFalse
+        verify(exactly = 2) { mock.exists(ThingId("R1")) }
     }
 
     @Configuration

@@ -45,6 +45,8 @@ internal fun ThingId.toLiteralId() = LiteralId(value)
 
 internal fun ThingId.toPredicateId() = PredicateId(value)
 
+internal fun ThingId.toResourceId() = ResourceId(value)
+
 internal fun Set<ThingId>.toClassIds() = map { it.toClassId() }.toSet()
 
 internal fun Iterable<ThingId>.toClassIds() = map { it.toClassId() }
@@ -111,7 +113,7 @@ internal fun Node.toClass() = Class(
 )
 
 internal fun Node.toResource() = Resource(
-    id = ResourceId(this["resource_id"].asString()),
+    id = ThingId(this["resource_id"].asString()),
     label = this["label"].asString(),
     classes = this.labels().filter { it !in reservedClassIds }.map(::ThingId).toSet(),
     createdAt = this["created_at"].toOffsetDateTime(),

@@ -4,7 +4,6 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import java.util.*
@@ -16,25 +15,26 @@ private val paperDeletedClass = ThingId("PaperDeleted")
 private val comparisonClass = ThingId("Comparison")
 private val unknownUUID = UUID(0, 0)
 
-class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
+class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
     compareBy(Resource::createdAt)
 ), ResourceRepository {
-    override fun findByIdAndClasses(id: ResourceId, classes: Set<ThingId>): Resource? =
+    override fun findByIdAndClasses(id: ThingId, classes: Set<ThingId>): Resource? =
         entities[id]?.takeIf { it.classes.any {`class` -> `class` in classes } }
 
-    override fun nextIdentity(): ResourceId {
-        var id = ResourceId(entities.size.toLong())
+    override fun nextIdentity(): ThingId {
+        var count = entities.size.toLong()
+        var id = ThingId("R$count")
         while(id in entities) {
-            id = ResourceId(id.value.toLong() + 1)
+            id = ThingId("R${++count}")
         }
         return id
     }
 
     override fun save(resource: Resource) {
-        entities[resource.id!!] = resource
+        entities[resource.id] = resource
     }
 
-    override fun deleteByResourceId(id: ResourceId) {
+    override fun deleteByResourceId(id: ThingId) {
         entities.remove(id)
     }
 
@@ -42,7 +42,7 @@ class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
         entities.clear()
     }
 
-    override fun findByResourceId(id: ResourceId?) =
+    override fun findByResourceId(id: ThingId) =
         Optional.ofNullable(entities[id])
 
     // TODO: rename to findAllPapersByLabel or replace with a generic method with a classes parameter
@@ -185,7 +185,7 @@ class InMemoryResourceRepository : InMemoryRepository<ResourceId, Resource>(
         findAllByClassAndFlags(pageable, unlisted = false)
 
     // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
-    override fun findPaperByResourceId(id: ResourceId) =
+    override fun findPaperByResourceId(id: ThingId) =
         Optional.ofNullable(entities.values.firstOrNull {
             it.id == id && paperClass in it.classes
         })

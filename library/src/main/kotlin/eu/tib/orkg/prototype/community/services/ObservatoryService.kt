@@ -9,7 +9,7 @@ import eu.tib.orkg.prototype.community.domain.model.Observatory
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -26,7 +26,7 @@ class PostgresObservatoryService(
         name: String,
         description: String,
         organizationId: OrganizationId,
-        researchField: ResourceId?,
+        researchField: ThingId?,
         displayId: String
     ): Observatory {
         val observatoryId = id ?: ObservatoryId(UUID.randomUUID())
@@ -129,7 +129,7 @@ class PostgresObservatoryService(
     }
 
     fun Observatory.withResearchField(resourceId: String) = this.apply {
-        val resource = resourceService.findById(ResourceId(resourceId))
+        val resource = resourceService.findById(ThingId(resourceId))
         researchField?.id = resource.get().id.toString()
         researchField?.label = resource.get().label
     }

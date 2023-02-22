@@ -5,7 +5,7 @@ import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.port.out.GetPaperFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperPort
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -22,7 +22,7 @@ class PaperVerificationController(
 ) : BaseController() {
 
     @GetMapping("/api/papers/{id}/metadata/verified")
-    fun getVerifiedFlag(@PathVariable id: ResourceId): Boolean =
+    fun getVerifiedFlag(@PathVariable id: ThingId): Boolean =
         query.getPaperVerifiedFlag(id) ?: throw ResourceNotFound.withId(id)
 
     @GetMapping("/api/classes/Paper/resources/", params = ["verified=true"])

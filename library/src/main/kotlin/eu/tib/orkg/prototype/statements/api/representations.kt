@@ -6,7 +6,6 @@ import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
 import java.time.OffsetDateTime
@@ -45,7 +44,7 @@ interface PredicateRepresentation : ThingRepresentation, ProvenanceMetadata {
 }
 
 interface ResourceRepresentation : ThingRepresentation, ResourceProvenanceMetadata, ContentTypeFlags {
-    val id: ResourceId
+    val id: ThingId
     val label: String
     val classes: Set<ThingId>
     val shared: Long

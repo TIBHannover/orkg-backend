@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.services.ChangeLog
 import eu.tib.orkg.prototype.statements.services.TopContributorsWithProfile
@@ -91,7 +91,7 @@ class StatsController(private val service: RetrieveStatisticsUseCase) {
      */
     @GetMapping("/research-field/{id}/top/changelog")
     @ResponseStatus(HttpStatus.OK)
-    fun getTopChangeLogsByResearchField(@PathVariable id: ResourceId, pageable: Pageable): ResponseEntity<Page<ChangeLog>> =
+    fun getTopChangeLogsByResearchField(@PathVariable id: ThingId, pageable: Pageable): ResponseEntity<Page<ChangeLog>> =
         ResponseEntity.ok(service.getRecentChangeLogByResearchField(id, pageable))
 
     /**
@@ -113,7 +113,7 @@ class StatsController(private val service: RetrieveStatisticsUseCase) {
      */
     @GetMapping("/research-field/{id}/subfields/top/contributors")
     @ResponseStatus(HttpStatus.OK)
-    fun getTopContributorsByResearchField(@PathVariable id: ResourceId, @RequestParam(required = false, defaultValue = "0") days: Long): ResponseEntity<Iterable<TopContributorsWithProfileAndTotalCount>> {
+    fun getTopContributorsByResearchField(@PathVariable id: ThingId, @RequestParam(required = false, defaultValue = "0") days: Long): ResponseEntity<Iterable<TopContributorsWithProfileAndTotalCount>> {
         return ResponseEntity.ok(service.getTopCurrentContributorsByResearchField(id, days))
     }
 
@@ -123,7 +123,7 @@ class StatsController(private val service: RetrieveStatisticsUseCase) {
      */
     @GetMapping("/research-field/{id}/top/contributors")
     @ResponseStatus(HttpStatus.OK)
-    fun getTopContributorsByResearchFieldExcludeSubFields(@PathVariable id: ResourceId, @RequestParam(required = false, defaultValue = "0") days: Long): ResponseEntity<Iterable<TopContributorsWithProfileAndTotalCount>> {
+    fun getTopContributorsByResearchFieldExcludeSubFields(@PathVariable id: ThingId, @RequestParam(required = false, defaultValue = "0") days: Long): ResponseEntity<Iterable<TopContributorsWithProfileAndTotalCount>> {
         return ResponseEntity.ok(service.getTopCurrentContributorsByResearchFieldExcludeSubFields(id, days))
     }
 }

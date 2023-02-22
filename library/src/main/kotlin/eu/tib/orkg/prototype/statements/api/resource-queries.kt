@@ -4,7 +4,6 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import java.util.*
@@ -12,8 +11,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface RetrieveResourceUseCase {
-    fun exists(id: ResourceId): Boolean
-    fun findByIdAndClasses(id: ResourceId, classes: Set<ThingId>): ResourceRepresentation?
+    fun exists(id: ThingId): Boolean
+    fun findByIdAndClasses(id: ThingId, classes: Set<ThingId>): ResourceRepresentation?
 
     // TODO: Needed by problem service. May need better solution.
     fun map(action: IterableResourcesGenerator): Iterable<ResourceRepresentation>
@@ -65,10 +64,10 @@ interface RetrieveResourceUseCase {
         pageable: Pageable
     ): Page<ResourceRepresentation>
     fun findByDOI(doi: String): Optional<ResourceRepresentation>
-    fun findById(id: ResourceId?): Optional<ResourceRepresentation>
+    fun findById(id: ThingId): Optional<ResourceRepresentation>
     fun findByTitle(title: String?): Optional<ResourceRepresentation>
     fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation>
-    fun findContributorsByResourceId(id: ResourceId, pageable: Pageable): Page<ResourceContributor>
+    fun findContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor>
     fun findPapersByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation>
     fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation>
     fun findResourcesByObservatoryIdAndClass(id: ObservatoryId, classes: List<String>, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
@@ -80,7 +79,7 @@ interface RetrieveResourceUseCase {
     ): Page<ResourceRepresentation>
     fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation>
     fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation>
-    fun hasStatements(id: ResourceId): Boolean
+    fun hasStatements(id: ThingId): Boolean
 }
 
 fun interface ResourceGenerator {

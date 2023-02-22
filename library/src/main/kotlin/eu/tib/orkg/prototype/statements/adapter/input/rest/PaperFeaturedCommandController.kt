@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.adapter.input.rest
 
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -17,12 +17,12 @@ class PaperFeaturedCommandController(
 ) {
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun markFeatured(@PathVariable id: ResourceId) {
+    fun markFeatured(@PathVariable id: ThingId) {
         service.markAsFeatured(id)
     }
 
     @DeleteMapping("/{id}/metadata/featured")
-    fun unmarkFeatured(@PathVariable id: ResourceId) {
+    fun unmarkFeatured(@PathVariable id: ThingId) {
         service.markAsNonFeatured(id)
     }
 }

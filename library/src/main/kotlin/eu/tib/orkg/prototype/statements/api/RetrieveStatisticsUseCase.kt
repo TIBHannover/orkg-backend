@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.api
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.services.ChangeLog
 import eu.tib.orkg.prototype.statements.services.TopContributorsWithProfile
@@ -52,7 +52,7 @@ interface RetrieveStatisticsUseCase {
     /**
      * Get recent changes in ORKG by research field
      */
-    fun getRecentChangeLogByResearchField(id: ResourceId, pageable: Pageable): Page<ChangeLog>
+    fun getRecentChangeLogByResearchField(id: ThingId, pageable: Pageable): Page<ChangeLog>
 
     /**
      * Get trending research problems
@@ -62,10 +62,10 @@ interface RetrieveStatisticsUseCase {
     /**
      * Get top contributors by research field ID
      */
-    fun getTopCurrentContributorsByResearchField(id: ResourceId, days: Long): Iterable<TopContributorsWithProfileAndTotalCount>
+    fun getTopCurrentContributorsByResearchField(id: ThingId, days: Long): Iterable<TopContributorsWithProfileAndTotalCount>
 
     /**
      * Get top contributors by research field ID excluding sub research fields
      */
-    fun getTopCurrentContributorsByResearchFieldExcludeSubFields(id: ResourceId, days: Long): Iterable<TopContributorsWithProfileAndTotalCount>
+    fun getTopCurrentContributorsByResearchFieldExcludeSubFields(id: ThingId, days: Long): Iterable<TopContributorsWithProfileAndTotalCount>
 }

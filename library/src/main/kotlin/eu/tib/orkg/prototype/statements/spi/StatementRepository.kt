@@ -8,7 +8,6 @@ import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase.*
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
@@ -18,8 +17,8 @@ import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.transaction.annotation.Transactional
 
 interface StatementRepository : EntityRepository<GeneralStatement, StatementId> {
-    fun countStatementsAboutResource(id: ResourceId): Long
-    fun countStatementsAboutResources(resourceIds: Set<ResourceId>): Map<ResourceId, Long>
+    fun countStatementsAboutResource(id: ThingId): Long
+    fun countStatementsAboutResources(resourceIds: Set<ThingId>): Map<ThingId, Long>
     // legacy methods:
     fun nextIdentity(): StatementId
     @Transactional
@@ -62,12 +61,12 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun findAllByObjects(objectIds: List<String>, pageable: Pageable): Page<GeneralStatement>
     fun fetchAsBundle(id: String, configuration: BundleConfiguration): Iterable<GeneralStatement>
     fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount>
-    fun findDOIByContributionId(id: ResourceId): Optional<Literal>
+    fun findDOIByContributionId(id: ThingId): Optional<Literal>
     fun countPredicateUsage(id: ThingId): Long
     fun findByDOI(doi: String): Optional<Resource>
     fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource>
-    fun findContributorsByResourceId(id: ResourceId, pageable: Pageable): Page<ResourceContributor>
-    fun checkIfResourceHasStatements(id: ResourceId): Boolean
+    fun findContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor>
+    fun checkIfResourceHasStatements(id: ThingId): Boolean
     fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
 }
 

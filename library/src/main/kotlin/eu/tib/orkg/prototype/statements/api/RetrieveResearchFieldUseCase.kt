@@ -1,36 +1,36 @@
 package eu.tib.orkg.prototype.statements.api
 
-import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.community.domain.model.ResearchField
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import java.util.Optional
+import eu.tib.orkg.prototype.contributions.domain.model.Contributor
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface RetrieveResearchFieldUseCase {
-    fun findById(id: ResourceId): Optional<ResourceRepresentation>
+    fun findById(id: ThingId): Optional<ResourceRepresentation>
 
-    fun getResearchProblemsOfField(id: ResourceId, pageable: Pageable): Page<PaperCountPerResearchProblem>
+    fun getResearchProblemsOfField(id: ThingId, pageable: Pageable): Page<PaperCountPerResearchProblem>
 
-    fun getResearchProblemsIncludingSubFields(id: ResourceId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
+    fun getResearchProblemsIncludingSubFields(id: ThingId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
 
-    fun getContributorsIncludingSubFields(id: ResourceId, pageable: Pageable): Page<Contributor>
+    fun getContributorsIncludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor>
 
-    fun getPapersIncludingSubFields(id: ResourceId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
+    fun getPapersIncludingSubFields(id: ThingId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
 
-    fun getComparisonsIncludingSubFields(id: ResourceId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
+    fun getComparisonsIncludingSubFields(id: ThingId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
 
-    fun getContributorsExcludingSubFields(id: ResourceId, pageable: Pageable): Page<Contributor>
+    fun getContributorsExcludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor>
 
-    fun getPapersExcludingSubFields(id: ResourceId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
+    fun getPapersExcludingSubFields(id: ThingId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
 
-    fun getComparisonsExcludingSubFields(id: ResourceId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
+    fun getComparisonsExcludingSubFields(id: ThingId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
 
-    fun getResearchProblemsExcludingSubFields(id: ResourceId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
+    fun getResearchProblemsExcludingSubFields(id: ThingId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
 
-    fun getEntitiesBasedOnClassesIncludingSubfields(id: ResourceId, classesList: List<String>, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
+    fun getEntitiesBasedOnClassesIncludingSubfields(id: ThingId, classesList: List<String>, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
 
-    fun getEntitiesBasedOnClassesExcludingSubfields(id: ResourceId, classesList: List<String>, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
+    fun getEntitiesBasedOnClassesExcludingSubfields(id: ThingId, classesList: List<String>, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
 
     fun withBenchmarks(): List<ResearchField>
 

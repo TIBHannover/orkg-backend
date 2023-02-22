@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -33,7 +33,7 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
     @Test
     @DisplayName("should create resource from request")
     fun shouldCreateResourceFromRequest() {
-        val resource = service.create(CreateResourceRequest(ResourceId("someID"), "Some Concept"))
+        val resource = service.create(CreateResourceRequest(ThingId("someID"), "Some Concept"))
 
         assertThat(resource.id.toString()).isEqualTo("someID")
         assertThat(resource.label).isEqualTo("Some Concept")

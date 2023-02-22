@@ -116,7 +116,7 @@ data class Neo4jResource(
 
     fun toResource() =
         Resource(
-            resourceId,
+            ThingId(resourceId!!.value),
             label!!,
             createdAt!!,
             classes - ReservedClassIds,

@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.application.port.out
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
@@ -69,39 +69,39 @@ interface LoadProblemPort {
 }
 
 interface GetPaperFlagQuery {
-    fun getPaperVerifiedFlag(id: ResourceId): Boolean?
-    fun getFeaturedPaperFlag(id: ResourceId): Boolean
-    fun getUnlistedPaperFlag(id: ResourceId): Boolean
+    fun getPaperVerifiedFlag(id: ThingId): Boolean?
+    fun getFeaturedPaperFlag(id: ThingId): Boolean
+    fun getUnlistedPaperFlag(id: ThingId): Boolean
 }
 
 interface GetResourceFlagQuery {
-    fun getFeaturedResourceFlag(id: ResourceId): Boolean
-    fun getUnlistedResourceFlag(id: ResourceId): Boolean
+    fun getFeaturedResourceFlag(id: ThingId): Boolean
+    fun getUnlistedResourceFlag(id: ThingId): Boolean
 }
 
 interface GetProblemFlagQuery {
-    fun getFeaturedProblemFlag(id: ResourceId): Boolean
-    fun getUnlistedProblemFlag(id: ResourceId): Boolean
+    fun getFeaturedProblemFlag(id: ThingId): Boolean
+    fun getUnlistedProblemFlag(id: ThingId): Boolean
 }
 
 interface GetContributionFlagQuery {
-    fun getFeaturedContributionFlag(id: ResourceId): Boolean
-    fun getUnlistedContributionFlag(id: ResourceId): Boolean
+    fun getFeaturedContributionFlag(id: ThingId): Boolean
+    fun getUnlistedContributionFlag(id: ThingId): Boolean
 }
 
 interface GetComparisonFlagQuery {
-    fun getFeaturedComparisonFlag(id: ResourceId): Boolean
-    fun getUnlistedComparisonFlag(id: ResourceId): Boolean
+    fun getFeaturedComparisonFlag(id: ThingId): Boolean
+    fun getUnlistedComparisonFlag(id: ThingId): Boolean
 }
 
 interface GetVisualizationFlagQuery {
-    fun getFeaturedVisualizationFlag(id: ResourceId): Boolean
-    fun getUnlistedVisualizationFlag(id: ResourceId): Boolean
+    fun getFeaturedVisualizationFlag(id: ThingId): Boolean
+    fun getUnlistedVisualizationFlag(id: ThingId): Boolean
 }
 
 interface GetSmartReviewFlagQuery {
-    fun getFeaturedSmartReviewFlag(id: ResourceId): Boolean
-    fun getUnlistedSmartReviewFlag(id: ResourceId): Boolean
+    fun getFeaturedSmartReviewFlag(id: ThingId): Boolean
+    fun getUnlistedSmartReviewFlag(id: ThingId): Boolean
 }
 
 interface GetContributorsQuery {

@@ -13,7 +13,6 @@ import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.PaperService
 import java.util.*
@@ -492,7 +491,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             )
     }
 
-    fun createTemplateAndTypedResource(value: String): ResourceId {
+    fun createTemplateAndTypedResource(value: String): ThingId {
         // create required classes and predicates
         val templateClass = classService.createClass(
             id = "ContributionTemplate",

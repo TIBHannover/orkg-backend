@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -28,17 +28,17 @@ class ComparisonController(
 
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)
-    fun markFeatured(@PathVariable id: ResourceId) {
+    fun markFeatured(@PathVariable id: ThingId) {
         service.markAsFeatured(id)
     }
 
     @DeleteMapping("/{id}/metadata/featured")
-    fun unmarkFeatured(@PathVariable id: ResourceId) {
+    fun unmarkFeatured(@PathVariable id: ThingId) {
         service.markAsNonFeatured(id)
     }
 
     @GetMapping("/{id}/metadata/featured")
-    fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean? =
+    fun getFeaturedFlag(@PathVariable id: ThingId): Boolean? =
         service.getFeaturedResourceFlag(id)
 
     @GetMapping("/metadata/unlisted", params = ["unlisted=true"])
@@ -51,15 +51,15 @@ class ComparisonController(
 
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.OK)
-    fun markUnlisted(@PathVariable id: ResourceId) {
+    fun markUnlisted(@PathVariable id: ThingId) {
         neo4jResourceService.markAsUnlisted(id)
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")
-    fun unmarkUnlisted(@PathVariable id: ResourceId) {
+    fun unmarkUnlisted(@PathVariable id: ThingId) {
         neo4jResourceService.markAsListed(id)
     }
 
     @GetMapping("/{id}/metadata/unlisted")
-    fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean = service.getUnlistedResourceFlag(id)
+    fun getUnlistedFlag(@PathVariable id: ThingId): Boolean = service.getUnlistedResourceFlag(id)
 }

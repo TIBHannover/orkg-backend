@@ -64,7 +64,7 @@ class Neo4jResource: Neo4jThing() {
         }
 
     fun toResource() = Resource(
-        id = resourceId,
+        id = ThingId(resourceId!!.value),
         label = label!!,
         createdAt = createdAt!!,
         classes = classes - ReservedClassIds,

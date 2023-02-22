@@ -3,21 +3,22 @@ package eu.tib.orkg.prototype.statements.api
 import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
 import eu.tib.orkg.prototype.statements.application.port.out.GetProblemFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.LoadProblemPort
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.*
-import java.util.Optional
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.ContributorPerProblem
+import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.DetailsPerProblem
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface RetrieveResearchProblemUseCase :
     GetProblemFlagQuery,
     LoadProblemPort {
-    fun findById(id: ResourceId): Optional<ResourceRepresentation>
+    fun findById(id: ThingId): Optional<ResourceRepresentation>
 
-    fun findFieldsPerProblem(problemId: ResourceId): List<FieldCount>
+    fun findFieldsPerProblem(problemId: ThingId): List<FieldCount>
 
     fun findFieldsPerProblemAndClasses(
-        problemId: ResourceId,
+        problemId: ThingId,
         featured: Boolean?,
         unlisted: Boolean,
         classes: List<String>,
@@ -26,11 +27,11 @@ interface RetrieveResearchProblemUseCase :
 
     fun findTopResearchProblems(): List<ResourceRepresentation>
 
-    fun findContributorsPerProblem(problemId: ResourceId, pageable: Pageable): List<ContributorPerProblem>
+    fun findContributorsPerProblem(problemId: ThingId, pageable: Pageable): List<ContributorPerProblem>
 
-    fun findAuthorsPerProblem(problemId: ResourceId, pageable: Pageable): List<PaperCountPerAuthor>
+    fun findAuthorsPerProblem(problemId: ThingId, pageable: Pageable): List<PaperCountPerAuthor>
 
-    fun forDataset(id: ResourceId): Optional<List<ResearchProblem>>
+    fun forDataset(id: ThingId): Optional<List<ResearchProblem>>
 
     data class FieldCount(
         val field: ResourceRepresentation,

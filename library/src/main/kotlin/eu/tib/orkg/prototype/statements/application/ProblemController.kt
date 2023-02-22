@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.ResourceService
 import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.*
 import org.springframework.data.domain.Page
@@ -30,13 +30,13 @@ class ProblemController(
 ) {
 
     @GetMapping("/{problemId}/fields")
-    fun getFieldPerProblem(@PathVariable problemId: ResourceId): ResponseEntity<Iterable<Any>> {
+    fun getFieldPerProblem(@PathVariable problemId: ThingId): ResponseEntity<Iterable<Any>> {
         return ResponseEntity.ok(service.findFieldsPerProblem(problemId))
     }
 
     @GetMapping("/{problemId}/")
     fun getFieldPerProblemAndClasses(
-        @PathVariable problemId: ResourceId,
+        @PathVariable problemId: ThingId,
         @RequestParam(value = "classes") classes: List<String>,
         @Nullable @RequestParam("featured")
         featured: Boolean?,
@@ -54,7 +54,7 @@ class ProblemController(
 
     @GetMapping("/{problemId}/users")
     fun getContributorsPerProblem(
-        @PathVariable problemId: ResourceId,
+        @PathVariable problemId: ThingId,
         pageable: Pageable
     ): ResponseEntity<Iterable<Any>> {
         val contributors = service.findContributorsPerProblem(problemId, pageable).map {
@@ -69,7 +69,7 @@ class ProblemController(
 
     @GetMapping("/{problemId}/authors")
     fun getAuthorsPerProblem(
-        @PathVariable problemId: ResourceId,
+        @PathVariable problemId: ThingId,
         @RequestParam("page", required = false) page: Int?,
         @RequestParam("items", required = false) items: Int?,
         pageable: Pageable
@@ -87,17 +87,17 @@ class ProblemController(
 
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)
-    fun markFeatured(@PathVariable id: ResourceId) {
+    fun markFeatured(@PathVariable id: ThingId) {
         resourceService.markAsFeatured(id)
     }
 
     @DeleteMapping("/{id}/metadata/featured")
-    fun unmarkFeatured(@PathVariable id: ResourceId) {
+    fun unmarkFeatured(@PathVariable id: ThingId) {
         resourceService.markAsNonFeatured(id)
     }
 
     @GetMapping("/{id}/metadata/featured")
-    fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean = service.getFeaturedProblemFlag(id)
+    fun getFeaturedFlag(@PathVariable id: ThingId): Boolean = service.getFeaturedProblemFlag(id)
 
     @GetMapping("/metadata/unlisted", params = ["unlisted=true"])
     fun getUnlistedContributions(pageable: Pageable) =
@@ -109,15 +109,15 @@ class ProblemController(
 
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.OK)
-    fun markUnlisted(@PathVariable id: ResourceId) {
+    fun markUnlisted(@PathVariable id: ThingId) {
         resourceService.markAsUnlisted(id)
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")
-    fun unmarkUnlisted(@PathVariable id: ResourceId) {
+    fun unmarkUnlisted(@PathVariable id: ThingId) {
         resourceService.markAsListed(id)
     }
 
     @GetMapping("/{id}/metadata/unlisted")
-    fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean? = service.getUnlistedProblemFlag(id)
+    fun getUnlistedFlag(@PathVariable id: ThingId): Boolean? = service.getUnlistedProblemFlag(id)
 }

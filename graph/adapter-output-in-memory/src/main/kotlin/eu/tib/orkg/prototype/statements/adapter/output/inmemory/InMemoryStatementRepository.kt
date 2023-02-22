@@ -9,7 +9,6 @@ import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -183,13 +182,13 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         entities.clear()
     }
 
-    override fun countStatementsAboutResource(id: ResourceId) =
+    override fun countStatementsAboutResource(id: ThingId) =
         entities.filter { id.value == it.value.`object`.thingId.value }.count().toLong()
 
-    override fun countStatementsAboutResources(resourceIds: Set<ResourceId>) =
+    override fun countStatementsAboutResources(resourceIds: Set<ThingId>) =
         resourceIds.associateWith(::countStatementsAboutResource).filter { it.value > 0 }
 
-    override fun findDOIByContributionId(id: ResourceId): Optional<Literal> =
+    override fun findDOIByContributionId(id: ThingId): Optional<Literal> =
         Optional.ofNullable(entities.values.find {
             it.subject is Resource && paperClass in (it.subject as Resource).classes
                 && it.predicate.id == hasContribution
@@ -236,7 +235,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         }.flatten().distinct()
 
     // TODO: rename to findAllContributorsByResourceId
-    override fun findContributorsByResourceId(id: ResourceId, pageable: Pageable): Page<ResourceContributor> =
+    override fun findContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> =
         findSubgraph(ThingId(id.value)) { statement, _ ->
             statement.`object` !is Resource || (statement.`object` as Resource).classes.none { `class` ->
                 `class` == paperClass || `class` == researchProblemClass || `class` == researchFieldClass
@@ -251,7 +250,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
             .sortedByDescending { it.createdAt }
             .paged(pageable)
 
-    override fun checkIfResourceHasStatements(id: ResourceId): Boolean =
+    override fun checkIfResourceHasStatements(id: ThingId): Boolean =
         entities.values.any { it.subject.thingId.value == id.value || it.`object`.thingId.value == id.value }
 
     override fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =

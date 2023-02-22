@@ -7,7 +7,6 @@ import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceIdGenerator
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceRepository
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.stringify
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
@@ -31,15 +30,15 @@ class SpringDataNeo4jResourceAdapter(
     private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator,
     private val neo4jClient: Neo4jClient
 ) : ResourceRepository {
-    override fun findByIdAndClasses(id: ResourceId, classes: Set<ThingId>): Resource? =
-        neo4jRepository.findByIdAndClassesContaining(id, classes.stringify())?.toResource()
+    override fun findByIdAndClasses(id: ThingId, classes: Set<ThingId>): Resource? =
+        neo4jRepository.findByIdAndClassesContaining(id.toResourceId(), classes.stringify())?.toResource()
 
-    override fun nextIdentity(): ResourceId {
+    override fun nextIdentity(): ThingId {
         // IDs could exist already by manual creation. We need to find the next available one.
-        var id: ResourceId
+        var id: ThingId
         do {
             id = neo4jResourceIdGenerator.nextIdentity()
-        } while (neo4jRepository.existsByResourceId(id))
+        } while (neo4jRepository.existsByResourceId(id.toResourceId()))
         return id
     }
 
@@ -59,8 +58,8 @@ class SpringDataNeo4jResourceAdapter(
             CacheEvict(key = "#id.value", cacheNames = [THING_ID_TO_THING_CACHE]),
         ]
     )
-    override fun deleteByResourceId(id: ResourceId) {
-        neo4jRepository.deleteByResourceId(id)
+    override fun deleteByResourceId(id: ThingId) {
+        neo4jRepository.deleteByResourceId(id.toResourceId())
     }
 
     @Caching(
@@ -77,11 +76,11 @@ class SpringDataNeo4jResourceAdapter(
         neo4jRepository.findAll(pageable).map(Neo4jResource::toResource)
 
     @Cacheable(key = "#id", cacheNames = [RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE])
-    override fun exists(id: ResourceId): Boolean = neo4jRepository.existsByResourceId(id)
+    override fun exists(id: ThingId): Boolean = neo4jRepository.existsByResourceId(id.toResourceId())
 
     @Cacheable(key = "#id", cacheNames = [RESOURCE_ID_TO_RESOURCE_CACHE])
-    override fun findByResourceId(id: ResourceId?): Optional<Resource> =
-        neo4jRepository.findByResourceId(id).map(Neo4jResource::toResource)
+    override fun findByResourceId(id: ThingId): Optional<Resource> =
+        neo4jRepository.findByResourceId(id.toResourceId()).map(Neo4jResource::toResource)
 
     override fun findAllByLabel(label: String): Iterable<Resource> =
         neo4jRepository.findAllByLabel(label).map(Neo4jResource::toResource)
@@ -185,8 +184,8 @@ class SpringDataNeo4jResourceAdapter(
     override fun findAllByUnlistedIsFalse(pageable: Pageable): Page<Resource> =
         neo4jRepository.findAllByUnlistedIsFalse(pageable).map(Neo4jResource::toResource)
 
-    override fun findPaperByResourceId(id: ResourceId): Optional<Resource> =
-        neo4jRepository.findPaperByResourceId(id).map(Neo4jResource::toResource)
+    override fun findPaperByResourceId(id: ThingId): Optional<Resource> =
+        neo4jRepository.findPaperByResourceId(id.toResourceId()).map(Neo4jResource::toResource)
 
     override fun findAllVerifiedPapers(pageable: Pageable): Page<Resource> =
         neo4jRepository.findAllVerifiedPapers(pageable).map(Neo4jResource::toResource)
@@ -249,8 +248,8 @@ class SpringDataNeo4jResourceAdapter(
 
     private fun Resource.toNeo4jResource() =
         // We need to fetch the original resource, so "resources" is set properly.
-        neo4jRepository.findByResourceId(id!!).orElse(Neo4jResource()).apply {
-            resourceId = this@toNeo4jResource.id
+        neo4jRepository.findByResourceId(id.toResourceId()).orElse(Neo4jResource()).apply {
+            resourceId = this@toNeo4jResource.id.toResourceId()
             label = this@toNeo4jResource.label
             createdBy = this@toNeo4jResource.createdBy
             createdAt = this@toNeo4jResource.createdAt

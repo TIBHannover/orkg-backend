@@ -20,7 +20,6 @@ import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -80,11 +79,11 @@ class SpringDataNeo4jStatementAdapter(
         return neo4jStatements.map { it.toStatement(table) }
     }
 
-    override fun countStatementsAboutResource(id: ResourceId): Long =
-        neo4jRepository.countStatementsByObjectId(id)
+    override fun countStatementsAboutResource(id: ThingId): Long =
+        neo4jRepository.countStatementsByObjectId(id.toResourceId())
 
-    override fun countStatementsAboutResources(resourceIds: Set<ResourceId>): Map<ResourceId, Long> =
-        neo4jRepository.countStatementsAboutResource(resourceIds).associate { ResourceId(it.resourceId) to it.count }
+    override fun countStatementsAboutResources(resourceIds: Set<ThingId>): Map<ThingId, Long> =
+        neo4jRepository.countStatementsAboutResource(resourceIds.toResourceIds()).associate { ThingId(it.resourceId) to it.count }
 
     override fun findByStatementId(id: StatementId): Optional<GeneralStatement> =
         neo4jRepository.findByStatementId(id).map { it.toStatement() }
@@ -146,8 +145,8 @@ class SpringDataNeo4jStatementAdapter(
             RetrieveStatementUseCase.PredicateUsageCount(ThingId(it.id), it.count)
         }
 
-    override fun findDOIByContributionId(id: ResourceId): Optional<Literal> =
-        neo4jRepository.findDOIByContributionId(id).map(Neo4jLiteral::toLiteral)
+    override fun findDOIByContributionId(id: ThingId): Optional<Literal> =
+        neo4jRepository.findDOIByContributionId(id.toResourceId()).map(Neo4jLiteral::toLiteral)
 
     override fun countPredicateUsage(id: ThingId) = neo4jRepository.countPredicateUsage(id.toPredicateId())
 
@@ -157,11 +156,11 @@ class SpringDataNeo4jStatementAdapter(
     override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
         neo4jRepository.findProblemsByObservatoryId(id).map(Neo4jResource::toResource)
 
-    override fun findContributorsByResourceId(id: ResourceId, pageable: Pageable): Page<ResourceContributor> =
-        neo4jRepository.findContributorsByResourceId(id, pageable)
+    override fun findContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> =
+        neo4jRepository.findContributorsByResourceId(id.toResourceId(), pageable)
 
-    override fun checkIfResourceHasStatements(id: ResourceId): Boolean =
-        neo4jRepository.checkIfResourceHasStatements(id)
+    override fun checkIfResourceHasStatements(id: ThingId): Boolean =
+        neo4jRepository.checkIfResourceHasStatements(id.toResourceId())
 
     override fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
         neo4jRepository.findProblemsByOrganizationId(id, pageable).map(Neo4jResource::toResource)
@@ -203,7 +202,7 @@ class SpringDataNeo4jStatementAdapter(
             is Class -> neo4jClassRepository.findByClassId(this.id.toClassId()).get()
             is Literal -> neo4jLiteralRepository.findByLiteralId(this.id.toLiteralId()).get()
             is Predicate -> neo4jPredicateRepository.findByPredicateId(this.id.toPredicateId()).get()
-            is Resource -> neo4jResourceRepository.findByResourceId(this.id).get()
+            is Resource -> neo4jResourceRepository.findByResourceId(this.id.toResourceId()).get()
         }
 
     private fun BundleConfiguration.toApocConfiguration(): Map<String, Any> {

@@ -5,7 +5,7 @@ import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
 import net.minidev.json.JSONArray
 import org.assertj.core.api.Assertions.assertThat
@@ -280,7 +280,7 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
         // Given several research problems with the same name
         val classId = service.createClass(label = "research problem")
         val classes = setOf(classId.value)
-        val resources = mutableListOf<ResourceId>()
+        val resources = mutableListOf<ThingId>()
         // The regular resource
         resources += resourceService.createResource(
             classes = classes,
@@ -293,7 +293,7 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
                 label = "Testing the Darwin's naturalisation hypothesis in invasion biology\n"
             )
         }
-        val expectedIds = resources.map(ResourceId::toString).reversed().toJSONArray()
+        val expectedIds = resources.map(ThingId::value).reversed().toJSONArray()
 
         // When queried, should return all of them
         val query = "Testing the Darwin"

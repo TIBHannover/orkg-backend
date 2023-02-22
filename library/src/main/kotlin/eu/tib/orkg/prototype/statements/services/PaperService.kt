@@ -1,5 +1,7 @@
 package eu.tib.orkg.prototype.statements.services
 
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
@@ -14,9 +16,6 @@ import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.NamedObject
 import eu.tib.orkg.prototype.statements.application.OrcidNotValid
 import eu.tib.orkg.prototype.statements.application.OrphanOrcidValue
-import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import java.util.*
@@ -69,7 +68,7 @@ class PaperService(
         jsonObject: NamedObject,
         paperRequest: CreatePaperRequest,
         userUUID: UUID,
-    ): ResourceId {
+    ): ThingId {
         // Always append Contribution class to custom user classes
         val contributionClasses =
             (listOf(ObjectService.ID_CONTRIBUTION_CLASS) + jsonObject.classes.orEmpty()).toSet().toList()
@@ -172,7 +171,7 @@ class PaperService(
             userId,
             paperId.value,
             ObjectService.ResearchFieldPredicate,
-            ResourceId(request.paper.researchField).value
+            ThingId(request.paper.researchField).value
         )
         return paperObj
     }
@@ -183,7 +182,7 @@ class PaperService(
      */
     fun handlePublishingVenue(
         venue: String,
-        paperId: ResourceId,
+        paperId: ThingId,
         userId: ContributorId,
         observatoryId: ObservatoryId,
         extractionMethod: ExtractionMethod,
@@ -201,7 +200,7 @@ class PaperService(
         }
         // create a statement with the venue resource
         statementService.add(
-            userId, paperId.value, venuePredicate, venueResource.id!!.value
+            userId, paperId.value, venuePredicate, venueResource.id.value
         )
     }
 
@@ -213,7 +212,7 @@ class PaperService(
     fun handleAuthors(
         paper: CreatePaperRequest,
         userId: ContributorId,
-        paperId: ResourceId,
+        paperId: ThingId,
         observatoryId: ObservatoryId,
         organizationId: OrganizationId
     ) {

@@ -18,7 +18,7 @@ internal class ResourceEqualsContractTest : EqualsContract<Resource> {
     private val observatoryUUID = UUID.randomUUID()
 
     override fun getInstance(): Resource = Resource(
-        id = ResourceId(equalID),
+        id = ThingId(equalID),
         label = "some label",
         createdAt = OffsetDateTime.parse(timeStamp),
         createdBy = ContributorId(contributorUUID),
@@ -32,7 +32,7 @@ internal class ResourceEqualsContractTest : EqualsContract<Resource> {
 
     override fun getEqualInstanceSupplier(): Supplier<Resource> = Supplier {
         Resource(
-            id = ResourceId(equalID),
+            id = ThingId(equalID),
             label = "some label",
             createdAt = OffsetDateTime.parse(timeStamp),
             createdBy = ContributorId(contributorUUID),
@@ -46,7 +46,7 @@ internal class ResourceEqualsContractTest : EqualsContract<Resource> {
     }
 
     override fun getNonEqualInstance(): Resource = Resource(
-        id = ResourceId(differentID),
+        id = ThingId(differentID),
         label = "some label",
         createdAt = OffsetDateTime.parse(timeStamp),
         createdBy = ContributorId(contributorUUID),

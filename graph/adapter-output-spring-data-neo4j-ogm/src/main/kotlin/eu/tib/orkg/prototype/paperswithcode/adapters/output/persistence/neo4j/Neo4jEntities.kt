@@ -1,11 +1,12 @@
 package eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j
 
+import eu.tib.orkg.prototype.community.domain.model.ResearchField
 import eu.tib.orkg.prototype.paperswithcode.application.domain.BenchmarkSummary
 import eu.tib.orkg.prototype.paperswithcode.application.domain.Dataset
 import eu.tib.orkg.prototype.paperswithcode.application.domain.DatasetSummary
 import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
-import eu.tib.orkg.prototype.community.domain.model.ResearchField
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.data.neo4j.annotation.QueryResult
 
 @QueryResult
@@ -18,7 +19,7 @@ data class Neo4jBenchmarkSummary(
 ) {
     fun toBenchmarkSummary() =
         BenchmarkSummary(
-            ResearchProblem(problem.resourceId!!, problem.label!!),
+            ResearchProblem(ThingId(problem.resourceId!!.value), problem.label!!),
             null,
             fields.map { ResearchField(it.thingId!!, it.label!!) },
             totalPapers.toInt(),

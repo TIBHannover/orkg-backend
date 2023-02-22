@@ -20,7 +20,7 @@ internal class StatementEqualsContractUnitTest : EqualsContract<GeneralStatement
     private val timeStamp = OffsetDateTime.now().toString()
     private val contributorUUID = UUID.randomUUID()
 
-    private val subjectResource = createResource(id = ResourceId(1234))
+    private val subjectResource = createResource(id = ThingId("R1234"))
     private val predicate = createPredicate(id = ThingId("P5555"))
     private val objectResource = createClass(id = ThingId("9886")) // to use a different Thing
 
@@ -46,9 +46,9 @@ internal class StatementEqualsContractUnitTest : EqualsContract<GeneralStatement
 
     override fun getNonEqualInstance(): GeneralStatement = GeneralStatement(
         id = StatementId(differentID),
-        subject = createResource(id = ResourceId(2345)),
+        subject = createResource(id = ThingId("R2345")),
         predicate = createPredicate(id = ThingId("P6666")),
-        `object` = createResource(id = ResourceId(8865)),
+        `object` = createResource(id = ThingId("R8865")),
         createdAt = OffsetDateTime.parse(timeStamp),
         createdBy = ContributorId(UUID.randomUUID()),
     )
@@ -62,7 +62,7 @@ internal class NastyBugOnStatementEqualsContractUnitTest : EqualsContract<Genera
 
     // Values take from failing test
     private val subjectResource = Resource(
-        id = ResourceId("R1"),
+        id = ThingId("R1"),
         label = "Default Label",
         createdAt = OffsetDateTime.parse("2023-01-23T16:28:34.513038Z"),
         classes = emptySet(),
@@ -110,9 +110,9 @@ internal class NastyBugOnStatementEqualsContractUnitTest : EqualsContract<Genera
 
     override fun getNonEqualInstance(): GeneralStatement = GeneralStatement(
         id = StatementId(differentID),
-        subject = createResource(id = ResourceId(2345)),
+        subject = createResource(id = ThingId("R2345")),
         predicate = createPredicate(id = ThingId("P6666")),
-        `object` = createResource(id = ResourceId(8865)),
+        `object` = createResource(id = ThingId("R8865")),
         createdAt = OffsetDateTime.parse(timeStamp),
         createdBy = ContributorId(UUID.randomUUID()),
     )

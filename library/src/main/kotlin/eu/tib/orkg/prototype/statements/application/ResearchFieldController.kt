@@ -5,7 +5,7 @@ import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase.PaperCountPerResearchProblem
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -37,7 +37,7 @@ class ResearchFieldController(
      */
     @GetMapping("/{id}/problems")
     fun getResearchProblemsOfField(
-        @PathVariable id: ResourceId,
+        @PathVariable id: ThingId,
         pageable: Pageable
     ): ResponseEntity<Page<PaperCountPerResearchProblem>> {
         resourceService.findById(id)
@@ -52,7 +52,7 @@ class ResearchFieldController(
      */
     @GetMapping("/{id}/subfields/research-problems")
     fun getResearchProblemsIncludingSubFields(
-        @PathVariable id: ResourceId,
+        @PathVariable id: ThingId,
         @Nullable @RequestParam("featured")
         featured: Boolean?,
         @RequestParam("unlisted", required = false, defaultValue = "false")
@@ -76,7 +76,7 @@ class ResearchFieldController(
      */
     @GetMapping("/{id}/subfields/contributors")
     fun getContributorsIncludingSubFields(
-        @PathVariable id: ResourceId,
+        @PathVariable id: ThingId,
         pageable: Pageable
     ): ResponseEntity<Page<Contributor>> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
@@ -90,7 +90,7 @@ class ResearchFieldController(
      */
     @GetMapping("/{id}/subfields/comparisons")
     fun getComparisonsIncludingSubFields(
-        @PathVariable id: ResourceId,
+        @PathVariable id: ThingId,
         @Nullable @RequestParam("featured")
         featured: Boolean?,
         @RequestParam("unlisted", required = false, defaultValue = "false")
@@ -113,7 +113,7 @@ class ResearchFieldController(
      */
     @GetMapping("/{id}/subfields/papers")
     fun getPapersIncludingSubFields(
-        @PathVariable id: ResourceId,
+        @PathVariable id: ThingId,
         @Nullable @RequestParam("featured")
         featured: Boolean?,
         @RequestParam("unlisted", required = false, defaultValue = "false")
@@ -135,7 +135,7 @@ class ResearchFieldController(
      */
     @GetMapping("/{id}/papers")
     fun getPapersExcludingSubFields(
-        @PathVariable id: ResourceId,
+        @PathVariable id: ThingId,
         @Nullable @RequestParam("featured")
         featured: Boolean?,
         @RequestParam("unlisted", required = false, defaultValue = "false")
@@ -157,7 +157,7 @@ class ResearchFieldController(
      */
     @GetMapping("/{id}/comparisons")
     fun getComparisonsExcludingSubFields(
-        @PathVariable id: ResourceId,
+        @PathVariable id: ThingId,
         @Nullable @RequestParam("featured")
         featured: Boolean?,
         @RequestParam("unlisted", required = false, defaultValue = "false")
@@ -179,7 +179,7 @@ class ResearchFieldController(
      */
     @GetMapping("/{id}/contributors")
     fun getContributorsExcludingSubFields(
-        @PathVariable id: ResourceId,
+        @PathVariable id: ThingId,
         @RequestParam("featured")
         featured: Optional<Boolean>,
         pageable: Pageable
@@ -194,7 +194,7 @@ class ResearchFieldController(
      */
     @GetMapping("/{id}/research-problems")
     fun getResearchProblemsExcludingSubFields(
-        @PathVariable id: ResourceId,
+        @PathVariable id: ThingId,
         @Nullable @RequestParam("featured")
         featured: Boolean?,
         @RequestParam("unlisted", required = false, defaultValue = "false")
@@ -215,7 +215,7 @@ class ResearchFieldController(
      */
     @GetMapping("/{id}/subfields/")
     fun getEntitiesBasedOnClassesIncludingSubFields(
-        @PathVariable id: ResourceId,
+        @PathVariable id: ThingId,
         @RequestParam("featured", required = false, defaultValue = "false")
         @Nullable
         featured: Boolean,
@@ -234,7 +234,7 @@ class ResearchFieldController(
      */
     @GetMapping("/{id}")
     fun getEntitiesBasedOnClassesExcludingSubFields(
-        @PathVariable id: ResourceId,
+        @PathVariable id: ThingId,
         @RequestParam("featured", required = false, defaultValue = "false")
         featured: Boolean,
         @RequestParam("unlisted", required = false, defaultValue = "false")

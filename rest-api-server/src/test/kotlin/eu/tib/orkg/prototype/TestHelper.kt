@@ -16,7 +16,6 @@ import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -45,7 +44,7 @@ annotation class AuthorizationServerUnitTestWorkaround
 /**
  * Creates a resource that uses as many defaults as possible.
  */
-fun createResource() = Resource(ResourceId(1), "Default Label", OffsetDateTime.now())
+fun createResource() = Resource(ThingId("R1"), "Default Label", OffsetDateTime.now())
 
 fun createClass(): Class = Class(
     id = ThingId("OK"),

@@ -11,7 +11,6 @@ import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase.Field
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase.PaperCountPerAuthor
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository
 import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.ContributorPerProblem
@@ -32,10 +31,10 @@ class ResearchProblemService(
     private val resourceService: ResourceUseCases,
     private val researchProblemQueries: FindResearchProblemQuery,
 ) : RetrieveResearchProblemUseCase {
-    override fun findById(id: ResourceId): Optional<ResourceRepresentation> =
+    override fun findById(id: ThingId): Optional<ResourceRepresentation> =
         Optional.ofNullable(resourceService.findByIdAndClasses(id, setOf(ProblemClass)))
 
-    override fun findFieldsPerProblem(problemId: ResourceId): List<FieldCount> {
+    override fun findFieldsPerProblem(problemId: ThingId): List<FieldCount> {
         return researchProblemRepository.findResearchFieldsPerProblem(problemId).map {
             FieldCount(
                 field = resourceService.map(ResourceGenerator { it.field }), freq = it.freq
@@ -44,7 +43,7 @@ class ResearchProblemService(
     }
 
     override fun findFieldsPerProblemAndClasses(
-        problemId: ResourceId,
+        problemId: ThingId,
         featured: Boolean?,
         unlisted: Boolean,
         classes: List<String>,
@@ -91,13 +90,13 @@ class ResearchProblemService(
             findTopResearchProblemsGoingBack(listOfMonths.drop(1), newResult)
     }
 
-    override fun findContributorsPerProblem(problemId: ResourceId, pageable: Pageable): List<ContributorPerProblem> {
+    override fun findContributorsPerProblem(problemId: ThingId, pageable: Pageable): List<ContributorPerProblem> {
         return researchProblemRepository
             .findContributorsLeaderboardPerProblem(problemId, pageable)
             .content
     }
 
-    override fun findAuthorsPerProblem(problemId: ResourceId, pageable: Pageable): List<PaperCountPerAuthor> {
+    override fun findAuthorsPerProblem(problemId: ThingId, pageable: Pageable): List<PaperCountPerAuthor> {
         return researchProblemRepository.findAuthorsLeaderboardPerProblem(problemId, pageable).content.map {
                 if (it.isLiteral) PaperCountPerAuthor(
                     author = it.author,
@@ -112,18 +111,18 @@ class ResearchProblemService(
             }
     }
 
-    override fun forDataset(id: ResourceId): Optional<List<ResearchProblem>> {
+    override fun forDataset(id: ThingId): Optional<List<ResearchProblem>> {
         val dataset = resourceService.findById(id)
         if (!dataset.isPresent) return Optional.empty()
         return Optional.of(researchProblemQueries.findResearchProblemForDataset(id))
     }
 
-    override fun getFeaturedProblemFlag(id: ResourceId): Boolean {
+    override fun getFeaturedProblemFlag(id: ThingId): Boolean {
         val result = researchProblemRepository.findById(id)
         return result.orElseThrow { ResourceNotFound.withId(id) }.featured ?: false
     }
 
-    override fun getUnlistedProblemFlag(id: ResourceId): Boolean {
+    override fun getUnlistedProblemFlag(id: ThingId): Boolean {
         val result = researchProblemRepository.findById(id)
         return result.orElseThrow { ResourceNotFound.withId(id) }.unlisted ?: false
     }
@@ -142,7 +141,7 @@ class ResearchProblemService(
 
     private fun getProblemsWithFeatured(
         classesList: List<String>,
-        problemId: ResourceId,
+        problemId: ThingId,
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable,
@@ -198,7 +197,7 @@ class ResearchProblemService(
 
     private fun getProblemsWithoutFeatured(
         classesList: List<String>,
-        problemId: ResourceId,
+        problemId: ThingId,
         unlisted: Boolean,
         pageable: Pageable,
         resultList: MutableList<DetailsPerProblem>,

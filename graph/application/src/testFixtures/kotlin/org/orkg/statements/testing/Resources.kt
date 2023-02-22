@@ -11,7 +11,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.time.OffsetDateTime
 
 fun createResource(
-    id: ResourceId? = ResourceId(1),
+    id: ThingId = ThingId("R1"),
     label: String = "Default Label",
     createdAt: OffsetDateTime = OffsetDateTime.now(),
     classes: Set<ThingId> = emptySet(),

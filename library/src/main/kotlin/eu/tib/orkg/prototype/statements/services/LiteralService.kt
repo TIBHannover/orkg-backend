@@ -5,7 +5,6 @@ import eu.tib.orkg.prototype.statements.api.LiteralRepresentation
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.util.EscapedRegex
@@ -57,7 +56,7 @@ class LiteralService(
         repository.findAllByLabelMatchesRegex(part.toSearchString(), pageable)
             .map(Literal::toLiteralRepresentation) // TODO: See declaration
 
-    override fun findDOIByContributionId(id: ResourceId): Optional<LiteralRepresentation> =
+    override fun findDOIByContributionId(id: ThingId): Optional<LiteralRepresentation> =
         statementRepository.findDOIByContributionId(id).map(Literal::toLiteralRepresentation)
 
     override fun update(literal: Literal): LiteralRepresentation {

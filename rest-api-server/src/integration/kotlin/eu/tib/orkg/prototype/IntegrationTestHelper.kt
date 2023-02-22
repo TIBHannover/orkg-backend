@@ -12,7 +12,6 @@ import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
 import java.util.*
@@ -62,9 +61,9 @@ fun CreateResourceUseCase.createResource(
     id: String? = null,
     label: String? = null,
     extractionMethod: ExtractionMethod? = null
-): ResourceId {
+): ThingId {
     val request = CreateResourceRequest(
-        id = Optional.ofNullable(id).map(::ResourceId).orElse(null),
+        id = Optional.ofNullable(id).map(::ThingId).orElse(null),
         label = label ?: "label",
         classes = classes.map(::ThingId).toSet(),
         extractionMethod = extractionMethod ?: ExtractionMethod.UNKNOWN
@@ -80,9 +79,9 @@ fun CreateResourceUseCase.createResource(
     userId: ContributorId = ContributorId.createUnknownContributor(),
     observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
     organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
-): ResourceId {
+): ThingId {
     val request = CreateResourceRequest(
-        id = Optional.ofNullable(id).map(::ResourceId).orElse(null),
+        id = Optional.ofNullable(id).map(::ThingId).orElse(null),
         label = label ?: "label",
         classes = classes.map(::ThingId).toSet(),
         extractionMethod = extractionMethod ?: ExtractionMethod.UNKNOWN
@@ -113,7 +112,7 @@ fun OrganizationUseCases.createOrganization(
 
 fun ObservatoryUseCases.createObservatory(
     organizationId: OrganizationId,
-    researchField: ResourceId,
+    researchField: ThingId,
     name: String = "Test Observatory",
     description: String = "Example description",
     displayId: String = name.toDisplayId(),

@@ -9,7 +9,7 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.spi.ChangeLogResponse
 import eu.tib.orkg.prototype.statements.spi.ObservatoryResources
@@ -91,7 +91,7 @@ class StatisticsService(
         return getChangeLogsWithProfile(changeLogs, pageable)
     }
 
-    override fun getRecentChangeLogByResearchField(id: ResourceId, pageable: Pageable): Page<ChangeLog> {
+    override fun getRecentChangeLogByResearchField(id: ThingId, pageable: Pageable): Page<ChangeLog> {
         val changeLogs = statsRepository.getChangeLogByResearchField(id, pageable)
 
         return getChangeLogsWithProfile(changeLogs, pageable)
@@ -100,7 +100,7 @@ class StatisticsService(
     override fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems> = statsRepository.getTrendingResearchProblems(pageable)
 
     override fun getTopCurrentContributorsByResearchField(
-        id: ResourceId,
+        id: ThingId,
         days: Long
     ): Iterable<TopContributorsWithProfileAndTotalCount> {
         val previousMonthDate: String = calculateStartDate(daysAgo = days)
@@ -113,7 +113,7 @@ class StatisticsService(
     }
 
     override fun getTopCurrentContributorsByResearchFieldExcludeSubFields(
-        id: ResourceId,
+        id: ThingId,
         days: Long
     ): Iterable<TopContributorsWithProfileAndTotalCount> {
         val previousMonthDate: String = calculateStartDate(daysAgo = days)

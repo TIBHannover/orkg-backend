@@ -10,10 +10,10 @@ import eu.tib.orkg.prototype.paperswithcode.application.port.output.SummarizeBen
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.SummarizeDatasetQuery
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import java.util.Optional
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import java.util.*
 import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Service
 
@@ -24,7 +24,7 @@ class BenchmarkService(
     private val researchFieldService: RetrieveResearchFieldUseCase,
     private val flags: FeatureFlagService,
 ) : RetrieveBenchmarkUseCase {
-    override fun summariesForResearchField(id: ResourceId): Optional<List<BenchmarkSummary>> {
+    override fun summariesForResearchField(id: ThingId): Optional<List<BenchmarkSummary>> {
         val researchField = researchFieldService.findById(id)
         if (!researchField.isPresent)
             return Optional.empty()
@@ -47,13 +47,13 @@ class DatasetService(
     private val summarizeDataset: SummarizeDatasetQuery,
     private val resourceService: ResourceUseCases
 ) : RetrieveDatasetUseCase {
-    override fun forResearchProblem(id: ResourceId): Optional<List<Dataset>> {
+    override fun forResearchProblem(id: ThingId): Optional<List<Dataset>> {
         val problem = researchProblemService.findById(id)
         if (!problem.isPresent) return Optional.empty()
         return Optional.of(findDatasets.forResearchProblem(id))
     }
 
-    override fun summaryFor(id: ResourceId, problemId: ResourceId): Optional<List<DatasetSummary>> {
+    override fun summaryFor(id: ThingId, problemId: ThingId): Optional<List<DatasetSummary>> {
         val dataset = resourceService.findById(id)
         if (!dataset.isPresent) return Optional.empty()
         val problem = resourceService.findById(problemId)

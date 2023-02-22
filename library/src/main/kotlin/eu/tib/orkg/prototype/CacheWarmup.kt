@@ -7,7 +7,6 @@ import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
 import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.slf4j.LoggerFactory
 import org.springframework.boot.ApplicationArguments
@@ -55,7 +54,7 @@ class CacheWarmup(
         statementService.findAllBySubjectAndPredicate(featuredResearchField, ThingId("P36"), PageRequest.of(0, 9999))
         listOf(true, false).forEach { featured ->
             researchFieldService.getEntitiesBasedOnClassesIncludingSubfields(
-                id = ResourceId(featuredResearchField),
+                id = ThingId(featuredResearchField),
                 classesList = listOf("Comparison"),
                 featured = featured,
                 unlisted = false,
@@ -64,7 +63,7 @@ class CacheWarmup(
                 fetchComparison(it.id)
             }
             researchFieldService.getEntitiesBasedOnClassesIncludingSubfields(
-                id = ResourceId(featuredResearchField),
+                id = ThingId(featuredResearchField),
                 classesList = listOf("Visualization"),
                 featured = featured,
                 unlisted = false,
@@ -73,7 +72,7 @@ class CacheWarmup(
                 fetchVisualization(it.id)
             }
             researchFieldService.getEntitiesBasedOnClassesIncludingSubfields(
-                id = ResourceId(featuredResearchField),
+                id = ThingId(featuredResearchField),
                 classesList = listOf("Paper"),
                 featured = featured,
                 unlisted = false,
@@ -114,7 +113,7 @@ class CacheWarmup(
         }
     }
 
-    private fun fetchComparison(id: ResourceId) {
+    private fun fetchComparison(id: ThingId) {
         statementService.findAllBySubject(id.value, PageRequest.of(0, 9999)).forEach {
             val `object` = it.`object`
             if (`object` is ResourceRepresentation && (ThingId("ComparisonRelatedFigure") in `object`.classes ||
@@ -125,7 +124,7 @@ class CacheWarmup(
         }
     }
 
-    private fun fetchVisualization(id: ResourceId) {
+    private fun fetchVisualization(id: ThingId) {
         statementService.findAllByObjectAndPredicate(
             objectId = id.value,
             predicateId = ThingId("hasVisualization"),
@@ -138,7 +137,7 @@ class CacheWarmup(
         )
     }
 
-    private fun fetchAssociatedPapers(id: ResourceId) {
+    private fun fetchAssociatedPapers(id: ThingId) {
         statementService.findAllBySubjectAndPredicate(
             subjectId = id.value,
             predicateId = ThingId("HasPaper"),

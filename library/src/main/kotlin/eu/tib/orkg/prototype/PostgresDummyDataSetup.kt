@@ -15,7 +15,7 @@ import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -138,7 +138,7 @@ class PostgresDummyDataSetup(
                     name = it.name!!,
                     description = it.description ?: "",
                     organizationId = it.organizationIds.first(),
-                    researchField = if (it.researchField?.id != null) ResourceId(it.researchField.id!!) else null,
+                    researchField = if (it.researchField?.id != null) ThingId(it.researchField.id!!) else null,
                     displayId = it.displayId!!
                 )
             }

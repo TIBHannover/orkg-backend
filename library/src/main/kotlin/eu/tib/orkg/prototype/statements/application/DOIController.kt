@@ -3,9 +3,9 @@ package eu.tib.orkg.prototype.statements.application
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.configuration.DataCiteConfiguration
 import eu.tib.orkg.prototype.statements.domain.model.DoiService
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.time.LocalDate
-import java.util.Base64
+import java.util.*
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -46,7 +46,7 @@ class DOIController(
         val title: String,
         val subject: String,
         @JsonProperty("related_resources")
-        val relatedResources: Set<ResourceId>,
+        val relatedResources: Set<ThingId>,
         val description: String,
         val authors: List<Creator>,
         val url: String,

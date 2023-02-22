@@ -3,8 +3,8 @@ package eu.tib.orkg.prototype.statements.spi
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.neo4j.ogm.annotation.Property
 import org.springframework.data.domain.Page
@@ -13,90 +13,90 @@ import org.springframework.data.neo4j.annotation.QueryResult
 
 interface ResearchProblemRepository {
 
-    fun findById(id: ResourceId): Optional<Resource>
+    fun findById(id: ThingId): Optional<Resource>
     fun findContributionsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<DetailsPerProblem>
     fun findContributionsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<DetailsPerProblem>
     fun findPapersByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<DetailsPerProblem>
     fun findPapersByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<DetailsPerProblem>
     fun findResearchFieldsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<DetailsPerProblem>
     fun findResearchFieldsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<DetailsPerProblem>
     fun findComparisonsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<DetailsPerProblem>
     fun findComparisonsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<DetailsPerProblem>
     fun findLiteratureListsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<DetailsPerProblem>
     fun findLiteratureListsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<DetailsPerProblem>
     fun findSmartReviewsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<DetailsPerProblem>
     fun findSmartReviewsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<DetailsPerProblem>
     fun findVisualizationsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<DetailsPerProblem>
     fun findVisualizationsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<DetailsPerProblem>
-    fun findResearchFieldsPerProblem(problemId: ResourceId): Iterable<FieldPerProblem>
+    fun findResearchFieldsPerProblem(problemId: ThingId): Iterable<FieldPerProblem>
     fun findTopResearchProblemsGoingBack(months: Int): Iterable<Resource>
     fun findTopResearchProblemsAllTime(): Iterable<Resource>
-    fun findContributorsLeaderboardPerProblem(problemId: ResourceId, pageable: Pageable): Page<ContributorPerProblem>
-    fun findAuthorsLeaderboardPerProblem(problemId: ResourceId, pageable: Pageable): Page<AuthorPerProblem>
-    fun findResearchProblemForDataset(datasetId: ResourceId): Iterable<Resource>
+    fun findContributorsLeaderboardPerProblem(problemId: ThingId, pageable: Pageable): Page<ContributorPerProblem>
+    fun findAuthorsLeaderboardPerProblem(problemId: ThingId, pageable: Pageable): Page<AuthorPerProblem>
+    fun findResearchProblemForDataset(datasetId: ThingId): Iterable<Resource>
     fun findAllFeaturedProblems(pageable: Pageable): Page<Resource>
     fun findAllNonFeaturedProblems(pageable: Pageable): Page<Resource>
     fun findAllUnlistedProblems(pageable: Pageable): Page<Resource>

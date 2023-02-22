@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jFieldPerProblem
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jProblemRepository
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository
 import java.util.*
 import org.springframework.data.domain.Page
@@ -15,116 +15,116 @@ import org.springframework.stereotype.Component
 class SpringDataNeo4JResearchProblemAdapter(
     private val neo4jRepository: Neo4jProblemRepository
 ) : ResearchProblemRepository {
-    override fun findById(id: ResourceId): Optional<Resource> =
-        neo4jRepository.findById(id).map { it.toResource() }
+    override fun findById(id: ThingId): Optional<Resource> =
+        neo4jRepository.findById(id.toResourceId()).map { it.toResource() }
 
     override fun findContributionsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<ResearchProblemRepository.DetailsPerProblem> =
-        neo4jRepository.findPapersByProblems(problemId, featured, unlisted, pageable)
+        neo4jRepository.findPapersByProblems(problemId.toResourceId(), featured, unlisted, pageable)
 
     override fun findContributionsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<ResearchProblemRepository.DetailsPerProblem> =
-        neo4jRepository.findPapersByProblems(problemId, unlisted, pageable)
+        neo4jRepository.findPapersByProblems(problemId.toResourceId(), unlisted, pageable)
 
     override fun findPapersByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<ResearchProblemRepository.DetailsPerProblem> =
-        neo4jRepository.findPapersByProblems(problemId, featured, unlisted, pageable)
+        neo4jRepository.findPapersByProblems(problemId.toResourceId(), featured, unlisted, pageable)
 
     override fun findPapersByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<ResearchProblemRepository.DetailsPerProblem> =
-        neo4jRepository.findPapersByProblems(problemId, unlisted, pageable)
+        neo4jRepository.findPapersByProblems(problemId.toResourceId(), unlisted, pageable)
 
     override fun findResearchFieldsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<ResearchProblemRepository.DetailsPerProblem> =
-        neo4jRepository.findResearchFieldsByProblems(problemId, featured, unlisted, pageable)
+        neo4jRepository.findResearchFieldsByProblems(problemId.toResourceId(), featured, unlisted, pageable)
 
     override fun findResearchFieldsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<ResearchProblemRepository.DetailsPerProblem> =
-        neo4jRepository.findResearchFieldsByProblems(problemId, unlisted, pageable)
+        neo4jRepository.findResearchFieldsByProblems(problemId.toResourceId(), unlisted, pageable)
 
     override fun findComparisonsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<ResearchProblemRepository.DetailsPerProblem> =
-        neo4jRepository.findComparisonsByProblems(problemId, featured, unlisted, pageable)
+        neo4jRepository.findComparisonsByProblems(problemId.toResourceId(), featured, unlisted, pageable)
 
     override fun findComparisonsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<ResearchProblemRepository.DetailsPerProblem> =
-        neo4jRepository.findComparisonsByProblems(problemId, unlisted, pageable)
+        neo4jRepository.findComparisonsByProblems(problemId.toResourceId(), unlisted, pageable)
 
     override fun findLiteratureListsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<ResearchProblemRepository.DetailsPerProblem> =
-        neo4jRepository.findLiteratureListsByProblems(problemId, featured, unlisted, pageable)
+        neo4jRepository.findLiteratureListsByProblems(problemId.toResourceId(), featured, unlisted, pageable)
 
     override fun findLiteratureListsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<ResearchProblemRepository.DetailsPerProblem> =
-        neo4jRepository.findLiteratureListsByProblems(problemId, unlisted, pageable)
+        neo4jRepository.findLiteratureListsByProblems(problemId.toResourceId(), unlisted, pageable)
 
     override fun findSmartReviewsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<ResearchProblemRepository.DetailsPerProblem> =
-        neo4jRepository.findSmartReviewsByProblems(problemId, featured, unlisted, pageable)
+        neo4jRepository.findSmartReviewsByProblems(problemId.toResourceId(), featured, unlisted, pageable)
 
     override fun findSmartReviewsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<ResearchProblemRepository.DetailsPerProblem> =
-        neo4jRepository.findSmartReviewsByProblems(problemId, unlisted, pageable)
+        neo4jRepository.findSmartReviewsByProblems(problemId.toResourceId(), unlisted, pageable)
 
     override fun findVisualizationsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<ResearchProblemRepository.DetailsPerProblem> =
-        neo4jRepository.findVisualizationsByProblems(problemId, featured, unlisted, pageable)
+        neo4jRepository.findVisualizationsByProblems(problemId.toResourceId(), featured, unlisted, pageable)
 
     override fun findVisualizationsByProblems(
-        problemId: ResourceId,
+        problemId: ThingId,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<ResearchProblemRepository.DetailsPerProblem> =
-        neo4jRepository.findVisualizationsByProblems(problemId, unlisted, pageable)
+        neo4jRepository.findVisualizationsByProblems(problemId.toResourceId(), unlisted, pageable)
 
-    override fun findResearchFieldsPerProblem(problemId: ResourceId): Iterable<ResearchProblemRepository.FieldPerProblem> =
-        neo4jRepository.findResearchFieldsPerProblem(problemId).map { it.toFieldPerProblem() }
+    override fun findResearchFieldsPerProblem(problemId: ThingId): Iterable<ResearchProblemRepository.FieldPerProblem> =
+        neo4jRepository.findResearchFieldsPerProblem(problemId.toResourceId()).map { it.toFieldPerProblem() }
 
     override fun findTopResearchProblemsGoingBack(months: Int): Iterable<Resource> =
         neo4jRepository.findTopResearchProblemsGoingBack(months).map { it.toResource() }
@@ -133,20 +133,20 @@ class SpringDataNeo4JResearchProblemAdapter(
         neo4jRepository.findTopResearchProblemsAllTime().map { it.toResource() }
 
     override fun findContributorsLeaderboardPerProblem(
-        problemId: ResourceId,
+        problemId: ThingId,
         pageable: Pageable
     ): Page<ResearchProblemRepository.ContributorPerProblem> =
-        neo4jRepository.findContributorsLeaderboardPerProblem(problemId, pageable)
+        neo4jRepository.findContributorsLeaderboardPerProblem(problemId.toResourceId(), pageable)
 
     override fun findAuthorsLeaderboardPerProblem(
-        problemId: ResourceId,
+        problemId: ThingId,
         pageable: Pageable
     ): Page<ResearchProblemRepository.AuthorPerProblem> =
-        neo4jRepository.findAuthorsLeaderboardPerProblem(problemId, pageable)
+        neo4jRepository.findAuthorsLeaderboardPerProblem(problemId.toResourceId(), pageable)
             .map { it.toAuthorPerProblem() }
 
-    override fun findResearchProblemForDataset(datasetId: ResourceId): Iterable<Resource> =
-        neo4jRepository.findResearchProblemForDataset(datasetId).map { it.toResource() }
+    override fun findResearchProblemForDataset(datasetId: ThingId): Iterable<Resource> =
+        neo4jRepository.findResearchProblemForDataset(datasetId.toResourceId()).map { it.toResource() }
 
     override fun findAllFeaturedProblems(pageable: Pageable): Page<Resource> =
         neo4jRepository.findAllFeaturedProblems(pageable).map { it.toResource() }

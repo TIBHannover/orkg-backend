@@ -5,7 +5,6 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.kotest.assertions.asClue
 import io.kotest.matchers.collections.shouldContainAll
@@ -25,7 +24,7 @@ interface ResourceRepositoryContractTest {
     @Test
     fun `successfully restores all properties after saving`() {
         val expected = Resource(
-            id = ResourceId("GecWdydH1s"),
+            id = ThingId("GecWdydH1s"),
             label = "0k6Y85xY9R",
             createdAt = OffsetDateTime.of(2022, 7, 19, 13, 14, 5, 12345, ZoneOffset.ofHours(2)),
             classes = setOf(ThingId("1F8eUlcCug"), ThingId("GecWdydH1s"), ThingId("2JYHgz8lvB")),
@@ -59,7 +58,7 @@ interface ResourceRepositoryContractTest {
     fun `given several resources, when all retrieved, gets the correct count when paged`() {
         val times = 23
         repeat(times) {
-            val r = createResource().copy(id = ResourceId(UUID.randomUUID().toString()))
+            val r = createResource().copy(id = ThingId(UUID.randomUUID().toString()))
             repository.save(r)
         }
         repository.findAll(PageRequest.of(0, 10)).totalElements shouldBe times
@@ -70,7 +69,7 @@ interface ResourceRepositoryContractTest {
         val observatoryId = ObservatoryId(UUID.randomUUID())
         val classes = setOf(ThingId("ToBeFound"), ThingId("Other"))
         val resource = createResource().copy(
-            id = ResourceId("R1234"),
+            id = ThingId("R1234"),
             observatoryId = observatoryId,
             classes = classes,
             featured = null,
@@ -87,7 +86,7 @@ interface ResourceRepositoryContractTest {
         )
 
         result.content.size shouldBe 1
-        result.first().id shouldBe ResourceId("R1234")
+        result.first().id shouldBe ThingId("R1234")
     }
 
     @Test
@@ -95,7 +94,7 @@ interface ResourceRepositoryContractTest {
         val observatoryId = ObservatoryId(UUID.randomUUID())
         val classes = setOf(ThingId("ToBeFound"), ThingId("Other"))
         val resource = createResource().copy(
-            id = ResourceId("R1234"),
+            id = ThingId("R1234"),
             observatoryId = observatoryId,
             classes = classes,
             featured = null,
@@ -119,7 +118,7 @@ interface ResourceRepositoryContractTest {
         val observatoryId = ObservatoryId(UUID.randomUUID())
         val classes = setOf(ThingId("ToBeFound"), ThingId("Other"))
         val resource = createResource().copy(
-            id = ResourceId("R1234"),
+            id = ThingId("R1234"),
             observatoryId = observatoryId,
             classes = classes,
             featured = null,
@@ -129,7 +128,7 @@ interface ResourceRepositoryContractTest {
 
         val result = repository.findByClassAndObservatoryId("ToBeFound", observatoryId)
         result.count() shouldBe 1
-        result.first().id shouldBe ResourceId("R1234")
+        result.first().id shouldBe ThingId("R1234")
     }
 
     @Test
@@ -137,7 +136,7 @@ interface ResourceRepositoryContractTest {
         val observatoryId = ObservatoryId(UUID.randomUUID())
         val classes = setOf(ThingId("NotToBeFound"), ThingId("Other"))
         val resource = createResource().copy(
-            id = ResourceId("R1234"),
+            id = ThingId("R1234"),
             observatoryId = observatoryId,
             classes = classes,
             featured = null,
@@ -152,14 +151,14 @@ interface ResourceRepositoryContractTest {
     @Test
     fun `given a resource with a class, when searched by including class set, it should be found`() {
         val resource1 = createResource().copy(
-            id = ResourceId("R1234"),
+            id = ThingId("R1234"),
             classes = setOf(ThingId("ToBeFound"), ThingId("Other")),
             featured = null,
             unlisted = null
         )
         repository.save(resource1)
         val resource2 = createResource().copy(
-            id = ResourceId("R2345"),
+            id = ThingId("R2345"),
             classes = setOf(ThingId("NotToBeFound"), ThingId("Other")),
             featured = null,
             unlisted = null
@@ -172,20 +171,20 @@ interface ResourceRepositoryContractTest {
             PageRequest.of(0, 10)
         )
         result.totalElements shouldBe 1
-        result.content.first().id shouldBe ResourceId("R1234")
+        result.content.first().id shouldBe ThingId("R1234")
     }
 
     @Test
     fun `given multiple resources with a class, when searched by including class set, they should be found`() {
         val resource1 = createResource().copy(
-            id = ResourceId("R1234"),
+            id = ThingId("R1234"),
             classes = setOf(ThingId("ToBeFound"), ThingId("Other")),
             featured = null,
             unlisted = null
         )
         repository.save(resource1)
         val resource2 = createResource().copy(
-            id = ResourceId("R2345"),
+            id = ThingId("R2345"),
             classes = setOf(ThingId("ToBeFound"), ThingId("Other")),
             featured = null,
             unlisted = null
@@ -198,20 +197,20 @@ interface ResourceRepositoryContractTest {
             PageRequest.of(0, 10)
         )
         result.totalElements shouldBe 2
-        result.content.map(Resource::id) shouldContainAll setOf(ResourceId("R1234"), ResourceId("R2345"))
+        result.content.map(Resource::id) shouldContainAll setOf(ThingId("R1234"), ThingId("R2345"))
     }
 
     @Test
     fun `given a resource with a class, when searched by excluding class set, it should be found`() {
         val resource1 = createResource().copy(
-            id = ResourceId("R1234"),
+            id = ThingId("R1234"),
             classes = setOf(ThingId("ToBeFound"), ThingId("Other")),
             featured = null,
             unlisted = null
         )
         repository.save(resource1)
         val resource2 = createResource().copy(
-            id = ResourceId("R2345"),
+            id = ThingId("R2345"),
             classes = setOf(ThingId("NotToBeFound"), ThingId("Other")),
             featured = null,
             unlisted = null
@@ -224,20 +223,20 @@ interface ResourceRepositoryContractTest {
             PageRequest.of(0, 10)
         )
         result.totalElements shouldBe 1
-        result.content.first().id shouldBe ResourceId("R1234")
+        result.content.first().id shouldBe ThingId("R1234")
     }
 
     @Test
     fun `given multiple resources with a class, when searched by excluding class set, they should be found`() {
         val resource1 = createResource().copy(
-            id = ResourceId("R1234"),
+            id = ThingId("R1234"),
             classes = setOf(ThingId("ToBeFound"), ThingId("Other")),
             featured = null,
             unlisted = null
         )
         repository.save(resource1)
         val resource2 = createResource().copy(
-            id = ResourceId("R2345"),
+            id = ThingId("R2345"),
             classes = setOf(ThingId("ToBeFound"), ThingId("Other")),
             featured = null,
             unlisted = null
@@ -250,13 +249,13 @@ interface ResourceRepositoryContractTest {
             PageRequest.of(0, 10)
         )
         result.totalElements shouldBe 2
-        result.content.map(Resource::id) shouldContainAll setOf(ResourceId("R1234"), ResourceId("R2345"))
+        result.content.map(Resource::id) shouldContainAll setOf(ThingId("R1234"), ThingId("R2345"))
     }
 
     @Test
     fun `given a resource with a class, when searched by its label, including and excluding class, it should be found`() {
         val resource1 = createResource().copy(
-            id = ResourceId("R1234"),
+            id = ThingId("R1234"),
             classes = setOf(ThingId("ToBeFound"), ThingId("Other")),
             label = "12345",
             featured = null,
@@ -264,7 +263,7 @@ interface ResourceRepositoryContractTest {
         )
         repository.save(resource1)
         val resource2 = createResource().copy(
-            id = ResourceId("R2345"),
+            id = ThingId("R2345"),
             classes = setOf(ThingId("NotToBeFound"), ThingId("Other")),
             label = "12345",
             featured = null,
@@ -272,7 +271,7 @@ interface ResourceRepositoryContractTest {
         )
         repository.save(resource2)
         val resource3 = createResource().copy(
-            id = ResourceId("R3456"),
+            id = ThingId("R3456"),
             classes = setOf(ThingId("NotToBeFound"), ThingId("Other")),
             label = "abcdef",
             featured = null,
@@ -287,13 +286,13 @@ interface ResourceRepositoryContractTest {
             PageRequest.of(0, 10)
         )
         result.totalElements shouldBe 1
-        result.content.first().id shouldBe ResourceId("R1234")
+        result.content.first().id shouldBe ThingId("R1234")
     }
 
     @Test
     fun `given a resource with a class, when searched by its label (regex), including and excluding class, it should be found`() {
         val resource1 = createResource().copy(
-            id = ResourceId("R1234"),
+            id = ThingId("R1234"),
             classes = setOf(ThingId("ToBeFound"), ThingId("Other")),
             label = "12345",
             featured = null,
@@ -301,7 +300,7 @@ interface ResourceRepositoryContractTest {
         )
         repository.save(resource1)
         val resource2 = createResource().copy(
-            id = ResourceId("R2345"),
+            id = ThingId("R2345"),
             classes = setOf(ThingId("NotToBeFound"), ThingId("Other")),
             label = "12345",
             featured = null,
@@ -309,7 +308,7 @@ interface ResourceRepositoryContractTest {
         )
         repository.save(resource2)
         val resource3 = createResource().copy(
-            id = ResourceId("R3456"),
+            id = ThingId("R3456"),
             classes = setOf(ThingId("NotToBeFound"), ThingId("Other")),
             label = "abcdef",
             featured = null,
@@ -324,7 +323,7 @@ interface ResourceRepositoryContractTest {
             PageRequest.of(0, 10)
         )
         result.totalElements shouldBe 1
-        result.content.first().id shouldBe ResourceId("R1234")
+        result.content.first().id shouldBe ThingId("R1234")
     }
 
     @Test
@@ -333,7 +332,7 @@ interface ResourceRepositoryContractTest {
         val contributorId1 = ContributorId("dc8b2055-c14a-4e9f-9fcd-e0b79cf1f834")
         val contributorId2 = ContributorId("4e08d9e4-e16c-42f1-9e9b-294579bdff1d")
         val resource1 = createResource().copy(
-            id = ResourceId("R1234"),
+            id = ThingId("R1234"),
             createdBy = contributorId1,
             classes = classes,
             featured = null,
@@ -341,7 +340,7 @@ interface ResourceRepositoryContractTest {
         )
         repository.save(resource1)
         val resource2 = createResource().copy(
-            id = ResourceId("R2345"),
+            id = ThingId("R2345"),
             createdBy = contributorId1,
             classes = classes,
             featured = null,
@@ -349,7 +348,7 @@ interface ResourceRepositoryContractTest {
         )
         repository.save(resource2)
         val resource3 = createResource().copy(
-            id = ResourceId("R3456"),
+            id = ThingId("R3456"),
             createdBy = contributorId2,
             classes = classes,
             featured = null,
@@ -357,7 +356,7 @@ interface ResourceRepositoryContractTest {
         )
         repository.save(resource3)
         val resource4 = createResource().copy(
-            id = ResourceId("R4567"),
+            id = ThingId("R4567"),
             createdBy = ContributorId.createUnknownContributor(),
             classes = classes,
             featured = null,

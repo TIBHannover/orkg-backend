@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.statements.application.BaseController
 import eu.tib.orkg.prototype.statements.application.port.out.GetPaperFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperPort
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -21,7 +21,7 @@ class PaperUnlistedController(
 ) : BaseController() {
 
     @GetMapping("/api/papers/{id}/metadata/unlisted")
-    fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean = query.getUnlistedPaperFlag(id)
+    fun getUnlistedFlag(@PathVariable id: ThingId): Boolean = query.getUnlistedPaperFlag(id)
 
     @GetMapping("/api/classes/Paper/unlisted/resources/", params = ["unlisted=true"])
     fun loadUnlistedPapers(pageable: Pageable): Page<Resource> {

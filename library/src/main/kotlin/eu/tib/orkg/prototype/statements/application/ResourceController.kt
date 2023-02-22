@@ -9,7 +9,6 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.Label
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import org.springframework.data.domain.Page
@@ -43,7 +42,7 @@ class ResourceController(
 ) : BaseController() {
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: ResourceId): ResourceRepresentation =
+    fun findById(@PathVariable id: ThingId): ResourceRepresentation =
         service.findById(id).orElseThrow { ResourceNotFound.withId(id) }
 
     @GetMapping("/")
@@ -109,7 +108,7 @@ class ResourceController(
 
     @PutMapping("/{id}")
     fun update(
-        @PathVariable id: ResourceId,
+        @PathVariable id: ThingId,
         @RequestBody request: UpdateResourceRequest
     ): ResponseEntity<ResourceRepresentation> {
         val found = service.findById(id)
@@ -125,7 +124,7 @@ class ResourceController(
     @RequestMapping("{id}/observatory", method = [RequestMethod.POST, RequestMethod.PUT])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateWithObservatory(
-        @PathVariable id: ResourceId,
+        @PathVariable id: ThingId,
         @RequestBody request: UpdateResourceObservatoryRequest
     ): ResponseEntity<ResourceRepresentation> {
         val found = service.findById(id)
@@ -135,13 +134,13 @@ class ResourceController(
     }
 
     @GetMapping("{id}/contributors")
-    fun findContributorsById(@PathVariable id: ResourceId, pageable: Pageable): Page<ResourceContributor> {
+    fun findContributorsById(@PathVariable id: ThingId, pageable: Pageable): Page<ResourceContributor> {
         return service.findContributorsByResourceId(id, pageable)
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    fun delete(@PathVariable id: ResourceId): ResponseEntity<Unit> {
+    fun delete(@PathVariable id: ThingId): ResponseEntity<Unit> {
         service.delete(id)
         return ResponseEntity.noContent().build()
     }
@@ -156,17 +155,17 @@ class ResourceController(
 
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)
-    fun markFeatured(@PathVariable id: ResourceId) {
+    fun markFeatured(@PathVariable id: ThingId) {
         service.markAsFeatured(id)
     }
 
     @DeleteMapping("/{id}/metadata/featured")
-    fun unmarkFeatured(@PathVariable id: ResourceId) {
+    fun unmarkFeatured(@PathVariable id: ThingId) {
         service.markAsNonFeatured(id)
     }
 
     @GetMapping("/{id}/metadata/featured")
-    fun getFeaturedFlag(@PathVariable id: ResourceId): Boolean? =
+    fun getFeaturedFlag(@PathVariable id: ThingId): Boolean? =
         service.getFeaturedResourceFlag(id)
 
     @GetMapping("/metadata/unlisted", params = ["unlisted=true"])
@@ -179,17 +178,17 @@ class ResourceController(
 
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.OK)
-    fun markUnlisted(@PathVariable id: ResourceId) {
+    fun markUnlisted(@PathVariable id: ThingId) {
         service.markAsUnlisted(id)
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")
-    fun unmarkUnlisted(@PathVariable id: ResourceId) {
+    fun unmarkUnlisted(@PathVariable id: ThingId) {
         service.markAsListed(id)
     }
 
     @GetMapping("/{id}/metadata/unlisted")
-    fun getUnlistedFlag(@PathVariable id: ResourceId): Boolean = service.getUnlistedResourceFlag(id)
+    fun getUnlistedFlag(@PathVariable id: ThingId): Boolean = service.getUnlistedResourceFlag(id)
 
     @GetMapping("/classes")
     fun getResourcesByClass(
@@ -211,14 +210,14 @@ enum class ExtractionMethod {
 }
 
 data class CreateResourceRequest(
-    val id: ResourceId?,
+    val id: ThingId?,
     val label: String,
     val classes: Set<ThingId> = emptySet(),
     val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
 )
 
 data class UpdateResourceRequest(
-    val id: ResourceId?,
+    val id: ThingId?,
     val label: String?,
     val classes: Set<ThingId>?
 )

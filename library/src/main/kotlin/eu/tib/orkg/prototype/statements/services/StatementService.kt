@@ -18,7 +18,6 @@ import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.Thing
@@ -34,7 +33,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-typealias StatementCounts = Map<ResourceId, Long>
+typealias StatementCounts = Map<ThingId, Long>
 
 @Service
 @Transactional
@@ -245,18 +244,18 @@ class StatementService(
 
     override fun removeAll() = statementRepository.deleteAll()
 
-    private fun countsFor(statements: List<GeneralStatement>): Map<ResourceId, Long> {
+    private fun countsFor(statements: List<GeneralStatement>): Map<ThingId, Long> {
         val resourceIds =
-            statements.map(GeneralStatement::subject).filterIsInstance<Resource>().mapNotNull { it.id } +
-                statements.map(GeneralStatement::`object`).filterIsInstance<Resource>().mapNotNull { it.id }
+            statements.map(GeneralStatement::subject).filterIsInstance<Resource>().map { it.id } +
+                statements.map(GeneralStatement::`object`).filterIsInstance<Resource>().map { it.id }
         return statementRepository.countStatementsAboutResources(resourceIds.toSet())
     }
 
-    private fun formatLabelFor(statements: List<GeneralStatement>): Map<ResourceId, FormattedLabel?> =
+    private fun formatLabelFor(statements: List<GeneralStatement>): Map<ThingId, FormattedLabel?> =
         if (flags.isFormattedLabelsEnabled()) {
             (statements.map(GeneralStatement::subject).filterIsInstance<Resource>() +
                 statements.map(GeneralStatement::`object`).filterIsInstance<Resource>())
-                .associate { it.id!! to templateRepository.formattedLabelFor(it.id, it.classes) }
+                .associate { it.id to templateRepository.formattedLabelFor(it.id, it.classes) }
         } else emptyMap()
 
     private fun retrieveAndConvertSingleStatement(action: () -> Optional<GeneralStatement>): Optional<StatementRepresentation> {

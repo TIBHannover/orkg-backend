@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.spi
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.QueryResult
@@ -17,10 +17,10 @@ interface StatsRepository {
     fun getObservatoryComparisonsCount(id: ObservatoryId): Long
     fun getObservatoriesPapersAndComparisonsCount(): List<ObservatoryResources>
     fun getTopCurrentContributorIdsAndContributionsCount(date: String, pageable: Pageable): Page<TopContributorIdentifiers>
-    fun getTopCurContribIdsAndContribCountByResearchFieldId(id: ResourceId, date: String): List<List<Map<String, List<ResultObject>>>>
-    fun getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(id: ResourceId, date: String): List<List<Map<String, List<ResultObject>>>>
+    fun getTopCurContribIdsAndContribCountByResearchFieldId(id: ThingId, date: String): List<List<Map<String, List<ResultObject>>>>
+    fun getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(id: ThingId, date: String): List<List<Map<String, List<ResultObject>>>>
     fun getChangeLog(pageable: Pageable): Page<ChangeLogResponse>
-    fun getChangeLogByResearchField(id: ResourceId, pageable: Pageable): Page<ChangeLogResponse>
+    fun getChangeLogByResearchField(id: ThingId, pageable: Pageable): Page<ChangeLogResponse>
     fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems>
     fun getOrphanedNodesCount(): Long
 }

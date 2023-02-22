@@ -12,7 +12,6 @@ import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResearchFieldRepository
 import java.util.*
@@ -33,11 +32,11 @@ class ResearchFieldService(
     private val resourceService: ResourceUseCases,
 ) : RetrieveResearchFieldUseCase {
 
-    override fun findById(id: ResourceId): Optional<ResourceRepresentation> =
+    override fun findById(id: ThingId): Optional<ResourceRepresentation> =
         Optional.ofNullable(resourceService.findByIdAndClasses(id, setOf(ResearchField)))
 
     override fun getResearchProblemsOfField(
-        id: ResourceId,
+        id: ThingId,
         pageable: Pageable
     ): Page<RetrieveResearchFieldUseCase.PaperCountPerResearchProblem> {
         return researchFieldRepository.getResearchProblemsOfField(id, pageable).map {
@@ -49,7 +48,7 @@ class ResearchFieldService(
     }
 
     override fun getResearchProblemsIncludingSubFields(
-        id: ResourceId,
+        id: ThingId,
         featured: Boolean?,
         unlisted: Boolean,
         pageable: Pageable
@@ -68,13 +67,13 @@ class ResearchFieldService(
         })
     }
 
-    override fun getContributorsIncludingSubFields(id: ResourceId, pageable: Pageable): Page<Contributor> {
+    override fun getContributorsIncludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor> {
         val contributors = researchFieldRepository.getContributorIdsFromResearchFieldAndIncludeSubfields(id, pageable).map(ContributorId::value)
         return PageImpl(userRepository.findByIdIn(contributors.content.toTypedArray()).map(UserEntity::toContributor))
     }
 
     override fun getPapersIncludingSubFields(
-        id: ResourceId,
+        id: ThingId,
         featured: Boolean?,
         unlisted: Boolean,
         pageable: Pageable
@@ -93,7 +92,7 @@ class ResearchFieldService(
     }
 
     override fun getComparisonsIncludingSubFields(
-        id: ResourceId,
+        id: ThingId,
         featured: Boolean?,
         unlisted: Boolean,
         pageable: Pageable
@@ -111,13 +110,13 @@ class ResearchFieldService(
         })
     }
 
-    override fun getContributorsExcludingSubFields(id: ResourceId, pageable: Pageable): Page<Contributor> {
+    override fun getContributorsExcludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor> {
         val contributors = researchFieldRepository.getContributorIdsExcludingSubFields(id, pageable).map(ContributorId::value)
         return PageImpl(userRepository.findByIdIn(contributors.content.toTypedArray()).map(UserEntity::toContributor))
     }
 
     override fun getPapersExcludingSubFields(
-        id: ResourceId,
+        id: ThingId,
         featured: Boolean?,
         unlisted: Boolean,
         pageable: Pageable
@@ -136,7 +135,7 @@ class ResearchFieldService(
     }
 
     override fun getComparisonsExcludingSubFields(
-        id: ResourceId,
+        id: ThingId,
         featured: Boolean?,
         unlisted: Boolean,
         pageable: Pageable
@@ -155,7 +154,7 @@ class ResearchFieldService(
     }
 
     override fun getResearchProblemsExcludingSubFields(
-        id: ResourceId,
+        id: ThingId,
         featured: Boolean?,
         unlisted: Boolean,
         pageable: Pageable
@@ -178,7 +177,7 @@ class ResearchFieldService(
      * Please check with frontend team before modifying this function
      */
     override fun getEntitiesBasedOnClassesIncludingSubfields(
-        id: ResourceId,
+        id: ThingId,
         classesList: List<String>,
         featured: Boolean?,
         unlisted: Boolean,
@@ -202,7 +201,7 @@ class ResearchFieldService(
      * Please check with frontend team before modifying this function
      */
     override fun getEntitiesBasedOnClassesExcludingSubfields(
-        id: ResourceId,
+        id: ThingId,
         classesList: List<String>,
         featured: Boolean?,
         unlisted: Boolean,
@@ -229,7 +228,7 @@ class ResearchFieldService(
 
     private fun getListIncludingSubFieldsWithoutFeaturedFlag(
         classesList: List<String>,
-        id: ResourceId,
+        id: ThingId,
         unlisted: Boolean,
         pageable: Pageable
     ): List<Page<Resource>> {
@@ -247,7 +246,7 @@ class ResearchFieldService(
 
     private fun getListIncludingSubFieldsWithFlags(
         classesList: List<String>,
-        id: ResourceId,
+        id: ThingId,
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
@@ -266,7 +265,7 @@ class ResearchFieldService(
 
     private fun getListExcludingSubFieldsWithoutFeaturedFlag(
         classesList: List<String>,
-        id: ResourceId,
+        id: ThingId,
         unlisted: Boolean,
         pageable: Pageable
     ): List<Page<Resource>> {
@@ -284,7 +283,7 @@ class ResearchFieldService(
 
     private fun getListExcludingSubFieldsWithFlags(
         classesList: List<String>,
-        id: ResourceId,
+        id: ThingId,
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable

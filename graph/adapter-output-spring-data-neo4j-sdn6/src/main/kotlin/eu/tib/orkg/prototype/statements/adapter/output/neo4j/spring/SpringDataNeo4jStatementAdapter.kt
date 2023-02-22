@@ -8,7 +8,6 @@ import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase.PredicateUs
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.ObjectService
@@ -131,7 +130,7 @@ class SpringDataNeo4jStatementAdapter(
             .paged(pageable, countQuery)
     }
 
-    override fun countStatementsAboutResource(id: ResourceId): Long {
+    override fun countStatementsAboutResource(id: ThingId): Long {
         val r = name("r")
         val subject = node("Thing")
         val `object` = node("Resource")
@@ -146,7 +145,7 @@ class SpringDataNeo4jStatementAdapter(
             .one() ?: 0
     }
 
-    override fun countStatementsAboutResources(resourceIds: Set<ResourceId>): Map<ResourceId, Long> {
+    override fun countStatementsAboutResources(resourceIds: Set<ThingId>): Map<ThingId, Long> {
         val r = name("r")
         val subject = node("Thing")
         val `object` = node("Resource")
@@ -161,7 +160,7 @@ class SpringDataNeo4jStatementAdapter(
             .returning(id, count)
             .build()
         return neo4jClient.query(query.cypher)
-            .mappedBy { _, record -> ResourceId(record[id].asString()) to record[count].asLong() }
+            .mappedBy { _, record -> ThingId(record[id].asString()) to record[count].asLong() }
             .all()
             .toMap()
     }
@@ -353,7 +352,7 @@ class SpringDataNeo4jStatementAdapter(
             .paged(pageable, countQuery)
     }
 
-    override fun findDOIByContributionId(id: ResourceId): Optional<Literal> {
+    override fun findDOIByContributionId(id: ThingId): Optional<Literal> {
         val doi = name("doi")
         val relations = node("Resource")
             .withProperties("resource_id", literalOf<String>(id.value))
@@ -436,7 +435,7 @@ class SpringDataNeo4jStatementAdapter(
             .all()
     }
 
-    override fun findContributorsByResourceId(id: ResourceId, pageable: Pageable): Page<ResourceContributor> {
+    override fun findContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> {
         val apocConfiguration = mapOf<String, Any>(
             "relationshipFilter" to ">",
             "labelFilter" to "-ResearchField|-ResearchProblem|-Paper"
@@ -474,7 +473,7 @@ class SpringDataNeo4jStatementAdapter(
             .paged(pageable, countQuery)
     }
 
-    override fun checkIfResourceHasStatements(id: ResourceId): Boolean {
+    override fun checkIfResourceHasStatements(id: ThingId): Boolean {
         val n = node("Resource")
             .withProperties("resource_id", literalOf<String>(id.value))
             .named("n")

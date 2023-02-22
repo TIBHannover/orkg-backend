@@ -14,7 +14,7 @@ class ResourceRDFTests {
             |<http://orkg.org/orkg/resource/R100> <http://www.w3.org/2000/01/rdf-schema#label> "some dummy label"^^<http://www.w3.org/2001/XMLSchema#string> .
             |
         """.trimMargin()
-        val resource = createResource().copy(ResourceId(100), label = "some dummy label")
+        val resource = createResource().copy(ThingId("R100"), label = "some dummy label")
         assertThat(resource.toNTriple()).isEqualTo(expectedOutput)
     }
 }

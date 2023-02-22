@@ -5,7 +5,6 @@ import eu.tib.orkg.prototype.statements.application.DOIServiceUnavailable
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
-import java.lang.Exception
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
@@ -51,7 +50,7 @@ class DoiService(
         }
     }
 
-    fun getRelatedPapers(relatedResources: Set<ResourceId>): String {
+    fun getRelatedPapers(relatedResources: Set<ThingId>): String {
         val doiList: MutableSet<String> = mutableSetOf()
         relatedResources.map { resourceId ->
             val doi = literalService.findDOIByContributionId(resourceId)

@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.community.api
 import eu.tib.orkg.prototype.community.domain.model.Observatory
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.Optional
 
 interface ObservatoryUseCases {
@@ -14,7 +14,7 @@ interface ObservatoryUseCases {
         name: String,
         description: String,
         organizationId: OrganizationId,
-        researchField: ResourceId?,
+        researchField: ThingId?,
         displayId: String
     ): Observatory
 

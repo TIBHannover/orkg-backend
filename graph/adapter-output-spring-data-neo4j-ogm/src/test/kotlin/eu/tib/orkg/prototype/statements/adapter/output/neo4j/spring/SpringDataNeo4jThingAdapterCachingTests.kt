@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
@@ -98,7 +97,7 @@ class SpringDataNeo4jThingAdapterCachingTests {
     @Test
     fun `fetching a thing by ID should be cached`() {
         val thingId = "R1"
-        val resource = createResource().copy(id = ResourceId(thingId))
+        val resource = createResource().copy(id = ThingId(thingId))
         every { mock.findByThingId("R1") } returns Optional.of(resource) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
@@ -196,7 +195,7 @@ class SpringDataNeo4jThingAdapterCachingTests {
     @Test
     fun `saving a resource should evict it from the thing-id cache`() {
         val thingId = "R1"
-        val resource = createResource().copy(id = ResourceId(thingId))
+        val resource = createResource().copy(id = ThingId(thingId))
         val modified = resource.copy(label = "new label")
         every { mock.findByThingId(thingId) } returns Optional.of(resource) andThen Optional.of(modified) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
@@ -252,11 +251,11 @@ class SpringDataNeo4jThingAdapterCachingTests {
     @Test
     fun `deleting a resource should evict it from the thing cache`() {
         val thingId = "R1"
-        val resource = createResource().copy(id = ResourceId(thingId))
+        val resource = createResource().copy(id = ThingId(thingId))
         every { mock.findByThingId(thingId) } returns Optional.of(resource) andThen Optional.of(resource) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
-        every { resourceMock.deleteByResourceId(resource.id!!) } returns Unit
+        every { resourceMock.deleteByResourceId(resource.id) } returns Unit
 
         // Obtain resource from Thing repository
         assertThat(adapter.findByThingId(thingId).get()).isEqualTo(resource)
@@ -269,9 +268,9 @@ class SpringDataNeo4jThingAdapterCachingTests {
         verify(exactly = 1) { mock.findByThingId(thingId) }
 
         // Delete predicate from repository
-        resourceAdapter.deleteByResourceId(resource.id!!)
+        resourceAdapter.deleteByResourceId(resource.id)
         // Verify the deletion happened
-        verify(exactly = 1) { resourceMock.deleteByResourceId(resource.id!!) }
+        verify(exactly = 1) { resourceMock.deleteByResourceId(resource.id) }
 
         // Verify that the cache was evicted
         assertThat(adapter.findByThingId(thingId).get()).isEqualTo(resource)

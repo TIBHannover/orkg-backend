@@ -11,7 +11,6 @@ import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -98,14 +97,14 @@ fun <
         // Disabled because the expected functionality is not supported by Spring Data Neo4j
         xit("updates an already existing statement") {
             val original = createStatement(
-                subject = createResource(ResourceId(1)),
-                `object` = createResource(ResourceId(2))
+                subject = createResource(ThingId("R1")),
+                `object` = createResource(ThingId("R2"))
             )
             saveStatement(original)
             val found = repository.findByStatementId(original.id!!).get()
             found shouldBe original
 
-            val modifiedSubject = createResource(ResourceId(3))
+            val modifiedSubject = createResource(ThingId("R3"))
             val modified = found.copy(subject = modifiedSubject)
             saveStatement(modified)
 
@@ -132,7 +131,7 @@ fun <
             // 5 ← 1 → 2 → 3
             val resources = mutableMapOf<Int, Resource>()
             val resourceFactory = { id: Int ->
-                { createResource(id = ResourceId(id.toLong())) }
+                { createResource(id = ThingId("R$id")) }
             }
             val graph = listOf(
                 1 to 2, 2 to 3, 2 to 4, 4 to 7,
@@ -150,7 +149,7 @@ fun <
             context("recursively by resource id") {
                 it("returns the correct result") {
                     graph.forEach(saveStatement)
-                    val actual = repository.countByIdRecursive(ResourceId(1).value)
+                    val actual = repository.countByIdRecursive(ThingId("R1").value)
                     actual shouldBe 6
                 }
                 it("returns zero when the resource is missing in the graph") {
@@ -162,12 +161,12 @@ fun <
             context("about a resource") {
                 it("returns the correct result") {
                     graph.forEach(saveStatement)
-                    repository.countStatementsAboutResource(ResourceId(1)) shouldBe 1
-                    repository.countStatementsAboutResource(ResourceId(3)) shouldBe 2
+                    repository.countStatementsAboutResource(ThingId("R1")) shouldBe 1
+                    repository.countStatementsAboutResource(ThingId("R3")) shouldBe 2
                 }
                 it("returns zero when the resource is missing in the graph") {
                     graph.forEach(saveStatement)
-                    val actual = repository.countStatementsAboutResource(ResourceId("missing"))
+                    val actual = repository.countStatementsAboutResource(ThingId("missing"))
                     actual shouldBe 0
                 }
             }
@@ -179,8 +178,8 @@ fun <
                         1L to 1L,
                         3L to 2L,
                         //10L to 0L
-                    ).mapKeys { ResourceId(it.key) }
-                    val resourceIds = expected.keys + ResourceId(10)
+                    ).mapKeys { ThingId("R${it.key}") }
+                    val resourceIds = expected.keys + ThingId("R10")
                     val actual = repository.countStatementsAboutResources(resourceIds)
                     actual shouldContainExactly expected
                 }
@@ -192,7 +191,7 @@ fun <
                 // TODO: do we expect results for missing resource ids to be zero or missing?
                 it("returns nothing when the given resource is missing in the graph") {
                     graph.forEach(saveStatement)
-                    val actual = repository.countStatementsAboutResources(setOf(ResourceId("missing")))
+                    val actual = repository.countStatementsAboutResources(setOf(ThingId("missing")))
                     actual.size shouldBe 0
                 }
             }
@@ -233,7 +232,7 @@ fun <
         context("by subject id") {
             val expectedCount = 3
             val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
-            val subject = createResource(id = ResourceId(1))
+            val subject = createResource(id = ThingId("R1"))
             (0 until expectedCount).forEach {
                 statements[it] = statements[it].copy(
                     subject = subject
@@ -303,7 +302,7 @@ fun <
         context("by object id") {
             val expectedCount = 3
             val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
-            val `object` = createResource(id = ResourceId(1))
+            val `object` = createResource(id = ThingId("R1"))
             (0 until expectedCount).forEach {
                 statements[it] = statements[it].copy(
                     `object` = `object`
@@ -338,7 +337,7 @@ fun <
         context("by object id and predicate id") {
             val expectedCount = 3
             val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
-            val `object` = createResource(id = ResourceId(1))
+            val `object` = createResource(id = ThingId("R1"))
             val predicate = createPredicate(id = ThingId("P1"))
             (0 until expectedCount).forEach {
                 statements[it] = statements[it].copy(
@@ -376,7 +375,7 @@ fun <
         context("by subject id and predicate id") {
             val expectedCount = 3
             val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
-            val subject = createResource(id = ResourceId(1))
+            val subject = createResource(id = ThingId("R1"))
             val predicate = createPredicate(id = ThingId("P1"))
             (0 until expectedCount).forEach {
                 statements[it] = statements[it].copy(
@@ -513,14 +512,14 @@ fun <
                 // index(2) -> id(1)
                 val id = it.coerceAtMost(1).toLong()
                 val subject = createResource(
-                    id = ResourceId(id),
+                    id = ThingId("R$id"),
                     // We need to fix the time here, to make equality work.
                     createdAt = OffsetDateTime.parse("2023-01-24T16:09:18.557233+01:00")
                 )
                 statements[it] = statements[it].copy(
                     subject = subject
                 )
-                subject.id!!.value
+                subject.id.value
             }
             statements.forEach(saveStatement)
             val expected = statements.take(expectedCount)
@@ -549,7 +548,7 @@ fun <
             val expectedCount = 3
             val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
             val ids = (0 until 2).map {
-                val id = ResourceId(it.toLong())
+                val id = ThingId("R$it")
                 val `object` = createResource(id = id)
                 statements[it] = statements[it].copy(`object` = `object`)
                 if (it == 1)
@@ -728,7 +727,7 @@ fun <
                 statements.forEach(saveStatement)
 
                 val expected = statements[1].`object`
-                val actual = repository.findDOIByContributionId(contribution.id!!)
+                val actual = repository.findDOIByContributionId(contribution.id)
 
                 actual.isPresent shouldBe true
                 actual.get() shouldBe expected
@@ -1026,7 +1025,7 @@ fun <
                 otherResourceRelatesToAnotherResource.createdBy to otherResourceRelatesToAnotherResource.createdAt
             ).map { ResourceContributor(it.first.toString(), it.second!!.format(ISO_OFFSET_DATE_TIME)) }
 
-            val result = repository.findContributorsByResourceId(resource.id!!, PageRequest.of(0, 5))
+            val result = repository.findContributorsByResourceId(resource.id, PageRequest.of(0, 5))
 
             it("returns the correct result") {
                 result shouldNotBe null
@@ -1056,7 +1055,7 @@ fun <
                 val resource = fabricator.random<Resource>()
                 // Resource has to exist for neo4j repos
                 resourceRepository.save(resource)
-                repository.checkIfResourceHasStatements(resource.id!!) shouldBe false
+                repository.checkIfResourceHasStatements(resource.id) shouldBe false
             }
         }
         context("when a statement exists") {
@@ -1066,8 +1065,8 @@ fun <
                     `object` = fabricator.random<Resource>()
                 )
                 saveStatement(statement)
-                repository.checkIfResourceHasStatements((statement.subject as Resource).id!!) shouldBe true
-                repository.checkIfResourceHasStatements((statement.`object` as Resource).id!!) shouldBe true
+                repository.checkIfResourceHasStatements((statement.subject as Resource).id) shouldBe true
+                repository.checkIfResourceHasStatements((statement.`object` as Resource).id) shouldBe true
             }
         }
     }

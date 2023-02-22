@@ -31,7 +31,7 @@ data class FeatureFlags(
     /** Enable support for formatted labels (disabled by default - for performance reasons). */
     val formattedLabels: Boolean = false,
     /** Use Neo4j 3.x (legacy) series. */
-    val useNeo4jVersion3: Boolean = true,
+    val useNeo4jVersion3: Boolean = false,
     /** Enable cache warmup. */
     val cacheWarmup: Boolean = true
 )

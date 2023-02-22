@@ -13,7 +13,7 @@ import org.testcontainers.containers.Neo4jContainer
 import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.utility.DockerImageName
 
-const val NEO4J_VERSION = "3.5"
+const val NEO4J_VERSION = "4.4-community"
 
 @Testcontainers
 @SpringBootTest // TODO: This should be "downgraded" to @DataNeo4jTest after decoupling services and output adapters
@@ -24,7 +24,7 @@ abstract class Neo4jTestContainersBaseTest {
         // We instantiate only one container per test class.
         @JvmStatic
         protected val container: Neo4jContainer<*> =
-            Neo4jContainer(DockerImageName.parse("neo4j:$NEO4J_VERSION-community"))
+            Neo4jContainer(DockerImageName.parse("neo4j:$NEO4J_VERSION"))
                 .withEnv("NEO4JLABS_PLUGINS", """["apoc"]""")
                 .withoutAuthentication()
 

@@ -27,7 +27,7 @@ services:
         condition: service_healthy
 
   neo4j:
-    image: neo4j:3.5
+    image: neo4j:4.4-community
     ports:
       - '127.0.0.1:7474:7474' # HTTP
       #- '::1:7474:7474'
@@ -36,6 +36,8 @@ services:
     environment:
       NEO4JLABS_PLUGINS: '["apoc"]'
       NEO4J_AUTH: none
+      NEO4J_dbms_mode: SINGLE
+      NEO4J_dbms_default__database: orkg
       NEO4J_dbms_memory_heap_max__size: 8G
     healthcheck:
       test: [ "CMD", "/var/lib/neo4j/bin/cypher-shell", "-u", "${NEO4J_USERNAME}", "-p", "${NEO4J_PASSWORD}", "MATCH () RETURN count(*) as count" ]

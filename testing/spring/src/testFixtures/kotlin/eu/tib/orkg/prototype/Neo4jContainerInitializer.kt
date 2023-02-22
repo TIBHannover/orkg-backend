@@ -14,7 +14,7 @@ class Neo4jContainerInitializer : ApplicationContextInitializer<ConfigurableAppl
     // TODO: might be nice to aggregate values for debugging, if possible
 
     companion object {
-        val neo4jContainer: Neo4jContainer<*> = Neo4jContainer(DockerImageName.parse("neo4j:3.5-community"))
+        val neo4jContainer: Neo4jContainer<*> = Neo4jContainer(DockerImageName.parse("neo4j:4.4-community"))
             .withoutAuthentication()
             .withLabsPlugins(Neo4jLabsPlugin.APOC) // adds significant startup overhead
             .withReuse(true)

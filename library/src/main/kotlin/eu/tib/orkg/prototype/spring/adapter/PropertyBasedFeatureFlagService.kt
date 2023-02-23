@@ -15,8 +15,6 @@ class PropertyBasedFeatureFlagService(
 
     override fun isFormattedLabelsEnabled(): Boolean = config.formattedLabels
 
-    override fun isNeo4jVersion3Enabled(): Boolean = config.useNeo4jVersion3
-
     override fun isCacheWarmupEnabled(): Boolean = config.cacheWarmup
 }
 

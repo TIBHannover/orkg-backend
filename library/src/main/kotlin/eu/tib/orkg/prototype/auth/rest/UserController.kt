@@ -44,18 +44,6 @@ class UserController(
         return ok(UserDetails(user))
     }
 
-    /**
-     * Retrieve the user's data.
-     *
-     * <strong>Note:</strong> This endpoint should only be used to obtain data for the logged-in user!
-     * It should not be used for other user data! Use the contributor abstraction for that!
-     */
-    @GetMapping("/{id}")
-    fun lookupUser(@PathVariable id: UUID): ResponseEntity<UserDetails> {
-        val contributor = userService.findById(id).orElseThrow { UserNotFound(id) }
-        return ok(UserDetails(contributor))
-    }
-
     @PutMapping("/")
     fun updateUserDetails(@RequestBody @Valid updatedDetails: UserDetailsUpdateRequest, principal: Principal?): ResponseEntity<UserDetails> {
         if (principal?.name == null)

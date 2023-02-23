@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - All entities now report the correct creation timestamps. (Closes: [#438](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/438))
 ### Changed
 - Upgrade Neo4j to version 4.4. (Closes: [#178](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/178), [#257](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/257))
+### Removed
+- Removed the endpoint to fetch user information. The contributors endpoint should be used instead. (Closes: [#184](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/184))
 
 ## [0.25.0] - 2023-01-24
 ### Fixed

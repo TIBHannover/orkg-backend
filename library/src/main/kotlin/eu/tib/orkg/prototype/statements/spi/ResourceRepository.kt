@@ -20,20 +20,20 @@ interface ResourceRepository : EntityRepository<Resource, ThingId> {
     fun findByResourceId(id: ThingId): Optional<Resource>
     fun findAllByLabelMatchesRegex(label: String, pageable: Pageable): Page<Resource>
     fun findAllByLabelContaining(part: String, pageable: Pageable): Page<Resource>
-    fun findAllByClass(`class`: String, pageable: Pageable): Page<Resource>
-    fun findAllByClassAndCreatedBy(`class`: String, createdBy: ContributorId, pageable: Pageable): Page<Resource>
-    fun findAllByClassAndLabel(`class`: String, label: String, pageable: Pageable): Page<Resource>
-    fun findAllByClassAndLabelAndCreatedBy(`class`: String, label: String, createdBy: ContributorId, pageable: Pageable): Page<Resource>
+    fun findAllByClass(`class`: ThingId, pageable: Pageable): Page<Resource>
+    fun findAllByClassAndCreatedBy(`class`: ThingId, createdBy: ContributorId, pageable: Pageable): Page<Resource>
+    fun findAllByClassAndLabel(`class`: ThingId, label: String, pageable: Pageable): Page<Resource>
+    fun findAllByClassAndLabelAndCreatedBy(`class`: ThingId, label: String, createdBy: ContributorId, pageable: Pageable): Page<Resource>
 
-    fun findAllByClassAndLabelMatchesRegex(`class`: String, label: String, pageable: Pageable): Page<Resource>
-    fun findAllByClassAndLabelMatchesRegexAndCreatedBy(`class`: String, label: String, createdBy: ContributorId, pageable: Pageable): Page<Resource>
+    fun findAllByClassAndLabelMatchesRegex(`class`: ThingId, label: String, pageable: Pageable): Page<Resource>
+    fun findAllByClassAndLabelMatchesRegexAndCreatedBy(`class`: ThingId, label: String, createdBy: ContributorId, pageable: Pageable): Page<Resource>
 
     fun findAllIncludingAndExcludingClasses(includeClasses: Set<ThingId>, excludeClasses: Set<ThingId>, pageable: Pageable): Page<Resource>
     fun findAllIncludingAndExcludingClassesByLabel(includeClasses: Set<ThingId>, excludeClasses: Set<ThingId>, label: String, pageable: Pageable): Page<Resource>
     fun findAllIncludingAndExcludingClassesByLabelMatchesRegex(includeClasses: Set<ThingId>, excludeClasses: Set<ThingId>, label: String, pageable: Pageable): Page<Resource>
     fun findByLabel(label: String?): Optional<Resource>
     fun findAllByLabel(label: String): Iterable<Resource>
-    fun findByClassAndObservatoryId(`class`: String, id: ObservatoryId): Iterable<Resource>
+    fun findByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId): Iterable<Resource>
     fun findAllByVerifiedIsTrue(pageable: Pageable): Page<Resource>
     fun findAllByVerifiedIsFalse(pageable: Pageable): Page<Resource>
     fun findAllByFeaturedIsTrue(pageable: Pageable): Page<Resource>
@@ -47,10 +47,10 @@ interface ResourceRepository : EntityRepository<Resource, ThingId> {
     fun findAllNonFeaturedPapers(pageable: Pageable): Page<Resource>
     fun findAllUnlistedPapers(pageable: Pageable): Page<Resource>
     fun findAllListedPapers(pageable: Pageable): Page<Resource>
-    fun findAllFeaturedResourcesByClass(classes: List<String>, unlisted: Boolean, pageable: Pageable): Page<Resource>
-    fun findAllFeaturedResourcesByClass(classes: List<String>, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
-    fun findAllFeaturedResourcesByObservatoryIDAndClass(id: ObservatoryId, classes: List<String>, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
-    fun findAllResourcesByObservatoryIDAndClass(id: ObservatoryId, classes: List<String>, unlisted: Boolean, pageable: Pageable): Page<Resource>
+    fun findAllFeaturedResourcesByClass(classes: List<ThingId>, unlisted: Boolean, pageable: Pageable): Page<Resource>
+    fun findAllFeaturedResourcesByClass(classes: List<ThingId>, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
+    fun findAllFeaturedResourcesByObservatoryIDAndClass(id: ObservatoryId, classes: List<ThingId>, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
+    fun findAllResourcesByObservatoryIDAndClass(id: ObservatoryId, classes: List<ThingId>, unlisted: Boolean, pageable: Pageable): Page<Resource>
     fun findAllContributorIds(pageable: Pageable): Page<ContributorId>
     fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
 }

@@ -220,7 +220,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             resources.forEach(repository::save)
 
             val expected = resources.take(expectedCount)
-            val result = repository.findAllByClass(`class`.value, PageRequest.of(0, 5))
+            val result = repository.findAllByClass(`class`, PageRequest.of(0, 5))
 
             it("returns the correct result") {
                 result shouldNotBe null
@@ -255,7 +255,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
 
             val expected = resources.drop(3).take(3)
             val result = repository.findAllByClassAndCreatedBy(
-                `class`.value,
+                `class`,
                 contributor,
                 PageRequest.of(0, 5)
             )
@@ -293,7 +293,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
 
             val expected = resources.drop(3).take(3)
             val result = repository.findAllByClassAndLabel(
-                `class`.value,
+                `class`,
                 label,
                 PageRequest.of(0, 5)
             )
@@ -335,7 +335,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
 
             val expected = resources.drop(4).take(2)
             val result = repository.findAllByClassAndLabelAndCreatedBy(
-                `class`.value,
+                `class`,
                 label,
                 contributor,
                 PageRequest.of(0, 5)
@@ -373,7 +373,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
 
             val expected = resources.drop(3).take(3)
             val result = repository.findAllByClassAndLabelMatchesRegex(
-                `class`.value,
+                `class`,
                 """^label to find \(\d\)$""",
                 PageRequest.of(0, 5)
             )
@@ -414,7 +414,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
 
             val expected = resources.drop(4).take(2)
             val result = repository.findAllByClassAndLabelMatchesRegexAndCreatedBy(
-                `class`.value,
+                `class`,
                 """^label to find \(\d\)$""",
                 contributor,
                 PageRequest.of(0, 5)
@@ -675,7 +675,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                 resources.forEach(repository::save)
                 val expected = resources.take(expectedCount)
                 val result = repository.findAllFeaturedResourcesByClass(
-                    classes = classes.map { it.value },
+                    classes = classes,
                     unlisted = true,
                     pageable = PageRequest.of(0, 5)
                 )
@@ -701,7 +701,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                 resources.forEach(repository::save)
                 val expected = resources.drop(3).take(expectedCount)
                 val result = repository.findAllFeaturedResourcesByClass(
-                    classes = classes.map { it.value },
+                    classes = classes,
                     unlisted = false,
                     pageable = PageRequest.of(0, 5)
                 )
@@ -749,7 +749,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                         }
                     }
                     val result = repository.findAllFeaturedResourcesByClass(
-                        classes = c.map { it.value },
+                        classes = c,
                         unlisted = unlisted,
                         featured = featured,
                         pageable = PageRequest.of(0, 5)
@@ -801,7 +801,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                         }
                     }
                     val result = repository.findAllFeaturedResourcesByObservatoryIDAndClass(
-                        classes = c.map { it.value },
+                        classes = c,
                         unlisted = unlisted,
                         featured = featured,
                         id = observatoryId,
@@ -851,7 +851,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                         }
                     }
                     val result = repository.findAllResourcesByObservatoryIDAndClass(
-                        classes = c.map { it.value },
+                        classes = c,
                         unlisted = unlisted,
                         id = observatoryId,
                         pageable = PageRequest.of(0, 5)

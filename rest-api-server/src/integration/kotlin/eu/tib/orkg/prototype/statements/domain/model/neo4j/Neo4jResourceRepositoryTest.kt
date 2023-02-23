@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceRepository
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatement
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatementRepository
+import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
@@ -150,7 +151,7 @@ class Neo4jResourceRepositoryTest : Neo4jTestContainersBaseTest() {
         // without class
         resourceRepository.save(Neo4jResource("cat", ResourceId("R3")))
 
-        val result = resourceRepository.findAllByClass("C0", pagination)
+        val result = resourceRepository.findAllByClass(ClassId("C0"), pagination)
 
         assertThat(result).hasSize(1)
         assertThat(result).containsExactlyInAnyOrder(resourceToBeFound)

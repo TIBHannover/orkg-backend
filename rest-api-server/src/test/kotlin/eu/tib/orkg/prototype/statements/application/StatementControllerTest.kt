@@ -60,7 +60,7 @@ internal class StatementControllerTest {
             "object_id" to `object`
         )
 
-        every { statementService.create(any(), any(), any(), any()) } throws StatementSubjectNotFound(subject)
+        every { statementService.create(any(), any(), any(), any()) } throws StatementSubjectNotFound(ThingId(subject))
 
         mockMvc.perform(performPost(body))
             .andExpect(status().isBadRequest)
@@ -108,7 +108,7 @@ internal class StatementControllerTest {
             "object_id" to `object`
         )
 
-        every { statementService.create(any(), any(), any(), any()) } throws StatementObjectNotFound(`object`)
+        every { statementService.create(any(), any(), any(), any()) } throws StatementObjectNotFound(ThingId(`object`))
 
         mockMvc.perform(performPost(body))
             .andExpect(status().isBadRequest)

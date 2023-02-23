@@ -10,10 +10,11 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
 import java.time.OffsetDateTime
 
-sealed interface ThingRepresentation
+sealed interface ThingRepresentation {
+    val id: ThingId
+}
 
 interface LiteralRepresentation : ThingRepresentation, ProvenanceMetadata {
-    val id: ThingId
     val label: String
     val datatype: String
 
@@ -23,7 +24,6 @@ interface LiteralRepresentation : ThingRepresentation, ProvenanceMetadata {
 }
 
 interface ClassRepresentation : ThingRepresentation, ProvenanceMetadata {
-    val id: ThingId
     val label: String
     val uri: URI?
     val description: String?
@@ -34,7 +34,6 @@ interface ClassRepresentation : ThingRepresentation, ProvenanceMetadata {
 }
 
 interface PredicateRepresentation : ThingRepresentation, ProvenanceMetadata {
-    val id: ThingId
     val label: String
     val description: String?
 
@@ -44,7 +43,6 @@ interface PredicateRepresentation : ThingRepresentation, ProvenanceMetadata {
 }
 
 interface ResourceRepresentation : ThingRepresentation, ResourceProvenanceMetadata, ContentTypeFlags {
-    val id: ThingId
     val label: String
     val classes: Set<ThingId>
     val shared: Long

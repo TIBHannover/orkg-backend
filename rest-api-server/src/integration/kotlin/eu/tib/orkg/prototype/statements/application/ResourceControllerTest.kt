@@ -405,7 +405,7 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         val subject = service.createResource(label = "parent")
         val `object` = service.createResource(label = "son")
         val predicate = predicateService.createPredicate(label = "related")
-        statementService.create(subject.value, predicate, `object`.value)
+        statementService.create(subject, predicate, `object`)
 
         mockMvc
             .perform(deleteRequest("/api/resources/$subject"))
@@ -443,8 +443,8 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
         val con1 = service.createResource(label = "Connection 1")
         val con2 = service.createResource(label = "Connection 2")
         val predicate = predicateService.createPredicate(label = "Test predicate")
-        statementService.create(con1.value, predicate, resId.value)
-        statementService.create(con2.value, predicate, resId.value)
+        statementService.create(con1, predicate, resId)
+        statementService.create(con2, predicate, resId)
         val id2 = classService.createClass(label = "Class 2")
         service.createResource(classes = setOf(id2.value), label = "Another Resource")
 
@@ -525,21 +525,21 @@ class ResourceControllerTest : RestDocumentationBaseTest() {
             label = "Throw-way template"
         )
         val labelFormat = literalService.create("xx{${throwAwayProperty.id}}xx")
-        statementService.create(template.value, templateLabelPredicate, labelFormat.id.value)
-        statementService.create(template.value, templateClassPredicate, throwAwayClass.value)
+        statementService.create(template, templateLabelPredicate, labelFormat.id)
+        statementService.create(template, templateClassPredicate, throwAwayClass)
         val templateComponent = service.createResource(
             classes = setOf(templateComponentClass.value),
             label = "component 1"
         )
-        statementService.create(template.value, templateComponentPredicate, templateComponent.value)
-        statementService.create(templateComponent.value, templateComponentPropertyPredicate, throwAwayProperty.id.value)
+        statementService.create(template, templateComponentPredicate, templateComponent)
+        statementService.create(templateComponent, templateComponentPropertyPredicate, throwAwayProperty.id)
         // Create resource and type it
         val templatedResource = service.createResource(
             classes = setOf(throwAwayClass.value),
             label = "Fancy resource"
         )
         val someValue = literalService.create(value)
-        statementService.create(templatedResource.value, throwAwayProperty.id, someValue.id.value)
+        statementService.create(templatedResource, throwAwayProperty.id, someValue.id)
         return templatedResource
     }
 

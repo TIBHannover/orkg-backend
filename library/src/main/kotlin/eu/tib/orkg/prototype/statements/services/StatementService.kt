@@ -51,24 +51,24 @@ class StatementService(
     override fun findById(statementId: StatementId): Optional<StatementRepresentation> =
         retrieveAndConvertSingleStatement { statementRepository.findByStatementId(statementId) }
 
-    override fun findAllBySubject(subjectId: String, pagination: Pageable): Page<StatementRepresentation> =
+    override fun findAllBySubject(subjectId: ThingId, pagination: Pageable): Page<StatementRepresentation> =
         retrieveAndConvertPaged { statementRepository.findAllBySubject(subjectId, pagination) }
 
     override fun findAllByPredicate(predicateId: ThingId, pagination: Pageable): Page<StatementRepresentation> =
         retrieveAndConvertPaged { statementRepository.findAllByPredicateId(predicateId, pagination) }
 
-    override fun findAllByObject(objectId: String, pagination: Pageable): Page<StatementRepresentation> =
+    override fun findAllByObject(objectId: ThingId, pagination: Pageable): Page<StatementRepresentation> =
         retrieveAndConvertPaged { statementRepository.findAllByObject(objectId, pagination) }
 
     override fun findAllBySubjectAndPredicate(
-        subjectId: String,
+        subjectId: ThingId,
         predicateId: ThingId,
         pagination: Pageable
     ): Page<StatementRepresentation> =
         retrieveAndConvertPaged { statementRepository.findAllBySubjectAndPredicate(subjectId, predicateId, pagination) }
 
     override fun findAllByObjectAndPredicate(
-        objectId: String,
+        objectId: ThingId,
         predicateId: ThingId,
         pagination: Pageable
     ): Page<StatementRepresentation> =
@@ -77,14 +77,14 @@ class StatementService(
     @Transactional(readOnly = true)
     override fun exists(id: StatementId): Boolean = statementRepository.exists(id)
 
-    override fun create(subject: String, predicate: ThingId, `object`: String): StatementRepresentation =
+    override fun create(subject: ThingId, predicate: ThingId, `object`: ThingId): StatementRepresentation =
         create(ContributorId.createUnknownContributor(), subject, predicate, `object`)
 
     override fun create(
         userId: ContributorId,
-        subject: String,
+        subject: ThingId,
         predicate: ThingId,
-        `object`: String
+        `object`: ThingId
     ): StatementRepresentation {
         val foundSubject = thingRepository.findByThingId(subject)
             .orElseThrow { StatementSubjectNotFound(subject) }
@@ -108,7 +108,7 @@ class StatementService(
         return findById(newStatement.id!!).get()
     }
 
-    override fun add(userId: ContributorId, subject: String, predicate: ThingId, `object`: String) {
+    override fun add(userId: ContributorId, subject: ThingId, predicate: ThingId, `object`: ThingId) {
         // This method mostly exists for performance reasons. We just create the statement but do not return anything.
         // That saves the extra calls to the database to retrieve the statement again, even if it may not be needed.
 
@@ -169,7 +169,7 @@ class StatementService(
         return findById(found.id!!).get()
     }
 
-    override fun countStatements(paperId: String): Long = statementRepository.countByIdRecursive(paperId)
+    override fun countStatements(paperId: ThingId): Long = statementRepository.countByIdRecursive(paperId)
 
     override fun findAllByPredicateAndLabel(
         predicateId: ThingId,
@@ -194,7 +194,7 @@ class StatementService(
         }
 
     override fun fetchAsBundle(
-        thingId: String,
+        thingId: ThingId,
         configuration: BundleConfiguration,
         includeFirst: Boolean
     ): Bundle {
@@ -216,7 +216,7 @@ class StatementService(
      * @return returns a Bundle object
      */
     private fun createBundle(
-        thingId: String,
+        thingId: ThingId,
         configuration: BundleConfiguration
     ): Bundle = Bundle(
         thingId, retrieveAndConvertIterable {
@@ -234,7 +234,7 @@ class StatementService(
      * @return returns a Bundle object (addition of normal bundle and first level bundle)
      */
     private fun createBundleFirstIncluded(
-        thingId: String,
+        thingId: ThingId,
         configuration: BundleConfiguration
     ): Bundle = createBundle(thingId, configuration) + Bundle(
         thingId, retrieveAndConvertIterable {

@@ -9,11 +9,11 @@ data class StatementEditRequest(
     val statementId: StatementId?,
 
     @JsonProperty("subject_id")
-    val subjectId: String?,
+    val subjectId: ThingId?,
 
     @JsonProperty("predicate_id")
     val predicateId: ThingId?,
 
     @JsonProperty("object_id")
-    val objectId: String?
+    val objectId: ThingId?
 )

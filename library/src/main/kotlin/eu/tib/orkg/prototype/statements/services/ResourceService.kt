@@ -42,8 +42,8 @@ import org.springframework.transaction.annotation.Transactional
 
 typealias FormattedLabels = Map<ThingId, FormattedLabel?>
 
-private const val PAPER_CLASS = "Paper"
-private const val COMPARISON_CLASS = "Comparison"
+private val paperClass = ThingId("Paper")
+private val comparisonClass = ThingId("Comparison")
 
 @Service
 @Transactional
@@ -149,17 +149,17 @@ class ResourceService(
         retrieveAndConvertPaged { repository.findAllByLabelMatchesRegex(part.toSearchString(), pageable) }
 
     override fun findAllByClass(pageable: Pageable, id: ThingId): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged { repository.findAllByClass(id.toString(), pageable) }
+        retrieveAndConvertPaged { repository.findAllByClass(id, pageable) }
 
     override fun findAllByClassAndCreatedBy(
         pageable: Pageable,
         id: ThingId,
         createdBy: ContributorId
     ): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged { repository.findAllByClassAndCreatedBy(id.toString(), createdBy, pageable) }
+        retrieveAndConvertPaged { repository.findAllByClassAndCreatedBy(id, createdBy, pageable) }
 
     override fun findAllByClassAndLabel(pageable: Pageable, id: ThingId, label: String): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged { repository.findAllByClassAndLabel(id.toString(), label, pageable) }
+        retrieveAndConvertPaged { repository.findAllByClassAndLabel(id, label, pageable) }
 
     override fun findAllByClassAndLabelAndCreatedBy(
         pageable: Pageable,
@@ -169,7 +169,7 @@ class ResourceService(
     ): Page<ResourceRepresentation> =
         retrieveAndConvertPaged {
             repository.findAllByClassAndLabelAndCreatedBy(
-                id.toString(),
+                id,
                 label,
                 createdBy,
                 pageable
@@ -183,7 +183,7 @@ class ResourceService(
     ): Page<ResourceRepresentation> =
         retrieveAndConvertPaged {
             repository.findAllByClassAndLabelMatchesRegex(
-                id.toString(),
+                id,
                 part.toSearchString(),
                 pageable
             )
@@ -197,7 +197,7 @@ class ResourceService(
     ): Page<ResourceRepresentation> =
         retrieveAndConvertPaged {
             repository.findAllByClassAndLabelMatchesRegexAndCreatedBy(
-                id.toString(),
+                id,
                 part.toSearchString(),
                 createdBy,
                 pageable
@@ -277,17 +277,17 @@ class ResourceService(
         retrieveAndConvertPaged { repository.findAllByUnlistedIsFalse(pageable) }
 
     override fun findPapersByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation> =
-        retrieveAndConvertIterable { repository.findByClassAndObservatoryId(PAPER_CLASS, id) }
+        retrieveAndConvertIterable { repository.findByClassAndObservatoryId(paperClass, id) }
 
     override fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation> =
-        retrieveAndConvertIterable { repository.findByClassAndObservatoryId(COMPARISON_CLASS, id) }
+        retrieveAndConvertIterable { repository.findByClassAndObservatoryId(comparisonClass, id) }
 
     override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation> =
         retrieveAndConvertIterable { statementRepository.findProblemsByObservatoryId(id) }
 
     override fun findResourcesByObservatoryIdAndClass(
         id: ObservatoryId,
-        classes: List<String>,
+        classes: List<ThingId>,
         featured: Boolean?,
         unlisted: Boolean,
         pageable: Pageable
@@ -347,7 +347,7 @@ class ResourceService(
     override fun removeAll() = repository.deleteAll()
 
     override fun getResourcesByClasses(
-        classes: List<String>,
+        classes: List<ThingId>,
         featured: Boolean?,
         unlisted: Boolean,
         pageable: Pageable

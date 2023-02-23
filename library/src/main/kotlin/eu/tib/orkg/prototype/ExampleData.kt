@@ -69,14 +69,14 @@ class ExampleData(
         //
         // Statements
         //
-        statementService.create(wilesProof.value, addresses, tanimaConj.value)
-        statementService.create(wilesProof.value, addresses, fermatsLastTheorem.value)
-        statementService.create(wilesProof.value, yields, modularityTheorem.value)
+        statementService.create(wilesProof, addresses, tanimaConj)
+        statementService.create(wilesProof, addresses, fermatsLastTheorem)
+        statementService.create(wilesProof, yields, modularityTheorem)
 
-        statementService.create(grubersDesign.value, employs, caseStudies.value)
-        statementService.create(grubersDesign.value, addresses, designOfOntologies.value)
-        statementService.create(grubersDesign.value, addresses, knowledgeEngineering.value)
-        statementService.create(grubersDesign.value, yields, ontoDesignCriteria.value)
+        statementService.create(grubersDesign, employs, caseStudies)
+        statementService.create(grubersDesign, addresses, designOfOntologies)
+        statementService.create(grubersDesign, addresses, knowledgeEngineering)
+        statementService.create(grubersDesign, yields, ontoDesignCriteria)
 
         // Predicates (for DILS)
         predicateService.create("is a")
@@ -141,15 +141,15 @@ class ExampleData(
         for (field in fields) {
             val newField = resourceService.create(CreateResourceRequest(null, field.name,
                 setOf(ThingId("ResearchField")))).id
-            statementService.create(researchField.value, subfieldPredicate, newField.value)
+            statementService.create(researchField, subfieldPredicate, newField)
             for (subfield in field.subfields) {
                 val newSubfield = resourceService.create(CreateResourceRequest(null, subfield.name,
                     setOf(ThingId("ResearchField")))).id
-                statementService.create(newField.value, subfieldPredicate, newSubfield.value)
+                statementService.create(newField, subfieldPredicate, newSubfield)
                 for (subSubfield in subfield.subfields) {
                     val newSubSubfield = resourceService.create(CreateResourceRequest(null, subSubfield.name,
                         setOf(ThingId("ResearchField")))).id
-                    statementService.create(newSubfield.value, subfieldPredicate, newSubSubfield.value)
+                    statementService.create(newSubfield, subfieldPredicate, newSubSubfield)
                 }
             }
         }

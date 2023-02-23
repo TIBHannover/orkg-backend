@@ -51,19 +51,19 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
     override fun findByStatementId(id: StatementId): Optional<GeneralStatement> =
         Optional.ofNullable(entities[id])
 
-    override fun findAllBySubject(subjectId: String, pageable: Pageable) =
-        findAllFilteredAndPaged(pageable) { it.subject.thingId.value == subjectId }
+    override fun findAllBySubject(subjectId: ThingId, pageable: Pageable) =
+        findAllFilteredAndPaged(pageable) { it.subject.thingId == subjectId }
 
     override fun findAllByPredicateId(predicateId: ThingId, pageable: Pageable) =
         findAllFilteredAndPaged(pageable) { it.predicate.id == predicateId }
 
-    override fun findAllByObject(objectId: String, pageable: Pageable) =
-        findAllFilteredAndPaged(pageable) { it.`object`.thingId.value == objectId }
+    override fun findAllByObject(objectId: ThingId, pageable: Pageable) =
+        findAllFilteredAndPaged(pageable) { it.`object`.thingId == objectId }
 
-    override fun countByIdRecursive(id: String): Long {
+    override fun countByIdRecursive(id: ThingId): Long {
         val visited = mutableSetOf<StatementId>()
         val frontier = ArrayDeque(entities.values.filter {
-            it.subject.thingId.value == id
+            it.subject.thingId == id
         })
         var count = 0L
         while (frontier.isNotEmpty()) {
@@ -81,19 +81,19 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
     }
 
     override fun findAllByObjectAndPredicate(
-        objectId: String,
+        objectId: ThingId,
         predicateId: ThingId,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
-        it.predicate.id == predicateId && it.`object`.thingId.value == objectId
+        it.predicate.id == predicateId && it.`object`.thingId == objectId
     }
 
     override fun findAllBySubjectAndPredicate(
-        subjectId: String,
+        subjectId: ThingId,
         predicateId: ThingId,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
-        it.predicate.id == predicateId && it.subject.thingId.value == subjectId
+        it.predicate.id == predicateId && it.subject.thingId == subjectId
     }
 
     // FIXME: rename to findAllByPredicateIdAndLiteralObjectLabel
@@ -116,21 +116,21 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
     }
 
     override fun findAllBySubjects(
-        subjectIds: List<String>,
+        subjectIds: List<ThingId>,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
-        subjectIds.contains(it.subject.thingId.value)
+        it.subject.thingId in subjectIds
     }
 
     override fun findAllByObjects(
-        objectIds: List<String>,
+        objectIds: List<ThingId>,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
-        objectIds.contains(it.`object`.thingId.value)
+        it.`object`.thingId in objectIds
     }
 
-    override fun fetchAsBundle(id: String, configuration: BundleConfiguration): Iterable<GeneralStatement> =
-        entities.values.find { it.subject.thingId.value == id }?.let {
+    override fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration): Iterable<GeneralStatement> =
+        entities.values.find { it.subject.thingId == id }?.let {
             val exclude = mutableSetOf<GeneralStatement>()
             findSubgraph(it.subject.thingId) { statement, level ->
                 if (configuration.minLevel != null && level <= configuration.minLevel!!) {

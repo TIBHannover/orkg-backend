@@ -2,12 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.BundleConfiguration
-import eu.tib.orkg.prototype.statements.api.ClassRepresentation
-import eu.tib.orkg.prototype.statements.api.LiteralRepresentation
-import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
-import eu.tib.orkg.prototype.statements.api.ThingRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.CreateStatement
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
@@ -52,7 +47,7 @@ class StatementController(
 
     @GetMapping("/subject/{subjectId}")
     fun findBySubject(
-        @PathVariable subjectId: String,
+        @PathVariable subjectId: ThingId,
         pageable: Pageable
     ): HttpEntity<Page<StatementRepresentation>> {
         return ok(statementService.findAllBySubject(subjectId, pageable))
@@ -60,7 +55,7 @@ class StatementController(
 
     @GetMapping("/subject/{subjectId}/predicate/{predicateId}")
     fun findBySubjectAndPredicate(
-        @PathVariable subjectId: String,
+        @PathVariable subjectId: ThingId,
         @PathVariable predicateId: ThingId,
         pageable: Pageable
     ): HttpEntity<Iterable<StatementRepresentation>> {
@@ -94,7 +89,7 @@ class StatementController(
 
     @GetMapping("/object/{objectId}")
     fun findByObject(
-        @PathVariable objectId: String,
+        @PathVariable objectId: ThingId,
         pageable: Pageable
     ): Page<StatementRepresentation> {
         return statementService.findAllByObject(objectId, pageable)
@@ -102,7 +97,7 @@ class StatementController(
 
     @GetMapping("/object/{objectId}/predicate/{predicateId}")
     fun findByObjectAndPredicate(
-        @PathVariable objectId: String,
+        @PathVariable objectId: ThingId,
         @PathVariable predicateId: ThingId,
         pageable: Pageable
     ): HttpEntity<Iterable<StatementRepresentation>> {
@@ -138,13 +133,12 @@ class StatementController(
         if (!foundStatement.isPresent)
             return notFound().build()
 
-        val toUpdate = statementEditRequest
-            .copy(
-                statementId = id,
-                subjectId = statementEditRequest.subjectId ?: getIdAsString(foundStatement.get().subject),
-                predicateId = statementEditRequest.predicateId ?: foundStatement.get().predicate.id,
-                objectId = statementEditRequest.objectId ?: getIdAsString(foundStatement.get().`object`)
-            )
+        val toUpdate = statementEditRequest.copy(
+            statementId = id,
+            subjectId = statementEditRequest.subjectId ?: foundStatement.get().subject.id,
+            predicateId = statementEditRequest.predicateId ?: foundStatement.get().predicate.id,
+            objectId = statementEditRequest.objectId ?: foundStatement.get().`object`.id
+        )
 
         return ok(statementService.update(toUpdate))
     }
@@ -165,7 +159,7 @@ class StatementController(
 
     @GetMapping("/{thingId}/bundle")
     fun fetchAsBundle(
-        @PathVariable thingId: String,
+        @PathVariable thingId: ThingId,
         @RequestParam("minLevel", required = false) minLevel: Int?,
         @RequestParam("maxLevel", required = false) maxLevel: Int?,
         @RequestParam("blacklist", required = false, defaultValue = "") blacklist: List<ThingId>,
@@ -184,12 +178,4 @@ class StatementController(
             )
         )
     }
-
-    private fun getIdAsString(thing: ThingRepresentation): String =
-        when (thing) {
-            is ResourceRepresentation -> thing.id.value
-            is LiteralRepresentation -> thing.id.value
-            is PredicateRepresentation -> thing.id.value
-            is ClassRepresentation -> thing.id.value
-        }
 }

@@ -13,23 +13,23 @@ interface RetrieveStatementUseCase {
     // legacy methods:
     fun findAll(pagination: Pageable): Iterable<StatementRepresentation>
     fun findById(statementId: StatementId): Optional<StatementRepresentation>
-    fun findAllBySubject(subjectId: String, pagination: Pageable): Page<StatementRepresentation>
+    fun findAllBySubject(subjectId: ThingId, pagination: Pageable): Page<StatementRepresentation>
     fun findAllByPredicate(predicateId: ThingId, pagination: Pageable): Page<StatementRepresentation>
-    fun findAllByObject(objectId: String, pagination: Pageable): Page<StatementRepresentation>
+    fun findAllByObject(objectId: ThingId, pagination: Pageable): Page<StatementRepresentation>
     fun findAllBySubjectAndPredicate(
-        subjectId: String,
+        subjectId: ThingId,
         predicateId: ThingId,
         pagination: Pageable
     ): Iterable<StatementRepresentation>
 
     fun findAllByObjectAndPredicate(
-        objectId: String,
+        objectId: ThingId,
         predicateId: ThingId,
         pagination: Pageable
     ): Iterable<StatementRepresentation>
 
     fun totalNumberOfStatements(): Long
-    fun countStatements(paperId: String): Long
+    fun countStatements(paperId: ThingId): Long
     fun findAllByPredicateAndLabel(
         predicateId: ThingId,
         literal: String,
@@ -43,7 +43,7 @@ interface RetrieveStatementUseCase {
         pagination: Pageable
     ): Iterable<StatementRepresentation>
 
-    fun fetchAsBundle(thingId: String, configuration: BundleConfiguration, includeFirst: Boolean): Bundle
+    fun fetchAsBundle(thingId: ThingId, configuration: BundleConfiguration, includeFirst: Boolean): Bundle
 
     fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount>
 

@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.services
 import eu.tib.orkg.prototype.statements.application.port.`in`.GetBulkStatementsQuery
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -12,23 +13,23 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class BulkStatementService(
     private val statementRepository: StatementRepository,
-) :
-    GetBulkStatementsQuery {
+) : GetBulkStatementsQuery {
+
     override fun getBulkStatementsBySubjects(
-        subjects: List<String>,
+        subjects: List<ThingId>,
         pageable: Pageable
     ): Map<String, Iterable<GeneralStatement>> {
         return statementRepository.findAllBySubjects(subjects, pageable)
             .content // FIXME: Not sure how page information can be passed in such call
-            .groupBy { (it.subject as Resource).id!!.value }
+            .groupBy { (it.subject as Resource).id.value }
     }
 
     override fun getBulkStatementsByObjects(
-        objects: List<String>,
+        objects: List<ThingId>,
         pageable: Pageable
     ): Map<String, Iterable<GeneralStatement>> {
         return statementRepository.findAllByObjects(objects, pageable)
             .content // FIXME: Not sure how page information can be passed in such call
-            .groupBy { (it.`object` as Resource).id!!.value }
+            .groupBy { (it.`object` as Resource).id.value }
     }
 }

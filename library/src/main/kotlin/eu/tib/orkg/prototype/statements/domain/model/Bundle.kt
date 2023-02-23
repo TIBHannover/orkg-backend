@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class Bundle(
     @JsonProperty("root")
-    val rootId: String,
+    val rootId: ThingId,
     @JsonProperty("statements")
     var bundle: MutableList<StatementRepresentation> = mutableListOf()
 ) {

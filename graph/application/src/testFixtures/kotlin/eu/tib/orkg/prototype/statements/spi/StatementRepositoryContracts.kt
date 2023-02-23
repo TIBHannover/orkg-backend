@@ -149,12 +149,12 @@ fun <
             context("recursively by resource id") {
                 it("returns the correct result") {
                     graph.forEach(saveStatement)
-                    val actual = repository.countByIdRecursive(ThingId("R1").value)
+                    val actual = repository.countByIdRecursive(ThingId("R1"))
                     actual shouldBe 6
                 }
                 it("returns zero when the resource is missing in the graph") {
                     graph.forEach(saveStatement)
-                    val actual = repository.countByIdRecursive("missing")
+                    val actual = repository.countByIdRecursive(ThingId("missing"))
                     actual shouldBe 0
                 }
             }
@@ -242,7 +242,7 @@ fun <
             val expected = statements.take(expectedCount)
 
             val result = repository.findAllBySubject(
-                subject.id.toString(),
+                subject.id,
                 PageRequest.of(0, 5)
             )
 
@@ -312,7 +312,7 @@ fun <
             val expected = statements.take(expectedCount)
 
             val result = repository.findAllByObject(
-                `object`.id.toString(),
+                `object`.id,
                 PageRequest.of(0, 5)
             )
 
@@ -349,7 +349,7 @@ fun <
             val expected = statements.take(expectedCount)
 
             val result = repository.findAllByObjectAndPredicate(
-                `object`.id.toString(),
+                `object`.id,
                 predicate.id,
                 PageRequest.of(0, 5)
             )
@@ -387,7 +387,7 @@ fun <
             val expected = statements.take(expectedCount)
 
             val result = repository.findAllBySubjectAndPredicate(
-                subject.id.toString(),
+                subject.id,
                 predicate.id,
                 PageRequest.of(0, 5)
             )
@@ -519,7 +519,7 @@ fun <
                 statements[it] = statements[it].copy(
                     subject = subject
                 )
-                subject.id.value
+                subject.id
             }
             statements.forEach(saveStatement)
             val expected = statements.take(expectedCount)
@@ -553,7 +553,7 @@ fun <
                 statements[it] = statements[it].copy(`object` = `object`)
                 if (it == 1)
                     statements[it + 1] = statements[it + 1].copy(`object` = `object`)
-                id.value
+                id
             }
             statements.forEach(saveStatement)
             val expected = statements.take(expectedCount)
@@ -587,7 +587,7 @@ fun <
                 saveStatement(statement1)
                 saveStatement(statement2)
                 val result = repository.fetchAsBundle(
-                    statement1.subject.thingId.value,
+                    statement1.subject.thingId,
                     BundleConfiguration(
                         minLevel = 1,
                         maxLevel = null,
@@ -609,7 +609,7 @@ fun <
                 saveStatement(statement1)
                 saveStatement(statement2)
                 val result = repository.fetchAsBundle(
-                    statement1.subject.thingId.value,
+                    statement1.subject.thingId,
                     BundleConfiguration(
                         minLevel = null,
                         maxLevel = 1,
@@ -632,7 +632,7 @@ fun <
                 saveStatement(statement1)
                 saveStatement(statement2)
                 val result = repository.fetchAsBundle(
-                    statement1.subject.thingId.value,
+                    statement1.subject.thingId,
                     BundleConfiguration(
                         minLevel = null,
                         maxLevel = null,
@@ -656,7 +656,7 @@ fun <
                 saveStatement(statement1)
                 saveStatement(statement2)
                 val result = repository.fetchAsBundle(
-                    statement1.subject.thingId.value,
+                    statement1.subject.thingId,
                     BundleConfiguration(
                         minLevel = null,
                         maxLevel = null,

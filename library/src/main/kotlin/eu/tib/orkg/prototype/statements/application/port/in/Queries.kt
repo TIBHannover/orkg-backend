@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.application.port.`in`
 
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
@@ -25,11 +26,11 @@ interface GetPapersQuery {
 
 interface GetBulkStatementsQuery {
     fun getBulkStatementsBySubjects(
-        subjects: List<String>,
+        subjects: List<ThingId>,
         pageable: Pageable
     ): Map<String, Iterable<GeneralStatement>>
     fun getBulkStatementsByObjects(
-        objects: List<String>,
+        objects: List<ThingId>,
         pageable: Pageable
     ): Map<String, Iterable<GeneralStatement>>
 }

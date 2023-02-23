@@ -103,7 +103,7 @@ class ObservatoryController(
     @GetMapping("{id}/class")
     fun findProblemsByObservatoryId(
         @PathVariable id: ObservatoryId,
-        @RequestParam(value = "classes") classes: List<String>,
+        @RequestParam(value = "classes") classes: List<ThingId>,
         @Nullable @RequestParam("featured")
         featured: Boolean?,
         @RequestParam("unlisted", required = false, defaultValue = "false")

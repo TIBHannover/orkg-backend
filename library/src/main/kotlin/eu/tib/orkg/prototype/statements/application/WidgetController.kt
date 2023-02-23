@@ -26,7 +26,7 @@ class WidgetController(
             title != null -> service.findByTitle(title).orElseThrow { ResourceNotFound.withLabel(title) }
             else -> throw MissingParameter.requiresAtLeastOneOf("doi", "title")
         }
-        val totalStatements = statementService.countStatements(resource.id.value)
+        val totalStatements = statementService.countStatements(resource.id)
 
         return WidgetInfo(
             id = resource.id.toString(),

@@ -27,7 +27,7 @@ class SpringDataNeo4jClassAdapter(
     @Caching(
         evict = [
             CacheEvict(key = "#c.id", cacheNames = [CLASS_ID_TO_CLASS_CACHE]),
-            CacheEvict(key = "#c.id.value", cacheNames = [THING_ID_TO_THING_CACHE]),
+            CacheEvict(key = "#c.id", cacheNames = [THING_ID_TO_THING_CACHE]),
         ]
     )
     override fun save(c: Class) {

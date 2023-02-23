@@ -53,7 +53,7 @@ class PaperService(
                 val contributionId = addCompleteContribution(it, request, userUUID)
                 // Create statement between paper and contribution
                 statementService.add(
-                    userId, paperId.value, ObjectService.ContributionPredicate, contributionId.value
+                    userId, paperId, ObjectService.ContributionPredicate, contributionId
                 )
             }
         }
@@ -135,13 +135,13 @@ class PaperService(
         // paper doi
         if (request.paper.hasDOI()) {
             val paperDoi = literalService.create(userId, request.paper.doi!!).id
-            statementService.add(userId, paperId.value, ObjectService.DoiPredicate, paperDoi.value)
+            statementService.add(userId, paperId, ObjectService.DoiPredicate, paperDoi)
         }
 
         // paper URL
         if (request.paper.hasUrl()) {
             val paperUrl = literalService.create(userId, request.paper.url!!).id
-            statementService.add(userId, paperId.value, ObjectService.UrlPredicate, paperUrl.value)
+            statementService.add(userId, paperId, ObjectService.UrlPredicate, paperUrl)
         }
 
         // paper authors
@@ -150,15 +150,15 @@ class PaperService(
         // paper publication date
         if (request.paper.hasPublicationMonth()) statementService.add(
             userId,
-            paperId.value,
+            paperId,
             ObjectService.PublicationMonthPredicate,
-            literalService.create(userId, request.paper.publicationMonth.toString()).id.value
+            literalService.create(userId, request.paper.publicationMonth.toString()).id
         )
         if (request.paper.hasPublicationYear()) statementService.add(
             userId,
-            paperId.value,
+            paperId,
             ObjectService.PublicationYearPredicate,
-            literalService.create(userId, request.paper.publicationYear.toString()).id.value
+            literalService.create(userId, request.paper.publicationYear.toString()).id
         )
 
         // paper published At
@@ -169,9 +169,9 @@ class PaperService(
         // paper research field
         statementService.add(
             userId,
-            paperId.value,
+            paperId,
             ObjectService.ResearchFieldPredicate,
-            ThingId(request.paper.researchField).value
+            ThingId(request.paper.researchField)
         )
         return paperObj
     }
@@ -200,7 +200,7 @@ class PaperService(
         }
         // create a statement with the venue resource
         statementService.add(
-            userId, paperId.value, venuePredicate, venueResource.id.value
+            userId, paperId, venuePredicate, venueResource.id
         )
     }
 
@@ -231,16 +231,16 @@ class PaperService(
                         if (foundOrcid != null) {
                             // Link existing ORCID
                             val authorStatement = statementService.findAllByObject(
-                                foundOrcid.id.value, PageRequest.of(
+                                foundOrcid.id, PageRequest.of(
                                     0, 10
                                 ) // TODO: Hide values by using default values for the parameters
                             ).firstOrNull { it.predicate.id == ObjectService.OrcidPredicate }
                                 ?: throw OrphanOrcidValue(orcidValue)
                             statementService.add(
                                 userId,
-                                paperId.value,
+                                paperId,
                                 ObjectService.AuthorPredicate,
-                                (authorStatement.subject as ResourceRepresentation).id.value
+                                (authorStatement.subject as ResourceRepresentation).id
                             )
                         } else {
                             // create resource
@@ -252,26 +252,26 @@ class PaperService(
                                 organizationId
                             )
                             statementService.add(
-                                userId, paperId.value, ObjectService.AuthorPredicate, author.id.value
+                                userId, paperId, ObjectService.AuthorPredicate, author.id
                             )
                             // Create orcid literal
                             val orcid = literalService.create(userId, orcidValue)
                             // Add ORCID id to the new resource
                             statementService.add(
-                                userId, author.id.value, ObjectService.OrcidPredicate, orcid.id.value
+                                userId, author.id, ObjectService.OrcidPredicate, orcid.id
                             )
                         }
                     } else {
                         // create literal and link it
                         statementService.add(
                             userId,
-                            paperId.value,
+                            paperId,
                             ObjectService.AuthorPredicate,
-                            literalService.create(userId, it.label!!).id.value
+                            literalService.create(userId, it.label!!).id
                         )
                     }
                 } else {
-                    statementService.add(userId, paperId.value, ObjectService.AuthorPredicate, it.id!!)
+                    statementService.add(userId, paperId, ObjectService.AuthorPredicate, it.id!!)
                 }
             }
         }

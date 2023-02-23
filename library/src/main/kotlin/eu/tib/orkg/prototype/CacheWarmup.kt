@@ -50,11 +50,11 @@ class CacheWarmup(
     }
 
     private fun warmupHome() {
-        val featuredResearchField = statsService.getFieldsStats().toList().maxByOrNull { it.second }?.first!!
+        val featuredResearchField = ThingId(statsService.getFieldsStats().toList().maxByOrNull { it.second }?.first!!)
         statementService.findAllBySubjectAndPredicate(featuredResearchField, ThingId("P36"), PageRequest.of(0, 9999))
         listOf(true, false).forEach { featured ->
             researchFieldService.getEntitiesBasedOnClassesIncludingSubfields(
-                id = ThingId(featuredResearchField),
+                id = featuredResearchField,
                 classesList = listOf("Comparison"),
                 featured = featured,
                 unlisted = false,
@@ -63,7 +63,7 @@ class CacheWarmup(
                 fetchComparison(it.id)
             }
             researchFieldService.getEntitiesBasedOnClassesIncludingSubfields(
-                id = ThingId(featuredResearchField),
+                id = featuredResearchField,
                 classesList = listOf("Visualization"),
                 featured = featured,
                 unlisted = false,
@@ -72,13 +72,13 @@ class CacheWarmup(
                 fetchVisualization(it.id)
             }
             researchFieldService.getEntitiesBasedOnClassesIncludingSubfields(
-                id = ThingId(featuredResearchField),
+                id = featuredResearchField,
                 classesList = listOf("Paper"),
                 featured = featured,
                 unlisted = false,
                 pageable = PageRequest.of(0, 5)
             ).forEach {
-                statementService.findAllBySubject(it.id.value, PageRequest.of(0, 9999))
+                statementService.findAllBySubject(it.id, PageRequest.of(0, 9999))
             }
         }
     }
@@ -91,7 +91,7 @@ class CacheWarmup(
 
     private fun warmupPaperList() {
         resourceService.findAllByClass(PageRequest.of(0, 25), ThingId("Paper")).forEach {
-            statementService.findAllBySubject(it.id.value, PageRequest.of(0, 9999))
+            statementService.findAllBySubject(it.id, PageRequest.of(0, 9999))
         }
     }
 
@@ -114,24 +114,24 @@ class CacheWarmup(
     }
 
     private fun fetchComparison(id: ThingId) {
-        statementService.findAllBySubject(id.value, PageRequest.of(0, 9999)).forEach {
+        statementService.findAllBySubject(id, PageRequest.of(0, 9999)).forEach {
             val `object` = it.`object`
             if (`object` is ResourceRepresentation && (ThingId("ComparisonRelatedFigure") in `object`.classes ||
                     it.predicate.id == ThingId("hasPreviousVersion"))
             ) {
-                statementService.findAllBySubject(`object`.id.value, PageRequest.of(0, 9999))
+                statementService.findAllBySubject(`object`.id, PageRequest.of(0, 9999))
             }
         }
     }
 
     private fun fetchVisualization(id: ThingId) {
         statementService.findAllByObjectAndPredicate(
-            objectId = id.value,
+            objectId = id,
             predicateId = ThingId("hasVisualization"),
             pagination = PageRequest.of(0, 5)
         )
         statementService.findAllBySubjectAndPredicate(
-            subjectId = id.value,
+            subjectId = id,
             predicateId = ThingId("hasSubject"),
             pagination = PageRequest.of(0, 5)
         )
@@ -139,13 +139,13 @@ class CacheWarmup(
 
     private fun fetchAssociatedPapers(id: ThingId) {
         statementService.findAllBySubjectAndPredicate(
-            subjectId = id.value,
+            subjectId = id,
             predicateId = ThingId("HasPaper"),
             pagination = PageRequest.of(0, 9999)
         ).forEach { hasPaperStatement ->
             val paper = hasPaperStatement.`object`
             if (paper is ResourceRepresentation) {
-                statementService.findAllBySubject(paper.id.value, PageRequest.of(0, 9999))
+                statementService.findAllBySubject(paper.id, PageRequest.of(0, 9999))
             }
         }
     }

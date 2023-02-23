@@ -79,7 +79,7 @@ interface ResourceRepositoryContractTest {
 
         val result = repository.findAllFeaturedResourcesByObservatoryIDAndClass(
             observatoryId,
-            listOf("ToBeFound"),
+            listOf(ThingId("ToBeFound")),
             featured = false,
             unlisted = false,
             PageRequest.of(0, 10)
@@ -104,7 +104,7 @@ interface ResourceRepositoryContractTest {
 
         val result = repository.findAllFeaturedResourcesByObservatoryIDAndClass(
             observatoryId,
-            listOf("ToBeFound"),
+            listOf(ThingId("ToBeFound")),
             featured = true,
             unlisted = false,
             PageRequest.of(0, 10)
@@ -126,7 +126,7 @@ interface ResourceRepositoryContractTest {
         )
         repository.save(resource)
 
-        val result = repository.findByClassAndObservatoryId("ToBeFound", observatoryId)
+        val result = repository.findByClassAndObservatoryId(ThingId("ToBeFound"), observatoryId)
         result.count() shouldBe 1
         result.first().id shouldBe ThingId("R1234")
     }
@@ -144,7 +144,7 @@ interface ResourceRepositoryContractTest {
         )
         repository.save(resource)
 
-        val result = repository.findByClassAndObservatoryId("ToBeFound", observatoryId)
+        val result = repository.findByClassAndObservatoryId(ThingId("ToBeFound"), observatoryId)
         result.count() shouldBe 0
     }
 

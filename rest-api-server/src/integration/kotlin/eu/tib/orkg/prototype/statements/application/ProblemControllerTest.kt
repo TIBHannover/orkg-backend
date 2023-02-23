@@ -79,7 +79,7 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
             extractionMethod = ExtractionMethod.MANUAL
         )
 
-        statementService.create(contributor, contribution.value, predicate, problem.value)
+        statementService.create(contributor, contribution, predicate, problem)
 
         mockMvc
             .perform(getRequestTo("/api/problems/$problem/users?size=4"))

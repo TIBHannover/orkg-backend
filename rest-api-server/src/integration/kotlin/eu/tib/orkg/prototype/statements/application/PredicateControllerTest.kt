@@ -220,7 +220,7 @@ class PredicateControllerTest : RestDocumentationBaseTest() {
         val subject = resourceService.createResource(label = "subject")
         val `object` = resourceService.createResource(label = "child")
         val predicate = service.createPredicate(label = "related")
-        statementService.create(subject.value, predicate, `object`.value)
+        statementService.create(subject, predicate, `object`)
 
         mockMvc
             .perform(deleteRequest("/api/predicates/$predicate"))

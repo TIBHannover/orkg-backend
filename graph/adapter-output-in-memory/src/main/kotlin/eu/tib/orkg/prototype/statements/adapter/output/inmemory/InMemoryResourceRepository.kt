@@ -55,63 +55,51 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
     override fun findAllByLabelContaining(part: String, pageable: Pageable) =
         findAllFilteredAndPaged(pageable) { it.label.contains(part) }
 
-    override fun findAllByClass(`class`: String, pageable: Pageable): Page<Resource> {
-        val classId = ThingId(`class`)
-        return findAllFilteredAndPaged(pageable) { it.classes.contains(classId) }
-    }
+    override fun findAllByClass(`class`: ThingId, pageable: Pageable): Page<Resource> =
+        findAllFilteredAndPaged(pageable) { it.classes.contains(`class`) }
 
     override fun findAllByClassAndCreatedBy(
-        `class`: String,
+        `class`: ThingId,
         createdBy: ContributorId,
         pageable: Pageable
-    ): Page<Resource> {
-        val classId = ThingId(`class`)
-        return findAllFilteredAndPaged(pageable) {
-            it.createdBy == createdBy && it.classes.contains(classId)
-        }
+    ): Page<Resource> = findAllFilteredAndPaged(pageable) {
+        it.createdBy == createdBy && it.classes.contains(`class`)
     }
 
-    override fun findAllByClassAndLabel(`class`: String, label: String, pageable: Pageable): Page<Resource> {
-        val classId = ThingId(`class`)
-        return findAllFilteredAndPaged(pageable) {
-            it.label == label && it.classes.contains(classId)
+    override fun findAllByClassAndLabel(`class`: ThingId, label: String, pageable: Pageable): Page<Resource> =
+        findAllFilteredAndPaged(pageable) {
+            it.label == label && it.classes.contains(`class`)
         }
-    }
 
     override fun findAllByClassAndLabelAndCreatedBy(
-        `class`: String,
+        `class`: ThingId,
         label: String,
         createdBy: ContributorId,
         pageable: Pageable
-    ): Page<Resource> {
-        val classId = ThingId(`class`)
-        return findAllFilteredAndPaged(pageable) {
-            it.createdBy == createdBy && it.label == label && it.classes.contains(classId)
-        }
+    ): Page<Resource> = findAllFilteredAndPaged(pageable) {
+        it.createdBy == createdBy && it.label == label && it.classes.contains(`class`)
     }
 
     override fun findAllByClassAndLabelMatchesRegex(
-        `class`: String,
+        `class`: ThingId,
         label: String,
         pageable: Pageable
     ): Page<Resource> {
-        val classId = ThingId(`class`)
         val regex = Regex(label)
         return findAllFilteredAndPaged(pageable) {
-            it.label.matches(regex) && it.classes.contains(classId)
+            it.label.matches(regex) && it.classes.contains(`class`)
         }
     }
 
     override fun findAllByClassAndLabelMatchesRegexAndCreatedBy(
-        `class`: String,
+        `class`: ThingId,
         label: String,
         createdBy: ContributorId,
         pageable: Pageable
     ): Page<Resource> {
-        val classId = ThingId(`class`)
         val regex = Regex(label)
         return findAllFilteredAndPaged(pageable) {
-            it.label.matches(regex) && it.classes.contains(classId) && it.createdBy == createdBy
+            it.label.matches(regex) && it.classes.contains(`class`) && it.createdBy == createdBy
         }
     }
 
@@ -155,10 +143,8 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
         Optional.ofNullable(entities.values.firstOrNull { it.label == label })
 
     // TODO: rename to findAllByClassAndObservatoryId
-    override fun findByClassAndObservatoryId(`class`: String, id: ObservatoryId): Iterable<Resource> {
-        val classId = ThingId(`class`)
-        return entities.values.filter { classId in it.classes && it.observatoryId == id }
-    }
+    override fun findByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId): Iterable<Resource> =
+        entities.values.filter { `class` in it.classes && it.observatoryId == id }
 
     // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
     override fun findAllByVerifiedIsTrue(pageable: Pageable) =
@@ -244,47 +230,41 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
 
     // TODO: Check if usage is correct because name is findAllFeaturedResourcesByClass and not findAllUnlistedResourcesByClass
     override fun findAllFeaturedResourcesByClass(
-        classes: List<String>,
+        classes: List<ThingId>,
         unlisted: Boolean,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
-        it.unlisted == unlisted && it.classes.any { id ->
-            id.value in classes
-        }
+        it.unlisted == unlisted && it.classes.any { id -> id in classes }
     }
 
     override fun findAllFeaturedResourcesByClass(
-        classes: List<String>,
+        classes: List<ThingId>,
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
-        it.unlisted == unlisted  && it.featured == featured && it.classes.any { id ->
-            id.value in classes
-        }
+        it.unlisted == unlisted  && it.featured == featured && it.classes.any { id -> id in classes }
     }
 
     override fun findAllFeaturedResourcesByObservatoryIDAndClass(
         id: ObservatoryId,
-        classes: List<String>,
+        classes: List<ThingId>,
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
         it.unlisted == unlisted && it.featured == featured && it.observatoryId == id && it.classes.any { id ->
-            id.value in classes
+            id in classes
         }
     }
 
     override fun findAllResourcesByObservatoryIDAndClass(
         id: ObservatoryId,
-        classes: List<String>,
+        classes: List<ThingId>,
         unlisted: Boolean,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
-        it.unlisted == unlisted && it.observatoryId == id && it.classes.any { id ->
-            id.value in classes
-        }
+        it.unlisted == unlisted && it.observatoryId == id && it.classes.any { id -> id in classes }
     }
 
     override fun findAllContributorIds(pageable: Pageable) =

@@ -92,21 +92,21 @@ class ResearchFieldControllerTest : RestDocumentationBaseTest() {
         )
         // Link Contribution -> Problem
         statementService.create(
-            contributionResource.value,
+            contributionResource,
             ThingId("P32"), // has research problem
-            problemResource.value
+            problemResource
         )
         // Link Paper -> Contribution
         statementService.create(
-            paperResource.value,
+            paperResource,
             ThingId("P31"), // has contribution
-            contributionResource.value
+            contributionResource
         )
         // Link Paper -> Research Field
         statementService.create(
-            paperResource.value,
+            paperResource,
             ThingId("P30"), // has research field
-            fieldResource.value
+            fieldResource
         )
 
         mockMvc

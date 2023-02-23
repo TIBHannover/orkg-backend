@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.PaperService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -107,7 +108,7 @@ data class Paper(
  * Author class container
  */
 data class Author(
-    val id: String?,
+    val id: ThingId?,
     val label: String?,
     val orcid: String?
 ) {
@@ -122,6 +123,5 @@ data class Author(
      * Check if the author is an existing resource
      * i.e., the id of the author is not null
      */
-    fun hasId() =
-        !id.isNullOrEmpty()
+    fun hasId() = id != null
 }

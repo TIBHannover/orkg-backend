@@ -181,9 +181,9 @@ class SpringDataNeo4jStatementAdapter(
             .one()
     }
 
-    override fun findAllBySubject(subjectId: String, pageable: Pageable): Page<GeneralStatement> =
+    override fun findAllBySubject(subjectId: ThingId, pageable: Pageable): Page<GeneralStatement> =
         findAllFilteredAndPaged(pageable) { subject, _, _ ->
-            val subjectIdLiteral = literalOf<String>(subjectId)
+            val subjectIdLiteral = literalOf<String>(subjectId.value)
             subject.property("resource_id").eq(subjectIdLiteral)
                 .or(subject.property("literal_id").eq(subjectIdLiteral))
                 .or(subject.property("predicate_id").eq(subjectIdLiteral))
@@ -195,19 +195,19 @@ class SpringDataNeo4jStatementAdapter(
             relation.property("predicate_id").eq(literalOf<String>(predicateId.value))
         }
 
-    override fun findAllByObject(objectId: String, pageable: Pageable): Page<GeneralStatement> =
+    override fun findAllByObject(objectId: ThingId, pageable: Pageable): Page<GeneralStatement> =
         findAllFilteredAndPaged(pageable) { _, _, `object` ->
-            val objectIdLiteral = literalOf<String>(objectId)
+            val objectIdLiteral = literalOf<String>(objectId.value)
             `object`.property("resource_id").eq(objectIdLiteral)
                 .or(`object`.property("literal_id").eq(objectIdLiteral))
                 .or(`object`.property("predicate_id").eq(objectIdLiteral))
                 .or(`object`.property("class_id").eq(objectIdLiteral))
         }
 
-    override fun countByIdRecursive(id: String): Long {
+    override fun countByIdRecursive(id: ThingId): Long {
         val subject = node("Thing")
         val `object` = anyNode()
-        val idLiteral = literalOf<String>(id)
+        val idLiteral = literalOf<String>(id.value)
         val query = match(
                 subject.relationshipTo(`object`).unbounded()
             ).where(
@@ -223,12 +223,12 @@ class SpringDataNeo4jStatementAdapter(
     }
 
     override fun findAllByObjectAndPredicate(
-        objectId: String,
+        objectId: ThingId,
         predicateId: ThingId,
         pageable: Pageable
     ): Page<GeneralStatement> =
         findAllFilteredAndPaged(pageable) { _, relation, `object` ->
-            val objectIdLiteral = literalOf<String>(objectId)
+            val objectIdLiteral = literalOf<String>(objectId.value)
             `object`.property("resource_id").eq(objectIdLiteral)
                 .or(`object`.property("literal_id").eq(objectIdLiteral))
                 .or(`object`.property("predicate_id").eq(objectIdLiteral))
@@ -237,12 +237,12 @@ class SpringDataNeo4jStatementAdapter(
         }
 
     override fun findAllBySubjectAndPredicate(
-        subjectId: String,
+        subjectId: ThingId,
         predicateId: ThingId,
         pageable: Pageable
     ): Page<GeneralStatement> =
         findAllFilteredAndPaged(pageable) { subject, relation, _ ->
-            val subjectIdLiteral = literalOf<String>(subjectId)
+            val subjectIdLiteral = literalOf<String>(subjectId.value)
             subject.property("resource_id").eq(subjectIdLiteral)
                 .or(subject.property("literal_id").eq(subjectIdLiteral))
                 .or(subject.property("predicate_id").eq(subjectIdLiteral))
@@ -278,30 +278,30 @@ class SpringDataNeo4jStatementAdapter(
                 .and(subject.property("class_id").eq(literalOf<String>(subjectClass.value)))
         }
 
-    override fun findAllBySubjects(subjectIds: List<String>, pageable: Pageable): Page<GeneralStatement> =
+    override fun findAllBySubjects(subjectIds: List<ThingId>, pageable: Pageable): Page<GeneralStatement> =
         findAllFilteredAndPaged(pageable) { subject, _, _ ->
-            val subjectIdsLiteral = literalOf<List<String>>(subjectIds)
+            val subjectIdsLiteral = literalOf<List<String>>(subjectIds.map { it.value })
             subject.property("resource_id").`in`(subjectIdsLiteral)
                 .or(subject.property("literal_id").`in`(subjectIdsLiteral))
                 .or(subject.property("predicate_id").`in`(subjectIdsLiteral))
                 .or(subject.property("class_id").`in`(subjectIdsLiteral))
         }
 
-    override fun findAllByObjects(objectIds: List<String>, pageable: Pageable): Page<GeneralStatement> =
+    override fun findAllByObjects(objectIds: List<ThingId>, pageable: Pageable): Page<GeneralStatement> =
         findAllFilteredAndPaged(pageable) { _, _, `object` ->
-            val objectIdsLiteral = literalOf<List<String>>(objectIds)
+            val objectIdsLiteral = literalOf<List<String>>(objectIds.map { it.value })
             `object`.property("resource_id").`in`(objectIdsLiteral)
                 .or(`object`.property("literal_id").`in`(objectIdsLiteral))
                 .or(`object`.property("predicate_id").`in`(objectIdsLiteral))
                 .or(`object`.property("class_id").`in`(objectIdsLiteral))
         }
 
-    override fun fetchAsBundle(id: String, configuration: BundleConfiguration): Iterable<GeneralStatement> {
+    override fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration): Iterable<GeneralStatement> {
         val n = name("n")
         val relationships = name("relationships")
         val rel = name("rel")
         val node = node("Thing").named(n)
-        val idLiteral = literalOf<String>(id)
+        val idLiteral = literalOf<String>(id.value)
         val query = match(node)
             .where(
                 node.property("resource_id").eq(idLiteral)

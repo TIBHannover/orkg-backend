@@ -28,18 +28,18 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun deleteByStatementId(id: StatementId)
     fun deleteAll()
     fun findByStatementId(id: StatementId): Optional<GeneralStatement>
-    fun findAllBySubject(subjectId: String, pageable: Pageable): Page<GeneralStatement>
+    fun findAllBySubject(subjectId: ThingId, pageable: Pageable): Page<GeneralStatement>
     fun findAllByPredicateId(predicateId: ThingId, pageable: Pageable): Page<GeneralStatement>
-    fun findAllByObject(objectId: String, pageable: Pageable): Page<GeneralStatement>
-    fun countByIdRecursive(id: String): Long
+    fun findAllByObject(objectId: ThingId, pageable: Pageable): Page<GeneralStatement>
+    fun countByIdRecursive(id: ThingId): Long // Subject id
     fun findAllByObjectAndPredicate(
-        objectId: String,
+        objectId: ThingId,
         predicateId: ThingId,
         pageable: Pageable
     ): Page<GeneralStatement>
 
     fun findAllBySubjectAndPredicate(
-        subjectId: String,
+        subjectId: ThingId,
         predicateId: ThingId,
         pageable: Pageable
     ): Page<GeneralStatement>
@@ -57,9 +57,9 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
         pageable: Pageable
     ): Page<GeneralStatement>
 
-    fun findAllBySubjects(subjectIds: List<String>, pageable: Pageable): Page<GeneralStatement>
-    fun findAllByObjects(objectIds: List<String>, pageable: Pageable): Page<GeneralStatement>
-    fun fetchAsBundle(id: String, configuration: BundleConfiguration): Iterable<GeneralStatement>
+    fun findAllBySubjects(subjectIds: List<ThingId>, pageable: Pageable): Page<GeneralStatement>
+    fun findAllByObjects(objectIds: List<ThingId>, pageable: Pageable): Page<GeneralStatement>
+    fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration): Iterable<GeneralStatement>
     fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount>
     fun findDOIByContributionId(id: ThingId): Optional<Literal>
     fun countPredicateUsage(id: ThingId): Long

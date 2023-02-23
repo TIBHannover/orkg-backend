@@ -36,7 +36,7 @@ class SpringDataNeo4jLiteralAdapter(
     @Caching(
         evict = [
             CacheEvict(key = "#literal.id", cacheNames = [LITERAL_ID_TO_LITERAL_CACHE]),
-            CacheEvict(key = "#literal.id.value", cacheNames = [THING_ID_TO_THING_CACHE]),
+            CacheEvict(key = "#literal.id", cacheNames = [THING_ID_TO_THING_CACHE]),
         ]
     )
     override fun save(literal: Literal) {

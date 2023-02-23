@@ -36,9 +36,9 @@ interface StatementProvenanceMetadata {
 data class CreateStatement(
     val id: StatementId? = null,
     @JsonProperty("subject_id")
-    val subjectId: String,
+    val subjectId: ThingId,
     @JsonProperty("predicate_id")
     val predicateId: ThingId,
     @JsonProperty("object_id")
-    val objectId: String
+    val objectId: ThingId
 )

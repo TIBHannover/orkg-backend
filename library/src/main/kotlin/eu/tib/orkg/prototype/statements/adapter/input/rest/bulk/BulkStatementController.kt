@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.statements.adapter.input.rest.bulk
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.StatementEditRequest
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -27,24 +26,22 @@ class BulkStatementController(
 ) {
     @GetMapping("/subjects")
     fun findBySubjects(
-        @RequestParam("ids") resourceIds: List<ResourceId>,
+        @RequestParam("ids") resourceIds: List<ThingId>,
         pageable: Pageable
     ): ResponseEntity<List<BulkGetStatementsResponse>> {
         return ok(
-                resourceIds.map {
-                        BulkGetStatementsResponse(it.value,
-                            statementService.findAllBySubject(it.value, pageable)
-                        )
-                }
+            resourceIds.map {
+                BulkGetStatementsResponse(it, statementService.findAllBySubject(it, pageable))
+            }
         )
     }
 
     @GetMapping("/objects")
     fun findByObjects(
-        @RequestParam("ids") resourceIds: List<ResourceId>,
+        @RequestParam("ids") resourceIds: List<ThingId>,
         pageable: Pageable
     ): List<BulkGetStatementsResponse> {
-        return resourceIds.map { BulkGetStatementsResponse(it.value, statementService.findAllByObject(it.value, pageable)) }
+        return resourceIds.map { BulkGetStatementsResponse(it, statementService.findAllByObject(it, pageable)) }
 }
     @DeleteMapping("/")
     fun delete(
@@ -72,7 +69,7 @@ class BulkStatementController(
 }
 
 data class BulkGetStatementsResponse(
-    val id: String,
+    val id: ThingId,
     val statements: Page<StatementRepresentation>
 )
 
@@ -84,11 +81,11 @@ data class BulkPutStatementResponse(
 
 data class BulkStatementEditRequest(
     @JsonProperty("subject_id")
-    val subjectId: String? = null,
+    val subjectId: ThingId? = null,
 
     @JsonProperty("predicate_id")
     val predicateId: ThingId? = null,
 
     @JsonProperty("object_id")
-    val objectId: String? = null
+    val objectId: ThingId? = null
 )

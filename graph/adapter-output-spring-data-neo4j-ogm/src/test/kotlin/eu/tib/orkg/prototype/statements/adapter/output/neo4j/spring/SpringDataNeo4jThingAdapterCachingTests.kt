@@ -96,9 +96,9 @@ class SpringDataNeo4jThingAdapterCachingTests {
 
     @Test
     fun `fetching a thing by ID should be cached`() {
-        val thingId = "R1"
-        val resource = createResource().copy(id = ThingId(thingId))
-        every { mock.findByThingId("R1") } returns Optional.of(resource) andThen {
+        val thingId = ThingId("R1")
+        val resource = createResource().copy(id = thingId)
+        every { mock.findByThingId(thingId) } returns Optional.of(resource) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
 
@@ -116,8 +116,8 @@ class SpringDataNeo4jThingAdapterCachingTests {
 
     @Test
     fun `saving a class should evict it from the thing-id cache`() {
-        val thingId = "R1"
-        val `class` = createClass().copy(id = ThingId(thingId))
+        val thingId = ThingId("R1")
+        val `class` = createClass().copy(id = thingId)
         val modified = `class`.copy(label = "new label")
         every { mock.findByThingId(thingId) } returns Optional.of(`class`) andThen Optional.of(modified) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
@@ -125,7 +125,7 @@ class SpringDataNeo4jThingAdapterCachingTests {
         every { classMock.save(modified) } returns Unit
 
         // Obtain class from Thing repository
-        assertThat(adapter.findByThingId("R1").get()).isEqualTo(`class`)
+        assertThat(adapter.findByThingId(thingId).get()).isEqualTo(`class`)
         // Verify the loading happened
         verify(exactly = 1) { mock.findByThingId(thingId) }
 
@@ -142,8 +142,8 @@ class SpringDataNeo4jThingAdapterCachingTests {
 
     @Test
     fun `saving a literal should evict it from the thing-id cache`() {
-        val thingId = "R1"
-        val literal = createLiteral().copy(id = ThingId(thingId))
+        val thingId = ThingId("R1")
+        val literal = createLiteral().copy(id = thingId)
         val modified = literal.copy(label = "new label")
         every { mock.findByThingId(thingId) } returns Optional.of(literal) andThen Optional.of(modified) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
@@ -151,7 +151,7 @@ class SpringDataNeo4jThingAdapterCachingTests {
         every { literalMock.save(modified) } returns Unit
 
         // Obtain literal from Thing repository
-        assertThat(adapter.findByThingId("R1").get()).isEqualTo(literal)
+        assertThat(adapter.findByThingId(thingId).get()).isEqualTo(literal)
         // Verify the loading happened
         verify(exactly = 1) { mock.findByThingId(thingId) }
 
@@ -168,8 +168,8 @@ class SpringDataNeo4jThingAdapterCachingTests {
 
     @Test
     fun `saving a predicate should evict it from the thing-id cache`() {
-        val thingId = "R1"
-        val predicate = createPredicate().copy(id = ThingId(thingId))
+        val thingId = ThingId("R1")
+        val predicate = createPredicate().copy(id = thingId)
         val modified = predicate.copy(label = "new label")
         every { mock.findByThingId(thingId) } returns Optional.of(predicate) andThen Optional.of(modified) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
@@ -177,7 +177,7 @@ class SpringDataNeo4jThingAdapterCachingTests {
         every { predicateMock.save(modified) } returns Unit
 
         // Obtain predicate from Thing repository
-        assertThat(adapter.findByThingId("R1").get()).isEqualTo(predicate)
+        assertThat(adapter.findByThingId(thingId).get()).isEqualTo(predicate)
         // Verify the loading happened
         verify(exactly = 1) { mock.findByThingId(thingId) }
 
@@ -194,8 +194,8 @@ class SpringDataNeo4jThingAdapterCachingTests {
 
     @Test
     fun `saving a resource should evict it from the thing-id cache`() {
-        val thingId = "R1"
-        val resource = createResource().copy(id = ThingId(thingId))
+        val thingId = ThingId("R1")
+        val resource = createResource().copy(id = thingId)
         val modified = resource.copy(label = "new label")
         every { mock.findByThingId(thingId) } returns Optional.of(resource) andThen Optional.of(modified) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
@@ -203,7 +203,7 @@ class SpringDataNeo4jThingAdapterCachingTests {
         every { resourceMock.save(modified) } returns Unit
 
         // Obtain resource from Thing repository
-        assertThat(adapter.findByThingId("R1").get()).isEqualTo(resource)
+        assertThat(adapter.findByThingId(thingId).get()).isEqualTo(resource)
         // Verify the loading happened
         verify(exactly = 1) { mock.findByThingId(thingId) }
 
@@ -221,8 +221,8 @@ class SpringDataNeo4jThingAdapterCachingTests {
 
     @Test
     fun `deleting a predicate should evict it from the thing cache`() {
-        val thingId = "R1"
-        val predicate = createPredicate().copy(id = ThingId(thingId))
+        val thingId = ThingId("R1")
+        val predicate = createPredicate().copy(id = thingId)
         every { mock.findByThingId(thingId) } returns Optional.of(predicate) andThen Optional.of(predicate) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
@@ -250,8 +250,8 @@ class SpringDataNeo4jThingAdapterCachingTests {
 
     @Test
     fun `deleting a resource should evict it from the thing cache`() {
-        val thingId = "R1"
-        val resource = createResource().copy(id = ThingId(thingId))
+        val thingId = ThingId("R1")
+        val resource = createResource().copy(id = thingId)
         every { mock.findByThingId(thingId) } returns Optional.of(resource) andThen Optional.of(resource) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }

@@ -110,13 +110,13 @@ class URIAlreadyInUse(uri: String) :
 class InvalidClassFilter(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """The class "$id" cannot be included and excluded at the same time.""")
 
-class StatementSubjectNotFound(id: String) :
+class StatementSubjectNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Subject "$id" not found.""")
 
 class StatementPredicateNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Predicate "$id" not found.""")
 
-class StatementObjectNotFound(id: String) :
+class StatementObjectNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Object "$id" not found.""")
 
 class DOIRegistrationError(doi: String) :

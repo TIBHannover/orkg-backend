@@ -8,9 +8,9 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 
 interface CreateStatementUseCase {
     // legacy methods:
-    fun create(subject: String, predicate: ThingId, `object`: String): StatementRepresentation
-    fun create(userId: ContributorId, subject: String, predicate: ThingId, `object`: String): StatementRepresentation
-    fun add(userId: ContributorId, subject: String, predicate: ThingId, `object`: String)
+    fun create(subject: ThingId, predicate: ThingId, `object`: ThingId): StatementRepresentation
+    fun create(userId: ContributorId, subject: ThingId, predicate: ThingId, `object`: ThingId): StatementRepresentation
+    fun add(userId: ContributorId, subject: ThingId, predicate: ThingId, `object`: ThingId)
 }
 
 interface UpdateStatementUseCase {

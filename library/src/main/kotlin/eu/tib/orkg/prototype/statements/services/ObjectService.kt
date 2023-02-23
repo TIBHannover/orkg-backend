@@ -74,7 +74,7 @@ class ObjectService(
         if (request.resource.hasSubsequentStatements()) checkObjectStatements(request.resource.values!!, predicates)
         if (request.resource.isTyped()) request.resource.classes!!.forEach { checkIfClassExists(it) }
 
-        val tempResources: HashMap<String, String> = HashMap()
+        val tempResources: HashMap<String, ThingId> = HashMap()
 
         // Create the resource
         val resourceId = existingThingId
@@ -138,7 +138,7 @@ class ObjectService(
     fun goThroughStatementsRecursively(
         subject: ThingId,
         data: HashMap<String, List<ObjectStatement>>,
-        tempResources: HashMap<String, String>,
+        tempResources: HashMap<String, ThingId>,
         predicates: HashMap<String, ThingId>,
         resourceQueue: Queue<TempResource>,
         userId: ContributorId,
@@ -158,7 +158,7 @@ class ObjectService(
                                     // Update existing resources with pre-defined classes
                                     typeResourceBasedOnPredicate(predicateId, jsonObject)
                                 }
-                                statementService.add(userId, subject.value, predicateId!!, jsonObject.`@id`!!)
+                                statementService.add(userId, subject, predicateId!!, ThingId(jsonObject.`@id`!!))
                             }
                             jsonObject.isTempResource() -> {
                                 if (!tempResources.containsKey(jsonObject.`@id`)) resourceQueue.add(
@@ -170,7 +170,7 @@ class ObjectService(
                                 )
                                 else {
                                     val tempId = tempResources[jsonObject.`@id`]
-                                    statementService.add(userId, subject.value, predicateId!!, tempId!!)
+                                    statementService.add(userId, subject, predicateId!!, tempId!!)
                                 }
                             }
                         }
@@ -180,9 +180,9 @@ class ObjectService(
                             userId, jsonObject.text!!, jsonObject.datatype ?: "xsd:string"
                         ).id
                         if (jsonObject.`@temp` != null) {
-                            tempResources[jsonObject.`@temp`] = newLiteral.value
+                            tempResources[jsonObject.`@temp`] = newLiteral
                         }
-                        statementService.add(userId, subject.value, predicateId!!, newLiteral.value)
+                        statementService.add(userId, subject, predicateId!!, newLiteral)
                     }
                     jsonObject.isNewResource() -> { // create new resource
                         // Check for classes of resource
@@ -207,9 +207,9 @@ class ObjectService(
                             userId, jsonObject.label!!, observatoryId, extractionMethod, organizationId
                         ).id
                         if (jsonObject.`@temp` != null) {
-                            tempResources[jsonObject.`@temp`] = newResource.value
+                            tempResources[jsonObject.`@temp`] = newResource
                         }
-                        statementService.add(userId, subject.value, predicateId, newResource.value)
+                        statementService.add(userId, subject, predicateId, newResource)
                         if (jsonObject.hasSubsequentStatements()) {
                             goThroughStatementsRecursively(
                                 newResource,
@@ -238,7 +238,7 @@ class ObjectService(
      */
     private fun handleTempResourcesInQueue(
         queue: Queue<TempResource>,
-        tempResources: HashMap<String, String>,
+        tempResources: HashMap<String, ThingId>,
         isRecursive: Boolean,
         userId: ContributorId
     ) {
@@ -249,7 +249,7 @@ class ObjectService(
             limit--
             if (tempResources.containsKey(temp.`object`)) {
                 val tempId = tempResources[temp.`object`]
-                statementService.add(userId, temp.subject.value, temp.predicate, tempId!!)
+                statementService.add(userId, temp.subject, temp.predicate, tempId!!)
             } else {
                 queue.add(temp)
             }

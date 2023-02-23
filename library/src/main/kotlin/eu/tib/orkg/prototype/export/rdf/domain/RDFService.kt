@@ -72,7 +72,7 @@ class RDFService(
     override fun rdfModelForResource(id: ThingId): Optional<Model> {
         val resource = resourceRepository.findByResourceId(id).orElse(null) ?: return Optional.empty()
         val statements =
-            statementRepository.findAllBySubject(resource.id.value, PageRequest.of(0, Int.MAX_VALUE)) // FIXME
+            statementRepository.findAllBySubject(resource.id, PageRequest.of(0, Int.MAX_VALUE)) // FIXME
         with(resource) {
             val model = ModelBuilder().apply {
                 setNamespace("r", RdfConstants.RESOURCE_NS)

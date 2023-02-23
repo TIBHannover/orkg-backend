@@ -43,7 +43,7 @@ class SpringDataNeo4jResourceAdapter(
     @Caching(
         evict = [
             CacheEvict(key = "#resource.id", cacheNames = [RESOURCE_ID_TO_RESOURCE_CACHE]),
-            CacheEvict(key = "#resource.id.value", cacheNames = [THING_ID_TO_THING_CACHE]),
+            CacheEvict(key = "#resource.id", cacheNames = [THING_ID_TO_THING_CACHE]),
         ]
     )
     override fun save(resource: Resource) {
@@ -53,7 +53,7 @@ class SpringDataNeo4jResourceAdapter(
     @Caching(
         evict = [
             CacheEvict(key = "#id"),
-            CacheEvict(key = "#id.value", cacheNames = [THING_ID_TO_THING_CACHE]),
+            CacheEvict(key = "#id", cacheNames = [THING_ID_TO_THING_CACHE]),
         ]
     )
     override fun deleteByResourceId(id: ThingId) {
@@ -89,37 +89,37 @@ class SpringDataNeo4jResourceAdapter(
     override fun findAllByLabelContaining(part: String, pageable: Pageable): Page<Resource> =
         neo4jRepository.findAllByLabelContaining(part, pageable).map(Neo4jResource::toResource)
 
-    override fun findAllByClass(`class`: String, pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllByClass(`class`, pageable).map(Neo4jResource::toResource)
+    override fun findAllByClass(`class`: ThingId, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllByClass(`class`.toClassId(), pageable).map(Neo4jResource::toResource)
 
     override fun findAllByClassAndCreatedBy(
-        `class`: String,
+        `class`: ThingId,
         createdBy: ContributorId,
         pageable: Pageable
     ): Page<Resource> =
-        neo4jRepository.findAllByClassAndCreatedBy(`class`, createdBy, pageable).map(Neo4jResource::toResource)
+        neo4jRepository.findAllByClassAndCreatedBy(`class`.toClassId(), createdBy, pageable).map(Neo4jResource::toResource)
 
-    override fun findAllByClassAndLabel(`class`: String, label: String, pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllByClassAndLabel(`class`, label, pageable).map(Neo4jResource::toResource)
+    override fun findAllByClassAndLabel(`class`: ThingId, label: String, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllByClassAndLabel(`class`.toClassId(), label, pageable).map(Neo4jResource::toResource)
 
     override fun findAllByClassAndLabelAndCreatedBy(
-        `class`: String,
+        `class`: ThingId,
         label: String,
         createdBy: ContributorId,
         pageable: Pageable
     ): Page<Resource> =
-        neo4jRepository.findAllByClassAndCreatedBy(`class`, createdBy, pageable).map(Neo4jResource::toResource)
+        neo4jRepository.findAllByClassAndCreatedBy(`class`.toClassId(), createdBy, pageable).map(Neo4jResource::toResource)
 
-    override fun findAllByClassAndLabelMatchesRegex(`class`: String, label: String, pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllByClassAndLabelMatchesRegex(`class`, label, pageable).map(Neo4jResource::toResource)
+    override fun findAllByClassAndLabelMatchesRegex(`class`: ThingId, label: String, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllByClassAndLabelMatchesRegex(`class`.toClassId(), label, pageable).map(Neo4jResource::toResource)
 
     override fun findAllByClassAndLabelMatchesRegexAndCreatedBy(
-        `class`: String,
+        `class`: ThingId,
         label: String,
         createdBy: ContributorId,
         pageable: Pageable
     ): Page<Resource> =
-        neo4jRepository.findAllByClassAndLabelMatchesRegexAndCreatedBy(`class`, label, createdBy, pageable)
+        neo4jRepository.findAllByClassAndLabelMatchesRegexAndCreatedBy(`class`.toClassId(), label, createdBy, pageable)
             .map(Neo4jResource::toResource)
 
     override fun findAllIncludingAndExcludingClasses(
@@ -161,8 +161,8 @@ class SpringDataNeo4jResourceAdapter(
     override fun findByLabel(label: String?): Optional<Resource> =
         neo4jRepository.findByLabel(label).map(Neo4jResource::toResource)
 
-    override fun findByClassAndObservatoryId(`class`: String, id: ObservatoryId): Iterable<Resource> =
-        neo4jRepository.findByClassAndObservatoryId(`class`, id).map(Neo4jResource::toResource)
+    override fun findByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId): Iterable<Resource> =
+        neo4jRepository.findByClassAndObservatoryId(`class`.toClassId(), id).map(Neo4jResource::toResource)
 
     override fun findAllByVerifiedIsTrue(pageable: Pageable): Page<Resource> =
         neo4jRepository.findAllByVerifiedIsTrue(pageable).map(Neo4jResource::toResource)
@@ -204,34 +204,37 @@ class SpringDataNeo4jResourceAdapter(
         neo4jRepository.findAllListedPapers(pageable).map(Neo4jResource::toResource)
 
     override fun findAllFeaturedResourcesByClass(
-        classes: List<String>,
+        classes: List<ThingId>,
         unlisted: Boolean,
         pageable: Pageable
     ): Page<Resource> =
-        neo4jRepository.findAllFeaturedResourcesByClass(classes, unlisted, pageable).map(Neo4jResource::toResource)
+        neo4jRepository.findAllFeaturedResourcesByClass(classes.toClassIds(), unlisted, pageable).map(Neo4jResource::toResource)
 
     override fun findAllFeaturedResourcesByClass(
-        classes: List<String>,
+        classes: List<ThingId>,
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<Resource> = neo4jRepository.findAllFeaturedResourcesByClass(classes, featured, unlisted, pageable)
+    ): Page<Resource> = neo4jRepository.findAllFeaturedResourcesByClass(classes.toClassIds(), featured, unlisted, pageable)
         .map(Neo4jResource::toResource)
 
     override fun findAllFeaturedResourcesByObservatoryIDAndClass(
         id: ObservatoryId,
-        classes: List<String>,
+        classes: List<ThingId>,
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<Resource> = neo4jRepository.findAllFeaturedResourcesByObservatoryIdAndClass(id, classes, featured, unlisted, pageable).map(Neo4jResource::toResource)
+    ): Page<Resource> =
+        neo4jRepository.findAllFeaturedResourcesByObservatoryIdAndClass(id, classes.toClassIds(), featured, unlisted, pageable)
+            .map(Neo4jResource::toResource)
 
     override fun findAllResourcesByObservatoryIDAndClass(
         id: ObservatoryId,
-        classes: List<String>,
+        classes: List<ThingId>,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<Resource> = neo4jRepository.findAllResourcesByObservatoryIdAndClass(id, classes, unlisted, pageable).map(Neo4jResource::toResource)
+    ): Page<Resource> = neo4jRepository.findAllResourcesByObservatoryIdAndClass(id, classes.toClassIds(), unlisted, pageable)
+        .map(Neo4jResource::toResource)
 
     override fun findAllContributorIds(pageable: Pageable) = neo4jRepository.findAllContributorIds(pageable)
 

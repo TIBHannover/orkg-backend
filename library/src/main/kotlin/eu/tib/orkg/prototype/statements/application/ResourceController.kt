@@ -192,7 +192,7 @@ class ResourceController(
 
     @GetMapping("/classes")
     fun getResourcesByClass(
-        @RequestParam(value = "classes") classes: List<String>,
+        @RequestParam(value = "classes") classes: List<ThingId>,
         @Nullable @RequestParam("featured")
         featured: Boolean?,
         @RequestParam("unlisted", required = false, defaultValue = "false")

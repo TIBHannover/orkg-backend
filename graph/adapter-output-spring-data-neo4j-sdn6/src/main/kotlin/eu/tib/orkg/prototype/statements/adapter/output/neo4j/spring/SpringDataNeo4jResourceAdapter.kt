@@ -17,7 +17,6 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.cache.annotation.Caching
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
 
 const val RESOURCE_ID_TO_RESOURCE_CACHE = "resource-id-to-resource"
@@ -27,8 +26,7 @@ const val RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE = "resource-id-to-resource-exists
 @CacheConfig(cacheNames = [RESOURCE_ID_TO_RESOURCE_CACHE, RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE])
 class SpringDataNeo4jResourceAdapter(
     private val neo4jRepository: Neo4jResourceRepository,
-    private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator,
-    private val neo4jClient: Neo4jClient
+    private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator
 ) : ResourceRepository {
     override fun findByIdAndClasses(id: ThingId, classes: Set<ThingId>): Resource? =
         neo4jRepository.findByIdAndClassesContaining(id.toResourceId(), classes.stringify())?.toResource()

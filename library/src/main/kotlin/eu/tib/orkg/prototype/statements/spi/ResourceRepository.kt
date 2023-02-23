@@ -31,7 +31,7 @@ interface ResourceRepository : EntityRepository<Resource, ThingId> {
     fun findAllIncludingAndExcludingClasses(includeClasses: Set<ThingId>, excludeClasses: Set<ThingId>, pageable: Pageable): Page<Resource>
     fun findAllIncludingAndExcludingClassesByLabel(includeClasses: Set<ThingId>, excludeClasses: Set<ThingId>, label: String, pageable: Pageable): Page<Resource>
     fun findAllIncludingAndExcludingClassesByLabelMatchesRegex(includeClasses: Set<ThingId>, excludeClasses: Set<ThingId>, label: String, pageable: Pageable): Page<Resource>
-    fun findByLabel(label: String?): Optional<Resource>
+    fun findByLabel(label: String): Optional<Resource>
     fun findAllByLabel(label: String): Iterable<Resource>
     fun findByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId): Iterable<Resource>
     fun findAllByVerifiedIsTrue(pageable: Pageable): Page<Resource>

@@ -139,7 +139,7 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
     }
 
     // TODO: rename to findPaperByLabel or replace with a generic method with a classes parameter
-    override fun findByLabel(label: String?) =
+    override fun findByLabel(label: String) =
         Optional.ofNullable(entities.values.firstOrNull { it.label == label })
 
     // TODO: rename to findAllByClassAndObservatoryId

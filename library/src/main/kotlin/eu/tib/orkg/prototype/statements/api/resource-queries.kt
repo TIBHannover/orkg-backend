@@ -65,7 +65,7 @@ interface RetrieveResourceUseCase {
     ): Page<ResourceRepresentation>
     fun findByDOI(doi: String): Optional<ResourceRepresentation>
     fun findById(id: ThingId): Optional<ResourceRepresentation>
-    fun findByTitle(title: String?): Optional<ResourceRepresentation>
+    fun findByTitle(title: String): Optional<ResourceRepresentation>
     fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation>
     fun findContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor>
     fun findPapersByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation>

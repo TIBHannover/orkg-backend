@@ -258,7 +258,7 @@ class ResourceService(
     override fun findByDOI(doi: String): Optional<ResourceRepresentation> =
         retrieveAndConvertOptional { statementRepository.findByDOI(doi) }
 
-    override fun findByTitle(title: String?): Optional<ResourceRepresentation> =
+    override fun findByTitle(title: String): Optional<ResourceRepresentation> =
         retrieveAndConvertOptional { repository.findByLabel(title) }
 
     override fun findAllByTitle(title: String?): Iterable<ResourceRepresentation> =

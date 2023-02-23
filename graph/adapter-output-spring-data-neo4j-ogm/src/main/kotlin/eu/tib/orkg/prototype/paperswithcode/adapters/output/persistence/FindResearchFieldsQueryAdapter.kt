@@ -12,5 +12,5 @@ class FindResearchFieldsQueryAdapter(
     private val repository: ResearchFieldRepository,
 ) : FindResearchFieldsQuery {
     override fun withBenchmarks(): List<ResearchField> =
-        repository.findResearchFieldsWithBenchmarks().map { ResearchField(it.id!!.value, it.label) }
+        repository.findResearchFieldsWithBenchmarks().map { ResearchField(it.id.value, it.label) }
 }

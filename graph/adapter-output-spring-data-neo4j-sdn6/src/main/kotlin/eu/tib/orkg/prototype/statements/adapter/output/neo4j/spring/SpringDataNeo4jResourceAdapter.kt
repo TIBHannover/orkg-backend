@@ -160,7 +160,7 @@ class SpringDataNeo4jResourceAdapter(
             pageable
         ).map(Neo4jResource::toResource)
 
-    override fun findByLabel(label: String?): Optional<Resource> =
+    override fun findByLabel(label: String): Optional<Resource> =
         neo4jRepository.findByLabel(label).map(Neo4jResource::toResource)
 
     override fun findByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId): Iterable<Resource> =

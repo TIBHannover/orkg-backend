@@ -1,7 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.inmemory
 
 import eu.tib.orkg.prototype.statements.domain.model.Class
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.toOptional
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
@@ -16,7 +15,7 @@ class InMemoryClassRepository : InMemoryRepository<ThingId, Class>(
         entities[c.id] = c
     }
 
-    override fun findByClassId(id: ThingId?): Optional<Class> = Optional.ofNullable(entities[id!!])
+    override fun findByClassId(id: ThingId): Optional<Class> = Optional.ofNullable(entities[id])
 
     override fun findAllByClassId(id: Iterable<ThingId>, pageable: Pageable) =
         findAllFilteredAndPaged(pageable) { id.contains(it.id) }

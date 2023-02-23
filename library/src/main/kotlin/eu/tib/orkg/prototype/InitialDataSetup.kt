@@ -1,12 +1,13 @@
 package eu.tib.orkg.prototype
 
-import eu.tib.orkg.prototype.configuration.InputInjection
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.io.FileReader
 import java.net.URI
+import javax.validation.constraints.NotBlank
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.ComponentScan
@@ -18,11 +19,14 @@ import org.springframework.stereotype.Component
 @Profile("development", "docker")
 class DataInitializer(
     private val classService: ClassUseCases,
-    private val predicateService: CreatePredicateUseCase,
-    private val config: InputInjection
+    private val predicateService: CreatePredicateUseCase
 ) : ApplicationRunner {
 
     private val logger = LoggerFactory.getLogger(this::class.java.name)
+
+    @Value("\${orkg.init.setup.entities-file}")
+    @NotBlank
+    private var entitiesFile: String? = null
 
     /**
      * Creating new classes and predicates only
@@ -31,9 +35,9 @@ class DataInitializer(
     override fun run(args: ApplicationArguments?) {
         logger.info("Begin setting up initial data...")
 
-        val fileParser =
-            EntityConfigurationParser(FileReader(
-                this::class.java.classLoader.getResource(config.entitiesFile).file))
+        val fileParser = EntityConfigurationParser(
+            FileReader(this::class.java.classLoader.getResource(entitiesFile)!!.file)
+        )
         val mainCommand: CreateMainCommand = fileParser.parseInitialData()
 
         createClasses(mainCommand.classList)

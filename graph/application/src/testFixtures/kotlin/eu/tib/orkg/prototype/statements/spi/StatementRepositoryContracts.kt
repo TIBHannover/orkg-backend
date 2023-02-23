@@ -23,6 +23,7 @@ import io.kotest.matchers.longs.shouldBeGreaterThanOrEqual
 import io.kotest.matchers.maps.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.string.shouldNotMatch
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import org.orkg.statements.testing.createClass
@@ -673,9 +674,14 @@ fun <
         }
     }
 
-    context("requesting a new identity") {
-        it("returns a valid id") {
-            repository.nextIdentity() shouldNotBe null
+    describe("requesting a new identity") {
+        context("returns a valid id") {
+            it("that is not blank") {
+                repository.nextIdentity().value shouldNotMatch """\s+"""
+            }
+            it("that is prefixed with 'S'") {
+                repository.nextIdentity().value[0] shouldBe 'S'
+            }
         }
         it("returns an id that is not yet in the repository") {
             val statement = createStatement(id = repository.nextIdentity())

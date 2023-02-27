@@ -1,7 +1,8 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
-import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
+import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
+import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod.UNKNOWN
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.PaperService
 import org.springframework.http.HttpStatus

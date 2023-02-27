@@ -11,7 +11,7 @@ import eu.tib.orkg.prototype.statements.api.CreateClassUseCase
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
-import eu.tib.orkg.prototype.statements.application.ExtractionMethod
+import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
 import java.util.*

@@ -8,6 +8,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
@@ -201,12 +202,6 @@ class ResourceController(
     ): Page<ResourceRepresentation> {
         return service.getResourcesByClasses(classes, featured, unlisted, pageable)
     }
-}
-
-enum class ExtractionMethod {
-    AUTOMATIC,
-    MANUAL,
-    UNKNOWN
 }
 
 data class CreateResourceRequest(

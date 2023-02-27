@@ -8,6 +8,7 @@ import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
+import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.services.PaperService
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat

@@ -10,8 +10,8 @@ import eu.tib.orkg.prototype.statements.api.ResourceGenerator
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
-import eu.tib.orkg.prototype.statements.application.ExtractionMethod
-import eu.tib.orkg.prototype.statements.application.ExtractionMethod.UNKNOWN
+import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
+import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod.UNKNOWN
 import eu.tib.orkg.prototype.statements.application.InvalidClassCollection
 import eu.tib.orkg.prototype.statements.application.InvalidClassFilter
 import eu.tib.orkg.prototype.statements.application.ResourceCantBeDeleted

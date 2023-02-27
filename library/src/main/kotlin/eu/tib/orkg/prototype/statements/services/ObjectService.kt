@@ -13,7 +13,7 @@ import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.ClassNotFound
 import eu.tib.orkg.prototype.statements.application.CreateObjectRequest
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
-import eu.tib.orkg.prototype.statements.application.ExtractionMethod
+import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.LiteralNotFound
 import eu.tib.orkg.prototype.statements.application.ObjectStatement
 import eu.tib.orkg.prototype.statements.application.PredicateNotFound

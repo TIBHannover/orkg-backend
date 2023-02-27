@@ -12,7 +12,7 @@ import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.CreateObjectRequest
 import eu.tib.orkg.prototype.statements.application.CreatePaperRequest
 import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
-import eu.tib.orkg.prototype.statements.application.ExtractionMethod
+import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.NamedObject
 import eu.tib.orkg.prototype.statements.application.OrcidNotValid
 import eu.tib.orkg.prototype.statements.application.OrphanOrcidValue

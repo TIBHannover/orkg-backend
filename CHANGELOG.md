@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Searching for research fields now works correctly with featured and unlisted flags. (Closes: [#392](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/392))
 ### Added
 - It is now possible to get a list of top authors of a comparison via `/comparisons/{id}/authors`. (Closes: [#440](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/440))
 

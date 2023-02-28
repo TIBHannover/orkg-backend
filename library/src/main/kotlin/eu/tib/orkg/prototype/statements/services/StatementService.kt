@@ -6,7 +6,7 @@ import eu.tib.orkg.prototype.statements.api.BundleConfiguration
 import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.ThingRepresentation
-import eu.tib.orkg.prototype.statements.application.StatementEditRequest
+import eu.tib.orkg.prototype.statements.api.UpdateStatementUseCase
 import eu.tib.orkg.prototype.statements.application.StatementNotFound
 import eu.tib.orkg.prototype.statements.application.StatementObjectNotFound
 import eu.tib.orkg.prototype.statements.application.StatementPredicateNotFound
@@ -141,32 +141,30 @@ class StatementService(
         }
     }
 
-    override fun update(statementEditRequest: StatementEditRequest): StatementRepresentation {
-        var found = statementRepository.findByStatementId(statementEditRequest.statementId!!)
-            .orElseThrow { StatementNotFound(statementEditRequest.statementId.value) }
+    override fun update(command: UpdateStatementUseCase.UpdateCommand) {
+        var found = statementRepository.findByStatementId(command.statementId)
+            .orElseThrow { StatementNotFound(command.statementId.value) }
 
-        statementEditRequest.subjectId?.let {
+        command.subjectId?.let {
             @Suppress("UNUSED_VARIABLE") // It is unused, because commented out. This method needs a re-write.
-            val foundSubject = thingRepository.findByThingId(statementEditRequest.subjectId)
-                .orElseThrow { StatementSubjectNotFound(statementEditRequest.subjectId) }
+            val foundSubject = thingRepository.findByThingId(command.subjectId)
+                .orElseThrow { StatementSubjectNotFound(command.subjectId) }
             // found = found.copy(subject = foundSubject) // TODO: does this make sense?
         }
 
-        statementEditRequest.predicateId?.let {
-            val foundPredicate = predicateService.findByPredicateId(statementEditRequest.predicateId)
-                .orElseThrow { StatementPredicateNotFound(statementEditRequest.predicateId) }
+        command.predicateId?.let {
+            val foundPredicate = predicateService.findByPredicateId(command.predicateId)
+                .orElseThrow { StatementPredicateNotFound(command.predicateId) }
             found = found.copy(predicate = foundPredicate)
         }
 
-        statementEditRequest.objectId?.let {
-            val foundObject = thingRepository.findByThingId(statementEditRequest.objectId)
-                .orElseThrow { StatementObjectNotFound(statementEditRequest.objectId) }
+        command.objectId?.let {
+            val foundObject = thingRepository.findByThingId(command.objectId)
+                .orElseThrow { StatementObjectNotFound(command.objectId) }
             found = found.copy(`object` = foundObject)
         }
 
         statementRepository.save(found)
-
-        return findById(found.id!!).get()
     }
 
     override fun countStatements(paperId: ThingId): Long = statementRepository.countByIdRecursive(paperId)

@@ -1,7 +1,6 @@
 package eu.tib.orkg.prototype.statements.api
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.application.StatementEditRequest
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -14,7 +13,14 @@ interface CreateStatementUseCase {
 }
 
 interface UpdateStatementUseCase {
-    fun update(statementEditRequest: StatementEditRequest): StatementRepresentation
+    fun update(command: UpdateCommand)
+
+    data class UpdateCommand(
+        val statementId: StatementId,
+        val subjectId: ThingId? = null,
+        val predicateId: ThingId? = null,
+        val objectId: ThingId? = null,
+    )
 }
 
 interface DeleteStatementUseCase {

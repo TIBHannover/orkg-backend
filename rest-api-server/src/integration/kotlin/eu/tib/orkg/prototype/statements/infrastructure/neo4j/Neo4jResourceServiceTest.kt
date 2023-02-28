@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.assertj.core.api.Assertions.assertThat
@@ -33,10 +33,11 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
     @Test
     @DisplayName("should create resource from request")
     fun shouldCreateResourceFromRequest() {
-        val resource = service.create(CreateResourceRequest(ThingId("someID"), "Some Concept"))
+        val resource = service.create(
+            CreateResourceUseCase.CreateCommand(id = ThingId("someID"), label = "Some Concept")
+        )
 
-        assertThat(resource.id.toString()).isEqualTo("someID")
-        assertThat(resource.label).isEqualTo("Some Concept")
+        assertThat(resource.value).isEqualTo("someID")
     }
 
     @Test
@@ -187,12 +188,11 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
         val resources = mutableListOf<ResourceRepresentation>()
         repeat(5) {
             resources += service.create(
-                CreateResourceRequest(
-                    null,
-                    "Testing the Darwin's naturalisation hypothesis in invasion biology",
-                    setOf(researchProblemClass)
+                CreateResourceUseCase.CreateCommand(
+                    label = "Testing the Darwin's naturalisation hypothesis in invasion biology",
+                    classes = setOf(researchProblemClass),
                 )
-            )
+            ).let { service.findById(it).get() }
         }
         assertThat(service.findAll(PageRequest.of(0, 10_000)).totalElements).isEqualTo(5)
 

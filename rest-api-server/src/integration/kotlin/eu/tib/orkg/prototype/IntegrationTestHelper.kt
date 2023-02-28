@@ -10,7 +10,6 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.CreateClassUseCase
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
-import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
@@ -61,15 +60,14 @@ fun CreateResourceUseCase.createResource(
     id: String? = null,
     label: String? = null,
     extractionMethod: ExtractionMethod? = null
-): ThingId {
-    val request = CreateResourceRequest(
+): ThingId = this.create(
+    CreateResourceUseCase.CreateCommand(
         id = Optional.ofNullable(id).map(::ThingId).orElse(null),
         label = label ?: "label",
         classes = classes.map(::ThingId).toSet(),
         extractionMethod = extractionMethod ?: ExtractionMethod.UNKNOWN
     )
-    return this.create(request).id
-}
+)
 
 fun CreateResourceUseCase.createResource(
     classes: Set<String> = setOf(),
@@ -79,15 +77,17 @@ fun CreateResourceUseCase.createResource(
     userId: ContributorId = ContributorId.createUnknownContributor(),
     observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
     organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
-): ThingId {
-    val request = CreateResourceRequest(
+): ThingId = this.create(
+    CreateResourceUseCase.CreateCommand(
         id = Optional.ofNullable(id).map(::ThingId).orElse(null),
         label = label ?: "label",
         classes = classes.map(::ThingId).toSet(),
-        extractionMethod = extractionMethod ?: ExtractionMethod.UNKNOWN
+        extractionMethod = extractionMethod ?: ExtractionMethod.UNKNOWN,
+        contributorId = userId,
+        observatoryId = observatoryId,
+        organizationId = organizationId,
     )
-    return this.create(userId, request, observatoryId, request.extractionMethod, organizationId).id
-}
+)
 
 // Users
 

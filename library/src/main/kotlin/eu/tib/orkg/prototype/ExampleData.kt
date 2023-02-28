@@ -4,10 +4,10 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
+import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.CreateClassRequest
-import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.io.InputStream
 import org.springframework.boot.ApplicationArguments
@@ -132,16 +132,25 @@ class ExampleData(
         val inStream: InputStream? = javaClass.classLoader.getResourceAsStream("data/ResearchFields.json")
         val fields = mapper.readValue<List<ResearchField>>(inStream!!)
         for (field in fields) {
-            val newField = resourceService.create(CreateResourceRequest(null, field.name,
-                setOf(ThingId("ResearchField")))).id
+            val newFieldCommand = CreateResourceUseCase.CreateCommand(
+                label = field.name,
+                classes = setOf(ThingId("ResearchField")),
+            )
+            val newField = resourceService.create(newFieldCommand)
             statementService.create(researchField, subfieldPredicate, newField)
             for (subfield in field.subfields) {
-                val newSubfield = resourceService.create(CreateResourceRequest(null, subfield.name,
-                    setOf(ThingId("ResearchField")))).id
+                val newSubFieldCommand = CreateResourceUseCase.CreateCommand(
+                    label = subfield.name,
+                    classes = setOf(ThingId("ResearchField")),
+                )
+                val newSubfield = resourceService.create(newSubFieldCommand)
                 statementService.create(newField, subfieldPredicate, newSubfield)
                 for (subSubfield in subfield.subfields) {
-                    val newSubSubfield = resourceService.create(CreateResourceRequest(null, subSubfield.name,
-                        setOf(ThingId("ResearchField")))).id
+                    val newSubSubFieldCommand = CreateResourceUseCase.CreateCommand(
+                        label = subSubfield.name,
+                        classes = setOf(ThingId("ResearchField")),
+                    )
+                    val newSubSubfield = resourceService.create(newSubSubFieldCommand)
                     statementService.create(newSubfield, subfieldPredicate, newSubSubfield)
                 }
             }

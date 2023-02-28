@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.adapter.input.rest.bulk
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
-import eu.tib.orkg.prototype.statements.application.StatementEditRequest
+import eu.tib.orkg.prototype.statements.api.UpdateStatementUseCase
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -57,13 +57,15 @@ class BulkStatementController(
         @RequestBody(required = true) statementEditRequest: BulkStatementEditRequest
     ): ResponseEntity<Iterable<BulkPutStatementResponse>> {
         return ok(statementsIds.map {
-            val request = StatementEditRequest(
-                statementId = it,
-                subjectId = statementEditRequest.subjectId,
-                predicateId = statementEditRequest.predicateId,
-                objectId = statementEditRequest.objectId,
+            statementService.update(
+                UpdateStatementUseCase.UpdateCommand(
+                    statementId = it,
+                    subjectId = statementEditRequest.subjectId,
+                    predicateId = statementEditRequest.predicateId,
+                    objectId = statementEditRequest.objectId,
+                )
             )
-            BulkPutStatementResponse(it, statementService.update(request))
+            BulkPutStatementResponse(it, statementService.findById(it).get())
         })
     }
 }

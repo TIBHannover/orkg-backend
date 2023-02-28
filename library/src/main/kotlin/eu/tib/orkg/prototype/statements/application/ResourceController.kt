@@ -6,8 +6,10 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.UpdateResourceUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -98,7 +100,18 @@ class ResourceController(
             observatoryId = contributor.get().observatoryId
         }
         val id =
-            service.create(ContributorId(userId), resource, observatoryId, resource.extractionMethod, organizationId).id
+            service.create(
+                CreateResourceUseCase.CreateCommand(
+                    id = resource.id,
+                    label = resource.label,
+                    classes = resource.classes,
+                    extractionMethod = resource.extractionMethod,
+                    contributorId = ContributorId(userId),
+                    observatoryId = observatoryId,
+                    organizationId = organizationId,
+                )
+            )
+
         val location = uriComponentsBuilder
             .path("api/resources/{id}")
             .buildAndExpand(id)
@@ -117,9 +130,14 @@ class ResourceController(
         if (!found.isPresent)
             return notFound().build()
 
-        val updatedRequest = request.copy(id = id)
-
-        return ok(service.update(updatedRequest))
+        service.update(
+            UpdateResourceUseCase.UpdateCommand(
+                id = id,
+                label = request.label,
+                classes = request.classes,
+            )
+        )
+        return ok(service.findById(id).get())
     }
 
     @RequestMapping("{id}/observatory", method = [RequestMethod.POST, RequestMethod.PUT])
@@ -131,7 +149,14 @@ class ResourceController(
         val found = service.findById(id)
         if (!found.isPresent)
             return notFound().build()
-        return ok(service.updatePaperObservatory(request, id))
+        service.update(
+            UpdateResourceUseCase.UpdateCommand(
+                id = id,
+                organizationId = request.organizationId,
+                observatoryId = request.observatoryId,
+            )
+        )
+        return ok(service.findById(id).get())
     }
 
     @GetMapping("{id}/contributors")

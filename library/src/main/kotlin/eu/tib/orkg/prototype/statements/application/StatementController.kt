@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.BundleConfiguration
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
+import eu.tib.orkg.prototype.statements.api.UpdateStatementUseCase
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.CreateStatement
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
@@ -133,14 +134,16 @@ class StatementController(
         if (!foundStatement.isPresent)
             return notFound().build()
 
-        val toUpdate = statementEditRequest.copy(
-            statementId = id,
-            subjectId = statementEditRequest.subjectId ?: foundStatement.get().subject.id,
-            predicateId = statementEditRequest.predicateId ?: foundStatement.get().predicate.id,
-            objectId = statementEditRequest.objectId ?: foundStatement.get().`object`.id
+        statementService.update(
+            UpdateStatementUseCase.UpdateCommand(
+                statementId = id,
+                subjectId = statementEditRequest.subjectId ?: foundStatement.get().subject.id,
+                predicateId = statementEditRequest.predicateId ?: foundStatement.get().predicate.id,
+                objectId = statementEditRequest.objectId ?: foundStatement.get().`object`.id
+            )
         )
 
-        return ok(statementService.update(toUpdate))
+        return ok(statementService.findById(id).get())
     }
 
     @DeleteMapping("/{id}")

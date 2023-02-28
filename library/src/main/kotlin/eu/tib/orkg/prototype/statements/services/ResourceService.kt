@@ -4,20 +4,18 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
+import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.IterableResourcesGenerator
 import eu.tib.orkg.prototype.statements.api.PagedResourcesGenerator
 import eu.tib.orkg.prototype.statements.api.ResourceGenerator
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
+import eu.tib.orkg.prototype.statements.api.UpdateResourceUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
-import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod.UNKNOWN
 import eu.tib.orkg.prototype.statements.application.InvalidClassCollection
 import eu.tib.orkg.prototype.statements.application.InvalidClassFilter
 import eu.tib.orkg.prototype.statements.application.ResourceCantBeDeleted
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
-import eu.tib.orkg.prototype.statements.application.UpdateResourceObservatoryRequest
-import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -61,13 +59,28 @@ class ResourceService(
     @Transactional(readOnly = true)
     override fun exists(id: ThingId): Boolean = repository.exists(id)
 
-    override fun create(label: String): ResourceRepresentation = create(
-        ContributorId.createUnknownContributor(),
-        label,
-        ObservatoryId.createUnknownObservatory(),
-        UNKNOWN,
-        OrganizationId.createUnknownOrganization()
-    )
+    override fun create(command: CreateResourceUseCase.CreateCommand): ThingId {
+        val id = command.id ?: repository.nextIdentity()
+        if (command.classes.isNotEmpty() && !classRepository.existsAll(command.classes)) {
+            throw InvalidClassCollection(command.classes)
+        }
+        val resource = Resource(
+            id = id,
+            label = command.label,
+            classes = command.classes,
+            extractionMethod = command.extractionMethod,
+            createdAt = OffsetDateTime.now(),
+            createdBy = command.contributorId ?: ContributorId.createUnknownContributor(),
+            observatoryId = command.observatoryId ?: ObservatoryId.createUnknownObservatory(),
+            organizationId = command.organizationId ?: OrganizationId.createUnknownOrganization()
+        )
+        repository.save(resource)
+        return id
+    }
+
+    override fun create(label: String): ResourceRepresentation =
+        create(CreateResourceUseCase.CreateCommand(label = label))
+            .let { findById(it).get() }
 
     override fun create(
         userId: ContributorId,
@@ -75,53 +88,17 @@ class ResourceService(
         observatoryId: ObservatoryId,
         extractionMethod: ExtractionMethod,
         organizationId: OrganizationId
-    ): ResourceRepresentation {
-        val resourceId = repository.nextIdentity()
-        val newResource = Resource(
-            label = label,
-            id = resourceId,
-            createdBy = userId,
-            observatoryId = observatoryId,
-            extractionMethod = extractionMethod,
-            organizationId = organizationId,
-            createdAt = OffsetDateTime.now(),
+    ): ResourceRepresentation =
+        create(
+            CreateResourceUseCase.CreateCommand(
+                label = label,
+                contributorId = userId,
+                observatoryId = observatoryId,
+                extractionMethod = extractionMethod,
+                organizationId = organizationId,
+            )
         )
-        repository.save(newResource)
-        return findById(newResource.id).get()
-    }
-
-    override fun create(request: CreateResourceRequest): ResourceRepresentation = create(
-        ContributorId.createUnknownContributor(),
-        request,
-        ObservatoryId.createUnknownObservatory(),
-        UNKNOWN,
-        OrganizationId.createUnknownOrganization()
-    )
-
-    override fun create(
-        userId: ContributorId,
-        request: CreateResourceRequest,
-        observatoryId: ObservatoryId,
-        extractionMethod: ExtractionMethod,
-        organizationId: OrganizationId
-    ): ResourceRepresentation {
-        val id = request.id ?: repository.nextIdentity()
-        if (request.classes.isNotEmpty() && !classRepository.existsAll(request.classes)) {
-            throw InvalidClassCollection(request.classes)
-        }
-        val resource = Resource(
-            label = request.label,
-            id = id,
-            createdBy = userId,
-            observatoryId = observatoryId,
-            extractionMethod = extractionMethod,
-            organizationId = organizationId,
-            createdAt = OffsetDateTime.now(),
-            classes = request.classes
-        )
-        repository.save(resource)
-        return findById(resource.id).get()
-    }
+            .let { findById(it).get() }
 
     override fun findByIdAndClasses(id: ThingId, classes: Set<ThingId>): ResourceRepresentation? =
         retrieveAndConvertNullable { repository.findByIdAndClasses(id, classes) }
@@ -309,30 +286,22 @@ class ResourceService(
     override fun findContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> =
         statementRepository.findContributorsByResourceId(id, pageable)
 
-    override fun update(request: UpdateResourceRequest): ResourceRepresentation {
+    override fun update(command: UpdateResourceUseCase.UpdateCommand) {
         // already checked by service
-        var found = repository.findByResourceId(request.id!!).get()
+        var found = repository.findByResourceId(command.id).get()
 
         // update all the properties
-        if (request.label != null) found = found.copy(label = request.label)
-        if (request.classes != null) {
-            if (request.classes.isNotEmpty() && !classRepository.existsAll(request.classes)) {
-                throw InvalidClassCollection(request.classes)
+        if (command.label != null) found = found.copy(label = command.label)
+        if (command.classes != null) {
+            if (command.classes.isNotEmpty() && !classRepository.existsAll(command.classes)) {
+                throw InvalidClassCollection(command.classes)
             }
-            found = found.copy(classes = request.classes)
+            found = found.copy(classes = command.classes)
         }
+        if (command.observatoryId != null) found = found.copy(observatoryId = command.observatoryId)
+        if (command.organizationId != null) found = found.copy(organizationId = command.organizationId)
+
         repository.save(found)
-
-        return findById(found.id).get()
-    }
-
-    override fun updatePaperObservatory(request: UpdateResourceObservatoryRequest, id: ThingId): ResourceRepresentation {
-        var found = repository.findByResourceId(id).get()
-        found = found.copy(observatoryId = request.observatoryId)
-        found = found.copy(organizationId = request.organizationId)
-        repository.save(found)
-
-        return findById(found.id).get()
     }
 
     override fun delete(id: ThingId) {

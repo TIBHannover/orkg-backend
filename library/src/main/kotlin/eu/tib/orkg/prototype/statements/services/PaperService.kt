@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
@@ -11,11 +12,10 @@ import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.CreateObjectRequest
 import eu.tib.orkg.prototype.statements.application.CreatePaperRequest
-import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
-import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.NamedObject
 import eu.tib.orkg.prototype.statements.application.OrcidNotValid
 import eu.tib.orkg.prototype.statements.application.OrphanOrcidValue
+import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import java.util.*
@@ -124,12 +124,15 @@ class PaperService(
 
         // paper title
         val paperObj = resourceService.create(
-            userId,
-            CreateResourceRequest(null, request.paper.title, setOf(ThingId("Paper"))),
-            observatoryId,
-            request.paper.extractionMethod,
-            organizationId
-        )
+            CreateResourceUseCase.CreateCommand(
+                label = request.paper.title,
+                classes = setOf(ThingId("Paper")),
+                extractionMethod = request.paper.extractionMethod,
+                contributorId = userId,
+                observatoryId = observatoryId,
+                organizationId = organizationId
+            )
+        ).let { resourceService.findById(it).get() }
         val paperId = paperObj.id
 
         // paper doi
@@ -192,11 +195,16 @@ class PaperService(
         // Check if resource exists
         val venueResource = resourceRepository.findByLabel(venue).orElseGet {
             val representation = resourceService.create(
-                userId, CreateResourceRequest(
-                    null, venue, setOf(ObjectService.VenueClass)
-                ), observatoryId, extractionMethod, organizationId
+                CreateResourceUseCase.CreateCommand(
+                    label = venue,
+                    classes = setOf(ObjectService.VenueClass),
+                    extractionMethod = extractionMethod,
+                    contributorId = userId,
+                    observatoryId = observatoryId,
+                    organizationId = organizationId
+                )
             )
-            resourceRepository.findByResourceId(representation.id).get()
+            resourceRepository.findByResourceId(representation).get()
         }
         // create a statement with the venue resource
         statementService.add(
@@ -244,21 +252,24 @@ class PaperService(
                             )
                         } else {
                             // create resource
-                            val author = resourceService.create(
-                                userId,
-                                CreateResourceRequest(null, it.label!!, setOf(ObjectService.AuthorClass)),
-                                observatoryId,
-                                paper.paper.extractionMethod,
-                                organizationId
+                            val authorId = resourceService.create(
+                                CreateResourceUseCase.CreateCommand(
+                                    label = it.label!!,
+                                    classes = setOf(ObjectService.AuthorClass),
+                                    extractionMethod = paper.paper.extractionMethod,
+                                    contributorId = userId,
+                                    observatoryId = observatoryId,
+                                    organizationId = organizationId
+                                )
                             )
                             statementService.add(
-                                userId, paperId, ObjectService.AuthorPredicate, author.id
+                                userId, paperId, ObjectService.AuthorPredicate, authorId
                             )
                             // Create orcid literal
                             val orcid = literalService.create(userId, orcidValue)
                             // Add ORCID id to the new resource
                             statementService.add(
-                                userId, author.id, ObjectService.OrcidPredicate, orcid.id
+                                userId, authorId, ObjectService.OrcidPredicate, orcid.id
                             )
                         }
                     } else {

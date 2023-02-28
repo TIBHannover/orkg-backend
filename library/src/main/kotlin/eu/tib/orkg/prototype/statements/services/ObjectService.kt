@@ -5,21 +5,21 @@ import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
+import eu.tib.orkg.prototype.statements.api.UpdateResourceUseCase
 import eu.tib.orkg.prototype.statements.application.ClassNotFound
 import eu.tib.orkg.prototype.statements.application.CreateObjectRequest
-import eu.tib.orkg.prototype.statements.application.CreateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.LiteralNotFound
 import eu.tib.orkg.prototype.statements.application.ObjectStatement
 import eu.tib.orkg.prototype.statements.application.PredicateNotFound
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.TempResource
-import eu.tib.orkg.prototype.statements.application.UpdateResourceRequest
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.stereotype.Service
@@ -79,12 +79,15 @@ class ObjectService(
         // Create the resource
         val resourceId = existingThingId
             ?: resourceService.create(
-                userId,
-                CreateResourceRequest(null, request.resource.name, request.resource.classes.toThingIds()),
-                observatoryId,
-                request.resource.extractionMethod,
-                organizationId
-            ).id
+                CreateResourceUseCase.CreateCommand(
+                    label = request.resource.name,
+                    classes = request.resource.classes.toThingIds(),
+                    extractionMethod = request.resource.extractionMethod,
+                    contributorId = userId,
+                    observatoryId = observatoryId,
+                    organizationId = organizationId,
+                )
+            )
 
         // Check if the contribution has more statements to add
         if (request.resource.hasSubsequentStatements()) {
@@ -197,12 +200,15 @@ class ObjectService(
                         MAP_PREDICATE_CLASSES[predicateId!!.value]?.let { ThingId(it) }?.let { classes.add(it) }
                         // Create resource
                         val newResource = if (classes.isNotEmpty()) resourceService.create(
-                            userId,
-                            CreateResourceRequest(null, jsonObject.label!!, classes.toSet()),
-                            observatoryId,
-                            extractionMethod,
-                            organizationId
-                        ).id
+                            CreateResourceUseCase.CreateCommand(
+                                label = jsonObject.label!!,
+                                classes = classes.toSet(),
+                                contributorId = userId,
+                                extractionMethod = extractionMethod,
+                                observatoryId = observatoryId,
+                                organizationId = organizationId,
+                            )
+                        )
                         else resourceService.create(
                             userId, jsonObject.label!!, observatoryId, extractionMethod, organizationId
                         ).id
@@ -269,7 +275,7 @@ class ObjectService(
             val res = resourceService.findById(ThingId(resource.`@id`!!)).get()
             val newClasses = res.classes.toMutableSet()
             newClasses.add(it)
-            resourceService.update(UpdateResourceRequest(res.id, null, newClasses))
+            resourceService.update(UpdateResourceUseCase.UpdateCommand(id = res.id, label = null, classes = newClasses))
         }
     }
 

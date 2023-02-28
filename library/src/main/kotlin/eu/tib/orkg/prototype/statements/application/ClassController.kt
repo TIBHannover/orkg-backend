@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.AlreadyInUse
 import eu.tib.orkg.prototype.statements.api.ClassRepresentation
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.CreateClassUseCase
 import eu.tib.orkg.prototype.statements.api.InvalidURI
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
@@ -99,7 +100,14 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
         }
 
         val userId = authenticatedUserId()
-        val id = service.create(ContributorId(userId), `class`).id
+        val id = service.create(
+            CreateClassUseCase.CreateCommand(
+                contributorId = ContributorId(userId),
+                id = `class`.id?.value,
+                label = `class`.label,
+                uri = `class`.uri,
+            )
+        )
         val location = uriComponentsBuilder.path("api/classes/{id}").buildAndExpand(id).toUri()
 
         return created(location).body(service.findById(id).get())

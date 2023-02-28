@@ -3,11 +3,11 @@ package eu.tib.orkg.prototype
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.CreateClassUseCase
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
-import eu.tib.orkg.prototype.statements.application.CreateClassRequest
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.io.InputStream
 import org.springframework.boot.ApplicationArguments
@@ -119,7 +119,7 @@ class ExampleData(
         //
         // Class
         //
-        classService.create(CreateClassRequest(ThingId("Paper"), "Paper", null))
+        classService.create(CreateClassUseCase.CreateCommand(id = "Paper", label = "Paper", uri = null))
 
         //
         // Resource

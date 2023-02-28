@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import dev.forkhandles.values.ofOrNull
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.UpdatePredicateUseCase.ReplaceCommand
@@ -55,7 +56,13 @@ class PredicateController(private val service: PredicateUseCases) : BaseControll
         Label.ofOrNull(predicate.label) ?: throw InvalidLabel()
         if (predicate.id != null && service.findById(predicate.id).isPresent) throw PredicateAlreadyExists(predicate.id)
         val userId = authenticatedUserId()
-        val id = service.create(ContributorId(userId), predicate).id
+        val id = service.create(
+            CreatePredicateUseCase.CreateCommand(
+                contributorId = ContributorId(userId),
+                id = predicate.id?.value,
+                label = predicate.label,
+            )
+        )
 
         val location = uriComponentsBuilder.path("api/predicates/{id}").buildAndExpand(id).toUri()
 

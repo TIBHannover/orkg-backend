@@ -6,7 +6,6 @@ import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.UpdatePredicateUseCase
-import eu.tib.orkg.prototype.statements.application.CreatePredicateRequest
 import eu.tib.orkg.prototype.statements.application.PredicateCantBeDeleted
 import eu.tib.orkg.prototype.statements.application.PredicateNotFound
 import eu.tib.orkg.prototype.statements.domain.model.Clock
@@ -62,27 +61,6 @@ class PredicateService(
         val newThingId = create(
             CreatePredicateUseCase.CreateCommand(
                 label = label,
-                contributorId = userId
-            )
-        )
-        return repository.findByPredicateId(newThingId).map(Predicate::toPredicateRepresentation).get()
-    }
-
-    override fun create(request: CreatePredicateRequest): PredicateRepresentation {
-        val newThingId = create(
-            CreatePredicateUseCase.CreateCommand(
-                label = request.label,
-                id = request.id?.value
-            )
-        )
-        return repository.findByPredicateId(newThingId).map(Predicate::toPredicateRepresentation).get()
-    }
-
-    override fun create(userId: ContributorId, request: CreatePredicateRequest): PredicateRepresentation {
-        val newThingId = create(
-            CreatePredicateUseCase.CreateCommand(
-                label = request.label,
-                id = request.id?.value,
                 contributorId = userId
             )
         )

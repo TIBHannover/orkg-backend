@@ -1,8 +1,5 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
-import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
-import eu.tib.orkg.prototype.statements.application.CreatePredicateRequest
-import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.assertj.core.api.Assertions.assertThat
@@ -22,29 +19,6 @@ class PredicateServiceTest : Neo4jTestContainersBaseTest() {
         service.removeAll()
 
         assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(0)
-    }
-
-    @Test
-    @DisplayName("should create predicate from request")
-    fun shouldCreatePredicateFromRequest() {
-        val resource = service.create(CreatePredicateRequest(ThingId("someID"), "Some Concept"))
-
-        assertThat(resource.id.toString()).isEqualTo("someID")
-        assertThat(resource.label).isEqualTo("Some Concept")
-    }
-
-    @Test
-    @DisplayName("should find created predicates")
-    fun shouldFindCreatedPredicates() {
-        service.create(CreatePredicateRequest(ThingId("firstID"), "First Concept"))
-        service.create(CreatePredicateRequest(ThingId("secondID"), "Second Concept"))
-
-        val predicates = service.findAll(PageRequest.of(0, 10))
-
-        val labels = predicates.map(PredicateRepresentation::label)
-
-        assertThat(predicates).hasSize(2)
-        assertThat(labels).containsExactlyInAnyOrder("First Concept", "Second Concept")
     }
 
     @Test

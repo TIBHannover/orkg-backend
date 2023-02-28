@@ -17,7 +17,6 @@ import eu.tib.orkg.prototype.statements.api.InvalidLabel
 import eu.tib.orkg.prototype.statements.api.InvalidURI
 import eu.tib.orkg.prototype.statements.api.UpdateClassUseCase
 import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
-import eu.tib.orkg.prototype.statements.application.CreateClassRequest
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.Clock
 import eu.tib.orkg.prototype.statements.domain.model.Label
@@ -66,21 +65,6 @@ class ClassService(
             )
         )
         return repository.findByClassId(newClassId).map(Class::toClassRepresentation).get()
-    }
-
-    override fun create(request: CreateClassRequest): ClassRepresentation =
-        create(ContributorId.createUnknownContributor(), request)
-
-    override fun create(userId: ContributorId, request: CreateClassRequest): ClassRepresentation {
-        val newThingId = create(
-            CreateClassUseCase.CreateCommand(
-                id = request.id?.value,
-                label = request.label,
-                contributorId = userId,
-                uri = request.uri,
-            )
-        )
-        return repository.findByClassId(newThingId).map(Class::toClassRepresentation).get()
     }
 
     @Transactional(readOnly = true)

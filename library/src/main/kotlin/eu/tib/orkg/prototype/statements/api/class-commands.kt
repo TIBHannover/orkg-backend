@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype.statements.api
 
 import dev.forkhandles.result4k.Result
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.application.CreateClassRequest
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
 
@@ -12,8 +11,6 @@ interface CreateClassUseCase {
     // legacy methods:
     fun create(label: String): ClassRepresentation
     fun create(userId: ContributorId, label: String): ClassRepresentation
-    fun create(request: CreateClassRequest): ClassRepresentation
-    fun create(userId: ContributorId, request: CreateClassRequest): ClassRepresentation
     fun createIfNotExists(id: ThingId, label: String, uri: URI?)
 
     data class CreateCommand(

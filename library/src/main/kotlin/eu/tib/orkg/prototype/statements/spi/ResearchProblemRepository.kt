@@ -6,10 +6,8 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
-import org.neo4j.ogm.annotation.Property
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.neo4j.annotation.QueryResult
 
 interface ResearchProblemRepository {
 
@@ -95,7 +93,6 @@ interface ResearchProblemRepository {
     fun findTopResearchProblemsGoingBack(months: Int): Iterable<Resource>
     fun findTopResearchProblemsAllTime(): Iterable<Resource>
     fun findContributorsLeaderboardPerProblem(problemId: ThingId, pageable: Pageable): Page<ContributorPerProblem>
-    fun findAuthorsLeaderboardPerProblem(problemId: ThingId, pageable: Pageable): Page<AuthorPerProblem>
     fun findResearchProblemForDataset(datasetId: ThingId): Iterable<Resource>
     fun findAllFeaturedProblems(pageable: Pageable): Page<Resource>
     fun findAllNonFeaturedProblems(pageable: Pageable): Page<Resource>
@@ -107,12 +104,10 @@ interface ResearchProblemRepository {
         val freq: Long
     )
 
-    @QueryResult
     data class DetailsPerProblem(
-        val id: String?,
+        val id: ThingId?,
         val label: String?,
         @JsonProperty("created_at")
-        @Property("created_at")
         val createdAt: String?,
         val featured: Boolean?,
         val unlisted: Boolean?,
@@ -121,7 +116,6 @@ interface ResearchProblemRepository {
         val createdBy: String?
     )
 
-    @QueryResult
     data class ContributorPerProblem(
         val user: String,
         val freq: Long

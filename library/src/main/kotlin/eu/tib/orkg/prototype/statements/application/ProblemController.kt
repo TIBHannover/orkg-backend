@@ -7,6 +7,8 @@ import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.ResourceService
 import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.*
+import eu.tib.orkg.prototype.statements.domain.model.PaperAuthor
+import eu.tib.orkg.prototype.statements.services.AuthorService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -26,7 +28,8 @@ import org.springframework.web.bind.annotation.RestController
 class ProblemController(
     private val service: RetrieveResearchProblemUseCase, // FIXME
     private val resourceService: ResourceService,
-    private val contributorService: ContributorService
+    private val contributorService: ContributorService,
+    private val authorService: AuthorService,
 ) {
 
     @GetMapping("/{problemId}/fields")
@@ -70,11 +73,9 @@ class ProblemController(
     @GetMapping("/{problemId}/authors")
     fun getAuthorsPerProblem(
         @PathVariable problemId: ThingId,
-        @RequestParam("page", required = false) page: Int?,
-        @RequestParam("items", required = false) items: Int?,
         pageable: Pageable
-    ): ResponseEntity<Iterable<Any>> {
-        return ResponseEntity.ok(service.findAuthorsPerProblem(problemId, pageable))
+    ): Page<PaperAuthor> {
+        return authorService.findAuthorsPerProblem(problemId, pageable)
     }
 
     @GetMapping("/metadata/featured", params = ["featured=true"])

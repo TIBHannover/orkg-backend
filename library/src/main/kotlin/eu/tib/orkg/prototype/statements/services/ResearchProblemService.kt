@@ -8,7 +8,6 @@ import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase.FieldCount
-import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase.PaperCountPerAuthor
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -94,21 +93,6 @@ class ResearchProblemService(
         return researchProblemRepository
             .findContributorsLeaderboardPerProblem(problemId, pageable)
             .content
-    }
-
-    override fun findAuthorsPerProblem(problemId: ThingId, pageable: Pageable): List<PaperCountPerAuthor> {
-        return researchProblemRepository.findAuthorsLeaderboardPerProblem(problemId, pageable).content.map {
-                if (it.isLiteral) PaperCountPerAuthor(
-                    author = it.author,
-                    papers = it.papers,
-                )
-                else PaperCountPerAuthor(
-                    // It is important that this is a ResourceRepresentation! Otherwise, it will break clients.
-                    // This is not ideal, but would need custom serialization code.
-                    author = resourceService.map(ResourceGenerator { it.toAuthorResource }),
-                    papers = it.papers,
-                )
-            }
     }
 
     override fun forDataset(id: ThingId): Optional<List<ResearchProblem>> {

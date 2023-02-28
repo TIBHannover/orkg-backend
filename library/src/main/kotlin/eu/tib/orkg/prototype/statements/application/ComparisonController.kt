@@ -11,20 +11,21 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import eu.tib.orkg.prototype.statements.services.AuthorService
 
 @RestController
 @RequestMapping("/api/comparisons")
 class ComparisonController(
-    private val neo4jResourceService: ResourceUseCases,
-    private val service: ResourceUseCases
+    private val service: ResourceUseCases,
+    private val authorService: AuthorService
 ) {
     @GetMapping("/metadata/featured", params = ["featured=true"])
     fun getFeaturedComparisons(pageable: Pageable) =
-        neo4jResourceService.loadFeaturedComparisons(pageable)
+        service.loadFeaturedComparisons(pageable)
 
     @GetMapping("/metadata/featured", params = ["featured=false"])
     fun getNonFeaturedComparisons(pageable: Pageable) =
-        neo4jResourceService.loadNonFeaturedComparisons(pageable)
+        service.loadNonFeaturedComparisons(pageable)
 
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)
@@ -43,23 +44,27 @@ class ComparisonController(
 
     @GetMapping("/metadata/unlisted", params = ["unlisted=true"])
     fun getUnlistedComparisons(pageable: Pageable) =
-        neo4jResourceService.loadUnlistedComparisons(pageable)
+        service.loadUnlistedComparisons(pageable)
 
     @GetMapping("/metadata/unlisted", params = ["unlisted=false"])
     fun getListedComparisons(pageable: Pageable) =
-        neo4jResourceService.loadListedComparisons(pageable)
+        service.loadListedComparisons(pageable)
 
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.OK)
     fun markUnlisted(@PathVariable id: ThingId) {
-        neo4jResourceService.markAsUnlisted(id)
+        service.markAsUnlisted(id)
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")
     fun unmarkUnlisted(@PathVariable id: ThingId) {
-        neo4jResourceService.markAsListed(id)
+        service.markAsListed(id)
     }
 
     @GetMapping("/{id}/metadata/unlisted")
     fun getUnlistedFlag(@PathVariable id: ThingId): Boolean = service.getUnlistedResourceFlag(id)
+
+    @GetMapping("/{id}/authors")
+    fun getTopAuthors(@PathVariable id: ThingId, pageable: Pageable) =
+        authorService.findTopAuthorsOfComparison(id, pageable)
 }

@@ -5,8 +5,8 @@ import eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j.BE
 import eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j.DATASET_CLASS
 import eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j.DATASET_PREDICATE
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository
 import java.util.*
+import org.neo4j.ogm.annotation.Property
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.Query
@@ -57,7 +57,7 @@ interface Neo4jProblemRepository :
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<ResearchProblemRepository.DetailsPerProblem>
+    ): Page<Neo4jDetailsPerProblem>
 
     @Query("""MATCH (p:Problem {resource_id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)
                     WHERE COALESCE(p.unlisted, false) = $unlisted
@@ -69,7 +69,7 @@ interface Neo4jProblemRepository :
         problemId: ResourceId,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<ResearchProblemRepository.DetailsPerProblem>
+    ): Page<Neo4jDetailsPerProblem>
 
     @Query("""MATCH (p:Problem {resource_id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)
                     WHERE COALESCE(p.featured, false) = $featured AND COALESCE(p.unlisted, false) = $unlisted
@@ -82,7 +82,7 @@ interface Neo4jProblemRepository :
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<ResearchProblemRepository.DetailsPerProblem>
+    ): Page<Neo4jDetailsPerProblem>
 
     @Query("""MATCH (p:Problem {resource_id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(c:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)
                     WHERE COALESCE(p.unlisted, false) = $unlisted
@@ -94,7 +94,7 @@ interface Neo4jProblemRepository :
         problemId: ResourceId,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<ResearchProblemRepository.DetailsPerProblem>
+    ): Page<Neo4jDetailsPerProblem>
 
     @Query("""MATCH (p:Problem {resource_id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(f:ResearchField)
                     WHERE COALESCE(p.featured, false) = $featured AND COALESCE(p.unlisted, false) = $unlisted
@@ -107,7 +107,7 @@ interface Neo4jProblemRepository :
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<ResearchProblemRepository.DetailsPerProblem>
+    ): Page<Neo4jDetailsPerProblem>
 
     @Query("""MATCH (p:Problem {resource_id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(f:ResearchField)
                     WHERE COALESCE(p.unlisted, false) = $unlisted
@@ -119,7 +119,7 @@ interface Neo4jProblemRepository :
         problemId: ResourceId,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<ResearchProblemRepository.DetailsPerProblem>
+    ): Page<Neo4jDetailsPerProblem>
 
     @Query("""MATCH (p:Problem {resource_id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'compareContribution'}]-(c:Comparison)
                     WHERE COALESCE(p.featured, false) = $featured AND COALESCE(p.unlisted, false) = $unlisted
@@ -132,7 +132,7 @@ interface Neo4jProblemRepository :
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<ResearchProblemRepository.DetailsPerProblem>
+    ): Page<Neo4jDetailsPerProblem>
 
     @Query("""MATCH (p:Problem {resource_id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'compareContribution'}]-(c:Comparison)
                     WHERE COALESCE(p.unlisted, false) = $unlisted
@@ -144,7 +144,7 @@ interface Neo4jProblemRepository :
         problemId: ResourceId,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<ResearchProblemRepository.DetailsPerProblem>
+    ): Page<Neo4jDetailsPerProblem>
 
     @Query("""MATCH (p:Problem {resource_id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(f:ResearchField)<-[:RELATED{predicate_id: 'HasList'}]-(l:LiteratureList)
                     WHERE COALESCE(p.featured, false) = $featured AND COALESCE(p.unlisted, false) = $unlisted
@@ -157,7 +157,7 @@ interface Neo4jProblemRepository :
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<ResearchProblemRepository.DetailsPerProblem>
+    ): Page<Neo4jDetailsPerProblem>
 
     @Query("""MATCH (p:Problem {resource_id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(f:ResearchField)<-[:RELATED{predicate_id: 'HasList'}]-(l:LiteratureList)
                     WHERE COALESCE(p.unlisted, false) = $unlisted
@@ -169,7 +169,7 @@ interface Neo4jProblemRepository :
         problemId: ResourceId,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<ResearchProblemRepository.DetailsPerProblem>
+    ): Page<Neo4jDetailsPerProblem>
 
     @Query("""MATCH (p:Problem {resource_id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(s:SmartReview)
                     WHERE COALESCE(p.featured, false) = $featured AND COALESCE(p.unlisted, false) = $unlisted
@@ -182,7 +182,7 @@ interface Neo4jProblemRepository :
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<ResearchProblemRepository.DetailsPerProblem>
+    ): Page<Neo4jDetailsPerProblem>
 
     @Query("""MATCH (p:Problem {resource_id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(s:SmartReview)
                     WHERE COALESCE(p.unlisted, false) = $unlisted
@@ -194,7 +194,7 @@ interface Neo4jProblemRepository :
         problemId: ResourceId,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<ResearchProblemRepository.DetailsPerProblem>
+    ): Page<Neo4jDetailsPerProblem>
 
     @Query("""MATCH (p:Problem {resource_id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)-[:RELATED {predicate_id: 'hasVisualization'}]->(v:Visualization)
                     WHERE COALESCE(p.featured, false) = $featured AND COALESCE(p.unlisted, false) = $unlisted
@@ -207,7 +207,7 @@ interface Neo4jProblemRepository :
         featured: Boolean,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<ResearchProblemRepository.DetailsPerProblem>
+    ): Page<Neo4jDetailsPerProblem>
 
     @Query("""MATCH (p:Problem {resource_id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)-[:RELATED {predicate_id: 'hasVisualization'}]->(v:Visualization)
                     WHERE COALESCE(p.unlisted, false) = $unlisted
@@ -219,7 +219,7 @@ interface Neo4jProblemRepository :
         problemId: ResourceId,
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<ResearchProblemRepository.DetailsPerProblem>
+    ): Page<Neo4jDetailsPerProblem>
 
     @Query("""MATCH (:Problem {resource_id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(field:ResearchField)
                     RETURN field, COUNT(paper) AS freq
@@ -250,16 +250,7 @@ interface Neo4jProblemRepository :
                     WHERE contribution.created_by IS NOT NULL AND contribution.created_by <> '00000000-0000-0000-0000-000000000000'
                     WITH contribution.created_by AS user, COUNT(contribution.created_by) AS freq
                     RETURN COUNT(user)""")
-    fun findContributorsLeaderboardPerProblem(problemId: ResourceId, pageable: Pageable): Page<ResearchProblemRepository.ContributorPerProblem>
-
-    @Query(value = """MATCH (problem:Problem {resource_id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P27'}]->(author: Thing)
-                        RETURN author.label AS author, COLLECT(author)[0] AS thing , COUNT(paper.resource_id) AS papers
-                        ORDER BY papers DESC, author""",
-        countQuery = """MATCH (problem:Problem {resource_id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper)-[:RELATED {predicate_id: 'P27'}]->(author: Thing)
-                        WITH author.label AS author, COLLECT(author)[0] AS thing , COUNT(paper.resource_id) AS papers
-                        RETURN COUNT (author)""")
-    // TODO: Should group on the resource and not on the label. See https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/172#note_378465870
-    fun findAuthorsLeaderboardPerProblem(problemId: ResourceId, pageable: Pageable): Page<Neo4jAuthorPerProblem>
+    fun findContributorsLeaderboardPerProblem(problemId: ResourceId, pageable: Pageable): Page<Neo4jContributorPerProblem>
 
     @Query(value = """MATCH (ds:$DATASET_CLASS {resource_id: $datasetId})<-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]-(:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(:Contribution)-[:RELATED {predicate_id: 'P32'}]->(problem:Problem)
                     RETURN DISTINCT problem""")
@@ -297,8 +288,19 @@ data class Neo4jFieldPerProblem(
 )
 
 @QueryResult
-data class Neo4jAuthorPerProblem(
-    val author: String,
-    val thing: Neo4jThing,
-    val papers: Long
+data class Neo4jDetailsPerProblem(
+    val id: String?,
+    val label: String?,
+    @Property("created_at")
+    val createdAt: String?,
+    val featured: Boolean?,
+    val unlisted: Boolean?,
+    val classes: List<String>,
+    val createdBy: String?
+)
+
+@QueryResult
+data class Neo4jContributorPerProblem(
+    val user: String,
+    val freq: Long
 )

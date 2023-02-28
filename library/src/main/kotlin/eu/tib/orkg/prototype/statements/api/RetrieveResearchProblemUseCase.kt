@@ -29,17 +29,10 @@ interface RetrieveResearchProblemUseCase :
 
     fun findContributorsPerProblem(problemId: ThingId, pageable: Pageable): List<ContributorPerProblem>
 
-    fun findAuthorsPerProblem(problemId: ThingId, pageable: Pageable): List<PaperCountPerAuthor>
-
     fun forDataset(id: ThingId): Optional<List<ResearchProblem>>
 
     data class FieldCount(
         val field: ResourceRepresentation,
         val freq: Long,
-    )
-
-    data class PaperCountPerAuthor(
-        val author: Any, // TODO: Provide a proper abstraction
-        val papers: Long,
     )
 }

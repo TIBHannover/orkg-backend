@@ -27,7 +27,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         headers: HttpHeaders,
         status: HttpStatus,
         request: WebRequest
-    ) = buildBadRequestResponse(ex, requestURI(request)) {
+    ) = buildBadRequestResponse(ex, request.requestURI) {
         ex.bindingResult.fieldErrors.map {
             FieldValidationError(field = it.field.toSnakeCase(), message = it?.defaultMessage)
         }
@@ -104,7 +104,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         val payload = MessageErrorResponse(
             status = BAD_REQUEST.value(),
             error = BAD_REQUEST.reasonPhrase,
-            path = requestURI(request),
+            path = request.requestURI,
             message = ex.rootCause?.message
         )
         return ResponseEntity(payload, BAD_REQUEST)
@@ -113,7 +113,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(RuntimeException::class)
     fun handleRuntimeException(
         ex: RuntimeException,
-        request: HttpServletRequest
+        request: WebRequest
     ): ResponseEntity<Any> {
         val payload = ErrorResponse(
             status = INTERNAL_SERVER_ERROR.value(),
@@ -189,8 +189,8 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
     )
 }
 
-private fun requestURI(request: WebRequest) =
-    when (request) {
-        is ServletWebRequest -> request.request.requestURI
-        else -> request.contextPath // most likely this is empty
+private val WebRequest.requestURI: String
+    get() = when (this) {
+        is ServletWebRequest -> request.requestURI
+        else -> contextPath // most likely this is empty
     }

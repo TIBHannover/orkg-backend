@@ -1,12 +1,16 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.statements.api.PaperResourceWithPathRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod.UNKNOWN
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.PaperService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -35,6 +39,13 @@ class PaperController(
             .toUri()
         return ResponseEntity.created(location).body(resource)
     }
+
+    @GetMapping("/")
+    fun findPaperResourcesRelatedTo(
+        @RequestParam("linkedTo", required = true) id: ThingId,
+        pageable: Pageable
+    ): Page<PaperResourceWithPathRepresentation> =
+        service.findPapersRelatedToResource(id, pageable)
 }
 
 /**

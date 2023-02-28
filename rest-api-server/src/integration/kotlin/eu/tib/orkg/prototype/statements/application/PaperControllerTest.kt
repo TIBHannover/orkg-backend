@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.services.PaperService
@@ -44,6 +45,9 @@ class PaperControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var classService: ClassUseCases
+
+    @Autowired
+    private lateinit var statementService: StatementUseCases
 
     @Autowired
     private lateinit var paperService: PaperService
@@ -352,6 +356,34 @@ class PaperControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(postRequestWithBody("/api/papers/?mergeIfExists=false", paper))
             .andExpect(status().isCreated)
+    }
+
+    @Test
+    fun `fetch papers related to a particular resource`() {
+        val predicate1 = predicateService.create("Predicate 1").id
+        val predicate2 = predicateService.create("Predicate 2").id
+
+        val relatedPaper1 = resourceService.createResource(setOf("Paper"), label = "Paper 1")
+        val relatedPaper2 = resourceService.createResource(setOf("Paper"), label = "Paper 2")
+        val unrelatedPaper = resourceService.createResource(setOf("Paper"), label = "Paper 3")
+        val intermediateResource = resourceService.createResource(label = "Not interesting")
+        val unrelatedResource = resourceService.createResource(label = "Some resource")
+        val id = resourceService.createResource(label = "Our resource")
+
+        statementService.create(relatedPaper1, predicate1, id)
+        statementService.create(relatedPaper2, predicate2, intermediateResource)
+        statementService.create(intermediateResource, predicate1, id)
+        statementService.create(unrelatedPaper, predicate1, unrelatedResource)
+
+        mockMvc
+            .perform(getRequestTo("/api/papers/?linkedTo=$id&size=50"))
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    snippet,
+                    // TODO: figure out how to document this call
+                )
+            )
     }
 
     private fun paperResponseFields() =

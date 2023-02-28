@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Searching for research fields now works correctly with featured and unlisted flags. (Closes: [#392](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/392))
 ### Added
 - It is now possible to get a list of top authors of a comparison via `/comparisons/{id}/authors`. (Closes: [#440](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/440))
+- It is now possible to find all papers connected to a specific resource via `/api/papers/?linkedTo={id}`. (Closes: [#415](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/415))
 
 ## [0.26.0] - 2023-02-27
 ### Fixed

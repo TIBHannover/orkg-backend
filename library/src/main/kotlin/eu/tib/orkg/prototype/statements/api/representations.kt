@@ -10,6 +10,8 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
 import java.time.OffsetDateTime
 
+typealias PathRepresentation = List<List<ThingRepresentation>>
+
 sealed interface ThingRepresentation {
     val id: ThingId
 }
@@ -78,4 +80,8 @@ interface ContentTypeFlags {
     val featured: Boolean
     val unlisted: Boolean
     val verified: Boolean
+}
+
+interface PaperResourceWithPathRepresentation : ResourceRepresentation {
+    val path: PathRepresentation
 }

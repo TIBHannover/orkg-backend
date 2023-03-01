@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
 import eu.tib.orkg.prototype.statements.api.ThingRepresentation
-import eu.tib.orkg.prototype.statements.application.StatementResponse
 import java.time.OffsetDateTime
 
 data class GeneralStatement(
@@ -16,7 +15,7 @@ data class GeneralStatement(
     val createdAt: OffsetDateTime?,
     @JsonProperty("created_by")
     val createdBy: ContributorId = ContributorId.createUnknownContributor()
-) : StatementResponse
+)
 
 interface StatementRepresentation : StatementProvenanceMetadata {
     val id: StatementId

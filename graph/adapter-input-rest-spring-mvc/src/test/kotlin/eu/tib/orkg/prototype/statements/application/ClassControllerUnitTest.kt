@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
-import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
 import eu.tib.orkg.prototype.auth.service.UserRepository
+import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.createClass
 import eu.tib.orkg.prototype.statements.api.AlreadyInUse
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -46,8 +47,8 @@ import eu.tib.orkg.prototype.statements.api.InvalidLabel as InvalidLabelProblem
 internal const val INVALID_LABEL = "invalid\nlabel"
 internal const val INVALID_URI = "invalid\nuri"
 
+@ContextConfiguration(classes = [ClassController::class, ExceptionHandler::class])
 @WebMvcTest(controllers = [ClassController::class])
-@AuthorizationServerUnitTestWorkaround
 @DisplayName("Given a Class controller")
 internal class ClassControllerUnitTest {
 

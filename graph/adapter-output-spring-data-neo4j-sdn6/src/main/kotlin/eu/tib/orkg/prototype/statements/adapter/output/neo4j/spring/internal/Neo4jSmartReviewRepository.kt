@@ -43,6 +43,8 @@ private const val MATCH_LISTED_SMART_REVIEW =
 
 private const val MATCH_SMART_REVIEW_BY_ID = """MATCH (node:`Resource`:`SmartReviewPublished` {resource_id: $id})"""
 
+private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
+
 interface Neo4jSmartReviewRepository :
     Neo4jRepository<Neo4jResource, Long> {
 
@@ -50,25 +52,25 @@ interface Neo4jSmartReviewRepository :
     fun findSmartReviewByResourceId(id: ResourceId): Optional<Neo4jResource>
 
     @Query(
-        value = """$MATCH_FEATURED_SMART_REVIEW $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        value = """$MATCH_FEATURED_SMART_REVIEW $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """$MATCH_FEATURED_SMART_REVIEW $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllFeaturedSmartReviews(pageable: Pageable): Page<Neo4jResource>
 
     @Query(
-        value = """$MATCH_NONFEATURED_SMART_REVIEW $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        value = """$MATCH_NONFEATURED_SMART_REVIEW $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """$MATCH_NONFEATURED_SMART_REVIEW $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllNonFeaturedSmartReviews(pageable: Pageable): Page<Neo4jResource>
 
     @Query(
-        value = """$MATCH_UNLISTED_SMART_REVIEW $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        value = """$MATCH_UNLISTED_SMART_REVIEW $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """$MATCH_UNLISTED_SMART_REVIEW $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllUnlistedSmartReviews(pageable: Pageable): Page<Neo4jResource>
 
     @Query(
-        value = """$MATCH_LISTED_SMART_REVIEW $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        value = """$MATCH_LISTED_SMART_REVIEW $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """$MATCH_LISTED_SMART_REVIEW $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllListedSmartReviews(pageable: Pageable): Page<Neo4jResource>

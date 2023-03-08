@@ -43,6 +43,8 @@ private const val MATCH_LISTED_VISUALIZATION =
 
 private const val MATCH_VISUALIZATION_BY_ID = """MATCH (node:`Resource`:`Visualization` {resource_id: $id})"""
 
+private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
+
 interface Neo4jVisualizationRepository :
     Neo4jRepository<Neo4jResource, Long> {
 
@@ -50,25 +52,25 @@ interface Neo4jVisualizationRepository :
     fun findVisualizationByResourceId(id: ResourceId): Optional<Neo4jResource>
 
     @Query(
-        value = """$MATCH_FEATURED_VISUALIZATION $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        value = """$MATCH_FEATURED_VISUALIZATION $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """$MATCH_FEATURED_VISUALIZATION $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllFeaturedVisualizations(pageable: Pageable): Page<Neo4jResource>
 
     @Query(
-        value = """$MATCH_NONFEATURED_VISUALIZATION $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        value = """$MATCH_NONFEATURED_VISUALIZATION $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """$MATCH_NONFEATURED_VISUALIZATION $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllNonFeaturedVisualizations(pageable: Pageable): Page<Neo4jResource>
 
     @Query(
-        value = """$MATCH_UNLISTED_VISUALIZATION $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        value = """$MATCH_UNLISTED_VISUALIZATION $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """$MATCH_UNLISTED_VISUALIZATION $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllUnlistedVisualizations(pageable: Pageable): Page<Neo4jResource>
 
     @Query(
-        value = """$MATCH_LISTED_VISUALIZATION $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        value = """$MATCH_LISTED_VISUALIZATION $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """$MATCH_LISTED_VISUALIZATION $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllListedVisualizations(pageable: Pageable): Page<Neo4jResource>

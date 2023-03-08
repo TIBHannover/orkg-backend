@@ -43,6 +43,8 @@ private const val MATCH_LISTED_COMPARISON =
 
 private const val MATCH_COMPARISON_BY_ID = """MATCH (node:`Resource`:`Comparison` {resource_id: $id})"""
 
+private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
+
 interface Neo4jComparisonRepository :
     Neo4jRepository<Neo4jResource, Long> {
 
@@ -50,25 +52,25 @@ interface Neo4jComparisonRepository :
     fun findComparisonByResourceId(id: ResourceId): Optional<Neo4jResource>
 
     @Query(
-        value = """$MATCH_FEATURED_COMPARISON $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        value = """$MATCH_FEATURED_COMPARISON $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """$MATCH_FEATURED_COMPARISON $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllFeaturedComparisons(pageable: Pageable): Page<Neo4jResource>
 
     @Query(
-        value = """$MATCH_NONFEATURED_COMPARISON $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        value = """$MATCH_NONFEATURED_COMPARISON $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """$MATCH_NONFEATURED_COMPARISON $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllNonFeaturedComparisons(pageable: Pageable): Page<Neo4jResource>
 
     @Query(
-        value = """$MATCH_UNLISTED_COMPARISON $WITH_NODE_PROPERTIES $RETURN_NODE""",
+        value = """$MATCH_UNLISTED_COMPARISON $WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """$MATCH_UNLISTED_COMPARISON $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllUnlistedComparisons(pageable: Pageable): Page<Neo4jResource>
 
     @Query(
-        value = """$MATCH_LISTED_COMPARISON}$WITH_NODE_PROPERTIES $RETURN_NODE""",
+        value = """$MATCH_LISTED_COMPARISON}$WITH_NODE_PROPERTIES $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """$MATCH_LISTED_COMPARISON $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
     )
     fun findAllListedComparisons(pageable: Pageable): Page<Neo4jResource>

@@ -40,8 +40,9 @@ private fun aggregateAndConvertToModelObjects(paperId: ResourceId, path: Iterabl
             possiblePath = mutableListOf()
             finalResult.add(possiblePath)
         }
-        if (p is Neo4jResource || p is Neo4jPredicate) {
-            possiblePath.add(p.toThing())
+        when (p) {
+            is Neo4jResource, is Neo4jPredicate -> possiblePath.add(p.toThing())
+            else -> throw IllegalStateException("Result types can only be either resources or predicates. This is a bug!")
         }
     }
     return finalResult

@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
 @Component
-class SpringDataNeo4JResearchProblemAdapter(
+class SpringDataNeo4jResearchProblemAdapter(
     private val neo4jRepository: Neo4jProblemRepository
 ) : ResearchProblemRepository {
     override fun findById(id: ThingId): Optional<Resource> =

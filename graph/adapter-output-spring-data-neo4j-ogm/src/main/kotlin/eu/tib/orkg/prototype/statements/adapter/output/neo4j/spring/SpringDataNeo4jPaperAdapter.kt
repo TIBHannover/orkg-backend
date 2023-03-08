@@ -16,7 +16,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
 @Component
-class SpringDataNeo4PaperAdapter(
+class SpringDataNeo4jPaperAdapter(
     private val neo4jRepository: Neo4jPaperRepository
 ) : PaperRepository {
 
@@ -40,9 +40,8 @@ private fun aggregateAndConvertToModelObjects(paperId: ResourceId, path: Iterabl
             possiblePath = mutableListOf()
             finalResult.add(possiblePath)
         }
-        when (p) {
-            is Neo4jResource -> possiblePath.add(p.toResource())
-            is Neo4jPredicate -> possiblePath.add(p.toPredicate())
+        if (p is Neo4jResource || p is Neo4jPredicate) {
+            possiblePath.add(p.toThing())
         }
     }
     return finalResult

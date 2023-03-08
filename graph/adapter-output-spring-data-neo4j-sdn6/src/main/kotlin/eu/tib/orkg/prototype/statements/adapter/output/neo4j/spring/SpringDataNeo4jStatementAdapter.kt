@@ -205,17 +205,26 @@ class SpringDataNeo4jStatementAdapter(
         }
 
     override fun countByIdRecursive(id: ThingId): Long {
-        val subject = node("Thing")
-        val `object` = anyNode()
         val idLiteral = literalOf<String>(id.value)
-        val query = match(
-                subject.relationshipTo(`object`).unbounded()
-            ).where(
-                subject.property("resource_id").eq(idLiteral)
-                    .or(subject.property("literal_id").eq(idLiteral))
-                    .or(subject.property("predicate_id").eq(idLiteral))
-                    .or(subject.property("class_id").eq(idLiteral))
-            ).returning(count(subject))
+        val apocConfiguration = mapOf<String, Any>(
+            "relationshipFilter" to ">",
+            "labelFilter" to "-ResearchField|-ResearchProblem|-Paper"
+        )
+        val n = name("n")
+        val relationships = name("relationships")
+        val rel = name("rel")
+        val query = match(node("Thing").named(n))
+            .where(
+                n.property("resource_id").eq(idLiteral)
+                    .or(n.property("literal_id").eq(idLiteral))
+                    .or(n.property("predicate_id").eq(idLiteral))
+                    .or(n.property("class_id").eq(idLiteral))
+            ).call("apoc.path.subgraphAll")
+            .withArgs(n, asExpression(apocConfiguration))
+            .yield(relationships)
+            .with(relationships)
+            .unwind(relationships).`as`(rel)
+            .returning(count(rel))
             .build()
         return neo4jClient.query(query.cypher)
             .fetchAs<Long>()

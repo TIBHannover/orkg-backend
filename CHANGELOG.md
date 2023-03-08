@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Fixed incorrect statement count and performance issue for widget endpoint (Closes: [#459](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/459))
 
 ## [0.27.0] - 2023-03-02
 ### Fixed

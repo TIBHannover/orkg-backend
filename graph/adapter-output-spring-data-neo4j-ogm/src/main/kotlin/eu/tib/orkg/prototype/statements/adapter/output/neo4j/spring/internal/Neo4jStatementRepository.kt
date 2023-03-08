@@ -24,11 +24,9 @@ private const val subjectIds = "${'$'}subjectIds"
 private const val objectIds = "${'$'}objectIds"
 private const val predicateId = "${'$'}predicateId"
 private const val objectId = "${'$'}objectId"
-private const val paperId = "${'$'}paperId"
 private const val id = "${'$'}id"
 private const val resourceIds = "${'$'}resourceIds"
 private const val doi = "${'$'}doi"
-private const val ids = "${'$'}ids"
 
 /**
  * Partial query that matches a statement.
@@ -102,8 +100,13 @@ interface Neo4jStatementRepository :
     @Query("""MATCH statement=(obj:`Resource` {resource_id: $id})<-[rel:`RELATED`]-(:`Thing`) RETURN count(statement)""")
     fun countStatementsByObjectId(id: ResourceId): Long
 
-    @Query("""MATCH (p:`Thing`)-[*]->() WHERE p.`resource_id`=$paperId OR p.`literal_id`=$paperId OR p.`predicate_id`=$paperId OR p.`class_id`=$paperId RETURN COUNT(p)""")
-    fun countByIdRecursive(paperId: ThingId): Long
+    @Query("""MATCH (n:Thing)
+WHERE n.`resource_id`=$id OR n.`literal_id`=$id OR n.`predicate_id`=$id OR n.`class_id`=$id
+CALL apoc.path.subgraphAll(n, {relationshipFilter: ">", labelFilter: "-ResearchField|-ResearchProblem|-Paper"})
+YIELD relationships
+UNWIND relationships AS rel
+RETURN COUNT(rel) as cnt""")
+    fun countByIdRecursive(id: ThingId): Long
 
     @Query("$MATCH_STATEMENT WHERE (obj.`resource_id`=$objectId OR obj.`literal_id`=$objectId OR obj.`predicate_id`=$objectId OR obj.`class_id`=$objectId) AND rel.`predicate_id`=$predicateId $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
     countQuery = "$MATCH_STATEMENT WHERE (obj.`resource_id`=$objectId OR obj.`literal_id`=$objectId OR obj.`predicate_id`=$objectId OR obj.`class_id`=$objectId) AND rel.`predicate_id`=$predicateId $WITH_SORTABLE_FIELDS $RETURN_COUNT")

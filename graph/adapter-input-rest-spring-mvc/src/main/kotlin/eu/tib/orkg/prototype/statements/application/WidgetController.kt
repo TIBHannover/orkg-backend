@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.application
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -29,7 +30,7 @@ class WidgetController(
         val totalStatements = statementService.countStatements(resource.id)
 
         return WidgetInfo(
-            id = resource.id.toString(),
+            id = resource.id,
             doi = doi,
             title = resource.label,
             numberOfStatements = totalStatements
@@ -37,7 +38,7 @@ class WidgetController(
     }
 
     data class WidgetInfo(
-        val id: String,
+        val id: ThingId,
         val doi: String?,
         val title: String,
         @JsonProperty("num_statements")

@@ -138,7 +138,10 @@ class PostgresDummyDataSetup(
                     name = it.name!!,
                     description = it.description ?: "",
                     organizationId = it.organizationIds.first(),
-                    researchField = if (it.researchField?.id != null) ThingId(it.researchField.id!!) else null,
+                    researchField = Optional.ofNullable(it.researchField?.id)
+                        .map(::ThingId)
+                        .filter { id -> resourceService.findById(id).isPresent }
+                        .orElse(null),
                     displayId = it.displayId!!
                 )
             }

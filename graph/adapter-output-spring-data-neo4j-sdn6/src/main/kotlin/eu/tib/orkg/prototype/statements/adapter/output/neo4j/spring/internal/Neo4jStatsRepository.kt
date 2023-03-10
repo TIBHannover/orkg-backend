@@ -22,7 +22,7 @@ interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
     @Query("""CALL apoc.meta.stats()""")
     fun getGraphMetaData(): Iterable<HashMap<String, Any>>
 
-    @Query("""MATCH (n:ResearchField) WITH n OPTIONAL MATCH (n)-[:RELATED*0..3 {predicate_id: 'P36'}]->(:ResearchField)<-[:RELATED {predicate_id: 'P30'}]-(p:Paper) RETURN n.resource_id AS fieldId, n.label AS field, COUNT(p) AS papers""")
+    @Query("""MATCH (n:ResearchField) WITH n OPTIONAL MATCH (n)-[:RELATED*0..3 {predicate_id: 'P36'}]->(r:ResearchField) OPTIONAL MATCH (r)<-[:RELATED {predicate_id: 'P30'}]-(p:Paper) RETURN n.resource_id AS fieldId, n.label AS field, COUNT(p) AS papers""")
     fun getResearchFieldsPapersCount(): Iterable<FieldsStats>
 
     @Query("""MATCH (n:Paper {observatory_id: $id}) RETURN COUNT(n) As totalPapers""")

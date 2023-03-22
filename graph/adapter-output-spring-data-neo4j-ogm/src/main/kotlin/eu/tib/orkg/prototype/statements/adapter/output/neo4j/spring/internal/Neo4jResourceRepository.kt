@@ -66,7 +66,7 @@ private const val MATCH_UNLISTED_PAPER =
     """MATCH (node) WHERE node.unlisted = true AND $HAS_PAPER_CLASS"""
 
 private const val MATCH_LISTED_PAPER =
-    """MATCH (node) WHERE OR node.unlisted = false AND $HAS_PAPER_CLASS"""
+    """MATCH (node) WHERE node.unlisted = false AND $HAS_PAPER_CLASS"""
 
 const val IS_FEATURED = "COALESCE(node.featured, false) = $featured"
 const val IS_UNLISTED = "COALESCE(node.unlisted, false) = $unlisted"

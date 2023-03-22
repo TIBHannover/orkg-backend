@@ -50,8 +50,34 @@ interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
     @Query("""MATCH (research:ResearchField{resource_id: $id}) WITH COLLECT(research) AS r OPTIONAL MATCH(c:Contribution)<-[:RELATED{predicate_id: 'P31'}]-(p:Paper)-[:RELATED {predicate_id: 'P30'}]->(inner_r) WHERE inner_r in r AND c.created_by IS NOT NULL AND c.created_by <> '00000000-0000-0000-0000-000000000000' AND c.created_at > $date  WITH c.created_by AS contribution_creators, COUNT(c.created_by) AS cnt RETURN COLLECT({id:contribution_creators, cnt:cnt}) AS total UNION MATCH (research:ResearchField{resource_id: $id})WITH COLLECT(research) AS r OPTIONAL MATCH(comparison1: Comparison)-[related:RELATED]->(contribution1:Contribution)<-[:RELATED{predicate_id: 'P31'}]-(p1:Paper)-[:RELATED {predicate_id: 'P30'}]->(inner_r) WHERE inner_r in r AND comparison1.created_by IS NOT NULL AND comparison1.created_by <> '00000000-0000-0000-0000-000000000000' AND comparison1.created_at > $date WITH  comparison1.created_by AS comparison_creators,COUNT(comparison1.created_by) AS cnt RETURN COLLECT({id:comparison_creators, cnt:cnt}) AS total UNION MATCH (research:ResearchField{resource_id: $id}) WITH COLLECT(research) AS r OPTIONAL MATCH(p1:Paper)-[:RELATED {predicate_id: 'P30'}]->(inner_r) WHERE inner_r in r AND p1.created_by IS NOT NULL AND p1.created_by <> '00000000-0000-0000-0000-000000000000' AND p1.created_at > $date WITH  p1.created_by AS paper_creators, COUNT(p1.created_by) AS cnt RETURN COLLECT({id:paper_creators, cnt:cnt}) AS total UNION MATCH (research:ResearchField{resource_id: $id}) WITH COLLECT(research) AS r OPTIONAL MATCH (v:Visualization)<-[:RELATED]-(comparison1: Comparison)-[related:RELATED]->(contribution1:Contribution)<-[:RELATED{predicate_id: 'P31'}]-(p1:Paper)-[:RELATED {predicate_id: 'P30'}]->(inner_r) WHERE inner_r in r AND v.created_by IS NOT NULL AND v.created_by <> '00000000-0000-0000-0000-000000000000' AND v.created_at > $date WITH  v.created_by AS visualization_creators, COUNT(v.created_by) AS cnt RETURN COLLECT({id:visualization_creators, cnt:cnt}) AS total UNION MATCH (research:ResearchField{resource_id: $id}) WITH COLLECT(research) AS r OPTIONAL MATCH (problem:Problem)<-[:RELATED]-(c:Contribution)<-[:RELATED{predicate_id: 'P31'}]-(p:Paper)-[:RELATED {predicate_id: 'P30'}]->(inner_r) WHERE inner_r in r AND problem.created_by IS NOT NULL AND problem.created_by <> '00000000-0000-0000-0000-000000000000'AND problem.created_at > $date WITH  problem.created_by AS problem_creators, COUNT(problem.created_by) AS cnt RETURN COLLECT({id:problem_creators, cnt:cnt}) AS total""")
     fun getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(id: ResourceId, date: String): List<List<Map<String, List<ResultObject>>>>
 
-    @Query("""MATCH (sub: Thing) WHERE ('Paper' IN labels(sub) OR 'Comparison' IN labels(sub) OR 'Problem' IN labels(sub) OR 'Visualization' IN labels(sub) OR 'Contribution' IN labels(sub)) AND (NOT 'PaperDeleted' IN  labels(sub)) AND (NOT 'ContributionDeleted' IN labels(sub)) RETURN sub.resource_id AS id, sub.label AS label, sub.created_at AS createdAt, COALESCE(sub.created_by, '00000000-0000-0000-0000-000000000000') as createdBy, labels(sub) AS classes ORDER BY createdAt DESC $PAGE_PARAMS""",
-        countQuery = "MATCH (sub: Thing) WHERE ('Paper' IN labels(sub) OR 'Comparison' IN labels(sub) OR 'Problem' IN labels(sub) OR 'Visualization' IN labels(sub) OR 'Contribution' IN labels(sub)) AND (NOT 'PaperDeleted' IN  labels(sub)) AND (NOT 'ContributionDeleted' IN labels(sub)) RETURN count(sub.created_by) as cnt")
+    @Query("""
+CALL {
+    MATCH (sub:Paper) WITH labels(sub) AS labels, sub WHERE NOT 'PaperDeleted' IN labels RETURN sub
+    UNION ALL
+    MATCH (sub:Contribution) WITH labels(sub) AS labels, sub WHERE NOT 'ContributionDeleted' IN labels RETURN sub
+    UNION ALL
+    MATCH (sub:Problem) RETURN sub
+    UNION ALL
+    MATCH (sub:Visualization) RETURN sub
+    UNION ALL
+    MATCH (sub:Contribution) RETURN sub
+} WITH sub
+RETURN sub.resource_id AS id, sub.label AS label, sub.created_at AS createdAt, COALESCE(sub.created_by, '00000000-0000-0000-0000-000000000000') as createdBy, labels(sub) AS classes ORDER BY createdAt DESC
+""",
+        countQuery = """
+CALL {
+    MATCH (sub:Paper) WITH labels(sub) AS labels, sub WHERE NOT 'PaperDeleted' IN labels RETURN sub
+    UNION ALL
+    MATCH (sub:Contribution) WITH labels(sub) AS labels, sub WHERE NOT 'ContributionDeleted' IN labels RETURN sub
+    UNION ALL
+    MATCH (sub:Problem) RETURN sub
+    UNION ALL
+    MATCH (sub:Visualization) RETURN sub
+    UNION ALL
+    MATCH (sub:Contribution) RETURN sub
+} WITH sub
+RETURN count(sub)
+""")
     fun getChangeLog(pageable: Pageable): Page<ChangeLogResponse>
 
     @Query("""MATCH (comp:Comparison)-[:RELATED* 0..4]->(contribution:Contribution)<-[:RELATED* 0..4]-(p:Paper)-[:RELATED* 0..4]->(r:ResearchField{resource_id: $id}) OPTIONAL MATCH(v:Visualization)<-[:RELATED* 0..4]-(comp) WITH COLLECT([v.resource_id,v.label, v.created_at, v.created_by,labels(v)])  +  COLLECT([comp.resource_id,comp.label, comp.created_at, comp.created_by, labels(comp)]) + COLLECT([contribution.resource_id,contribution.label, contribution.created_at, contribution.created_by, labels(contribution)]) + COLLECT([p.resource_id,p.label, p.created_at, p.created_by, labels(p)]) + COLLECT([r.resource_id,r.label, r.created_at, r.created_by, labels(r)]) AS items UNWIND items AS changelogs  WITH DISTINCT changelogs[0] AS id, changelogs[1] AS label, changelogs[2] AS createdAt, changelogs[3] AS createdBy, changelogs[4] AS classes WHERE id IS NOT NULL RETURN id, label, createdAt, createdBy, classes $PAGE_PARAMS""",

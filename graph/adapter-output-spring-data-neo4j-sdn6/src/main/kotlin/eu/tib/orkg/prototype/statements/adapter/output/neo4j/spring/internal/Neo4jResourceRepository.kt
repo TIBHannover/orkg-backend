@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -67,7 +68,7 @@ private const val MATCH_UNLISTED_PAPER =
     """MATCH (node) WHERE node.unlisted = true AND $HAS_PAPER_CLASS"""
 
 private const val MATCH_LISTED_PAPER =
-    """MATCH (node) WHERE OR node.unlisted = false AND $HAS_PAPER_CLASS"""
+    """MATCH (node) WHERE node.unlisted = false AND $HAS_PAPER_CLASS"""
 
 const val IS_FEATURED = "COALESCE(node.featured, false) = $featured"
 const val IS_UNLISTED = "COALESCE(node.unlisted, false) = $unlisted"
@@ -76,7 +77,7 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     fun existsByResourceId(id: ResourceId): Boolean
 
     @Query("""MATCH (node:`Resource` {resource_id: $id}) WHERE $HAS_CLASSES $WITH_NODE_PROPERTIES $RETURN_NODE""")
-    fun findByIdAndClassesContaining(id: ResourceId, classes: Set<String>): Neo4jResource?
+    fun findByIdAndClassesContaining(id: ResourceId, classes: Set<ThingId>): Neo4jResource?
 
     fun findByResourceId(id: ResourceId?): Optional<Neo4jResource>
 

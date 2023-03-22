@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -75,7 +76,7 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     fun existsByResourceId(id: ResourceId): Boolean
 
     @Query("""MATCH (node:`Resource` {resource_id: $id}) WHERE $HAS_CLASSES $WITH_NODE_PROPERTIES $RETURN_NODE""")
-    fun findByIdAndClassesContaining(id: ResourceId, classes: Set<String>): Neo4jResource?
+    fun findByIdAndClassesContaining(id: ResourceId, classes: Set<ThingId>): Neo4jResource?
 
     override fun findAll(): Iterable<Neo4jResource>
 

@@ -855,6 +855,14 @@ fun <
                 val actual = repository.findByDOI(doi)
                 actual.isPresent shouldBe true
                 actual.get() shouldBe paper
+
+                val upper = repository.findByDOI(doi.uppercase())
+                upper.isPresent shouldBe true
+                upper.get() shouldBe paper
+
+                val lower = repository.findByDOI(doi.lowercase())
+                lower.isPresent shouldBe true
+                lower.get() shouldBe paper
             }
             it("does not return deleted papers") {
                 val paper = createResource(

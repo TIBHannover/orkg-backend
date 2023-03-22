@@ -3,9 +3,9 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassId
+import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.LiteralId
@@ -22,9 +22,9 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.function.BiFunction
 import org.jetbrains.annotations.Contract
+import org.neo4j.cypherdsl.core.Expression
 import org.neo4j.cypherdsl.core.FunctionInvocation
 import org.neo4j.cypherdsl.core.SymbolicName
-import org.neo4j.cypherdsl.core.utils.Assertions
 import org.neo4j.driver.Record
 import org.neo4j.driver.Value
 import org.neo4j.driver.types.MapAccessor
@@ -142,15 +142,17 @@ internal fun Value.toOrganizationId() = if (isNull) OrganizationId.createUnknown
 internal fun Value.toExtractionMethod() = if (isNull) ExtractionMethod.UNKNOWN else ExtractionMethod.valueOf(asString())
 
 @Contract(pure = true)
-internal fun startNode(symbolicName: SymbolicName): FunctionInvocation {
-    Assertions.notNull(symbolicName, "The relationship for startNode is required.")
-    return FunctionInvocation.create({ "startNode" }, symbolicName)
-}
+internal fun startNode(symbolicName: SymbolicName): FunctionInvocation =
+    FunctionInvocation.create({ "startNode" }, symbolicName)
 
 @Contract(pure = true)
-internal fun endNode(symbolicName: SymbolicName): FunctionInvocation {
-    Assertions.notNull(symbolicName, "The relationship for endNode is required.")
-    return FunctionInvocation.create({ "endNode" }, symbolicName)
-}
+internal fun endNode(symbolicName: SymbolicName): FunctionInvocation =
+    FunctionInvocation.create({ "endNode" }, symbolicName)
+
+// TODO: This extension function is required because the Cypher DSL used does not support calling the method, and
+//       newer versions requiring Java 17. It can be replaced after upgrading.
+@Contract(pure = true)
+internal fun toUpper(expression: Expression): FunctionInvocation =
+    FunctionInvocation.create({ "toUpper" }, expression)
 
 internal operator fun MapAccessor.get(symbolicName: SymbolicName): Value = this[symbolicName.value]

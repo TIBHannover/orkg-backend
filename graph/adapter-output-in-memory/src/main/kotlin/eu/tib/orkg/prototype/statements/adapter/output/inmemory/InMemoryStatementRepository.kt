@@ -203,7 +203,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
             it.subject is Resource && with(it.subject as Resource) {
                 paperClass in classes && paperDeletedClass !in classes
             }   && it.predicate.id == hasDOI
-                && it.`object` is Literal && it.`object`.label == doi
+                && it.`object` is Literal && it.`object`.label.uppercase() == doi.uppercase()
         }).map { it.subject as Resource }
 
     // TODO: rename to findAllProblemsByObservatoryId

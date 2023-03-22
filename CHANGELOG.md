@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.27.1] - 2023-03-10
 ### Fixed
 - Fixed incorrect statement count and performance issue for widget endpoint (Closes: [#459](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/459))
+- DOIs are compared insensitive now, as mandated by the [DOI handbook](https://www.doi.org/doi_handbook/2_Numbering.html#2.4). (Closes: [#254](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/254))
 
 ## [0.27.0] - 2023-03-02
 ### Fixed

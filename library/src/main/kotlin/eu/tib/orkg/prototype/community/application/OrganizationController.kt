@@ -69,20 +69,21 @@ class OrganizationController(
         } else if (service.findByDisplayId(organization.displayId).isPresent) {
             throw OrganizationAlreadyExists.withDisplayId(organization.displayId)
         }
-        val response = service.create(
+        val imageId = imageService.create(CreateImageUseCase.CreateCommand(decodedLogo.data, decodedLogo.mimeType, organization.createdBy))
+        val id = service.create(
             id = null,
             organization.organizationName,
             organization.createdBy,
             organization.url,
             organization.displayId,
-            OrganizationType.fromOrNull(organization.type)!!
+            OrganizationType.fromOrNull(organization.type)!!,
+            imageId
         )
-        imageService.create(CreateImageUseCase.CreateCommand(decodedLogo.data, decodedLogo.mimeType, organization.createdBy))
         val location = uriComponentsBuilder
             .path("api/organizations/{id}")
-            .buildAndExpand(response.id)
+            .buildAndExpand(id)
             .toUri()
-        return ResponseEntity.created(location).body(service.findById(response.id!!).get())
+        return ResponseEntity.created(location).body(service.findById(id).get())
     }
 
     @GetMapping("/")

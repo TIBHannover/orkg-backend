@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationType
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.files.domain.model.ImageId
 import eu.tib.orkg.prototype.statements.api.CreateClassUseCase
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
@@ -105,8 +106,9 @@ fun OrganizationUseCases.createOrganization(
     url: String = "https://www.example.org",
     displayId: String = organizationName.toDisplayId(),
     type: OrganizationType = OrganizationType.GENERAL,
-    id: OrganizationId? = null
-) = this.create(id, organizationName, createdBy, url, displayId, type).id!!
+    id: OrganizationId? = null,
+    logoId: ImageId? = null
+) = this.create(id, organizationName, createdBy, url, displayId, type, logoId)
 
 // Observatories
 

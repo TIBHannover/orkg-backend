@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationType
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.files.domain.model.Image
+import eu.tib.orkg.prototype.files.domain.model.ImageId
 import eu.tib.orkg.prototype.statements.api.UpdateOrganizationUseCases
 import java.util.*
 
@@ -19,8 +20,9 @@ interface OrganizationUseCases : UpdateOrganizationUseCases {
         createdBy: ContributorId,
         url: String,
         displayId: String,
-        type: OrganizationType
-    ): Organization
+        type: OrganizationType,
+        logoId: ImageId?
+    ): OrganizationId
 
     fun listOrganizations(): List<Organization>
 

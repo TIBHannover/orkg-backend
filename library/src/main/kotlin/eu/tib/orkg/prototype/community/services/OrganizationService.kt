@@ -29,9 +29,21 @@ class OrganizationService(
         createdBy: ContributorId,
         url: String,
         displayId: String,
-        type: OrganizationType
-    ): Organization {
-        return createOrganization(id, organizationName, createdBy, url, displayId, type).toOrganization()
+        type: OrganizationType,
+        logoId: ImageId?
+    ): OrganizationId {
+        val organizationId = id ?: OrganizationId(UUID.randomUUID())
+        val newOrganization = OrganizationEntity().apply {
+            this.id = organizationId.value
+            name = organizationName
+            this.createdBy = createdBy.value
+            this.url = url
+            this.displayId = displayId
+            this.type = type
+            this.logoId = logoId?.value
+        }
+        postgresOrganizationRepository.save(newOrganization)
+        return organizationId
     }
 
     override fun listOrganizations(): List<Organization> {
@@ -76,26 +88,6 @@ class OrganizationService(
     }
 
     override fun removeAll() = postgresOrganizationRepository.deleteAll()
-
-    private fun createOrganization(
-        id: OrganizationId?,
-        organizationName: String,
-        createdBy: ContributorId,
-        Url: String,
-        displayId: String,
-        type: OrganizationType
-    ): OrganizationEntity {
-        val organizationId = id ?: OrganizationId(UUID.randomUUID())
-        val newOrganization = OrganizationEntity().apply {
-            this.id = organizationId.value
-            name = organizationName
-            this.createdBy = createdBy.value
-            url = Url
-            this.displayId = displayId
-            this.type = type
-        }
-        return postgresOrganizationRepository.save(newOrganization)
-    }
 
     override fun findLogo(id: OrganizationId): Optional<Image> {
         val organization = postgresOrganizationRepository.findById(id.value)

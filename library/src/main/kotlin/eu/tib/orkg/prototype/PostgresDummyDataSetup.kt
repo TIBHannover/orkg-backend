@@ -88,18 +88,20 @@ class PostgresDummyDataSetup(
         fetchOrganizations("https://orkg.org/api/organizations/conferences")
 
     private fun generateOrganizations(organizations: List<Organization>) {
-        organizations.forEach {
-            val organization = organizationService.findById(it.id!!).orElseGet {
+        organizations.forEach { organization ->
+            organizationService.findById(organization.id!!).ifPresentOrElse({
+                organizationService.updateOrganization(organization)
+            }, {
                 organizationService.create(
-                    id = it.id,
-                    organizationName = it.name!!,
-                    createdBy = it.createdBy!!,
-                    url = it.homepage!!,
-                    displayId = it.displayId!!,
-                    type = it.type!!
+                    id = organization.id,
+                    organizationName = organization.name!!,
+                    createdBy = organization.createdBy!!,
+                    url = organization.homepage!!,
+                    displayId = organization.displayId!!,
+                    type = organization.type!!,
+                    logoId = null
                 )
-            }
-            organizationService.updateOrganization(organization)
+            })
         }
         // Ignore images as they are stored locally and depend on controller logic
     }

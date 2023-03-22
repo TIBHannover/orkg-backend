@@ -191,7 +191,7 @@ class PaperService(
             userId,
             paperId,
             ObjectService.ResearchFieldPredicate,
-            ThingId(request.paper.researchField)
+            request.paper.researchField
         )
         return paperObj
     }

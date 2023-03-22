@@ -69,7 +69,7 @@ data class Paper(
     val publicationYear: Int?,
     val publishedIn: String?,
     val url: String?,
-    val researchField: String,
+    val researchField: ThingId,
     val contributions: List<NamedObject>?,
     val extractionMethod: ExtractionMethod = UNKNOWN
 ) {

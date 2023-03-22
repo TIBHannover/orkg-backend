@@ -10,6 +10,7 @@ import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.PaperService
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat
@@ -132,7 +133,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
         CreatePaperRequest(null, Paper(
             title = title,
             doi = doi,
-            researchField = researchField,
+            researchField = ThingId(researchField),
             publicationYear = 2015,
             contributions = listOf(
                 NamedObject(
@@ -332,6 +333,24 @@ class PaperControllerTest : RestDocumentationBaseTest() {
                     paperResponseFields()
                 )
             )
+    }
+
+    @Test
+    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    fun `when research field is blank, 400 BAD REQUEST is returned`() {
+        val paperWithNoResearchField = mapOf(
+            "paper" to mapOf(
+                "title" to "long title here",
+                "doi" to "doi.id.here",
+                "researchField" to "",
+                "publicationYear" to 2015,
+                "contributions" to emptyMap<String, Any>()
+            )
+        )
+
+        mockMvc
+            .perform(postRequestWithBody("/api/papers/?mergeIfExists=false", paperWithNoResearchField))
+            .andExpect(status().isBadRequest)
     }
 
     @Test

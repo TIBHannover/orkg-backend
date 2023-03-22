@@ -8,6 +8,7 @@ import eu.tib.orkg.prototype.shared.SimpleMessageException
 import eu.tib.orkg.prototype.toSnakeCase
 import java.time.OffsetDateTime
 import javax.servlet.http.HttpServletRequest
+import org.springframework.data.neo4j.exception.UncategorizedNeo4jException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.*
@@ -110,7 +111,10 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         return ResponseEntity(payload, BAD_REQUEST)
     }
 
-    @ExceptionHandler(RuntimeException::class)
+    @ExceptionHandler(value = [
+        RuntimeException::class,
+        UncategorizedNeo4jException::class
+    ])
     fun handleRuntimeException(
         ex: RuntimeException,
         request: WebRequest

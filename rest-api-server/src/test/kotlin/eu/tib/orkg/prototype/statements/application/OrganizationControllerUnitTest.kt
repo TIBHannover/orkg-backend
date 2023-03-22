@@ -11,7 +11,6 @@ import eu.tib.orkg.prototype.community.application.InvalidImageEncoding
 import eu.tib.orkg.prototype.community.application.LogoNotFound
 import eu.tib.orkg.prototype.community.application.OrganizationController
 import eu.tib.orkg.prototype.community.application.OrganizationNotFound
-import eu.tib.orkg.prototype.community.application.encodeBase64
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
@@ -135,10 +134,8 @@ internal class OrganizationControllerUnitTest {
     fun `Given an organization is fetched, when service succeeds, then status 200 OK and the organization is returned with the encoded logo`() {
         val id = OrganizationId(UUID.randomUUID())
         val logoId = ImageId(UUID.randomUUID())
-        val encodedImage = "encoded_image_data"
         val organization = createOrganization().copy(
             id = id,
-            logo = encodedImage,
             logoId = logoId
         )
         val contributor = ContributorId(UUID.randomUUID())
@@ -156,11 +153,9 @@ internal class OrganizationControllerUnitTest {
         mockMvc.perform(get("/api/organizations/$id"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value("$id"))
-            .andExpect(jsonPath("$.logo").value(image.encodeBase64()))
             .andExpect(jsonPath("$.logo_id").doesNotExist())
 
         verify(exactly = 1) { organizationService.findById(id) }
-        verify(exactly = 1) { organizationService.findLogo(id) }
     }
 
     @Nested
@@ -204,12 +199,6 @@ internal class OrganizationControllerUnitTest {
                 decoded.data shouldBe expected.data
                 decoded.mimeType.toString() shouldBe expected.mimeType.toString()
             }
-        }
-
-        @Test
-        fun `given an image is encoded, then the result is correct`() {
-            val encoded = loadImage(testImage).encodeBase64()
-            encoded shouldBe loadEncodedImage(encodedTestImage)
         }
     }
 

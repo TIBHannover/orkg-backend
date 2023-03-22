@@ -92,7 +92,6 @@ fun createStatement(subject: Thing, predicate: Predicate, `object`: Thing) = Gen
 fun createOrganization() = Organization(
     id = OrganizationId(UUID.fromString("d02073bc-30fd-481e-9167-f3fc3595d590")),
     name = "some organization name",
-    logo = null,
     createdBy = ContributorId("ee06bdf3-d6f3-41d1-8af2-64c583d9057e"),
     homepage = "https://example.org",
     displayId = "some display id",

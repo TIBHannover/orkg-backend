@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Removed
+- Removed deprecated logo field from organization response. (See: [!463](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/463))
 
 ## [0.27.1] - 2023-03-10
 ### Fixed

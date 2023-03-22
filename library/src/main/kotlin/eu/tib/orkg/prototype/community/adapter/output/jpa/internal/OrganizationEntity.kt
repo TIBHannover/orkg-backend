@@ -58,7 +58,6 @@ class OrganizationEntity() {
         Organization(
             id = OrganizationId(id!!),
             name = name,
-            logo = null,
             createdBy = ContributorId(createdBy!!),
             homepage = url,
             observatoryIds = observatories!!.map { ObservatoryId(it.id!!) }.toSet(),

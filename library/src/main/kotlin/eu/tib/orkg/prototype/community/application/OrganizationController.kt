@@ -14,7 +14,6 @@ import eu.tib.orkg.prototype.files.api.CreateImageUseCase
 import eu.tib.orkg.prototype.files.api.ImageUseCases
 import eu.tib.orkg.prototype.files.application.InvalidImageData
 import eu.tib.orkg.prototype.files.application.InvalidMimeType
-import eu.tib.orkg.prototype.files.domain.model.Image
 import eu.tib.orkg.prototype.files.domain.model.ImageData
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
@@ -88,23 +87,17 @@ class OrganizationController(
     }
 
     @GetMapping("/")
-    fun findOrganizations(): List<Organization> {
-        return service.listOrganizations().onEach { expandLogo(it) }
-    }
+    fun findOrganizations(): List<Organization> = service.listOrganizations()
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: String): Organization {
-        val response: Organization = if (id.isValidUUID(id)) {
-            service
-                .findById(OrganizationId(id))
-                .orElseThrow { OrganizationNotFound(id) }
-        } else {
-            service
-                .findByDisplayId(id)
-                .orElseThrow { OrganizationNotFound(id) }
-        }
-        expandLogo(response)
-        return response
+    fun findById(@PathVariable id: String): Organization = if (id.isValidUUID(id)) {
+        service
+            .findById(OrganizationId(id))
+            .orElseThrow { OrganizationNotFound(id) }
+    } else {
+        service
+            .findByDisplayId(id)
+            .orElseThrow { OrganizationNotFound(id) }
     }
 
     @GetMapping("{id}/observatories")
@@ -117,9 +110,7 @@ class OrganizationController(
         contributorService.findUsersByOrganizationId(id)
 
     @GetMapping("/conferences")
-    fun findOrganizationsConferences(): Iterable<Organization> {
-        return service.listConferences().onEach { expandLogo(it) }
-    }
+    fun findOrganizationsConferences(): Iterable<Organization> = service.listConferences()
 
     @GetMapping("{id}/comparisons")
     fun findComparisonsByOrganizationId(@PathVariable id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation> {
@@ -228,14 +219,6 @@ class OrganizationController(
             .orElseThrow { OrganizationNotFound(id) }
     }
 
-    private fun expandLogo(organization: Organization) {
-        if (organization.logoId != null) {
-            service.findLogo(organization.id!!).ifPresent {
-                organization.logo = it.encodeBase64()
-            }
-        }
-    }
-
     fun String.isValidUUID(id: String): Boolean = try { UUID.fromString(id) != null } catch (e: IllegalArgumentException) { false }
 
     data class CreateOrganizationRequest(
@@ -295,9 +278,4 @@ value class EncodedImage(val value: String) {
         }
         return UpdateOrganizationUseCases.RawImage(data, mimeType)
     }
-}
-
-fun Image.encodeBase64(): String {
-    val encoded = Base64.getEncoder().encodeToString(data.bytes)
-    return "data:$mimeType;base64,$encoded"
 }

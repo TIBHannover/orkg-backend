@@ -119,7 +119,6 @@ class OrganizationControllerIntegrationTest : RestDocumentationBaseTest() {
         private fun organizationResponseFields(OrganizationType: OrganizationType.Companion) = listOf(
             fieldWithPath("id").description("The organization ID"),
             fieldWithPath("name").description("The organization name"),
-            fieldWithPath("logo").description("The logo of the organization"),
             fieldWithPath("created_by").description("The ID of the user that created the organization."),
             fieldWithPath("homepage").description("The URL of the organization's homepage."),
             fieldWithPath("observatory_ids").description("The list of observatories that belong to this organization"),

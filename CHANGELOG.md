@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - DOIs are compared insensitive now, as mandated by the [DOI handbook](https://www.doi.org/doi_handbook/2_Numbering.html#2.4). (Closes: [#254](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/254))
 ### Removed
 - Removed deprecated logo field from organization response. (See: [!463](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/463))
+- Removed unused data field from organization update request. (See: [!431](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/431))
 
 ## [0.27.1] - 2023-03-10
 ### Fixed

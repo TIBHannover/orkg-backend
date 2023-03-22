@@ -20,7 +20,6 @@ import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateOrganizationUseCases
 import eu.tib.orkg.prototype.statements.application.BaseController
 import java.io.ByteArrayInputStream
-import java.time.OffsetDateTime
 import java.util.*
 import javax.activation.MimeType
 import javax.activation.MimeTypeParseException
@@ -252,7 +251,6 @@ class OrganizationController(
         @field:Size(min = 1)
         val url: String?,
         val type: OrganizationType?,
-        val date: OffsetDateTime?,
         val logo: MultipartFile?
     )
 }

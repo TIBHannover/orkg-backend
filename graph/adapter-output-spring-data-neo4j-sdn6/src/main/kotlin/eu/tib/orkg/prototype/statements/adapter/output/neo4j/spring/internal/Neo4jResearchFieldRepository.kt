@@ -79,8 +79,8 @@ interface Neo4jResearchFieldRepository :
                     RETURN COUNT(orkgusers) as cnt""")
     fun getContributorIdsExcludingSubFields(id: ResourceId, pageable: Pageable): Page<ContributorId>
 
-    @Query("MATCH(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(r: ResearchField{resource_id:$id}) WHERE (NOT EXISTS(paper.featured) OR paper.featured = false) AND (NOT EXISTS(paper.unlisted) OR paper.unlisted = false) WITH DISTINCT paper, paper.created_at AS created_at, paper.resource_id AS resource_id, paper.label AS label, paper.created_by AS created_by RETURN paper $PAGE_PARAMS",
-        countQuery = "MATCH(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(r: ResearchField{resource_id:$id}) WHERE (NOT EXISTS(paper.featured) OR paper.featured = false) AND (NOT EXISTS(paper.unlisted) OR paper.unlisted = false) RETURN COUNT(paper) AS cnt")
+    @Query("MATCH(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(r: ResearchField{resource_id:$id}) WHERE (paper.featured IS NULL OR paper.featured = false) AND (paper.unlisted IS NULL OR paper.unlisted = false) WITH DISTINCT paper, paper.created_at AS created_at, paper.resource_id AS resource_id, paper.label AS label, paper.created_by AS created_by RETURN paper $PAGE_PARAMS",
+        countQuery = "MATCH(paper:Paper)-[:RELATED {predicate_id: 'P30'}]->(r: ResearchField{resource_id:$id}) WHERE (paper.featured IS NULL OR paper.featured = false) AND (paper.unlisted IS NULL OR paper.unlisted = false) RETURN COUNT(paper) AS cnt")
     fun getPapersExcludingSubFields(id: ResourceId, pageable: Pageable): Page<Neo4jResource>
 
     @Query("MATCH(paper:Paper {featured: $featured, unlisted: $unlisted} )-[:RELATED {predicate_id: 'P30'}]->(r: ResearchField{resource_id:$id}) WITH DISTINCT paper, paper.created_at AS created_at, paper.resource_id AS resource_id, paper.label AS label, paper.created_by AS created_by RETURN paper $PAGE_PARAMS",

@@ -29,17 +29,19 @@ private const val RETURN_NODE_COUNT = """RETURN count(node)"""
 private const val WITH_NODE_PROPERTIES =
     """WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at"""
 
+private const val MATCH_CONTRIBUTION = """MATCH (node:`Resource`:`Contribution`)"""
+
 private const val MATCH_FEATURED_CONTRIBUTION =
-    """MATCH (node) WHERE EXISTS(node.featured) AND node.featured = true AND ANY(collectionFields IN ['Contribution'] WHERE collectionFields IN LABELS(node))"""
+    """$MATCH_CONTRIBUTION WHERE node.featured IS NOT NULL AND node.featured = true"""
 
 private const val MATCH_NONFEATURED_CONTRIBUTION =
-    """MATCH (node) WHERE (NOT EXISTS(node.featured) OR node.featured = false) AND ANY(collectionFields IN ['Contribution'] WHERE collectionFields IN LABELS(node))"""
+    """$MATCH_CONTRIBUTION WHERE (node.featured IS NULL OR node.featured = false)"""
 
 private const val MATCH_UNLISTED_CONTRIBUTION =
-    """MATCH (node) WHERE EXISTS(node.unlisted) AND node.unlisted = true AND ANY(collectionFields IN ['Contribution'] WHERE collectionFields IN LABELS(node))"""
+    """$MATCH_CONTRIBUTION WHERE node.unlisted IS NOT NULL AND node.unlisted = true"""
 
 private const val MATCH_LISTED_CONTRIBUTION =
-    """MATCH (node) WHERE (NOT EXISTS(node.unlisted) OR node.unlisted = false) AND ANY(collectionFields IN ['Contribution'] WHERE collectionFields IN LABELS(node))"""
+    """$MATCH_CONTRIBUTION WHERE (node.unlisted IS NULL OR node.unlisted = false)"""
 
 private const val MATCH_CONTRIBUTION_BY_ID = """MATCH (node:`Resource`:`Contribution` {resource_id: $id})"""
 

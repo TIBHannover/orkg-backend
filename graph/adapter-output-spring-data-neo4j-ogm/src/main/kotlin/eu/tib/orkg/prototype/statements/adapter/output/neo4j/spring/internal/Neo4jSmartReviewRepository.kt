@@ -29,17 +29,19 @@ private const val RETURN_NODE_COUNT = """RETURN count(node)"""
 private const val WITH_NODE_PROPERTIES =
     """WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at"""
 
+private const val MATCH_SMART_REVIEW = """MATCH (node:`Resource`:`SmartReviewPublished`)"""
+
 private const val MATCH_FEATURED_SMART_REVIEW =
-    """MATCH (node) WHERE EXISTS(node.featured) AND node.featured = true AND ANY(collectionFields IN ['SmartReviewPublished'] WHERE collectionFields IN LABELS(node))"""
+    """$MATCH_SMART_REVIEW WHERE node.featured IS NOT NULL AND node.featured = true"""
 
 private const val MATCH_NONFEATURED_SMART_REVIEW =
-    """MATCH (node) WHERE (NOT EXISTS(node.featured) OR node.featured = false) AND ANY(collectionFields IN ['SmartReviewPublished'] WHERE collectionFields IN LABELS(node))"""
+    """$MATCH_SMART_REVIEW WHERE (node.featured IS NULL OR node.featured = false)"""
 
 private const val MATCH_UNLISTED_SMART_REVIEW =
-    """MATCH (node) WHERE EXISTS(node.unlisted) AND node.unlisted = true AND ANY(collectionFields IN ['SmartReviewPublished'] WHERE collectionFields IN LABELS(node))"""
+    """$MATCH_SMART_REVIEW WHERE node.unlisted IS NOT NULL AND node.unlisted = true"""
 
 private const val MATCH_LISTED_SMART_REVIEW =
-    """MATCH (node) WHERE (NOT EXISTS(node.unlisted) OR node.unlisted = false) AND ANY(collectionFields IN ['SmartReviewPublished'] WHERE collectionFields IN LABELS(node))"""
+    """$MATCH_SMART_REVIEW WHERE (node.unlisted IS NULL OR node.unlisted = false)"""
 
 private const val MATCH_SMART_REVIEW_BY_ID = """MATCH (node:`Resource`:`SmartReviewPublished` {resource_id: $id})"""
 

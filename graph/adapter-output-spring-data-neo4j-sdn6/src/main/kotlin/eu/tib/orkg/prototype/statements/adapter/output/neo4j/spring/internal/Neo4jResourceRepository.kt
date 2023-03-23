@@ -46,29 +46,29 @@ private const val WITH_NODE_PROPERTIES =
 
 // Custom queries
 
-private const val HAS_PAPER_CLASS = """ANY(collectionFields IN ['Paper'] WHERE collectionFields IN LABELS(node))"""
-
 private const val HAS_CLASSES = """ANY(collectionFields IN $classes WHERE collectionFields IN LABELS(node))"""
+
+private const val MATCH_PAPER = """MATCH (node:`Resource`:`Paper`)"""
 
 private const val MATCH_PAPER_BY_ID = """MATCH (node:`Resource`:`Paper` {resource_id: $id})"""
 
 private const val MATCH_VERIFIED_PAPER =
-    """MATCH (node) WHERE EXISTS(node.verified) AND node.verified = true AND $HAS_PAPER_CLASS"""
+    """$MATCH_PAPER WHERE node.verified IS NOT NULL AND node.verified = true"""
 
 private const val MATCH_UNVERIFIED_PAPER =
-    """MATCH (node) WHERE (NOT EXISTS(node.verified) OR node.verified = false) AND $HAS_PAPER_CLASS"""
+    """$MATCH_PAPER WHERE (node.verified IS NULL OR node.verified = false)"""
 
 private const val MATCH_FEATURED_PAPER =
-    """MATCH (node) WHERE node.featured = true AND $HAS_PAPER_CLASS"""
+    """$MATCH_PAPER WHERE node.featured = true"""
 
 private const val MATCH_NONFEATURED_PAPER =
-    """MATCH (node) WHERE node.featured = false AND $HAS_PAPER_CLASS"""
+    """$MATCH_PAPER WHERE node.featured = false"""
 
 private const val MATCH_UNLISTED_PAPER =
-    """MATCH (node) WHERE node.unlisted = true AND $HAS_PAPER_CLASS"""
+    """$MATCH_PAPER WHERE node.unlisted = true"""
 
 private const val MATCH_LISTED_PAPER =
-    """MATCH (node) WHERE node.unlisted = false AND $HAS_PAPER_CLASS"""
+    """$MATCH_PAPER WHERE node.unlisted = false"""
 
 const val IS_FEATURED = "COALESCE(node.featured, false) = $featured"
 const val IS_UNLISTED = "COALESCE(node.unlisted, false) = $unlisted"

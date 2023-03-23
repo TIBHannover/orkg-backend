@@ -24,8 +24,11 @@ import io.kotest.matchers.maps.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
+import java.text.SimpleDateFormat
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
+import java.time.format.DateTimeFormatter.ofPattern
+import java.util.*
 import org.orkg.statements.testing.createClass
 import org.orkg.statements.testing.createLiteral
 import org.orkg.statements.testing.createPredicate
@@ -1000,6 +1003,75 @@ fun <
         }
     }
 
+    describe("finding a timeline") {
+        context("by resource id") {
+            val resource = fabricator.random<Resource>()
+
+            setOf("ResearchField", "ResearchProblem", "Paper").forEach {
+                val resourceForIt = fabricator.random<Resource>().copy(
+                    classes = setOf(ThingId(it))
+                )
+                val resourceRelatesToIt = fabricator.random<GeneralStatement>().copy(
+                    subject = resource,
+                    `object` = resourceForIt
+                )
+                saveStatement(resourceRelatesToIt)
+            }
+
+            // Relate to some other Resource
+            val otherResource = fabricator.random<Resource>()
+            val resourceRelatesToOtherResource = fabricator.random<GeneralStatement>().copy(
+                subject = resource,
+                `object` = otherResource
+            )
+            saveStatement(resourceRelatesToOtherResource)
+
+            // Relate otherResource to another Resource
+            val anotherResource = fabricator.random<Resource>()
+            val otherResourceRelatesToAnotherResource = fabricator.random<GeneralStatement>().copy(
+                subject = otherResource,
+                `object` = anotherResource
+            )
+            saveStatement(otherResourceRelatesToAnotherResource)
+
+            val formatter = ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX")
+            val expected = setOf(
+                resource.createdBy to resource.createdAt,
+                otherResource.createdBy to otherResource.createdAt,
+                resourceRelatesToOtherResource.createdBy to resourceRelatesToOtherResource.createdAt,
+                anotherResource.createdBy to anotherResource.createdAt,
+                otherResourceRelatesToAnotherResource.createdBy to otherResourceRelatesToAnotherResource.createdAt
+            ).map {
+                ResourceContributor(
+                    it.first.toString(),
+                    it.second!!.withSecond(0).withNano(0).format(formatter)
+                )
+            }
+
+            val result = repository.findTimelineByResourceId(resource.id, PageRequest.of(0, 5))
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe 5
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 5
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe 5
+            }
+            it("sorts the results by creation date by default") {
+                result.content.map {
+                    OffsetDateTime.parse(it.createdAt, ISO_OFFSET_DATE_TIME)
+                }.zipWithNext { a, b ->
+                    a shouldBeGreaterThan b
+                }
+            }
+        }
+    }
+
     describe("finding several contributors") {
         context("by resource id") {
             val resource = fabricator.random<Resource>()
@@ -1032,14 +1104,14 @@ fun <
             saveStatement(otherResourceRelatesToAnotherResource)
 
             val expected = setOf(
-                resource.createdBy to resource.createdAt,
-                otherResource.createdBy to otherResource.createdAt,
-                resourceRelatesToOtherResource.createdBy to resourceRelatesToOtherResource.createdAt,
-                anotherResource.createdBy to anotherResource.createdAt,
-                otherResourceRelatesToAnotherResource.createdBy to otherResourceRelatesToAnotherResource.createdAt
-            ).map { ResourceContributor(it.first.toString(), it.second!!.format(ISO_OFFSET_DATE_TIME)) }
+                resource.createdBy,
+                otherResource.createdBy,
+                resourceRelatesToOtherResource.createdBy,
+                anotherResource.createdBy,
+                otherResourceRelatesToAnotherResource.createdBy
+            )
 
-            val result = repository.findContributorsByResourceId(resource.id, PageRequest.of(0, 5))
+            val result = repository.findAllContributorsByResourceId(resource.id, PageRequest.of(0, 5))
 
             it("returns the correct result") {
                 result shouldNotBe null
@@ -1054,10 +1126,8 @@ fun <
                 result.totalElements shouldBe 5
             }
             it("sorts the results by creation date by default") {
-                result.content.map {
-                    OffsetDateTime.parse(it.createdAt, ISO_OFFSET_DATE_TIME)
-                }.zipWithNext { a, b ->
-                    a shouldBeGreaterThan b
+                result.content.zipWithNext { a, b ->
+                    a.value.toString() shouldBeLessThan b.value.toString()
                 }
             }
         }
@@ -1079,8 +1149,8 @@ fun <
                     `object` = fabricator.random<Resource>()
                 )
                 saveStatement(statement)
-                repository.checkIfResourceHasStatements((statement.subject as Resource).id) shouldBe true
-                repository.checkIfResourceHasStatements((statement.`object` as Resource).id) shouldBe true
+                repository.checkIfResourceHasStatements(statement.subject.thingId) shouldBe true
+                repository.checkIfResourceHasStatements(statement.`object`.thingId) shouldBe true
             }
         }
     }

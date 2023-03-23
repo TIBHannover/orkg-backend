@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.spi
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.BundleConfiguration
 import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase.*
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
@@ -65,7 +66,8 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun countPredicateUsage(id: ThingId): Long
     fun findByDOI(doi: String): Optional<Resource>
     fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource>
-    fun findContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor>
+    fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId>
+    fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor>
     fun checkIfResourceHasStatements(id: ThingId): Boolean
     fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
 }

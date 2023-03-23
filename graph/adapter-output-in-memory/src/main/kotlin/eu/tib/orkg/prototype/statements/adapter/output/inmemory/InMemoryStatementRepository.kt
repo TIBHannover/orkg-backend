@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.adapter.output.inmemory
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.BundleConfiguration
 import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase.PredicateUsageCount
 import eu.tib.orkg.prototype.statements.domain.model.Class
@@ -14,6 +15,13 @@ import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
 import org.springframework.data.domain.Page
@@ -221,20 +229,45 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
             }.map { it.`object` as Resource }
         }.flatten().distinct()
 
-    // TODO: rename to findAllContributorsByResourceId
-    override fun findContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> =
-        findSubgraph(ThingId(id.value)) { statement, _ ->
+    override fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId> =
+        findSubgraph(id) { statement, _ ->
             statement.`object` !is Resource || (statement.`object` as Resource).classes.none { `class` ->
                 `class` == paperClass || `class` == researchProblemClass || `class` == researchFieldClass
             }
         }.map {
             setOf(
-                it.subject.toResourceContributor(),
-                it.`object`.toResourceContributor(),
-                ResourceContributor(it.createdBy.toString(), it.createdAt!!.format(ISO_OFFSET_DATE_TIME))
+                it.subject.toContributor(),
+                it.`object`.toContributor(),
+                it.createdBy
             )
         }.flatten().distinct()
+            .sortedBy { it.toString() }
+            .paged(pageable)
+
+    override fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> =
+        findSubgraph(id) { statement, _ ->
+            statement.`object` !is Resource || (statement.`object` as Resource).classes.none { `class` ->
+                `class` == paperClass || `class` == researchProblemClass || `class` == researchFieldClass
+            }
+        }.asSequence()
+            .map {
+                setOf(
+                    it.subject.toResourceEdit(),
+                    it.`object`.toResourceEdit(),
+                    ResourceEdit(it.createdBy, it.createdAt!!.toInstant().toEpochMilli())
+                )
+            }.flatten()
+            .distinct()
+            .map {
+                ResourceContributor(
+                    it.contributor.value.toString(),
+                    SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").apply {
+                        timeZone = TimeZone.getTimeZone("UTC")
+                    }.format(it.millis - (it.millis % 60000))
+                )
+            }.distinct()
             .sortedByDescending { it.createdAt }
+            .toList()
             .paged(pageable)
 
     override fun checkIfResourceHasStatements(id: ThingId): Boolean =
@@ -285,13 +318,26 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         return visited
     }
 
-    private fun Thing.toResourceContributor() =
+    private fun Thing.toContributor() =
         when (this) {
-            is Class -> ResourceContributor(createdBy.value.toString(), createdAt.format(ISO_OFFSET_DATE_TIME))
-            is Resource -> ResourceContributor(createdBy.value.toString(), createdAt.format(ISO_OFFSET_DATE_TIME))
-            is Predicate -> ResourceContributor(createdBy.value.toString(), createdAt.format(ISO_OFFSET_DATE_TIME))
-            is Literal -> ResourceContributor(createdBy.value.toString(), createdAt.format(ISO_OFFSET_DATE_TIME))
+            is Class -> createdBy
+            is Resource -> createdBy
+            is Predicate ->createdBy
+            is Literal -> createdBy
+        }
+
+    private fun Thing.toResourceEdit() =
+        when (this) {
+            is Class -> ResourceEdit(createdBy, createdAt.toInstant().toEpochMilli())
+            is Resource -> ResourceEdit(createdBy, createdAt.toInstant().toEpochMilli())
+            is Predicate -> ResourceEdit(createdBy, createdAt.toInstant().toEpochMilli())
+            is Literal -> ResourceEdit(createdBy, createdAt.toInstant().toEpochMilli())
         }
 
     private fun <T: Any> Iterable<T>.containsAny(other: Iterable<T>): Boolean = any(other::contains)
+
+    private data class ResourceEdit(
+        val contributor: ContributorId,
+        val millis: Long
+    )
 }

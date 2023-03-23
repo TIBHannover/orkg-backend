@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
@@ -201,10 +202,10 @@ WITH rel AS p, endNode(rel) AS o, n
 WITH COLLECT(p) + COLLECT(o) + n as nodes
 WITH DISTINCT nodes
 UNWIND nodes as node
-WITH DISTINCT node.created_by AS createdBy, node.created_at AS createdAt
+WITH DISTINCT node.created_by AS createdBy
 WHERE createdBy IS NOT NULL
-RETURN createdBy, createdAt
-ORDER BY createdAt DESC""",
+RETURN createdBy
+ORDER BY createdBy""",
         countQuery = """MATCH (n:Resource {resource_id: $id})
 CALL apoc.path.subgraphAll(n, {relationshipFilter: ">", labelFilter: "-ResearchField|-ResearchProblem|-Paper"})
 YIELD relationships
@@ -213,10 +214,49 @@ WITH rel AS p, endNode(rel) AS o, n
 WITH COLLECT(p) + COLLECT(o) + n as nodes
 WITH DISTINCT nodes
 UNWIND nodes as node
-WITH DISTINCT node.created_by AS createdBy, node.created_at AS createdAt
+WITH DISTINCT node.created_by AS createdBy
 WHERE createdBy IS NOT NULL
 RETURN COUNT(createdBy) as cnt""")
-    fun findContributorsByResourceId(id: ResourceId, pageable: Pageable): Page<ResourceContributor>
+    fun findAllContributorsByResourceId(id: ResourceId, pageable: Pageable): Page<ContributorId>
+
+    @Query("""MATCH (n:Resource {resource_id: $id})
+CALL apoc.path.subgraphAll(n, {relationshipFilter: ">", labelFilter: "-ResearchField|-ResearchProblem|-Paper"})
+YIELD relationships
+UNWIND relationships AS rel
+WITH rel AS p, endNode(rel) AS o, n
+WITH COLLECT(p) + COLLECT(o) + COLLECT(n) as nodes
+WITH DISTINCT nodes
+UNWIND nodes as node
+WITH node
+WHERE node.created_by IS NOT NULL AND node.created_at IS NOT NULL
+WITH node.created_by AS createdBy, 
+CASE
+  WHEN node.created_at =~ "\d+-\d+-\d+T\d+:\d+:\d+\.\d+.*" THEN apoc.date.parse(node.created_at, "ms", "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+  ELSE apoc.date.parse(node.created_at, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX")
+END AS ms
+WITH createdBy, ms - (ms % 60000) as bin
+WITH DISTINCT [createdBy, apoc.date.format(bin, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX")] AS edit
+RETURN edit[0] as createdBy, edit[1] as createdAt
+ORDER BY createdAt DESC""",
+        countQuery = """MATCH (n:Resource {resource_id: $id})
+CALL apoc.path.subgraphAll(n, {relationshipFilter: ">", labelFilter: "-ResearchField|-ResearchProblem|-Paper"})
+YIELD relationships
+UNWIND relationships AS rel
+WITH rel AS p, endNode(rel) AS o, n
+WITH COLLECT(p) + COLLECT(o) + COLLECT(n) as nodes
+WITH DISTINCT nodes
+UNWIND nodes as node
+WITH node
+WHERE node.created_by IS NOT NULL AND node.created_at IS NOT NULL
+WITH node.created_by AS createdBy, 
+CASE
+  WHEN node.created_at =~ "\d+-\d+-\d+T\d+:\d+:\d+\.\d+.*" THEN apoc.date.parse(node.created_at, "ms", "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+  ELSE apoc.date.parse(node.created_at, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX")
+END AS ms
+WITH createdBy, ms - (ms % 60000) as bin
+WITH DISTINCT [createdBy, apoc.date.format(bin, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX")] AS edit
+RETURN COUNT(edit) as cnt""")
+    fun findTimelineByResourceId(id: ResourceId, pageable: Pageable): Page<ResourceContributor>
 
     @Query("""MATCH (n:Resource {resource_id: $id}) RETURN EXISTS ((n)-[:RELATED]-(:Thing)) AS used""")
     fun checkIfResourceHasStatements(id: ResourceId): Boolean

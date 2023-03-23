@@ -67,7 +67,8 @@ interface RetrieveResourceUseCase {
     fun findById(id: ThingId): Optional<ResourceRepresentation>
     fun findByTitle(title: String): Optional<ResourceRepresentation>
     fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation>
-    fun findContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor>
+    fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId>
+    fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor>
     fun findPapersByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation>
     fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation>
     fun findResourcesByObservatoryIdAndClass(id: ObservatoryId, classes: List<ThingId>, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>

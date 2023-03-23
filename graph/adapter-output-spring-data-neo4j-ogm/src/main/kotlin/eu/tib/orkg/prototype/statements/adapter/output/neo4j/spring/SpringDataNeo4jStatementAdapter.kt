@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClassRepository
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteral
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteralRepository
@@ -156,8 +157,11 @@ class SpringDataNeo4jStatementAdapter(
     override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
         neo4jRepository.findProblemsByObservatoryId(id).map(Neo4jResource::toResource)
 
-    override fun findContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> =
-        neo4jRepository.findContributorsByResourceId(id.toResourceId(), pageable)
+    override fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId> =
+        neo4jRepository.findAllContributorsByResourceId(id.toResourceId(), pageable)
+
+    override fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> =
+        neo4jRepository.findTimelineByResourceId(id.toResourceId(), pageable)
 
     override fun checkIfResourceHasStatements(id: ThingId): Boolean =
         neo4jRepository.checkIfResourceHasStatements(id.toResourceId())

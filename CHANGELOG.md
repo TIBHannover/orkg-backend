@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Removed deprecated logo field from organization response. (See: [!463](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/463))
 - Removed unused data field from organization update request. (See: [!431](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/431))
+### Changed
+- The endpoint `/api/resource/{id}/contributors` was moved to `/api/resource/{id}/timeline` and changed to bin its results per minute per contributor.
+  The old endpoint for contributors was replaced with an implementation that returns a distinct and paged set of contributor IDs.
+  (See: [!423](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/423))
 
 ## [0.27.1] - 2023-03-10
 ### Fixed

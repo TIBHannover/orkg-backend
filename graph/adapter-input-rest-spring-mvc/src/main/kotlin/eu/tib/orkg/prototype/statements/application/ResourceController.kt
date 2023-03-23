@@ -160,9 +160,12 @@ class ResourceController(
     }
 
     @GetMapping("{id}/contributors")
-    fun findContributorsById(@PathVariable id: ThingId, pageable: Pageable): Page<ResourceContributor> {
-        return service.findContributorsByResourceId(id, pageable)
-    }
+    fun findContributorsById(@PathVariable id: ThingId, pageable: Pageable): Page<ContributorId> =
+        service.findAllContributorsByResourceId(id, pageable)
+
+    @GetMapping("{id}/timeline")
+    fun findTimelineById(@PathVariable id: ThingId, pageable: Pageable): Page<ResourceContributor> =
+        service.findTimelineByResourceId(id, pageable)
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")

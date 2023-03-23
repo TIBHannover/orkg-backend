@@ -11,11 +11,11 @@ import eu.tib.orkg.prototype.statements.api.ResourceGenerator
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateResourceUseCase
-import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.InvalidClassCollection
 import eu.tib.orkg.prototype.statements.application.InvalidClassFilter
 import eu.tib.orkg.prototype.statements.application.ResourceCantBeDeleted
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
+import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -283,8 +283,15 @@ class ResourceService(
             }
         }
 
-    override fun findContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> =
-        statementRepository.findContributorsByResourceId(id, pageable)
+    override fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> =
+        repository.findByResourceId(id).map {
+            statementRepository.findTimelineByResourceId(id, pageable)
+        }.orElseThrow { ResourceNotFound.withId(id) }
+
+    override fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId> =
+        repository.findByResourceId(id).map {
+            statementRepository.findAllContributorsByResourceId(id, pageable)
+        }.orElseThrow { ResourceNotFound.withId(id) }
 
     override fun update(command: UpdateResourceUseCase.UpdateCommand) {
         // already checked by service

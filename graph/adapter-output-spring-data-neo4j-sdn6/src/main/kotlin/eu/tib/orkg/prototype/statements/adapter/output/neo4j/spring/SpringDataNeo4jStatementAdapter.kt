@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatementIdGenerator
 import eu.tib.orkg.prototype.statements.api.BundleConfiguration
 import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase.PredicateUsageCount
@@ -14,11 +15,16 @@ import eu.tib.orkg.prototype.statements.services.ObjectService
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
 import org.neo4j.cypherdsl.core.Condition
+import org.neo4j.cypherdsl.core.Cypher
 import org.neo4j.cypherdsl.core.Cypher.anyNode
 import org.neo4j.cypherdsl.core.Cypher.asExpression
+import org.neo4j.cypherdsl.core.Cypher.call
+import org.neo4j.cypherdsl.core.Cypher.caseExpression
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
@@ -26,9 +32,12 @@ import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.optionalMatch
 import org.neo4j.cypherdsl.core.Cypher.returning
 import org.neo4j.cypherdsl.core.Cypher.union
+import org.neo4j.cypherdsl.core.Cypher.valueAt
+import org.neo4j.cypherdsl.core.Expression
 import org.neo4j.cypherdsl.core.Functions.collect
 import org.neo4j.cypherdsl.core.Functions.count
 import org.neo4j.cypherdsl.core.Functions.countDistinct
+import org.neo4j.cypherdsl.core.Operations
 import org.neo4j.cypherdsl.core.Predicates.exists
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -445,7 +454,7 @@ class SpringDataNeo4jStatementAdapter(
             .all()
     }
 
-    override fun findContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> {
+    override fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId> {
         val apocConfiguration = mapOf<String, Any>(
             "relationshipFilter" to ">",
             "labelFilter" to "-ResearchField|-ResearchProblem|-Paper"
@@ -456,7 +465,6 @@ class SpringDataNeo4jStatementAdapter(
         val nodes = name("nodes")
         val node = name("node")
         val createdBy = name("createdBy")
-        val createdAt = name("createdAt")
         val match = match(
                 node("Resource")
                     .named(n)
@@ -468,13 +476,81 @@ class SpringDataNeo4jStatementAdapter(
             .unwind(relationships).`as`(rel)
             .withDistinct(collect(rel).add(collect(endNode(rel))).add(n).`as`(nodes))
             .unwind(nodes).`as`(node)
-            .withDistinct(node.property("created_by").`as`(createdBy), node.property("created_at").`as`(createdAt))
+            .withDistinct(node.property("created_by").`as`(createdBy))
+            .where(createdBy.isNotNull)
         val query = match
-            .returning(createdBy, createdAt)
-            .orderBy(createdAt.descending())
+            .returning(createdBy)
+            .orderBy(createdBy)
             .build(pageable)
         val countQuery = match
             .returning(count(createdBy))
+            .build()
+        return neo4jClient.query(query.cypher)
+            .fetchAs(ContributorId::class.java)
+            .mappedBy { _, record -> record[createdBy].toContributorId() }
+            .paged(pageable, countQuery)
+    }
+
+    override fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> {
+        val apocConfiguration = mapOf<String, Any>(
+            "relationshipFilter" to ">",
+            "labelFilter" to "-ResearchField|-ResearchProblem|-Paper"
+        )
+        val n = name("n")
+        val relationships = name("relationships")
+        val rel = name("rel")
+        val nodes = name("nodes")
+        val node = name("node")
+        val createdBy = name("createdBy")
+        val createdAt = name("createdAt")
+        val ms = name("ms")
+        val bin = name("bin")
+        val edit = Cypher.listOf(
+            createdBy,
+            call("apoc.date.format").withArgs(
+                bin,
+                literalOf<String>("ms"),
+                literalOf<String>("yyyy-MM-dd'T'HH:mm:ssXXX")
+            ).asFunction()
+        ).`as`("edit")
+        val match = match(
+                node("Resource")
+                    .named(n)
+                    .withProperties("resource_id", literalOf<String>(id.value))
+            ).call("apoc.path.subgraphAll")
+            .withArgs(n, asExpression(apocConfiguration))
+            .yield(relationships)
+            .with(relationships, n)
+            .unwind(relationships).`as`(rel)
+            .withDistinct(collect(rel).add(collect(endNode(rel))).add(collect(n)).`as`(nodes))
+            .unwind(nodes).`as`(node)
+            .with(node)
+            .where(node.property("created_by").isNotNull.and(node.property("created_at").isNotNull))
+            .with(
+                node.property("created_by").`as`(createdBy),
+                caseExpression()
+                    .`when`(node.property("created_at").matches("""\d+-\d+-\d+T\d+:\d+:\d+\.\d+.*"""))
+                    .then(call("apoc.date.parse").withArgs(
+                        node.property("created_at"),
+                        literalOf<String>("ms"),
+                        literalOf<String>("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+                    ).asFunction())
+                    .elseDefault(call("apoc.date.parse").withArgs(
+                        node.property("created_at"),
+                        literalOf<String>("ms"),
+                        literalOf<String>("yyyy-MM-dd'T'HH:mm:ssXXX")
+                    ).asFunction())
+                    .`as`(ms)
+            ).with(
+                createdBy as Expression,
+                ms.subtract(ms.asExpression().remainder(literalOf<Int>(60000))).`as`(bin)
+            ).withDistinct(edit)
+        val query = match
+            .returning(valueAt(edit, 0).`as`(createdBy), valueAt(edit, 1).`as`(createdAt))
+            .orderBy(createdAt.descending())
+            .build(pageable)
+        val countQuery = match
+            .returning(count(edit))
             .build()
         return neo4jClient.query(query.cypher)
             .fetchAs(ResourceContributor::class.java)

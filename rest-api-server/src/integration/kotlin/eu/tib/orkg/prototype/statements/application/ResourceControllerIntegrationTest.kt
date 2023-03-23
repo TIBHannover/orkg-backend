@@ -43,7 +43,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 @Import(MockUserDetailsService::class)
 @TestPropertySource(properties = ["orkg.features.formatted_labels=false"])
-class ResourceControllerTest : RestDocumentationBaseTest() {
+class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var flags: FeatureFlagService

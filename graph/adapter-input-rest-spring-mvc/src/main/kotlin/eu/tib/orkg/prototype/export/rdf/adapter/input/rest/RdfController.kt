@@ -5,11 +5,13 @@ import eu.tib.orkg.prototype.statements.application.PredicateController
 import eu.tib.orkg.prototype.statements.application.ResourceController
 import eu.tib.orkg.prototype.export.rdf.api.ExportRDFUseCase
 import org.springframework.data.domain.Pageable
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/rdf")
@@ -20,10 +22,13 @@ class RdfController(
     private val classController: ClassController
 ) {
     @GetMapping("/dump", produces = ["application/n-triples"])
-    fun dumpToRdf(): ResponseEntity<String> {
-        return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=\"dump.nt\"")
-            .body(service.dumpToNTriple())
-    }
+    fun dumpToRdf(uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<String> =
+        ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
+            .location(uriComponentsBuilder
+                .path("/files/rdf-dumps/rdf-export-orkg.nt")
+                .build()
+                .toUri())
+            .build()
 
     @GetMapping("/hints")
     fun getHints(

@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import eu.tib.orkg.prototype.asString
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.export.rdf.domain.toNTriple
 import org.assertj.core.api.Assertions.assertThat
@@ -15,6 +16,6 @@ class ResourceRDFTests {
             |
         """.trimMargin()
         val resource = createResource().copy(ThingId("R100"), label = "some dummy label")
-        assertThat(resource.toNTriple()).isEqualTo(expectedOutput)
+        assertThat(resource::toNTriple.asString()).isEqualTo(expectedOutput)
     }
 }

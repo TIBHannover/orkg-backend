@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import eu.tib.orkg.prototype.createClass
+import eu.tib.orkg.prototype.asString
 import eu.tib.orkg.prototype.export.rdf.domain.toNTriple
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -15,7 +16,7 @@ class ClassRDFTests {
             |
         """.trimMargin()
         val `class` = createClass().copy(id = ThingId("C100"), label = "some dummy label", uri = null)
-        assertThat(`class`.toNTriple()).isEqualTo(expectedOutput)
+        assertThat(`class`::toNTriple.asString()).isEqualTo(expectedOutput)
     }
 
     @Test
@@ -27,6 +28,6 @@ class ClassRDFTests {
             |
         """.trimMargin()
         val `class` = createClass().copy(id = ThingId("C100"), label = "some dummy label")
-        assertThat(`class`.toNTriple()).isEqualTo(expectedOutput)
+        assertThat(`class`::toNTriple.asString()).isEqualTo(expectedOutput)
     }
 }

@@ -14,6 +14,7 @@ import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.forEach
+import java.io.Writer
 import java.net.URI
 import java.util.*
 import org.eclipse.rdf4j.model.Model
@@ -33,11 +34,19 @@ class RDFService(
     private val resourceRepository: ResourceRepository,
     private val classesRepository: ClassRepository
 ) : ExportRDFUseCase {
-    override fun dumpToNTriple(): String = buildString {
-        classesRepository.forEach { append(it.toNTriple()) }
-        predicateRepository.forEach { append(it.toNTriple()) }
-        resourceRepository.forEach { append(it.toNTriple()) }
-        statementRepository.forEach { append(it.toNTriple()) }
+    override fun dumpToNTriple(writer: Writer) {
+        classesRepository.forEach({
+            it.toNTriple(writer)
+        }, writer::flush)
+        predicateRepository.forEach({
+            it.toNTriple(writer)
+        }, writer::flush)
+        resourceRepository.forEach({
+            it.toNTriple(writer)
+        }, writer::flush)
+        statementRepository.forEach({
+            it.toNTriple(writer)
+        }, writer::flush)
     }
 
     override fun rdfModelForClass(id: ThingId): Optional<Model> {
@@ -95,46 +104,43 @@ class RDFService(
     }
 }
 
-fun Class.toNTriple(): String {
+fun Class.toNTriple(writer: Writer) {
     val cPrefix = RdfConstants.CLASS_NS
-    val sb = StringBuilder()
-    sb.append("<$cPrefix$id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .\n")
-    if (uri?.isValidForNTriple() == true) sb.append("<$cPrefix$id> <${OWL.EQUIVALENTCLASS}> <$uri> .\n")
-    sb.append("<$cPrefix$id> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label)}\"^^<http://www.w3.org/2001/XMLSchema#string> .\n")
-    return sb.toString()
+    writer.write("<$cPrefix$id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .\n")
+    if (uri?.isValidForNTriple() == true) writer.write("<$cPrefix$id> <${OWL.EQUIVALENTCLASS}> <$uri> .\n")
+    writer.write("<$cPrefix$id> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label)}\"^^<http://www.w3.org/2001/XMLSchema#string> .\n")
 }
 
-fun Predicate.toNTriple(): String {
+fun Predicate.toNTriple(writer: Writer) {
     val cPrefix = RdfConstants.CLASS_NS
     val pPrefix = RdfConstants.PREDICATE_NS
-    return "<$pPrefix$id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Predicate> .\n" + "<$pPrefix$id> <http://www.w3.org/2000/01/rdf-schema#label> \"${
+    val predicate = "<$pPrefix$id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Predicate> .\n" + "<$pPrefix$id> <http://www.w3.org/2000/01/rdf-schema#label> \"${
         escapeLiterals(
             label
         )
     }\"^^<http://www.w3.org/2001/XMLSchema#string> .\n"
+    writer.write(predicate)
 }
 
-fun Resource.toNTriple(): String {
+fun Resource.toNTriple(writer: Writer) {
     val cPrefix = RdfConstants.CLASS_NS
     val rPrefix = RdfConstants.RESOURCE_NS
-    val sb = StringBuilder()
-    sb.append("<$rPrefix$id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Resource> .\n")
-    classes.forEach { sb.append("<$rPrefix$id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <$cPrefix${it.value}> .\n") }
-    sb.append("<$rPrefix$id> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label)}\"^^<http://www.w3.org/2001/XMLSchema#string> .\n")
-    return sb.toString()
+    writer.write("<$rPrefix$id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Resource> .\n")
+    classes.forEach { writer.write("<$rPrefix$id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <$cPrefix${it.value}> .\n") }
+    writer.write("<$rPrefix$id> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label)}\"^^<http://www.w3.org/2001/XMLSchema#string> .\n")
 }
 
 /**
  * Convert the triple to a statement in NTriple format.
  */
-fun GeneralStatement.toNTriple(): String {
+fun GeneralStatement.toNTriple(writer: Writer) {
     val pPrefix = RdfConstants.PREDICATE_NS
-    val result = "${serializeThing(subject)} <$pPrefix${predicate.id}> ${serializeThing(`object`)} .\n"
-    if (result[0] == '"')
-    // Ignore literal
-    // TODO: log this somewhere
-        return ""
-    return result
+    val statement = "${serializeThing(subject)} <$pPrefix${predicate.id}> ${serializeThing(`object`)} .\n"
+    if (statement[0] == '"')
+        // Ignore literal
+        // TODO: log this somewhere
+        return
+    writer.write(statement)
 }
 
 /**

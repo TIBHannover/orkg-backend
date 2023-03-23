@@ -44,14 +44,9 @@ class RdfControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun index() {
-        service.create("Resource 1")
-        service.create("Resource 2")
-        service.create("Resource 3")
-
         mockMvc
             .perform(getFileRequestTo("/api/rdf/dump"))
-            .andExpect(status().isOk)
-            .andExpect(content().string(containsString("Resource 1")))
+            .andExpect(status().isMovedPermanently)
             .andDo(
                 document(
                     snippet

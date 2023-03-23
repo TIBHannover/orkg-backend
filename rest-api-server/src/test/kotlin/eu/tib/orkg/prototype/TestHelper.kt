@@ -20,6 +20,8 @@ import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.io.BufferedReader
+import java.io.StringWriter
+import java.io.Writer
 import java.net.URI
 import java.net.URLConnection
 import java.time.OffsetDateTime
@@ -125,3 +127,9 @@ fun loadEncodedImage(uri: URI): String =
 
 private val URI.inputStream
     get() = ClassPathResource(path).inputStream
+
+fun ((Writer) -> Unit).asString(): String {
+    val writer = StringWriter()
+    this(writer)
+    return writer.toString()
+}

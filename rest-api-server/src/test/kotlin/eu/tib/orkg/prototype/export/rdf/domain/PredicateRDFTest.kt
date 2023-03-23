@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.export.rdf.domain
 
+import eu.tib.orkg.prototype.asString
 import eu.tib.orkg.prototype.createPredicate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -14,6 +15,6 @@ internal class PredicateRDFTest {
             |
         """.trimMargin()
         val predicate = createPredicate()
-        assertThat(predicate.toNTriple()).isEqualTo(expectedOutput)
+        assertThat(predicate::toNTriple.asString()).isEqualTo(expectedOutput)
     }
 }

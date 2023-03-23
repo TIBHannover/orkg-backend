@@ -14,6 +14,12 @@ coffee-boots:
   cache:
     basic-spec: maximumSize=5000,expireAfterAccess=10m,recordStats
 orkg:
+  rdf:
+    dump:
+      # cron schedule for the rdf-dump
+      # use "-" to disable
+      schedule: "-"
+      file-name: rdf-export-orkg.nt
   init:
     setup:
       entities-file: "data/required_entities.json"

@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.export.rdf.domain
 
+import eu.tib.orkg.prototype.asString
 import eu.tib.orkg.prototype.createLiteral
 import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.createResource
@@ -22,7 +23,7 @@ internal class StatementRDFTest {
             predicate = createPredicate().copy(id = ThingId("P200")),
             `object` = createResource().copy(id = ThingId("R300"), label = "object")
         )
-        assertThat(statement.toNTriple()).isEqualTo(expectedOutput)
+        assertThat(statement::toNTriple.asString()).isEqualTo(expectedOutput)
     }
 
     @Test
@@ -36,7 +37,7 @@ internal class StatementRDFTest {
             predicate = createPredicate().copy(id = ThingId("P200")),
             `object` = createLiteral().copy(id = ThingId("L300"), label = "object")
         )
-        assertThat(statement.toNTriple()).isEqualTo(expectedOutput)
+        assertThat(statement::toNTriple.asString()).isEqualTo(expectedOutput)
     }
 
     @Test
@@ -53,6 +54,6 @@ internal class StatementRDFTest {
                 id = ThingId("L300"), label = "object", datatype = "http://example.org/myDataType"
             )
         )
-        assertThat(statement.toNTriple()).isEqualTo(expectedOutput)
+        assertThat(statement::toNTriple.asString()).isEqualTo(expectedOutput)
     }
 }

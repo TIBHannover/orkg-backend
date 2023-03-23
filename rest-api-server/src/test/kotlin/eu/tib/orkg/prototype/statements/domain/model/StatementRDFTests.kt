@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.createLiteral
 import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.createStatement
+import eu.tib.orkg.prototype.asString
 import eu.tib.orkg.prototype.export.rdf.domain.toNTriple
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
@@ -22,7 +23,7 @@ class StatementRDFTests {
             predicate = createPredicate().copy(id = ThingId("P200")),
             `object` = createResource().copy(id = ThingId("R300"), label = "object")
         )
-        assertThat(statement.toNTriple()).isEqualTo(expectedOutput)
+        assertThat(statement::toNTriple.asString()).isEqualTo(expectedOutput)
     }
 
     @Test
@@ -36,7 +37,7 @@ class StatementRDFTests {
             predicate = createPredicate().copy(id = ThingId("P200")),
             `object` = createLiteral().copy(id = ThingId("L300"), label = "object")
         )
-        assertThat(statement.toNTriple()).isEqualTo(expectedOutput)
+        assertThat(statement::toNTriple.asString()).isEqualTo(expectedOutput)
     }
 
     @Test
@@ -51,6 +52,6 @@ class StatementRDFTests {
             predicate = createPredicate().copy(id = ThingId("P200")),
             `object` = createLiteral().copy(id = ThingId("L300"), label = "object", datatype = "http://example.org/myDataType")
         )
-        assertThat(statement.toNTriple()).isEqualTo(expectedOutput)
+        assertThat(statement::toNTriple.asString()).isEqualTo(expectedOutput)
     }
 }

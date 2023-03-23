@@ -294,6 +294,14 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         return id
     }
 
+    override fun findBySubjectIdAndPredicateIdAndObjectId(
+        subjectId: ThingId,
+        predicateId: ThingId,
+        objectId: ThingId
+    ): Optional<GeneralStatement> = Optional.ofNullable(entities.values.firstOrNull {
+        it.subject.thingId == subjectId && it.predicate.id == predicateId && it.`object`.thingId == objectId
+    })
+
     private fun findSubgraph(
         root: ThingId,
         expansionFilter: (GeneralStatement, Int) -> Boolean = { _, _ -> true }

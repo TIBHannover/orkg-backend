@@ -593,6 +593,39 @@ class SpringDataNeo4jStatementAdapter(
             .paged(pageable, countQuery)
     }
 
+    override fun findBySubjectIdAndPredicateIdAndObjectId(
+        subjectId: ThingId,
+        predicateId: ThingId,
+        objectId: ThingId
+    ): Optional<GeneralStatement> {
+        val r = name("r")
+        val subject = node("Thing")
+        val `object` = node("Thing")
+        val subjectIdLiteral = literalOf<String>(subjectId.value)
+        val predicateIdLiteral = literalOf<String>(predicateId.value)
+        val objectIdLiteral = literalOf<String>(objectId.value)
+        val query = match(
+                subject.relationshipTo(`object`, RELATED)
+                    .named(r)
+            ).where(
+                r.property("predicate_id").eq(predicateIdLiteral)
+                    .and(subject.property("resource_id").eq(subjectIdLiteral)
+                        .or(subject.property("literal_id").eq(subjectIdLiteral))
+                        .or(subject.property("predicate_id").eq(subjectIdLiteral))
+                        .or(subject.property("class_id").eq(subjectIdLiteral)))
+                    .and(`object`.property("resource_id").eq(objectIdLiteral)
+                        .or(`object`.property("literal_id").eq(objectIdLiteral))
+                        .or(`object`.property("predicate_id").eq(objectIdLiteral))
+                        .or(`object`.property("class_id").eq(objectIdLiteral)))
+            ).returning(r, subject.`as`("s"), `object`.`as`("o"))
+            .limit(1)
+            .build()
+        return neo4jClient.query(query.cypher)
+            .fetchAs(GeneralStatement::class.java)
+            .mappedBy(StatementMapper(predicateRepository))
+            .one()
+    }
+
     private fun findAllFilteredAndPaged(
         pageable: Pageable,
         subject: CNode = node("Thing"),

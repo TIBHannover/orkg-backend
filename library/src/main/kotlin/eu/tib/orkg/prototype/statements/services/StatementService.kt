@@ -95,17 +95,21 @@ class StatementService(
         val foundObject = thingRepository.findByThingId(`object`)
             .orElseThrow { StatementObjectNotFound(`object`) }
 
-        val id = statementRepository.nextIdentity()
-        val newStatement = GeneralStatement(
-            id = id,
-            subject = foundSubject,
-            predicate = foundPredicate,
-            `object` = foundObject,
-            createdBy = userId,
-            createdAt = OffsetDateTime.now(),
-        )
-        statementRepository.save(newStatement)
-        return findById(newStatement.id!!).get()
+        return retrieveAndConvertSingleStatement {
+            statementRepository.findBySubjectIdAndPredicateIdAndObjectId(subject, predicate, `object`)
+        }.orElseGet {
+            val id = statementRepository.nextIdentity()
+            val newStatement = GeneralStatement(
+                id = id,
+                subject = foundSubject,
+                predicate = foundPredicate,
+                `object` = foundObject,
+                createdBy = userId,
+                createdAt = OffsetDateTime.now(),
+            )
+            statementRepository.save(newStatement)
+            findById(newStatement.id!!).get()
+        }
     }
 
     override fun add(userId: ContributorId, subject: ThingId, predicate: ThingId, `object`: ThingId) {

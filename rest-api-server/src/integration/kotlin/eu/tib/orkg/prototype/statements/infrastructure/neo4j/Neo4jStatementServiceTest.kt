@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
+import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -66,12 +67,11 @@ class Neo4jStatementServiceTest : Neo4jTestContainersBaseTest() {
 
         service.create(r1, p1, r2)
         service.create(r1, p1, r3)
-        service.create(r1, p1, r3)
         service.create(r3, p2, r1)
 
         val statements = service.findAll(pagination)
 
-        assertThat(statements).hasSize(4)
+        assertThat(statements).hasSize(3)
     }
 
     @Test
@@ -107,14 +107,13 @@ class Neo4jStatementServiceTest : Neo4jTestContainersBaseTest() {
         val p1 = predicateService.create("greater than").id
         val p2 = predicateService.create("less than").id
 
-        service.create(r1, p1, r2)
-        service.create(r1, p1, r3)
-        service.create(r1, p1, r3)
-        service.create(r3, p2, r1)
+        service.create(r1, p2, r2)
+        service.create(r1, p2, r3)
+        service.create(r3, p1, r1)
 
-        assertThat(service.findAll(pagination)).hasSize(4)
+        assertThat(service.findAll(pagination)).hasSize(3)
 
-        assertThat(service.findAllBySubject(r1, pagination)).hasSize(3)
+        assertThat(service.findAllBySubject(r1, pagination)).hasSize(2)
         assertThat(service.findAllBySubject(r2, pagination)).hasSize(0)
         assertThat(service.findAllBySubject(r3, pagination)).hasSize(1)
     }
@@ -131,12 +130,26 @@ class Neo4jStatementServiceTest : Neo4jTestContainersBaseTest() {
 
         service.create(r1, p1, r2)
         service.create(r1, p1, r3)
-        service.create(r1, p1, r3)
         service.create(r3, p2, r1)
 
-        assertThat(service.findAll(pagination)).hasSize(4)
+        assertThat(service.findAll(pagination)).hasSize(3)
 
-        assertThat(service.findAllByPredicate(p1, pagination)).hasSize(3)
+        assertThat(service.findAllByPredicate(p1, pagination)).hasSize(2)
         assertThat(service.findAllByPredicate(p2, pagination)).hasSize(1)
+    }
+
+    @Test
+    @DisplayName("does not create duplicate statements")
+    fun doesNotCreateDuplicateStatements() {
+        val pagination = PageRequest.of(0, 10)
+        val r1 = resourceService.create("one").id
+        val r2 = resourceService.create("two").id
+        val p1 = predicateService.create("less than").id
+
+        val s1 = service.create(r1, p1, r2)
+        val s2 = service.create(r1, p1, r2)
+
+        assertThat(s2.id).isEqualTo(s1.id)
+        assertThat(service.findAll(pagination)).hasSize(1)
     }
 }

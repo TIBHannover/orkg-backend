@@ -169,6 +169,13 @@ class SpringDataNeo4jStatementAdapter(
     override fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
         neo4jRepository.findProblemsByOrganizationId(id, pageable).map(Neo4jResource::toResource)
 
+    override fun findBySubjectIdAndPredicateIdAndObjectId(
+        subjectId: ThingId,
+        predicateId: ThingId,
+        objectId: ThingId
+    ): Optional<GeneralStatement> =
+        neo4jRepository.findBySubjectIdAndPredicateIdAndObjectId(subjectId, predicateId, objectId).map { it.toStatement() }
+
     private fun Neo4jStatement.toStatement(): GeneralStatement = GeneralStatement(
         id = statementId!!,
         subject = subject!!.toThing(),

@@ -1154,4 +1154,24 @@ fun <
             }
         }
     }
+
+    describe("finding a statement") {
+        context("by subject id and predicate id and object id") {
+            it("returns the correct result") {
+                val statements = fabricator.random<List<GeneralStatement>>()
+                statements.forEach(saveStatement)
+
+                val expected = statements[0]
+
+                val actual = repository.findBySubjectIdAndPredicateIdAndObjectId(
+                    subjectId = expected.subject.thingId,
+                    predicateId = expected.predicate.id,
+                    objectId = expected.`object`.thingId
+                )
+
+                actual.isPresent shouldBe true
+                actual.get() shouldBe expected
+            }
+        }
+    }
 }

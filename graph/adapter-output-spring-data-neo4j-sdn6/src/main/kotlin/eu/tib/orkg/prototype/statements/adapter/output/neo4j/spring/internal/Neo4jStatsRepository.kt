@@ -80,8 +80,40 @@ RETURN count(sub)
 """)
     fun getChangeLog(pageable: Pageable): Page<ChangeLogResponse>
 
-    @Query("""MATCH (comp:Comparison)-[:RELATED* 0..4]->(contribution:Contribution)<-[:RELATED* 0..4]-(p:Paper)-[:RELATED* 0..4]->(r:ResearchField{resource_id: $id}) OPTIONAL MATCH(v:Visualization)<-[:RELATED* 0..4]-(comp) WITH COLLECT([v.resource_id,v.label, v.created_at, v.created_by,labels(v)])  +  COLLECT([comp.resource_id,comp.label, comp.created_at, comp.created_by, labels(comp)]) + COLLECT([contribution.resource_id,contribution.label, contribution.created_at, contribution.created_by, labels(contribution)]) + COLLECT([p.resource_id,p.label, p.created_at, p.created_by, labels(p)]) + COLLECT([r.resource_id,r.label, r.created_at, r.created_by, labels(r)]) AS items UNWIND items AS changelogs  WITH DISTINCT changelogs[0] AS id, changelogs[1] AS label, changelogs[2] AS createdAt, changelogs[3] AS createdBy, changelogs[4] AS classes WHERE id IS NOT NULL RETURN id, label, createdAt, createdBy, classes $PAGE_PARAMS""",
-        countQuery = "MATCH (comp:Comparison)-[:RELATED* 0..4]->(contribution:Contribution)<-[:RELATED* 0..4]-(p:Paper)-[:RELATED* 0..4]->(r:ResearchField{resource_id: $id}) OPTIONAL MATCH(v:Visualization)<-[:RELATED* 0..4]-(comp) WITH COLLECT([v.resource_id,v.label, v.created_at, v.created_by,labels(v)]) + COLLECT([comp.resource_id,comp.label, comp.created_at, comp.created_by, labels(comp)]) + COLLECT([contribution.resource_id,contribution.label, contribution.created_at, contribution.created_by, labels(contribution)]) + COLLECT([p.resource_id,p.label, p.created_at, p.created_by, labels(p)]) + COLLECT([r.resource_id,r.label, r.created_at, r.created_by, labels(r)]) AS items UNWIND items AS changelogs WITH DISTINCT changelogs WHERE changelogs[0] IS NOT NULL RETURN COUNT(changelogs) AS cnt")
+    @Query("""
+MATCH (r:ResearchField {resource_id: $id})
+CALL apoc.path.subgraphAll(r, {labelFilter: "+ResearchField", relationshipFilter: "RELATED>"})
+YIELD relationships
+UNWIND relationships AS rel
+WITH rel, r
+WHERE rel.predicate_id = "P36"
+WITH COLLECT(endNode(rel)) + COLLECT(r) AS fields
+UNWIND fields AS field
+MATCH (p:Paper)-[:RELATED {predicate_id: "P30"}]->(field)
+OPTIONAL MATCH (c:Comparison)-[:RELATED {predicate_id: "compareContribution"}]->(:Contribution)<-[:RELATED {predicate_id:"P31"}]-(p)
+OPTIONAL MATCH (c)-[:RELATED {predicate_id: "hasVisualization"}]->(v:Visualization)
+WITH [p, c, v] AS nodes
+UNWIND nodes AS n
+WITH DISTINCT n
+WHERE n IS NOT NULL
+RETURN n.resource_id AS id, n.label AS label, n.created_at AS createdAt, n.created_by AS createdBy, labels(n) AS classes""",
+        countQuery = """
+MATCH (r:ResearchField {resource_id: $id})
+CALL apoc.path.subgraphAll(r, {labelFilter: "+ResearchField", relationshipFilter: "RELATED>"})
+YIELD relationships
+UNWIND relationships AS rel
+WITH rel, r
+WHERE rel.predicate_id = "P36"
+WITH COLLECT(endNode(rel)) + COLLECT(r) AS fields
+UNWIND fields AS field
+MATCH (p:Paper)-[:RELATED {predicate_id: "P30"}]->(field)
+OPTIONAL MATCH (c:Comparison)-[:RELATED {predicate_id: "compareContribution"}]->(:Contribution)<-[:RELATED {predicate_id:"P31"}]-(p)
+OPTIONAL MATCH (c)-[:RELATED {predicate_id: "hasVisualization"}]->(v:Visualization)
+WITH [p, c, v] AS nodes
+UNWIND nodes AS n
+WITH DISTINCT n
+WHERE n IS NOT NULL
+RETURN COUNT(n)""")
     fun getChangeLogByResearchField(id: ResourceId, pageable: Pageable): Page<ChangeLogResponse>
 
     @Query("""MATCH (paper: Paper)-[:RELATED {predicate_id: 'P31'}]->(c1: Contribution)-[:RELATED{predicate_id: 'P32'}]-> (r:Problem) WHERE paper.created_by <> '00000000-0000-0000-0000-000000000000' WITH r.resource_id AS id, r.label AS researchProblem, COUNT(paper) AS papersCount, COLLECT(DISTINCT paper.created_by) AS contributor RETURN id, researchProblem, papersCount $PAGE_PARAMS""",

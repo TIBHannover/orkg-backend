@@ -13,8 +13,11 @@ import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
-private const val RETURN_NODE =
-    """RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)"""
+/**
+ * Partial query that returns the node.
+ * Queries using this partial query must use `node` as the binding name.
+ */
+private const val RETURN_NODE = """RETURN node"""
 
 private const val RETURN_NODE_COUNT = """RETURN count(node)"""
 

@@ -10,11 +10,10 @@ import org.springframework.data.neo4j.repository.query.Query
 private const val id = "${'$'}id"
 
 /**
- * Partial query that returns the node as well as its ID and relationships.
+ * Partial query that returns the node.
  * Queries using this partial query must use `node` as the binding name.
  */
-private const val RETURN_NODE =
-    """RETURN node, [ [ (node)<-[r_r1:`RELATED`]-(r1:`Resource`) | [ r_r1, r1 ] ], [ (node)-[r_r1:`RELATED`]->(r1:`Resource`) | [ r_r1, r1 ] ] ], ID(node)"""
+private const val RETURN_NODE = """RETURN node"""
 
 /**
  * Partial query that returns the node count for use in count queries.

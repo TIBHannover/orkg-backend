@@ -95,10 +95,10 @@ class ResearchProblemService(
             .content
     }
 
-    override fun forDataset(id: ThingId): Optional<List<ResearchProblem>> {
+    override fun forDataset(id: ThingId, pageable: Pageable): Optional<Page<ResearchProblem>> {
         val dataset = resourceService.findById(id)
         if (!dataset.isPresent) return Optional.empty()
-        return Optional.of(researchProblemQueries.findResearchProblemForDataset(id))
+        return Optional.of(researchProblemQueries.findResearchProblemForDataset(id, pageable))
     }
 
     override fun getFeaturedProblemFlag(id: ThingId): Boolean {

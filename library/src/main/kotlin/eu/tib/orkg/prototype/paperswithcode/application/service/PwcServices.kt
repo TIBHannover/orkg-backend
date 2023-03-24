@@ -15,6 +15,8 @@ import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.context.annotation.Primary
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Primary
@@ -24,19 +26,19 @@ class BenchmarkService(
     private val researchFieldService: RetrieveResearchFieldUseCase,
     private val flags: FeatureFlagService,
 ) : RetrieveBenchmarkUseCase {
-    override fun summariesForResearchField(id: ThingId): Optional<List<BenchmarkSummary>> {
+    override fun summariesForResearchField(id: ThingId, pageable: Pageable): Optional<Page<BenchmarkSummary>> {
         val researchField = researchFieldService.findById(id)
         if (!researchField.isPresent)
             return Optional.empty()
         return Optional.of(
-            summarizeBenchmark.byResearchField(researchField.get().id)
+            summarizeBenchmark.byResearchField(researchField.get().id, pageable)
         )
     }
 
-    override fun summary(): Optional<List<BenchmarkSummary>> = if (flags.isPapersWithCodeLegacyModelEnabled())
+    override fun summary(pageable: Pageable): Optional<Page<BenchmarkSummary>> = if (flags.isPapersWithCodeLegacyModelEnabled())
         error("This method is not supported in the PwC legacy model! Calling it is a bug!")
     else
-        Optional.of(summarizeBenchmark.getAll())
+        Optional.of(summarizeBenchmark.getAll(pageable))
 }
 
 @Primary
@@ -47,17 +49,17 @@ class DatasetService(
     private val summarizeDataset: SummarizeDatasetQuery,
     private val resourceService: ResourceUseCases
 ) : RetrieveDatasetUseCase {
-    override fun forResearchProblem(id: ThingId): Optional<List<Dataset>> {
+    override fun forResearchProblem(id: ThingId, pageable: Pageable): Optional<Page<Dataset>> {
         val problem = researchProblemService.findById(id)
         if (!problem.isPresent) return Optional.empty()
-        return Optional.of(findDatasets.forResearchProblem(id))
+        return Optional.of(findDatasets.forResearchProblem(id, pageable))
     }
 
-    override fun summaryFor(id: ThingId, problemId: ThingId): Optional<List<DatasetSummary>> {
+    override fun summaryFor(id: ThingId, problemId: ThingId, pageable: Pageable): Optional<Page<DatasetSummary>> {
         val dataset = resourceService.findById(id)
         if (!dataset.isPresent) return Optional.empty()
         val problem = resourceService.findById(problemId)
         if (!problem.isPresent) return Optional.empty()
-        return Optional.of(summarizeDataset.byAndProblem(id, problemId))
+        return Optional.of(summarizeDataset.byAndProblem(id, problemId, pageable))
     }
 }

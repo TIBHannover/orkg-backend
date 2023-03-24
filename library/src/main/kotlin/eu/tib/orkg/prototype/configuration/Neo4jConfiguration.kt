@@ -12,14 +12,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
     "eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j",
     "eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal",
     "eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j",
-    "eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.legacymodel.neo4j",
+    "eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.legacymodel",
 )
 @EntityScan(
     "eu.tib.orkg.prototype.statements.domain.model.neo4j",
     "eu.tib.orkg.prototype.graphdb.indexing.domain.model.neo4j",
     "eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal",
     "eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j",
-    "eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.legacymodel.neo4j",
+    "eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.legacymodel",
     "eu.tib.orkg.prototype.statements.spi" // because of mapping types, can be removed after upgrade to SDN 6
 )
 class Neo4jConfiguration

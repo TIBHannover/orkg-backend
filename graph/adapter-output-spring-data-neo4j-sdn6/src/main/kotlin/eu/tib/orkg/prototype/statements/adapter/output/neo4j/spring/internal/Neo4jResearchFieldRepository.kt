@@ -116,8 +116,8 @@ interface Neo4jResearchFieldRepository :
     fun getProblemsExcludingSubFieldsWithoutFeaturedFlag(id: ResourceId, unlisted: Boolean, pageable: Pageable): Page<Neo4jResource>
 
     @Query("""MATCH (:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(:Paper)-[:RELATED {predicate_id: 'P30'}]->(r:ResearchField) RETURN DISTINCT r""",
-        countQuery = """MATCH (:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(:Paper)-[:RELATED {predicate_id: 'P30'}]->(r:ResearchField) RETURN COUNT(DISTINCT r) AS cnt""")
-    fun findResearchFieldsWithBenchmarks(): Iterable<Neo4jResource>
+        countQuery = """MATCH (:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(:Paper)-[:RELATED {predicate_id: 'P30'}]->(r:ResearchField) RETURN COUNT(DISTINCT r) AS cnt $PAGE_PARAMS""")
+    fun findResearchFieldsWithBenchmarks(pageable: Pageable): Page<Neo4jResource>
 
     @Query("""MATCH (research:ResearchField)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(research1:ResearchField{resource_id: $id}) WITH COLLECT (research) + COLLECT(research1) AS all_research_fields MATCH (v:Visualization {featured: $featured, unlisted: $unlisted})<-[:RELATED {predicate_id: 'hasVisualization'}]-(comparison1: Comparison)-[related:RELATED {predicate_id: 'hasSubject'}]->(resField) WHERE resField IN all_research_fields WITH DISTINCT v, v.resource_id AS resource_id, v.label AS label, v.created_by AS created_by, v.created_at AS created_at RETURN v $PAGE_PARAMS""",
         countQuery = """MATCH (research:ResearchField)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(research1:ResearchField{resource_id: $id}) WITH COLLECT (research) + COLLECT(research1) AS all_research_fields MATCH (v:Visualization {featured: $featured, unlisted: $unlisted})<-[:RELATED {predicate_id: 'hasVisualization'}]-(comparison1: Comparison)-[related:RELATED {predicate_id: 'hasSubject'}]->(resField) WHERE resField IN all_research_fields RETURN COUNT(DISTINCT v) AS cnt""")

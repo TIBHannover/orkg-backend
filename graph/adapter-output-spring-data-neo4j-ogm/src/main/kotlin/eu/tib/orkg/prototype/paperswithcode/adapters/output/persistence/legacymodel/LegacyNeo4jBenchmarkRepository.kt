@@ -1,7 +1,10 @@
-package eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.legacymodel.neo4j
+package eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.legacymodel
 
+import eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.legacymodel.neo4j.LegacyNeo4jBenchmarkSummary
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
@@ -14,6 +17,14 @@ MATCH (cont)-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]->(:Benchmark)-[:RELATED 
 MATCH (cont)-[:RELATED {predicate_id: 'P32'}]->(pr:Problem)
 OPTIONAL MATCH (cont)-[:RELATED {predicate_id: 'HAS_SOURCE_CODE'}]->(l:Literal)
 RETURN DISTINCT pr AS problem, COUNT(DISTINCT p) AS totalPapers, COUNT(DISTINCT l) AS totalCodes, COUNT(DISTINCT ds) AS totalDatasets
+    """,
+        countQuery = """
+MATCH (r:ResearchField {resource_id: $id})<-[:RELATED {predicate_id: 'P30'}]-(p:Paper)-[:RELATED {predicate_id: 'P31'}]->(cont:Contribution)
+MATCH (cont)-[:RELATED {predicate_id: 'HAS_BENCHMARK'}]->(:Benchmark)-[:RELATED {predicate_id: 'HAS_DATASET'}]->(ds:Dataset)
+MATCH (cont)-[:RELATED {predicate_id: 'P32'}]->(pr:Problem)
+OPTIONAL MATCH (cont)-[:RELATED {predicate_id: 'HAS_SOURCE_CODE'}]->(l:Literal)
+WITH DISTINCT pr AS problem, COUNT(DISTINCT p) AS totalPapers, COUNT(DISTINCT l) AS totalCodes, COUNT(DISTINCT ds) AS totalDatasets
+RETURN COUNT(problem) AS cnt
     """)
-    fun summarizeBenchmarkByResearchField(id: ResourceId): Iterable<LegacyNeo4jBenchmarkSummary>
+    fun summarizeBenchmarkByResearchField(id: ResourceId, pageable: Pageable): Page<LegacyNeo4jBenchmarkSummary>
 }

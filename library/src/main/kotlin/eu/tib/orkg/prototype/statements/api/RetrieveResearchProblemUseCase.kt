@@ -29,7 +29,7 @@ interface RetrieveResearchProblemUseCase :
 
     fun findContributorsPerProblem(problemId: ThingId, pageable: Pageable): List<ContributorPerProblem>
 
-    fun forDataset(id: ThingId): Optional<List<ResearchProblem>>
+    fun forDataset(id: ThingId, pageable: Pageable): Optional<Page<ResearchProblem>>
 
     data class FieldCount(
         val field: ResourceRepresentation,

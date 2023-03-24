@@ -10,6 +10,8 @@ import eu.tib.orkg.prototype.paperswithcode.application.port.output.SummarizeDat
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.toResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
 @Component
@@ -18,15 +20,15 @@ class DatasetAdapter(
     val datasetRepository: Neo4jDatasetRepository
 ) : FindDatasetsQuery, SummarizeDatasetQuery {
 
-    override fun forResearchProblem(id: ThingId): List<Dataset> =
-        datasetRepository.findDatasetsByResearchProblem(id.toResourceId())
+    override fun forResearchProblem(id: ThingId, pageable: Pageable): Page<Dataset> =
+        datasetRepository.findDatasetsByResearchProblem(id.toResourceId(), pageable)
             .map(Neo4jDataset::toDataset)
 
-    override fun by(id: ThingId): List<DatasetSummary> =
-        datasetRepository.summarizeDatasetQueryById(id.toResourceId())
+    override fun by(id: ThingId, pageable: Pageable): Page<DatasetSummary> =
+        datasetRepository.summarizeDatasetQueryById(id.toResourceId(), pageable)
             .map(Neo4jBenchmarkUnpacked::toDatasetSummary)
 
-    override fun byAndProblem(id: ThingId, problemId: ThingId): List<DatasetSummary> =
-        datasetRepository.summarizeDatasetQueryByIdAndProblemId(id.toResourceId(), problemId.toResourceId())
+    override fun byAndProblem(id: ThingId, problemId: ThingId, pageable: Pageable): Page<DatasetSummary> =
+        datasetRepository.summarizeDatasetQueryByIdAndProblemId(id.toResourceId(), problemId.toResourceId(), pageable)
             .map(Neo4jBenchmarkUnpacked::toDatasetSummary)
 }

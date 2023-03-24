@@ -4,6 +4,8 @@ import eu.tib.orkg.prototype.community.domain.model.ResearchField
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.FindResearchFieldsQuery
 import eu.tib.orkg.prototype.statements.spi.ResearchFieldRepository
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
 @Component
@@ -11,6 +13,6 @@ import org.springframework.stereotype.Component
 class FindResearchFieldsQueryAdapter(
     private val repository: ResearchFieldRepository,
 ) : FindResearchFieldsQuery {
-    override fun withBenchmarks(): List<ResearchField> =
-        repository.findResearchFieldsWithBenchmarks().map { ResearchField(it.id.value, it.label) }
+    override fun withBenchmarks(pageable: Pageable): Page<ResearchField> =
+        repository.findResearchFieldsWithBenchmarks(pageable).map { ResearchField(it.id.value, it.label) }
 }

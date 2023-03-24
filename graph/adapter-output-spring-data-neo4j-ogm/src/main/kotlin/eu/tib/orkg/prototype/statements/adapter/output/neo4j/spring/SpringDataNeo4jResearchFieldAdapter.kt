@@ -162,8 +162,8 @@ class SpringDataNeo4jResearchFieldAdapter(
             pageable
         ).map { it.toResource() }
 
-    override fun findResearchFieldsWithBenchmarks(): Iterable<Resource> =
-        neo4jRepository.findResearchFieldsWithBenchmarks().map { it.toResource() }
+    override fun findResearchFieldsWithBenchmarks(pageable: Pageable): Page<Resource> =
+        neo4jRepository.findResearchFieldsWithBenchmarks(pageable).map { it.toResource() }
 
     override fun getVisualizationsIncludingSubFieldsWithFlags(
         id: ThingId,

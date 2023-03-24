@@ -30,7 +30,7 @@ interface ResearchFieldRepository {
     fun getProblemsExcludingSubFields(id: ThingId, pageable: Pageable): Page<Resource>
     fun getProblemsExcludingSubFieldsWithFlags(id: ThingId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
     fun getProblemsExcludingSubFieldsWithoutFeaturedFlag(id: ThingId, unlisted: Boolean, pageable: Pageable): Page<Resource>
-    fun findResearchFieldsWithBenchmarks(): Iterable<Resource>
+    fun findResearchFieldsWithBenchmarks(pageable: Pageable): Page<Resource>
     fun getVisualizationsIncludingSubFieldsWithFlags(id: ThingId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
     fun getVisualizationsIncludingSubFieldsWithoutFeaturedFlag(id: ThingId, unlisted: Boolean, pageable: Pageable): Page<Resource>
     fun getSmartReviewsIncludingSubFieldsWithFlags(id: ThingId, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>

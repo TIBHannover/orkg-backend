@@ -218,7 +218,7 @@ class ResearchFieldService(
         })
     }
 
-    override fun withBenchmarks(): List<ResearchField> = researchFieldsQuery.withBenchmarks()
+    override fun withBenchmarks(pageable: Pageable): Page<ResearchField> = researchFieldsQuery.withBenchmarks(pageable)
 
     private fun setFeatured(unlisted: Boolean, featured: Boolean?): Boolean? =
         when (unlisted) {

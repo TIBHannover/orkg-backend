@@ -156,8 +156,8 @@ class SpringDataNeo4jResearchProblemAdapter(
         neo4jRepository.findContributorsLeaderboardPerProblem(problemId.toResourceId(), pageable)
             .map { it.toContributorPerProblem() }
 
-    override fun findResearchProblemForDataset(datasetId: ThingId): Iterable<Resource> =
-        neo4jRepository.findResearchProblemForDataset(datasetId.toResourceId()).map { it.toResource() }
+    override fun findResearchProblemForDataset(datasetId: ThingId, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findResearchProblemForDataset(datasetId.toResourceId(), pageable).map { it.toResource() }
 
     override fun findAllFeaturedProblems(pageable: Pageable): Page<Resource> =
         neo4jRepository.findAllFeaturedProblems(pageable).map { it.toResource() }

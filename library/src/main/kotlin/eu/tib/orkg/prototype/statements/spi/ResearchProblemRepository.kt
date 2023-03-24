@@ -93,7 +93,7 @@ interface ResearchProblemRepository {
     fun findTopResearchProblemsGoingBack(months: Int): Iterable<Resource>
     fun findTopResearchProblemsAllTime(): Iterable<Resource>
     fun findContributorsLeaderboardPerProblem(problemId: ThingId, pageable: Pageable): Page<ContributorPerProblem>
-    fun findResearchProblemForDataset(datasetId: ThingId): Iterable<Resource>
+    fun findResearchProblemForDataset(datasetId: ThingId, pageable: Pageable): Page<Resource>
     fun findAllFeaturedProblems(pageable: Pageable): Page<Resource>
     fun findAllNonFeaturedProblems(pageable: Pageable): Page<Resource>
     fun findAllUnlistedProblems(pageable: Pageable): Page<Resource>

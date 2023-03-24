@@ -32,7 +32,7 @@ interface RetrieveResearchFieldUseCase {
 
     fun getEntitiesBasedOnClassesExcludingSubfields(id: ThingId, classesList: List<String>, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
 
-    fun withBenchmarks(): List<ResearchField>
+    fun withBenchmarks(pageable: Pageable): Page<ResearchField>
 
     data class PaperCountPerResearchProblem(
         val problem: ResourceRepresentation,

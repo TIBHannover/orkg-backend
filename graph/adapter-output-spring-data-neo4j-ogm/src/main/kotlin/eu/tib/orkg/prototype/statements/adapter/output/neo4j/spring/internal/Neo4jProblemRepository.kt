@@ -260,8 +260,10 @@ interface Neo4jProblemRepository :
     fun findContributorsLeaderboardPerProblem(problemId: ResourceId, pageable: Pageable): Page<Neo4jContributorPerProblem>
 
     @Query(value = """MATCH (ds:$DATASET_CLASS {resource_id: $datasetId})<-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]-(:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(:Contribution)-[:RELATED {predicate_id: 'P32'}]->(problem:Problem)
-                    RETURN DISTINCT problem""")
-    fun findResearchProblemForDataset(datasetId: ResourceId): Iterable<Neo4jResource>
+                    RETURN DISTINCT problem""",
+        countQuery = """MATCH (ds:$DATASET_CLASS {resource_id: $datasetId})<-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]-(:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(:Contribution)-[:RELATED {predicate_id: 'P32'}]->(problem:Problem)
+                    RETURN COUNT(DISTINCT problem) as cnt""")
+    fun findResearchProblemForDataset(datasetId: ResourceId, pageable: Pageable): Page<Neo4jResource>
 
     @Query(
         value = """$MATCH_FEATURED_PROBLEM $WITH_NODE_PROPERTIES $RETURN_NODE""",

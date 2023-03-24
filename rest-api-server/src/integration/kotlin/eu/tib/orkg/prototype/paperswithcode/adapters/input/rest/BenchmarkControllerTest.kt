@@ -159,12 +159,14 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/research-fields/benchmarks"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", hasSize<Int>(1)))
-            .andExpect(jsonPath("$[0].label", equalTo(fieldWithBenchmarkLabel)))
+            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.content[0].label", equalTo(fieldWithBenchmarkLabel)))
+            .andExpect(jsonPath("$.number").value(0)) // page number
+            .andExpect(jsonPath("$.totalElements").value(1))
             .andDo(
                 document(
                     snippet,
-                    researchFieldListResponseFields()
+                    researchFieldPageResponseFields()
                 )
             )
     }
@@ -204,16 +206,18 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/benchmarks/summary/research-field/$fieldWithDataset"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", hasSize<Int>(2)))
-            .andExpect(jsonPath("$[0].research_problem.id", equalTo(problem2.value)))
-            .andExpect(jsonPath("$[1].research_problem.id", equalTo(problem1.value)))
-            .andExpect(jsonPath("$[0].total_papers", equalTo(1)))
-            .andExpect(jsonPath("$[0].total_datasets", equalTo(2)))
-            .andExpect(jsonPath("$[0].total_codes", equalTo(5)))
+            .andExpect(jsonPath("$.content", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.content[0].research_problem.id", equalTo(problem2.value)))
+            .andExpect(jsonPath("$.content[1].research_problem.id", equalTo(problem1.value)))
+            .andExpect(jsonPath("$.content[0].total_papers", equalTo(1)))
+            .andExpect(jsonPath("$.content[0].total_datasets", equalTo(2)))
+            .andExpect(jsonPath("$.content[0].total_codes", equalTo(5)))
+            .andExpect(jsonPath("$.number").value(0)) // page number
+            .andExpect(jsonPath("$.totalElements").value(2))
             .andDo(
                 document(
                     snippet,
-                    benchmarkListResponseFields()
+                    benchmarkPageResponseFields()
                 )
             )
     }
@@ -255,16 +259,18 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/benchmarks/summary/"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", hasSize<Int>(2)))
-            .andExpect(jsonPath("$[0].research_problem.id", equalTo(problem2.value)))
-            .andExpect(jsonPath("$[1].research_problem.id", equalTo(problem1.value)))
-            .andExpect(jsonPath("$[0].total_papers", equalTo(1)))
-            .andExpect(jsonPath("$[0].total_datasets", equalTo(2)))
-            .andExpect(jsonPath("$[0].total_codes", equalTo(5)))
+            .andExpect(jsonPath("$.content", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.content[0].research_problem.id", equalTo(problem2.value)))
+            .andExpect(jsonPath("$.content[1].research_problem.id", equalTo(problem1.value)))
+            .andExpect(jsonPath("$.content[0].total_papers", equalTo(1)))
+            .andExpect(jsonPath("$.content[0].total_datasets", equalTo(2)))
+            .andExpect(jsonPath("$.content[0].total_codes", equalTo(5)))
+            .andExpect(jsonPath("$.number").value(0)) // page number
+            .andExpect(jsonPath("$.totalElements").value(2))
             .andDo(
                 document(
                     snippet,
-                    benchmarkListResponseFields()
+                    benchmarkPageResponseFields()
                 )
             )
     }
@@ -323,26 +329,28 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/benchmarks/summary/"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", hasSize<Int>(2)))
-            .andExpect(jsonPath("$[*].research_problem.id", containsInAnyOrder(problem1.value, problem2.value)))
+            .andExpect(jsonPath("$.content", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.content[*].research_problem.id", containsInAnyOrder(problem1.value, problem2.value)))
             // Due to limits in JSONPath, we can only filter to the respective object from the list, but not get rid of
             // the list itself, so we need to deal with that. The list of research fields is embedded into a list, so
             // by selecting all elements (via "[*]") we get rid of the innermost list. Because that does not work for
             // the totals, those are checked using a list containing the expected result.
             // Problem 1:
-            .andExpect(jsonPath("$[?(@.research_problem.id==\"${problem1.value}\")].research_fields[*]", hasSize<Int>(2)))
-            .andExpect(jsonPath("$[?(@.research_problem.id==\"${problem1.value}\")].total_papers", equalTo(listOf(2))))
-            .andExpect(jsonPath("$[?(@.research_problem.id==\"${problem1.value}\")].total_datasets", equalTo(listOf(2))))
-            .andExpect(jsonPath("$[?(@.research_problem.id==\"${problem1.value}\")].total_codes", equalTo(listOf(5))))
+            .andExpect(jsonPath("$.content[?(@.research_problem.id==\"${problem1.value}\")].research_fields[*]", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.content[?(@.research_problem.id==\"${problem1.value}\")].total_papers", equalTo(listOf(2))))
+            .andExpect(jsonPath("$.content[?(@.research_problem.id==\"${problem1.value}\")].total_datasets", equalTo(listOf(2))))
+            .andExpect(jsonPath("$.content[?(@.research_problem.id==\"${problem1.value}\")].total_codes", equalTo(listOf(5))))
             // Problem 2:
-            .andExpect(jsonPath("$[?(@.research_problem.id==\"${problem2.value}\")].research_fields[*]", hasSize<Int>(1)))
-            .andExpect(jsonPath("$[?(@.research_problem.id==\"${problem2.value}\")].total_papers", equalTo(listOf(1))))
-            .andExpect(jsonPath("$[?(@.research_problem.id==\"${problem2.value}\")].total_datasets", equalTo(listOf(2))))
-            .andExpect(jsonPath("$[?(@.research_problem.id==\"${problem2.value}\")].total_codes", equalTo(listOf(5))))
+            .andExpect(jsonPath("$.content[?(@.research_problem.id==\"${problem2.value}\")].research_fields[*]", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.content[?(@.research_problem.id==\"${problem2.value}\")].total_papers", equalTo(listOf(1))))
+            .andExpect(jsonPath("$.content[?(@.research_problem.id==\"${problem2.value}\")].total_datasets", equalTo(listOf(2))))
+            .andExpect(jsonPath("$.content[?(@.research_problem.id==\"${problem2.value}\")].total_codes", equalTo(listOf(5))))
+            .andExpect(jsonPath("$.number").value(0)) // page number
+            .andExpect(jsonPath("$.totalElements").value(2))
             .andDo(
                 document(
                     snippet,
-                    benchmarkListResponseFields()
+                    benchmarkPageResponseFields()
                 )
             )
     }
@@ -378,11 +386,13 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/datasets/$dataset/problems"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.content", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.number").value(0)) // page number
+            .andExpect(jsonPath("$.totalElements").value(2))
             .andDo(
                 document(
                     snippet,
-                    researchProblemListResponseFields()
+                    researchProblemPageResponseFields()
                 )
             )
     }
@@ -434,13 +444,15 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/datasets/research-problem/$problem"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", hasSize<Int>(2)))
-            .andExpect(jsonPath("$[0].total_papers", equalTo(1)))
-            .andExpect(jsonPath("$[0].total_models", equalTo(0)))
-            .andExpect(jsonPath("$[0].total_codes", equalTo(3)))
-            .andExpect(jsonPath("$[1].total_papers", equalTo(1)))
-            .andExpect(jsonPath("$[1].total_models", equalTo(4)))
-            .andExpect(jsonPath("$[1].total_codes", equalTo(0)))
+            .andExpect(jsonPath("$.content", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.content[0].total_papers", equalTo(1)))
+            .andExpect(jsonPath("$.content[0].total_models", equalTo(0)))
+            .andExpect(jsonPath("$.content[0].total_codes", equalTo(3)))
+            .andExpect(jsonPath("$.content[1].total_papers", equalTo(1)))
+            .andExpect(jsonPath("$.content[1].total_models", equalTo(4)))
+            .andExpect(jsonPath("$.content[1].total_codes", equalTo(0)))
+            .andExpect(jsonPath("$.number").value(0)) // page number
+            .andExpect(jsonPath("$.totalElements").value(2))
             .andDo(
                 document(
                     snippet,
@@ -555,11 +567,13 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/datasets/$dataset/problem/$problem1/summary"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.content", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.number").value(0)) // page number
+            .andExpect(jsonPath("$.totalElements").value(2))
             .andDo(
                 document(
                     snippet,
-                    datasetSummaryListResponseFields()
+                    datasetSummaryPageResponseFields()
                 )
             )
     }
@@ -666,11 +680,13 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/datasets/$dataset/problem/$problem1/summary"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.content", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.number").value(0)) // page number
+            .andExpect(jsonPath("$.totalElements").value(2))
             .andDo(
                 document(
                     snippet,
-                    datasetSummaryListResponseFields()
+                    datasetSummaryPageResponseFields()
                 )
             )
     }
@@ -681,9 +697,10 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("label").description("Research field label").type(String::class).optional() // FIXME: PwC
         )
 
-    private fun researchFieldListResponseFields() =
-        responseFields(fieldWithPath("[]").description("A list of research fields"))
-            .andWithPrefix("[].", researchFieldResponseFields())
+    private fun researchFieldPageResponseFields() =
+        responseFields(pageableDetailedFieldParameters())
+            .andWithPrefix("content[].", researchFieldResponseFields())
+            .andWithPrefix("")
 
     private fun researchProblemResponseFields() =
         listOf(
@@ -691,9 +708,10 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("label").description("Research problem label")
         )
 
-    private fun researchProblemListResponseFields() =
-        responseFields(fieldWithPath("[]").description("A list of research problems"))
-            .andWithPrefix("[].", researchProblemResponseFields())
+    private fun researchProblemPageResponseFields() =
+        responseFields(pageableDetailedFieldParameters())
+            .andWithPrefix("content[].", researchProblemResponseFields())
+            .andWithPrefix("")
 
     private fun benchmarkResponseFields() =
         listOf(
@@ -702,18 +720,17 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("total_codes").description("Total number of code urls"),
             fieldWithPath("research_problem").description("Research problem concerned with this research field"),
             fieldWithPath("research_field").description("The research field the problem belongs to.").optional(), // FIXME: PwC
+            fieldWithPath("research_field").description("Legacy RF of a benchmark summary").optional(),
+            fieldWithPath("research_fields").description("List of RFs for a benchmark summary").optional()
         )
 
-    private fun benchmarkListResponseFields() =
-        responseFields(
-            fieldWithPath("[]").description("A list of benchmarks"),
-            fieldWithPath("[].research_field").description("Legacy RF of a benchmark summary").optional(),
-            fieldWithPath("[].research_fields").description("List of RFs for a benchmark summary").optional()
-        )
-            .andWithPrefix("[].", benchmarkResponseFields())
-            .andWithPrefix("[].research_field.", researchFieldResponseFields())
-            .andWithPrefix("[].research_fields.[].", researchFieldResponseFields())
-            .andWithPrefix("[].research_problem.", researchProblemResponseFields())
+    private fun benchmarkPageResponseFields() =
+        responseFields(pageableDetailedFieldParameters())
+            .andWithPrefix("content[].", benchmarkResponseFields())
+            .andWithPrefix("content[].research_field.", researchFieldResponseFields())
+            .andWithPrefix("content[].research_fields.[].", researchFieldResponseFields())
+            .andWithPrefix("content[].research_problem.", researchProblemResponseFields())
+            .andWithPrefix("")
 
     private fun datasetResponseFields() =
         listOf(
@@ -725,8 +742,9 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         )
 
     private fun datasetListResponseFields() =
-        responseFields(fieldWithPath("[]").description("A list of datasets"))
-            .andWithPrefix("[].", datasetResponseFields())
+        responseFields(pageableDetailedFieldParameters())
+            .andWithPrefix("content[].", datasetResponseFields())
+            .andWithPrefix("")
 
     private fun datasetSummaryResponseFields() =
         listOf(
@@ -740,7 +758,8 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("code_urls").description("A list of urls for the codes specified in the papers")
         )
 
-    private fun datasetSummaryListResponseFields() =
-        responseFields(fieldWithPath("[]").description("A list of dataset summaries"))
-            .andWithPrefix("[].", datasetSummaryResponseFields())
+    private fun datasetSummaryPageResponseFields() =
+        responseFields(pageableDetailedFieldParameters())
+            .andWithPrefix("content[].", datasetSummaryResponseFields())
+            .andWithPrefix("")
 }

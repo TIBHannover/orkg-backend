@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.28.1] - 2023-03-27
 ### Fixed
 - The RDF export does not use the atomic move operation anymore. (See: [!483](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/483))
 - The changelog for research fields was fixed to provide correct results. (See [!480](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/480))
@@ -291,7 +293,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.28.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.28.1...master
+[0.28.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.28.1
 [0.28.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.28.0
 [0.27.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.27.1
 [0.27.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.27.0

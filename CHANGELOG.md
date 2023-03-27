@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - The RDF export does not use the atomic move operation anymore. (See: [!483](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/483))
+- The changelog for research fields was fixed to provide correct results. (See [!480](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/480))
 ### Changed
 - The benchmark endpoints are now paged. (Closes: [#461](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/461))
 

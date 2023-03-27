@@ -62,7 +62,7 @@ CALL {
     UNION ALL
     MATCH (sub:Contribution) RETURN sub
 } WITH sub
-RETURN sub.resource_id AS id, sub.label AS label, sub.created_at AS createdAt, COALESCE(sub.created_by, '00000000-0000-0000-0000-000000000000') as createdBy, labels(sub) AS classes ORDER BY createdAt DESC
+RETURN sub.resource_id AS id, sub.label AS label, sub.created_at AS createdAt, COALESCE(sub.created_by, '00000000-0000-0000-0000-000000000000') AS createdBy, labels(sub) AS classes ORDER BY createdAt DESC
 """,
         countQuery = """
 CALL {
@@ -76,19 +76,23 @@ CALL {
     UNION ALL
     MATCH (sub:Contribution) RETURN sub
 } WITH sub
-RETURN count(sub)
+RETURN COUNT(sub)
 """)
     fun getChangeLog(pageable: Pageable): Page<ChangeLogResponse>
 
     @Query("""
-MATCH (r:ResearchField {resource_id: $id})
-CALL apoc.path.subgraphAll(r, {labelFilter: "+ResearchField", relationshipFilter: "RELATED>"})
-YIELD relationships
-UNWIND relationships AS rel
-WITH rel, r
-WHERE rel.predicate_id = "P36"
-WITH COLLECT(endNode(rel)) + COLLECT(r) AS fields
-UNWIND fields AS field
+CALL {
+    MATCH (field:ResearchField {resource_id: $id})
+    RETURN field
+    UNION ALL
+    MATCH (field:ResearchField {resource_id: $id})
+    CALL apoc.path.subgraphAll(field, {labelFilter: "+ResearchField", relationshipFilter: "RELATED>"})
+    YIELD relationships
+    UNWIND relationships AS rel
+    WITH rel
+    WHERE rel.predicate_id = "P36"
+    RETURN endNode(rel) AS field
+} WITH field
 MATCH (p:Paper)-[:RELATED {predicate_id: "P30"}]->(field)
 OPTIONAL MATCH (c:Comparison)-[:RELATED {predicate_id: "compareContribution"}]->(:Contribution)<-[:RELATED {predicate_id:"P31"}]-(p)
 OPTIONAL MATCH (c)-[:RELATED {predicate_id: "hasVisualization"}]->(v:Visualization)
@@ -96,16 +100,20 @@ WITH [p, c, v] AS nodes
 UNWIND nodes AS n
 WITH DISTINCT n
 WHERE n IS NOT NULL
-RETURN n.resource_id AS id, n.label AS label, n.created_at AS createdAt, n.created_by AS createdBy, labels(n) AS classes""",
+RETURN n.resource_id AS id, n.label AS label, n.created_at AS createdAt, COALESCE(n.created_by, '00000000-0000-0000-0000-000000000000') AS createdBy, labels(n) AS classes""",
         countQuery = """
-MATCH (r:ResearchField {resource_id: $id})
-CALL apoc.path.subgraphAll(r, {labelFilter: "+ResearchField", relationshipFilter: "RELATED>"})
-YIELD relationships
-UNWIND relationships AS rel
-WITH rel, r
-WHERE rel.predicate_id = "P36"
-WITH COLLECT(endNode(rel)) + COLLECT(r) AS fields
-UNWIND fields AS field
+CALL {
+    MATCH (field:ResearchField {resource_id: $id})
+    RETURN field
+    UNION ALL
+    MATCH (field:ResearchField {resource_id: $id})
+    CALL apoc.path.subgraphAll(field, {labelFilter: "+ResearchField", relationshipFilter: "RELATED>"})
+    YIELD relationships
+    UNWIND relationships AS rel
+    WITH rel
+    WHERE rel.predicate_id = "P36"
+    RETURN endNode(rel) AS field
+} WITH field
 MATCH (p:Paper)-[:RELATED {predicate_id: "P30"}]->(field)
 OPTIONAL MATCH (c:Comparison)-[:RELATED {predicate_id: "compareContribution"}]->(:Contribution)<-[:RELATED {predicate_id:"P31"}]-(p)
 OPTIONAL MATCH (c)-[:RELATED {predicate_id: "hasVisualization"}]->(v:Visualization)

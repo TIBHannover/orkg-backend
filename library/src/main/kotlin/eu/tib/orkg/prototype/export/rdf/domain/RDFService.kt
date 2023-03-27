@@ -14,9 +14,17 @@ import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.forEach
+import java.io.FileOutputStream
+import java.io.OutputStreamWriter
 import java.io.Writer
 import java.net.URI
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 import java.util.*
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
 import org.eclipse.rdf4j.model.Model
 import org.eclipse.rdf4j.model.util.ModelBuilder
 import org.eclipse.rdf4j.model.vocabulary.OWL
@@ -25,6 +33,8 @@ import org.eclipse.rdf4j.model.vocabulary.RDFS
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+
+private const val DEFAULT_FILE_NAME = "rdf-export-orkg.nt"
 
 @Service
 @Transactional
@@ -47,6 +57,21 @@ class RDFService(
         statementRepository.forEach({
             it.toNTriple(writer)
         }, writer::flush)
+    }
+
+    override fun dumpToNTriple(path: String?) {
+        val filePath = resolveFilePath(path)
+        if (filePath.parent.exists().not()) throw NoSuchFileException(
+            file = filePath.toFile(),
+            reason = "The directory ${filePath.parent} does not exist! Make sure it was created, and that permissions are correct.",
+        )
+        val temp = Files.createTempFile("", "")
+        OutputStreamWriter(FileOutputStream(temp.toFile()), Charsets.UTF_8).use {
+            dumpToNTriple(it)
+        }
+        if (temp.exists()) {
+            Files.move(temp, filePath, StandardCopyOption.REPLACE_EXISTING)
+        }
     }
 
     override fun rdfModelForClass(id: ThingId): Optional<Model> {
@@ -101,6 +126,17 @@ class RDFService(
             }.build()
             return Optional.of(model)
         }
+    }
+
+    internal fun resolveFilePath(path: String?): Path {
+        if (path == null) {
+            return Paths.get(DEFAULT_FILE_NAME)
+        }
+        val file = Paths.get(path)
+        if (file.isDirectory()) {
+            return file.resolve(DEFAULT_FILE_NAME)
+        }
+        return file
     }
 }
 

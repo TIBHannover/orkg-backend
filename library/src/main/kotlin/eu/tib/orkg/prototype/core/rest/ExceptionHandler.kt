@@ -7,7 +7,6 @@ import eu.tib.orkg.prototype.shared.PropertyValidationException
 import eu.tib.orkg.prototype.shared.SimpleMessageException
 import eu.tib.orkg.prototype.toSnakeCase
 import java.time.OffsetDateTime
-import javax.servlet.http.HttpServletRequest
 import org.springframework.data.neo4j.exception.UncategorizedNeo4jException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -20,6 +19,7 @@ import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
+import org.springframework.web.util.ContentCachingRequestWrapper
 
 @ControllerAdvice
 class ExceptionHandler : ResponseEntityExceptionHandler() {
@@ -37,7 +37,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(PropertyValidationException::class)
     fun handlePropertyValidationException(
         ex: PropertyValidationException,
-        request: HttpServletRequest
+        request: WebRequest
     ) = buildBadRequestResponse(ex, request.requestURI) {
             // Use a list so that it is compatible to the javax.validation responses
             listOf(
@@ -48,7 +48,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(ForbiddenOperationException::class)
     fun handleForbiddenOperationException(
         ex: ForbiddenOperationException,
-        request: HttpServletRequest
+        request: WebRequest
     ) = buildForbiddenResponse(ex, request.requestURI) {
             // Use a list so that it is compatible to the javax.validation responses
             listOf(
@@ -59,7 +59,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(UserRegistrationException::class)
     fun handleUserRegistrationException(
         ex: UserRegistrationException,
-        request: HttpServletRequest
+        request: WebRequest
     ): ResponseEntity<Any> {
         val payload = MessageErrorResponse(
             status = ex.status.value(),
@@ -73,16 +73,16 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(LoggedMessageException::class)
     fun handleLoggedMessageException(
         ex: LoggedMessageException,
-        request: HttpServletRequest
+        request: WebRequest
     ): ResponseEntity<Any> {
-        ex.printStackTrace()
+        logException(ex, request)
         return handleSimpleMessageException(ex, request)
     }
 
     @ExceptionHandler(SimpleMessageException::class)
     fun handleSimpleMessageException(
         ex: SimpleMessageException,
-        request: HttpServletRequest
+        request: WebRequest
     ): ResponseEntity<Any> {
         val payload = MessageErrorResponse(
             status = ex.status.value(),
@@ -119,12 +119,12 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         ex: RuntimeException,
         request: WebRequest
     ): ResponseEntity<Any> {
+        logException(ex, request)
         val payload = ErrorResponse(
             status = INTERNAL_SERVER_ERROR.value(),
             error = INTERNAL_SERVER_ERROR.reasonPhrase,
             path = request.requestURI,
         )
-        ex.printStackTrace()
         return ResponseEntity(payload, INTERNAL_SERVER_ERROR)
     }
 
@@ -156,6 +156,26 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
             path = path
         )
         return ResponseEntity(payload, FORBIDDEN)
+    }
+
+    private fun logException(throwable: Throwable, request: WebRequest) {
+        val message = StringBuilder(
+            """Request: ${request.requestURI}${request.parameterMap.toParameterString()}, Headers: ${request.headerMap}"""
+        )
+
+        if (request is ServletWebRequest) {
+            val nativeRequest: ContentCachingRequestWrapper = request.nativeRequest as ContentCachingRequestWrapper
+            message.insert(0, " ")
+            message.insert(0, nativeRequest.method)
+
+            val requestBody = String(nativeRequest.contentAsByteArray)
+            if (requestBody.isNotBlank()) {
+                message.append(", Body: ")
+                message.append(requestBody)
+            }
+        }
+
+        logger.error(message.toString(), throwable)
     }
 
     data class ErrorResponse(
@@ -198,3 +218,9 @@ private val WebRequest.requestURI: String
         is ServletWebRequest -> request.requestURI
         else -> contextPath // most likely this is empty
     }
+
+private val WebRequest.headerMap: Map<String, String?>
+    get() = headerNames.asSequence().associateWith { getHeader(it) }
+
+private fun <K, V> Map<K, Array<V>>.toParameterString(): String =
+    entries.joinToString(separator = "&", prefix = "?") { "${it.key}=${it.value.joinToString(separator = ",")}" }

@@ -23,11 +23,14 @@ import org.neo4j.cypherdsl.core.Cypher.anyNode
 import org.neo4j.cypherdsl.core.Cypher.asExpression
 import org.neo4j.cypherdsl.core.Cypher.call
 import org.neo4j.cypherdsl.core.Cypher.caseExpression
+import org.neo4j.cypherdsl.core.Cypher.listOf
+import org.neo4j.cypherdsl.core.Cypher.listWith
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.optionalMatch
+import org.neo4j.cypherdsl.core.Cypher.raw
 import org.neo4j.cypherdsl.core.Cypher.returning
 import org.neo4j.cypherdsl.core.Cypher.union
 import org.neo4j.cypherdsl.core.Cypher.unwind
@@ -36,6 +39,7 @@ import org.neo4j.cypherdsl.core.Expression
 import org.neo4j.cypherdsl.core.Functions.collect
 import org.neo4j.cypherdsl.core.Functions.count
 import org.neo4j.cypherdsl.core.Functions.countDistinct
+import org.neo4j.cypherdsl.core.Functions.labels
 import org.neo4j.cypherdsl.core.Predicates.exists
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -101,12 +105,25 @@ class SpringDataNeo4jStatementAdapter(
     override fun delete(statement: GeneralStatement) = deleteByStatementId(statement.id!!)
 
     override fun deleteByStatementId(id: StatementId) {
-        val relation = anyNode().relationshipTo(anyNode(), RELATED)
-            .named("r")
+        val o = name("o")
+        val n = name("n")
+        val l = name("l")
+        val node = anyNode().named(n)
+        val relation = node("Thing")
+            .relationshipTo(anyNode().named(o), RELATED)
+            .withProperties("statement_id", literalOf<String>(id.value))
         val query = match(relation)
-            .where(relation.property("statement_id").eq(literalOf<String>(id.value)))
             .delete(relation)
+            .with(
+                listWith(n).`in`(listOf(o))
+                    .where(
+                        literalOf<String>("Literal").`in`(labels(node))
+                            .and(node.relationshipBetween(anyNode()).asCondition().not())
+                    ).returning(n)
+                    .`as`(l)
+            ).returningRaw(raw("FOREACH(n IN l | DELETE n)"))
             .build()
+
         neo4jClient.query(query.cypher).run()
     }
 

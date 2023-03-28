@@ -218,19 +218,19 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         }).map { it.subject as Resource }
 
     // TODO: rename to findAllProblemsByObservatoryId
-    override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
+    override fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
         // FIXME: Create a union with all Problems that are not used in statements
         entities.values.filter {
-            it.subject is Resource && with(it.subject as Resource) {
-                paperClass in classes && observatoryId == id
-            }
-        }.map { statementAboutPaper ->
-            findSubgraph(statementAboutPaper.subject.thingId).filter {
-                it.`object` is Resource && with(it.`object` as Resource) {
-                    problemClass in classes && observatoryId == id
-                }
+            it.subject is Resource && paperClass in (it.subject as Resource).classes && (it.subject as Resource).observatoryId == id
+                && it.predicate.id == hasContribution
+                && it.`object` is Resource && contributionClass in (it.`object` as Resource).classes
+        }.map { hasContributionStatement ->
+            entities.values.filter {
+                it.subject.thingId == hasContributionStatement.`object`.thingId
+                    && it.predicate.id == hasResearchProblem
+                    && it.`object` is Resource && problemClass in (it.`object` as Resource).classes
             }.map { it.`object` as Resource }
-        }.flatten().distinct()
+        }.flatten().distinct().paged(pageable)
 
     override fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId> =
         findSubgraph(id) { statement, _ ->
@@ -278,7 +278,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
 
     override fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
         entities.values.filter {
-            it.subject is Resource && comparisonClass in (it.subject as Resource).classes
+            it.subject is Resource && comparisonClass in (it.subject as Resource).classes && (it.subject as Resource).organizationId == id
                 && it.predicate.id == compareContribution
                 && it.`object` is Resource && contributionClass in (it.`object` as Resource).classes
         }.map { compareContributionStatement ->

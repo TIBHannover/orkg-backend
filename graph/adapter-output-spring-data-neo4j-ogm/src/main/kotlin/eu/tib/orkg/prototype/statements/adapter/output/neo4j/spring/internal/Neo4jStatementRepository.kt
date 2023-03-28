@@ -194,9 +194,19 @@ ORDER BY rel.created_at DESC"""
     @Query("""MATCH (node:Paper)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(l:Literal) WHERE not 'PaperDeleted' in labels(node) AND toUpper(l.label) = toUpper($doi) RETURN node LIMIT 1""")
     fun findByDOI(doi: String): Optional<Neo4jResource>
 
-    // TODO: Update endpoint to use pagination once we upgraded to Neo4j 4.0
-    @Query("""MATCH (n:Paper {observatory_id: $id})-[*]->(r:Problem) RETURN r UNION ALL MATCH (r:Problem {observatory_id: $id}) RETURN r""")
-    fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Neo4jResource>
+    @Query("""
+CALL {
+    MATCH (:Paper {observatory_id: $id})-[:RELATED {predicate_id:"P31"}]->(:Contribution)-[:RELATED {predicate_id:"P32"}]->(r:Problem) RETURN r
+    UNION
+    MATCH (r:Problem {observatory_id: $id}) RETURN r
+} RETURN r ORDER BY r.resource_id""",
+        countQuery = """
+CALL {
+    MATCH (:Paper {observatory_id: $id})-[:RELATED {predicate_id:"P31"}]->(:Contribution)-[:RELATED {predicate_id:"P32"}]->(r:Problem) RETURN r
+    UNION
+    MATCH (r:Problem {observatory_id: $id}) RETURN r
+} RETURN COUNT(r)""")
+    fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Neo4jResource>
 
     @Query("""MATCH (n:Resource {resource_id: $id})
 CALL apoc.path.subgraphAll(n, {relationshipFilter: ">", labelFilter: "-ResearchField|-ResearchProblem|-Paper"})

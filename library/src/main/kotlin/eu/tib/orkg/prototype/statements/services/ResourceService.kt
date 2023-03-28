@@ -259,8 +259,8 @@ class ResourceService(
     override fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation> =
         retrieveAndConvertIterable { repository.findByClassAndObservatoryId(comparisonClass, id) }
 
-    override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation> =
-        retrieveAndConvertIterable { statementRepository.findProblemsByObservatoryId(id) }
+    override fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged { statementRepository.findProblemsByObservatoryId(id, pageable) }
 
     override fun findResourcesByObservatoryIdAndClass(
         id: ObservatoryId,

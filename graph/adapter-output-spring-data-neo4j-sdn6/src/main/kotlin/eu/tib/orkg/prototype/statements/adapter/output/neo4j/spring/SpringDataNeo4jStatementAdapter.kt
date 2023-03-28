@@ -444,26 +444,37 @@ class SpringDataNeo4jStatementAdapter(
     }
 
     // TODO: Update endpoint to use pagination once we upgraded to Neo4j 4.0
-    override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource> {
+    override fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> {
         val problem = name("p")
         val idLiteral = literalOf<String>(id.value.toString())
-        val query = union(
+        val call = call(union(
             match(
                 node("Paper")
-                    .withProperties("observatory_id", idLiteral)
-                    .relationshipTo(node("Problem").named(problem))
-                    .unbounded()
-            ).returning(problem).build(),
+                    .withProperties("organization_id", idLiteral)
+                    .relationshipTo(node("Contribution"), RELATED)
+                    .withProperties("predicate_id", literalOf<String>("P31"))
+                    .relationshipTo(node("Problem").named(problem), RELATED)
+                    .properties("predicate_id", literalOf<String>("P32"))
+            ).returning(problem)
+                .build(),
             match(
                 node("Problem")
                     .named(problem)
                     .withProperties("observatory_id", idLiteral)
-            ).returning(problem).build()
-        )
+            ).returning(problem)
+                .build()
+        ))
+        val query = call
+            .returning(problem)
+            .orderBy(problem.property("resource_id"))
+            .build(pageable)
+        val countQuery = call
+            .returning(count(problem))
+            .build()
         return neo4jClient.query(query.cypher)
             .fetchAs(Resource::class.java)
             .mappedBy(ResourceMapper(problem))
-            .all()
+            .paged(pageable, countQuery)
     }
 
     override fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId> {

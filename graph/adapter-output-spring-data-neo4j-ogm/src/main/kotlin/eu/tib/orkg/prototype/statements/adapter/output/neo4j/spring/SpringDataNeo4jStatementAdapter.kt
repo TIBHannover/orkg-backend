@@ -158,8 +158,8 @@ class SpringDataNeo4jStatementAdapter(
     override fun findByDOI(doi: String): Optional<Resource> =
         neo4jRepository.findByDOI(doi).map(Neo4jResource::toResource)
 
-    override fun findProblemsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
-        neo4jRepository.findProblemsByObservatoryId(id).map(Neo4jResource::toResource)
+    override fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findProblemsByObservatoryId(id, pageable).map(Neo4jResource::toResource)
 
     override fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId> =
         neo4jRepository.findAllContributorsByResourceId(id.toResourceId(), pageable)

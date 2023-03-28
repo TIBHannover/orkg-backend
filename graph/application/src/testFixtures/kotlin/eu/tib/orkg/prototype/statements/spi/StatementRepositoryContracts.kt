@@ -888,25 +888,30 @@ fun <
         context("by observatory id") {
             val observatoryId = fabricator.random<ObservatoryId>()
             val expected = (0 until 2).map {
-                val contribution = createResource(id = fabricator.random())
-                val researchProblem = createResource(
-                    id = fabricator.random(),
-                    classes = setOf(ThingId("Problem")),
-                    observatoryId = observatoryId
-                )
                 val paper = createResource(
                     id = fabricator.random(),
                     classes = setOf(ThingId("Paper")),
                     observatoryId = observatoryId
                 )
+                val contribution = createResource(
+                    id = fabricator.random(),
+                    classes = setOf(ThingId("Contribution"))
+                )
+                val researchProblem = createResource(
+                    id = fabricator.random(),
+                    classes = setOf(ThingId("Problem")),
+                    observatoryId = observatoryId
+                )
                 val paperHasContribution = createStatement(
                     id = fabricator.random(),
                     subject = paper,
+                    predicate = createPredicate(ThingId("P31")), // hasContribution
                     `object` = contribution
                 )
                 val contributionHasResearchProblem = createStatement(
                     id = fabricator.random(),
                     subject = contribution,
+                    predicate = createPredicate(ThingId("P32")), // hasProblem
                     `object` = researchProblem
                 )
                 saveStatement(paperHasContribution)
@@ -914,33 +919,25 @@ fun <
                 researchProblem
             }
 
-            val result = repository.findProblemsByObservatoryId(observatoryId)
+            val result = repository.findProblemsByObservatoryId(observatoryId, PageRequest.of(0, 5))
 
             it("returns the correct result") {
                 result shouldNotBe null
-                result.count() shouldBe 2
-                result shouldContainAll expected
+                result.content shouldNotBe null
+                result.content.size shouldBe 2
+                result.content shouldContainAll expected
             }
-
-//            val result = repository.findProblemsByObservatoryId(observatoryId, PageRequest.of(0, 5))
-//
-//            it("returns the correct result") {
-//                result shouldNotBe null
-//                result.content shouldNotBe null
-//                result.content.size shouldBe 2
-//                result.content shouldContainAll expected
-//            }
-//            it("pages the result correctly") {
-//                result.size shouldBe 5
-//                result.number shouldBe 0
-//                result.totalPages shouldBe 1
-//                result.totalElements shouldBe 2
-//            }
-//            xit("sorts the results by creation date by default") {
-//                result.content.zipWithNext { a, b ->
-//                    a.createdAt shouldBeLessThan b.createdAt
-//                }
-//            }
+            it("pages the result correctly") {
+                result.size shouldBe 5
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe 2
+            }
+            xit("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
         }
         context("by organization id") {
             val organizationId = fabricator.random<OrganizationId>()

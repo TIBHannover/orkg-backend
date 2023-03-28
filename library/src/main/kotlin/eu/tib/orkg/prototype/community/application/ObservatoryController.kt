@@ -96,8 +96,8 @@ class ObservatoryController(
     }
 
     @GetMapping("{id}/problems")
-    fun findProblemsByObservatoryId(@PathVariable id: ObservatoryId): Iterable<ResourceRepresentation> {
-        return resourceService.findProblemsByObservatoryId(id)
+    fun findProblemsByObservatoryId(@PathVariable id: ObservatoryId, pageable: Pageable): Page<ResourceRepresentation> {
+        return resourceService.findProblemsByObservatoryId(id, pageable)
     }
 
     @GetMapping("{id}/class")

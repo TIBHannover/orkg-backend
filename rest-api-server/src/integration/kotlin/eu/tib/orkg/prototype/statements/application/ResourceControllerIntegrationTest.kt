@@ -97,7 +97,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     pageableRequestParameters(),
-                    listOfDetailedResourcesResponseFields()
+                    pageOfDetailedResourcesResponseFields()
                 )
             )
     }
@@ -121,7 +121,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
                             .description("Whether it is an exact string lookup or just containment")
                             .optional()
                     ),
-                    listOfDetailedResourcesResponseFields()
+                    pageOfDetailedResourcesResponseFields()
                 )
             )
     }
@@ -145,7 +145,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
                             .description("Whether it is an exact string lookup or just containment")
                             .optional()
                     ),
-                    listOfDetailedResourcesResponseFields()
+                    pageOfDetailedResourcesResponseFields()
                 )
             )
     }
@@ -321,7 +321,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
                             .description("List of classes to include e.g Paper,C0,Contribution (default: not provided)")
                             .optional()
                     ),
-                    listOfDetailedResourcesResponseFields()
+                    pageOfDetailedResourcesResponseFields()
                 )
             )
     }
@@ -357,7 +357,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
                             .description("List of classes to include e.g Paper,C0,Contribution (default: not provided)")
                             .optional()
                     ),
-                    listOfDetailedResourcesResponseFields()
+                    pageOfDetailedResourcesResponseFields()
                 )
             )
     }
@@ -468,7 +468,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
                             .description("List of classes to exclude e.g Paper,C0,Contribution (default: not provided)")
                             .optional()
                     ),
-                    listOfDetailedResourcesResponseFields()
+                    pageOfDetailedResourcesResponseFields()
                 )
             )
     }
@@ -543,13 +543,6 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
         return templatedResource
     }
 
-    fun listOfDetailedResourcesResponseFields(): ResponseFieldsSnippet {
-        return responseFields(pageableDetailedFieldParameters())
-            .andWithPrefix(
-                "content[].", resourceResponseFields()
-            ).andWithPrefix("")
-    }
-
     fun createTestUser(): ContributorId {
         userService.registerUser("abc@gmail.com", "123456", "Test user")
         return ContributorId(userService.findByEmail("abc@gmail.com").get().id!!)
@@ -580,5 +573,12 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
             )
                 .andWithPrefix("[].", resourceResponseFields())
                 .andWithPrefix("")
+
+        fun pageOfDetailedResourcesResponseFields(): ResponseFieldsSnippet {
+            return responseFields(pageableDetailedFieldParameters())
+                .andWithPrefix(
+                    "content[].", resourceResponseFields()
+                ).andWithPrefix("")
+        }
     }
 }

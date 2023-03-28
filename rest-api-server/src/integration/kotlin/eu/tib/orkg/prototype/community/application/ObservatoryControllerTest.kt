@@ -171,12 +171,12 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
 
         mockMvc
             .perform(getRequestTo("/api/observatories/$observatoryId/problems"))
-            .andExpect(jsonPath("$", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(status().isOk)
             .andDo(
                 document(
                     snippet,
-                    ResourceControllerIntegrationTest.listOfResourcesResponseFields()
+                    ResourceControllerIntegrationTest.pageOfDetailedResourcesResponseFields()
                 )
             )
     }

@@ -1,0 +1,8 @@
+= ORKG REST API
+:reftext: REST API
+
+include::partial$description.adoc[]
+
+It currently only supports JSON as a serialization format.
+
+TBD: extend text

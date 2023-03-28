@@ -1,0 +1,1 @@
+The ORKG REST API provides a web programming interface for clients to modify information in the knowledge graph.

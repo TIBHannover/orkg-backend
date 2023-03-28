@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.shared.PropertyValidationException
 import eu.tib.orkg.prototype.shared.SimpleMessageException
 import eu.tib.orkg.prototype.toSnakeCase
 import java.time.OffsetDateTime
+import javax.servlet.http.HttpServletRequest
 import org.springframework.data.neo4j.exception.UncategorizedNeo4jException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -164,14 +165,16 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         )
 
         if (request is ServletWebRequest) {
-            val nativeRequest: ContentCachingRequestWrapper = request.nativeRequest as ContentCachingRequestWrapper
+            val nativeRequest: HttpServletRequest = request.request
             message.insert(0, " ")
             message.insert(0, nativeRequest.method)
 
-            val requestBody = String(nativeRequest.contentAsByteArray)
-            if (requestBody.isNotBlank()) {
-                message.append(", Body: ")
-                message.append(requestBody)
+            if (nativeRequest is ContentCachingRequestWrapper) {
+                val requestBody = String(nativeRequest.contentAsByteArray)
+                if (requestBody.isNotBlank()) {
+                    message.append(", Body: ")
+                    message.append(requestBody)
+                }
             }
         }
 

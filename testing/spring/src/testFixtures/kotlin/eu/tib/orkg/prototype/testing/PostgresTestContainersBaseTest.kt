@@ -27,7 +27,8 @@ const val POSTGRES_VERSION = "11"
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ComponentScan(
     basePackages = [
-        "eu.tib.orkg.prototype.files.adapter.output.jpa"
+        "eu.tib.orkg.prototype.files.adapter.output.jpa",
+        "eu.tib.orkg.prototype.discussions.adapter.output.jpa"
     ]
 )
 @TestConstructor(autowireMode = ALL)
@@ -58,11 +59,6 @@ abstract class PostgresTestContainersBaseTest {
                 add("spring.jpa.show-sql") { true }
             }
         }
-
-        // Ryuk will NOT manage the shut-down, so shutdown method is required.
-        @JvmStatic
-        @AfterAll
-        fun stopContainer() = container.stop()
     }
 
     @Autowired

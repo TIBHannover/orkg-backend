@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Deleting statements should not result in "500 Server Error" anymore. (Closes: [#467](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/467))
+### Added
+- It is now possible to have discussions about entities. (See: [!454](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/454))
 
 ## [0.28.1] - 2023-03-27
 ### Fixed

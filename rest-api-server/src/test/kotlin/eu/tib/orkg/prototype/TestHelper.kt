@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype
 
+import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.OrkgUserDetailsService
 import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.community.domain.model.Organization
@@ -24,6 +25,7 @@ import java.io.StringWriter
 import java.io.Writer
 import java.net.URI
 import java.net.URLConnection
+import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.util.*
 import javax.activation.MimeType
@@ -100,6 +102,17 @@ fun createOrganization() = Organization(
     type = OrganizationType.GENERAL,
     logoId = null
 )
+
+fun createUser(id: UUID = UUID.fromString("ee06bdf3-d6f3-41d1-8af2-64c583d9057e")) = UserEntity().apply {
+    this.id = id
+    email = "user@example.org"
+    password = "secret"
+    displayName = "Example User"
+    enabled = true
+    created = LocalDateTime.now()
+    organizationId = null
+    observatoryId = null
+}
 
 val testImage: URI = URI.create("classpath:/images/test_image.png")
 val encodedTestImage: URI = URI.create("classpath:/images/test_image_encoded.txt")

@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.29.0] - 2023-03-28
 ### Fixed
 - Deleting statements should not result in "500 Server Error" anymore. (Closes: [#467](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/467))
 ### Added
@@ -297,7 +299,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.28.1...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.29.0...master
+[0.29.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.29.0
 [0.28.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.28.1
 [0.28.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.28.0
 [0.27.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.27.1

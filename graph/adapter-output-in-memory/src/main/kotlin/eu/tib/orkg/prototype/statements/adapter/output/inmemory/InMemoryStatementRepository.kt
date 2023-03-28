@@ -56,6 +56,9 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         entities.remove(id)
     }
 
+    override fun deleteByStatementIds(ids: Set<StatementId>) =
+       ids.forEach { deleteByStatementId(it) }
+
     override fun findByStatementId(id: StatementId): Optional<GeneralStatement> =
         Optional.ofNullable(entities[id])
 

@@ -45,9 +45,9 @@ class BulkStatementController(
 }
     @DeleteMapping("/")
     fun delete(
-        @RequestParam("ids") statementsIds: List<StatementId>
+        @RequestParam("ids") statementsIds: Set<StatementId>
     ): ResponseEntity<Unit> {
-        statementsIds.forEach { statementService.remove(it) }
+        statementService.remove(statementsIds)
         return noContent().build()
     }
 

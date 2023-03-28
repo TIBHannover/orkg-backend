@@ -27,6 +27,7 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun count(): Long
     fun delete(statement: GeneralStatement)
     fun deleteByStatementId(id: StatementId)
+    fun deleteByStatementIds(ids: Set<StatementId>)
     fun deleteAll()
     fun findByStatementId(id: StatementId): Optional<GeneralStatement>
     fun findAllBySubject(subjectId: ThingId, pageable: Pageable): Page<GeneralStatement>

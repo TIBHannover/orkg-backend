@@ -15,8 +15,6 @@ import eu.tib.orkg.prototype.statements.services.ObjectService
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
 import org.neo4j.cypherdsl.core.Condition
@@ -32,12 +30,12 @@ import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.optionalMatch
 import org.neo4j.cypherdsl.core.Cypher.returning
 import org.neo4j.cypherdsl.core.Cypher.union
+import org.neo4j.cypherdsl.core.Cypher.unwind
 import org.neo4j.cypherdsl.core.Cypher.valueAt
 import org.neo4j.cypherdsl.core.Expression
 import org.neo4j.cypherdsl.core.Functions.collect
 import org.neo4j.cypherdsl.core.Functions.count
 import org.neo4j.cypherdsl.core.Functions.countDistinct
-import org.neo4j.cypherdsl.core.Operations
 import org.neo4j.cypherdsl.core.Predicates.exists
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -107,6 +105,20 @@ class SpringDataNeo4jStatementAdapter(
             .named("r")
         val query = match(relation)
             .where(relation.property("statement_id").eq(literalOf<String>(id.value)))
+            .delete(relation)
+            .build()
+        neo4jClient.query(query.cypher).run()
+    }
+
+    override fun deleteByStatementIds(ids: Set<StatementId>) {
+        val relation = anyNode().relationshipTo(anyNode(), RELATED)
+            .named("r")
+        val id = name("id")
+        val query = unwind(literalOf<Set<StatementId>>(ids))
+            .`as`(id)
+            .with(id)
+            .match(relation)
+            .where(relation.property("statement_id").eq(id))
             .delete(relation)
             .build()
         neo4jClient.query(query.cypher).run()

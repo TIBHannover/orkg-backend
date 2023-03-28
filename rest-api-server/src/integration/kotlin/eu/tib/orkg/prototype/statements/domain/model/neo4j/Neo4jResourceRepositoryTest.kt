@@ -13,6 +13,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -50,10 +51,10 @@ class Neo4jResourceRepositoryTest : Neo4jTestContainersBaseTest() {
         val result = resourceRepository.findAll()
 
         assertThat(result).hasSize(1)
-        assertThat(result.first().resources).isNotNull
     }
 
     @Test
+    @Disabled("Because of #467, Neo4jResource currently does relate to other entities")
     @DisplayName("should show is shared resource")
     fun shouldShowIsSharedResource() {
         val sub = Neo4jResource(
@@ -92,11 +93,12 @@ class Neo4jResourceRepositoryTest : Neo4jTestContainersBaseTest() {
             )
         )
 
-        val result = resourceRepository.findByResourceId(obj.resourceId)
-        assertThat(result.get().objectOf).hasSize(2)
+//        val result = resourceRepository.findByResourceId(obj.resourceId)
+//        assertThat(result.get().objectOf).hasSize(2)
     }
 
     @Test
+    @Disabled("Because of #467, Neo4jResource currently does relate to other entities")
     @DisplayName("should create connection between two resources")
     fun shouldCreateConnectionBetweenTwoResources() {
         val pagination = PageRequest.of(0, 10)
@@ -130,12 +132,12 @@ class Neo4jResourceRepositoryTest : Neo4jTestContainersBaseTest() {
         assertThat(allFound).isNotEmpty
         assertThat(allFound).hasSize(1)
 
-        val found = allFound.first()
+//        val found = allFound.first()
 
-        assertThat(found.resources).isNotNull
-        assertThat(found.resources).isNotEmpty
-        assertThat(found.resources).hasSize(1)
-        assertThat(found.resources.first().`object`?.label).isEqualTo("object")
+//        assertThat(found.resources).isNotNull
+//        assertThat(found.resources).isNotEmpty
+//        assertThat(found.resources).hasSize(1)
+//        assertThat(found.resources.first().`object`?.label).isEqualTo("object")
     }
 
     @Test

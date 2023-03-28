@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
@@ -17,7 +16,6 @@ import org.neo4j.ogm.annotation.Id
 import org.neo4j.ogm.annotation.Labels
 import org.neo4j.ogm.annotation.NodeEntity
 import org.neo4j.ogm.annotation.Property
-import org.neo4j.ogm.annotation.Relationship
 import org.neo4j.ogm.annotation.Required
 import org.neo4j.ogm.annotation.typeconversion.Convert
 
@@ -43,14 +41,6 @@ data class Neo4jResource(
     @Required
     @Convert(ResourceIdConverter::class)
     var resourceId: ResourceId? = null
-
-    @Relationship(type = "RELATED")
-    @JsonIgnore
-    var resources: MutableSet<Neo4jStatement> = mutableSetOf()
-
-    @Relationship(type = "RELATED", direction = Relationship.INCOMING)
-    @JsonIgnore
-    var objectOf: MutableSet<Neo4jStatement> = mutableSetOf()
 
     @Property("created_by")
     @Convert(ContributorIdConverter::class)

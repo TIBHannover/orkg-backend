@@ -26,6 +26,7 @@ private const val objectIds = "${'$'}objectIds"
 private const val predicateId = "${'$'}predicateId"
 private const val objectId = "${'$'}objectId"
 private const val id = "${'$'}id"
+private const val ids = "${'$'}ids"
 private const val resourceIds = "${'$'}resourceIds"
 private const val doi = "${'$'}doi"
 
@@ -83,6 +84,9 @@ interface Neo4jStatementRepository :
 
     @Query("""MATCH ()-[s:`RELATED`]->() WHERE s.statement_id = $id DELETE s""")
     fun deleteByStatementId(id: StatementId)
+
+    @Query("""UNWIND $ids AS id MATCH ()-[s:`RELATED`]->() WHERE s.statement_id = id DELETE s""")
+    fun deleteByStatementIds(ids: Set<StatementId>)
 
     @Query("$MATCH_STATEMENT $BY_SUBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
     countQuery = "$MATCH_STATEMENT $BY_SUBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_COUNT")

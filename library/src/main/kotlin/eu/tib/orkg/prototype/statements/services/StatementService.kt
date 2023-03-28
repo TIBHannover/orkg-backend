@@ -139,11 +139,11 @@ class StatementService(
 
     override fun totalNumberOfStatements(): Long = statementRepository.count()
 
-    override fun remove(statementId: StatementId) {
-        if (statementRepository.exists(statementId)) {
-            statementRepository.deleteByStatementId(statementId)
-        }
-    }
+    override fun remove(statementId: StatementId) =
+        statementRepository.deleteByStatementId(statementId)
+
+    override fun remove(statementIds: Set<StatementId>) =
+        statementRepository.deleteByStatementIds(statementIds)
 
     override fun update(command: UpdateStatementUseCase.UpdateCommand) {
         var found = statementRepository.findByStatementId(command.statementId)

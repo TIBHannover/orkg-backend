@@ -28,6 +28,7 @@ const val POSTGRES_VERSION = "11"
 @ComponentScan(
     basePackages = [
         "eu.tib.orkg.prototype.files.adapter.output.jpa",
+        "eu.tib.orkg.prototype.community.adapter.output.jpa",
         "eu.tib.orkg.prototype.discussions.adapter.output.jpa"
     ]
 )

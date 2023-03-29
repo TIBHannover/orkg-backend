@@ -55,7 +55,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
         service.removeAll()
         classService.removeAll()
 
-        assertThat(observatoryService.listObservatories()).hasSize(0)
+        assertThat(observatoryService.listObservatories(PageRequest.of(0, 10))).hasSize(0)
         assertThat(resourceService.findAll(PageRequest.of(0, 10))).hasSize(0)
         assertThat(service.listOrganizations()).hasSize(0)
         assertThat(classService.findAll(PageRequest.of(0, 10))).hasSize(0)

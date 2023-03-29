@@ -30,6 +30,7 @@ import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 import org.apache.commons.io.IOUtils
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent
@@ -102,7 +103,7 @@ class OrganizationController(
 
     @GetMapping("{id}/observatories")
     fun findObservatoriesByOrganization(@PathVariable id: OrganizationId): List<Observatory> {
-        return observatoryService.findObservatoriesByOrganizationId(id)
+        return observatoryService.findObservatoriesByOrganizationId(id, PageRequest.of(0, Int.MAX_VALUE)).content
     }
 
     @GetMapping("{id}/users")

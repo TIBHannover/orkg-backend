@@ -3,9 +3,12 @@ package eu.tib.orkg.prototype
 import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import eu.tib.orkg.prototype.auth.service.OrkgUserDetailsService
 import eu.tib.orkg.prototype.auth.service.UserRepository
+import eu.tib.orkg.prototype.community.domain.model.Observatory
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.Organization
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationType
+import eu.tib.orkg.prototype.community.domain.model.ResearchField
 import eu.tib.orkg.prototype.configuration.AuthorizationServerConfiguration
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.files.domain.model.Image
@@ -113,6 +116,15 @@ fun createUser(id: UUID = UUID.fromString("ee06bdf3-d6f3-41d1-8af2-64c583d9057e"
     organizationId = null
     observatoryId = null
 }
+
+fun createObservatory(organizationIds: Set<OrganizationId>) = Observatory(
+    id = ObservatoryId(UUID.fromString("95565e51-2b80-4c28-918c-6fbc5e2a9b33")),
+    name = "Test Observatory",
+    description = "Example Description",
+    researchField = ResearchField("R1234", null),
+    organizationIds = organizationIds,
+    displayId = "test_observatory"
+)
 
 val testImage: URI = URI.create("classpath:/images/test_image.png")
 val encodedTestImage: URI = URI.create("classpath:/images/test_image_encoded.txt")

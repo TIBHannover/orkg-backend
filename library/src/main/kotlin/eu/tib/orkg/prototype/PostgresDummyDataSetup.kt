@@ -135,7 +135,7 @@ class PostgresDummyDataSetup(
     private fun generateObservatories(observatories: List<Observatory>): List<Observatory> {
         observatories.forEach {
             val observatory = observatoryService.findById(it.id!!).orElseGet {
-                observatoryService.create(
+                val id = observatoryService.create(
                     id = it.id,
                     name = it.name!!,
                     description = it.description ?: "",
@@ -146,12 +146,13 @@ class PostgresDummyDataSetup(
                         .orElse(null),
                     displayId = it.displayId!!
                 )
+                observatoryService.findById(id).get()
             }
 
             for (organizationId in it.organizationIds) {
                 if (organizationId !in observatory.organizationIds) {
                     // There should exist a better method for adding organizations to an observatory but this is all we got
-                    observatoryService.updateOrganization(observatory.id!!, organizationId)
+                    observatoryService.addOrganization(observatory.id!!, organizationId)
                 }
             }
         }

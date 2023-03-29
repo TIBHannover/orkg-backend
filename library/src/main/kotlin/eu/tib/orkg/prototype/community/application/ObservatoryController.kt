@@ -5,10 +5,12 @@ import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.community.domain.model.Observatory
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.community.domain.model.ResearchField
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.application.ResearchFieldNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.StatisticsService
 import eu.tib.orkg.prototype.statements.spi.ObservatoryResources
@@ -18,6 +20,7 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.lang.Nullable
@@ -59,12 +62,12 @@ class ObservatoryController(
             observatory.organizationId,
             observatory.researchField,
             observatory.displayId
-        ).id
+        )
         val location = uriComponentsBuilder
             .path("api/observatories/{id}")
             .buildAndExpand(id)
             .toUri()
-        return ResponseEntity.created(location).body(service.findById(id!!).get())
+        return ResponseEntity.created(location).body(service.findById(id).get())
     }
 
     @GetMapping("/{id}")
@@ -82,7 +85,7 @@ class ObservatoryController(
 
     @GetMapping("/")
     fun findObservatories(): List<Observatory> {
-        return service.listObservatories()
+        return service.listObservatories(PageRequest.of(0, Int.MAX_VALUE)).content
     }
 
     @GetMapping("{id}/papers")
@@ -119,9 +122,10 @@ class ObservatoryController(
 
     @GetMapping("research-field/{id}/observatories")
     fun findObservatoriesByResearchField(
-        @PathVariable id: String
+        @PathVariable id: ThingId
     ): List<Observatory>? {
-        return service.findObservatoriesByResearchField(id)
+        resourceService.findById(id).orElseThrow { ResearchFieldNotFound(id) }
+        return service.findObservatoriesByResearchField(id, PageRequest.of(0, Int.MAX_VALUE)).content
     }
 
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
@@ -151,18 +155,19 @@ class ObservatoryController(
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateObservatoryResearchField(
         @PathVariable id: ObservatoryId,
-        @RequestBody @Valid researchFieldId: UpdateRequest
+        @RequestBody @Valid request: UpdateRequest
     ): Observatory {
         service
             .findById(id)
             .orElseThrow { ObservatoryNotFound(id) }
-
-        return service.changeResearchField(id, researchFieldId.value)
+        val researchField = resourceService.findById(ThingId(request.value))
+            .orElseThrow { ResearchFieldNotFound(ThingId(request.value)) }
+        return service.changeResearchField(id, ResearchField(researchField.id.value, researchField.label))
     }
 
     @RequestMapping("add/{id}/organization", method = [RequestMethod.POST, RequestMethod.PUT])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    fun updateObservatoryOrganization(
+    fun addObservatoryOrganization(
         @PathVariable id: ObservatoryId,
         @RequestBody organizationRequest: UpdateOrganizationRequest
     ): Observatory {
@@ -170,7 +175,7 @@ class ObservatoryController(
             .findById(id)
             .orElseThrow { ObservatoryNotFound(id) }
 
-        return service.updateOrganization(id, organizationRequest.organizationId)
+        return service.addOrganization(id, organizationRequest.organizationId)
     }
 
     @RequestMapping("delete/{id}/organization", method = [RequestMethod.POST, RequestMethod.PUT])

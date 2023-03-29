@@ -1,23 +1,26 @@
 package eu.tib.orkg.prototype.community.services
 
-import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.ObservatoryEntity
-import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresObservatoryRepository
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
+import eu.tib.orkg.prototype.community.application.ObservatoryNotFound
 import eu.tib.orkg.prototype.community.application.OrganizationNotFound
 import eu.tib.orkg.prototype.community.domain.model.Observatory
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.community.domain.model.ResearchField
+import eu.tib.orkg.prototype.community.spi.ObservatoryRepository
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
-class PostgresObservatoryService(
-    private val postgresObservatoryRepository: PostgresObservatoryRepository,
+class ObservatoryService(
+    private val postgresObservatoryRepository: ObservatoryRepository,
     private val postgresOrganizationRepository: PostgresOrganizationRepository,
     private val resourceService: ResourceUseCases
 ) : ObservatoryUseCases {
@@ -28,100 +31,90 @@ class PostgresObservatoryService(
         organizationId: OrganizationId,
         researchField: ThingId?,
         displayId: String
-    ): Observatory {
-        val observatoryId = id ?: ObservatoryId(UUID.randomUUID())
+    ): ObservatoryId {
+        val oId = id ?: ObservatoryId(UUID.randomUUID())
         val org = postgresOrganizationRepository
             .findById(organizationId.value)
-            .orElseThrow { OrganizationNotFound(organizationId) } // FIXME: should always have an ID
-        val newObservatory = ObservatoryEntity().apply {
-            this.id = observatoryId.value
-            this.name = name
-            this.description = description
-            this.researchField = researchField?.value
-            organizations = mutableSetOf(org)
-            this.displayId = displayId
-        }
-
-        val response = postgresObservatoryRepository.save(newObservatory).toObservatory()
-        return expand(response)
+            .orElseThrow { OrganizationNotFound(organizationId) }
+        val observatory = Observatory(
+            id = oId,
+            name = name,
+            description = description,
+            // We can pass `null` for the label here, as only the id gets stored
+            researchField = if (researchField?.value != null) ResearchField(researchField.value, null) else null,
+            organizationIds = mutableSetOf(OrganizationId(org.id!!)),
+            displayId = displayId
+        )
+        postgresObservatoryRepository.save(observatory)
+        return oId
     }
 
-    override fun listObservatories(): List<Observatory> =
-        postgresObservatoryRepository.findAll()
-            .map(ObservatoryEntity::toObservatory)
+    override fun listObservatories(pageable: Pageable): Page<Observatory> =
+        postgresObservatoryRepository.findAll(pageable)
             .map(::expand)
 
-    override fun findObservatoriesByOrganizationId(id: OrganizationId): List<Observatory> =
-        postgresObservatoryRepository.findByOrganizationsId(id.value)
-            .map(ObservatoryEntity::toObservatory)
+    override fun findObservatoriesByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Observatory> =
+        postgresObservatoryRepository.findByOrganizationId(id, pageable)
             .map(::expand)
 
     override fun findByName(name: String): Optional<Observatory> =
         postgresObservatoryRepository.findByName(name)
-            .map(ObservatoryEntity::toObservatory)
             .map(::expand)
 
     override fun findById(id: ObservatoryId): Optional<Observatory> =
-        postgresObservatoryRepository.findById(id.value)
-            .map(ObservatoryEntity::toObservatory)
+        postgresObservatoryRepository.findById(id)
             .map(::expand)
 
     override fun findByDisplayId(id: String): Optional<Observatory> =
         postgresObservatoryRepository.findByDisplayId(id)
-            .map(ObservatoryEntity::toObservatory)
             .map(::expand)
 
-    override fun findObservatoriesByResearchField(researchField: String): List<Observatory> =
-        postgresObservatoryRepository.findByResearchField(researchField)
-            .map(ObservatoryEntity::toObservatory)
+    override fun findObservatoriesByResearchField(researchField: ThingId, pageable: Pageable): Page<Observatory> =
+        postgresObservatoryRepository.findByResearchField(researchField, pageable)
             .map(::expand)
 
     override fun removeAll() = postgresObservatoryRepository.deleteAll()
 
-    override fun changeName(id: ObservatoryId, to: String): Observatory {
-        val entity = postgresObservatoryRepository.findById(id.value).get().apply {
-            name = to
-        }
-        val response = postgresObservatoryRepository.save(entity).toObservatory()
-        return expand(response)
+    override fun changeName(id: ObservatoryId, name: String): Observatory {
+        val observatory = postgresObservatoryRepository.findById(id)
+            .orElseThrow { ObservatoryNotFound(id) }
+            .copy(name = name)
+        postgresObservatoryRepository.save(observatory)
+        return expand(observatory)
     }
 
-    override fun changeDescription(id: ObservatoryId, to: String): Observatory {
-        val entity = postgresObservatoryRepository.findById(id.value).get().apply {
-            description = to
-        }
-        val response = postgresObservatoryRepository.save(entity).toObservatory()
-        return expand(response)
+    override fun changeDescription(id: ObservatoryId, description: String): Observatory {
+        val observatory = postgresObservatoryRepository.findById(id)
+            .orElseThrow { ObservatoryNotFound(id) }
+            .copy(description = description)
+        postgresObservatoryRepository.save(observatory)
+        return expand(observatory)
     }
 
-    override fun changeResearchField(id: ObservatoryId, to: String): Observatory {
-        val entity = postgresObservatoryRepository.findById(id.value).get().apply {
-            researchField = to
-        }
-        val response = postgresObservatoryRepository.save(entity).toObservatory()
-        return expand(response)
+    override fun changeResearchField(id: ObservatoryId, researchField: ResearchField): Observatory {
+        val observatory = postgresObservatoryRepository.findById(id)
+            .orElseThrow { ObservatoryNotFound(id) }
+            .copy(researchField = researchField)
+        postgresObservatoryRepository.save(observatory)
+        return expand(observatory)
     }
 
-    override fun updateOrganization(id: ObservatoryId, organizationId: OrganizationId): Observatory {
-        val org = postgresOrganizationRepository
-            .findById(organizationId.value)
+    override fun addOrganization(id: ObservatoryId, organizationId: OrganizationId): Observatory {
+        postgresOrganizationRepository.findById(organizationId.value)
             .orElseThrow { OrganizationNotFound(organizationId) }
-        val entity = postgresObservatoryRepository.findById(id.value).get()
-        entity.organizations?.add(org)
-
-        val response = postgresObservatoryRepository.save(entity).toObservatory()
-        return expand(response)
+        val observatory = postgresObservatoryRepository.findById(id)
+            .map { it.copy(organizationIds = it.organizationIds + organizationId) }
+            .orElseThrow { ObservatoryNotFound(id) }
+        postgresObservatoryRepository.save(observatory)
+        return expand(observatory)
     }
 
     override fun deleteOrganization(id: ObservatoryId, organizationId: OrganizationId): Observatory {
-        val org = postgresOrganizationRepository
-            .findById(organizationId.value)
-            .orElseThrow { OrganizationNotFound(organizationId) }
-        val entity = postgresObservatoryRepository.findById(id.value).get()
-        entity.organizations?.remove(org)
-
-        val response = postgresObservatoryRepository.save(entity).toObservatory()
-        return expand(response)
+        val observatory = postgresObservatoryRepository.findById(id)
+            .map { it.copy(organizationIds = it.organizationIds - organizationId) }
+            .orElseThrow { ObservatoryNotFound(id) }
+        postgresObservatoryRepository.save(observatory)
+        return expand(observatory)
     }
 
     fun hasResearchField(response: Observatory): Boolean {

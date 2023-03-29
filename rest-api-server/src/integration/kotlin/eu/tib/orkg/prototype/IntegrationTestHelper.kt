@@ -119,6 +119,6 @@ fun ObservatoryUseCases.createObservatory(
     description: String = "Example description",
     displayId: String = name.toDisplayId(),
     id: ObservatoryId? = null
-) = this.create(id, name, description, organizationId, researchField, displayId).id!!
+) = this.create(id, name, description, organizationId, researchField, displayId)
 
 private fun String.toDisplayId() = this.lowercase().replace(Regex("[^a-zA-Z0-9_]"), "_")

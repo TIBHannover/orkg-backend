@@ -11,6 +11,7 @@ package eu.tib.orkg.prototype.spring.spi
  */
 interface FeatureFlagService {
     /** Determine if the old (legacy) model of Papers With Code should be used. */
+    @Deprecated("This flag is obsolete and will be removed.", level = DeprecationLevel.HIDDEN)
     fun isPapersWithCodeLegacyModelEnabled(): Boolean
 
     /** Determine if formatted labels are enabled and appended to resource representation. */

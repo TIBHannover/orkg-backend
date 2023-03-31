@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Removed
+- The legacy Papers with Code (Pw) model support has been removed. (See: [!488](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/488))
 
 ## [0.29.0] - 2023-03-28
 ### Fixed

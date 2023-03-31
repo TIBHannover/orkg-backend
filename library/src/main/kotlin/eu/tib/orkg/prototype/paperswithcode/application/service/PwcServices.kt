@@ -8,23 +8,19 @@ import eu.tib.orkg.prototype.paperswithcode.application.port.input.RetrieveDatas
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.FindDatasetsQuery
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.SummarizeBenchmarkQuery
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.SummarizeDatasetQuery
-import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
-import org.springframework.context.annotation.Primary
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
-@Primary
 @Service
 class BenchmarkService(
     private val summarizeBenchmark: SummarizeBenchmarkQuery,
     private val researchFieldService: RetrieveResearchFieldUseCase,
-    private val flags: FeatureFlagService,
 ) : RetrieveBenchmarkUseCase {
     override fun summariesForResearchField(id: ThingId, pageable: Pageable): Optional<Page<BenchmarkSummary>> {
         val researchField = researchFieldService.findById(id)
@@ -35,13 +31,10 @@ class BenchmarkService(
         )
     }
 
-    override fun summary(pageable: Pageable): Optional<Page<BenchmarkSummary>> = if (flags.isPapersWithCodeLegacyModelEnabled())
-        error("This method is not supported in the PwC legacy model! Calling it is a bug!")
-    else
+    override fun summary(pageable: Pageable): Optional<Page<BenchmarkSummary>> =
         Optional.of(summarizeBenchmark.getAll(pageable))
 }
 
-@Primary
 @Service
 class DatasetService(
     private val findDatasets: FindDatasetsQuery,

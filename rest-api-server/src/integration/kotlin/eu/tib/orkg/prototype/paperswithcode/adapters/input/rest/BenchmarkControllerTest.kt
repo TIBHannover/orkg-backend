@@ -20,7 +20,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
-import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -30,27 +29,14 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
-import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
-
-// This is only required because these are integration tests. In a unit test, we would mock the feature flag service.
-// But for the time were we have both code bases, we need to run both test sets as well.
-@TestPropertySource(properties = ["orkg.features.pwc-legacy-model=true"])
-class BenchmarkControllerLegacyTest : BenchmarkControllerTest() {
-    @BeforeEach
-    override fun setup() {
-        super.setup()
-        classService.createClasses("Benchmark", "Dataset", "Evaluation", "Model", "Metric")
-    }
-}
 
 @Suppress("HttpUrlsUsage")
 @DisplayName("Benchmark Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-@TestPropertySource(properties = ["orkg.features.pwc-legacy-model=false"])
 class BenchmarkControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
@@ -104,28 +90,26 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
 
         classService.createClasses("Paper", "Problem", "ResearchField", "Contribution")
 
-        if (!flags.isPapersWithCodeLegacyModelEnabled()) {
-            predicateService.createPredicate(id = labelsAndClasses.numericValuePredicate, label = "Has numeric value")
+        predicateService.createPredicate(id = labelsAndClasses.numericValuePredicate, label = "Has numeric value")
 
-            classService.createClass(
-                label = "Quantity",
-                labelsAndClasses.quantityClass,
-                uri = URI("http://qudt.org/2.1/schema/qudt/Quantity")
-            )
-            classService.createClass(
-                label = "Quantity",
-                labelsAndClasses.quantityValueClass,
-                uri = URI("http://qudt.org/2.1/schema/qudt/QuantityValue")
-            )
-            classService.createClass(
-                label = "Quantity Kind",
-                labelsAndClasses.metricClass,
-                uri = URI("http://qudt.org/2.1/schema/qudt/QuantityKind")
-            )
-            classService.createClass("Dataset", labelsAndClasses.datasetClass)
-            classService.createClass("Benchmark", labelsAndClasses.benchmarkClass)
-            classService.createClass("Model", labelsAndClasses.modelClass)
-        }
+        classService.createClass(
+            label = "Quantity",
+            labelsAndClasses.quantityClass,
+            uri = URI("http://qudt.org/2.1/schema/qudt/Quantity")
+        )
+        classService.createClass(
+            label = "Quantity",
+            labelsAndClasses.quantityValueClass,
+            uri = URI("http://qudt.org/2.1/schema/qudt/QuantityValue")
+        )
+        classService.createClass(
+            label = "Quantity Kind",
+            labelsAndClasses.metricClass,
+            uri = URI("http://qudt.org/2.1/schema/qudt/QuantityKind")
+        )
+        classService.createClass("Dataset", labelsAndClasses.datasetClass)
+        classService.createClass("Benchmark", labelsAndClasses.benchmarkClass)
+        classService.createClass("Model", labelsAndClasses.modelClass)
     }
 
     @Test
@@ -224,8 +208,6 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun fetchBenchmarkSummaries() {
-        assumeFalse(flags.isPapersWithCodeLegacyModelEnabled())
-
         val field1 = resourceService.createResource(setOf("ResearchField"), label = "Field with a dataset #1")
 
         val benchPaper = resourceService.createResource(setOf("Paper"), label = "Paper 1")
@@ -277,8 +259,6 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun `aggregate problems that belong to multiple RFs when fetching summary`() {
-        assumeFalse(flags.isPapersWithCodeLegacyModelEnabled())
-
         val field1 = resourceService.createResource(setOf("ResearchField"), label = "Field #1 with a problem #1")
         val field2 = resourceService.createResource(setOf("ResearchField"), label = "Field #2 with a problem #1")
 
@@ -485,62 +465,41 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         val scoreOfM1B1E2 = literalService.create("4548")
         val scoreOfM1B2E1 = literalService.create("3M")
 
-        if (flags.isPapersWithCodeLegacyModelEnabled()) {
-            val evaluationB1E1 = resourceService.createResource(setOf("Evaluation"), label = "Evaluation 1")
-            val evaluationB1E2 = resourceService.createResource(setOf("Evaluation"), label = "Evaluation 2")
-            val evaluationB2E1 = resourceService.createResource(setOf("Evaluation"), label = "Evaluation 1")
+        val quantityB1E1 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 1")
+        val quantityB1E2 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 2")
+        val quantityB2E1 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 1")
 
-            val metric1 = resourceService.createResource(setOf("Metric"), label = "Metric 1")
-            val metric2 = resourceService.createResource(setOf("Metric"), label = "Metric 2")
+        val metric1 = resourceService.createResource(setOf(labelsAndClasses.metricClass), label = "Metric 1")
+        val metric2 = resourceService.createResource(setOf(labelsAndClasses.metricClass), label = "Metric 2")
 
-            statementService.create(benchmark1, ThingId("HAS_EVALUATION"), evaluationB1E1)
-            statementService.create(benchmark1, ThingId("HAS_EVALUATION"), evaluationB1E2)
-            statementService.create(benchmark2, ThingId("HAS_EVALUATION"), evaluationB2E1)
+        val quantityValueB1E1 = resourceService.createResource(
+            classes = setOf(labelsAndClasses.quantityValueClass),
+            label = "Quantity Value 1"
+        )
+        val quantityValueB1E2 = resourceService.createResource(
+            classes = setOf(labelsAndClasses.quantityValueClass),
+            label = "Quantity Value 2"
+        )
+        val quantityValueB2E1 = resourceService.createResource(
+            classes = setOf(labelsAndClasses.quantityValueClass),
+            label = "Quantity Value 3"
+        )
 
-            statementService.create(evaluationB1E1, ThingId("HAS_METRIC"), metric1)
-            statementService.create(evaluationB1E2, ThingId("HAS_METRIC"), metric2)
-            statementService.create(evaluationB2E1, ThingId("HAS_METRIC"), metric1)
+        statementService.create(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E1)
+        statementService.create(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E2)
+        statementService.create(benchmark2, ThingId(labelsAndClasses.quantityPredicate), quantityB2E1)
 
-            statementService.create(evaluationB1E1, ThingId("HAS_VALUE"), scoreOfM1B1E1.id)
-            statementService.create(evaluationB1E2, ThingId("HAS_VALUE"), scoreOfM1B1E2.id)
-            statementService.create(evaluationB2E1, ThingId("HAS_VALUE"), scoreOfM1B2E1.id)
-        } else {
-            val quantityB1E1 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 1")
-            val quantityB1E2 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 2")
-            val quantityB2E1 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 1")
+        statementService.create(quantityB1E1, ThingId(labelsAndClasses.metricPredicate), metric1)
+        statementService.create(quantityB1E2, ThingId(labelsAndClasses.metricPredicate), metric2)
+        statementService.create(quantityB2E1, ThingId(labelsAndClasses.metricPredicate), metric1)
 
-            val metric1 = resourceService.createResource(setOf(labelsAndClasses.metricClass), label = "Metric 1")
-            val metric2 = resourceService.createResource(setOf(labelsAndClasses.metricClass), label = "Metric 2")
+        statementService.create(quantityB1E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E1)
+        statementService.create(quantityB1E2, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E2)
+        statementService.create(quantityB2E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB2E1)
 
-            val quantityValueB1E1 = resourceService.createResource(
-                classes = setOf(labelsAndClasses.quantityValueClass),
-                label = "Quantity Value 1"
-            )
-            val quantityValueB1E2 = resourceService.createResource(
-                classes = setOf(labelsAndClasses.quantityValueClass),
-                label = "Quantity Value 2"
-            )
-            val quantityValueB2E1 = resourceService.createResource(
-                classes = setOf(labelsAndClasses.quantityValueClass),
-                label = "Quantity Value 3"
-            )
-
-            statementService.create(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E1)
-            statementService.create(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E2)
-            statementService.create(benchmark2, ThingId(labelsAndClasses.quantityPredicate), quantityB2E1)
-
-            statementService.create(quantityB1E1, ThingId(labelsAndClasses.metricPredicate), metric1)
-            statementService.create(quantityB1E2, ThingId(labelsAndClasses.metricPredicate), metric2)
-            statementService.create(quantityB2E1, ThingId(labelsAndClasses.metricPredicate), metric1)
-
-            statementService.create(quantityB1E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E1)
-            statementService.create(quantityB1E2, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E2)
-            statementService.create(quantityB2E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB2E1)
-
-            statementService.create(quantityValueB1E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E1.id)
-            statementService.create(quantityValueB1E2, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E2.id)
-            statementService.create(quantityValueB2E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B2E1.id)
-        }
+        statementService.create(quantityValueB1E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E1.id)
+        statementService.create(quantityValueB1E2, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E2.id)
+        statementService.create(quantityValueB2E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B2E1.id)
 
         statementService.create(paper, ThingId("P31"), contribution1)
         statementService.create(paper, ThingId("P31"), contribution2)
@@ -599,65 +558,39 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         val scoreOfM1B1E2 = literalService.create("4548")
         val scoreOfM1B2E1 = literalService.create("3.2B")
 
-        if (flags.isPapersWithCodeLegacyModelEnabled()) {
-            val evaluationB1E1 = resourceService.createResource(setOf("Evaluation"), label = "Evaluation 1")
-            val evaluationB1E2 = resourceService.createResource(setOf("Evaluation"), label = "Evaluation 2")
-            val evaluationB2E1 = resourceService.createResource(setOf("Evaluation"), label = "Evaluation 1")
+        val quantityB1E1 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 1")
+        val quantityB1E2 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 2")
+        val quantityB2E1 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 1")
 
-            val metric1 = resourceService.createResource(setOf("Metric"), label = "Metric 1")
-            val metric2 = resourceService.createResource(setOf("Metric"), label = "Metric 2")
+        val metric1 = resourceService.createResource(setOf(labelsAndClasses.metricClass), label = "Metric 1")
+        val metric2 = resourceService.createResource(setOf(labelsAndClasses.metricClass), label = "Metric 2")
 
-            statementService.create(benchmark1, ThingId("HAS_EVALUATION"), evaluationB1E1)
-            statementService.create(benchmark1, ThingId("HAS_EVALUATION"), evaluationB1E2)
-            statementService.create(benchmark2, ThingId("HAS_EVALUATION"), evaluationB2E1)
+        val quantityValueB1E1 = resourceService.createResource(
+            classes = setOf(labelsAndClasses.quantityValueClass), label = "Quantity Value 1"
+        )
+        val quantityValueB1E2 = resourceService.createResource(
+            classes = setOf(labelsAndClasses.quantityValueClass), label = "Quantity Value 2"
+        )
+        val quantityValueB2E1 = resourceService.createResource(
+            classes = setOf(labelsAndClasses.quantityValueClass), label = "Quantity Value 3"
+        )
 
-            statementService.create(benchmark1, ThingId("HAS_DATASET"), dataset)
-            statementService.create(benchmark2, ThingId("HAS_DATASET"), dataset)
+        statementService.create(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E1)
+        statementService.create(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E2)
+        statementService.create(benchmark2, ThingId(labelsAndClasses.quantityPredicate), quantityB2E1)
 
-            statementService.create(evaluationB1E1, ThingId("HAS_METRIC"), metric1)
-            statementService.create(evaluationB1E2, ThingId("HAS_METRIC"), metric2)
-            statementService.create(evaluationB2E1, ThingId("HAS_METRIC"), metric1)
+        statementService.create(quantityB1E1, ThingId(labelsAndClasses.metricPredicate), metric1)
+        statementService.create(quantityB1E2, ThingId(labelsAndClasses.metricPredicate), metric2)
+        statementService.create(quantityB2E1, ThingId(labelsAndClasses.metricPredicate), metric1)
 
-            statementService.create(evaluationB1E1, ThingId("HAS_VALUE"), scoreOfM1B1E1.id)
-            statementService.create(evaluationB1E2, ThingId("HAS_VALUE"), scoreOfM1B1E2.id)
-            statementService.create(evaluationB2E1, ThingId("HAS_VALUE"), scoreOfM1B2E1.id)
-        } else {
-            val quantityB1E1 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 1")
-            val quantityB1E2 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 2")
-            val quantityB2E1 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 1")
+        statementService.create(quantityB1E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E1)
+        statementService.create(quantityB1E2, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E2)
+        statementService.create(quantityB2E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB2E1)
 
-            val metric1 = resourceService.createResource(setOf(labelsAndClasses.metricClass), label = "Metric 1")
-            val metric2 = resourceService.createResource(setOf(labelsAndClasses.metricClass), label = "Metric 2")
+        statementService.create(quantityValueB1E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E1.id)
+        statementService.create(quantityValueB1E2, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E2.id)
+        statementService.create(quantityValueB2E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B2E1.id)
 
-            val quantityValueB1E1 = resourceService.createResource(
-                classes = setOf(labelsAndClasses.quantityValueClass),
-                label = "Quantity Value 1"
-            )
-            val quantityValueB1E2 = resourceService.createResource(
-                classes = setOf(labelsAndClasses.quantityValueClass),
-                label = "Quantity Value 2"
-            )
-            val quantityValueB2E1 = resourceService.createResource(
-                classes = setOf(labelsAndClasses.quantityValueClass),
-                label = "Quantity Value 3"
-            )
-
-            statementService.create(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E1)
-            statementService.create(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E2)
-            statementService.create(benchmark2, ThingId(labelsAndClasses.quantityPredicate), quantityB2E1)
-
-            statementService.create(quantityB1E1, ThingId(labelsAndClasses.metricPredicate), metric1)
-            statementService.create(quantityB1E2, ThingId(labelsAndClasses.metricPredicate), metric2)
-            statementService.create(quantityB2E1, ThingId(labelsAndClasses.metricPredicate), metric1)
-
-            statementService.create(quantityB1E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E1)
-            statementService.create(quantityB1E2, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E2)
-            statementService.create(quantityB2E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB2E1)
-
-            statementService.create(quantityValueB1E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E1.id)
-            statementService.create(quantityValueB1E2, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E2.id)
-            statementService.create(quantityValueB2E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B2E1.id)
-        }
         statementService.create(paper, ThingId("P31"), contribution1)
         statementService.create(paper, ThingId("P31"), contribution2)
 

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 class PropertyBasedFeatureFlagService(
     private val config: FeatureFlags
 ) : FeatureFlagService {
-    override fun isPapersWithCodeLegacyModelEnabled(): Boolean = config.pwcLegacyModel
+    override fun isPapersWithCodeLegacyModelEnabled(): Boolean = false
 
     override fun isFormattedLabelsEnabled(): Boolean = config.formattedLabels
 
@@ -24,8 +24,6 @@ class PropertyBasedFeatureFlagService(
  * Enable/Disable specific ORKG features.
  */
 data class FeatureFlags(
-    /** Use the old (legacy) model for Paper With Code data. */
-    val pwcLegacyModel: Boolean = false,
     /** Enable support for formatted labels (disabled by default - for performance reasons). */
     val formattedLabels: Boolean = false,
     /** Use Neo4j 3.x (legacy) series. */

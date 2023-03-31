@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.statements.application
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
-import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.community.api.OrganizationUseCases
 import eu.tib.orkg.prototype.community.application.EncodedImage
@@ -44,6 +43,7 @@ import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -72,7 +72,7 @@ internal class OrganizationControllerUnitTest {
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
-    private lateinit var userRepository: UserRepository
+    private lateinit var userDetailsService: UserDetailsService
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean

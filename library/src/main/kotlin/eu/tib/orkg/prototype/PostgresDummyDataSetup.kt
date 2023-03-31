@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.community.api.ConferenceSeriesUseCases
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.community.api.OrganizationUseCases
@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component
 @Component
 @Profile("datagen")
 class PostgresDummyDataSetup(
-    private val userService: UserService,
+    private val userService: AuthUseCase,
     private val observatoryService: ObservatoryUseCases,
     private val organizationService: OrganizationUseCases,
     private val conferenceSeriesService: ConferenceSeriesUseCases,
@@ -180,7 +180,7 @@ class PostgresDummyDataSetup(
             if (userService.findById(it.key).isEmpty) {
                 registerFakeUser(it.key)
             }
-            userService.updateOrganizationAndObservatory(it.key, it.value.first, it.value.second)
+            userService.updateOrganizationAndObservatory(it.key, it.value.first?.value, it.value.second?.value)
         }
     }
 

@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.auth.rest
+package eu.tib.orkg.prototype.auth.domain
 
 import eu.tib.orkg.prototype.shared.SimpleMessageException
 import java.util.*

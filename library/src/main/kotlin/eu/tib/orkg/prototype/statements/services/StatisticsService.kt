@@ -1,10 +1,12 @@
 package eu.tib.orkg.prototype.statements.services
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.auth.persistence.UserEntity
-import eu.tib.orkg.prototype.auth.service.UserRepository
+import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.UserEntity
+import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.JpaUserRepository
+import eu.tib.orkg.prototype.auth.domain.User
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresObservatoryRepository
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
+import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.toContributor
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
@@ -29,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class StatisticsService(
     private val statsRepository: StatsRepository,
-    private val userRepository: UserRepository,
+    private val userRepository: JpaUserRepository,
     private val observatoryRepository: PostgresObservatoryRepository,
     private val organizationRepository: PostgresOrganizationRepository
 ) : RetrieveStatisticsUseCase {
@@ -130,7 +132,10 @@ class StatisticsService(
 
         val userIdList = changeLogs.content.map { UUID.fromString(it.createdBy) }.toTypedArray()
 
-        val mapValues = userRepository.findByIdIn(userIdList).map(UserEntity::toContributor).groupBy(Contributor::id)
+        val mapValues = userRepository.findByIdIn(userIdList)
+            .map(UserEntity::toUser)
+            .map(User::toContributor)
+            .groupBy(Contributor::id)
 
         changeLogs.forEach { changeLogResponse ->
             val contributor = mapValues[ContributorId(changeLogResponse.createdBy)]?.first()
@@ -148,7 +153,10 @@ class StatisticsService(
     private fun getContributorsWithProfile(topContributors: Page<TopContributorIdentifiers>, pageable: Pageable): Page<TopContributorsWithProfile> {
         val userIdList = topContributors.content.map { UUID.fromString(it.id) }.toTypedArray()
 
-        val mapValues = userRepository.findByIdIn(userIdList).map(UserEntity::toContributor).groupBy(Contributor::id)
+        val mapValues = userRepository.findByIdIn(userIdList)
+            .map(UserEntity::toUser)
+            .map(User::toContributor)
+            .groupBy(Contributor::id)
 
         val refinedTopContributors =
             topContributors.content.map { topContributor ->
@@ -162,7 +170,10 @@ class StatisticsService(
     private fun getContributorsWithProfileAndTotalCount(topContributors: List<OverallContributions>): List<TopContributorsWithProfileAndTotalCount> {
         val userIdList = topContributors.map { UUID.fromString(it.id) }.toTypedArray()
 
-        val mapValues = userRepository.findByIdIn(userIdList).map(UserEntity::toContributor).groupBy(Contributor::id)
+        val mapValues = userRepository.findByIdIn(userIdList)
+            .map(UserEntity::toUser)
+            .map(User::toContributor)
+            .groupBy(Contributor::id)
 
         return topContributors.map { topContributor ->
             val contributor = mapValues[topContributor.id?.let { ContributorId(it) }]?.first()

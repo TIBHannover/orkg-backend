@@ -1,6 +1,5 @@
-package eu.tib.orkg.prototype.auth.service
+package eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal
 
-import eu.tib.orkg.prototype.auth.persistence.UserEntity
 import java.util.Optional
 import java.util.UUID
 import org.springframework.data.jpa.repository.JpaRepository
@@ -9,7 +8,7 @@ import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
 @Repository
-interface UserRepository :
+interface JpaUserRepository :
     JpaRepository<UserEntity, UUID> {
     fun findByEmailIgnoreCase(email: String): Optional<UserEntity>
 

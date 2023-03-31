@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype
 
-import eu.tib.orkg.prototype.auth.persistence.UserEntity
-import eu.tib.orkg.prototype.auth.service.OrkgUserDetailsService
-import eu.tib.orkg.prototype.auth.service.UserRepository
+import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.JpaUserRepository
+import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.UserEntity
+import eu.tib.orkg.prototype.auth.adapter.output.spring.security.OrkgUserDetailsService
 import eu.tib.orkg.prototype.community.domain.model.Observatory
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.Organization
@@ -40,7 +40,7 @@ import org.springframework.core.io.ClassPathResource
  *
  * This annotation will import required components.
  * This is necessary for unit tests that use mocking to properly initialize the application context.
- * Test classes using this annotation need to also mock [UserRepository].
+ * Test classes using this annotation need to also mock [JpaUserRepository].
  */
 @Import(
     AuthorizationServerConfiguration::class,

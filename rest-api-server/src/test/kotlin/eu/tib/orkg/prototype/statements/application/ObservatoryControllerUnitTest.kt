@@ -3,7 +3,7 @@ package eu.tib.orkg.prototype.statements.application
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
-import eu.tib.orkg.prototype.auth.service.UserRepository
+import eu.tib.orkg.prototype.auth.spi.UserRepository
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.community.application.ObservatoryAlreadyExists
 import eu.tib.orkg.prototype.community.application.ObservatoryController

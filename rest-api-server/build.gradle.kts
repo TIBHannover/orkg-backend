@@ -64,6 +64,8 @@ dependencies {
     // This is supposed to go away at some point:
     implementation(project(":library"))
     // This project is essentially a "configuration" project in Spring's sense, so we depend on all components:
+    implementation(project(":identity-management:application"))
+    implementation(project(":identity-management:adapter-output-spring-data-jpa"))
     implementation(project(":graph:application"))
     implementation(project(":graph:adapter-input-rest-spring-mvc"))
     implementation(project(":graph:adapter-output-spring-data-neo4j-ogm"))

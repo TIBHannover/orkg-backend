@@ -1,11 +1,16 @@
 package eu.tib.orkg.prototype.community.adapter.output.jpa.internal
 import com.fasterxml.jackson.annotation.JsonIgnore
-import eu.tib.orkg.prototype.auth.persistence.UserEntity
+import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.UserEntity
+import eu.tib.orkg.prototype.auth.domain.User
 import eu.tib.orkg.prototype.community.domain.model.Observatory
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.ResearchField
-import java.util.UUID
+import eu.tib.orkg.prototype.contributions.domain.model.Contributor
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.util.*
 import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -46,15 +51,25 @@ class ObservatoryEntity() {
         inverseJoinColumns = [JoinColumn(name = "organization_id", referencedColumnName = "id")]
     )
     var organizations: MutableSet<OrganizationEntity>? = mutableSetOf()
-
-    fun toObservatory() =
-        Observatory(
-            id = ObservatoryId(id!!),
-            name = name,
-            description = description,
-            researchField = ResearchField(researchField, null),
-            members = users!!.map(UserEntity::toContributor).toSet(),
-            organizationIds = organizations!!.map { OrganizationId(it.id!!) }.toSet(),
-            displayId = displayId
-        )
 }
+
+fun ObservatoryEntity.toObservatory() =
+    Observatory(
+        id = ObservatoryId(id!!),
+        name = name,
+        description = description,
+        researchField = ResearchField(researchField, null),
+        members = users!!.map(UserEntity::toUser).map(User::toContributor).toSet(),
+        organizationIds = organizations!!.map { OrganizationId(it.id!!) }.toSet(),
+        displayId = displayId
+    )
+
+fun User.toContributor() =
+    Contributor(
+        id = ContributorId(this.id),
+        name = this.displayName,
+        email = this.email,
+        joinedAt = OffsetDateTime.of(this.createdAt, ZoneOffset.UTC),
+        organizationId = this.organizationId?.let(::OrganizationId) ?: OrganizationId.createUnknownOrganization(),
+        observatoryId = this.observatoryId?.let(::ObservatoryId) ?: ObservatoryId.createUnknownObservatory(),
+    )

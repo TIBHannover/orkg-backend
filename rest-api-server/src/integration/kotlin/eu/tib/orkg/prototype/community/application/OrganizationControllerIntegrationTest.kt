@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.community.application
 
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.community.api.OrganizationUseCases
 import eu.tib.orkg.prototype.community.domain.model.OrganizationType
@@ -34,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional
 class OrganizationControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var userService: UserService
+    private lateinit var userService: AuthUseCase
 
     @Autowired
     private lateinit var service: OrganizationUseCases

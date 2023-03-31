@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.core.rest
 
-import eu.tib.orkg.prototype.auth.rest.UserRegistrationException
+import eu.tib.orkg.prototype.auth.domain.UserRegistrationException
 import eu.tib.orkg.prototype.shared.ForbiddenOperationException
 import eu.tib.orkg.prototype.shared.LoggedMessageException
 import eu.tib.orkg.prototype.shared.PropertyValidationException

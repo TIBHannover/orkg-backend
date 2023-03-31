@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.auth.persistence.UserEntity
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.auth.api.AuthUseCase
+import eu.tib.orkg.prototype.auth.domain.User
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional
 internal class ContributorControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
-    private lateinit var service: UserService
+    private lateinit var service: AuthUseCase
 
     @Test
     @DisplayName("When contributor is found Then returns contributor information")
@@ -24,7 +24,7 @@ internal class ContributorControllerTest : RestDocumentationBaseTest() {
         service.registerUser("some.user@example.org", "IRRELEVANT", "Some User")
         val id = service
             .findByEmail("some.user@example.org")
-            .map(UserEntity::id)
+            .map(User::id)
             .orElseThrow { IllegalStateException("Test setup broken! Should find the user created!") }
 
         mockMvc

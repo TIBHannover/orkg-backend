@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.createClasses
 import eu.tib.orkg.prototype.createPredicates
 import eu.tib.orkg.prototype.createResource
@@ -54,7 +54,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     private lateinit var paperService: PaperService
 
     @Autowired
-    private lateinit var userService: UserService
+    private lateinit var userService: AuthUseCase
 
     @BeforeEach
     fun setup() {

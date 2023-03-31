@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.auth.domain.model
+package eu.tib.orkg.prototype.auth.domain
 
 import java.math.BigInteger
 import java.security.MessageDigest

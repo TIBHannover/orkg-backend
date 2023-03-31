@@ -2,10 +2,12 @@ package eu.tib.orkg.prototype.auth.rest
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
-import eu.tib.orkg.prototype.auth.persistence.UserEntity
-import eu.tib.orkg.prototype.auth.rest.AuthController.RegisterUserRequest
-import eu.tib.orkg.prototype.auth.service.UserRepository
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.auth.adapter.input.rest.spring.AuthController
+import eu.tib.orkg.prototype.auth.adapter.input.rest.spring.AuthController.RegisterUserRequest
+import eu.tib.orkg.prototype.auth.api.AuthUseCase
+import eu.tib.orkg.prototype.auth.domain.Role
+import eu.tib.orkg.prototype.auth.domain.User
+import java.time.LocalDateTime
 import java.util.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -37,11 +40,11 @@ class AuthControllerUnitTest {
     private lateinit var objectMapper: ObjectMapper
 
     @MockBean
-    private lateinit var userService: UserService
+    private lateinit var userService: AuthUseCase
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockBean
-    private lateinit var userRepository: UserRepository
+    private lateinit var userDetailsService: UserDetailsService
 
     @BeforeEach
     fun setup() {
@@ -173,7 +176,7 @@ class AuthControllerUnitTest {
             matchingPassword = "irrelevant",
             displayName = "irrelevant"
         )
-        given(userService.findByEmail(anyString())).willReturn(Optional.of(UserEntity()))
+        given(userService.findByEmail(anyString())).willReturn(Optional.of(defaultUser()))
 
         mockMvc
             .perform(registrationOf(user))
@@ -220,4 +223,16 @@ class AuthControllerUnitTest {
             .contentType(APPLICATION_JSON)
             .characterEncoding("UTF-8")
             .content(objectMapper.writeValueAsString(user))
+
+    private fun defaultUser() = User(
+        id = UUID.randomUUID(),
+        email = "user@example.org",
+        displayName = "J. Doe",
+        password = "!invalid, not a hash",
+        enabled = true,
+        createdAt = LocalDateTime.now(),
+        roles = setOf(Role("ROLE_USER")),
+        organizationId = null,
+        observatoryId = null,
+    )
 }

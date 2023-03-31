@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
-import eu.tib.orkg.prototype.auth.service.UserRepository
+import eu.tib.orkg.prototype.auth.spi.UserRepository
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases

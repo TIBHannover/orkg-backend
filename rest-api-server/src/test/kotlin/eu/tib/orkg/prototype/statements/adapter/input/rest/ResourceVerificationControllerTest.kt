@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.statements.adapter.input.rest
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
-import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsVerifiedUseCase
 import eu.tib.orkg.prototype.statements.application.port.out.LoadResourcePort
@@ -17,6 +16,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
@@ -40,7 +40,7 @@ class ResourceVerificationControllerTest {
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
-    private lateinit var userRepository: UserRepository
+    private lateinit var userDetailsService: UserDetailsService
 
     @MockkBean
     private lateinit var resourceAdapter: LoadResourcePort

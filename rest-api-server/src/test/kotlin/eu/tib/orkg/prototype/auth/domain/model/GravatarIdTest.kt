@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.auth.domain.model
 
+import eu.tib.orkg.prototype.auth.domain.GravatarId
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test

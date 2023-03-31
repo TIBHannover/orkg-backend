@@ -2,6 +2,7 @@ rootProject.name = "orkg-prototype"
 
 include("platform")
 include("library")
+include("common:exceptions")
 include("testing:spring")
 include(
     // The module containing the domain code will be called "application", because it will also contain application
@@ -13,6 +14,10 @@ include(
     "graph:adapter-output-spring-data-neo4j-ogm",
     "graph:adapter-output-spring-data-neo4j-sdn6",
     "graph:adapter-output-in-memory",
+)
+include(
+    "identity-management:application",
+    "identity-management:adapter-output-spring-data-jpa",
 )
 include("rest-api-server")
 

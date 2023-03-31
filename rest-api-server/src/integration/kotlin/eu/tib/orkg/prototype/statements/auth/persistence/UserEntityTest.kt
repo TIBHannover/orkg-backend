@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.auth.persistence
 
 import eu.tib.orkg.prototype.TestContainersJpaTest
-import eu.tib.orkg.prototype.auth.persistence.UserEntity
+import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.UserEntity
 import java.util.UUID
 import javax.persistence.PersistenceException
 import org.assertj.core.api.Assertions.assertThat

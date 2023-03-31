@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.discussions.services
 
-import eu.tib.orkg.prototype.auth.persistence.RoleEntity
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.auth.domain.Role
+import eu.tib.orkg.prototype.auth.domain.UserService
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.discussions.api.CreateDiscussionCommentUseCase
 import eu.tib.orkg.prototype.discussions.api.DiscussionCommentRepresentation
@@ -63,7 +63,7 @@ class DiscussionService(
         val user = userService.findById(contributorId.value)
             .orElseThrow { UserNotFound(contributorId.value) }
         repository.findById(id).ifPresent {
-            if (it.createdBy.value != user.id!! && "ROLE_ADMIN" !in user.roles.map(RoleEntity::name)) {
+            if (it.createdBy.value != user.id && "ROLE_ADMIN" !in user.roles.map(Role::name)) {
                 throw Unauthorized()
             }
             repository.deleteById(id)

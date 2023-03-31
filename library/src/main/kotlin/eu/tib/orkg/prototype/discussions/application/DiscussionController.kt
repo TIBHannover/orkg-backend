@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.discussions.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.auth.domain.UserService
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.discussions.api.CreateDiscussionCommentUseCase.CreateCommand
 import eu.tib.orkg.prototype.discussions.api.DiscussionCommentRepresentation
@@ -48,7 +48,7 @@ class DiscussionController(
             CreateCommand(
                 topic = topic,
                 message = request.message,
-                createdBy = ContributorId(user.id!!)
+                createdBy = ContributorId(user.id)
             )
         )
         val location = uriComponentsBuilder

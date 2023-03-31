@@ -25,6 +25,10 @@ dependencies {
     // Platform alignment for ORKG components
     api(platform(project(":platform")))
 
+    api(project(":common:exceptions"))
+    api(project(":identity-management:application"))
+    api(project(":identity-management:adapter-output-spring-data-jpa")) // required by OrganizationEntity
+
     // Upgrade for security reasons. Can be removed after Spring upgrade.
     implementation(platform("org.apache.logging.log4j:log4j-bom:2.19.0"))
 

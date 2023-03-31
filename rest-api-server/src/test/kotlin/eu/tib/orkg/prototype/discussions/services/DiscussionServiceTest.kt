@@ -1,11 +1,11 @@
 package eu.tib.orkg.prototype.discussions.services
 
-import eu.tib.orkg.prototype.auth.persistence.RoleEntity
-import eu.tib.orkg.prototype.auth.persistence.UserEntity
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.auth.domain.Role
+import eu.tib.orkg.prototype.auth.domain.UserService
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.createClass
 import eu.tib.orkg.prototype.createLiteral
+import eu.tib.orkg.prototype.createUser
 import eu.tib.orkg.prototype.discussions.api.CreateDiscussionCommentUseCase
 import eu.tib.orkg.prototype.discussions.application.InvalidContent
 import eu.tib.orkg.prototype.discussions.application.TopicNotFound
@@ -396,9 +396,7 @@ class DiscussionServiceTest {
             createdBy = userId,
             createdAt = staticClock.now()
         )
-        val user = UserEntity().apply {
-            id = userId.value
-        }
+        val user = createUser(id = userId.value).toUser()
 
         every { userService.findById(userId.value) } returns Optional.of(user)
         every { repository.findById(comment.id) } returns Optional.of(comment)
@@ -421,9 +419,7 @@ class DiscussionServiceTest {
             createdBy = userId,
             createdAt = staticClock.now()
         )
-        val user = UserEntity().apply {
-            this.id = userId.value
-        }
+        val user = createUser(id = userId.value).toUser()
 
         every { repository.findById(any()) } returns Optional.of(comment)
         every { userService.findById(userId.value) } returns Optional.of(user)
@@ -461,9 +457,7 @@ class DiscussionServiceTest {
         val topic = ThingId("C123")
         val userId = ContributorId(UUID.randomUUID())
         val id = DiscussionCommentId(UUID.randomUUID())
-        val user = UserEntity().apply {
-            this.id = userId.value
-        }
+        val user = createUser(id = userId.value).toUser()
 
         every { userService.findById(userId.value) } returns Optional.of(user)
         every { repository.findById(id) } returns Optional.empty()
@@ -484,9 +478,7 @@ class DiscussionServiceTest {
             createdBy = ContributorId(UUID.randomUUID()),
             createdAt = staticClock.now()
         )
-        val user = UserEntity().apply {
-            id = userId.value
-        }
+        val user = createUser(id = userId.value).toUser()
 
         every { userService.findById(userId.value) } returns Optional.of(user)
         every { repository.findById(comment.id) } returns Optional.of(comment)
@@ -510,13 +502,7 @@ class DiscussionServiceTest {
             createdBy = ContributorId(UUID.randomUUID()),
             createdAt = staticClock.now()
         )
-        val user = UserEntity().apply {
-            id = userId.value
-            roles += RoleEntity().apply {
-                id = 1
-                name = "ROLE_ADMIN"
-            }
-        }
+        val user = createUser(id = userId.value).toUser().copy(roles = setOf(Role("ROLE_ADMIN")))
 
         every { userService.findById(userId.value) } returns Optional.of(user)
         every { repository.findById(comment.id) } returns Optional.of(comment)

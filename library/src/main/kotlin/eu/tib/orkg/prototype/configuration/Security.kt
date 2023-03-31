@@ -5,10 +5,8 @@ import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest
-import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
@@ -71,8 +69,6 @@ class AuthorizationServerConfiguration(
 @EnableResourceServer
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@EnableJpaRepositories("eu.tib.orkg.prototype.auth.service") // TODO: change location
-@EntityScan("eu.tib.orkg.prototype.auth.persistence")
 class ResourceServerConfiguration(
     private val userDetailsService: UserDetailsService
 ) : ResourceServerConfigurerAdapter() {

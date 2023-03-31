@@ -1,7 +1,9 @@
 package eu.tib.orkg.prototype.statements.services
 
-import eu.tib.orkg.prototype.auth.persistence.UserEntity
-import eu.tib.orkg.prototype.auth.service.UserRepository
+import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.UserEntity
+import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.JpaUserRepository
+import eu.tib.orkg.prototype.auth.domain.User
+import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.toContributor
 import eu.tib.orkg.prototype.community.domain.model.ResearchField
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
@@ -28,7 +30,7 @@ private val ResearchField = ThingId("ResearchField")
 class ResearchFieldService(
     private val researchFieldRepository: ResearchFieldRepository,
     private val researchFieldsQuery: FindResearchFieldsQuery,
-    private val userRepository: UserRepository,
+    private val userRepository: JpaUserRepository,
     private val resourceService: ResourceUseCases,
 ) : RetrieveResearchFieldUseCase {
 
@@ -68,8 +70,13 @@ class ResearchFieldService(
     }
 
     override fun getContributorsIncludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor> {
-        val contributors = researchFieldRepository.getContributorIdsFromResearchFieldAndIncludeSubfields(id, pageable).map(ContributorId::value)
-        return PageImpl(userRepository.findByIdIn(contributors.content.toTypedArray()).map(UserEntity::toContributor))
+        val contributors = researchFieldRepository.getContributorIdsFromResearchFieldAndIncludeSubfields(id, pageable)
+            .map(ContributorId::value)
+        return PageImpl(
+            userRepository.findByIdIn(contributors.content.toTypedArray())
+                .map(UserEntity::toUser)
+                .map(User::toContributor)
+        )
     }
 
     override fun getPapersIncludingSubFields(
@@ -111,8 +118,13 @@ class ResearchFieldService(
     }
 
     override fun getContributorsExcludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor> {
-        val contributors = researchFieldRepository.getContributorIdsExcludingSubFields(id, pageable).map(ContributorId::value)
-        return PageImpl(userRepository.findByIdIn(contributors.content.toTypedArray()).map(UserEntity::toContributor))
+        val contributors =
+            researchFieldRepository.getContributorIdsExcludingSubFields(id, pageable).map(ContributorId::value)
+        return PageImpl(
+            userRepository.findByIdIn(contributors.content.toTypedArray())
+                .map(UserEntity::toUser)
+                .map(User::toContributor)
+        )
     }
 
     override fun getPapersExcludingSubFields(

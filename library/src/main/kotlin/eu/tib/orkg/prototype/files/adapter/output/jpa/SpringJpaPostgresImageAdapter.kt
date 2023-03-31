@@ -6,12 +6,10 @@ import eu.tib.orkg.prototype.files.domain.model.Image
 import eu.tib.orkg.prototype.files.domain.model.ImageId
 import eu.tib.orkg.prototype.files.spi.ImageRepository
 import java.util.*
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 
 @Component
 class SpringJpaPostgresImageAdapter(
-    @Qualifier("postgresImageRepository")
     private val repository: PostgresImageRepository
 ) : ImageRepository {
     override fun save(image: Image) {

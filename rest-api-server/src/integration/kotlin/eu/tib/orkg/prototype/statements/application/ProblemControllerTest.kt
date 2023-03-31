@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.createClasses
 import eu.tib.orkg.prototype.createPredicate
@@ -52,7 +52,7 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
     private lateinit var statementService: StatementUseCases
 
     @Autowired
-    private lateinit var userService: UserService
+    private lateinit var userService: AuthUseCase
 
     @BeforeEach
     fun setup() {
@@ -79,7 +79,7 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
         val userEmail = "test@testemail.com"
         if (!userService.findByEmail(userEmail).isPresent)
             userService.registerUser(userEmail, "testTest123", "test_user")
-        val uuid = userService.findByEmail(userEmail).get().id!!
+        val uuid = userService.findByEmail(userEmail).get().id
         val contributor = ContributorId(uuid)
 
         val contribution = resourceService.createResource(

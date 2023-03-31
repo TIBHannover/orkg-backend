@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.auth
 
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.statements.client.OrkgApiClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -18,7 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 @AutoConfigureTestDatabase(replace = NONE)
 class OAuthTest {
     @Autowired
-    private lateinit var userService: UserService
+    private lateinit var userService: AuthUseCase
 
     @LocalServerPort
     private var port: Int = 8000

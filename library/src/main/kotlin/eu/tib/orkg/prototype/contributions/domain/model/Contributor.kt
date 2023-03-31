@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.contributions.domain.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.auth.domain.model.GravatarId
+import eu.tib.orkg.prototype.auth.domain.GravatarId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import java.time.OffsetDateTime

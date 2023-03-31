@@ -1,14 +1,16 @@
-package eu.tib.orkg.prototype.auth.rest
+package eu.tib.orkg.prototype.auth.adapter.input.rest.spring
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.auth.persistence.RoleEntity
-import eu.tib.orkg.prototype.auth.persistence.UserEntity
-import eu.tib.orkg.prototype.auth.service.UserService
-import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
+import eu.tib.orkg.prototype.auth.api.AuthUseCase
+import eu.tib.orkg.prototype.auth.domain.CurrentPasswordInvalid
+import eu.tib.orkg.prototype.auth.domain.PasswordsDoNotMatch
+import eu.tib.orkg.prototype.auth.domain.Role
+import eu.tib.orkg.prototype.auth.domain.User
 import eu.tib.orkg.prototype.community.application.UserIsAlreadyMemberOfObservatory
 import eu.tib.orkg.prototype.community.application.UserIsAlreadyMemberOfOrganization
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.community.domain.model.toContributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.UserNotFound
 import java.security.Principal
@@ -32,8 +34,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/user")
 class UserController(
-    private val userService: UserService,
-    private val observatoryService: ObservatoryUseCases
+    private val userService: AuthUseCase,
 ) {
     @GetMapping("/")
     fun lookupUserDetails(principal: Principal?): ResponseEntity<UserDetails> {
@@ -50,7 +51,7 @@ class UserController(
             return ResponseEntity(UNAUTHORIZED)
         val id = UUID.fromString(principal.name)
         val user = userService.findById(id).orElseThrow { UserNotFound(id) }
-        userService.updateName(user.id!!, updatedDetails.displayName)
+        userService.updateName(user.id, updatedDetails.displayName)
         return ok(UserDetails(user))
     }
 
@@ -63,8 +64,8 @@ class UserController(
 
         val id = UUID.fromString(principal.name)
         val user = userService.findById(id).orElseThrow { UserNotFound(id) }
-        if (userService.checkPassword(user.id!!, updatedPassword.currentPassword)) {
-            userService.updatePassword(user.id!!, updatedPassword.newPassword)
+        if (userService.checkPassword(user.id, updatedPassword.currentPassword)) {
+            userService.updatePassword(user.id, updatedPassword.newPassword)
         } else {
             throw CurrentPasswordInvalid()
         }
@@ -91,7 +92,13 @@ class UserController(
         if (user.organizationId == userObservatory.organizationId.value) {
             throw UserIsAlreadyMemberOfOrganization(userObservatory.organizationId)
         }
-        return ok(userService.addUserObservatory(userObservatory, user).toContributor())
+        return ok(
+            userService.addUserObservatory(
+                userObservatory.observatoryId.value,
+                userObservatory.organizationId.value,
+                user
+            ).toContributor()
+        )
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -104,9 +111,9 @@ class UserController(
      * Decorator for user data.
      * This class prevents user data from leaking by only exposing data that is relevant to the client.
      */
-    data class UserDetails(private val user: UserEntity) {
+    data class UserDetails(private val user: User) {
         @JsonProperty("id")
-        val id: UUID = user.id!!
+        val id: UUID = user.id
 
         @JsonProperty("email")
         val email = user.email
@@ -115,7 +122,7 @@ class UserController(
         val displayName = user.displayName
 
         @JsonProperty("created_at")
-        val created = user.created
+        val created = user.createdAt
 
         @JsonProperty("organization_id")
         val organizationId = user.organizationId
@@ -125,7 +132,7 @@ class UserController(
 
         @get:JsonProperty("is_curation_allowed")
         val isCurationAllowed: Boolean
-        get() = "ROLE_ADMIN" in user.roles.map(RoleEntity::name)
+            get() = "ROLE_ADMIN" in user.roles.map(Role::name)
     }
 
     data class UpdatedUserResponse(

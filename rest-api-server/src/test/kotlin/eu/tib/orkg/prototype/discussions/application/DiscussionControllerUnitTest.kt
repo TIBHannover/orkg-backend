@@ -3,10 +3,10 @@ package eu.tib.orkg.prototype.discussions.application
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
-import eu.tib.orkg.prototype.auth.persistence.UserEntity
-import eu.tib.orkg.prototype.auth.service.UserRepository
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.auth.domain.UserService
+import eu.tib.orkg.prototype.auth.spi.UserRepository
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.createUser
 import eu.tib.orkg.prototype.discussions.api.CreateDiscussionCommentUseCase
 import eu.tib.orkg.prototype.discussions.api.DiscussionUseCases
 import eu.tib.orkg.prototype.discussions.domain.model.DiscussionComment
@@ -72,9 +72,7 @@ internal class DiscussionControllerUnitTest {
         val topic = ThingId("C1234")
         val userId = UUID.randomUUID()
         val mockPrincipal = mockk<Principal>()
-        val userEntity = UserEntity().apply {
-            id = userId
-        }
+        val user = createUser(id = userId).toUser()
         val comment = DiscussionComment(
             id = DiscussionCommentId(UUID.randomUUID()),
             topic = topic,
@@ -89,7 +87,7 @@ internal class DiscussionControllerUnitTest {
         )
 
         every { mockPrincipal.name } returns userId.toString()
-        every { userService.findById(userId) } returns Optional.of(userEntity)
+        every { userService.findById(userId) } returns Optional.of(user)
         every { discussionService.create(createCommand) } returns comment.id
         every { discussionService.findByTopicAndCommentId(topic, comment.id) } returns Optional.of(comment.toDiscussionCommentRepresentation())
 
@@ -154,12 +152,10 @@ internal class DiscussionControllerUnitTest {
         val topic = ThingId("C1234")
         val mockPrincipal = mockk<Principal>()
         val userId = UUID.randomUUID()
-        val userEntity = UserEntity().apply {
-            id = userId
-        }
+        val user = createUser(id = userId).toUser()
 
         every { mockPrincipal.name } returns userId.toString()
-        every { userService.findById(userId) } returns Optional.of(userEntity)
+        every { userService.findById(userId) } returns Optional.of(user)
         every { discussionService.create(any()) } throws TopicNotFound(topic)
 
         val request = mapOf(
@@ -180,11 +176,9 @@ internal class DiscussionControllerUnitTest {
         val topic = ThingId("C1234")
         val mockPrincipal = mockk<Principal>()
         val userId = UUID.randomUUID()
-        val userEntity = UserEntity().apply {
-            id = userId
-        }
+        val user = createUser(id = userId).toUser()
         every { mockPrincipal.name } returns userId.toString()
-        every { userService.findById(userId) } returns Optional.of(userEntity)
+        every { userService.findById(userId) } returns Optional.of(user)
         every { discussionService.create(any()) } throws InvalidContent()
 
         val request = mapOf(

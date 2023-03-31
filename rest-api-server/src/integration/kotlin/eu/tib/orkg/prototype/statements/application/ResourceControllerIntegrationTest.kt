@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.createClass
 import eu.tib.orkg.prototype.createPredicate
@@ -64,7 +64,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
     private lateinit var paperService: PaperService
 
     @Autowired
-    private lateinit var userService: UserService
+    private lateinit var userService: AuthUseCase
 
     @Autowired
     private lateinit var literalService: LiteralUseCases
@@ -545,7 +545,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
 
     fun createTestUser(): ContributorId {
         userService.registerUser("abc@gmail.com", "123456", "Test user")
-        return ContributorId(userService.findByEmail("abc@gmail.com").get().id!!)
+        return ContributorId(userService.findByEmail("abc@gmail.com").get().id)
     }
 
     companion object RestDoc {

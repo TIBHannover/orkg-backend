@@ -1,7 +1,9 @@
-package eu.tib.orkg.prototype.auth.rest
+package eu.tib.orkg.prototype.auth.adapter.input.rest.spring
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.auth.api.AuthUseCase
+import eu.tib.orkg.prototype.auth.domain.PasswordsDoNotMatch
+import eu.tib.orkg.prototype.auth.domain.UserAlreadyRegistered
 import javax.validation.Valid
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
@@ -18,11 +20,12 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/auth")
 class AuthController(
-    private val userService: UserService
+    private val userService: AuthUseCase
 ) {
     @PostMapping("/register")
     @ResponseStatus(OK)
     fun registerUser(@RequestBody @Valid request: RegisterUserRequest): ResponseEntity<*> {
+        // TODO: Move logic to service
         val email = request.email.lowercase()
         val user = userService.findByEmail(email)
         if (user.isPresent)

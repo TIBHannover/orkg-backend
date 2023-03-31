@@ -1,13 +1,12 @@
 package eu.tib.orkg.prototype.community.spi
 
-import eu.tib.orkg.prototype.auth.service.UserRepository
+import eu.tib.orkg.prototype.auth.spi.UserRepository
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.OrganizationEntity
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import eu.tib.orkg.prototype.community.domain.model.Observatory
 import eu.tib.orkg.prototype.community.domain.model.Organization
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.createObservatory
-import eu.tib.orkg.prototype.createOrganization
 import eu.tib.orkg.prototype.createUser
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.kotest.assertions.asClue
@@ -142,7 +141,7 @@ interface ObservatoryRepositoryContractTest {
         )
         val createdBy = organization.createdBy!!.value
         if (userRepository.findById(createdBy).isEmpty) {
-            userRepository.save(createUser(createdBy))
+            userRepository.save(createUser(createdBy).toUser())
         }
         this.save(toOrganizationEntity(organization))
         return organizationId

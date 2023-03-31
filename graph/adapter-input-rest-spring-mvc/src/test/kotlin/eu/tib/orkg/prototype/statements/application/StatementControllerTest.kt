@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
-import eu.tib.orkg.prototype.auth.service.UserRepository
+import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -38,7 +38,7 @@ internal class StatementControllerTest {
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
-    private lateinit var userRepository: UserRepository
+    private lateinit var userRepository: AuthUseCase
 
     @MockkBean
     private lateinit var statementService: StatementUseCases

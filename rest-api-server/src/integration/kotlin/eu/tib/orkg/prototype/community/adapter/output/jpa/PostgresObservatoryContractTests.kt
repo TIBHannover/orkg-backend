@@ -1,11 +1,12 @@
 package eu.tib.orkg.prototype.community.adapter.output.jpa
 
-import eu.tib.orkg.prototype.auth.service.UserRepository
+import eu.tib.orkg.prototype.auth.spi.UserRepository
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import eu.tib.orkg.prototype.community.spi.ObservatoryRepository
 import eu.tib.orkg.prototype.community.spi.ObservatoryRepositoryContractTest
 import eu.tib.orkg.prototype.testing.PostgresTestContainersBaseTest
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 
 class PostgresObservatoryContractTests : PostgresTestContainersBaseTest(), ObservatoryRepositoryContractTest {
 
@@ -16,8 +17,8 @@ class PostgresObservatoryContractTests : PostgresTestContainersBaseTest(), Obser
     @Autowired
     private lateinit var organizationAdapter: PostgresOrganizationRepository
 
-    // TODO: Replace with adapter
     @Autowired
+    @Qualifier("jpaUserAdapter")
     private lateinit var userAdapter: UserRepository
 
     override val repository: ObservatoryRepository

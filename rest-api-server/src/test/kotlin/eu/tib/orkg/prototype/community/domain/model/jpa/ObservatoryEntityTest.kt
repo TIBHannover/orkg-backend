@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.community.domain.model.jpa
 
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.ObservatoryEntity
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.OrganizationEntity
+import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.toObservatory
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import java.util.*
 import org.assertj.core.api.Assertions.*

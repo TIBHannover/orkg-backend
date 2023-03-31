@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.testing
 import java.math.BigInteger
 import javax.persistence.EntityManager
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -29,7 +28,8 @@ const val POSTGRES_VERSION = "11"
     basePackages = [
         "eu.tib.orkg.prototype.files.adapter.output.jpa",
         "eu.tib.orkg.prototype.community.adapter.output.jpa",
-        "eu.tib.orkg.prototype.discussions.adapter.output.jpa"
+        "eu.tib.orkg.prototype.discussions.adapter.output.jpa",
+        "eu.tib.orkg.prototype.auth.adapter.output.jpa.spring",
     ]
 )
 @TestConstructor(autowireMode = ALL)

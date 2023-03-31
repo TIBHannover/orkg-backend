@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype
 
-import eu.tib.orkg.prototype.auth.service.UserService
+import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.community.api.OrganizationUseCases
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
@@ -92,7 +92,7 @@ fun CreateResourceUseCase.createResource(
 
 // Users
 
-fun UserService.createUser(
+fun AuthUseCase.createUser(
     anEmail: String = "user@example.org",
     aPassword: String = "123456",
     aDisplayName: String = "Example User"

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
-import eu.tib.orkg.prototype.auth.service.UserRepository
+import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.createClass
 import eu.tib.orkg.prototype.statements.api.AlreadyInUse
@@ -69,7 +69,7 @@ internal class ClassControllerUnitTest {
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
-    private lateinit var userRepository: UserRepository
+    private lateinit var userRepository: AuthUseCase
 
     @BeforeEach
     fun setup() {

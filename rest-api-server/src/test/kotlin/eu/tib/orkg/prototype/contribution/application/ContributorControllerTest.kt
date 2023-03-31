@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype.contribution.application
 
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
-import eu.tib.orkg.prototype.auth.service.UserRepository
 import eu.tib.orkg.prototype.contributions.application.ContributorController
 import eu.tib.orkg.prototype.contributions.application.ports.input.RetrieveContributorUseCase
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
@@ -18,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -40,7 +40,7 @@ class ContributorControllerTest {
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockBean
-    private lateinit var userRepository: UserRepository
+    private lateinit var userDetailsService: UserDetailsService
 
     @MockkBean
     private lateinit var retrieveContributor: RetrieveContributorUseCase

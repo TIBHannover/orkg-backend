@@ -22,6 +22,8 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.function.BiFunction
 import org.jetbrains.annotations.Contract
+import org.neo4j.cypherdsl.core.Cypher
+import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Expression
 import org.neo4j.cypherdsl.core.FunctionInvocation
 import org.neo4j.cypherdsl.core.SymbolicName
@@ -156,3 +158,8 @@ internal fun toUpper(expression: Expression): FunctionInvocation =
     FunctionInvocation.create({ "toUpper" }, expression)
 
 internal operator fun MapAccessor.get(symbolicName: SymbolicName): Value = this[symbolicName.value]
+
+internal fun paperNode() = node("Paper", "Resource")
+internal fun comparisonNode() = node("Comparison", "Resource")
+internal fun problemNode() = node("Problem", "Resource")
+internal fun contributionNode() = node("Contribution", "Resource")

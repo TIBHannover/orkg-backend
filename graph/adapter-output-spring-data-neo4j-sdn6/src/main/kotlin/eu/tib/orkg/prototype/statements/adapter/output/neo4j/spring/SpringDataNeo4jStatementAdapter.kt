@@ -403,7 +403,7 @@ class SpringDataNeo4jStatementAdapter(
         val doi = name("doi")
         val relations = node("Resource")
             .withProperties("resource_id", literalOf<String>(id.value))
-            .relationshipFrom(node("Paper"), RELATED)
+            .relationshipFrom(paperNode(), RELATED)
             .withProperties("predicate_id", literalOf<String>(ObjectService.ID_CONTRIBUTION_PREDICATE))
             .relationshipTo(node("Literal").named(doi), RELATED)
             .properties("predicate_id", literalOf<String>(ObjectService.ID_DOI_PREDICATE))
@@ -442,7 +442,7 @@ class SpringDataNeo4jStatementAdapter(
 
     override fun findByDOI(doi: String): Optional<Resource> {
         val p = name("p")
-        val paper = node("Paper")
+        val paper = paperNode()
             .named(p)
         val l = name("l")
         val query = match(
@@ -466,11 +466,11 @@ class SpringDataNeo4jStatementAdapter(
         val idLiteral = literalOf<String>(id.value.toString())
         val call = call(union(
             match(
-                node("Paper")
+                paperNode()
                     .withProperties("organization_id", idLiteral)
-                    .relationshipTo(node("Contribution"), RELATED)
+                    .relationshipTo(contributionNode(), RELATED)
                     .withProperties("predicate_id", literalOf<String>("P31"))
-                    .relationshipTo(node("Problem").named(problem), RELATED)
+                    .relationshipTo(problemNode().named(problem), RELATED)
                     .properties("predicate_id", literalOf<String>("P32"))
             ).returning(problem)
                 .build(),
@@ -614,11 +614,11 @@ class SpringDataNeo4jStatementAdapter(
     override fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> {
         val problem = name("p")
         val match = match(
-                node("Comparison")
+                comparisonNode()
                     .withProperties("organization_id", literalOf<String>(id.value.toString()))
-                    .relationshipTo(node("Contribution"), RELATED)
+                    .relationshipTo(contributionNode(), RELATED)
                     .withProperties("predicate_id", literalOf<String>("compareContribution"))
-                    .relationshipTo(node("Problem").named(problem), RELATED)
+                    .relationshipTo(problemNode().named(problem), RELATED)
                     .properties("predicate_id", literalOf<String>("P32"))
             )
         val query = match

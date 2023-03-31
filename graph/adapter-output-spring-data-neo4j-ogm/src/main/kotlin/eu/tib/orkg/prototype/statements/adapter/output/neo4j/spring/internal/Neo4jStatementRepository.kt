@@ -185,26 +185,26 @@ ORDER BY rel.created_at DESC"""
     )
     fun countPredicateUsage(pageable: Pageable): Page<Neo4jPredicateUsageCount>
 
-    @Query("""MATCH (n:Paper)-[:RELATED {predicate_id: 'P31'}]->(:Resource {resource_id: $id}), (n)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(L:Literal) RETURN L""")
+    @Query("""MATCH (n:Paper:Resource)-[:RELATED {predicate_id: 'P31'}]->(:Resource {resource_id: $id}), (n)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(L:Literal) RETURN L""")
     fun findDOIByContributionId(id: ResourceId): Optional<Neo4jLiteral>
 
     @Query("""OPTIONAL MATCH (:Thing)-[r1:RELATED {predicate_id: $id}]->(:Thing) OPTIONAL MATCH (:Predicate {predicate_id: $id})-[r2:RELATED]-(:Thing) WITH COUNT(DISTINCT r1) as relations, COUNT(DISTINCT r2) as nodes RETURN relations + nodes as cnt""")
     fun countPredicateUsage(id: PredicateId): Long
 
-    @Query("""MATCH (node:Paper)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(l:Literal) WHERE not 'PaperDeleted' in labels(node) AND toUpper(l.label) = toUpper($doi) RETURN node LIMIT 1""")
+    @Query("""MATCH (node:Paper:Resource)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(l:Literal) WHERE not 'PaperDeleted' in labels(node) AND toUpper(l.label) = toUpper($doi) RETURN node LIMIT 1""")
     fun findByDOI(doi: String): Optional<Neo4jResource>
 
     @Query("""
 CALL {
-    MATCH (:Paper {observatory_id: $id})-[:RELATED {predicate_id:"P31"}]->(:Contribution)-[:RELATED {predicate_id:"P32"}]->(r:Problem) RETURN r
+    MATCH (:Paper:Resource {observatory_id: $id})-[:RELATED {predicate_id:"P31"}]->(:Contribution:Resource)-[:RELATED {predicate_id:"P32"}]->(r:Problem:Resource) RETURN r
     UNION
-    MATCH (r:Problem {observatory_id: $id}) RETURN r
+    MATCH (r:Problem:Resource {observatory_id: $id}) RETURN r
 } RETURN r ORDER BY r.resource_id""",
         countQuery = """
 CALL {
-    MATCH (:Paper {observatory_id: $id})-[:RELATED {predicate_id:"P31"}]->(:Contribution)-[:RELATED {predicate_id:"P32"}]->(r:Problem) RETURN r
+    MATCH (:Paper:Resource {observatory_id: $id})-[:RELATED {predicate_id:"P31"}]->(:Contribution:Resource)-[:RELATED {predicate_id:"P32"}]->(r:Problem:Resource) RETURN r
     UNION
-    MATCH (r:Problem {observatory_id: $id}) RETURN r
+    MATCH (r:Problem:Resource {observatory_id: $id}) RETURN r
 } RETURN COUNT(r)""")
     fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Neo4jResource>
 
@@ -275,8 +275,8 @@ RETURN COUNT(edit) as cnt""")
     @Query("""MATCH (n:Resource {resource_id: $id}) RETURN EXISTS ((n)-[:RELATED]-(:Thing)) AS used""")
     fun checkIfResourceHasStatements(id: ResourceId): Boolean
 
-    @Query(value = """MATCH (n:Comparison {organization_id: $id })-[r:RELATED {predicate_id: 'compareContribution'}]->(rc:Contribution)-[rr:RELATED {predicate_id: 'P32'}]->(p:Problem) RETURN DISTINCT p""",
-        countQuery = """MATCH (n:Comparison {organization_id: $id })-[r:RELATED {predicate_id: 'compareContribution'}]->(rc:Contribution)-[rr:RELATED {predicate_id: 'P32'}]->(p:Problem) RETURN count(DISTINCT p)""")
+    @Query(value = """MATCH (n:Comparison:Resource {organization_id: $id })-[r:RELATED {predicate_id: 'compareContribution'}]->(rc:Contribution:Resource)-[rr:RELATED {predicate_id: 'P32'}]->(p:Problem:Resource) RETURN DISTINCT p""",
+        countQuery = """MATCH (n:Comparison:Resource {organization_id: $id })-[r:RELATED {predicate_id: 'compareContribution'}]->(rc:Contribution:Resource)-[rr:RELATED {predicate_id: 'P32'}]->(p:Problem:Resource) RETURN count(DISTINCT p)""")
     fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Neo4jResource>
 
     @Query("""$MATCH_STATEMENT WHERE (sub.`resource_id`=$subjectId OR sub.`literal_id`=$subjectId OR sub.`predicate_id`=$subjectId OR sub.`class_id`=$subjectId) AND rel.`predicate_id` = $predicateId AND (obj.`resource_id`=$objectId OR obj.`literal_id`=$objectId OR obj.`predicate_id`=$objectId OR obj.`class_id`=$objectId) $RETURN_STATEMENT LIMIT 1""")

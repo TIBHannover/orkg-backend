@@ -43,9 +43,8 @@ private const val featured = "${'$'}featured"
 private const val problemId = "${'$'}problemId"
 private const val id = "${'$'}id"
 
-// These snippets are equivalent to "COALESCE(p.featured, false) = $featured)", which has some performance issues.
-private const val IS_FEATURED_P = "((p.featured IS NOT NULL AND p.featured = $featured) OR false = $featured)"
-private const val IS_UNLISTED_P = "((p.unlisted IS NOT NULL AND p.unlisted = $unlisted) OR false = $unlisted)"
+private const val IS_FEATURED_P = "COALESCE(p.featured, false) = $featured"
+private const val IS_UNLISTED_P = "COALESCE(p.unlisted, false) = $unlisted"
 
 interface Neo4jProblemRepository :
     Neo4jRepository<Neo4jResource, Long> {

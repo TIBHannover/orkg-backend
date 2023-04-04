@@ -24,6 +24,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.spi.OwnershipInfo
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
@@ -89,6 +90,11 @@ class SpringDataNeo4jStatementAdapter(
 
     override fun countStatementsAboutResources(resourceIds: Set<ThingId>): Map<ThingId, Long> =
         neo4jRepository.countStatementsAboutResource(resourceIds.toResourceIds()).associate { ThingId(it.resourceId) to it.count }
+
+    override fun determineOwnership(statementIds: Set<StatementId>): Set<OwnershipInfo> =
+        neo4jRepository.findAllByStatementIdIn(statementIds)
+            .map { OwnershipInfo(it.statementId!!, it.createdBy) }
+            .toSet()
 
     override fun findByStatementId(id: StatementId): Optional<GeneralStatement> =
         neo4jRepository.findByStatementId(id).map { it.toStatement() }

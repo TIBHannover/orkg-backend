@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsUnlistedServ
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
@@ -18,12 +19,14 @@ class PaperUnlistedCommandController(
     private val service: MarkAsUnlistedService
 ) {
     @PutMapping("/{id}/metadata/unlisted")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun markUnlisted(@PathVariable id: ThingId) {
         service.markAsUnlisted(id)
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun markListed(@PathVariable id: ThingId) {
         service.markAsListed(id)
     }

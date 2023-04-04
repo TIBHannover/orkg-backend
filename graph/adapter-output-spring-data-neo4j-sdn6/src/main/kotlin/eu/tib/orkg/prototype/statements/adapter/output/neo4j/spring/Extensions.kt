@@ -138,6 +138,7 @@ internal fun Node.toPredicate() = Predicate(
 internal fun Value.asNullableBoolean(): Boolean? = if (isNull) null else isTrue
 internal fun Value.toOffsetDateTime() = OffsetDateTime.parse(asString(), DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 internal fun Value.toURI() = if (isNull) null else URI.create(asString())
+internal fun Value.toStatementId() = StatementId(asString())
 internal fun Value.toContributorId() = if (isNull) ContributorId.createUnknownContributor() else ContributorId(asString())
 internal fun Value.toObservatoryId() = if (isNull) ObservatoryId.createUnknownObservatory() else ObservatoryId(asString())
 internal fun Value.toOrganizationId() = if (isNull) OrganizationId.createUnknownOrganization() else OrganizationId(asString())

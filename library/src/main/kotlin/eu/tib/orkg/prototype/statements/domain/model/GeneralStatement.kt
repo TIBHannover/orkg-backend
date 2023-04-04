@@ -15,7 +15,9 @@ data class GeneralStatement(
     val createdAt: OffsetDateTime?,
     @JsonProperty("created_by")
     val createdBy: ContributorId = ContributorId.createUnknownContributor()
-)
+) {
+    fun isOwnedBy(contributorId: ContributorId) = createdBy == contributorId
+}
 
 interface StatementRepresentation : StatementProvenanceMetadata {
     val id: StatementId

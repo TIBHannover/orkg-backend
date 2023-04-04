@@ -1171,4 +1171,16 @@ fun <
             }
         }
     }
+    describe("determining ownership") {
+        it("returns the correct result") {
+            val statements = fabricator.random<List<GeneralStatement>>()
+            statements.forEach(saveStatement)
+            val allStatementIds = statements.map { it.id!! }.toSet()
+            val expected = statements.map { OwnershipInfo(it.id!!, it.createdBy) }.toSet()
+
+            val actual = repository.determineOwnership(allStatementIds)
+
+            actual shouldBe expected
+        }
+    }
 }

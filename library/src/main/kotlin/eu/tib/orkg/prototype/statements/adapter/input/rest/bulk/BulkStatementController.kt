@@ -1,8 +1,10 @@
 package eu.tib.orkg.prototype.statements.adapter.input.rest.bulk
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateStatementUseCase
+import eu.tib.orkg.prototype.statements.application.BaseController
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -23,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/statements")
 class BulkStatementController(
     private val statementService: StatementUseCases
-) {
+) : BaseController() {
     @GetMapping("/subjects")
     fun findBySubjects(
         @RequestParam("ids") resourceIds: List<ThingId>,
@@ -47,7 +49,7 @@ class BulkStatementController(
     fun delete(
         @RequestParam("ids") statementsIds: Set<StatementId>
     ): ResponseEntity<Unit> {
-        statementService.remove(statementsIds)
+        statementService.delete(statementsIds, ContributorId(authenticatedUserId()))
         return noContent().build()
     }
 

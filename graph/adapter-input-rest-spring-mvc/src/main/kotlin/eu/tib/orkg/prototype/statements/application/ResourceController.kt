@@ -184,11 +184,13 @@ class ResourceController(
 
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun markFeatured(@PathVariable id: ThingId) {
         service.markAsFeatured(id)
     }
 
     @DeleteMapping("/{id}/metadata/featured")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun unmarkFeatured(@PathVariable id: ThingId) {
         service.markAsNonFeatured(id)
     }

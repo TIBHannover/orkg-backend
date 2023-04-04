@@ -327,6 +327,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun deleteLiteralStatement() {
         val s = resourceService.create("one")
         val p = predicateService.create("has symbol")
@@ -344,6 +345,7 @@ class StatementControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun deleteResourceStatement() {
         val s = resourceService.create("one")
         val p = predicateService.create("has creator")

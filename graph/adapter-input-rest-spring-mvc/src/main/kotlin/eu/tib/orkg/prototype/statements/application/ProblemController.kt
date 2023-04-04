@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.lang.Nullable
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -87,12 +88,14 @@ class ProblemController(
         service.loadNonFeaturedProblems(pageable)
 
     @PutMapping("/{id}/metadata/featured")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     fun markFeatured(@PathVariable id: ThingId) {
         resourceService.markAsFeatured(id)
     }
 
     @DeleteMapping("/{id}/metadata/featured")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun unmarkFeatured(@PathVariable id: ThingId) {
         resourceService.markAsNonFeatured(id)
     }
@@ -109,12 +112,14 @@ class ProblemController(
         service.loadListedProblems(pageable)
 
     @PutMapping("/{id}/metadata/unlisted")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     fun markUnlisted(@PathVariable id: ThingId) {
         resourceService.markAsUnlisted(id)
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun unmarkUnlisted(@PathVariable id: ThingId) {
         resourceService.markAsListed(id)
     }

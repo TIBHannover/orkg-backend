@@ -13,6 +13,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.spi.OwnershipInfo
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.text.SimpleDateFormat
@@ -185,6 +186,9 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
 
     override fun countStatementsAboutResources(resourceIds: Set<ThingId>) =
         resourceIds.associateWith(::countStatementsAboutResource).filter { it.value > 0 }
+
+    override fun determineOwnership(statementIds: Set<StatementId>): Set<OwnershipInfo> =
+        entities.filter { it.value.id in statementIds }.map { OwnershipInfo(it.value.id!!, it.value.createdBy) }.toSet()
 
     override fun findDOIByContributionId(id: ThingId): Optional<Literal> =
         Optional.ofNullable(entities.values.find {

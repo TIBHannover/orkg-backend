@@ -12,6 +12,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.ObjectService
+import eu.tib.orkg.prototype.statements.spi.OwnershipInfo
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
@@ -30,6 +31,7 @@ import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.optionalMatch
+import org.neo4j.cypherdsl.core.Cypher.parameter
 import org.neo4j.cypherdsl.core.Cypher.raw
 import org.neo4j.cypherdsl.core.Cypher.returning
 import org.neo4j.cypherdsl.core.Cypher.union
@@ -201,6 +203,23 @@ class SpringDataNeo4jStatementAdapter(
             .mappedBy { _, record -> ThingId(record[id].asString()) to record[count].asLong() }
             .all()
             .toMap()
+    }
+
+    override fun determineOwnership(statementIds: Set<StatementId>): Set<OwnershipInfo> {
+        val r = name("r")
+        val subject = node("Thing")
+        val `object` = node("Thing")
+        val query = match(subject.relationshipTo(`object`, RELATED).named(r))
+            .where(r.property("statement_id").`in`(literalOf<Set<String>>(statementIds.map(StatementId::value))))
+            .returning(r.property("statement_id").`as`("statementId"), r.property("created_by").`as`("owner"))
+            .build()
+        return neo4jClient.query(query.cypher)
+            .fetchAs(OwnershipInfo::class.java)
+            .mappedBy { _, record ->
+                OwnershipInfo(record["statementId"].toStatementId(), record["owner"].toContributorId())
+            }
+            .all()
+            .toSet()
     }
 
     override fun findByStatementId(id: StatementId): Optional<GeneralStatement> {

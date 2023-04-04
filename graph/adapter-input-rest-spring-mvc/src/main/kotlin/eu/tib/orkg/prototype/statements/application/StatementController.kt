@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -147,6 +148,7 @@ class StatementController(
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     fun delete(
         @PathVariable id: StatementId
     ): ResponseEntity<Unit> {
@@ -155,7 +157,7 @@ class StatementController(
         if (!foundStatement.isPresent)
             return notFound().build()
 
-        statementService.remove(foundStatement.get().id)
+        statementService.delete(foundStatement.get().id, ContributorId(authenticatedUserId()))
 
         return ResponseEntity.noContent().build()
     }

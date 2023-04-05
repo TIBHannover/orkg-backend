@@ -12,8 +12,21 @@ private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
 
 interface Neo4jPaperRepository : Neo4jRepository<Neo4jResource, Long> {
 
-    @Query(value = """MATCH p=(paper:Paper:Resource)-[:RELATED*]->(:Resource{resource_id: $id}) WITH paper, apoc.coll.flatten([r in relationships(p) | [startNode(r), r]]) AS path UNWIND path AS thing MATCH (t:Thing) WHERE t.resource_id = thing.resource_id OR t.predicate_id = thing.predicate_id RETURN paper, COLLECT(t) AS path $PAGE_PARAMS""",
-        countQuery = """MATCH p=(paper:Paper:Resource)-[:RELATED*]->(:Resource{resource_id: $id}) WITH paper, apoc.coll.flatten([r in relationships(p) | [startNode(r), r]]) AS path UNWIND path AS thing MATCH (t:Thing) WHERE t.resource_id = thing.resource_id OR t.predicate_id = thing.predicate_id RETURN COUNT(DISTINCT paper) AS cnt""")
+    @Query("""
+MATCH (r:Resource {resource_id: $id})
+CALL apoc.path.expandConfig(r, {relationshipFilter: "<RELATED", labelFilter: "/Paper", uniqueness: "RELATIONSHIP_GLOBAL"})
+YIELD path
+WITH last(nodes(path)) AS paper, apoc.coll.reverse(apoc.coll.flatten([r in relationships(path) | [r, startNode(r)]])) AS path
+UNWIND path AS thing
+MATCH (t:Thing)
+WHERE t.resource_id = thing.resource_id OR t.predicate_id = thing.predicate_id
+RETURN paper, COLLECT(t) AS path""",
+        countQuery = """
+MATCH (r:Resource {resource_id: $id})
+CALL apoc.path.expandConfig(r, {relationshipFilter: "<RELATED", labelFilter: "/Paper", uniqueness: "RELATIONSHIP_GLOBAL"})
+YIELD path
+WITH last(nodes(path)) AS paper
+RETURN COUNT(DISTINCT paper) AS cnt""")
     fun findAllPapersRelatedToResource(id: ResourceId, pageable: Pageable): Page<Neo4jPaperWithPath>
 }
 

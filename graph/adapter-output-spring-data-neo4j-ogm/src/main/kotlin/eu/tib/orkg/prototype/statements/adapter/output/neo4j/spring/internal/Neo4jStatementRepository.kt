@@ -85,7 +85,7 @@ interface Neo4jStatementRepository :
     @Query("""MATCH (:`Thing`)-[r:`RELATED` {statement_id: $id}]->(o) DELETE r WITH [n IN [o] WHERE "Literal" IN LABELS(n) AND NOT (n)--()] AS l FOREACH(n IN l | DELETE n)""")
     fun deleteByStatementId(id: StatementId)
 
-    @Query("""UNWIND $ids AS id MATCH ()-[s:`RELATED`]->() WHERE s.statement_id = id DELETE s""")
+    @Query("""UNWIND $ids AS id MATCH (:`Thing`)-[r:`RELATED` {statement_id: id}]->(o) DELETE r WITH [n IN [o] WHERE "Literal" IN LABELS(n) AND NOT (n)--()] AS l FOREACH(n IN l | DELETE n)""")
     fun deleteByStatementIds(ids: Set<StatementId>)
 
     @Query("$MATCH_STATEMENT $BY_SUBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",

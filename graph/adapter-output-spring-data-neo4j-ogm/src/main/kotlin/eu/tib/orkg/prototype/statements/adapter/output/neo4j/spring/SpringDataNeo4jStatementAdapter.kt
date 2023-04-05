@@ -69,7 +69,12 @@ class SpringDataNeo4jStatementAdapter(
     }
 
     override fun deleteByStatementIds(ids: Set<StatementId>) {
-        neo4jRepository.deleteByStatementIds(ids)
+        // Fix OGM interpreting a singleton list as a string value of the first element
+        if (ids.size == 1) {
+            neo4jRepository.deleteByStatementId(ids.single())
+        } else if (ids.size > 1) {
+            neo4jRepository.deleteByStatementIds(ids)
+        }
     }
 
     override fun deleteAll() {
@@ -91,10 +96,18 @@ class SpringDataNeo4jStatementAdapter(
     override fun countStatementsAboutResources(resourceIds: Set<ThingId>): Map<ThingId, Long> =
         neo4jRepository.countStatementsAboutResource(resourceIds.toResourceIds()).associate { ThingId(it.resourceId) to it.count }
 
-    override fun determineOwnership(statementIds: Set<StatementId>): Set<OwnershipInfo> =
-        neo4jRepository.findAllByStatementIdIn(statementIds)
-            .map { OwnershipInfo(it.statementId!!, it.createdBy) }
-            .toSet()
+    override fun determineOwnership(statementIds: Set<StatementId>): Set<OwnershipInfo> {
+        // Fix OGM interpreting a singleton list as a string value of the first element
+        return if (statementIds.size == 1) {
+            neo4jRepository.findByStatementId(statementIds.single())
+                .map { setOf(OwnershipInfo(it.statementId!!, it.createdBy)) }
+                .orElseGet { emptySet() }
+        } else {
+            neo4jRepository.findAllByStatementIdIn(statementIds)
+                .map { OwnershipInfo(it.statementId!!, it.createdBy) }
+                .toSet()
+        }
+    }
 
     override fun findByStatementId(id: StatementId): Optional<GeneralStatement> =
         neo4jRepository.findByStatementId(id).map { it.toStatement() }

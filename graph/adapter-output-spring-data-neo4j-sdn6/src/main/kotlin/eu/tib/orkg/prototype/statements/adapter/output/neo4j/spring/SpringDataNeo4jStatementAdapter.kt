@@ -130,16 +130,29 @@ class SpringDataNeo4jStatementAdapter(
     }
 
     override fun deleteByStatementIds(ids: Set<StatementId>) {
-        val relation = anyNode().relationshipTo(anyNode(), RELATED)
-            .named("r")
+        val o = name("o")
+        val n = name("n")
+        val l = name("l")
         val id = name("id")
-        val query = unwind(literalOf<Set<StatementId>>(ids))
+        val node = anyNode().named(n)
+        val relation = node("Thing")
+            .relationshipTo(anyNode().named(o), RELATED)
+            .withProperties("statement_id", id)
+        val query = unwind(literalOf<Set<String>>(ids.map { it.value }))
             .`as`(id)
             .with(id)
             .match(relation)
-            .where(relation.property("statement_id").eq(id))
             .delete(relation)
+            .with(
+                listWith(n).`in`(listOf(o))
+                    .where(
+                        literalOf<String>("Literal").`in`(labels(node))
+                            .and(node.relationshipBetween(anyNode()).asCondition().not())
+                    ).returning(n)
+                    .`as`(l)
+            ).returningRaw(raw("FOREACH(n IN l | DELETE n)"))
             .build()
+
         neo4jClient.query(query.cypher).run()
     }
 

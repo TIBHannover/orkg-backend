@@ -223,6 +223,22 @@ fun <
         }
     }
 
+    context("deleting several statements") {
+        it("by statement id removes them from the repository") {
+            val expected: List<GeneralStatement> = fabricator.random()
+            expected.forEach(saveStatement)
+            repository.findAll(PageRequest.of(0, 10)).totalElements shouldBe expected.size
+            repository.deleteByStatementIds(expected.map { it.id!! }.toSet())
+            repository.findAll(PageRequest.of(0, 10)).totalElements shouldBe 0
+        }
+        it("by statement id removes them from the repository (singleton)") {
+            val expected: GeneralStatement = fabricator.random()
+            saveStatement(expected)
+            repository.deleteByStatementIds(setOf(expected.id!!))
+            repository.findByStatementId(expected.id!!).isPresent shouldBe false
+        }
+    }
+
     it("delete all statements") {
         (0L until 3L).forEach {
             saveStatement(createStatement(id = StatementId(it)))

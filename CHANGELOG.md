@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.30.1] - 2023-04-05
+### Fixed
+- "Bulk deleting" a single statement does work now. (See: [!493](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/493))
+
 ## [0.30.0] - 2023-04-04
 ### Security
 - Some open endpoints were closed, and deleting statements requires ownership or curator status now. (See: [!492](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/492))
@@ -305,7 +309,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.30.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.30.1...master
+[0.30.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.30.1
 [0.30.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.30.0
 [0.29.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.29.0
 [0.28.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.28.1

@@ -13,6 +13,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.*
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -129,6 +130,19 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         return ResponseEntity(payload, INTERNAL_SERVER_ERROR)
     }
 
+    @ExceptionHandler(AccessDeniedException::class)
+    fun handleAccessDeniedException(
+        ex: AccessDeniedException,
+        request: WebRequest
+    ): ResponseEntity<Any> {
+        val payload = ErrorResponse(
+            status = FORBIDDEN.value(),
+            error = FORBIDDEN.reasonPhrase,
+            path = request.requestURI,
+        )
+        return ResponseEntity(payload, FORBIDDEN)
+    }
+
     fun <T> buildBadRequestResponse(
         exception: T,
         path: String,
@@ -225,5 +239,7 @@ private val WebRequest.requestURI: String
 private val WebRequest.headerMap: Map<String, String?>
     get() = headerNames.asSequence().associateWith { getHeader(it) }
 
-private fun <K, V> Map<K, Array<V>>.toParameterString(): String =
-    entries.joinToString(separator = "&", prefix = "?") { "${it.key}=${it.value.joinToString(separator = ",")}" }
+private fun <K, V> Map<K, Array<V>>.toParameterString() = when {
+    entries.isNotEmpty() -> entries.joinToString(separator = "&", prefix = "?") { "${it.key}=${it.value.joinToString(separator = ",")}" }
+    else -> String()
+}

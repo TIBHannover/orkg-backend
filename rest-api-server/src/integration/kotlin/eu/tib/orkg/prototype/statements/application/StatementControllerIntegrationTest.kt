@@ -34,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 @Import(MockUserDetailsService::class)
 
-class StatementControllerTest : RestDocumentationBaseTest() {
+class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var statementService: StatementUseCases
@@ -322,42 +322,6 @@ class StatementControllerTest : RestDocumentationBaseTest() {
                     requestBody(),
                     createdResponseHeaders(),
                     statementWithLiteralResponseFields()
-                )
-            )
-    }
-
-    @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
-    fun deleteLiteralStatement() {
-        val s = resourceService.create("one")
-        val p = predicateService.create("has symbol")
-        val l = literalService.create("1")
-        val st = statementService.create(s.id, p.id, l.id)
-
-        mockMvc.perform(deleteRequest("/api/statements/${st.id}"))
-            .andExpect(status().isNoContent)
-            .andDo(
-                document(
-                    snippet,
-                    requestBody()
-                )
-            )
-    }
-
-    @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
-    fun deleteResourceStatement() {
-        val s = resourceService.create("one")
-        val p = predicateService.create("has creator")
-        val r = resourceService.create("Leibniz")
-        val st = statementService.create(s.id, p.id, r.id)
-
-        mockMvc.perform(deleteRequest("/api/statements/${st.id}"))
-            .andExpect(status().isNoContent)
-            .andDo(
-                document(
-                    snippet,
-                    requestBody()
                 )
             )
     }

@@ -9,15 +9,17 @@ import eu.tib.orkg.prototype.statements.domain.model.CreateStatement
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import java.security.Principal
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpEntity
+import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -148,16 +150,19 @@ class StatementController(
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
     fun delete(
-        @PathVariable id: StatementId
+        @PathVariable id: StatementId,
+        principal: Principal?
     ): ResponseEntity<Unit> {
+        if (principal?.name == null)
+            return ResponseEntity(HttpStatus.FORBIDDEN)
+        val userId = UUID.fromString(principal.name)
         val foundStatement = statementService.findById(id)
 
         if (!foundStatement.isPresent)
             return notFound().build()
 
-        statementService.delete(foundStatement.get().id, ContributorId(authenticatedUserId()))
+        statementService.delete(foundStatement.get().id, ContributorId(userId))
 
         return ResponseEntity.noContent().build()
     }

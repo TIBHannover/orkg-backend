@@ -5,7 +5,7 @@ import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod.UNKNOWN
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.services.PaperService
+import eu.tib.orkg.prototype.statements.services.LegacyPaperServiceLegacy
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -21,8 +21,8 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/papers/")
-class PaperController(
-    private val service: PaperService,
+class LegacyPaperController(
+    private val service: LegacyPaperServiceLegacy,
 ) : BaseController() {
 
     @PostMapping("/")

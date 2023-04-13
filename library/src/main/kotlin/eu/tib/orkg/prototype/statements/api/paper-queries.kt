@@ -4,6 +4,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
-interface RetrievePaperUseCase {
+interface LegacyRetrievePaperUseCase {
     fun findPapersRelatedToResource(related: ThingId, pageable: Pageable): Page<PaperResourceWithPathRepresentation>
 }

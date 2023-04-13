@@ -235,6 +235,9 @@ class ResourceService(
     override fun findByDOI(doi: String): Optional<ResourceRepresentation> =
         retrieveAndConvertOptional { statementRepository.findByDOI(doi) }
 
+    override fun findAllPapersByDOI(doi: String, pageable: Pageable): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged { statementRepository.findAllPapersByDOI(doi, pageable) }
+
     override fun findByTitle(title: String): Optional<ResourceRepresentation> =
         retrieveAndConvertOptional { repository.findByLabel(title) }
 

@@ -20,7 +20,7 @@ import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.PaperResourceWithPathRepresentation
 import eu.tib.orkg.prototype.statements.api.PathRepresentation
-import eu.tib.orkg.prototype.statements.api.RetrievePaperUseCase
+import eu.tib.orkg.prototype.statements.api.LegacyRetrievePaperUseCase
 import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
 import eu.tib.orkg.prototype.statements.domain.model.PaperResourceWithPath
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -36,7 +36,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
-class PaperService(
+class LegacyPaperServiceLegacy(
     private val resourceService: ResourceUseCases,
     private val literalService: LiteralUseCases,
     private val predicateService: PredicateUseCases,
@@ -48,7 +48,7 @@ class PaperService(
     private val statementRepository: StatementRepository,
     private val templateRepository: TemplateRepository,
     private val flags: FeatureFlagService,
-) : RetrievePaperUseCase {
+) : LegacyRetrievePaperUseCase {
     /**
      * Main entry point, to create paper and check contributions
      * Using the Object endpoint to handle recursive object creation

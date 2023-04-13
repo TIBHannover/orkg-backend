@@ -900,6 +900,111 @@ fun <
         }
     }
 
+    describe("finding several papers") {
+        val doi = fabricator.random<String>()
+        val hasDoi = createPredicate(id = ThingId("P26"))
+        context("by doi") {
+            val doiLiteral = createLiteral(label = doi)
+
+            val paper =  createResource(
+                id = fabricator.random(),
+                classes = setOf(ThingId("Paper"))
+            )
+            val paperHasDoi = createStatement(
+                id = fabricator.random(),
+                subject = paper,
+                predicate = hasDoi,
+                `object` = doiLiteral
+            )
+
+            val deletedPaper = createResource(
+                id = fabricator.random(),
+                classes = setOf(ThingId("Paper"), ThingId("PaperDeleted"))
+            )
+            val deletedPaperHasDoi = createStatement(
+                id = fabricator.random(),
+                subject = deletedPaper,
+                predicate = hasDoi,
+                `object` = doiLiteral
+            )
+
+            context("with default case") {
+                saveStatement(paperHasDoi)
+                saveStatement(deletedPaperHasDoi)
+
+                val result = repository.findAllPapersByDOI(doi, PageRequest.of(0, 5))
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe 1
+                    result.content shouldContainAll setOf(paper)
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe 1
+                }
+                xit("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+
+            context("with uppercase") {
+                saveStatement(paperHasDoi)
+                saveStatement(deletedPaperHasDoi)
+
+                val result = repository.findAllPapersByDOI(doi.uppercase(), PageRequest.of(0, 5))
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe 1
+                    result.content shouldContainAll setOf(paper)
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe 1
+                }
+                xit("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+
+            context("with lowercase") {
+                saveStatement(paperHasDoi)
+                saveStatement(deletedPaperHasDoi)
+
+                val result = repository.findAllPapersByDOI(doi.lowercase(), PageRequest.of(0, 5))
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe 1
+                    result.content shouldContainAll setOf(paper)
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe 1
+                }
+                xit("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+        }
+    }
+
     describe("finding several research problems") {
         context("by observatory id") {
             val observatoryId = fabricator.random<ObservatoryId>()

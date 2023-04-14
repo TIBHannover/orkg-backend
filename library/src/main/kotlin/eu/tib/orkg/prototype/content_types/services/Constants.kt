@@ -11,6 +11,7 @@ object Predicates {
     val yearPublished = ThingId("P29")
     val hasVenue = ThingId("HAS_VENUE")
     val hasURL = ThingId("url")
+    val hasORCID = ThingId("HAS_ORCID")
 }
 
 object Classes {
@@ -20,4 +21,13 @@ object Classes {
 
 object PageRequests {
     val ALL: PageRequest = PageRequest.of(0, Int.MAX_VALUE)
+}
+
+object Identifiers {
+    val paper = mapOf(
+        Predicates.hasDOI to "doi"
+    )
+    val author = mapOf(
+        Predicates.hasORCID to "orcid"
+    )
 }

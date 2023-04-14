@@ -76,7 +76,7 @@ internal class PaperControllerUnitTest {
     private fun createDummyPaperRepresentation() = object : PaperRepresentation {
         override val id: ThingId = ThingId("R123")
         override val title: String = "Dummy Paper Title"
-        override val researchField: List<ThingId> = listOf(
+        override val researchFields: List<ThingId> = listOf(
             ThingId("R456"),
             ThingId("R789")
         )

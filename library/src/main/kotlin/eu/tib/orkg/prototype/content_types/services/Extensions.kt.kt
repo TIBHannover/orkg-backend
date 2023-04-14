@@ -6,8 +6,11 @@ import java.util.stream.Collectors
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 
-internal fun <T, R> Page<T>.pmap(action: (T) -> R): Page<R> =
-    PageImpl(content.parallelStream().map(action).collect(Collectors.toList()), pageable, totalElements)
+internal fun <T, R> Page<T>.pmap(transform: (T) -> R): Page<R> =
+    PageImpl(content.pmap(transform), pageable, totalElements)
+
+internal fun <T, R> Collection<T>.pmap(transform: (T) -> R): List<R> =
+    parallelStream().map(transform).collect(Collectors.toList())
 
 internal fun List<GeneralStatement>.wherePredicate(predicateId: ThingId) =
     filter { it.predicate.id == predicateId }

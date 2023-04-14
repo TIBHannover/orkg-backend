@@ -11,8 +11,8 @@ import java.time.OffsetDateTime
 interface PaperRepresentation {
     val id: ThingId
     val title: String
-    @get:JsonProperty("research_field")
-    val researchField: List<ThingId>
+    @get:JsonProperty("research_fields")
+    val researchFields: List<ThingId>
     val identifiers: Map<String, String>
     @get:JsonProperty("publication_info")
     val publicationInfo: PublicationInfoRepresentation

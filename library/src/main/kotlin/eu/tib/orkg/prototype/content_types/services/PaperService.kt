@@ -49,9 +49,7 @@ class PaperService(
             override val id: ThingId = this@toPaperRepresentation.id
             override val title: String = this@toPaperRepresentation.label
             override val researchFields: List<ThingId> = statements.wherePredicate(Predicates.hasResearchField).objectIds().sortedBy { it.value }
-            override val identifiers: Map<String, String> = statements
-                .filter { it.predicate.id in Identifiers.paper.keys }
-                .associate { Identifiers.paper[it.predicate.id]!! to it.`object`.label }
+            override val identifiers: Map<String, String> = statements.mapIdentifiers(Identifiers.paper)
             override val publicationInfo = object : PublicationInfoRepresentation {
                 override val publishedMonth: Int? = statements.wherePredicate(Predicates.monthPublished).firstObjectLabel()?.toIntOrNull()
                 override val publishedYear: Long? = statements.wherePredicate(Predicates.yearPublished).firstObjectLabel()?.toLongOrNull()
@@ -87,9 +85,7 @@ class PaperService(
         return object : AuthorRepresentation {
             override val id: ThingId = this@toAuthorRepresentation.id
             override val name: String = label
-            override val identifiers: Map<String, String> = Identifiers.author.mapNotNull {
-                statements.wherePredicate(it.key).firstObjectLabel()?.let { identifier -> it.value to identifier }
-            }.toMap()
+            override val identifiers: Map<String, String> = statements.mapIdentifiers(Identifiers.author)
             override val homepage: String? = statements.wherePredicate(Predicates.hasWebsite).firstObjectLabel()
         }
     }

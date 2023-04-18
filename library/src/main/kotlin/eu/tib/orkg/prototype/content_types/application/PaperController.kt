@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/content-types/paper/")
 class PaperController(
     private val service: PaperUseCases
-): BaseController() {
+) : BaseController() {
     @GetMapping("/{id}")
     fun findById(
         @PathVariable id: ThingId

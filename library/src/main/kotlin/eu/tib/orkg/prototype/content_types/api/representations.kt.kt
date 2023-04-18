@@ -16,8 +16,7 @@ interface PaperRepresentation {
     val identifiers: Map<String, String>
     @get:JsonProperty("publication_info")
     val publicationInfo: PublicationInfoRepresentation
-    val authors: List<ThingId>
-    val contributors: List<ContributorId>
+    val authors: List<AuthorRepresentation>
     @get:JsonProperty("observatories")
     val observatories: List<ObservatoryId>
     @get:JsonProperty("organizations")
@@ -45,7 +44,7 @@ interface PublicationInfoRepresentation {
 }
 
 interface AuthorRepresentation {
-    val id: ThingId
+    val id: ThingId?
     val name: String
     val identifiers: Map<String, String>
     val homepage: String?

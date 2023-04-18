@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.content_types.services
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.content_types.api.AuthorRepresentation
 import eu.tib.orkg.prototype.content_types.api.CreatePaperUseCase
 import eu.tib.orkg.prototype.content_types.api.PaperRepresentation
 import eu.tib.orkg.prototype.content_types.api.PaperUseCases
@@ -12,7 +13,10 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.application.ResourceAlreadyExists
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
+import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.Class
+import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.ResourceService
 import eu.tib.orkg.prototype.statements.services.StatementService
@@ -56,7 +60,6 @@ class PaperService(
                     .mapValues { author.identifiers[it.value] }
                     .filter { it.value != null }
                     .firstNotNullOfOrNull {
-                        // TODO: this behavior is different from the old one.
                         statementRepository.findAllByPredicateIdAndLabel(it.key, it.value!!, PageRequests.ALL).singleOrNull()
                     }?.subject?.thingId
                 if (authorId != null) {
@@ -87,7 +90,6 @@ class PaperService(
     private fun Resource.toPaperRepresentation(): PaperRepresentation {
         val statements = statementRepository.findAllBySubject(id, PageRequests.ALL).content
             .filter { it.`object`.label.isNotBlank() }
-        val contributors = statementRepository.findAllContributorsByResourceId(id, PageRequests.ALL).content
         return object : PaperRepresentation {
             override val id: ThingId = this@toPaperRepresentation.id
             override val title: String = this@toPaperRepresentation.label
@@ -101,8 +103,9 @@ class PaperService(
                 override val publishedIn: String? = statements.wherePredicate(Predicates.hasVenue).firstObjectLabel()
                 override val url: String? = statements.wherePredicate(Predicates.hasURL).firstObjectLabel()
             }
-            override val authors: List<ThingId> = statements.wherePredicate(Predicates.hasAuthor).objectIds().sortedBy { it.value }
-            override val contributors: List<ContributorId> = contributors
+            override val authors: List<AuthorRepresentation> = statements.wherePredicate(Predicates.hasAuthor).objects()
+                .filter { it is Resource || it is Literal }
+                .pmap { it.toAuthorRepresentation() }
             override val observatories: List<ObservatoryId> = listOf(observatoryId)
             override val organizations: List<OrganizationId> = listOf(organizationId)
             override val extractionMethod: ExtractionMethod = this@toPaperRepresentation.extractionMethod
@@ -113,5 +116,33 @@ class PaperService(
             override val verified: Boolean = this@toPaperRepresentation.verified ?: false
             override val deleted: Boolean = Classes.paperDeleted in classes
         }
+    }
+
+    private fun Thing.toAuthorRepresentation(): AuthorRepresentation {
+        return when (this) {
+            is Resource -> toAuthorRepresentation()
+            is Literal -> toAuthorRepresentation()
+            else -> throw IllegalStateException("""Cannot convert "$thingId" to author. This is a bug!""")
+        }
+    }
+
+    private fun Resource.toAuthorRepresentation(): AuthorRepresentation {
+        val statements = statementRepository.findAllBySubject(id, PageRequests.ALL).content
+            .filter { it.`object`.label.isNotBlank() }
+        return object : AuthorRepresentation {
+            override val id: ThingId = this@toAuthorRepresentation.id
+            override val name: String = label
+            override val identifiers: Map<String, String> = Identifiers.author.mapNotNull {
+                statements.wherePredicate(it.key).firstObjectLabel()?.let { identifier -> it.value to identifier }
+            }.toMap()
+            override val homepage: String? = statements.wherePredicate(Predicates.hasWebsite).firstObjectLabel()
+        }
+    }
+
+    private fun Literal.toAuthorRepresentation() = object : AuthorRepresentation {
+        override val id: ThingId? = null
+        override val name: String = label
+        override val identifiers: Map<String, String> = emptyMap()
+        override val homepage: String? = null
     }
 }

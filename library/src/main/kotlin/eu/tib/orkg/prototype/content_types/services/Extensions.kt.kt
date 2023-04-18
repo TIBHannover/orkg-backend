@@ -18,5 +18,8 @@ internal fun List<GeneralStatement>.wherePredicate(predicateId: ThingId) =
 internal fun List<GeneralStatement>.objectIds() =
     map { it.`object`.thingId }
 
+internal fun List<GeneralStatement>.objects() =
+    map { it.`object` }
+
 internal fun List<GeneralStatement>.firstObjectLabel(): String? =
     firstOrNull()?.`object`?.label

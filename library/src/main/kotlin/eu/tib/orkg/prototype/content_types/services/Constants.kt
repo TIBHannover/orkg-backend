@@ -12,6 +12,7 @@ object Predicates {
     val hasVenue = ThingId("HAS_VENUE")
     val hasURL = ThingId("url")
     val hasORCID = ThingId("HAS_ORCID")
+    val hasWebsite = ThingId("website")
 }
 
 object Classes {

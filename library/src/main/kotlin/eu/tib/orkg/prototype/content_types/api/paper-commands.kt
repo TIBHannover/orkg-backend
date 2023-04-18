@@ -19,7 +19,6 @@ interface CreatePaperUseCase {
         val authors: List<Author>,
         val observatories: List<ObservatoryId>,
         val organizations: List<OrganizationId>,
-        val contributions: Contributions,
         val extractionMethod: ExtractionMethod
     ) {
         data class PublicationInfo(
@@ -33,36 +32,6 @@ interface CreatePaperUseCase {
             val name: String?,
             val identifiers: Map<String, String>?,
             val homepage: String?
-        )
-
-        data class GraphObjects(
-            val resources: Map<String, Resource>,
-            val literals: Map<String, Literal>,
-            val predicates: Map<String, Predicate>
-        ) {
-            data class Resource(
-                val label: String
-            )
-
-            data class Literal(
-                val label: String,
-                val dataType: String
-            )
-
-            data class Predicate(
-                val label: String,
-                val description: String
-            )
-        }
-
-        data class Contributions(
-            val contributions: List<Contribution>,
-            val objects: GraphObjects
-        )
-
-        data class Contribution(
-            val name: String,
-            val statements: Map<String, List<String>>
         )
     }
 }

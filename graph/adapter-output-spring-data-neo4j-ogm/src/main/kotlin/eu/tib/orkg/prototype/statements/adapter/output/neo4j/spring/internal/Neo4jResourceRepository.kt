@@ -57,16 +57,16 @@ private const val MATCH_UNVERIFIED_PAPER =
     """$MATCH_PAPER WHERE (node.verified IS NULL OR node.verified = false)"""
 
 private const val MATCH_FEATURED_PAPER =
-    """$MATCH_PAPER WHERE node.featured = true"""
+    """$MATCH_PAPER WHERE COALESCE(node.featured, false) = true"""
 
 private const val MATCH_NONFEATURED_PAPER =
-    """$MATCH_PAPER WHERE node.featured = false"""
+    """$MATCH_PAPER WHERE COALESCE(node.featured, false) = false"""
 
 private const val MATCH_UNLISTED_PAPER =
-    """$MATCH_PAPER WHERE node.unlisted = true"""
+    """$MATCH_PAPER WHERE COALESCE(node.unlisted, false) = true"""
 
 private const val MATCH_LISTED_PAPER =
-    """$MATCH_PAPER WHERE node.unlisted = false"""
+    """$MATCH_PAPER WHERE COALESCE(node.unlisted, false) = false"""
 
 const val IS_FEATURED = "COALESCE(node.featured, false) = $featured"
 const val IS_UNLISTED = "COALESCE(node.unlisted, false) = $unlisted"

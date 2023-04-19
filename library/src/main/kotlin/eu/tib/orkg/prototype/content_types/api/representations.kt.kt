@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.content_types.api
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.content_types.domain.model.Visibility
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -28,10 +29,8 @@ interface PaperRepresentation {
     val createdAt: OffsetDateTime
     @get:JsonProperty("created_by")
     val createdBy: ContributorId
-    val featured: Boolean
-    val unlisted: Boolean
     val verified: Boolean
-    val deleted: Boolean
+    val visibility: Visibility
 }
 
 interface PublicationInfoRepresentation {

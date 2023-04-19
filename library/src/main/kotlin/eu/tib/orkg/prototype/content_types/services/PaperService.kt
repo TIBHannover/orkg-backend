@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.content_types.api.LabeledObjectRepresentation
 import eu.tib.orkg.prototype.content_types.api.PaperRepresentation
 import eu.tib.orkg.prototype.content_types.api.PaperUseCases
 import eu.tib.orkg.prototype.content_types.api.PublicationInfoRepresentation
+import eu.tib.orkg.prototype.content_types.domain.model.Visibility
 import eu.tib.orkg.prototype.content_types.application.PaperNotFound
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
@@ -43,6 +44,19 @@ class PaperService(
         resourceRepository.findAllByClassAndLabel(Classes.paper, title, pageable)
             .pmap { it.toPaperRepresentation() }
 
+    override fun findAllByVisibility(visibility: Visibility, pageable: Pageable): Page<PaperRepresentation> =
+        when (visibility) {
+            Visibility.LISTED -> resourceRepository.findAllListedPapers(pageable)
+            Visibility.UNLISTED -> resourceRepository.findAllUnlistedPapers(pageable)
+            Visibility.FEATURED -> resourceRepository.findAllFeaturedPapers(pageable)
+            Visibility.NON_FEATURED -> resourceRepository.findAllNonFeaturedPapers(pageable)
+            Visibility.DELETED -> resourceRepository.findAllByClass(Classes.paperDeleted, pageable)
+        }.pmap { it.toPaperRepresentation() }
+
+    override fun findAllByContributor(contributorId: ContributorId, pageable: Pageable): Page<PaperRepresentation> =
+        resourceRepository.findAllByClassAndCreatedBy(Classes.paper, contributorId, pageable)
+            .pmap { it.toPaperRepresentation() }
+
     private fun Resource.toPaperRepresentation(): PaperRepresentation {
         val statements = statementRepository.findAllBySubject(id, PageRequests.ALL).content
             .filter { it.`object`.label.isNotBlank() }
@@ -70,10 +84,8 @@ class PaperService(
             override val extractionMethod: ExtractionMethod = this@toPaperRepresentation.extractionMethod
             override val createdAt: OffsetDateTime = this@toPaperRepresentation.createdAt
             override val createdBy: ContributorId = this@toPaperRepresentation.createdBy
-            override val featured: Boolean = this@toPaperRepresentation.featured ?: false
-            override val unlisted: Boolean = this@toPaperRepresentation.unlisted ?: false
             override val verified: Boolean = this@toPaperRepresentation.verified ?: false
-            override val deleted: Boolean = Classes.paperDeleted in classes
+            override val visibility: Visibility = this@toPaperRepresentation.visibility
         }
     }
 
@@ -102,4 +114,21 @@ class PaperService(
         override val identifiers: Map<String, String> = emptyMap()
         override val homepage: String? = null
     }
+
+    private val Resource.visibility: Visibility
+        get() {
+            if (Classes.paperDeleted in classes) {
+                return Visibility.DELETED
+            }
+            return when (featured ?: false) {
+                true -> when (unlisted ?: false) {
+                    true -> Visibility.UNLISTED
+                    false -> Visibility.FEATURED
+                }
+                false -> when (unlisted ?: false) {
+                    true -> Visibility.UNLISTED
+                    false -> Visibility.LISTED
+                }
+            }
+        }
 }

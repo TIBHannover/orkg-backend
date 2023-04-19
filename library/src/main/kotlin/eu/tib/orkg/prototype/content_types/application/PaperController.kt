@@ -2,6 +2,8 @@ package eu.tib.orkg.prototype.content_types.application
 
 import eu.tib.orkg.prototype.content_types.api.PaperRepresentation
 import eu.tib.orkg.prototype.content_types.api.PaperUseCases
+import eu.tib.orkg.prototype.content_types.domain.model.Visibility
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.statements.application.BaseController
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -23,18 +25,21 @@ class PaperController(
         @PathVariable id: ThingId
     ): PaperRepresentation = service.findById(id)
 
-    // TODO: featured, listed, unlisted, date range?
     @GetMapping("/")
     fun findAll(
         @RequestParam("doi", required = false) doi: String?,
         @RequestParam("title", required = false) title: String?,
+        @RequestParam("visibility", required = false) visibility: Visibility?,
+        @RequestParam("contributor", required = false) contributorId: ContributorId?,
         pageable: Pageable
     ): Page<PaperRepresentation> {
-        if (doi != null && title != null)
-            throw TooManyParameters.atMostOneOf("doi", "title")
+        if (setOf(doi, title, visibility, contributorId).size > 2)
+            throw TooManyParameters.atMostOneOf("doi", "title", "visibility", "contributor")
         return when {
             doi != null -> service.findAllByDOI(doi, pageable)
             title != null -> service.findAllByTitle(title, pageable)
+            visibility != null -> service.findAllByVisibility(visibility, pageable)
+            contributorId != null -> service.findAllByContributor(contributorId, pageable)
             else -> service.findAll(pageable)
         }
     }

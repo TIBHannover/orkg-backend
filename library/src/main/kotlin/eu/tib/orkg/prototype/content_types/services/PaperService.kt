@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.content_types.services
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.content_types.api.AuthorRepresentation
+import eu.tib.orkg.prototype.content_types.api.LabeledObjectRepresentation
 import eu.tib.orkg.prototype.content_types.api.PaperRepresentation
 import eu.tib.orkg.prototype.content_types.api.PaperUseCases
 import eu.tib.orkg.prototype.content_types.api.PublicationInfoRepresentation
@@ -48,7 +49,9 @@ class PaperService(
         return object : PaperRepresentation {
             override val id: ThingId = this@toPaperRepresentation.id
             override val title: String = this@toPaperRepresentation.label
-            override val researchFields: List<ThingId> = statements.wherePredicate(Predicates.hasResearchField).objectIds().sortedBy { it.value }
+            override val researchFields: List<LabeledObjectRepresentation> = statements.wherePredicate(Predicates.hasResearchField)
+                .objectIdsWithLabel()
+                .sortedBy { it.id }
             override val identifiers: Map<String, String> = statements.mapIdentifiers(Identifiers.paper)
             override val publicationInfo = object : PublicationInfoRepresentation {
                 override val publishedMonth: Int? = statements.wherePredicate(Predicates.monthPublished).firstObjectLabel()?.toIntOrNull()
@@ -59,6 +62,9 @@ class PaperService(
             override val authors: List<AuthorRepresentation> = statements.wherePredicate(Predicates.hasAuthor).objects()
                 .filter { it is Resource || it is Literal }
                 .pmap { it.toAuthorRepresentation() }
+            override val contributions: List<LabeledObjectRepresentation> = statements.wherePredicate(Predicates.hasContribution)
+                .objectIdsWithLabel()
+                .sortedBy { it.id }
             override val observatories: List<ObservatoryId> = listOf(observatoryId)
             override val organizations: List<OrganizationId> = listOf(organizationId)
             override val extractionMethod: ExtractionMethod = this@toPaperRepresentation.extractionMethod

@@ -4,11 +4,12 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.data.domain.PageRequest
 
 object Predicates {
-    val hasResearchField = ThingId("P30")
     val hasDOI = ThingId("P26")
     val hasAuthor = ThingId("P27")
     val monthPublished = ThingId("P28")
     val yearPublished = ThingId("P29")
+    val hasResearchField = ThingId("P30")
+    val hasContribution = ThingId("P31")
     val hasVenue = ThingId("HAS_VENUE")
     val hasURL = ThingId("url")
     val hasORCID = ThingId("HAS_ORCID")

@@ -5,9 +5,12 @@ import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.content_types.api.AuthorRepresentation
+import eu.tib.orkg.prototype.content_types.api.LabeledObjectRepresentation
 import eu.tib.orkg.prototype.content_types.api.PaperRepresentation
 import eu.tib.orkg.prototype.content_types.api.PaperUseCases
 import eu.tib.orkg.prototype.content_types.api.PublicationInfoRepresentation
+import eu.tib.orkg.prototype.content_types.domain.model.Visibility
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
@@ -76,9 +79,15 @@ internal class PaperControllerUnitTest {
     private fun createDummyPaperRepresentation() = object : PaperRepresentation {
         override val id: ThingId = ThingId("R123")
         override val title: String = "Dummy Paper Title"
-        override val researchFields: List<ThingId> = listOf(
-            ThingId("R456"),
-            ThingId("R789")
+        override val researchFields: List<LabeledObjectRepresentation> = listOf(
+            object : LabeledObjectRepresentation {
+                override val id: ThingId = ThingId("R456")
+                override val label: String = "Research Field 1"
+            },
+            object : LabeledObjectRepresentation {
+                override val id: ThingId = ThingId("R789")
+                override val label: String = "Research Field 2"
+            }
         )
         override val identifiers: Map<String, String> = mapOf(
             "doi" to "10.1000/182"
@@ -89,13 +98,31 @@ internal class PaperControllerUnitTest {
             override val publishedIn: String = "Fancy Conference"
             override val url: String = "https://example.org"
         }
-        override val authors: List<ThingId> = listOf(
-            ThingId("147"),
-            ThingId("258")
+        override val authors: List<AuthorRepresentation> = listOf(
+            object : AuthorRepresentation {
+                override val id: ThingId = ThingId("147")
+                override val name: String = "Author 1"
+                override val identifiers: Map<String, String> = mapOf(
+                    "doi" to "10.1007/s00787-010-0130-8"
+                )
+                override val homepage: String = "https://example.org"
+            },
+            object : AuthorRepresentation {
+                override val id: ThingId? = null
+                override val name: String = "Author 2"
+                override val identifiers: Map<String, String> = emptyMap()
+                override val homepage: String? = null
+            }
         )
-        override val contributors: List<ContributorId> = listOf(
-            ContributorId("71834d65-cde6-474c-8840-2b8df2f62ea8"),
-            ContributorId("c4023d56-2e9a-47e5-ad2d-e7a3da827fe8")
+        override val contributions: List<LabeledObjectRepresentation> = listOf(
+            object : LabeledObjectRepresentation {
+                override val id: ThingId = ThingId("R258")
+                override val label: String = "Contribution 1"
+            },
+            object : LabeledObjectRepresentation {
+                override val id: ThingId = ThingId("R396")
+                override val label: String = "Contribution 2"
+            }
         )
         override val observatories: List<ObservatoryId> = listOf(
             ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece"),
@@ -108,9 +135,7 @@ internal class PaperControllerUnitTest {
         override val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
         override val createdAt: OffsetDateTime = OffsetDateTime.parse("2023-04-12T16:05:05.959539600+02:00")
         override val createdBy: ContributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620")
-        override val featured: Boolean = false
-        override val unlisted: Boolean = false
+        override val visibility: Visibility = Visibility.LISTED
         override val verified: Boolean = false
-        override val deleted: Boolean = false
     }
 }

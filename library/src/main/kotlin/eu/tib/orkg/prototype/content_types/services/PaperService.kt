@@ -122,19 +122,10 @@ class PaperService(
     }
 
     private val Resource.visibility: Visibility
-        get() {
-            if (Classes.paperDeleted in classes) {
-                return Visibility.DELETED
-            }
-            return when (featured ?: false) {
-                true -> when (unlisted ?: false) {
-                    true -> Visibility.UNLISTED
-                    false -> Visibility.FEATURED
-                }
-                false -> when (unlisted ?: false) {
-                    true -> Visibility.UNLISTED
-                    false -> Visibility.LISTED
-                }
-            }
+        get() = when {
+            Classes.paperDeleted in classes -> Visibility.DELETED
+            unlisted ?: false -> Visibility.UNLISTED
+            featured ?: false -> Visibility.FEATURED
+            else -> Visibility.LISTED
         }
 }

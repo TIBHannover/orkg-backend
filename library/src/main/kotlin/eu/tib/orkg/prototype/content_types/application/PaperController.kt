@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.content_types.application
 
 import eu.tib.orkg.prototype.content_types.api.PaperRepresentation
 import eu.tib.orkg.prototype.content_types.api.PaperUseCases
-import eu.tib.orkg.prototype.content_types.domain.model.Visibility
+import eu.tib.orkg.prototype.content_types.api.VisibilityFilter
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.statements.application.BaseController
@@ -35,7 +35,7 @@ class PaperController(
     fun findAll(
         @RequestParam("doi", required = false) doi: String?,
         @RequestParam("title", required = false) title: String?,
-        @RequestParam("visibility", required = false) visibility: Visibility?,
+        @RequestParam("visibility", required = false) visibility: VisibilityFilter?,
         @RequestParam("created_by", required = false) createdBy: ContributorId?,
         pageable: Pageable
     ): Page<PaperRepresentation> {

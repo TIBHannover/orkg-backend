@@ -7,7 +7,7 @@ import eu.tib.orkg.prototype.content_types.api.LabeledObjectRepresentation
 import eu.tib.orkg.prototype.content_types.api.PaperRepresentation
 import eu.tib.orkg.prototype.content_types.api.PaperUseCases
 import eu.tib.orkg.prototype.content_types.api.PublicationInfoRepresentation
-import eu.tib.orkg.prototype.content_types.domain.model.Visibility
+import eu.tib.orkg.prototype.content_types.api.VisibilityFilter
 import eu.tib.orkg.prototype.content_types.application.PaperNotFound
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
@@ -15,6 +15,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.time.OffsetDateTime
@@ -44,13 +45,13 @@ class PaperService(
         resourceRepository.findAllByClassAndLabel(Classes.paper, title, pageable)
             .pmap { it.toPaperRepresentation() }
 
-    override fun findAllByVisibility(visibility: Visibility, pageable: Pageable): Page<PaperRepresentation> =
+    override fun findAllByVisibility(visibility: VisibilityFilter, pageable: Pageable): Page<PaperRepresentation> =
         when (visibility) {
-            Visibility.LISTED -> resourceRepository.findAllListedPapers(pageable)
-            Visibility.UNLISTED -> resourceRepository.findAllUnlistedPapers(pageable)
-            Visibility.FEATURED -> resourceRepository.findAllFeaturedPapers(pageable)
-            Visibility.NON_FEATURED -> resourceRepository.findAllNonFeaturedPapers(pageable)
-            Visibility.DELETED -> resourceRepository.findAllByClass(Classes.paperDeleted, pageable)
+            VisibilityFilter.ALL_LISTED -> resourceRepository.findAllListedPapers(pageable)
+            VisibilityFilter.UNLISTED -> resourceRepository.findAllUnlistedPapers(pageable)
+            VisibilityFilter.FEATURED -> resourceRepository.findAllFeaturedPapers(pageable)
+            VisibilityFilter.NON_FEATURED -> resourceRepository.findAllNonFeaturedPapers(pageable)
+            VisibilityFilter.DELETED -> resourceRepository.findAllByClass(Classes.paperDeleted, pageable)
         }.pmap { it.toPaperRepresentation() }
 
     override fun findAllByContributor(contributorId: ContributorId, pageable: Pageable): Page<PaperRepresentation> =
@@ -125,6 +126,6 @@ class PaperService(
             Classes.paperDeleted in classes -> Visibility.DELETED
             unlisted ?: false -> Visibility.UNLISTED
             featured ?: false -> Visibility.FEATURED
-            else -> Visibility.LISTED
+            else -> Visibility.DEFAULT
         }
 }

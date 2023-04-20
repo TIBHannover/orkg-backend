@@ -10,12 +10,13 @@ import eu.tib.orkg.prototype.content_types.api.LabeledObjectRepresentation
 import eu.tib.orkg.prototype.content_types.api.PaperRepresentation
 import eu.tib.orkg.prototype.content_types.api.PaperUseCases
 import eu.tib.orkg.prototype.content_types.api.PublicationInfoRepresentation
-import eu.tib.orkg.prototype.content_types.domain.model.Visibility
+import eu.tib.orkg.prototype.content_types.api.VisibilityFilter
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import io.mockk.every
 import io.mockk.verify
 import java.time.OffsetDateTime
@@ -109,7 +110,7 @@ internal class PaperControllerUnitTest {
     @Test
     fun `Given several papers are being fetched by visibility, then status is 200 OK and papers are returned`() {
         val papers = listOf(createDummyPaperRepresentation())
-        val visibility = papers.first().visibility
+        val visibility = VisibilityFilter.ALL_LISTED
         every { paperService.findAllByVisibility(visibility, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
 
         get("/api/content-types/paper/?visibility=$visibility")
@@ -241,7 +242,7 @@ internal class PaperControllerUnitTest {
         override val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
         override val createdAt: OffsetDateTime = OffsetDateTime.parse("2023-04-12T16:05:05.959539600+02:00")
         override val createdBy: ContributorId = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620")
-        override val visibility: Visibility = Visibility.LISTED
+        override val visibility: Visibility = Visibility.DEFAULT
         override val verified: Boolean = false
     }
 }

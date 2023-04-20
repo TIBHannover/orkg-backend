@@ -128,7 +128,7 @@ internal class PaperControllerUnitTest {
         val contributorId = papers.first().createdBy
         every { paperService.findAllByContributor(contributorId, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
 
-        mockMvc.get("/api/content-types/paper/?contributor=$contributorId")
+        mockMvc.get("/api/content-types/paper/?created_by=$contributorId")
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -142,9 +142,9 @@ internal class PaperControllerUnitTest {
         val papers = listOf(createDummyPaperRepresentation())
         val title = papers.first().title
         val contributorId = papers.first().createdBy
-        val exception = TooManyParameters.atMostOneOf("doi", "title", "visibility", "contributor")
+        val exception = TooManyParameters.atMostOneOf("doi", "title", "visibility", "created_by")
 
-        mockMvc.get("/api/content-types/paper/?title=$title&contributor=$contributorId")
+        mockMvc.get("/api/content-types/paper/?title=$title&created_by=$contributorId")
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.path").value("/api/content-types/paper/"))

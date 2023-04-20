@@ -30,16 +30,16 @@ class PaperController(
         @RequestParam("doi", required = false) doi: String?,
         @RequestParam("title", required = false) title: String?,
         @RequestParam("visibility", required = false) visibility: Visibility?,
-        @RequestParam("contributor", required = false) contributorId: ContributorId?,
+        @RequestParam("created_by", required = false) createdBy: ContributorId?,
         pageable: Pageable
     ): Page<PaperRepresentation> {
-        if (setOf(doi, title, visibility, contributorId).size > 2)
-            throw TooManyParameters.atMostOneOf("doi", "title", "visibility", "contributor")
+        if (setOf(doi, title, visibility, createdBy).size > 2)
+            throw TooManyParameters.atMostOneOf("doi", "title", "visibility", "created_by")
         return when {
             doi != null -> service.findAllByDOI(doi, pageable)
             title != null -> service.findAllByTitle(title, pageable)
             visibility != null -> service.findAllByVisibility(visibility, pageable)
-            contributorId != null -> service.findAllByContributor(contributorId, pageable)
+            createdBy != null -> service.findAllByContributor(createdBy, pageable)
             else -> service.findAll(pageable)
         }
     }

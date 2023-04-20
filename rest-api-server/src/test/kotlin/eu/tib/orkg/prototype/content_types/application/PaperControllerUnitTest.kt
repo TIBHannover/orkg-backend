@@ -67,7 +67,7 @@ internal class PaperControllerUnitTest {
         val papers = listOf(createDummyPaperRepresentation())
         every { paperService.findAll(any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
 
-        mockMvc.get("/api/content-types/paper/")
+        get("/api/content-types/paper/")
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -82,7 +82,7 @@ internal class PaperControllerUnitTest {
         val doi = papers.first().identifiers["doi"]!!
         every { paperService.findAllByDOI(doi, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
 
-        mockMvc.get("/api/content-types/paper/?doi=$doi")
+        get("/api/content-types/paper/?doi=$doi")
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -97,7 +97,7 @@ internal class PaperControllerUnitTest {
         val title = papers.first().title
         every { paperService.findAllByTitle(title, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
 
-        mockMvc.get("/api/content-types/paper/?title=$title")
+        get("/api/content-types/paper/?title=$title")
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -112,7 +112,7 @@ internal class PaperControllerUnitTest {
         val visibility = papers.first().visibility
         every { paperService.findAllByVisibility(visibility, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
 
-        mockMvc.get("/api/content-types/paper/?visibility=$visibility")
+        get("/api/content-types/paper/?visibility=$visibility")
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -127,7 +127,7 @@ internal class PaperControllerUnitTest {
         val contributorId = papers.first().createdBy
         every { paperService.findAllByContributor(contributorId, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
 
-        mockMvc.get("/api/content-types/paper/?created_by=$contributorId")
+        get("/api/content-types/paper/?created_by=$contributorId")
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -143,7 +143,7 @@ internal class PaperControllerUnitTest {
         val contributorId = papers.first().createdBy
         val exception = TooManyParameters.atMostOneOf("doi", "title", "visibility", "created_by")
 
-        mockMvc.get("/api/content-types/paper/?title=$title&created_by=$contributorId")
+        get("/api/content-types/paper/?title=$title&created_by=$contributorId")
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.path").value("/api/content-types/paper/"))
@@ -156,7 +156,7 @@ internal class PaperControllerUnitTest {
         val contributors = listOf(ContributorId(UUID.randomUUID()))
         every { paperService.findAllContributorsByPaperId(id, any()) } returns PageImpl(contributors, PageRequest.of(0, 5), 1)
 
-        mockMvc.get("/api/content-types/paper/$id/contributors")
+        get("/api/content-types/paper/$id/contributors")
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -171,7 +171,7 @@ internal class PaperControllerUnitTest {
         val exception = PaperNotFound(id)
         every { paperService.findAllContributorsByPaperId(id, any()) } throws exception
 
-        mockMvc.get("/api/content-types/paper/$id/contributors")
+        get("/api/content-types/paper/$id/contributors")
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
             .andExpect(jsonPath("$.path").value("/api/content-types/paper/$id/contributors"))
@@ -180,7 +180,7 @@ internal class PaperControllerUnitTest {
         verify(exactly = 1) { paperService.findAllContributorsByPaperId(id, any()) }
     }
 
-    private fun MockMvc.get(string: String) = perform(MockMvcRequestBuilders.get(string))
+    private fun get(string: String) = mockMvc.perform(MockMvcRequestBuilders.get(string))
 
     private fun createDummyPaperRepresentation() = object : PaperRepresentation {
         override val id: ThingId = ThingId("R123")

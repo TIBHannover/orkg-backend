@@ -10,6 +10,7 @@ import eu.tib.orkg.prototype.content_types.api.PublicationInfoRepresentation
 import eu.tib.orkg.prototype.content_types.domain.model.Visibility
 import eu.tib.orkg.prototype.content_types.application.PaperNotFound
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -56,6 +57,11 @@ class PaperService(
     override fun findAllByContributor(contributorId: ContributorId, pageable: Pageable): Page<PaperRepresentation> =
         resourceRepository.findAllByClassAndCreatedBy(Classes.paper, contributorId, pageable)
             .pmap { it.toPaperRepresentation() }
+
+    override fun findAllContributorsByPaperId(id: ThingId, pageable: Pageable): Page<ContributorId> =
+        resourceRepository.findPaperByResourceId(id)
+            .map { statementRepository.findAllContributorsByResourceId(id, pageable) }
+            .orElseThrow { PaperNotFound(id) }
 
     private fun Resource.toPaperRepresentation(): PaperRepresentation {
         val statements = statementRepository.findAllBySubject(id, PageRequests.ALL).content

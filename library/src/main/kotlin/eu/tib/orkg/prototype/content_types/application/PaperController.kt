@@ -25,6 +25,12 @@ class PaperController(
         @PathVariable id: ThingId
     ): PaperRepresentation = service.findById(id)
 
+    @GetMapping("/{id}/contributors")
+    fun findAllContributorsByPaperId(
+        @PathVariable id: ThingId,
+        pageable: Pageable
+    ): Page<ContributorId> = service.findAllContributorsByPaperId(id, pageable)
+
     @GetMapping("/")
     fun findAll(
         @RequestParam("doi", required = false) doi: String?,

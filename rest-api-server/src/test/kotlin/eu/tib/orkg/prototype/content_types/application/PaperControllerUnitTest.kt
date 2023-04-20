@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.content_types.application
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
-import eu.tib.orkg.prototype.community.application.OrganizationNotFound
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.content_types.api.AuthorRepresentation
@@ -149,6 +148,36 @@ internal class PaperControllerUnitTest {
             .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.path").value("/api/content-types/paper/"))
             .andExpect(jsonPath("$.message").value(exception.message))
+    }
+
+    @Test
+    fun `Given a paper, when contributors are fetched, then status 200 OK and contributors are returned`() {
+        val id = ThingId("R123")
+        val contributors = listOf(ContributorId(UUID.randomUUID()))
+        every { paperService.findAllContributorsByPaperId(id, any()) } returns PageImpl(contributors, PageRequest.of(0, 5), 1)
+
+        mockMvc.get("/api/content-types/paper/$id/contributors")
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.number").value(0)) // page number
+            .andExpect(jsonPath("$.totalElements").value(1))
+
+        verify(exactly = 1) { paperService.findAllContributorsByPaperId(id, any()) }
+    }
+
+    @Test
+    fun `Given a paper, when contributors are fetched but paper is missing, then status 404 NOT FOUND`() {
+        val id = ThingId("R123")
+        val exception = PaperNotFound(id)
+        every { paperService.findAllContributorsByPaperId(id, any()) } throws exception
+
+        mockMvc.get("/api/content-types/paper/$id/contributors")
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.path").value("/api/content-types/paper/$id/contributors"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.findAllContributorsByPaperId(id, any()) }
     }
 
     private fun MockMvc.get(string: String) = perform(MockMvcRequestBuilders.get(string))

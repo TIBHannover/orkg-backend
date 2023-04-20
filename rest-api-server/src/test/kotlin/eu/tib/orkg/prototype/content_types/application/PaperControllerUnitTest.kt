@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.content_types.application
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
+import eu.tib.orkg.prototype.community.application.OrganizationNotFound
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.content_types.api.AuthorRepresentation
@@ -13,6 +14,7 @@ import eu.tib.orkg.prototype.content_types.api.PublicationInfoRepresentation
 import eu.tib.orkg.prototype.content_types.domain.model.Visibility
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
+import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.mockk.every
@@ -27,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+import org.springframework.http.HttpStatus
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -61,7 +64,7 @@ internal class PaperControllerUnitTest {
     }
 
     @Test
-    fun `Given several paper are being fetched, when no parameters are given, then status is 200 OK and papers are returned`() {
+    fun `Given several papers are being fetched, then status is 200 OK and papers are returned`() {
         val papers = listOf(createDummyPaperRepresentation())
         every { paperService.findAll(any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
 
@@ -72,6 +75,80 @@ internal class PaperControllerUnitTest {
             .andExpect(jsonPath("$.totalElements").value(1))
 
         verify(exactly = 1) { paperService.findAll(any()) }
+    }
+
+    @Test
+    fun `Given several papers are being fetched by doi, then status is 200 OK and papers are returned`() {
+        val papers = listOf(createDummyPaperRepresentation())
+        val doi = papers.first().identifiers["doi"]!!
+        every { paperService.findAllByDOI(doi, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
+
+        mockMvc.get("/api/content-types/paper/?doi=$doi")
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.number").value(0)) // page number
+            .andExpect(jsonPath("$.totalElements").value(1))
+
+        verify(exactly = 1) { paperService.findAllByDOI(doi, any()) }
+    }
+
+    @Test
+    fun `Given several papers are being fetched by title, then status is 200 OK and papers are returned`() {
+        val papers = listOf(createDummyPaperRepresentation())
+        val title = papers.first().title
+        every { paperService.findAllByTitle(title, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
+
+        mockMvc.get("/api/content-types/paper/?title=$title")
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.number").value(0)) // page number
+            .andExpect(jsonPath("$.totalElements").value(1))
+
+        verify(exactly = 1) { paperService.findAllByTitle(title, any()) }
+    }
+
+    @Test
+    fun `Given several papers are being fetched by visibility, then status is 200 OK and papers are returned`() {
+        val papers = listOf(createDummyPaperRepresentation())
+        val visibility = papers.first().visibility
+        every { paperService.findAllByVisibility(visibility, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
+
+        mockMvc.get("/api/content-types/paper/?visibility=$visibility")
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.number").value(0)) // page number
+            .andExpect(jsonPath("$.totalElements").value(1))
+
+        verify(exactly = 1) { paperService.findAllByVisibility(visibility, any()) }
+    }
+
+    @Test
+    fun `Given several papers are being fetched by contributor id, then status is 200 OK and papers are returned`() {
+        val papers = listOf(createDummyPaperRepresentation())
+        val contributorId = papers.first().createdBy
+        every { paperService.findAllByContributor(contributorId, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
+
+        mockMvc.get("/api/content-types/paper/?contributor=$contributorId")
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.number").value(0)) // page number
+            .andExpect(jsonPath("$.totalElements").value(1))
+
+        verify(exactly = 1) { paperService.findAllByContributor(contributorId, any()) }
+    }
+
+    @Test
+    fun `Given several papers are being fetched, when multiple query parameters are given, then status is 400 BAD REQUEST`() {
+        val papers = listOf(createDummyPaperRepresentation())
+        val title = papers.first().title
+        val contributorId = papers.first().createdBy
+        val exception = TooManyParameters.atMostOneOf("doi", "title", "visibility", "contributor")
+
+        mockMvc.get("/api/content-types/paper/?title=$title&contributor=$contributorId")
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/content-types/paper/"))
+            .andExpect(jsonPath("$.message").value(exception.message))
     }
 
     private fun MockMvc.get(string: String) = perform(MockMvcRequestBuilders.get(string))

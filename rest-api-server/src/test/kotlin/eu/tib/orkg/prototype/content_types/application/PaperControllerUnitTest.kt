@@ -64,6 +64,32 @@ internal class PaperControllerUnitTest {
     }
 
     @Test
+    fun `Given a paper, when it is fetched by id and service succeeds, then status is 200 OK and contribution is returned`() {
+        val contribution = createDummyPaperRepresentation()
+        every { paperService.findById(contribution.id) } returns contribution
+
+        get("/api/content-types/paper/${contribution.id}")
+            .andExpect(status().isOk)
+
+        verify(exactly = 1) { paperService.findById(contribution.id) }
+    }
+
+    @Test
+    fun `Given a paper, when it is fetched by id and service reports missing paper, then status is 404 NOT FOUND`() {
+        val id = ThingId("Missing")
+        val exception = PaperNotFound(id)
+        every { paperService.findById(id) } throws exception
+
+        get("/api/content-types/paper/$id")
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.path").value("/api/content-types/paper/$id"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.findById(id) }
+    }
+
+    @Test
     fun `Given several papers are being fetched, then status is 200 OK and papers are returned`() {
         val papers = listOf(createDummyPaperRepresentation())
         every { paperService.findAll(any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)

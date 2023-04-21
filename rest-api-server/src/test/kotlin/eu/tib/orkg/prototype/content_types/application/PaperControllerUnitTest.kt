@@ -90,7 +90,7 @@ internal class PaperControllerUnitTest {
     }
 
     @Test
-    fun `Given several papers are being fetched, then status is 200 OK and papers are returned`() {
+    fun `Given several papers, when they are fetched, then status is 200 OK and papers are returned`() {
         val papers = listOf(createDummyPaperRepresentation())
         every { paperService.findAll(any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
 
@@ -104,7 +104,7 @@ internal class PaperControllerUnitTest {
     }
 
     @Test
-    fun `Given several papers are being fetched by doi, then status is 200 OK and papers are returned`() {
+    fun `Given several papers, when they are fetched by doi, then status is 200 OK and papers are returned`() {
         val papers = listOf(createDummyPaperRepresentation())
         val doi = papers.first().identifiers["doi"]!!
         every { paperService.findAllByDOI(doi, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
@@ -119,7 +119,7 @@ internal class PaperControllerUnitTest {
     }
 
     @Test
-    fun `Given several papers are being fetched by title, then status is 200 OK and papers are returned`() {
+    fun `Given several papers, when they are fetched by title, then status is 200 OK and papers are returned`() {
         val papers = listOf(createDummyPaperRepresentation())
         val title = papers.first().title
         every { paperService.findAllByTitle(title, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
@@ -134,7 +134,7 @@ internal class PaperControllerUnitTest {
     }
 
     @Test
-    fun `Given several papers are being fetched by visibility, then status is 200 OK and papers are returned`() {
+    fun `Given several papers, when they are fetched by visibility, then status is 200 OK and papers are returned`() {
         val papers = listOf(createDummyPaperRepresentation())
         val visibility = VisibilityFilter.ALL_LISTED
         every { paperService.findAllByVisibility(visibility, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
@@ -149,7 +149,7 @@ internal class PaperControllerUnitTest {
     }
 
     @Test
-    fun `Given several papers are being fetched by contributor id, then status is 200 OK and papers are returned`() {
+    fun `Given several papers, when they are fetched by contributor id, then status is 200 OK and papers are returned`() {
         val papers = listOf(createDummyPaperRepresentation())
         val contributorId = papers.first().createdBy
         every { paperService.findAllByContributor(contributorId, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
@@ -164,7 +164,7 @@ internal class PaperControllerUnitTest {
     }
 
     @Test
-    fun `Given several papers are being fetched, when multiple query parameters are given, then status is 400 BAD REQUEST`() {
+    fun `Given several papers, when they are fetched but multiple query parameters are given, then status is 400 BAD REQUEST`() {
         val papers = listOf(createDummyPaperRepresentation())
         val title = papers.first().title
         val contributorId = papers.first().createdBy

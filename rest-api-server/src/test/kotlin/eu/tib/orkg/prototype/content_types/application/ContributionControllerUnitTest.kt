@@ -52,7 +52,7 @@ internal class ContributionControllerUnitTest {
     }
 
     @Test
-    fun `Given a contribution, when is fetched by id and service succeeds, then status is 200 OK and contribution is returned`() {
+    fun `Given a contribution, when it is fetched by id and service succeeds, then status is 200 OK and contribution is returned`() {
         val contribution = createDummyContributionRepresentation()
         every { contributionService.findById(contribution.id) } returns contribution
 
@@ -63,7 +63,7 @@ internal class ContributionControllerUnitTest {
     }
 
     @Test
-    fun `Given a contribution, when is fetched by id and service reports missing contribution, then status is 404 NOT FOUND`() {
+    fun `Given a contribution, when it is fetched by id and service reports missing contribution, then status is 404 NOT FOUND`() {
         val id = ThingId("Missing")
         val exception = ContributionNotFound(id)
         every { contributionService.findById(id) } throws exception

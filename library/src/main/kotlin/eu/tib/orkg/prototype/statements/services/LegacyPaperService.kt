@@ -36,7 +36,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
-class LegacyPaperServiceLegacy(
+class LegacyPaperService(
     private val resourceService: ResourceUseCases,
     private val literalService: LiteralUseCases,
     private val predicateService: PredicateUseCases,

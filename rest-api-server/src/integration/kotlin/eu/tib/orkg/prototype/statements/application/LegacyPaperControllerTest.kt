@@ -11,7 +11,7 @@ import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.services.LegacyPaperServiceLegacy
+import eu.tib.orkg.prototype.statements.services.LegacyPaperService
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.not
@@ -51,7 +51,7 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
     private lateinit var statementService: StatementUseCases
 
     @Autowired
-    private lateinit var legacyPaperService: LegacyPaperServiceLegacy
+    private lateinit var legacyPaperService: LegacyPaperService
 
     @Autowired
     private lateinit var userService: AuthUseCase

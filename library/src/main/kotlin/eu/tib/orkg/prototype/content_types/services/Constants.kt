@@ -24,6 +24,7 @@ object Predicates {
 object Classes {
     val paper = ThingId("Paper")
     val paperDeleted = ThingId("PaperDeleted")
+    val contribution = ThingId("Contribution")
 }
 
 object PageRequests {

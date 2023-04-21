@@ -54,3 +54,10 @@ interface LabeledObjectRepresentation {
     val id: ThingId
     val label: String
 }
+
+interface ContributionRepresentation {
+    val id: ThingId
+    val label: String
+    val properties: Map<ThingId, List<ThingId>>
+    val visibility: Visibility
+}

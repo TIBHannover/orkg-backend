@@ -2,7 +2,9 @@ package eu.tib.orkg.prototype.content_types.services
 
 import eu.tib.orkg.prototype.content_types.api.LabeledObjectRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
+import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import java.util.stream.Collectors
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -30,3 +32,11 @@ internal fun List<GeneralStatement>.firstObjectLabel(): String? = firstOrNull()?
 internal fun List<GeneralStatement>.mapIdentifiers(identifiers: Map<ThingId, String>) =
     filter { it.predicate.id in identifiers.keys }
         .associate { identifiers[it.predicate.id]!! to it.`object`.label }
+
+internal val Resource.visibility: Visibility
+    get() = when {
+        Classes.paperDeleted in classes -> Visibility.DELETED
+        unlisted ?: false -> Visibility.UNLISTED
+        featured ?: false -> Visibility.FEATURED
+        else -> Visibility.DEFAULT
+    }

@@ -120,12 +120,4 @@ class PaperService(
         override val identifiers: Map<String, String> = emptyMap()
         override val homepage: String? = null
     }
-
-    private val Resource.visibility: Visibility
-        get() = when {
-            Classes.paperDeleted in classes -> Visibility.DELETED
-            unlisted ?: false -> Visibility.UNLISTED
-            featured ?: false -> Visibility.FEATURED
-            else -> Visibility.DEFAULT
-        }
 }

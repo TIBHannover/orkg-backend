@@ -7,5 +7,5 @@ import org.springframework.http.HttpStatus
 class PaperNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Paper "$id" not found.""")
 
-class AuthorNotFound(id: ThingId) :
-    SimpleMessageException(HttpStatus.NOT_FOUND, """Paper "$id" not found.""")
+class ContributionNotFound(id: ThingId) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Contribution "$id" not found.""")

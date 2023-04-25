@@ -164,7 +164,7 @@ CALL {
     UNION ALL
     MATCH (sub:Visualization:Resource) RETURN sub
     UNION ALL
-    MATCH (sub:Contribution:Resource) RETURN sub
+    MATCH (sub:Comparison:Resource) WITH labels(sub) AS labels, sub WHERE NOT 'ComparisonDeleted' IN labels RETURN sub
 } WITH sub
 RETURN sub.resource_id AS id, sub.label AS label, sub.created_at AS createdAt, COALESCE(sub.created_by, '00000000-0000-0000-0000-000000000000') AS createdBy, labels(sub) AS classes ORDER BY createdAt DESC
 """,
@@ -178,7 +178,7 @@ CALL {
     UNION ALL
     MATCH (sub:Visualization:Resource) RETURN sub
     UNION ALL
-    MATCH (sub:Contribution:Resource) RETURN sub
+    MATCH (sub:Comparison:Resource) WITH labels(sub) AS labels, sub WHERE NOT 'ComparisonDeleted' IN labels RETURN sub
 } WITH sub
 RETURN COUNT(sub)
 """)

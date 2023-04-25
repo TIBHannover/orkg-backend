@@ -576,11 +576,11 @@ class SpringDataNeo4jStatementAdapter(
         val createdBy = name("createdBy")
         val createdAt = name("createdAt")
         val ms = name("ms")
-        val bin = name("bin")
-        val edit = Cypher.listOf(
+        val timestamp = name("timestamp")
+        val edit = listOf(
             createdBy,
             call("apoc.date.format").withArgs(
-                bin,
+                ms,
                 literalOf<String>("ms"),
                 literalOf<String>("yyyy-MM-dd'T'HH:mm:ssXXX")
             ).asFunction()
@@ -600,22 +600,18 @@ class SpringDataNeo4jStatementAdapter(
             .where(node.property("created_by").isNotNull.and(node.property("created_at").isNotNull))
             .with(
                 node.property("created_by").`as`(createdBy),
-                caseExpression()
-                    .`when`(node.property("created_at").matches("""\d+-\d+-\d+T\d+:\d+:\d+\.\d+.*"""))
-                    .then(call("apoc.date.parse").withArgs(
-                        node.property("created_at"),
-                        literalOf<String>("ms"),
-                        literalOf<String>("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-                    ).asFunction())
-                    .elseDefault(call("apoc.date.parse").withArgs(
-                        node.property("created_at"),
-                        literalOf<String>("ms"),
-                        literalOf<String>("yyyy-MM-dd'T'HH:mm:ssXXX")
-                    ).asFunction())
-                    .`as`(ms)
+                call("apoc.text.regreplace").withArgs(
+                    node.property("created_at"),
+                    literalOf<String>("""^(\d+-\d+-\d+T\d+:\d+):\d+(?:\.\d+)?(.*)$"""),
+                    literalOf<String>("$1:00$2")
+                ).asFunction().`as`(timestamp)
             ).with(
-                createdBy as Expression,
-                ms.subtract(ms.asExpression().remainder(literalOf<Int>(60000))).`as`(bin)
+                createdBy,
+                call("apoc.date.parse").withArgs(
+                    timestamp,
+                    literalOf<String>("ms"),
+                    literalOf<String>("yyyy-MM-dd'T'HH:mm:ssXXX")
+                ).asFunction().`as`(ms).asExpression()
             ).withDistinct(edit)
         val query = match
             .returning(valueAt(edit, 0).`as`(createdBy), valueAt(edit, 1).`as`(createdAt))

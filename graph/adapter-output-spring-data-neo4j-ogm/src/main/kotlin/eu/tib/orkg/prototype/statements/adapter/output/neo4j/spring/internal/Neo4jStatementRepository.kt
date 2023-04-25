@@ -243,13 +243,9 @@ WITH DISTINCT nodes
 UNWIND nodes as node
 WITH node
 WHERE node.created_by IS NOT NULL AND node.created_at IS NOT NULL
-WITH node.created_by AS createdBy, 
-CASE
-  WHEN node.created_at =~ "\d+-\d+-\d+T\d+:\d+:\d+\.\d+.*" THEN apoc.date.parse(node.created_at, "ms", "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-  ELSE apoc.date.parse(node.created_at, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX")
-END AS ms
-WITH createdBy, ms - (ms % 60000) as bin
-WITH DISTINCT [createdBy, apoc.date.format(bin, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX")] AS edit
+WITH node.created_by AS createdBy, apoc.text.regreplace(node.created_at, "^(\d+-\d+-\d+T\d+:\d+):\d+(?:\.\d+)?(.*)${'$'}", "${'$'}1:00${'$'}2") AS timestamp
+WITH createdBy, apoc.date.parse(timestamp, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX") AS ms
+WITH DISTINCT [createdBy, apoc.date.format(ms, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX")] AS edit
 RETURN edit[0] as createdBy, edit[1] as createdAt
 ORDER BY createdAt DESC""",
         countQuery = """MATCH (n:Resource {resource_id: $id})
@@ -262,14 +258,10 @@ WITH DISTINCT nodes
 UNWIND nodes as node
 WITH node
 WHERE node.created_by IS NOT NULL AND node.created_at IS NOT NULL
-WITH node.created_by AS createdBy, 
-CASE
-  WHEN node.created_at =~ "\d+-\d+-\d+T\d+:\d+:\d+\.\d+.*" THEN apoc.date.parse(node.created_at, "ms", "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-  ELSE apoc.date.parse(node.created_at, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX")
-END AS ms
-WITH createdBy, ms - (ms % 60000) as bin
-WITH DISTINCT [createdBy, apoc.date.format(bin, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX")] AS edit
-RETURN COUNT(edit) as cnt""")
+WITH node.created_by AS createdBy, apoc.text.regreplace(node.created_at, "^(\d+-\d+-\d+T\d+:\d+):\d+(?:\.\d+)?(.*)${'$'}", "${'$'}1:00${'$'}2") AS timestamp
+WITH createdBy, apoc.date.parse(timestamp, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX") AS ms
+WITH DISTINCT [createdBy, apoc.date.format(ms, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX")] AS edit
+RETURN COUNT(edit) AS cnt""")
     fun findTimelineByResourceId(id: ResourceId, pageable: Pageable): Page<ResourceContributor>
 
     @Query("""MATCH (n:Resource {resource_id: $id}) RETURN EXISTS ((n)-[:RELATED]-(:Thing)) AS used""")

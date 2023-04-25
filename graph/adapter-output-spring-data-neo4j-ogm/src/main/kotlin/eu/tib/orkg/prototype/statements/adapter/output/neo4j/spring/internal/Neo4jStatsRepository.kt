@@ -5,12 +5,12 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.spi.ChangeLogResponse
 import eu.tib.orkg.prototype.statements.spi.FieldsStats
 import eu.tib.orkg.prototype.statements.spi.ObservatoryResources
-import eu.tib.orkg.prototype.statements.spi.ResultObject
-import eu.tib.orkg.prototype.statements.spi.TopContributorIdentifiers
 import eu.tib.orkg.prototype.statements.spi.TrendingResearchProblems
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.Query
+import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
 private const val date = "${'$'}date"
@@ -33,21 +33,146 @@ interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
     @Query("""MATCH (n:Paper:Resource) WHERE n.observatory_id<>'00000000-0000-0000-0000-000000000000' WITH DISTINCT (n.observatory_id) AS observatoryId, COUNT(n) AS resources OPTIONAL MATCH (c:Comparison:Resource) where c.observatory_id<>'00000000-0000-0000-0000-000000000000' AND c.observatory_id = observatoryId WITH DISTINCT (c.observatory_id) as cobservatoryId, count(c) as comparisons, resources, observatoryId RETURN observatoryId, resources, comparisons""")
     fun getObservatoriesPapersAndComparisonsCount(): List<ObservatoryResources>
 
-    @Query("""MATCH(sub: Resource) WHERE ('Paper' IN LABELS(sub) OR 'Comparison' IN LABELS(sub) OR 'Problem' IN LABELS(sub) OR 'Contribution' IN LABELS(sub) OR 'Visualization' IN LABELS(sub)) AND (sub.created_by <> '00000000-0000-0000-0000-000000000000' AND sub.created_at > $date ) RETURN DISTINCT sub.created_by AS id, count(sub) AS contributions""",
-        countQuery = "MATCH(sub: Resource) WHERE ('Paper' IN LABELS(sub) OR 'Comparison' IN LABELS(sub) OR 'Problem' IN LABELS(sub) OR 'Contribution' IN LABELS(sub) OR 'Visualization' IN LABELS(sub)) AND (sub.created_by <> '00000000-0000-0000-0000-000000000000' AND sub.created_at > $date ) RETURN DISTINCT COUNT(sub.created_by) AS cnt")
-    fun getTopCurrentContributorIdsAndContributionsCount(date: String, pageable: Pageable): Page<TopContributorIdentifiers>
+    @Query("""
+CALL {
+    MATCH (n:Paper:Resource)
+    WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+    RETURN n.created_by AS id, COUNT(n) AS papers, 0 AS comparisons, 0 AS contributions, 0 AS visualizations, 0 AS problems
+    UNION ALL
+    MATCH (n:Comparison:Resource)
+    WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+    RETURN n.created_by AS id, 0 AS papers, COUNT(n) AS comparisons, 0 AS contributions, 0 AS visualizations, 0 AS problems
+    UNION ALL
+    MATCH (n:Contribution:Resource)
+    WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+    RETURN n.created_by AS id, 0 AS papers, 0 AS comparisons, COUNT(n) AS contributions, 0 AS visualizations, 0 AS problems
+    UNION ALL
+    MATCH (n:Visualization:Resource)
+    WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+    RETURN n.created_by AS id, 0 AS papers, 0 AS comparisons, 0 AS contributions, COUNT(n) AS visualizations, 0 AS problems
+    UNION ALL
+    MATCH (n:Problem:Resource) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+    RETURN n.created_by AS id, 0 AS papers, 0 AS comparisons, 0 AS contributions, 0 AS visualizations, COUNT(n) AS problems
+} WITH id, SUM(papers) AS papers, SUM(contributions) AS contributions, SUM(comparisons) AS comparisons, SUM(visualizations) AS visualizations, SUM(problems) AS problems
+RETURN id AS contributor, papers, contributions, comparisons, visualizations, problems, (papers + contributions + comparisons + visualizations + problems) AS total""",
+        countQuery = """
+CALL {
+    MATCH (n:Paper:Resource)
+    WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+    RETURN DISTINCT n.created_by AS id
+    UNION ALL
+    MATCH (n:Comparison:Resource)
+    WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+    RETURN DISTINCT n.created_by AS id
+    UNION ALL
+    MATCH (n:Contribution:Resource)
+    WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+    RETURN DISTINCT n.created_by AS id
+    UNION ALL
+    MATCH (n:Visualization:Resource)
+    WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+    RETURN DISTINCT n.created_by AS id
+    UNION ALL
+    MATCH (n:Problem:Resource)
+    WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+    RETURN DISTINCT n.created_by AS id
+} WITH DISTINCT id
+RETURN COUNT(id)""")
+    fun getTopCurrentContributorIdsAndContributionsCount(date: String, pageable: Pageable): Page<Neo4jContributorRecord>
 
     /**
      * This query fetches the contributor IDs from sub research fields as well.
      */
-    @Query("""MATCH (research:ResearchField:Resource)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(research1:ResearchField{resource_id: $id}) WITH (COLLECT(research) + COLLECT(research1)) AS r OPTIONAL MATCH(c:Contribution:Resource)<-[:RELATED{predicate_id: 'P31'}]-(p:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(inner_r) WHERE inner_r in r AND c.created_by IS NOT NULL AND c.created_by <> '00000000-0000-0000-0000-000000000000' AND c.created_at > $date  WITH  c.created_by AS contribution_creators, COUNT(c.created_by) AS cnt RETURN COLLECT({id:contribution_creators, cnt:cnt}) AS total UNION MATCH (research:ResearchField:Resource)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(research1:ResearchField{resource_id: $id}) WITH (COLLECT(research) + COLLECT(research1)) AS r OPTIONAL MATCH(comparison1: Comparison)-[related:RELATED]->(contribution1:Contribution)<-[:RELATED{predicate_id: 'P31'}]-(p1:Paper)-[:RELATED {predicate_id: 'P30'}]->(inner_r) WHERE inner_r in r AND comparison1.created_by IS NOT NULL AND comparison1.created_by <> '00000000-0000-0000-0000-000000000000' AND comparison1.created_at > $date WITH  comparison1.created_by AS comparison_creators, COUNT(comparison1.created_by) AS cnt RETURN COLLECT({id:comparison_creators, cnt:cnt}) AS total UNION MATCH (research:ResearchField:Resource)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(research1:ResearchField{resource_id: $id}) WITH (COLLECT(research) + COLLECT(research1)) AS r OPTIONAL MATCH(p1:Paper)-[:RELATED {predicate_id: 'P30'}]->(inner_r) WHERE inner_r in r AND p1.created_by IS NOT NULL AND p1.created_by <> '00000000-0000-0000-0000-000000000000' AND p1.created_at > $date WITH  p1.created_by AS paper_creators, COUNT(p1.created_by) AS cnt RETURN COLLECT({id:paper_creators, cnt:cnt}) AS total UNION MATCH (research:ResearchField:Resource)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(research1:ResearchField{resource_id: $id}) WITH (COLLECT(research) + COLLECT(research1)) AS r OPTIONAL MATCH (v:Visualization:Resource)<-[:RELATED]-(comparison1: Comparison)-[related:RELATED]->(contribution1:Contribution)<-[:RELATED{predicate_id: 'P31'}]-(p1:Paper)-[:RELATED {predicate_id: 'P30'}]->(inner_r) WHERE inner_r in r AND v.created_by IS NOT NULL AND v.created_by <> '00000000-0000-0000-0000-000000000000' AND v.created_at > $date WITH  v.created_by AS visualization_creators, COUNT(v.created_by) AS cnt RETURN COLLECT({id:visualization_creators, cnt:cnt}) AS total UNION MATCH (research:ResearchField:Resource)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(research1:ResearchField{resource_id: $id}) WITH (COLLECT(research) + COLLECT(research1)) AS r OPTIONAL MATCH (problem:Problem:Resource)<-[:RELATED]-(c:Contribution:Resource)<-[:RELATED{predicate_id: 'P31'}]-(p:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(inner_r) WHERE inner_r in r AND problem.created_by IS NOT NULL AND problem.created_by <> '00000000-0000-0000-0000-000000000000' AND problem.created_at > $date WITH  problem.created_by AS problem_creators, COUNT(problem.created_by) AS cnt RETURN COLLECT({id:problem_creators, cnt:cnt}) AS total""")
-    fun getTopCurContribIdsAndContribCountByResearchFieldId(id: ResourceId, date: String): List<List<Map<String, List<ResultObject>>>>
+    @Query("""
+CALL {
+    MATCH (field:ResearchField:Resource {resource_id: $id})
+    RETURN field
+    UNION ALL
+    MATCH (field:ResearchField:Resource {resource_id: $id})
+    CALL apoc.path.subgraphAll(field, {labelFilter: "+ResearchField", relationshipFilter: "RELATED>"})
+    YIELD relationships
+    UNWIND relationships AS rel
+    WITH rel
+    WHERE rel.predicate_id = "P36"
+    RETURN endNode(rel) AS field
+} WITH field
+MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(field)
+OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution:Resource)
+OPTIONAL MATCH (cmp:Comparison:Resource)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
+OPTIONAL MATCH (cmp)-[:RELATED {predicate_id: "hasVisualization"}]->(vsl:Visualization:Resource)
+OPTIONAL MATCH (ctr)-[:RELATED {predicate_id: "P32"}]->(prb:Problem:Resource)
+WITH [
+    [ppr, [1, 0, 0, 0, 0]],
+    [ctr, [0, 1, 0, 0, 0]],
+    [cmp, [0, 0, 1, 0, 0]],
+    [vsl, [0, 0, 0, 1, 0]],
+    [prb, [0, 0, 0, 0, 1]]
+] AS nodes
+UNWIND nodes AS n
+WITH DISTINCT n
+WHERE n[0] IS NOT NULL AND n[0].created_by <> "00000000-0000-0000-0000-000000000000" AND n[0].created_at > $date
+WITH n[0].created_by AS contributor, SUM(n[1][0]) AS papers, SUM(n[1][1]) AS contributions, SUM(n[1][2]) AS comparisons, SUM(n[1][3]) AS visualizations, SUM(n[1][4]) AS problems
+RETURN contributor, papers, contributions, comparisons, visualizations, problems, (papers + contributions + comparisons + visualizations + problems) AS total""",
+        countQuery = """
+CALL {
+    MATCH (field:ResearchField:Resource {resource_id: $id})
+    RETURN field
+    UNION ALL
+    MATCH (field:ResearchField:Resource {resource_id: $id})
+    CALL apoc.path.subgraphAll(field, {labelFilter: "+ResearchField", relationshipFilter: "RELATED>"})
+    YIELD relationships
+    UNWIND relationships AS rel
+    WITH rel
+    WHERE rel.predicate_id = "P36"
+    RETURN endNode(rel) AS field
+} WITH field
+MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(field)
+OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution:Resource)
+OPTIONAL MATCH (cmp:Comparison:Resource)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
+OPTIONAL MATCH (cmp)-[:RELATED {predicate_id: "hasVisualization"}]->(vsl:Visualization:Resource)
+OPTIONAL MATCH (ctr)-[:RELATED {predicate_id: "P32"}]->(prb:Problem:Resource)
+WITH [ppr, ctr, cmp, vsl, prb] AS nodes
+UNWIND nodes AS n
+WITH DISTINCT n
+WHERE n IS NOT NULL AND n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+WITH DISTINCT n.created_by AS contributor
+RETURN COUNT(contributor)""")
+    fun getTopCurContribIdsAndContribCountByResearchFieldId(id: ResourceId, date: String, pageable: Pageable): Page<Neo4jContributorRecord>
 
     /**
      * This query fetches the contributor ID from only research fields and excludes sub research fields.
      */
-    @Query("""MATCH (research:ResearchField:Resource{resource_id: $id}) WITH COLLECT(research) AS r OPTIONAL MATCH(c:Contribution:Resource)<-[:RELATED{predicate_id: 'P31'}]-(p:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(inner_r) WHERE inner_r in r AND c.created_by IS NOT NULL AND c.created_by <> '00000000-0000-0000-0000-000000000000' AND c.created_at > $date  WITH c.created_by AS contribution_creators, COUNT(c.created_by) AS cnt RETURN COLLECT({id:contribution_creators, cnt:cnt}) AS total UNION MATCH (research:ResearchField:Resource{resource_id: $id})WITH COLLECT(research) AS r OPTIONAL MATCH(comparison1: Comparison)-[related:RELATED]->(contribution1:Contribution)<-[:RELATED{predicate_id: 'P31'}]-(p1:Paper)-[:RELATED {predicate_id: 'P30'}]->(inner_r) WHERE inner_r in r AND comparison1.created_by IS NOT NULL AND comparison1.created_by <> '00000000-0000-0000-0000-000000000000' AND comparison1.created_at > $date WITH  comparison1.created_by AS comparison_creators,COUNT(comparison1.created_by) AS cnt RETURN COLLECT({id:comparison_creators, cnt:cnt}) AS total UNION MATCH (research:ResearchField:Resource{resource_id: $id}) WITH COLLECT(research) AS r OPTIONAL MATCH(p1:Paper)-[:RELATED {predicate_id: 'P30'}]->(inner_r) WHERE inner_r in r AND p1.created_by IS NOT NULL AND p1.created_by <> '00000000-0000-0000-0000-000000000000' AND p1.created_at > $date WITH  p1.created_by AS paper_creators, COUNT(p1.created_by) AS cnt RETURN COLLECT({id:paper_creators, cnt:cnt}) AS total UNION MATCH (research:ResearchField:Resource{resource_id: $id}) WITH COLLECT(research) AS r OPTIONAL MATCH (v:Visualization:Resource)<-[:RELATED]-(comparison1: Comparison)-[related:RELATED]->(contribution1:Contribution)<-[:RELATED{predicate_id: 'P31'}]-(p1:Paper)-[:RELATED {predicate_id: 'P30'}]->(inner_r) WHERE inner_r in r AND v.created_by IS NOT NULL AND v.created_by <> '00000000-0000-0000-0000-000000000000' AND v.created_at > $date WITH  v.created_by AS visualization_creators, COUNT(v.created_by) AS cnt RETURN COLLECT({id:visualization_creators, cnt:cnt}) AS total UNION MATCH (research:ResearchField:Resource{resource_id: $id}) WITH COLLECT(research) AS r OPTIONAL MATCH (problem:Problem:Resource)<-[:RELATED]-(c:Contribution:Resource)<-[:RELATED{predicate_id: 'P31'}]-(p:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(inner_r) WHERE inner_r in r AND problem.created_by IS NOT NULL AND problem.created_by <> '00000000-0000-0000-0000-000000000000'AND problem.created_at > $date WITH  problem.created_by AS problem_creators, COUNT(problem.created_by) AS cnt RETURN COLLECT({id:problem_creators, cnt:cnt}) AS total""")
-    fun getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(id: ResourceId, date: String): List<List<Map<String, List<ResultObject>>>>
+    @Query("""
+MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(:ResearchField:Resource {resource_id: $id})
+OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution:Resource)
+OPTIONAL MATCH (cmp:Comparison:Resource)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
+OPTIONAL MATCH (cmp)-[:RELATED {predicate_id: "hasVisualization"}]->(vsl:Visualization:Resource)
+OPTIONAL MATCH (ctr)-[:RELATED {predicate_id: "P32"}]->(prb:Problem:Resource)
+WITH [
+    [ppr, [1, 0, 0, 0, 0]],
+    [ctr, [0, 1, 0, 0, 0]],
+    [cmp, [0, 0, 1, 0, 0]],
+    [vsl, [0, 0, 0, 1, 0]],
+    [prb, [0, 0, 0, 0, 1]]
+] AS nodes
+UNWIND nodes AS n
+WITH DISTINCT n
+WHERE n[0] IS NOT NULL AND n[0].created_by <> "00000000-0000-0000-0000-000000000000" AND n[0].created_at > $date
+WITH n[0].created_by AS contributor, SUM(n[1][0]) AS papers, SUM(n[1][1]) AS contributions, SUM(n[1][2]) AS comparisons, SUM(n[1][3]) AS visualizations, SUM(n[1][4]) AS problems
+RETURN contributor, papers, contributions, comparisons, visualizations, problems, (papers + contributions + comparisons + visualizations + problems) AS total""",
+        countQuery = """
+MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(r:ResearchField:Resource {resource_id: $id})
+OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution:Resource)
+OPTIONAL MATCH (cmp:Comparison:Resource)-[:RELATED {predicate_id: "compareContribution"}]->(ctr)
+OPTIONAL MATCH (cmp)-[:RELATED {predicate_id: "hasVisualization"}]->(vsl:Visualization:Resource)
+OPTIONAL MATCH (ctr)-[:RELATED {predicate_id: "P32"}]->(prb:Problem:Resource)
+WITH [ppr, ctr, cmp, vsl, prb] AS nodes
+UNWIND nodes AS n
+WITH DISTINCT n
+WHERE n IS NOT NULL AND n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+WITH DISTINCT n.created_by AS contributor
+RETURN COUNT(contributor)""")
+    fun getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(id: ResourceId, date: String, pageable: Pageable): Page<Neo4jContributorRecord>
 
     @Query("""
 CALL {
@@ -130,3 +255,14 @@ RETURN COUNT(n)""")
     @Query("""MATCH (n:Thing) WHERE NOT (n)--() RETURN COUNT(n) AS orphanedNodes""")
     fun getOrphanedNodesCount(): Long
 }
+
+@QueryResult
+data class Neo4jContributorRecord(
+    val contributor: String, // TODO: Should be ContributorId
+    val comparisons: Long,
+    val papers: Long,
+    val contributions: Long,
+    val problems: Long,
+    val visualizations: Long,
+    val total: Long
+)

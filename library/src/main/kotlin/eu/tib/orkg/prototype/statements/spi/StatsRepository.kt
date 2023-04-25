@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.spi
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -16,9 +17,20 @@ interface StatsRepository {
     fun getObservatoryPapersCount(id: ObservatoryId): Long
     fun getObservatoryComparisonsCount(id: ObservatoryId): Long
     fun getObservatoriesPapersAndComparisonsCount(): List<ObservatoryResources>
-    fun getTopCurrentContributorIdsAndContributionsCount(date: String, pageable: Pageable): Page<TopContributorIdentifiers>
-    fun getTopCurContribIdsAndContribCountByResearchFieldId(id: ThingId, date: String): List<List<Map<String, List<ResultObject>>>>
-    fun getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(id: ThingId, date: String): List<List<Map<String, List<ResultObject>>>>
+    fun getTopCurrentContributorIdsAndContributionsCount(
+        date: String,
+        pageable: Pageable
+    ): Page<RetrieveStatisticsUseCase.ContributorRecord>
+    fun getTopCurContribIdsAndContribCountByResearchFieldId(
+        id: ThingId,
+        date: String,
+        pageable: Pageable
+    ): Page<RetrieveStatisticsUseCase.ContributorRecord>
+    fun getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(
+        id: ThingId,
+        date: String,
+        pageable: Pageable
+    ): Page<RetrieveStatisticsUseCase.ContributorRecord>
     fun getChangeLog(pageable: Pageable): Page<ChangeLogResponse>
     fun getChangeLogByResearchField(id: ThingId, pageable: Pageable): Page<ChangeLogResponse>
     fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems>
@@ -74,15 +86,4 @@ data class TrendingResearchProblems(
     val id: String,
     val researchProblem: String,
     val papersCount: Long
-)
-
-/**
- * Data class comprising of contributor ID
- * and the number of contributions
- * per contributor
- */
-@QueryResult
-data class TopContributorIdentifiers(
-    val id: String,
-    val contributions: Long
 )

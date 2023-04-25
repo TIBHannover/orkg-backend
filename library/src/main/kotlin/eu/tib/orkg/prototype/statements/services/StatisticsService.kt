@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.statements.services
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.UserEntity
 import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.JpaUserRepository
+import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.UserEntity
 import eu.tib.orkg.prototype.auth.domain.User
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresObservatoryRepository
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
@@ -11,13 +11,11 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
-import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Stats
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ChangeLogResponse
 import eu.tib.orkg.prototype.statements.spi.ObservatoryResources
-import eu.tib.orkg.prototype.statements.spi.ResultObject
 import eu.tib.orkg.prototype.statements.spi.StatsRepository
-import eu.tib.orkg.prototype.statements.spi.TopContributorIdentifiers
 import eu.tib.orkg.prototype.statements.spi.TrendingResearchProblems
 import java.time.LocalDate
 import java.util.*
@@ -80,12 +78,11 @@ class StatisticsService(
     override fun getObservatoriesPapersAndComparisonsCount(): List<ObservatoryResources> =
         statsRepository.getObservatoriesPapersAndComparisonsCount()
 
-    override fun getTopCurrentContributors(pageable: Pageable, days: Long): Page<TopContributorsWithProfile> {
-        val previousMonthDate: String = calculateStartDate(daysAgo = days)
-
-        return getContributorsWithProfile(statsRepository.getTopCurrentContributorIdsAndContributionsCount(
-            previousMonthDate, pageable), pageable)
-    }
+    override fun getTopCurrentContributors(
+        days: Long,
+        pageable: Pageable
+    ): Page<RetrieveStatisticsUseCase.ContributorRecord> =
+        statsRepository.getTopCurrentContributorIdsAndContributionsCount(calculateStartDate(daysAgo = days), pageable)
 
     override fun getRecentChangeLog(pageable: Pageable): Page<ChangeLog> {
         val changeLogs = statsRepository.getChangeLog(pageable)
@@ -103,29 +100,25 @@ class StatisticsService(
 
     override fun getTopCurrentContributorsByResearchField(
         id: ThingId,
-        days: Long
-    ): Iterable<TopContributorsWithProfileAndTotalCount> {
-        val previousMonthDate: String = calculateStartDate(daysAgo = days)
-
-        val values = statsRepository.getTopCurContribIdsAndContribCountByResearchFieldId(id, previousMonthDate)
-
-        val totalContributions = extractAndCalculateContributionDetails(values)
-
-        return getContributorsWithProfileAndTotalCount(totalContributions)
-    }
+        days: Long,
+        pageable: Pageable
+    ): Page<RetrieveStatisticsUseCase.ContributorRecord> =
+        statsRepository.getTopCurContribIdsAndContribCountByResearchFieldId(
+            id,
+            calculateStartDate(daysAgo = days),
+            pageable
+        )
 
     override fun getTopCurrentContributorsByResearchFieldExcludeSubFields(
         id: ThingId,
-        days: Long
-    ): Iterable<TopContributorsWithProfileAndTotalCount> {
-        val previousMonthDate: String = calculateStartDate(daysAgo = days)
-
-        val values = statsRepository.getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(id, previousMonthDate)
-
-        val totalContributions = extractAndCalculateContributionDetails(values)
-
-        return getContributorsWithProfileAndTotalCount(totalContributions)
-    }
+        days: Long,
+        pageable: Pageable
+    ): Page<RetrieveStatisticsUseCase.ContributorRecord> =
+        statsRepository.getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(
+            id,
+            calculateStartDate(daysAgo = days),
+            pageable
+        )
 
     private fun getChangeLogsWithProfile(changeLogs: Page<ChangeLogResponse>, pageable: Pageable): Page<ChangeLog> {
         val refinedChangeLog = mutableListOf<ChangeLog>()
@@ -150,112 +143,11 @@ class StatisticsService(
         return PageImpl(refinedChangeLog, pageable, refinedChangeLog.size.toLong())
     }
 
-    private fun getContributorsWithProfile(topContributors: Page<TopContributorIdentifiers>, pageable: Pageable): Page<TopContributorsWithProfile> {
-        val userIdList = topContributors.content.map { UUID.fromString(it.id) }.toTypedArray()
-
-        val mapValues = userRepository.findByIdIn(userIdList)
-            .map(UserEntity::toUser)
-            .map(User::toContributor)
-            .groupBy(Contributor::id)
-
-        val refinedTopContributors =
-            topContributors.content.map { topContributor ->
-                val contributor = mapValues[ContributorId(topContributor.id)]?.first()
-                TopContributorsWithProfile(topContributor.contributions, Profile(contributor?.id, contributor?.name, contributor?.gravatarId, contributor?.avatarURL))
-            } as MutableList<TopContributorsWithProfile>
-
-        return PageImpl(refinedTopContributors, pageable, refinedTopContributors.size.toLong())
-    }
-
-    private fun getContributorsWithProfileAndTotalCount(topContributors: List<OverallContributions>): List<TopContributorsWithProfileAndTotalCount> {
-        val userIdList = topContributors.map { UUID.fromString(it.id) }.toTypedArray()
-
-        val mapValues = userRepository.findByIdIn(userIdList)
-            .map(UserEntity::toUser)
-            .map(User::toContributor)
-            .groupBy(Contributor::id)
-
-        return topContributors.map { topContributor ->
-            val contributor = mapValues[topContributor.id?.let { ContributorId(it) }]?.first()
-            TopContributorsWithProfileAndTotalCount(
-                topContributor.individualContributionsCount as IndividualContributionsCount,
-                Profile(contributor?.id, contributor?.name, contributor?.gravatarId, contributor?.avatarURL)
-            )
-        }
-    }
-
     private fun extractValue(map: Map<*, *>, key: String): Long {
         return if (map.containsKey(key))
             map[key] as Long
         else
             0
-    }
-
-    private fun extractAndCalculateContributionDetails(values: List<List<Map<String, List<ResultObject>>>>): List<OverallContributions> {
-        val mapLookUpResult = mutableMapOf<String, IndividualContributionsCount>()
-
-        values.forEachIndexed { index, row ->
-            row.forEach { hashMap ->
-                if (hashMap["total"] != null) {
-                    val value = hashMap["total"]
-                    val iter = value?.iterator()
-                    while (iter != null && iter.hasNext()) {
-                        val mapEntry = iter.next()
-                        if (mapEntry["id"] != null) {
-                            val id = mapEntry["id"] as String
-                            val cnt = mapEntry["cnt"] as Long
-
-                            val counts = if (mapLookUpResult.containsKey(id)) {
-                                mapLookUpResult[id]!!
-                            } else {
-                                IndividualContributionsCount()
-                            }
-
-                            mapLookUpResult[id] = updateCount(index, counts, cnt)
-                        }
-                    }
-                }
-            }
-        }
-
-        /*Returning a maximum of top 30 results from the list
-        since post processing is not possible in UNION for
-        Neo4j < 4.When Neo4j is upgraded, the limit
-        should be applied in the cypher query
-        Also, processing here makes sense for now since
-        all the contributions need to be added to get the
-        list in descending order before getting the top 30.
-        Also note: Frontend needs just 30 as it fits on
-        wide-body monitors*/
-        return mapLookUpResult.entries.map { mapEntry ->
-            OverallContributions(mapEntry.key, mapEntry.value)
-        }.sortedByDescending { it.individualContributionsCount?.total }
-            .subList(0, if (mapLookUpResult.size > 30) 30 else mapLookUpResult.size)
-    }
-
-    private fun updateCount(index: Int, counts: IndividualContributionsCount, value: Long?): IndividualContributionsCount {
-        // 0 = Contribution; 1 = Comparison; 2 = Paper; 3 = Visualization; 4 = Problem
-        when (index) {
-            0 -> {
-                counts.contributions = value ?: 0
-            }
-            1 -> {
-                counts.comparisons = value ?: 0
-            }
-            2 -> {
-                counts.papers = value ?: 0
-            }
-            3 -> {
-                counts.visualizations = value ?: 0
-            }
-            4 -> {
-                counts.problems = value ?: 0
-            } else -> {
-                throw IllegalStateException("Contributions: The query returns more indices than expected")
-            }
-        }
-
-        return counts
     }
 
     private fun calculateStartDate(daysAgo: Long): String =
@@ -282,27 +174,6 @@ data class ChangeLog(
 )
 
 /**
- * Class containing top contributors along with
- * contributions count and the corresponding
- * profile
- */
-data class TopContributorsWithProfileAndTotalCount(
-    @JsonProperty("counts")
-    val individualContributions: IndividualContributionsCount,
-    val profile: Profile
-)
-
-/**
- * Class containing top contributors along with
- * contributions count and the corresponding
- * profile
- */
-data class TopContributorsWithProfile(
-    val contributions: Long,
-    val profile: Profile?
-)
-
-/**
  * Class used only to display minimal profile details
  * of contributors
  */
@@ -315,28 +186,3 @@ data class Profile(
     @JsonProperty("gravatar_url")
     val gravatarUrl: String?
 )
-
-/**
- * Data class containing individual contributions and id
- */
-data class OverallContributions(
-    @JsonProperty("id")
-    var id: String? = null,
-    @JsonProperty("counts")
-    var individualContributionsCount: IndividualContributionsCount? = null
-)
-
-/**
- * Data class containing individual contributions
- */
-data class IndividualContributionsCount(
-    var contributions: Long = 0,
-    var comparisons: Long = 0,
-    var papers: Long = 0,
-    var visualizations: Long = 0,
-    var problems: Long = 0
-
-) {
-    val total: Long
-        get() = contributions + comparisons + papers + visualizations + problems
-}

@@ -20,7 +20,7 @@ WITH last(nodes(path)) AS paper, apoc.coll.reverse(apoc.coll.flatten([r in relat
 UNWIND path AS thing
 MATCH (t:Thing)
 WHERE t.resource_id = thing.resource_id OR t.predicate_id = thing.predicate_id
-RETURN paper, COLLECT(t) AS path""",
+RETURN paper, COLLECT(t) AS path $PAGE_PARAMS""",
         countQuery = """
 MATCH (r:Resource {resource_id: $id})
 CALL apoc.path.expandConfig(r, {relationshipFilter: "<RELATED", labelFilter: "/Paper", uniqueness: "RELATIONSHIP_GLOBAL"})

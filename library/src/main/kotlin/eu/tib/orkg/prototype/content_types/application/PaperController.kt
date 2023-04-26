@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/content-types/paper/")
+@RequestMapping("/api/content-types/papers/")
 class PaperController(
     private val service: PaperUseCases
 ) : BaseController() {

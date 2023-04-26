@@ -56,7 +56,7 @@ internal class ContributionControllerUnitTest {
         val contribution = createDummyContributionRepresentation()
         every { contributionService.findById(contribution.id) } returns contribution
 
-        get("/api/content-types/contribution/${contribution.id}")
+        get("/api/content-types/contributions/${contribution.id}")
             .andExpect(status().isOk)
 
         verify(exactly = 1) { contributionService.findById(contribution.id) }
@@ -68,10 +68,10 @@ internal class ContributionControllerUnitTest {
         val exception = ContributionNotFound(id)
         every { contributionService.findById(id) } throws exception
 
-        get("/api/content-types/contribution/$id")
+        get("/api/content-types/contributions/$id")
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/content-types/contribution/$id"))
+            .andExpect(jsonPath("$.path").value("/api/content-types/contributions/$id"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
         verify(exactly = 1) { contributionService.findById(id) }

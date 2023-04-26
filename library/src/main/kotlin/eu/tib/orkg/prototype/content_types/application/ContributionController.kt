@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/content-types/contribution/")
+@RequestMapping("/api/content-types/contributions/")
 class ContributionController(
     private val service: ContributionUseCases
 ) : BaseController() {

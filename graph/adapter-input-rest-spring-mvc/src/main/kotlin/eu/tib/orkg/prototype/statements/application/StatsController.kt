@@ -2,11 +2,9 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
-import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Stats
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.ChangeLog
-import eu.tib.orkg.prototype.statements.services.TopContributorsWithProfile
-import eu.tib.orkg.prototype.statements.services.TopContributorsWithProfileAndTotalCount
 import eu.tib.orkg.prototype.statements.spi.TrendingResearchProblems
 import java.util.*
 import org.springframework.data.domain.Page
@@ -95,35 +93,37 @@ class StatsController(private val service: RetrieveStatisticsUseCase) {
         ResponseEntity.ok(service.getRecentChangeLogByResearchField(id, pageable))
 
     /**
-     * Fetch the top contributors along with
-     * the profile details
+     * Fetch the top contributors
      */
     @GetMapping("/top/contributors")
     @ResponseStatus(HttpStatus.OK)
-    fun getTopContributors(pageable: Pageable, @RequestParam days: Optional<Long>): ResponseEntity<Page<TopContributorsWithProfile>> {
-        if (days.isPresent) {
-            return ResponseEntity.ok(service.getTopCurrentContributors(pageable, days.get()))
-        }
-        return ResponseEntity.ok(service.getTopCurrentContributors(pageable, 0))
-    }
+    fun getTopContributors(
+        @RequestParam(required = false, defaultValue = "0") days: Long,
+        pageable: Pageable
+    ): Page<RetrieveStatisticsUseCase.ContributorRecord> =
+        service.getTopCurrentContributors(days, pageable)
 
     /**
-     * Fetch the top contributors by research field ID along with
-     * the profile details
+     * Fetch the top contributors by research field ID including subfields
      */
     @GetMapping("/research-field/{id}/subfields/top/contributors")
     @ResponseStatus(HttpStatus.OK)
-    fun getTopContributorsByResearchField(@PathVariable id: ThingId, @RequestParam(required = false, defaultValue = "0") days: Long): ResponseEntity<Iterable<TopContributorsWithProfileAndTotalCount>> {
-        return ResponseEntity.ok(service.getTopCurrentContributorsByResearchField(id, days))
-    }
+    fun getTopContributorsByResearchField(
+        @PathVariable id: ThingId,
+        @RequestParam(required = false, defaultValue = "0") days: Long,
+        pageable: Pageable
+    ): Page<RetrieveStatisticsUseCase.ContributorRecord> =
+        service.getTopCurrentContributorsByResearchField(id, days, pageable)
 
     /**
-     * Fetch the top contributors by research field ID along with
-     * the profile details
+     * Fetch the top contributors by research field ID excluding subfields
      */
     @GetMapping("/research-field/{id}/top/contributors")
     @ResponseStatus(HttpStatus.OK)
-    fun getTopContributorsByResearchFieldExcludeSubFields(@PathVariable id: ThingId, @RequestParam(required = false, defaultValue = "0") days: Long): ResponseEntity<Iterable<TopContributorsWithProfileAndTotalCount>> {
-        return ResponseEntity.ok(service.getTopCurrentContributorsByResearchFieldExcludeSubFields(id, days))
-    }
+    fun getTopContributorsByResearchFieldExcludeSubFields(
+        @PathVariable id: ThingId,
+        @RequestParam(required = false, defaultValue = "0") days: Long,
+        pageable: Pageable
+    ): Page<RetrieveStatisticsUseCase.ContributorRecord> =
+        service.getTopCurrentContributorsByResearchFieldExcludeSubFields(id, days, pageable)
 }

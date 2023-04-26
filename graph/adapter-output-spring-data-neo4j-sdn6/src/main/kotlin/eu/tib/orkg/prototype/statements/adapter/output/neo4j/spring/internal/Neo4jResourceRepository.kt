@@ -106,15 +106,15 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
         countQuery = """MATCH (node:`Resource`) WHERE $`class` IN labels(node) AND node.label =~ $label AND node.created_by = $createdBy WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllByClassAndLabelMatchesRegexAndCreatedBy(`class`: ClassId, label: String, createdBy: ContributorId, pageable: Pageable): Page<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WITH labels(node) AS labels, node WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels) WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at $RETURN_NODE""",
+    @Query(value = """MATCH (node:`Resource`) WITH labels(node) AS labels, node WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels) WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """MATCH (node:`Resource`) WITH labels(node) AS labels, node WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels) WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllIncludingAndExcludingClasses(includeClasses: Set<ClassId>, excludeClasses: Set<ClassId>, pageable: Pageable): Page<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WITH labels(node) AS labels, node WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels) AND node.label = $label WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at $RETURN_NODE""",
+    @Query(value = """MATCH (node:`Resource`) WITH labels(node) AS labels, node WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels) AND node.label = $label WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """MATCH (node:`Resource`) WITH labels(node) AS labels, node WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels) AND node.label = $label WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllIncludingAndExcludingClassesByLabel(includeClasses: Set<ClassId>, excludeClasses: Set<ClassId>, label: String, pageable: Pageable): Page<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WITH labels(node) AS labels, node WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels) AND node.label =~ $label WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at $RETURN_NODE""",
+    @Query(value = """MATCH (node:`Resource`) WITH labels(node) AS labels, node WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels) AND node.label =~ $label WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """MATCH (node:`Resource`) WITH labels(node) AS labels, node WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels) AND node.label =~ $label WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllIncludingAndExcludingClassesByLabelMatchesRegex(includeClasses: Set<ClassId>, excludeClasses: Set<ClassId>, label: String, pageable: Pageable): Page<Neo4jResource>
 

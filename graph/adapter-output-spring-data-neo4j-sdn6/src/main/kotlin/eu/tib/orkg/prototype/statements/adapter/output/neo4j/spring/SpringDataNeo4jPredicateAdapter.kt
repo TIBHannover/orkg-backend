@@ -44,7 +44,7 @@ class SpringDataNeo4jPredicateAdapter(
     @Caching(
         evict = [
             CacheEvict(key = "#id"),
-            CacheEvict(key = "#id.value", cacheNames = [THING_ID_TO_THING_CACHE]),
+            CacheEvict(key = "#id", cacheNames = [THING_ID_TO_THING_CACHE]),
         ]
     )
     override fun deleteByPredicateId(id: ThingId) {
@@ -64,7 +64,7 @@ class SpringDataNeo4jPredicateAdapter(
     @Caching(
         evict = [
             CacheEvict(key = "#predicate.id"),
-            CacheEvict(key = "#predicate.id.value", cacheNames = [THING_ID_TO_THING_CACHE]),
+            CacheEvict(key = "#predicate.id", cacheNames = [THING_ID_TO_THING_CACHE]),
         ]
     )
     override fun save(predicate: Predicate) {

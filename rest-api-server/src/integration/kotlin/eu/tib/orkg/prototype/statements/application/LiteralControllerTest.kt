@@ -16,7 +16,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -45,65 +44,6 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/literals/"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$").isArray)
-            .andDo(
-                document(
-                    snippet,
-                    listOfLiteralsResponseFields()
-                )
-            )
-    }
-
-    @Test
-    fun lookup() {
-        service.create("research contribution")
-        service.create("programming language")
-        service.create("research topic")
-
-        mockMvc
-            .perform(getRequestTo("/api/literals/?q=research"))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$").isArray)
-            .andDo(
-                document(
-                    snippet,
-                    requestParameters(
-                        parameterWithName("q").description("A search term that must be contained in the label")
-                    ),
-                    listOfLiteralsResponseFields()
-                )
-            )
-    }
-
-    @Test
-    fun lookupWithSpecialChars() {
-        service.create("research contribution")
-        service.create("programming language (PL)")
-        service.create("research topic")
-
-        mockMvc
-            .perform(getRequestTo("/api/literals/?q=PL)"))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$").isArray)
-            .andDo(
-                document(
-                    snippet,
-                    requestParameters(
-                        parameterWithName("q").description("A search term that must be contained in the label")
-                    ),
-                    listOfLiteralsResponseFields()
-                )
-            )
-    }
-
-    @Test
-    fun indexPaged() {
-        service.create("research contribution")
-        service.create("programming language")
-
-        mockMvc
-            .perform(getRequestTo("/api/literals/?size=5"))
-            .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.number").value(0)) // page number
             .andExpect(jsonPath("$.totalElements").value(2))
@@ -117,13 +57,13 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    fun lookupPaged() {
+    fun lookup() {
         service.create("research contribution")
         service.create("programming language")
         service.create("research topic")
 
         mockMvc
-            .perform(getRequestTo("/api/literals/?q=research&size=5"))
+            .perform(getRequestTo("/api/literals/?q=research"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -140,13 +80,13 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    fun lookupWithSpecialCharsPaged() {
+    fun lookupWithSpecialChars() {
         service.create("research contribution")
         service.create("programming language (PL)")
         service.create("research topic")
 
         mockMvc
-            .perform(getRequestTo("/api/literals/?q=PL&size=5"))
+            .perform(getRequestTo("/api/literals/?q=PL)"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -239,9 +179,5 @@ class LiteralControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("featured").optional().ignored(),
             fieldWithPath("unlisted").optional().ignored()
         )
-
-        fun listOfLiteralsResponseFields(): ResponseFieldsSnippet =
-            responseFields(fieldWithPath("[]").description("A list of literals"))
-                .andWithPrefix("[].", literalResponseFields())
     }
 }

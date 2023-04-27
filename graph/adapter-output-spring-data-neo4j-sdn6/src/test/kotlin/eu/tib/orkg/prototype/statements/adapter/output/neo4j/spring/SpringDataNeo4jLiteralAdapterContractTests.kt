@@ -9,9 +9,7 @@ import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import org.neo4j.cypherdsl.core.Cypher
 import org.neo4j.cypherdsl.core.Cypher.*
-import org.neo4j.cypherdsl.core.Functions
 import org.neo4j.cypherdsl.core.Functions.*
 import org.orkg.statements.testing.createLiteral
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,7 +22,7 @@ import org.springframework.test.context.ContextConfiguration
 
 @Ignored("Workaround for Docker container issue active (\"all in one\"). Remove when solved.")
 @DataNeo4jTest
-@ContextConfiguration(classes = [SpringDataNeo4jClassAdapter::class], initializers = [Neo4jContainerInitializer::class])
+@ContextConfiguration(classes = [SpringDataNeo4jLiteralAdapter::class], initializers = [Neo4jContainerInitializer::class])
 @Import(Neo4jConfiguration::class)
 @ComponentScan(basePackages = ["eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring"])
 internal class SpringDataNeo4jLiteralAdapterContractTests(

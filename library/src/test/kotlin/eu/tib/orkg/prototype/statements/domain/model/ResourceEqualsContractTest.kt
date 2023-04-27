@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.domain.model
 import com.redfin.contractual.EqualsContract
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import java.time.OffsetDateTime
 import java.util.*
 import java.util.function.Supplier
@@ -24,8 +25,7 @@ internal class ResourceEqualsContractTest : EqualsContract<Resource> {
         classes = setOf(ThingId("C1"), ThingId("C9999")),
         observatoryId = ObservatoryId(observatoryUUID),
         extractionMethod = ExtractionMethod.UNKNOWN,
-        featured = true,
-        unlisted = false,
+        visibility = Visibility.FEATURED,
         verified = true,
     )
 
@@ -38,8 +38,7 @@ internal class ResourceEqualsContractTest : EqualsContract<Resource> {
             classes = setOf(ThingId("C1"), ThingId("C9999")),
             observatoryId = ObservatoryId(observatoryUUID),
             extractionMethod = ExtractionMethod.UNKNOWN,
-            featured = true,
-            unlisted = false,
+            visibility = Visibility.FEATURED,
             verified = true,
         )
     }
@@ -52,8 +51,7 @@ internal class ResourceEqualsContractTest : EqualsContract<Resource> {
         classes = setOf(ThingId("C1"), ThingId("C9999")),
         observatoryId = ObservatoryId(observatoryUUID),
         extractionMethod = ExtractionMethod.UNKNOWN,
-        featured = true,
-        unlisted = false,
+        visibility = Visibility.FEATURED,
         verified = true,
     )
 }

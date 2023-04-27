@@ -10,6 +10,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.application.ResearchFieldNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.StatisticsService
@@ -106,15 +107,19 @@ class ObservatoryController(
     @GetMapping("{id}/class")
     fun findProblemsByObservatoryId(
         @PathVariable id: ObservatoryId,
-        @RequestParam(value = "classes") classes: List<ThingId>,
+        @RequestParam(value = "classes") classes: Set<ThingId>,
         @Nullable @RequestParam("featured")
         featured: Boolean?,
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<ResourceRepresentation> {
-        return resourceService.findResourcesByObservatoryIdAndClass(id, classes, featured, unlisted, pageable)
-    }
+    ): Page<ResourceRepresentation> =
+        resourceService.findAllByClassInAndVisibilityAndObservatoryId(
+            classes,
+            visibilityFilterFromFlags(featured, unlisted),
+            id,
+            pageable
+        )
 
     @GetMapping("{id}/users")
     fun findUsersByObservatoryId(@PathVariable id: ObservatoryId): Iterable<Contributor> =
@@ -232,3 +237,13 @@ class ObservatoryController(
         val organizationId: OrganizationId
     )
 }
+
+internal fun visibilityFilterFromFlags(featured: Boolean?, unlisted: Boolean?): VisibilityFilter =
+    when (unlisted ?: false) {
+        true -> VisibilityFilter.UNLISTED
+        false -> when (featured) {
+            null -> VisibilityFilter.ALL_LISTED
+            true -> VisibilityFilter.FEATURED
+            false -> VisibilityFilter.NON_FEATURED
+        }
+    }

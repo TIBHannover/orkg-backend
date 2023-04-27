@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.domain.model
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import java.time.OffsetDateTime
 
 data class Resource(
@@ -14,8 +15,7 @@ data class Resource(
     val observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
     val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     val organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
-    val featured: Boolean? = null,
-    val unlisted: Boolean? = null,
+    val visibility: Visibility = Visibility.DEFAULT,
     val verified: Boolean? = null,
 ) : Thing {
     override val thingId: ThingId = ThingId(id.value)

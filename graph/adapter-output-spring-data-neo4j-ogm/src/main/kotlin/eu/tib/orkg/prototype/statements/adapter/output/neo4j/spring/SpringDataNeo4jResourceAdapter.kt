@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceIdGenerator
@@ -163,79 +164,61 @@ class SpringDataNeo4jResourceAdapter(
     override fun findByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId): Iterable<Resource> =
         neo4jRepository.findByClassAndObservatoryId(`class`.toClassId(), id).map(Neo4jResource::toResource)
 
-    override fun findAllByVerifiedIsTrue(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllByVerifiedIsTrue(pageable).map(Neo4jResource::toResource)
-
-    override fun findAllByVerifiedIsFalse(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllByVerifiedIsFalse(pageable).map(Neo4jResource::toResource)
-
-    override fun findAllByFeaturedIsTrue(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllByFeaturedIsTrue(pageable).map(Neo4jResource::toResource)
-
-    override fun findAllByFeaturedIsFalse(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllByFeaturedIsFalse(pageable).map(Neo4jResource::toResource)
-
-    override fun findAllByUnlistedIsTrue(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllByUnlistedIsTrue(pageable).map(Neo4jResource::toResource)
-
-    override fun findAllByUnlistedIsFalse(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllByUnlistedIsFalse(pageable).map(Neo4jResource::toResource)
-
     override fun findPaperByResourceId(id: ThingId): Optional<Resource> =
-        neo4jRepository.findPaperByResourceId(id.toResourceId()).map(Neo4jResource::toResource)
-
-    override fun findAllVerifiedPapers(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllVerifiedPapers(pageable).map(Neo4jResource::toResource)
-
-    override fun findAllUnverifiedPapers(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllUnverifiedPapers(pageable).map(Neo4jResource::toResource)
-
-    override fun findAllFeaturedPapers(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllFeaturedPapers(pageable).map(Neo4jResource::toResource)
-
-    override fun findAllNonFeaturedPapers(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllNonFeaturedPapers(pageable).map(Neo4jResource::toResource)
-
-    override fun findAllUnlistedPapers(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllUnlistedPapers(pageable).map(Neo4jResource::toResource)
-
-    override fun findAllListedPapers(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllListedPapers(pageable).map(Neo4jResource::toResource)
-
-    override fun findAllFeaturedResourcesByClass(
-        classes: List<ThingId>,
-        unlisted: Boolean,
-        pageable: Pageable
-    ): Page<Resource> =
-        neo4jRepository.findAllFeaturedResourcesByClass(classes.toClassIds(), unlisted, pageable).map(Neo4jResource::toResource)
-
-    override fun findAllFeaturedResourcesByClass(
-        classes: List<ThingId>,
-        featured: Boolean,
-        unlisted: Boolean,
-        pageable: Pageable
-    ): Page<Resource> = neo4jRepository.findAllFeaturedResourcesByClass(classes.toClassIds(), featured, unlisted, pageable)
-        .map(Neo4jResource::toResource)
-
-    override fun findAllFeaturedResourcesByObservatoryIDAndClass(
-        id: ObservatoryId,
-        classes: List<ThingId>,
-        featured: Boolean,
-        unlisted: Boolean,
-        pageable: Pageable
-    ): Page<Resource> =
-        neo4jRepository.findAllFeaturedResourcesByObservatoryIdAndClass(id, classes.toClassIds(), featured, unlisted, pageable)
+        neo4jRepository.findPaperByResourceId(id.toResourceId())
             .map(Neo4jResource::toResource)
 
-    override fun findAllResourcesByObservatoryIDAndClass(
-        id: ObservatoryId,
-        classes: List<ThingId>,
-        unlisted: Boolean,
-        pageable: Pageable
-    ): Page<Resource> = neo4jRepository.findAllResourcesByObservatoryIdAndClass(id, classes.toClassIds(), unlisted, pageable)
-        .map(Neo4jResource::toResource)
+    override fun findAllPapersByVerified(verified: Boolean, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllPapersByVerified(verified, pageable)
+            .map(Neo4jResource::toResource)
 
-    override fun findAllContributorIds(pageable: Pageable) = neo4jRepository.findAllContributorIds(pageable)
+    override fun findAllByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllByVisibility(visibility, pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun findAllListed(pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllListed(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun findAllPapersByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllPapersByVisibility(visibility, pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun findAllListedPapers(pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllListedPapers(pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun findAllByClassInAndVisibility(
+        classes: Set<ThingId>,
+        visibility: Visibility,
+        pageable: Pageable
+    ): Page<Resource> =
+        neo4jRepository.findAllByClassInAndVisibility(classes.toClassIds(), visibility, pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun findAllListedByClassIn(classes: Set<ThingId>, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllListedByClassIn(classes.toClassIds(), pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun findAllByClassInAndVisibilityAndObservatoryId(
+        classes: Set<ThingId>,
+        visibility: Visibility,
+        id: ObservatoryId,
+        pageable: Pageable
+    ): Page<Resource> =
+        neo4jRepository.findAllByClassInAndVisibilityAndObservatoryId(classes.toClassIds(), visibility, id, pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun findAllListedByClassInAndObservatoryId(
+        classes: Set<ThingId>,
+        id: ObservatoryId,
+        pageable: Pageable
+    ): Page<Resource> =
+        neo4jRepository.findAllListedByClassInAndObservatoryId(classes.toClassIds(), id, pageable)
+            .map(Neo4jResource::toResource)
+
+    override fun findAllContributorIds(pageable: Pageable) =
+        neo4jRepository.findAllContributorIds(pageable)
 
     override fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
         neo4jRepository.findComparisonsByOrganizationId(id, pageable).map(Neo4jResource::toResource)
@@ -250,8 +233,7 @@ class SpringDataNeo4jResourceAdapter(
             observatoryId = this@toNeo4jResource.observatoryId
             extractionMethod = this@toNeo4jResource.extractionMethod
             verified = this@toNeo4jResource.verified
-            featured = this@toNeo4jResource.featured
-            unlisted = this@toNeo4jResource.unlisted
+            visibility = this@toNeo4jResource.visibility
             organizationId = this@toNeo4jResource.organizationId
             classes = this@toNeo4jResource.classes
         }

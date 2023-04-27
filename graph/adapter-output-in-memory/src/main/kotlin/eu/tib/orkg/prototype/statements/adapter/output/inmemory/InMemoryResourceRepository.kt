@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.adapter.output.inmemory
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -147,125 +148,14 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
         entities.values.filter { `class` in it.classes && it.observatoryId == id }
 
     // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
-    override fun findAllByVerifiedIsTrue(pageable: Pageable) =
-        findAllByClassAndFlags(pageable, verified = true)
-
-    // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
-    override fun findAllByVerifiedIsFalse(pageable: Pageable) =
-        findAllByClassAndFlags(pageable, verified = false)
-
-    // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
-    override fun findAllByFeaturedIsTrue(pageable: Pageable) =
-        findAllByClassAndFlags(pageable, featured = true)
-
-    // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
-    override fun findAllByFeaturedIsFalse(pageable: Pageable) =
-        findAllByClassAndFlags(pageable, featured = false)
-
-    // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
-    override fun findAllByUnlistedIsTrue(pageable: Pageable) =
-        findAllByClassAndFlags(pageable, unlisted = true)
-
-    // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
-    override fun findAllByUnlistedIsFalse(pageable: Pageable) =
-        findAllByClassAndFlags(pageable, unlisted = false)
-
-    // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
     override fun findPaperByResourceId(id: ThingId) =
         Optional.ofNullable(entities.values.firstOrNull {
             it.id == id && paperClass in it.classes
         })
 
-    // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
-    override fun findAllVerifiedPapers(pageable: Pageable): Page<Resource> {
-        TODO("This method should be moved to a PaperRepository")
-    }
+    override fun findAllPapersByVerified(verified: Boolean, pageable: Pageable): Page<Resource> =
+        findAllFilteredAndPaged(pageable) { (it.verified ?: false) == verified && paperClass in it.classes }
 
-    // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
-    override fun findAllUnverifiedPapers(pageable: Pageable): Page<Resource> {
-        TODO("This method should be moved to a PaperRepository")
-    }
-
-    // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
-    override fun findAllFeaturedPapers(pageable: Pageable): Page<Resource> {
-        TODO("This method should be moved to a PaperRepository")
-    }
-
-    // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
-    override fun findAllNonFeaturedPapers(pageable: Pageable): Page<Resource> {
-        TODO("This method should be moved to a PaperRepository")
-    }
-
-    // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
-    override fun findAllUnlistedPapers(pageable: Pageable): Page<Resource> {
-        TODO("This method should be moved to a PaperRepository")
-    }
-
-    // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
-    override fun findAllListedPapers(pageable: Pageable): Page<Resource> {
-        TODO("This method should be moved to a PaperRepository")
-    }
-
-    private fun findAllByClassAndFlags(
-        pageable: Pageable,
-        classes: Set<ThingId>? = null,
-        unlisted: Boolean? = null,
-        featured: Boolean? = null,
-        verified: Boolean? = null
-    ) = findAllFilteredAndPaged(pageable) predicate@ {
-            if (!classes.isNullOrEmpty() && !it.classes.containsAll(classes)) {
-                return@predicate false
-            }
-            if (unlisted != null && (it.unlisted == true) != unlisted) {
-                return@predicate false
-            }
-            if (featured != null && (it.featured == true) != featured) {
-                return@predicate false
-            }
-            if (verified != null && (it.verified == true) != verified) {
-                return@predicate false
-            }
-            true
-        }
-
-    // TODO: Check if usage is correct because name is findAllFeaturedResourcesByClass and not findAllUnlistedResourcesByClass
-    override fun findAllFeaturedResourcesByClass(
-        classes: List<ThingId>,
-        unlisted: Boolean,
-        pageable: Pageable
-    ) = findAllFilteredAndPaged(pageable) {
-        it.unlisted == unlisted && it.classes.any { id -> id in classes }
-    }
-
-    override fun findAllFeaturedResourcesByClass(
-        classes: List<ThingId>,
-        featured: Boolean,
-        unlisted: Boolean,
-        pageable: Pageable
-    ) = findAllFilteredAndPaged(pageable) {
-        it.unlisted == unlisted  && it.featured == featured && it.classes.any { id -> id in classes }
-    }
-
-    override fun findAllFeaturedResourcesByObservatoryIDAndClass(
-        id: ObservatoryId,
-        classes: List<ThingId>,
-        featured: Boolean,
-        unlisted: Boolean,
-        pageable: Pageable
-    ) = findAllFilteredAndPaged(pageable) {
-        it.unlisted == unlisted && it.featured == featured && it.observatoryId == id && it.classes.any { id ->
-            id in classes
-        }
-    }
-
-    override fun findAllResourcesByObservatoryIDAndClass(
-        id: ObservatoryId,
-        classes: List<ThingId>,
-        unlisted: Boolean,
-        pageable: Pageable
-    ) = findAllFilteredAndPaged(pageable) {
-        it.unlisted == unlisted && it.observatoryId == id && it.classes.any { id -> id in classes }
-    }
 
     override fun findAllContributorIds(pageable: Pageable) =
         entities.values
@@ -280,4 +170,49 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
         findAllFilteredAndPaged(pageable) {
             comparisonClass in it.classes && it.organizationId == id
         }
+
+    override fun findAllByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource> =
+        findAllFilteredAndPaged(pageable) { it.visibility == visibility }
+
+    override fun findAllListed(pageable: Pageable): Page<Resource> =
+        findAllFilteredAndPaged(pageable) { it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED }
+
+    override fun findAllPapersByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource> =
+        findAllFilteredAndPaged(pageable) { it.visibility == visibility && paperClass in it.classes }
+
+    override fun findAllListedPapers(pageable: Pageable): Page<Resource> =
+        findAllFilteredAndPaged(pageable) { (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED) && paperClass in it.classes }
+
+    override fun findAllByClassInAndVisibility(
+        classes: Set<ThingId>,
+        visibility: Visibility,
+        pageable: Pageable
+    ): Page<Resource> = findAllFilteredAndPaged(pageable) {
+        it.visibility == visibility && it.classes.any { `class` -> `class` in classes }
+    }
+
+    override fun findAllListedByClassIn(
+        classes: Set<ThingId>,
+        pageable: Pageable
+    ): Page<Resource> = findAllFilteredAndPaged(pageable) {
+        (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED) && it.classes.any { `class` -> `class` in classes }
+    }
+
+    override fun findAllByClassInAndVisibilityAndObservatoryId(
+        classes: Set<ThingId>,
+        visibility: Visibility,
+        id: ObservatoryId,
+        pageable: Pageable
+    ): Page<Resource> = findAllFilteredAndPaged(pageable) {
+        it.visibility == visibility && it.observatoryId == id && it.classes.any { `class` -> `class` in classes }
+    }
+
+    override fun findAllListedByClassInAndObservatoryId(
+        classes: Set<ThingId>,
+        id: ObservatoryId,
+        pageable: Pageable
+    ): Page<Resource> = findAllFilteredAndPaged(pageable) {
+        (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED) && it.observatoryId == id
+            && it.classes.any { `class` -> `class` in classes }
+    }
 }

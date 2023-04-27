@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.domain.model
 import com.redfin.contractual.EqualsContract
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import java.net.URI
 import java.time.OffsetDateTime
@@ -69,8 +70,7 @@ internal class NastyBugOnStatementEqualsContractUnitTest : EqualsContract<Genera
         observatoryId = ObservatoryId("00000000-0000-0000-0000-000000000000"),
         extractionMethod = ExtractionMethod.UNKNOWN,
         organizationId = OrganizationId("00000000-0000-0000-0000-000000000000"),
-        featured = null,
-        unlisted = null,
+        visibility = Visibility.DEFAULT,
         verified = null
     )
     private val predicate = Predicate(

@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
@@ -39,11 +40,12 @@ class Neo4jResource: Neo4jThing() {
     @Property("verified")
     var verified: Boolean? = null
 
-    @Property("featured")
-    var featured: Boolean? = null
-
-    @Property("unlisted")
-    var unlisted: Boolean? = null
+    @Property("visibility")
+    var visibility: Visibility? = null
+        get() = field ?: Visibility.DEFAULT
+        set(value) {
+            field = value.takeIf { it != Visibility.DEFAULT }
+        }
 
     @Property("organization_id")
     var organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
@@ -72,8 +74,7 @@ class Neo4jResource: Neo4jThing() {
         observatoryId = observatoryId,
         extractionMethod = extractionMethod,
         organizationId = organizationId,
-        featured = featured,
-        unlisted = unlisted,
+        visibility = visibility!!,
         verified = verified,
     )
 

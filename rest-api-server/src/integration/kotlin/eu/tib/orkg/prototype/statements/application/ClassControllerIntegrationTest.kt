@@ -412,6 +412,7 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
         fieldWithPath("shared").description("The number of times this resource is shared"),
         fieldWithPath("formatted_label").description("The formatted label of the resource if available").optional(),
         fieldWithPath("_class").description("Resource").optional(),
+        fieldWithPath("visibility").description("Visibility").optional().ignored(),
         fieldWithPath("verified").description("Verified").optional().ignored(),
         fieldWithPath("featured").description("Featured").optional().ignored(),
         fieldWithPath("unlisted").description("Unlisted").optional().ignored()

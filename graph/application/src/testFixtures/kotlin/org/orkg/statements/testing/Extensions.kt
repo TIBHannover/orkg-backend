@@ -78,8 +78,7 @@ fun Fabrikate.withCustomMappings(): Fabrikate {
             observatoryId = random(),
             extractionMethod = random(),
             organizationId = random(),
-            featured = random(),
-            unlisted = random(),
+            visibility = random(),
             verified = random()
         )
     }

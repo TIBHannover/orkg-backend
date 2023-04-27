@@ -6,15 +6,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
-interface GetResourcesQuery {
-    fun getVerifiedResources(pageable: Pageable): Page<Resource>
-    fun getUnverifiedResources(pageable: Pageable): Page<Resource>
-    fun getFeaturedResources(pageable: Pageable): Page<Resource>
-    fun getNonFeaturedResources(pageable: Pageable): Page<Resource>
-    fun getUnlistedResources(pageable: Pageable): Page<Resource>
-    fun getListedResources(pageable: Pageable): Page<Resource>
-}
-
 interface GetPapersQuery {
     fun getVerifiedPapers(pageable: Pageable): Page<Resource>
     fun getUnverifiedPapers(pageable: Pageable): Page<Resource>

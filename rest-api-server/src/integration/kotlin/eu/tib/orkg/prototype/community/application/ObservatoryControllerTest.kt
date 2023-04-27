@@ -197,9 +197,9 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
 
         mockMvc
             .perform(getRequestTo("/api/observatories/$observatoryId/class?classes=SomeClass"))
+            .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.content[0].id").value(resourceId.value))
-            .andExpect(status().isOk)
     }
 
     @Test

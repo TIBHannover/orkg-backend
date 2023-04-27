@@ -562,6 +562,8 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
             fieldWithPath("_class").description("Class").optional(),
             fieldWithPath("verified").description("Determines if the resource was verified by a curator.").optional()
                 .ignored(),
+            fieldWithPath("visibility").description("""Visibility of this resource. Can be one of "listed", "featured", "unlisted" or "deleted".""")
+                .optional().ignored(),
             fieldWithPath("featured").description("Featured Value").optional().ignored(),
             fieldWithPath("unlisted").description("Unlisted Value").optional().ignored(),
             fieldWithPath("formatted_label").description("The formatted label of the resource if available").optional()

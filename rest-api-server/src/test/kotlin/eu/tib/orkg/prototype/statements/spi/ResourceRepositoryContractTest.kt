@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.spi
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.createResource
+import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -31,8 +32,7 @@ interface ResourceRepositoryContractTest {
             createdBy = ContributorId("24c40ebb-a3d4-4cda-bf8c-41e2237b4ab0"),
             observatoryId = ObservatoryId("e68cdf97-ff61-434a-af9d-4120bcf7eb38"),
             extractionMethod = ExtractionMethod.AUTOMATIC,
-            featured = null,
-            unlisted = true,
+            visibility = Visibility.UNLISTED,
             verified = false,
         )
         repository.save(expected)
@@ -48,8 +48,7 @@ interface ResourceRepositoryContractTest {
             it.classes shouldContainExactlyInAnyOrder expected.classes
             it.observatoryId shouldBe expected.observatoryId
             it.extractionMethod shouldBe expected.extractionMethod
-            it.featured shouldBe expected.featured
-            it.unlisted shouldBe expected.unlisted
+            it.visibility shouldBe expected.visibility
             it.verified shouldBe expected.verified
         }
     }
@@ -72,16 +71,14 @@ interface ResourceRepositoryContractTest {
             id = ThingId("R1234"),
             observatoryId = observatoryId,
             classes = classes,
-            featured = null,
-            unlisted = null
+            visibility = Visibility.DEFAULT
         )
         repository.save(resource)
 
-        val result = repository.findAllFeaturedResourcesByObservatoryIDAndClass(
+        val result = repository.findAllByClassInAndVisibilityAndObservatoryId(
+            setOf(ThingId("ToBeFound")),
+            visibility = Visibility.DEFAULT,
             observatoryId,
-            listOf(ThingId("ToBeFound")),
-            featured = false,
-            unlisted = false,
             PageRequest.of(0, 10)
         )
 
@@ -97,16 +94,14 @@ interface ResourceRepositoryContractTest {
             id = ThingId("R1234"),
             observatoryId = observatoryId,
             classes = classes,
-            featured = null,
-            unlisted = null
+            visibility = Visibility.DEFAULT
         )
         repository.save(resource)
 
-        val result = repository.findAllFeaturedResourcesByObservatoryIDAndClass(
+        val result = repository.findAllByClassInAndVisibilityAndObservatoryId(
+            setOf(ThingId("ToBeFound")),
+            visibility = Visibility.FEATURED,
             observatoryId,
-            listOf(ThingId("ToBeFound")),
-            featured = true,
-            unlisted = false,
             PageRequest.of(0, 10)
         )
 
@@ -121,8 +116,7 @@ interface ResourceRepositoryContractTest {
             id = ThingId("R1234"),
             observatoryId = observatoryId,
             classes = classes,
-            featured = null,
-            unlisted = null
+            visibility = Visibility.DEFAULT
         )
         repository.save(resource)
 
@@ -139,8 +133,7 @@ interface ResourceRepositoryContractTest {
             id = ThingId("R1234"),
             observatoryId = observatoryId,
             classes = classes,
-            featured = null,
-            unlisted = null
+            visibility = Visibility.DEFAULT
         )
         repository.save(resource)
 
@@ -153,15 +146,13 @@ interface ResourceRepositoryContractTest {
         val resource1 = createResource().copy(
             id = ThingId("R1234"),
             classes = setOf(ThingId("ToBeFound"), ThingId("Other")),
-            featured = null,
-            unlisted = null
+            visibility = Visibility.DEFAULT
         )
         repository.save(resource1)
         val resource2 = createResource().copy(
             id = ThingId("R2345"),
             classes = setOf(ThingId("NotToBeFound"), ThingId("Other")),
-            featured = null,
-            unlisted = null
+            visibility = Visibility.DEFAULT
         )
         repository.save(resource2)
 
@@ -179,15 +170,13 @@ interface ResourceRepositoryContractTest {
         val resource1 = createResource().copy(
             id = ThingId("R1234"),
             classes = setOf(ThingId("ToBeFound"), ThingId("Other")),
-            featured = null,
-            unlisted = null
+            visibility = Visibility.DEFAULT
         )
         repository.save(resource1)
         val resource2 = createResource().copy(
             id = ThingId("R2345"),
             classes = setOf(ThingId("ToBeFound"), ThingId("Other")),
-            featured = null,
-            unlisted = null
+            visibility = Visibility.DEFAULT
         )
         repository.save(resource2)
 
@@ -205,15 +194,13 @@ interface ResourceRepositoryContractTest {
         val resource1 = createResource().copy(
             id = ThingId("R1234"),
             classes = setOf(ThingId("ToBeFound"), ThingId("Other")),
-            featured = null,
-            unlisted = null
+            visibility = Visibility.DEFAULT
         )
         repository.save(resource1)
         val resource2 = createResource().copy(
             id = ThingId("R2345"),
             classes = setOf(ThingId("NotToBeFound"), ThingId("Other")),
-            featured = null,
-            unlisted = null
+            visibility = Visibility.DEFAULT
         )
         repository.save(resource2)
 
@@ -231,15 +218,13 @@ interface ResourceRepositoryContractTest {
         val resource1 = createResource().copy(
             id = ThingId("R1234"),
             classes = setOf(ThingId("ToBeFound"), ThingId("Other")),
-            featured = null,
-            unlisted = null
+            visibility = Visibility.DEFAULT
         )
         repository.save(resource1)
         val resource2 = createResource().copy(
             id = ThingId("R2345"),
             classes = setOf(ThingId("ToBeFound"), ThingId("Other")),
-            featured = null,
-            unlisted = null
+            visibility = Visibility.DEFAULT
         )
         repository.save(resource2)
 
@@ -258,24 +243,21 @@ interface ResourceRepositoryContractTest {
             id = ThingId("R1234"),
             classes = setOf(ThingId("ToBeFound"), ThingId("Other")),
             label = "12345",
-            featured = null,
-            unlisted = null
+            visibility = Visibility.DEFAULT
         )
         repository.save(resource1)
         val resource2 = createResource().copy(
             id = ThingId("R2345"),
             classes = setOf(ThingId("NotToBeFound"), ThingId("Other")),
             label = "12345",
-            featured = null,
-            unlisted = null
+            visibility = Visibility.DEFAULT
         )
         repository.save(resource2)
         val resource3 = createResource().copy(
             id = ThingId("R3456"),
             classes = setOf(ThingId("NotToBeFound"), ThingId("Other")),
             label = "abcdef",
-            featured = null,
-            unlisted = null
+            visibility = Visibility.DEFAULT
         )
         repository.save(resource3)
 
@@ -295,24 +277,21 @@ interface ResourceRepositoryContractTest {
             id = ThingId("R1234"),
             classes = setOf(ThingId("ToBeFound"), ThingId("Other")),
             label = "12345",
-            featured = null,
-            unlisted = null
+            visibility = Visibility.DEFAULT
         )
         repository.save(resource1)
         val resource2 = createResource().copy(
             id = ThingId("R2345"),
             classes = setOf(ThingId("NotToBeFound"), ThingId("Other")),
             label = "12345",
-            featured = null,
-            unlisted = null
+            visibility = Visibility.DEFAULT
         )
         repository.save(resource2)
         val resource3 = createResource().copy(
             id = ThingId("R3456"),
             classes = setOf(ThingId("NotToBeFound"), ThingId("Other")),
             label = "abcdef",
-            featured = null,
-            unlisted = null
+            visibility = Visibility.DEFAULT
         )
         repository.save(resource3)
 
@@ -335,32 +314,28 @@ interface ResourceRepositoryContractTest {
             id = ThingId("R1234"),
             createdBy = contributorId1,
             classes = classes,
-            featured = null,
-            unlisted = null
+            visibility = Visibility.DEFAULT
         )
         repository.save(resource1)
         val resource2 = createResource().copy(
             id = ThingId("R2345"),
             createdBy = contributorId1,
             classes = classes,
-            featured = null,
-            unlisted = null
+            visibility = Visibility.DEFAULT
         )
         repository.save(resource2)
         val resource3 = createResource().copy(
             id = ThingId("R3456"),
             createdBy = contributorId2,
             classes = classes,
-            featured = null,
-            unlisted = null
+            visibility = Visibility.DEFAULT
         )
         repository.save(resource3)
         val resource4 = createResource().copy(
             id = ThingId("R4567"),
             createdBy = ContributorId.createUnknownContributor(),
             classes = classes,
-            featured = null,
-            unlisted = null
+            visibility = Visibility.DEFAULT
         )
         repository.save(resource4)
 

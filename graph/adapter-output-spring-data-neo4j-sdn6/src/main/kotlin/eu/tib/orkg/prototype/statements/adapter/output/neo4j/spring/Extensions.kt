@@ -16,13 +16,13 @@ import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import java.net.URI
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.function.BiFunction
 import org.jetbrains.annotations.Contract
-import org.neo4j.cypherdsl.core.Cypher
 import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Expression
 import org.neo4j.cypherdsl.core.FunctionInvocation
@@ -123,8 +123,7 @@ internal fun Node.toResource() = Resource(
     observatoryId = this["observatory_id"].toObservatoryId(),
     organizationId = this["organization_id"].toOrganizationId(),
     extractionMethod = this["extraction_method"].toExtractionMethod(),
-    featured = this["featured"].asNullableBoolean(),
-    unlisted = this["unlisted"].asNullableBoolean(),
+    visibility = this["visibility"].toVisibility(),
     verified = this["verified"].asNullableBoolean()
 )
 
@@ -143,6 +142,7 @@ internal fun Value.toContributorId() = if (isNull) ContributorId.createUnknownCo
 internal fun Value.toObservatoryId() = if (isNull) ObservatoryId.createUnknownObservatory() else ObservatoryId(asString())
 internal fun Value.toOrganizationId() = if (isNull) OrganizationId.createUnknownOrganization() else OrganizationId(asString())
 internal fun Value.toExtractionMethod() = if (isNull) ExtractionMethod.UNKNOWN else ExtractionMethod.valueOf(asString())
+internal fun Value.toVisibility() = if (isNull) Visibility.DEFAULT else Visibility.valueOf(asString())
 
 @Contract(pure = true)
 internal fun startNode(symbolicName: SymbolicName): FunctionInvocation =

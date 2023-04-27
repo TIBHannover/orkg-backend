@@ -13,7 +13,6 @@ import eu.tib.orkg.prototype.statements.application.port.out.GetVisualizationFla
 import eu.tib.orkg.prototype.statements.application.port.out.LoadComparisonPort
 import eu.tib.orkg.prototype.statements.application.port.out.LoadContributionPort
 import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperPort
-import eu.tib.orkg.prototype.statements.application.port.out.LoadResourcePort
 import eu.tib.orkg.prototype.statements.application.port.out.LoadSmartReviewPort
 import eu.tib.orkg.prototype.statements.application.port.out.LoadVisualizationPort
 import eu.tib.orkg.prototype.statements.domain.model.URIService
@@ -35,7 +34,6 @@ interface StatementUseCases : CreateStatementUseCase, RetrieveStatementUseCase, 
 // FIXME: we need to refactor those as well
 interface OtherResourceUseCases :
     MarkAsVerifiedUseCase,
-    LoadResourcePort,
     LoadPaperPort,
     GetPaperFlagQuery,
     MarkFeaturedService,

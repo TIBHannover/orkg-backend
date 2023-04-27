@@ -11,6 +11,7 @@ import eu.tib.orkg.prototype.statements.api.ResourceGenerator
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateResourceUseCase
+import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.application.InvalidClassCollection
 import eu.tib.orkg.prototype.statements.application.InvalidClassFilter
 import eu.tib.orkg.prototype.statements.application.ResourceCantBeDeleted
@@ -19,6 +20,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.ComparisonRepository
 import eu.tib.orkg.prototype.statements.spi.ContributionRepository
@@ -244,17 +246,16 @@ class ResourceService(
     override fun findAllByTitle(title: String?): Iterable<ResourceRepresentation> =
         retrieveAndConvertIterable { repository.findAllByLabel(title!!) }
 
-    override fun findAllByFeatured(pageable: Pageable): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged { repository.findAllByFeaturedIsTrue(pageable) }
-
-    override fun findAllByNonFeatured(pageable: Pageable): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged { repository.findAllByFeaturedIsFalse(pageable) }
-
-    override fun findAllByUnlisted(pageable: Pageable): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged { repository.findAllByUnlistedIsTrue(pageable) }
-
-    override fun findAllByListed(pageable: Pageable): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged { repository.findAllByUnlistedIsFalse(pageable) }
+    override fun findAllByVisibility(visibility: VisibilityFilter, pageable: Pageable): Page<ResourceRepresentation> =
+        retrieveAndConvertPaged {
+            when (visibility) {
+                VisibilityFilter.ALL_LISTED -> repository.findAllListed(pageable)
+                VisibilityFilter.UNLISTED -> repository.findAllByVisibility(Visibility.UNLISTED, pageable)
+                VisibilityFilter.FEATURED -> repository.findAllByVisibility(Visibility.FEATURED, pageable)
+                VisibilityFilter.NON_FEATURED -> repository.findAllByVisibility(Visibility.DEFAULT, pageable)
+                VisibilityFilter.DELETED -> repository.findAllByVisibility(Visibility.DELETED, pageable)
+            }
+        }
 
     override fun findPapersByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation> =
         retrieveAndConvertIterable { repository.findByClassAndObservatoryId(paperClass, id) }
@@ -265,36 +266,30 @@ class ResourceService(
     override fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<ResourceRepresentation> =
         retrieveAndConvertPaged { statementRepository.findProblemsByObservatoryId(id, pageable) }
 
-    override fun findResourcesByObservatoryIdAndClass(
+    override fun findAllByClassInAndVisibilityAndObservatoryId(
+        classes: Set<ThingId>,
+        visibility: VisibilityFilter,
         id: ObservatoryId,
-        classes: List<ThingId>,
-        featured: Boolean?,
-        unlisted: Boolean,
         pageable: Pageable
-    ): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged {
-            if (featured != null) {
-                repository.findAllFeaturedResourcesByObservatoryIDAndClass(
-                    id,
-                    classes,
-                    featured,
-                    unlisted,
-                    pageable
-                )
-            } else {
-                repository.findAllResourcesByObservatoryIDAndClass(id, classes, unlisted, pageable)
-            }
+    ): Page<ResourceRepresentation> = retrieveAndConvertPaged {
+        when (visibility) {
+            VisibilityFilter.ALL_LISTED -> repository.findAllListedByClassInAndObservatoryId(classes, id, pageable)
+            VisibilityFilter.UNLISTED -> repository.findAllByClassInAndVisibilityAndObservatoryId(classes, Visibility.UNLISTED, id, pageable)
+            VisibilityFilter.FEATURED -> repository.findAllByClassInAndVisibilityAndObservatoryId(classes, Visibility.FEATURED, id, pageable)
+            VisibilityFilter.NON_FEATURED -> repository.findAllByClassInAndVisibilityAndObservatoryId(classes, Visibility.DEFAULT, id, pageable)
+            VisibilityFilter.DELETED -> repository.findAllByClassInAndVisibilityAndObservatoryId(classes, Visibility.DELETED, id, pageable)
         }
+    }
 
     override fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> =
-        repository.findByResourceId(id).map {
-            statementRepository.findTimelineByResourceId(id, pageable)
-        }.orElseThrow { ResourceNotFound.withId(id) }
+        repository.findByResourceId(id)
+            .map { statementRepository.findTimelineByResourceId(id, pageable) }
+            .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId> =
-        repository.findByResourceId(id).map {
-            statementRepository.findAllContributorsByResourceId(id, pageable)
-        }.orElseThrow { ResourceNotFound.withId(id) }
+        repository.findByResourceId(id)
+            .map { statementRepository.findAllContributorsByResourceId(id, pageable) }
+            .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun update(command: UpdateResourceUseCase.UpdateCommand) {
         // already checked by service
@@ -325,26 +320,22 @@ class ResourceService(
 
     override fun removeAll() = repository.deleteAll()
 
-    override fun getResourcesByClasses(
-        classes: List<ThingId>,
-        featured: Boolean?,
-        unlisted: Boolean,
+    override fun findAllByClassInAndVisibility(
+        classes: Set<ThingId>,
+        visibility: VisibilityFilter,
         pageable: Pageable
-    ): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged {
-            if (classes.isNotEmpty()) {
-                when (featured) {
-                    null -> repository.findAllFeaturedResourcesByClass(
-                        classes, unlisted, pageable
-                    )
-                    else -> repository.findAllFeaturedResourcesByClass(
-                        classes, featured, unlisted, pageable
-                    )
-                }
-            } else {
-                Page.empty()
+    ): Page<ResourceRepresentation> = when {
+        classes.isNotEmpty() -> retrieveAndConvertPaged {
+            when (visibility) {
+                VisibilityFilter.ALL_LISTED -> repository.findAllListedByClassIn(classes, pageable)
+                VisibilityFilter.UNLISTED -> repository.findAllByClassInAndVisibility(classes, Visibility.UNLISTED, pageable)
+                VisibilityFilter.FEATURED -> repository.findAllByClassInAndVisibility(classes, Visibility.FEATURED, pageable)
+                VisibilityFilter.NON_FEATURED -> repository.findAllByClassInAndVisibility(classes, Visibility.DEFAULT, pageable)
+                VisibilityFilter.DELETED -> repository.findAllByClassInAndVisibility(classes, Visibility.DELETED, pageable)
             }
         }
+        else -> findAllByVisibility(visibility, pageable)
+    }
 
     override fun findAllContributorIds(pageable: Pageable) = repository.findAllContributorIds(pageable)
 
@@ -352,37 +343,22 @@ class ResourceService(
 
     override fun markAsUnverified(resourceId: ThingId) = setVerifiedFlag(resourceId, false)
 
-    override fun loadVerifiedResources(pageable: Pageable): Page<Resource> =
-        repository.findAllByVerifiedIsTrue(pageable)
+    override fun loadVerifiedPapers(pageable: Pageable): Page<Resource> =
+        repository.findAllPapersByVerified(true, pageable)
 
-    override fun loadUnverifiedResources(pageable: Pageable): Page<Resource> =
-        repository.findAllByVerifiedIsFalse(pageable)
+    override fun loadUnverifiedPapers(pageable: Pageable): Page<Resource> =
+        repository.findAllPapersByVerified(false, pageable)
 
-    override fun loadVerifiedPapers(pageable: Pageable): Page<Resource> = repository.findAllVerifiedPapers(pageable)
-
-    override fun loadUnverifiedPapers(pageable: Pageable): Page<Resource> = repository.findAllUnverifiedPapers(pageable)
-
-    /**
-     * Get the "verified" flag of a paper resource.
-     *
-     * @param id The ID of a resource of class "Paper".
-     * @return The value of the flag, or `null` if the resource is not found or not a paper.
-     */
-    override fun getPaperVerifiedFlag(id: ThingId): Boolean? {
-        val result = repository.findPaperByResourceId(id)
-        if (result.isPresent) {
-            val paper = result.get()
-            return paper.verified ?: false
-        }
-        return null
-    }
+    override fun getPaperVerifiedFlag(id: ThingId): Boolean? =
+        repository.findPaperByResourceId(id)
+            .map { it.verified }
+            .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun markAsFeatured(resourceId: ThingId) {
         val resource = repository.findByResourceId(resourceId)
             .orElseThrow { ResourceNotFound.withId(resourceId) }
         val modified = resource.copy(
-            unlisted = false,
-            featured = true
+            visibility = Visibility.FEATURED
         )
         repository.save(modified)
     }
@@ -391,7 +367,7 @@ class ResourceService(
         val resource = repository.findByResourceId(resourceId)
             .orElseThrow { ResourceNotFound.withId(resourceId) }
         val modified = resource.copy(
-            featured = false
+            visibility = Visibility.DEFAULT
         )
         repository.save(modified)
     }
@@ -400,8 +376,7 @@ class ResourceService(
         val resource = repository.findByResourceId(resourceId)
             .orElseThrow { ResourceNotFound.withId(resourceId) }
         val modified = resource.copy(
-            unlisted = true,
-            featured = false
+            visibility = Visibility.UNLISTED
         )
         repository.save(modified)
     }
@@ -410,50 +385,42 @@ class ResourceService(
         val resource = repository.findByResourceId(resourceId)
             .orElseThrow { ResourceNotFound.withId(resourceId) }
         val modified = resource.copy(
-            unlisted = false
+            visibility = Visibility.DEFAULT
         )
         repository.save(modified)
     }
 
-    override fun loadFeaturedPapers(pageable: Pageable): Page<Resource> = repository.findAllFeaturedPapers(pageable)
+    override fun loadFeaturedPapers(pageable: Pageable): Page<Resource> =
+        repository.findAllPapersByVisibility(Visibility.FEATURED, pageable)
 
     override fun loadNonFeaturedPapers(pageable: Pageable): Page<Resource> =
-        repository.findAllNonFeaturedPapers(pageable)
+        repository.findAllPapersByVisibility(Visibility.DEFAULT, pageable)
 
-    override fun loadFeaturedResources(pageable: Pageable): Page<Resource> =
-        repository.findAllByVerifiedIsTrue(pageable)
+    override fun loadUnlistedPapers(pageable: Pageable): Page<Resource> =
+        repository.findAllPapersByVisibility(Visibility.UNLISTED, pageable)
 
-    override fun loadNonFeaturedResources(pageable: Pageable): Page<Resource> =
-        repository.findAllByVerifiedIsFalse(pageable)
+    override fun loadListedPapers(pageable: Pageable): Page<Resource> =
+        repository.findAllListedPapers(pageable)
 
-    override fun loadUnlistedResources(pageable: Pageable): Page<Resource> =
-        repository.findAllByUnlistedIsTrue(pageable)
+    override fun getFeaturedPaperFlag(id: ThingId): Boolean =
+        repository.findPaperByResourceId(id)
+            .map { it.visibility == Visibility.FEATURED }
+            .orElseThrow { ResourceNotFound.withId(id) }
 
-    override fun loadListedResources(pageable: Pageable): Page<Resource> = repository.findAllByUnlistedIsFalse(pageable)
+    override fun getUnlistedPaperFlag(id: ThingId): Boolean =
+        repository.findPaperByResourceId(id)
+            .map { it.visibility == Visibility.UNLISTED || it.visibility == Visibility.DELETED }
+            .orElseThrow { ResourceNotFound.withId(id) }
 
-    override fun loadUnlistedPapers(pageable: Pageable): Page<Resource> = repository.findAllUnlistedPapers(pageable)
+    override fun getFeaturedResourceFlag(id: ThingId): Boolean =
+        repository.findByResourceId(id)
+            .map { it.visibility == Visibility.FEATURED }
+            .orElseThrow { ResourceNotFound.withId(id) }
 
-    override fun loadListedPapers(pageable: Pageable): Page<Resource> = repository.findAllListedPapers(pageable)
-
-    override fun getFeaturedPaperFlag(id: ThingId): Boolean {
-        val result = repository.findPaperByResourceId(id)
-        return result.orElseThrow { ResourceNotFound.withId(id) }.featured ?: false
-    }
-
-    override fun getUnlistedPaperFlag(id: ThingId): Boolean {
-        val result = repository.findPaperByResourceId(id)
-        return result.orElseThrow { ResourceNotFound.withId(id) }.unlisted ?: false
-    }
-
-    override fun getFeaturedResourceFlag(id: ThingId): Boolean {
-        val result = repository.findByResourceId(id)
-        return result.orElseThrow { ResourceNotFound.withId(id) }.featured ?: false
-    }
-
-    override fun getUnlistedResourceFlag(id: ThingId): Boolean {
-        val result = repository.findByResourceId(id)
-        return result.orElseThrow { ResourceNotFound.withId(id) }.featured ?: false
-    }
+    override fun getUnlistedResourceFlag(id: ThingId): Boolean =
+        repository.findByResourceId(id)
+            .map { it.visibility == Visibility.UNLISTED || it.visibility == Visibility.DELETED }
+            .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun loadFeaturedComparisons(pageable: Pageable): Page<Resource> =
         comparisonRepository.findAllFeaturedComparisons(pageable)
@@ -503,45 +470,46 @@ class ResourceService(
     override fun loadListedSmartReviews(pageable: Pageable): Page<Resource> =
         smartReviewRepository.findAllListedSmartReviews(pageable)
 
-    override fun getFeaturedContributionFlag(id: ThingId): Boolean {
-        val result = contributionRepository.findContributionByResourceId(id)
-        return result.orElseThrow { ResourceNotFound.withId(id) }.featured ?: false
-    }
+    override fun getFeaturedContributionFlag(id: ThingId): Boolean =
+        contributionRepository.findContributionByResourceId(id)
+            .map { it.visibility == Visibility.FEATURED }
+            .orElseThrow { ResourceNotFound.withId(id) }
 
-    override fun getUnlistedContributionFlag(id: ThingId): Boolean {
-        val result = contributionRepository.findContributionByResourceId(id)
-        return result.orElseThrow { ResourceNotFound.withId(id) }.unlisted ?: false
-    }
+    override fun getUnlistedContributionFlag(id: ThingId): Boolean =
+        contributionRepository.findContributionByResourceId(id)
+            .map { it.visibility == Visibility.UNLISTED || it.visibility == Visibility.DELETED }
+            .orElseThrow { ResourceNotFound.withId(id) }
 
-    override fun getFeaturedComparisonFlag(id: ThingId): Boolean {
-        val result = comparisonRepository.findComparisonByResourceId(id)
-        return result.orElseThrow { ResourceNotFound.withId(id) }.featured ?: false
-    }
+    override fun getFeaturedComparisonFlag(id: ThingId): Boolean =
+        comparisonRepository.findComparisonByResourceId(id)
+            .map { it.visibility == Visibility.FEATURED }
+            .orElseThrow { ResourceNotFound.withId(id) }
 
-    override fun getUnlistedComparisonFlag(id: ThingId): Boolean {
-        val result = comparisonRepository.findComparisonByResourceId(id)
-        return result.orElseThrow { ResourceNotFound.withId(id) }.unlisted ?: false
-    }
+    override fun getUnlistedComparisonFlag(id: ThingId): Boolean =
+        comparisonRepository.findComparisonByResourceId(id)
+            .map { it.visibility == Visibility.UNLISTED || it.visibility == Visibility.DELETED }
+            .orElseThrow { ResourceNotFound.withId(id) }
 
-    override fun getFeaturedVisualizationFlag(id: ThingId): Boolean {
-        val result = visualizationRepository.findVisualizationByResourceId(id)
-        return result.orElseThrow { ResourceNotFound.withId(id) }.featured ?: false
-    }
+    override fun getFeaturedVisualizationFlag(id: ThingId): Boolean =
+        visualizationRepository.findVisualizationByResourceId(id)
+            .map { it.visibility == Visibility.FEATURED }
+            .orElseThrow { ResourceNotFound.withId(id) }
 
-    override fun getUnlistedVisualizationFlag(id: ThingId): Boolean {
-        val result = visualizationRepository.findVisualizationByResourceId(id)
-        return result.orElseThrow { ResourceNotFound.withId(id) }.unlisted ?: false
-    }
+    override fun getUnlistedVisualizationFlag(id: ThingId): Boolean =
+        visualizationRepository.findVisualizationByResourceId(id)
+            .map { it.visibility == Visibility.UNLISTED || it.visibility == Visibility.DELETED }
+            .orElseThrow { ResourceNotFound.withId(id) }
 
-    override fun getFeaturedSmartReviewFlag(id: ThingId): Boolean {
-        val result = smartReviewRepository.findSmartReviewByResourceId(id)
-        return result.orElseThrow { ResourceNotFound.withId(id) }.featured ?: false
-    }
+    override fun getFeaturedSmartReviewFlag(id: ThingId): Boolean =
+        smartReviewRepository.findSmartReviewByResourceId(id)
+            .map { it.visibility == Visibility.FEATURED }
+            .orElseThrow { ResourceNotFound.withId(id) }
 
-    override fun getUnlistedSmartReviewFlag(id: ThingId): Boolean {
-        val result = smartReviewRepository.findSmartReviewByResourceId(id)
-        return result.orElseThrow { ResourceNotFound.withId(id) }.unlisted ?: false
-    }
+    override fun getUnlistedSmartReviewFlag(id: ThingId): Boolean =
+        smartReviewRepository.findSmartReviewByResourceId(id)
+            .map { it.visibility == Visibility.UNLISTED || it.visibility == Visibility.DELETED }
+            .orElseThrow { ResourceNotFound.withId(id) }
+
     override fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation> =
         retrieveAndConvertPaged { repository.findComparisonsByOrganizationId(id, pageable) }
 
@@ -612,8 +580,8 @@ fun Resource.toResourceRepresentation(usageCounts: StatementCounts, formattedLab
         override val createdBy: ContributorId = this@toResourceRepresentation.createdBy
         override val observatoryId: ObservatoryId = this@toResourceRepresentation.observatoryId
         override val organizationId: OrganizationId = this@toResourceRepresentation.organizationId
-        override val featured: Boolean = this@toResourceRepresentation.featured ?: false
-        override val unlisted: Boolean = this@toResourceRepresentation.unlisted ?: false
+        override val featured: Boolean = this@toResourceRepresentation.visibility == Visibility.FEATURED
+        override val unlisted: Boolean = this@toResourceRepresentation.visibility == Visibility.UNLISTED
         override val verified: Boolean = this@toResourceRepresentation.verified ?: false
         override val formattedLabel: FormattedLabel? = formattedLabels[this@toResourceRepresentation.id]
     }

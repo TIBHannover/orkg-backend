@@ -39,13 +39,10 @@ interface RetrieveResourceUseCase {
         createdBy: ContributorId
     ): Page<ResourceRepresentation>
 
-    fun findAllByFeatured(pageable: Pageable): Page<ResourceRepresentation>
     fun findAllByLabel(pageable: Pageable, label: String): Page<ResourceRepresentation>
     fun findAllByLabelContaining(pageable: Pageable, part: String): Page<ResourceRepresentation>
-    fun findAllByListed(pageable: Pageable): Page<ResourceRepresentation>
-    fun findAllByNonFeatured(pageable: Pageable): Page<ResourceRepresentation>
     fun findAllByTitle(title: String?): Iterable<ResourceRepresentation>
-    fun findAllByUnlisted(pageable: Pageable): Page<ResourceRepresentation>
+    fun findAllByVisibility(visibility: VisibilityFilter, pageable: Pageable): Page<ResourceRepresentation>
     fun findAllIncludingAndExcludingClasses(
         includeClasses: Set<ThingId>,
         excludeClasses: Set<ThingId>,
@@ -72,11 +69,15 @@ interface RetrieveResourceUseCase {
     fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor>
     fun findPapersByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation>
     fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<ResourceRepresentation>
-    fun findResourcesByObservatoryIdAndClass(id: ObservatoryId, classes: List<ThingId>, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
-    fun getResourcesByClasses(
-        classes: List<ThingId>,
-        featured: Boolean?,
-        unlisted: Boolean,
+    fun findAllByClassInAndVisibilityAndObservatoryId(
+        classes: Set<ThingId>,
+        visibility: VisibilityFilter,
+        id: ObservatoryId,
+        pageable: Pageable
+    ): Page<ResourceRepresentation>
+    fun findAllByClassInAndVisibility(
+        classes: Set<ThingId>,
+        visibility: VisibilityFilter,
         pageable: Pageable
     ): Page<ResourceRepresentation>
     fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation>

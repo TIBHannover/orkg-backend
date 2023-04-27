@@ -11,6 +11,7 @@ import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase.Field
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository
 import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.ContributorPerProblem
 import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.DetailsPerProblem
@@ -101,15 +102,15 @@ class ResearchProblemService(
         return Optional.of(researchProblemQueries.findResearchProblemForDataset(id, pageable))
     }
 
-    override fun getFeaturedProblemFlag(id: ThingId): Boolean {
-        val result = researchProblemRepository.findById(id)
-        return result.orElseThrow { ResourceNotFound.withId(id) }.featured ?: false
-    }
+    override fun getFeaturedProblemFlag(id: ThingId): Boolean =
+        researchProblemRepository.findById(id)
+            .map { it.visibility == Visibility.FEATURED }
+            .orElseThrow { ResourceNotFound.withId(id) }
 
-    override fun getUnlistedProblemFlag(id: ThingId): Boolean {
-        val result = researchProblemRepository.findById(id)
-        return result.orElseThrow { ResourceNotFound.withId(id) }.unlisted ?: false
-    }
+    override fun getUnlistedProblemFlag(id: ThingId): Boolean =
+        researchProblemRepository.findById(id)
+            .map { it.visibility == Visibility.UNLISTED || it.visibility == Visibility.DELETED }
+            .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun loadFeaturedProblems(pageable: Pageable): Page<Resource> =
         researchProblemRepository.findAllFeaturedProblems(pageable)

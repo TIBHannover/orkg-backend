@@ -10,6 +10,7 @@ import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateResourceUseCase
+import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -176,11 +177,11 @@ class ResourceController(
 
     @GetMapping("/metadata/featured", params = ["featured=true"])
     fun getFeaturedResources(pageable: Pageable) =
-        service.findAllByFeatured(pageable)
+        service.findAllByVisibility(VisibilityFilter.FEATURED, pageable)
 
     @GetMapping("/metadata/featured", params = ["featured=false"])
     fun getNonFeaturedResources(pageable: Pageable) =
-        service.findAllByNonFeatured(pageable)
+        service.findAllByVisibility(VisibilityFilter.NON_FEATURED, pageable)
 
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)
@@ -196,16 +197,18 @@ class ResourceController(
     }
 
     @GetMapping("/{id}/metadata/featured")
-    fun getFeaturedFlag(@PathVariable id: ThingId): Boolean? =
-        service.getFeaturedResourceFlag(id)
+    fun getFeaturedFlag(@PathVariable id: ThingId): Boolean =
+        service.findById(id)
+            .map { it.featured }
+            .orElseThrow { ResourceNotFound.withId(id) }
 
     @GetMapping("/metadata/unlisted", params = ["unlisted=true"])
     fun getUnlistedResources(pageable: Pageable) =
-        service.findAllByUnlisted(pageable)
+        service.findAllByVisibility(VisibilityFilter.UNLISTED, pageable)
 
     @GetMapping("/metadata/unlisted", params = ["unlisted=false"])
     fun getListedResources(pageable: Pageable) =
-        service.findAllByListed(pageable)
+        service.findAllByVisibility(VisibilityFilter.ALL_LISTED, pageable)
 
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.OK)
@@ -219,18 +222,21 @@ class ResourceController(
     }
 
     @GetMapping("/{id}/metadata/unlisted")
-    fun getUnlistedFlag(@PathVariable id: ThingId): Boolean = service.getUnlistedResourceFlag(id)
+    fun getUnlistedFlag(@PathVariable id: ThingId): Boolean =
+        service.findById(id)
+            .map { it.unlisted }
+            .orElseThrow { ResourceNotFound.withId(id) }
 
     @GetMapping("/classes")
     fun getResourcesByClass(
-        @RequestParam(value = "classes") classes: List<ThingId>,
+        @RequestParam(value = "classes") classes: Set<ThingId>,
         @Nullable @RequestParam("featured")
         featured: Boolean?,
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable
     ): Page<ResourceRepresentation> {
-        return service.getResourcesByClasses(classes, featured, unlisted, pageable)
+        return service.findAllByClassInAndVisibility(classes, visibilityFilterFromFlags(featured, unlisted), pageable)
     }
 }
 
@@ -253,3 +259,13 @@ data class UpdateResourceObservatoryRequest(
     @JsonProperty("organization_id")
     val organizationId: OrganizationId
 )
+
+internal fun visibilityFilterFromFlags(featured: Boolean?, unlisted: Boolean?): VisibilityFilter =
+    when (unlisted ?: false) {
+        true -> VisibilityFilter.UNLISTED
+        false -> when (featured) {
+            null -> VisibilityFilter.ALL_LISTED
+            true -> VisibilityFilter.FEATURED
+            false -> VisibilityFilter.NON_FEATURED
+        }
+    }

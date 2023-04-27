@@ -4,10 +4,9 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import java.time.OffsetDateTime
 
 fun createResource(
@@ -19,8 +18,7 @@ fun createResource(
     observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
     extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
-    featured: Boolean? = null,
-    unlisted: Boolean? = null,
+    visibility: Visibility = Visibility.DEFAULT,
     verified: Boolean? = null
 ) = Resource(
     id = id,
@@ -31,7 +29,6 @@ fun createResource(
     observatoryId = observatoryId,
     extractionMethod = extractionMethod,
     organizationId  =organizationId,
-    featured = featured,
-    unlisted = unlisted,
+    visibility = visibility,
     verified = verified
 )

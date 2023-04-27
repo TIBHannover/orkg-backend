@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import java.time.OffsetDateTime
 import org.springframework.data.neo4j.core.schema.DynamicLabels
 import org.springframework.data.neo4j.core.schema.Node
@@ -39,11 +40,12 @@ class Neo4jResource: Neo4jThing() {
     @Property("verified")
     var verified: Boolean? = null
 
-    @Property("featured")
-    var featured: Boolean? = null
-
-    @Property("unlisted")
-    var unlisted: Boolean? = null
+    @Property("visibility")
+    var visibility: Visibility? = null
+        get() = field ?: Visibility.DEFAULT
+        set(value) {
+            field = value.takeIf { it != Visibility.DEFAULT }
+        }
 
     @Property("organization_id")
     var organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
@@ -72,8 +74,7 @@ class Neo4jResource: Neo4jThing() {
         observatoryId = observatoryId,
         extractionMethod = extractionMethod,
         organizationId = organizationId,
-        featured = featured,
-        unlisted = unlisted,
+        visibility = visibility!!,
         verified = verified,
     )
 

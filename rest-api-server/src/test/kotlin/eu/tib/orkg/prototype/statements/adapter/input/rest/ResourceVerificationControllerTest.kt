@@ -5,7 +5,6 @@ import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsVerifiedUseCase
-import eu.tib.orkg.prototype.statements.application.port.out.LoadResourcePort
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.mockk.every
 import java.util.*
@@ -41,9 +40,6 @@ class ResourceVerificationControllerTest {
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var userDetailsService: UserDetailsService
-
-    @MockkBean
-    private lateinit var resourceAdapter: LoadResourcePort
 
     @MockkBean
     private lateinit var service: MarkAsVerifiedUseCase

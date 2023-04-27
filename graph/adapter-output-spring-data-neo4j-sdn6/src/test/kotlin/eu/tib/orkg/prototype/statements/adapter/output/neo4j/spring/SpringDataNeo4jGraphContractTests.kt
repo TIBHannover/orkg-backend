@@ -45,7 +45,6 @@ internal class SpringDataNeo4jGraphContractTests(
     include(literalRepositoryContract(springDataNeo4jLiteralAdapter))
     include(predicateRepositoryContract(springDataNeo4jPredicateAdapter))
     include(resourceRepositoryContract(springDataNeo4jResourceAdapter))
-    include(resourceRepositoryContract(springDataNeo4jResourceAdapter))
     include(
         statementRepositoryContract(
             springDataNeo4jStatementAdapter,

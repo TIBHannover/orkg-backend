@@ -69,8 +69,7 @@ internal class NastyBugOnStatementEqualsContractUnitTest : EqualsContract<Genera
         observatoryId = ObservatoryId("00000000-0000-0000-0000-000000000000"),
         extractionMethod = ExtractionMethod.UNKNOWN,
         organizationId = OrganizationId("00000000-0000-0000-0000-000000000000"),
-        featured = null,
-        unlisted = null,
+        visibility = Visibility.DEFAULT,
         verified = null
     )
     private val predicate = Predicate(

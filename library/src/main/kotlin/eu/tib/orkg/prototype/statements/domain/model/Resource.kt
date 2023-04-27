@@ -14,8 +14,7 @@ data class Resource(
     val observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
     val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     val organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
-    val featured: Boolean? = null,
-    val unlisted: Boolean? = null,
+    val visibility: Visibility = Visibility.DEFAULT,
     val verified: Boolean? = null,
 ) : Thing {
     override val thingId: ThingId = ThingId(id.value)

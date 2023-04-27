@@ -48,10 +48,10 @@ class PaperService(
     override fun findAllByVisibility(visibility: VisibilityFilter, pageable: Pageable): Page<PaperRepresentation> =
         when (visibility) {
             VisibilityFilter.ALL_LISTED -> resourceRepository.findAllListedPapers(pageable)
-            VisibilityFilter.UNLISTED -> resourceRepository.findAllUnlistedPapers(pageable)
-            VisibilityFilter.FEATURED -> resourceRepository.findAllFeaturedPapers(pageable)
-            VisibilityFilter.NON_FEATURED -> resourceRepository.findAllNonFeaturedPapers(pageable)
-            VisibilityFilter.DELETED -> resourceRepository.findAllByClass(Classes.paperDeleted, pageable)
+            VisibilityFilter.NON_FEATURED -> resourceRepository.findAllPapersByVisibility(Visibility.DEFAULT, pageable)
+            VisibilityFilter.UNLISTED -> resourceRepository.findAllPapersByVisibility(Visibility.UNLISTED, pageable)
+            VisibilityFilter.FEATURED -> resourceRepository.findAllPapersByVisibility(Visibility.FEATURED, pageable)
+            VisibilityFilter.DELETED -> resourceRepository.findAllPapersByVisibility(Visibility.DELETED, pageable)
         }.pmap { it.toPaperRepresentation() }
 
     override fun findAllByContributor(contributorId: ContributorId, pageable: Pageable): Page<PaperRepresentation> =

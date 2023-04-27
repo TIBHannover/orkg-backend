@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -34,23 +35,20 @@ interface ResourceRepository : EntityRepository<Resource, ThingId> {
     fun findByLabel(label: String): Optional<Resource>
     fun findAllByLabel(label: String): Iterable<Resource>
     fun findByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId): Iterable<Resource>
-    fun findAllByVerifiedIsTrue(pageable: Pageable): Page<Resource>
-    fun findAllByVerifiedIsFalse(pageable: Pageable): Page<Resource>
-    fun findAllByFeaturedIsTrue(pageable: Pageable): Page<Resource>
-    fun findAllByFeaturedIsFalse(pageable: Pageable): Page<Resource>
-    fun findAllByUnlistedIsTrue(pageable: Pageable): Page<Resource>
-    fun findAllByUnlistedIsFalse(pageable: Pageable): Page<Resource>
     fun findPaperByResourceId(id: ThingId): Optional<Resource>
-    fun findAllVerifiedPapers(pageable: Pageable): Page<Resource>
-    fun findAllUnverifiedPapers(pageable: Pageable): Page<Resource>
-    fun findAllFeaturedPapers(pageable: Pageable): Page<Resource>
-    fun findAllNonFeaturedPapers(pageable: Pageable): Page<Resource>
-    fun findAllUnlistedPapers(pageable: Pageable): Page<Resource>
-    fun findAllListedPapers(pageable: Pageable): Page<Resource>
-    fun findAllFeaturedResourcesByClass(classes: List<ThingId>, unlisted: Boolean, pageable: Pageable): Page<Resource>
-    fun findAllFeaturedResourcesByClass(classes: List<ThingId>, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
-    fun findAllFeaturedResourcesByObservatoryIDAndClass(id: ObservatoryId, classes: List<ThingId>, featured: Boolean, unlisted: Boolean, pageable: Pageable): Page<Resource>
-    fun findAllResourcesByObservatoryIDAndClass(id: ObservatoryId, classes: List<ThingId>, unlisted: Boolean, pageable: Pageable): Page<Resource>
+    fun findAllPapersByVerified(verified: Boolean, pageable: Pageable): Page<Resource>
     fun findAllContributorIds(pageable: Pageable): Page<ContributorId>
     fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
+
+    fun findAllByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource>
+    fun findAllListed(pageable: Pageable): Page<Resource>
+
+    fun findAllPapersByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource>
+    fun findAllListedPapers(pageable: Pageable): Page<Resource>
+
+    fun findAllByClassInAndVisibility(classes: Set<ThingId>, visibility: Visibility, pageable: Pageable): Page<Resource>
+    fun findAllListedByClassIn(classes: Set<ThingId>, pageable: Pageable): Page<Resource>
+
+    fun findAllByClassInAndVisibilityAndObservatoryId(classes: Set<ThingId>, visibility: Visibility, id: ObservatoryId, pageable: Pageable): Page<Resource>
+    fun findAllListedByClassInAndObservatoryId(classes: Set<ThingId>, id: ObservatoryId, pageable: Pageable): Page<Resource>
 }

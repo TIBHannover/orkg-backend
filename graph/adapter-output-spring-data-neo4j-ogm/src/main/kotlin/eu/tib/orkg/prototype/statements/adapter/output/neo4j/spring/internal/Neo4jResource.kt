@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ObservatoryIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.OrganizationIdConverter
@@ -59,11 +60,12 @@ data class Neo4jResource(
     @Property("verified")
     var verified: Boolean? = null
 
-    @Property("featured")
-    var featured: Boolean? = null
-
-    @Property("unlisted")
-    var unlisted: Boolean? = null
+    @Property("visibility")
+    var visibility: Visibility? = null
+        get() = field ?: Visibility.DEFAULT
+        set(value) {
+            field = value.takeIf { it != Visibility.DEFAULT }
+        }
 
     @Property("organization_id")
     @Convert(OrganizationIdConverter::class)
@@ -91,8 +93,7 @@ data class Neo4jResource(
         observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
         extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
         organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
-        featured: Boolean = false,
-        unlisted: Boolean = false
+        visibility: Visibility = Visibility.DEFAULT
     ) : this(null) {
         this.label = label
         this.resourceId = resourceId
@@ -100,8 +101,7 @@ data class Neo4jResource(
         this.observatoryId = observatoryId
         this.extractionMethod = extractionMethod
         this.organizationId = organizationId
-        this.featured = featured
-        this.unlisted = unlisted
+        this.visibility = visibility
     }
 
     fun toResource() =
@@ -114,8 +114,7 @@ data class Neo4jResource(
             observatoryId = observatoryId,
             extractionMethod = extractionMethod,
             organizationId = organizationId,
-            featured = featured,
-            unlisted = unlisted,
+            visibility = visibility!!,
             verified = verified,
         )
 

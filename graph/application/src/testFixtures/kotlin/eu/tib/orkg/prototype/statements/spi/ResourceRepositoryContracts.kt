@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
@@ -14,7 +15,6 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
-import kotlin.math.ceil
 import org.orkg.statements.testing.createResource
 import org.orkg.statements.testing.random
 import org.orkg.statements.testing.withCustomMappings
@@ -49,8 +49,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                 it.observatoryId shouldBe it.observatoryId
                 it.extractionMethod shouldBe it.extractionMethod
                 it.organizationId shouldBe it.organizationId
-                it.featured shouldBe it.featured
-                it.unlisted shouldBe it.unlisted
+                it.visibility shouldBe it.visibility
                 it.verified shouldBe it.verified
                 it.thingId shouldBe expected.thingId
             }
@@ -486,274 +485,18 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
         context("by including and excluding classes and label regex") {
             // TODO implement
         }
-        context("by verified flag") {
-            context("is true") {
-                val expectedCount = 3
-                val resources = fabricator.random<List<Resource>>().mapIndexed { index, resource ->
-                    resource.copy(verified = index < expectedCount)
-                }
-                resources.forEach(repository::save)
-
-                val expected = resources.take(expectedCount)
-                val result = repository.findAllByVerifiedIsTrue(PageRequest.of(0, 5))
-
-                it("returns the correct result") {
-                    result shouldNotBe null
-                    result.content shouldNotBe null
-                    result.content.size shouldBe expectedCount
-                    result.content shouldContainAll expected
-                }
-                it("pages the result correctly") {
-                    result.size shouldBe 5
-                    result.number shouldBe 0
-                    result.totalPages shouldBe 1
-                    result.totalElements shouldBe expectedCount
-                }
-                xit("sorts the results by creation date by default") {
-                    result.content.zipWithNext { a, b ->
-                        a.createdAt shouldBeLessThan b.createdAt
-                    }
-                }
+        context("by visibility") {
+            val resources = fabricator.random<List<Resource>>().mapIndexed { index, resource ->
+                resource.copy(visibility = Visibility.values()[index % Visibility.values().size])
             }
-            context("is false") {
-                val expectedCount = 3
-                val resources = fabricator.random<List<Resource>>().mapIndexed { index, resource ->
-                    resource.copy(verified = index >= expectedCount)
-                }
-                resources.forEach(repository::save)
-
-                val expected = resources.take(expectedCount)
-                val result = repository.findAllByVerifiedIsFalse(PageRequest.of(0, 5))
-
-                it("returns the correct result") {
-                    result shouldNotBe null
-                    result.content shouldNotBe null
-                    result.content.size shouldBe expectedCount
-                    result.content shouldContainAll expected
-                }
-                it("pages the result correctly") {
-                    result.size shouldBe 5
-                    result.number shouldBe 0
-                    result.totalPages shouldBe 1
-                    result.totalElements shouldBe expectedCount
-                }
-                xit("sorts the results by creation date by default") {
-                    result.content.zipWithNext { a, b ->
-                        a.createdAt shouldBeLessThan b.createdAt
-                    }
-                }
-            }
-        }
-        context("by featured flag") {
-            context("is true") {
-                val expectedCount = 3
-                val resources = fabricator.random<List<Resource>>().mapIndexed { index, resource ->
-                    resource.copy(featured = index < expectedCount)
-                }
-                resources.forEach(repository::save)
-
-                val expected = resources.take(expectedCount)
-                val result = repository.findAllByFeaturedIsTrue(PageRequest.of(0, 5))
-
-                it("returns the correct result") {
-                    result shouldNotBe null
-                    result.content shouldNotBe null
-                    result.content.size shouldBe expectedCount
-                    result.content shouldContainAll expected
-                }
-                it("pages the result correctly") {
-                    result.size shouldBe 5
-                    result.number shouldBe 0
-                    result.totalPages shouldBe 1
-                    result.totalElements shouldBe expectedCount
-                }
-                xit("sorts the results by creation date by default") {
-                    result.content.zipWithNext { a, b ->
-                        a.createdAt shouldBeLessThan b.createdAt
-                    }
-                }
-            }
-            context("is false") {
-                val expectedCount = 3
-                val resources = fabricator.random<List<Resource>>().mapIndexed { index, resource ->
-                    resource.copy(featured = index >= expectedCount)
-                }
-                resources.forEach(repository::save)
-
-                val expected = resources.take(expectedCount)
-                val result = repository.findAllByFeaturedIsFalse(PageRequest.of(0, 5))
-
-                it("returns the correct result") {
-                    result shouldNotBe null
-                    result.content shouldNotBe null
-                    result.content.size shouldBe expectedCount
-                    result.content shouldContainAll expected
-                }
-                it("pages the result correctly") {
-                    result.size shouldBe 5
-                    result.number shouldBe 0
-                    result.totalPages shouldBe 1
-                    result.totalElements shouldBe expectedCount
-                }
-                xit("sorts the results by creation date by default") {
-                    result.content.zipWithNext { a, b ->
-                        a.createdAt shouldBeLessThan b.createdAt
-                    }
-                }
-            }
-        }
-        context("by unlisted flag") {
-            context("is true") {
-                val expectedCount = 3
-                val resources = fabricator.random<List<Resource>>().mapIndexed { index, resource ->
-                    resource.copy(unlisted = index < expectedCount)
-                }
-                resources.forEach(repository::save)
-
-                val expected = resources.take(expectedCount)
-                val result = repository.findAllByUnlistedIsTrue(PageRequest.of(0, 5))
-
-                it("returns the correct result") {
-                    result shouldNotBe null
-                    result.content shouldNotBe null
-                    result.content.size shouldBe expectedCount
-                    result.content shouldContainAll expected
-                }
-                it("pages the result correctly") {
-                    result.size shouldBe 5
-                    result.number shouldBe 0
-                    result.totalPages shouldBe 1
-                    result.totalElements shouldBe expectedCount
-                }
-                xit("sorts the results by creation date by default") {
-                    result.content.zipWithNext { a, b ->
-                        a.createdAt shouldBeLessThan b.createdAt
-                    }
-                }
-            }
-            context("is false") {
-                val expectedCount = 3
-                val resources = fabricator.random<List<Resource>>().mapIndexed { index, resource ->
-                    resource.copy(unlisted = index >= expectedCount)
-                }
-                resources.forEach(repository::save)
-
-                val expected = resources.take(expectedCount)
-                val result = repository.findAllByUnlistedIsFalse(PageRequest.of(0, 5))
-
-                it("returns the correct result") {
-                    result shouldNotBe null
-                    result.content shouldNotBe null
-                    result.content.size shouldBe expectedCount
-                    result.content shouldContainAll expected
-                }
-                it("pages the result correctly") {
-                    result.size shouldBe 5
-                    result.number shouldBe 0
-                    result.totalPages shouldBe 1
-                    result.totalElements shouldBe expectedCount
-                }
-                xit("sorts the results by creation date by default") {
-                    result.content.zipWithNext { a, b ->
-                        a.createdAt shouldBeLessThan b.createdAt
-                    }
-                }
-            }
-        }
-        context("by class and unlisted flag") {
-            val expectedCount = 3
-            val resources = fabricator.random<MutableList<Resource>>()
-            val classes = (0 until 3).map { ThingId("ThingId$it") }
-            (0 until 6).forEach {
-                resources[it] = resources[it].copy(
-                    classes = resources[it].classes + classes,
-                    unlisted = it < 3
-                )
-            }
-
-            context("is true") {
-                resources.forEach(repository::save)
-                val expected = resources.take(expectedCount)
-                val result = repository.findAllFeaturedResourcesByClass(
-                    classes = classes,
-                    unlisted = true,
-                    pageable = PageRequest.of(0, 5)
-                )
-                it("returns the correct result") {
-                    result shouldNotBe null
-                    result.content shouldNotBe null
-                    result.content.size shouldBe expectedCount
-                    result.content shouldContainAll expected
-                }
-                it("pages the result correctly") {
-                    result.size shouldBe 5
-                    result.number shouldBe 0
-                    result.totalPages shouldBe 1
-                    result.totalElements shouldBe expectedCount
-                }
-                xit("sorts the results by creation date by default") {
-                    result.content.zipWithNext { a, b ->
-                        a.createdAt shouldBeLessThan b.createdAt
-                    }
-                }
-            }
-            context("is false") {
-                resources.forEach(repository::save)
-                val expected = resources.drop(3).take(expectedCount)
-                val result = repository.findAllFeaturedResourcesByClass(
-                    classes = classes,
-                    unlisted = false,
-                    pageable = PageRequest.of(0, 5)
-                )
-
-                it("returns the correct result") {
-                    result shouldNotBe null
-                    result.content shouldNotBe null
-                    result.content.size shouldBe expectedCount
-                    result.content shouldContainAll expected
-                }
-                it("pages the result correctly") {
-                    result.size shouldBe 5
-                    result.number shouldBe 0
-                    result.totalPages shouldBe 1
-                    result.totalElements shouldBe expectedCount
-                }
-                xit("sorts the results by creation date by default") {
-                    result.content.zipWithNext { a, b ->
-                        a.createdAt shouldBeLessThan b.createdAt
-                    }
-                }
-            }
-        }
-        context("by classes and unlisted flag and featured flag") {
-            val classes = (0 until 3).map { ThingId("$it") }
-            val resources = fabricator.random<List<Resource>>().mapIndexed { index, it ->
-                val c = classes.take(index % 3)
-                val unlisted = index >= 6
-                val featured = ((index / 3) % 2) == 1 // toggles every 3 indices
-                it.copy(
-                    classes = it.classes + c,
-                    unlisted = unlisted,
-                    featured = featured
-                )
-            }
-            // TODO: refactor this, maybe?
-            listOf(classes, emptyList()).forEach { c ->
-            listOf(true, false).forEach { unlisted ->
-            listOf(true, false).forEach { featured ->
-                context("when classes is ${if (c.isEmpty()) "empty" else "not empty"} and unlisted is $unlisted and featured is $featured") {
+            Visibility.values().forEach { visibility ->
+                context("when visibility is $visibility") {
                     resources.forEach(repository::save)
-                    val expected = resources.filter {
-                        it.unlisted == unlisted && it.featured == featured && it.classes.any { id ->
-                            id in c
-                        }
-                    }
-                    val result = repository.findAllFeaturedResourcesByClass(
-                        classes = c,
-                        unlisted = unlisted,
-                        featured = featured,
-                        pageable = PageRequest.of(0, 5)
-                    )
+
+                    val expected = resources.filter { it.visibility == visibility }
+                    expected.size shouldBe 3
+                    val result = repository.findAllByVisibility(visibility, PageRequest.of(0, 5))
+
                     it("returns the correct result") {
                         result shouldNotBe null
                         result.content shouldNotBe null
@@ -763,50 +506,153 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                     it("pages the result correctly") {
                         result.size shouldBe 5
                         result.number shouldBe 0
-                        result.totalPages shouldBe ceil(expected.size / 5.0).toInt()
+                        result.totalPages shouldBe 1
                         result.totalElements shouldBe expected.size
                     }
-                    xit("sorts the results by creation date by default") {
+                    it("sorts the results by creation date by default") {
                         result.content.zipWithNext { a, b ->
                             a.createdAt shouldBeLessThan b.createdAt
                         }
                     }
                 }
-            }}}
+            }
         }
-        context("by classes and unlisted flag and featured flag and observatory id") {
-            val classes = (0 until 3).map { ThingId("$it") }
-            val observatoryId = fabricator.random<ObservatoryId>()
-            val resources = fabricator.random<Resource>(24).mapIndexed { index, it ->
-                val c = classes.take(index % 3)
-                val unlisted = index >= 6
-                val featured = ((index / 3) % 2) == 1 // toggles every 3 indices
-                val doSetObservatoryId = ((index / 6) % 2) == 1 // toggles every 6 indices
-                it.copy(
-                    classes = it.classes + c,
-                    unlisted = unlisted,
-                    featured = featured,
-                    observatoryId = if (doSetObservatoryId) observatoryId else it.observatoryId
+        context("by listed visibility") {
+            val resources = fabricator.random<List<Resource>>().mapIndexed { index, resource ->
+                resource.copy(visibility = Visibility.values()[index % Visibility.values().size])
+            }
+            resources.forEach(repository::save)
+
+            val expected = resources.filter { it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED }
+            expected.size shouldBe 6
+            val result = repository.findAllListed(PageRequest.of(0, 10))
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
+        context("by class and visibility") {
+            val size = 3 * Visibility.values().size * 2
+            val classes = setOf(ThingId("Paper"))
+            val resources = fabricator.random<Resource>(size).mapIndexed { index, resource ->
+                resource.copy(
+                    visibility = Visibility.values()[index % Visibility.values().size],
+                    classes = if (index >= size / 2) classes else resource.classes
                 )
             }
-            // TODO: refactor this, maybe?
-            listOf(classes, emptyList()).forEach { c ->
-            listOf(true, false).forEach { unlisted ->
-            listOf(true, false).forEach { featured ->
-                context("when classes is ${if (c.isEmpty()) "empty" else "not empty"} and unlisted is $unlisted and featured is $featured") {
+            Visibility.values().forEach { visibility ->
+                context("when visibility is $visibility") {
                     resources.forEach(repository::save)
+
                     val expected = resources.filter {
-                        it.unlisted == unlisted && it.observatoryId == observatoryId && it.featured == featured && it.classes.any { id ->
-                            id in c
+                        it.visibility == visibility && classes.any { `class`-> `class` in it.classes }
+                    }
+                    expected.size shouldBe 3
+                    val result = repository.findAllByClassInAndVisibility(classes, visibility, PageRequest.of(0, 5))
+
+                    it("returns the correct result") {
+                        result shouldNotBe null
+                        result.content shouldNotBe null
+                        result.content.size shouldBe expected.size
+                        result.content shouldContainAll expected
+                    }
+                    it("pages the result correctly") {
+                        result.size shouldBe 5
+                        result.number shouldBe 0
+                        result.totalPages shouldBe 1
+                        result.totalElements shouldBe expected.size
+                    }
+                    it("sorts the results by creation date by default") {
+                        result.content.zipWithNext { a, b ->
+                            a.createdAt shouldBeLessThan b.createdAt
                         }
                     }
-                    val result = repository.findAllFeaturedResourcesByObservatoryIDAndClass(
-                        classes = c,
-                        unlisted = unlisted,
-                        featured = featured,
+                }
+            }
+        }
+        context("by class and listed visibility") {
+            val size = 3 * Visibility.values().size * 2
+            val classes = setOf(ThingId("Paper"))
+            val resources = fabricator.random<Resource>(size).mapIndexed { index, resource ->
+                resource.copy(
+                    visibility = Visibility.values()[index % Visibility.values().size],
+                    classes = if (index >= size / 2) classes else resource.classes
+                )
+            }
+            resources.forEach(repository::save)
+
+            val expected = resources.filter {
+                (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED)
+                    && classes.any { `class`-> `class` in it.classes }
+            }
+            expected.size shouldBe 6
+            val result = repository.findAllListedByClassIn(classes, PageRequest.of(0, 10))
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
+        context("by class and visibility and observatory id") {
+            val size = 2 * Visibility.values().size * 2 * 2
+            val classes = setOf(ThingId("Paper"))
+            val observatoryId: ObservatoryId = fabricator.random()
+            val resources = fabricator.random<Resource>(size).mapIndexed { index, resource ->
+                resource.copy(
+                    visibility = Visibility.values()[index % Visibility.values().size]
+                )
+            }.toMutableList()
+            (0 until size / 2).forEach {
+                resources[it] = resources[it].copy(classes = resources[it].classes + classes)
+            }
+            ((size / 4 until size / 2) + ((size / 4) * 3 until size)).forEach {
+                resources[it] = resources[it].copy(observatoryId = observatoryId)
+            }
+
+            Visibility.values().forEach { visibility ->
+                context("when visibility is $visibility") {
+                    resources.forEach(repository::save)
+
+                    val expected = resources.filter {
+                        it.visibility == visibility && it.observatoryId == observatoryId && it.classes.any {`class`->
+                            `class` in classes
+                        }
+                    }
+                    expected.size shouldBe 2
+                    val result = repository.findAllByClassInAndVisibilityAndObservatoryId(
+                        classes = classes,
+                        visibility = visibility,
                         id = observatoryId,
                         pageable = PageRequest.of(0, 5)
                     )
+
                     it("returns the correct result") {
                         result shouldNotBe null
                         result.content shouldNotBe null
@@ -816,65 +662,65 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                     it("pages the result correctly") {
                         result.size shouldBe 5
                         result.number shouldBe 0
-                        result.totalPages shouldBe ceil(expected.size / 5.0).toInt()
+                        result.totalPages shouldBe 1
                         result.totalElements shouldBe expected.size
                     }
-                    xit("sorts the results by creation date by default") {
+                    it("sorts the results by creation date by default") {
                         result.content.zipWithNext { a, b ->
                             a.createdAt shouldBeLessThan b.createdAt
                         }
                     }
                 }
-            }}}
-        }
-        context("by classes and unlisted flag and observatory id") {
-            val classes = (0 until 3).map { ThingId("$it") }
-            val observatoryId = fabricator.random<ObservatoryId>()
-            val resources = fabricator.random<List<Resource>>().mapIndexed { index, it ->
-                val c = classes.take(index % 3)
-                val unlisted = index >= 6
-                val doSetObservatoryId = ((index / 3) % 2) == 1 // toggles every 3 indices
-                it.copy(
-                    classes = it.classes + c,
-                    unlisted = unlisted,
-                    observatoryId = if (doSetObservatoryId) observatoryId else it.observatoryId
-                )
             }
-            // TODO: refactor this, maybe?
-            listOf(classes, emptyList()).forEach { c ->
-            listOf(true, false).forEach { unlisted ->
-                context("when classes is ${if (c.isEmpty()) "empty" else "not empty"} and unlisted is $unlisted") {
-                    resources.forEach(repository::save)
-                    val expected = resources.filter {
-                        it.observatoryId == observatoryId && it.unlisted == unlisted && it.classes.any { id ->
-                            id in c
-                        }
+        }
+        context("by class and listed visibility and observatory id") {
+            val size = 2 * Visibility.values().size * 2 * 2
+            val classes = setOf(ThingId("Paper"))
+            val observatoryId: ObservatoryId = fabricator.random()
+            val resources = fabricator.random<Resource>(size).mapIndexed { index, resource ->
+                resource.copy(
+                    visibility = Visibility.values()[index % Visibility.values().size]
+                )
+            }.toMutableList()
+            (0 until size / 2).forEach {
+                resources[it] = resources[it].copy(classes = resources[it].classes + classes)
+            }
+            // Set the observatory id for the second quarter and the last quarter of the resources (25%-50% and 75%-100%)
+            ((size / 4 until size / 2) + ((size / 4) * 3 until size)).forEach {
+                resources[it] = resources[it].copy(observatoryId = observatoryId)
+            }
+            resources.forEach(repository::save)
+
+            val expected = resources.filter {
+                (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED)
+                    && it.observatoryId == observatoryId && it.classes.any {`class`->
+                        `class` in classes
                     }
-                    val result = repository.findAllResourcesByObservatoryIDAndClass(
-                        classes = c,
-                        unlisted = unlisted,
-                        id = observatoryId,
-                        pageable = PageRequest.of(0, 5)
-                    )
-                    it("returns the correct result") {
-                        result shouldNotBe null
-                        result.content shouldNotBe null
-                        result.content.size shouldBe expected.size
-                        result.content shouldContainAll expected
-                    }
-                    it("pages the result correctly") {
-                        result.size shouldBe 5
-                        result.number shouldBe 0
-                        result.totalPages shouldBe ceil(expected.size / 5.0).toInt()
-                        result.totalElements shouldBe expected.size
-                    }
-                    xit("sorts the results by creation date by default") {
-                        result.content.zipWithNext { a, b ->
-                            a.createdAt shouldBeLessThan b.createdAt
-                        }
-                    }
+            }
+            expected.size shouldBe 4
+            val result = repository.findAllListedByClassInAndObservatoryId(
+                classes = classes,
+                id = observatoryId,
+                pageable = PageRequest.of(0, 10)
+            )
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
                 }
-            }}
+            }
         }
     }
 
@@ -914,6 +760,158 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
         it("sorts the results lexicographically by default") {
             result.content.zipWithNext { a, b ->
                 a.value.toString() shouldBeLessThan b.value.toString()
+            }
+        }
+    }
+
+    describe("finding several papers") {
+        context("by verified flag") {
+            context("is true") {
+                val expectedCount = 3
+                val resources = fabricator.random<List<Resource>>().mapIndexed { index, resource ->
+                    resource.copy(
+                        verified = index < expectedCount * 2
+                    )
+                }.toMutableList()
+                (0 until expectedCount).forEach {
+                    resources[it] = resources[it].copy(
+                        classes = resources[it].classes + ThingId("Paper")
+                    )
+                }
+                resources.forEach(repository::save)
+
+                val expected = resources.take(expectedCount)
+                val result = repository.findAllPapersByVerified(true, PageRequest.of(0, 5))
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                xit("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+            context("is false") {
+                val expectedCount = 3
+                val resources = fabricator.random<List<Resource>>().mapIndexed { index, resource ->
+                    if (index % expectedCount == 0) {
+                        resource.copy(
+                            verified = null
+                        )
+                    } else {
+                        resource.copy(
+                            verified = index >= expectedCount * 2
+                        )
+                    }
+                }.toMutableList()
+                (0 until expectedCount).forEach {
+                    resources[it] = resources[it].copy(
+                        classes = resources[it].classes + ThingId("Paper")
+                    )
+                }
+                resources.forEach(repository::save)
+
+                val expected = resources.take(expectedCount)
+                val result = repository.findAllPapersByVerified(false, PageRequest.of(0, 5))
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                it("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+        }
+        context("by visibility") {
+            val size = 3 * Visibility.values().size * 2
+            val resources = fabricator.random<Resource>(size).mapIndexed { index, resource ->
+                resource.copy(
+                    visibility = Visibility.values()[index % Visibility.values().size],
+                    classes = if (index >= size / 2) resource.classes + ThingId("Paper") else resource.classes
+                )
+            }
+            Visibility.values().forEach { visibility ->
+                context("when visibility is $visibility") {
+                    resources.forEach(repository::save)
+
+                    val expected = resources.filter { it.visibility == visibility && ThingId("Paper") in it.classes }
+                    expected.size shouldBe 3
+                    val result = repository.findAllPapersByVisibility(visibility, PageRequest.of(0, 5))
+
+                    it("returns the correct result") {
+                        result shouldNotBe null
+                        result.content shouldNotBe null
+                        result.content.size shouldBe expected.size
+                        result.content shouldContainAll expected
+                    }
+                    it("pages the result correctly") {
+                        result.size shouldBe 5
+                        result.number shouldBe 0
+                        result.totalPages shouldBe 1
+                        result.totalElements shouldBe expected.size
+                    }
+                    it("sorts the results by creation date by default") {
+                        result.content.zipWithNext { a, b ->
+                            a.createdAt shouldBeLessThan b.createdAt
+                        }
+                    }
+                }
+            }
+        }
+        context("by listed visibility") {
+            val size = 3 * Visibility.values().size * 2
+            val resources = fabricator.random<Resource>(size).mapIndexed { index, resource ->
+                resource.copy(
+                    visibility = Visibility.values()[index % Visibility.values().size],
+                    classes = if (index >= size / 2) resource.classes + ThingId("Paper") else resource.classes
+                )
+            }
+            resources.forEach(repository::save)
+
+            val expected = resources.filter {
+                (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED)
+                    && ThingId("Paper") in it.classes
+            }
+            expected.size shouldBe 6
+            val result = repository.findAllListedPapers(PageRequest.of(0, 10))
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.size
+                result.content shouldContainAll expected
+            }
+            it("pages the result correctly") {
+                result.size shouldBe 10
+                result.number shouldBe 0
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.size
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
             }
         }
     }

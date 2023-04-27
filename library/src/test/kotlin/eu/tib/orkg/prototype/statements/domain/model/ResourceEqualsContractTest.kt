@@ -24,8 +24,7 @@ internal class ResourceEqualsContractTest : EqualsContract<Resource> {
         classes = setOf(ThingId("C1"), ThingId("C9999")),
         observatoryId = ObservatoryId(observatoryUUID),
         extractionMethod = ExtractionMethod.UNKNOWN,
-        featured = true,
-        unlisted = false,
+        visibility = Visibility.FEATURED,
         verified = true,
     )
 
@@ -38,8 +37,7 @@ internal class ResourceEqualsContractTest : EqualsContract<Resource> {
             classes = setOf(ThingId("C1"), ThingId("C9999")),
             observatoryId = ObservatoryId(observatoryUUID),
             extractionMethod = ExtractionMethod.UNKNOWN,
-            featured = true,
-            unlisted = false,
+            visibility = Visibility.FEATURED,
             verified = true,
         )
     }
@@ -52,8 +50,7 @@ internal class ResourceEqualsContractTest : EqualsContract<Resource> {
         classes = setOf(ThingId("C1"), ThingId("C9999")),
         observatoryId = ObservatoryId(observatoryUUID),
         extractionMethod = ExtractionMethod.UNKNOWN,
-        featured = true,
-        unlisted = false,
+        visibility = Visibility.FEATURED,
         verified = true,
     )
 }

@@ -1,6 +1,6 @@
-package eu.tib.orkg.prototype.content_types.services
+package eu.tib.orkg.prototype.contenttypes.services
 
-import eu.tib.orkg.prototype.content_types.application.ContributionNotFound
+import eu.tib.orkg.prototype.contenttypes.application.ContributionNotFound
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility

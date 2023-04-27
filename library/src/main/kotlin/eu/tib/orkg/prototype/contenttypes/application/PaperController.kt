@@ -1,8 +1,8 @@
-package eu.tib.orkg.prototype.content_types.application
+package eu.tib.orkg.prototype.contenttypes.application
 
-import eu.tib.orkg.prototype.content_types.api.PaperRepresentation
-import eu.tib.orkg.prototype.content_types.api.PaperUseCases
-import eu.tib.orkg.prototype.content_types.api.VisibilityFilter
+import eu.tib.orkg.prototype.contenttypes.api.PaperRepresentation
+import eu.tib.orkg.prototype.contenttypes.api.PaperUseCases
+import eu.tib.orkg.prototype.contenttypes.api.VisibilityFilter
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.statements.application.BaseController

@@ -1,16 +1,16 @@
-package eu.tib.orkg.prototype.content_types.application
+package eu.tib.orkg.prototype.contenttypes.application
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.content_types.api.AuthorRepresentation
-import eu.tib.orkg.prototype.content_types.api.LabeledObjectRepresentation
-import eu.tib.orkg.prototype.content_types.api.PaperRepresentation
-import eu.tib.orkg.prototype.content_types.api.PaperUseCases
-import eu.tib.orkg.prototype.content_types.api.PublicationInfoRepresentation
-import eu.tib.orkg.prototype.content_types.api.VisibilityFilter
+import eu.tib.orkg.prototype.contenttypes.api.AuthorRepresentation
+import eu.tib.orkg.prototype.contenttypes.api.LabeledObjectRepresentation
+import eu.tib.orkg.prototype.contenttypes.api.PaperRepresentation
+import eu.tib.orkg.prototype.contenttypes.api.PaperUseCases
+import eu.tib.orkg.prototype.contenttypes.api.PublicationInfoRepresentation
+import eu.tib.orkg.prototype.contenttypes.api.VisibilityFilter
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.shared.TooManyParameters

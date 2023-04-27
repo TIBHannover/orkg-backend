@@ -1,6 +1,6 @@
-package eu.tib.orkg.prototype.content_types.services
+package eu.tib.orkg.prototype.contenttypes.services
 
-import eu.tib.orkg.prototype.content_types.api.LabeledObjectRepresentation
+import eu.tib.orkg.prototype.contenttypes.api.LabeledObjectRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId

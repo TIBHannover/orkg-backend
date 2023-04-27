@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.content_types.application
+package eu.tib.orkg.prototype.contenttypes.application
 
 import eu.tib.orkg.prototype.shared.SimpleMessageException
 import eu.tib.orkg.prototype.statements.domain.model.ThingId

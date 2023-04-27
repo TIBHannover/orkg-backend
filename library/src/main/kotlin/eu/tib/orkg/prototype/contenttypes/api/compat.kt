@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.content_types.api
+package eu.tib.orkg.prototype.contenttypes.api
 
 interface PaperUseCases : RetrievePaperUseCase
 

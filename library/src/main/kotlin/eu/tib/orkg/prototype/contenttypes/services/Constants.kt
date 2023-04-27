@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.content_types.services
+package eu.tib.orkg.prototype.contenttypes.services
 
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.data.domain.PageRequest

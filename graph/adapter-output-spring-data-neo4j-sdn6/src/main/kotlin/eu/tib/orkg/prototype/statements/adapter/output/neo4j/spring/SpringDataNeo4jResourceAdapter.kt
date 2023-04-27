@@ -42,7 +42,7 @@ class SpringDataNeo4jResourceAdapter(
     @Caching(
         evict = [
             CacheEvict(key = "#resource.id", cacheNames = [RESOURCE_ID_TO_RESOURCE_CACHE]),
-            CacheEvict(key = "#resource.id.value", cacheNames = [THING_ID_TO_THING_CACHE]),
+            CacheEvict(key = "#resource.id", cacheNames = [THING_ID_TO_THING_CACHE]),
         ]
     )
     override fun save(resource: Resource) {
@@ -52,7 +52,7 @@ class SpringDataNeo4jResourceAdapter(
     @Caching(
         evict = [
             CacheEvict(key = "#id"),
-            CacheEvict(key = "#id.value", cacheNames = [THING_ID_TO_THING_CACHE]),
+            CacheEvict(key = "#id", cacheNames = [THING_ID_TO_THING_CACHE]),
         ]
     )
     override fun deleteByResourceId(id: ThingId) {

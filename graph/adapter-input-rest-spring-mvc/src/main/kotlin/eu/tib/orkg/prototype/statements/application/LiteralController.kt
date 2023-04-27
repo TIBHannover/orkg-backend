@@ -8,7 +8,6 @@ import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.ResponseEntity
@@ -38,15 +37,7 @@ class LiteralController(
             .findById(id)
             .orElseThrow { LiteralNotFound(id) }
 
-    // TODO: remove when front-end has migrated to paged method
     @GetMapping("/")
-    fun findByLabel(
-        @RequestParam("q", required = false) searchString: String?,
-        @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean
-    ): Iterable<LiteralRepresentation> =
-        findByLabel(searchString, exactMatch, PageRequest.of(0, Int.MAX_VALUE)).content
-
-    @GetMapping("/", params = ["size"])
     fun findByLabel(
         @RequestParam("q", required = false) searchString: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,

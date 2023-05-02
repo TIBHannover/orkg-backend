@@ -13,12 +13,16 @@ plugins {
 
 testing {
     suites {
-        val test by getting(JvmTestSuite::class) {
+        val test by getting(JvmTestSuite::class)
+        val containerTest by registering(JvmTestSuite::class) {
+            testType.set(TestSuiteType.FUNCTIONAL_TEST)
             useJUnitJupiter()
             dependencies {
+                implementation(project())
                 implementation(testFixtures(project(":testing:spring")))
                 implementation(testFixtures(project(":graph:application"))) {
                     exclude(group = "org.neo4j", module = "neo4j-ogm-bolt-native-types")
+                    exclude(group = "org.liquibase", module = "liquibase-core") // Do not bring in forced version (via platform)
                 }
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
@@ -26,6 +30,14 @@ testing {
                     exclude(module = "mockito-core")
                 }
                 implementation("com.ninja-squad:springmockk:2.0.1")
+                implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
+            }
+            targets {
+                all {
+                    testTask.configure {
+                        shouldRunAfter(test)
+                    }
+                }
             }
         }
     }
@@ -33,10 +45,12 @@ testing {
 
 dependencies {
     api(enforcedPlatform(SpringBootPlugin.BOM_COORDINATES)) // TODO: align with platform when upgrade is done
+    "containerTestApi"(enforcedPlatform(SpringBootPlugin.BOM_COORDINATES)) // TODO: align with platform when upgrade is done
 
     // TODO: remove when domain was moved
     api(project(":library")) {
         exclude(group = "org.neo4j", module = "neo4j-ogm-bolt-native-types")
+        exclude(group = "org.liquibase", module = "liquibase-core") // Do not bring in forced version (via platform)
     }
     api(project(":graph:application"))
 
@@ -51,4 +65,8 @@ dependencies {
 
     // Caching
     api("org.springframework.boot:spring-boot-starter-cache")
+}
+
+tasks.named("check") {
+    dependsOn(testing.suites.named("containerTest"))
 }

@@ -78,3 +78,6 @@ logging:
   level:
     org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
     org.neo4j.ogm.drivers.bolt.request.BoltRequest: DEBUG
+  pattern:
+    # Default console logging pattern of spring-boot 2.3.x with additional leading zero-width-space
+    console: "\u200B%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr( ){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx"

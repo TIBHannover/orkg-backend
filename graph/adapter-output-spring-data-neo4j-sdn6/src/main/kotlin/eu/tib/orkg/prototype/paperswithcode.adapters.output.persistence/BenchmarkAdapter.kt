@@ -6,13 +6,11 @@ import eu.tib.orkg.prototype.paperswithcode.application.domain.BenchmarkSummary
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.SummarizeBenchmarkQuery
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.toResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
 @Component
-@ConditionalOnProperty("orkg.features.pwc-legacy-model", havingValue = "false", matchIfMissing = true)
 class BenchmarkAdapter(
     val benchmarkRepository: Neo4jBenchmarkRepository,
 ) : SummarizeBenchmarkQuery {

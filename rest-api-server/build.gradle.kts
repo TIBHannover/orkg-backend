@@ -1,8 +1,11 @@
+@file:Suppress("UnstableApiUsage")
+
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
+import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 group = "eu.tib"
-version = "0.30.1"
+version = "0.30.2"
 
 val neo4jVersion = "3.5.+" // should match version in Dockerfile
 val springDataNeo4jVersion = "5.3.4"
@@ -25,7 +28,6 @@ plugins {
     alias(libs.plugins.spring.boot)
 
     id("org.jetbrains.dokka") version "0.10.1"
-    id("com.coditory.integration-test") version "1.2.1"
     id("de.jansauer.printcoverage") version "2.0.0"
     id("org.asciidoctor.jvm.convert") version "3.3.2"
     id("com.google.cloud.tools.jib") version "3.1.1"
@@ -52,9 +54,73 @@ idea {
     }
 }
 
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
+            dependencies {
+                implementation(testFixtures(project(":testing:spring")))
+                implementation(testFixtures(project(":graph:application")))
+                implementation("org.springframework.security:spring-security-test")
+                implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+                implementation("org.springframework.boot:spring-boot-starter-test") {
+                    // Disable JUnit 4 (aka Vintage)
+                    exclude(group = "junit", module = "junit")
+                    exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+                    // TODO: We currently have a mixture of MockK and Mockito tests. After migration, we should disable Mockito.
+                    // exclude(module = "mockito-core")
+                }
+                implementation("com.ninja-squad:springmockk:2.0.1")
+                implementation("com.redfin:contractual:3.0.0")
+            }
+        }
+        val integrationTest by registering(JvmTestSuite::class) {
+            testType.set(TestSuiteType.INTEGRATION_TEST)
+            useJUnitJupiter()
+            dependencies {
+                implementation(project())
+                implementation(testFixtures(project(":testing:spring")))
+                implementation(testFixtures(project(":graph:application")))
+                implementation("org.springframework.security:spring-security-test")
+                implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+                implementation("org.springframework.boot:spring-boot-starter-test") {
+                    // Disable JUnit 4 (aka Vintage)
+                    exclude(group = "junit", module = "junit")
+                    exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+                    // TODO: We currently have a mixture of MockK and Mockito tests. After migration, we should disable Mockito.
+                    // exclude(module = "mockito-core")
+                }
+                implementation("com.ninja-squad:springmockk:2.0.1")
+                implementation("com.redfin:contractual:3.0.0")
+                implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+                implementation("org.postgresql:postgresql")
+            }
+            targets {
+                all {
+                    testTask.configure {
+                        shouldRunAfter(test)
+                    }
+                }
+            }
+        }
+    }
+}
+
+val bootJar by tasks.getting(BootJar::class) {
+    enabled = true
+    archiveClassifier.set("boot")
+}
+
+val jar by tasks.getting(Jar::class) {
+    // Build regular JAR, so we can share the application class and database migrations (e.g. for use in tests)
+    enabled = true
+}
+
 dependencies {
     // Platform alignment for ORKG components
     api(platform(project(":platform")))
+    testApi(enforcedPlatform(libs.junit5.bom))
+    "integrationTestApi"(enforcedPlatform(libs.junit5.bom))
 
     kapt(platform(project(":platform")))
 
@@ -110,26 +176,18 @@ dependencies {
     //
     // Testing
     //
-    testImplementation(testFixtures(project(":testing:spring")))
-    testImplementation(testFixtures(project(":graph:application")))
-    testImplementation("org.springframework.security:spring-security-test")
-    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
-    testImplementation(libs.bundles.testcontainers)
-    testImplementation(libs.bundles.kotest)
-    testImplementation("org.springframework.boot:spring-boot-starter-test") {
-        // Disable JUnit 4 (aka Vintage)
-        exclude(group = "junit", module = "junit")
-        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-        // TODO: We currently have a mixture of MockK and Mockito tests. After migration, we should disable Mockito.
-        // exclude(module = "mockito-core")
-    }
-    testImplementation("com.ninja-squad:springmockk:2.0.1")
-    testImplementation("com.redfin:contractual:3.0.0")
+    // Note: Version Catalogs are not yet supported in the test suites plugin
+    "integrationTestImplementation"(libs.bundles.testcontainers)
+    "integrationTestImplementation"(libs.bundles.kotest)
 
     //
     // Documentation
     //
     "asciidoctor"("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.4.RELEASE")
+}
+
+tasks.named("check") {
+    dependsOn(testing.suites.named("integrationTest"))
 }
 
 tasks {
@@ -150,11 +208,6 @@ tasks {
             // Exclude test marked as "development", because those are for features only used in dev, and rather slow.
             excludeTags = setOf("development")
         }
-    }
-
-    named("bootJar", org.springframework.boot.gradle.tasks.bundling.BootJar::class).configure {
-        enabled = true
-        archiveClassifier.set("boot")
     }
 
     named("bootRun", BootRun::class.java).configure {

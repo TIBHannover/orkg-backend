@@ -1,20 +1,12 @@
 package eu.tib.orkg.prototype
 
 import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.JpaUserRepository
-import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.UserEntity
 import eu.tib.orkg.prototype.auth.adapter.output.spring.security.OrkgUserDetailsService
-import eu.tib.orkg.prototype.community.domain.model.Observatory
-import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.Organization
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationType
-import eu.tib.orkg.prototype.community.domain.model.ResearchField
 import eu.tib.orkg.prototype.configuration.AuthorizationServerConfiguration
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.files.domain.model.Image
-import eu.tib.orkg.prototype.files.domain.model.ImageData
-import eu.tib.orkg.prototype.files.domain.model.ImageId
-import eu.tib.orkg.prototype.statements.api.UpdateOrganizationUseCases.RawImage
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
@@ -23,17 +15,10 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import java.io.BufferedReader
-import java.io.StringWriter
-import java.io.Writer
 import java.net.URI
-import java.net.URLConnection
-import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.util.*
-import javax.activation.MimeType
 import org.springframework.context.annotation.Import
-import org.springframework.core.io.ClassPathResource
 
 /**
  * Helper annotation to set up the authorization server in the application context.
@@ -105,56 +90,3 @@ fun createOrganization() = Organization(
     type = OrganizationType.GENERAL,
     logoId = null
 )
-
-fun createUser(id: UUID = UUID.fromString("ee06bdf3-d6f3-41d1-8af2-64c583d9057e")) = UserEntity().apply {
-    this.id = id
-    email = "user@example.org"
-    password = "secret"
-    displayName = "Example User"
-    enabled = true
-    created = LocalDateTime.now()
-    organizationId = null
-    observatoryId = null
-}
-
-fun createObservatory(organizationIds: Set<OrganizationId>) = Observatory(
-    id = ObservatoryId(UUID.fromString("95565e51-2b80-4c28-918c-6fbc5e2a9b33")),
-    name = "Test Observatory",
-    description = "Example Description",
-    researchField = ResearchField("R1234", null),
-    organizationIds = organizationIds,
-    displayId = "test_observatory"
-)
-
-val testImage: URI = URI.create("classpath:/images/test_image.png")
-val encodedTestImage: URI = URI.create("classpath:/images/test_image_encoded.txt")
-
-fun loadImage(
-    uri: URI,
-    id: ImageId = ImageId(UUID.randomUUID()),
-    createdBy: ContributorId = ContributorId(UUID.fromString("d02073bc-30fd-481e-9167-f3fc3595d590")),
-    createdAt: OffsetDateTime = OffsetDateTime.now()
-): Image {
-    val image = loadRawImage(uri)
-    return Image(id, image.data, image.mimeType, createdBy, createdAt)
-}
-
-fun loadRawImage(uri: URI): RawImage {
-    uri.inputStream.use {
-        val mimeType = MimeType(URLConnection.guessContentTypeFromStream(it))
-        val data = ImageData(it.readBytes())
-        return RawImage(data, mimeType)
-    }
-}
-
-fun loadEncodedImage(uri: URI): String =
-    uri.inputStream.bufferedReader().use(BufferedReader::readText)
-
-private val URI.inputStream
-    get() = ClassPathResource(path).inputStream
-
-fun ((Writer) -> Unit).asString(): String {
-    val writer = StringWriter()
-    this(writer)
-    return writer.toString()
-}

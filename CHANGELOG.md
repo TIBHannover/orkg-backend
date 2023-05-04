@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.30.2] - 2023-05-04
+### Changed
+- The "featured" and "unlisted" flags were redesigned to make the queries more consistent and less error-prone.
+  This only affects the internal data structures, the behavior for clients stays the same.
+  (See: [!499](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/499), [!519](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/519))
+### Removed
+- The endpoint for fetching literals (unpaged) was removed. (See: [!510](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/510))
+
 ## [0.30.1] - 2023-04-05
 ### Fixed
 - "Bulk deleting" a single statement does work now. (See: [!493](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/493))
@@ -309,7 +317,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.30.1...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.30.2...master
+[0.30.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.30.2
 [0.30.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.30.1
 [0.30.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.30.0
 [0.29.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.29.0

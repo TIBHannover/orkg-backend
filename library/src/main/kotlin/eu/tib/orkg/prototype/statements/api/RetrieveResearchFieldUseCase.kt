@@ -12,25 +12,58 @@ interface RetrieveResearchFieldUseCase {
 
     fun getResearchProblemsOfField(id: ThingId, pageable: Pageable): Page<PaperCountPerResearchProblem>
 
-    fun getResearchProblemsIncludingSubFields(id: ThingId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
-
     fun getContributorsIncludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor>
-
-    fun getPapersIncludingSubFields(id: ThingId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
-
-    fun getComparisonsIncludingSubFields(id: ThingId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
-
     fun getContributorsExcludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor>
 
-    fun getPapersExcludingSubFields(id: ThingId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
+    fun findAllPapersByResearchField(
+        id: ThingId,
+        visibility: VisibilityFilter,
+        includeSubFields: Boolean = false,
+        pageable: Pageable
+    ): Page<ResourceRepresentation>
 
-    fun getComparisonsExcludingSubFields(id: ThingId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
+    fun findAllComparisonsByResearchField(
+        id: ThingId,
+        visibility: VisibilityFilter,
+        includeSubFields: Boolean = false,
+        pageable: Pageable
+    ): Page<ResourceRepresentation>
 
-    fun getResearchProblemsExcludingSubFields(id: ThingId, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
+    fun findAllResearchProblemsByResearchField(
+        id: ThingId,
+        visibility: VisibilityFilter,
+        includeSubFields: Boolean = false,
+        pageable: Pageable
+    ): Page<ResourceRepresentation>
 
-    fun getEntitiesBasedOnClassesIncludingSubfields(id: ThingId, classesList: List<String>, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
+    fun findAllVisualizationsByResearchField(
+        id: ThingId,
+        visibility: VisibilityFilter,
+        includeSubFields: Boolean = false,
+        pageable: Pageable
+    ): Page<ResourceRepresentation>
 
-    fun getEntitiesBasedOnClassesExcludingSubfields(id: ThingId, classesList: List<String>, featured: Boolean?, unlisted: Boolean, pageable: Pageable): Page<ResourceRepresentation>
+    fun findAllSmartReviewsByResearchField(
+        id: ThingId,
+        visibility: VisibilityFilter,
+        includeSubFields: Boolean = false,
+        pageable: Pageable
+    ): Page<ResourceRepresentation>
+
+    fun findAllLiteratureListsByResearchField(
+        id: ThingId,
+        visibility: VisibilityFilter,
+        includeSubFields: Boolean = false,
+        pageable: Pageable
+    ): Page<ResourceRepresentation>
+
+    fun findAllEntitiesBasedOnClassesByResearchField(
+        id: ThingId,
+        classesList: List<String>,
+        visibility: VisibilityFilter,
+        includeSubFields: Boolean = false,
+        pageable: Pageable
+    ): Page<ResourceRepresentation>
 
     fun withBenchmarks(pageable: Pageable): Page<ResearchField>
 

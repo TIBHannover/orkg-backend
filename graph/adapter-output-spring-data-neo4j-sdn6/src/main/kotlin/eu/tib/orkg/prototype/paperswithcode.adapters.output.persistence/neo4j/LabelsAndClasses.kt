@@ -1,11 +1,9 @@
 package eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j
 
 import eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.LabelAndClassService
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 
 @Component
-@ConditionalOnProperty("orkg.features.pwc-legacy-model", havingValue = "false", matchIfMissing = true)
 class LabelsAndClasses : LabelAndClassService {
     override val benchmarkClass: String = BENCHMARK_CLASS
     override val benchmarkPredicate: String = BENCHMARK_PREDICATE

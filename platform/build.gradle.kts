@@ -11,7 +11,10 @@ dependencies {
     // Extend existing platforms
     api(enforcedPlatform(kotlin("bom", "1.7.10")))
     api(platform(libs.forkhandles.bom))
-    api(enforcedPlatform(libs.spring.boot.bom))
+    api(enforcedPlatform(libs.spring.boot.bom)) {
+        // We need a bugfix, so we exclude it here and set a constraint later
+        exclude(group = "org.liquibase", module = "liquibase-core")
+    }
     api(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
     api(enforcedPlatform(libs.kotlinx.coroutines.bom)) // Required for Kotest. TODO: can be removed after upgrade to Spring Boot 2.7
 
@@ -22,6 +25,13 @@ dependencies {
         api(project(":graph:application"))
         api(project(":graph:adapter-input-rest-spring-mvc"))
         api(project(":graph:adapter-output-spring-data-neo4j-ogm"))
+
+        api("org.liquibase:liquibase-core") {
+            version {
+                strictly("[3.10,4.0[")
+                prefer("3.10.3")
+            }
+        }
 
         /*
         // Security-related adjustments

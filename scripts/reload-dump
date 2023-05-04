@@ -18,7 +18,7 @@ fi
 # Load dump into separate volume
 docker volume create "$dump_volume"
 temp_container=$(docker container create --volume "${dump_volume}:/dumps" alpine)
-docker cp -L dumps/neo4j-dump-latest.dump ${temp_container}:/dumps
+docker cp -L "${1:-dumps/neo4j-dump-latest.dump}" ${temp_container}:/dumps/neo4j-dump-latest.dump
 docker rm "$temp_container"
 
 # Shutdown and remove Neo4j

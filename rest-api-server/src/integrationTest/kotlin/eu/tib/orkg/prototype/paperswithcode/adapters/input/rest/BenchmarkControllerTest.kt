@@ -652,15 +652,12 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
             fieldWithPath("total_datasets").description("Total number of datasets related"),
             fieldWithPath("total_codes").description("Total number of code urls"),
             fieldWithPath("research_problem").description("Research problem concerned with this research field"),
-            fieldWithPath("research_field").description("The research field the problem belongs to.").optional(), // FIXME: PwC
-            fieldWithPath("research_field").description("Legacy RF of a benchmark summary").optional(),
             fieldWithPath("research_fields").description("List of RFs for a benchmark summary").optional()
         )
 
     private fun benchmarkPageResponseFields() =
         responseFields(pageableDetailedFieldParameters())
             .andWithPrefix("content[].", benchmarkResponseFields())
-            .andWithPrefix("content[].research_field.", researchFieldResponseFields())
             .andWithPrefix("content[].research_fields.[].", researchFieldResponseFields())
             .andWithPrefix("content[].research_problem.", researchProblemResponseFields())
             .andWithPrefix("")

@@ -1,6 +1,8 @@
 // JVM Test Suite is still incubating, but expected to be stable soon, so disabling the warning.
 @file:Suppress("UnstableApiUsage")
 
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+
 
 plugins {
     id("org.orkg.kotlin-conventions")
@@ -21,6 +23,30 @@ testing {
                     exclude(module = "mockito-core")
                 }
                 implementation("com.ninja-squad:springmockk:2.0.1")
+                implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
+            }
+        }
+        val containerTest by registering(JvmTestSuite::class) {
+            testType.set(TestSuiteType.FUNCTIONAL_TEST)
+            useJUnitJupiter()
+            dependencies {
+                implementation(project())
+                implementation(testFixtures(project(":testing:spring")))
+                implementation(testFixtures(project(":graph:application")))
+                implementation("org.springframework.boot:spring-boot-starter-test") {
+                    exclude(group = "junit", module = "junit")
+                    exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+                    exclude(module = "mockito-core")
+                }
+                implementation("com.ninja-squad:springmockk:2.0.1")
+                implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
+            }
+            targets {
+                all {
+                    testTask.configure {
+                        shouldRunAfter(test)
+                    }
+                }
             }
         }
     }
@@ -29,6 +55,7 @@ testing {
 dependencies {
     api(project(":library")) // TODO: remove when domain was moved
     api(platform(project(":platform")))
+    "containerTestApi"(platform(project(":platform")))
 
     api(project(":graph:application"))
 
@@ -46,4 +73,8 @@ dependencies {
 
     // Caching
     api("org.springframework.boot:spring-boot-starter-cache")
+}
+
+tasks.named("check") {
+    dependsOn(testing.suites.named("containerTest"))
 }

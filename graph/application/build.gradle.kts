@@ -13,8 +13,10 @@ dependencies {
     testFixturesApi(project(":library"))
     testFixturesApi(libs.bundles.kotest)
     testFixturesApi("org.springframework.data:spring-data-commons")
+    testFixturesImplementation("org.springframework.boot:spring-boot-starter-data-jpa")
     testFixturesImplementation(libs.forkhandles.fabrikate4k)
     testFixturesImplementation(libs.forkhandles.values4k)
+    testFixturesImplementation(libs.bundles.jaxb)
 }
 
 testing {

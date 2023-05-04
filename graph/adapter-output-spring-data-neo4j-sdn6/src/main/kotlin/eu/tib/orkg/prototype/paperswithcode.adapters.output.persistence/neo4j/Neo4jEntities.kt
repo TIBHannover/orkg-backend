@@ -18,7 +18,6 @@ data class Neo4jBenchmarkSummary(
     fun toBenchmarkSummary() =
         BenchmarkSummary(
             ResearchProblem(ThingId(problem.resourceId!!.value), problem.label!!),
-            null,
             fields.map { ResearchField(it.thingId!!, it.label!!) },
             totalPapers.toInt(),
             totalDatasets.toInt(),

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- The "featured" and "unlisted" flags were redesigned to make the queries more consistent and less error-prone.
+  This only affects the internal data structures, the behavior for clients stays the same.
+  (See: [!499](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/499), [!519](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/519))
 
 ## [0.30.1] - 2023-04-05
 ### Fixed

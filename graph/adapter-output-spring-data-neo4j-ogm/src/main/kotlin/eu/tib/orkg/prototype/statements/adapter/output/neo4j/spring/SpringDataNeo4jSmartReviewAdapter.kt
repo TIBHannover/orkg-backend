@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
+import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jSmartReviewRepository
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -16,15 +17,9 @@ class SpringDataNeo4jSmartReviewAdapter(
     override fun findSmartReviewByResourceId(id: ThingId): Optional<Resource> =
         neo4jRepository.findSmartReviewByResourceId(id.toResourceId()).map { it.toResource() }
 
-    override fun findAllFeaturedSmartReviews(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllFeaturedSmartReviews(pageable).map { it.toResource() }
-
-    override fun findAllNonFeaturedSmartReviews(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllNonFeaturedSmartReviews(pageable).map { it.toResource() }
-
-    override fun findAllUnlistedSmartReviews(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllUnlistedSmartReviews(pageable).map { it.toResource() }
-
     override fun findAllListedSmartReviews(pageable: Pageable): Page<Resource> =
         neo4jRepository.findAllListedSmartReviews(pageable).map { it.toResource() }
+
+    override fun findAllSmartReviewsByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllSmartReviewsByVisibility(visibility, pageable).map { it.toResource() }
 }

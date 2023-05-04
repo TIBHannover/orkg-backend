@@ -47,9 +47,13 @@ class ProblemController(
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable
-    ): Page<DetailsPerProblem> {
-        return service.findFieldsPerProblemAndClasses(problemId, featured, unlisted, classes, pageable)
-    }
+    ): Page<RetrieveResearchProblemUseCase.DetailsPerProblem> =
+        service.findAllEntitiesBasedOnClassByProblem(
+            problemId = problemId,
+            classes = classes,
+            visibilityFilter = visibilityFilterFromFlags(featured, unlisted),
+            pageable = pageable
+        )
 
     @GetMapping("/top")
     fun getTopProblems(): ResponseEntity<Iterable<ResourceRepresentation>> {

@@ -1,10 +1,11 @@
 package eu.tib.orkg.prototype.statements.services
 
-import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.UserEntity
 import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.JpaUserRepository
+import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.UserEntity
 import eu.tib.orkg.prototype.auth.domain.User
-import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.toContributor
 import eu.tib.orkg.prototype.community.domain.model.ResearchField
+import eu.tib.orkg.prototype.community.domain.model.toContributor
+import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.FindResearchFieldsQuery
@@ -13,6 +14,7 @@ import eu.tib.orkg.prototype.statements.api.ResourceGenerator
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
+import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResearchFieldRepository
@@ -49,26 +51,6 @@ class ResearchFieldService(
         }
     }
 
-    override fun getResearchProblemsIncludingSubFields(
-        id: ThingId,
-        featured: Boolean?,
-        unlisted: Boolean,
-        pageable: Pageable
-    ): Page<ResourceRepresentation> {
-        val modifiedFeatured: Boolean =
-            setFeatured(unlisted, featured) ?: return resourceService.map(PagedResourcesGenerator {
-                researchFieldRepository.getProblemsIncludingSubFields(
-                    id = id, pageable = pageable
-                )
-            })
-
-        return resourceService.map(PagedResourcesGenerator {
-            researchFieldRepository.getProblemsIncludingSubFieldsWithFlags(
-                id = id, featured = modifiedFeatured, unlisted = unlisted, pageable = pageable
-            )
-        })
-    }
-
     override fun getContributorsIncludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor> {
         val contributors = researchFieldRepository.getContributorIdsFromResearchFieldAndIncludeSubfields(id, pageable)
             .map(ContributorId::value)
@@ -77,44 +59,6 @@ class ResearchFieldService(
                 .map(UserEntity::toUser)
                 .map(User::toContributor)
         )
-    }
-
-    override fun getPapersIncludingSubFields(
-        id: ThingId,
-        featured: Boolean?,
-        unlisted: Boolean,
-        pageable: Pageable
-    ): Page<ResourceRepresentation> {
-        val modifiedFeatured: Boolean =
-            setFeatured(unlisted, featured) ?: return resourceService.map(PagedResourcesGenerator {
-                researchFieldRepository.getPapersIncludingSubFields(
-                    id = id, pageable = pageable
-                )
-            })
-        return resourceService.map(PagedResourcesGenerator {
-            researchFieldRepository.getPapersIncludingSubFieldsWithFlags(
-                id = id, featured = modifiedFeatured, unlisted = unlisted, pageable = pageable
-            )
-        })
-    }
-
-    override fun getComparisonsIncludingSubFields(
-        id: ThingId,
-        featured: Boolean?,
-        unlisted: Boolean,
-        pageable: Pageable
-    ): Page<ResourceRepresentation> {
-        val modifiedFeatured: Boolean =
-            setFeatured(unlisted, featured) ?: return resourceService.map(PagedResourcesGenerator {
-                researchFieldRepository.getComparisonsIncludingSubFields(
-                    id = id, pageable = pageable
-                )
-            })
-        return resourceService.map(PagedResourcesGenerator {
-            researchFieldRepository.getComparisonsIncludingSubFieldsWithFlags(
-                id = id, featured = modifiedFeatured, unlisted = unlisted, pageable = pageable
-            )
-        })
     }
 
     override fun getContributorsExcludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor> {
@@ -127,77 +71,109 @@ class ResearchFieldService(
         )
     }
 
-    override fun getPapersExcludingSubFields(
+    override fun findAllPapersByResearchField(
         id: ThingId,
-        featured: Boolean?,
-        unlisted: Boolean,
+        visibility: VisibilityFilter,
+        includeSubFields: Boolean,
         pageable: Pageable
-    ): Page<ResourceRepresentation> {
-        val modifiedFeatured: Boolean =
-            setFeatured(unlisted, featured) ?: return resourceService.map(PagedResourcesGenerator {
-                researchFieldRepository.getPapersExcludingSubFields(
-                    id = id, pageable = pageable
-                )
-            })
-        return resourceService.map(PagedResourcesGenerator {
-            researchFieldRepository.getPapersExcludingSubFieldsWithFlags(
-                id = id, featured = modifiedFeatured, unlisted = unlisted, pageable = pageable
-            )
-        })
-    }
+    ): Page<ResourceRepresentation> = resourceService.map(PagedResourcesGenerator {
+        when (visibility) {
+            VisibilityFilter.ALL_LISTED -> researchFieldRepository.findAllListedPapersByResearchField(id, includeSubFields, pageable)
+            VisibilityFilter.UNLISTED -> researchFieldRepository.findAllPapersByResearchFieldAndVisibility(id, Visibility.UNLISTED, includeSubFields, pageable)
+            VisibilityFilter.FEATURED -> researchFieldRepository.findAllPapersByResearchFieldAndVisibility(id, Visibility.FEATURED, includeSubFields, pageable)
+            VisibilityFilter.NON_FEATURED -> researchFieldRepository.findAllPapersByResearchFieldAndVisibility(id, Visibility.DEFAULT, includeSubFields, pageable)
+            VisibilityFilter.DELETED -> researchFieldRepository.findAllPapersByResearchFieldAndVisibility(id, Visibility.DELETED, includeSubFields, pageable)
+        }
+    })
 
-    override fun getComparisonsExcludingSubFields(
+    override fun findAllComparisonsByResearchField(
         id: ThingId,
-        featured: Boolean?,
-        unlisted: Boolean,
+        visibility: VisibilityFilter,
+        includeSubFields: Boolean,
         pageable: Pageable
-    ): Page<ResourceRepresentation> {
-        val modifiedFeatured: Boolean =
-            setFeatured(unlisted, featured) ?: return resourceService.map(PagedResourcesGenerator {
-                researchFieldRepository.getComparisonsExcludingSubFields(
-                    id = id, pageable = pageable
-                )
-            })
-        return resourceService.map(PagedResourcesGenerator {
-            researchFieldRepository.getComparisonsExcludingSubFieldsWithFlags(
-                id = id, featured = modifiedFeatured, unlisted = unlisted, pageable = pageable
-            )
-        })
-    }
+    ): Page<ResourceRepresentation> = resourceService.map(PagedResourcesGenerator {
+        when (visibility) {
+            VisibilityFilter.ALL_LISTED -> researchFieldRepository.findAllListedComparisonsByResearchField(id, includeSubFields, pageable)
+            VisibilityFilter.UNLISTED -> researchFieldRepository.findAllComparisonsByResearchFieldAndVisibility(id, Visibility.UNLISTED, includeSubFields, pageable)
+            VisibilityFilter.FEATURED -> researchFieldRepository.findAllComparisonsByResearchFieldAndVisibility(id, Visibility.FEATURED, includeSubFields, pageable)
+            VisibilityFilter.NON_FEATURED -> researchFieldRepository.findAllComparisonsByResearchFieldAndVisibility(id, Visibility.DEFAULT, includeSubFields, pageable)
+            VisibilityFilter.DELETED -> researchFieldRepository.findAllComparisonsByResearchFieldAndVisibility(id, Visibility.DELETED, includeSubFields, pageable)
+        }
+    })
 
-    override fun getResearchProblemsExcludingSubFields(
+    override fun findAllResearchProblemsByResearchField(
         id: ThingId,
-        featured: Boolean?,
-        unlisted: Boolean,
+        visibility: VisibilityFilter,
+        includeSubFields: Boolean,
         pageable: Pageable
-    ): Page<ResourceRepresentation> {
-        val modifiedFeatured: Boolean =
-            setFeatured(unlisted, featured) ?: return resourceService.map(PagedResourcesGenerator {
-                researchFieldRepository.getProblemsExcludingSubFields(
-                    id = id, pageable = pageable
-                )
-            })
-        return resourceService.map(PagedResourcesGenerator {
-            researchFieldRepository.getProblemsExcludingSubFieldsWithFlags(
-                id = id, featured = modifiedFeatured, unlisted = unlisted, pageable = pageable
-            )
-        })
-    }
+    ): Page<ResourceRepresentation> = resourceService.map(PagedResourcesGenerator {
+        when (visibility) {
+            VisibilityFilter.ALL_LISTED -> researchFieldRepository.findAllListedProblemsByResearchField(id, includeSubFields, pageable)
+            VisibilityFilter.UNLISTED -> researchFieldRepository.findAllProblemsByResearchFieldAndVisibility(id, Visibility.UNLISTED, includeSubFields, pageable)
+            VisibilityFilter.FEATURED -> researchFieldRepository.findAllProblemsByResearchFieldAndVisibility(id, Visibility.FEATURED, includeSubFields, pageable)
+            VisibilityFilter.NON_FEATURED -> researchFieldRepository.findAllProblemsByResearchFieldAndVisibility(id, Visibility.DEFAULT, includeSubFields, pageable)
+            VisibilityFilter.DELETED -> researchFieldRepository.findAllProblemsByResearchFieldAndVisibility(id, Visibility.DELETED, includeSubFields, pageable)
+        }
+    })
 
-    /**
-     * We are checking for classes named SmartReviewPublished and LiteratureListPublished.
-     * Please check with frontend team before modifying this function
-     */
-    override fun getEntitiesBasedOnClassesIncludingSubfields(
+    override fun findAllVisualizationsByResearchField(
+        id: ThingId,
+        visibility: VisibilityFilter,
+        includeSubFields: Boolean,
+        pageable: Pageable
+    ): Page<ResourceRepresentation> = resourceService.map(PagedResourcesGenerator {
+        when (visibility) {
+            VisibilityFilter.ALL_LISTED -> researchFieldRepository.findAllListedVisualizationsByResearchField(id, includeSubFields, pageable)
+            VisibilityFilter.UNLISTED -> researchFieldRepository.findAllVisualizationsByResearchFieldAndVisibility(id, Visibility.UNLISTED, includeSubFields, pageable)
+            VisibilityFilter.FEATURED -> researchFieldRepository.findAllVisualizationsByResearchFieldAndVisibility(id, Visibility.FEATURED, includeSubFields, pageable)
+            VisibilityFilter.NON_FEATURED -> researchFieldRepository.findAllVisualizationsByResearchFieldAndVisibility(id, Visibility.DEFAULT, includeSubFields, pageable)
+            VisibilityFilter.DELETED -> researchFieldRepository.findAllVisualizationsByResearchFieldAndVisibility(id, Visibility.DELETED, includeSubFields, pageable)
+        }
+    })
+
+    override fun findAllSmartReviewsByResearchField(
+        id: ThingId,
+        visibility: VisibilityFilter,
+        includeSubFields: Boolean,
+        pageable: Pageable
+    ): Page<ResourceRepresentation> = resourceService.map(PagedResourcesGenerator {
+        when (visibility) {
+            VisibilityFilter.ALL_LISTED -> researchFieldRepository.findAllListedSmartReviewsByResearchField(id, includeSubFields, pageable)
+            VisibilityFilter.UNLISTED -> researchFieldRepository.findAllSmartReviewsByResearchFieldAndVisibility(id, Visibility.UNLISTED, includeSubFields, pageable)
+            VisibilityFilter.FEATURED -> researchFieldRepository.findAllSmartReviewsByResearchFieldAndVisibility(id, Visibility.FEATURED, includeSubFields, pageable)
+            VisibilityFilter.NON_FEATURED -> researchFieldRepository.findAllSmartReviewsByResearchFieldAndVisibility(id, Visibility.DEFAULT, includeSubFields, pageable)
+            VisibilityFilter.DELETED -> researchFieldRepository.findAllSmartReviewsByResearchFieldAndVisibility(id, Visibility.DELETED, includeSubFields, pageable)
+        }
+    })
+
+    override fun findAllLiteratureListsByResearchField(
+        id: ThingId,
+        visibility: VisibilityFilter,
+        includeSubFields: Boolean,
+        pageable: Pageable
+    ): Page<ResourceRepresentation> = resourceService.map(PagedResourcesGenerator {
+        when (visibility) {
+            VisibilityFilter.ALL_LISTED -> researchFieldRepository.findAllListedLiteratureListsByResearchField(id, includeSubFields, pageable)
+            VisibilityFilter.UNLISTED -> researchFieldRepository.findAllLiteratureListsByResearchFieldAndVisibility(id, Visibility.UNLISTED, includeSubFields, pageable)
+            VisibilityFilter.FEATURED -> researchFieldRepository.findAllLiteratureListsByResearchFieldAndVisibility(id, Visibility.FEATURED, includeSubFields, pageable)
+            VisibilityFilter.NON_FEATURED -> researchFieldRepository.findAllLiteratureListsByResearchFieldAndVisibility(id, Visibility.DEFAULT, includeSubFields, pageable)
+            VisibilityFilter.DELETED -> researchFieldRepository.findAllLiteratureListsByResearchFieldAndVisibility(id, Visibility.DELETED, includeSubFields, pageable)
+        }
+    })
+
+    override fun findAllEntitiesBasedOnClassesByResearchField(
         id: ThingId,
         classesList: List<String>,
-        featured: Boolean?,
-        unlisted: Boolean,
+        visibility: VisibilityFilter,
+        includeSubFields: Boolean,
         pageable: Pageable
     ): Page<ResourceRepresentation> {
-        val pages = when (featured) {
-            null -> getListIncludingSubFieldsWithoutFeaturedFlag(classesList, id, unlisted, pageable)
-            else -> getListIncludingSubFieldsWithFlags(classesList, id, featured, unlisted, pageable)
+        val pages = when (visibility) {
+            VisibilityFilter.ALL_LISTED -> findAllListedEntitiesBasedOnClassesByResearchField(id, classesList, includeSubFields, pageable)
+            VisibilityFilter.UNLISTED -> findAllEntitiesBasedOnClassesByResearchFieldAndVisibility(id, classesList, Visibility.UNLISTED, includeSubFields, pageable)
+            VisibilityFilter.FEATURED -> findAllEntitiesBasedOnClassesByResearchFieldAndVisibility(id, classesList, Visibility.FEATURED, includeSubFields, pageable)
+            VisibilityFilter.NON_FEATURED -> findAllEntitiesBasedOnClassesByResearchFieldAndVisibility(id, classesList, Visibility.DEFAULT, includeSubFields, pageable)
+            VisibilityFilter.DELETED -> findAllEntitiesBasedOnClassesByResearchFieldAndVisibility(id, classesList, Visibility.DELETED, includeSubFields, pageable)
         }
         val resultList = pages.map { it.content }.flatten().sortedWith { o1, o2 ->
             o2.createdAt.compareTo(o1.createdAt)
@@ -208,107 +184,38 @@ class ResearchFieldService(
         })
     }
 
-    /**
-     * We are checking for classes named SmartReviewPublished and LiteratureListPublished.
-     * Please check with frontend team before modifying this function
-     */
-    override fun getEntitiesBasedOnClassesExcludingSubfields(
-        id: ThingId,
-        classesList: List<String>,
-        featured: Boolean?,
-        unlisted: Boolean,
-        pageable: Pageable
-    ): Page<ResourceRepresentation> {
-        val pages = when (featured) {
-            null -> getListExcludingSubFieldsWithoutFeaturedFlag(classesList, id, unlisted, pageable)
-            else -> getListExcludingSubFieldsWithFlags(classesList, id, featured, unlisted, pageable)
-        }
-        val resultList = pages.map { it.content }.flatten().sortedBy(Resource::createdAt)
-        val totalElements = pages.sumOf { it.totalElements }
-        return resourceService.map(PagedResourcesGenerator {
-            PageImpl(resultList, pageable, totalElements)
-        })
-    }
-
     override fun withBenchmarks(pageable: Pageable): Page<ResearchField> = researchFieldsQuery.withBenchmarks(pageable)
 
-    private fun setFeatured(unlisted: Boolean, featured: Boolean?): Boolean? =
-        when (unlisted) {
-            true -> false
-            false -> featured
-        }
-
-    private fun getListIncludingSubFieldsWithoutFeaturedFlag(
-        classesList: List<String>,
+    private fun findAllListedEntitiesBasedOnClassesByResearchField(
         id: ThingId,
-        unlisted: Boolean,
+        classesList: List<String>,
+        includeSubFields: Boolean,
         pageable: Pageable
-    ): List<Page<Resource>> {
-        return classesList.map { classType ->
-            when (classType.uppercase(Locale.getDefault())) {
-                "PAPER" -> researchFieldRepository.getPapersIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
-                "COMPARISON" -> researchFieldRepository.getComparisonsIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
-                "VISUALIZATION" -> researchFieldRepository.getVisualizationsIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
-                "LITERATURELISTPUBLISHED" -> researchFieldRepository.getLiteratureListIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
-                "PROBLEM" -> researchFieldRepository.getProblemsIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
-                else -> researchFieldRepository.getSmartReviewsIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
-            }
+    ): List<Page<Resource>> = classesList.map { classType ->
+        when (classType.uppercase(Locale.getDefault())) {
+            "PAPER" -> researchFieldRepository.findAllListedPapersByResearchField(id, includeSubFields, pageable)
+            "COMPARISON" -> researchFieldRepository.findAllListedComparisonsByResearchField(id, includeSubFields, pageable)
+            "VISUALIZATION" -> researchFieldRepository.findAllListedVisualizationsByResearchField(id, includeSubFields, pageable)
+            "LITERATURELISTPUBLISHED" -> researchFieldRepository.findAllListedLiteratureListsByResearchField(id, includeSubFields, pageable)
+            "PROBLEM" -> researchFieldRepository.findAllListedProblemsByResearchField(id, includeSubFields, pageable)
+            else -> researchFieldRepository.findAllListedSmartReviewsByResearchField(id, includeSubFields, pageable)
         }
     }
 
-    private fun getListIncludingSubFieldsWithFlags(
-        classesList: List<String>,
+    private fun findAllEntitiesBasedOnClassesByResearchFieldAndVisibility(
         id: ThingId,
-        featured: Boolean,
-        unlisted: Boolean,
-        pageable: Pageable
-    ): List<Page<Resource>> {
-        return classesList.map { classType ->
-            when (classType.uppercase(Locale.getDefault())) {
-                "PAPER" -> researchFieldRepository.getPapersIncludingSubFieldsWithFlags(id, featured, unlisted, pageable)
-                "COMPARISON" -> researchFieldRepository.getComparisonsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable)
-                "VISUALIZATION" -> researchFieldRepository.getVisualizationsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable)
-                "LITERATURELISTPUBLISHED" -> researchFieldRepository.getLiteratureListIncludingSubFieldsWithFlags(id, featured, unlisted, pageable)
-                "PROBLEM" -> researchFieldRepository.getProblemsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable)
-                else -> researchFieldRepository.getSmartReviewsIncludingSubFieldsWithFlags(id, featured, unlisted, pageable)
-            }
-        }
-    }
-
-    private fun getListExcludingSubFieldsWithoutFeaturedFlag(
         classesList: List<String>,
-        id: ThingId,
-        unlisted: Boolean,
+        visibility: Visibility,
+        includeSubFields: Boolean,
         pageable: Pageable
-    ): List<Page<Resource>> {
-        return classesList.map { classType ->
-            when (classType.uppercase(Locale.getDefault())) {
-                "PAPER" -> researchFieldRepository.getPapersExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
-                "COMPARISON" -> researchFieldRepository.getComparisonsExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
-                "VISUALIZATION" -> researchFieldRepository.getVisualizationsExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
-                "LITERATURELISTPUBLISHED" -> researchFieldRepository.getLiteratureListExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
-                "PROBLEM" -> researchFieldRepository.getProblemsExcludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
-                else -> researchFieldRepository.getSmartReviewsIncludingSubFieldsWithoutFeaturedFlag(id, unlisted, pageable)
-            }
-        }
-    }
-
-    private fun getListExcludingSubFieldsWithFlags(
-        classesList: List<String>,
-        id: ThingId,
-        featured: Boolean,
-        unlisted: Boolean,
-        pageable: Pageable
-    ): List<Page<Resource>> {
-        return classesList.map { classType ->
-            when (classType.uppercase(Locale.getDefault())) {
-                "PAPER" -> researchFieldRepository.getPapersExcludingSubFieldsWithFlags(id, featured, unlisted, pageable)
-                "COMPARISON" -> researchFieldRepository.getComparisonsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable)
-                "VISUALIZATION" -> researchFieldRepository.getVisualizationsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable)
-                "LITERATURELISTPUBLISHED" -> researchFieldRepository.getLiteratureListExcludingSubFieldsWithFlags(id, featured, unlisted, pageable)
-                "PROBLEM" -> researchFieldRepository.getProblemsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable)
-                else -> researchFieldRepository.getSmartReviewsExcludingSubFieldsWithFlags(id, featured, unlisted, pageable)
-            }
+    ): List<Page<Resource>> = classesList.map { classType ->
+        when (classType.uppercase(Locale.getDefault())) {
+            "PAPER" -> researchFieldRepository.findAllPapersByResearchFieldAndVisibility(id, visibility, includeSubFields, pageable)
+            "COMPARISON" -> researchFieldRepository.findAllComparisonsByResearchFieldAndVisibility(id, visibility, includeSubFields, pageable)
+            "VISUALIZATION" -> researchFieldRepository.findAllVisualizationsByResearchFieldAndVisibility(id, visibility, includeSubFields, pageable)
+            "LITERATURELISTPUBLISHED" -> researchFieldRepository.findAllLiteratureListsByResearchFieldAndVisibility(id, visibility, includeSubFields, pageable)
+            "PROBLEM" -> researchFieldRepository.findAllProblemsByResearchFieldAndVisibility(id, visibility, includeSubFields, pageable)
+            else -> researchFieldRepository.findAllSmartReviewsByResearchFieldAndVisibility(id, visibility, includeSubFields, pageable)
         }
     }
 }

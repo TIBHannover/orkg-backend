@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.services
 
+import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.FindResearchProblemQuery
 import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
 import eu.tib.orkg.prototype.statements.api.IterableResourcesGenerator
@@ -8,13 +9,13 @@ import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase.FieldCount
-import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
+import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository
 import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.ContributorPerProblem
-import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.DetailsPerProblem
+import java.time.format.DateTimeFormatter
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -42,25 +43,37 @@ class ResearchProblemService(
         }
     }
 
-    override fun findFieldsPerProblemAndClasses(
+    override fun findAllEntitiesBasedOnClassByProblem(
         problemId: ThingId,
-        featured: Boolean?,
-        unlisted: Boolean,
         classes: List<String>,
+        visibilityFilter: VisibilityFilter,
         pageable: Pageable
-    ): Page<DetailsPerProblem> {
-        val resultList = mutableListOf<DetailsPerProblem>()
+    ): Page<RetrieveResearchProblemUseCase.DetailsPerProblem> {
+        val resultList = mutableListOf<Resource>()
         val totals = mutableListOf<Long>()
         if (classes.isNotEmpty()) {
-            when (featured) {
-                null -> getProblemsWithoutFeatured(classes, problemId, unlisted, pageable, resultList, totals)
-                else -> getProblemsWithFeatured(classes, problemId, featured, unlisted, pageable, resultList, totals)
+            when (visibilityFilter) {
+                VisibilityFilter.ALL_LISTED -> findAllListedEntitiesBasedOnClassByProblem(classes, problemId, pageable, resultList, totals)
+                VisibilityFilter.UNLISTED -> findAllEntitiesBasedOnClassByProblemAndVisibility(classes, problemId, Visibility.UNLISTED, pageable, resultList, totals)
+                VisibilityFilter.FEATURED -> findAllEntitiesBasedOnClassByProblemAndVisibility(classes, problemId, Visibility.FEATURED, pageable, resultList, totals)
+                VisibilityFilter.NON_FEATURED -> findAllEntitiesBasedOnClassByProblemAndVisibility(classes, problemId, Visibility.DEFAULT, pageable, resultList, totals)
+                VisibilityFilter.DELETED -> findAllEntitiesBasedOnClassByProblemAndVisibility(classes, problemId, Visibility.DELETED, pageable, resultList, totals)
             }
-            resultList.sortBy(DetailsPerProblem::createdAt)
+            resultList.sortBy(Resource::createdAt)
         } else {
-            return Page.empty()
+            return Page.empty(pageable)
         }
-        return PageImpl(resultList.take(pageable.pageSize), pageable, totals.sum())
+        return PageImpl(resultList.take(pageable.pageSize), pageable, totals.sum()).map {
+            RetrieveResearchProblemUseCase.DetailsPerProblem(
+                id = it.id,
+                label = it.label,
+                createdAt = DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(it.createdAt),
+                featured = it.visibility == Visibility.FEATURED,
+                unlisted = it.visibility == Visibility.UNLISTED,
+                classes = it.classes.map { `class` -> `class`.value },
+                createdBy = it.createdBy.value.toString()
+            )
+        }
     }
 
     override fun findTopResearchProblems(): List<ResourceRepresentation> =
@@ -113,66 +126,58 @@ class ResearchProblemService(
             .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun loadFeaturedProblems(pageable: Pageable): Page<Resource> =
-        researchProblemRepository.findAllFeaturedProblems(pageable)
+        researchProblemRepository.findAllProblemsByVisibility(Visibility.FEATURED, pageable)
 
     override fun loadNonFeaturedProblems(pageable: Pageable): Page<Resource> =
-        researchProblemRepository.findAllNonFeaturedProblems(pageable)
+        researchProblemRepository.findAllProblemsByVisibility(Visibility.DEFAULT, pageable)
 
     override fun loadUnlistedProblems(pageable: Pageable): Page<Resource> =
-        researchProblemRepository.findAllUnlistedProblems(pageable)
+        researchProblemRepository.findAllProblemsByVisibility(Visibility.UNLISTED, pageable)
 
     override fun loadListedProblems(pageable: Pageable): Page<Resource> =
         researchProblemRepository.findAllListedProblems(pageable)
 
-    private fun getProblemsWithFeatured(
+    private fun findAllListedEntitiesBasedOnClassByProblem(
         classesList: List<String>,
         problemId: ThingId,
-        featured: Boolean,
-        unlisted: Boolean,
         pageable: Pageable,
-        resultList: MutableList<DetailsPerProblem>,
+        resultList: MutableList<Resource>,
         totals: MutableList<Long>,
     ) {
-        classesList.forEach { classType ->
+        classesList.map { classType ->
             when (classType.uppercase(Locale.getDefault())) {
                 "PAPER" -> {
-                    val result = researchProblemRepository.findPapersByProblems(problemId, featured, unlisted, pageable)
+                    val result = researchProblemRepository.findAllListedPapersByProblem(problemId, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 "CONTRIBUTION" -> {
-                    val result =
-                        researchProblemRepository.findContributionsByProblems(problemId, featured, unlisted, pageable)
+                    val result = researchProblemRepository.findAllListedContributionsByProblem(problemId, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 "COMPARISON" -> {
-                    val result =
-                        researchProblemRepository.findComparisonsByProblems(problemId, featured, unlisted, pageable)
+                    val result = researchProblemRepository.findAllListedComparisonsByProblem(problemId, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 "SMARTREVIEWPUBLISHED" -> {
-                    val result =
-                        researchProblemRepository.findSmartReviewsByProblems(problemId, featured, unlisted, pageable)
+                    val result = researchProblemRepository.findAllListedSmartReviewsByProblem(problemId, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 "LITERATURELISTPUBLISHED" -> {
-                    val result =
-                        researchProblemRepository.findLiteratureListsByProblems(problemId, featured, unlisted, pageable)
+                    val result = researchProblemRepository.findAllListedLiteratureListsByProblem(problemId, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 "VISUALIZATION" -> {
-                    val result =
-                        researchProblemRepository.findVisualizationsByProblems(problemId, featured, unlisted, pageable)
+                    val result = researchProblemRepository.findAllListedVisualizationsByProblem(problemId, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 else -> {
-                    val result =
-                        researchProblemRepository.findResearchFieldsByProblems(problemId, featured, unlisted, pageable)
+                    val result = researchProblemRepository.findAllListedResearchFieldsByProblem(problemId, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
@@ -180,48 +185,48 @@ class ResearchProblemService(
         }
     }
 
-    private fun getProblemsWithoutFeatured(
+    private fun findAllEntitiesBasedOnClassByProblemAndVisibility(
         classesList: List<String>,
         problemId: ThingId,
-        unlisted: Boolean,
+        visibility: Visibility,
         pageable: Pageable,
-        resultList: MutableList<DetailsPerProblem>,
+        resultList: MutableList<Resource>,
         totals: MutableList<Long>,
     ) {
         classesList.forEach { classType ->
             when (classType.uppercase(Locale.getDefault())) {
                 "PAPER" -> {
-                    val result = researchProblemRepository.findPapersByProblems(problemId, unlisted, pageable)
+                    val result = researchProblemRepository.findAllPapersByProblemAndVisibility(problemId, visibility, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 "CONTRIBUTION" -> {
-                    val result = researchProblemRepository.findContributionsByProblems(problemId, unlisted, pageable)
+                    val result = researchProblemRepository.findAllContributionsByProblemAndVisibility(problemId, visibility, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 "COMPARISON" -> {
-                    val result = researchProblemRepository.findComparisonsByProblems(problemId, unlisted, pageable)
+                    val result = researchProblemRepository.findAllComparisonsByProblemAndVisibility(problemId, visibility, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 "SMARTREVIEWPUBLISHED" -> {
-                    val result = researchProblemRepository.findSmartReviewsByProblems(problemId, unlisted, pageable)
+                    val result = researchProblemRepository.findAllSmartReviewsByProblemAndVisibility(problemId, visibility, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 "LITERATURELISTPUBLISHED" -> {
-                    val result = researchProblemRepository.findLiteratureListsByProblems(problemId, unlisted, pageable)
+                    val result = researchProblemRepository.findAllLiteratureListsByProblemAndVisibility(problemId, visibility, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 "VISUALIZATION" -> {
-                    val result = researchProblemRepository.findVisualizationsByProblems(problemId, unlisted, pageable)
+                    val result = researchProblemRepository.findAllVisualizationsByProblemAndVisibility(problemId, visibility, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }
                 else -> {
-                    val result = researchProblemRepository.findResearchFieldsByProblems(problemId, unlisted, pageable)
+                    val result = researchProblemRepository.findAllResearchFieldsByProblemAndVisibility(problemId, visibility, pageable)
                     resultList.addAll(result.content)
                     totals += result.totalElements
                 }

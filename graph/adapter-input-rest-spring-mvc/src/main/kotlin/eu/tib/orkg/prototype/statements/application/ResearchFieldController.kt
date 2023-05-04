@@ -58,15 +58,16 @@ class ResearchFieldController(
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable
-    ): ResponseEntity<Page<ResourceRepresentation>>? {
+    ): Page<ResourceRepresentation> {
         // Add if condition to check if featured is present and pass the variable
         // Do the same for all
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
-        return ok(service.getResearchProblemsIncludingSubFields(
+        return service.findAllResearchProblemsByResearchField(
             id = id,
-            featured = featured,
-            unlisted = unlisted,
-            pageable = pageable))
+            visibility = visibilityFilterFromFlags(featured, unlisted),
+            includeSubFields = true,
+            pageable = pageable
+        )
     }
 
     /**
@@ -96,14 +97,14 @@ class ResearchFieldController(
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable
-    ): ResponseEntity<Page<ResourceRepresentation>>? {
+    ): Page<ResourceRepresentation> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
-        return ok(service.getComparisonsIncludingSubFields(
+        return service.findAllComparisonsByResearchField(
             id = id,
-            featured = featured,
-            unlisted = unlisted,
+            visibility = visibilityFilterFromFlags(featured, unlisted),
+            includeSubFields = true,
             pageable = pageable
-        ))
+        )
     }
 
     /**
@@ -119,13 +120,14 @@ class ResearchFieldController(
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable
-    ): ResponseEntity<Page<ResourceRepresentation>>? {
+    ): Page<ResourceRepresentation> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
-        return ok(service.getPapersIncludingSubFields(
+        return service.findAllPapersByResearchField(
             id = id,
-            featured = featured,
-            unlisted = unlisted,
-            pageable = pageable))
+            visibility = visibilityFilterFromFlags(featured, unlisted),
+            includeSubFields = true,
+            pageable = pageable
+        )
     }
 
     /**
@@ -141,13 +143,14 @@ class ResearchFieldController(
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable
-    ): ResponseEntity<Page<ResourceRepresentation>>? {
+    ): Page<ResourceRepresentation> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
-        return ok(service.getPapersExcludingSubFields(
+        return service.findAllPapersByResearchField(
             id = id,
-            featured = featured,
-            unlisted = unlisted,
-            pageable = pageable))
+            visibility = visibilityFilterFromFlags(featured, unlisted),
+            includeSubFields = false,
+            pageable = pageable
+        )
     }
 
     /**
@@ -163,13 +166,14 @@ class ResearchFieldController(
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable
-    ): ResponseEntity<Page<ResourceRepresentation>>? {
+    ): Page<ResourceRepresentation> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
-        return ok(service.getComparisonsExcludingSubFields(
+        return service.findAllComparisonsByResearchField(
             id = id,
-            featured = featured,
-            unlisted = unlisted,
-            pageable = pageable))
+            visibility = visibilityFilterFromFlags(featured, unlisted),
+            includeSubFields = false,
+            pageable = pageable
+        )
     }
 
     /**
@@ -200,13 +204,14 @@ class ResearchFieldController(
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
         pageable: Pageable
-    ): ResponseEntity<Page<ResourceRepresentation>>? {
+    ): Page<ResourceRepresentation> {
         resourceService.findById(id).orElseThrow { ResourceNotFound.withId(id) }
-        return ok(service.getResearchProblemsExcludingSubFields(
+        return service.findAllResearchProblemsByResearchField(
             id = id,
-            featured = featured,
-            unlisted = unlisted,
-            pageable = pageable))
+            visibility = visibilityFilterFromFlags(featured, unlisted),
+            includeSubFields = false,
+            pageable = pageable
+        )
     }
 
     /**
@@ -224,9 +229,14 @@ class ResearchFieldController(
         @RequestParam("classes")
         classes: List<String>,
         pageable: Pageable
-    ): ResponseEntity<Page<ResourceRepresentation>>? {
-        return ok(service.getEntitiesBasedOnClassesIncludingSubfields(id, classes, featured, unlisted, pageable))
-    }
+    ): Page<ResourceRepresentation> =
+        service.findAllEntitiesBasedOnClassesByResearchField(
+            id = id,
+            classesList = classes,
+            visibility = visibilityFilterFromFlags(featured, unlisted),
+            includeSubFields = true,
+            pageable = pageable
+        )
 
     /**
      * Gets entities based on the provided classes excluding sub fields
@@ -242,7 +252,12 @@ class ResearchFieldController(
         @RequestParam("classes")
         classes: List<String>,
         pageable: Pageable
-    ): ResponseEntity<Page<ResourceRepresentation>>? {
-        return ok(service.getEntitiesBasedOnClassesExcludingSubfields(id, classes, featured, unlisted, pageable))
-    }
+    ): Page<ResourceRepresentation> =
+        service.findAllEntitiesBasedOnClassesByResearchField(
+            id = id,
+            classesList = classes,
+            visibility = visibilityFilterFromFlags(featured, unlisted),
+            includeSubFields = false,
+            pageable = pageable
+        )
 }

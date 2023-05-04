@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
 import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
+import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.slf4j.LoggerFactory
 import org.springframework.boot.ApplicationArguments
@@ -52,30 +53,30 @@ class CacheWarmup(
     private fun warmupHome() {
         val featuredResearchField = ThingId(statsService.getFieldsStats().toList().maxByOrNull { it.second }?.first!!)
         statementService.findAllBySubjectAndPredicate(featuredResearchField, ThingId("P36"), PageRequest.of(0, 9999))
-        listOf(true, false).forEach { featured ->
-            researchFieldService.getEntitiesBasedOnClassesIncludingSubfields(
+        listOf(VisibilityFilter.FEATURED, VisibilityFilter.ALL_LISTED).forEach { visibility ->
+            researchFieldService.findAllEntitiesBasedOnClassesByResearchField(
                 id = featuredResearchField,
                 classesList = listOf("Comparison"),
-                featured = featured,
-                unlisted = false,
+                visibility = visibility,
+                includeSubFields = true,
                 pageable = PageRequest.of(0, 5)
             ).forEach {
                 fetchComparison(it.id)
             }
-            researchFieldService.getEntitiesBasedOnClassesIncludingSubfields(
+            researchFieldService.findAllEntitiesBasedOnClassesByResearchField(
                 id = featuredResearchField,
                 classesList = listOf("Visualization"),
-                featured = featured,
-                unlisted = false,
+                visibility = visibility,
+                includeSubFields = true,
                 pageable = PageRequest.of(0, 5)
             ).forEach {
                 fetchVisualization(it.id)
             }
-            researchFieldService.getEntitiesBasedOnClassesIncludingSubfields(
+            researchFieldService.findAllEntitiesBasedOnClassesByResearchField(
                 id = featuredResearchField,
                 classesList = listOf("Paper"),
-                featured = featured,
-                unlisted = false,
+                visibility = visibility,
+                includeSubFields = true,
                 pageable = PageRequest.of(0, 5)
             ).forEach {
                 statementService.findAllBySubject(it.id, PageRequest.of(0, 9999))

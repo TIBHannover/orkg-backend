@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
@@ -11,7 +12,6 @@ import eu.tib.orkg.prototype.statements.api.ResourceGenerator
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateResourceUseCase
-import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.application.InvalidClassCollection
 import eu.tib.orkg.prototype.statements.application.InvalidClassFilter
@@ -420,49 +420,49 @@ class ResourceService(
             .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun loadFeaturedComparisons(pageable: Pageable): Page<Resource> =
-        comparisonRepository.findAllFeaturedComparisons(pageable)
+        comparisonRepository.findAllComparisonsByVisibility(Visibility.FEATURED, pageable)
 
     override fun loadNonFeaturedComparisons(pageable: Pageable): Page<Resource> =
-        comparisonRepository.findAllNonFeaturedComparisons(pageable)
+        comparisonRepository.findAllComparisonsByVisibility(Visibility.DEFAULT, pageable)
 
     override fun loadUnlistedComparisons(pageable: Pageable): Page<Resource> =
-        comparisonRepository.findAllUnlistedComparisons(pageable)
+        comparisonRepository.findAllComparisonsByVisibility(Visibility.UNLISTED, pageable)
 
     override fun loadListedComparisons(pageable: Pageable): Page<Resource> =
         comparisonRepository.findAllListedComparisons(pageable)
 
     override fun loadFeaturedContributions(pageable: Pageable): Page<Resource> =
-        contributionRepository.findAllFeaturedContributions(pageable)
+        contributionRepository.findAllContributionsByVisibility(Visibility.FEATURED, pageable)
 
     override fun loadNonFeaturedContributions(pageable: Pageable): Page<Resource> =
-        contributionRepository.findAllNonFeaturedContributions(pageable)
+        contributionRepository.findAllContributionsByVisibility(Visibility.DEFAULT, pageable)
 
     override fun loadUnlistedContributions(pageable: Pageable): Page<Resource> =
-        contributionRepository.findAllUnlistedContributions(pageable)
+        contributionRepository.findAllContributionsByVisibility(Visibility.UNLISTED, pageable)
 
     override fun loadListedContributions(pageable: Pageable): Page<Resource> =
         contributionRepository.findAllListedContributions(pageable)
 
     override fun loadFeaturedVisualizations(pageable: Pageable): Page<Resource> =
-        visualizationRepository.findAllFeaturedVisualizations(pageable)
+        visualizationRepository.findAllVisualizationsByVisibility(Visibility.FEATURED, pageable)
 
     override fun loadNonFeaturedVisualizations(pageable: Pageable): Page<Resource> =
-        visualizationRepository.findAllNonFeaturedVisualizations(pageable)
+        visualizationRepository.findAllVisualizationsByVisibility(Visibility.DEFAULT, pageable)
 
     override fun loadUnlistedVisualizations(pageable: Pageable): Page<Resource> =
-        visualizationRepository.findAllUnlistedVisualizations(pageable)
+        visualizationRepository.findAllVisualizationsByVisibility(Visibility.UNLISTED, pageable)
 
     override fun loadListedVisualizations(pageable: Pageable): Page<Resource> =
         visualizationRepository.findAllListedVisualizations(pageable)
 
     override fun loadFeaturedSmartReviews(pageable: Pageable): Page<Resource> =
-        smartReviewRepository.findAllFeaturedSmartReviews(pageable)
+        smartReviewRepository.findAllSmartReviewsByVisibility(Visibility.FEATURED, pageable)
 
     override fun loadNonFeaturedSmartReviews(pageable: Pageable): Page<Resource> =
-        smartReviewRepository.findAllNonFeaturedSmartReviews(pageable)
+        smartReviewRepository.findAllSmartReviewsByVisibility(Visibility.DEFAULT, pageable)
 
     override fun loadUnlistedSmartReviews(pageable: Pageable): Page<Resource> =
-        smartReviewRepository.findAllUnlistedSmartReviews(pageable)
+        smartReviewRepository.findAllSmartReviewsByVisibility(Visibility.UNLISTED, pageable)
 
     override fun loadListedSmartReviews(pageable: Pageable): Page<Resource> =
         smartReviewRepository.findAllListedSmartReviews(pageable)

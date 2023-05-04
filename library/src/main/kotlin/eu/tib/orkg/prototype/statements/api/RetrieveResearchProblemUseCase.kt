@@ -5,8 +5,8 @@ import eu.tib.orkg.prototype.statements.application.port.out.GetProblemFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.LoadProblemPort
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.ContributorPerProblem
-import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.DetailsPerProblem
 import java.util.*
+import org.codehaus.jackson.annotate.JsonProperty
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
@@ -17,11 +17,10 @@ interface RetrieveResearchProblemUseCase :
 
     fun findFieldsPerProblem(problemId: ThingId): List<FieldCount>
 
-    fun findFieldsPerProblemAndClasses(
+    fun findAllEntitiesBasedOnClassByProblem(
         problemId: ThingId,
-        featured: Boolean?,
-        unlisted: Boolean,
         classes: List<String>,
+        visibilityFilter: VisibilityFilter,
         pageable: Pageable
     ): Page<DetailsPerProblem>
 
@@ -34,5 +33,17 @@ interface RetrieveResearchProblemUseCase :
     data class FieldCount(
         val field: ResourceRepresentation,
         val freq: Long,
+    )
+
+    data class DetailsPerProblem(
+        val id: ThingId?,
+        val label: String?,
+        @JsonProperty("created_at")
+        val createdAt: String?,
+        val featured: Boolean?,
+        val unlisted: Boolean?,
+        val classes: List<String>,
+        @JsonProperty("created_by")
+        val createdBy: String?
     )
 }

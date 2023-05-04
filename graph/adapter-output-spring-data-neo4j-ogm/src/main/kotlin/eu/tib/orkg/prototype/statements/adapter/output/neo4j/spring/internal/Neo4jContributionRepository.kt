@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
+import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import java.util.*
 import org.springframework.data.domain.Page
@@ -8,6 +9,7 @@ import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
 private const val id = "${'$'}id"
+private const val visibility = "${'$'}visibility"
 
 /**
  * Partial query that returns the node.
@@ -30,19 +32,13 @@ private const val WITH_NODE_PROPERTIES =
 
 private const val MATCH_CONTRIBUTION = """MATCH (node:`Resource`:`Contribution`)"""
 
-private const val MATCH_FEATURED_CONTRIBUTION =
-    """$MATCH_CONTRIBUTION WHERE node.featured IS NOT NULL AND node.featured = true"""
-
-private const val MATCH_NONFEATURED_CONTRIBUTION =
-    """$MATCH_CONTRIBUTION WHERE (node.featured IS NULL OR node.featured = false)"""
-
-private const val MATCH_UNLISTED_CONTRIBUTION =
-    """$MATCH_CONTRIBUTION WHERE node.unlisted IS NOT NULL AND node.unlisted = true"""
-
-private const val MATCH_LISTED_CONTRIBUTION =
-    """$MATCH_CONTRIBUTION WHERE (node.unlisted IS NULL OR node.unlisted = false)"""
-
 private const val MATCH_CONTRIBUTION_BY_ID = """MATCH (node:`Resource`:`Contribution` {resource_id: $id})"""
+
+private const val WHERE_VISIBILITY = """WHERE COALESCE(node.visibility, "DEFAULT") = $visibility"""
+
+private const val ORDER_BY_CREATED_AT = """ORDER BY created_at"""
+
+private const val MATCH_LISTED_CONTRIBUTION = """$MATCH_CONTRIBUTION WHERE (node.visibility IS NULL OR node.visibility = "FEATURED")"""
 
 interface Neo4jContributionRepository :
     Neo4jRepository<Neo4jResource, Long> {
@@ -50,27 +46,11 @@ interface Neo4jContributionRepository :
     @Query("""$MATCH_CONTRIBUTION_BY_ID $WITH_NODE_PROPERTIES $RETURN_NODE""")
     fun findContributionByResourceId(id: ResourceId): Optional<Neo4jResource>
 
-    @Query(
-        value = """$MATCH_FEATURED_CONTRIBUTION $WITH_NODE_PROPERTIES $RETURN_NODE""",
-        countQuery = """$MATCH_FEATURED_CONTRIBUTION $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
-    )
-    fun findAllFeaturedContributions(pageable: Pageable): Page<Neo4jResource>
-
-    @Query(
-        value = """$MATCH_NONFEATURED_CONTRIBUTION $WITH_NODE_PROPERTIES $RETURN_NODE""",
-        countQuery = """$MATCH_NONFEATURED_CONTRIBUTION $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
-    )
-    fun findAllNonFeaturedContributions(pageable: Pageable): Page<Neo4jResource>
-
-    @Query(
-        value = """$MATCH_UNLISTED_CONTRIBUTION $WITH_NODE_PROPERTIES $RETURN_NODE""",
-        countQuery = """$MATCH_UNLISTED_CONTRIBUTION $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
-    )
-    fun findAllUnlistedContributions(pageable: Pageable): Page<Neo4jResource>
-
-    @Query(
-        value = """$MATCH_LISTED_CONTRIBUTION $WITH_NODE_PROPERTIES $RETURN_NODE""",
-        countQuery = """$MATCH_LISTED_CONTRIBUTION $WITH_NODE_PROPERTIES $RETURN_NODE_COUNT"""
-    )
+    @Query("""$MATCH_LISTED_CONTRIBUTION $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE""",
+        countQuery = """$MATCH_LISTED_CONTRIBUTION $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")
     fun findAllListedContributions(pageable: Pageable): Page<Neo4jResource>
+
+    @Query("""$MATCH_CONTRIBUTION $WHERE_VISIBILITY $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE""",
+        countQuery = """$MATCH_CONTRIBUTION $WHERE_VISIBILITY $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")
+    fun findAllContributionsByVisibility(visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
 }

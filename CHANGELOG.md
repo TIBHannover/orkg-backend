@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.30.3] - 2023-05-05
 ### Changed
 - Reverted checks on statement deletion, because it breaks the frontend.
   (See: [!523](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/523))
@@ -320,7 +322,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.30.2...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.30.3...master
+[0.30.3]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.30.3
 [0.30.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.30.2
 [0.30.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.30.1
 [0.30.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.30.0

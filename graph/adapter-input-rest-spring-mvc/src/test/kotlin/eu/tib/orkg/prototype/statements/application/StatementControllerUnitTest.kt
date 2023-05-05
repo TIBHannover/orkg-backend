@@ -10,18 +10,12 @@ import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.createStatement
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
-import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
-import eu.tib.orkg.prototype.statements.domain.model.StatementId
-import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.services.toPredicateRepresentation
-import eu.tib.orkg.prototype.statements.services.toRepresentation
 import io.mockk.Runs
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
-import io.mockk.mockk
 import io.mockk.verify
 import io.mockk.verifyAll
 import java.security.Principal
@@ -186,22 +180,6 @@ internal class StatementControllerUnitTest {
     @DisplayName("Given a user is logged in")
     inner class UserLoggedIn {
         @Test
-        fun `when deleting a statement and service reports statement not found, then status is 404 NOT FOUND`() {
-            val id = StatementId("S1")
-            val userId = UUID.randomUUID()
-
-            every { principal.name } returns userId.toString()
-            every { statementService.findById(id) } returns Optional.empty()
-
-            mockMvc.delete("/api/statements/$id", principal)
-                .andExpect(status().isNotFound)
-
-            verify(exactly = 0) { statementService.delete(id, ContributorId(userId)) }
-            verify(exactly = 1) { statementService.findById(id) }
-            verifyAll { principal.name }
-        }
-
-        @Test
         fun `when deleting a statement with a literal object and service reports success, then status is 204 NO CONTENT`() {
             val s = createResource().copy(label = "one")
             val p = createPredicate().copy(label = "has symbol")
@@ -210,14 +188,12 @@ internal class StatementControllerUnitTest {
             val userId = UUID.randomUUID()
 
             every { principal.name } returns userId.toString()
-            every { statementService.findById(st.id!!) } returns Optional.of(st.toStatementRepresentation())
-            every { statementService.delete(st.id!!, ContributorId(userId)) } just Runs
+            every { statementService.delete(st.id!!) } just Runs
 
             mockMvc.delete("/api/statements/${st.id}", principal)
                 .andExpect(status().isNoContent)
 
-            verify(exactly = 1) { statementService.delete(st.id!!, ContributorId(userId)) }
-            verify(exactly = 1) { statementService.findById(st.id!!) }
+            verify(exactly = 1) { statementService.delete(st.id!!) }
             verifyAll { principal.name }
         }
 
@@ -230,14 +206,12 @@ internal class StatementControllerUnitTest {
             val userId = UUID.randomUUID()
 
             every { principal.name } returns userId.toString()
-            every { statementService.findById(st.id!!) } returns Optional.of(st.toStatementRepresentation())
-            every { statementService.delete(st.id!!, ContributorId(userId)) } just Runs
+            every { statementService.delete(st.id!!) } just Runs
 
             mockMvc.delete("/api/statements/${st.id}", principal)
                 .andExpect(status().isNoContent)
 
-            verify(exactly = 1) { statementService.delete(st.id!!, ContributorId(userId)) }
-            verify(exactly = 1) { statementService.findById(st.id!!) }
+            verify(exactly = 1) { statementService.delete(st.id!!) }
             verifyAll { principal.name }
         }
     }
@@ -251,15 +225,13 @@ internal class StatementControllerUnitTest {
             val p = createPredicate().copy(label = "has symbol")
             val l = createLiteral().copy(label = "1")
             val st = createStatement(s, p, l)
-            val userId = UUID.randomUUID()
 
             every { principal.name } returns null
 
             mockMvc.delete("/api/statements/${st.id}", principal)
                 .andExpect(status().isForbidden)
 
-            verify(exactly = 0) { statementService.findById(st.id!!) }
-            verify(exactly = 0) { statementService.delete(st.id!!, ContributorId(userId)) }
+            verify(exactly = 0) { statementService.delete(st.id!!) }
             verifyAll { principal.name }
         }
 
@@ -269,26 +241,15 @@ internal class StatementControllerUnitTest {
             val p = createPredicate().copy(label = "has symbol")
             val l = createResource().copy(label = "1")
             val st = createStatement(s, p, l)
-            val userId = UUID.randomUUID()
 
             every { principal.name } returns null
 
             mockMvc.delete("/api/statements/${st.id}", principal)
                 .andExpect(status().isForbidden)
 
-            verify(exactly = 0) { statementService.findById(st.id!!) }
-            verify(exactly = 0) { statementService.delete(st.id!!, ContributorId(userId)) }
+            verify(exactly = 0) { statementService.delete(st.id!!) }
             verifyAll { principal.name }
         }
-    }
-
-    private fun GeneralStatement.toStatementRepresentation(): StatementRepresentation = object : StatementRepresentation {
-        override val id = this@toStatementRepresentation.id!!
-        override val subject = this@toStatementRepresentation.subject.toRepresentation(emptyMap(), emptyMap())
-        override val predicate = this@toStatementRepresentation.predicate.toPredicateRepresentation()
-        override val `object` = this@toStatementRepresentation.`object`.toRepresentation(emptyMap(), emptyMap())
-        override val createdAt =this@toStatementRepresentation. createdAt!!
-        override val createdBy = this@toStatementRepresentation.createdBy
     }
 
     private fun performPost(body: Map<String, String>) =

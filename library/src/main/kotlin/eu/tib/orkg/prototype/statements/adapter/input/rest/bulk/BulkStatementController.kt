@@ -1,15 +1,16 @@
 package eu.tib.orkg.prototype.statements.adapter.input.rest.bulk
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateStatementUseCase
 import eu.tib.orkg.prototype.statements.application.BaseController
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import java.security.Principal
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.ok
@@ -47,9 +48,12 @@ class BulkStatementController(
 }
     @DeleteMapping("/")
     fun delete(
-        @RequestParam("ids") statementsIds: Set<StatementId>
+        @RequestParam("ids") statementsIds: Set<StatementId>,
+        principal: Principal?
     ): ResponseEntity<Unit> {
-        statementService.delete(statementsIds, ContributorId(authenticatedUserId()))
+        if (principal?.name == null)
+            return ResponseEntity(HttpStatus.FORBIDDEN)
+        statementService.delete(statementsIds)
         return noContent().build()
     }
 

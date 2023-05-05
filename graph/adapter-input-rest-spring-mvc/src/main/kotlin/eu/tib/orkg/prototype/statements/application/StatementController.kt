@@ -156,14 +156,7 @@ class StatementController(
     ): ResponseEntity<Unit> {
         if (principal?.name == null)
             return ResponseEntity(HttpStatus.FORBIDDEN)
-        val userId = UUID.fromString(principal.name)
-        val foundStatement = statementService.findById(id)
-
-        if (!foundStatement.isPresent)
-            return notFound().build()
-
-        statementService.delete(foundStatement.get().id, ContributorId(userId))
-
+        statementService.delete(id)
         return ResponseEntity.noContent().build()
     }
 

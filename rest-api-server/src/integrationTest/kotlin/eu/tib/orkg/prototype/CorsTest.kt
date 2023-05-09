@@ -67,5 +67,5 @@ class CorsTest {
         header().string("Access-Control-Allow-Origin", "*")
 
     private fun allAllowedMethodsPresent(): ResultMatcher =
-        header().string("Access-Control-Allow-Methods", "OPTIONS,GET,HEAD,POST,PUT,DELETE")
+        header().string("Access-Control-Allow-Methods", "OPTIONS,GET,HEAD,POST,PUT,PATCH,DELETE")
 }

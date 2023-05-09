@@ -149,7 +149,7 @@ class CorsConfig {
             val configuration = CorsConfiguration()
                 .applyPermitDefaultValues()
                 .apply {
-                    allowedMethods = listOf("OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE")
+                    allowedMethods = listOf("OPTIONS", "GET", "HEAD", "POST", "PUT", "PATCH", "DELETE")
                 }
             registerCorsConfiguration("/**", configuration)
         }

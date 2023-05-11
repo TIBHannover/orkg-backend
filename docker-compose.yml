@@ -74,6 +74,7 @@ services:
     image: quay.io/keycloak/keycloak:21.1.1
     command:
       - start-dev
+      - --import-realm
     ports:
       - 127.0.0.1:8888:8080  # Port re-mapped to prevent conflict with API
     environment:
@@ -81,6 +82,8 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_HOSTNAME_URL: http://localhost:8888
       DB_VENDOR: H2
+    volumes:
+      - ./keycloak/import:/opt/keycloak/data/import:ro
     networks:
       - backend
 

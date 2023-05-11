@@ -29,6 +29,28 @@ orkg:
     doiPrefix: "10.7484"
     url: "https://api.test.datacite.org/dois"
     publish: "draft"
+keycloak:
+  realm: orkg-dev
+  auth-server-url: http://localhost:8888
+  ssl-required: external
+  resource: orkg-frontend
+  credentials:
+    secret: pk6zY383L6rznH6MfsPoXdj1MQYdQFMW
+  use-resource-role-mappings: true
+  security-constraints:
+    - auth-roles:
+       - admin
+       - user
+      security-collections:
+        - name: insecure stuff
+          patterns:
+            - /insecure
+    - auth-roles:
+        - admin
+      security-collections:
+        - name: admin stuff
+          patterns:
+            - /admin
 management:
   endpoints:
     enabled-by-default: false

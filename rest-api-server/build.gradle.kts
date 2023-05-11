@@ -150,6 +150,8 @@ dependencies {
     implementation("org.neo4j:neo4j-ogm-bolt-native-types")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.security.oauth:spring-security-oauth2:$springSecurityOAuthVersion.RELEASE")
+    implementation("org.keycloak:keycloak-spring-boot-starter")
+    implementation(platform("org.keycloak.bom:keycloak-adapter-bom:21.1.1"))
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-cache")

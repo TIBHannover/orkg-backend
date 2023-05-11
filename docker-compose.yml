@@ -71,12 +71,15 @@ services:
       - 'postgres-data:/var/lib/postgresql/data/pgdata'
 
   keycloak:
-    image: quay.io/keycloak/keycloak:13.0.1
+    image: quay.io/keycloak/keycloak:21.1.1
+    command:
+      - start-dev
     ports:
       - 127.0.0.1:8888:8080  # Port re-mapped to prevent conflict with API
     environment:
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME_URL: http://localhost:8888
       DB_VENDOR: H2
     networks:
       - backend

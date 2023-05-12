@@ -415,7 +415,7 @@
   "requiredCredentials": [
     "password"
   ],
-  "passwordPolicy": "hashAlgorithm(bcrypt)",
+  "passwordPolicy": "hashAlgorithm(bcrypt) and hashIterations(10)",
   "otpPolicyType": "totp",
   "otpPolicyAlgorithm": "HmacSHA1",
   "otpPolicyInitialCounter": 0,

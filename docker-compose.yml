@@ -84,6 +84,7 @@ services:
       DB_VENDOR: H2
     volumes:
       - ./keycloak/import:/opt/keycloak/data/import:ro
+      - ./keycloak/providers:/opt/keycloak/providers:ro
     networks:
       - backend
 

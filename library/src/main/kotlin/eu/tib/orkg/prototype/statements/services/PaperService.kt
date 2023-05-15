@@ -173,13 +173,13 @@ class PaperService(
             userId,
             paperId,
             ObjectService.PublicationMonthPredicate,
-            literalService.create(userId, request.paper.publicationMonth.toString()).id
+            literalService.create(userId, request.paper.publicationMonth.toString(), datatype = "xsd:integer").id
         )
         if (request.paper.hasPublicationYear()) statementService.add(
             userId,
             paperId,
             ObjectService.PublicationYearPredicate,
-            literalService.create(userId, request.paper.publicationYear.toString()).id
+            literalService.create(userId, request.paper.publicationYear.toString(), datatype = "xsd:integer").id
         )
 
         // paper published At

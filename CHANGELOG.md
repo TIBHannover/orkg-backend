@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- The default file permissions on the RDF dump were changed to not cause issues in deployment. (See: [!526](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/526))
 
 ## [0.30.3] - 2023-05-05
 ### Changed

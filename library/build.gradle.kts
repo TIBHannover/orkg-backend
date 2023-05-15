@@ -72,6 +72,7 @@ dependencies {
     //
     // Testing
     //
+    testImplementation(testFixtures(project(":testing:kotest")))
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation(libs.bundles.testcontainers)

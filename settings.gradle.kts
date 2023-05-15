@@ -3,6 +3,7 @@ rootProject.name = "orkg-prototype"
 include("platform")
 include("library")
 include("common:exceptions")
+include("testing:kotest")
 include("testing:spring")
 include(
     // The module containing the domain code will be called "application", because it will also contain application

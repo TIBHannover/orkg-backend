@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (Closes: [#476](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/476))
 - Updating a single statement works now.
   (Closes: [#477](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/477))
+- All issues when updating organization are fixed now.
+  (See: [!527](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/527))
 
 ## [0.30.3] - 2023-05-05
 ### Changed

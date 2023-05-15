@@ -2,8 +2,6 @@ package eu.tib.orkg.prototype
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.JpaUserRepository
-import eu.tib.orkg.prototype.auth.spi.UserRepository
-import eu.tib.orkg.prototype.statements.spi.EntityRepository
 import java.time.ZoneOffset
 import java.util.*
 import org.keycloak.OAuth2Constants.PASSWORD
@@ -17,8 +15,6 @@ import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.Profile
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 

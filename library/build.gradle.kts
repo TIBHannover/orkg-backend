@@ -50,6 +50,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.data:spring-data-neo4j:$springDataNeo4jVersion.RELEASE")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.keycloak:keycloak-admin-client:21.1.1")
     // JAXB stuff. Was removed from Java 9. Seems to be needed for OAuth2.
     implementation(libs.bundles.jaxb)
     implementation(libs.annotations.jsr305) // provides @Nullable and other JSR305 annotations

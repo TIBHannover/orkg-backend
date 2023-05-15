@@ -73,6 +73,8 @@ dependencies {
     implementation("org.jolokia:jolokia-core")
     // Data Faker
     implementation("net.datafaker:datafaker:1.7.0")
+    // Search string parsing
+    implementation("org.apache.lucene:lucene-queryparser:9.5.0")
     //
     // Testing
     //

@@ -13,6 +13,7 @@ import eu.tib.orkg.prototype.statements.api.UpdateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.Label
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import org.springframework.data.domain.Page
@@ -51,36 +52,29 @@ class ResourceController(
 
     @GetMapping("/")
     fun findByLabel(
-        @RequestParam("q", required = false) searchString: String?,
+        @RequestParam("q", required = false) string: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         @RequestParam("include", required = false, defaultValue = "") includeClasses: Set<ThingId>,
         @RequestParam("exclude", required = false, defaultValue = "") excludeClasses: Set<ThingId>,
         pageable: Pageable
     ): Page<ResourceRepresentation> =
         when {
-            excludeClasses.isNotEmpty() || includeClasses.isNotEmpty() -> when {
-                searchString == null -> service.findAllIncludingAndExcludingClasses(
+            excludeClasses.isNotEmpty() || includeClasses.isNotEmpty() -> when (string) {
+                null -> service.findAllIncludingAndExcludingClasses(
                     includeClasses,
                     excludeClasses,
                     pageable
                 )
-                exactMatch -> service.findAllIncludingAndExcludingClassesByLabel(
+                else -> service.findAllIncludingAndExcludingClassesByLabel(
                     includeClasses,
                     excludeClasses,
-                    searchString,
-                    pageable
-                )
-                else -> service.findAllIncludingAndExcludingClassesByLabelContaining(
-                    includeClasses,
-                    excludeClasses,
-                    searchString,
+                    SearchString.of(string, exactMatch),
                     pageable
                 )
             }
-            else -> when {
-                searchString == null -> service.findAll(pageable)
-                exactMatch -> service.findAllByLabel(pageable, searchString)
-                else -> service.findAllByLabelContaining(pageable, searchString)
+            else -> when (string) {
+                null -> service.findAll(pageable)
+                else -> service.findAllByLabel(SearchString.of(string, exactMatch), pageable)
             }
         }
 

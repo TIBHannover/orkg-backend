@@ -20,6 +20,7 @@ import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
 import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.ComparisonRepository
@@ -30,9 +31,6 @@ import eu.tib.orkg.prototype.statements.spi.SmartReviewRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import eu.tib.orkg.prototype.statements.spi.VisualizationRepository
-import eu.tib.orkg.prototype.util.EscapedRegex
-import eu.tib.orkg.prototype.util.SanitizedWhitespace
-import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
 import java.time.OffsetDateTime
 import java.util.*
 import org.springframework.data.domain.Page
@@ -119,13 +117,10 @@ class ResourceService(
     override fun findById(id: ThingId): Optional<ResourceRepresentation> =
         retrieveAndConvertOptional { repository.findByResourceId(id) }
 
-    override fun findAllByLabel(pageable: Pageable, label: String): Page<ResourceRepresentation> =
+    override fun findAllByLabel(label: SearchString, pageable: Pageable): Page<ResourceRepresentation> =
         retrieveAndConvertPaged {
-            repository.findAllByLabelMatchesRegex(label.toExactSearchString(), pageable)
+            repository.findAllByLabel(label, pageable)
         }
-
-    override fun findAllByLabelContaining(pageable: Pageable, part: String): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged { repository.findAllByLabelMatchesRegex(part.toSearchString(), pageable) }
 
     override fun findAllByClass(pageable: Pageable, id: ThingId): Page<ResourceRepresentation> =
         retrieveAndConvertPaged { repository.findAllByClass(id, pageable) }
@@ -137,47 +132,19 @@ class ResourceService(
     ): Page<ResourceRepresentation> =
         retrieveAndConvertPaged { repository.findAllByClassAndCreatedBy(id, createdBy, pageable) }
 
-    override fun findAllByClassAndLabel(pageable: Pageable, id: ThingId, label: String): Page<ResourceRepresentation> =
+    override fun findAllByClassAndLabel(id: ThingId, label: SearchString, pageable: Pageable): Page<ResourceRepresentation> =
         retrieveAndConvertPaged { repository.findAllByClassAndLabel(id, label, pageable) }
 
     override fun findAllByClassAndLabelAndCreatedBy(
-        pageable: Pageable,
         id: ThingId,
-        label: String,
-        createdBy: ContributorId
+        label: SearchString,
+        createdBy: ContributorId,
+        pageable: Pageable
     ): Page<ResourceRepresentation> =
         retrieveAndConvertPaged {
             repository.findAllByClassAndLabelAndCreatedBy(
                 id,
                 label,
-                createdBy,
-                pageable
-            )
-        }
-
-    override fun findAllByClassAndLabelContaining(
-        pageable: Pageable,
-        id: ThingId,
-        part: String
-    ): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged {
-            repository.findAllByClassAndLabelMatchesRegex(
-                id,
-                part.toSearchString(),
-                pageable
-            )
-        }
-
-    override fun findAllByClassAndLabelContainingAndCreatedBy(
-        pageable: Pageable,
-        id: ThingId,
-        part: String,
-        createdBy: ContributorId
-    ): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged {
-            repository.findAllByClassAndLabelMatchesRegexAndCreatedBy(
-                id,
-                part.toSearchString(),
                 createdBy,
                 pageable
             )
@@ -197,32 +164,15 @@ class ResourceService(
     override fun findAllIncludingAndExcludingClassesByLabel(
         includeClasses: Set<ThingId>,
         excludeClasses: Set<ThingId>,
-        label: String,
+        label: SearchString,
         pageable: Pageable
     ): Page<ResourceRepresentation> {
         validateClassFilter(includeClasses, excludeClasses)
         return retrieveAndConvertPaged {
-            repository.findAllIncludingAndExcludingClassesByLabelMatchesRegex(
+            repository.findAllIncludingAndExcludingClassesByLabel(
                 includeClasses,
                 excludeClasses,
-                label.toExactSearchString(),
-                pageable
-            )
-        }
-    }
-
-    override fun findAllIncludingAndExcludingClassesByLabelContaining(
-        includeClasses: Set<ThingId>,
-        excludeClasses: Set<ThingId>,
-        part: String,
-        pageable: Pageable
-    ): Page<ResourceRepresentation> {
-        validateClassFilter(includeClasses, excludeClasses)
-        return retrieveAndConvertPaged {
-            repository.findAllIncludingAndExcludingClassesByLabelMatchesRegex(
-                includeClasses,
-                excludeClasses,
-                part.toSearchString(),
+                label,
                 pageable
             )
         }
@@ -238,10 +188,10 @@ class ResourceService(
         retrieveAndConvertOptional { statementRepository.findByDOI(doi) }
 
     override fun findByTitle(title: String): Optional<ResourceRepresentation> =
-        retrieveAndConvertOptional { repository.findByLabel(title) }
+        retrieveAndConvertOptional { repository.findPaperByLabel(title) }
 
     override fun findAllByTitle(title: String?): Iterable<ResourceRepresentation> =
-        retrieveAndConvertIterable { repository.findAllByLabel(title!!) }
+        retrieveAndConvertIterable { repository.findAllPapersByLabel(title!!) }
 
     override fun findAllByVisibility(visibility: VisibilityFilter, pageable: Pageable): Page<ResourceRepresentation> =
         retrieveAndConvertPaged {
@@ -521,12 +471,6 @@ class ResourceService(
         resultObj = resultObj.copy(verified = verified)
         repository.save(resultObj)
     }
-
-    private fun String.toSearchString() =
-        "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"
-
-    private fun String.toExactSearchString() =
-        "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"
 
     private fun countsFor(resources: List<Resource>): Map<ThingId, Long> {
         val resourceIds = resources.map { it.id }.toSet()

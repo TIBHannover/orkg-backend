@@ -211,7 +211,7 @@ class PaperService(
     ) {
         val venuePredicate = predicateService.findById(ObjectService.VenuePredicate).get().id
         // Check if resource exists
-        val venueResource = resourceRepository.findByLabel(venue).orElseGet {
+        val venueResource = resourceRepository.findPaperByLabel(venue).orElseGet {
             val representation = resourceService.create(
                 CreateResourceUseCase.CreateCommand(
                     label = venue,

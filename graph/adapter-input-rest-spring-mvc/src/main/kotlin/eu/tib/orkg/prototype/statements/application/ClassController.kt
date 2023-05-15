@@ -14,6 +14,7 @@ import eu.tib.orkg.prototype.statements.api.UpdateClassUseCase
 import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Label
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import java.net.URI
 import javax.validation.Valid
 import org.springframework.data.domain.Page
@@ -53,24 +54,25 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
     @GetMapping("/{id}/resources/")
     fun findResourcesWithClass(
         @PathVariable id: ThingId,
-        @RequestParam("q", required = false) searchString: String?,
+        @RequestParam("q", required = false) string: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         @RequestParam("creator", required = false) creator: ContributorId?,
         pageable: Pageable
     ): Page<ResourceRepresentation> {
         return if (creator != null) {
-            when {
-                searchString == null -> resourceService.findAllByClassAndCreatedBy(pageable, id, creator)
-                exactMatch -> resourceService.findAllByClassAndLabelAndCreatedBy(pageable, id, searchString, creator)
-                else -> resourceService.findAllByClassAndLabelContainingAndCreatedBy(
-                    pageable, id, searchString, creator
+            when (string) {
+                null -> resourceService.findAllByClassAndCreatedBy(pageable, id, creator)
+                else -> resourceService.findAllByClassAndLabelAndCreatedBy(
+                    id = id,
+                    label = SearchString.of(string, exactMatch),
+                    createdBy = creator,
+                    pageable = pageable
                 )
             }
         } else {
-            when {
-                searchString == null -> resourceService.findAllByClass(pageable, id)
-                exactMatch -> resourceService.findAllByClassAndLabel(pageable, id, searchString)
-                else -> resourceService.findAllByClassAndLabelContaining(pageable, id, searchString)
+            when (string) {
+                null -> resourceService.findAllByClass(pageable, id)
+                else -> resourceService.findAllByClassAndLabel(id, SearchString.of(string, exactMatch), pageable)
             }
         }
     }

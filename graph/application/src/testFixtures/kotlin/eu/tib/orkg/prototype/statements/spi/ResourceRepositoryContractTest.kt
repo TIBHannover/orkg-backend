@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.kotest.assertions.asClue
 import io.kotest.matchers.collections.shouldContainAll
@@ -238,7 +239,7 @@ interface ResourceRepositoryContractTest {
     }
 
     @Test
-    fun `given a resource with a class, when searched by its label, including and excluding class, it should be found`() {
+    fun `given a resource with a class, when searched by its label (exact), including and excluding class, it should be found`() {
         val resource1 = createResource().copy(
             id = ThingId("R1234"),
             classes = setOf(ThingId("ToBeFound"), ThingId("Other")),
@@ -261,10 +262,10 @@ interface ResourceRepositoryContractTest {
         )
         repository.save(resource3)
 
-        val result = repository.findAllIncludingAndExcludingClassesByLabelMatchesRegex(
+        val result = repository.findAllIncludingAndExcludingClassesByLabel(
             setOf(ThingId("ToBeFound")),
             setOf(ThingId("NotToBeFound")),
-            "12345",
+            SearchString.of("12345", exactMatch = true),
             PageRequest.of(0, 10)
         )
         result.totalElements shouldBe 1
@@ -272,7 +273,7 @@ interface ResourceRepositoryContractTest {
     }
 
     @Test
-    fun `given a resource with a class, when searched by its label (regex), including and excluding class, it should be found`() {
+    fun `given a resource with a class, when searched by its label (fuzzy), including and excluding class, it should be found`() {
         val resource1 = createResource().copy(
             id = ThingId("R1234"),
             classes = setOf(ThingId("ToBeFound"), ThingId("Other")),
@@ -295,10 +296,10 @@ interface ResourceRepositoryContractTest {
         )
         repository.save(resource3)
 
-        val result = repository.findAllIncludingAndExcludingClassesByLabelMatchesRegex(
+        val result = repository.findAllIncludingAndExcludingClassesByLabel(
             setOf(ThingId("ToBeFound")),
             setOf(ThingId("NotToBeFound")),
-            """\d+""",
+            SearchString.of("1234", exactMatch = false),
             PageRequest.of(0, 10)
         )
         result.totalElements shouldBe 1

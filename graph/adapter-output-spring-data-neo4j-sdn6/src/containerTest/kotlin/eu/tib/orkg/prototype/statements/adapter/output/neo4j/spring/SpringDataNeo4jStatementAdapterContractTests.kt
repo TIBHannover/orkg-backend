@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
+import eu.tib.orkg.prototype.IndexInitializer
 import eu.tib.orkg.prototype.Neo4jContainerInitializer
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
@@ -27,7 +28,7 @@ import org.springframework.test.context.ContextConfiguration
         Neo4jContainerInitializer::class
     ]
 )
-@Import(Neo4jConfiguration::class)
+@Import(value = [Neo4jConfiguration::class, IndexInitializer::class])
 @ComponentScan(basePackages = ["eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal"])
 internal class SpringDataNeo4jStatementAdapterContractTests(
     @Autowired private val springDataNeo4jStatementAdapter: StatementRepository,

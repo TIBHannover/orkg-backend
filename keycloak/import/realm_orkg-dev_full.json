@@ -688,7 +688,7 @@
         "oauth2.device.authorization.grant.enabled": "false",
         "display.on.consent.screen": "false",
         "backchannel.logout.revoke.offline.tokens": "false",
-		"login_theme": "orkg"
+        "login_theme": "orkg"
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": true,

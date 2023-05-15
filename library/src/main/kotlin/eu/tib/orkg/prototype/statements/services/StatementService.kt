@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.services
 
-import eu.tib.orkg.prototype.auth.domain.UserService
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.BundleConfiguration
@@ -23,6 +22,7 @@ import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
@@ -44,7 +44,7 @@ class StatementService(
     private val statementRepository: StatementRepository,
     private val templateRepository: TemplateRepository,
     private val flags: FeatureFlagService,
-    private val userService: UserService,
+    private val literalRepository: LiteralRepository,
 ) : StatementUseCases {
 
     override fun findAll(pagination: Pageable): Iterable<StatementRepresentation> =
@@ -163,6 +163,8 @@ class StatementService(
         var found = statementRepository.findByStatementId(command.statementId)
             .orElseThrow { StatementNotFound(command.statementId.value) }
 
+        val literal: Thing? = found.`object`.takeIf { it is Literal }
+
         command.subjectId?.let {
             @Suppress("UNUSED_VARIABLE") // It is unused, because commented out. This method needs a re-write.
             val foundSubject = thingRepository.findByThingId(command.subjectId)
@@ -182,6 +184,11 @@ class StatementService(
             found = found.copy(`object` = foundObject)
         }
 
+        statementRepository.deleteByStatementId(command.statementId)
+        // Restore literal that may have automatically been deleted by statement deletion
+        if (literal != null && command.objectId != null) {
+            literalRepository.save(literal as Literal)
+        }
         statementRepository.save(found)
     }
 

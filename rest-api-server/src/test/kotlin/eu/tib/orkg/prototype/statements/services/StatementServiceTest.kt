@@ -8,6 +8,7 @@ import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.createStatement
 import eu.tib.orkg.prototype.createUser
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import eu.tib.orkg.prototype.statements.spi.OwnershipInfo
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import io.kotest.core.spec.IsolationMode
@@ -27,6 +28,7 @@ class StatementServiceTest : DescribeSpec({
 
     val statementRepository: StatementRepository = mockk()
     val userService: UserService = mockk()
+    val literalRepository: LiteralRepository = mockk()
 
     @Suppress("UNUSED_VARIABLE")
     val service = StatementService(
@@ -35,12 +37,12 @@ class StatementServiceTest : DescribeSpec({
         statementRepository,
         templateRepository = mockk(),
         flags = mockk(),
-        userService,
+        literalRepository,
     )
 
     afterEach {
         // Confirm all calls. This is a protection against false-positive test results.
-        confirmVerified(statementRepository, userService)
+        confirmVerified(statementRepository, userService, literalRepository)
     }
 
     context("deleting a single statement") {

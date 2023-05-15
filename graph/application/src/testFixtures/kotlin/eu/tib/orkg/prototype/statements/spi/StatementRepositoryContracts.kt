@@ -1188,15 +1188,37 @@ fun <
         }
     }
     describe("determining ownership") {
-        it("returns the correct result") {
-            val statements = fabricator.random<List<GeneralStatement>>()
-            statements.forEach(saveStatement)
-            val allStatementIds = statements.map { it.id!! }.toSet()
-            val expected = statements.map { OwnershipInfo(it.id!!, it.createdBy) }.toSet()
+        context("when multiple ids are given") {
+            it("returns the correct result") {
+                val statements = fabricator.random<List<GeneralStatement>>()
+                statements.forEach(saveStatement)
+                val allStatementIds = statements.map { it.id!! }.toSet()
+                val expected = statements.map { OwnershipInfo(it.id!!, it.createdBy) }.toSet()
 
-            val actual = repository.determineOwnership(allStatementIds)
+                val actual = repository.determineOwnership(allStatementIds)
 
-            actual shouldBe expected
+                actual shouldBe expected
+            }
+        }
+        context("when one id is given") {
+            it("returns the correct result") {
+                val statement = fabricator.random<GeneralStatement>()
+                saveStatement(statement)
+                val expected = setOf(statement).map { OwnershipInfo(it.id!!, it.createdBy) }.toSet()
+
+                val actual = repository.determineOwnership(setOf(statement.id!!))
+
+                actual shouldBe expected
+            }
+        }
+        context("when no id is given") {
+            it("returns the correct result") {
+                val expected = emptySet<OwnershipInfo>()
+
+                val actual = repository.determineOwnership(emptySet())
+
+                actual shouldBe expected
+            }
         }
     }
 }

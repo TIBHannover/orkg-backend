@@ -22,6 +22,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import java.nio.file.attribute.PosixFilePermissions
+import java.nio.file.attribute.PosixFilePermissions.fromString
 import java.util.*
 import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
@@ -65,7 +67,8 @@ class RDFService(
             file = filePath.toFile(),
             reason = "The directory ${filePath.parent} does not exist! Make sure it was created, and that permissions are correct.",
         )
-        val temp = Files.createTempFile("", "")
+        val permissions = PosixFilePermissions.asFileAttribute(fromString("rw-r--r--"))
+        val temp = Files.createTempFile("", "", permissions)
         OutputStreamWriter(FileOutputStream(temp.toFile()), Charsets.UTF_8).use {
             dumpToNTriple(it)
         }

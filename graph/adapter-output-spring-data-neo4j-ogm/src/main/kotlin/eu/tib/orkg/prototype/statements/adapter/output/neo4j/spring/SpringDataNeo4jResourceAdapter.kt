@@ -50,7 +50,7 @@ class SpringDataNeo4jResourceAdapter(
         ]
     )
     override fun save(resource: Resource) {
-        neo4jRepository.save(resource.toNeo4jResource())
+        neo4jRepository.save(resource.toNeo4jResource(neo4jRepository))
     }
 
     @Caching(
@@ -66,7 +66,7 @@ class SpringDataNeo4jResourceAdapter(
     @Caching(
         evict = [
             CacheEvict(allEntries = true),
-            CacheEvict(allEntries = true, cacheNames = [THING_ID_TO_THING_CACHE]),
+            CacheEvict(allEntries = true, cacheNames = [THING_ID_TO_THING_CACHE])
         ]
     )
     override fun deleteAll() {
@@ -233,19 +233,4 @@ class SpringDataNeo4jResourceAdapter(
 
     override fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
         neo4jRepository.findComparisonsByOrganizationId(id, pageable).map(Neo4jResource::toResource)
-
-    private fun Resource.toNeo4jResource() =
-        // We need to fetch the original resource, so "resources" is set properly.
-        neo4jRepository.findByResourceId(id.toResourceId()).orElse(Neo4jResource()).apply {
-            resourceId = this@toNeo4jResource.id.toResourceId()
-            label = this@toNeo4jResource.label
-            createdBy = this@toNeo4jResource.createdBy
-            createdAt = this@toNeo4jResource.createdAt
-            observatoryId = this@toNeo4jResource.observatoryId
-            extractionMethod = this@toNeo4jResource.extractionMethod
-            verified = this@toNeo4jResource.verified
-            visibility = this@toNeo4jResource.visibility
-            organizationId = this@toNeo4jResource.organizationId
-            classes = this@toNeo4jResource.classes
-        }
 }

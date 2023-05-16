@@ -43,7 +43,7 @@ class SpringDataNeo4jLiteralAdapter(
         ]
     )
     override fun save(literal: Literal) {
-        neo4jRepository.save(literal.toNeo4jLiteral())
+        neo4jRepository.save(literal.toNeo4jLiteral(neo4jRepository))
     }
 
     @Caching(
@@ -71,13 +71,4 @@ class SpringDataNeo4jLiteralAdapter(
 
     @Cacheable(key = "#id", cacheNames = [LITERAL_ID_TO_LITERAL_EXISTS_CACHE])
     override fun exists(id: ThingId): Boolean = neo4jRepository.existsByLiteralId(id.toLiteralId())
-
-    private fun Literal.toNeo4jLiteral() =
-        neo4jRepository.findByLiteralId(id.toLiteralId()).orElse(Neo4jLiteral()).apply {
-            literalId = this@toNeo4jLiteral.id.toLiteralId()
-            label = this@toNeo4jLiteral.label
-            datatype = this@toNeo4jLiteral.datatype
-            createdAt = this@toNeo4jLiteral.createdAt
-            createdBy = this@toNeo4jLiteral.createdBy
-        }
 }

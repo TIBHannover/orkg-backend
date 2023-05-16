@@ -179,7 +179,6 @@ dependencies {
     // Note: Version Catalogs are not yet supported in the test suites plugin
     "integrationTestImplementation"(libs.bundles.testcontainers)
     "integrationTestImplementation"(libs.bundles.kotest)
-
     //
     // Documentation
     //

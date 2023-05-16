@@ -27,6 +27,7 @@ class SpringDataNeo4jClassAdapter(
     private val neo4jRepository: Neo4jClassRepository,
     private val neo4jClassIdGenerator: Neo4jClassIdGenerator,
 ) : ClassRepository {
+
     @Caching(
         evict = [
             CacheEvict(key = "#c.id", cacheNames = [CLASS_ID_TO_CLASS_CACHE]),
@@ -34,7 +35,7 @@ class SpringDataNeo4jClassAdapter(
         ]
     )
     override fun save(c: Class) {
-        neo4jRepository.save(c.toNeo4jClass())
+        neo4jRepository.save(c.toNeo4jClass(neo4jRepository))
     }
 
     override fun findAll(pageable: Pageable): Page<Class> = neo4jRepository.findAll(pageable).map(Neo4jClass::toClass)
@@ -78,13 +79,4 @@ class SpringDataNeo4jClassAdapter(
         } while (neo4jRepository.existsByClassId(id.toClassId()))
         return id
     }
-
-    private fun Class.toNeo4jClass(): Neo4jClass =
-        neo4jRepository.findByClassId(id.toClassId()).orElse(Neo4jClass()).apply {
-            classId = this@toNeo4jClass.id.toClassId()
-            label = this@toNeo4jClass.label
-            uri = this@toNeo4jClass.uri?.toString()
-            createdBy = this@toNeo4jClass.createdBy
-            createdAt = this@toNeo4jClass.createdAt
-        }
 }

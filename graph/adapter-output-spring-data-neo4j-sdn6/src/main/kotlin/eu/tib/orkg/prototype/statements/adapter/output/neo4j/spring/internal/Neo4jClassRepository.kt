@@ -49,4 +49,7 @@ RETURN COUNT(node)""")
     fun findAllByLabelContaining(label: String, pageable: Pageable): Page<Neo4jClass>
 
     fun findByUri(uri: String): Optional<Neo4jClass>
+
+    @Query("""MATCH (c:Class) DETACH DELETE c""")
+    override fun deleteAll()
 }

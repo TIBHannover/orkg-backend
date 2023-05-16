@@ -68,7 +68,7 @@ class SpringDataNeo4jPredicateAdapter(
         ]
     )
     override fun save(predicate: Predicate) {
-        neo4jRepository.save(predicate.toNeo4jPredicate())
+        neo4jRepository.save(predicate.toNeo4jPredicate(neo4jRepository))
     }
 
     override fun nextIdentity(): ThingId {

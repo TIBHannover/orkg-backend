@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
         [!505](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/505),
         [!506](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/506),
         [!507](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/507))
-
+- Class hierarchies are now supported.
+  (Closes: [#421](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/421))
 ## [0.30.4] - 2023-05-15
 ### Fixed
 - The default file permissions on the RDF dump were changed to not cause issues in deployment. (See: [!526](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/526))

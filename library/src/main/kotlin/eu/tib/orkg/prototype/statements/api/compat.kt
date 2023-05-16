@@ -31,6 +31,8 @@ interface ResourceUseCases : CreateResourceUseCase, RetrieveResourceUseCase, Upd
 interface StatementUseCases : CreateStatementUseCase, RetrieveStatementUseCase, UpdateStatementUseCase,
     DeleteStatementUseCase
 
+interface ClassHierarchyUseCases : CreateClassHierarchyUseCase, RetrieveClassHierarchyUseCase, DeleteClassHierarchyUseCase
+
 // FIXME: we need to refactor those as well
 interface OtherResourceUseCases :
     MarkAsVerifiedUseCase,

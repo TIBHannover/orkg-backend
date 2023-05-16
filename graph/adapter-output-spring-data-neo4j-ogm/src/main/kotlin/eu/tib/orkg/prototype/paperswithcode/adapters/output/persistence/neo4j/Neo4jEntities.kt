@@ -48,6 +48,7 @@ data class Neo4jDataset(
 @QueryResult
 data class Neo4jBenchmarkUnpacked(
     val model: String?,
+    val modelId: String?,
     val score: String,
     val metric: String,
     val paper: Neo4jResource,
@@ -59,6 +60,7 @@ data class Neo4jBenchmarkUnpacked(
     fun toDatasetSummary() =
         DatasetSummary(
             model,
+            modelId?.let(::ThingId),
             score,
             metric,
             paper.resourceId!!,

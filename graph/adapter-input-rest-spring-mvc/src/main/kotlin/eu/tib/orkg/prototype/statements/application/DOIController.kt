@@ -6,18 +6,19 @@ import eu.tib.orkg.prototype.statements.domain.model.DoiService
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.time.LocalDate
 import java.util.*
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/dois/")
+@RequestMapping("/api/dois/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class DOIController(
     private val doiService: DoiService,
     private val dataciteConfiguration: DataCiteConfiguration
 ) {
-    @PostMapping("/")
+    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun addDOI(@RequestBody doiData: CreateDOIRequest): String {
         val doiPrefix = dataciteConfiguration.doiPrefix!!
         val xmlMetadata = doiData.toXML(doiPrefix, doiService.getRelatedPapers(doiData.relatedResources))

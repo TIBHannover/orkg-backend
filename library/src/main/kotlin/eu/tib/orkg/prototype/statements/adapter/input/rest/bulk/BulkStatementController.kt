@@ -11,6 +11,7 @@ import java.security.Principal
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.ok
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/statements")
+@RequestMapping("/api/statements", produces = [MediaType.APPLICATION_JSON_VALUE])
 class BulkStatementController(
     private val statementService: StatementUseCases
 ) : BaseController() {
@@ -57,7 +58,7 @@ class BulkStatementController(
         return noContent().build()
     }
 
-    @PutMapping("/")
+    @PutMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun edit(
         @RequestParam("ids") statementsIds: List<StatementId>,
         @RequestBody(required = true) statementEditRequest: BulkStatementEditRequest

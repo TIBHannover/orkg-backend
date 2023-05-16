@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.notFound
@@ -40,7 +41,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/resources/")
+@RequestMapping("/api/resources/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ResourceController(
     private val service: ResourceUseCases,
     private val contributorService: ContributorService
@@ -78,7 +79,7 @@ class ResourceController(
             }
         }
 
-    @PostMapping("/")
+    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(CREATED)
     fun add(
         @RequestBody resource: CreateResourceRequest,
@@ -115,7 +116,7 @@ class ResourceController(
         return created(location).body(service.findById(id).get())
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,
         @RequestBody request: UpdateResourceRequest
@@ -135,7 +136,7 @@ class ResourceController(
         return ok(service.findById(id).get())
     }
 
-    @RequestMapping("{id}/observatory", method = [RequestMethod.POST, RequestMethod.PUT])
+    @RequestMapping("{id}/observatory", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateWithObservatory(
         @PathVariable id: ThingId,

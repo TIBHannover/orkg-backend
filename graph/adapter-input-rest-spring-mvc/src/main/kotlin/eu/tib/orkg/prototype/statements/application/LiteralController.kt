@@ -11,6 +11,7 @@ import javax.validation.constraints.NotBlank
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.ok
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/literals/")
+@RequestMapping("/api/literals/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class LiteralController(
     private val service: LiteralUseCases,
     private val repository: LiteralRepository, // FIXME: Work-around, needs rewrite in service
@@ -48,7 +49,7 @@ class LiteralController(
         else -> service.findAllByLabel(SearchString.of(searchString, exactMatch), pageable)
     }
 
-    @PostMapping("/")
+    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(CREATED)
     fun add(
         @RequestBody @Valid literal: LiteralCreateRequest,
@@ -64,7 +65,7 @@ class LiteralController(
         return created(location).body(service.findById(id).get())
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: LiteralUpdateRequest

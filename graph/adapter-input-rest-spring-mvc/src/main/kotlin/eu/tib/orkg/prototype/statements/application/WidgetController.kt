@@ -4,13 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/widgets/")
+@RequestMapping("/api/widgets/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class WidgetController(
     private val service: ResourceUseCases,
     private val statementService: StatementUseCases

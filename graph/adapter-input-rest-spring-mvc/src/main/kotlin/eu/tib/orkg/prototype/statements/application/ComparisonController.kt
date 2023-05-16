@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import eu.tib.orkg.prototype.statements.services.AuthorService
+import org.springframework.http.MediaType
 
 @RestController
-@RequestMapping("/api/comparisons")
+@RequestMapping("/api/comparisons", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ComparisonController(
     private val service: ResourceUseCases,
     private val authorService: AuthorService

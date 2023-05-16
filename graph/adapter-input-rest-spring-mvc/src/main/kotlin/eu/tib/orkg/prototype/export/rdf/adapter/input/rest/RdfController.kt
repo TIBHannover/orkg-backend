@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.application.ResourceController
 import eu.tib.orkg.prototype.export.rdf.api.ExportRDFUseCase
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/rdf")
+@RequestMapping("/api/rdf", produces = [MediaType.APPLICATION_JSON_VALUE])
 class RdfController(
     private val service: ExportRDFUseCase,
     private val resourceController: ResourceController,

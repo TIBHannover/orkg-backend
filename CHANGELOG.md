@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed an issue with looking up venues during paper creation.
   (See: [!528](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/528))
+- Does not cause internal errors anymore when invalid `Accept` header field is sent.
+  (See: [!521](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/521))
 ### Added
 - Support for fulltext search on labels of resources, classes, predicates and literals.
   (Closes: [#211](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/211),

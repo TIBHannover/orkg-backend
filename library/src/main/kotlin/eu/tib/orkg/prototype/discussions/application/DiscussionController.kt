@@ -16,6 +16,7 @@ import javax.validation.constraints.NotBlank
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.*
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -28,12 +29,12 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/discussions/")
+@RequestMapping("/api/discussions/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class DiscussionController(
     private val service: DiscussionUseCases,
     private val userService: UserService
 ) {
-    @PostMapping("/topic/{topic}")
+    @PostMapping("/topic/{topic}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun createDiscussionComment(
         @PathVariable topic: ThingId,
         @RequestBody @Valid request: CreateCommentRequest,

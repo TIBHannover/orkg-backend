@@ -20,6 +20,7 @@ import javax.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.web.bind.annotation.GetMapping
@@ -37,7 +38,7 @@ import eu.tib.orkg.prototype.statements.api.ClassNotFound as ClassNotFoundProble
 import eu.tib.orkg.prototype.statements.api.InvalidLabel as InvalidLabelProblem
 
 @RestController
-@RequestMapping("/api/classes/")
+@RequestMapping("/api/classes/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ClassController(private val service: ClassUseCases, private val resourceService: ResourceUseCases) :
     BaseController() {
 
@@ -87,7 +88,7 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
         else -> service.findAllByLabel(SearchString.of(string, exactMatch), pageable)
     }
 
-    @PostMapping("/")
+    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(CREATED)
     fun add(@RequestBody `class`: CreateClassRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         Label.ofOrNull(`class`.label) ?: throw InvalidLabel()
@@ -112,7 +113,7 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
         return created(location).body(service.findById(id).get())
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun replace(
         @PathVariable id: ThingId,
         @RequestBody request: ReplaceClassRequest
@@ -131,7 +132,7 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
         return ResponseEntity.ok(service.findById(id).get())
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,
         @Valid @RequestBody requestBody: UpdateRequestBody

@@ -52,7 +52,7 @@ import org.springframework.web.util.UriComponentsBuilder
 private val encodedImagePattern = Regex("""^data:(.*);base64,([A-Za-z0-9+/]+=*)$""").toPattern()
 
 @RestController
-@RequestMapping("/api/organizations/")
+@RequestMapping("/api/organizations/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class OrganizationController(
     private val service: OrganizationUseCases,
     private val observatoryService: ObservatoryUseCases,
@@ -60,7 +60,7 @@ class OrganizationController(
     private val imageService: ImageUseCases,
     private val resourceService: ResourceUseCases
 ) : BaseController() {
-    @PostMapping("/")
+    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun addOrganization(
         @RequestBody @Valid organization: CreateOrganizationRequest,
@@ -153,7 +153,7 @@ class OrganizationController(
         return noContent().build()
     }
 
-    @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
+    @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateOrganizationName(
         @PathVariable id: OrganizationId,
@@ -165,7 +165,7 @@ class OrganizationController(
         return ok().body(response)
     }
 
-    @RequestMapping("{id}/url", method = [RequestMethod.POST, RequestMethod.PUT])
+    @RequestMapping("{id}/url", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateOrganizationUrl(
         @PathVariable id: OrganizationId,
@@ -177,7 +177,7 @@ class OrganizationController(
         return ok().body(response)
     }
 
-    @RequestMapping("{id}/type", method = [RequestMethod.POST, RequestMethod.PUT])
+    @RequestMapping("{id}/type", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateOrganizationType(
         @PathVariable id: OrganizationId,
@@ -189,7 +189,7 @@ class OrganizationController(
         return ok().body(response)
     }
 
-    @RequestMapping("{id}/logo", method = [RequestMethod.POST, RequestMethod.PUT])
+    @RequestMapping("{id}/logo", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateOrganizationLogo(
         @PathVariable id: OrganizationId,

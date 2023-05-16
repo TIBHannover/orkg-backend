@@ -9,6 +9,7 @@ import eu.tib.orkg.prototype.statements.services.PaperService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -20,12 +21,12 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/papers/")
+@RequestMapping("/api/papers/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class PaperController(
     private val service: PaperService,
 ) : BaseController() {
 
-    @PostMapping("/")
+    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
     fun add(
         @RequestBody paper: CreatePaperRequest,

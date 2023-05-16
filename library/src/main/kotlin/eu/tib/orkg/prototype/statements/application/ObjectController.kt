@@ -8,6 +8,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.ObjectService
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -24,13 +25,13 @@ const val PREDICATE_EXISTING_KEY = "predicate"
 const val CLASS_EXISTING_KEY = "class"
 
 @RestController
-@RequestMapping("/api/objects/")
+@RequestMapping("/api/objects/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ObjectController(
     private val resourceService: ResourceUseCases,
     private val service: ObjectService,
 ) : BaseController() {
 
-    @PostMapping("/")
+    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
     fun add(
         @RequestBody obj: CreateObjectRequest,
@@ -44,7 +45,7 @@ class ObjectController(
         return ResponseEntity.created(location).body(resource)
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
     fun add(
         @PathVariable id: ThingId,

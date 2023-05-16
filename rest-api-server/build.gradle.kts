@@ -182,7 +182,7 @@ dependencies {
     //
     // Documentation
     //
-    "asciidoctor"("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.4.RELEASE")
+    "asciidoctor"("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.7.RELEASE")
 }
 
 tasks.named("check") {

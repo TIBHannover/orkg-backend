@@ -11,12 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!528](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/528))
 ### Added
 - Support for fulltext search on labels of resources, classes, predicates and literals.
-  (See: [!504](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/504),
+  (Closes: [#211](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/211),
+           [#212](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/212);
+   See: [!504](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/504),
         [!505](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/505),
         [!506](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/506),
         [!507](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/507))
 - Class hierarchies are now supported.
   (Closes: [#421](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/421))
+
 ## [0.30.4] - 2023-05-15
 ### Fixed
 - The default file permissions on the RDF dump were changed to not cause issues in deployment. (See: [!526](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/526))

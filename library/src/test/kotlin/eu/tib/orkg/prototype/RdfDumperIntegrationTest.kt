@@ -11,9 +11,7 @@ import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
-import eu.tib.orkg.prototype.testing.kotest.LinuxOnly
 import io.kotest.assertions.throwables.shouldThrowExactly
-import io.kotest.core.annotation.EnabledIf
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.core.test.TestScope
@@ -22,6 +20,7 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import java.io.File
+import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.attribute.PosixFileAttributeView
@@ -34,7 +33,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.springframework.data.domain.PageImpl
 
-@EnabledIf(LinuxOnly::class)
 internal class RdfServiceIntegrationTest : DescribeSpec({
 
     val statementRepository: StatementRepository = mockk()
@@ -101,8 +99,10 @@ internal class RdfServiceIntegrationTest : DescribeSpec({
                     service.dumpToNTriple(targetFile.absolutePath)
                 }
                 targetFile.exists() shouldBe true
-                val view = Files.getFileAttributeView(targetFile.toPath(), PosixFileAttributeView::class.java)
-                view.readAttributes().permissions() shouldBe setOf(OWNER_WRITE, OWNER_READ, GROUP_READ, OTHERS_READ)
+                if (FileSystems.getDefault().supportedFileAttributeViews().contains("posix")) {
+                    val view = Files.getFileAttributeView(targetFile.toPath(), PosixFileAttributeView::class.java)
+                    view.readAttributes().permissions() shouldBe setOf(OWNER_WRITE, OWNER_READ, GROUP_READ, OTHERS_READ)
+                }
             }
             it("contains the expected output", verifyOutput(targetFile, service, resourceRepository))
         }

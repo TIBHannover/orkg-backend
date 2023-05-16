@@ -18,10 +18,12 @@ import java.io.FileOutputStream
 import java.io.OutputStreamWriter
 import java.io.Writer
 import java.net.URI
+import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import java.nio.file.attribute.FileAttribute
 import java.nio.file.attribute.PosixFilePermissions
 import java.nio.file.attribute.PosixFilePermissions.fromString
 import java.util.*
@@ -67,8 +69,7 @@ class RDFService(
             file = filePath.toFile(),
             reason = "The directory ${filePath.parent} does not exist! Make sure it was created, and that permissions are correct.",
         )
-        val permissions = PosixFilePermissions.asFileAttribute(fromString("rw-r--r--"))
-        val temp = Files.createTempFile("", "", permissions)
+        val temp = Files.createTempFile("", "", *fileAttributes())
         OutputStreamWriter(FileOutputStream(temp.toFile()), Charsets.UTF_8).use {
             dumpToNTriple(it)
         }
@@ -129,6 +130,13 @@ class RDFService(
             }.build()
             return Optional.of(model)
         }
+    }
+
+    private fun fileAttributes(): Array<FileAttribute<out Any>> {
+        if (FileSystems.getDefault().supportedFileAttributeViews().contains("posix")) {
+            return arrayOf(PosixFilePermissions.asFileAttribute(fromString("rw-r--r--")))
+        }
+        return emptyArray()
     }
 
     internal fun resolveFilePath(path: String?): Path {

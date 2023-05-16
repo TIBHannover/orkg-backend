@@ -1,7 +1,10 @@
 package eu.tib.orkg.prototype.statements.application.port.`in`
 
+import eu.tib.orkg.prototype.statements.domain.model.ContributionInfo
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 
 interface MarkAsVerifiedUseCase {
     /**
@@ -29,4 +32,8 @@ interface MarkFeaturedService {
 interface MarkAsUnlistedService {
     fun markAsUnlisted(resourceId: ThingId)
     fun markAsListed(resourceId: ThingId)
+}
+
+interface RetrieveComparisonContributionsUseCase {
+    fun findContributionsDetailsById(ids: List<ThingId>, pageable: Pageable): Page<ContributionInfo>
 }

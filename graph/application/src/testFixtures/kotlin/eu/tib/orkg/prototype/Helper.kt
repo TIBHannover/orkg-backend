@@ -36,8 +36,8 @@ import org.springframework.core.io.ClassPathResource
  */
 fun createResource() = Resource(ThingId("R1"), "Default Label", OffsetDateTime.now())
 
-fun createClass(): Class = Class(
-    id = ThingId("OK"),
+fun createClass(id: String = "OK"): Class = Class(
+    id = ThingId(id),
     label = "some label",
     createdAt = OffsetDateTime.now(),
     uri = URI.create("https://example.org/OK"),
@@ -46,16 +46,16 @@ fun createClass(): Class = Class(
 
 internal fun createClassWithoutURI(): Class = createClass().copy(uri = null)
 
-fun createPredicate() = Predicate(
-    id = ThingId("P1"),
+fun createPredicate(id: String = "P1") = Predicate(
+    id = ThingId(id),
     label = "some predicate label",
     createdAt = OffsetDateTime.now(),
     createdBy = ContributorId("a56cfd65-8d29-4eae-a252-1b806fe88d3c"),
 )
 
-fun createLiteral() = Literal(
-    id = ThingId("L1"),
-    label = "some literal value",
+fun createLiteral(value: String = "some literal value", id: String = "L1") = Literal(
+    id = ThingId(id),
+    label = value,
     datatype = "xsd:string",
     createdAt = OffsetDateTime.now(),
     createdBy = ContributorId("679ad2bd-ceb3-4f26-80ec-b6eab7a5e8c1"),

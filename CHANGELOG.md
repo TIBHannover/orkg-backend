@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Support for fulltext search on labels of resources, classes, predicates and literals.
+  (See: [!504](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/504),
+        [!505](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/505),
+        [!506](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/506),
+        [!507](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/507))
 
 ## [0.30.4] - 2023-05-15
 ### Fixed

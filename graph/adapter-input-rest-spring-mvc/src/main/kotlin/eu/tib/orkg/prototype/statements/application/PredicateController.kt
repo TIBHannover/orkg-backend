@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.UpdatePredicateUseCase.ReplaceCommand
 import eu.tib.orkg.prototype.statements.domain.model.Label
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -36,15 +37,12 @@ class PredicateController(private val service: PredicateUseCases) : BaseControll
 
     @GetMapping("/")
     fun findByLabel(
-        @RequestParam("q", required = false) searchString: String?,
+        @RequestParam("q", required = false) string: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         pageable: Pageable
-    ): Page<PredicateRepresentation> {
-        return when {
-            searchString == null -> service.findAll(pageable)
-            exactMatch -> service.findAllByLabel(searchString, pageable)
-            else -> service.findAllByLabelContaining(searchString, pageable)
-        }
+    ): Page<PredicateRepresentation> = when (string) {
+        null -> service.findAll(pageable)
+        else -> service.findAllByLabel(SearchString.of(string, exactMatch), pageable)
     }
 
     @PostMapping("/")

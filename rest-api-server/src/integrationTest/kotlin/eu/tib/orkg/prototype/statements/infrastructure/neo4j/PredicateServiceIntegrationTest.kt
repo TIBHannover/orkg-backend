@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.assertj.core.api.Assertions.assertThat
@@ -9,7 +10,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 
-class PredicateServiceTest : Neo4jTestContainersBaseTest() {
+class PredicateServiceIntegrationTest : Neo4jTestContainersBaseTest() {
 
     @Autowired
     private lateinit var service: PredicateService
@@ -29,7 +30,8 @@ class PredicateServiceTest : Neo4jTestContainersBaseTest() {
 
         assertThat(service.findAll(PageRequest.of(0, 10))).hasSize(2)
 
-        val result = service.findAllByLabel("not in the list", PageRequest.of(0, 10))
+        val result =
+            service.findAllByLabel(SearchString.of("not in the list", exactMatch = true), PageRequest.of(0, 10))
 
         assertThat(result).isEmpty()
     }
@@ -42,7 +44,7 @@ class PredicateServiceTest : Neo4jTestContainersBaseTest() {
         service.create("other")
         service.create("yet another")
 
-        val result = service.findAllByLabel("same", PageRequest.of(0, 10))
+        val result = service.findAllByLabel(SearchString.of("same", exactMatch = true), PageRequest.of(0, 10))
 
         assertThat(result).hasSize(2)
     }
@@ -51,7 +53,7 @@ class PredicateServiceTest : Neo4jTestContainersBaseTest() {
     @DisplayName("should not return predicate containing substring")
     fun shouldNotReturnPredicateContainingSubstring() {
         service.create("this is part of the test")
-        assertThat(service.findAllByLabel("part", PageRequest.of(0, 10))).isEmpty()
+        assertThat(service.findAllByLabel(SearchString.of("part", exactMatch = true), PageRequest.of(0, 10))).isEmpty()
     }
 
     @Test
@@ -62,7 +64,7 @@ class PredicateServiceTest : Neo4jTestContainersBaseTest() {
         service.create("part at the beginning")
         service.create("something else")
 
-        val result = service.findAllByLabelContaining("part", PageRequest.of(0, 10))
+        val result = service.findAllByLabel(SearchString.of("part", exactMatch = false), PageRequest.of(0, 10))
 
         assertThat(result).hasSize(3)
     }

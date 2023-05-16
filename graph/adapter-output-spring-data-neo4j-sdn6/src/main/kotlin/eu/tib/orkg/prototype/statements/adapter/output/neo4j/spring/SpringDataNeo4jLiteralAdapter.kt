@@ -3,7 +3,10 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteral
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteralIdGenerator
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteralRepository
+import eu.tib.orkg.prototype.statements.domain.model.ExactSearchString
+import eu.tib.orkg.prototype.statements.domain.model.FuzzySearchString
 import eu.tib.orkg.prototype.statements.domain.model.Literal
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import java.util.*
@@ -60,14 +63,11 @@ class SpringDataNeo4jLiteralAdapter(
     override fun findByLiteralId(id: ThingId): Optional<Literal> =
         neo4jRepository.findByLiteralId(id.toLiteralId()).map(Neo4jLiteral::toLiteral)
 
-    override fun findAllByLabel(value: String, pageable: Pageable): Page<Literal> =
-        neo4jRepository.findAllByLabel(value, pageable).map(Neo4jLiteral::toLiteral)
-
-    override fun findAllByLabelMatchesRegex(label: String, pageable: Pageable): Page<Literal> =
-        neo4jRepository.findAllByLabelMatchesRegex(label, pageable).map(Neo4jLiteral::toLiteral)
-
-    override fun findAllByLabelContaining(part: String, pageable: Pageable): Page<Literal> =
-        neo4jRepository.findAllByLabelContaining(part, pageable).map(Neo4jLiteral::toLiteral)
+    override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Literal> =
+        when (labelSearchString) {
+            is ExactSearchString -> neo4jRepository.findAllByLabel(labelSearchString.value, pageable)
+            is FuzzySearchString -> neo4jRepository.findAllByLabelContaining(labelSearchString.value, pageable)
+        }.map(Neo4jLiteral::toLiteral)
 
     @Cacheable(key = "#id", cacheNames = [LITERAL_ID_TO_LITERAL_EXISTS_CACHE])
     override fun exists(id: ThingId): Boolean = neo4jRepository.existsByLiteralId(id.toLiteralId())

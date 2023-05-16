@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.spi
 
 import eu.tib.orkg.prototype.statements.domain.model.Literal
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.data.domain.Page
@@ -15,7 +16,5 @@ interface LiteralRepository {
     fun deleteAll()
     fun findAll(pageable: Pageable): Page<Literal>
     fun findByLiteralId(id: ThingId): Optional<Literal>
-    fun findAllByLabel(value: String, pageable: Pageable): Page<Literal>
-    fun findAllByLabelMatchesRegex(label: String, pageable: Pageable): Page<Literal>
-    fun findAllByLabelContaining(part: String, pageable: Pageable): Page<Literal>
+    fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Literal>
 }

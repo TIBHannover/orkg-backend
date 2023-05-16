@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
-import eu.tib.orkg.prototype.statements.application.LiteralControllerTest.RestDoc.literalResponseFields
+import eu.tib.orkg.prototype.statements.application.LiteralControllerIntegrationTest.RestDoc.literalResponseFields
 import eu.tib.orkg.prototype.statements.application.PredicateControllerTest.RestDoc.predicateResponseFields
 import eu.tib.orkg.prototype.statements.application.ResourceControllerIntegrationTest.RestDoc.resourceResponseFields
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService

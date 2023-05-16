@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!528](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/528))
 - Does not cause internal errors anymore when invalid `Accept` header field is sent.
   (See: [!521](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/521))
+- Fixed an issue when creating RDF dumps with the default configuration.
+  (See: [!534](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/534))
+- RDF dumps can be created on Windows again.
+  (Closes: [#480](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/480))
 ### Added
 - Support for fulltext search on labels of resources, classes, predicates and literals.
   (Closes: [#211](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/211),

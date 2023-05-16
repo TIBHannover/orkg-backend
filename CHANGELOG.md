@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Fixed an issue with looking up venues during paper creation.
+  (See: [!528](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/528))
 ### Added
 - Support for fulltext search on labels of resources, classes, predicates and literals.
   (See: [!504](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/504),

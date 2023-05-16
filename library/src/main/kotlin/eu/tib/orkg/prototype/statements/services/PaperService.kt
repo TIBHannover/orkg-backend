@@ -212,8 +212,12 @@ class PaperService(
     ) {
         val venuePredicate = predicateService.findById(ObjectService.VenuePredicate).get().id
         // Check if resource exists
-        val venueResource = resourceRepository.findPaperByLabel(venue).orElseGet {
-            val representation = resourceService.create(
+        val venueResource = resourceRepository.findAllByClassAndLabel(
+            `class` = ObjectService.VenueClass,
+            labelSearchString = SearchString.of(venue, exactMatch = true),
+            pageable = PageRequest.of(0, 1)
+        ).singleOrNull() ?: run {
+            val resourceId = resourceService.create(
                 CreateResourceUseCase.CreateCommand(
                     label = venue,
                     classes = setOf(ObjectService.VenueClass),
@@ -223,7 +227,7 @@ class PaperService(
                     organizationId = organizationId
                 )
             )
-            resourceRepository.findByResourceId(representation).get()
+            resourceRepository.findByResourceId(resourceId).get()
         }
         // create a statement with the venue resource
         statementService.add(

@@ -17,6 +17,7 @@ class IndexInitializer : InitializingBean {
         with (neo4jClient) {
             logger.info("Creating indexes for Neo4j")
             query("""CREATE FULLTEXT INDEX fulltext_idx_for_resource_on_label IF NOT EXISTS FOR (n:Resource) ON EACH [n.label]""").run()
+            query("""CREATE FULLTEXT INDEX fulltext_idx_for_class_on_label IF NOT EXISTS FOR (n:Class) ON EACH [n.label]""").run()
         }
     }
 }

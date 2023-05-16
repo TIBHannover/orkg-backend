@@ -27,6 +27,7 @@ import java.nio.file.attribute.FileAttribute
 import java.nio.file.attribute.PosixFilePermissions
 import java.nio.file.attribute.PosixFilePermissions.fromString
 import java.util.*
+import kotlin.io.path.absolute
 import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
 import org.eclipse.rdf4j.model.Model
@@ -65,7 +66,7 @@ class RDFService(
 
     override fun dumpToNTriple(path: String?) {
         val filePath = resolveFilePath(path)
-        if (filePath.parent.exists().not()) throw NoSuchFileException(
+        if (filePath.absolute().parent.exists().not()) throw NoSuchFileException(
             file = filePath.toFile(),
             reason = "The directory ${filePath.parent} does not exist! Make sure it was created, and that permissions are correct.",
         )

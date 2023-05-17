@@ -128,7 +128,7 @@ include:
 container_scanning:
   stage: verify
   variables:
-    DOCKER_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    CS_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
   needs:
     - job: docker-build
       optional: true

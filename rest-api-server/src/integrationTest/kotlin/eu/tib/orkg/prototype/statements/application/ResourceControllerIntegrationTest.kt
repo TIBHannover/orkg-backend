@@ -12,7 +12,6 @@ import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.PaperService
 import java.util.*
@@ -271,7 +270,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
         val oldClass = classService.createClass(label = "class")
         val resource = service.createResource(classes = setOf(oldClass.value), label = "test")
 
-        val update = mapOf("classes" to emptyList<ClassId>())
+        val update = mapOf("classes" to emptyList<ThingId>())
 
         mockMvc
             .perform(putRequestWithBody("/api/resources/$resource", update))

@@ -51,7 +51,7 @@ class ResourceServiceUnitTests {
         val resource = createResource(id = id)
         val pageable = PageRequest.of(0, 5)
 
-        every { repository.findByResourceId(id) } returns Optional.of(resource)
+        every { repository.findById(id) } returns Optional.of(resource)
         every { statementRepository.findTimelineByResourceId(id, pageable) } returns Page.empty()
 
         service.findTimelineByResourceId(id, pageable)
@@ -64,7 +64,7 @@ class ResourceServiceUnitTests {
         val id = ThingId("R123")
         val pageable = PageRequest.of(0, 5)
 
-        every { repository.findByResourceId(id) } returns Optional.empty()
+        every { repository.findById(id) } returns Optional.empty()
 
         shouldThrow<ResourceNotFound> {
             service.findTimelineByResourceId(id, pageable)
@@ -79,7 +79,7 @@ class ResourceServiceUnitTests {
         val resource = createResource(id = id)
         val pageable = PageRequest.of(0, 5)
 
-        every { repository.findByResourceId(id) } returns Optional.of(resource)
+        every { repository.findById(id) } returns Optional.of(resource)
         every { statementRepository.findAllContributorsByResourceId(id, pageable) } returns Page.empty()
 
         service.findAllContributorsByResourceId(id, pageable)
@@ -92,7 +92,7 @@ class ResourceServiceUnitTests {
         val id = ThingId("R123")
         val pageable = PageRequest.of(0, 5)
 
-        every { repository.findByResourceId(id) } returns Optional.empty()
+        every { repository.findById(id) } returns Optional.empty()
 
         shouldThrow<ResourceNotFound> {
             service.findAllContributorsByResourceId(id, pageable)

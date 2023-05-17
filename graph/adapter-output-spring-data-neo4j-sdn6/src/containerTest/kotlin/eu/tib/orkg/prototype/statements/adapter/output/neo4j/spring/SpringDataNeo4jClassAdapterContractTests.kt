@@ -49,7 +49,7 @@ fun <R : ClassRepository, C : Neo4jClient> neo4jClassRepositoryContract(
 
             val n = anyNode()
                 .named("n")
-                .withProperties("class_id", literalOf<String>(`class`.id.value))
+                .withProperties("id", literalOf<String>(`class`.id.value))
             val query = match(n)
                 .unwind(labels(n))
                 .`as`("label")

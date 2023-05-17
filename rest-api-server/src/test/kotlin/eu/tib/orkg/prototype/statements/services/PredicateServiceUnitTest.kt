@@ -115,26 +115,26 @@ class PredicateServiceUnitTest {
     fun `given a predicate is being deleted, when it is still used in a statement, an appropriate error is thrown`() {
         val mockPredicate = createPredicate()
 
-        every { repository.findByPredicateId(mockPredicate.id) } returns Optional.of(mockPredicate)
+        every { repository.findById(mockPredicate.id) } returns Optional.of(mockPredicate)
         every { statementRepository.countPredicateUsage(mockPredicate.id) } returns 1
 
         shouldThrow<PredicateCantBeDeleted> {
             service.delete(mockPredicate.id)
         }
 
-        verify(exactly = 0) { repository.deleteByPredicateId(any()) }
+        verify(exactly = 0) { repository.deleteById(any()) }
     }
 
     @Test
     fun `given a predicate is being deleted, when it is not used in a statement, it gets deleted`() {
         val mockPredicate = createPredicate()
 
-        every { repository.findByPredicateId(mockPredicate.id) } returns Optional.of(mockPredicate)
+        every { repository.findById(mockPredicate.id) } returns Optional.of(mockPredicate)
         every { statementRepository.countPredicateUsage(mockPredicate.id) } returns 0
-        every { repository.deleteByPredicateId(mockPredicate.id) } returns Unit
+        every { repository.deleteById(mockPredicate.id) } returns Unit
 
         service.delete(mockPredicate.id)
 
-        verify(exactly = 1) { repository.deleteByPredicateId(mockPredicate.id) }
+        verify(exactly = 1) { repository.deleteById(mockPredicate.id) }
     }
 }

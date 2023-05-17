@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Class
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import java.net.URI
@@ -20,15 +19,15 @@ import org.neo4j.ogm.annotation.typeconversion.Convert
 data class Neo4jClass(
     @Id
     @GeneratedValue
-    var id: Long? = null,
+    var nodeId: Long? = null,
     @Relationship(type = "RELATED", direction = Relationship.OUTGOING)
     @JsonIgnore
     var subjectOf: MutableSet<Neo4jStatement> = mutableSetOf()
 ) : Neo4jThing {
-    @Property("class_id")
+    @Property("id")
     @Required
-    @Convert(ClassIdConverter::class)
-    var classId: ClassId? = null
+    @Convert(ThingIdConverter::class)
+    override var id: ThingId? = null
 
     @Property("label")
     @Required
@@ -41,9 +40,14 @@ data class Neo4jClass(
     @Convert(ContributorIdConverter::class)
     var createdBy: ContributorId = ContributorId.createUnknownContributor()
 
-    constructor(label: String, classId: ClassId, createdBy: ContributorId = ContributorId.createUnknownContributor(), uri: URI?) : this(null) {
+    constructor(
+        label: String,
+        id: ThingId,
+        createdBy: ContributorId = ContributorId.createUnknownContributor(),
+        uri: URI?
+    ) : this(null) {
         this.label = label
-        this.classId = classId
+        this.id = id
         this.uri = uri?.toString()
         this.createdBy = createdBy
     }
@@ -54,7 +58,7 @@ data class Neo4jClass(
     fun toClass(): Class {
         val aURI: URI? = if (uri != null) URI.create(uri!!) else null
         val clazz = Class(
-            id = ThingId(classId!!.value),
+            id = id!!,
             label = label!!,
             uri = aURI,
             createdAt = createdAt!!,
@@ -64,9 +68,6 @@ data class Neo4jClass(
             clazz.description = subjectOf.firstOrNull { it.predicateId?.value == "description" }?.`object`?.label
         return clazz
     }
-
-    override val thingId: String?
-        get() = classId?.value
 
     override fun toThing() = toClass()
 }

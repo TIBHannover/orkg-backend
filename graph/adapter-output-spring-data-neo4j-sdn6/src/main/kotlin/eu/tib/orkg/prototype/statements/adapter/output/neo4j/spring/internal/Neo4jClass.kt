@@ -2,8 +2,6 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Class
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
-import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
 import java.time.OffsetDateTime
 import org.springframework.data.neo4j.core.schema.Node
@@ -11,9 +9,6 @@ import org.springframework.data.neo4j.core.schema.Property
 
 @Node("Class")
 class Neo4jClass : Neo4jThing() {
-    @Property("class_id")
-    var classId: ClassId? = null
-
     @Property("uri")
     var uri: String? = null
 
@@ -24,16 +19,13 @@ class Neo4jClass : Neo4jThing() {
     var createdAt: OffsetDateTime? = null
 
     fun toClass() = Class(
-        id = ThingId(classId!!.value),
+        id = id!!,
         label = label!!,
         uri = if (uri != null) URI.create(uri!!) else null,
         createdAt = createdAt!!,
         createdBy = createdBy,
         // TODO: class description
     )
-
-    override val thingId: String?
-        get() = classId?.value
 
     override fun toThing() = toClass()
 }

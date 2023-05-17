@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model.neo4j
 
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteral
-import eu.tib.orkg.prototype.statements.domain.model.LiteralId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.time.OffsetDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
@@ -16,7 +16,7 @@ internal class Neo4jLiteralTest {
     inner class GivenANeo4jLiteral {
 
         private val neo4jLiteral = Neo4jLiteral().apply {
-            literalId = LiteralId(1)
+            this.id = ThingId("L1")
             label = "irrelevant"
             createdAt = OffsetDateTime.now() // Prevent NPE
         }
@@ -46,7 +46,7 @@ internal class Neo4jLiteralTest {
     inner class GivenANeo4jLiteralWithNonDefaultValues {
 
         private val neo4jLiteral = Neo4jLiteral().apply {
-            literalId = LiteralId(1)
+            this.id = ThingId("L1")
             label = "irrelevant"
             datatype = NON_DEFAULT_DATATYPE
             createdAt = OffsetDateTime.now()

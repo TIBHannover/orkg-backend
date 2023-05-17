@@ -14,12 +14,12 @@ class SpringDataNeo4jTemplateAdapter(
     private val neo4jRepository: Neo4jTemplateRepository
 ) : TemplateRepository {
 
-    override fun findTemplateSpecs(resourceId: ThingId): Optional<TemplatedResource> =
-        neo4jRepository.findTemplateSpecs(resourceId.toResourceId())
+    override fun findTemplateSpecs(id: ThingId): Optional<TemplatedResource> =
+        neo4jRepository.findTemplateSpecs(id)
 
-    override fun formattedLabelFor(resourceId: ThingId, classes: Set<ThingId>): FormattedLabel? {
+    override fun formattedLabelFor(id: ThingId, classes: Set<ThingId>): FormattedLabel? {
         if (classes.isEmpty()) return null
-        val templatedResource = findTemplateSpecs(resourceId)
+        val templatedResource = findTemplateSpecs(id)
         if (!templatedResource.isPresent) return null
         return FormattedLabel.ofOrNull(templatedResource.get().composeFormattedLabel())
     }

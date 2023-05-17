@@ -36,9 +36,9 @@ class SpringDataNeo4jClassHierarchyAdapter(
         val parent = node("Class")
         val query = match(child)
             .where(
-                child.property("class_id").eq(literalOf<String>(classRelation.child.id.value))
+                child.property("id").eq(literalOf<String>(classRelation.child.id.value))
             ).match(parent).where(
-                parent.property("class_id").eq(literalOf<String>(classRelation.parent.id.value))
+                parent.property("id").eq(literalOf<String>(classRelation.parent.id.value))
             ).create(
                 child.relationshipTo(parent, SUBCLASS_OF).withProperties(
                     "created_by", literalOf<String>(classRelation.createdBy.value.toString()),
@@ -57,9 +57,9 @@ class SpringDataNeo4jClassHierarchyAdapter(
         val query = unwind(rows).`as`(row)
             .with(row)
             .match(child).where(
-                child.property("class_id").eq(row.property("child_id"))
+                child.property("id").eq(row.property("child_id"))
             ).match(parent).where(
-                parent.property("class_id").eq(row.property("parent_id"))
+                parent.property("id").eq(row.property("parent_id"))
             ).create(
                 r.withProperties(
                     "created_by", row.property("created_by"),
@@ -80,11 +80,11 @@ class SpringDataNeo4jClassHierarchyAdapter(
             )).run()
     }
 
-    override fun deleteByChildClassId(childId: ThingId) {
+    override fun deleteByChildId(childId: ThingId) {
         val r = name("r")
         val query = match(
                 node("Class")
-                    .withProperties("class_id", literalOf<String>(childId.value))
+                    .withProperties("id", literalOf<String>(childId.value))
                     .relationshipTo(node("Class"), SUBCLASS_OF)
                     .named(r)
             ).delete(r)
@@ -115,7 +115,7 @@ class SpringDataNeo4jClassHierarchyAdapter(
                     .relationshipTo(
                         node("Class")
                             .named(p)
-                            .withProperties("class_id", literalOf<String>(id.value)),
+                            .withProperties("id", literalOf<String>(id.value)),
                         SUBCLASS_OF
                     )
             )
@@ -123,7 +123,7 @@ class SpringDataNeo4jClassHierarchyAdapter(
             .optionalMatch(
                 g.relationshipTo(anyNode().named(c))
             ).returning(c, count(g).`as`(childCount))
-            .orderBy(c.property("class_id").ascending())
+            .orderBy(c.property("id").ascending())
             .build(pageable)
         val countQuery = match
             .returning(count(c))
@@ -138,7 +138,7 @@ class SpringDataNeo4jClassHierarchyAdapter(
         val p = name("p")
         val query = match(
                 node("Class")
-                    .withProperties("class_id", literalOf<String>(id.value))
+                    .withProperties("id", literalOf<String>(id.value))
                     .relationshipTo(anyNode("Class").named(p), SUBCLASS_OF)
             ).returning(p)
             .build()
@@ -154,7 +154,7 @@ class SpringDataNeo4jClassHierarchyAdapter(
             .named(r)
         val query = match(
                 node("Class")
-                    .withProperties("class_id", literalOf<String>(id.value))
+                    .withProperties("id", literalOf<String>(id.value))
                     .relationshipTo(root, SUBCLASS_OF)
                     .unbounded()
             ).where(
@@ -180,7 +180,7 @@ class SpringDataNeo4jClassHierarchyAdapter(
             )
         val query = match
             .returning(root)
-            .orderBy(root.property("class_id").ascending())
+            .orderBy(root.property("id").ascending())
             .build(pageable)
         val countQuery = match
             .returning(count(root))
@@ -200,7 +200,7 @@ class SpringDataNeo4jClassHierarchyAdapter(
         val match = match(
                 node("Class")
                     .named(c)
-                    .withProperties("class_id", literalOf<String>(id.value))
+                    .withProperties("id", literalOf<String>(id.value))
                     .relationshipTo(node("Class").named(p), SUBCLASS_OF)
                     .length(0, null)
             ).with(collect(p).add(c).`as`(classes))
@@ -213,8 +213,8 @@ class SpringDataNeo4jClassHierarchyAdapter(
                     .named(`class`)
                     .relationshipTo(node("Class").named(p), SUBCLASS_OF)
             )
-            .returning(`class`, p.property("class_id").`as`(parentId))
-            .orderBy(`class`.property("class_id").ascending())
+            .returning(`class`, p.property("id").`as`(parentId))
+            .orderBy(`class`.property("id").ascending())
             .build(pageable)
         val countQuery = match
             .returning(count(`class`))
@@ -240,10 +240,10 @@ class SpringDataNeo4jClassHierarchyAdapter(
                     .relationshipTo(
                         node("Class")
                             .named(r)
-                            .withProperties("class_id", idLiteral),
+                            .withProperties("id", idLiteral),
                         SUBCLASS_OF
                     ).unbounded()
-            ).with(collect(c.property("class_id")).add(idLiteral).`as`(ids))
+            ).with(collect(c.property("id")).add(idLiteral).`as`(ids))
             .match(instance)
             .where(any(label).`in`(labels(instance)).where(label.`in`(ids)))
             .returning(count(i))
@@ -256,13 +256,13 @@ class SpringDataNeo4jClassHierarchyAdapter(
     override fun existsChild(id: ThingId, childId: ThingId): Boolean {
         val c = node("Class")
             .named("c")
-            .withProperties("class_id", literalOf<String>(childId.value))
+            .withProperties("id", literalOf<String>(childId.value))
         val query = match(c)
             .returning(
                 exists(
                     c.relationshipTo(
                         node("Class")
-                            .withProperties("class_id", literalOf<String>(id.value)),
+                            .withProperties("id", literalOf<String>(id.value)),
                         SUBCLASS_OF
                     ).unbounded()
                 )
@@ -275,7 +275,7 @@ class SpringDataNeo4jClassHierarchyAdapter(
     override fun existsChildren(id: ThingId): Boolean {
         val c = node("Class")
             .named("c")
-            .withProperties("class_id", literalOf<String>(id.value))
+            .withProperties("id", literalOf<String>(id.value))
         val query = match(c)
             .returning(exists(node("Class").relationshipTo(c, SUBCLASS_OF)))
             .build()

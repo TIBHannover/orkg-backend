@@ -13,9 +13,9 @@ class InMemoryPredicateRepository : InMemoryRepository<ThingId, Predicate>(
     override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable) =
         findAllFilteredAndPaged(pageable) { it.label.matches(labelSearchString) }
 
-    override fun findByPredicateId(id: ThingId) = Optional.ofNullable(entities[id])
+    override fun findById(id: ThingId) = Optional.ofNullable(entities[id])
 
-    override fun deleteByPredicateId(id: ThingId) {
+    override fun deleteById(id: ThingId) {
         entities.remove(id)
     }
 

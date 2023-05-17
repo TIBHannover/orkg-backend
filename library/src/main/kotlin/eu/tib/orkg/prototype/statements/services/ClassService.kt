@@ -62,7 +62,7 @@ class ClassService(
                 contributorId = userId,
             )
         )
-        return repository.findByClassId(newClassId).map(Class::toClassRepresentation).get()
+        return repository.findById(newClassId).map(Class::toClassRepresentation).get()
     }
 
     @Transactional(readOnly = true)
@@ -72,10 +72,10 @@ class ClassService(
         repository.findAll(pageable).map(Class::toClassRepresentation)
 
     override fun findAllById(ids: Iterable<ThingId>, pageable: Pageable): Page<ClassRepresentation> =
-        repository.findAllByClassId(ids, pageable).map(Class::toClassRepresentation)
+        repository.findAllById(ids, pageable).map(Class::toClassRepresentation)
 
     override fun findById(id: ThingId): Optional<ClassRepresentation> =
-        repository.findByClassId(id).map(Class::toClassRepresentation)
+        repository.findById(id).map(Class::toClassRepresentation)
 
     override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<ClassRepresentation> =
         repository.findAllByLabel(labelSearchString, pageable)
@@ -83,7 +83,7 @@ class ClassService(
 
     override fun replace(id: ThingId, command: UpdateClassUseCase.ReplaceCommand): Result<Unit, ClassUpdateProblem> {
         val label = Label.ofOrNull(command.label) ?: return Failure(InvalidLabel)
-        val found = repository.findByClassId(id).orElse(null) ?: return Failure(ClassNotFound)
+        val found = repository.findById(id).orElse(null) ?: return Failure(ClassNotFound)
         if (found.uri != command.uri && found.uri != null) return Failure(UpdateNotAllowed)
         command.uri?.let {
             val possiblyUsed = findByURI(it).orElse(null)
@@ -95,14 +95,14 @@ class ClassService(
 
     override fun updateLabel(id: ThingId, newLabel: String): Result<Unit, ClassLabelUpdateProblem> {
         val label = Label.ofOrNull(newLabel) ?: return Failure(InvalidLabel)
-        val found = repository.findByClassId(id).orElse(null) ?: return Failure(ClassNotFound)
+        val found = repository.findById(id).orElse(null) ?: return Failure(ClassNotFound)
         if (found.label != label.value) repository.save(found.copy(label = label.value))
         return Success(Unit)
     }
 
     override fun updateURI(id: ThingId, with: String): Result<Unit, ClassURIUpdateProblem> {
         val uri = with.toURIOrNull() ?: return Failure(InvalidURI)
-        val found = repository.findByClassId(id).orElse(null) ?: return Failure(ClassNotFound)
+        val found = repository.findById(id).orElse(null) ?: return Failure(ClassNotFound)
         if (found.uri != null) return Failure(UpdateNotAllowed)
         val possiblyUsed = findByURI(uri).orElse(null)
         if (possiblyUsed != null && possiblyUsed.id != found.id) return Failure(AlreadyInUse)
@@ -119,7 +119,7 @@ class ClassService(
         // Checking if URI is null
         if (uri == null) {
             // check only for ID
-            val found = repository.findByClassId(id)
+            val found = repository.findById(id)
             if (found.isEmpty) {
                 repository.save(
                     Class(
@@ -133,7 +133,7 @@ class ClassService(
             }
         } else {
             val oClassByURI = repository.findByUri(uri.toString())
-            val oClassById = repository.findByClassId(id)
+            val oClassById = repository.findById(id)
             when {
                 oClassById.isEmpty && oClassByURI.isEmpty -> repository.save(
                     Class(

@@ -17,9 +17,9 @@ interface ResourceRepository : EntityRepository<Resource, ThingId> {
     // legacy methods:
     fun nextIdentity(): ThingId
     fun save(resource: Resource)
-    fun deleteByResourceId(id: ThingId)
+    fun deleteById(id: ThingId)
     fun deleteAll()
-    fun findByResourceId(id: ThingId): Optional<Resource>
+    fun findById(id: ThingId): Optional<Resource>
     fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Resource>
     fun findAllByClass(`class`: ThingId, pageable: Pageable): Page<Resource>
     fun findAllByClassAndCreatedBy(`class`: ThingId, createdBy: ContributorId, pageable: Pageable): Page<Resource>
@@ -44,7 +44,7 @@ interface ResourceRepository : EntityRepository<Resource, ThingId> {
     fun findPaperByLabel(label: String): Optional<Resource>
     fun findAllPapersByLabel(label: String): Iterable<Resource>
     fun findByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId): Iterable<Resource>
-    fun findPaperByResourceId(id: ThingId): Optional<Resource>
+    fun findPaperById(id: ThingId): Optional<Resource>
     fun findAllPapersByVerified(verified: Boolean, pageable: Pageable): Page<Resource>
     fun findAllContributorIds(pageable: Pageable): Page<ContributorId>
     fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>

@@ -15,6 +15,6 @@ interface LiteralRepository {
     fun save(literal: Literal)
     fun deleteAll()
     fun findAll(pageable: Pageable): Page<Literal>
-    fun findByLiteralId(id: ThingId): Optional<Literal>
+    fun findById(id: ThingId): Optional<Literal>
     fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Literal>
 }

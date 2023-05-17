@@ -6,7 +6,6 @@ import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.time.OffsetDateTime
 import org.springframework.data.neo4j.core.schema.DynamicLabels
@@ -22,9 +21,6 @@ private val ReservedClassIds = setOf(
 
 @Node("Resource")
 class Neo4jResource: Neo4jThing() {
-    @Property("resource_id")
-    var resourceId: ResourceId? = null
-
     @Property("created_by")
     var createdBy: ContributorId = ContributorId.createUnknownContributor()
 
@@ -62,7 +58,7 @@ class Neo4jResource: Neo4jThing() {
         }
 
     fun toResource() = Resource(
-        id = ThingId(resourceId!!.value),
+        id = id!!,
         label = label!!,
         createdAt = createdAt!!,
         classes = classes - ReservedClassIds,
@@ -73,9 +69,6 @@ class Neo4jResource: Neo4jThing() {
         visibility = visibility!!,
         verified = verified,
     )
-
-    override val thingId: String?
-        get() = resourceId?.value
 
     override fun toThing() = toResource()
 }

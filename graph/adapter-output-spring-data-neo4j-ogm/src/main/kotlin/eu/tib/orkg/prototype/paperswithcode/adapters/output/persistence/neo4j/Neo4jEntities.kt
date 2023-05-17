@@ -19,8 +19,8 @@ data class Neo4jBenchmarkSummary(
 ) {
     fun toBenchmarkSummary() =
         BenchmarkSummary(
-            ResearchProblem(ThingId(problem.resourceId!!.value), problem.label!!),
-            fields.map { ResearchField(it.thingId!!, it.label!!) },
+            ResearchProblem(problem.id!!, problem.label!!),
+            fields.map { ResearchField(it.id!!.value, it.label!!) },
             totalPapers.toInt(),
             totalDatasets.toInt(),
             totalCodes.toInt()
@@ -37,7 +37,7 @@ data class Neo4jDataset(
 ) {
     fun toDataset() =
         Dataset(
-            dataset.resourceId!!,
+            dataset.id!!,
             dataset.label!!,
             totalModels.toInt(),
             totalPapers.toInt(),
@@ -63,7 +63,7 @@ data class Neo4jBenchmarkUnpacked(
             modelId?.let(::ThingId),
             score,
             metric,
-            paper.resourceId!!,
+            paper.id!!,
             paper.label!!,
             month?.toInt(),
             year?.toInt(),

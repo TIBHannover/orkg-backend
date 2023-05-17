@@ -63,27 +63,27 @@ class SpringDataNeo4jClassAdapterCachingTests {
     @Test
     fun `fetching a class by ID should be cached`() {
         val `class` = createClass().copy(id = ThingId("C1"))
-        every { mock.findByClassId(ThingId("C1")) } returns Optional.of(`class`) andThen {
+        every { mock.findById(ThingId("C1")) } returns Optional.of(`class`) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
 
         // Obtain class from repository
-        assertThat(adapter.findByClassId(ThingId("C1")).get()).isEqualTo(`class`)
+        assertThat(adapter.findById(ThingId("C1")).get()).isEqualTo(`class`)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByClassId(ThingId("C1")) }
+        verify(exactly = 1) { mock.findById(ThingId("C1")) }
 
         // Obtain the same class again for several times
-        assertThat(adapter.findByClassId(ThingId("C1")).get()).isEqualTo(`class`)
-        assertThat(adapter.findByClassId(ThingId("C1")).get()).isEqualTo(`class`)
+        assertThat(adapter.findById(ThingId("C1")).get()).isEqualTo(`class`)
+        assertThat(adapter.findById(ThingId("C1")).get()).isEqualTo(`class`)
 
-        verify(exactly = 1) { mock.findByClassId(ThingId("C1")) }
+        verify(exactly = 1) { mock.findById(ThingId("C1")) }
     }
 
     @Test
     fun `saving a class should evict it from the id-to-class cache`() {
         val `class` = createClass().copy(id = ThingId("C1"))
         val modified = `class`.copy(label = "new label")
-        every { mock.findByClassId(ThingId("C1")) } returns Optional.of(`class`) andThen Optional.of(modified) andThen {
+        every { mock.findById(ThingId("C1")) } returns Optional.of(`class`) andThen Optional.of(modified) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { mock.exists(ThingId("C1")) } returns true andThen {
@@ -92,9 +92,9 @@ class SpringDataNeo4jClassAdapterCachingTests {
         every { mock.save(modified) } returns Unit
 
         // Obtain class from repository
-        assertThat(adapter.findByClassId(ThingId("C1")).get()).isEqualTo(`class`)
+        assertThat(adapter.findById(ThingId("C1")).get()).isEqualTo(`class`)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByClassId(ThingId("C1")) }
+        verify(exactly = 1) { mock.findById(ThingId("C1")) }
 
         // Check class existence in repository
         assertThat(adapter.exists(ThingId("C1"))).isTrue
@@ -106,11 +106,11 @@ class SpringDataNeo4jClassAdapterCachingTests {
         verify { mock.save(modified) } // required because of confirmVerified()
 
         // Obtaining the class again
-        assertThat(adapter.findByClassId(ThingId("C1")).get())
+        assertThat(adapter.findById(ThingId("C1")).get())
             .`as`("obtaining the updated version from the cache")
             .isEqualTo(modified)
         // Verify the loading happened (again)
-        verify(exactly = 2) { mock.findByClassId(ThingId("C1")) }
+        verify(exactly = 2) { mock.findById(ThingId("C1")) }
 
         // Check class existence again
         assertThat(adapter.exists(ThingId("C1"))).isTrue

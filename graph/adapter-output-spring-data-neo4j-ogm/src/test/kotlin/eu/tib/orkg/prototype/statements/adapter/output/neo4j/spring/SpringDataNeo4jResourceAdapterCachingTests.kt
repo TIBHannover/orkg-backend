@@ -64,27 +64,27 @@ class SpringDataNeo4jResourceAdapterCachingTests {
     @Test
     fun `fetching a resource by ID should be cached`() {
         val resource = createResource().copy(id = ThingId("R1"))
-        every { mock.findByResourceId(ThingId("R1")) } returns Optional.of(resource) andThen {
+        every { mock.findById(ThingId("R1")) } returns Optional.of(resource) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
 
         // Obtain resource from repository
-        assertThat(adapter.findByResourceId(ThingId("R1")).get()).isEqualTo(resource)
+        assertThat(adapter.findById(ThingId("R1")).get()).isEqualTo(resource)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByResourceId(ThingId("R1")) }
+        verify(exactly = 1) { mock.findById(ThingId("R1")) }
 
         // Obtain the same resource again for several times
-        assertThat(adapter.findByResourceId(ThingId("R1")).get()).isEqualTo(resource)
-        assertThat(adapter.findByResourceId(ThingId("R1")).get()).isEqualTo(resource)
+        assertThat(adapter.findById(ThingId("R1")).get()).isEqualTo(resource)
+        assertThat(adapter.findById(ThingId("R1")).get()).isEqualTo(resource)
 
-        verify(exactly = 1) { mock.findByResourceId(ThingId("R1")) }
+        verify(exactly = 1) { mock.findById(ThingId("R1")) }
     }
 
     @Test
     fun `saving a resource should evict it from the id-to-resource cache`() {
         val resource = createResource().copy(id = ThingId("R1"))
         val modified = resource.copy(label = "new label")
-        every { mock.findByResourceId(ThingId("R1")) } returns Optional.of(resource) andThen Optional.of(modified) andThen {
+        every { mock.findById(ThingId("R1")) } returns Optional.of(resource) andThen Optional.of(modified) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { mock.exists(ThingId("R1")) } returns true andThen {
@@ -93,9 +93,9 @@ class SpringDataNeo4jResourceAdapterCachingTests {
         every { mock.save(modified) } returns Unit
 
         // Obtain resource from repository
-        assertThat(adapter.findByResourceId(ThingId("R1")).get()).isEqualTo(resource)
+        assertThat(adapter.findById(ThingId("R1")).get()).isEqualTo(resource)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByResourceId(ThingId("R1")) }
+        verify(exactly = 1) { mock.findById(ThingId("R1")) }
 
         // Check resource existence in repository
         assertThat(adapter.exists(ThingId("R1"))).isTrue
@@ -107,11 +107,11 @@ class SpringDataNeo4jResourceAdapterCachingTests {
         verify { mock.save(modified) } // required because of confirmVerified()
 
         // Obtaining the resource again
-        assertThat(adapter.findByResourceId(ThingId("R1")).get())
+        assertThat(adapter.findById(ThingId("R1")).get())
             .`as`("obtaining the updated version from the cache")
             .isEqualTo(modified)
         // Verify the loading happened (again)
-        verify(exactly = 2) { mock.findByResourceId(ThingId("R1")) }
+        verify(exactly = 2) { mock.findById(ThingId("R1")) }
 
         // Check resource existence again
         assertThat(adapter.exists(ThingId("R1"))).isTrue
@@ -140,29 +140,29 @@ class SpringDataNeo4jResourceAdapterCachingTests {
     @Test
     fun `deleting a resource should evict it from the id-to-resource cache`() {
         val resource = createResource().copy(id = ThingId("R1"))
-        every { mock.findByResourceId(ThingId("R1")) } returns Optional.of(resource) andThen Optional.of(resource) andThen {
+        every { mock.findById(ThingId("R1")) } returns Optional.of(resource) andThen Optional.of(resource) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
-        every { adapter.deleteByResourceId(ThingId("R1")) } returns Unit
+        every { adapter.deleteById(ThingId("R1")) } returns Unit
 
         // Obtain predicate from repository
-        assertThat(adapter.findByResourceId(ThingId("R1")).get()).isEqualTo(resource)
+        assertThat(adapter.findById(ThingId("R1")).get()).isEqualTo(resource)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByResourceId(ThingId("R1")) }
+        verify(exactly = 1) { mock.findById(ThingId("R1")) }
 
         // Obtain the same predicate again for several times
-        assertThat(adapter.findByResourceId(ThingId("R1")).get()).isEqualTo(resource)
-        assertThat(adapter.findByResourceId(ThingId("R1")).get()).isEqualTo(resource)
-        verify(exactly = 1) { mock.findByResourceId(ThingId("R1")) }
+        assertThat(adapter.findById(ThingId("R1")).get()).isEqualTo(resource)
+        assertThat(adapter.findById(ThingId("R1")).get()).isEqualTo(resource)
+        verify(exactly = 1) { mock.findById(ThingId("R1")) }
 
         // Delete predicate from repository
-        adapter.deleteByResourceId(ThingId("R1"))
+        adapter.deleteById(ThingId("R1"))
         // Verify the deletion happened
-        verify(exactly = 1) { mock.deleteByResourceId(ThingId("R1")) }
+        verify(exactly = 1) { mock.deleteById(ThingId("R1")) }
 
         // Verify that the cache was evicted
-        assertThat(adapter.findByResourceId(ThingId("R1")).get()).isEqualTo(resource)
-        verify(exactly = 2) { mock.findByResourceId(ThingId("R1")) }
+        assertThat(adapter.findById(ThingId("R1")).get()).isEqualTo(resource)
+        verify(exactly = 2) { mock.findById(ThingId("R1")) }
     }
 
     @Test
@@ -170,7 +170,7 @@ class SpringDataNeo4jResourceAdapterCachingTests {
         every { mock.exists(ThingId("R1")) } returns true andThen false andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
-        every { adapter.deleteByResourceId(ThingId("R1")) } returns Unit
+        every { adapter.deleteById(ThingId("R1")) } returns Unit
 
         // Obtain predicate from repository
         assertThat(adapter.exists(ThingId("R1"))).isTrue
@@ -183,9 +183,9 @@ class SpringDataNeo4jResourceAdapterCachingTests {
         verify(exactly = 1) { mock.exists(ThingId("R1")) }
 
         // Delete predicate from repository
-        adapter.deleteByResourceId(ThingId("R1"))
+        adapter.deleteById(ThingId("R1"))
         // Verify the deletion happened
-        verify(exactly = 1) { mock.deleteByResourceId(ThingId("R1")) }
+        verify(exactly = 1) { mock.deleteById(ThingId("R1")) }
 
         // Verify that the cache was evicted
         assertThat(adapter.exists(ThingId("R1"))).isFalse

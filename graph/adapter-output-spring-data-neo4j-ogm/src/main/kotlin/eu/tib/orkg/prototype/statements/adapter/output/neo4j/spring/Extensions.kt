@@ -14,15 +14,11 @@ import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatementRepository
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jThing
 import eu.tib.orkg.prototype.statements.domain.model.Class
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ClassSubclassRelation
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
-import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 
@@ -30,7 +26,7 @@ internal fun ClassSubclassRelation.toNeo4jClassRelation(
     neo4jRepository: Neo4jClassRelationRepository,
     neo4jClassRepository: Neo4jClassRepository
 ) =
-    neo4jRepository.findByChildClassId(child.id.toClassId()).orElse(Neo4jClassRelation()).apply {
+    neo4jRepository.findByChildId(child.id).orElse(Neo4jClassRelation()).apply {
         child = this@toNeo4jClassRelation.child.toNeo4jClass(neo4jClassRepository)
         parent = this@toNeo4jClassRelation.parent.toNeo4jClass(neo4jClassRepository)
         createdBy = this@toNeo4jClassRelation.createdBy
@@ -38,8 +34,8 @@ internal fun ClassSubclassRelation.toNeo4jClassRelation(
     }
 
 internal fun Class.toNeo4jClass(neo4jRepository: Neo4jClassRepository): Neo4jClass =
-    neo4jRepository.findByClassId(id.toClassId()).orElse(Neo4jClass()).apply {
-        classId = this@toNeo4jClass.id.toClassId()
+    neo4jRepository.findById(id).orElse(Neo4jClass()).apply {
+        id = this@toNeo4jClass.id
         label = this@toNeo4jClass.label
         uri = this@toNeo4jClass.uri?.toString()
         createdBy = this@toNeo4jClass.createdBy
@@ -47,8 +43,8 @@ internal fun Class.toNeo4jClass(neo4jRepository: Neo4jClassRepository): Neo4jCla
     }
 
 internal fun Literal.toNeo4jLiteral(neo4jRepository: Neo4jLiteralRepository) =
-    neo4jRepository.findByLiteralId(id.toLiteralId()).orElse(Neo4jLiteral()).apply {
-        literalId = this@toNeo4jLiteral.id.toLiteralId()
+    neo4jRepository.findById(id).orElse(Neo4jLiteral()).apply {
+        id = this@toNeo4jLiteral.id
         label = this@toNeo4jLiteral.label
         datatype = this@toNeo4jLiteral.datatype
         createdAt = this@toNeo4jLiteral.createdAt
@@ -56,8 +52,8 @@ internal fun Literal.toNeo4jLiteral(neo4jRepository: Neo4jLiteralRepository) =
     }
 
 internal fun Predicate.toNeo4jPredicate(neo4jRepository: Neo4jPredicateRepository) =
-    neo4jRepository.findByPredicateId(id.toPredicateId()).orElse(Neo4jPredicate()).apply {
-        predicateId = this@toNeo4jPredicate.id.toPredicateId()
+    neo4jRepository.findById(id).orElse(Neo4jPredicate()).apply {
+        id = this@toNeo4jPredicate.id
         label = this@toNeo4jPredicate.label
         createdBy = this@toNeo4jPredicate.createdBy
         createdAt = this@toNeo4jPredicate.createdAt
@@ -65,8 +61,8 @@ internal fun Predicate.toNeo4jPredicate(neo4jRepository: Neo4jPredicateRepositor
 
 internal fun Resource.toNeo4jResource(neo4jRepository: Neo4jResourceRepository) =
     // We need to fetch the original resource, so "resources" is set properly.
-    neo4jRepository.findByResourceId(id.toResourceId()).orElse(Neo4jResource()).apply {
-        resourceId = this@toNeo4jResource.id.toResourceId()
+    neo4jRepository.findById(id).orElse(Neo4jResource()).apply {
+        id = this@toNeo4jResource.id
         label = this@toNeo4jResource.label
         createdBy = this@toNeo4jResource.createdBy
         createdAt = this@toNeo4jResource.createdAt
@@ -83,7 +79,7 @@ internal fun Neo4jStatement.toStatement(
 ): GeneralStatement = GeneralStatement(
     id = statementId!!,
     subject = subject!!.toThing(),
-    predicate = neo4jPredicateRepository.findByPredicateId(predicateId!!).get().toPredicate(),
+    predicate = neo4jPredicateRepository.findById(predicateId!!).get().toPredicate(),
     `object` = `object`!!.toThing(),
     createdAt = createdAt!!,
     createdBy = createdBy
@@ -111,7 +107,7 @@ internal fun GeneralStatement.toNeo4jStatement(
         statementId = this@toNeo4jStatement.id
         subject = this@toNeo4jStatement.subject.toNeo4jThing(neo4jClassRepository, neo4jLiteralRepository, neo4jPredicateRepository, neo4jResourceRepository)
         `object` = this@toNeo4jStatement.`object`.toNeo4jThing(neo4jClassRepository, neo4jLiteralRepository, neo4jPredicateRepository, neo4jResourceRepository)
-        predicateId = this@toNeo4jStatement.predicate.id.toPredicateId()
+        predicateId = this@toNeo4jStatement.predicate.id
         createdBy = this@toNeo4jStatement.createdBy
         createdAt = this@toNeo4jStatement.createdAt
     }
@@ -123,22 +119,8 @@ internal fun Thing.toNeo4jThing(
     neo4jResourceRepository: Neo4jResourceRepository
 ): Neo4jThing =
     when (this) {
-        is Class -> neo4jClassRepository.findByClassId(id.toClassId()).get()
-        is Literal -> neo4jLiteralRepository.findByLiteralId(id.toLiteralId()).get()
-        is Predicate -> neo4jPredicateRepository.findByPredicateId(id.toPredicateId()).get()
-        is Resource -> neo4jResourceRepository.findByResourceId(id.toResourceId()).get()
+        is Class -> neo4jClassRepository.findById(id).get()
+        is Literal -> neo4jLiteralRepository.findById(id).get()
+        is Predicate -> neo4jPredicateRepository.findById(id).get()
+        is Resource -> neo4jResourceRepository.findById(id).get()
     }
-
-internal fun ThingId.toClassId() = ClassId(value)
-
-internal fun ThingId.toLiteralId() = LiteralId(value)
-
-internal fun ThingId.toPredicateId() = PredicateId(value)
-
-internal fun ThingId.toResourceId() = ResourceId(value)
-
-internal fun Set<ThingId>.toClassIds() = map { it.toClassId() }.toSet()
-
-internal fun Iterable<ThingId>.toClassIds() = map { it.toClassId() }
-
-internal fun Set<ThingId>.toResourceIds() = map { it.toResourceId() }.toSet()

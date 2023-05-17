@@ -7,7 +7,7 @@ import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import java.time.OffsetDateTime
 
 data class Resource(
-    val id: ThingId,
+    override val id: ThingId,
     override val label: String,
     val createdAt: OffsetDateTime,
     val classes: Set<ThingId> = emptySet(),
@@ -17,6 +17,4 @@ data class Resource(
     val organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
     val visibility: Visibility = Visibility.DEFAULT,
     val verified: Boolean? = null,
-) : Thing {
-    override val thingId: ThingId = ThingId(id.value)
-}
+) : Thing

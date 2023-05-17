@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j.*
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.data.domain.Page
@@ -33,53 +32,53 @@ private const val RETURN_NODE_COUNT = """RETURN count(node)"""
  * Queries using this partial query must use `node` as the binding name.
  */
 private const val WITH_NODE_PROPERTIES =
-    """WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at"""
+    """WITH node, node.label AS label, node.id AS id, node.created_at AS created_at"""
 
-private const val MATCH_RESEARCH_FIELD_WITH_SUBFIELDS = """MATCH (field:ResearchField:Resource)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(sub:ResearchField:Resource {resource_id: $id}) WITH COLLECT(field) + COLLECT(sub) AS fields"""
+private const val MATCH_RESEARCH_FIELD_WITH_SUBFIELDS = """MATCH (field:ResearchField:Resource)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(sub:ResearchField:Resource {id: $id}) WITH COLLECT(field) + COLLECT(sub) AS fields"""
 private const val AND_FIELD_IN_FIELDS = """AND field IN fields"""
 private const val WHERE_VISIBILITY_IS_LISTED = """WHERE (node.visibility = "DEFAULT" OR node.visibility = "FEATURED")"""
 private const val WHERE_VISIBILITY = """WHERE node.visibility = $visibility"""
 private const val WITH_DISTINCT_NODE = """WITH DISTINCT node"""
 private const val MATCH_PAPER_RELATED_TO_RESEARCH_FIELD = """MATCH (node:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(field:ResearchField:Resource)"""
-private const val MATCH_PAPER_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(:ResearchField:Resource {resource_id: $id})"""
+private const val MATCH_PAPER_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(:ResearchField:Resource {id: $id})"""
 private const val MATCH_COMPARISON_RELATED_TO_RESEARCH_FIELD = """MATCH (node:Comparison:Resource)-[:RELATED]->(:Contribution:Resource)<-[:RELATED {predicate_id: "P31"}]-(:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(field:ResearchField:Resource)"""
-private const val MATCH_COMPARISON_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:Comparison:Resource)-[:RELATED]->(:Contribution:Resource)<-[:RELATED {predicate_id: "P31"}]-(:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(:ResearchField:Resource {resource_id: $id})"""
+private const val MATCH_COMPARISON_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:Comparison:Resource)-[:RELATED]->(:Contribution:Resource)<-[:RELATED {predicate_id: "P31"}]-(:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(:ResearchField:Resource {id: $id})"""
 private const val MATCH_PROBLEM_RELATED_TO_RESEARCH_FIELD = """MATCH (node:Problem:Resource)<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(field:ResearchField:Resource)"""
-private const val MATCH_PROBLEM_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:Problem:Resource)<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(:ResearchField:Resource {resource_id: $id})"""
+private const val MATCH_PROBLEM_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:Problem:Resource)<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(:ResearchField:Resource {id: $id})"""
 private const val MATCH_VISUALIZATION_RELATED_TO_RESEARCH_FIELD = """MATCH (node:Visualization:Resource)<-[:RELATED {predicate_id: 'hasVisualization'}]-(:Comparison:Resource)-[:RELATED {predicate_id: 'hasSubject'}]->(field:ResearchField:Resource)"""
-private const val MATCH_VISUALIZATION_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:Visualization:Resource)<-[:RELATED {predicate_id: 'hasVisualization'}]-(:Comparison:Resource)-[:RELATED {predicate_id: 'hasSubject'}]->(:ResearchField:Resource {resource_id: $id})"""
+private const val MATCH_VISUALIZATION_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:Visualization:Resource)<-[:RELATED {predicate_id: 'hasVisualization'}]-(:Comparison:Resource)-[:RELATED {predicate_id: 'hasSubject'}]->(:ResearchField:Resource {id: $id})"""
 private const val MATCH_SMART_REVIEW_RELATED_TO_RESEARCH_FIELD = """MATCH (node:SmartReviewPublished:Resource)-[:RELATED]->(:SmartReview:Resource)-[:RELATED {predicate_id: 'P30'}]->(field:ResearchField:Resource)"""
-private const val MATCH_SMART_REVIEW_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:SmartReviewPublished:Resource)-[:RELATED]->(:SmartReview:Resource)-[:RELATED {predicate_id: 'P30'}]->(:ResearchField:Resource {resource_id: $id})"""
+private const val MATCH_SMART_REVIEW_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:SmartReviewPublished:Resource)-[:RELATED]->(:SmartReview:Resource)-[:RELATED {predicate_id: 'P30'}]->(:ResearchField:Resource {id: $id})"""
 private const val MATCH_LITERATURE_LIST_RELATED_TO_RESEARCH_FIELD = """MATCH (node:LiteratureListPublished:Resource)-[:RELATED]->(:LiteratureList:Resource)-[:RELATED {predicate_id: 'P30'}]->(field:ResearchField:Resource)"""
-private const val MATCH_LITERATURE_LIST_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:LiteratureListPublished:Resource)-[:RELATED]->(:LiteratureList:Resource)-[:RELATED {predicate_id: 'P30'}]->(:ResearchField:Resource {resource_id: $id})"""
+private const val MATCH_LITERATURE_LIST_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:LiteratureListPublished:Resource)-[:RELATED]->(:LiteratureList:Resource)-[:RELATED {predicate_id: 'P30'}]->(:ResearchField:Resource {id: $id})"""
 
 interface Neo4jResearchFieldRepository :
     Neo4jRepository<Neo4jResource, Long> {
-    @Query("""MATCH (field:ResearchField:Resource {resource_id: $id}) RETURN field""")
-    fun findById(id: ResourceId): Optional<Neo4jResource>
+    @Query("""MATCH (field:ResearchField:Resource {id: $id}) RETURN field""")
+    fun findById(id: ThingId): Optional<Neo4jResource>
 
-    @Query("""MATCH (field:ResearchField:Resource {resource_id: $fieldId})<-[:RELATED {predicate_id: 'P30'}]-(paper:Paper:Resource)-[:RELATED {predicate_id: 'P31'}]->(cont:Contribution:Resource)-[:RELATED {predicate_id: 'P32'}]->(problem:Problem:Resource)
+    @Query("""MATCH (field:ResearchField:Resource {id: $fieldId})<-[:RELATED {predicate_id: 'P30'}]-(paper:Paper:Resource)-[:RELATED {predicate_id: 'P31'}]->(cont:Contribution:Resource)-[:RELATED {predicate_id: 'P32'}]->(problem:Problem:Resource)
                     WITH COUNT(paper) AS papers, problem
                     RETURN DISTINCT problem, papers""",
-        countQuery = """MATCH (field:ResearchField:Resource {resource_id: $fieldId})<-[:RELATED {predicate_id: 'P30'}]-(paper:Paper:Resource)-[:RELATED {predicate_id: 'P31'}]->(cont:Contribution:Resource)-[:RELATED {predicate_id: 'P32'}]->(problem:Problem:Resource)
+        countQuery = """MATCH (field:ResearchField:Resource {id: $fieldId})<-[:RELATED {predicate_id: 'P30'}]-(paper:Paper:Resource)-[:RELATED {predicate_id: 'P31'}]->(cont:Contribution:Resource)-[:RELATED {predicate_id: 'P32'}]->(problem:Problem:Resource)
                         WITH COUNT(paper) AS papers, problem
                         RETURN COUNT(papers) AS cnt"""
     )
-    fun getResearchProblemsOfField(fieldId: ResourceId, pageable: Pageable): Page<Neo4jProblemsPerField>
+    fun getResearchProblemsOfField(fieldId: ThingId, pageable: Pageable): Page<Neo4jProblemsPerField>
 
-    @Query("""MATCH (research:ResearchField:Resource)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(research1:ResearchField:Resource{resource_id: $id}) WITH COLLECT (research) + COLLECT(research1) AS all_research_fields MATCH(comparison1: Comparison:Resource)-[related:RELATED]->(contribution1:Contribution:Resource)<-[:RELATED{predicate_id: "P31"}]-(p1:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(resField) WHERE resField IN all_research_fields WITH COLLECT(comparison1.created_by) + COLLECT(contribution1.created_by) + COLLECT(p1.created_by) AS items UNWIND items AS orkgusers RETURN DISTINCT orkgusers""",
-        countQuery = """MATCH (research:ResearchField:Resource)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(research1:ResearchField:Resource{resource_id: $id}) WITH COLLECT (research) + COLLECT(research1) AS all_research_fields MATCH(comparison1: Comparison:Resource)-[related:RELATED]->(contribution1:Contribution:Resource)<-[:RELATED{predicate_id: "P31"}]-(p1:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(resField) WHERE resField IN all_research_fields WITH COLLECT(comparison1.created_by) + COLLECT(contribution1.created_by) + COLLECT(p1.created_by) AS items UNWIND items AS orkgusers RETURN COUNT(DISTINCT orkgusers) AS cnt""")
-    fun getContributorIdsFromResearchFieldAndIncludeSubfields(id: ResourceId, pageable: Pageable): Page<ContributorId>
+    @Query("""MATCH (research:ResearchField:Resource)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(research1:ResearchField:Resource{id: $id}) WITH COLLECT (research) + COLLECT(research1) AS all_research_fields MATCH(comparison1: Comparison:Resource)-[related:RELATED]->(contribution1:Contribution:Resource)<-[:RELATED{predicate_id: "P31"}]-(p1:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(resField) WHERE resField IN all_research_fields WITH COLLECT(comparison1.created_by) + COLLECT(contribution1.created_by) + COLLECT(p1.created_by) AS items UNWIND items AS orkgusers RETURN DISTINCT orkgusers""",
+        countQuery = """MATCH (research:ResearchField:Resource)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(research1:ResearchField:Resource{id: $id}) WITH COLLECT (research) + COLLECT(research1) AS all_research_fields MATCH(comparison1: Comparison:Resource)-[related:RELATED]->(contribution1:Contribution:Resource)<-[:RELATED{predicate_id: "P31"}]-(p1:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(resField) WHERE resField IN all_research_fields WITH COLLECT(comparison1.created_by) + COLLECT(contribution1.created_by) + COLLECT(p1.created_by) AS items UNWIND items AS orkgusers RETURN COUNT(DISTINCT orkgusers) AS cnt""")
+    fun getContributorIdsFromResearchFieldAndIncludeSubfields(id: ThingId, pageable: Pageable): Page<ContributorId>
 
-    @Query("""MATCH(comparison1: Comparison:Resource)-[related:RELATED]->(contribution1:Contribution:Resource)<-[:RELATED{predicate_id: "P31"}]-(p1:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(:ResearchField:Resource{resource_id: $id}) 
+    @Query("""MATCH(comparison1: Comparison:Resource)-[related:RELATED]->(contribution1:Contribution:Resource)<-[:RELATED{predicate_id: "P31"}]-(p1:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(:ResearchField:Resource{id: $id}) 
                     WITH COLLECT(comparison1.created_by) + COLLECT(contribution1.created_by) + COLLECT(p1.created_by) AS items 
                     UNWIND items AS orkgusers
                     RETURN orkgusers""",
-        countQuery = """MATCH(comparison1: Comparison:Resource)-[related:RELATED]->(contribution1:Contribution:Resource)<-[:RELATED{predicate_id: "P31"}]-(p1:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(:ResearchField:Resource{resource_id: $id}) 
+        countQuery = """MATCH(comparison1: Comparison:Resource)-[related:RELATED]->(contribution1:Contribution:Resource)<-[:RELATED{predicate_id: "P31"}]-(p1:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(:ResearchField:Resource{id: $id}) 
                     WITH COLLECT(comparison1.created_by) + COLLECT(contribution1.created_by) + COLLECT(p1.created_by) AS items 
                     UNWIND items AS orkgusers
                     RETURN COUNT(orkgusers) as cnt""")
-    fun getContributorIdsExcludingSubFields(id: ResourceId, pageable: Pageable): Page<ContributorId>
+    fun getContributorIdsExcludingSubFields(id: ThingId, pageable: Pageable): Page<ContributorId>
 
     @Query("""MATCH (:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(r:ResearchField:Resource) RETURN DISTINCT r""",
         countQuery = """MATCH (:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(r:ResearchField:Resource) RETURN COUNT(DISTINCT r) AS cnt""")

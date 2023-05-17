@@ -10,8 +10,8 @@ import org.springframework.data.domain.Pageable
 interface ClassRepository : EntityRepository<Class, ThingId> {
     // legacy methods:
     fun save(c: Class)
-    fun findByClassId(id: ThingId): Optional<Class>
-    fun findAllByClassId(id: Iterable<ThingId>, pageable: Pageable): Page<Class>
+    fun findById(id: ThingId): Optional<Class>
+    fun findAllById(id: Iterable<ThingId>, pageable: Pageable): Page<Class>
     fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Class>
     fun findByUri(uri: String): Optional<Class>
     fun deleteAll()

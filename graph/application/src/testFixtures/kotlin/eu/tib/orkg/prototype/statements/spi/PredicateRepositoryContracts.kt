@@ -33,7 +33,7 @@ fun <R : PredicateRepository> predicateRepositoryContract(repository: R) = descr
             val expected: Predicate = fabricator.random()
             repository.save(expected)
 
-            val actual = repository.findByPredicateId(expected.id).orElse(null)
+            val actual = repository.findById(expected.id).orElse(null)
 
             actual shouldNotBe null
             actual.asClue {
@@ -41,19 +41,19 @@ fun <R : PredicateRepository> predicateRepositoryContract(repository: R) = descr
                 it.label shouldBe expected.label
                 it.createdAt shouldBe expected.createdAt
                 it.createdBy shouldBe expected.createdBy
-                it.thingId shouldBe expected.thingId
+                it.id shouldBe expected.id
                 it.description shouldBe it.description
             }
         }
         it("updates an already existing predicate") {
             val original: Predicate = fabricator.random()
             repository.save(original)
-            val found = repository.findByPredicateId(original.id).get()
+            val found = repository.findById(original.id).get()
             val modified = found.copy(label = "some new label, never seen before")
             repository.save(modified)
 
             repository.findAll(PageRequest.of(0, Int.MAX_VALUE)).toSet().size shouldBe 1
-            repository.findByPredicateId(original.id).get().label shouldBe "some new label, never seen before"
+            repository.findById(original.id).get().label shouldBe "some new label, never seen before"
         }
     }
 
@@ -124,8 +124,8 @@ fun <R : PredicateRepository> predicateRepositoryContract(repository: R) = descr
         it("by predicate id removes it from the repository") {
             val expected = fabricator.random<Predicate>()
             repository.save(expected)
-            repository.deleteByPredicateId(expected.id)
-            repository.findByPredicateId(expected.id).isPresent shouldBe false
+            repository.deleteById(expected.id)
+            repository.findById(expected.id).isPresent shouldBe false
         }
     }
 
@@ -152,7 +152,7 @@ fun <R : PredicateRepository> predicateRepositoryContract(repository: R) = descr
             val predicate = createPredicate(id = repository.nextIdentity())
             repository.save(predicate)
             val id = repository.nextIdentity()
-            repository.findByPredicateId(id).isPresent shouldBe false
+            repository.findById(id).isPresent shouldBe false
         }
     }
 }

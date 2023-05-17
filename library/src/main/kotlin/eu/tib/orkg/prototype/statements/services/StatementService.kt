@@ -91,7 +91,7 @@ class StatementService(
         val foundSubject = thingRepository.findByThingId(subject)
             .orElseThrow { StatementSubjectNotFound(subject) }
 
-        val foundPredicate = predicateService.findByPredicateId(predicate)
+        val foundPredicate = predicateService.findById(predicate)
             .orElseThrow { StatementPredicateNotFound(predicate) }
 
         val foundObject = thingRepository.findByThingId(`object`)
@@ -121,7 +121,7 @@ class StatementService(
         val foundSubject = thingRepository.findByThingId(subject)
             .orElseThrow { StatementSubjectNotFound(subject) }
 
-        val foundPredicate = predicateService.findByPredicateId(predicate)
+        val foundPredicate = predicateService.findById(predicate)
             .orElseThrow { StatementPredicateNotFound(predicate) }
 
         val foundObject = thingRepository.findByThingId(`object`)
@@ -173,7 +173,7 @@ class StatementService(
         }
 
         command.predicateId?.let {
-            val foundPredicate = predicateService.findByPredicateId(command.predicateId)
+            val foundPredicate = predicateService.findById(command.predicateId)
                 .orElseThrow { StatementPredicateNotFound(command.predicateId) }
             found = found.copy(predicate = foundPredicate)
         }

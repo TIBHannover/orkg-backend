@@ -41,17 +41,17 @@ class SpringDataNeo4jClassAdapter(
     override fun findAll(pageable: Pageable): Page<Class> = neo4jRepository.findAll(pageable).map(Neo4jClass::toClass)
 
     @Cacheable(key = "#id", cacheNames = [CLASS_ID_TO_CLASS_EXISTS_CACHE])
-    override fun exists(id: ThingId): Boolean = neo4jRepository.existsByClassId(id.toClassId())
+    override fun exists(id: ThingId): Boolean = neo4jRepository.existsById(id)
 
     override fun existsAll(ids: Set<ThingId>): Boolean =
-        neo4jRepository.existsAllByClassId(ids.toClassIds())
+        neo4jRepository.existsAllById(ids)
 
     @Cacheable(key = "#id", cacheNames = [CLASS_ID_TO_CLASS_CACHE])
-    override fun findByClassId(id: ThingId): Optional<Class> =
-        neo4jRepository.findByClassId(id.toClassId()).map(Neo4jClass::toClass)
+    override fun findById(id: ThingId): Optional<Class> =
+        neo4jRepository.findById(id).map(Neo4jClass::toClass)
 
-    override fun findAllByClassId(id: Iterable<ThingId>, pageable: Pageable): Page<Class> =
-        neo4jRepository.findAllByClassIdIn(id.toClassIds(), pageable).map(Neo4jClass::toClass)
+    override fun findAllById(id: Iterable<ThingId>, pageable: Pageable): Page<Class> =
+        neo4jRepository.findAllByIdIn(id, pageable).map(Neo4jClass::toClass)
 
     override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Class> =
         when (labelSearchString) {
@@ -76,7 +76,7 @@ class SpringDataNeo4jClassAdapter(
         var id: ThingId
         do {
             id = neo4jClassIdGenerator.nextIdentity()
-        } while (neo4jRepository.existsByClassId(id.toClassId()))
+        } while (neo4jRepository.existsById(id))
         return id
     }
 }

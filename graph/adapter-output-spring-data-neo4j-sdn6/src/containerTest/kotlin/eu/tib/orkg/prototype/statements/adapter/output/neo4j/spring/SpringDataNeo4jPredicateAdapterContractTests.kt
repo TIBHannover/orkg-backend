@@ -49,7 +49,7 @@ fun <R : PredicateRepository, C : Neo4jClient> neo4jPredicateRepositoryContract(
 
             val n = anyNode()
                 .named("n")
-                .withProperties("predicate_id", literalOf<String>(predicate.id.value))
+                .withProperties("id", literalOf<String>(predicate.id.value))
             val query = match(n)
                 .unwind(labels(n))
                 .`as`("label")

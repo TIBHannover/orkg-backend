@@ -6,7 +6,6 @@ import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ObservatoryIdConverter
@@ -31,17 +30,17 @@ private val ReservedClassIds = setOf(
 data class Neo4jResource(
     @Id
     @GeneratedValue
-    var id: Long? = null
+    var nodeId: Long? = null
 ) : Neo4jThing {
 
     @Property("label")
     @Required
     override var label: String? = null
 
-    @Property("resource_id")
+    @Property("id")
     @Required
-    @Convert(ResourceIdConverter::class)
-    var resourceId: ResourceId? = null
+    @Convert(ThingIdConverter::class)
+    override var id: ThingId? = null
 
     @Property("created_by")
     @Convert(ContributorIdConverter::class)
@@ -84,7 +83,7 @@ data class Neo4jResource(
 
     constructor(
         label: String,
-        resourceId: ResourceId,
+        resourceId: ThingId,
         createdBy: ContributorId = ContributorId.createUnknownContributor(),
         observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
         extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
@@ -92,7 +91,7 @@ data class Neo4jResource(
         visibility: Visibility = Visibility.DEFAULT
     ) : this(null) {
         this.label = label
-        this.resourceId = resourceId
+        this.id = resourceId
         this.createdBy = createdBy
         this.observatoryId = observatoryId
         this.extractionMethod = extractionMethod
@@ -102,10 +101,10 @@ data class Neo4jResource(
 
     fun toResource() =
         Resource(
-            ThingId(resourceId!!.value),
-            label!!,
-            createdAt!!,
-            classes - ReservedClassIds,
+            id = id!!,
+            label = label!!,
+            createdAt = createdAt!!,
+            classes = classes - ReservedClassIds,
             createdBy = createdBy,
             observatoryId = observatoryId,
             extractionMethod = extractionMethod,
@@ -113,9 +112,6 @@ data class Neo4jResource(
             visibility = visibility!!,
             verified = verified,
         )
-
-    override val thingId: String?
-        get() = resourceId?.value
 
     override fun toThing() = toResource()
 

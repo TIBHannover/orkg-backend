@@ -18,7 +18,7 @@ import java.time.OffsetDateTime
     )
 )
 data class LiteralObject(
-    val id: LiteralId?,
+    val id: ThingId?,
     val label: String,
     @JsonProperty("created_at")
     val createdAt: OffsetDateTime?,

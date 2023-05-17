@@ -2,18 +2,14 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Class
-import eu.tib.orkg.prototype.statements.domain.model.ClassId
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
-import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -41,18 +37,6 @@ private val reservedClassIds = setOf(
     "Resource"
 )
 
-internal fun ThingId.toClassId() = ClassId(value)
-
-internal fun ThingId.toLiteralId() = LiteralId(value)
-
-internal fun ThingId.toPredicateId() = PredicateId(value)
-
-internal fun ThingId.toResourceId() = ResourceId(value)
-
-internal fun Set<ThingId>.toClassIds() = map { it.toClassId() }.toSet()
-
-internal fun Iterable<ThingId>.toClassIds() = map { it.toClassId() }
-
 internal data class StatementMapper(
     val predicateRepository: PredicateRepository,
     val subject: String = "s",
@@ -71,7 +55,7 @@ internal data class StatementMapper(
         return GeneralStatement(
             id = StatementId(relation["statement_id"].asString()),
             // This could be fetched directly in findByXYZ
-            predicate = predicateRepository.findByPredicateId(ThingId(relation["predicate_id"].asString())).get(),
+            predicate = predicateRepository.findById(relation["predicate_id"].toThingId()!!).get(),
             createdAt = relation["created_at"].toOffsetDateTime(),
             createdBy = relation["created_by"].toContributorId(),
             subject = record[subject].asNode().toThing(),
@@ -96,7 +80,7 @@ internal data class ClassMapper(val name: String) : BiFunction<TypeSystem, Recor
 }
 
 internal fun Node.toLiteral() = Literal(
-    id = ThingId(this["literal_id"].asString()),
+    id = this["id"].toThingId()!!,
     label = this["label"].asString(),
     datatype = this["datatype"]?.asString() ?: "xsd:string",
     createdAt = this["created_at"].toOffsetDateTime(),
@@ -112,7 +96,7 @@ internal fun Node.toThing(): Thing = when {
 }
 
 internal fun Node.toClass() = Class(
-    id = ThingId(this["class_id"].asString()),
+    id = this["id"].toThingId()!!,
     label = this["label"].asString(),
     uri = this["uri"].toURI(),
     createdAt = this["created_at"].toOffsetDateTime(),
@@ -120,7 +104,7 @@ internal fun Node.toClass() = Class(
 )
 
 internal fun Node.toResource() = Resource(
-    id = ThingId(this["resource_id"].asString()),
+    id = this["id"].toThingId()!!,
     label = this["label"].asString(),
     classes = this.labels().filter { it !in reservedClassIds }.map(::ThingId).toSet(),
     createdAt = this["created_at"].toOffsetDateTime(),
@@ -133,7 +117,7 @@ internal fun Node.toResource() = Resource(
 )
 
 internal fun Node.toPredicate() = Predicate(
-    id = ThingId(this["predicate_id"].asString()),
+    id = this["id"].toThingId()!!,
     label = this["label"].asString(),
     createdAt = this["created_at"].toOffsetDateTime(),
     createdBy = this["created_by"].toContributorId(),

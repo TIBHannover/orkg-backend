@@ -115,7 +115,7 @@ class ResourceService(
         retrieveAndConvertPaged { repository.findAll(pageable) }
 
     override fun findById(id: ThingId): Optional<ResourceRepresentation> =
-        retrieveAndConvertOptional { repository.findByResourceId(id) }
+        retrieveAndConvertOptional { repository.findById(id) }
 
     override fun findAllByLabel(label: SearchString, pageable: Pageable): Page<ResourceRepresentation> =
         retrieveAndConvertPaged {
@@ -229,18 +229,18 @@ class ResourceService(
     }
 
     override fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> =
-        repository.findByResourceId(id)
+        repository.findById(id)
             .map { statementRepository.findTimelineByResourceId(id, pageable) }
             .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId> =
-        repository.findByResourceId(id)
+        repository.findById(id)
             .map { statementRepository.findAllContributorsByResourceId(id, pageable) }
             .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun update(command: UpdateResourceUseCase.UpdateCommand) {
         // already checked by service
-        var found = repository.findByResourceId(command.id).get()
+        var found = repository.findById(command.id).get()
 
         // update all the properties
         if (command.label != null) found = found.copy(label = command.label)
@@ -257,12 +257,12 @@ class ResourceService(
     }
 
     override fun delete(id: ThingId) {
-        val resource = repository.findByResourceId(id).orElseThrow { ResourceNotFound.withId(id) }
+        val resource = repository.findById(id).orElseThrow { ResourceNotFound.withId(id) }
 
         if (statementRepository.checkIfResourceHasStatements(resource.id))
             throw ResourceCantBeDeleted(resource.id)
 
-        repository.deleteByResourceId(resource.id)
+        repository.deleteById(resource.id)
     }
 
     override fun removeAll() = repository.deleteAll()
@@ -297,12 +297,12 @@ class ResourceService(
         repository.findAllPapersByVerified(false, pageable)
 
     override fun getPaperVerifiedFlag(id: ThingId): Boolean? =
-        repository.findPaperByResourceId(id)
+        repository.findPaperById(id)
             .map { it.verified }
             .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun markAsFeatured(resourceId: ThingId) {
-        val resource = repository.findByResourceId(resourceId)
+        val resource = repository.findById(resourceId)
             .orElseThrow { ResourceNotFound.withId(resourceId) }
         val modified = resource.copy(
             visibility = Visibility.FEATURED
@@ -311,7 +311,7 @@ class ResourceService(
     }
 
     override fun markAsNonFeatured(resourceId: ThingId) {
-        val resource = repository.findByResourceId(resourceId)
+        val resource = repository.findById(resourceId)
             .orElseThrow { ResourceNotFound.withId(resourceId) }
         val modified = resource.copy(
             visibility = Visibility.DEFAULT
@@ -320,7 +320,7 @@ class ResourceService(
     }
 
     override fun markAsUnlisted(resourceId: ThingId) {
-        val resource = repository.findByResourceId(resourceId)
+        val resource = repository.findById(resourceId)
             .orElseThrow { ResourceNotFound.withId(resourceId) }
         val modified = resource.copy(
             visibility = Visibility.UNLISTED
@@ -329,7 +329,7 @@ class ResourceService(
     }
 
     override fun markAsListed(resourceId: ThingId) {
-        val resource = repository.findByResourceId(resourceId)
+        val resource = repository.findById(resourceId)
             .orElseThrow { ResourceNotFound.withId(resourceId) }
         val modified = resource.copy(
             visibility = Visibility.DEFAULT
@@ -350,22 +350,22 @@ class ResourceService(
         repository.findAllListedPapers(pageable)
 
     override fun getFeaturedPaperFlag(id: ThingId): Boolean =
-        repository.findPaperByResourceId(id)
+        repository.findPaperById(id)
             .map { it.visibility == Visibility.FEATURED }
             .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun getUnlistedPaperFlag(id: ThingId): Boolean =
-        repository.findPaperByResourceId(id)
+        repository.findPaperById(id)
             .map { it.visibility == Visibility.UNLISTED || it.visibility == Visibility.DELETED }
             .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun getFeaturedResourceFlag(id: ThingId): Boolean =
-        repository.findByResourceId(id)
+        repository.findById(id)
             .map { it.visibility == Visibility.FEATURED }
             .orElseThrow { ResourceNotFound.withId(id) }
 
     override fun getUnlistedResourceFlag(id: ThingId): Boolean =
-        repository.findByResourceId(id)
+        repository.findById(id)
             .map { it.visibility == Visibility.UNLISTED || it.visibility == Visibility.DELETED }
             .orElseThrow { ResourceNotFound.withId(id) }
 
@@ -466,7 +466,7 @@ class ResourceService(
     override fun hasStatements(id: ThingId): Boolean = statementRepository.checkIfResourceHasStatements(id)
 
     private fun setVerifiedFlag(resourceId: ThingId, verified: Boolean) {
-        val result = repository.findByResourceId(resourceId)
+        val result = repository.findById(resourceId)
         var resultObj = result.orElseThrow { ResourceNotFound.withId(resourceId) }
         resultObj = resultObj.copy(verified = verified)
         repository.save(resultObj)

@@ -1,10 +1,9 @@
 package eu.tib.orkg.prototype.statements.spi
 
-import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassSubclassRelation
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.spi.ClassHierarchyRepository.*
+import eu.tib.orkg.prototype.statements.spi.ClassHierarchyRepository.ChildClass
+import eu.tib.orkg.prototype.statements.spi.ClassHierarchyRepository.ClassHierarchyEntry
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.comparables.shouldBeLessThan
@@ -47,8 +46,8 @@ fun <
 
     fun createRelation(parentId: ThingId, childId: ThingId) =
         ClassSubclassRelation(
-            classRepository.findByClassId(childId).get(),
-            classRepository.findByClassId(parentId).get(),
+            classRepository.findById(childId).get(),
+            classRepository.findById(parentId).get(),
             OffsetDateTime.now()
         )
 
@@ -108,8 +107,8 @@ fun <
                 result.content shouldNotBe null
                 result.content.size shouldBe 2
                 result.content shouldContainAll setOf(
-                    ChildClass(classRepository.findByClassId(ThingId("2")).get(), 0),
-                    ChildClass(classRepository.findByClassId(ThingId("3")).get(), 2)
+                    ChildClass(classRepository.findById(ThingId("2")).get(), 0),
+                    ChildClass(classRepository.findById(ThingId("3")).get(), 2)
                 )
             }
             it("pages the result correctly") {
@@ -299,7 +298,7 @@ fun <
                 result.content shouldNotBe null
                 result.content.size shouldBe 1
                 result.content shouldContainAll setOf(
-                    ClassHierarchyEntry(classRepository.findByClassId(ThingId("1")).get(), null)
+                    ClassHierarchyEntry(classRepository.findById(ThingId("1")).get(), null)
                 )
             }
             it("pages the result correctly") {
@@ -323,8 +322,8 @@ fun <
                 result.content shouldNotBe null
                 result.content.size shouldBe 2
                 result.content shouldContainAll setOf(
-                    ClassHierarchyEntry(classRepository.findByClassId(ThingId("1")).get(), null),
-                    ClassHierarchyEntry(classRepository.findByClassId(ThingId("3")).get(), ThingId("1"))
+                    ClassHierarchyEntry(classRepository.findById(ThingId("1")).get(), null),
+                    ClassHierarchyEntry(classRepository.findById(ThingId("3")).get(), ThingId("1"))
                 )
             }
             it("pages the result correctly") {
@@ -348,7 +347,7 @@ fun <
                 result.content shouldNotBe null
                 result.content.size shouldBe 1
                 result.content shouldContainAll setOf(
-                    ClassHierarchyEntry(classRepository.findByClassId(ThingId("4")).get(), null)
+                    ClassHierarchyEntry(classRepository.findById(ThingId("4")).get(), null)
                 )
             }
             it("pages the result correctly") {

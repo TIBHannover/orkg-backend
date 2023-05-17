@@ -35,7 +35,7 @@ fun <R : LiteralRepository> literalRepositoryContract(
             val expected: Literal = fabricator.random()
             repository.save(expected)
 
-            val actual = repository.findByLiteralId(expected.id).orElse(null)
+            val actual = repository.findById(expected.id).orElse(null)
 
             actual shouldNotBe null
             actual.asClue {
@@ -49,13 +49,13 @@ fun <R : LiteralRepository> literalRepositoryContract(
         it("updates an already existing statement") {
             val original: Literal = fabricator.random()
             repository.save(original)
-            val found = repository.findByLiteralId(original.id).get()
+            val found = repository.findById(original.id).get()
             val modifiedLabel = "modified label"
             val modified = found.copy(label = modifiedLabel)
             repository.save(modified)
 
             repository.findAll(PageRequest.of(0, Int.MAX_VALUE)).toSet().size shouldBe 1
-            repository.findByLiteralId(original.id).get().label shouldBe modifiedLabel
+            repository.findById(original.id).get().label shouldBe modifiedLabel
         }
     }
 
@@ -145,7 +145,7 @@ fun <R : LiteralRepository> literalRepositoryContract(
             val literal = createLiteral(id = repository.nextIdentity())
             repository.save(literal)
             val id = repository.nextIdentity()
-            repository.findByLiteralId(id).isPresent shouldBe false
+            repository.findById(id).isPresent shouldBe false
         }
     }
 }

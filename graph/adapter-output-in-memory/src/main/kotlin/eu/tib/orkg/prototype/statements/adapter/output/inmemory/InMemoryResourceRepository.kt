@@ -36,7 +36,7 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
         entities[resource.id] = resource
     }
 
-    override fun deleteByResourceId(id: ThingId) {
+    override fun deleteById(id: ThingId) {
         entities.remove(id)
     }
 
@@ -44,7 +44,7 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
         entities.clear()
     }
 
-    override fun findByResourceId(id: ThingId) =
+    override fun findById(id: ThingId) =
         Optional.ofNullable(entities[id])
 
     override fun findAllPapersByLabel(label: String) =
@@ -107,7 +107,7 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
         entities.values.filter { `class` in it.classes && it.observatoryId == id }
 
     // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
-    override fun findPaperByResourceId(id: ThingId) =
+    override fun findPaperById(id: ThingId) =
         Optional.ofNullable(entities.values.firstOrNull {
             it.id == id && paperClass in it.classes
         })

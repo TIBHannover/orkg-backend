@@ -15,9 +15,9 @@ class InMemoryClassRepository : InMemoryRepository<ThingId, Class>(
         entities[c.id] = c
     }
 
-    override fun findByClassId(id: ThingId): Optional<Class> = Optional.ofNullable(entities[id])
+    override fun findById(id: ThingId): Optional<Class> = Optional.ofNullable(entities[id])
 
-    override fun findAllByClassId(id: Iterable<ThingId>, pageable: Pageable) =
+    override fun findAllById(id: Iterable<ThingId>, pageable: Pageable) =
         findAllFilteredAndPaged(pageable) { id.contains(it.id) }
 
     override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable) =

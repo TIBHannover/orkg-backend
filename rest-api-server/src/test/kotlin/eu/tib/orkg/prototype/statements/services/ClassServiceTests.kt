@@ -122,7 +122,7 @@ class ClassServiceTests {
 
     @Test
     fun `given a class does not exist, when updating the label, then it returns an appropriate error`() {
-        every { repository.findByClassId(any()) } returns Optional.empty()
+        every { repository.findById(any()) } returns Optional.empty()
 
         val actual = service.updateLabel(ThingId("non-existent"), "new label")
 
@@ -134,7 +134,7 @@ class ClassServiceTests {
     fun `given a class exists, when updating the label and the label is valid, it returns success`() {
         val originalClass = createClass()
         val expectedClass = originalClass.copy(label = "new label")
-        every { repository.findByClassId(ThingId("OK")) } returns Optional.of(originalClass)
+        every { repository.findById(ThingId("OK")) } returns Optional.of(originalClass)
         every { repository.save(expectedClass) } returns Unit
 
         val actual = service.updateLabel(ThingId("OK"), "new label")
@@ -145,7 +145,7 @@ class ClassServiceTests {
 
     @Test
     fun `given a class exists, when updating the label and the label is invalid, it returns an appropriate error`() {
-        every { repository.findByClassId(ThingId("OK")) } returns Optional.of(createClass())
+        every { repository.findById(ThingId("OK")) } returns Optional.of(createClass())
 
         val actual = service.updateLabel(ThingId("OK"), "some\ninvalid\nlabel")
 
@@ -156,7 +156,7 @@ class ClassServiceTests {
     @Test
     fun `given a class exists, when updating the label with the same text, it skips the action and returns success`() {
         val originalClass = createClass()
-        every { repository.findByClassId(ThingId("OK")) } returns Optional.of(originalClass)
+        every { repository.findById(ThingId("OK")) } returns Optional.of(originalClass)
 
         val actual = service.updateLabel(ThingId("OK"), "some label")
 
@@ -166,7 +166,7 @@ class ClassServiceTests {
 
     @Test
     fun `given a class does not exist, when updating the URI, then it returns an appropriate error`() {
-        every { repository.findByClassId(any()) } returns Optional.empty()
+        every { repository.findById(any()) } returns Optional.empty()
 
         val actual = service.updateURI(ThingId("non-existent"), "https://example.org/foo")
 
@@ -178,7 +178,7 @@ class ClassServiceTests {
     fun `given a class exists and has no URI, when updating the URI and the URI is valid and the URI is not already used, it returns success`() {
         val originalClass = createClassWithoutURI()
         val expectedClass = originalClass.copy(uri = URI.create("https://example.org/NEW"))
-        every { repository.findByClassId(ThingId("OK")) } returns Optional.of(originalClass)
+        every { repository.findById(ThingId("OK")) } returns Optional.of(originalClass)
         every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
         every { repository.save(expectedClass) } returns Unit
 
@@ -193,7 +193,7 @@ class ClassServiceTests {
         val originalClass = createClassWithoutURI()
         val expectedClass = originalClass.copy(uri = URI.create("https://example.org/NEW"))
         val differentWithSameURI = createClassWithoutURI().copy(id = ThingId("different"), uri = expectedClass.uri)
-        every { repository.findByClassId(ThingId("OK")) } returns Optional.of(originalClass)
+        every { repository.findById(ThingId("OK")) } returns Optional.of(originalClass)
         every { service.findByURI(expectedClass.uri!!) } returns differentWithSameURI.toOptional()
             .map(Class::toClassRepresentation)
         every { repository.save(expectedClass) } returns Unit
@@ -207,7 +207,7 @@ class ClassServiceTests {
     @Test
     fun `given a class exists and has no URI, when updating the URI and the URI is invalid, it returns an appropriate error`() {
         val originalClass = createClassWithoutURI()
-        every { repository.findByClassId(ThingId("OK")) } returns Optional.of(originalClass)
+        every { repository.findById(ThingId("OK")) } returns Optional.of(originalClass)
 
         val actual = service.updateURI(ThingId("OK"), "\n")
 
@@ -218,7 +218,7 @@ class ClassServiceTests {
     @Test
     fun `given a class exists and has a URI, when updating the URI, it returns an appropriate error`() {
         val originalClass = createClass()
-        every { repository.findByClassId(ThingId("OK")) } returns Optional.of(originalClass)
+        every { repository.findById(ThingId("OK")) } returns Optional.of(originalClass)
 
         val actual = service.updateURI(ThingId("OK"), "https://example.com/DIFFERENT")
 
@@ -232,7 +232,7 @@ class ClassServiceTests {
         val originalClass = createClass()
         val replacingClass = createClass().copy(label = "other label")
         val expectedClass = originalClass.copy(id = classToReplace, label = replacingClass.label)
-        every { repository.findByClassId(classToReplace) } returns Optional.of(originalClass)
+        every { repository.findById(classToReplace) } returns Optional.of(originalClass)
         every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
         every { repository.save(expectedClass) } returns Unit
 
@@ -258,7 +258,7 @@ class ClassServiceTests {
         val classToReplace = ThingId("ToReplace")
         val replacingClass = createClassWithoutURI().copy(label = "other label")
         val existingClass = createClass().copy(id = classToReplace)
-        every { repository.findByClassId(classToReplace) } returns existingClass.toOptional()
+        every { repository.findById(classToReplace) } returns existingClass.toOptional()
 
         val actual = service.replace(classToReplace, command = replacingClass.toReplaceCommand())
 
@@ -272,7 +272,7 @@ class ClassServiceTests {
         val existingClass = createClass().copy(id = classToReplace)
         val replacingClass = createClass().copy(label = "other label")
         val expectedClass = existingClass.copy(id = classToReplace, label = replacingClass.label)
-        every { repository.findByClassId(classToReplace) } returns existingClass.toOptional()
+        every { repository.findById(classToReplace) } returns existingClass.toOptional()
         every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
         every { repository.save(expectedClass) } returns Unit
 
@@ -289,7 +289,7 @@ class ClassServiceTests {
         val replacingClass =
             createClass().copy(uri = URI.create("https://example.com/NEW"), label = existingClass.label)
         val expectedClass = existingClass.copy(id = classToReplace, uri = replacingClass.uri)
-        every { repository.findByClassId(classToReplace) } returns existingClass.toOptional()
+        every { repository.findById(classToReplace) } returns existingClass.toOptional()
         every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
         every { repository.save(expectedClass) } returns Unit
 
@@ -307,7 +307,7 @@ class ClassServiceTests {
             createClass().copy(uri = URI.create("https://example.com/NEW"), label = existingClass.label)
         val expectedClass = existingClass.copy(id = classToReplace, uri = replacingClass.uri)
         val differentWithSameURI = createClassWithoutURI().copy(id = ThingId("different"), uri = expectedClass.uri)
-        every { repository.findByClassId(classToReplace) } returns existingClass.toOptional()
+        every { repository.findById(classToReplace) } returns existingClass.toOptional()
         every { service.findByURI(expectedClass.uri!!) } returns differentWithSameURI.toOptional()
             .map(Class::toClassRepresentation)
         every { repository.save(expectedClass) } returns Unit
@@ -324,7 +324,7 @@ class ClassServiceTests {
         val replacingClass =
             createClass().copy(label = "other label", uri = URI.create("https://example.com/NEW")).toReplaceCommand()
         val existingClass = createClass().copy(id = classToReplace)
-        every { repository.findByClassId(classToReplace) } returns existingClass.toOptional()
+        every { repository.findById(classToReplace) } returns existingClass.toOptional()
 
         val actual = service.replace(classToReplace, command = replacingClass)
 
@@ -338,7 +338,7 @@ class ClassServiceTests {
         val existingClass = createClassWithoutURI().copy(id = classToReplace)
         val replacingClass = createClassWithoutURI().copy(label = "other label").toReplaceCommand()
         val expectedClass = existingClass.copy(id = classToReplace, label = replacingClass.label)
-        every { repository.findByClassId(classToReplace) } returns existingClass.toOptional()
+        every { repository.findById(classToReplace) } returns existingClass.toOptional()
         every { repository.save(expectedClass) } returns Unit
 
         val actual = service.replace(classToReplace, command = replacingClass)

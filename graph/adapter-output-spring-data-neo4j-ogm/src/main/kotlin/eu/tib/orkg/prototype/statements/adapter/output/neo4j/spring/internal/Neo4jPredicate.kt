@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import java.time.OffsetDateTime
@@ -19,16 +18,16 @@ import org.neo4j.ogm.annotation.typeconversion.Convert
 data class Neo4jPredicate(
     @Id
     @GeneratedValue
-    var id: Long? = null,
+    var nodeId: Long? = null,
 
     @Property("label")
     @Required
     override var label: String? = null,
 
-    @Property("predicate_id")
+    @Property("id")
     @Required
-    @Convert(PredicateIdConverter::class)
-    var predicateId: PredicateId? = null,
+    @Convert(ThingIdConverter::class)
+    override var id: ThingId? = null,
 
     @Property("created_by")
     @Convert(ContributorIdConverter::class)
@@ -43,19 +42,16 @@ data class Neo4jPredicate(
 ) : Neo4jThing {
 
     fun toPredicate(): Predicate {
-        val pred = Predicate(
-            id = ThingId(predicateId!!.value),
+        val predicate = Predicate(
+            id = id!!,
             label = label!!,
             createdAt = createdAt!!,
             createdBy = createdBy
         )
         if (subjectOf.isNotEmpty())
-            pred.description = subjectOf.firstOrNull { it.predicateId?.value == "description" }?.`object`?.label
-        return pred
+            predicate.description = subjectOf.firstOrNull { it.predicateId?.value == "description" }?.`object`?.label
+        return predicate
     }
-
-    override val thingId: String?
-        get() = predicateId?.value
 
     override fun toThing() = toPredicate()
 }

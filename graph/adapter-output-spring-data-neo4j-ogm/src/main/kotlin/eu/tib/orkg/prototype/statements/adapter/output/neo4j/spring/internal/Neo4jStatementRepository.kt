@@ -3,10 +3,8 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
-import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.services.ObjectService
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import eu.tib.orkg.prototype.statements.spi.StatementRepository.*
@@ -61,16 +59,16 @@ private const val WITH_SORTABLE_FIELDS =
 // Custom queries
 
 private const val BY_SUBJECT_ID =
-    """WHERE sub.`resource_id`=$subjectId OR sub.`literal_id`=$subjectId OR sub.`predicate_id`=$subjectId OR sub.`class_id`=$subjectId"""
+    """WHERE sub.`id`=$subjectId"""
 
 private const val BY_OBJECT_ID =
-    """WHERE obj.`resource_id`=$objectId OR obj.`literal_id`=$objectId OR obj.`predicate_id`=$objectId OR obj.`class_id`=$objectId"""
+    """WHERE obj.`id`=$objectId"""
 
 private const val WHERE_SUBJECT_ID_IN =
-    """WHERE sub.`resource_id` IN $subjectIds OR sub.`literal_id` IN $subjectIds OR sub.`predicate_id` IN $subjectIds OR sub.`class_id` IN $subjectIds"""
+    """WHERE sub.`id` IN $subjectIds"""
 
 private const val WHERE_OBJECT_ID_IN =
-    """WHERE obj.`resource_id` IN $objectIds OR obj.`literal_id` IN $objectIds OR obj.`predicate_id` IN $objectIds OR obj.`class_id` IN $objectIds"""
+    """WHERE obj.`id` IN $objectIds"""
 
 interface Neo4jStatementRepository :
     Neo4jRepository<Neo4jStatement, Long> {
@@ -92,40 +90,39 @@ interface Neo4jStatementRepository :
     countQuery = "$MATCH_STATEMENT $BY_SUBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_COUNT")
     fun findAllBySubject(subjectId: ThingId, pagination: Pageable): Page<Neo4jStatement>
 
-    fun findAllByPredicateId(predicateId: PredicateId, pagination: Pageable): Page<Neo4jStatement>
+    fun findAllByPredicateId(predicateId: ThingId, pagination: Pageable): Page<Neo4jStatement>
 
     @Query("$MATCH_STATEMENT $BY_OBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
     countQuery = "$MATCH_STATEMENT $BY_OBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_COUNT")
     fun findAllByObject(objectId: ThingId, pagination: Pageable): Page<Neo4jStatement>
 
-    @Query("""MATCH statement=(sub:`Resource`)<-[:`RELATED`]-(:`Thing`) WHERE sub.resource_id in $resourceIds WITH sub.resource_id as resourceId, count(statement) as count RETURN resourceId, count""")
-    fun countStatementsAboutResource(resourceIds: Set<ResourceId>): List<StatementsPerResource>
+    @Query("""MATCH statement=(sub:`Resource`)<-[:`RELATED`]-(:`Thing`) WHERE sub.id in $resourceIds WITH sub.id as id, count(statement) as count RETURN id, count""")
+    fun countStatementsAboutResource(resourceIds: Set<ThingId>): List<StatementsPerResource>
 
     /** Count all incoming statements to a resource node. This is used to calculate the "shared" property. */
-    @Query("""MATCH statement=(obj:`Resource` {resource_id: $id})<-[rel:`RELATED`]-(:`Thing`) RETURN count(statement)""")
-    fun countStatementsByObjectId(id: ResourceId): Long
+    @Query("""MATCH statement=(obj:`Resource` {id: $id})<-[rel:`RELATED`]-(:`Thing`) RETURN count(statement)""")
+    fun countStatementsByObjectId(id: ThingId): Long
 
-    @Query("""MATCH (n:Thing)
-WHERE n.`resource_id`=$id OR n.`literal_id`=$id OR n.`predicate_id`=$id OR n.`class_id`=$id
+    @Query("""MATCH (n:Thing {id: $id})
 CALL apoc.path.subgraphAll(n, {relationshipFilter: ">", labelFilter: "-ResearchField|-ResearchProblem|-Paper"})
 YIELD relationships
 UNWIND relationships AS rel
 RETURN COUNT(rel) as cnt""")
     fun countByIdRecursive(id: ThingId): Long
 
-    @Query("$MATCH_STATEMENT WHERE (obj.`resource_id`=$objectId OR obj.`literal_id`=$objectId OR obj.`predicate_id`=$objectId OR obj.`class_id`=$objectId) AND rel.`predicate_id`=$predicateId $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
-    countQuery = "$MATCH_STATEMENT WHERE (obj.`resource_id`=$objectId OR obj.`literal_id`=$objectId OR obj.`predicate_id`=$objectId OR obj.`class_id`=$objectId) AND rel.`predicate_id`=$predicateId $WITH_SORTABLE_FIELDS $RETURN_COUNT")
+    @Query("$MATCH_STATEMENT WHERE obj.id=$objectId AND rel.`predicate_id`=$predicateId $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
+    countQuery = "$MATCH_STATEMENT WHERE obj.id=$objectId AND rel.`predicate_id`=$predicateId $WITH_SORTABLE_FIELDS $RETURN_COUNT")
     fun findAllByObjectAndPredicate(
         objectId: ThingId,
-        predicateId: PredicateId,
+        predicateId: ThingId,
         pagination: Pageable
     ): Page<Neo4jStatement>
 
-    @Query("$MATCH_STATEMENT WHERE (sub.`resource_id`=$subjectId OR sub.`literal_id`=$subjectId OR sub.`predicate_id`=$subjectId OR sub.`class_id`=$subjectId) AND rel.`predicate_id`=$predicateId $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
-    countQuery = "$MATCH_STATEMENT WHERE (sub.`resource_id`=$subjectId OR sub.`literal_id`=$subjectId OR sub.`predicate_id`=$subjectId OR sub.`class_id`=$subjectId) AND rel.`predicate_id`=$predicateId $WITH_SORTABLE_FIELDS $RETURN_COUNT")
+    @Query("$MATCH_STATEMENT WHERE sub.id=$subjectId AND rel.`predicate_id`=$predicateId $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
+    countQuery = "$MATCH_STATEMENT WHERE sub.id=$subjectId AND rel.`predicate_id`=$predicateId $WITH_SORTABLE_FIELDS $RETURN_COUNT")
     fun findAllBySubjectAndPredicate(
         subjectId: ThingId,
-        predicateId: PredicateId,
+        predicateId: ThingId,
         pagination: Pageable
     ): Page<Neo4jStatement>
 
@@ -134,17 +131,17 @@ RETURN COUNT(rel) as cnt""")
         countQuery = "$MATCH_STATEMENT_WITH_LITERAL WHERE rel.`predicate_id`=$predicateId AND obj.`label`=$literal $WITH_SORTABLE_FIELDS $RETURN_COUNT"
     )
     fun findAllByPredicateIdAndLabel(
-        predicateId: PredicateId,
+        predicateId: ThingId,
         literal: String,
         pagination: Pageable
     ): Page<Neo4jStatement>
 
     @Query(
-        "$MATCH_STATEMENT_WITH_LITERAL WHERE sub.class_id=$subjectClass AND rel.`predicate_id`=$predicateId AND obj.`label`=$literal $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
-        countQuery = "$MATCH_STATEMENT_WITH_LITERAL WHERE sub.class_id=$subjectClass AND rel.`predicate_id`=$predicateId AND obj.`label`=$literal $WITH_SORTABLE_FIELDS $RETURN_COUNT"
+        "$MATCH_STATEMENT_WITH_LITERAL WHERE sub.id=$subjectClass AND rel.`predicate_id`=$predicateId AND obj.`label`=$literal $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
+        countQuery = "$MATCH_STATEMENT_WITH_LITERAL WHERE sub.id=$subjectClass AND rel.`predicate_id`=$predicateId AND obj.`label`=$literal $WITH_SORTABLE_FIELDS $RETURN_COUNT"
     )
     fun findAllByPredicateIdAndLabelAndSubjectClass(
-        predicateId: PredicateId,
+        predicateId: ThingId,
         literal: String,
         subjectClass: ThingId,
         pagination: Pageable
@@ -169,8 +166,7 @@ RETURN COUNT(rel) as cnt""")
     ): Page<Neo4jStatement>
 
     @Query(
-        """MATCH (n:Thing)
-WHERE n.resource_id = $id OR n.literal_id = $id OR n.class_id = $id OR n.predicate_id = $id
+        """MATCH (n:Thing {id: $id})
 CALL apoc.path.subgraphAll(n, $configuration)
 YIELD relationships
 UNWIND relationships as rel
@@ -185,11 +181,11 @@ ORDER BY rel.created_at DESC"""
     )
     fun countPredicateUsage(pageable: Pageable): Page<Neo4jPredicateUsageCount>
 
-    @Query("""MATCH (n:Paper:Resource)-[:RELATED {predicate_id: 'P31'}]->(:Resource {resource_id: $id}), (n)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(L:Literal) RETURN L""")
-    fun findDOIByContributionId(id: ResourceId): Optional<Neo4jLiteral>
+    @Query("""MATCH (n:Paper:Resource)-[:RELATED {predicate_id: 'P31'}]->(:Resource {id: $id}), (n)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(L:Literal) RETURN L""")
+    fun findDOIByContributionId(id: ThingId): Optional<Neo4jLiteral>
 
-    @Query("""OPTIONAL MATCH (:Thing)-[r1:RELATED {predicate_id: $id}]->(:Thing) OPTIONAL MATCH (:Predicate {predicate_id: $id})-[r2:RELATED]-(:Thing) WITH COUNT(DISTINCT r1) as relations, COUNT(DISTINCT r2) as nodes RETURN relations + nodes as cnt""")
-    fun countPredicateUsage(id: PredicateId): Long
+    @Query("""OPTIONAL MATCH (:Thing)-[r1:RELATED {predicate_id: $id}]->(:Thing) OPTIONAL MATCH (:Predicate {id: $id})-[r2:RELATED]-(:Thing) WITH COUNT(DISTINCT r1) as relations, COUNT(DISTINCT r2) as nodes RETURN relations + nodes as cnt""")
+    fun countPredicateUsage(id: ThingId): Long
 
     @Query("""MATCH (node:Paper:Resource)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(l:Literal) WHERE not 'PaperDeleted' in labels(node) AND toUpper(l.label) = toUpper($doi) RETURN node LIMIT 1""")
     fun findByDOI(doi: String): Optional<Neo4jResource>
@@ -199,7 +195,7 @@ CALL {
     MATCH (:Paper:Resource {observatory_id: $id})-[:RELATED {predicate_id:"P31"}]->(:Contribution:Resource)-[:RELATED {predicate_id:"P32"}]->(r:Problem:Resource) RETURN r
     UNION
     MATCH (r:Problem:Resource {observatory_id: $id}) RETURN r
-} RETURN r ORDER BY r.resource_id""",
+} RETURN r ORDER BY r.id""",
         countQuery = """
 CALL {
     MATCH (:Paper:Resource {observatory_id: $id})-[:RELATED {predicate_id:"P31"}]->(:Contribution:Resource)-[:RELATED {predicate_id:"P32"}]->(r:Problem:Resource) RETURN r
@@ -208,7 +204,7 @@ CALL {
 } RETURN COUNT(r)""")
     fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Neo4jResource>
 
-    @Query("""MATCH (n:Resource {resource_id: $id})
+    @Query("""MATCH (n:Resource {id: $id})
 CALL apoc.path.subgraphAll(n, {relationshipFilter: ">", labelFilter: "-ResearchField|-ResearchProblem|-Paper"})
 YIELD relationships
 UNWIND relationships AS rel
@@ -220,7 +216,7 @@ WITH DISTINCT node.created_by AS createdBy
 WHERE createdBy IS NOT NULL
 RETURN createdBy
 ORDER BY createdBy""",
-        countQuery = """MATCH (n:Resource {resource_id: $id})
+        countQuery = """MATCH (n:Resource {id: $id})
 CALL apoc.path.subgraphAll(n, {relationshipFilter: ">", labelFilter: "-ResearchField|-ResearchProblem|-Paper"})
 YIELD relationships
 UNWIND relationships AS rel
@@ -231,9 +227,9 @@ UNWIND nodes as node
 WITH DISTINCT node.created_by AS createdBy
 WHERE createdBy IS NOT NULL
 RETURN COUNT(createdBy) as cnt""")
-    fun findAllContributorsByResourceId(id: ResourceId, pageable: Pageable): Page<ContributorId>
+    fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId>
 
-    @Query("""MATCH (n:Resource {resource_id: $id})
+    @Query("""MATCH (n:Resource {id: $id})
 CALL apoc.path.subgraphAll(n, {relationshipFilter: ">", labelFilter: "-ResearchField|-ResearchProblem|-Paper"})
 YIELD relationships
 UNWIND relationships AS rel
@@ -248,7 +244,7 @@ WITH createdBy, apoc.date.parse(timestamp, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX") AS 
 WITH DISTINCT [createdBy, apoc.date.format(ms, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX")] AS edit
 RETURN edit[0] as createdBy, edit[1] as createdAt
 ORDER BY createdAt DESC""",
-        countQuery = """MATCH (n:Resource {resource_id: $id})
+        countQuery = """MATCH (n:Resource {id: $id})
 CALL apoc.path.subgraphAll(n, {relationshipFilter: ">", labelFilter: "-ResearchField|-ResearchProblem|-Paper"})
 YIELD relationships
 UNWIND relationships AS rel
@@ -262,16 +258,16 @@ WITH node.created_by AS createdBy, apoc.text.regreplace(node.created_at, "^(\d+-
 WITH createdBy, apoc.date.parse(timestamp, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX") AS ms
 WITH DISTINCT [createdBy, apoc.date.format(ms, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX")] AS edit
 RETURN COUNT(edit) AS cnt""")
-    fun findTimelineByResourceId(id: ResourceId, pageable: Pageable): Page<ResourceContributor>
+    fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor>
 
-    @Query("""MATCH (n:Resource {resource_id: $id}) RETURN EXISTS ((n)-[:RELATED]-(:Thing)) AS used""")
-    fun checkIfResourceHasStatements(id: ResourceId): Boolean
+    @Query("""MATCH (n:Resource {id: $id}) RETURN EXISTS ((n)-[:RELATED]-(:Thing)) AS used""")
+    fun checkIfResourceHasStatements(id: ThingId): Boolean
 
     @Query(value = """MATCH (n:Comparison:Resource {organization_id: $id })-[r:RELATED {predicate_id: 'compareContribution'}]->(rc:Contribution:Resource)-[rr:RELATED {predicate_id: 'P32'}]->(p:Problem:Resource) RETURN DISTINCT p""",
         countQuery = """MATCH (n:Comparison:Resource {organization_id: $id })-[r:RELATED {predicate_id: 'compareContribution'}]->(rc:Contribution:Resource)-[rr:RELATED {predicate_id: 'P32'}]->(p:Problem:Resource) RETURN count(DISTINCT p)""")
     fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Neo4jResource>
 
-    @Query("""$MATCH_STATEMENT WHERE (sub.`resource_id`=$subjectId OR sub.`literal_id`=$subjectId OR sub.`predicate_id`=$subjectId OR sub.`class_id`=$subjectId) AND rel.`predicate_id` = $predicateId AND (obj.`resource_id`=$objectId OR obj.`literal_id`=$objectId OR obj.`predicate_id`=$objectId OR obj.`class_id`=$objectId) $RETURN_STATEMENT LIMIT 1""")
+    @Query("""$MATCH_STATEMENT WHERE sub.`id`=$subjectId AND rel.`predicate_id` = $predicateId AND obj.`id`=$objectId $RETURN_STATEMENT LIMIT 1""")
     fun findBySubjectIdAndPredicateIdAndObjectId(subjectId: ThingId, predicateId: ThingId, objectId: ThingId): Optional<Neo4jStatement>
 
     fun findAllByStatementIdIn(statementIds: Set<StatementId>): List<Neo4jStatement>
@@ -279,7 +275,7 @@ RETURN COUNT(edit) AS cnt""")
 
 @QueryResult
 data class StatementsPerResource(
-    val resourceId: String,
+    val id: String,
     val count: Long
 )
 

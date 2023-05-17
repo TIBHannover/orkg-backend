@@ -45,6 +45,6 @@ data class Neo4jClassRelation(
     }
 
     override fun toString(): String {
-        return "(${child!!.thingId} {${child!!.label}})-[SUBCLASS_OF]->(${parent!!.thingId} {${parent!!.label}})"
+        return "(${child!!.id} {${child!!.label}})-[SUBCLASS_OF]->(${parent!!.id} {${parent!!.label}})"
     }
 }

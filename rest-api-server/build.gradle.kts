@@ -135,6 +135,7 @@ dependencies {
     implementation(project(":graph:application"))
     implementation(project(":graph:adapter-input-rest-spring-mvc"))
     implementation(project(":graph:adapter-output-spring-data-neo4j-ogm"))
+    implementation(project(":widget"))
 
     implementation(libs.forkhandles.result4k)
     implementation(libs.forkhandles.values4k)

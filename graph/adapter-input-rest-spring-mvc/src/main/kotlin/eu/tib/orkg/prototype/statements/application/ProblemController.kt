@@ -4,17 +4,17 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
+import eu.tib.orkg.prototype.statements.api.VisibilityFilter
+import eu.tib.orkg.prototype.statements.domain.model.PaperAuthor
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.services.AuthorService
 import eu.tib.orkg.prototype.statements.services.ResourceService
 import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.*
-import eu.tib.orkg.prototype.statements.domain.model.PaperAuthor
-import eu.tib.orkg.prototype.statements.services.AuthorService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.lang.Nullable
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -43,16 +43,18 @@ class ProblemController(
     fun getFieldPerProblemAndClasses(
         @PathVariable problemId: ThingId,
         @RequestParam(value = "classes") classes: List<String>,
-        @Nullable @RequestParam("featured")
-        featured: Boolean?,
+        @RequestParam("featured", required = false, defaultValue = "false")
+        featured: Boolean,
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
+        @RequestParam("visibility", required = false)
+        visibility: VisibilityFilter?,
         pageable: Pageable
     ): Page<RetrieveResearchProblemUseCase.DetailsPerProblem> =
         service.findAllEntitiesBasedOnClassByProblem(
             problemId = problemId,
             classes = classes,
-            visibilityFilter = visibilityFilterFromFlags(featured, unlisted),
+            visibilityFilter = visibility ?: visibilityFilterFromFlags(featured, unlisted),
             pageable = pageable
         )
 

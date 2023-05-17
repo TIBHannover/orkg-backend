@@ -42,7 +42,7 @@ private const val ORDER_BY_CREATED_AT = """ORDER BY created_at"""
 private const val WITH_DISTINCT_NODE = """WITH DISTINCT node"""
 
 private const val MATCH_LISTED_PROBLEM = """$MATCH_PROBLEM WHERE (node.visibility IS NULL OR node.visibility = "FEATURED")"""
-private const val MATCH_CONTRIBUTION_RELATED_TO_PROBLEM_WITH_ID = """MATCH (:Problem:Resource {resource_id: $id})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)"""
+private const val MATCH_CONTRIBUTION_RELATED_TO_PROBLEM_WITH_ID = """MATCH (:Problem:Resource {resource_id: $id})<-[:RELATED {predicate_id: 'P32'}]-(node:Contribution:Resource)"""
 private const val MATCH_PAPER_RELATED_TO_PROBLEM_WITH_ID = """MATCH (:Problem:Resource {resource_id: $id})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(node:Paper:Resource)"""
 private const val MATCH_RESEARCH_FIELD_RELATED_TO_PROBLEM_WITH_ID = """MATCH (:Problem:Resource {resource_id: $id})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(node:ResearchField:Resource)"""
 private const val MATCH_COMPARISON_RELATED_TO_PROBLEM_WITH_ID = """MATCH (:Problem:Resource {resource_id: $id})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'compareContribution'}]-(node:Comparison:Resource)"""

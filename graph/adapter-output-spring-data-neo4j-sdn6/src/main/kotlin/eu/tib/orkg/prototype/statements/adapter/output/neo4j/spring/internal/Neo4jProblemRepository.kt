@@ -32,15 +32,15 @@ private const val visibility = "${'$'}visibility"
 
 private const val MATCH_PROBLEM = """MATCH (node:`Resource`:`Problem`)"""
 
-private const val WHERE_VISIBILITY = """WHERE COALESCE(node.visibility, "DEFAULT") = $visibility"""
+private const val WHERE_VISIBILITY = """WHERE node.visibility = $visibility"""
 
-private const val WHERE_VISIBILITY_IS_LISTED = """WHERE (node.visibility IS NULL OR node.visibility = "FEATURED")"""
+private const val WHERE_VISIBILITY_IS_LISTED = """WHERE (node.visibility = "DEFAULT" OR node.visibility = "FEATURED")"""
 
 private const val ORDER_BY_CREATED_AT = """ORDER BY created_at"""
 
 private const val WITH_DISTINCT_NODE = """WITH DISTINCT node"""
 
-private const val MATCH_LISTED_PROBLEM = """$MATCH_PROBLEM WHERE (node.visibility IS NULL OR node.visibility = "FEATURED")"""
+private const val MATCH_LISTED_PROBLEM = """$MATCH_PROBLEM WHERE (node.visibility = "DEFAULT" OR node.visibility = "FEATURED")"""
 private const val MATCH_CONTRIBUTION_RELATED_TO_PROBLEM_WITH_ID = """MATCH (:Problem:Resource {resource_id: $id})<-[:RELATED {predicate_id: 'P32'}]-(node:Contribution:Resource)"""
 private const val MATCH_PAPER_RELATED_TO_PROBLEM_WITH_ID = """MATCH (:Problem:Resource {resource_id: $id})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(node:Paper:Resource)"""
 private const val MATCH_RESEARCH_FIELD_RELATED_TO_PROBLEM_WITH_ID = """MATCH (:Problem:Resource {resource_id: $id})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(node:ResearchField:Resource)"""

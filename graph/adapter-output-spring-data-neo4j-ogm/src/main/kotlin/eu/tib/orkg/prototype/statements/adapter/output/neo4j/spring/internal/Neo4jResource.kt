@@ -62,10 +62,6 @@ data class Neo4jResource(
 
     @Property("visibility")
     var visibility: Visibility? = null
-        get() = field ?: Visibility.DEFAULT
-        set(value) {
-            field = value.takeIf { it != Visibility.DEFAULT }
-        }
 
     @Property("organization_id")
     @Convert(OrganizationIdConverter::class)

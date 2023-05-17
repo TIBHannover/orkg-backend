@@ -34,11 +34,11 @@ private const val MATCH_CONTRIBUTION = """MATCH (node:`Resource`:`Contribution`)
 
 private const val MATCH_CONTRIBUTION_BY_ID = """MATCH (node:`Resource`:`Contribution` {resource_id: $id})"""
 
-private const val WHERE_VISIBILITY = """WHERE COALESCE(node.visibility, "DEFAULT") = $visibility"""
+private const val WHERE_VISIBILITY = """WHERE node.visibility = $visibility"""
 
 private const val ORDER_BY_CREATED_AT = """ORDER BY created_at"""
 
-private const val MATCH_LISTED_CONTRIBUTION = """$MATCH_CONTRIBUTION WHERE (node.visibility IS NULL OR node.visibility = "FEATURED")"""
+private const val MATCH_LISTED_CONTRIBUTION = """$MATCH_CONTRIBUTION WHERE (node.visibility = "DEFAULT" OR node.visibility = "FEATURED")"""
 
 interface Neo4jContributionRepository :
     Neo4jRepository<Neo4jResource, Long> {

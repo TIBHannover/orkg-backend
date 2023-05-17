@@ -34,11 +34,11 @@ private const val MATCH_VISUALIZATION = """MATCH (node:`Resource`:`Visualization
 
 private const val MATCH_VISUALIZATION_BY_ID = """MATCH (node:`Resource`:`Visualization` {resource_id: $id})"""
 
-private const val WHERE_VISIBILITY = """WHERE COALESCE(node.visibility, "DEFAULT") = $visibility"""
+private const val WHERE_VISIBILITY = """WHERE node.visibility = $visibility"""
 
 private const val ORDER_BY_CREATED_AT = """ORDER BY created_at"""
 
-private const val MATCH_LISTED_VISUALIZATION = """$MATCH_VISUALIZATION WHERE (node.visibility IS NULL OR node.visibility = "FEATURED")"""
+private const val MATCH_LISTED_VISUALIZATION = """$MATCH_VISUALIZATION WHERE (node.visibility = "DEFAULT" OR node.visibility = "FEATURED")"""
 
 interface Neo4jVisualizationRepository :
     Neo4jRepository<Neo4jResource, Long> {

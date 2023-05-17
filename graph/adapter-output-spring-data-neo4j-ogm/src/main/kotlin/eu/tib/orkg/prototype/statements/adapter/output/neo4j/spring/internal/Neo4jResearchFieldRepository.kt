@@ -37,8 +37,8 @@ private const val WITH_NODE_PROPERTIES =
 
 private const val MATCH_RESEARCH_FIELD_WITH_SUBFIELDS = """MATCH (field:ResearchField:Resource)<-[:RELATED* 0.. {predicate_id: 'P36'}]-(sub:ResearchField:Resource {resource_id: $id}) WITH COLLECT(field) + COLLECT(sub) AS fields"""
 private const val AND_FIELD_IN_FIELDS = """AND field IN fields"""
-private const val WHERE_VISIBILITY_IS_LISTED = """WHERE (node.visibility IS NULL OR node.visibility = "FEATURED")"""
-private const val WHERE_VISIBILITY = """WHERE COALESCE(node.visibility, "DEFAULT") = $visibility"""
+private const val WHERE_VISIBILITY_IS_LISTED = """WHERE (node.visibility = "DEFAULT" OR node.visibility = "FEATURED")"""
+private const val WHERE_VISIBILITY = """WHERE node.visibility = $visibility"""
 private const val WITH_DISTINCT_NODE = """WITH DISTINCT node"""
 private const val MATCH_PAPER_RELATED_TO_RESEARCH_FIELD = """MATCH (node:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(field:ResearchField:Resource)"""
 private const val MATCH_PAPER_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:Paper:Resource)-[:RELATED {predicate_id: 'P30'}]->(:ResearchField:Resource {resource_id: $id})"""

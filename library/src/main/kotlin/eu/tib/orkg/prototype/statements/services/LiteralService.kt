@@ -4,12 +4,10 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.LiteralRepresentation
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.domain.model.Literal
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
-import eu.tib.orkg.prototype.util.EscapedRegex
-import eu.tib.orkg.prototype.util.SanitizedWhitespace
-import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
 import java.time.OffsetDateTime
 import java.util.*
 import org.springframework.data.domain.Page
@@ -48,13 +46,8 @@ class LiteralService(
     override fun findById(id: ThingId): Optional<LiteralRepresentation> =
         repository.findByLiteralId(id).map(Literal::toLiteralRepresentation)
 
-    override fun findAllByLabel(label: String, pageable: Pageable): Page<LiteralRepresentation> =
-        repository.findAllByLabelMatchesRegex(label.toExactSearchString(), pageable)
-            .map(Literal::toLiteralRepresentation) // TODO: See declaration
-
-    override fun findAllByLabelContaining(part: String, pageable: Pageable): Page<LiteralRepresentation> =
-        repository.findAllByLabelMatchesRegex(part.toSearchString(), pageable)
-            .map(Literal::toLiteralRepresentation) // TODO: See declaration
+    override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<LiteralRepresentation> =
+        repository.findAllByLabel(labelSearchString, pageable).map(Literal::toLiteralRepresentation)
 
     override fun findDOIByContributionId(id: ThingId): Optional<LiteralRepresentation> =
         statementRepository.findDOIByContributionId(id).map(Literal::toLiteralRepresentation)
@@ -72,12 +65,6 @@ class LiteralService(
     }
 
     override fun removeAll() = repository.deleteAll()
-
-    private fun String.toSearchString() =
-        "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"
-
-    private fun String.toExactSearchString() =
-        "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"
 }
 
 fun Literal.toLiteralRepresentation(): LiteralRepresentation = object : LiteralRepresentation {

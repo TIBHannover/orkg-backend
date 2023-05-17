@@ -90,6 +90,11 @@ internal data class ResourceMapper(val name: String) : BiFunction<TypeSystem, Re
     override fun apply(typeSystem: TypeSystem, record: Record) = record[name].asNode().toResource()
 }
 
+internal data class ClassMapper(val name: String) : BiFunction<TypeSystem, Record, Class> {
+    constructor(symbolicName: SymbolicName) : this(symbolicName.value)
+    override fun apply(typeSystem: TypeSystem, record: Record) = record[name].asNode().toClass()
+}
+
 internal fun Node.toLiteral() = Literal(
     id = ThingId(this["literal_id"].asString()),
     label = this["label"].asString(),
@@ -142,6 +147,7 @@ internal fun Value.toContributorId() = if (isNull) ContributorId.createUnknownCo
 internal fun Value.toObservatoryId() = if (isNull) ObservatoryId.createUnknownObservatory() else ObservatoryId(asString())
 internal fun Value.toOrganizationId() = if (isNull) OrganizationId.createUnknownOrganization() else OrganizationId(asString())
 internal fun Value.toExtractionMethod() = if (isNull) ExtractionMethod.UNKNOWN else ExtractionMethod.valueOf(asString())
+internal fun Value.toThingId() = if (isNull) null else ThingId(asString())
 internal fun Value.toVisibility() = if (isNull) Visibility.DEFAULT else Visibility.valueOf(asString())
 
 @Contract(pure = true)

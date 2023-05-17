@@ -4,13 +4,14 @@ import eu.tib.orkg.prototype.contributions.application.ports.input.RetrieveContr
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.ContributorNotFound
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/contributors")
+@RequestMapping("/api/contributors", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ContributorController(
     val retrieveContributor: RetrieveContributorUseCase
 ) {

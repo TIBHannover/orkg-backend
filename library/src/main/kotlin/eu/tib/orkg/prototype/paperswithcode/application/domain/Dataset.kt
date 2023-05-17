@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.paperswithcode.application.domain
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 
 // Are of class "Dataset" in the database
 data class Dataset(
@@ -17,6 +18,8 @@ data class Dataset(
 data class DatasetSummary(
     @JsonProperty("model_name")
     val modelName: String?,
+    @JsonProperty("model_id")
+    val modelId: ThingId?,
     val score: String,
     val metric: String,
     @JsonProperty("paper_id")

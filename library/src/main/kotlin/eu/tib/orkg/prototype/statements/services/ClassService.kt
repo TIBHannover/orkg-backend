@@ -20,12 +20,10 @@ import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.Clock
 import eu.tib.orkg.prototype.statements.domain.model.Label
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.SystemClock
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
-import eu.tib.orkg.prototype.util.EscapedRegex
-import eu.tib.orkg.prototype.util.SanitizedWhitespace
-import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
 import java.net.URI
 import java.net.URISyntaxException
 import java.time.OffsetDateTime
@@ -79,21 +77,9 @@ class ClassService(
     override fun findById(id: ThingId): Optional<ClassRepresentation> =
         repository.findByClassId(id).map(Class::toClassRepresentation)
 
-    override fun findAllByLabel(label: String): Iterable<ClassRepresentation> =
-        repository.findAllByLabelMatchesRegex(label.toExactSearchString())
-            .map(Class::toClassRepresentation) // TODO: See declaration
-
-    override fun findAllByLabel(pageable: Pageable, label: String): Page<ClassRepresentation> =
-        repository.findAllByLabelMatchesRegex(label.toExactSearchString(), pageable)
-            .map(Class::toClassRepresentation) // TODO: See declaration
-
-    override fun findAllByLabelContaining(part: String): Iterable<ClassRepresentation> =
-        repository.findAllByLabelMatchesRegex(part.toSearchString())
-            .map(Class::toClassRepresentation) // TODO: See declaration
-
-    override fun findAllByLabelContaining(pageable: Pageable, part: String): Page<ClassRepresentation> =
-        repository.findAllByLabelMatchesRegex(part.toSearchString(), pageable)
-            .map(Class::toClassRepresentation) // TODO: See declaration
+    override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<ClassRepresentation> =
+        repository.findAllByLabel(labelSearchString, pageable)
+            .map(Class::toClassRepresentation)
 
     override fun replace(id: ThingId, command: UpdateClassUseCase.ReplaceCommand): Result<Unit, ClassUpdateProblem> {
         val label = Label.ofOrNull(command.label) ?: return Failure(InvalidLabel)
@@ -171,12 +157,6 @@ class ClassService(
     } catch (_: URISyntaxException) {
         null
     }
-
-    private fun String.toSearchString() =
-        "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"
-
-    private fun String.toExactSearchString() =
-        "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"
 }
 
 fun Class.toClassRepresentation(): ClassRepresentation = object : ClassRepresentation {

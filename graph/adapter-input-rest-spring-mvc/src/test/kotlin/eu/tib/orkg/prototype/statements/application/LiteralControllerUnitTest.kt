@@ -35,7 +35,7 @@ import org.springframework.web.context.WebApplicationContext
 @ContextConfiguration(classes = [LiteralController::class, ExceptionHandler::class])
 @WebMvcTest(controllers = [LiteralController::class])
 @DisplayName("Given a Literal controller")
-class LiteralControllerTest {
+class LiteralControllerUnitTest {
 
     private lateinit var mockMvc: MockMvc
 

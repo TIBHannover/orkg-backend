@@ -12,6 +12,7 @@ import eu.tib.orkg.prototype.statements.services.AuthorService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.lang.Nullable
 import org.springframework.security.access.prepost.PreAuthorize
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/problems/")
+@RequestMapping("/api/problems/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ProblemController(
     private val service: RetrieveResearchProblemUseCase, // FIXME
     private val resourceService: ResourceService,

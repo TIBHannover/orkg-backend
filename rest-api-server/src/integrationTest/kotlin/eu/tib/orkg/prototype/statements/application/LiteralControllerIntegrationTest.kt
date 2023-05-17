@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Literal Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-class LiteralControllerTest : RestDocumentationBaseTest() {
+class LiteralControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var service: LiteralUseCases

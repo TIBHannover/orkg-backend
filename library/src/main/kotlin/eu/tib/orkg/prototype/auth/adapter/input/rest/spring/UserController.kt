@@ -20,6 +20,7 @@ import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 import org.springframework.http.HttpStatus.UNAUTHORIZED
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.security.access.prepost.PreAuthorize
@@ -32,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/user", produces = [MediaType.APPLICATION_JSON_VALUE])
 class UserController(
     private val userService: AuthUseCase,
 ) {
@@ -45,7 +46,7 @@ class UserController(
         return ok(UserDetails(user))
     }
 
-    @PutMapping("/")
+    @PutMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun updateUserDetails(@RequestBody @Valid updatedDetails: UserDetailsUpdateRequest, principal: Principal?): ResponseEntity<UserDetails> {
         if (principal?.name == null)
             return ResponseEntity(UNAUTHORIZED)
@@ -55,7 +56,7 @@ class UserController(
         return ok(UserDetails(user))
     }
 
-    @PutMapping("/password")
+    @PutMapping("/password", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun updatePassword(@RequestBody @Valid updatedPassword: PasswordDTO, principal: Principal?): ResponseEntity<Any> {
         if (principal?.name == null)
             return ResponseEntity(UNAUTHORIZED)
@@ -83,7 +84,7 @@ class UserController(
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @PutMapping("/observatory")
+    @PutMapping("/observatory", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun updateUserObservatory(@RequestBody @Valid userObservatory: UserObservatoryRequest): ResponseEntity<Any> {
         val user = userService.findByEmail(userObservatory.userEmail).orElseThrow { UserNotFound(userObservatory.userEmail) }
         if (user.observatoryId == userObservatory.observatoryId.value) {

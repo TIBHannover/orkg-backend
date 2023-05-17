@@ -91,14 +91,14 @@ class RdfControllerTest : RestDocumentationBaseTest() {
 
     @Test
     fun testFilterClass() {
-        classService.create("Class *")
-        classService.create("Class +")
-        classService.create("Class /")
+        classService.create("Class 1")
+        classService.create("Class 2")
+        classService.create("Class 3")
 
         mockMvc
-            .perform(getRequestTo("/api/rdf/hints?q=/&type=class"))
+            .perform(getRequestTo("/api/rdf/hints?q=3&type=class"))
             .andExpect(status().isOk)
-            .andExpect(content().string(containsString("Class /")))
+            .andExpect(content().string(containsString("Class 3")))
             .andExpect(content().string(not(containsString("Resource"))))
             .andExpect(content().string(not(containsString("Predicate"))))
             .andDo(

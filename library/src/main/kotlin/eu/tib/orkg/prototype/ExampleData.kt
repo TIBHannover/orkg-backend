@@ -110,6 +110,7 @@ class ExampleData(
         predicateService.create("has research field")
         predicateService.create("has contribution")
         predicateService.create("has research problem")
+        predicateService.create("subClassOf")
         // Demo Predicate Data
         predicateService.create("approach")
         predicateService.create("evaluation")

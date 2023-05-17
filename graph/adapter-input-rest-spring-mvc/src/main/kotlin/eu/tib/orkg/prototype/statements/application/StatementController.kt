@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.notFound
@@ -33,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/statements")
+@RequestMapping("/api/statements", produces = [MediaType.APPLICATION_JSON_VALUE])
 class StatementController(
     private val statementService: StatementUseCases
 ) : BaseController() {
@@ -108,7 +109,7 @@ class StatementController(
         return ok(statementService.findAllByObjectAndPredicate(objectId, predicateId, pageable))
     }
 
-    @PostMapping("/")
+    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(CREATED)
     fun add(@RequestBody statement: CreateStatement, uriComponentsBuilder: UriComponentsBuilder):
         HttpEntity<StatementRepresentation> {
@@ -127,7 +128,7 @@ class StatementController(
         return created(location).body(body)
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun edit(
         @PathVariable id: StatementId,
         @RequestBody(required = true) statementEditRequest: StatementEditRequest
@@ -156,14 +157,7 @@ class StatementController(
     ): ResponseEntity<Unit> {
         if (principal?.name == null)
             return ResponseEntity(HttpStatus.FORBIDDEN)
-        val userId = UUID.fromString(principal.name)
-        val foundStatement = statementService.findById(id)
-
-        if (!foundStatement.isPresent)
-            return notFound().build()
-
-        statementService.delete(foundStatement.get().id, ContributorId(userId))
-
+        statementService.delete(id)
         return ResponseEntity.noContent().build()
     }
 

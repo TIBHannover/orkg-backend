@@ -11,13 +11,11 @@ import eu.tib.orkg.prototype.statements.application.PredicateNotFound
 import eu.tib.orkg.prototype.statements.domain.model.Clock
 import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.SystemClock
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
-import eu.tib.orkg.prototype.util.EscapedRegex
-import eu.tib.orkg.prototype.util.SanitizedWhitespace
-import eu.tib.orkg.prototype.util.WhitespaceIgnorantPattern
 import java.time.OffsetDateTime
 import java.util.*
 import org.springframework.data.domain.Page
@@ -73,13 +71,9 @@ class PredicateService(
     override fun findById(id: ThingId): Optional<PredicateRepresentation> =
         repository.findByPredicateId(id).map(Predicate::toPredicateRepresentation)
 
-    override fun findAllByLabel(label: String, pageable: Pageable): Page<PredicateRepresentation> =
-        repository.findAllByLabelMatchesRegex(label.toExactSearchString(), pageable)
-            .map(Predicate::toPredicateRepresentation) // TODO: See declaration
-
-    override fun findAllByLabelContaining(part: String, pageable: Pageable): Page<PredicateRepresentation> =
-        repository.findAllByLabelMatchesRegex(part.toSearchString(), pageable)
-            .map(Predicate::toPredicateRepresentation) // TODO: See declaration
+    override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<PredicateRepresentation> =
+        repository.findAllByLabel(labelSearchString, pageable)
+            .map(Predicate::toPredicateRepresentation)
 
     override fun update(id: ThingId, command: UpdatePredicateUseCase.ReplaceCommand) {
         var found = repository.findByPredicateId(id).get()
@@ -114,12 +108,6 @@ class PredicateService(
     }
 
     override fun removeAll() = repository.deleteAll()
-
-    private fun String.toSearchString() =
-        "(?i).*${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}.*"
-
-    private fun String.toExactSearchString() =
-        "(?i)^${WhitespaceIgnorantPattern(EscapedRegex(SanitizedWhitespace(this)))}$"
 }
 
 fun Predicate.toPredicateRepresentation(): PredicateRepresentation = object : PredicateRepresentation {

@@ -219,17 +219,26 @@ class SpringDataNeo4jStatementAdapter(
     }
 
     override fun determineOwnership(statementIds: Set<StatementId>): Set<OwnershipInfo> {
+        val id = name("id")
+        val statementId = name("statementId")
+        val owner = name("owner")
         val r = name("r")
         val subject = node("Thing")
         val `object` = node("Thing")
-        val query = match(subject.relationshipTo(`object`, RELATED).named(r))
-            .where(r.property("statement_id").`in`(literalOf<Set<String>>(statementIds.map(StatementId::value))))
-            .returning(r.property("statement_id").`as`("statementId"), r.property("created_by").`as`("owner"))
+        val query = unwind(literalOf<Set<String>>(statementIds.map(StatementId::value)))
+            .`as`(id)
+            .with(id)
+            .match(
+                subject.relationshipTo(`object`, RELATED)
+                    .withProperties("statement_id", id)
+                    .named(r)
+            )
+            .returning(r.property("statement_id").`as`(statementId), r.property("created_by").`as`(owner))
             .build()
         return neo4jClient.query(query.cypher)
             .fetchAs(OwnershipInfo::class.java)
             .mappedBy { _, record ->
-                OwnershipInfo(record["statementId"].toStatementId(), record["owner"].toContributorId())
+                OwnershipInfo(record[statementId].toStatementId(), record[owner].toContributorId())
             }
             .all()
             .toSet()

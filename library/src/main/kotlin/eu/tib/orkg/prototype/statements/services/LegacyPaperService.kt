@@ -23,6 +23,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
 import eu.tib.orkg.prototype.statements.domain.model.PaperResourceWithPath
 import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.PaperRepository
@@ -173,13 +174,13 @@ class LegacyPaperService(
             userId,
             paperId,
             ObjectService.PublicationMonthPredicate,
-            literalService.create(userId, request.paper.publicationMonth.toString()).id
+            literalService.create(userId, request.paper.publicationMonth.toString(), datatype = "xsd:integer").id
         )
         if (request.paper.hasPublicationYear()) statementService.add(
             userId,
             paperId,
             ObjectService.PublicationYearPredicate,
-            literalService.create(userId, request.paper.publicationYear.toString()).id
+            literalService.create(userId, request.paper.publicationYear.toString(), datatype = "xsd:integer").id
         )
 
         // paper published At
@@ -211,8 +212,12 @@ class LegacyPaperService(
     ) {
         val venuePredicate = predicateService.findById(ObjectService.VenuePredicate).get().id
         // Check if resource exists
-        val venueResource = resourceRepository.findByLabel(venue).orElseGet {
-            val representation = resourceService.create(
+        val venueResource = resourceRepository.findAllByClassAndLabel(
+            `class` = ObjectService.VenueClass,
+            labelSearchString = SearchString.of(venue, exactMatch = true),
+            pageable = PageRequest.of(0, 1)
+        ).singleOrNull() ?: run {
+            val resourceId = resourceService.create(
                 CreateResourceUseCase.CreateCommand(
                     label = venue,
                     classes = setOf(ObjectService.VenueClass),
@@ -222,7 +227,7 @@ class LegacyPaperService(
                     organizationId = organizationId
                 )
             )
-            resourceRepository.findByResourceId(representation).get()
+            resourceRepository.findByResourceId(resourceId).get()
         }
         // create a statement with the venue resource
         statementService.add(
@@ -253,7 +258,10 @@ class LegacyPaperService(
                         val indexClean = it.orcid.lastIndexOf('/')
                         val orcidValue = if (indexClean == -1) it.orcid else it.orcid.substring(indexClean + 1)
                         // Check if the orcid exists in the system or not
-                        val foundOrcid = literalService.findAllByLabel(orcidValue, PageRequest.of(0, 1)).firstOrNull()
+                        val foundOrcid = literalService.findAllByLabel(
+                            SearchString.of(orcidValue, exactMatch = true),
+                            PageRequest.of(0, 1)
+                        ).firstOrNull()
                         if (foundOrcid != null) {
                             // Link existing ORCID
                             val authorStatement = statementService.findAllByObject(

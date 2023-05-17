@@ -7,10 +7,12 @@ import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.UpdatePredicateUseCase.ReplaceCommand
 import eu.tib.orkg.prototype.statements.domain.model.Label
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.security.access.prepost.PreAuthorize
@@ -27,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/predicates/")
+@RequestMapping("/api/predicates/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class PredicateController(private val service: PredicateUseCases) : BaseController() {
 
     @GetMapping("/{id}")
@@ -36,18 +38,15 @@ class PredicateController(private val service: PredicateUseCases) : BaseControll
 
     @GetMapping("/")
     fun findByLabel(
-        @RequestParam("q", required = false) searchString: String?,
+        @RequestParam("q", required = false) string: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         pageable: Pageable
-    ): Page<PredicateRepresentation> {
-        return when {
-            searchString == null -> service.findAll(pageable)
-            exactMatch -> service.findAllByLabel(searchString, pageable)
-            else -> service.findAllByLabelContaining(searchString, pageable)
-        }
+    ): Page<PredicateRepresentation> = when (string) {
+        null -> service.findAll(pageable)
+        else -> service.findAllByLabel(SearchString.of(string, exactMatch), pageable)
     }
 
-    @PostMapping("/")
+    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(CREATED)
     fun add(
         @RequestBody predicate: CreatePredicateRequest,
@@ -69,7 +68,7 @@ class PredicateController(private val service: PredicateUseCases) : BaseControll
         return created(location).body(service.findById(id).get())
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,
         @RequestBody predicate: ReplacePredicateRequest

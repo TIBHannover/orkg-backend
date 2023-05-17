@@ -34,7 +34,7 @@ MATCH (s:Literal)<-[:RELATED {predicate_id: '$NUMERIC_VALUE_PREDICATE'}]-(qv:$QU
 MATCH (c)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper)
 OPTIONAL MATCH (month:Literal)-[:RELATED {predicate_id: 'P28'}]-(p)-[:RELATED {predicate_id: 'P29'}]-(year:Literal)
 OPTIONAL MATCH (md:$MODEL_CLASS)<-[:RELATED {predicate_id: '$MODEL_PREDICATE'}]-(c)-[:RELATED {predicate_id: '$SOURCE_CODE_PREDICATE'}]->(l:Literal)
-RETURN p AS paper, month.label AS month, year.label AS year, COLLECT(DISTINCT l.label) AS codes, md.label AS model, mt.label AS metric, s.label AS score $PAGE_PARAMS
+RETURN p AS paper, month.label AS month, year.label AS year, COLLECT(DISTINCT l.label) AS codes, md.resource_id AS modelId, md.label AS model, mt.label AS metric, s.label AS score $PAGE_PARAMS
     """,
         countQuery = """
 MATCH (ds:$DATASET_CLASS {resource_id: $id})<-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]-(b:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(c:Contribution)
@@ -52,7 +52,7 @@ MATCH (s:Literal)<-[:RELATED {predicate_id: '$NUMERIC_VALUE_PREDICATE'}]-(qv:$QU
 MATCH (c)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper)
 OPTIONAL MATCH (month:Literal)-[:RELATED {predicate_id: 'P28'}]-(p)-[:RELATED {predicate_id: 'P29'}]-(year:Literal)
 OPTIONAL MATCH (md:$MODEL_CLASS)<-[:RELATED {predicate_id: '$MODEL_PREDICATE'}]-(c)-[:RELATED {predicate_id: '$SOURCE_CODE_PREDICATE'}]->(l:Literal)
-RETURN p AS paper, month.label AS month, year.label AS year, COLLECT(DISTINCT l.label) AS codes, md.label AS model, mt.label AS metric, s.label AS score $PAGE_PARAMS
+RETURN p AS paper, month.label AS month, year.label AS year, COLLECT(DISTINCT l.label) AS codes, md.resource_id AS modelId, md.label AS model, mt.label AS metric, s.label AS score $PAGE_PARAMS
     """,
         countQuery = """
 MATCH (ds:$DATASET_CLASS {resource_id: $id})<-[:RELATED {predicate_id: '$DATASET_PREDICATE'}]-(b:$BENCHMARK_CLASS)<-[:RELATED {predicate_id: '$BENCHMARK_PREDICATE'}]-(c:Contribution)-[:RELATED {predicate_id: 'P32'}]->(:Problem {resource_id: $problemId})

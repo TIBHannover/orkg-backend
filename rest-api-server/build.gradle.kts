@@ -5,7 +5,7 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 group = "eu.tib"
-version = "0.30.2"
+version = "0.31.0"
 
 val neo4jVersion = "3.5.+" // should match version in Dockerfile
 val springDataNeo4jVersion = "5.3.4"
@@ -179,11 +179,10 @@ dependencies {
     // Note: Version Catalogs are not yet supported in the test suites plugin
     "integrationTestImplementation"(libs.bundles.testcontainers)
     "integrationTestImplementation"(libs.bundles.kotest)
-
     //
     // Documentation
     //
-    "asciidoctor"("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.4.RELEASE")
+    "asciidoctor"("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.7.RELEASE")
 }
 
 tasks.named("check") {

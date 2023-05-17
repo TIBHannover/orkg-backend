@@ -23,6 +23,7 @@ import javax.validation.constraints.Size
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.lang.Nullable
 import org.springframework.security.access.prepost.PreAuthorize
@@ -37,7 +38,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/observatories/")
+@RequestMapping("/api/observatories/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ObservatoryController(
     private val service: ObservatoryUseCases,
     private val resourceService: ResourceUseCases,
@@ -45,7 +46,7 @@ class ObservatoryController(
     private val statisticsService: StatisticsService
 ) {
 
-    @PostMapping("/")
+    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun addObservatory(
         @RequestBody @Valid observatory: CreateObservatoryRequest,
@@ -133,7 +134,7 @@ class ObservatoryController(
         return service.findObservatoriesByResearchField(id, PageRequest.of(0, Int.MAX_VALUE)).content
     }
 
-    @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
+    @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateObservatoryName(@PathVariable id: ObservatoryId, @RequestBody @Valid name: UpdateRequest): Observatory {
         service
@@ -143,7 +144,7 @@ class ObservatoryController(
         return service.changeName(id, name.value)
     }
 
-    @RequestMapping("{id}/description", method = [RequestMethod.POST, RequestMethod.PUT])
+    @RequestMapping("{id}/description", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateObservatoryDescription(
         @PathVariable id: ObservatoryId,
@@ -156,7 +157,7 @@ class ObservatoryController(
         return service.changeDescription(id, description.value)
     }
 
-    @RequestMapping("{id}/research_field", method = [RequestMethod.POST, RequestMethod.PUT])
+    @RequestMapping("{id}/research_field", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateObservatoryResearchField(
         @PathVariable id: ObservatoryId,
@@ -170,7 +171,7 @@ class ObservatoryController(
         return service.changeResearchField(id, ResearchField(researchField.id.value, researchField.label))
     }
 
-    @RequestMapping("add/{id}/organization", method = [RequestMethod.POST, RequestMethod.PUT])
+    @RequestMapping("add/{id}/organization", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun addObservatoryOrganization(
         @PathVariable id: ObservatoryId,
@@ -183,7 +184,7 @@ class ObservatoryController(
         return service.addOrganization(id, organizationRequest.organizationId)
     }
 
-    @RequestMapping("delete/{id}/organization", method = [RequestMethod.POST, RequestMethod.PUT])
+    @RequestMapping("delete/{id}/organization", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun deleteObservatoryOrganization(
         @PathVariable id: ObservatoryId,

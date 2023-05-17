@@ -4,6 +4,9 @@ import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClassIdGenerator
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClassRepository
 import eu.tib.orkg.prototype.statements.domain.model.Class
+import eu.tib.orkg.prototype.statements.domain.model.ExactSearchString
+import eu.tib.orkg.prototype.statements.domain.model.FuzzySearchString
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import java.util.*
@@ -24,6 +27,7 @@ class SpringDataNeo4jClassAdapter(
     private val neo4jRepository: Neo4jClassRepository,
     private val neo4jClassIdGenerator: Neo4jClassIdGenerator,
 ) : ClassRepository {
+
     @Caching(
         evict = [
             CacheEvict(key = "#c.id", cacheNames = [CLASS_ID_TO_CLASS_CACHE]),
@@ -31,7 +35,7 @@ class SpringDataNeo4jClassAdapter(
         ]
     )
     override fun save(c: Class) {
-        neo4jRepository.save(c.toNeo4jClass())
+        neo4jRepository.save(c.toNeo4jClass(neo4jRepository))
     }
 
     override fun findAll(pageable: Pageable): Page<Class> = neo4jRepository.findAll(pageable).map(Neo4jClass::toClass)
@@ -49,20 +53,11 @@ class SpringDataNeo4jClassAdapter(
     override fun findAllByClassId(id: Iterable<ThingId>, pageable: Pageable): Page<Class> =
         neo4jRepository.findAllByClassIdIn(id.toClassIds(), pageable).map(Neo4jClass::toClass)
 
-    override fun findAllByLabel(label: String): Iterable<Class> =
-        neo4jRepository.findAllByLabel(label).map(Neo4jClass::toClass)
-
-    override fun findAllByLabel(label: String, pageable: Pageable): Page<Class> =
-        neo4jRepository.findAllByLabel(label, pageable).map(Neo4jClass::toClass)
-
-    override fun findAllByLabelMatchesRegex(label: String): Iterable<Class> =
-        neo4jRepository.findAllByLabelMatchesRegex(label).map(Neo4jClass::toClass)
-
-    override fun findAllByLabelMatchesRegex(label: String, pageable: Pageable): Page<Class> =
-        neo4jRepository.findAllByLabelMatchesRegex(label, pageable).map(Neo4jClass::toClass)
-
-    override fun findAllByLabelContaining(part: String): Iterable<Class> =
-        neo4jRepository.findAllByLabelContaining(part).map(Neo4jClass::toClass)
+    override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Class> =
+        when (labelSearchString) {
+            is ExactSearchString -> neo4jRepository.findAllByLabel(labelSearchString.value, pageable)
+            is FuzzySearchString -> neo4jRepository.findAllByLabelContaining(labelSearchString.value, pageable)
+        }.map(Neo4jClass::toClass)
 
     override fun findByUri(uri: String): Optional<Class> = neo4jRepository.findByUri(uri).map(Neo4jClass::toClass)
 
@@ -84,13 +79,4 @@ class SpringDataNeo4jClassAdapter(
         } while (neo4jRepository.existsByClassId(id.toClassId()))
         return id
     }
-
-    private fun Class.toNeo4jClass(): Neo4jClass =
-        neo4jRepository.findByClassId(id.toClassId()).orElse(Neo4jClass()).apply {
-            classId = this@toNeo4jClass.id.toClassId()
-            label = this@toNeo4jClass.label
-            uri = this@toNeo4jClass.uri?.toString()
-            createdBy = this@toNeo4jClass.createdBy
-            createdAt = this@toNeo4jClass.createdAt
-        }
 }

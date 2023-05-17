@@ -20,7 +20,14 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import java.io.File
+import java.nio.file.FileSystems
+import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.attribute.PosixFileAttributeView
+import java.nio.file.attribute.PosixFilePermission.GROUP_READ
+import java.nio.file.attribute.PosixFilePermission.OTHERS_READ
+import java.nio.file.attribute.PosixFilePermission.OWNER_READ
+import java.nio.file.attribute.PosixFilePermission.OWNER_WRITE
 import java.time.OffsetDateTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -92,6 +99,10 @@ internal class RdfServiceIntegrationTest : DescribeSpec({
                     service.dumpToNTriple(targetFile.absolutePath)
                 }
                 targetFile.exists() shouldBe true
+                if (FileSystems.getDefault().supportedFileAttributeViews().contains("posix")) {
+                    val view = Files.getFileAttributeView(targetFile.toPath(), PosixFileAttributeView::class.java)
+                    view.readAttributes().permissions() shouldBe setOf(OWNER_WRITE, OWNER_READ, GROUP_READ, OTHERS_READ)
+                }
             }
             it("contains the expected output", verifyOutput(targetFile, service, resourceRepository))
         }

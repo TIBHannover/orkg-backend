@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.api
 
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.data.domain.Page
@@ -10,7 +11,6 @@ interface RetrieveLiteralUseCase {
     // legacy methods:
     fun findAll(pageable: Pageable): Page<LiteralRepresentation>
     fun findById(id: ThingId): Optional<LiteralRepresentation>
-    fun findAllByLabel(label: String, pageable: Pageable): Page<LiteralRepresentation>
-    fun findAllByLabelContaining(part: String, pageable: Pageable): Page<LiteralRepresentation>
+    fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<LiteralRepresentation>
     fun findDOIByContributionId(id: ThingId): Optional<LiteralRepresentation>
 }

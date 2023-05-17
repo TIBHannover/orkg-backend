@@ -13,12 +13,14 @@ import eu.tib.orkg.prototype.statements.api.UpdateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.Label
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.notFound
@@ -39,7 +41,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/resources/")
+@RequestMapping("/api/resources/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ResourceController(
     private val service: ResourceUseCases,
     private val contributorService: ContributorService
@@ -51,40 +53,33 @@ class ResourceController(
 
     @GetMapping("/")
     fun findByLabel(
-        @RequestParam("q", required = false) searchString: String?,
+        @RequestParam("q", required = false) string: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         @RequestParam("include", required = false, defaultValue = "") includeClasses: Set<ThingId>,
         @RequestParam("exclude", required = false, defaultValue = "") excludeClasses: Set<ThingId>,
         pageable: Pageable
     ): Page<ResourceRepresentation> =
         when {
-            excludeClasses.isNotEmpty() || includeClasses.isNotEmpty() -> when {
-                searchString == null -> service.findAllIncludingAndExcludingClasses(
+            excludeClasses.isNotEmpty() || includeClasses.isNotEmpty() -> when (string) {
+                null -> service.findAllIncludingAndExcludingClasses(
                     includeClasses,
                     excludeClasses,
                     pageable
                 )
-                exactMatch -> service.findAllIncludingAndExcludingClassesByLabel(
+                else -> service.findAllIncludingAndExcludingClassesByLabel(
                     includeClasses,
                     excludeClasses,
-                    searchString,
-                    pageable
-                )
-                else -> service.findAllIncludingAndExcludingClassesByLabelContaining(
-                    includeClasses,
-                    excludeClasses,
-                    searchString,
+                    SearchString.of(string, exactMatch),
                     pageable
                 )
             }
-            else -> when {
-                searchString == null -> service.findAll(pageable)
-                exactMatch -> service.findAllByLabel(pageable, searchString)
-                else -> service.findAllByLabelContaining(pageable, searchString)
+            else -> when (string) {
+                null -> service.findAll(pageable)
+                else -> service.findAllByLabel(SearchString.of(string, exactMatch), pageable)
             }
         }
 
-    @PostMapping("/")
+    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(CREATED)
     fun add(
         @RequestBody resource: CreateResourceRequest,
@@ -121,7 +116,7 @@ class ResourceController(
         return created(location).body(service.findById(id).get())
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,
         @RequestBody request: UpdateResourceRequest
@@ -141,7 +136,7 @@ class ResourceController(
         return ok(service.findById(id).get())
     }
 
-    @RequestMapping("{id}/observatory", method = [RequestMethod.POST, RequestMethod.PUT])
+    @RequestMapping("{id}/observatory", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateWithObservatory(
         @PathVariable id: ThingId,

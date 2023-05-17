@@ -10,6 +10,7 @@ import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController
  * of ORKG
  */
 @RestController
-@RequestMapping("/api/stats/")
+@RequestMapping("/api/stats/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class StatsController(private val service: RetrieveStatisticsUseCase) {
     /**
      * Fetch the top statistics of ORKG

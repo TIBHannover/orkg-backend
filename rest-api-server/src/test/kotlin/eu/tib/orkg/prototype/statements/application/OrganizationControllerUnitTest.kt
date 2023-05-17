@@ -11,6 +11,7 @@ import eu.tib.orkg.prototype.community.application.LogoNotFound
 import eu.tib.orkg.prototype.community.application.OrganizationController
 import eu.tib.orkg.prototype.community.application.OrganizationNotFound
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationType
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.createOrganization
@@ -42,10 +43,15 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
+import org.springframework.mock.web.MockMultipartFile
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.ResultActions
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
@@ -212,8 +218,9 @@ internal class OrganizationControllerUnitTest {
 
         every { organizationService.update(any(), any()) } throws OrganizationNotFound(id)
 
-        mockMvc.perform(performPatch("/api/organizations/$id", body))
-            .andExpect(status().isNotFound)
+        patchMultipart("/api/organizations/$id") {
+            json("properties", body)
+        }.andExpect(status().isNotFound)
 
         verify(exactly = 1) { organizationService.update(any(), any()) }
     }
@@ -228,8 +235,9 @@ internal class OrganizationControllerUnitTest {
 
         every { organizationService.update(any(), any()) } throws InvalidMimeType("irrelevant")
 
-        mockMvc.perform(performPatch("/api/organizations/$id", body))
-            .andExpect(status().isForbidden)
+        patchMultipart("/api/organizations/$id") {
+            json("properties", body)
+        }.andExpect(status().isForbidden)
 
         verify(exactly = 1) { organizationService.update(any(), any()) }
     }
@@ -244,8 +252,9 @@ internal class OrganizationControllerUnitTest {
 
         every { organizationService.update(any(), any()) } throws InvalidImageData()
 
-        mockMvc.perform(performPatch("/api/organizations/$id", body))
-            .andExpect(status().isForbidden)
+        patchMultipart("/api/organizations/$id") {
+            json("properties", body)
+        }.andExpect(status().isForbidden)
 
         verify(exactly = 1) { organizationService.update(any(), any()) }
     }
@@ -260,8 +269,9 @@ internal class OrganizationControllerUnitTest {
 
         every { organizationService.update(any(), any()) } returns Unit
 
-        mockMvc.perform(performPatch("/api/organizations/$id", body))
-            .andExpect(status().isNoContent)
+        patchMultipart("/api/organizations/$id") {
+            json("properties", body)
+        }.andExpect(status().isNoContent)
             .andExpect(content().string(""))
 
         verify(exactly = 1) { organizationService.update(any(), any()) }
@@ -275,8 +285,9 @@ internal class OrganizationControllerUnitTest {
             "name" to ""
         )
 
-        mockMvc.perform(performPatch("/api/organizations/$id", body))
-            .andExpect(status().isBadRequest)
+        patchMultipart("/api/organizations/$id") {
+            json("properties", body)
+        }.andExpect(status().isBadRequest)
 
         verify(exactly = 0) { organizationService.update(any(), any()) }
     }
@@ -289,15 +300,106 @@ internal class OrganizationControllerUnitTest {
             "url" to ""
         )
 
-        mockMvc.perform(performPatch("/api/organizations/$id", body))
-            .andExpect(status().isBadRequest)
+        patchMultipart("/api/organizations/$id") {
+            json("properties", body)
+        }.andExpect(status().isBadRequest)
 
         verify(exactly = 0) { organizationService.update(any(), any()) }
     }
 
-    private fun performPatch(uri: String, body: Map<String, Any>) =
-        MockMvcRequestBuilders.patch(uri)
-            .contentType(MediaType.APPLICATION_JSON)
-            .characterEncoding(Charsets.UTF_8.name())
-            .content(objectMapper.writeValueAsString(body))
+    @Test
+    @WithMockUser(username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given an organization is updated, when payload contains json and logo, then status is 204 NO CONTENT`() {
+        val id = OrganizationId(UUID.randomUUID())
+        val image = loadRawImage(testImage)
+        val body = mapOf(
+            "name" to "Organization",
+            "url" to "https://example.com",
+            "type" to OrganizationType.GENERAL
+        )
+
+        every { organizationService.update(any(), any()) } returns Unit
+
+        patchMultipart("/api/organizations/$id") {
+            json("properties", body)
+            file(MockMultipartFile("logo", "image.png", image.mimeType.toString(), image.data.bytes))
+        }.andExpect(status().isNoContent)
+
+        verify(exactly = 1) { organizationService.update(any(), any()) }
+    }
+
+    @Test
+    @WithMockUser(username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given an organization is updated, when payload contains logo only, then status is 204 NO CONTENT`() {
+        val id = OrganizationId(UUID.randomUUID())
+        val image = loadRawImage(testImage)
+
+        every { organizationService.update(any(), any()) } returns Unit
+
+        patchMultipart("/api/organizations/$id") {
+            file(MockMultipartFile("logo", "image.png", image.mimeType.toString(), image.data.bytes))
+        }.andExpect(status().isNoContent)
+
+        verify(exactly = 1) { organizationService.update(any(), any()) }
+    }
+
+    @Test
+    @WithMockUser(username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given an organization is updated, when payload contains json only, then status is 204 NO CONTENT`() {
+        val id = OrganizationId(UUID.randomUUID())
+        val body = mapOf(
+            "name" to "Organization",
+            "url" to "https://example.com",
+            "type" to OrganizationType.GENERAL
+        )
+
+        every { organizationService.update(any(), any()) } returns Unit
+
+        patchMultipart("/api/organizations/$id") {
+            json("properties", body)
+        }.andExpect(status().isNoContent)
+
+        verify(exactly = 1) { organizationService.update(any(), any()) }
+    }
+
+    @Test
+    @WithMockUser(username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given an organization is updated, when payload is empty, then status is 204 NO CONTENT`() {
+        val id = OrganizationId(UUID.randomUUID())
+
+        every { organizationService.update(any(), any()) } returns Unit
+
+        patchMultipart("/api/organizations/$id")
+            .andExpect(status().isNoContent)
+
+        verify(exactly = 1) { organizationService.update(any(), any()) }
+    }
+
+    private fun MockMultipartHttpServletRequestBuilder.json(
+        name: String,
+        data: Map<String, Any>
+    ): MockMultipartHttpServletRequestBuilder = file(
+        MockMultipartFile(
+            name,
+            null,
+            MediaType.APPLICATION_JSON_VALUE,
+            objectMapper.writeValueAsString(data).toByteArray()
+        )
+    )
+
+    private fun patchMultipart(
+        uriTemplate: String,
+        block: (MockMultipartHttpServletRequestBuilder.() -> (Unit))? = null
+    ): ResultActions {
+        val request: MockMultipartHttpServletRequestBuilder = MockMvcRequestBuilders.multipart(uriTemplate)
+
+        // TODO: This can be replaced with MockMvcRequestBuilders.multipart(HttpMethod.PATCH, uriTemplate) after the upgrade, when spring-test 5.3.x is used.
+        val field = MockHttpServletRequestBuilder::class.java.getDeclaredField("method")
+        field.isAccessible = true
+        field.set(request, HttpMethod.PATCH.name)
+
+        if (block != null)
+            block(request)
+        return mockMvc.perform(request.characterEncoding(Charsets.UTF_8.name()))
+    }
 }

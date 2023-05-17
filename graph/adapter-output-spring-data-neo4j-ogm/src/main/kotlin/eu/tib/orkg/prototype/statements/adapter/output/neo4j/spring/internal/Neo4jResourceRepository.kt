@@ -24,6 +24,8 @@ private const val id = "${'$'}id"
 private const val visibility = "${'$'}visibility"
 private const val verified = "${'$'}verified"
 
+private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_resource_on_label"
+
 /**
  * Partial query that returns the node.
  * Queries using this partial query must use `node` as the binding name.
@@ -71,10 +73,27 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
 
     fun findByResourceId(id: ResourceId?): Optional<Neo4jResource>
 
-    // TODO: Work-around for https://jira.spring.io/browse/DATAGRAPH-1200. Replace with IgnoreCase or ContainsIgnoreCase when fixed.
-    fun findAllByLabelMatchesRegex(label: String, pageable: Pageable): Page<Neo4jResource>
+    @Query("""
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+WHERE toLower(node.label) = toLower($label)
+RETURN node""",
+        countQuery = """
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+WHERE toLower(node.label) = toLower($label)
+RETURN COUNT(node)""")
+    fun findAllByLabel(label: String, pageable: Pageable): Page<Neo4jResource>
 
-    fun findAllByLabelContaining(part: String, pageable: Pageable): Page<Neo4jResource>
+    @Query("""
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+RETURN node""",
+        countQuery = """
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+RETURN COUNT(node)""")
+    fun findAllByLabelContaining(label: String, pageable: Pageable): Page<Neo4jResource>
 
     // TODO: limit the selection of sortBy values to (label & id) only because they are explicit in the query
     @Query(value = """MATCH (node:`Resource`) WHERE $`class` IN labels(node) WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at $RETURN_NODE""",
@@ -85,36 +104,92 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
         countQuery = """MATCH (node:`Resource`) WHERE $`class` IN labels(node) AND node.created_by = $createdBy WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllByClassAndCreatedBy(`class`: ClassId, createdBy: ContributorId, pageable: Pageable): Page<Neo4jResource>
 
-    // TODO: Check if the countQuery can be optimized or joined with the value query
-    @Query(value = """MATCH (node:`Resource`) WHERE $`class` IN labels(node) AND node.label = $label WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at $RETURN_NODE""",
-        countQuery = """MATCH (node:`Resource`) WHERE $`class` IN labels(node) AND node.label = $label WITH COUNT(node) as cnt RETURN cnt""")
+    @Query(value = """
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+WHERE toLower(node.label) = toLower($label) AND $`class` IN labels(node)
+RETURN node""",
+        countQuery = """
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+WHERE toLower(node.label) = toLower($label) AND $`class` IN labels(node)
+RETURN COUNT(node)""")
     fun findAllByClassAndLabel(`class`: ClassId, label: String, pageable: Pageable): Page<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WHERE $`class` IN labels(node) AND node.label =~ $label  WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at $RETURN_NODE""",
-        countQuery = """MATCH (node:`Resource`) WHERE $`class` IN labels(node) AND node.label =~ $label WITH COUNT(node) as cnt RETURN cnt""")
-    fun findAllByClassAndLabelMatchesRegex(`class`: ClassId, label: String, pageable: Pageable): Page<Neo4jResource>
+    @Query(value = """
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+WHERE $`class` IN labels(node)
+RETURN node""",
+        countQuery = """
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+WHERE $`class` IN labels(node)
+RETURN COUNT(node)""")
+    fun findAllByClassAndLabelContaining(`class`: ClassId, label: String, pageable: Pageable): Page<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WHERE $`class` IN labels(node) AND node.label =~ $label AND node.created_by = $createdBy WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at $RETURN_NODE""",
-        countQuery = """MATCH (node:`Resource`) WHERE $`class` IN labels(node) AND node.label =~ $label AND node.created_by = $createdBy WITH COUNT(node) as cnt RETURN cnt""")
-    fun findAllByClassAndLabelMatchesRegexAndCreatedBy(`class`: ClassId, label: String, createdBy: ContributorId, pageable: Pageable): Page<Neo4jResource>
+    @Query(value = """
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+WHERE toLower(node.label) = toLower($label) AND $`class` IN labels(node) AND node.created_by = $createdBy
+RETURN node""",
+        countQuery = """
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+WHERE toLower(node.label) = toLower($label) AND $`class` IN labels(node) AND node.created_by = $createdBy
+RETURN COUNT(node)""")
+    fun findAllByClassAndLabelAndCreatedBy(`class`: ClassId, label: String, createdBy: ContributorId, pageable: Pageable): Page<Neo4jResource>
+
+    @Query(value = """
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+WHERE $`class` IN labels(node) AND node.created_by = $createdBy
+RETURN node""",
+        countQuery = """
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+WHERE $`class` IN labels(node) AND node.created_by = $createdBy
+RETURN COUNT(node)""")
+    fun findAllByClassAndLabelContainingAndCreatedBy(`class`: ClassId, label: String, createdBy: ContributorId, pageable: Pageable): Page<Neo4jResource>
 
     @Query(value = """MATCH (node:`Resource`) WITH labels(node) AS labels, node WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels) WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at $RETURN_NODE""",
-    countQuery = """MATCH (node:`Resource`) WITH labels(node) AS labels, node WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels) WITH COUNT(node) as cnt RETURN cnt""")
+        countQuery = """MATCH (node:`Resource`) WITH labels(node) AS labels, node WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels) WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllIncludingAndExcludingClasses(includeClasses: Set<ClassId>, excludeClasses: Set<ClassId>, pageable: Pageable): Page<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WITH labels(node) AS labels, node WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels) AND node.label = $label WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at $RETURN_NODE""",
-    countQuery = """MATCH (node:`Resource`) WITH labels(node) AS labels, node WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels) AND node.label = $label WITH COUNT(node) as cnt RETURN cnt""")
+    @Query(value = """
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+WITH labels(node) AS labels, node
+WHERE toLower(node.label) = toLower($label) AND NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels)
+RETURN node""",
+        countQuery = """
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+WITH labels(node) AS labels, node
+WHERE toLower(node.label) = toLower($label) AND NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels)
+RETURN COUNT(node)""")
     fun findAllIncludingAndExcludingClassesByLabel(includeClasses: Set<ClassId>, excludeClasses: Set<ClassId>, label: String, pageable: Pageable): Page<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WITH labels(node) AS labels, node WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels) AND node.label =~ $label WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at $RETURN_NODE""",
-    countQuery = """MATCH (node:`Resource`) WITH labels(node) AS labels, node WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels) AND node.label =~ $label WITH COUNT(node) as cnt RETURN cnt""")
-    fun findAllIncludingAndExcludingClassesByLabelMatchesRegex(includeClasses: Set<ClassId>, excludeClasses: Set<ClassId>, label: String, pageable: Pageable): Page<Neo4jResource>
 
-    @Query("""MATCH (node:Paper) WHERE not 'PaperDeleted' IN labels(node) AND node.label = $label $RETURN_NODE LIMIT 1""")
-    fun findByLabel(label: String?): Optional<Neo4jResource>
+    @Query(value = """
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+WITH labels(node) AS labels, node
+WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels)
+RETURN node""",
+        countQuery = """
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+WITH labels(node) AS labels, node
+WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels)
+RETURN COUNT(node)""")
+    fun findAllIncludingAndExcludingClassesByLabelContaining(includeClasses: Set<ClassId>, excludeClasses: Set<ClassId>, label: String, pageable: Pageable): Page<Neo4jResource>
 
-    @Query("""MATCH (node:Paper) WHERE not 'PaperDeleted' IN labels(node) AND node.label = $label $RETURN_NODE""")
-    fun findAllByLabel(label: String): Iterable<Neo4jResource>
+    @Query("""MATCH (node:Paper:Resource) WHERE not 'PaperDeleted' IN labels(node) AND node.label = $label $RETURN_NODE LIMIT 1""")
+    fun findPaperByLabel(label: String?): Optional<Neo4jResource>
+
+    @Query("""MATCH (node:Paper:Resource) WHERE not 'PaperDeleted' IN labels(node) AND node.label = $label $RETURN_NODE""")
+    fun findAllPapersByLabel(label: String): Iterable<Neo4jResource>
 
     @Query("""MATCH (n {observatory_id: ${'$'}id}) WHERE ${'$'}class in LABELS(n) RETURN n""")
     fun findByClassAndObservatoryId(`class`: ClassId, id: ObservatoryId): Iterable<Neo4jResource>
@@ -131,8 +206,8 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     @Transactional
     fun deleteByResourceId(id: ResourceId): Iterable<Long>
 
-    @Query(value = """MATCH (n:Comparison {organization_id: $id }) RETURN n""",
-        countQuery = """MATCH (n:Comparison {organization_id: $id }) RETURN COUNT(n)""")
+    @Query(value = """MATCH (n:Comparison:Resource {organization_id: $id }) RETURN n""",
+        countQuery = """MATCH (n:Comparison:Resource {organization_id: $id }) RETURN COUNT(n)""")
     fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Neo4jResource>
 
     @Query("""$MATCH_PAPER WHERE $VERIFIED_IS $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE""",

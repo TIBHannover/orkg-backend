@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.spi
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.statements.domain.model.Literal
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
@@ -65,90 +66,57 @@ fun <R : LiteralRepository> literalRepositoryContract(
             (0 until 3).forEach {
                 literals[it] = literals[it].copy(label = "label to find")
             }
-            literals.forEach(repository::save)
 
             val expected = literals.take(expectedCount)
-            val result = repository.findAllByLabel(
-                "label to find",
-                PageRequest.of(0, 5)
-            )
 
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe expectedCount
-                result.content shouldContainAll expected
-            }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe expectedCount
-            }
-            xit("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt shouldBeLessThan b.createdAt
+            context("with exact matching") {
+                literals.forEach(repository::save)
+                val result = repository.findAllByLabel(
+                    SearchString.of("label to find", exactMatch = true),
+                    PageRequest.of(0, 5)
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                xit("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
                 }
             }
-        }
-        context("by label regex") {
-            val expectedCount = 3
-            val literals = fabricator.random<List<Literal>>().toMutableList()
-            (0 until 3).forEach {
-                literals[it] = literals[it].copy(label = "label to find ($it)")
-            }
-            literals.forEach(repository::save)
+            context("with fuzzy matching") {
+                literals.forEach(repository::save)
+                val result = repository.findAllByLabel(
+                    SearchString.of("to find", exactMatch = false),
+                    PageRequest.of(0, 5)
+                )
 
-            val expected = literals.take(expectedCount)
-            val result = repository.findAllByLabelMatchesRegex(
-                """^label to find \(\d\)$""",
-                PageRequest.of(0, 5)
-            )
-
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe expectedCount
-                result.content shouldContainAll expected
-            }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe expectedCount
-            }
-            xit("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt shouldBeLessThan b.createdAt
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
                 }
-            }
-        }
-        context("by label containing") {
-            val expectedCount = 3
-            val literals = fabricator.random<List<Literal>>().toMutableList()
-            (0 until 3).forEach {
-                literals[it] = literals[it].copy(label = "label to find")
-            }
-            literals.forEach(repository::save)
-
-            val expected = literals.take(expectedCount)
-            val result = repository.findAllByLabelContaining("to find", PageRequest.of(0, 5))
-
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe expectedCount
-                result.content shouldContainAll expected
-            }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe expectedCount
-            }
-            xit("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt shouldBeLessThan b.createdAt
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                xit("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
                 }
             }
         }

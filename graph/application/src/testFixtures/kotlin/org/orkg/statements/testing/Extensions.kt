@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.Class
+import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import kotlin.math.absoluteValue
 
 fun Fabrikate.withCustomMappings(): Fabrikate {
@@ -20,6 +21,10 @@ fun Fabrikate.withCustomMappings(): Fabrikate {
     // register fabricator for StatementId because of id constraints
     config.register {
         StatementId(random<Long>().absoluteValue)
+    }
+    // register fabricator for ResourceId because of id constraints
+    config.register {
+        ResourceId(random<Long>().absoluteValue)
     }
     // register fabricator for Things because it's just an interface
     config.register<Thing> {

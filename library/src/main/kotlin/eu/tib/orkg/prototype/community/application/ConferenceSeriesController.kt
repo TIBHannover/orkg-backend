@@ -10,6 +10,7 @@ import java.util.*
 import javax.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -20,11 +21,11 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/conference-series/")
+@RequestMapping("/api/conference-series/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ConferenceSeriesController(
     private val service: ConferenceSeriesUseCases
 ) {
-    @RequestMapping("/", method = [RequestMethod.POST, RequestMethod.PUT])
+    @RequestMapping("/", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun addConferenceSeries(
         @RequestBody @Valid conference: ConferenceSeriesRequest,
         uriComponentsBuilder: UriComponentsBuilder

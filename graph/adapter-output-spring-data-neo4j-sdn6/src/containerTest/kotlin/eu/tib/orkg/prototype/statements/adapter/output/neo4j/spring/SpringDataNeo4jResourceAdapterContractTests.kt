@@ -1,18 +1,18 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
+import eu.tib.orkg.prototype.IndexInitializer
 import eu.tib.orkg.prototype.Neo4jContainerInitializer
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.resourceRepositoryContract
-import io.kotest.core.annotation.Ignored
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import org.neo4j.cypherdsl.core.Cypher
-import org.neo4j.cypherdsl.core.Cypher.*
-import org.neo4j.cypherdsl.core.Functions
-import org.neo4j.cypherdsl.core.Functions.*
+import org.neo4j.cypherdsl.core.Cypher.anyNode
+import org.neo4j.cypherdsl.core.Cypher.literalOf
+import org.neo4j.cypherdsl.core.Cypher.match
+import org.neo4j.cypherdsl.core.Functions.labels
 import org.orkg.statements.testing.createResource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
@@ -22,10 +22,9 @@ import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.data.neo4j.core.fetchAs
 import org.springframework.test.context.ContextConfiguration
 
-@Ignored("Workaround for Docker container issue active (\"all in one\"). Remove when solved.")
 @DataNeo4jTest
 @ContextConfiguration(classes = [SpringDataNeo4jResourceAdapter::class], initializers = [Neo4jContainerInitializer::class])
-@Import(Neo4jConfiguration::class)
+@Import(value = [Neo4jConfiguration::class, IndexInitializer::class])
 @ComponentScan(basePackages = ["eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal"])
 internal class SpringDataNeo4jResourceAdapterContractTests(
     @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,

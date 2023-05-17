@@ -32,6 +32,7 @@ import org.apache.commons.io.IOUtils
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.ok
@@ -43,6 +44,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.util.UriComponentsBuilder
@@ -50,7 +52,7 @@ import org.springframework.web.util.UriComponentsBuilder
 private val encodedImagePattern = Regex("""^data:(.*);base64,([A-Za-z0-9+/]+=*)$""").toPattern()
 
 @RestController
-@RequestMapping("/api/organizations/")
+@RequestMapping("/api/organizations/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class OrganizationController(
     private val service: OrganizationUseCases,
     private val observatoryService: ObservatoryUseCases,
@@ -58,7 +60,7 @@ class OrganizationController(
     private val imageService: ImageUseCases,
     private val resourceService: ResourceUseCases
 ) : BaseController() {
-    @PostMapping("/")
+    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun addOrganization(
         @RequestBody @Valid organization: CreateOrganizationRequest,
@@ -122,24 +124,25 @@ class OrganizationController(
         return resourceService.findProblemsByOrganizationId(id, pageable)
     }
 
-    @PatchMapping("{id}")
+    @PatchMapping("{id}", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateOrganization(
         @PathVariable id: OrganizationId,
-        @RequestBody @Valid request: UpdateOrganizationRequest
+        @RequestPart("properties", required = false) @Valid request: UpdateOrganizationRequest?,
+        @RequestPart("logo", required = false) logo: MultipartFile?
     ): ResponseEntity<Any> {
         val userId = authenticatedUserId()
         service.update(ContributorId(userId), UpdateOrganizationUseCases.UpdateOrganizationRequest(
             id = id,
-            name = request.name,
-            url = request.url,
-            type = request.type,
-            logo = request.logo?.let {
-                val bytes = request.logo.bytes
+            name = request?.name,
+            url = request?.url,
+            type = request?.type,
+            logo = logo?.let {
+                val bytes = logo.bytes
                 val mimeType = try {
-                    MimeType(request.logo.contentType)
+                    MimeType(logo.contentType)
                 } catch (e: MimeTypeParseException) {
-                    throw InvalidMimeType(request.logo.contentType, e)
+                    throw InvalidMimeType(logo.contentType, e)
                 }
                 UpdateOrganizationUseCases.RawImage(
                     data = ImageData(bytes),
@@ -150,7 +153,7 @@ class OrganizationController(
         return noContent().build()
     }
 
-    @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT])
+    @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateOrganizationName(
         @PathVariable id: OrganizationId,
@@ -162,7 +165,7 @@ class OrganizationController(
         return ok().body(response)
     }
 
-    @RequestMapping("{id}/url", method = [RequestMethod.POST, RequestMethod.PUT])
+    @RequestMapping("{id}/url", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateOrganizationUrl(
         @PathVariable id: OrganizationId,
@@ -174,7 +177,7 @@ class OrganizationController(
         return ok().body(response)
     }
 
-    @RequestMapping("{id}/type", method = [RequestMethod.POST, RequestMethod.PUT])
+    @RequestMapping("{id}/type", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateOrganizationType(
         @PathVariable id: OrganizationId,
@@ -186,7 +189,7 @@ class OrganizationController(
         return ok().body(response)
     }
 
-    @RequestMapping("{id}/logo", method = [RequestMethod.POST, RequestMethod.PUT])
+    @RequestMapping("{id}/logo", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun updateOrganizationLogo(
         @PathVariable id: OrganizationId,
@@ -252,8 +255,7 @@ class OrganizationController(
         val name: String?,
         @field:Size(min = 1)
         val url: String?,
-        val type: OrganizationType?,
-        val logo: MultipartFile?
+        val type: OrganizationType?
     )
 }
 

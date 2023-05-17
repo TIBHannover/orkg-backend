@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.application
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.LiteralRepresentation
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import javax.validation.Valid
@@ -10,6 +11,7 @@ import javax.validation.constraints.NotBlank
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.ok
@@ -25,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
-@RequestMapping("/api/literals/")
+@RequestMapping("/api/literals/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class LiteralController(
     private val service: LiteralUseCases,
     private val repository: LiteralRepository, // FIXME: Work-around, needs rewrite in service
@@ -42,15 +44,12 @@ class LiteralController(
         @RequestParam("q", required = false) searchString: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         pageable: Pageable
-    ): Page<LiteralRepresentation> =
-        if (searchString == null)
-            service.findAll(pageable)
-        else if (exactMatch)
-            service.findAllByLabel(searchString, pageable)
-        else
-            service.findAllByLabelContaining(searchString, pageable)
+    ): Page<LiteralRepresentation> =  when (searchString) {
+        null -> service.findAll(pageable)
+        else -> service.findAllByLabel(SearchString.of(searchString, exactMatch), pageable)
+    }
 
-    @PostMapping("/")
+    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(CREATED)
     fun add(
         @RequestBody @Valid literal: LiteralCreateRequest,
@@ -66,7 +65,7 @@ class LiteralController(
         return created(location).body(service.findById(id).get())
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: LiteralUpdateRequest

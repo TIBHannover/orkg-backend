@@ -8,6 +8,10 @@ import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
 
 private const val ids = "${'$'}ids"
+private const val label = "${'$'}label"
+
+private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
+private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_class_on_label"
 
 interface Neo4jClassRepository : Neo4jRepository<Neo4jClass, Long> {
     fun existsByClassId(id: ClassId): Boolean
@@ -20,16 +24,32 @@ interface Neo4jClassRepository : Neo4jRepository<Neo4jClass, Long> {
 
     fun findAllByClassIdIn(ids: Iterable<ClassId>, pageable: Pageable): Page<Neo4jClass>
 
-    fun findAllByLabel(label: String): Iterable<Neo4jClass>
-
+    @Query("""
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+WHERE toLower(node.label) = toLower($label)
+RETURN node $PAGE_PARAMS""",
+        countQuery = """
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+WHERE toLower(node.label) = toLower($label)
+RETURN COUNT(node)""")
     fun findAllByLabel(label: String, pageable: Pageable): Page<Neo4jClass>
 
-    // TODO: Work-around for https://jira.spring.io/browse/DATAGRAPH-1200. Replace with IgnoreCase or ContainsIgnoreCase when fixed.
-    fun findAllByLabelMatchesRegex(label: String): Iterable<Neo4jClass>
-
-    fun findAllByLabelMatchesRegex(label: String, pageable: Pageable): Page<Neo4jClass>
-
-    fun findAllByLabelContaining(part: String): Iterable<Neo4jClass>
+    @Query("""
+WITH SIZE($label) AS size
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+RETURN node $PAGE_PARAMS""",
+        countQuery = """
+WITH SIZE($label) AS size
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+RETURN COUNT(node)""")
+    fun findAllByLabelContaining(label: String, pageable: Pageable): Page<Neo4jClass>
 
     fun findByUri(uri: String): Optional<Neo4jClass>
+
+    @Query("""MATCH (c:Class) DETACH DELETE c""")
+    override fun deleteAll()
 }

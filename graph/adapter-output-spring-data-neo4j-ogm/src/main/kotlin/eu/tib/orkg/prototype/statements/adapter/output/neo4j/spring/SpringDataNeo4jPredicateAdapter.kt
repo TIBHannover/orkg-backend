@@ -3,7 +3,10 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jPredicate
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jPredicateIdGenerator
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jPredicateRepository
+import eu.tib.orkg.prototype.statements.domain.model.ExactSearchString
+import eu.tib.orkg.prototype.statements.domain.model.FuzzySearchString
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import java.util.*
@@ -28,14 +31,11 @@ class SpringDataNeo4jPredicateAdapter(
 
     override fun exists(id: ThingId): Boolean = neo4jRepository.existsByPredicateId(id.toPredicateId())
 
-    override fun findAllByLabel(label: String, pageable: Pageable): Page<Predicate> =
-        neo4jRepository.findAllByLabel(label, pageable).map(Neo4jPredicate::toPredicate)
-
-    override fun findAllByLabelMatchesRegex(label: String, pageable: Pageable): Page<Predicate> =
-        neo4jRepository.findAllByLabelMatchesRegex(label, pageable).map(Neo4jPredicate::toPredicate)
-
-    override fun findAllByLabelContaining(part: String, pageable: Pageable): Page<Predicate> =
-        neo4jRepository.findAllByLabelContaining(part, pageable).map(Neo4jPredicate::toPredicate)
+    override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Predicate> =
+        when (labelSearchString) {
+            is ExactSearchString -> neo4jRepository.findAllByLabel(labelSearchString.value, pageable)
+            is FuzzySearchString -> neo4jRepository.findAllByLabelContaining(labelSearchString.value, pageable)
+        }.map(Neo4jPredicate::toPredicate)
 
     @Cacheable(key = "#id")
     override fun findByPredicateId(id: ThingId): Optional<Predicate> =
@@ -68,7 +68,7 @@ class SpringDataNeo4jPredicateAdapter(
         ]
     )
     override fun save(predicate: Predicate) {
-        neo4jRepository.save(predicate.toNeo4jPredicate())
+        neo4jRepository.save(predicate.toNeo4jPredicate(neo4jRepository))
     }
 
     override fun nextIdentity(): ThingId {

@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.spi
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.statements.domain.model.Class
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
@@ -133,19 +134,10 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
             }
             val expected = classes.take(expectedCount)
 
-            context("without pagination") {
-                it("returns the correct result") {
-                    classes.forEach(repository::save)
-                    val result = repository.findAllByLabel("label to find")
-                    result shouldNotBe null
-                    result.count() shouldBe expectedCount
-                    result shouldContainAll expected
-                }
-            }
-            context("with pagination") {
+            context("with exact matching") {
                 classes.forEach(repository::save)
                 val result = repository.findAllByLabel(
-                    "label to find",
+                    SearchString.of("label to find", exactMatch = true),
                     PageRequest.of(0, 5)
                 )
 
@@ -167,28 +159,10 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
                     }
                 }
             }
-        }
-        context("by label regex") {
-            val expectedCount = 3
-            val classes = fabricator.random<List<Class>>().toMutableList()
-            (0 until 3).forEach {
-                classes[it] = classes[it].copy(label = "label to find ($it)")
-            }
-            val expected = classes.take(expectedCount)
-
-            context("without pagination") {
-                it("returns the correct result") {
-                    classes.forEach(repository::save)
-                    val result = repository.findAllByLabelMatchesRegex("""^label to find \(\d\)$""")
-                    result shouldNotBe null
-                    result.count() shouldBe expectedCount
-                    result shouldContainAll expected
-                }
-            }
-            context("with pagination") {
+            context("with fuzzy matching") {
                 classes.forEach(repository::save)
-                val result = repository.findAllByLabelMatchesRegex(
-                    """^label to find \(\d\)$""",
+                val result = repository.findAllByLabel(
+                    SearchString.of("label to find", exactMatch = false),
                     PageRequest.of(0, 5)
                 )
 
@@ -209,23 +183,6 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
                         a.createdAt shouldBeLessThan b.createdAt
                     }
                 }
-            }
-        }
-        context("by label containing") {
-            val expectedCount = 3
-            val classes = fabricator.random<List<Class>>().toMutableList()
-            (0 until 3).forEach {
-                classes[it] = classes[it].copy(label = "label to find")
-            }
-            classes.forEach(repository::save)
-
-            val expected = classes.take(expectedCount)
-            val result = repository.findAllByLabelContaining("to find")
-
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.count() shouldBe expectedCount
-                result shouldContainAll expected
             }
         }
     }

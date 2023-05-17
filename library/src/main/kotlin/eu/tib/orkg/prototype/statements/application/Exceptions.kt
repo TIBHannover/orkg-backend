@@ -122,11 +122,26 @@ class StatementObjectNotFound(id: ThingId) :
 class DOIRegistrationError(doi: String) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Unable to register DOI "$doi".""")
 
+class TooFewIDsError(ids: List<ThingId>) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Too few ids: At least two ids are required. Got only "${ids.size}".""")
+
 class DOIServiceUnavailable : LoggedMessageException {
     constructor(cause: Throwable) : super(HttpStatus.SERVICE_UNAVAILABLE, """DOI service unavailable""", cause)
     constructor(responseMessage: String, errorResponse: String) :
         super(HttpStatus.SERVICE_UNAVAILABLE, """DOI service returned "$responseMessage" with error response: $errorResponse""")
 }
+
+class InvalidSubclassRelation(childId: ThingId, parentId: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """The class "$childId" cannot be a subclass of "$parentId"."""")
+
+class ParentClassAlreadyExists(childId: ThingId, parentId: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """The class "$childId" already has a parent class ($parentId)."""")
+
+class EmptyChildIds :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, "The provided list is empty.")
+
+class ParentClassAlreadyHasChildren(id: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """The class "$id" already has a child classes."""")
 
 /**
  * Exception indicating that a property was blank when it was not supposed to be.

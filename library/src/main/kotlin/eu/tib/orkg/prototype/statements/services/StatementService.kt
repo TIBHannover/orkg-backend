@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.services
 
-import eu.tib.orkg.prototype.auth.domain.UserService
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.BundleConfiguration
@@ -23,7 +22,7 @@ import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.spi.OwnershipInfo
+import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
@@ -45,7 +44,7 @@ class StatementService(
     private val statementRepository: StatementRepository,
     private val templateRepository: TemplateRepository,
     private val flags: FeatureFlagService,
-    private val userService: UserService,
+    private val literalRepository: LiteralRepository,
 ) : StatementUseCases {
 
     override fun findAll(pagination: Pageable): Iterable<StatementRepresentation> =
@@ -143,38 +142,28 @@ class StatementService(
     override fun totalNumberOfStatements(): Long = statementRepository.count()
 
     /**
-     * Delete a statement if it is owned by the given contributor, or if the contributor has curator status.
+     * Deletes a statement.
      *
      * @param statementId the ID of the statement to delete.
-     * @param contributorId the ID of the contributor requesting the deletion.
      */
-    override fun delete(statementId: StatementId, contributorId: ContributorId) {
-        val statement = statementRepository.findByStatementId(statementId).orElse(null) ?: return
-        val contributor = userService.findById(contributorId.value).orElse(null)
-        if (statement.isOwnedBy(contributorId) || contributor?.isCurator == true) {
-            statementRepository.deleteByStatementId(statementId)
-        }
+    override fun delete(statementId: StatementId) {
+        statementRepository.deleteByStatementId(statementId)
     }
 
     /**
-     * Delete a set of statements if they are all owned by the given contributor, or if the contributor has curator
-     * status.
+     * Deletes a set of statements.
      *
      * @param statementIds the set of IDs of the statements to delete.
-     * @param contributorId the ID of the contributor requesting the deletion.
      */
-    override fun delete(statementIds: Set<StatementId>, contributorId: ContributorId) {
-        val ownerInfo = statementRepository.determineOwnership(statementIds)
-        val allOwnedByContributor = ownerInfo.map(OwnershipInfo::owner).all { it == contributorId }
-        val contributor = userService.findById(contributorId.value).orElse(null)
-        if (allOwnedByContributor || contributor?.isCurator == true) {
-            statementRepository.deleteByStatementIds(statementIds)
-        }
+    override fun delete(statementIds: Set<StatementId>) {
+        statementRepository.deleteByStatementIds(statementIds)
     }
 
     override fun update(command: UpdateStatementUseCase.UpdateCommand) {
         var found = statementRepository.findByStatementId(command.statementId)
             .orElseThrow { StatementNotFound(command.statementId.value) }
+
+        val literal: Thing? = found.`object`.takeIf { it is Literal }
 
         command.subjectId?.let {
             @Suppress("UNUSED_VARIABLE") // It is unused, because commented out. This method needs a re-write.
@@ -195,6 +184,11 @@ class StatementService(
             found = found.copy(`object` = foundObject)
         }
 
+        statementRepository.deleteByStatementId(command.statementId)
+        // Restore literal that may have automatically been deleted by statement deletion
+        if (literal != null && command.objectId != null) {
+            literalRepository.save(literal as Literal)
+        }
         statementRepository.save(found)
     }
 

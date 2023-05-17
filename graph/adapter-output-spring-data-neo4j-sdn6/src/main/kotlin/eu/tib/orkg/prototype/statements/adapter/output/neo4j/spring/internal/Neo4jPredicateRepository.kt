@@ -9,18 +9,37 @@ import org.springframework.data.neo4j.repository.query.Query
 import org.springframework.transaction.annotation.Transactional
 
 private const val ids = "${'$'}ids"
+private const val label = "${'$'}label"
+
+private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
+private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_predicate_on_label"
 
 interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, Long> {
     fun existsByPredicateId(id: PredicateId): Boolean
 
     override fun findAll(pageable: Pageable): Page<Neo4jPredicate>
 
+    @Query("""
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+WHERE toLower(node.label) = toLower($label)
+RETURN node $PAGE_PARAMS""",
+        countQuery = """
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+WHERE toLower(node.label) = toLower($label)
+RETURN COUNT(node)""")
     fun findAllByLabel(label: String, pageable: Pageable): Page<Neo4jPredicate>
 
-    // TODO: Work-around for https://jira.spring.io/browse/DATAGRAPH-1200. Replace with IgnoreCase or ContainsIgnoreCase when fixed.
-    fun findAllByLabelMatchesRegex(label: String, pageable: Pageable): Page<Neo4jPredicate>
-
-    fun findAllByLabelContaining(part: String, pageable: Pageable): Page<Neo4jPredicate>
+    @Query("""
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+RETURN node $PAGE_PARAMS""",
+        countQuery = """
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+YIELD node
+RETURN COUNT(node)""")
+    fun findAllByLabelContaining(label: String, pageable: Pageable): Page<Neo4jPredicate>
 
     fun findByPredicateId(id: PredicateId?): Optional<Neo4jPredicate>
 

@@ -13,6 +13,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
@@ -42,7 +43,7 @@ class PaperService(
             .pmap { it.toPaperRepresentation() }
 
     override fun findAllByTitle(title: String, pageable: Pageable): Page<PaperRepresentation> =
-        resourceRepository.findAllByClassAndLabel(Classes.paper, title, pageable)
+        resourceRepository.findAllByClassAndLabel(Classes.paper, SearchString.of(title, exactMatch = true), pageable)
             .pmap { it.toPaperRepresentation() }
 
     override fun findAllByVisibility(visibility: VisibilityFilter, pageable: Pageable): Page<PaperRepresentation> =

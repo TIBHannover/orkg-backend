@@ -24,8 +24,8 @@ interface UpdateStatementUseCase {
 }
 
 interface DeleteStatementUseCase {
-    fun delete(statementId: StatementId, contributorId: ContributorId)
-    fun delete(statementIds: Set<StatementId>, contributorId: ContributorId)
+    fun delete(statementId: StatementId)
+    fun delete(statementIds: Set<StatementId>)
 
     // For tests only!
     fun removeAll()

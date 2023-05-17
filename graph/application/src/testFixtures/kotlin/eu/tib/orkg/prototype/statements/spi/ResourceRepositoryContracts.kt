@@ -5,6 +5,7 @@ import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import io.kotest.assertions.asClue
@@ -133,86 +134,68 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
     describe("finding several resources") {
         context("by label") {
             val expectedCount = 3
-            val resources = fabricator.random<MutableList<Resource>>()
-            repeat(3) {
-                resources[it] = resources[it].copy(label = "label to find")
-            }
-            val expected = resources.take(expectedCount)
-
-            // Disabled because the method only finds resources with class Paper
-            xit("returns the correct result") {
-                resources.forEach(repository::save)
-                val result = repository.findAllByLabel("label to find")
-                result shouldNotBe null
-                result.count() shouldBe expectedCount
-                result shouldContainAll expected
-            }
-        }
-        context("by label regex") {
-            val expectedCount = 3
             val resources = fabricator.random<List<Resource>>().toMutableList()
             (0 until 3).forEach {
-                resources[it] = resources[it].copy(label = "label to find ($it)")
+                resources[it] = resources[it].copy(label = "label to find")
             }
-            resources.forEach(repository::save)
 
             val expected = resources.take(expectedCount)
-            val result = repository.findAllByLabelMatchesRegex(
-                """^label to find \(\d\)$""",
-                PageRequest.of(0, 5)
-            )
 
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe expectedCount
-                result.content shouldContainAll expected
-            }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe expectedCount
-            }
-            xit("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt shouldBeLessThan b.createdAt
+            context("with exact matching") {
+                resources.forEach(repository::save)
+                val result = repository.findAllByLabel(
+                    SearchString.of("label to find", exactMatch = true),
+                    PageRequest.of(0, 5)
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                xit("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
                 }
             }
-        }
-        context("by label containing") {
-            val expectedCount = 3
-            val resources = fabricator.random<List<Resource>>().toMutableList()
-            (0 until 3).forEach {
-                resources[it] = resources[it].copy(label = "label to find")
-            }
-            resources.forEach(repository::save)
+            context("with fuzzy matching") {
+                resources.forEach(repository::save)
+                val result = repository.findAllByLabel(
+                    SearchString.of("label to find", exactMatch = false),
+                    PageRequest.of(0, 5)
+                )
 
-            val expected = resources.take(expectedCount)
-            val result = repository.findAllByLabelContaining("to find", PageRequest.of(0, 5))
-
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe expectedCount
-                result.content shouldContainAll expected
-            }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe expectedCount
-            }
-            xit("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt shouldBeLessThan b.createdAt
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                xit("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
                 }
             }
         }
         context("by class") {
             val expectedCount = 3
             val resources = fabricator.random<List<Resource>>().toMutableList()
-            val `class` = fabricator.random<ThingId>()
+            val `class` = ThingId("SomeClass")
             (0 until 3).forEach {
                 resources[it] = resources[it].copy(classes = resources[it].classes + `class`)
             }
@@ -242,7 +225,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
         context("by class and contributor") {
             val expectedCount = 3
             val resources = fabricator.random<List<Resource>>().toMutableList()
-            val `class` = fabricator.random<ThingId>()
+            val `class` = ThingId("SomeClass")
             val contributor = fabricator.random<ContributorId>()
             (0 until 6).forEach {
                 resources[it] = resources[it].copy(classes = resources[it].classes + `class`)
@@ -288,30 +271,59 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             (3 until 9).forEach {
                 resources[it] = resources[it].copy(label = label)
             }
-            resources.forEach(repository::save)
 
             val expected = resources.drop(3).take(3)
-            val result = repository.findAllByClassAndLabel(
-                `class`,
-                label,
-                PageRequest.of(0, 5)
-            )
 
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe expectedCount
-                result.content shouldContainAll expected
+            context("with exact matching") {
+                resources.forEach(repository::save)
+                val result = repository.findAllByClassAndLabel(
+                    `class` = `class`,
+                    labelSearchString = SearchString.of(label, exactMatch = true),
+                    pageable = PageRequest.of(0, 5)
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                xit("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
             }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe expectedCount
-            }
-            xit("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt shouldBeLessThan b.createdAt
+            context("with fuzzy matching") {
+                resources.forEach(repository::save)
+                val result = repository.findAllByClassAndLabel(
+                    `class` = `class`,
+                    labelSearchString = SearchString.of(label, exactMatch = false),
+                    pageable = PageRequest.of(0, 5)
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                xit("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
                 }
             }
         }
@@ -330,110 +342,61 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             (4 until 10).forEach {
                 resources[it] = resources[it].copy(createdBy = contributor)
             }
-            resources.forEach(repository::save)
 
             val expected = resources.drop(4).take(2)
-            val result = repository.findAllByClassAndLabelAndCreatedBy(
-                `class`,
-                label,
-                contributor,
-                PageRequest.of(0, 5)
-            )
 
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe expectedCount
-                result.content shouldContainAll expected
-            }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe expectedCount
-            }
-            xit("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt shouldBeLessThan b.createdAt
+            context("with exact matching") {
+                resources.forEach(repository::save)
+                val result = repository.findAllByClassAndLabelAndCreatedBy(
+                    `class` = `class`,
+                    labelSearchString = SearchString.of(label, exactMatch = true),
+                    createdBy = contributor,
+                    pageable = PageRequest.of(0, 5)
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                xit("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
                 }
             }
-        }
-        context("by class and label regex") {
-            val expectedCount = 3
-            val resources = fabricator.random<List<Resource>>().toMutableList()
-            val `class` = fabricator.random<ThingId>()
-            (0 until 6).forEach {
-                resources[it] = resources[it].copy(classes = resources[it].classes + `class`)
-            }
-            (3 until 9).forEach {
-                resources[it] = resources[it].copy(label = "label to find ($it)")
-            }
-            resources.forEach(repository::save)
+            context("with fuzzy matching") {
+                resources.forEach(repository::save)
+                val result = repository.findAllByClassAndLabelAndCreatedBy(
+                    `class` = `class`,
+                    labelSearchString = SearchString.of(label, exactMatch = false),
+                    createdBy = contributor,
+                    pageable = PageRequest.of(0, 5)
+                )
 
-            val expected = resources.drop(3).take(3)
-            val result = repository.findAllByClassAndLabelMatchesRegex(
-                `class`,
-                """^label to find \(\d\)$""",
-                PageRequest.of(0, 5)
-            )
-
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe expectedCount
-                result.content shouldContainAll expected
-            }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe expectedCount
-            }
-            xit("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt shouldBeLessThan b.createdAt
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expectedCount
+                    result.content shouldContainAll expected
                 }
-            }
-        }
-        context("by class, label regex and contributor") {
-            val expectedCount = 2
-            val resources = fabricator.random<List<Resource>>().toMutableList()
-            val `class` = fabricator.random<ThingId>()
-            val contributor = fabricator.random<ContributorId>()
-            (0 until 6).forEach {
-                resources[it] = resources[it].copy(classes = resources[it].classes + `class`)
-            }
-            (2 until 8).forEach {
-                resources[it] = resources[it].copy(label = "label to find ($it)")
-            }
-            (4 until 10).forEach {
-                resources[it] = resources[it].copy(createdBy = contributor)
-            }
-            resources.forEach(repository::save)
-
-            val expected = resources.drop(4).take(2)
-            val result = repository.findAllByClassAndLabelMatchesRegexAndCreatedBy(
-                `class`,
-                """^label to find \(\d\)$""",
-                contributor,
-                PageRequest.of(0, 5)
-            )
-
-            it("returns the correct result") {
-                result shouldNotBe null
-                result.content shouldNotBe null
-                result.content.size shouldBe expectedCount
-                result.content shouldContainAll expected
-            }
-            it("pages the result correctly") {
-                result.size shouldBe 5
-                result.number shouldBe 0
-                result.totalPages shouldBe 1
-                result.totalElements shouldBe expectedCount
-            }
-            xit("sorts the results by creation date by default") {
-                result.content.zipWithNext { a, b ->
-                    a.createdAt shouldBeLessThan b.createdAt
+                it("pages the result correctly") {
+                    result.size shouldBe 5
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expectedCount
+                }
+                xit("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
                 }
             }
         }
@@ -480,9 +443,6 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             }
         }
         context("by including and excluding classes and label") {
-            // TODO implement
-        }
-        context("by including and excluding classes and label regex") {
             // TODO implement
         }
         context("by visibility") {
@@ -765,6 +725,25 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
     }
 
     describe("finding several papers") {
+        context("by label") {
+            val expectedCount = 3
+            val resources = fabricator.random<MutableList<Resource>>()
+            repeat(5) {
+                resources[it] = resources[it].copy(label = "label to find")
+            }
+            repeat(3) {
+                resources[it] = resources[it].copy(classes = resources[it].classes + ThingId("Paper"))
+            }
+            val expected = resources.take(expectedCount)
+
+            it("returns the correct result") {
+                resources.forEach(repository::save)
+                val result = repository.findAllPapersByLabel("label to find")
+                result shouldNotBe null
+                result.count() shouldBe expectedCount
+                result shouldContainAll expected
+            }
+        }
         context("by verified flag") {
             context("is true") {
                 val expectedCount = 3

@@ -9,6 +9,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.lang.Nullable
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController
  * research field ID
  */
 @RestController
-@RequestMapping("/api/research-fields/")
+@RequestMapping("/api/research-fields/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ResearchFieldController(
     private val service: RetrieveResearchFieldUseCase,
     private val resourceService: ResourceUseCases

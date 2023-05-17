@@ -15,7 +15,7 @@ A `GET` request get all research fields relating to a problem
 
 A `GET` request to get a paginated list of ORKG users that contributed to contributions where a problem is being addressed.
 
-operation::problem-controller-test-get-users-per-problem[snippets='request-fields,curl-request,http-response']
+operation::problem-controller-test-get-users-per-problem[snippets='curl-request,http-response,response-fields']
 
 [[problems-authors]]
 === Authors per problem

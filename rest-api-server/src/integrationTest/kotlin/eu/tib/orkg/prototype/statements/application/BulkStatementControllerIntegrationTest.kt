@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @DisplayName("Bulk Statement Controller")
 @Transactional
-class BulkStatementControllerTest : RestDocumentationBaseTest() {
+class BulkStatementControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var service: StatementUseCases

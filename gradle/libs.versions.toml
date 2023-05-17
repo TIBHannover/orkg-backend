@@ -5,7 +5,7 @@ kotest = "5.4.0"
 kotlinx-coroutines = "1.6.4"
 testcontainers = "1.17.3"
 spotless = "6.2.1"
-spring-boot = "2.3.4.RELEASE"
+spring-boot = "2.3.5.RELEASE"
 spring-dependency-management = "1.0.11.RELEASE"
 
 [libraries]

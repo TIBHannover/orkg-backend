@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.31.0] - 2023-05-16
+### Fixed
+- Fixed an issue with looking up venues during paper creation.
+  (See: [!528](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/528))
+- Does not cause internal errors anymore when invalid `Accept` header field is sent.
+  (See: [!521](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/521))
+- Fixed an issue when creating RDF dumps with the default configuration.
+  (See: [!534](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/534))
+- RDF dumps can be created on Windows again.
+  (Closes: [#480](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/480))
+### Added
+- Support for fulltext search on labels of resources, classes, predicates and literals.
+  (Closes: [#211](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/211),
+           [#212](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/212);
+   See: [!504](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/504),
+        [!505](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/505),
+        [!506](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/506),
+        [!507](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/507))
+- Class hierarchies are now supported.
+  (Closes: [#421](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/421))
+
+## [0.30.4] - 2023-05-15
+### Fixed
+- The default file permissions on the RDF dump were changed to not cause issues in deployment. (See: [!526](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/526))
+- When adding a paper, publication year and month are now set correctly.
+  (Closes: [#476](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/476))
+- Updating a single statement works now.
+  (Closes: [#477](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/477))
+- All issues when updating organization are fixed now.
+  (See: [!527](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/527))
+
+## [0.30.3] - 2023-05-05
+### Changed
+- Reverted checks on statement deletion, because it breaks the frontend.
+  (See: [!523](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/523))
+
 ## [0.30.2] - 2023-05-04
 ### Changed
 - The "featured" and "unlisted" flags were redesigned to make the queries more consistent and less error-prone.
@@ -317,7 +353,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.30.2...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.31.0...master
+[0.31.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.31.0
+[0.30.4]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.30.4
+[0.30.3]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.30.3
 [0.30.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.30.2
 [0.30.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.30.1
 [0.30.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.30.0

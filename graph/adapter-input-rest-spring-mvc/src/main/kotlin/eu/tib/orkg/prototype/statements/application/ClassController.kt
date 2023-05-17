@@ -12,13 +12,15 @@ import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateClassUseCase
 import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
-import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Label
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
 import javax.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.web.bind.annotation.GetMapping
@@ -36,7 +38,7 @@ import eu.tib.orkg.prototype.statements.api.ClassNotFound as ClassNotFoundProble
 import eu.tib.orkg.prototype.statements.api.InvalidLabel as InvalidLabelProblem
 
 @RestController
-@RequestMapping("/api/classes/")
+@RequestMapping("/api/classes/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ClassController(private val service: ClassUseCases, private val resourceService: ResourceUseCases) :
     BaseController() {
 
@@ -53,42 +55,40 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
     @GetMapping("/{id}/resources/")
     fun findResourcesWithClass(
         @PathVariable id: ThingId,
-        @RequestParam("q", required = false) searchString: String?,
+        @RequestParam("q", required = false) string: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         @RequestParam("creator", required = false) creator: ContributorId?,
         pageable: Pageable
     ): Page<ResourceRepresentation> {
         return if (creator != null) {
-            when {
-                searchString == null -> resourceService.findAllByClassAndCreatedBy(pageable, id, creator)
-                exactMatch -> resourceService.findAllByClassAndLabelAndCreatedBy(pageable, id, searchString, creator)
-                else -> resourceService.findAllByClassAndLabelContainingAndCreatedBy(
-                    pageable, id, searchString, creator
+            when (string) {
+                null -> resourceService.findAllByClassAndCreatedBy(pageable, id, creator)
+                else -> resourceService.findAllByClassAndLabelAndCreatedBy(
+                    id = id,
+                    label = SearchString.of(string, exactMatch),
+                    createdBy = creator,
+                    pageable = pageable
                 )
             }
         } else {
-            when {
-                searchString == null -> resourceService.findAllByClass(pageable, id)
-                exactMatch -> resourceService.findAllByClassAndLabel(pageable, id, searchString)
-                else -> resourceService.findAllByClassAndLabelContaining(pageable, id, searchString)
+            when (string) {
+                null -> resourceService.findAllByClass(pageable, id)
+                else -> resourceService.findAllByClassAndLabel(id, SearchString.of(string, exactMatch), pageable)
             }
         }
     }
 
     @GetMapping("/")
     fun findByLabel(
-        @RequestParam("q", required = false) searchString: String?,
+        @RequestParam("q", required = false) string: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         pageable: Pageable
-    ): Page<ClassRepresentation> {
-        return when {
-            searchString == null -> service.findAll(pageable)
-            exactMatch -> service.findAllByLabel(pageable, searchString)
-            else -> service.findAllByLabelContaining(pageable, searchString)
-        }
+    ): Page<ClassRepresentation> = when (string) {
+        null -> service.findAll(pageable)
+        else -> service.findAllByLabel(SearchString.of(string, exactMatch), pageable)
     }
 
-    @PostMapping("/")
+    @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(CREATED)
     fun add(@RequestBody `class`: CreateClassRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
         Label.ofOrNull(`class`.label) ?: throw InvalidLabel()
@@ -113,7 +113,7 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
         return created(location).body(service.findById(id).get())
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun replace(
         @PathVariable id: ThingId,
         @RequestBody request: ReplaceClassRequest
@@ -132,7 +132,7 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
         return ResponseEntity.ok(service.findById(id).get())
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,
         @Valid @RequestBody requestBody: UpdateRequestBody

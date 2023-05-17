@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.spi
 
 import eu.tib.orkg.prototype.statements.domain.model.Class
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.data.domain.Page
@@ -11,11 +12,7 @@ interface ClassRepository : EntityRepository<Class, ThingId> {
     fun save(c: Class)
     fun findByClassId(id: ThingId): Optional<Class>
     fun findAllByClassId(id: Iterable<ThingId>, pageable: Pageable): Page<Class>
-    fun findAllByLabel(label: String): Iterable<Class>
-    fun findAllByLabel(label: String, pageable: Pageable): Page<Class>
-    fun findAllByLabelMatchesRegex(label: String): Iterable<Class>
-    fun findAllByLabelMatchesRegex(label: String, pageable: Pageable): Page<Class>
-    fun findAllByLabelContaining(part: String): Iterable<Class>
+    fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Class>
     fun findByUri(uri: String): Optional<Class>
     fun deleteAll()
     fun nextIdentity(): ThingId

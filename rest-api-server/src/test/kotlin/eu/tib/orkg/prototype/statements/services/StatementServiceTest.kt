@@ -8,6 +8,7 @@ import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.createStatement
 import eu.tib.orkg.prototype.createUser
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import eu.tib.orkg.prototype.statements.spi.OwnershipInfo
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import io.kotest.core.spec.IsolationMode
@@ -27,32 +28,26 @@ class StatementServiceTest : DescribeSpec({
 
     val statementRepository: StatementRepository = mockk()
     val userService: UserService = mockk()
+    val literalRepository: LiteralRepository = mockk()
 
+    @Suppress("UNUSED_VARIABLE")
     val service = StatementService(
         thingRepository = mockk(),
         predicateService = mockk(),
         statementRepository,
         templateRepository = mockk(),
         flags = mockk(),
-        userService,
+        literalRepository,
     )
 
     afterEach {
         // Confirm all calls. This is a protection against false-positive test results.
-        confirmVerified(statementRepository, userService)
+        confirmVerified(statementRepository, userService, literalRepository)
     }
 
     context("deleting a single statement") {
-        it("does nothing if statement does not exist") {
-            every { statementRepository.findByStatementId(any()) } returns Optional.empty()
-
-            withContext(Dispatchers.IO) {
-                service.delete(StatementId("S_irrelevant"), randomContributorId())
-            }
-
-            verify(exactly = 1) { statementRepository.findByStatementId(StatementId("S_irrelevant")) }
-        }
-        context("statement is owned by contributor") {
+        // Disabled because functionality has temporarily been removed
+        xcontext("statement is owned by contributor") {
             val subject = createResource()
             val predicate = createPredicate()
             val `object` = createResource()
@@ -68,7 +63,7 @@ class StatementServiceTest : DescribeSpec({
                 every { statementRepository.deleteByStatementId(any()) } just Runs
 
                 withContext(Dispatchers.IO) {
-                    service.delete(statementId, contributorId)
+//                    service.delete(statementId, contributorId)
                 }
 
                 verify(exactly = 1) {
@@ -78,7 +73,8 @@ class StatementServiceTest : DescribeSpec({
                 }
             }
         }
-        context("statement is not owned by contributor") {
+        // Disabled because functionality has temporarily been removed
+        xcontext("statement is not owned by contributor") {
             val subject = createResource()
             val predicate = createPredicate()
             val `object` = createResource()
@@ -98,7 +94,7 @@ class StatementServiceTest : DescribeSpec({
                 every { statementRepository.deleteByStatementId(any()) } just Runs
 
                 withContext(Dispatchers.IO) {
-                    service.delete(statementId, contributorId)
+//                    service.delete(statementId, contributorId)
                 }
 
                 verify(exactly = 1) { statementRepository.findByStatementId(statementId) }
@@ -108,7 +104,8 @@ class StatementServiceTest : DescribeSpec({
         }
     }
     context("deleting multiple statements") {
-        context("all statements are owned by contributor") {
+        // Disabled because functionality has temporarily been removed
+        xcontext("all statements are owned by contributor") {
             val statementIds = (1..4).map { StatementId("S$it") }.toSet()
             val contributorId = randomContributorId()
             val user = createUser(contributorId.value).toUser()
@@ -120,7 +117,7 @@ class StatementServiceTest : DescribeSpec({
                 every { statementRepository.deleteByStatementIds(any()) } just Runs
 
                 withContext(Dispatchers.IO) {
-                    service.delete(statementIds, contributorId)
+//                    service.delete(statementIds, contributorId)
                 }
 
                 verify(exactly = 1) {
@@ -130,7 +127,8 @@ class StatementServiceTest : DescribeSpec({
                 }
             }
         }
-        context("at least one statement is not owned by the contributor") {
+        // Disabled because functionality has temporarily been removed
+        xcontext("at least one statement is not owned by the contributor") {
             val ownedStatementIds = (1..4).map { StatementId("S$it") }.toSet()
             val contributorId = randomContributorId()
             val fakeResult = ownedStatementIds.map { OwnershipInfo(it, contributorId) }
@@ -144,7 +142,7 @@ class StatementServiceTest : DescribeSpec({
                 every { userService.findById(contributorId.value) } returns Optional.of(user)
 
                 withContext(Dispatchers.IO) {
-                    service.delete(allStatementIds, contributorId)
+//                    service.delete(allStatementIds, contributorId)
                 }
 
                 verify(exactly = 1) { statementRepository.determineOwnership(allStatementIds) }
@@ -158,7 +156,7 @@ class StatementServiceTest : DescribeSpec({
                 every { statementRepository.deleteByStatementIds(allStatementIds) } just Runs
 
                 withContext(Dispatchers.IO) {
-                    service.delete(allStatementIds, contributorId)
+//                    service.delete(allStatementIds, contributorId)
                 }
 
                 verify(exactly = 1) { statementRepository.determineOwnership(allStatementIds) }

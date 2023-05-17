@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
@@ -46,62 +47,35 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
     override fun findByResourceId(id: ThingId) =
         Optional.ofNullable(entities[id])
 
-    // TODO: rename to findAllPapersByLabel or replace with a generic method with a classes parameter
-    override fun findAllByLabel(label: String) =
+    override fun findAllPapersByLabel(label: String) =
         entities.values.filter { it.label == label && paperClass in it.classes && paperDeletedClass !in it.classes}
 
-    override fun findAllByLabelMatchesRegex(label: String, pageable: Pageable) =
-        findAllFilteredAndPaged(pageable) { it.label.matches(Regex(label)) }
-
-    override fun findAllByLabelContaining(part: String, pageable: Pageable) =
-        findAllFilteredAndPaged(pageable) { it.label.contains(part) }
+    override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable) =
+        findAllFilteredAndPaged(pageable) { it.label.matches(labelSearchString) }
 
     override fun findAllByClass(`class`: ThingId, pageable: Pageable): Page<Resource> =
-        findAllFilteredAndPaged(pageable) { it.classes.contains(`class`) }
+        findAllFilteredAndPaged(pageable) { `class` in it.classes }
 
     override fun findAllByClassAndCreatedBy(
         `class`: ThingId,
         createdBy: ContributorId,
         pageable: Pageable
     ): Page<Resource> = findAllFilteredAndPaged(pageable) {
-        it.createdBy == createdBy && it.classes.contains(`class`)
+        it.createdBy == createdBy && `class` in it.classes
     }
 
-    override fun findAllByClassAndLabel(`class`: ThingId, label: String, pageable: Pageable): Page<Resource> =
+    override fun findAllByClassAndLabel(`class`: ThingId, labelSearchString: SearchString, pageable: Pageable): Page<Resource> =
         findAllFilteredAndPaged(pageable) {
-            it.label == label && it.classes.contains(`class`)
+            it.label.matches(labelSearchString) && `class` in it.classes
         }
 
     override fun findAllByClassAndLabelAndCreatedBy(
         `class`: ThingId,
-        label: String,
+        labelSearchString: SearchString,
         createdBy: ContributorId,
         pageable: Pageable
     ): Page<Resource> = findAllFilteredAndPaged(pageable) {
-        it.createdBy == createdBy && it.label == label && it.classes.contains(`class`)
-    }
-
-    override fun findAllByClassAndLabelMatchesRegex(
-        `class`: ThingId,
-        label: String,
-        pageable: Pageable
-    ): Page<Resource> {
-        val regex = Regex(label)
-        return findAllFilteredAndPaged(pageable) {
-            it.label.matches(regex) && it.classes.contains(`class`)
-        }
-    }
-
-    override fun findAllByClassAndLabelMatchesRegexAndCreatedBy(
-        `class`: ThingId,
-        label: String,
-        createdBy: ContributorId,
-        pageable: Pageable
-    ): Page<Resource> {
-        val regex = Regex(label)
-        return findAllFilteredAndPaged(pageable) {
-            it.label.matches(regex) && it.classes.contains(`class`) && it.createdBy == createdBy
-        }
+        it.createdBy == createdBy && it.label.matches(labelSearchString) && `class` in it.classes
     }
 
     override fun findAllIncludingAndExcludingClasses(
@@ -110,38 +84,23 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
         it.classes.containsAll(includeClasses) && it.classes.none { id ->
-            excludeClasses.contains(id)
+            id in excludeClasses
         }
     }
 
     override fun findAllIncludingAndExcludingClassesByLabel(
         includeClasses: Set<ThingId>,
         excludeClasses: Set<ThingId>,
-        label: String,
+        labelSearchString: SearchString,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
-        it.label == label && it.classes.containsAll(includeClasses) && it.classes.none { id ->
-            excludeClasses.contains(id)
+        it.label.matches(labelSearchString) && it.classes.containsAll(includeClasses) && it.classes.none { id ->
+            id in excludeClasses
         }
     }
 
-    override fun findAllIncludingAndExcludingClassesByLabelMatchesRegex(
-        includeClasses: Set<ThingId>,
-        excludeClasses: Set<ThingId>,
-        label: String,
-        pageable: Pageable
-    ): Page<Resource> {
-        val regex = Regex(label)
-        return findAllFilteredAndPaged(pageable) {
-            it.label.matches(regex) && it.classes.containsAll(includeClasses) && it.classes.none { id ->
-                excludeClasses.contains(id)
-            }
-        }
-    }
-
-    // TODO: rename to findPaperByLabel or replace with a generic method with a classes parameter
-    override fun findByLabel(label: String) =
-        Optional.ofNullable(entities.values.firstOrNull { it.label == label })
+    override fun findPaperByLabel(label: String) =
+        Optional.ofNullable(entities.values.firstOrNull { it.label == label && paperClass in it.classes })
 
     // TODO: rename to findAllByClassAndObservatoryId
     override fun findByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId): Iterable<Resource> =

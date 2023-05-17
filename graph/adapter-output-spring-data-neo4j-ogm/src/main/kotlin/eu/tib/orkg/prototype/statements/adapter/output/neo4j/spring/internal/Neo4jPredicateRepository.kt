@@ -25,7 +25,7 @@ interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, Long> {
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
 YIELD node
 WHERE toLower(node.label) = toLower($label)
-RETURN node""",
+RETURN node, [[(node)-[r:`RELATED`]->(t:`Thing`) | [r, t]]]""",
         countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
 YIELD node
@@ -36,7 +36,7 @@ RETURN COUNT(node)""")
     @Query("""
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
 YIELD node
-RETURN node""",
+RETURN node, [[(node)-[r:`RELATED`]->(t:`Thing`) | [r, t]]]""",
         countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
 YIELD node

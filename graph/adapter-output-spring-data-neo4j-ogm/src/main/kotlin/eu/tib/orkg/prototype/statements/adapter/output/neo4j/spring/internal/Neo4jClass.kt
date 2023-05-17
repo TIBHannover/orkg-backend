@@ -23,7 +23,7 @@ data class Neo4jClass(
     var id: Long? = null,
     @Relationship(type = "RELATED", direction = Relationship.OUTGOING)
     @JsonIgnore
-    var subjectOf: MutableSet<Neo4jClass> = mutableSetOf()
+    var subjectOf: MutableSet<Neo4jStatement> = mutableSetOf()
 ) : Neo4jThing {
     @Property("class_id")
     @Required
@@ -61,7 +61,7 @@ data class Neo4jClass(
             createdBy = createdBy,
         )
         if (subjectOf.isNotEmpty())
-            clazz.description = subjectOf.firstOrNull { it.classId?.value == "description" }?.label
+            clazz.description = subjectOf.firstOrNull { it.predicateId?.value == "description" }?.`object`?.label
         return clazz
     }
 

@@ -25,6 +25,7 @@ class Neo4jPredicate : Neo4jThing() {
         label = label!!,
         createdAt = createdAt!!,
         createdBy = createdBy
+        // TODO: predicate description
     )
 
     override val thingId: String?

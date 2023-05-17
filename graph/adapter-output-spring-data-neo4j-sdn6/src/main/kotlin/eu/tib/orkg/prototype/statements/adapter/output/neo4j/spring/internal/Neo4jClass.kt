@@ -29,6 +29,7 @@ class Neo4jClass : Neo4jThing() {
         uri = if (uri != null) URI.create(uri!!) else null,
         createdAt = createdAt!!,
         createdBy = createdBy,
+        // TODO: class description
     )
 
     override val thingId: String?

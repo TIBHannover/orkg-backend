@@ -44,7 +44,7 @@ class LiteralService(
         repository.findAll(pageable).map(Literal::toLiteralRepresentation)
 
     override fun findById(id: ThingId): Optional<LiteralRepresentation> =
-        repository.findByLiteralId(id).map(Literal::toLiteralRepresentation)
+        repository.findById(id).map(Literal::toLiteralRepresentation)
 
     override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<LiteralRepresentation> =
         repository.findAllByLabel(labelSearchString, pageable).map(Literal::toLiteralRepresentation)
@@ -54,7 +54,7 @@ class LiteralService(
 
     override fun update(literal: Literal): LiteralRepresentation {
         // already checked by service
-        var found = repository.findByLiteralId(literal.id).get()
+        var found = repository.findById(literal.id).get()
 
         // update all the properties
         found = found.copy(label = literal.label)

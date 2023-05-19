@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.Query
@@ -12,21 +12,21 @@ private const val id = "${'$'}id"
 interface Neo4jPaperRepository : Neo4jRepository<Neo4jResource, Long> {
 
     @Query("""
-MATCH (r:Resource {resource_id: $id})
+MATCH (r:Resource {id: $id})
 CALL apoc.path.expandConfig(r, {relationshipFilter: "<RELATED", labelFilter: "/Paper", uniqueness: "RELATIONSHIP_GLOBAL"})
 YIELD path
 WITH last(nodes(path)) AS paper, apoc.coll.reverse(apoc.coll.flatten([r in relationships(path) | [r, startNode(r)]])) AS path
 UNWIND path AS thing
 MATCH (t:Thing)
-WHERE t.resource_id = thing.resource_id OR t.predicate_id = thing.predicate_id
+WHERE t.id = thing.id
 RETURN paper, COLLECT(t) AS path""",
         countQuery = """
-MATCH (r:Resource {resource_id: $id})
+MATCH (r:Resource {id: $id})
 CALL apoc.path.expandConfig(r, {relationshipFilter: "<RELATED", labelFilter: "/Paper", uniqueness: "RELATIONSHIP_GLOBAL"})
 YIELD path
 WITH last(nodes(path)) AS paper
 RETURN COUNT(DISTINCT paper) AS cnt""")
-    fun findAllPapersRelatedToResource(id: ResourceId, pageable: Pageable): Page<Neo4jPaperWithPath>
+    fun findAllPapersRelatedToResource(id: ThingId, pageable: Pageable): Page<Neo4jPaperWithPath>
 }
 
 @QueryResult

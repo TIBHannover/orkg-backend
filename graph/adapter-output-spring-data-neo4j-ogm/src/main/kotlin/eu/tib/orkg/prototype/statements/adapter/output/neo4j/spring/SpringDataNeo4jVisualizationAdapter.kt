@@ -15,7 +15,7 @@ class SpringDataNeo4jVisualizationAdapter(
     private val neo4jRepository: Neo4jVisualizationRepository
 ) : VisualizationRepository {
     override fun findVisualizationByResourceId(id: ThingId): Optional<Resource> =
-        neo4jRepository.findVisualizationByResourceId(id.toResourceId()).map { it.toResource() }
+        neo4jRepository.findVisualizationByResourceId(id).map { it.toResource() }
 
     override fun findAllListedVisualizations(pageable: Pageable): Page<Resource> =
         neo4jRepository.findAllListedVisualizations(pageable).map { it.toResource() }

@@ -17,13 +17,6 @@ import eu.tib.orkg.prototype.statements.spi.OwnershipInfo
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -64,13 +57,13 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         Optional.ofNullable(entities[id])
 
     override fun findAllBySubject(subjectId: ThingId, pageable: Pageable) =
-        findAllFilteredAndPaged(pageable) { it.subject.thingId == subjectId }
+        findAllFilteredAndPaged(pageable) { it.subject.id == subjectId }
 
     override fun findAllByPredicateId(predicateId: ThingId, pageable: Pageable) =
         findAllFilteredAndPaged(pageable) { it.predicate.id == predicateId }
 
     override fun findAllByObject(objectId: ThingId, pageable: Pageable) =
-        findAllFilteredAndPaged(pageable) { it.`object`.thingId == objectId }
+        findAllFilteredAndPaged(pageable) { it.`object`.id == objectId }
 
     override fun countByIdRecursive(id: ThingId): Long =
         findSubgraph(ThingId(id.value)) { statement, _ ->
@@ -84,7 +77,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         predicateId: ThingId,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
-        it.predicate.id == predicateId && it.`object`.thingId == objectId
+        it.predicate.id == predicateId && it.`object`.id == objectId
     }
 
     override fun findAllBySubjectAndPredicate(
@@ -92,7 +85,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         predicateId: ThingId,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
-        it.predicate.id == predicateId && it.subject.thingId == subjectId
+        it.predicate.id == predicateId && it.subject.id == subjectId
     }
 
     // FIXME: rename to findAllByPredicateIdAndLiteralObjectLabel
@@ -111,27 +104,27 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         subjectClass: ThingId,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
-        it.predicate.id == predicateId && it.`object` is Literal && it.`object`.label == literal && it.subject.thingId == subjectClass
+        it.predicate.id == predicateId && it.`object` is Literal && it.`object`.label == literal && it.subject.id == subjectClass
     }
 
     override fun findAllBySubjects(
         subjectIds: List<ThingId>,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
-        it.subject.thingId in subjectIds
+        it.subject.id in subjectIds
     }
 
     override fun findAllByObjects(
         objectIds: List<ThingId>,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
-        it.`object`.thingId in objectIds
+        it.`object`.id in objectIds
     }
 
     override fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration): Iterable<GeneralStatement> =
-        entities.values.find { it.subject.thingId == id }?.let {
+        entities.values.find { it.subject.id == id }?.let {
             val exclude = mutableSetOf<GeneralStatement>()
-            findSubgraph(it.subject.thingId) { statement, level ->
+            findSubgraph(it.subject.id) { statement, level ->
                 if (configuration.minLevel != null && level <= configuration.minLevel!!) {
                     // Filter statements out later because we do not want to stop the graph traversal
                     exclude.add(statement)
@@ -182,7 +175,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
     }
 
     override fun countStatementsAboutResource(id: ThingId) =
-        entities.filter { id.value == it.value.`object`.thingId.value }.count().toLong()
+        entities.filter { id.value == it.value.`object`.id.value }.count().toLong()
 
     override fun countStatementsAboutResources(resourceIds: Set<ThingId>) =
         resourceIds.associateWith(::countStatementsAboutResource).filter { it.value > 0 }
@@ -194,12 +187,12 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         Optional.ofNullable(entities.values.find {
             it.subject is Resource && paperClass in (it.subject as Resource).classes
                 && it.predicate.id == hasContribution
-                && it.`object`.thingId.value == id.value
+                && it.`object`.id.value == id.value
         }?.let {
             it.subject as Resource
         }?.let { paper ->
             entities.values.find {
-                it.subject.thingId == paper.thingId
+                it.subject.id == paper.id
                     && it.predicate.id == hasDOI
             }?.let {
                 it.`object` as Literal
@@ -238,7 +231,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
                 && it.`object` is Resource && contributionClass in (it.`object` as Resource).classes
         }.map { hasContributionStatement ->
             entities.values.filter {
-                it.subject.thingId == hasContributionStatement.`object`.thingId
+                it.subject.id == hasContributionStatement.`object`.id
                     && it.predicate.id == hasResearchProblem
                     && it.`object` is Resource && problemClass in (it.`object` as Resource).classes
             }.map { it.`object` as Resource }
@@ -286,7 +279,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
             .paged(pageable)
 
     override fun checkIfResourceHasStatements(id: ThingId): Boolean =
-        entities.values.any { it.subject.thingId.value == id.value || it.`object`.thingId.value == id.value }
+        entities.values.any { it.subject.id.value == id.value || it.`object`.id.value == id.value }
 
     override fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
         entities.values.filter {
@@ -295,7 +288,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
                 && it.`object` is Resource && contributionClass in (it.`object` as Resource).classes
         }.map { compareContributionStatement ->
             entities.values.filter {
-                it.subject.thingId == compareContributionStatement.`object`.thingId
+                it.subject.id == compareContributionStatement.`object`.id
                     && it.predicate.id == hasResearchProblem
                     && it.`object` is Resource && problemClass in (it.`object` as Resource).classes
             }.map { it.`object` as Resource }
@@ -314,7 +307,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         predicateId: ThingId,
         objectId: ThingId
     ): Optional<GeneralStatement> = Optional.ofNullable(entities.values.firstOrNull {
-        it.subject.thingId == subjectId && it.predicate.id == predicateId && it.`object`.thingId == objectId
+        it.subject.id == subjectId && it.predicate.id == predicateId && it.`object`.id == objectId
     })
 
     private fun findSubgraph(
@@ -323,7 +316,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
     ): Set<GeneralStatement> {
         val visited = mutableSetOf<GeneralStatement>()
         val frontier = entities.values.filter {
-            it.subject.thingId == root && expansionFilter(it, 1)
+            it.subject.id == root && expansionFilter(it, 1)
         }.mapTo(Stack()) {
             it to 1
         }

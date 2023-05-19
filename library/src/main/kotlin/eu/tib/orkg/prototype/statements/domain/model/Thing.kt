@@ -6,7 +6,7 @@ import eu.tib.orkg.prototype.statements.application.json.ThingIdDeserializer
 import eu.tib.orkg.prototype.statements.application.json.ThingIdSerializer
 
 sealed interface Thing {
-    val thingId: ThingId
+    val id: ThingId
     val label: String
 }
 

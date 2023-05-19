@@ -30,7 +30,7 @@ class PaperService(
     private val statementRepository: StatementRepository
 ) : PaperUseCases {
     override fun findById(id: ThingId): PaperRepresentation =
-        resourceRepository.findPaperByResourceId(id)
+        resourceRepository.findPaperById(id)
             .map { it.toPaperRepresentation() }
             .orElseThrow { PaperNotFound(id) }
 
@@ -60,7 +60,7 @@ class PaperService(
             .pmap { it.toPaperRepresentation() }
 
     override fun findAllContributorsByPaperId(id: ThingId, pageable: Pageable): Page<ContributorId> =
-        resourceRepository.findPaperByResourceId(id)
+        resourceRepository.findPaperById(id)
             .map { statementRepository.findAllContributorsByResourceId(id, pageable) }
             .orElseThrow { PaperNotFound(id) }
 
@@ -100,7 +100,7 @@ class PaperService(
         return when (this) {
             is Resource -> toAuthorRepresentation()
             is Literal -> toAuthorRepresentation()
-            else -> throw IllegalStateException("""Cannot convert "$thingId" to author. This is a bug!""")
+            else -> throw IllegalStateException("""Cannot convert "$id" to author. This is a bug!""")
         }
     }
 

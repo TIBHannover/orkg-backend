@@ -32,7 +32,7 @@ class ClassHierarchyService(
     private val classRepository: ClassRepository
 ) : ClassHierarchyUseCases {
     override fun create(userId: ContributorId, parentId: ThingId, childIds: Set<ThingId>, checkIfParentIsLeaf: Boolean) {
-        val parent = classRepository.findByClassId(parentId)
+        val parent = classRepository.findById(parentId)
             .orElseThrow { ClassNotFound.withThingId(parentId) }
         if (checkIfParentIsLeaf && repository.existsChildren(parentId)) {
             throw ParentClassAlreadyHasChildren(parentId)
@@ -40,7 +40,7 @@ class ClassHierarchyService(
         val classRelations = mutableSetOf<ClassSubclassRelation>()
         for (childId in childIds) {
             if (childId == parentId) throw InvalidSubclassRelation(childId, parentId)
-            val child = classRepository.findByClassId(childId)
+            val child = classRepository.findById(childId)
                 .orElseThrow { ClassNotFound.withThingId(childId) }
             val currentParent = repository.findParent(childId)
             if (currentParent.isPresent) throw ParentClassAlreadyExists(childId, parentId)
@@ -58,17 +58,17 @@ class ClassHierarchyService(
     }
 
     override fun findChildren(id: ThingId, pageable: Pageable): Page<ChildClassRepresentation> =
-        classRepository.findByClassId(id).map {
+        classRepository.findById(id).map {
             repository.findChildren(id, pageable).map(ChildClass::toChildClassRepresentation)
         }.orElseThrow { ClassNotFound.withThingId(id) }
 
     override fun findParent(id: ThingId): Optional<ClassRepresentation> =
-        classRepository.findByClassId(id).map {
+        classRepository.findById(id).map {
             repository.findParent(id).map(Class::toClassRepresentation)
         }.orElseThrow { ClassNotFound.withThingId(id) }
 
     override fun findRoot(id: ThingId): Optional<ClassRepresentation> =
-        classRepository.findByClassId(id).map {
+        classRepository.findById(id).map {
             repository.findRoot(id).map(Class::toClassRepresentation)
         }.orElseThrow { ClassNotFound.withThingId(id) }
 
@@ -76,18 +76,18 @@ class ClassHierarchyService(
         repository.findAllRoots(pageable).map(Class::toClassRepresentation)
 
     override fun findClassHierarchy(id: ThingId, pageable: Pageable): Page<ClassHierarchyEntryRepresentation> =
-        classRepository.findByClassId(id).map {
+        classRepository.findById(id).map {
             repository.findClassHierarchy(id, pageable).map(ClassHierarchyEntry::toClassHierarchyEntryRepresentation)
         }.orElseThrow { ClassNotFound.withThingId(id) }
 
     override fun countClassInstances(id: ThingId): Long =
-        classRepository.findByClassId(id).map {
+        classRepository.findById(id).map {
             repository.countClassInstances(id)
         }.orElseThrow { ClassNotFound.withThingId(id) }
 
     override fun delete(childId: ThingId) {
-        classRepository.findByClassId(childId).map {
-            relationRepository.deleteByChildClassId(childId)
+        classRepository.findById(childId).map {
+            relationRepository.deleteByChildId(childId)
         }.orElseThrow { ClassNotFound.withThingId(childId) }
     }
 }

@@ -20,6 +20,7 @@ include(
     "identity-management:application",
     "identity-management:adapter-output-spring-data-jpa",
 )
+include("widget")
 include("rest-api-server")
 
 // Declare default repository settings for all sub-projects.

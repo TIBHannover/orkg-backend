@@ -18,7 +18,7 @@ internal fun List<GeneralStatement>.wherePredicate(predicateId: ThingId) =
 
 internal fun List<GeneralStatement>.objectIdsWithLabel(): List<LabeledObjectRepresentation> = map {
     object : LabeledObjectRepresentation {
-        override val id: ThingId = it.`object`.thingId
+        override val id: ThingId = it.`object`.id
         override val label: String = it.`object`.label
     }
 }

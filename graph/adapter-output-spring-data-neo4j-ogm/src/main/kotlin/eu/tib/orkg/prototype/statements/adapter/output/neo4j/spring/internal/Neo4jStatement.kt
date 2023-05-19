@@ -2,8 +2,8 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.domain.model.PredicateId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.StatementIdConverter
 import java.time.OffsetDateTime
@@ -37,8 +37,8 @@ data class Neo4jStatement(
 
     @Property("predicate_id")
     @Required
-    @Convert(PredicateIdConverter::class)
-    var predicateId: PredicateId? = null
+    @Convert(ThingIdConverter::class)
+    var predicateId: ThingId? = null
 
     @Property("created_by")
     @Convert(ContributorIdConverter::class)
@@ -50,7 +50,7 @@ data class Neo4jStatement(
     constructor(
         statementId: StatementId,
         subject: Neo4jThing,
-        predicateId: PredicateId,
+        predicateId: ThingId,
         `object`: Neo4jThing,
         createdBy: ContributorId = ContributorId.createUnknownContributor()
     ) :
@@ -63,6 +63,6 @@ data class Neo4jStatement(
     }
 
     override fun toString(): String {
-        return "{id:$statementId}==(${subject!!.thingId} {${subject!!.label}})-[$predicateId]->(${`object`!!.thingId} {${`object`!!.label}})=="
+        return "{id:$statementId}==(${subject!!.id} {${subject!!.label}})-[$predicateId]->(${`object`!!.id} {${`object`!!.label}})=="
     }
 }

@@ -63,27 +63,27 @@ class SpringDataNeo4jLiteralAdapterCachingTests {
     @Test
     fun `fetching a literal by ID should be cached`() {
         val literal = createLiteral().copy(id = ThingId("L1"))
-        every { mock.findByLiteralId(ThingId("L1")) } returns Optional.of(literal) andThen {
+        every { mock.findById(ThingId("L1")) } returns Optional.of(literal) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
 
         // Obtain literal from repository
-        assertThat(adapter.findByLiteralId(ThingId("L1")).get()).isEqualTo(literal)
+        assertThat(adapter.findById(ThingId("L1")).get()).isEqualTo(literal)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByLiteralId(ThingId("L1")) }
+        verify(exactly = 1) { mock.findById(ThingId("L1")) }
 
         // Obtain the same literal again for several times
-        assertThat(adapter.findByLiteralId(ThingId("L1")).get()).isEqualTo(literal)
-        assertThat(adapter.findByLiteralId(ThingId("L1")).get()).isEqualTo(literal)
+        assertThat(adapter.findById(ThingId("L1")).get()).isEqualTo(literal)
+        assertThat(adapter.findById(ThingId("L1")).get()).isEqualTo(literal)
 
-        verify(exactly = 1) { mock.findByLiteralId(ThingId("L1")) }
+        verify(exactly = 1) { mock.findById(ThingId("L1")) }
     }
 
     @Test
     fun `saving a literal should evict it from the id-to-literal cache`() {
         val literal = createLiteral().copy(id = ThingId("L1"))
         val modified = literal.copy(label = "new label")
-        every { mock.findByLiteralId(ThingId("L1")) } returns Optional.of(literal) andThen Optional.of(modified) andThen {
+        every { mock.findById(ThingId("L1")) } returns Optional.of(literal) andThen Optional.of(modified) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { mock.exists(ThingId("L1")) } returns true andThen {
@@ -92,9 +92,9 @@ class SpringDataNeo4jLiteralAdapterCachingTests {
         every { mock.save(modified) } returns Unit
 
         // Obtain literal from repository
-        assertThat(adapter.findByLiteralId(ThingId("L1")).get()).isEqualTo(literal)
+        assertThat(adapter.findById(ThingId("L1")).get()).isEqualTo(literal)
         // Verify the loading happened
-        verify(exactly = 1) { mock.findByLiteralId(ThingId("L1")) }
+        verify(exactly = 1) { mock.findById(ThingId("L1")) }
 
         // Check literal existence in repository
         assertThat(adapter.exists(ThingId("L1"))).isTrue
@@ -106,11 +106,11 @@ class SpringDataNeo4jLiteralAdapterCachingTests {
         verify { mock.save(modified) } // required because of confirmVerified()
 
         // Obtaining the literal again
-        assertThat(adapter.findByLiteralId(ThingId("L1")).get())
+        assertThat(adapter.findById(ThingId("L1")).get())
             .`as`("obtaining the updated version from the cache")
             .isEqualTo(modified)
         // Verify the loading happened (again)
-        verify(exactly = 2) { mock.findByLiteralId(ThingId("L1")) }
+        verify(exactly = 2) { mock.findById(ThingId("L1")) }
 
         // Check literal existence again
         assertThat(adapter.exists(ThingId("L1"))).isTrue

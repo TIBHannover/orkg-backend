@@ -226,7 +226,7 @@ class SpringDataNeo4jThingAdapterCachingTests {
         every { mock.findByThingId(thingId) } returns Optional.of(predicate) andThen Optional.of(predicate) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
-        every { predicateMock.deleteByPredicateId(predicate.id) } returns Unit
+        every { predicateMock.deleteById(predicate.id) } returns Unit
 
         // Obtain predicate from Thing repository
         assertThat(adapter.findByThingId(thingId).get()).isEqualTo(predicate)
@@ -239,9 +239,9 @@ class SpringDataNeo4jThingAdapterCachingTests {
         verify(exactly = 1) { mock.findByThingId(thingId) }
 
         // Delete predicate from repository
-        predicateAdapter.deleteByPredicateId(predicate.id)
+        predicateAdapter.deleteById(predicate.id)
         // Verify the deletion happened
-        verify(exactly = 1) { predicateMock.deleteByPredicateId(predicate.id) }
+        verify(exactly = 1) { predicateMock.deleteById(predicate.id) }
 
         // Verify that the cache was evicted
         assertThat(adapter.findByThingId(thingId).get()).isEqualTo(predicate)
@@ -255,7 +255,7 @@ class SpringDataNeo4jThingAdapterCachingTests {
         every { mock.findByThingId(thingId) } returns Optional.of(resource) andThen Optional.of(resource) andThen {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
-        every { resourceMock.deleteByResourceId(resource.id) } returns Unit
+        every { resourceMock.deleteById(resource.id) } returns Unit
 
         // Obtain resource from Thing repository
         assertThat(adapter.findByThingId(thingId).get()).isEqualTo(resource)
@@ -268,9 +268,9 @@ class SpringDataNeo4jThingAdapterCachingTests {
         verify(exactly = 1) { mock.findByThingId(thingId) }
 
         // Delete predicate from repository
-        resourceAdapter.deleteByResourceId(resource.id)
+        resourceAdapter.deleteById(resource.id)
         // Verify the deletion happened
-        verify(exactly = 1) { resourceMock.deleteByResourceId(resource.id) }
+        verify(exactly = 1) { resourceMock.deleteById(resource.id) }
 
         // Verify that the cache was evicted
         assertThat(adapter.findByThingId(thingId).get()).isEqualTo(resource)

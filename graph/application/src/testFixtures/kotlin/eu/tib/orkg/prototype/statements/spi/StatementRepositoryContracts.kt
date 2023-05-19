@@ -24,7 +24,6 @@ import io.kotest.matchers.maps.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
-import java.text.SimpleDateFormat
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.time.format.DateTimeFormatter.ofPattern
@@ -607,7 +606,7 @@ fun <
                 saveStatement(statement1)
                 saveStatement(statement2)
                 val result = repository.fetchAsBundle(
-                    statement1.subject.thingId,
+                    statement1.subject.id,
                     BundleConfiguration(
                         minLevel = 1,
                         maxLevel = null,
@@ -629,7 +628,7 @@ fun <
                 saveStatement(statement1)
                 saveStatement(statement2)
                 val result = repository.fetchAsBundle(
-                    statement1.subject.thingId,
+                    statement1.subject.id,
                     BundleConfiguration(
                         minLevel = null,
                         maxLevel = 1,
@@ -652,7 +651,7 @@ fun <
                 saveStatement(statement1)
                 saveStatement(statement2)
                 val result = repository.fetchAsBundle(
-                    statement1.subject.thingId,
+                    statement1.subject.id,
                     BundleConfiguration(
                         minLevel = null,
                         maxLevel = null,
@@ -676,7 +675,7 @@ fun <
                 saveStatement(statement1)
                 saveStatement(statement2)
                 val result = repository.fetchAsBundle(
-                    statement1.subject.thingId,
+                    statement1.subject.id,
                     BundleConfiguration(
                         minLevel = null,
                         maxLevel = null,
@@ -1267,8 +1266,8 @@ fun <
                     `object` = fabricator.random<Resource>()
                 )
                 saveStatement(statement)
-                repository.checkIfResourceHasStatements(statement.subject.thingId) shouldBe true
-                repository.checkIfResourceHasStatements(statement.`object`.thingId) shouldBe true
+                repository.checkIfResourceHasStatements(statement.subject.id) shouldBe true
+                repository.checkIfResourceHasStatements(statement.`object`.id) shouldBe true
             }
         }
     }
@@ -1282,9 +1281,9 @@ fun <
                 val expected = statements[0]
 
                 val actual = repository.findBySubjectIdAndPredicateIdAndObjectId(
-                    subjectId = expected.subject.thingId,
+                    subjectId = expected.subject.id,
                     predicateId = expected.predicate.id,
-                    objectId = expected.`object`.thingId
+                    objectId = expected.`object`.id
                 )
 
                 actual.isPresent shouldBe true

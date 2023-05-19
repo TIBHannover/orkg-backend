@@ -11,8 +11,8 @@ interface PredicateRepository : EntityRepository<Predicate, ThingId> {
     // legacy methods:
     fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Predicate>
     // TODO: Work-around for https://jira.spring.io/browse/DATAGRAPH-1200. Replace with IgnoreCase or ContainsIgnoreCase when fixed.
-    fun findByPredicateId(id: ThingId): Optional<Predicate>
-    fun deleteByPredicateId(id: ThingId)
+    fun findById(id: ThingId): Optional<Predicate>
+    fun deleteById(id: ThingId)
     fun deleteAll()
     fun save(predicate: Predicate)
     fun nextIdentity(): ThingId

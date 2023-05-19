@@ -20,8 +20,8 @@ class SpringDataNeo4jClassRelationAdapter(
         neo4jRepository.saveAll(classRelations.map { it.toNeo4jClassRelation(neo4jRepository, neo4jClassRepository) })
     }
 
-    override fun deleteByChildClassId(childId: ThingId) =
-        neo4jRepository.removeByChildClassId(childId.toClassId())
+    override fun deleteByChildId(childId: ThingId) =
+        neo4jRepository.removeByChildId(childId)
 
     override fun deleteAll() = neo4jRepository.deleteAll()
 }

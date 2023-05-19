@@ -15,7 +15,7 @@ class SpringDataNeo4jSmartReviewAdapter(
     private val neo4jRepository: Neo4jSmartReviewRepository
 ) : SmartReviewRepository {
     override fun findSmartReviewByResourceId(id: ThingId): Optional<Resource> =
-        neo4jRepository.findSmartReviewByResourceId(id.toResourceId()).map { it.toResource() }
+        neo4jRepository.findSmartReviewByResourceId(id).map { it.toResource() }
 
     override fun findAllListedSmartReviews(pageable: Pageable): Page<Resource> =
         neo4jRepository.findAllListedSmartReviews(pageable).map { it.toResource() }

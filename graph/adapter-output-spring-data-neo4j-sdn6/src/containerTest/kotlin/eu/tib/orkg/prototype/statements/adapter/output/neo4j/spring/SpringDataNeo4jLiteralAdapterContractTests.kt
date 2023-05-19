@@ -49,7 +49,7 @@ fun <R : LiteralRepository, C : Neo4jClient> neo4jLiteralRepositoryContract(
 
             val n = anyNode()
                 .named("n")
-                .withProperties("literal_id", literalOf<String>(literal.id.value))
+                .withProperties("id", literalOf<String>(literal.id.value))
             val query = match(n)
                 .unwind(labels(n))
                 .`as`("label")

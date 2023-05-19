@@ -94,7 +94,7 @@ fun <
                 precondition.isPresent shouldBe true
                 precondition.get().id shouldBe parent.id
 
-                repository.deleteByChildClassId(child.id)
+                repository.deleteByChildId(child.id)
 
                 val result = hierarchyRepository.findParent(child.id)
                 result.isPresent shouldBe false

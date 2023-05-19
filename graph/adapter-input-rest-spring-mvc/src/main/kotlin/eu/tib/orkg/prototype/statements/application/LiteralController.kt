@@ -70,7 +70,7 @@ class LiteralController(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: LiteralUpdateRequest
     ): ResponseEntity<LiteralRepresentation> {
-        var literal = repository.findByLiteralId(id).orElseThrow { LiteralNotFound(id) }
+        var literal = repository.findById(id).orElseThrow { LiteralNotFound(id) }
 
         if (request.label != null) {
             literal = literal.copy(label = request.label)

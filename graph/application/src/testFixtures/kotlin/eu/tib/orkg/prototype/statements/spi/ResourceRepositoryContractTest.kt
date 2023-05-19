@@ -38,7 +38,7 @@ interface ResourceRepositoryContractTest {
         )
         repository.save(expected)
 
-        val actual = repository.findByResourceId(expected.id).orElse(null)
+        val actual = repository.findById(expected.id).orElse(null)
 
         actual shouldNotBe null
         actual.asClue {

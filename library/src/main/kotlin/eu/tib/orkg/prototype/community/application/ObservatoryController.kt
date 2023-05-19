@@ -25,7 +25,6 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.lang.Nullable
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -109,17 +108,19 @@ class ObservatoryController(
     fun findProblemsByObservatoryId(
         @PathVariable id: ObservatoryId,
         @RequestParam(value = "classes") classes: Set<ThingId>,
-        @Nullable @RequestParam("featured")
-        featured: Boolean?,
+        @RequestParam("featured", required = false, defaultValue = "false")
+        featured: Boolean,
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
+        @RequestParam("visibility", required = false)
+        visibility: VisibilityFilter?,
         pageable: Pageable
     ): Page<ResourceRepresentation> =
         resourceService.findAllByClassInAndVisibilityAndObservatoryId(
-            classes,
-            visibilityFilterFromFlags(featured, unlisted),
-            id,
-            pageable
+            classes = classes,
+            visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
+            id = id,
+            pageable = pageable
         )
 
     @GetMapping("{id}/users")

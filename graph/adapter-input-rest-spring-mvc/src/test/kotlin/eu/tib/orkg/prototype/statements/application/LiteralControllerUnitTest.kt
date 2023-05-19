@@ -88,7 +88,7 @@ class LiteralControllerUnitTest {
         val literal = createUpdateRequestWithEmptyLabel()
         val double = createDummyLiteral() // needed so "expected" has the same timestamp
         val expected = double.copy(label = "")
-        every { literalRepository.findByLiteralId(any()) } returns Optional.of(double)
+        every { literalRepository.findById(any()) } returns Optional.of(double)
         every { literalService.update(any()) } returns expected.toLiteralRepresentation()
 
         mockMvc
@@ -119,7 +119,7 @@ class LiteralControllerUnitTest {
     @Test
     fun whenPUT_AndDatatypeIsBlank_ThenFailValidation() {
         val literal = createUpdateRequestWithBlankDatatype()
-        every { literalRepository.findByLiteralId(any()) } returns Optional.of(createDummyLiteral())
+        every { literalRepository.findById(any()) } returns Optional.of(createDummyLiteral())
 
         mockMvc
             .perform(updateOf(literal, "L1"))

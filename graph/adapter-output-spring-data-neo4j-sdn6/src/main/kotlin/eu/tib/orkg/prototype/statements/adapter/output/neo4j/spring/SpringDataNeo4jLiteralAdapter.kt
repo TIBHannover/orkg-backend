@@ -32,7 +32,7 @@ class SpringDataNeo4jLiteralAdapter(
         var id: ThingId
         do {
             id = neo4jLiteralIdGenerator.nextIdentity()
-        } while (neo4jRepository.existsByLiteralId(id.toLiteralId()))
+        } while (neo4jRepository.existsById(id))
         return id
     }
 
@@ -60,8 +60,8 @@ class SpringDataNeo4jLiteralAdapter(
         neo4jRepository.findAll(pageable).map(Neo4jLiteral::toLiteral)
 
     @Cacheable(key = "#id", cacheNames = [LITERAL_ID_TO_LITERAL_CACHE])
-    override fun findByLiteralId(id: ThingId): Optional<Literal> =
-        neo4jRepository.findByLiteralId(id.toLiteralId()).map(Neo4jLiteral::toLiteral)
+    override fun findById(id: ThingId): Optional<Literal> =
+        neo4jRepository.findById(id).map(Neo4jLiteral::toLiteral)
 
     override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Literal> =
         when (labelSearchString) {
@@ -70,11 +70,11 @@ class SpringDataNeo4jLiteralAdapter(
         }.map(Neo4jLiteral::toLiteral)
 
     @Cacheable(key = "#id", cacheNames = [LITERAL_ID_TO_LITERAL_EXISTS_CACHE])
-    override fun exists(id: ThingId): Boolean = neo4jRepository.existsByLiteralId(id.toLiteralId())
+    override fun exists(id: ThingId): Boolean = neo4jRepository.existsById(id)
 
     private fun Literal.toNeo4jLiteral() =
-        neo4jRepository.findByLiteralId(id.toLiteralId()).orElse(Neo4jLiteral()).apply {
-            literalId = this@toNeo4jLiteral.id.toLiteralId()
+        neo4jRepository.findById(this.id).orElse(Neo4jLiteral()).apply {
+            id = this@toNeo4jLiteral.id
             label = this@toNeo4jLiteral.label
             datatype = this@toNeo4jLiteral.datatype
             createdAt = this@toNeo4jLiteral.createdAt

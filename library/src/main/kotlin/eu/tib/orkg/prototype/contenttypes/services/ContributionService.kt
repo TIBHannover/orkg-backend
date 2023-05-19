@@ -18,7 +18,7 @@ class ContributionService(
     private val statementRepository: StatementRepository
 ) : ContributionUseCases {
     override fun findById(id: ThingId): ContributionRepresentation =
-        resourceRepository.findByResourceId(id)
+        resourceRepository.findById(id)
             .filter { Classes.contribution in it.classes }
             .map { it.toContributionRepresentation() }
             .orElseThrow { ContributionNotFound(id) }
@@ -36,7 +36,7 @@ class ContributionService(
             override val properties: Map<ThingId, List<ThingId>> = statements
                 .groupBy { it.predicate.id }
                 .mapValues {
-                    it.value.map { statement -> statement.`object`.thingId }
+                    it.value.map { statement -> statement.`object`.id }
                 }
             override val visibility: Visibility = this@toContributionRepresentation.visibility
         }

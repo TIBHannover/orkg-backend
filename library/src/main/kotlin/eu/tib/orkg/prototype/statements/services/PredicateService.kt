@@ -52,7 +52,7 @@ class PredicateService(
                 label = label
             )
         )
-        return repository.findByPredicateId(newThingId).map(Predicate::toPredicateRepresentation).get()
+        return repository.findById(newThingId).map(Predicate::toPredicateRepresentation).get()
     }
 
     override fun create(userId: ContributorId, label: String): PredicateRepresentation {
@@ -62,21 +62,21 @@ class PredicateService(
                 contributorId = userId
             )
         )
-        return repository.findByPredicateId(newThingId).map(Predicate::toPredicateRepresentation).get()
+        return repository.findById(newThingId).map(Predicate::toPredicateRepresentation).get()
     }
 
     override fun findAll(pageable: Pageable): Page<PredicateRepresentation> =
         repository.findAll(pageable).map(Predicate::toPredicateRepresentation)
 
     override fun findById(id: ThingId): Optional<PredicateRepresentation> =
-        repository.findByPredicateId(id).map(Predicate::toPredicateRepresentation)
+        repository.findById(id).map(Predicate::toPredicateRepresentation)
 
     override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<PredicateRepresentation> =
         repository.findAllByLabel(labelSearchString, pageable)
             .map(Predicate::toPredicateRepresentation)
 
     override fun update(id: ThingId, command: UpdatePredicateUseCase.ReplaceCommand) {
-        var found = repository.findByPredicateId(id).get()
+        var found = repository.findById(id).get()
 
         // update all the properties
         found = found.copy(label = command.label)
@@ -85,7 +85,7 @@ class PredicateService(
     }
 
     override fun createIfNotExists(id: ThingId, label: String) {
-        val oPredicate = repository.findByPredicateId(id)
+        val oPredicate = repository.findById(id)
 
         if (oPredicate.isEmpty) {
             val p = Predicate(
@@ -104,7 +104,7 @@ class PredicateService(
         if (statementRepository.countPredicateUsage(predicate.id) > 0)
             throw PredicateCantBeDeleted(predicate.id)
 
-        repository.deleteByPredicateId(predicate.id)
+        repository.deleteById(predicate.id)
     }
 
     override fun removeAll() = repository.deleteAll()

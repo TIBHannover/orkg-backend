@@ -25,7 +25,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
-import org.springframework.lang.Nullable
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -225,13 +224,19 @@ class ResourceController(
     @GetMapping("/classes")
     fun getResourcesByClass(
         @RequestParam(value = "classes") classes: Set<ThingId>,
-        @Nullable @RequestParam("featured")
-        featured: Boolean?,
+        @RequestParam("featured", required = false, defaultValue = "false")
+        featured: Boolean,
         @RequestParam("unlisted", required = false, defaultValue = "false")
         unlisted: Boolean,
+        @RequestParam("visibility", required = false)
+        visibility: VisibilityFilter?,
         pageable: Pageable
     ): Page<ResourceRepresentation> {
-        return service.findAllByClassInAndVisibility(classes, visibilityFilterFromFlags(featured, unlisted), pageable)
+        return service.findAllByClassInAndVisibility(
+            classes = classes,
+            visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
+            pageable = pageable
+        )
     }
 }
 

@@ -27,7 +27,7 @@ class PaperServiceUnitTests {
     @Test
     fun `Given a paper exists, when fetching it by id, then it is returned`() {
         val expected = createResource()
-        every { resourceRepository.findPaperByResourceId(expected.id) } returns Optional.of(expected)
+        every { resourceRepository.findPaperById(expected.id) } returns Optional.of(expected)
         every { statementRepository.findAllBySubject(expected.id, PageRequests.ALL) } returns Page.empty(PageRequests.ALL)
 
         service.findById(expected.id).asClue { paper ->
@@ -57,27 +57,27 @@ class PaperServiceUnitTests {
             paper.visibility shouldBe Visibility.DEFAULT
         }
 
-        verify(exactly = 1) { resourceRepository.findPaperByResourceId(expected.id) }
+        verify(exactly = 1) { resourceRepository.findPaperById(expected.id) }
         verify(exactly = 1) { statementRepository.findAllBySubject(expected.id, any()) }
     }
 
     @Test
     fun `Given a paper does not exist, when fetching it by id, then an exception is thrown`() {
         val id = ThingId("Missing")
-        every { resourceRepository.findPaperByResourceId(id) } returns Optional.empty()
+        every { resourceRepository.findPaperById(id) } returns Optional.empty()
 
         assertThrows<PaperNotFound> {
             service.findById(id)
         }
 
-        verify(exactly = 1) { resourceRepository.findPaperByResourceId(id) }
+        verify(exactly = 1) { resourceRepository.findPaperById(id) }
         verify(exactly = 0) { statementRepository.findAllBySubject(id, any()) }
     }
 
     @Test
     fun `Given a paper, when fetching its contributors, then the list of contributors returned`() {
         val expected = createResource()
-        every { resourceRepository.findPaperByResourceId(expected.id) } returns Optional.of(expected)
+        every { resourceRepository.findPaperById(expected.id) } returns Optional.of(expected)
         every { statementRepository.findAllContributorsByResourceId(expected.id, PageRequests.ALL) } returns PageImpl(
             listOf(expected.createdBy),
             PageRequests.ALL,
@@ -86,20 +86,20 @@ class PaperServiceUnitTests {
 
         service.findAllContributorsByPaperId(expected.id, PageRequests.ALL)
 
-        verify(exactly = 1) { resourceRepository.findPaperByResourceId(expected.id) }
+        verify(exactly = 1) { resourceRepository.findPaperById(expected.id) }
         verify(exactly = 1) { statementRepository.findAllContributorsByResourceId(expected.id, any()) }
     }
 
     @Test
     fun `Given a paper does not exist, when fetching its contributors, then an exception is thrown`() {
         val id = ThingId("Missing")
-        every { resourceRepository.findPaperByResourceId(id) } returns Optional.empty()
+        every { resourceRepository.findPaperById(id) } returns Optional.empty()
 
         assertThrows<PaperNotFound> {
             service.findAllContributorsByPaperId(id, PageRequests.ALL)
         }
 
-        verify(exactly = 1) { resourceRepository.findPaperByResourceId(id) }
+        verify(exactly = 1) { resourceRepository.findPaperById(id) }
         verify(exactly = 0) { statementRepository.findAllContributorsByResourceId(id, any()) }
     }
 }

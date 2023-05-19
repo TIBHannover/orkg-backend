@@ -7,7 +7,7 @@ import java.util.*
 
 interface TemplateRepository {
 
-    fun findTemplateSpecs(resourceId: ThingId): Optional<TemplatedResource>
+    fun findTemplateSpecs(id: ThingId): Optional<TemplatedResource>
 
-    fun formattedLabelFor(resourceId: ThingId, classes: Set<ThingId>): FormattedLabel?
+    fun formattedLabelFor(id: ThingId, classes: Set<ThingId>): FormattedLabel?
 }

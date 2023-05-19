@@ -18,7 +18,7 @@ import java.time.OffsetDateTime
     )
 )
 data class ResourceObject(
-    val id: ResourceId?,
+    val id: ThingId?,
     val label: String,
     @JsonProperty("created_at")
     val createdAt: OffsetDateTime?,

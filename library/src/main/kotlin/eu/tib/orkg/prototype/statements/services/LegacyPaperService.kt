@@ -227,7 +227,7 @@ class LegacyPaperService(
                     organizationId = organizationId
                 )
             )
-            resourceRepository.findByResourceId(resourceId).get()
+            resourceRepository.findById(resourceId).get()
         }
         // create a statement with the venue resource
         statementService.add(

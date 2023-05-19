@@ -5,7 +5,7 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 group = "eu.tib"
-version = "0.31.0"
+version = "0.31.1"
 
 val neo4jVersion = "3.5.+" // should match version in Dockerfile
 val springDataNeo4jVersion = "5.3.4"
@@ -135,6 +135,7 @@ dependencies {
     implementation(project(":graph:application"))
     implementation(project(":graph:adapter-input-rest-spring-mvc"))
     implementation(project(":graph:adapter-output-spring-data-neo4j-ogm"))
+    implementation(project(":widget"))
 
     implementation(libs.forkhandles.result4k)
     implementation(libs.forkhandles.values4k)

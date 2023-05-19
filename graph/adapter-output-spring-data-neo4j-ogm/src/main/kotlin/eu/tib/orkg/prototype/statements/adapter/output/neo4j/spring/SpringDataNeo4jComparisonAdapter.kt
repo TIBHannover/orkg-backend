@@ -16,7 +16,7 @@ class SpringDataNeo4jComparisonAdapter(
 ) : ComparisonRepository {
 
     override fun findComparisonByResourceId(id: ThingId): Optional<Resource> =
-        neo4jRepository.findComparisonByResourceId(id.toResourceId()).map { it.toResource() }
+        neo4jRepository.findComparisonByResourceId(id).map { it.toResource() }
 
     override fun findAllListedComparisons(pageable: Pageable): Page<Resource> =
         neo4jRepository.findAllListedComparisons(pageable).map { it.toResource() }

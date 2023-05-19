@@ -9,7 +9,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ContributionInfo
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.kotest.assertions.asClue
@@ -96,14 +95,14 @@ fun <
             }
             contributionIds.add(
                 ContributionInfo(
-                    ResourceId(cont.id.value),
+                    ThingId(cont.id.value),
                     cont.label,
                     paper.label,
                     year?.label?.toIntOrNull(),
-                    ResourceId(paper.id.value)
+                    ThingId(paper.id.value)
                 )
             )
-            val contPredicate = predicateRepository.findByPredicateId(ThingId("P31")).get()
+            val contPredicate = predicateRepository.findById(ThingId("P31")).get()
             statementRepository.save(
                 GeneralStatement(
                     id = fabricator.random(),
@@ -115,7 +114,7 @@ fun <
                 )
             )
             if (year != null) {
-                val yearPredicate = predicateRepository.findByPredicateId(ThingId("P29")).get()
+                val yearPredicate = predicateRepository.findById(ThingId("P29")).get()
                 statementRepository.save(
                     GeneralStatement(
                         id = fabricator.random(),

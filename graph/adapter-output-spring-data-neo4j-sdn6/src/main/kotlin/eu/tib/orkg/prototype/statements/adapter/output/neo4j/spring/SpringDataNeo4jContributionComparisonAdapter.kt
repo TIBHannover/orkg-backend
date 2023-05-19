@@ -15,6 +15,6 @@ class SpringDataNeo4jContributionComparisonAdapter(
     val contributionComparisonRepository: Neo4jContributionComparisonRepository,
 ) : ContributionComparisonRepository {
     override fun findContributionsDetailsById(ids: List<ThingId>, pageable: Pageable): Page<ContributionInfo> =
-        contributionComparisonRepository.findContributionsDetailsById(ids.map { it.toResourceId() }, pageable)
-            .map ( Neo4jContributionInfo::toContributionInfo )
+        contributionComparisonRepository.findContributionsDetailsById(ids, pageable)
+            .map(Neo4jContributionInfo::toContributionInfo)
 }

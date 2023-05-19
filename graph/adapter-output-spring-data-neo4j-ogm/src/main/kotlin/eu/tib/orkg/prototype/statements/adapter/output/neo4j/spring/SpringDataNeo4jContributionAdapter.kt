@@ -16,7 +16,7 @@ class SpringDataNeo4jContributionAdapter(
 ) : ContributionRepository {
 
     override fun findContributionByResourceId(id: ThingId): Optional<Resource> =
-        neo4jRepository.findContributionByResourceId(id.toResourceId()).map { it.toResource() }
+        neo4jRepository.findContributionByResourceId(id).map { it.toResource() }
 
     override fun findAllListedContributions(pageable: Pageable): Page<Resource> =
         neo4jRepository.findAllListedContributions(pageable).map { it.toResource() }

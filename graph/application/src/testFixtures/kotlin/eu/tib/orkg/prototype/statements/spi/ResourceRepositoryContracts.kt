@@ -38,7 +38,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             val expected: Resource = fabricator.random()
             repository.save(expected)
 
-            val actual = repository.findByResourceId(expected.id).orElse(null)
+            val actual = repository.findById(expected.id).orElse(null)
 
             actual shouldNotBe null
             actual.asClue {
@@ -52,18 +52,18 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                 it.organizationId shouldBe it.organizationId
                 it.visibility shouldBe it.visibility
                 it.verified shouldBe it.verified
-                it.thingId shouldBe expected.thingId
+                it.id shouldBe expected.id
             }
         }
         it("updates an already existing resource") {
             val original: Resource = fabricator.random()
             repository.save(original)
-            val found = repository.findByResourceId(original.id).get()
+            val found = repository.findById(original.id).get()
             val modified = found.copy(label = "some new label, never seen before")
             repository.save(modified)
 
             repository.findAll(PageRequest.of(0, Int.MAX_VALUE)).toSet().size shouldBe 1
-            repository.findByResourceId(original.id).get().label shouldBe "some new label, never seen before"
+            repository.findById(original.id).get().label shouldBe "some new label, never seen before"
         }
     }
 
@@ -108,7 +108,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             val resource = createResource(id = repository.nextIdentity())
             repository.save(resource)
             val id = repository.nextIdentity()
-            repository.findByResourceId(id).isPresent shouldBe false
+            repository.findById(id).isPresent shouldBe false
         }
     }
 
@@ -126,8 +126,8 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
         it("by resource id removes it from the repository") {
             val expected: Resource = fabricator.random()
             repository.save(expected)
-            repository.deleteByResourceId(expected.id)
-            repository.findByResourceId(expected.id).isPresent shouldBe false
+            repository.deleteById(expected.id)
+            repository.findById(expected.id).isPresent shouldBe false
         }
     }
 

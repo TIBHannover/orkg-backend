@@ -34,7 +34,7 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
             val expected: Class = fabricator.random()
             repository.save(expected)
 
-            val actual = repository.findByClassId(expected.id).orElse(null)
+            val actual = repository.findById(expected.id).orElse(null)
 
             actual shouldNotBe null
             actual.asClue {
@@ -43,19 +43,19 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
                 it.uri shouldBe expected.uri
                 it.createdAt shouldBe expected.createdAt
                 it.createdBy shouldBe expected.createdBy
-                it.thingId shouldBe expected.thingId
+                it.id shouldBe expected.id
                 it.description shouldBe it.description
             }
         }
         it("updates an already existing class") {
             val original: Class = fabricator.random()
             repository.save(original)
-            val found = repository.findByClassId(original.id).get()
+            val found = repository.findById(original.id).get()
             val modified = found.copy(label = "some new label, never seen before")
             repository.save(modified)
 
             repository.findAll(PageRequest.of(0, Int.MAX_VALUE)).toSet().size shouldBe 1
-            repository.findByClassId(original.id).get().label shouldBe "some new label, never seen before"
+            repository.findById(original.id).get().label shouldBe "some new label, never seen before"
         }
     }
 
@@ -103,7 +103,7 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
             classes.forEach(repository::save)
 
             val expected = classes.take(expectedCount)
-            val result = repository.findAllByClassId(
+            val result = repository.findAllById(
                 expected.map { it.id },
                 PageRequest.of(0, 5)
             )
@@ -231,7 +231,7 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
             val `class` = createClass(id = repository.nextIdentity())
             repository.save(`class`)
             val id = repository.nextIdentity()
-            repository.findByClassId(id).isPresent shouldBe false
+            repository.findById(id).isPresent shouldBe false
         }
     }
 }

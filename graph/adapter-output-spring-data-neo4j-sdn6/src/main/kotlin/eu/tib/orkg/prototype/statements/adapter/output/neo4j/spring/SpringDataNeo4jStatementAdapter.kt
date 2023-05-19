@@ -19,11 +19,9 @@ import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
 import org.neo4j.cypherdsl.core.Condition
-import org.neo4j.cypherdsl.core.Cypher
 import org.neo4j.cypherdsl.core.Cypher.anyNode
 import org.neo4j.cypherdsl.core.Cypher.asExpression
 import org.neo4j.cypherdsl.core.Cypher.call
-import org.neo4j.cypherdsl.core.Cypher.caseExpression
 import org.neo4j.cypherdsl.core.Cypher.listOf
 import org.neo4j.cypherdsl.core.Cypher.listWith
 import org.neo4j.cypherdsl.core.Cypher.literalOf
@@ -31,13 +29,11 @@ import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.optionalMatch
-import org.neo4j.cypherdsl.core.Cypher.parameter
 import org.neo4j.cypherdsl.core.Cypher.raw
 import org.neo4j.cypherdsl.core.Cypher.returning
 import org.neo4j.cypherdsl.core.Cypher.union
 import org.neo4j.cypherdsl.core.Cypher.unwind
 import org.neo4j.cypherdsl.core.Cypher.valueAt
-import org.neo4j.cypherdsl.core.Expression
 import org.neo4j.cypherdsl.core.Functions.collect
 import org.neo4j.cypherdsl.core.Functions.count
 import org.neo4j.cypherdsl.core.Functions.countDistinct
@@ -72,18 +68,14 @@ class SpringDataNeo4jStatementAdapter(
 
     override fun save(statement: GeneralStatement) {
         val subject = node("Thing")
+            .withProperties("id", literalOf<String>(statement.subject.id.value))
+            .named("s")
         val `object` = node("Thing")
-        val query = match(subject).where(
-                subject.property("class_id").eq(literalOf<String>(statement.subject.thingId.value))
-                    .or(subject.property("predicate_id").eq(literalOf<String>(statement.subject.thingId.value)))
-                    .or(subject.property("resource_id").eq(literalOf<String>(statement.subject.thingId.value)))
-                    .or(subject.property("literal_id").eq(literalOf<String>(statement.subject.thingId.value)))
-            ).match(`object`).where(
-                `object`.property("class_id").eq(literalOf<String>(statement.`object`.thingId.value))
-                    .or(`object`.property("predicate_id").eq(literalOf<String>(statement.`object`.thingId.value)))
-                    .or(`object`.property("resource_id").eq(literalOf<String>(statement.`object`.thingId.value)))
-                    .or(`object`.property("literal_id").eq(literalOf<String>(statement.`object`.thingId.value)))
-            ).create(
+            .withProperties("id", literalOf<String>(statement.`object`.id.value))
+            .named("o")
+        val query = match(subject)
+            .match(`object`)
+            .create(
                 subject.relationshipTo(`object`, RELATED).withProperties(
                     "statement_id", literalOf<String>(statement.id?.value),
                     "predicate_id", literalOf<String>(statement.predicate.id.value),
@@ -187,11 +179,11 @@ class SpringDataNeo4jStatementAdapter(
         val r = name("r")
         val subject = node("Thing")
         val `object` = node("Resource")
+            .withProperties("id", literalOf<String>(id.value))
         val query = match(
                 subject.relationshipTo(`object`, RELATED)
                     .named(r)
-            ).where(`object`.property("resource_id").eq(literalOf<String>(id.value)))
-            .returning(count(r))
+            ).returning(count(r))
             .build()
         return neo4jClient.query(query.cypher)
             .fetchAs<Long>()
@@ -202,7 +194,7 @@ class SpringDataNeo4jStatementAdapter(
         val r = name("r")
         val subject = node("Thing")
         val `object` = node("Resource")
-        val resourceId = `object`.property("resource_id")
+        val resourceId = `object`.property("id")
         val id = name("id")
         val count = name("c")
         val query = match(
@@ -262,11 +254,7 @@ class SpringDataNeo4jStatementAdapter(
 
     override fun findAllBySubject(subjectId: ThingId, pageable: Pageable): Page<GeneralStatement> =
         findAllFilteredAndPaged(pageable) { subject, _, _ ->
-            val subjectIdLiteral = literalOf<String>(subjectId.value)
-            subject.property("resource_id").eq(subjectIdLiteral)
-                .or(subject.property("literal_id").eq(subjectIdLiteral))
-                .or(subject.property("predicate_id").eq(subjectIdLiteral))
-                .or(subject.property("class_id").eq(subjectIdLiteral))
+            subject.property("id").eq(literalOf<String>(subjectId.value))
         }
 
     override fun findAllByPredicateId(predicateId: ThingId, pageable: Pageable): Page<GeneralStatement> =
@@ -276,15 +264,10 @@ class SpringDataNeo4jStatementAdapter(
 
     override fun findAllByObject(objectId: ThingId, pageable: Pageable): Page<GeneralStatement> =
         findAllFilteredAndPaged(pageable) { _, _, `object` ->
-            val objectIdLiteral = literalOf<String>(objectId.value)
-            `object`.property("resource_id").eq(objectIdLiteral)
-                .or(`object`.property("literal_id").eq(objectIdLiteral))
-                .or(`object`.property("predicate_id").eq(objectIdLiteral))
-                .or(`object`.property("class_id").eq(objectIdLiteral))
+            `object`.property("id").eq(literalOf<String>(objectId.value))
         }
 
     override fun countByIdRecursive(id: ThingId): Long {
-        val idLiteral = literalOf<String>(id.value)
         val apocConfiguration = mapOf<String, Any>(
             "relationshipFilter" to ">",
             "labelFilter" to "-ResearchField|-ResearchProblem|-Paper"
@@ -292,13 +275,12 @@ class SpringDataNeo4jStatementAdapter(
         val n = name("n")
         val relationships = name("relationships")
         val rel = name("rel")
-        val query = match(node("Thing").named(n))
-            .where(
-                n.property("resource_id").eq(idLiteral)
-                    .or(n.property("literal_id").eq(idLiteral))
-                    .or(n.property("predicate_id").eq(idLiteral))
-                    .or(n.property("class_id").eq(idLiteral))
-            ).call("apoc.path.subgraphAll")
+        val query = match(
+                node("Thing")
+                    .withProperties("id", literalOf<String>(id.value))
+                    .named(n)
+            )
+            .call("apoc.path.subgraphAll")
             .withArgs(n, asExpression(apocConfiguration))
             .yield(relationships)
             .with(relationships)
@@ -316,11 +298,7 @@ class SpringDataNeo4jStatementAdapter(
         pageable: Pageable
     ): Page<GeneralStatement> =
         findAllFilteredAndPaged(pageable) { _, relation, `object` ->
-            val objectIdLiteral = literalOf<String>(objectId.value)
-            `object`.property("resource_id").eq(objectIdLiteral)
-                .or(`object`.property("literal_id").eq(objectIdLiteral))
-                .or(`object`.property("predicate_id").eq(objectIdLiteral))
-                .or(`object`.property("class_id").eq(objectIdLiteral))
+            `object`.property("id").eq(literalOf<String>(objectId.value))
                 .and(relation.property("predicate_id").eq(literalOf<String>(predicateId.value)))
         }
 
@@ -330,11 +308,7 @@ class SpringDataNeo4jStatementAdapter(
         pageable: Pageable
     ): Page<GeneralStatement> =
         findAllFilteredAndPaged(pageable) { subject, relation, _ ->
-            val subjectIdLiteral = literalOf<String>(subjectId.value)
-            subject.property("resource_id").eq(subjectIdLiteral)
-                .or(subject.property("literal_id").eq(subjectIdLiteral))
-                .or(subject.property("predicate_id").eq(subjectIdLiteral))
-                .or(subject.property("class_id").eq(subjectIdLiteral))
+            subject.property("id").eq(literalOf<String>(subjectId.value))
                 .and(relation.property("predicate_id").eq(literalOf<String>(predicateId.value)))
         }
 
@@ -363,40 +337,28 @@ class SpringDataNeo4jStatementAdapter(
         ) { subject, relation, `object` ->
             relation.property("predicate_id").eq(literalOf<String>(predicateId.value))
                 .and(`object`.property("label").eq(literalOf<String>(literal)))
-                .and(subject.property("class_id").eq(literalOf<String>(subjectClass.value)))
+                .and(subject.property("id").eq(literalOf<String>(subjectClass.value)))
         }
 
     override fun findAllBySubjects(subjectIds: List<ThingId>, pageable: Pageable): Page<GeneralStatement> =
         findAllFilteredAndPaged(pageable) { subject, _, _ ->
-            val subjectIdsLiteral = literalOf<List<String>>(subjectIds.map { it.value })
-            subject.property("resource_id").`in`(subjectIdsLiteral)
-                .or(subject.property("literal_id").`in`(subjectIdsLiteral))
-                .or(subject.property("predicate_id").`in`(subjectIdsLiteral))
-                .or(subject.property("class_id").`in`(subjectIdsLiteral))
+            subject.property("id").`in`(literalOf<List<String>>(subjectIds.map { it.value }))
         }
 
     override fun findAllByObjects(objectIds: List<ThingId>, pageable: Pageable): Page<GeneralStatement> =
         findAllFilteredAndPaged(pageable) { _, _, `object` ->
-            val objectIdsLiteral = literalOf<List<String>>(objectIds.map { it.value })
-            `object`.property("resource_id").`in`(objectIdsLiteral)
-                .or(`object`.property("literal_id").`in`(objectIdsLiteral))
-                .or(`object`.property("predicate_id").`in`(objectIdsLiteral))
-                .or(`object`.property("class_id").`in`(objectIdsLiteral))
+            `object`.property("id").`in`(literalOf<List<String>>(objectIds.map { it.value }))
         }
 
     override fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration): Iterable<GeneralStatement> {
         val n = name("n")
         val relationships = name("relationships")
         val rel = name("rel")
-        val node = node("Thing").named(n)
-        val idLiteral = literalOf<String>(id.value)
+        val node = node("Thing")
+            .withProperties("id", literalOf<String>(id.value))
+            .named(n)
         val query = match(node)
-            .where(
-                node.property("resource_id").eq(idLiteral)
-                    .or(node.property("literal_id").eq(idLiteral))
-                    .or(node.property("class_id").eq(idLiteral))
-                    .or(node.property("predicate_id").eq(idLiteral))
-            ).call("apoc.path.subgraphAll")
+            .call("apoc.path.subgraphAll")
             .withArgs(n, asExpression(configuration.toApocConfiguration()))
             .yield(relationships)
             .with(relationships)
@@ -443,7 +405,7 @@ class SpringDataNeo4jStatementAdapter(
     override fun findDOIByContributionId(id: ThingId): Optional<Literal> {
         val doi = name("doi")
         val relations = node("Resource")
-            .withProperties("resource_id", literalOf<String>(id.value))
+            .withProperties("id", literalOf<String>(id.value))
             .relationshipFrom(paperNode(), RELATED)
             .withProperties("predicate_id", literalOf<String>(ObjectService.ID_CONTRIBUTION_PREDICATE))
             .relationshipTo(node("Literal").named(doi), RELATED)
@@ -470,7 +432,7 @@ class SpringDataNeo4jStatementAdapter(
                     .withProperties("predicate_id", idLiteral))
             .optionalMatch(
                 node("Predicate")
-                    .withProperties("predicate_id", idLiteral)
+                    .withProperties("id", idLiteral)
                     .relationshipBetween(node("Thing"), RELATED)
                     .named(r2)
             ).with(countDistinct(r1).`as`(relations), countDistinct(r2).`as`(nodes))
@@ -548,7 +510,7 @@ class SpringDataNeo4jStatementAdapter(
         ))
         val query = call
             .returning(problem)
-            .orderBy(problem.property("resource_id"))
+            .orderBy(problem.property("id"))
             .build(pageable)
         val countQuery = call
             .returning(count(problem))
@@ -572,8 +534,8 @@ class SpringDataNeo4jStatementAdapter(
         val createdBy = name("createdBy")
         val match = match(
                 node("Resource")
+                    .withProperties("id", literalOf<String>(id.value))
                     .named(n)
-                    .withProperties("resource_id", literalOf<String>(id.value))
             ).call("apoc.path.subgraphAll")
             .withArgs(n, asExpression(apocConfiguration))
             .yield(relationships)
@@ -621,8 +583,8 @@ class SpringDataNeo4jStatementAdapter(
         ).`as`("edit")
         val match = match(
                 node("Resource")
+                    .withProperties("id", literalOf<String>(id.value))
                     .named(n)
-                    .withProperties("resource_id", literalOf<String>(id.value))
             ).call("apoc.path.subgraphAll")
             .withArgs(n, asExpression(apocConfiguration))
             .yield(relationships)
@@ -663,7 +625,7 @@ class SpringDataNeo4jStatementAdapter(
 
     override fun checkIfResourceHasStatements(id: ThingId): Boolean {
         val n = node("Resource")
-            .withProperties("resource_id", literalOf<String>(id.value))
+            .withProperties("id", literalOf<String>(id.value))
             .named("n")
         val query = match(n)
             .returning(exists(n.relationshipBetween(node("Thing"), RELATED)))
@@ -711,14 +673,8 @@ class SpringDataNeo4jStatementAdapter(
                     .named(r)
             ).where(
                 r.property("predicate_id").eq(predicateIdLiteral)
-                    .and(subject.property("resource_id").eq(subjectIdLiteral)
-                        .or(subject.property("literal_id").eq(subjectIdLiteral))
-                        .or(subject.property("predicate_id").eq(subjectIdLiteral))
-                        .or(subject.property("class_id").eq(subjectIdLiteral)))
-                    .and(`object`.property("resource_id").eq(objectIdLiteral)
-                        .or(`object`.property("literal_id").eq(objectIdLiteral))
-                        .or(`object`.property("predicate_id").eq(objectIdLiteral))
-                        .or(`object`.property("class_id").eq(objectIdLiteral)))
+                    .and(subject.property("id").eq(subjectIdLiteral))
+                    .and(`object`.property("id").eq(objectIdLiteral))
             ).returning(r, subject.`as`("s"), `object`.`as`("o"))
             .limit(1)
             .build()

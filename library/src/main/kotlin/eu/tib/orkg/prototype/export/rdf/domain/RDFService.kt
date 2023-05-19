@@ -80,7 +80,7 @@ class RDFService(
     }
 
     override fun rdfModelForClass(id: ThingId): Optional<Model> {
-        val clazz = classesRepository.findByClassId(id).orElse(null) ?: return Optional.empty()
+        val clazz = classesRepository.findById(id).orElse(null) ?: return Optional.empty()
         with(clazz) {
             val model = ModelBuilder().apply {
                 setNamespace("c", RdfConstants.CLASS_NS)
@@ -95,7 +95,7 @@ class RDFService(
     }
 
     override fun rdfModelForPredicate(id: ThingId): Optional<Model> {
-        val predicate = predicateRepository.findByPredicateId(id).orElse(null) ?: return Optional.empty()
+        val predicate = predicateRepository.findById(id).orElse(null) ?: return Optional.empty()
         with(predicate) {
             val model = ModelBuilder().apply {
                 setNamespace("p", RdfConstants.PREDICATE_NS)
@@ -109,7 +109,7 @@ class RDFService(
     }
 
     override fun rdfModelForResource(id: ThingId): Optional<Model> {
-        val resource = resourceRepository.findByResourceId(id).orElse(null) ?: return Optional.empty()
+        val resource = resourceRepository.findById(id).orElse(null) ?: return Optional.empty()
         val statements =
             statementRepository.findAllBySubject(resource.id, PageRequest.of(0, Int.MAX_VALUE)) // FIXME
         with(resource) {
@@ -154,15 +154,15 @@ class RDFService(
 
 fun Class.toNTriple(writer: Writer) {
     val cPrefix = RdfConstants.CLASS_NS
-    writer.write("<$cPrefix$id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .\n")
-    if (uri?.isValidForNTriple() == true) writer.write("<$cPrefix$id> <${OWL.EQUIVALENTCLASS}> <$uri> .\n")
-    writer.write("<$cPrefix$id> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label)}\"^^<http://www.w3.org/2001/XMLSchema#string> .\n")
+    writer.write("<$cPrefix${this.id}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .\n")
+    if (uri?.isValidForNTriple() == true) writer.write("<$cPrefix${this.id}> <${OWL.EQUIVALENTCLASS}> <$uri> .\n")
+    writer.write("<$cPrefix${this.id}> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label)}\"^^<http://www.w3.org/2001/XMLSchema#string> .\n")
 }
 
 fun Predicate.toNTriple(writer: Writer) {
     val cPrefix = RdfConstants.CLASS_NS
     val pPrefix = RdfConstants.PREDICATE_NS
-    val predicate = "<$pPrefix$id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Predicate> .\n" + "<$pPrefix$id> <http://www.w3.org/2000/01/rdf-schema#label> \"${
+    val predicate = "<$pPrefix${this.id}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Predicate> .\n" + "<$pPrefix${this.id}> <http://www.w3.org/2000/01/rdf-schema#label> \"${
         escapeLiterals(
             label
         )
@@ -173,9 +173,9 @@ fun Predicate.toNTriple(writer: Writer) {
 fun Resource.toNTriple(writer: Writer) {
     val cPrefix = RdfConstants.CLASS_NS
     val rPrefix = RdfConstants.RESOURCE_NS
-    writer.write("<$rPrefix$id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Resource> .\n")
-    classes.forEach { writer.write("<$rPrefix$id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <$cPrefix${it.value}> .\n") }
-    writer.write("<$rPrefix$id> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label)}\"^^<http://www.w3.org/2001/XMLSchema#string> .\n")
+    writer.write("<$rPrefix${this.id}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Resource> .\n")
+    classes.forEach { writer.write("<$rPrefix${this.id}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <$cPrefix${it.value}> .\n") }
+    writer.write("<$rPrefix${this.id}> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label)}\"^^<http://www.w3.org/2001/XMLSchema#string> .\n")
 }
 
 /**

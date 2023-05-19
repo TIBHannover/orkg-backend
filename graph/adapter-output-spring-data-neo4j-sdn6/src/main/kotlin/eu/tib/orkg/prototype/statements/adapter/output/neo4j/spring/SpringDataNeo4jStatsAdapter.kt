@@ -46,7 +46,7 @@ class SpringDataNeo4jStatsAdapter(
         date: String,
         pageable: Pageable
     ): Page<RetrieveStatisticsUseCase.ContributorRecord> =
-        neo4jRepository.getTopCurContribIdsAndContribCountByResearchFieldId(id.toResourceId(), date, pageable)
+        neo4jRepository.getTopCurContribIdsAndContribCountByResearchFieldId(id, date, pageable)
             .map { it.toContributionRecord() }
 
     override fun getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(
@@ -55,7 +55,7 @@ class SpringDataNeo4jStatsAdapter(
         pageable: Pageable
     ): Page<RetrieveStatisticsUseCase.ContributorRecord> =
         neo4jRepository.getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(
-            id = id.toResourceId(),
+            id = id,
             date = date,
             pageable = pageable
         ).map { it.toContributionRecord() }
@@ -64,7 +64,7 @@ class SpringDataNeo4jStatsAdapter(
         neo4jRepository.getChangeLog(pageable)
 
     override fun getChangeLogByResearchField(id: ThingId, pageable: Pageable): Page<ChangeLogResponse> =
-        neo4jRepository.getChangeLogByResearchField(id.toResourceId(), pageable)
+        neo4jRepository.getChangeLogByResearchField(id, pageable)
 
     override fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems> =
         neo4jRepository.getTrendingResearchProblems(pageable)

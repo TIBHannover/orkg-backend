@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import java.util.*
 import org.springframework.data.domain.Page
@@ -28,17 +28,17 @@ private const val RETURN_NODE_COUNT = """RETURN count(node)"""
  * Queries using this partial query must use `node` as the binding name.
  */
 private const val WITH_NODE_PROPERTIES =
-    """WITH node, node.label AS label, node.resource_id AS id, node.created_at AS created_at"""
+    """WITH node, node.label AS label, node.id AS id, node.created_at AS created_at"""
 
 private const val MATCH_SMART_REVIEW = """MATCH (node:`Resource`:`SmartReviewPublished`)"""
 
-private const val MATCH_SMART_REVIEW_BY_ID = """MATCH (node:`Resource`:`SmartReviewPublished` {resource_id: $id})"""
+private const val MATCH_SMART_REVIEW_BY_ID = """MATCH (node:`Resource`:`SmartReviewPublished` {id: $id})"""
 
-private const val WHERE_VISIBILITY = """WHERE COALESCE(node.visibility, "DEFAULT") = $visibility"""
+private const val WHERE_VISIBILITY = """WHERE node.visibility = $visibility"""
 
 private const val ORDER_BY_CREATED_AT = """ORDER BY created_at"""
 
-private const val MATCH_LISTED_SMART_REVIEW = """$MATCH_SMART_REVIEW WHERE (node.visibility IS NULL OR node.visibility = "FEATURED")"""
+private const val MATCH_LISTED_SMART_REVIEW = """$MATCH_SMART_REVIEW WHERE (node.visibility = "DEFAULT" OR node.visibility = "FEATURED")"""
 
 private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
 
@@ -46,7 +46,7 @@ interface Neo4jSmartReviewRepository :
     Neo4jRepository<Neo4jResource, Long> {
 
     @Query("""$MATCH_SMART_REVIEW_BY_ID $WITH_NODE_PROPERTIES $RETURN_NODE""")
-    fun findSmartReviewByResourceId(id: ResourceId): Optional<Neo4jResource>
+    fun findSmartReviewByResourceId(id: ThingId): Optional<Neo4jResource>
 
     @Query("""$MATCH_LISTED_SMART_REVIEW $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $PAGE_PARAMS""",
         countQuery = """$MATCH_LISTED_SMART_REVIEW $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")

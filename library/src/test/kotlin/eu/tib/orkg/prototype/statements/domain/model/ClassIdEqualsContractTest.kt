@@ -3,14 +3,14 @@ package eu.tib.orkg.prototype.statements.domain.model
 import com.redfin.contractual.EqualsContract
 import java.util.function.Supplier
 
-internal class ClassIdEqualsContractTest : EqualsContract<ClassId> {
+internal class ClassIdEqualsContractTest : EqualsContract<ThingId> {
 
     private val equalID = "SOME_ID"
     private val differentID = "another_id"
 
-    override fun getInstance(): ClassId = ClassId(equalID)
+    override fun getInstance(): ThingId = ThingId(equalID)
 
-    override fun getEqualInstanceSupplier(): Supplier<ClassId> = Supplier { ClassId(equalID) }
+    override fun getEqualInstanceSupplier(): Supplier<ThingId> = Supplier { ThingId(equalID) }
 
-    override fun getNonEqualInstance(): ClassId = ClassId(differentID)
+    override fun getNonEqualInstance(): ThingId = ThingId(differentID)
 }

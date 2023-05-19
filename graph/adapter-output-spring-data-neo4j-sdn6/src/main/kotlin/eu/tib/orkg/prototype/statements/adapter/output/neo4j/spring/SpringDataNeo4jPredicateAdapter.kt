@@ -29,7 +29,7 @@ class SpringDataNeo4jPredicateAdapter(
     override fun findAll(pageable: Pageable): Page<Predicate> =
         neo4jRepository.findAll(pageable).map(Neo4jPredicate::toPredicate)
 
-    override fun exists(id: ThingId): Boolean = neo4jRepository.existsByPredicateId(id.toPredicateId())
+    override fun exists(id: ThingId): Boolean = neo4jRepository.existsById(id)
 
     override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Predicate> =
         when (labelSearchString) {
@@ -38,8 +38,8 @@ class SpringDataNeo4jPredicateAdapter(
         }.map(Neo4jPredicate::toPredicate)
 
     @Cacheable(key = "#id")
-    override fun findByPredicateId(id: ThingId): Optional<Predicate> =
-        neo4jRepository.findByPredicateId(id.toPredicateId()).map(Neo4jPredicate::toPredicate)
+    override fun findById(id: ThingId): Optional<Predicate> =
+        neo4jRepository.findById(id).map(Neo4jPredicate::toPredicate)
 
     @Caching(
         evict = [
@@ -47,8 +47,8 @@ class SpringDataNeo4jPredicateAdapter(
             CacheEvict(key = "#id", cacheNames = [THING_ID_TO_THING_CACHE]),
         ]
     )
-    override fun deleteByPredicateId(id: ThingId) {
-        neo4jRepository.deleteByPredicateId(id.toPredicateId())
+    override fun deleteById(id: ThingId) {
+        neo4jRepository.deleteById(id)
     }
 
     @Caching(
@@ -76,13 +76,13 @@ class SpringDataNeo4jPredicateAdapter(
         var id: ThingId
         do {
             id = idGenerator.nextIdentity()
-        } while (neo4jRepository.existsByPredicateId(id.toPredicateId()))
+        } while (neo4jRepository.existsById(id))
         return id
     }
 
     private fun Predicate.toNeo4jPredicate() =
-        neo4jRepository.findByPredicateId(id.toPredicateId()).orElse(Neo4jPredicate()).apply {
-            predicateId = this@toNeo4jPredicate.id.toPredicateId()
+        neo4jRepository.findById(this.id).orElse(Neo4jPredicate()).apply {
+            id = this@toNeo4jPredicate.id
             label = this@toNeo4jPredicate.label
             createdBy = this@toNeo4jPredicate.createdBy
             createdAt = this@toNeo4jPredicate.createdAt

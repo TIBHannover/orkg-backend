@@ -1,12 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
-import eu.tib.orkg.prototype.statements.domain.model.Author
-import eu.tib.orkg.prototype.statements.domain.model.ComparisonAuthor
-import eu.tib.orkg.prototype.statements.domain.model.ComparisonAuthorInfo
-import eu.tib.orkg.prototype.statements.domain.model.PaperAuthor
-import eu.tib.orkg.prototype.statements.domain.model.ResourceId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.services.toResourceRepresentation
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.Query
@@ -20,8 +14,8 @@ interface Neo4jAuthorRepository :
     Neo4jRepository<Neo4jResource, Long> {
 
     @Query("""
-MATCH (c:Comparison:Resource {resource_id: $id})-[rel:RELATED {predicate_id: 'compareContribution'}]->(cont:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper:Resource)-[:RELATED {predicate_id: 'P27'}]->(a:Thing)
-WITH a, p, collect(p.resource_id) as paperIDs, count(p) as numPapers
+MATCH (c:Comparison:Resource {id: $id})-[rel:RELATED {predicate_id: 'compareContribution'}]->(cont:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper:Resource)-[:RELATED {predicate_id: 'P27'}]->(a:Thing)
+WITH a, p, collect(p.id) as paperIDs, count(p) as numPapers
 MATCH (p:Paper:Resource)-[rel2:RELATED {predicate_id: 'P27'}]->(auth:Thing)
 OPTIONAL MATCH(p)-[:RELATED {predicate_id: 'P29'}]->(year:Literal)
 WITH a, paperIDs, numPapers, auth, p, year.label AS year
@@ -40,18 +34,18 @@ WITH authorLabel, paperID, numPapers, authorResource, p, year,
 WITH authorLabel, collect(DISTINCT {paper: paperID, index: authorIndex, year: toInteger(year)}) as info, authorResource
 RETURN authorLabel, info, authorResource""",
         countQuery = """
-MATCH (c:Comparison:Resource {resource_id: $id})-[rel:RELATED {predicate_id: 'compareContribution'}]->(cont:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper:Resource)-[:RELATED {predicate_id: 'P27'}]->(a:Thing)
+MATCH (c:Comparison:Resource {id: $id})-[rel:RELATED {predicate_id: 'compareContribution'}]->(cont:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper:Resource)-[:RELATED {predicate_id: 'P27'}]->(a:Thing)
 WITH a.label as authorLabel
 RETURN COUNT(DISTINCT authorLabel) as cnt""")
-    fun findTopAuthorsOfComparison(id: ResourceId, pageable: Pageable): Page<Neo4jAuthorOfComparison>
+    fun findTopAuthorsOfComparison(id: ThingId, pageable: Pageable): Page<Neo4jAuthorOfComparison>
 
-    @Query(value = """MATCH (problem:Problem:Resource {resource_id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper:Resource)-[:RELATED {predicate_id: 'P27'}]->(author: Thing)
-                        RETURN author.label AS author, COLLECT(author)[0] AS thing , COUNT(paper.resource_id) AS papers
+    @Query(value = """MATCH (problem:Problem:Resource {id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper:Resource)-[:RELATED {predicate_id: 'P27'}]->(author: Thing)
+                        RETURN author.label AS author, COLLECT(author)[0] AS thing , COUNT(paper.id) AS papers
                         ORDER BY papers DESC, author""",
-        countQuery = """MATCH (problem:Problem:Resource {resource_id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper:Resource)-[:RELATED {predicate_id: 'P27'}]->(author: Thing)
-                        WITH author.label AS author, COLLECT(author)[0] AS thing , COUNT(paper.resource_id) AS papers
+        countQuery = """MATCH (problem:Problem:Resource {id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper:Resource)-[:RELATED {predicate_id: 'P27'}]->(author: Thing)
+                        WITH author.label AS author, COLLECT(author)[0] AS thing , COUNT(paper.id) AS papers
                         RETURN COUNT (author)""")
-    fun findAuthorsLeaderboardPerProblem(problemId: ResourceId, pageable: Pageable): Page<Neo4jAuthorPerProblem>
+    fun findAuthorsLeaderboardPerProblem(problemId: ThingId, pageable: Pageable): Page<Neo4jAuthorPerProblem>
 }
 
 @QueryResult

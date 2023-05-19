@@ -28,7 +28,7 @@ class ContributionServiceUnitTests {
         val expected = createResource().copy(
             classes = setOf(Classes.contribution)
         )
-        every { resourceRepository.findByResourceId(expected.id) } returns Optional.of(expected)
+        every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
         every { statementRepository.findAllBySubject(expected.id, PageRequests.ALL) } returns Page.empty(PageRequests.ALL)
 
         service.findById(expected.id).asClue { contribution ->
@@ -39,33 +39,33 @@ class ContributionServiceUnitTests {
             contribution.visibility shouldBe Visibility.DEFAULT
         }
 
-        verify(exactly = 1) { resourceRepository.findByResourceId(expected.id) }
+        verify(exactly = 1) { resourceRepository.findById(expected.id) }
         verify(exactly = 1) { statementRepository.findAllBySubject(expected.id, any()) }
     }
 
     @Test
     fun `Given a contribution does not exist, when fetching it by id, then an exception is thrown`() {
         val id = ThingId("Missing")
-        every { resourceRepository.findByResourceId(id) } returns Optional.empty()
+        every { resourceRepository.findById(id) } returns Optional.empty()
 
         assertThrows<ContributionNotFound> {
             service.findById(id)
         }
 
-        verify(exactly = 1) { resourceRepository.findByResourceId(id) }
+        verify(exactly = 1) { resourceRepository.findById(id) }
         verify(exactly = 0) { statementRepository.findAllBySubject(id, any()) }
     }
 
     @Test
     fun `Given a resource, when fetching it as a contribution although its not a contribution, then an exception is thrown`() {
         val expected = createResource()
-        every { resourceRepository.findByResourceId(expected.id) } returns Optional.of(expected)
+        every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
 
         assertThrows<ContributionNotFound> {
             service.findById(expected.id)
         }
 
-        verify(exactly = 1) { resourceRepository.findByResourceId(expected.id) }
+        verify(exactly = 1) { resourceRepository.findById(expected.id) }
         verify(exactly = 0) { statementRepository.findAllBySubject(expected.id, any()) }
     }
 }

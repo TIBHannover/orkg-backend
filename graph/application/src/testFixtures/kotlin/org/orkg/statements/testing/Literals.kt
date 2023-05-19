@@ -2,7 +2,6 @@ package org.orkg.statements.testing
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Literal
-import eu.tib.orkg.prototype.statements.domain.model.LiteralId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.time.OffsetDateTime
 

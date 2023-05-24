@@ -7,8 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.32.0] - 2023-05-24
+### Changed
+- All IDs need to be globally unique now.
+  (See: [!515](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/515))
+
 ## [0.31.1] - 2023-05-17
-## Fixed
+### Fixed
 - Loading of predicate and class description works again.
   (See: [!537](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/537))
 - Fixed queries for finding contributions related to research problem.
@@ -360,7 +365,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.31.1...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.32.0...master
+[0.32.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.32.0
 [0.31.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.31.1
 [0.31.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.31.0
 [0.30.4]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.30.4

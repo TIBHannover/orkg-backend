@@ -25,7 +25,7 @@ interface PaperResourceWithPathRepresentationAdapter : ThingRepresentationAdapte
         return map { it.toPaperResourceWithPathRepresentation(usageCounts, formattedLabels) }
     }
 
-    private fun PaperResourceWithPath.toPaperResourceWithPathRepresentation(
+    fun PaperResourceWithPath.toPaperResourceWithPathRepresentation(
         usageCounts: StatementCounts,
         formattedLabels: FormattedLabels
     ): PaperResourceWithPathRepresentation =

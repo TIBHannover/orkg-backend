@@ -2,21 +2,19 @@ package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
-import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
 import eu.tib.orkg.prototype.auth.spi.UserRepository
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.createClass
 import eu.tib.orkg.prototype.statements.api.ClassHierarchyUseCases
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.*
+import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.services.toClassRepresentation
-import eu.tib.orkg.prototype.statements.spi.ClassHierarchyRepository.*
 import io.mockk.every
 import io.mockk.verify
 import java.util.*
-import org.hamcrest.Matchers.endsWith
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -25,9 +23,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.MediaType
 import org.springframework.security.test.context.support.WithMockUser
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -35,8 +33,8 @@ import org.springframework.web.context.WebApplicationContext
 
 private const val CONTRIBUTOR_ID = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4"
 
+@ContextConfiguration(classes = [ClassHierarchyController::class, ExceptionHandler::class])
 @WebMvcTest(controllers = [ClassHierarchyController::class])
-@AuthorizationServerUnitTestWorkaround
 @DisplayName("Given a Class controller")
 internal class ClassHierarchyControllerUnitTest {
 
@@ -48,6 +46,7 @@ internal class ClassHierarchyControllerUnitTest {
     @Autowired
     private lateinit var context: WebApplicationContext
 
+    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var classService: ClassUseCases
 
@@ -71,7 +70,7 @@ internal class ClassHierarchyControllerUnitTest {
     fun `Given a parent class id, when searched for its children, then status is 200 OK and children class ids are returned`() {
         val parentId = ThingId("parent")
         val childId = ThingId("child")
-        val response = ChildClassRepresentation(createClass().copy(id = childId).toClassRepresentation(), 1)
+        val response = RetrieveClassHierarchyUseCase.ChildClass(createClass().copy(id = childId), 1)
 
         every { classHierarchyService.findChildren(parentId, any()) } returns PageImpl(listOf(response))
 
@@ -97,9 +96,7 @@ internal class ClassHierarchyControllerUnitTest {
         val parentId = ThingId("parent")
         val childId = ThingId("child")
 
-        every { classHierarchyService.findParent(childId) } returns Optional.of(
-            createClass().copy(id = parentId).toClassRepresentation()
-        )
+        every { classHierarchyService.findParent(childId) } returns Optional.of(createClass().copy(id = parentId))
 
         get("/api/classes/$childId/parent")
             .andExpect(status().isOk)
@@ -131,9 +128,7 @@ internal class ClassHierarchyControllerUnitTest {
         val rootId = ThingId("root")
         val childId = ThingId("child")
 
-        every { classHierarchyService.findRoot(childId) } returns Optional.of(
-            createClass().copy(id = rootId).toClassRepresentation()
-        )
+        every { classHierarchyService.findRoot(childId) } returns Optional.of(createClass().copy(id = rootId))
 
         get("/api/classes/$childId/root")
             .andExpect(status().isOk)
@@ -186,9 +181,7 @@ internal class ClassHierarchyControllerUnitTest {
 
         every {
             classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), parentId, setOf(childId), true)
-        } throws (
-            ClassNotFound.withThingId(childId)
-        )
+        } throws ClassNotFound.withThingId(childId)
 
         mockMvc
             .perform(performPost("/api/classes/$parentId/children", request))
@@ -203,9 +196,7 @@ internal class ClassHierarchyControllerUnitTest {
 
         every {
             classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), classId, setOf(classId), true)
-        } throws (
-            InvalidSubclassRelation(classId, classId)
-        )
+        } throws InvalidSubclassRelation(classId, classId)
 
         mockMvc
             .perform(performPost("/api/classes/$classId/children", request))
@@ -222,9 +213,7 @@ internal class ClassHierarchyControllerUnitTest {
 
         every {
             classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), parentId, setOf(childId), true)
-        } throws (
-            ParentClassAlreadyExists(childId, otherParentId)
-        )
+        } throws ParentClassAlreadyExists(childId, otherParentId)
 
         mockMvc
             .perform(performPost("/api/classes/$parentId/children", request))
@@ -245,7 +234,14 @@ internal class ClassHierarchyControllerUnitTest {
             .andExpect(status().isOk)
             .andExpect(header().string("location", endsWith("/api/classes/$parentId/children")))
 
-        verify(exactly = 1) { classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), parentId, setOf(childId), false) }
+        verify(exactly = 1) {
+            classHierarchyService.create(
+                ContributorId(CONTRIBUTOR_ID),
+                parentId,
+                setOf(childId),
+                false
+            )
+        }
     }
 
     @Test
@@ -257,9 +253,7 @@ internal class ClassHierarchyControllerUnitTest {
 
         every {
             classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), parentId, setOf(childId), false)
-        } throws (
-            ClassNotFound.withThingId(childId)
-        )
+        } throws ClassNotFound.withThingId(childId)
 
         mockMvc
             .perform(performPatch("/api/classes/$parentId/children", request))
@@ -274,9 +268,7 @@ internal class ClassHierarchyControllerUnitTest {
 
         every {
             classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), classId, setOf(classId), false)
-        } throws (
-            InvalidSubclassRelation(classId, classId)
-        )
+        } throws InvalidSubclassRelation(classId, classId)
 
         mockMvc
             .perform(performPatch("/api/classes/$classId/children", request))
@@ -293,9 +285,7 @@ internal class ClassHierarchyControllerUnitTest {
 
         every {
             classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), parentId, setOf(childId), false)
-        } throws (
-            ParentClassAlreadyExists(childId, otherParentId)
-        )
+        } throws ParentClassAlreadyExists(childId, otherParentId)
 
         mockMvc
             .perform(performPatch("/api/classes/$parentId/children", request))
@@ -309,7 +299,7 @@ internal class ClassHierarchyControllerUnitTest {
         every { classHierarchyService.delete(childId) } returns Unit
 
         mockMvc
-            .perform(delete("/api/classes/$childId/parent"))
+            .perform(MockMvcRequestBuilders.delete("/api/classes/$childId/parent"))
             .andExpect(status().isNoContent)
             .andExpect(content().string(""))
 
@@ -323,7 +313,7 @@ internal class ClassHierarchyControllerUnitTest {
         every { classHierarchyService.delete(childId) } throws ClassNotFound.withThingId(childId)
 
         mockMvc
-            .perform(delete("/api/classes/$childId/parent"))
+            .perform(MockMvcRequestBuilders.delete("/api/classes/$childId/parent"))
             .andExpect(status().isNotFound)
 
         verify(exactly = 1) { classHierarchyService.delete(childId) }
@@ -355,9 +345,7 @@ internal class ClassHierarchyControllerUnitTest {
 
         every {
             classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), parentId, setOf(childId), false)
-        } throws (
-            ClassNotFound.withThingId(childId)
-        )
+        } throws ClassNotFound.withThingId(childId)
 
         mockMvc
             .perform(performPost("/api/classes/$childId/parent", request))
@@ -373,9 +361,7 @@ internal class ClassHierarchyControllerUnitTest {
 
         every {
             classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), classId, setOf(classId), false)
-        } throws (
-            InvalidSubclassRelation(classId, classId)
-        )
+        } throws InvalidSubclassRelation(classId, classId)
 
         mockMvc
             .perform(performPost("/api/classes/$classId/parent", request))
@@ -392,9 +378,7 @@ internal class ClassHierarchyControllerUnitTest {
 
         every {
             classHierarchyService.create(ContributorId(CONTRIBUTOR_ID), parentId, setOf(childId), false)
-        } throws (
-            ParentClassAlreadyExists(childId, otherParentId)
-        )
+        } throws ParentClassAlreadyExists(childId, otherParentId)
 
         mockMvc
             .perform(performPost("/api/classes/$childId/parent", request))
@@ -426,11 +410,13 @@ internal class ClassHierarchyControllerUnitTest {
     fun `Given a class id, when the class hierarchy is fetched, then status is 200 OK`() {
         val childId = ThingId("child")
         val parentId = ThingId("parent")
-        val childClass = createClass().copy(id = childId).toClassRepresentation()
+        val childClass = createClass().copy(id = childId)
 
-        every { classHierarchyService.findClassHierarchy(childId, any()) } returns PageImpl(listOf(
-            ClassHierarchyEntryRepresentation(childClass, parentId)
-        ))
+        every { classHierarchyService.findClassHierarchy(childId, any()) } returns PageImpl(
+            listOf(
+                RetrieveClassHierarchyUseCase.ClassHierarchyEntry(childClass, parentId)
+            )
+        )
 
         get("/api/classes/$childId/hierarchy")
             .andExpect(status().isOk)

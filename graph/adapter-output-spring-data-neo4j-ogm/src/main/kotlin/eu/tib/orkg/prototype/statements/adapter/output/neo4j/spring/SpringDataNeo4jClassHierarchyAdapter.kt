@@ -2,11 +2,11 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClass
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClassHierarchyRepository
+import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.ChildClass
+import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.ClassHierarchyEntry
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassHierarchyRepository
-import eu.tib.orkg.prototype.statements.spi.ClassHierarchyRepository.ChildClass
-import eu.tib.orkg.prototype.statements.spi.ClassHierarchyRepository.ClassHierarchyEntry
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

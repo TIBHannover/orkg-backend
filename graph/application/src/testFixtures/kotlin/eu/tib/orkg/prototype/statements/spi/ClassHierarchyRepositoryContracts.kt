@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.statements.spi
 
+import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.ChildClass
+import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.ClassHierarchyEntry
 import eu.tib.orkg.prototype.statements.domain.model.ClassSubclassRelation
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.spi.ClassHierarchyRepository.ChildClass
-import eu.tib.orkg.prototype.statements.spi.ClassHierarchyRepository.ClassHierarchyEntry
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.comparables.shouldBeLessThan

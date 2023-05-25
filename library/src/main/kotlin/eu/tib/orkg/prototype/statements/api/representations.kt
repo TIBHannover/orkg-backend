@@ -93,3 +93,15 @@ data class BundleRepresentation(
     @JsonProperty("statements")
     val bundle: List<StatementRepresentation>
 )
+
+data class ChildClassRepresentation(
+    val `class`: ClassRepresentation,
+    @JsonProperty("child_count")
+    val childCount: Long
+)
+
+data class ClassHierarchyEntryRepresentation(
+    val `class`: ClassRepresentation,
+    @JsonProperty("parent_id")
+    val parentId: ThingId?
+)

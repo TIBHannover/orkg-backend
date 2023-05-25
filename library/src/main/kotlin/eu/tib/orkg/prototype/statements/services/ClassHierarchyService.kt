@@ -2,9 +2,8 @@ package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.ClassHierarchyUseCases
-import eu.tib.orkg.prototype.statements.api.ClassRepresentation
-import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.ChildClassRepresentation
-import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.ClassHierarchyEntryRepresentation
+import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.ChildClass
+import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.ClassHierarchyEntry
 import eu.tib.orkg.prototype.statements.application.ClassNotFound
 import eu.tib.orkg.prototype.statements.application.InvalidSubclassRelation
 import eu.tib.orkg.prototype.statements.application.ParentClassAlreadyExists
@@ -13,8 +12,6 @@ import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassSubclassRelation
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassHierarchyRepository
-import eu.tib.orkg.prototype.statements.spi.ClassHierarchyRepository.ChildClass
-import eu.tib.orkg.prototype.statements.spi.ClassHierarchyRepository.ClassHierarchyEntry
 import eu.tib.orkg.prototype.statements.spi.ClassRelationRepository
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import java.time.OffsetDateTime
@@ -57,47 +54,37 @@ class ClassHierarchyService(
         relationRepository.saveAll(classRelations)
     }
 
-    override fun findChildren(id: ThingId, pageable: Pageable): Page<ChildClassRepresentation> =
-        classRepository.findById(id).map {
-            repository.findChildren(id, pageable).map(ChildClass::toChildClassRepresentation)
-        }.orElseThrow { ClassNotFound.withThingId(id) }
+    override fun findChildren(id: ThingId, pageable: Pageable): Page<ChildClass> =
+        classRepository.findById(id)
+            .map { repository.findChildren(id, pageable) }
+            .orElseThrow { ClassNotFound.withThingId(id) }
 
-    override fun findParent(id: ThingId): Optional<ClassRepresentation> =
-        classRepository.findById(id).map {
-            repository.findParent(id).map(Class::toClassRepresentation)
-        }.orElseThrow { ClassNotFound.withThingId(id) }
+    override fun findParent(id: ThingId): Optional<Class> =
+        classRepository.findById(id)
+            .map { repository.findParent(id) }
+            .orElseThrow { ClassNotFound.withThingId(id) }
 
-    override fun findRoot(id: ThingId): Optional<ClassRepresentation> =
-        classRepository.findById(id).map {
-            repository.findRoot(id).map(Class::toClassRepresentation)
-        }.orElseThrow { ClassNotFound.withThingId(id) }
+    override fun findRoot(id: ThingId): Optional<Class> =
+        classRepository.findById(id)
+            .map { repository.findRoot(id) }
+            .orElseThrow { ClassNotFound.withThingId(id) }
 
-    override fun findAllRoots(pageable: Pageable): Page<ClassRepresentation> =
-        repository.findAllRoots(pageable).map(Class::toClassRepresentation)
+    override fun findAllRoots(pageable: Pageable): Page<Class> =
+        repository.findAllRoots(pageable)
 
-    override fun findClassHierarchy(id: ThingId, pageable: Pageable): Page<ClassHierarchyEntryRepresentation> =
-        classRepository.findById(id).map {
-            repository.findClassHierarchy(id, pageable).map(ClassHierarchyEntry::toClassHierarchyEntryRepresentation)
-        }.orElseThrow { ClassNotFound.withThingId(id) }
+    override fun findClassHierarchy(id: ThingId, pageable: Pageable): Page<ClassHierarchyEntry> =
+        classRepository.findById(id)
+            .map { repository.findClassHierarchy(id, pageable) }
+            .orElseThrow { ClassNotFound.withThingId(id) }
 
     override fun countClassInstances(id: ThingId): Long =
-        classRepository.findById(id).map {
-            repository.countClassInstances(id)
-        }.orElseThrow { ClassNotFound.withThingId(id) }
+        classRepository.findById(id)
+            .map { repository.countClassInstances(id) }
+            .orElseThrow { ClassNotFound.withThingId(id) }
 
     override fun delete(childId: ThingId) {
-        classRepository.findById(childId).map {
-            relationRepository.deleteByChildId(childId)
-        }.orElseThrow { ClassNotFound.withThingId(childId) }
+        classRepository.findById(childId)
+            .map { relationRepository.deleteByChildId(childId) }
+            .orElseThrow { ClassNotFound.withThingId(childId) }
     }
 }
-
-fun ChildClass.toChildClassRepresentation() = ChildClassRepresentation(
-    `class` = `class`.toClassRepresentation(),
-    childCount = childCount
-)
-
-fun ClassHierarchyEntry.toClassHierarchyEntryRepresentation() = ClassHierarchyEntryRepresentation(
-    `class` = `class`.toClassRepresentation(),
-    parentId = parentId
-)

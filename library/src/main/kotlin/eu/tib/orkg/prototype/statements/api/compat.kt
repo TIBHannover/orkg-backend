@@ -15,10 +15,11 @@ import eu.tib.orkg.prototype.statements.application.port.out.LoadContributionPor
 import eu.tib.orkg.prototype.statements.application.port.out.LoadPaperPort
 import eu.tib.orkg.prototype.statements.application.port.out.LoadSmartReviewPort
 import eu.tib.orkg.prototype.statements.application.port.out.LoadVisualizationPort
+import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.URIService
 
 interface ClassUseCases : CreateClassUseCase, RetrieveClassUseCase, UpdateClassUseCase, DeleteClassUseCase,
-    URIService<ClassRepresentation>
+    URIService<Class>
 
 interface LiteralUseCases : CreateLiteralUseCase, RetrieveLiteralUseCase, UpdateLiteralUseCase, DeleteLiteralUseCase
 

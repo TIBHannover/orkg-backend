@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.application
 import dev.forkhandles.result4k.onFailure
 import dev.forkhandles.values.ofOrNull
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.ClassRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.AlreadyInUse
 import eu.tib.orkg.prototype.statements.api.ClassRepresentation
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
@@ -39,18 +40,22 @@ import eu.tib.orkg.prototype.statements.api.InvalidLabel as InvalidLabelProblem
 
 @RestController
 @RequestMapping("/api/classes/", produces = [MediaType.APPLICATION_JSON_VALUE])
-class ClassController(private val service: ClassUseCases, private val resourceService: ResourceUseCases) :
-    BaseController() {
+class ClassController(
+    private val service: ClassUseCases,
+    private val resourceService: ResourceUseCases
+) : BaseController(), ClassRepresentationAdapter {
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: ThingId): ClassRepresentation = service.findById(id).orElseThrow { ClassNotFound.withThingId(id) }
+    fun findById(@PathVariable id: ThingId): ClassRepresentation =
+        service.findById(id).mapToClassRepresentation().orElseThrow { ClassNotFound.withThingId(id) }
 
     @GetMapping("/", params = ["uri"])
-    fun findByURI(@RequestParam uri: URI): ClassRepresentation = service.findByURI(uri).orElseThrow { ClassNotFound.withURI(uri) }
+    fun findByURI(@RequestParam uri: URI): ClassRepresentation =
+        service.findByURI(uri).mapToClassRepresentation().orElseThrow { ClassNotFound.withURI(uri) }
 
     @GetMapping("/", params = ["ids"])
     fun findByIds(@RequestParam ids: List<ThingId>, pageable: Pageable): Page<ClassRepresentation> =
-        service.findAllById(ids, pageable)
+        service.findAllById(ids, pageable).mapToClassRepresentation()
 
     @GetMapping("/{id}/resources/")
     fun findResourcesWithClass(
@@ -83,14 +88,18 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
         @RequestParam("q", required = false) string: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         pageable: Pageable
-    ): Page<ClassRepresentation> = when (string) {
-        null -> service.findAll(pageable)
-        else -> service.findAllByLabel(SearchString.of(string, exactMatch), pageable)
-    }
+    ): Page<ClassRepresentation> =
+        when (string) {
+            null -> service.findAll(pageable)
+            else -> service.findAllByLabel(SearchString.of(string, exactMatch), pageable)
+        }.mapToClassRepresentation()
 
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(CREATED)
-    fun add(@RequestBody `class`: CreateClassRequest, uriComponentsBuilder: UriComponentsBuilder): ResponseEntity<Any> {
+    fun add(
+        @RequestBody `class`: CreateClassRequest,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<ClassRepresentation> {
         Label.ofOrNull(`class`.label) ?: throw InvalidLabel()
         if (`class`.id != null && service.findById(`class`.id).isPresent) throw ClassAlreadyExists(`class`.id.value)
         if (!`class`.hasValidName()) throw ClassNotAllowed(`class`.id!!.value)
@@ -110,14 +119,14 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
         )
         val location = uriComponentsBuilder.path("api/classes/{id}").buildAndExpand(id).toUri()
 
-        return created(location).body(service.findById(id).get())
+        return created(location).body(service.findById(id).mapToClassRepresentation().get())
     }
 
     @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun replace(
         @PathVariable id: ThingId,
         @RequestBody request: ReplaceClassRequest
-    ): ResponseEntity<ClassRepresentation> {
+    ): ClassRepresentation {
         // We will be very lenient with the ID, meaning we do not validate it. But we correct for it in the response. (For now.)
         val newValues = UpdateClassUseCase.ReplaceCommand(label = request.label, uri = request.uri)
         service.replace(id, newValues).onFailure {
@@ -129,7 +138,7 @@ class ClassController(private val service: ClassUseCases, private val resourceSe
                 AlreadyInUse -> throw URIAlreadyInUse(request.uri.toString())
             }
         }
-        return ResponseEntity.ok(service.findById(id).get())
+        return service.findById(id).mapToClassRepresentation().get()
     }
 
     @PatchMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])

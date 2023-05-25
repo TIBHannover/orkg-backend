@@ -16,5 +16,5 @@ interface URIService<T> {
      * @param uri The [URI] to be searched.
      * @return An [Optional] containing the found entity, or [Optional.EMPTY] otherwise.
      */
-    fun findByURI(uri: URI): Optional<out T>
+    fun findByURI(uri: URI): Optional<T>
 }

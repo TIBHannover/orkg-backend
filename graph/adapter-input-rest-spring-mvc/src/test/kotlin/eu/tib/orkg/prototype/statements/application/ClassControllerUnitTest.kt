@@ -16,7 +16,6 @@ import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.toOptional
-import eu.tib.orkg.prototype.statements.services.toClassRepresentation
 import io.mockk.every
 import io.mockk.verify
 import java.net.URI
@@ -138,7 +137,7 @@ internal class ClassControllerUnitTest {
         val replacingClass = createClass().copy(id = id, label = "new label")
         val body = objectMapper.writeValueAsString(replacingClass)
         every { classService.replace(id, command = any()) } returns Success(Unit)
-        every { classService.findById(id) } returns replacingClass.toOptional().map(Class::toClassRepresentation)
+        every { classService.findById(id) } returns replacingClass.toOptional()
 
         mockMvc.performPut("/api/classes/$id", body)
             .andDo(MockMvcResultHandlers.print())
@@ -388,5 +387,5 @@ internal class ClassControllerUnitTest {
         label = "test class",
         createdAt = OffsetDateTime.now(),
         uri = URI.create("http://example.org/exists")
-    ).toClassRepresentation()
+    )
 }

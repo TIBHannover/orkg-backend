@@ -2,6 +2,10 @@ package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.ChildClassRepresentationAdapter
+import eu.tib.orkg.prototype.statements.ClassHierarchyEntryRepresentationAdapter
+import eu.tib.orkg.prototype.statements.api.ChildClassRepresentation
+import eu.tib.orkg.prototype.statements.api.ClassHierarchyEntryRepresentation
 import eu.tib.orkg.prototype.statements.api.ClassHierarchyUseCases
 import eu.tib.orkg.prototype.statements.api.ClassRepresentation
 import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.*
@@ -27,19 +31,21 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/classes", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ClassHierarchyController(
     private val service: ClassHierarchyUseCases
-) : BaseController() {
+) : BaseController(), ClassHierarchyEntryRepresentationAdapter, ChildClassRepresentationAdapter {
 
     @GetMapping("/{id}/children")
     fun findChildren(
         @PathVariable id: ThingId,
         pageable: Pageable
-    ): Page<ChildClassRepresentation> = service.findChildren(id, pageable)
+    ): Page<ChildClassRepresentation> = service.findChildren(id, pageable).mapToChildClassRepresentation()
 
     @GetMapping("/{id}/parent")
     fun findParent(
         @PathVariable id: ThingId
     ): ResponseEntity<ClassRepresentation> = service.findParent(id)
-        .map(::ok).orElseGet { noContent().build() }
+        .mapToClassRepresentation()
+        .map(::ok)
+        .orElseGet { noContent().build() }
 
     @DeleteMapping("/{id}/parent")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -70,13 +76,15 @@ class ClassHierarchyController(
     fun findRoot(
         @PathVariable id: ThingId
     ): ResponseEntity<ClassRepresentation> = service.findRoot(id)
-        .map(::ok).orElseGet { noContent().build() }
+        .mapToClassRepresentation()
+        .map(::ok)
+        .orElseGet { noContent().build() }
 
     @GetMapping("/roots")
     fun findAllRoots(
         @PathVariable id: ThingId,
         pageable: Pageable
-    ): Page<ClassRepresentation> = service.findAllRoots(pageable)
+    ): Page<ClassRepresentation> = service.findAllRoots(pageable).mapToClassRepresentation()
 
     @PostMapping("/{id}/children", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -125,7 +133,7 @@ class ClassHierarchyController(
         @PathVariable id: ThingId,
         pageable: Pageable
     ): Page<ClassHierarchyEntryRepresentation> =
-        service.findClassHierarchy(id, pageable)
+        service.findClassHierarchy(id, pageable).mapToClassHierarchyEntryRepresentation()
 }
 
 data class CreateChildrenRequest(

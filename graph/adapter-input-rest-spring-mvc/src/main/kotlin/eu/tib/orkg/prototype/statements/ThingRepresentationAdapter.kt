@@ -19,7 +19,7 @@ interface ThingRepresentationAdapter : ResourceRepresentationAdapter, ClassRepre
     private fun Thing.toThingRepresentation(): ThingRepresentation =
         when (this) {
             is Resource -> {
-                val count = statementRepository.countStatementsAboutResource(id)
+                val count = statementService.countStatementsAboutResource(id)
                 toResourceRepresentation(mapOf(id to count), formatLabelFor(listOf(this)))
             }
             is Class -> toClassRepresentation()

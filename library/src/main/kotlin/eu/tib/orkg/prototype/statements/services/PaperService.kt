@@ -2,35 +2,29 @@ package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
+import eu.tib.orkg.prototype.statements.api.CreatePaperUseCase.*
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
-import eu.tib.orkg.prototype.statements.api.PaperResourceWithPathRepresentation
-import eu.tib.orkg.prototype.statements.api.PathRepresentation
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.RetrievePaperUseCase
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.CreateObjectRequest
-import eu.tib.orkg.prototype.statements.application.CreatePaperRequest
 import eu.tib.orkg.prototype.statements.application.NamedObject
 import eu.tib.orkg.prototype.statements.application.OrcidNotValid
 import eu.tib.orkg.prototype.statements.application.OrphanOrcidValue
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
-import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
 import eu.tib.orkg.prototype.statements.domain.model.PaperResourceWithPath
-import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.PaperRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
-import java.time.OffsetDateTime
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -314,53 +308,6 @@ class PaperService(
         }
     }
 
-    private fun countsFor(resources: List<Resource>): Map<ThingId, Long> {
-        val resourceIds = resources.mapNotNull { it.id }.toSet()
-        return statementRepository.countStatementsAboutResources(resourceIds)
-    }
-
-    private fun formatLabelFor(resources: List<Resource>): Map<ThingId, FormattedLabel?> =
-        if (flags.isFormattedLabelsEnabled())
-            resources.associate { it.id to templateRepository.formattedLabelFor(it.id, it.classes) }
-        else emptyMap()
-
-    override fun findPapersRelatedToResource(related: ThingId, pageable: Pageable): Page<PaperResourceWithPathRepresentation> {
-        val resources = repository.findAllPapersRelatedToResource(related, pageable)
-        // Papers section
-        val paperList = resources.map(PaperResourceWithPath::paper).toList()
-        val paperCounts = countsFor(paperList)
-        val paperLabels = formatLabelFor(paperList)
-        // Resources section
-        val resourceList = resources.map { it.path }.flatten().filterIsInstance<Resource>()
-        val resourceCounts = countsFor(resourceList)
-        val resourceLabels = formatLabelFor(resourceList)
-        // Convert to representation
-        return resources.map {
-            it.toPaperResourceWithPathRepresentation(
-                paperCounts + resourceCounts,
-                paperLabels + resourceLabels
-            )
-        }
-    }
+    override fun findPapersRelatedToResource(related: ThingId, pageable: Pageable): Page<PaperResourceWithPath> =
+        repository.findAllPapersRelatedToResource(related, pageable)
 }
-
-fun PaperResourceWithPath.toPaperResourceWithPathRepresentation(usageCounts: StatementCounts, formattedLabels: FormattedLabels): PaperResourceWithPathRepresentation =
-    object : PaperResourceWithPathRepresentation {
-        override val id: ThingId = this@toPaperResourceWithPathRepresentation.paper.id
-        override val label: String = this@toPaperResourceWithPathRepresentation.paper.label
-        override val classes: Set<ThingId> = this@toPaperResourceWithPathRepresentation.paper.classes
-        override val shared: Long = usageCounts[this@toPaperResourceWithPathRepresentation.paper.id] ?: 0
-        override val extractionMethod: ExtractionMethod = this@toPaperResourceWithPathRepresentation.paper.extractionMethod
-        override val jsonClass: String = "resource"
-        override val createdAt: OffsetDateTime = this@toPaperResourceWithPathRepresentation.paper.createdAt
-        override val createdBy: ContributorId = this@toPaperResourceWithPathRepresentation.paper.createdBy
-        override val observatoryId: ObservatoryId = this@toPaperResourceWithPathRepresentation.paper.observatoryId
-        override val organizationId: OrganizationId = this@toPaperResourceWithPathRepresentation.paper.organizationId
-        override val featured: Boolean = this@toPaperResourceWithPathRepresentation.paper.visibility == Visibility.FEATURED
-        override val unlisted: Boolean = this@toPaperResourceWithPathRepresentation.paper.visibility == Visibility.UNLISTED
-        override val verified: Boolean = this@toPaperResourceWithPathRepresentation.paper.verified ?: false
-        override val formattedLabel: FormattedLabel? = formattedLabels[this@toPaperResourceWithPathRepresentation.paper.id]
-        override val path: PathRepresentation = this@toPaperResourceWithPathRepresentation.path.map { list ->
-            list.map { thing -> thing.toRepresentation(usageCounts, formattedLabels) }
-        }
-    }

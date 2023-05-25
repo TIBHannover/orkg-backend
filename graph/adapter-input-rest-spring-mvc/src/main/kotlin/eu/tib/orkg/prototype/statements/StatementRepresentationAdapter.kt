@@ -13,7 +13,7 @@ import java.time.OffsetDateTime
 import java.util.*
 import org.springframework.data.domain.Page
 
-interface StatementRepresentationAdapter : FormattedLabelRepresentationAdapter, ThingRepresentationAdapter {
+interface StatementRepresentationAdapter : ThingRepresentationAdapter {
 
     fun Optional<GeneralStatement>.mapToStatementRepresentation(): Optional<StatementRepresentation> =
         map { it.toStatementRepresentation() }

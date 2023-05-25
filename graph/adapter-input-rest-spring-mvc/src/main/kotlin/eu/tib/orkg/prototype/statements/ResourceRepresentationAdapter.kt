@@ -18,7 +18,7 @@ import org.springframework.data.domain.Page
 interface ResourceRepresentationAdapter : FormattedLabelRepresentationAdapter {
     fun Optional<Resource>.mapToResourceRepresentation(): Optional<ResourceRepresentation> =
         map {
-            val count = statementRepository.countStatementsAboutResource(it.id)
+            val count = statementService.countStatementsAboutResource(it.id)
             it.toResourceRepresentation(mapOf(it.id to count), formatLabelFor(listOf(it)))
         }
 

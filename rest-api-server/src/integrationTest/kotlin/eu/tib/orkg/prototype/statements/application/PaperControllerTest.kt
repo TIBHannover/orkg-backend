@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.createClasses
 import eu.tib.orkg.prototype.createPredicates
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.CreatePaperUseCase.*
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases

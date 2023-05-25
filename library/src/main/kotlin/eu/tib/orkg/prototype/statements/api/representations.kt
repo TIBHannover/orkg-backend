@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
+import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
 import java.time.OffsetDateTime
@@ -85,3 +86,10 @@ interface ContentTypeFlags {
 interface PaperResourceWithPathRepresentation : ResourceRepresentation {
     val path: PathRepresentation
 }
+
+data class BundleRepresentation(
+    @JsonProperty("root")
+    val rootId: ThingId,
+    @JsonProperty("statements")
+    val bundle: List<StatementRepresentation>
+)

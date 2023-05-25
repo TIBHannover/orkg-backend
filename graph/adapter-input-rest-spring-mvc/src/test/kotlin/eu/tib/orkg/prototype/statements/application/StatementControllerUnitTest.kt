@@ -9,8 +9,10 @@ import eu.tib.orkg.prototype.createLiteral
 import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.createStatement
+import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import io.mockk.Runs
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
@@ -58,6 +60,14 @@ internal class StatementControllerUnitTest {
 
     @MockkBean
     private lateinit var statementService: StatementUseCases
+
+    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
+    @MockkBean
+    private lateinit var templateRepository: TemplateRepository
+
+    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
+    @MockkBean
+    private lateinit var flags: FeatureFlagService
 
     @MockkBean
     private lateinit var principal: Principal

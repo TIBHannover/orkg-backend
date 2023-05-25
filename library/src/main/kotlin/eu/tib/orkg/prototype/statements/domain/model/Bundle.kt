@@ -1,18 +1,14 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-import com.fasterxml.jackson.annotation.JsonProperty
-
 data class Bundle(
-    @JsonProperty("root")
     val rootId: ThingId,
-    @JsonProperty("statements")
-    var bundle: MutableList<StatementRepresentation> = mutableListOf()
+    var bundle: MutableList<GeneralStatement> = mutableListOf()
 ) {
-    private fun addStatement(statement: StatementRepresentation) {
+    private fun addStatement(statement: GeneralStatement) {
         bundle.add(statement)
     }
 
-    operator fun contains(statement: StatementRepresentation): Boolean {
+    operator fun contains(statement: GeneralStatement): Boolean {
         return this.bundle.any { it.id == statement.id }
     }
 

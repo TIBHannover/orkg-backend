@@ -8,13 +8,13 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 
 interface FormattedLabelRepresentationAdapter {
-    val statementRepository: StatementUseCases
+    val statementService: StatementUseCases
     val templateRepository: TemplateRepository
     val flags: FeatureFlagService
 
     fun countsFor(resources: List<Resource>): Map<ThingId, Long> {
         val resourceIds = resources.map { it.id }.toSet()
-        return statementRepository.countStatementsAboutResources(resourceIds)
+        return statementService.countStatementsAboutResources(resourceIds)
     }
 
     fun formatLabelFor(resources: List<Resource>): Map<ThingId, FormattedLabel?> =

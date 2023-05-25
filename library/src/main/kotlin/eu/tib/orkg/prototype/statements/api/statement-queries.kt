@@ -47,6 +47,10 @@ interface RetrieveStatementUseCase {
 
     fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount>
 
+    fun countStatementsAboutResource(id: ThingId): Long
+
+    fun countStatementsAboutResources(ids: Set<ThingId>): Map<ThingId, Long>
+
     data class PredicateUsageCount(
         val id: ThingId,
         val count: Long

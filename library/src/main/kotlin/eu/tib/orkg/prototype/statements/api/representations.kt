@@ -85,10 +85,3 @@ interface ContentTypeFlags {
 interface PaperResourceWithPathRepresentation : ResourceRepresentation {
     val path: PathRepresentation
 }
-
-interface ClassHierarchyRepresentation {
-    val depth: Long
-    @get:JsonProperty("parent_id")
-    val parentId: ThingId
-    val `class`: ClassRepresentation
-}

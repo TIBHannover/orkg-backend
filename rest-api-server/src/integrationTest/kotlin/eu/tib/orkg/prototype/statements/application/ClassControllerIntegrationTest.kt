@@ -24,7 +24,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation
 import org.springframework.security.test.context.support.WithUserDetails
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -94,7 +93,6 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/classes/?uri=http://example.org/exists"))
             .andExpect(status().isOk)
-            .andDo(MockMvcResultHandlers.print())
             .andExpect(jsonPath("$.id").value(id))
             .andExpect(jsonPath("$.label").value(label))
             .andExpect(jsonPath("$.uri").value(uri.toString()))

@@ -25,7 +25,6 @@ import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.security.test.context.support.WithUserDetails
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -80,7 +79,6 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
 
         mockMvc
             .perform(getRequestTo("/api/statements/"))
-            .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -114,8 +112,7 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
         statementService.create(r2.id, pl.id, l1.id)
 
         mockMvc
-            .perform(getRequestTo("/api/statements/$statement"))
-            .andDo(MockMvcResultHandlers.print())
+            .perform(getRequestTo("/api/statements/${statement}"))
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -142,8 +139,6 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
 
         mockMvc
             .perform(getRequestTo("/api/statements/$statement"))
-            .andDo(MockMvcResultHandlers.print())
-            .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -259,7 +254,6 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/statements/object/${l1.id}/predicate/${p1.id}"))
             .andExpect(status().isOk)
-            .andDo(MockMvcResultHandlers.print())
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andDo(
                 document(
@@ -439,7 +433,6 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
 
         mockMvc
             .perform(getRequestTo("/api/statements/${a.id}/bundle"))
-            .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.statements", hasSize<Int>(9)))
             .andDo(

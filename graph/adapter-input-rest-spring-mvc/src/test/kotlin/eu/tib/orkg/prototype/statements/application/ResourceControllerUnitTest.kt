@@ -1,13 +1,16 @@
 package eu.tib.orkg.prototype.statements.application
 
 import com.ninjasquad.springmockk.MockkBean
-import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
 import eu.tib.orkg.prototype.auth.spi.UserRepository
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.core.rest.ExceptionHandler
+import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
+import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import io.mockk.every
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.*
@@ -20,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -27,15 +31,12 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
+@ContextConfiguration(classes = [ResourceController::class, ExceptionHandler::class])
 @WebMvcTest(controllers = [ResourceController::class])
-@AuthorizationServerUnitTestWorkaround
 @DisplayName("Given a Resource controller")
 internal class ResourceControllerUnitTest {
 
     private lateinit var mockMvc: MockMvc
-
-//    @Autowired
-//    private lateinit var objectMapper: ObjectMapper
 
     @Autowired
     private lateinit var context: WebApplicationContext
@@ -50,6 +51,18 @@ internal class ResourceControllerUnitTest {
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var userRepository: UserRepository
+
+    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
+    @MockkBean
+    private lateinit var statementService: StatementUseCases
+
+    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
+    @MockkBean
+    private lateinit var templateRepository: TemplateRepository
+
+    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
+    @MockkBean
+    private lateinit var flags: FeatureFlagService
 
     @BeforeEach
     fun setup() {

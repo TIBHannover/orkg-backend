@@ -2,13 +2,14 @@ package eu.tib.orkg.prototype.statements.api
 
 import eu.tib.orkg.prototype.community.domain.model.ResearchField
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
+import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface RetrieveResearchFieldUseCase {
-    fun findById(id: ThingId): Optional<ResourceRepresentation>
+    fun findById(id: ThingId): Optional<Resource>
 
     fun getResearchProblemsOfField(id: ThingId, pageable: Pageable): Page<PaperCountPerResearchProblem>
 
@@ -20,42 +21,42 @@ interface RetrieveResearchFieldUseCase {
         visibility: VisibilityFilter,
         includeSubFields: Boolean = false,
         pageable: Pageable
-    ): Page<ResourceRepresentation>
+    ): Page<Resource>
 
     fun findAllComparisonsByResearchField(
         id: ThingId,
         visibility: VisibilityFilter,
         includeSubFields: Boolean = false,
         pageable: Pageable
-    ): Page<ResourceRepresentation>
+    ): Page<Resource>
 
     fun findAllResearchProblemsByResearchField(
         id: ThingId,
         visibility: VisibilityFilter,
         includeSubFields: Boolean = false,
         pageable: Pageable
-    ): Page<ResourceRepresentation>
+    ): Page<Resource>
 
     fun findAllVisualizationsByResearchField(
         id: ThingId,
         visibility: VisibilityFilter,
         includeSubFields: Boolean = false,
         pageable: Pageable
-    ): Page<ResourceRepresentation>
+    ): Page<Resource>
 
     fun findAllSmartReviewsByResearchField(
         id: ThingId,
         visibility: VisibilityFilter,
         includeSubFields: Boolean = false,
         pageable: Pageable
-    ): Page<ResourceRepresentation>
+    ): Page<Resource>
 
     fun findAllLiteratureListsByResearchField(
         id: ThingId,
         visibility: VisibilityFilter,
         includeSubFields: Boolean = false,
         pageable: Pageable
-    ): Page<ResourceRepresentation>
+    ): Page<Resource>
 
     fun findAllEntitiesBasedOnClassesByResearchField(
         id: ThingId,
@@ -63,12 +64,12 @@ interface RetrieveResearchFieldUseCase {
         visibility: VisibilityFilter,
         includeSubFields: Boolean = false,
         pageable: Pageable
-    ): Page<ResourceRepresentation>
+    ): Page<Resource>
 
     fun withBenchmarks(pageable: Pageable): Page<ResearchField>
 
     data class PaperCountPerResearchProblem(
-        val problem: ResourceRepresentation,
+        val problem: Resource,
         val papers: Long
     )
 }

@@ -5,21 +5,21 @@ import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase
+import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase.CreateObjectRequest
+import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase.ObjectStatement
+import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase.TempResource
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateResourceUseCase
 import eu.tib.orkg.prototype.statements.application.ClassNotFound
-import eu.tib.orkg.prototype.statements.application.CreateObjectRequest
-import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.application.LiteralNotFound
-import eu.tib.orkg.prototype.statements.application.ObjectStatement
 import eu.tib.orkg.prototype.statements.application.PredicateNotFound
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
-import eu.tib.orkg.prototype.statements.application.TempResource
+import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.stereotype.Service
@@ -32,7 +32,7 @@ class ObjectService(
     private val statementService: StatementUseCases,
     private val classService: ClassUseCases,
     private val contributorService: ContributorService,
-) {
+) : CreateObjectUseCase {
 
     /**
      * Creates an object into the ORKG
@@ -41,11 +41,11 @@ class ObjectService(
      * This object allows for the flexibility of adding sub-graphs into
      * the ORKG that are not rooted in a paper.
      */
-    fun createObject(
+    override fun createObject(
         request: CreateObjectRequest,
-        existingThingId: ThingId? = null,
+        existingThingId: ThingId?,
         userUUID: UUID,
-    ): ResourceRepresentation {
+    ): ThingId {
         // Get provenance info
         val userId = ContributorId(userUUID)
         val contributor = contributorService.findByIdOrElseUnknown(userId)
@@ -104,7 +104,7 @@ class ObjectService(
                 organizationId = organizationId
             )
         }
-        return resourceService.findById(resourceId).get()
+        return resourceId
     }
 
     /**

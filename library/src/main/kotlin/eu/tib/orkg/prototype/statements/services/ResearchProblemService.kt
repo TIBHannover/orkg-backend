@@ -3,12 +3,9 @@ package eu.tib.orkg.prototype.statements.services
 import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.FindResearchProblemQuery
 import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
-import eu.tib.orkg.prototype.statements.api.IterableResourcesGenerator
-import eu.tib.orkg.prototype.statements.api.ResourceGenerator
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
-import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase.FieldCount
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase.FieldWithFreq
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -32,14 +29,12 @@ class ResearchProblemService(
     private val resourceService: ResourceUseCases,
     private val researchProblemQueries: FindResearchProblemQuery,
 ) : RetrieveResearchProblemUseCase {
-    override fun findById(id: ThingId): Optional<ResourceRepresentation> =
+    override fun findById(id: ThingId): Optional<Resource> =
         Optional.ofNullable(resourceService.findByIdAndClasses(id, setOf(ProblemClass)))
 
-    override fun findFieldsPerProblem(problemId: ThingId): List<FieldCount> {
+    override fun findFieldsPerProblem(problemId: ThingId): List<FieldWithFreq> {
         return researchProblemRepository.findResearchFieldsPerProblem(problemId).map {
-            FieldCount(
-                field = resourceService.map(ResourceGenerator { it.field }), freq = it.freq
-            )
+            FieldWithFreq(it.field, it.freq)
         }
     }
 
@@ -76,12 +71,10 @@ class ResearchProblemService(
         }
     }
 
-    override fun findTopResearchProblems(): List<ResourceRepresentation> =
-        resourceService.map(IterableResourcesGenerator {
-            findTopResearchProblemsGoingBack(
-                listOf(1, 2, 3, 6), emptyList()
-            )
-        }).toList()
+    override fun findTopResearchProblems(): List<Resource> =
+        findTopResearchProblemsGoingBack(
+            listOf(1, 2, 3, 6), emptyList()
+        ).toList()
 
     /*
     Iterate over the list of months, and if no problems are found go back a bit more in time

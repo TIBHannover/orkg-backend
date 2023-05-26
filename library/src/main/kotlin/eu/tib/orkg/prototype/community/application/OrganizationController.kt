@@ -15,8 +15,6 @@ import eu.tib.orkg.prototype.files.api.ImageUseCases
 import eu.tib.orkg.prototype.files.application.InvalidImageData
 import eu.tib.orkg.prototype.files.application.InvalidMimeType
 import eu.tib.orkg.prototype.files.domain.model.ImageData
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
-import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateOrganizationUseCases
 import eu.tib.orkg.prototype.statements.application.BaseController
 import java.io.ByteArrayInputStream
@@ -29,9 +27,7 @@ import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 import org.apache.commons.io.IOUtils
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent
@@ -57,9 +53,9 @@ class OrganizationController(
     private val service: OrganizationUseCases,
     private val observatoryService: ObservatoryUseCases,
     private val contributorService: ContributorService,
-    private val imageService: ImageUseCases,
-    private val resourceService: ResourceUseCases
+    private val imageService: ImageUseCases
 ) : BaseController() {
+
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun addOrganization(
@@ -114,15 +110,6 @@ class OrganizationController(
 
     @GetMapping("/conferences")
     fun findOrganizationsConferences(): Iterable<Organization> = service.listConferences()
-
-    @GetMapping("{id}/comparisons")
-    fun findComparisonsByOrganizationId(@PathVariable id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation> {
-        return resourceService.findComparisonsByOrganizationId(id, pageable)
-    }
-    @GetMapping("{id}/problems")
-    fun findProblemsByOrganizationId(@PathVariable id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation> {
-        return resourceService.findProblemsByOrganizationId(id, pageable)
-    }
 
     @PatchMapping("{id}", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")

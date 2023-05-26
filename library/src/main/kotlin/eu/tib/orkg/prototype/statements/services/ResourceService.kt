@@ -4,12 +4,7 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
-import eu.tib.orkg.prototype.statements.api.IterableResourcesGenerator
-import eu.tib.orkg.prototype.statements.api.PagedResourcesGenerator
-import eu.tib.orkg.prototype.statements.api.ResourceGenerator
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
@@ -29,7 +24,6 @@ import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.SmartReviewRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
-import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import eu.tib.orkg.prototype.statements.spi.VisualizationRepository
 import java.time.OffsetDateTime
 import java.util.*
@@ -52,8 +46,6 @@ class ResourceService(
     private val smartReviewRepository: SmartReviewRepository,
     private val repository: ResourceRepository,
     private val statementRepository: StatementRepository,
-    private val templateRepository: TemplateRepository,
-    private val flags: FeatureFlagService,
     private val classRepository: ClassRepository
 ) : ResourceUseCases {
     @Transactional(readOnly = true)
@@ -78,7 +70,7 @@ class ResourceService(
         return id
     }
 
-    override fun create(label: String): ResourceRepresentation =
+    override fun create(label: String): Resource =
         create(CreateResourceUseCase.CreateCommand(label = label))
             .let { findById(it).get() }
 
@@ -88,7 +80,7 @@ class ResourceService(
         observatoryId: ObservatoryId,
         extractionMethod: ExtractionMethod,
         organizationId: OrganizationId
-    ): ResourceRepresentation =
+    ): Resource =
         create(
             CreateResourceUseCase.CreateCommand(
                 label = label,
@@ -100,65 +92,51 @@ class ResourceService(
         )
             .let { findById(it).get() }
 
-    override fun findByIdAndClasses(id: ThingId, classes: Set<ThingId>): ResourceRepresentation? =
-        retrieveAndConvertNullable { repository.findByIdAndClasses(id, classes) }
+    override fun findByIdAndClasses(id: ThingId, classes: Set<ThingId>): Resource? =
+        repository.findByIdAndClasses(id, classes)
 
-    override fun map(action: IterableResourcesGenerator): Iterable<ResourceRepresentation> =
-        retrieveAndConvertIterable(action::generate)
+    override fun findAll(pageable: Pageable): Page<Resource> =
+        repository.findAll(pageable)
 
-    override fun map(action: PagedResourcesGenerator): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged(action::generate)
+    override fun findById(id: ThingId): Optional<Resource> =
+        repository.findById(id)
 
-    override fun map(action: ResourceGenerator): ResourceRepresentation = retrieveAndConvertNullable(action::generate)!!
+    override fun findAllByLabel(label: SearchString, pageable: Pageable): Page<Resource> =
+        repository.findAllByLabel(label, pageable)
 
-    override fun findAll(pageable: Pageable): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged { repository.findAll(pageable) }
-
-    override fun findById(id: ThingId): Optional<ResourceRepresentation> =
-        retrieveAndConvertOptional { repository.findById(id) }
-
-    override fun findAllByLabel(label: SearchString, pageable: Pageable): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged {
-            repository.findAllByLabel(label, pageable)
-        }
-
-    override fun findAllByClass(pageable: Pageable, id: ThingId): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged { repository.findAllByClass(id, pageable) }
+    override fun findAllByClass(pageable: Pageable, id: ThingId): Page<Resource> =
+        repository.findAllByClass(id, pageable)
 
     override fun findAllByClassAndCreatedBy(
         pageable: Pageable,
         id: ThingId,
         createdBy: ContributorId
-    ): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged { repository.findAllByClassAndCreatedBy(id, createdBy, pageable) }
+    ): Page<Resource> =
+        repository.findAllByClassAndCreatedBy(id, createdBy, pageable)
 
-    override fun findAllByClassAndLabel(id: ThingId, label: SearchString, pageable: Pageable): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged { repository.findAllByClassAndLabel(id, label, pageable) }
+    override fun findAllByClassAndLabel(id: ThingId, label: SearchString, pageable: Pageable): Page<Resource> =
+        repository.findAllByClassAndLabel(id, label, pageable)
 
     override fun findAllByClassAndLabelAndCreatedBy(
         id: ThingId,
         label: SearchString,
         createdBy: ContributorId,
         pageable: Pageable
-    ): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged {
-            repository.findAllByClassAndLabelAndCreatedBy(
-                id,
-                label,
-                createdBy,
-                pageable
-            )
-        }
+    ): Page<Resource> =
+        repository.findAllByClassAndLabelAndCreatedBy(
+            id,
+            label,
+            createdBy,
+            pageable
+        )
 
     override fun findAllIncludingAndExcludingClasses(
         includeClasses: Set<ThingId>,
         excludeClasses: Set<ThingId>,
         pageable: Pageable
-    ): Page<ResourceRepresentation> {
+    ): Page<Resource> {
         validateClassFilter(includeClasses, excludeClasses)
-        return retrieveAndConvertPaged {
-            repository.findAllIncludingAndExcludingClasses(includeClasses, excludeClasses, pageable)
-        }
+        return repository.findAllIncludingAndExcludingClasses(includeClasses, excludeClasses, pageable)
     }
 
     override fun findAllIncludingAndExcludingClassesByLabel(
@@ -166,16 +144,14 @@ class ResourceService(
         excludeClasses: Set<ThingId>,
         label: SearchString,
         pageable: Pageable
-    ): Page<ResourceRepresentation> {
+    ): Page<Resource> {
         validateClassFilter(includeClasses, excludeClasses)
-        return retrieveAndConvertPaged {
-            repository.findAllIncludingAndExcludingClassesByLabel(
-                includeClasses,
-                excludeClasses,
-                label,
-                pageable
-            )
-        }
+        return repository.findAllIncludingAndExcludingClassesByLabel(
+            includeClasses,
+            excludeClasses,
+            label,
+            pageable
+        )
     }
 
     fun validateClassFilter(includeClasses: Set<ThingId>, excludeClasses: Set<ThingId>) {
@@ -184,41 +160,39 @@ class ResourceService(
                 throw InvalidClassFilter(includedClass)
     }
 
-    override fun findByDOI(doi: String): Optional<ResourceRepresentation> =
-        retrieveAndConvertOptional { statementRepository.findByDOI(doi) }
+    override fun findByDOI(doi: String): Optional<Resource> =
+        statementRepository.findByDOI(doi)
 
-    override fun findByTitle(title: String): Optional<ResourceRepresentation> =
-        retrieveAndConvertOptional { repository.findPaperByLabel(title) }
+    override fun findByTitle(title: String): Optional<Resource> =
+        repository.findPaperByLabel(title)
 
-    override fun findAllByTitle(title: String?): Iterable<ResourceRepresentation> =
-        retrieveAndConvertIterable { repository.findAllPapersByLabel(title!!) }
+    override fun findAllByTitle(title: String?): Iterable<Resource> =
+        repository.findAllPapersByLabel(title!!)
 
-    override fun findAllByVisibility(visibility: VisibilityFilter, pageable: Pageable): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged {
-            when (visibility) {
-                VisibilityFilter.ALL_LISTED -> repository.findAllListed(pageable)
-                VisibilityFilter.UNLISTED -> repository.findAllByVisibility(Visibility.UNLISTED, pageable)
-                VisibilityFilter.FEATURED -> repository.findAllByVisibility(Visibility.FEATURED, pageable)
-                VisibilityFilter.NON_FEATURED -> repository.findAllByVisibility(Visibility.DEFAULT, pageable)
-                VisibilityFilter.DELETED -> repository.findAllByVisibility(Visibility.DELETED, pageable)
-            }
+    override fun findAllByVisibility(visibility: VisibilityFilter, pageable: Pageable): Page<Resource> =
+        when (visibility) {
+            VisibilityFilter.ALL_LISTED -> repository.findAllListed(pageable)
+            VisibilityFilter.UNLISTED -> repository.findAllByVisibility(Visibility.UNLISTED, pageable)
+            VisibilityFilter.FEATURED -> repository.findAllByVisibility(Visibility.FEATURED, pageable)
+            VisibilityFilter.NON_FEATURED -> repository.findAllByVisibility(Visibility.DEFAULT, pageable)
+            VisibilityFilter.DELETED -> repository.findAllByVisibility(Visibility.DELETED, pageable)
         }
 
-    override fun findPapersByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation> =
-        retrieveAndConvertIterable { repository.findByClassAndObservatoryId(paperClass, id) }
+    override fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Resource> =
+        repository.findByClassAndObservatoryId(paperClass, id)
 
-    override fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation> =
-        retrieveAndConvertIterable { repository.findByClassAndObservatoryId(comparisonClass, id) }
+    override fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
+        repository.findByClassAndObservatoryId(comparisonClass, id)
 
-    override fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged { statementRepository.findProblemsByObservatoryId(id, pageable) }
+    override fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
+        statementRepository.findProblemsByObservatoryId(id, pageable)
 
     override fun findAllByClassInAndVisibilityAndObservatoryId(
         classes: Set<ThingId>,
         visibility: VisibilityFilter,
         id: ObservatoryId,
         pageable: Pageable
-    ): Page<ResourceRepresentation> = retrieveAndConvertPaged {
+    ): Page<Resource> =
         when (visibility) {
             VisibilityFilter.ALL_LISTED -> repository.findAllListedByClassInAndObservatoryId(classes, id, pageable)
             VisibilityFilter.UNLISTED -> repository.findAllByClassInAndVisibilityAndObservatoryId(classes, Visibility.UNLISTED, id, pageable)
@@ -226,7 +200,6 @@ class ResourceService(
             VisibilityFilter.NON_FEATURED -> repository.findAllByClassInAndVisibilityAndObservatoryId(classes, Visibility.DEFAULT, id, pageable)
             VisibilityFilter.DELETED -> repository.findAllByClassInAndVisibilityAndObservatoryId(classes, Visibility.DELETED, id, pageable)
         }
-    }
 
     override fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> =
         repository.findById(id)
@@ -271,15 +244,13 @@ class ResourceService(
         classes: Set<ThingId>,
         visibility: VisibilityFilter,
         pageable: Pageable
-    ): Page<ResourceRepresentation> = when {
-        classes.isNotEmpty() -> retrieveAndConvertPaged {
-            when (visibility) {
-                VisibilityFilter.ALL_LISTED -> repository.findAllListedByClassIn(classes, pageable)
-                VisibilityFilter.UNLISTED -> repository.findAllByClassInAndVisibility(classes, Visibility.UNLISTED, pageable)
-                VisibilityFilter.FEATURED -> repository.findAllByClassInAndVisibility(classes, Visibility.FEATURED, pageable)
-                VisibilityFilter.NON_FEATURED -> repository.findAllByClassInAndVisibility(classes, Visibility.DEFAULT, pageable)
-                VisibilityFilter.DELETED -> repository.findAllByClassInAndVisibility(classes, Visibility.DELETED, pageable)
-            }
+    ): Page<Resource> = when {
+        classes.isNotEmpty() -> when (visibility) {
+            VisibilityFilter.ALL_LISTED -> repository.findAllListedByClassIn(classes, pageable)
+            VisibilityFilter.UNLISTED -> repository.findAllByClassInAndVisibility(classes, Visibility.UNLISTED, pageable)
+            VisibilityFilter.FEATURED -> repository.findAllByClassInAndVisibility(classes, Visibility.FEATURED, pageable)
+            VisibilityFilter.NON_FEATURED -> repository.findAllByClassInAndVisibility(classes, Visibility.DEFAULT, pageable)
+            VisibilityFilter.DELETED -> repository.findAllByClassInAndVisibility(classes, Visibility.DELETED, pageable)
         }
         else -> findAllByVisibility(visibility, pageable)
     }
@@ -457,11 +428,11 @@ class ResourceService(
             .map { it.visibility == Visibility.UNLISTED || it.visibility == Visibility.DELETED }
             .orElseThrow { ResourceNotFound.withId(id) }
 
-    override fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged { repository.findComparisonsByOrganizationId(id, pageable) }
+    override fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
+        repository.findComparisonsByOrganizationId(id, pageable)
 
-    override fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation> =
-        retrieveAndConvertPaged { statementRepository.findProblemsByOrganizationId(id, pageable) }
+    override fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
+        statementRepository.findProblemsByOrganizationId(id, pageable)
 
     override fun hasStatements(id: ThingId): Boolean = statementRepository.checkIfResourceHasStatements(id)
 
@@ -471,58 +442,4 @@ class ResourceService(
         resultObj = resultObj.copy(verified = verified)
         repository.save(resultObj)
     }
-
-    private fun countsFor(resources: List<Resource>): Map<ThingId, Long> {
-        val resourceIds = resources.map { it.id }.toSet()
-        return statementRepository.countStatementsAboutResources(resourceIds)
-    }
-
-    private fun formatLabelFor(resources: List<Resource>): Map<ThingId, FormattedLabel?> =
-        if (flags.isFormattedLabelsEnabled())
-            resources.associate { it.id to templateRepository.formattedLabelFor(it.id, it.classes) }
-        else emptyMap()
-
-    private fun retrieveAndConvertPaged(action: () -> Page<Resource>): Page<ResourceRepresentation> {
-        val paged = action()
-        val statementCounts = countsFor(paged.content)
-        val formattedLabelCount = formatLabelFor(paged.content)
-        return paged.map { it.toResourceRepresentation(statementCounts, formattedLabelCount) }
-    }
-
-    private fun retrieveAndConvertIterable(action: () -> Iterable<Resource>): Iterable<ResourceRepresentation> {
-        val resources = action()
-        val statementCounts = countsFor(resources.toList())
-        val formattedLabelCounts = formatLabelFor(resources.toList())
-        return resources.map { it.toResourceRepresentation(statementCounts, formattedLabelCounts) }
-    }
-
-    private fun retrieveAndConvertOptional(action: () -> Optional<Resource>): Optional<ResourceRepresentation> =
-        action().map {
-            val count = statementRepository.countStatementsAboutResource(it.id)
-            it.toResourceRepresentation(mapOf(it.id to count), formatLabelFor(listOf(it)))
-        }
-
-    private fun retrieveAndConvertNullable(action: () -> Resource?): ResourceRepresentation? =
-        action()?.let {
-            val count = statementRepository.countStatementsAboutResource(it.id)
-            it.toResourceRepresentation(mapOf(it.id to count), formatLabelFor(listOf(it)))
-        }
 }
-
-fun Resource.toResourceRepresentation(usageCounts: StatementCounts, formattedLabels: FormattedLabels): ResourceRepresentation =
-    object : ResourceRepresentation {
-        override val id: ThingId = this@toResourceRepresentation.id
-        override val label: String = this@toResourceRepresentation.label
-        override val classes: Set<ThingId> = this@toResourceRepresentation.classes
-        override val shared: Long = usageCounts[this@toResourceRepresentation.id] ?: 0
-        override val extractionMethod: ExtractionMethod = this@toResourceRepresentation.extractionMethod
-        override val jsonClass: String = "resource"
-        override val createdAt: OffsetDateTime = this@toResourceRepresentation.createdAt
-        override val createdBy: ContributorId = this@toResourceRepresentation.createdBy
-        override val observatoryId: ObservatoryId = this@toResourceRepresentation.observatoryId
-        override val organizationId: OrganizationId = this@toResourceRepresentation.organizationId
-        override val featured: Boolean = this@toResourceRepresentation.visibility == Visibility.FEATURED
-        override val unlisted: Boolean = this@toResourceRepresentation.visibility == Visibility.UNLISTED
-        override val verified: Boolean = this@toResourceRepresentation.verified ?: false
-        override val formattedLabel: FormattedLabel? = formattedLabels[this@toResourceRepresentation.id]
-    }

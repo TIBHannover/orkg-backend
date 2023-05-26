@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.services
 
-import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
@@ -9,7 +8,6 @@ import eu.tib.orkg.prototype.statements.spi.ContributionRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.SmartReviewRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
-import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import eu.tib.orkg.prototype.statements.spi.VisualizationRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.mockk.every
@@ -29,8 +27,6 @@ class ResourceServiceUnitTests {
     private val smartReviewRepository: SmartReviewRepository = mockk()
     private val repository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
-    private val templateRepository: TemplateRepository = mockk()
-    private val flags: FeatureFlagService = mockk()
     private val classRepository: ClassRepository = mockk()
 
     private val service = ResourceService(
@@ -40,8 +36,6 @@ class ResourceServiceUnitTests {
         smartReviewRepository,
         repository,
         statementRepository,
-        templateRepository,
-        flags,
         classRepository
     )
 

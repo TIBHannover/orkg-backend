@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.domain.model.ComparisonAuthorInfo
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
 import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
@@ -93,6 +94,35 @@ data class BundleRepresentation(
     @JsonProperty("statements")
     val bundle: List<StatementRepresentation>
 )
+
+sealed interface AuthorRepresentation {
+    interface ResourceAuthorRepresentation : AuthorRepresentation {
+        val value: ResourceRepresentation
+    }
+    interface LiteralAuthorRepresentation : AuthorRepresentation {
+        val value: String
+    }
+}
+
+interface PaperAuthorRepresentation {
+    val author: AuthorRepresentation
+    val papers: Int
+}
+
+interface ComparisonAuthorRepresentation {
+    val author: AuthorRepresentation
+    val info: Iterable<ComparisonAuthorInfo>
+}
+
+interface PaperCountPerResearchProblemRepresentation {
+    val problem: ResourceRepresentation
+    val papers: Long
+}
+
+interface FieldWithFreqRepresentation {
+    val field: ResourceRepresentation
+    val freq: Long
+}
 
 data class ChildClassRepresentation(
     val `class`: ClassRepresentation,

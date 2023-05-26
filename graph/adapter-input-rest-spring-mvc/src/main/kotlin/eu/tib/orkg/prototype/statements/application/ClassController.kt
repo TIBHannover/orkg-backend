@@ -3,7 +3,9 @@ package eu.tib.orkg.prototype.statements.application
 import dev.forkhandles.result4k.onFailure
 import dev.forkhandles.values.ofOrNull
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.ClassRepresentationAdapter
+import eu.tib.orkg.prototype.statements.ResourceRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.AlreadyInUse
 import eu.tib.orkg.prototype.statements.api.ClassRepresentation
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
@@ -11,11 +13,13 @@ import eu.tib.orkg.prototype.statements.api.CreateClassUseCase
 import eu.tib.orkg.prototype.statements.api.InvalidURI
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateClassUseCase
 import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
 import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import java.net.URI
 import javax.validation.Valid
 import org.springframework.data.domain.Page
@@ -42,8 +46,11 @@ import eu.tib.orkg.prototype.statements.api.InvalidLabel as InvalidLabelProblem
 @RequestMapping("/api/classes/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ClassController(
     private val service: ClassUseCases,
-    private val resourceService: ResourceUseCases
-) : BaseController(), ClassRepresentationAdapter {
+    private val resourceService: ResourceUseCases,
+    override val statementService: StatementUseCases,
+    override val templateRepository: TemplateRepository,
+    override val flags: FeatureFlagService
+) : BaseController(), ClassRepresentationAdapter, ResourceRepresentationAdapter {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: ThingId): ClassRepresentation =
@@ -80,7 +87,7 @@ class ClassController(
                 null -> resourceService.findAllByClass(pageable, id)
                 else -> resourceService.findAllByClassAndLabel(id, SearchString.of(string, exactMatch), pageable)
             }
-        }
+        }.mapToResourceRepresentation()
     }
 
     @GetMapping("/")

@@ -4,20 +4,21 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
+import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 
 interface CreateResourceUseCase {
     fun create(command: CreateCommand): ThingId
 
     // legacy methods:
-    fun create(label: String): ResourceRepresentation
+    fun create(label: String): Resource
     fun create(
         userId: ContributorId,
         label: String,
         observatoryId: ObservatoryId,
         extractionMethod: ExtractionMethod,
         organizationId: OrganizationId
-    ): ResourceRepresentation
+    ): Resource
 
     data class CreateCommand(
         val id: ThingId? = null,

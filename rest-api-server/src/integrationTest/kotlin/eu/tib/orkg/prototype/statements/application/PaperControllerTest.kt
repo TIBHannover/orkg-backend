@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.createClasses
 import eu.tib.orkg.prototype.createPredicates
 import eu.tib.orkg.prototype.createResource
+import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase.*
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.CreatePaperUseCase.*
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
@@ -157,7 +158,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     fun `shouldn't merge if DOI is empty`() {
         val originalPaper = createDummyPaperObject(doi = "")
 
-        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).id.value
+        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
 
         val paperWithEmptyDOI = mapOf(
             "paper" to mapOf(
@@ -203,7 +204,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     fun `merge papers that exists on title`() {
         val originalPaper = createDummyPaperObject()
 
-        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).id.value
+        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
 
         val paperWithSameTitle = mapOf(
             "paper" to mapOf(
@@ -249,7 +250,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     fun `merge papers that exists on doi`() {
         val originalPaper = createDummyPaperObject()
 
-        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).id.value
+        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
 
         val paperWithSameDOI = mapOf(
             "paper" to mapOf(
@@ -295,7 +296,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     fun `merge papers if both title and DOI exist`() {
         val originalPaper = createDummyPaperObject()
 
-        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).id.value
+        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
 
         val paperWithSameTitleAndDOI = mapOf(
             "paper" to mapOf(

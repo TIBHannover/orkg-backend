@@ -10,7 +10,6 @@ import eu.tib.orkg.prototype.community.spi.ObservatoryRepository
 import eu.tib.orkg.prototype.createObservatory
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.services.toResourceRepresentation
 import io.kotest.assertions.throwables.shouldThrow
 import io.mockk.every
 import io.mockk.mockk
@@ -76,7 +75,7 @@ class ObservatoryServiceTests {
     @Test
     fun `Find an observatory by name after creating it`() {
         val observatory = createObservatory(setOf(OrganizationId(UUID.randomUUID())))
-        val newResource = createResource().toResourceRepresentation(mapOf(), emptyMap())
+        val newResource = createResource()
 
         every { repository.findByName(observatory.name!!) } returns Optional.of(observatory)
         every { resourceUseCases.findById(ThingId(observatory.researchField?.id!!)) } returns Optional.of(newResource)
@@ -89,7 +88,7 @@ class ObservatoryServiceTests {
     @Test
     fun `Find an observatory by displayId after creating it`() {
         val observatory = createObservatory(setOf(OrganizationId(UUID.randomUUID())))
-        val newResource = createResource().toResourceRepresentation(mapOf(), emptyMap())
+        val newResource = createResource()
 
         every { repository.findByDisplayId(observatory.displayId!!) } returns Optional.of(observatory)
         every { resourceUseCases.findById(ThingId(observatory.researchField?.id!!)) } returns Optional.of(newResource)
@@ -102,7 +101,7 @@ class ObservatoryServiceTests {
     @Test
     fun `Find an observatory by Id after creating it`() {
         val observatory = createObservatory(setOf(OrganizationId(UUID.randomUUID())))
-        val newResource = createResource().toResourceRepresentation(mapOf(), emptyMap())
+        val newResource = createResource()
 
         every { repository.findById(observatory.id!!) } returns Optional.of(observatory)
         every { resourceUseCases.findById(ThingId(observatory.researchField?.id!!)) } returns Optional.of(newResource)
@@ -115,7 +114,7 @@ class ObservatoryServiceTests {
     @Test
     fun `Find an observatory by research field after creating it`() {
         val observatory = createObservatory(setOf(OrganizationId(UUID.randomUUID())))
-        val newResource = createResource().toResourceRepresentation(mapOf(), emptyMap())
+        val newResource = createResource()
         val newResearchField = ResearchField(newResource.id.value, newResource.label)
         val page: Page<Observatory> = PageImpl(listOf(observatory))
         val researchFieldId = ThingId(newResearchField.id!!)
@@ -132,7 +131,7 @@ class ObservatoryServiceTests {
     @Test
     fun `Find an observatory by organization Id after creating it`() {
         val observatory = createObservatory(setOf(OrganizationId(UUID.randomUUID())))
-        val newResource = createResource().toResourceRepresentation(mapOf(), emptyMap())
+        val newResource = createResource()
         val page: Page<Observatory> = PageImpl(listOf(observatory))
         val pageRequest = PageRequest.of(0, Int.MAX_VALUE)
         val organizationId = observatory.organizationIds.single()
@@ -148,7 +147,7 @@ class ObservatoryServiceTests {
     @Test
     fun `List all observatories`() {
         val observatory = createObservatory(setOf(OrganizationId(UUID.randomUUID())))
-        val newResource = createResource().toResourceRepresentation(mapOf(), emptyMap())
+        val newResource = createResource()
         val page: Page<Observatory> = PageImpl(listOf(observatory))
         val pageRequest = PageRequest.of(0, Int.MAX_VALUE)
 

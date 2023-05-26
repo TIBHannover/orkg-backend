@@ -4,27 +4,25 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
-import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
-import eu.tib.orkg.prototype.statements.api.CreatePaperUseCase.*
+import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase.CreateObjectRequest
+import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase.NamedObject
+import eu.tib.orkg.prototype.statements.api.CreatePaperUseCase
+import eu.tib.orkg.prototype.statements.api.CreatePaperUseCase.CreatePaperRequest
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.RetrievePaperUseCase
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
-import eu.tib.orkg.prototype.statements.application.CreateObjectRequest
-import eu.tib.orkg.prototype.statements.application.NamedObject
 import eu.tib.orkg.prototype.statements.application.OrcidNotValid
 import eu.tib.orkg.prototype.statements.application.OrphanOrcidValue
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.PaperResourceWithPath
+import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.PaperRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
-import eu.tib.orkg.prototype.statements.spi.StatementRepository
-import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -41,24 +39,20 @@ class PaperService(
     private val objectService: ObjectService,
     private val resourceRepository: ResourceRepository,
     private val repository: PaperRepository,
-    private val statementRepository: StatementRepository,
-    private val templateRepository: TemplateRepository,
-    private val flags: FeatureFlagService,
-) : RetrievePaperUseCase {
+) : RetrievePaperUseCase, CreatePaperUseCase {
     /**
      * Main entry point, to create paper and check contributions
      * Using the Object endpoint to handle recursive object creation
      */
-    fun addPaperContent(
+    override fun addPaperContent(
         request: CreatePaperRequest,
         mergeIfExists: Boolean,
         userUUID: UUID,
-    ): ResourceRepresentation {
+    ): ThingId {
         val userId = ContributorId(userUUID)
 
         // check if should be merged or not
-        val paperObj = createOrFindPaper(mergeIfExists, request, userId)
-        val paperId = paperObj.id
+        val paperId = createOrFindPaper(mergeIfExists, request, userId)
 
         // paper contribution data
         if (request.paper.hasContributions()) {
@@ -70,7 +64,7 @@ class PaperService(
                 )
             }
         }
-        return paperObj
+        return paperId
     }
 
     /**
@@ -89,7 +83,7 @@ class PaperService(
         val contribution = jsonObject.copy(classes = contributionClasses)
         val objectRequest = CreateObjectRequest(paperRequest.predicates, contribution)
         // Create contribution resource whether it has data or not
-        return objectService.createObject(objectRequest, null, userUUID).id
+        return objectService.createObject(objectRequest, null, userUUID)
     }
 
     /**
@@ -100,7 +94,7 @@ class PaperService(
         mergeIfExists: Boolean,
         request: CreatePaperRequest,
         userId: ContributorId
-    ): ResourceRepresentation {
+    ): ThingId {
         return if (mergeIfExists) {
             mergePapersIfPossible(userId, request)
         } else {
@@ -115,14 +109,14 @@ class PaperService(
     private fun mergePapersIfPossible(
         userId: ContributorId,
         request: CreatePaperRequest
-    ): ResourceRepresentation {
+    ): ThingId {
         // Do this in a sequential order, first check for DOI and then title, otherwise we create a new paper
         if (request.paper.hasDOI()) {
             val byDOI = resourceService.findByDOI(request.paper.doi!!)
-            if (byDOI.isPresent) return byDOI.get()
+            if (byDOI.isPresent) return byDOI.get().id
         }
         val byTitle = resourceService.findAllByTitle(request.paper.title)
-        if (byTitle.count() > 0) return byTitle.first()
+        if (byTitle.count() > 0) return byTitle.first().id
         return createNewPaperWithMetadata(userId, request)
     }
 
@@ -130,13 +124,13 @@ class PaperService(
      * Handles the creation of a new paper resource
      * i.e., creates the new paper, meta-data
      */
-    private fun createNewPaperWithMetadata(userId: ContributorId, request: CreatePaperRequest): ResourceRepresentation {
+    private fun createNewPaperWithMetadata(userId: ContributorId, request: CreatePaperRequest): ThingId {
         val contributor = contributorService.findByIdOrElseUnknown(userId)
         val organizationId = contributor.organizationId
         val observatoryId = contributor.observatoryId
 
         // paper title
-        val paperObj = resourceService.create(
+        val paperId = resourceService.create(
             CreateResourceUseCase.CreateCommand(
                 label = request.paper.title,
                 classes = setOf(ThingId("Paper")),
@@ -145,8 +139,7 @@ class PaperService(
                 observatoryId = observatoryId,
                 organizationId = organizationId
             )
-        ).let { resourceService.findById(it).get() }
-        val paperId = paperObj.id
+        )
 
         // paper doi
         if (request.paper.hasDOI()) {
@@ -189,7 +182,7 @@ class PaperService(
             ObjectService.ResearchFieldPredicate,
             request.paper.researchField
         )
-        return paperObj
+        return paperId
     }
 
     /**
@@ -268,7 +261,7 @@ class PaperService(
                                 userId,
                                 paperId,
                                 ObjectService.AuthorPredicate,
-                                (authorStatement.subject as ResourceRepresentation).id
+                                (authorStatement.subject as Resource).id
                             )
                         } else {
                             // create resource

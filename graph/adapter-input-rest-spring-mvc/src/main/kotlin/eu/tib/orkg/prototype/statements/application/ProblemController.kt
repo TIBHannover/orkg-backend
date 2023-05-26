@@ -2,14 +2,21 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
+import eu.tib.orkg.prototype.statements.AuthorRepresentationAdapter
+import eu.tib.orkg.prototype.statements.FieldPerProblemRepresentationAdapter
+import eu.tib.orkg.prototype.statements.ResourceRepresentationAdapter
+import eu.tib.orkg.prototype.statements.api.FieldWithFreqRepresentation
+import eu.tib.orkg.prototype.statements.api.PaperAuthorRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
-import eu.tib.orkg.prototype.statements.domain.model.PaperAuthor
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.AuthorService
 import eu.tib.orkg.prototype.statements.services.ResourceService
 import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.*
+import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -32,11 +39,14 @@ class ProblemController(
     private val resourceService: ResourceService,
     private val contributorService: ContributorService,
     private val authorService: AuthorService,
-) {
+    override val statementService: StatementUseCases,
+    override val templateRepository: TemplateRepository,
+    override val flags: FeatureFlagService,
+) : ResourceRepresentationAdapter, AuthorRepresentationAdapter, FieldPerProblemRepresentationAdapter {
 
     @GetMapping("/{problemId}/fields")
-    fun getFieldPerProblem(@PathVariable problemId: ThingId): ResponseEntity<Iterable<Any>> {
-        return ResponseEntity.ok(service.findFieldsPerProblem(problemId))
+    fun getFieldPerProblem(@PathVariable problemId: ThingId): Iterable<FieldWithFreqRepresentation> {
+        return service.findFieldsPerProblem(problemId).mapToFieldWithFreqRepresentation()
     }
 
     @GetMapping("/{problemId}/")
@@ -59,9 +69,8 @@ class ProblemController(
         )
 
     @GetMapping("/top")
-    fun getTopProblems(): ResponseEntity<Iterable<ResourceRepresentation>> {
-        return ResponseEntity.ok(service.findTopResearchProblems())
-    }
+    fun getTopProblems(): Iterable<ResourceRepresentation> =
+        service.findTopResearchProblems().mapToResourceRepresentation()
 
     @GetMapping("/{problemId}/users")
     fun getContributorsPerProblem(
@@ -82,9 +91,8 @@ class ProblemController(
     fun getAuthorsPerProblem(
         @PathVariable problemId: ThingId,
         pageable: Pageable
-    ): Page<PaperAuthor> {
-        return authorService.findAuthorsPerProblem(problemId, pageable)
-    }
+    ): Page<PaperAuthorRepresentation> =
+        authorService.findAuthorsPerProblem(problemId, pageable).mapToPaperAuthorRepresentation()
 
     @GetMapping("/metadata/featured", params = ["featured=true"])
     fun getFeaturedProblems(pageable: Pageable) =

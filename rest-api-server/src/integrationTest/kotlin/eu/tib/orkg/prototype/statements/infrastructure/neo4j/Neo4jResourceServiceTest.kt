@@ -2,8 +2,8 @@ package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
@@ -123,7 +123,7 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
         service.create("second")
         val pagination = PageRequest.of(0, 10)
         val resources = service.findAll(pagination)
-        val labels = resources.map(ResourceRepresentation::label)
+        val labels = resources.map(Resource::label)
 
         assertThat(resources).hasSize(2)
         assertThat(labels).containsExactlyInAnyOrder("first", "second")
@@ -205,13 +205,13 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
             pageable = PageRequest.of(1, 10)
         )
         assertThat(found).isNotNull
-        assertThat(found.map(ResourceRepresentation::id).contains(res))
+        assertThat(found.map(Resource::id).contains(res))
     }
 
     @Test
     fun `when several resources of a class exist with the same label, partial search should return all of them`() {
         val researchProblemClass = classService.create("ResearchProblem").id
-        val resources = mutableListOf<ResourceRepresentation>()
+        val resources = mutableListOf<Resource>()
         repeat(5) {
             resources += service.create(
                 CreateResourceUseCase.CreateCommand(
@@ -227,9 +227,9 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
             id = researchProblemClass,
             label = SearchString.of("Testing the Darwin", exactMatch = false),
             pageable = page
-        ).map(ResourceRepresentation::id)
+        ).map(Resource::id)
 
         assertThat(found.totalElements).isEqualTo(5)
-        assertThat(found.content).containsExactlyInAnyOrderElementsOf(resources.map(ResourceRepresentation::id))
+        assertThat(found.content).containsExactlyInAnyOrderElementsOf(resources.map(Resource::id))
     }
 }

@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.api
 
-import eu.tib.orkg.prototype.statements.application.NamedObject
+import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase.NamedObject
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
@@ -10,7 +10,7 @@ interface CreatePaperUseCase {
         request: CreatePaperRequest,
         mergeIfExists: Boolean,
         userUUID: UUID,
-    ): ResourceRepresentation
+    ): ThingId
 
     /**
      * Main entry point, basic skeleton of a paper

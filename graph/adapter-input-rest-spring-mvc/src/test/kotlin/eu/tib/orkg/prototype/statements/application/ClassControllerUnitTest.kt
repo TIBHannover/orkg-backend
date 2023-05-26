@@ -7,15 +7,18 @@ import dev.forkhandles.result4k.Success
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.createClass
+import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.AlreadyInUse
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.InvalidURI
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateClassUseCase.ReplaceCommand
 import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.toOptional
+import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import io.mockk.every
 import io.mockk.verify
 import java.net.URI
@@ -69,6 +72,18 @@ internal class ClassControllerUnitTest {
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var userRepository: AuthUseCase
+
+    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
+    @MockkBean
+    private lateinit var statementService: StatementUseCases
+
+    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
+    @MockkBean
+    private lateinit var templateRepository: TemplateRepository
+
+    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
+    @MockkBean
+    private lateinit var flags: FeatureFlagService
 
     @BeforeEach
     fun setup() {

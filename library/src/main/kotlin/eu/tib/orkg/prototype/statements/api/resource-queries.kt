@@ -13,59 +13,54 @@ import org.springframework.data.domain.Pageable
 
 interface RetrieveResourceUseCase {
     fun exists(id: ThingId): Boolean
-    fun findByIdAndClasses(id: ThingId, classes: Set<ThingId>): ResourceRepresentation?
-
-    // TODO: Needed by problem service. May need better solution.
-    fun map(action: IterableResourcesGenerator): Iterable<ResourceRepresentation>
-    fun map(action: PagedResourcesGenerator): Page<ResourceRepresentation>
-    fun map(action: ResourceGenerator): ResourceRepresentation
+    fun findByIdAndClasses(id: ThingId, classes: Set<ThingId>): Resource?
 
     // Legacy methods:
-    fun findAll(pageable: Pageable): Page<ResourceRepresentation>
-    fun findAllByClass(pageable: Pageable, id: ThingId): Page<ResourceRepresentation>
-    fun findAllByClassAndCreatedBy(pageable: Pageable, id: ThingId, createdBy: ContributorId): Page<ResourceRepresentation>
-    fun findAllByClassAndLabel(id: ThingId, label: SearchString, pageable: Pageable): Page<ResourceRepresentation>
+    fun findAll(pageable: Pageable): Page<Resource>
+    fun findAllByClass(pageable: Pageable, id: ThingId): Page<Resource>
+    fun findAllByClassAndCreatedBy(pageable: Pageable, id: ThingId, createdBy: ContributorId): Page<Resource>
+    fun findAllByClassAndLabel(id: ThingId, label: SearchString, pageable: Pageable): Page<Resource>
     fun findAllByClassAndLabelAndCreatedBy(
         id: ThingId,
         label: SearchString,
         createdBy: ContributorId,
         pageable: Pageable
-    ): Page<ResourceRepresentation>
-    fun findAllByLabel(label: SearchString, pageable: Pageable): Page<ResourceRepresentation>
-    fun findAllByTitle(title: String?): Iterable<ResourceRepresentation>
-    fun findAllByVisibility(visibility: VisibilityFilter, pageable: Pageable): Page<ResourceRepresentation>
+    ): Page<Resource>
+    fun findAllByLabel(label: SearchString, pageable: Pageable): Page<Resource>
+    fun findAllByTitle(title: String?): Iterable<Resource>
+    fun findAllByVisibility(visibility: VisibilityFilter, pageable: Pageable): Page<Resource>
     fun findAllIncludingAndExcludingClasses(
         includeClasses: Set<ThingId>,
         excludeClasses: Set<ThingId>,
         pageable: Pageable
-    ): Page<ResourceRepresentation>
+    ): Page<Resource>
     fun findAllIncludingAndExcludingClassesByLabel(
         includeClasses: Set<ThingId>,
         excludeClasses: Set<ThingId>,
         label: SearchString,
         pageable: Pageable
-    ): Page<ResourceRepresentation>
-    fun findByDOI(doi: String): Optional<ResourceRepresentation>
-    fun findById(id: ThingId): Optional<ResourceRepresentation>
-    fun findByTitle(title: String): Optional<ResourceRepresentation>
-    fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation>
+    ): Page<Resource>
+    fun findByDOI(doi: String): Optional<Resource>
+    fun findById(id: ThingId): Optional<Resource>
+    fun findByTitle(title: String): Optional<Resource>
+    fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<Resource>
     fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId>
     fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor>
-    fun findPapersByObservatoryId(id: ObservatoryId): Iterable<ResourceRepresentation>
-    fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<ResourceRepresentation>
+    fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Resource>
+    fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource>
     fun findAllByClassInAndVisibilityAndObservatoryId(
         classes: Set<ThingId>,
         visibility: VisibilityFilter,
         id: ObservatoryId,
         pageable: Pageable
-    ): Page<ResourceRepresentation>
+    ): Page<Resource>
     fun findAllByClassInAndVisibility(
         classes: Set<ThingId>,
         visibility: VisibilityFilter,
         pageable: Pageable
-    ): Page<ResourceRepresentation>
-    fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation>
-    fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation>
+    ): Page<Resource>
+    fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
+    fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
     fun hasStatements(id: ThingId): Boolean
 }
 

@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.api
 import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
 import eu.tib.orkg.prototype.statements.application.port.out.GetProblemFlagQuery
 import eu.tib.orkg.prototype.statements.application.port.out.LoadProblemPort
+import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.ContributorPerProblem
 import java.util.*
@@ -13,9 +14,9 @@ import org.springframework.data.domain.Pageable
 interface RetrieveResearchProblemUseCase :
     GetProblemFlagQuery,
     LoadProblemPort {
-    fun findById(id: ThingId): Optional<ResourceRepresentation>
+    fun findById(id: ThingId): Optional<Resource>
 
-    fun findFieldsPerProblem(problemId: ThingId): List<FieldCount>
+    fun findFieldsPerProblem(problemId: ThingId): List<FieldWithFreq>
 
     fun findAllEntitiesBasedOnClassByProblem(
         problemId: ThingId,
@@ -24,14 +25,14 @@ interface RetrieveResearchProblemUseCase :
         pageable: Pageable
     ): Page<DetailsPerProblem>
 
-    fun findTopResearchProblems(): List<ResourceRepresentation>
+    fun findTopResearchProblems(): List<Resource>
 
     fun findContributorsPerProblem(problemId: ThingId, pageable: Pageable): List<ContributorPerProblem>
 
     fun forDataset(id: ThingId, pageable: Pageable): Optional<Page<ResearchProblem>>
 
-    data class FieldCount(
-        val field: ResourceRepresentation,
+    data class FieldWithFreq(
+        val field: Resource,
         val freq: Long,
     )
 

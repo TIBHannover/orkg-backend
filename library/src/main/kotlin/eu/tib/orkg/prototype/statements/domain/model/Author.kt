@@ -1,7 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 
 data class ComparisonAuthor(
     val author: Author,
@@ -18,7 +17,7 @@ data class ComparisonAuthorInfo(
 )
 
 sealed class Author {
-    data class ResourceAuthor(val value: ResourceRepresentation) : Author()
+    data class ResourceAuthor(val value: Resource) : Author()
     data class LiteralAuthor(val value: String) : Author()
 }
 

@@ -112,7 +112,7 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
         statementService.create(r2.id, pl.id, l1.id)
 
         mockMvc
-            .perform(getRequestTo("/api/statements/${statement}"))
+            .perform(getRequestTo("/api/statements/$statement"))
             .andExpect(status().isOk)
             .andDo(
                 document(

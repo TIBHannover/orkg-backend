@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.export.rdf.domain.RDFService
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.spi.ClassHierarchyRepository
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
@@ -39,12 +40,14 @@ internal class RdfServiceIntegrationTest : DescribeSpec({
     val classRepository: ClassRepository = mockk()
     val predicateRepository: PredicateRepository = mockk()
     val resourceRepository: ResourceRepository = mockk()
+    val classHierarchyRepository: ClassHierarchyRepository = mockk()
 
     val service = RDFService(
         statementRepository,
         predicateRepository,
         resourceRepository,
         classRepository,
+        classHierarchyRepository
     )
 
     val tmpDir = tempdir()

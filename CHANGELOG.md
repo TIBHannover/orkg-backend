@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - The backend version can now be determined via `/api/version`.
   (See: [!543](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/543))
+- RDF-Dumps now include the class hierarchy.
+  (See: [!542](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/542))
 
 ## [0.32.0] - 2023-05-24
 ### Changed

@@ -316,3 +316,7 @@ kapt {
     // TODO: Check if classpath leakage is fixed in later versions.
     includeCompileClasspath = false
 }
+
+springBoot {
+    buildInfo()
+}

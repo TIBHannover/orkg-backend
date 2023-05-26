@@ -208,8 +208,8 @@ CALL {
 CALL apoc.path.subgraphAll(n, {relationshipFilter: ">", labelFilter: "-ResearchField|-ResearchProblem|-Paper"})
 YIELD relationships
 UNWIND relationships AS rel
-WITH rel AS p, endNode(rel) AS o, n
-WITH COLLECT(p) + COLLECT(o) + n as nodes
+WITH COLLECT(rel) AS p, COLLECT(endNode(rel)) AS o, n
+WITH p + o + n as nodes
 WITH DISTINCT nodes
 UNWIND nodes as node
 WITH DISTINCT node.created_by AS createdBy
@@ -220,8 +220,8 @@ ORDER BY createdBy""",
 CALL apoc.path.subgraphAll(n, {relationshipFilter: ">", labelFilter: "-ResearchField|-ResearchProblem|-Paper"})
 YIELD relationships
 UNWIND relationships AS rel
-WITH rel AS p, endNode(rel) AS o, n
-WITH COLLECT(p) + COLLECT(o) + n as nodes
+WITH COLLECT(rel) AS p, COLLECT(endNode(rel)) AS o, n
+WITH p + o + n as nodes
 WITH DISTINCT nodes
 UNWIND nodes as node
 WITH DISTINCT node.created_by AS createdBy

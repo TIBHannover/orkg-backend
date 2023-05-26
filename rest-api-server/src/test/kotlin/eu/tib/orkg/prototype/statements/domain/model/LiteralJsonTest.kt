@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import eu.tib.orkg.prototype.statements.LiteralRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.LiteralRepresentation
-import eu.tib.orkg.prototype.statements.services.toLiteralRepresentation
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import org.assertj.core.api.Assertions.assertThat
@@ -21,6 +21,8 @@ class LiteralJsonTest {
 
     @Autowired
     private lateinit var json: JacksonTester<LiteralRepresentation>
+
+    private val literalRepresentationAdapter: LiteralRepresentationAdapter = object : LiteralRepresentationAdapter {}
 
     @Nested
     @DisplayName("Given a Literal with default values")
@@ -88,12 +90,14 @@ class LiteralJsonTest {
     // TODO: Test that "_class" cannot be set or changed
 
     private fun createLiteral(datatype: String? = null) =
-        Literal(
-            id = ThingId("L100"),
-            label = "label",
-            createdAt = OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3)),
-            datatype = datatype ?: "xsd:string"
-        ).toLiteralRepresentation()
+        with(literalRepresentationAdapter) {
+            Literal(
+                id = ThingId("L100"),
+                label = "label",
+                createdAt = OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3)),
+                datatype = datatype ?: "xsd:string"
+            ).toLiteralRepresentation()
+        }
 
     private fun LiteralRepresentation.serialize() = json.write(this)
 }

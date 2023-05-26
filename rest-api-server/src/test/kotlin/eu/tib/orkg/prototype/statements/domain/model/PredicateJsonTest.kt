@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import eu.tib.orkg.prototype.statements.PredicateRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
-import eu.tib.orkg.prototype.statements.services.toPredicateRepresentation
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import org.assertj.core.api.Assertions.assertThat
@@ -18,6 +18,9 @@ class PredicateJsonTest {
 
     @Autowired
     private lateinit var json: JacksonTester<PredicateRepresentation>
+
+    private val predicateRepresentationAdapter: PredicateRepresentationAdapter =
+        object : PredicateRepresentationAdapter {}
 
     @Test
     fun serializedPredicateShouldHaveId() {
@@ -41,11 +44,13 @@ class PredicateJsonTest {
     }
 
     private fun createPredicate() =
-        Predicate(
-            ThingId("P100"),
-            "label",
-            OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3))
-        ).toPredicateRepresentation()
+        with(predicateRepresentationAdapter) {
+            Predicate(
+                ThingId("P100"),
+                "label",
+                OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3))
+            ).toPredicateRepresentation()
+        }
 
     private fun serializedPredicate() = json.write(createPredicate())
 }

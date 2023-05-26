@@ -1,14 +1,15 @@
 package eu.tib.orkg.prototype.statements.api
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 
 interface CreatePredicateUseCase {
     fun create(command: CreateCommand): ThingId
 
     // legacy methods:
-    fun create(label: String): PredicateRepresentation
-    fun create(userId: ContributorId, label: String): PredicateRepresentation
+    fun create(label: String): Predicate
+    fun create(userId: ContributorId, label: String): Predicate
     fun createIfNotExists(id: ThingId, label: String)
 
     data class CreateCommand(

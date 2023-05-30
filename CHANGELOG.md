@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed query for finding statements by subject class, predicate id and object label
   (Closes: [#485](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/485))
+- Creating labels that exceed the maximum allowed length will no longer result in "500 Internal server error".
+  (See: [!558](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/558))
 
 ## [0.32.0] - 2023-05-24
 ### Changed

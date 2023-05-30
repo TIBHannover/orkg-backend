@@ -2,7 +2,9 @@ package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
+import eu.tib.orkg.prototype.statements.application.InvalidLiteralLabel
 import eu.tib.orkg.prototype.statements.domain.model.Literal
+import eu.tib.orkg.prototype.statements.domain.model.MAX_LABEL_LENGTH
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
@@ -24,6 +26,9 @@ class LiteralService(
         create(ContributorId.createUnknownContributor(), label, datatype)
 
     override fun create(userId: ContributorId, label: String, datatype: String): Literal {
+        if (label.length > MAX_LABEL_LENGTH) {
+            throw InvalidLiteralLabel()
+        }
         val literalId = repository.nextIdentity()
         val newLiteral = Literal(
             label = label,
@@ -52,6 +57,9 @@ class LiteralService(
         statementRepository.findDOIByContributionId(id)
 
     override fun update(literal: Literal) {
+        if (literal.label.length > MAX_LABEL_LENGTH) {
+            throw InvalidLiteralLabel()
+        }
         // already checked by service
         var found = repository.findById(literal.id).get()
 

@@ -16,6 +16,7 @@ import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateClassUseCase.ReplaceCommand
 import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
 import eu.tib.orkg.prototype.statements.domain.model.Class
+import eu.tib.orkg.prototype.statements.domain.model.MAX_LABEL_LENGTH
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.toOptional
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
@@ -192,7 +193,7 @@ internal class ClassControllerUnitTest {
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.errors.length()").value(1))
             .andExpect(jsonPath("$.errors[0].field").value("label"))
-            .andExpect(jsonPath("$.errors[0].message").value("A label must not be blank or contain newlines."))
+            .andExpect(jsonPath("$.errors[0].message").value("A label must not be blank or contain newlines and must be at most $MAX_LABEL_LENGTH characters long."))
             .andExpect(jsonPath("$.error").value("Bad Request"))
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.path").value("/api/classes/$id"))
@@ -280,7 +281,7 @@ internal class ClassControllerUnitTest {
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.errors.length()").value(1))
             .andExpect(jsonPath("$.errors[0].field").value("label"))
-            .andExpect(jsonPath("$.errors[0].message").value("A label must not be blank or contain newlines."))
+            .andExpect(jsonPath("$.errors[0].message").value("A label must not be blank or contain newlines and must be at most $MAX_LABEL_LENGTH characters long."))
             .andExpect(jsonPath("$.error").value("Bad Request"))
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.path").value("/api/classes/$id"))

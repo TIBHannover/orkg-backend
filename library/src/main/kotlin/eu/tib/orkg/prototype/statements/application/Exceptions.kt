@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.shared.ForbiddenOperationException
 import eu.tib.orkg.prototype.shared.LoggedMessageException
 import eu.tib.orkg.prototype.shared.PropertyValidationException
 import eu.tib.orkg.prototype.shared.SimpleMessageException
+import eu.tib.orkg.prototype.statements.domain.model.MAX_LABEL_LENGTH
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
@@ -86,7 +87,9 @@ class DuplicateURI(uri: URI, id: String) :
 class InvalidUUID(uuid: String, cause: Throwable?) :
     PropertyValidationException("id", """Value "$uuid" is not a valid UUID.""", cause)
 
-class InvalidLabel : PropertyValidationException("label", "A label must not be blank or contain newlines.")
+class InvalidLabel : PropertyValidationException("label", "A label must not be blank or contain newlines and must be at most $MAX_LABEL_LENGTH characters long.")
+
+class InvalidLiteralLabel : PropertyValidationException("label", "A literal must be at most $MAX_LABEL_LENGTH characters long.")
 
 class InvalidURI : PropertyValidationException("uri", "The provided URI is not a valid URI.")
 

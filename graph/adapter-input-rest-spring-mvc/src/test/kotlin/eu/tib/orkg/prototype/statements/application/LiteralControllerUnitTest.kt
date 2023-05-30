@@ -9,6 +9,7 @@ import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.application.LiteralController.LiteralCreateRequest
 import eu.tib.orkg.prototype.statements.application.LiteralController.LiteralUpdateRequest
 import eu.tib.orkg.prototype.statements.domain.model.Literal
+import eu.tib.orkg.prototype.statements.domain.model.MAX_LABEL_LENGTH
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.mockk.every
 import io.mockk.just
@@ -125,6 +126,42 @@ class LiteralControllerUnitTest {
             .andExpect(jsonPath("\$.errors.length()").value(1))
             .andExpect(jsonPath("\$.errors[0].field").value("datatype"))
             .andExpect(jsonPath("\$.errors[0].message").value("must not be blank"))
+    }
+
+    @Test
+    @WithMockUser(username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun whenPOST_AndLabelIsTooLong_ThenFailValidation() {
+        val literal = LiteralCreateRequest(
+            label = "a".repeat(MAX_LABEL_LENGTH + 1)
+        )
+        every { literalService.create(any(), any(), any()) } throws InvalidLiteralLabel()
+
+        mockMvc
+            .perform(creationOf(literal))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("\$.status").value(400))
+            .andExpect(jsonPath("\$.errors.length()").value(1))
+            .andExpect(jsonPath("\$.errors[0].field").value("label"))
+            .andExpect(jsonPath("\$.errors[0].message").value("A literal must be at most $MAX_LABEL_LENGTH characters long."))
+    }
+
+    @Test
+    fun whenPUT_AndLabelIsTooLong_ThenFailValidation() {
+        val literal = LiteralUpdateRequest(
+            id = null,
+            label = "a".repeat(MAX_LABEL_LENGTH + 1),
+            datatype = null
+        )
+        every { literalService.findById(any()) } returns Optional.of(createDummyLiteral())
+        every { literalService.update(any()) } throws InvalidLiteralLabel()
+
+        mockMvc
+            .perform(updateOf(literal, "L1"))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("\$.status").value(400))
+            .andExpect(jsonPath("\$.errors.length()").value(1))
+            .andExpect(jsonPath("\$.errors[0].field").value("label"))
+            .andExpect(jsonPath("\$.errors[0].message").value("A literal must be at most $MAX_LABEL_LENGTH characters long."))
     }
 
     @Test

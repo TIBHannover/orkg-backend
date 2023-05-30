@@ -21,9 +21,10 @@ class InMemoryClassRepository : InMemoryRepository<ThingId, Class>(
         findAllFilteredAndPaged(pageable) { id.contains(it.id) }
 
     override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable) =
-        findAllFilteredAndPaged(pageable) {
-            it.label.matches(labelSearchString)
-        }
+        entities.values
+            .filter { it.label.matches(labelSearchString) }
+            .sortedWith(compareBy { it.label.length })
+            .paged(pageable)
 
     override fun findByUri(uri: String) =
         entities.values.firstOrNull { it.uri.toString() == uri }.toOptional()

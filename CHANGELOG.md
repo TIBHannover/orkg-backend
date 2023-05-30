@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - RDF-Dumps now include the class hierarchy.
   (See: [!542](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/542))
 
+### Changed
+- Fuzzy search by label now returns more relevant results
+  (See: [!541](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/541))
+
 ### Fixed
 - Fixed query for finding statements by subject class, predicate id and object label
   (Closes: [#485](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/485))

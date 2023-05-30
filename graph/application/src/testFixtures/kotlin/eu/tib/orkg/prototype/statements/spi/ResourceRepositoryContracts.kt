@@ -134,9 +134,10 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
     describe("finding several resources") {
         context("by label") {
             val expectedCount = 3
+            val label = "label to find"
             val resources = fabricator.random<List<Resource>>().toMutableList()
             (0 until 3).forEach {
-                resources[it] = resources[it].copy(label = "label to find")
+                resources[it] = resources[it].copy(label = label)
             }
 
             val expected = resources.take(expectedCount)
@@ -144,7 +145,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             context("with exact matching") {
                 resources.forEach(repository::save)
                 val result = repository.findAllByLabel(
-                    SearchString.of("label to find", exactMatch = true),
+                    SearchString.of(label, exactMatch = true),
                     PageRequest.of(0, 5)
                 )
 
@@ -169,7 +170,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             context("with fuzzy matching") {
                 resources.forEach(repository::save)
                 val result = repository.findAllByLabel(
-                    SearchString.of("label to find", exactMatch = false),
+                    SearchString.of("label find", exactMatch = false),
                     PageRequest.of(0, 5)
                 )
 
@@ -264,7 +265,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             val expectedCount = 3
             val resources = fabricator.random<List<Resource>>().toMutableList()
             val `class` = fabricator.random<ThingId>()
-            val label = fabricator.random<String>()
+            val label = "label to find"
             (0 until 6).forEach {
                 resources[it] = resources[it].copy(classes = resources[it].classes + `class`)
             }
@@ -304,7 +305,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                 resources.forEach(repository::save)
                 val result = repository.findAllByClassAndLabel(
                     `class` = `class`,
-                    labelSearchString = SearchString.of(label, exactMatch = false),
+                    labelSearchString = SearchString.of("label find", exactMatch = false),
                     pageable = PageRequest.of(0, 5)
                 )
 
@@ -331,7 +332,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             val expectedCount = 2
             val resources = fabricator.random<List<Resource>>().toMutableList()
             val `class` = fabricator.random<ThingId>()
-            val label = fabricator.random<String>()
+            val label = "label to find"
             val contributor = fabricator.random<ContributorId>()
             (0 until 6).forEach {
                 resources[it] = resources[it].copy(classes = resources[it].classes + `class`)

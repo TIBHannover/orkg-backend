@@ -33,8 +33,12 @@ class SpringDataNeo4jPredicateAdapter(
 
     override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Predicate> =
         when (labelSearchString) {
-            is ExactSearchString -> neo4jRepository.findAllByLabel(labelSearchString.value, pageable)
-            is FuzzySearchString -> neo4jRepository.findAllByLabelContaining(labelSearchString.value, pageable)
+            is ExactSearchString -> neo4jRepository.findAllByLabel(labelSearchString.query, pageable)
+            is FuzzySearchString -> neo4jRepository.findAllByLabelContaining(
+                label = labelSearchString.query,
+                minLabelLength = labelSearchString.input.length,
+                pageable = pageable
+            )
         }.map(Neo4jPredicate::toPredicate)
 
     @Cacheable(key = "#id")

@@ -1,50 +1,38 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-import org.apache.lucene.analysis.standard.StandardAnalyzer
-import org.apache.lucene.queryparser.classic.ParseException
 import org.apache.lucene.queryparser.classic.QueryParser
 
-sealed class SearchString(val value: String) {
+sealed interface SearchString {
+    val input: String
+    val query: String
+
     companion object {
         fun of(string: String, exactMatch: Boolean = false): SearchString =
             if (exactMatch) ExactSearchString(string) else FuzzySearchString(string)
     }
 }
 
-class FuzzySearchString(string: String) : SearchString(parseFuzzy(string))
-class ExactSearchString(string: String) : SearchString(parseExact(string))
+class FuzzySearchString(value: String) : SearchString {
+    override val query: String
+    override val input: String
 
-/**
- * Normalizes the given string and escapes any special characters according to [escapeFuzzySearchString].
- * If the given string cannot be parsed by Apache Lucene, the entire string will be escaped.
- */
-private fun parseFuzzy(string: String): String {
-    val result = string.normalize().escapeFuzzySearchString()
-    try {
-        QueryParser("", StandardAnalyzer()).parse(result)
-    } catch (e: ParseException) {
-        return QueryParser.escape(result)
+    init {
+        this.input = value.normalize()
+        this.query = QueryParser.escape(this.input)
+            .replace(Regex("""\\([+-]\w)"""), "$1")
+            .replace(Regex("""(\w)(\s|$)"""), "$1*$2")
+            .replace(Regex("""\s"""), " AND ")
     }
-    return result
 }
 
-private fun parseExact(string: String): String = QueryParser.escape(string.normalize())
+class ExactSearchString(value: String) : SearchString {
+    override val query: String
+    override val input: String
 
-private fun String.normalize() = replace(Regex("""\s+"""), " ").trim()
+    init {
+        this.input = value.normalize()
+        this.query = QueryParser.escape(this.input)
+    }
+}
 
-/**
- * Escapes the following characters if they are not already escaped:
- *
- * | Symbol(s) | Function               |
- * | --------- | ---------------------- |
- * | ```~```   | Fuzzy/Proximity search |
- * | ```[]```  | Date range search      |
- * | ```{}```  | Non-date range search  |
- * | ```^```   | Term boosting          |
- * | ```:```   | Field                  |
- *
- * Also escapes leading ```*``` and ```?```.
- */
-fun String.escapeFuzzySearchString(): String =
-    replace(Regex("""(?<=^|[^\\])([~\[\]{}:^])"""), """\\$1""")
-        .replace(Regex("""^([*?])"""), """\\$1""")
+private fun String.normalize() = replace(Regex("""\s+"""), " ").lowercase().trim()

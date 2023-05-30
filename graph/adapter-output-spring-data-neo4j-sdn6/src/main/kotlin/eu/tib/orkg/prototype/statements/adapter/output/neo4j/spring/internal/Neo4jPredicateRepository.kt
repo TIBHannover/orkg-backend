@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 
 private const val ids = "${'$'}ids"
 private const val label = "${'$'}label"
+private const val minLabelLength = "${'$'}minLabelLength"
 
 private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
 private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_predicate_on_label"
@@ -33,13 +34,17 @@ RETURN COUNT(node)""")
 
     @Query("""
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
-YIELD node
+YIELD node, score
+WHERE SIZE(node.label) >= $minLabelLength
+WITH node, score
+ORDER BY SIZE(node.label) ASC, score DESC
 RETURN node, [[(node)-[r:`RELATED`]->(t:`Thing`) | [r, t]]] $PAGE_PARAMS""",
         countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
 YIELD node
+WHERE SIZE(node.label) >= $minLabelLength
 RETURN COUNT(node)""")
-    fun findAllByLabelContaining(label: String, pageable: Pageable): Page<Neo4jPredicate>
+    fun findAllByLabelContaining(label: String, minLabelLength: Int, pageable: Pageable): Page<Neo4jPredicate>
 
     fun findById(id: ThingId?): Optional<Neo4jPredicate>
 

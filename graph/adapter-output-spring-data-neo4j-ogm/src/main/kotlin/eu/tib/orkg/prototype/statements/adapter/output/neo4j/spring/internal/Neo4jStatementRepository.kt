@@ -137,8 +137,8 @@ RETURN COUNT(rel) as cnt""")
     ): Page<Neo4jStatement>
 
     @Query(
-        "$MATCH_STATEMENT_WITH_LITERAL WHERE sub.id=$subjectClass AND rel.`predicate_id`=$predicateId AND obj.`label`=$literal $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
-        countQuery = "$MATCH_STATEMENT_WITH_LITERAL WHERE sub.id=$subjectClass AND rel.`predicate_id`=$predicateId AND obj.`label`=$literal $WITH_SORTABLE_FIELDS $RETURN_COUNT"
+        "$MATCH_STATEMENT_WITH_LITERAL WHERE $subjectClass IN LABELS(sub) AND rel.`predicate_id`=$predicateId AND obj.`label`=$literal $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
+        countQuery = "$MATCH_STATEMENT_WITH_LITERAL WHERE $subjectClass IN LABELS(sub) AND rel.`predicate_id`=$predicateId AND obj.`label`=$literal $WITH_SORTABLE_FIELDS $RETURN_COUNT"
     )
     fun findAllByPredicateIdAndLabelAndSubjectClass(
         predicateId: ThingId,

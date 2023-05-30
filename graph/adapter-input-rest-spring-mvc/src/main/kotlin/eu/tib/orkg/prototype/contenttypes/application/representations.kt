@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.contenttypes.api
+package eu.tib.orkg.prototype.contenttypes.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId

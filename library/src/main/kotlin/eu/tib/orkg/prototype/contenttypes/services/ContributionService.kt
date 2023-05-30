@@ -1,11 +1,10 @@
 package eu.tib.orkg.prototype.contenttypes.services
 
-import eu.tib.orkg.prototype.contenttypes.api.ContributionRepresentation
 import eu.tib.orkg.prototype.contenttypes.api.ContributionUseCases
 import eu.tib.orkg.prototype.contenttypes.application.ContributionNotFound
+import eu.tib.orkg.prototype.contenttypes.domain.model.Contribution
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import org.springframework.data.domain.Page
@@ -17,28 +16,28 @@ class ContributionService(
     private val resourceRepository: ResourceRepository,
     private val statementRepository: StatementRepository
 ) : ContributionUseCases {
-    override fun findById(id: ThingId): ContributionRepresentation =
+    override fun findById(id: ThingId): Contribution =
         resourceRepository.findById(id)
             .filter { Classes.contribution in it.classes }
-            .map { it.toContributionRepresentation() }
+            .map { it.toContribution() }
             .orElseThrow { ContributionNotFound(id) }
 
-    override fun findAll(pageable: Pageable): Page<ContributionRepresentation> =
+    override fun findAll(pageable: Pageable): Page<Contribution> =
         resourceRepository.findAllByClass(Classes.contribution, pageable)
-            .pmap { it.toContributionRepresentation() }
+            .pmap { it.toContribution() }
 
-    private fun Resource.toContributionRepresentation(): ContributionRepresentation {
+    private fun Resource.toContribution(): Contribution {
         val statements = statementRepository.findAllBySubject(id, PageRequests.ALL).content
             .filter { it.`object`.label.isNotBlank() }
-        return object : ContributionRepresentation {
-            override val id: ThingId = this@toContributionRepresentation.id
-            override val label: String = this@toContributionRepresentation.label
-            override val properties: Map<ThingId, List<ThingId>> = statements
+        return Contribution(
+            id = this@toContribution.id,
+            label = this@toContribution.label,
+            properties = statements
                 .groupBy { it.predicate.id }
                 .mapValues {
                     it.value.map { statement -> statement.`object`.id }
-                }
-            override val visibility: Visibility = this@toContributionRepresentation.visibility
-        }
+                },
+            visibility = this@toContribution.visibility
+        )
     }
 }

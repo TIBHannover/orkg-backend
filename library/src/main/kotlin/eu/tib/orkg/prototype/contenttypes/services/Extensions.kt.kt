@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.contenttypes.services
 
-import eu.tib.orkg.prototype.contenttypes.api.LabeledObjectRepresentation
+import eu.tib.orkg.prototype.contenttypes.domain.model.LabeledObject
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.stream.Collectors
@@ -16,12 +16,8 @@ internal fun <T, R> Collection<T>.pmap(transform: (T) -> R): List<R> =
 internal fun List<GeneralStatement>.wherePredicate(predicateId: ThingId) =
     filter { it.predicate.id == predicateId }
 
-internal fun List<GeneralStatement>.objectIdsWithLabel(): List<LabeledObjectRepresentation> = map {
-    object : LabeledObjectRepresentation {
-        override val id: ThingId = it.`object`.id
-        override val label: String = it.`object`.label
-    }
-}
+internal fun List<GeneralStatement>.objectIdsWithLabel(): List<LabeledObject> =
+    map { LabeledObject(it.`object`.id, it.`object`.label) }
 
 internal fun List<GeneralStatement>.objects() = map { it.`object` }
 

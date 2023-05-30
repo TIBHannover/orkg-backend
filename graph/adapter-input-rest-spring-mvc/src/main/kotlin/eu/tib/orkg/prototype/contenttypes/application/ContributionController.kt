@@ -1,6 +1,6 @@
-package eu.tib.orkg.prototype.contenttypes
+package eu.tib.orkg.prototype.contenttypes.application
 
-import eu.tib.orkg.prototype.contenttypes.api.ContributionRepresentation
+import eu.tib.orkg.prototype.contenttypes.ContributionRepresentationAdapter
 import eu.tib.orkg.prototype.contenttypes.api.ContributionUseCases
 import eu.tib.orkg.prototype.statements.application.BaseController
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -16,12 +16,14 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/content-types/contributions/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ContributionController(
     private val service: ContributionUseCases
-) : BaseController() {
+) : BaseController(), ContributionRepresentationAdapter {
     @GetMapping("/{id}")
     fun findById(
         @PathVariable id: ThingId
-    ): ContributionRepresentation = service.findById(id)
+    ): ContributionRepresentation =
+        service.findById(id).toContributionRepresentation()
 
     @GetMapping("/")
-    fun findAll(pageable: Pageable): Page<ContributionRepresentation> = service.findAll(pageable)
+    fun findAll(pageable: Pageable): Page<ContributionRepresentation> =
+        service.findAll(pageable).mapToContributionRepresentation()
 }

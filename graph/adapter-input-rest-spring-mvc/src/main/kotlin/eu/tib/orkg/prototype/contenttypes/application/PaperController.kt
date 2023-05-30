@@ -1,10 +1,10 @@
-package eu.tib.orkg.prototype.contenttypes
+package eu.tib.orkg.prototype.contenttypes.application
 
-import eu.tib.orkg.prototype.contenttypes.api.PaperRepresentation
+import eu.tib.orkg.prototype.contenttypes.PaperRepresentationAdapter
 import eu.tib.orkg.prototype.contenttypes.api.PaperUseCases
-import eu.tib.orkg.prototype.contenttypes.api.VisibilityFilter
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.shared.TooManyParameters
+import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.application.BaseController
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.data.domain.Page
@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/content-types/papers/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class PaperController(
     private val service: PaperUseCases
-) : BaseController() {
+) : BaseController(), PaperRepresentationAdapter {
     @GetMapping("/{id}")
     fun findById(
         @PathVariable id: ThingId
-    ): PaperRepresentation = service.findById(id)
+    ): PaperRepresentation = service.findById(id).toPaperRepresentation()
 
     @GetMapping("/{id}/contributors")
     fun findAllContributorsByPaperId(
@@ -48,6 +48,6 @@ class PaperController(
             visibility != null -> service.findAllByVisibility(visibility, pageable)
             createdBy != null -> service.findAllByContributor(createdBy, pageable)
             else -> service.findAll(pageable)
-        }
+        }.mapToPaperRepresentation()
     }
 }

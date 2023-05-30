@@ -132,7 +132,7 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
     }
 
     fun createDummyPaperObject(title: String = "long title here", doi: String = "doi.id.here", researchField: String = "R12"): CreatePaperRequest =
-        CreatePaperRequest(null, Paper(
+        CreatePaperRequest(null, PaperDefinition(
             title = title,
             doi = doi,
             researchField = ThingId(researchField),

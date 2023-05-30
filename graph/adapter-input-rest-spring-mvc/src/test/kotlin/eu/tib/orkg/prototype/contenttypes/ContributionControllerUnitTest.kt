@@ -3,9 +3,10 @@ package eu.tib.orkg.prototype.contenttypes
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
-import eu.tib.orkg.prototype.contenttypes.api.ContributionRepresentation
 import eu.tib.orkg.prototype.contenttypes.api.ContributionUseCases
+import eu.tib.orkg.prototype.contenttypes.application.ContributionController
 import eu.tib.orkg.prototype.contenttypes.application.ContributionNotFound
+import eu.tib.orkg.prototype.contenttypes.domain.model.Contribution
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
@@ -54,7 +55,7 @@ internal class ContributionControllerUnitTest {
 
     @Test
     fun `Given a contribution, when it is fetched by id and service succeeds, then status is 200 OK and contribution is returned`() {
-        val contribution = createDummyContributionRepresentation()
+        val contribution = createDummyContribution()
         every { contributionService.findById(contribution.id) } returns contribution
 
         get("/api/content-types/contributions/${contribution.id}")
@@ -80,15 +81,15 @@ internal class ContributionControllerUnitTest {
 
     private fun get(string: String) = mockMvc.perform(MockMvcRequestBuilders.get(string))
 
-    private fun createDummyContributionRepresentation() = object : ContributionRepresentation {
-        override val id: ThingId = ThingId("R123")
-        override val label: String = "Dummy Contribution Label"
-        override val properties: Map<ThingId, List<ThingId>> = mapOf(
+    private fun createDummyContribution() = Contribution(
+        id = ThingId("R123"),
+        label = "Dummy Contribution Label",
+        properties = mapOf(
             ThingId("R456") to listOf(
                 ThingId("R789"),
                 ThingId("R147")
             )
-        )
-        override val visibility: Visibility = Visibility.DEFAULT
-    }
+        ),
+        visibility = Visibility.DEFAULT
+    )
 }

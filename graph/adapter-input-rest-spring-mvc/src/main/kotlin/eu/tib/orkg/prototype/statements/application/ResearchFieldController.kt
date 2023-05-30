@@ -1,12 +1,17 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
+import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
+import eu.tib.orkg.prototype.statements.PaperCountPerResearchProblemRepresentationAdapter
+import eu.tib.orkg.prototype.statements.ResourceRepresentationAdapter
+import eu.tib.orkg.prototype.statements.api.PaperCountPerResearchProblemRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
-import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase.PaperCountPerResearchProblem
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -28,8 +33,11 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/research-fields/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ResearchFieldController(
     private val service: RetrieveResearchFieldUseCase,
-    private val resourceService: ResourceUseCases
-) {
+    private val resourceService: ResourceUseCases,
+    override val statementService: StatementUseCases,
+    override val templateRepository: TemplateRepository,
+    override val flags: FeatureFlagService
+) : ResourceRepresentationAdapter, PaperCountPerResearchProblemRepresentationAdapter {
     /**
      * Fetches all the research problems and
      * number of papers based on a research
@@ -40,10 +48,10 @@ class ResearchFieldController(
     fun getResearchProblemsOfField(
         @PathVariable id: ThingId,
         pageable: Pageable
-    ): ResponseEntity<Page<PaperCountPerResearchProblem>> {
+    ): Page<PaperCountPerResearchProblemRepresentation> {
         resourceService.findById(id)
             .orElseThrow { ResourceNotFound.withId(id) }
-        return ok(service.getResearchProblemsOfField(id, pageable))
+        return service.getResearchProblemsOfField(id, pageable).mapToPaperCountPerResearchProblemRepresentation()
     }
 
     /**
@@ -70,7 +78,7 @@ class ResearchFieldController(
             visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
             includeSubFields = true,
             pageable = pageable
-        )
+        ).mapToResourceRepresentation()
     }
 
     /**
@@ -109,7 +117,7 @@ class ResearchFieldController(
             visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
             includeSubFields = true,
             pageable = pageable
-        )
+        ).mapToResourceRepresentation()
     }
 
     /**
@@ -134,7 +142,7 @@ class ResearchFieldController(
             visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
             includeSubFields = true,
             pageable = pageable
-        )
+        ).mapToResourceRepresentation()
     }
 
     /**
@@ -159,7 +167,7 @@ class ResearchFieldController(
             visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
             includeSubFields = false,
             pageable = pageable
-        )
+        ).mapToResourceRepresentation()
     }
 
     /**
@@ -184,7 +192,7 @@ class ResearchFieldController(
             visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
             includeSubFields = false,
             pageable = pageable
-        )
+        ).mapToResourceRepresentation()
     }
 
     /**
@@ -224,7 +232,7 @@ class ResearchFieldController(
             visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
             includeSubFields = false,
             pageable = pageable
-        )
+        ).mapToResourceRepresentation()
     }
 
     /**
@@ -250,7 +258,7 @@ class ResearchFieldController(
             visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
             includeSubFields = true,
             pageable = pageable
-        )
+        ).mapToResourceRepresentation()
 
     /**
      * Gets entities based on the provided classes excluding sub fields
@@ -275,5 +283,5 @@ class ResearchFieldController(
             visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
             includeSubFields = false,
             pageable = pageable
-        )
+        ).mapToResourceRepresentation()
 }

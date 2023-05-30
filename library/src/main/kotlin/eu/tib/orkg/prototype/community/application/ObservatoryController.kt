@@ -8,9 +8,7 @@ import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.ResearchField
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.application.ResearchFieldNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.StatisticsService
@@ -20,9 +18,7 @@ import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -32,7 +28,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
@@ -88,40 +83,6 @@ class ObservatoryController(
     fun findObservatories(): List<Observatory> {
         return service.listObservatories(PageRequest.of(0, Int.MAX_VALUE)).content
     }
-
-    @GetMapping("{id}/papers")
-    fun findPapersByObservatoryId(@PathVariable id: ObservatoryId): Iterable<ResourceRepresentation> {
-        return resourceService.findPapersByObservatoryId(id)
-    }
-
-    @GetMapping("{id}/comparisons")
-    fun findComparisonsByObservatoryId(@PathVariable id: ObservatoryId): Iterable<ResourceRepresentation> {
-        return resourceService.findComparisonsByObservatoryId(id)
-    }
-
-    @GetMapping("{id}/problems")
-    fun findProblemsByObservatoryId(@PathVariable id: ObservatoryId, pageable: Pageable): Page<ResourceRepresentation> {
-        return resourceService.findProblemsByObservatoryId(id, pageable)
-    }
-
-    @GetMapping("{id}/class")
-    fun findProblemsByObservatoryId(
-        @PathVariable id: ObservatoryId,
-        @RequestParam(value = "classes") classes: Set<ThingId>,
-        @RequestParam("featured", required = false, defaultValue = "false")
-        featured: Boolean,
-        @RequestParam("unlisted", required = false, defaultValue = "false")
-        unlisted: Boolean,
-        @RequestParam("visibility", required = false)
-        visibility: VisibilityFilter?,
-        pageable: Pageable
-    ): Page<ResourceRepresentation> =
-        resourceService.findAllByClassInAndVisibilityAndObservatoryId(
-            classes = classes,
-            visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
-            id = id,
-            pageable = pageable
-        )
 
     @GetMapping("{id}/users")
     fun findUsersByObservatoryId(@PathVariable id: ObservatoryId): Iterable<Contributor> =
@@ -239,13 +200,3 @@ class ObservatoryController(
         val organizationId: OrganizationId
     )
 }
-
-internal fun visibilityFilterFromFlags(featured: Boolean?, unlisted: Boolean?): VisibilityFilter =
-    when (unlisted ?: false) {
-        true -> VisibilityFilter.UNLISTED
-        false -> when (featured) {
-            null -> VisibilityFilter.ALL_LISTED
-            true -> VisibilityFilter.FEATURED
-            false -> VisibilityFilter.NON_FEATURED
-        }
-    }

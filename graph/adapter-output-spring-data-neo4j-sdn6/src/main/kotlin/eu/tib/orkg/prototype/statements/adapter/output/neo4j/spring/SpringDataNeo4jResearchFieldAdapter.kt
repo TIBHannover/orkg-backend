@@ -3,10 +3,10 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jProblemsPerField
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResearchFieldRepository
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase.PaperCountPerResearchProblem
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
-import eu.tib.orkg.prototype.statements.spi.ProblemsPerField
 import eu.tib.orkg.prototype.statements.spi.ResearchFieldRepository
 import java.util.*
 import org.springframework.data.domain.Page
@@ -20,8 +20,8 @@ class SpringDataNeo4jResearchFieldAdapter(
     override fun findById(id: ThingId): Optional<Resource> =
         neo4jRepository.findById(id).map { it.toResource() }
 
-    override fun getResearchProblemsOfField(fieldId: ThingId, pageable: Pageable): Page<ProblemsPerField> =
-        neo4jRepository.getResearchProblemsOfField(fieldId, pageable).map { it.toProblemsPerField() }
+    override fun getResearchProblemsOfField(fieldId: ThingId, pageable: Pageable): Page<PaperCountPerResearchProblem> =
+        neo4jRepository.getResearchProblemsOfField(fieldId, pageable).map { it.toPaperCountPerResearchProblem() }
 
     override fun getContributorIdsFromResearchFieldAndIncludeSubfields(
         id: ThingId,
@@ -161,8 +161,8 @@ class SpringDataNeo4jResearchFieldAdapter(
             false -> neo4jRepository.findAllLiteratureListsByResearchFieldAndVisibilityExcludingSubFields(id, visibility, pageable)
         }.map { it.toResource() }
 
-    private fun Neo4jProblemsPerField.toProblemsPerField() =
-        ProblemsPerField(
+    private fun Neo4jProblemsPerField.toPaperCountPerResearchProblem() =
+        PaperCountPerResearchProblem(
             problem = problem.toResource(),
             papers = papers
         )

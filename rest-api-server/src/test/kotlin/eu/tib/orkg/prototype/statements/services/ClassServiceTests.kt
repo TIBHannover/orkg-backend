@@ -195,7 +195,6 @@ class ClassServiceTests {
         val differentWithSameURI = createClassWithoutURI().copy(id = ThingId("different"), uri = expectedClass.uri)
         every { repository.findById(ThingId("OK")) } returns Optional.of(originalClass)
         every { service.findByURI(expectedClass.uri!!) } returns differentWithSameURI.toOptional()
-            .map(Class::toClassRepresentation)
         every { repository.save(expectedClass) } returns Unit
 
         val actual = service.updateURI(ThingId("OK"), "https://example.org/NEW")
@@ -309,7 +308,6 @@ class ClassServiceTests {
         val differentWithSameURI = createClassWithoutURI().copy(id = ThingId("different"), uri = expectedClass.uri)
         every { repository.findById(classToReplace) } returns existingClass.toOptional()
         every { service.findByURI(expectedClass.uri!!) } returns differentWithSameURI.toOptional()
-            .map(Class::toClassRepresentation)
         every { repository.save(expectedClass) } returns Unit
 
         val actual = service.replace(classToReplace, command = replacingClass.toReplaceCommand())

@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.domain.model.ComparisonAuthorInfo
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
+import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
 import java.time.OffsetDateTime
@@ -86,9 +88,50 @@ interface PaperResourceWithPathRepresentation : ResourceRepresentation {
     val path: PathRepresentation
 }
 
-interface ClassHierarchyRepresentation {
-    val depth: Long
-    @get:JsonProperty("parent_id")
-    val parentId: ThingId
-    val `class`: ClassRepresentation
+data class BundleRepresentation(
+    @JsonProperty("root")
+    val rootId: ThingId,
+    @JsonProperty("statements")
+    val bundle: List<StatementRepresentation>
+)
+
+sealed interface AuthorRepresentation {
+    interface ResourceAuthorRepresentation : AuthorRepresentation {
+        val value: ResourceRepresentation
+    }
+    interface LiteralAuthorRepresentation : AuthorRepresentation {
+        val value: String
+    }
 }
+
+interface PaperAuthorRepresentation {
+    val author: AuthorRepresentation
+    val papers: Int
+}
+
+interface ComparisonAuthorRepresentation {
+    val author: AuthorRepresentation
+    val info: Iterable<ComparisonAuthorInfo>
+}
+
+interface PaperCountPerResearchProblemRepresentation {
+    val problem: ResourceRepresentation
+    val papers: Long
+}
+
+interface FieldWithFreqRepresentation {
+    val field: ResourceRepresentation
+    val freq: Long
+}
+
+data class ChildClassRepresentation(
+    val `class`: ClassRepresentation,
+    @JsonProperty("child_count")
+    val childCount: Long
+)
+
+data class ClassHierarchyEntryRepresentation(
+    val `class`: ClassRepresentation,
+    @JsonProperty("parent_id")
+    val parentId: ThingId?
+)

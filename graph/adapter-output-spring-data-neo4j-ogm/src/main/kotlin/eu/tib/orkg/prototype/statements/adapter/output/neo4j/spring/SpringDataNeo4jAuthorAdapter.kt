@@ -9,7 +9,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ComparisonAuthor
 import eu.tib.orkg.prototype.statements.domain.model.ComparisonAuthorInfo
 import eu.tib.orkg.prototype.statements.domain.model.PaperAuthor
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.services.toResourceRepresentation
 import eu.tib.orkg.prototype.statements.spi.AuthorRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -35,14 +34,14 @@ private fun Neo4jAuthorOfComparison.toComparisonAuthor() =
             Author.LiteralAuthor(authorLabel)
         else
         // TODO: Replace with proper abstraction of Author
-            Author.ResourceAuthor(authorResource.toResource().toResourceRepresentation(emptyMap(), emptyMap())),
+            Author.ResourceAuthor(authorResource.toResource()),
         info.map { ComparisonAuthorInfo(paperId = ThingId(it.paper), it.index.toInt(), it.year?.toInt()) }
     )
 
 private fun Neo4jAuthorPerProblem.toPaperAuthor() =
     PaperAuthor(
         if (thing is Neo4jResource)
-            Author.ResourceAuthor(thing.toResource().toResourceRepresentation(emptyMap(), emptyMap()))
+            Author.ResourceAuthor(thing.toResource())
         else
             Author.LiteralAuthor(thing.label!!),
         papers.toInt()

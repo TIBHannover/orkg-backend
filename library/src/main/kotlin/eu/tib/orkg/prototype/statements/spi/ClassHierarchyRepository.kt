@@ -1,5 +1,7 @@
 package eu.tib.orkg.prototype.statements.spi
 
+import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.ChildClass
+import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.ClassHierarchyEntry
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
@@ -22,14 +24,4 @@ interface ClassHierarchyRepository {
     fun findClassHierarchy(id: ThingId, pageable: Pageable): Page<ClassHierarchyEntry>
 
     fun countClassInstances(id: ThingId): Long
-
-    data class ChildClass(
-        val `class`: Class,
-        val childCount: Long
-    )
-
-    data class ClassHierarchyEntry(
-        val `class`: Class,
-        val parentId: ThingId?
-    )
 }

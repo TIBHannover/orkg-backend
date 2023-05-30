@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import dev.forkhandles.values.ofOrNull
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.PredicateRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
@@ -30,28 +31,31 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/predicates/", produces = [MediaType.APPLICATION_JSON_VALUE])
-class PredicateController(private val service: PredicateUseCases) : BaseController() {
+class PredicateController(
+    private val service: PredicateUseCases
+) : BaseController(), PredicateRepresentationAdapter {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: ThingId): PredicateRepresentation =
-        service.findById(id).orElseThrow { PredicateNotFound(id) }
+        service.findById(id).mapToPredicateRepresentation().orElseThrow { PredicateNotFound(id) }
 
     @GetMapping("/")
     fun findByLabel(
         @RequestParam("q", required = false) string: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         pageable: Pageable
-    ): Page<PredicateRepresentation> = when (string) {
-        null -> service.findAll(pageable)
-        else -> service.findAllByLabel(SearchString.of(string, exactMatch), pageable)
-    }
+    ): Page<PredicateRepresentation> =
+        when (string) {
+            null -> service.findAll(pageable)
+            else -> service.findAllByLabel(SearchString.of(string, exactMatch), pageable)
+        }.mapToPredicateRepresentation()
 
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(CREATED)
     fun add(
         @RequestBody predicate: CreatePredicateRequest,
         uriComponentsBuilder: UriComponentsBuilder
-    ): ResponseEntity<Any> {
+    ): ResponseEntity<PredicateRepresentation> {
         Label.ofOrNull(predicate.label) ?: throw InvalidLabel()
         if (predicate.id != null && service.findById(predicate.id).isPresent) throw PredicateAlreadyExists(predicate.id)
         val userId = authenticatedUserId()
@@ -65,7 +69,7 @@ class PredicateController(private val service: PredicateUseCases) : BaseControll
 
         val location = uriComponentsBuilder.path("api/predicates/{id}").buildAndExpand(id).toUri()
 
-        return created(location).body(service.findById(id).get())
+        return created(location).body(service.findById(id).mapToPredicateRepresentation().get())
     }
 
     @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])

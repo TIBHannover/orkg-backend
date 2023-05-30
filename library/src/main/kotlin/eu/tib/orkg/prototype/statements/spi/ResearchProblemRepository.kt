@@ -1,8 +1,7 @@
 package eu.tib.orkg.prototype.statements.spi
 
-import eu.tib.orkg.prototype.statements.domain.model.Literal
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase.FieldWithFreq
 import eu.tib.orkg.prototype.statements.domain.model.Resource
-import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import java.util.*
@@ -34,18 +33,13 @@ interface ResearchProblemRepository {
     fun findAllListedVisualizationsByProblem(id: ThingId, pageable: Pageable): Page<Resource>
     fun findAllVisualizationsByProblemAndVisibility(id: ThingId, visibility: Visibility, pageable: Pageable): Page<Resource>
 
-    fun findResearchFieldsPerProblem(problemId: ThingId): Iterable<FieldPerProblem>
+    fun findResearchFieldsPerProblem(problemId: ThingId): Iterable<FieldWithFreq>
     fun findTopResearchProblemsGoingBack(months: Int): Iterable<Resource>
     fun findTopResearchProblemsAllTime(): Iterable<Resource>
     fun findContributorsLeaderboardPerProblem(problemId: ThingId, pageable: Pageable): Page<ContributorPerProblem>
     fun findResearchProblemForDataset(datasetId: ThingId, pageable: Pageable): Page<Resource>
     fun findAllListedProblems(pageable: Pageable): Page<Resource>
     fun findAllProblemsByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource>
-
-    data class FieldPerProblem(
-        val field: Resource,
-        val freq: Long
-    )
 
     data class ContributorPerProblem(
         val user: String,
@@ -54,16 +48,5 @@ interface ResearchProblemRepository {
         val contributor: UUID = UUID.fromString(user)
         val isAnonymous: Boolean
             get() = contributor == UUID(0, 0)
-    }
-
-    data class AuthorPerProblem(
-        val author: String,
-        val thing: Thing,
-        val papers: Long
-    ) {
-        val isLiteral: Boolean
-            get() = thing is Literal
-        val toAuthorResource: Resource
-            get() = thing as Resource
     }
 }

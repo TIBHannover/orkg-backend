@@ -1,10 +1,11 @@
-package eu.tib.orkg.prototype.contenttypes.application
+package eu.tib.orkg.prototype.contenttypes
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.contenttypes.api.ContributionRepresentation
 import eu.tib.orkg.prototype.contenttypes.api.ContributionUseCases
+import eu.tib.orkg.prototype.contenttypes.application.ContributionNotFound
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility

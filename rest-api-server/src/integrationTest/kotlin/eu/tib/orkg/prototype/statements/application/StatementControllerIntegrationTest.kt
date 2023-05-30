@@ -25,7 +25,6 @@ import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.security.test.context.support.WithUserDetails
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -80,7 +79,6 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
 
         mockMvc
             .perform(getRequestTo("/api/statements/"))
-            .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -114,8 +112,7 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
         statementService.create(r2.id, pl.id, l1.id)
 
         mockMvc
-            .perform(getRequestTo("/api/statements/${statement.id}"))
-            .andDo(MockMvcResultHandlers.print())
+            .perform(getRequestTo("/api/statements/$statement"))
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -141,9 +138,7 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
         val statement = statementService.create(r2.id, pl.id, l1.id)
 
         mockMvc
-            .perform(getRequestTo("/api/statements/${statement.id}"))
-            .andDo(MockMvcResultHandlers.print())
-            .andDo(MockMvcResultHandlers.print())
+            .perform(getRequestTo("/api/statements/$statement"))
             .andExpect(status().isOk)
             .andDo(
                 document(
@@ -259,7 +254,6 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/statements/object/${l1.id}/predicate/${p1.id}"))
             .andExpect(status().isOk)
-            .andDo(MockMvcResultHandlers.print())
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andDo(
                 document(
@@ -340,7 +334,7 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
             "predicate_id" to p2.id,
             "object_id" to o2.id
         )
-        mockMvc.perform(putRequestWithBody("/api/statements/${st.id}", body))
+        mockMvc.perform(putRequestWithBody("/api/statements/$st", body))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.predicate.id").value(p2.id.value))
             .andExpect(jsonPath("$.object.id").value(o2.id.value))
@@ -365,7 +359,7 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
         val body = mapOf(
             "predicate_id" to p2.id
         )
-        mockMvc.perform(putRequestWithBody("/api/statements/${st.id}", body))
+        mockMvc.perform(putRequestWithBody("/api/statements/$st", body))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.predicate.id").value(p2.id.value))
             .andDo(
@@ -439,7 +433,6 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
 
         mockMvc
             .perform(getRequestTo("/api/statements/${a.id}/bundle"))
-            .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.statements", hasSize<Int>(9)))
             .andDo(

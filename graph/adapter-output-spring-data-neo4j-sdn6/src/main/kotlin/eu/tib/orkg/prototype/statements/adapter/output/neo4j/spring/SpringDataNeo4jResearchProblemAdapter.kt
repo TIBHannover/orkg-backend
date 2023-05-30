@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
-import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jAuthorPerProblem
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jFieldPerProblem
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jProblemRepository
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase.FieldWithFreq
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
@@ -96,8 +96,8 @@ class SpringDataNeo4jResearchProblemAdapter(
         neo4jRepository.findAllVisualizationsByProblemAndVisibility(id, visibility, pageable)
             .map { it.toResource() }
 
-    override fun findResearchFieldsPerProblem(problemId: ThingId): Iterable<ResearchProblemRepository.FieldPerProblem> =
-        neo4jRepository.findResearchFieldsPerProblem(problemId).map { it.toFieldPerProblem() }
+    override fun findResearchFieldsPerProblem(problemId: ThingId): Iterable<FieldWithFreq> =
+        neo4jRepository.findResearchFieldsPerProblem(problemId).map { it.toFieldWithFreq() }
 
     override fun findTopResearchProblemsGoingBack(months: Int): Iterable<Resource> =
         neo4jRepository.findTopResearchProblemsGoingBack(months).map { it.toResource() }
@@ -120,16 +120,9 @@ class SpringDataNeo4jResearchProblemAdapter(
     override fun findAllProblemsByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource> =
         neo4jRepository.findAllProblemsByVisibility(visibility, pageable).map { it.toResource() }
 
-    fun Neo4jFieldPerProblem.toFieldPerProblem() =
-        ResearchProblemRepository.FieldPerProblem(
+    fun Neo4jFieldPerProblem.toFieldWithFreq() =
+        FieldWithFreq(
             field = field.toResource(),
             freq = freq
-        )
-
-    fun Neo4jAuthorPerProblem.toAuthorPerProblem() =
-        ResearchProblemRepository.AuthorPerProblem(
-            author = author,
-            thing = thing.toThing(),
-            papers = papers
         )
 }

@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.statements.api
 
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
+import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
-import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.data.domain.Page
@@ -11,22 +11,22 @@ import org.springframework.data.domain.Pageable
 interface RetrieveStatementUseCase {
     fun exists(id: StatementId): Boolean
     // legacy methods:
-    fun findAll(pagination: Pageable): Iterable<StatementRepresentation>
-    fun findById(statementId: StatementId): Optional<StatementRepresentation>
-    fun findAllBySubject(subjectId: ThingId, pagination: Pageable): Page<StatementRepresentation>
-    fun findAllByPredicate(predicateId: ThingId, pagination: Pageable): Page<StatementRepresentation>
-    fun findAllByObject(objectId: ThingId, pagination: Pageable): Page<StatementRepresentation>
+    fun findAll(pagination: Pageable): Iterable<GeneralStatement>
+    fun findById(statementId: StatementId): Optional<GeneralStatement>
+    fun findAllBySubject(subjectId: ThingId, pagination: Pageable): Page<GeneralStatement>
+    fun findAllByPredicate(predicateId: ThingId, pagination: Pageable): Page<GeneralStatement>
+    fun findAllByObject(objectId: ThingId, pagination: Pageable): Page<GeneralStatement>
     fun findAllBySubjectAndPredicate(
         subjectId: ThingId,
         predicateId: ThingId,
         pagination: Pageable
-    ): Iterable<StatementRepresentation>
+    ): Page<GeneralStatement>
 
     fun findAllByObjectAndPredicate(
         objectId: ThingId,
         predicateId: ThingId,
         pagination: Pageable
-    ): Iterable<StatementRepresentation>
+    ): Page<GeneralStatement>
 
     fun totalNumberOfStatements(): Long
     fun countStatements(paperId: ThingId): Long
@@ -34,18 +34,22 @@ interface RetrieveStatementUseCase {
         predicateId: ThingId,
         literal: String,
         pagination: Pageable
-    ): Page<StatementRepresentation>
+    ): Page<GeneralStatement>
 
     fun findAllByPredicateAndLabelAndSubjectClass(
         predicateId: ThingId,
         literal: String,
         subjectClass: ThingId,
         pagination: Pageable
-    ): Iterable<StatementRepresentation>
+    ): Page<GeneralStatement>
 
     fun fetchAsBundle(thingId: ThingId, configuration: BundleConfiguration, includeFirst: Boolean): Bundle
 
     fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount>
+
+    fun countStatementsAboutResource(id: ThingId): Long
+
+    fun countStatementsAboutResources(ids: Set<ThingId>): Map<ThingId, Long>
 
     data class PredicateUsageCount(
         val id: ThingId,

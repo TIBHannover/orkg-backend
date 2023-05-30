@@ -21,7 +21,6 @@ import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.StatisticsService
-import eu.tib.orkg.prototype.statements.services.toResourceRepresentation
 import eu.tib.orkg.prototype.statements.spi.ObservatoryResources
 import io.mockk.every
 import io.mockk.verify
@@ -408,7 +407,7 @@ internal class ObservatoryControllerUnitTest {
         val organizationsIds = (0..1).map { createOrganization().id!! }.toSet()
         val observatory = createObservatory(organizationsIds)
         val id = observatory.id!!
-        val newResource = createResource().toResourceRepresentation(mapOf(), emptyMap())
+        val newResource = createResource()
         val newResearchField = ResearchField(newResource.id.value, newResource.label)
         val body = ObservatoryController.UpdateRequest(newResearchField.id!!)
         val updatedObservatory = observatory.copy(researchField = newResearchField)
@@ -446,7 +445,7 @@ internal class ObservatoryControllerUnitTest {
     @Test
     fun `Updating the research field of non existing observatory, status is 404`() {
         val id = ObservatoryId(UUID.randomUUID())
-        val newResource = createResource().toResourceRepresentation(mapOf(), emptyMap())
+        val newResource = createResource()
         val newResearchField = ResearchField(newResource.id.value, newResource.label)
         val body = ObservatoryController.UpdateRequest(value = newResearchField.id!!)
         every { observatoryUseCases.findById(id) } returns Optional.empty()
@@ -463,53 +462,6 @@ internal class ObservatoryControllerUnitTest {
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.message").value(ObservatoryNotFound(id).message))
             .andExpect(jsonPath("$.path").value("/api/observatories/$id/research_field"))
-    }
-
-    @Test
-    fun `Given the observatory id, when service succeeds, then status is 200 OK and papers list is returned`() {
-        val id = ObservatoryId(UUID.randomUUID())
-        val paperResource = createResource().copy(observatoryId = id, classes = setOf(ThingId("Paper")))
-        every {
-            resourceService.findPapersByObservatoryId(id = id)
-        } returns listOf(paperResource.toResourceRepresentation(mapOf(), emptyMap()))
-
-        mockMvc.perform(get("/api/observatories/$id/papers"))
-            .andExpect(status().isOk)
-
-        verify(exactly = 1) { resourceService.findPapersByObservatoryId(id) }
-    }
-
-    @Test
-    fun `Given the observatory id, when service succeeds, then status is 200 OK and comparisons list is returned`() {
-        val id = ObservatoryId(UUID.randomUUID())
-        val comparisonResource = createResource().copy(observatoryId = id, classes = setOf(ThingId("Comparison")))
-        every {
-            resourceService.findComparisonsByObservatoryId(id = id)
-        } returns listOf(comparisonResource.toResourceRepresentation(mapOf(), emptyMap()))
-
-        mockMvc.perform(get("/api/observatories/$id/comparisons"))
-            .andExpect(status().isOk)
-
-        verify(exactly = 1) { resourceService.findComparisonsByObservatoryId(id) }
-    }
-
-    @Test
-    fun `Given the observatory id, when service succeeds, then status is 200 OK and problems list is returned`() {
-        val id = ObservatoryId(UUID.randomUUID())
-        val problemResource = createResource().copy(
-            observatoryId = id,
-            classes = setOf(ThingId("Problem"))
-        ).toResourceRepresentation(mapOf(), emptyMap())
-        val pageable = PageRequest.of(0, 20)
-
-        every {
-            resourceService.findProblemsByObservatoryId(id, any())
-        } returns PageImpl(listOf(problemResource), pageable, 1)
-
-        mockMvc.perform(get("/api/observatories/$id/problems"))
-            .andExpect(status().isOk)
-
-        verify(exactly = 1) { resourceService.findProblemsByObservatoryId(id, any()) }
     }
 
     @Test

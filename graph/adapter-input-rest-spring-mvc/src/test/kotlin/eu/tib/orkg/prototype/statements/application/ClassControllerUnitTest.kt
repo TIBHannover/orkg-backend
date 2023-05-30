@@ -7,16 +7,19 @@ import dev.forkhandles.result4k.Success
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.createClass
+import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.AlreadyInUse
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.InvalidURI
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateClassUseCase.ReplaceCommand
 import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
 import eu.tib.orkg.prototype.statements.domain.model.Class
+import eu.tib.orkg.prototype.statements.domain.model.MAX_LABEL_LENGTH
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.toOptional
-import eu.tib.orkg.prototype.statements.services.toClassRepresentation
+import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import io.mockk.every
 import io.mockk.verify
 import java.net.URI
@@ -36,7 +39,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -70,6 +72,18 @@ internal class ClassControllerUnitTest {
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var userRepository: AuthUseCase
+
+    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
+    @MockkBean
+    private lateinit var statementService: StatementUseCases
+
+    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
+    @MockkBean
+    private lateinit var templateRepository: TemplateRepository
+
+    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
+    @MockkBean
+    private lateinit var flags: FeatureFlagService
 
     @BeforeEach
     fun setup() {
@@ -138,10 +152,9 @@ internal class ClassControllerUnitTest {
         val replacingClass = createClass().copy(id = id, label = "new label")
         val body = objectMapper.writeValueAsString(replacingClass)
         every { classService.replace(id, command = any()) } returns Success(Unit)
-        every { classService.findById(id) } returns replacingClass.toOptional().map(Class::toClassRepresentation)
+        every { classService.findById(id) } returns replacingClass.toOptional()
 
         mockMvc.performPut("/api/classes/$id", body)
-            .andDo(MockMvcResultHandlers.print())
             .andExpect(status().isOk)
             .andExpect(jsonPath("\$.id").value(id.toString()))
         verify(exactly = 1) {
@@ -180,7 +193,7 @@ internal class ClassControllerUnitTest {
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.errors.length()").value(1))
             .andExpect(jsonPath("$.errors[0].field").value("label"))
-            .andExpect(jsonPath("$.errors[0].message").value("A label must not be blank or contain newlines."))
+            .andExpect(jsonPath("$.errors[0].message").value("A label must not be blank or contain newlines and must be at most $MAX_LABEL_LENGTH characters long."))
             .andExpect(jsonPath("$.error").value("Bad Request"))
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.path").value("/api/classes/$id"))
@@ -268,7 +281,7 @@ internal class ClassControllerUnitTest {
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.errors.length()").value(1))
             .andExpect(jsonPath("$.errors[0].field").value("label"))
-            .andExpect(jsonPath("$.errors[0].message").value("A label must not be blank or contain newlines."))
+            .andExpect(jsonPath("$.errors[0].message").value("A label must not be blank or contain newlines and must be at most $MAX_LABEL_LENGTH characters long."))
             .andExpect(jsonPath("$.error").value("Bad Request"))
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.path").value("/api/classes/$id"))
@@ -388,5 +401,5 @@ internal class ClassControllerUnitTest {
         label = "test class",
         createdAt = OffsetDateTime.now(),
         uri = URI.create("http://example.org/exists")
-    ).toClassRepresentation()
+    )
 }

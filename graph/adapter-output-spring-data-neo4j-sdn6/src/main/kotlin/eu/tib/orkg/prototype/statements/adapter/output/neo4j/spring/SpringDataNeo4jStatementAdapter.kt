@@ -333,11 +333,11 @@ class SpringDataNeo4jStatementAdapter(
     ): Page<GeneralStatement> =
         findAllFilteredAndPaged(
             pageable = pageable,
+            subject = node("Thing", subjectClass.value),
             `object` = node("Thing", "Literal")
-        ) { subject, relation, `object` ->
+                .withProperties("label", literalOf<String>(literal))
+        ) { _, relation, _ ->
             relation.property("predicate_id").eq(literalOf<String>(predicateId.value))
-                .and(`object`.property("label").eq(literalOf<String>(literal)))
-                .and(subject.property("id").eq(literalOf<String>(subjectClass.value)))
         }
 
     override fun findAllBySubjects(subjectIds: List<ThingId>, pageable: Pageable): Page<GeneralStatement> =

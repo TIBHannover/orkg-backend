@@ -1,11 +1,11 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.LiteralRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.LiteralRepresentation
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import org.springframework.data.domain.Page
@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
-import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -29,14 +28,13 @@ import org.springframework.web.util.UriComponentsBuilder
 @RestController
 @RequestMapping("/api/literals/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class LiteralController(
-    private val service: LiteralUseCases,
-    private val repository: LiteralRepository, // FIXME: Work-around, needs rewrite in service
-) : BaseController() {
+    private val service: LiteralUseCases
+) : BaseController(), LiteralRepresentationAdapter {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: ThingId): LiteralRepresentation =
-        service
-            .findById(id)
+        service.findById(id)
+            .mapToLiteralRepresentation()
             .orElseThrow { LiteralNotFound(id) }
 
     @GetMapping("/")
@@ -44,10 +42,11 @@ class LiteralController(
         @RequestParam("q", required = false) searchString: String?,
         @RequestParam("exact", required = false, defaultValue = "false") exactMatch: Boolean,
         pageable: Pageable
-    ): Page<LiteralRepresentation> =  when (searchString) {
-        null -> service.findAll(pageable)
-        else -> service.findAllByLabel(SearchString.of(searchString, exactMatch), pageable)
-    }
+    ): Page<LiteralRepresentation> =
+        when (searchString) {
+            null -> service.findAll(pageable)
+            else -> service.findAllByLabel(SearchString.of(searchString, exactMatch), pageable)
+        }.mapToLiteralRepresentation()
 
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(CREATED)
@@ -62,15 +61,15 @@ class LiteralController(
             .buildAndExpand(id)
             .toUri()
 
-        return created(location).body(service.findById(id).get())
+        return created(location).body(service.findById(id).mapToLiteralRepresentation().get())
     }
 
     @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,
         @RequestBody @Valid request: LiteralUpdateRequest
-    ): ResponseEntity<LiteralRepresentation> {
-        var literal = repository.findById(id).orElseThrow { LiteralNotFound(id) }
+    ): LiteralRepresentation {
+        var literal = service.findById(id).orElseThrow { LiteralNotFound(id) }
 
         if (request.label != null) {
             literal = literal.copy(label = request.label)
@@ -80,7 +79,8 @@ class LiteralController(
             if (request.datatype.isBlank()) throw PropertyIsBlank("datatype")
             literal = literal.copy(datatype = request.datatype)
         }
-        return ok(service.update(literal))
+        service.update(literal)
+        return findById(literal.id)
     }
 
     data class LiteralCreateRequest(

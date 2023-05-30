@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.contenttypes.application
+package eu.tib.orkg.prototype.contenttypes
 
 import eu.tib.orkg.prototype.contenttypes.api.ContributionRepresentation
 import eu.tib.orkg.prototype.contenttypes.api.ContributionUseCases

@@ -1,7 +1,11 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
+import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
+import eu.tib.orkg.prototype.statements.ResourceRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
-import eu.tib.orkg.prototype.statements.services.toResourceRepresentation
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
+import eu.tib.orkg.prototype.statements.spi.TemplateRepository
+import io.mockk.mockk
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import org.assertj.core.api.Assertions.assertThat
@@ -18,6 +22,12 @@ class ResourceJsonTest {
 
     @Autowired
     private lateinit var json: JacksonTester<ResourceRepresentation> // FIXME: This whole test might be pointless.
+
+    private val resourceRepresentationAdapter: ResourceRepresentationAdapter = object : ResourceRepresentationAdapter {
+        override val statementService: StatementUseCases = mockk()
+        override val templateRepository: TemplateRepository = mockk()
+        override val flags: FeatureFlagService = mockk()
+    }
 
     @Test
     fun serializedResourceShouldHaveId() {
@@ -62,15 +72,17 @@ class ResourceJsonTest {
     }
 
     private fun createResource() =
-        Resource(
-            ThingId("R100"),
-            "label",
-            OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3)),
-            setOf(ThingId("C1"), ThingId("C2"), ThingId("C3"))
-        ).toResourceRepresentation(
-            mapOf(ThingId("R100") to 11),
-            emptyMap()
-        )
+        with(resourceRepresentationAdapter) {
+            Resource(
+                ThingId("R100"),
+                "label",
+                OffsetDateTime.of(2018, 12, 25, 5, 23, 42, 123456789, ZoneOffset.ofHours(3)),
+                setOf(ThingId("C1"), ThingId("C2"), ThingId("C3"))
+            ).toResourceRepresentation(
+                mapOf(ThingId("R100") to 11),
+                emptyMap()
+            )
+        }
 
     private fun serializedResource() = json.write(createResource())
 }

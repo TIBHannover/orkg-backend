@@ -8,7 +8,6 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.AlreadyInUse
 import eu.tib.orkg.prototype.statements.api.ClassLabelUpdateProblem
 import eu.tib.orkg.prototype.statements.api.ClassNotFound
-import eu.tib.orkg.prototype.statements.api.ClassRepresentation
 import eu.tib.orkg.prototype.statements.api.ClassURIUpdateProblem
 import eu.tib.orkg.prototype.statements.api.ClassUpdateProblem
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
@@ -53,33 +52,32 @@ class ClassService(
         return newClass.id
     }
 
-    override fun create(label: String): ClassRepresentation = create(ContributorId.createUnknownContributor(), label)
+    override fun create(label: String): Class = create(ContributorId.createUnknownContributor(), label)
 
-    override fun create(userId: ContributorId, label: String): ClassRepresentation {
+    override fun create(userId: ContributorId, label: String): Class {
         val newClassId = create(
             CreateClassUseCase.CreateCommand(
                 label = label,
                 contributorId = userId,
             )
         )
-        return repository.findById(newClassId).map(Class::toClassRepresentation).get()
+        return repository.findById(newClassId).get()
     }
 
     @Transactional(readOnly = true)
     override fun exists(id: ThingId): Boolean = repository.exists(id)
 
-    override fun findAll(pageable: Pageable): Page<ClassRepresentation> =
-        repository.findAll(pageable).map(Class::toClassRepresentation)
+    override fun findAll(pageable: Pageable): Page<Class> =
+        repository.findAll(pageable)
 
-    override fun findAllById(ids: Iterable<ThingId>, pageable: Pageable): Page<ClassRepresentation> =
-        repository.findAllById(ids, pageable).map(Class::toClassRepresentation)
+    override fun findAllById(ids: Iterable<ThingId>, pageable: Pageable): Page<Class> =
+        repository.findAllById(ids, pageable)
 
-    override fun findById(id: ThingId): Optional<ClassRepresentation> =
-        repository.findById(id).map(Class::toClassRepresentation)
+    override fun findById(id: ThingId): Optional<Class> =
+        repository.findById(id)
 
-    override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<ClassRepresentation> =
+    override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Class> =
         repository.findAllByLabel(labelSearchString, pageable)
-            .map(Class::toClassRepresentation)
 
     override fun replace(id: ThingId, command: UpdateClassUseCase.ReplaceCommand): Result<Unit, ClassUpdateProblem> {
         val label = Label.ofOrNull(command.label) ?: return Failure(InvalidLabel)
@@ -112,8 +110,8 @@ class ClassService(
 
     override fun removeAll() = repository.deleteAll()
 
-    override fun findByURI(uri: URI): Optional<ClassRepresentation> =
-        repository.findByUri(uri.toString()).map(Class::toClassRepresentation)
+    override fun findByURI(uri: URI): Optional<Class> =
+        repository.findByUri(uri.toString())
 
     override fun createIfNotExists(id: ThingId, label: String, uri: URI?) {
         // Checking if URI is null
@@ -157,14 +155,4 @@ class ClassService(
     } catch (_: URISyntaxException) {
         null
     }
-}
-
-fun Class.toClassRepresentation(): ClassRepresentation = object : ClassRepresentation {
-    override val id: ThingId = this@toClassRepresentation.id
-    override val label: String = this@toClassRepresentation.label
-    override val uri: URI? = this@toClassRepresentation.uri
-    override val description: String? = this@toClassRepresentation.description
-    override val jsonClass: String = "class"
-    override val createdAt: OffsetDateTime = this@toClassRepresentation.createdAt
-    override val createdBy: ContributorId = this@toClassRepresentation.createdBy
 }

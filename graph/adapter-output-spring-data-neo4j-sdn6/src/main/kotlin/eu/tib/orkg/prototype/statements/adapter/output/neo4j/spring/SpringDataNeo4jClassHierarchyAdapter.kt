@@ -1,13 +1,13 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
+import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.ChildClass
+import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.ClassHierarchyEntry
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ClassSubclassRelation
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassHierarchyRepository
-import eu.tib.orkg.prototype.statements.spi.ClassHierarchyRepository.ChildClass
-import eu.tib.orkg.prototype.statements.spi.ClassHierarchyRepository.ClassHierarchyEntry
 import eu.tib.orkg.prototype.statements.spi.ClassRelationRepository
-import java.time.format.DateTimeFormatter.*
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
 import org.neo4j.cypherdsl.core.Cypher.anyNode
 import org.neo4j.cypherdsl.core.Cypher.literalOf
@@ -16,8 +16,12 @@ import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.parameter
 import org.neo4j.cypherdsl.core.Cypher.unwind
-import org.neo4j.cypherdsl.core.Functions.*
-import org.neo4j.cypherdsl.core.Predicates.*
+import org.neo4j.cypherdsl.core.Functions.collect
+import org.neo4j.cypherdsl.core.Functions.count
+import org.neo4j.cypherdsl.core.Functions.id
+import org.neo4j.cypherdsl.core.Functions.labels
+import org.neo4j.cypherdsl.core.Predicates.any
+import org.neo4j.cypherdsl.core.Predicates.exists
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.core.Neo4jClient

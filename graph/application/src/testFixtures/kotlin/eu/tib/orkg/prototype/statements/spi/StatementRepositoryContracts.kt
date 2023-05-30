@@ -476,30 +476,25 @@ fun <
         context("by predicate id and object label and subject class id") {
             val expectedCount = 3
             val statements = fabricator.random<List<GeneralStatement>>().toMutableList()
-            val subject = createClass(id = ThingId("C1"))
+            val `class` = ThingId("SomeClass")
             val predicate = createPredicate(id = ThingId("P1"))
             val literal = createLiteral(label = "label to find")
             (0 until expectedCount).forEach {
                 statements[it] = statements[it].copy(
-                    subject = subject,
+                    subject = fabricator.random<Resource>().copy(
+                        classes = setOf(`class`)
+                    ),
                     `object` = literal,
                     predicate = predicate
                 )
             }
-            // Create a statement with an object that is not a literal but has the same label
-            val `object` = createResource(label = "label to find")
-            statements[expectedCount] = statements[expectedCount].copy(
-                subject = subject,
-                `object` = `object`,
-                predicate = predicate
-            )
             statements.forEach(saveStatement)
             val expected = statements.take(expectedCount)
 
             val result = repository.findAllByPredicateIdAndLabelAndSubjectClass(
                 predicate.id,
                 literal.label,
-                subject.id,
+                `class`,
                 PageRequest.of(0, 5)
             )
 

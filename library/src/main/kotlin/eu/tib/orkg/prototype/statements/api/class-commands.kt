@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.api
 
 import dev.forkhandles.result4k.Result
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
 
@@ -9,8 +10,8 @@ interface CreateClassUseCase {
     fun create(command: CreateCommand): ThingId
 
     // legacy methods:
-    fun create(label: String): ClassRepresentation
-    fun create(userId: ContributorId, label: String): ClassRepresentation
+    fun create(label: String): Class
+    fun create(userId: ContributorId, label: String): Class
     fun createIfNotExists(id: ThingId, label: String, uri: URI?)
 
     data class CreateCommand(

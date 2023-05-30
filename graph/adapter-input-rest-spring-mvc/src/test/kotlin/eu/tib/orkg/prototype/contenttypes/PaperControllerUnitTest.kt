@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.contenttypes.application
+package eu.tib.orkg.prototype.contenttypes
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
@@ -11,6 +11,7 @@ import eu.tib.orkg.prototype.contenttypes.api.PaperRepresentation
 import eu.tib.orkg.prototype.contenttypes.api.PaperUseCases
 import eu.tib.orkg.prototype.contenttypes.api.PublicationInfoRepresentation
 import eu.tib.orkg.prototype.contenttypes.api.VisibilityFilter
+import eu.tib.orkg.prototype.contenttypes.application.PaperNotFound
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.shared.TooManyParameters

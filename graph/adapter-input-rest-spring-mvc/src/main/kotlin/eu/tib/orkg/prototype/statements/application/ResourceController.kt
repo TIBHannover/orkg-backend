@@ -6,16 +6,21 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
+import eu.tib.orkg.prototype.statements.ResourceRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
+import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -43,12 +48,15 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/resources/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ResourceController(
     private val service: ResourceUseCases,
-    private val contributorService: ContributorService
-) : BaseController() {
+    private val contributorService: ContributorService,
+    override val statementService: StatementUseCases,
+    override val templateRepository: TemplateRepository,
+    override val flags: FeatureFlagService
+) : BaseController(), ResourceRepresentationAdapter {
 
     @GetMapping("/{id}")
     fun findById(@PathVariable id: ThingId): ResourceRepresentation =
-        service.findById(id).orElseThrow { ResourceNotFound.withId(id) }
+        service.findById(id).mapToResourceRepresentation().orElseThrow { ResourceNotFound.withId(id) }
 
     @GetMapping("/")
     fun findByLabel(
@@ -76,14 +84,14 @@ class ResourceController(
                 null -> service.findAll(pageable)
                 else -> service.findAllByLabel(SearchString.of(string, exactMatch), pageable)
             }
-        }
+        }.mapToResourceRepresentation()
 
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(CREATED)
     fun add(
         @RequestBody resource: CreateResourceRequest,
         uriComponentsBuilder: UriComponentsBuilder
-    ): ResponseEntity<Any> {
+    ): ResponseEntity<ResourceRepresentation> {
         Label.ofOrNull(resource.label) ?: throw InvalidLabel()
         if (resource.id != null && service.findById(resource.id).isPresent) throw ResourceAlreadyExists(resource.id)
         val userId = authenticatedUserId()
@@ -112,7 +120,7 @@ class ResourceController(
             .buildAndExpand(id)
             .toUri()
 
-        return created(location).body(service.findById(id).get())
+        return created(location).body(service.findById(id).mapToResourceRepresentation().get())
     }
 
     @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
@@ -132,7 +140,7 @@ class ResourceController(
                 classes = request.classes,
             )
         )
-        return ok(service.findById(id).get())
+        return ok(service.findById(id).mapToResourceRepresentation().get())
     }
 
     @RequestMapping("{id}/observatory", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
@@ -151,7 +159,7 @@ class ResourceController(
                 observatoryId = request.observatoryId,
             )
         )
-        return ok(service.findById(id).get())
+        return ok(service.findById(id).mapToResourceRepresentation().get())
     }
 
     @GetMapping("{id}/contributors")
@@ -193,7 +201,7 @@ class ResourceController(
     @GetMapping("/{id}/metadata/featured")
     fun getFeaturedFlag(@PathVariable id: ThingId): Boolean =
         service.findById(id)
-            .map { it.featured }
+            .map { it.visibility == Visibility.FEATURED }
             .orElseThrow { ResourceNotFound.withId(id) }
 
     @GetMapping("/metadata/unlisted", params = ["unlisted=true"])
@@ -218,7 +226,7 @@ class ResourceController(
     @GetMapping("/{id}/metadata/unlisted")
     fun getUnlistedFlag(@PathVariable id: ThingId): Boolean =
         service.findById(id)
-            .map { it.unlisted }
+            .map { it.visibility == Visibility.UNLISTED }
             .orElseThrow { ResourceNotFound.withId(id) }
 
     @GetMapping("/classes")
@@ -236,7 +244,7 @@ class ResourceController(
             classes = classes,
             visibility = visibility ?: visibilityFilterFromFlags(featured, unlisted),
             pageable = pageable
-        )
+        ).mapToResourceRepresentation()
     }
 }
 

@@ -40,4 +40,11 @@ internal class LabelTest {
     fun `A valid label can be printed, because it is not sensitive`() {
         assertThat(Label.of("We were here!").value).isEqualTo("We were here!")
     }
+
+    @Test
+    fun `A string exceeding the maximum label length cannot be converted to a label`() {
+        assertThrows(IllegalArgumentException::class.java) {
+            Label.of("a".repeat(MAX_LABEL_LENGTH + 1))
+        }
+    }
 }

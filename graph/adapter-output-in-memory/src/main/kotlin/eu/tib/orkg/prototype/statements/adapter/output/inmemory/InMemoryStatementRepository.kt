@@ -104,7 +104,8 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         subjectClass: ThingId,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
-        it.predicate.id == predicateId && it.`object` is Literal && it.`object`.label == literal && it.subject.id == subjectClass
+        it.predicate.id == predicateId && it.`object` is Literal && it.`object`.label == literal &&
+            it.subject is Resource && subjectClass in (it.subject as Resource).classes
     }
 
     override fun findAllBySubjects(

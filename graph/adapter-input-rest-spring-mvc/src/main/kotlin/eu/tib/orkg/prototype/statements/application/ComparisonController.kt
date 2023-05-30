@@ -1,6 +1,9 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
+import eu.tib.orkg.prototype.statements.AuthorRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -12,14 +15,18 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import eu.tib.orkg.prototype.statements.services.AuthorService
+import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import org.springframework.http.MediaType
 
 @RestController
 @RequestMapping("/api/comparisons", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ComparisonController(
     private val service: ResourceUseCases,
-    private val authorService: AuthorService
-) {
+    private val authorService: AuthorService,
+    override val statementService: StatementUseCases,
+    override val templateRepository: TemplateRepository,
+    override val flags: FeatureFlagService
+) : AuthorRepresentationAdapter {
     @GetMapping("/metadata/featured", params = ["featured=true"])
     fun getFeaturedComparisons(pageable: Pageable) =
         service.loadFeaturedComparisons(pageable)
@@ -67,5 +74,5 @@ class ComparisonController(
 
     @GetMapping("/{id}/authors")
     fun getTopAuthors(@PathVariable id: ThingId, pageable: Pageable) =
-        authorService.findTopAuthorsOfComparison(id, pageable)
+        authorService.findTopAuthorsOfComparison(id, pageable).mapToComparisonAuthorRepresentation()
 }

@@ -9,6 +9,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.spi.ClassHierarchyRepository
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
@@ -47,11 +48,12 @@ class RDFService(
     private val statementRepository: StatementRepository,
     private val predicateRepository: PredicateRepository,
     private val resourceRepository: ResourceRepository,
-    private val classesRepository: ClassRepository
+    private val classesRepository: ClassRepository,
+    private val classHierarchyRepository: ClassHierarchyRepository
 ) : ExportRDFUseCase {
     override fun dumpToNTriple(writer: Writer) {
         classesRepository.forEach({
-            it.toNTriple(writer)
+            it.toNTriple(writer, classHierarchyRepository)
         }, writer::flush)
         predicateRepository.forEach({
             it.toNTriple(writer)
@@ -152,11 +154,14 @@ class RDFService(
     }
 }
 
-fun Class.toNTriple(writer: Writer) {
+fun Class.toNTriple(writer: Writer, classHierarchyRepository: ClassHierarchyRepository) {
     val cPrefix = RdfConstants.CLASS_NS
     writer.write("<$cPrefix${this.id}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .\n")
     if (uri?.isValidForNTriple() == true) writer.write("<$cPrefix${this.id}> <${OWL.EQUIVALENTCLASS}> <$uri> .\n")
     writer.write("<$cPrefix${this.id}> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label)}\"^^<http://www.w3.org/2001/XMLSchema#string> .\n")
+    classHierarchyRepository.findParent(id).ifPresent {
+        writer.write("<$cPrefix${this.id}> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <$cPrefix${it.id}> .\n")
+    }
 }
 
 fun Predicate.toNTriple(writer: Writer) {

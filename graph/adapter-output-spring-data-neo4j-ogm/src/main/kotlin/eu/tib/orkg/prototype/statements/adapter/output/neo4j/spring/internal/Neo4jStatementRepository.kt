@@ -137,8 +137,8 @@ RETURN COUNT(rel) as cnt""")
     ): Page<Neo4jStatement>
 
     @Query(
-        "$MATCH_STATEMENT_WITH_LITERAL WHERE sub.id=$subjectClass AND rel.`predicate_id`=$predicateId AND obj.`label`=$literal $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
-        countQuery = "$MATCH_STATEMENT_WITH_LITERAL WHERE sub.id=$subjectClass AND rel.`predicate_id`=$predicateId AND obj.`label`=$literal $WITH_SORTABLE_FIELDS $RETURN_COUNT"
+        "$MATCH_STATEMENT_WITH_LITERAL WHERE $subjectClass IN LABELS(sub) AND rel.`predicate_id`=$predicateId AND obj.`label`=$literal $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
+        countQuery = "$MATCH_STATEMENT_WITH_LITERAL WHERE $subjectClass IN LABELS(sub) AND rel.`predicate_id`=$predicateId AND obj.`label`=$literal $WITH_SORTABLE_FIELDS $RETURN_COUNT"
     )
     fun findAllByPredicateIdAndLabelAndSubjectClass(
         predicateId: ThingId,
@@ -218,8 +218,8 @@ CALL {
 CALL apoc.path.subgraphAll(n, {relationshipFilter: ">", labelFilter: "-ResearchField|-ResearchProblem|-Paper"})
 YIELD relationships
 UNWIND relationships AS rel
-WITH rel AS p, endNode(rel) AS o, n
-WITH COLLECT(p) + COLLECT(o) + n as nodes
+WITH COLLECT(rel) AS p, COLLECT(endNode(rel)) AS o, n
+WITH p + o + n as nodes
 WITH DISTINCT nodes
 UNWIND nodes as node
 WITH DISTINCT node.created_by AS createdBy
@@ -230,8 +230,8 @@ ORDER BY createdBy""",
 CALL apoc.path.subgraphAll(n, {relationshipFilter: ">", labelFilter: "-ResearchField|-ResearchProblem|-Paper"})
 YIELD relationships
 UNWIND relationships AS rel
-WITH rel AS p, endNode(rel) AS o, n
-WITH COLLECT(p) + COLLECT(o) + n as nodes
+WITH COLLECT(rel) AS p, COLLECT(endNode(rel)) AS o, n
+WITH p + o + n as nodes
 WITH DISTINCT nodes
 UNWIND nodes as node
 WITH DISTINCT node.created_by AS createdBy

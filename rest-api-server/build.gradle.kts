@@ -5,7 +5,7 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 group = "eu.tib"
-version = "0.31.1"
+version = "0.32.0"
 
 val neo4jVersion = "3.5.+" // should match version in Dockerfile
 val springDataNeo4jVersion = "5.3.4"
@@ -315,4 +315,15 @@ kapt {
     // The problem seems to be that the Neo4j annotation processor leaks into the classpath.
     // TODO: Check if classpath leakage is fixed in later versions.
     includeCompileClasspath = false
+}
+
+springBoot {
+    buildInfo()
+}
+
+normalization {
+    runtimeClasspath {
+        // This only affects build cache key calculation. The file will be included in the build.
+        ignore("**/build-info.properties")
+    }
 }

@@ -35,9 +35,7 @@ class StatementServiceTest : DescribeSpec({
         thingRepository = mockk(),
         predicateService = mockk(),
         statementRepository,
-        templateRepository = mockk(),
-        flags = mockk(),
-        literalRepository,
+        literalRepository
     )
 
     afterEach {

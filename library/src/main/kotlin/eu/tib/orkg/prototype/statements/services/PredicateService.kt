@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.statements.services
 import dev.forkhandles.values.ofOrNull
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
-import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.UpdatePredicateUseCase
 import eu.tib.orkg.prototype.statements.application.PredicateCantBeDeleted
@@ -46,34 +45,33 @@ class PredicateService(
         return id
     }
 
-    override fun create(label: String): PredicateRepresentation {
+    override fun create(label: String): Predicate {
         val newThingId = create(
             CreatePredicateUseCase.CreateCommand(
                 label = label
             )
         )
-        return repository.findById(newThingId).map(Predicate::toPredicateRepresentation).get()
+        return repository.findById(newThingId).get()
     }
 
-    override fun create(userId: ContributorId, label: String): PredicateRepresentation {
+    override fun create(userId: ContributorId, label: String): Predicate {
         val newThingId = create(
             CreatePredicateUseCase.CreateCommand(
                 label = label,
                 contributorId = userId
             )
         )
-        return repository.findById(newThingId).map(Predicate::toPredicateRepresentation).get()
+        return repository.findById(newThingId).get()
     }
 
-    override fun findAll(pageable: Pageable): Page<PredicateRepresentation> =
-        repository.findAll(pageable).map(Predicate::toPredicateRepresentation)
+    override fun findAll(pageable: Pageable): Page<Predicate> =
+        repository.findAll(pageable)
 
-    override fun findById(id: ThingId): Optional<PredicateRepresentation> =
-        repository.findById(id).map(Predicate::toPredicateRepresentation)
+    override fun findById(id: ThingId): Optional<Predicate> =
+        repository.findById(id)
 
-    override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<PredicateRepresentation> =
+    override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Predicate> =
         repository.findAllByLabel(labelSearchString, pageable)
-            .map(Predicate::toPredicateRepresentation)
 
     override fun update(id: ThingId, command: UpdatePredicateUseCase.ReplaceCommand) {
         var found = repository.findById(id).get()
@@ -108,13 +106,4 @@ class PredicateService(
     }
 
     override fun removeAll() = repository.deleteAll()
-}
-
-fun Predicate.toPredicateRepresentation(): PredicateRepresentation = object : PredicateRepresentation {
-    override val id: ThingId = this@toPredicateRepresentation.id
-    override val label: String = this@toPredicateRepresentation.label
-    override val description: String? = this@toPredicateRepresentation.description
-    override val jsonClass: String = "predicate"
-    override val createdAt: OffsetDateTime = this@toPredicateRepresentation.createdAt
-    override val createdBy: ContributorId = this@toPredicateRepresentation.createdBy
 }

@@ -186,9 +186,11 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
             if (nativeRequest is ContentCachingRequestWrapper) {
                 val requestBody = String(nativeRequest.contentAsByteArray)
                 if (requestBody.isNotBlank()) {
-                    message.append(", Body: ")
+                    message.append(", Payload: ")
                     message.append(requestBody)
                 }
+            } else {
+                message.append(nativeRequest.javaClass.name)
             }
         }
 

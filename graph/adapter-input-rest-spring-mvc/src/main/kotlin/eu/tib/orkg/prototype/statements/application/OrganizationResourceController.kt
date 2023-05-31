@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
-import eu.tib.orkg.prototype.statements.ResourceRepresentation
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.ResourceRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases

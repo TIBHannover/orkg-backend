@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements
 
+import eu.tib.orkg.prototype.statements.api.ClassRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
@@ -9,7 +10,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.JsonTest
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.json.JacksonTester
 import org.springframework.test.context.ContextConfiguration
 

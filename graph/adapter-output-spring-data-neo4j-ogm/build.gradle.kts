@@ -22,7 +22,7 @@ testing {
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
                     exclude(module = "mockito-core")
                 }
-                implementation("com.ninja-squad:springmockk:2.0.1")
+                implementation(libs.spring.mockk)
                 implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
             }
         }
@@ -38,7 +38,7 @@ testing {
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
                     exclude(module = "mockito-core")
                 }
-                implementation("com.ninja-squad:springmockk:2.0.1")
+                implementation(libs.spring.mockk)
                 implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
             }
             targets {
@@ -53,7 +53,6 @@ testing {
 }
 
 dependencies {
-    api(project(":library")) // TODO: remove when domain was moved
     api(platform(project(":platform")))
     "containerTestApi"(platform(project(":platform")))
 

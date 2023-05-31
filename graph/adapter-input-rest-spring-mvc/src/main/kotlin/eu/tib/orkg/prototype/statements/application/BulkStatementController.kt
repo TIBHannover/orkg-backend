@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
-import eu.tib.orkg.prototype.statements.StatementRepresentation
+import eu.tib.orkg.prototype.statements.api.StatementRepresentation
 import eu.tib.orkg.prototype.statements.StatementRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateStatementUseCase

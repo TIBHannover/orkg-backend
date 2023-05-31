@@ -1,5 +1,7 @@
 package eu.tib.orkg.prototype.statements
 
+import eu.tib.orkg.prototype.statements.api.FieldWithFreqRepresentation
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase.FieldWithFreq
 import eu.tib.orkg.prototype.statements.services.FormattedLabels
 import eu.tib.orkg.prototype.statements.services.StatementCounts

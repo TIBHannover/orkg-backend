@@ -18,7 +18,6 @@ testing {
 }
 
 dependencies {
-    api(project(":library"))
     api(project(":graph:application"))
     api("org.springframework.data:spring-data-commons")
     implementation(libs.forkhandles.values4k)

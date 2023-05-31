@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements
 
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId

@@ -2,9 +2,9 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
-import eu.tib.orkg.prototype.statements.BundleRepresentation
+import eu.tib.orkg.prototype.statements.api.BundleRepresentation
 import eu.tib.orkg.prototype.statements.BundleRepresentationAdapter
-import eu.tib.orkg.prototype.statements.StatementRepresentation
+import eu.tib.orkg.prototype.statements.api.StatementRepresentation
 import eu.tib.orkg.prototype.statements.StatementRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.BundleConfiguration
 import eu.tib.orkg.prototype.statements.api.StatementUseCases

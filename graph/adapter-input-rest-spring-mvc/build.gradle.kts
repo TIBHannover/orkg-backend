@@ -20,7 +20,7 @@ testing {
                     // exclude(module = "mockito-core") // TODO: uncomment when migrated to MockK
                 }
                 implementation("org.springframework.security:spring-security-test")
-                implementation("com.ninja-squad:springmockk:2.0.1")
+                implementation(libs.spring.mockk)
             }
         }
     }
@@ -29,8 +29,8 @@ testing {
 dependencies {
     api(platform(project(":platform")))
 
-    api(project(":library")) // TODO: remove after code migration to :graph:application
     api(project(":graph:application"))
+    api(project(":identity-management:application")) // only for ExceptionHandler
 
     api("org.springframework.data:spring-data-commons")
 
@@ -40,6 +40,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-data-neo4j") // only for ExceptionHandler
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin") // to (de)serialize data classes
 
     // RDF
     implementation("org.eclipse.rdf4j:rdf4j-client:3.7.7") {

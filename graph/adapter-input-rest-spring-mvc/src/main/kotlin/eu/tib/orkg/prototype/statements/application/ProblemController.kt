@@ -5,9 +5,9 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.AuthorRepresentationAdapter
 import eu.tib.orkg.prototype.statements.FieldPerProblemRepresentationAdapter
-import eu.tib.orkg.prototype.statements.FieldWithFreqRepresentation
-import eu.tib.orkg.prototype.statements.PaperAuthorRepresentation
-import eu.tib.orkg.prototype.statements.ResourceRepresentation
+import eu.tib.orkg.prototype.statements.api.FieldWithFreqRepresentation
+import eu.tib.orkg.prototype.statements.api.PaperAuthorRepresentation
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.ResourceRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
 import eu.tib.orkg.prototype.statements.api.StatementUseCases

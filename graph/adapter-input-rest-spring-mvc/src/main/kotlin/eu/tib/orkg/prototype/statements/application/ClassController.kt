@@ -4,9 +4,9 @@ import dev.forkhandles.result4k.onFailure
 import dev.forkhandles.values.ofOrNull
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
-import eu.tib.orkg.prototype.statements.ClassRepresentation
+import eu.tib.orkg.prototype.statements.api.ClassRepresentation
 import eu.tib.orkg.prototype.statements.ClassRepresentationAdapter
-import eu.tib.orkg.prototype.statements.ResourceRepresentation
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.ResourceRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.AlreadyInUse
 import eu.tib.orkg.prototype.statements.api.ClassUseCases

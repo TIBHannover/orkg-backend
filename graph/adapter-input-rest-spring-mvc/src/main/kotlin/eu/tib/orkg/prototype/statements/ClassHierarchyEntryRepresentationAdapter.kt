@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements
 
+import eu.tib.orkg.prototype.statements.api.ClassHierarchyEntryRepresentation
 import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.*
 import org.springframework.data.domain.Page
 

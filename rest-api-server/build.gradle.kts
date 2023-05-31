@@ -70,8 +70,7 @@ testing {
                     // TODO: We currently have a mixture of MockK and Mockito tests. After migration, we should disable Mockito.
                     // exclude(module = "mockito-core")
                 }
-                implementation("com.ninja-squad:springmockk:2.0.1")
-                implementation("com.redfin:contractual:3.0.0")
+                implementation(libs.spring.mockk)
             }
         }
         val integrationTest by registering(JvmTestSuite::class) {
@@ -81,6 +80,7 @@ testing {
                 implementation(project())
                 implementation(testFixtures(project(":testing:spring")))
                 implementation(testFixtures(project(":graph:application")))
+                implementation(project(":library"))
                 implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation("org.springframework.boot:spring-boot-starter-test") {
@@ -90,8 +90,7 @@ testing {
                     // TODO: We currently have a mixture of MockK and Mockito tests. After migration, we should disable Mockito.
                     // exclude(module = "mockito-core")
                 }
-                implementation("com.ninja-squad:springmockk:2.0.1")
-                implementation("com.redfin:contractual:3.0.0")
+                implementation(libs.spring.mockk)
                 implementation("org.springframework.boot:spring-boot-starter-data-jpa")
                 implementation("org.postgresql:postgresql")
             }
@@ -170,6 +169,8 @@ dependencies {
     implementation("com.github.ben-manes.caffeine:caffeine")
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("io.github.stepio.coffee-boots:coffee-boots:3.0.0")
+    // Data Faker
+    implementation("net.datafaker:datafaker:1.7.0")
     // Monitoring
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.jolokia:jolokia-core")

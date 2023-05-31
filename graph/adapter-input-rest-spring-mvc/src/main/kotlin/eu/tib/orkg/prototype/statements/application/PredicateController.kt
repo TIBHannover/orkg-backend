@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import dev.forkhandles.values.ofOrNull
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.PredicateRepresentation
+import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
 import eu.tib.orkg.prototype.statements.PredicateRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases

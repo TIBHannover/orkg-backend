@@ -2,12 +2,12 @@ package eu.tib.orkg.prototype
 
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
 import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
+import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.slf4j.LoggerFactory
 import org.springframework.boot.ApplicationArguments
@@ -117,7 +117,7 @@ class CacheWarmup(
     private fun fetchComparison(id: ThingId) {
         statementService.findAllBySubject(id, PageRequest.of(0, 9999)).forEach {
             val `object` = it.`object`
-            if (`object` is ResourceRepresentation && (ThingId("ComparisonRelatedFigure") in `object`.classes ||
+            if (`object` is Resource && (ThingId("ComparisonRelatedFigure") in `object`.classes ||
                     it.predicate.id == ThingId("hasPreviousVersion"))
             ) {
                 statementService.findAllBySubject(`object`.id, PageRequest.of(0, 9999))
@@ -145,7 +145,7 @@ class CacheWarmup(
             pagination = PageRequest.of(0, 9999)
         ).forEach { hasPaperStatement ->
             val paper = hasPaperStatement.`object`
-            if (paper is ResourceRepresentation) {
+            if (paper is Resource) {
                 statementService.findAllBySubject(paper.id, PageRequest.of(0, 9999))
             }
         }

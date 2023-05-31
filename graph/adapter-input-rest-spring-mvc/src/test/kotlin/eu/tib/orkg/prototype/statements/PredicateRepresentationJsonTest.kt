@@ -1,7 +1,7 @@
-package eu.tib.orkg.prototype.statements.domain.model
+package eu.tib.orkg.prototype.statements
 
-import eu.tib.orkg.prototype.statements.PredicateRepresentationAdapter
-import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
+import eu.tib.orkg.prototype.statements.domain.model.Predicate
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import org.assertj.core.api.Assertions.assertThat
@@ -9,12 +9,14 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.JsonTest
 import org.springframework.boot.test.json.JacksonTester
+import org.springframework.test.context.ContextConfiguration
 
 /**
  * Test the JSON serialization of a [Predicate].
  */
 @JsonTest
-class PredicateJsonTest {
+@ContextConfiguration(classes = [PredicateRepresentationAdapter::class])
+class PredicateRepresentationJsonTest {
 
     @Autowired
     private lateinit var json: JacksonTester<PredicateRepresentation>

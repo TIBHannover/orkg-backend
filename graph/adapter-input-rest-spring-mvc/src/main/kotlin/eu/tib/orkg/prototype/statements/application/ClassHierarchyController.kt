@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.ChildClassRepresentationAdapter
 import eu.tib.orkg.prototype.statements.ClassHierarchyEntryRepresentationAdapter
-import eu.tib.orkg.prototype.statements.api.ChildClassRepresentation
-import eu.tib.orkg.prototype.statements.api.ClassHierarchyEntryRepresentation
+import eu.tib.orkg.prototype.statements.ChildClassRepresentation
+import eu.tib.orkg.prototype.statements.ClassHierarchyEntryRepresentation
 import eu.tib.orkg.prototype.statements.api.ClassHierarchyUseCases
-import eu.tib.orkg.prototype.statements.api.ClassRepresentation
+import eu.tib.orkg.prototype.statements.ClassRepresentation
 import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.*
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*

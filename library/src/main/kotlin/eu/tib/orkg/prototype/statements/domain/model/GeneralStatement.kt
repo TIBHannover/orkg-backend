@@ -2,8 +2,6 @@ package eu.tib.orkg.prototype.statements.domain.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
-import eu.tib.orkg.prototype.statements.api.ThingRepresentation
 import java.time.OffsetDateTime
 
 data class GeneralStatement(
@@ -17,21 +15,6 @@ data class GeneralStatement(
     val createdBy: ContributorId = ContributorId.createUnknownContributor()
 ) {
     fun isOwnedBy(contributorId: ContributorId) = createdBy == contributorId
-}
-
-interface StatementRepresentation : StatementProvenanceMetadata {
-    val id: StatementId
-    val subject: ThingRepresentation
-    val predicate: PredicateRepresentation
-    val `object`: ThingRepresentation
-}
-
-interface StatementProvenanceMetadata {
-    @get:JsonProperty("created_at")
-    val createdAt: OffsetDateTime
-
-    @get:JsonProperty("created_by")
-    val createdBy: ContributorId
 }
 
 data class CreateStatement(

@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.statements.api
+package eu.tib.orkg.prototype.statements
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
@@ -7,7 +7,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ComparisonAuthorInfo
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
-import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
+import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
 import java.time.OffsetDateTime
@@ -135,3 +135,19 @@ data class ClassHierarchyEntryRepresentation(
     @JsonProperty("parent_id")
     val parentId: ThingId?
 )
+
+
+interface StatementRepresentation : StatementProvenanceMetadata {
+    val id: StatementId
+    val subject: ThingRepresentation
+    val predicate: PredicateRepresentation
+    val `object`: ThingRepresentation
+}
+
+interface StatementProvenanceMetadata {
+    @get:JsonProperty("created_at")
+    val createdAt: OffsetDateTime
+
+    @get:JsonProperty("created_by")
+    val createdBy: ContributorId
+}

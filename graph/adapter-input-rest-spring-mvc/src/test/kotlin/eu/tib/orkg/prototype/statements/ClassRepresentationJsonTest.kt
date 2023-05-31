@@ -1,7 +1,7 @@
-package eu.tib.orkg.prototype.statements.domain.model
+package eu.tib.orkg.prototype.statements
 
-import eu.tib.orkg.prototype.statements.ClassRepresentationAdapter
-import eu.tib.orkg.prototype.statements.api.ClassRepresentation
+import eu.tib.orkg.prototype.statements.domain.model.Class
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
@@ -9,13 +9,16 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.JsonTest
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.json.JacksonTester
+import org.springframework.test.context.ContextConfiguration
 
 /**
  * Test the JSON serialization of a [Class].
  */
 @JsonTest
-class ClassJsonTest {
+@ContextConfiguration(classes = [ClassRepresentationAdapter::class])
+class ClassRepresentationJsonTest {
 
     @Autowired
     private lateinit var json: JacksonTester<ClassRepresentation>

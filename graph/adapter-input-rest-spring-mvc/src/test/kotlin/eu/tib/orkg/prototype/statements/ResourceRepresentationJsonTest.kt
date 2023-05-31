@@ -1,9 +1,9 @@
-package eu.tib.orkg.prototype.statements.domain.model
+package eu.tib.orkg.prototype.statements
 
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
-import eu.tib.orkg.prototype.statements.ResourceRepresentationAdapter
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
+import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import io.mockk.mockk
 import java.time.OffsetDateTime
@@ -13,12 +13,14 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.JsonTest
 import org.springframework.boot.test.json.JacksonTester
+import org.springframework.test.context.ContextConfiguration
 
 /**
  * Test the JSON serialization of a [Resource].
  */
 @JsonTest
-class ResourceJsonTest {
+@ContextConfiguration(classes = [ResourceRepresentationAdapter::class])
+class ResourceRepresentationJsonTest {
 
     @Autowired
     private lateinit var json: JacksonTester<ResourceRepresentation> // FIXME: This whole test might be pointless.

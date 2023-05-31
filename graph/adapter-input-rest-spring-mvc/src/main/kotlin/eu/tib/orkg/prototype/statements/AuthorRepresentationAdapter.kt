@@ -1,9 +1,5 @@
 package eu.tib.orkg.prototype.statements
 
-import eu.tib.orkg.prototype.statements.api.AuthorRepresentation
-import eu.tib.orkg.prototype.statements.api.ComparisonAuthorRepresentation
-import eu.tib.orkg.prototype.statements.api.PaperAuthorRepresentation
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.Author
 import eu.tib.orkg.prototype.statements.domain.model.Author.LiteralAuthor
 import eu.tib.orkg.prototype.statements.domain.model.Author.ResourceAuthor

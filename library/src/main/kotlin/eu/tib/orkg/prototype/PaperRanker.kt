@@ -13,8 +13,6 @@ import kotlin.math.log10
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.ApplicationArguments
-import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -32,7 +30,7 @@ private val paperClass = ThingId("Paper")
 class PaperRanker(
     @Autowired private val resourceRepository: ResourceRepository,
     @Autowired private val rankingService: RankingService,
-) : ApplicationRunner {
+) {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 
     @Value("\${orkg.ranking.papers.workers:#{10}}")
@@ -42,7 +40,7 @@ class PaperRanker(
     private val chunkSize: Int? = null
 
     @Scheduled(cron = "\${orkg.ranking.papers.schedule}")
-    override fun run(args: ApplicationArguments?) {
+    fun run() {
         val startMillis = System.nanoTime()
         rankPapersAsync(workers!!) { paper, score ->
             if (paper.visibility == Visibility.UNLISTED && score.isSufficient) { // paper.unlistedBy is already checked by rankPapersAsync

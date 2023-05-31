@@ -20,6 +20,13 @@ orkg:
       # use "-" to disable
       schedule: "-"
       file-name: rdf-export-orkg.nt
+  ranking:
+    papers:
+      # cron schedule for paper-ranking
+      # use "-" to disable
+      schedule: "-"
+      workers: 10
+      chunk-size: 1000
   init:
     setup:
       entities-file: "data/required_entities.json"

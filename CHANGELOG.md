@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Papers can now automatically be un-listed and re-listed based on a quality score.
+  The quality score is determined by the following metrics:
+  - At least one author has to be present
+  - At least one contribution with properties has to be present
+  - The title has to be not-blank
+  
+  (See: [!512](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/512))
+- Unlisted resources now include a property called `unlisted_by`, indicating the user who unlisted the resource.
+  (See: [!512](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/512))
+
 ### Changed
 - The endpoint `/api/resources/{id}/timeline` no longer returns results past the creation time of the resource.
   (See: [!545](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/545))

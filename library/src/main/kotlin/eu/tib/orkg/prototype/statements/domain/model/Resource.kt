@@ -17,4 +17,5 @@ data class Resource(
     val organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
     val visibility: Visibility = Visibility.DEFAULT,
     val verified: Boolean? = null,
+    val unlistedBy: ContributorId? = null
 ) : Thing

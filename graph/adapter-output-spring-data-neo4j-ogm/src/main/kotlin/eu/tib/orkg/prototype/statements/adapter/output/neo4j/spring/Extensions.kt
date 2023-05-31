@@ -72,6 +72,7 @@ internal fun Resource.toNeo4jResource(neo4jRepository: Neo4jResourceRepository) 
         visibility = this@toNeo4jResource.visibility
         organizationId = this@toNeo4jResource.organizationId
         classes = this@toNeo4jResource.classes
+        unlistedBy = this@toNeo4jResource.unlistedBy
     }
 
 internal fun Neo4jStatement.toStatement(

@@ -14,6 +14,7 @@ data class ContributorId(val value: UUID) {
 
     companion object {
         fun createUnknownContributor() = ContributorId(UUID(0, 0))
+        val SYSTEM: ContributorId = ContributorId(UUID(-1, -1))
     }
 
     override fun toString() = value.toString()

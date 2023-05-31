@@ -1,5 +1,7 @@
 package eu.tib.orkg.prototype.statements
 
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonInclude.*
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
@@ -82,6 +84,9 @@ interface ContentTypeFlags {
     val featured: Boolean
     val unlisted: Boolean
     val verified: Boolean
+    @get:JsonInclude(Include.NON_NULL)
+    @get:JsonProperty("unlisted_by")
+    val unlistedBy: ContributorId?
 }
 
 interface PaperResourceWithPathRepresentation : ResourceRepresentation {

@@ -51,6 +51,7 @@ interface ResourceRepresentationAdapter : FormattedLabelRepresentationAdapter {
             override val featured: Boolean = this@toResourceRepresentation.visibility == Visibility.FEATURED
             override val unlisted: Boolean = this@toResourceRepresentation.visibility == Visibility.UNLISTED
             override val verified: Boolean = this@toResourceRepresentation.verified ?: false
+            override val unlistedBy: ContributorId? = this@toResourceRepresentation.unlistedBy
             override val formattedLabel: FormattedLabel? = formattedLabels[this@toResourceRepresentation.id]
         }
 }

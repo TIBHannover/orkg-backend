@@ -3,8 +3,8 @@ package eu.tib.orkg.prototype.statements.spi
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -52,6 +52,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                 it.organizationId shouldBe it.organizationId
                 it.visibility shouldBe it.visibility
                 it.verified shouldBe it.verified
+                it.unlistedBy shouldBe it.unlistedBy
                 it.id shouldBe expected.id
             }
         }

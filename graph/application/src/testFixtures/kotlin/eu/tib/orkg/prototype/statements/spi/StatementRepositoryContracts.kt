@@ -25,9 +25,10 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
 import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.time.format.DateTimeFormatter.ofPattern
-import java.util.*
+import kotlin.math.absoluteValue
 import org.orkg.statements.testing.createClass
 import org.orkg.statements.testing.createLiteral
 import org.orkg.statements.testing.createPredicate
@@ -1012,34 +1013,55 @@ fun <
 
     describe("finding a timeline") {
         context("by resource id") {
-            val resource = fabricator.random<Resource>()
+            val resource = fabricator.random<Resource>().copy(
+                createdAt = OffsetDateTime.now()
+            )
 
             setOf("ResearchField", "ResearchProblem", "Paper").forEach {
                 val resourceForIt = fabricator.random<Resource>().copy(
-                    classes = setOf(ThingId(it))
+                    classes = setOf(ThingId(it)),
+                    createdAt = resource.createdAt.plusSeconds(145864)
                 )
                 val resourceRelatesToIt = fabricator.random<GeneralStatement>().copy(
                     subject = resource,
-                    `object` = resourceForIt
+                    `object` = resourceForIt,
+                    createdAt = resource.createdAt.plusSeconds(7897)
                 )
                 saveStatement(resourceRelatesToIt)
             }
 
             // Relate to some other Resource
-            val otherResource = fabricator.random<Resource>()
+            val otherResource = fabricator.random<Resource>().copy(
+                createdAt = resource.createdAt.plusSeconds(5478)
+            )
             val resourceRelatesToOtherResource = fabricator.random<GeneralStatement>().copy(
                 subject = resource,
-                `object` = otherResource
+                `object` = otherResource,
+                createdAt = resource.createdAt.plusSeconds(26158)
             )
             saveStatement(resourceRelatesToOtherResource)
 
             // Relate otherResource to another Resource
-            val anotherResource = fabricator.random<Resource>()
+            val anotherResource = fabricator.random<Resource>().copy(
+                createdAt = resource.createdAt.plusSeconds(9871)
+            )
             val otherResourceRelatesToAnotherResource = fabricator.random<GeneralStatement>().copy(
                 subject = otherResource,
-                `object` = anotherResource
+                `object` = anotherResource,
+                createdAt = resource.createdAt.plusSeconds(14659)
             )
             saveStatement(otherResourceRelatesToAnotherResource)
+
+            // Relate to an old Resource
+            val oldResource = fabricator.random<Resource>().copy(
+                createdAt = resource.createdAt.minusSeconds(651456)
+            )
+            val resourceRelatesToOldResource = fabricator.random<GeneralStatement>().copy(
+                subject = resource,
+                `object` = oldResource,
+                createdAt = resource.createdAt.minusSeconds(156168)
+            )
+            saveStatement(resourceRelatesToOldResource)
 
             val formatter = ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX")
             val expected = setOf(
@@ -1051,7 +1073,11 @@ fun <
             ).map {
                 ResourceContributor(
                     it.first.toString(),
-                    it.second!!.withSecond(0).withNano(0).format(formatter)
+                    it.second!!
+                        .withSecond(0)
+                        .withNano(0)
+                        .atZoneSameInstant(ZoneOffset.UTC)
+                        .format(formatter)
                 )
             }
 

@@ -566,10 +566,14 @@ class SpringDataNeo4jStatementAdapter(
             .yield(relationships)
             .with(relationships, n)
             .unwind(relationships).`as`(rel)
-            .withDistinct(collect(rel).add(collect(endNode(rel))).add(collect(n)).`as`(nodes))
+            .withDistinct(collect(rel).add(collect(endNode(rel))).add(collect(n)).`as`(nodes), n.asExpression())
             .unwind(nodes).`as`(node)
-            .with(node)
-            .where(node.property("created_by").isNotNull.and(node.property("created_at").isNotNull))
+            .with(node, n)
+            .where(
+                node.property("created_by").isNotNull
+                    .and(node.property("created_at").isNotNull)
+                    .and(node.property("created_at").gte(n.property("created_at")))
+            )
             .with(
                 node.property("created_by").`as`(createdBy),
                 call("apoc.text.regreplace").withArgs(

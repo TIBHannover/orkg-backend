@@ -234,11 +234,11 @@ CALL apoc.path.subgraphAll(n, {relationshipFilter: ">", labelFilter: "-ResearchF
 YIELD relationships
 UNWIND relationships AS rel
 WITH rel AS p, endNode(rel) AS o, n
-WITH COLLECT(p) + COLLECT(o) + COLLECT(n) as nodes
-WITH DISTINCT nodes
+WITH COLLECT(p) + COLLECT(o) + COLLECT(n) as nodes, n
+WITH DISTINCT nodes, n
 UNWIND nodes as node
-WITH node
-WHERE node.created_by IS NOT NULL AND node.created_at IS NOT NULL
+WITH node, n
+WHERE node.created_by IS NOT NULL AND node.created_at IS NOT NULL AND node.created_at >= n.created_at
 WITH node.created_by AS createdBy, apoc.text.regreplace(node.created_at, "^(\d+-\d+-\d+T\d+:\d+):\d+(?:\.\d+)?(.*)${'$'}", "${'$'}1:00${'$'}2") AS timestamp
 WITH createdBy, apoc.date.parse(timestamp, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX") AS ms
 WITH DISTINCT [createdBy, apoc.date.format(ms, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX")] AS edit
@@ -249,11 +249,11 @@ CALL apoc.path.subgraphAll(n, {relationshipFilter: ">", labelFilter: "-ResearchF
 YIELD relationships
 UNWIND relationships AS rel
 WITH rel AS p, endNode(rel) AS o, n
-WITH COLLECT(p) + COLLECT(o) + COLLECT(n) as nodes
-WITH DISTINCT nodes
+WITH COLLECT(p) + COLLECT(o) + COLLECT(n) as nodes, n
+WITH DISTINCT nodes, n
 UNWIND nodes as node
-WITH node
-WHERE node.created_by IS NOT NULL AND node.created_at IS NOT NULL
+WITH node, n
+WHERE node.created_by IS NOT NULL AND node.created_at IS NOT NULL AND node.created_at >= n.created_at
 WITH node.created_by AS createdBy, apoc.text.regreplace(node.created_at, "^(\d+-\d+-\d+T\d+:\d+):\d+(?:\.\d+)?(.*)${'$'}", "${'$'}1:00${'$'}2") AS timestamp
 WITH createdBy, apoc.date.parse(timestamp, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX") AS ms
 WITH DISTINCT [createdBy, apoc.date.format(ms, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX")] AS edit

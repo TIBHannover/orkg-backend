@@ -47,7 +47,7 @@ class StatisticsService(
         val problemsCount = extractValue(labels, "Problem")
         val comparisonsCount = extractValue(labels, "Comparison")
         val visualizationsCount = extractValue(labels, "Visualization")
-        val templatesCount = extractValue(labels, "ContributionTemplate")
+        val templatesCount = extractValue(labels, "NodeShape")
         val smartReviewsCount = extractValue(labels, "SmartReview")
         val extraCounts = extra?.associate { it to extractValue(labels, it) }
         val fieldsCount = extractValue(labels, "ResearchField")

@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - The endpoint `/api/resources/{id}/timeline` no longer returns results past the creation time of the resource.
   (See: [!545](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/545))
+- Templates now use the SHACL shapes vocabulary.
+  (Closes: [#484](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/484))
 
 ## [0.33.0] - 2023-05-30
 ### Added

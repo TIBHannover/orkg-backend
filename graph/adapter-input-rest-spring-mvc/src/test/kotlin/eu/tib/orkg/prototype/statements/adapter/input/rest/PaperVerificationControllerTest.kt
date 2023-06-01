@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.adapter.input.rest
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
-import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
+import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsVerifiedUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
@@ -24,10 +25,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
+@ContextConfiguration(classes = [PaperVerificationCommandController::class, ExceptionHandler::class])
 @WebMvcTest(controllers = [PaperVerificationCommandController::class])
-@AuthorizationServerUnitTestWorkaround
 @DisplayName("Given a Resource")
-class ResourceVerificationControllerTest {
+internal class PaperVerificationControllerTest {
 
     private lateinit var mockMvc: MockMvc
 

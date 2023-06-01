@@ -1,15 +1,14 @@
 package eu.tib.orkg.prototype.contribution.application
 
 import com.ninjasquad.springmockk.MockkBean
-import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
 import eu.tib.orkg.prototype.contributions.application.ContributorController
 import eu.tib.orkg.prototype.contributions.application.ports.input.RetrieveContributorUseCase
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import io.mockk.every
 import java.time.OffsetDateTime
-import java.util.Optional
-import java.util.UUID
+import java.util.*
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -18,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -29,8 +29,8 @@ import org.springframework.web.context.WebApplicationContext
 // If nanosecond part is rounded to zero, the last digit is removed. Fun bug. -----vvv
 private const val ISO_8601_PATTERN = """^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{1,8}\d?([+-]\d{2}:\d{2}|Z)$"""
 
+@ContextConfiguration(classes = [ContributorController::class, ExceptionHandler::class])
 @WebMvcTest(controllers = [ContributorController::class])
-@AuthorizationServerUnitTestWorkaround
 class ContributorControllerTest {
 
     private lateinit var mockMvc: MockMvc

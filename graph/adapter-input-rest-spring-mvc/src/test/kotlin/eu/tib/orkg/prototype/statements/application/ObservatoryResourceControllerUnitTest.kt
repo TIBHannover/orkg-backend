@@ -33,7 +33,7 @@ import org.springframework.web.context.WebApplicationContext
 @ContextConfiguration(classes = [ObservatoryResourceController::class, ExceptionHandler::class])
 @WebMvcTest(controllers = [ObservatoryResourceController::class])
 @DisplayName("Given an ObservatoryResourceController controller")
-internal class ObservatoryControllerUnitTest {
+internal class ObservatoryResourceControllerUnitTest {
 
     private lateinit var mockMvc: MockMvc
 

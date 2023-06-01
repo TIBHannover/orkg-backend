@@ -44,7 +44,7 @@ fun createClass(id: String = "OK"): Class = Class(
     createdBy = ContributorId("dc8b2055-c14a-4e9f-9fcd-e0b79cf1f834")
 )
 
-internal fun createClassWithoutURI(): Class = createClass().copy(uri = null)
+fun createClassWithoutURI(): Class = createClass().copy(uri = null)
 
 fun createPredicate(id: String = "P1") = Predicate(
     id = ThingId(id),

@@ -214,11 +214,13 @@ class ResourceController(
 
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun markUnlisted(@PathVariable id: ThingId) {
-        service.markAsUnlisted(id)
+        service.markAsUnlisted(id, ContributorId(authenticatedUserId()))
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun unmarkUnlisted(@PathVariable id: ThingId) {
         service.markAsListed(id)
     }

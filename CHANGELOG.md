@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!545](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/545))
 - Templates now use the SHACL shapes vocabulary.
   (Closes: [#484](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/484))
+- Changing the visibility of a resource now properly sets the `unlisted_by` property.
+  (See: [!565](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/565))
 
 ## [0.33.0] - 2023-05-30
 ### Added

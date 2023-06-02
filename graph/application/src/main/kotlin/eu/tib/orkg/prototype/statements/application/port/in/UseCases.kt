@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application.port.`in`
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ContributionInfo
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
@@ -30,7 +31,7 @@ interface MarkFeaturedService {
 }
 
 interface MarkAsUnlistedService {
-    fun markAsUnlisted(resourceId: ThingId)
+    fun markAsUnlisted(resourceId: ThingId, contributorId: ContributorId)
     fun markAsListed(resourceId: ThingId)
 }
 

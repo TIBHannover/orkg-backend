@@ -42,7 +42,7 @@ class ProblemController(
     override val statementService: StatementUseCases,
     override val templateRepository: TemplateRepository,
     override val flags: FeatureFlagService,
-) : ResourceRepresentationAdapter, AuthorRepresentationAdapter, FieldPerProblemRepresentationAdapter {
+) : BaseController(), ResourceRepresentationAdapter, AuthorRepresentationAdapter, FieldPerProblemRepresentationAdapter {
 
     @GetMapping("/{problemId}/fields")
     fun getFieldPerProblem(@PathVariable problemId: ThingId): Iterable<FieldWithFreqRepresentation> {
@@ -130,7 +130,7 @@ class ProblemController(
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     fun markUnlisted(@PathVariable id: ThingId) {
-        resourceService.markAsUnlisted(id)
+        resourceService.markAsUnlisted(id, ContributorId(authenticatedUserId()))
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")

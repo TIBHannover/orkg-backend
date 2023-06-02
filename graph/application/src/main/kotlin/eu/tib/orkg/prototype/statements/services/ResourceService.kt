@@ -276,7 +276,8 @@ class ResourceService(
         val resource = repository.findById(resourceId)
             .orElseThrow { ResourceNotFound.withId(resourceId) }
         val modified = resource.copy(
-            visibility = Visibility.FEATURED
+            visibility = Visibility.FEATURED,
+            unlistedBy = null
         )
         repository.save(modified)
     }
@@ -285,16 +286,18 @@ class ResourceService(
         val resource = repository.findById(resourceId)
             .orElseThrow { ResourceNotFound.withId(resourceId) }
         val modified = resource.copy(
-            visibility = Visibility.DEFAULT
+            visibility = Visibility.DEFAULT,
+            unlistedBy = null
         )
         repository.save(modified)
     }
 
-    override fun markAsUnlisted(resourceId: ThingId) {
+    override fun markAsUnlisted(resourceId: ThingId, contributorId: ContributorId) {
         val resource = repository.findById(resourceId)
             .orElseThrow { ResourceNotFound.withId(resourceId) }
         val modified = resource.copy(
-            visibility = Visibility.UNLISTED
+            visibility = Visibility.UNLISTED,
+            unlistedBy = contributorId
         )
         repository.save(modified)
     }
@@ -303,7 +306,8 @@ class ResourceService(
         val resource = repository.findById(resourceId)
             .orElseThrow { ResourceNotFound.withId(resourceId) }
         val modified = resource.copy(
-            visibility = Visibility.DEFAULT
+            visibility = Visibility.DEFAULT,
+            unlistedBy = null
         )
         repository.save(modified)
     }

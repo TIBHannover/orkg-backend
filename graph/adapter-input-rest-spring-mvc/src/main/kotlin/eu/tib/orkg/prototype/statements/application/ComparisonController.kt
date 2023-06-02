@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.AuthorRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 import eu.tib.orkg.prototype.statements.services.AuthorService
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import org.springframework.http.MediaType
+import org.springframework.security.access.prepost.PreAuthorize
 
 @RestController
 @RequestMapping("/api/comparisons", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -26,7 +28,7 @@ class ComparisonController(
     override val statementService: StatementUseCases,
     override val templateRepository: TemplateRepository,
     override val flags: FeatureFlagService
-) : AuthorRepresentationAdapter {
+) : BaseController(), AuthorRepresentationAdapter {
     @GetMapping("/metadata/featured", params = ["featured=true"])
     fun getFeaturedComparisons(pageable: Pageable) =
         service.loadFeaturedComparisons(pageable)
@@ -37,11 +39,13 @@ class ComparisonController(
 
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun markFeatured(@PathVariable id: ThingId) {
         service.markAsFeatured(id)
     }
 
     @DeleteMapping("/{id}/metadata/featured")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun unmarkFeatured(@PathVariable id: ThingId) {
         service.markAsNonFeatured(id)
     }
@@ -60,11 +64,13 @@ class ComparisonController(
 
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun markUnlisted(@PathVariable id: ThingId) {
-        service.markAsUnlisted(id)
+        service.markAsUnlisted(id, ContributorId(authenticatedUserId()))
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun unmarkUnlisted(@PathVariable id: ThingId) {
         service.markAsListed(id)
     }

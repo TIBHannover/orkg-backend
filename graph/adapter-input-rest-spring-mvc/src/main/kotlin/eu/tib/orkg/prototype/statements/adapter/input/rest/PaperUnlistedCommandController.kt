@@ -1,5 +1,7 @@
 package eu.tib.orkg.prototype.statements.adapter.input.rest
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.application.BaseController
 import eu.tib.orkg.prototype.statements.application.port.`in`.MarkAsUnlistedService
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.beans.factory.annotation.Qualifier
@@ -18,12 +20,12 @@ import org.springframework.web.bind.annotation.RestController
 class PaperUnlistedCommandController(
     @Qualifier("resourceService")
     private val service: MarkAsUnlistedService
-) {
+) : BaseController() {
     @PutMapping("/{id}/metadata/unlisted")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun markUnlisted(@PathVariable id: ThingId) {
-        service.markAsUnlisted(id)
+        service.markAsUnlisted(id, ContributorId(authenticatedUserId()))
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")

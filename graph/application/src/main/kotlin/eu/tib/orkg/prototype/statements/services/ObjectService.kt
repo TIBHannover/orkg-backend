@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
@@ -48,7 +49,7 @@ class ObjectService(
     ): ThingId {
         // Get provenance info
         val userId = ContributorId(userUUID)
-        val contributor = contributorService.findByIdOrElseUnknown(userId)
+        val contributor = contributorService.findById(userId).orElse(Contributor.UNKNOWN)
         val organizationId: OrganizationId
         val observatoryId: ObservatoryId
         // if comparisons is assigned a conference i.e, organizationId will be available and observatoryId  will not be.

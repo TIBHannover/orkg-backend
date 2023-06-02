@@ -22,14 +22,6 @@ class JpaUserAdapter(
 
     override fun findById(id: UUID): Optional<User> = repository.findById(id).map(UserEntity::toUser)
 
-    override fun findByObservatoryId(id: UUID): Iterable<User> =
-        repository.findByObservatoryId(id).map(UserEntity::toUser)
-
-    override fun findByOrganizationId(id: UUID): Iterable<User> =
-        repository.findByOrganizationId(id).map(UserEntity::toUser)
-
-    override fun findByIdIn(ids: Array<UUID>): List<User> = repository.findByIdIn(ids).map(UserEntity::toUser)
-
     override fun deleteAll() = repository.deleteAll()
 
     internal fun User.toUserEntity(): UserEntity = repository.findById(this.id).orElse(UserEntity()).apply {

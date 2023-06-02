@@ -106,7 +106,7 @@ class OrganizationController(
 
     @GetMapping("{id}/users")
     fun findUsersByOrganizationId(@PathVariable id: OrganizationId): Iterable<Contributor> =
-        contributorService.findUsersByOrganizationId(id)
+        contributorService.findAllByOrganizationId(id, PageRequest.of(0, Int.MAX_VALUE)).content
 
     @GetMapping("/conferences")
     fun findOrganizationsConferences(): Iterable<Organization> = service.listConferences()

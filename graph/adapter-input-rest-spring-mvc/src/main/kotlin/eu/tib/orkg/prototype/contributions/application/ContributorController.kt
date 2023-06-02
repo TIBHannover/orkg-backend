@@ -17,6 +17,6 @@ class ContributorController(
 ) {
     @GetMapping("/{id}")
     fun getContributorById(@PathVariable id: ContributorId): Contributor =
-        retrieveContributor.byId(id)
+        retrieveContributor.findById(id)
             .orElseThrow { ContributorNotFound(id) }
 }

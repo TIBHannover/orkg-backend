@@ -53,7 +53,7 @@ class ContributorControllerTest {
     @Test
     fun `When ID is not found Then return 404 Not Found`() {
         val id = ContributorId(UUID.randomUUID())
-        every { retrieveContributor.byId(id) } returns Optional.empty()
+        every { retrieveContributor.findById(id) } returns Optional.empty()
 
         mockMvc
             .perform(contributorRequest(id))
@@ -63,7 +63,7 @@ class ContributorControllerTest {
     @Test
     fun `When ID is found Then return contributor`() {
         val id = ContributorId(UUID.randomUUID())
-        every { retrieveContributor.byId(id) } returns Optional.of(Contributor(id, "Some Name", OffsetDateTime.now()))
+        every { retrieveContributor.findById(id) } returns Optional.of(Contributor(id, "Some Name", OffsetDateTime.now()))
 
         mockMvc
             .perform(contributorRequest(id))

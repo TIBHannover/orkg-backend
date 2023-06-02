@@ -2,14 +2,12 @@ package eu.tib.orkg.prototype.statements.services
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.JpaUserRepository
-import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.UserEntity
-import eu.tib.orkg.prototype.auth.domain.User
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresObservatoryRepository
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
-import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.toContributor
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.contributions.spi.ContributorRepository
 import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
 import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -30,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional
 class StatisticsService(
     private val statsRepository: StatsRepository,
     private val userRepository: JpaUserRepository,
+    private val contributorRepository: ContributorRepository,
     private val observatoryRepository: PostgresObservatoryRepository,
     private val organizationRepository: PostgresOrganizationRepository
 ) : RetrieveStatisticsUseCase {
@@ -122,13 +121,8 @@ class StatisticsService(
 
     private fun getChangeLogsWithProfile(changeLogs: Page<ChangeLogResponse>, pageable: Pageable): Page<ChangeLog> {
         val refinedChangeLog = mutableListOf<ChangeLog>()
-
-        val userIdList = changeLogs.content.map { UUID.fromString(it.createdBy) }.toTypedArray()
-
-        val mapValues = userRepository.findByIdIn(userIdList)
-            .map(UserEntity::toUser)
-            .map(User::toContributor)
-            .groupBy(Contributor::id)
+        val userIdList = changeLogs.content.map { ContributorId(UUID.fromString(it.createdBy)) }
+        val mapValues = contributorRepository.findAllByIds(userIdList).groupBy(Contributor::id)
 
         changeLogs.forEach { changeLogResponse ->
             val contributor = mapValues[ContributorId(changeLogResponse.createdBy)]?.first()

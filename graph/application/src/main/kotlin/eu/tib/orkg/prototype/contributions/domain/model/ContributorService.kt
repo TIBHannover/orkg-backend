@@ -1,52 +1,30 @@
 package eu.tib.orkg.prototype.contributions.domain.model
 
-import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.UserEntity
-import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.JpaUserRepository
-import eu.tib.orkg.prototype.auth.domain.User
-import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.toContributor
 import eu.tib.orkg.prototype.contributions.application.ports.input.RetrieveContributorUseCase
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import java.time.OffsetDateTime
+import eu.tib.orkg.prototype.contributions.spi.ContributorRepository
 import java.util.Optional
 import javax.transaction.Transactional
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
 @Transactional
 class ContributorService(
-    private val userRepository: JpaUserRepository
+    private val repository: ContributorRepository
 ) : RetrieveContributorUseCase {
-    fun findById(userId: ContributorId): Optional<Contributor> =
-        userRepository
-            .findById(userId.value)
-            .map(UserEntity::toUser)
-            .map(User::toContributor)
+    override fun findById(id: ContributorId): Optional<Contributor> =
+        repository.findById(id)
 
-    /**
-     * Attempt to find a contributor with a given ID, or return a default user.
-     */
-    fun findByIdOrElseUnknown(userId: ContributorId): Contributor =
-        findById(userId)
-            .orElse(
-                Contributor(
-                    id = ContributorId.createUnknownContributor(),
-                    name = "Unknown User",
-                    joinedAt = OffsetDateTime.MIN
-                )
-            )
+    override fun findAllByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Contributor> =
+        repository.findAllByOrganizationId(id, pageable)
 
-    fun findUsersByOrganizationId(id: OrganizationId): Iterable<Contributor> =
-        userRepository
-            .findByOrganizationId(id.value)
-            .map(UserEntity::toUser)
-            .map(User::toContributor)
+    override fun findAllByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Contributor> =
+        repository.findAllByObservatoryId(id, pageable)
 
-    fun findUsersByObservatoryId(id: ObservatoryId): Iterable<Contributor> =
-        userRepository
-            .findByObservatoryId(id.value)
-            .map(UserEntity::toUser)
-            .map(User::toContributor)
-
-    override fun byId(id: ContributorId): Optional<Contributor> = findById(id)
+    override fun findAllByIds(ids: List<ContributorId>): List<Contributor> =
+        repository.findAllByIds(ids)
 }

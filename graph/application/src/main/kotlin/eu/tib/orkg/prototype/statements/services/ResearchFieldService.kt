@@ -8,6 +8,7 @@ import eu.tib.orkg.prototype.community.domain.model.toContributor
 import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.contributions.spi.ContributorRepository
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.FindResearchFieldsQuery
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
@@ -30,7 +31,7 @@ private val ResearchField = ThingId("ResearchField")
 class ResearchFieldService(
     private val researchFieldRepository: ResearchFieldRepository,
     private val researchFieldsQuery: FindResearchFieldsQuery,
-    private val userRepository: JpaUserRepository,
+    private val contributorRepository: ContributorRepository,
     private val resourceService: ResourceUseCases,
 ) : RetrieveResearchFieldUseCase {
 
@@ -51,22 +52,12 @@ class ResearchFieldService(
 
     override fun getContributorsIncludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor> {
         val contributors = researchFieldRepository.getContributorIdsFromResearchFieldAndIncludeSubfields(id, pageable)
-            .map(ContributorId::value)
-        return PageImpl(
-            userRepository.findByIdIn(contributors.content.toTypedArray())
-                .map(UserEntity::toUser)
-                .map(User::toContributor)
-        )
+        return PageImpl(contributorRepository.findAllByIds(contributors.content))
     }
 
     override fun getContributorsExcludingSubFields(id: ThingId, pageable: Pageable): Page<Contributor> {
-        val contributors =
-            researchFieldRepository.getContributorIdsExcludingSubFields(id, pageable).map(ContributorId::value)
-        return PageImpl(
-            userRepository.findByIdIn(contributors.content.toTypedArray())
-                .map(UserEntity::toUser)
-                .map(User::toContributor)
-        )
+        val contributors = researchFieldRepository.getContributorIdsExcludingSubFields(id, pageable)
+        return PageImpl(contributorRepository.findAllByIds(contributors.content))
     }
 
     override fun findAllPapersByResearchField(

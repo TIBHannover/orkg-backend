@@ -14,11 +14,5 @@ interface UserRepository {
 
     fun findById(id: UserId): Optional<User>
 
-    fun findByObservatoryId(id: ObservatoryId): Iterable<User>
-
-    fun findByOrganizationId(id: OrganizationId): Iterable<User>
-
-    fun findByIdIn(ids: Array<UserId>): List<User>
-
     fun deleteAll()
 }

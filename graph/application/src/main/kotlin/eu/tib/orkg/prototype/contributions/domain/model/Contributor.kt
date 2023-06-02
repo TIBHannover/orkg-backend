@@ -69,4 +69,13 @@ data class Contributor(
     @get:JsonProperty("avatar_url")
     val avatarURL: String
         get() = GravatarId(email).imageURL()
+
+    companion object {
+        val UNKNOWN: Contributor =
+            Contributor(
+                id = ContributorId.createUnknownContributor(),
+                name = "Unknown User",
+                joinedAt = OffsetDateTime.MIN
+            )
+    }
 }

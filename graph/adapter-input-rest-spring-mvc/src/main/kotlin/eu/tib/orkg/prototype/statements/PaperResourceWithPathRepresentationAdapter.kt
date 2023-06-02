@@ -43,6 +43,7 @@ interface PaperResourceWithPathRepresentationAdapter : ThingRepresentationAdapte
             override val featured: Boolean = this@toPaperResourceWithPathRepresentation.paper.visibility == Visibility.FEATURED
             override val unlisted: Boolean = this@toPaperResourceWithPathRepresentation.paper.visibility == Visibility.UNLISTED
             override val verified: Boolean = this@toPaperResourceWithPathRepresentation.paper.verified ?: false
+            override val unlistedBy: ContributorId? = this@toPaperResourceWithPathRepresentation.paper.unlistedBy
             override val formattedLabel: FormattedLabel? = formattedLabels[this@toPaperResourceWithPathRepresentation.paper.id]
             override val path: PathRepresentation = this@toPaperResourceWithPathRepresentation.path.map { list ->
                 list.map { it.toThingRepresentation(usageCounts, formattedLabels) }

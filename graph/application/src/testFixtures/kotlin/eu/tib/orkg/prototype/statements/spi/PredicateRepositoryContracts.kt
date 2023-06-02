@@ -60,9 +60,10 @@ fun <R : PredicateRepository> predicateRepositoryContract(repository: R) = descr
     describe("finding several predicates") {
         context("by label") {
             val expectedCount = 3
+            val label = "label to find"
             val predicates = fabricator.random<List<Predicate>>().toMutableList()
             (0 until 3).forEach {
-                predicates[it] = predicates[it].copy(label = "label to find")
+                predicates[it] = predicates[it].copy(label = label)
             }
 
             val expected = predicates.take(expectedCount)
@@ -70,7 +71,7 @@ fun <R : PredicateRepository> predicateRepositoryContract(repository: R) = descr
             context("with exact matching") {
                 predicates.forEach(repository::save)
                 val result = repository.findAllByLabel(
-                    SearchString.of("label to find", exactMatch = true),
+                    SearchString.of(label, exactMatch = true),
                     PageRequest.of(0, 5)
                 )
 
@@ -95,7 +96,7 @@ fun <R : PredicateRepository> predicateRepositoryContract(repository: R) = descr
             context("with fuzzy matching") {
                 predicates.forEach(repository::save)
                 val result = repository.findAllByLabel(
-                    SearchString.of("to find", exactMatch = false),
+                    SearchString.of("label find", exactMatch = false),
                     PageRequest.of(0, 5)
                 )
 

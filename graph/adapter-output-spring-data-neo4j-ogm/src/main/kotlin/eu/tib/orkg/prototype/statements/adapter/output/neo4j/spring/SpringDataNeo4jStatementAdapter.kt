@@ -25,6 +25,8 @@ import eu.tib.orkg.prototype.statements.spi.OwnershipInfo
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.util.*
+import org.springframework.cache.CacheManager
+import org.springframework.cache.caffeine.CaffeineCacheManager
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
@@ -39,6 +41,7 @@ class SpringDataNeo4jStatementAdapter(
     val neo4jPredicateRepository: Neo4jPredicateRepository,
     val neo4jLiteralRepository: Neo4jLiteralRepository,
     val neo4jClassRepository: Neo4jClassRepository,
+    private val cacheManager: CacheManager
 ) : StatementRepository {
     override fun nextIdentity(): StatementId {
         // IDs could exist already by manual creation. We need to find the next available one.
@@ -56,19 +59,33 @@ class SpringDataNeo4jStatementAdapter(
     override fun count(): Long = neo4jRepository.count()
 
     override fun delete(statement: GeneralStatement) {
-        neo4jRepository.deleteByStatementId(statement.id!!)
+        deleteByStatementId(statement.id!!)
     }
 
     override fun deleteByStatementId(id: StatementId) {
-        neo4jRepository.deleteByStatementId(id)
+        neo4jRepository.deleteByStatementId(id).ifPresent {
+            cacheManager.getCache(LITERAL_ID_TO_LITERAL_CACHE)?.evictIfPresent(it)
+            cacheManager.getCache(LITERAL_ID_TO_LITERAL_EXISTS_CACHE)?.evictIfPresent(it)
+            cacheManager.getCache(THING_ID_TO_THING_CACHE)?.evictIfPresent(it)
+        }
     }
 
     override fun deleteByStatementIds(ids: Set<StatementId>) {
         // Fix OGM interpreting a singleton list as a string value of the first element
         if (ids.size == 1) {
-            neo4jRepository.deleteByStatementId(ids.single())
+            deleteByStatementId(ids.single())
         } else if (ids.size > 1) {
-            neo4jRepository.deleteByStatementIds(ids)
+            val literals = neo4jRepository.deleteByStatementIds(ids)
+            if (literals.isNotEmpty()) {
+                val literalCache = cacheManager.getCache(LITERAL_ID_TO_LITERAL_CACHE)!!
+                val literalExistsCache = cacheManager.getCache(LITERAL_ID_TO_LITERAL_EXISTS_CACHE)!!
+                val thingCache = cacheManager.getCache(THING_ID_TO_THING_CACHE)!!
+                literals.forEach {
+                    literalCache.evictIfPresent(it)
+                    literalExistsCache.evictIfPresent(it)
+                    thingCache.evictIfPresent(it)
+                }
+            }
         }
     }
 
@@ -187,8 +204,8 @@ class SpringDataNeo4jStatementAdapter(
     override fun checkIfResourceHasStatements(id: ThingId): Boolean =
         neo4jRepository.checkIfResourceHasStatements(id)
 
-    override fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
-        neo4jRepository.findProblemsByOrganizationId(id, pageable).map(Neo4jResource::toResource)
+    override fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllProblemsByOrganizationId(id, pageable).map(Neo4jResource::toResource)
 
     override fun findBySubjectIdAndPredicateIdAndObjectId(
         subjectId: ThingId,

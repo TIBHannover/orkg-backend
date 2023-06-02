@@ -8,7 +8,7 @@ import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ChangeLogResponse
 import eu.tib.orkg.prototype.statements.spi.FieldsStats
-import eu.tib.orkg.prototype.statements.spi.ObservatoryResources
+import eu.tib.orkg.prototype.statements.spi.ObservatoryStats
 import eu.tib.orkg.prototype.statements.spi.StatsRepository
 import eu.tib.orkg.prototype.statements.spi.TrendingResearchProblems
 import org.springframework.data.domain.Page
@@ -31,8 +31,8 @@ class SpringDataNeo4jStatsAdapter(
     override fun getObservatoryComparisonsCount(id: ObservatoryId): Long =
         neo4jRepository.getObservatoryComparisonsCount(id)
 
-    override fun getObservatoriesPapersAndComparisonsCount(): List<ObservatoryResources> =
-        neo4jRepository.getObservatoriesPapersAndComparisonsCount()
+    override fun getObservatoriesPapersAndComparisonsCount(pageable: Pageable): Page<ObservatoryStats> =
+        neo4jRepository.getObservatoriesPapersAndComparisonsCount(pageable)
 
     override fun getTopCurrentContributorIdsAndContributionsCount(
         date: String,

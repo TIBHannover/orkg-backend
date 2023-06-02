@@ -44,7 +44,7 @@ fun createClass(id: String = "OK"): Class = Class(
     createdBy = ContributorId("dc8b2055-c14a-4e9f-9fcd-e0b79cf1f834")
 )
 
-internal fun createClassWithoutURI(): Class = createClass().copy(uri = null)
+fun createClassWithoutURI(): Class = createClass().copy(uri = null)
 
 fun createPredicate(id: String = "P1") = Predicate(
     id = ThingId(id),
@@ -104,7 +104,7 @@ fun createObservatory(organizationIds: Set<OrganizationId>) = Observatory(
     id = ObservatoryId(UUID.fromString("95565e51-2b80-4c28-918c-6fbc5e2a9b33")),
     name = "Test Observatory",
     description = "Example Description",
-    researchField = ResearchField("R1234", null),
+    researchField = ThingId("R1234"),
     organizationIds = organizationIds,
     displayId = "test_observatory"
 )

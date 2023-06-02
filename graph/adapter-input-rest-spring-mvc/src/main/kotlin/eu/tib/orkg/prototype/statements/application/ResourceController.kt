@@ -7,9 +7,9 @@ import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.ResourceRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateResourceUseCase
@@ -214,11 +214,13 @@ class ResourceController(
 
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun markUnlisted(@PathVariable id: ThingId) {
-        service.markAsUnlisted(id)
+        service.markAsUnlisted(id, ContributorId(authenticatedUserId()))
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     fun unmarkUnlisted(@PathVariable id: ThingId) {
         service.markAsListed(id)
     }

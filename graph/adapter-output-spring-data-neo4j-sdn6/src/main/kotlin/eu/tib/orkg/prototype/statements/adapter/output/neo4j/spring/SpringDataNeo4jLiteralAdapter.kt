@@ -65,8 +65,12 @@ class SpringDataNeo4jLiteralAdapter(
 
     override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Literal> =
         when (labelSearchString) {
-            is ExactSearchString -> neo4jRepository.findAllByLabel(labelSearchString.value, pageable)
-            is FuzzySearchString -> neo4jRepository.findAllByLabelContaining(labelSearchString.value, pageable)
+            is ExactSearchString -> neo4jRepository.findAllByLabel(labelSearchString.query, pageable)
+            is FuzzySearchString -> neo4jRepository.findAllByLabelContaining(
+                label = labelSearchString.query,
+                minLabelLength = labelSearchString.input.length,
+                pageable = pageable
+            )
         }.map(Neo4jLiteral::toLiteral)
 
     @Cacheable(key = "#id", cacheNames = [LITERAL_ID_TO_LITERAL_EXISTS_CACHE])

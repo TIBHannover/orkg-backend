@@ -253,8 +253,11 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
             .sortedBy { it.toString() }
             .paged(pageable)
 
-    override fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> =
-        findSubgraph(id) { statement, _ ->
+    override fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor> {
+        val resource = entities.values
+            .first { it.subject.id == id && (it.subject is Resource) }
+            .subject as Resource
+        return findSubgraph(id) { statement, _ ->
             statement.`object` !is Resource || (statement.`object` as Resource).classes.none { `class` ->
                 `class` == paperClass || `class` == researchProblemClass || `class` == researchFieldClass
             }
@@ -267,6 +270,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
                 )
             }.flatten()
             .distinct()
+            .filter { it.millis >= resource.createdAt.toInstant().toEpochMilli() }
             .map {
                 ResourceContributor(
                     it.contributor.value.toString(),
@@ -278,11 +282,12 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
             .sortedByDescending { it.createdAt }
             .toList()
             .paged(pageable)
+    }
 
     override fun checkIfResourceHasStatements(id: ThingId): Boolean =
         entities.values.any { it.subject.id.value == id.value || it.`object`.id.value == id.value }
 
-    override fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
+    override fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
         entities.values.filter {
             it.subject is Resource && comparisonClass in (it.subject as Resource).classes && (it.subject as Resource).organizationId == id
                 && it.predicate.id == compareContribution

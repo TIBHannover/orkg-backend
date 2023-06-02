@@ -51,7 +51,10 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
         entities.values.filter { it.label == label && paperClass in it.classes && paperDeletedClass !in it.classes}
 
     override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable) =
-        findAllFilteredAndPaged(pageable) { it.label.matches(labelSearchString) }
+        entities.values
+            .filter { it.label.matches(labelSearchString) }
+            .sortedWith(compareBy { it.label.length })
+            .paged(pageable)
 
     override fun findAllByClass(`class`: ThingId, pageable: Pageable): Page<Resource> =
         findAllFilteredAndPaged(pageable) { `class` in it.classes }
@@ -64,19 +67,24 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
         it.createdBy == createdBy && `class` in it.classes
     }
 
-    override fun findAllByClassAndLabel(`class`: ThingId, labelSearchString: SearchString, pageable: Pageable): Page<Resource> =
-        findAllFilteredAndPaged(pageable) {
-            it.label.matches(labelSearchString) && `class` in it.classes
-        }
+    override fun findAllByClassAndLabel(
+        `class`: ThingId,
+        labelSearchString: SearchString,
+        pageable: Pageable
+    ): Page<Resource> = entities.values
+        .filter { it.label.matches(labelSearchString) && `class` in it.classes }
+        .sortedWith(compareBy { it.label.length })
+        .paged(pageable)
 
     override fun findAllByClassAndLabelAndCreatedBy(
         `class`: ThingId,
         labelSearchString: SearchString,
         createdBy: ContributorId,
         pageable: Pageable
-    ): Page<Resource> = findAllFilteredAndPaged(pageable) {
-        it.createdBy == createdBy && it.label.matches(labelSearchString) && `class` in it.classes
-    }
+    ): Page<Resource> = entities.values
+        .filter { it.createdBy == createdBy && it.label.matches(labelSearchString) && `class` in it.classes }
+        .sortedWith(compareBy { it.label.length })
+        .paged(pageable)
 
     override fun findAllIncludingAndExcludingClasses(
         includeClasses: Set<ThingId>,
@@ -93,18 +101,22 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
         excludeClasses: Set<ThingId>,
         labelSearchString: SearchString,
         pageable: Pageable
-    ) = findAllFilteredAndPaged(pageable) {
-        it.label.matches(labelSearchString) && it.classes.containsAll(includeClasses) && it.classes.none { id ->
-            id in excludeClasses
+    ): Page<Resource> = entities.values
+        .filter {
+            it.label.matches(labelSearchString) && it.classes.containsAll(includeClasses) && it.classes.none { id ->
+                id in excludeClasses
+            }
         }
-    }
+        .sortedWith(compareBy { it.label.length })
+        .paged(pageable)
 
     override fun findPaperByLabel(label: String) =
         Optional.ofNullable(entities.values.firstOrNull { it.label == label && paperClass in it.classes })
 
-    // TODO: rename to findAllByClassAndObservatoryId
-    override fun findByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId): Iterable<Resource> =
-        entities.values.filter { `class` in it.classes && it.observatoryId == id }
+    override fun findAllByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId, pageable: Pageable): Page<Resource> =
+        findAllFilteredAndPaged(pageable) {
+            `class` in it.classes && it.observatoryId == id
+        }
 
     // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
     override fun findPaperById(id: ThingId) =
@@ -125,7 +137,7 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
             .paged(pageable)
 
     // TODO: Create a method with a generic class parameter
-    override fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable) =
+    override fun findAllComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable) =
         findAllFilteredAndPaged(pageable) {
             comparisonClass in it.classes && it.organizationId == id
         }

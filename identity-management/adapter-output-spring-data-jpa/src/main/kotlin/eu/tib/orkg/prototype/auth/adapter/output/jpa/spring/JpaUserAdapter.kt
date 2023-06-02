@@ -4,8 +4,11 @@ import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.JpaRoleRepo
 import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.JpaUserRepository
 import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.UserEntity
 import eu.tib.orkg.prototype.auth.domain.User
+import eu.tib.orkg.prototype.auth.spi.ObservatoryId
 import eu.tib.orkg.prototype.auth.spi.UserRepository
 import java.util.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
 @Component
@@ -21,14 +24,6 @@ class JpaUserAdapter(
         repository.findByEmailIgnoreCase(email).map(UserEntity::toUser)
 
     override fun findById(id: UUID): Optional<User> = repository.findById(id).map(UserEntity::toUser)
-
-    override fun findByObservatoryId(id: UUID): Iterable<User> =
-        repository.findByObservatoryId(id).map(UserEntity::toUser)
-
-    override fun findByOrganizationId(id: UUID): Iterable<User> =
-        repository.findByOrganizationId(id).map(UserEntity::toUser)
-
-    override fun findByIdIn(ids: Array<UUID>): List<User> = repository.findByIdIn(ids).map(UserEntity::toUser)
 
     override fun deleteAll() = repository.deleteAll()
 

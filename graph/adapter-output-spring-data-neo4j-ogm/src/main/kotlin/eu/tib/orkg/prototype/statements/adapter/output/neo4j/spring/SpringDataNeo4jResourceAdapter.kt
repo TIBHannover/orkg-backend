@@ -88,8 +88,12 @@ class SpringDataNeo4jResourceAdapter(
 
     override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Resource> =
         when (labelSearchString) {
-            is ExactSearchString -> neo4jRepository.findAllByLabel(labelSearchString.value, pageable)
-            is FuzzySearchString -> neo4jRepository.findAllByLabelContaining(labelSearchString.value, pageable)
+            is ExactSearchString -> neo4jRepository.findAllByLabel(labelSearchString.query, pageable)
+            is FuzzySearchString -> neo4jRepository.findAllByLabelContaining(
+                label = labelSearchString.query,
+                minLabelLength = labelSearchString.input.length,
+                pageable = pageable
+            )
         }.map(Neo4jResource::toResource)
 
     override fun findAllByClass(`class`: ThingId, pageable: Pageable): Page<Resource> =
@@ -106,12 +110,13 @@ class SpringDataNeo4jResourceAdapter(
         when (labelSearchString) {
             is ExactSearchString -> neo4jRepository.findAllByClassAndLabel(
                 `class` = `class`,
-                label = labelSearchString.value,
+                label = labelSearchString.query,
                 pageable = pageable
             )
             is FuzzySearchString -> neo4jRepository.findAllByClassAndLabelContaining(
                 `class` = `class`,
-                label = labelSearchString.value,
+                label = labelSearchString.query,
+                minLabelLength = labelSearchString.input.length,
                 pageable = pageable
             )
         }.map(Neo4jResource::toResource)
@@ -125,14 +130,15 @@ class SpringDataNeo4jResourceAdapter(
         when (labelSearchString) {
             is ExactSearchString -> neo4jRepository.findAllByClassAndLabelAndCreatedBy(
                 `class` = `class`,
-                label = labelSearchString.value,
+                label = labelSearchString.query,
                 createdBy = createdBy,
                 pageable = pageable
             )
             is FuzzySearchString -> neo4jRepository.findAllByClassAndLabelContainingAndCreatedBy(
                 `class` = `class`,
-                label = labelSearchString.value,
+                label = labelSearchString.query,
                 createdBy = createdBy,
+                minLabelLength = labelSearchString.input.length,
                 pageable = pageable
             )
         }.map(Neo4jResource::toResource)
@@ -158,13 +164,14 @@ class SpringDataNeo4jResourceAdapter(
             is ExactSearchString -> neo4jRepository.findAllIncludingAndExcludingClassesByLabel(
                 includeClasses = includeClasses,
                 excludeClasses = excludeClasses,
-                label = labelSearchString.value,
+                label = labelSearchString.query,
                 pageable = pageable
             )
             is FuzzySearchString -> neo4jRepository.findAllIncludingAndExcludingClassesByLabelContaining(
                 includeClasses = includeClasses,
                 excludeClasses = excludeClasses,
-                label = labelSearchString.value,
+                label = labelSearchString.query,
+                minLabelLength = labelSearchString.input.length,
                 pageable = pageable
             )
         }.map(Neo4jResource::toResource)
@@ -172,8 +179,13 @@ class SpringDataNeo4jResourceAdapter(
     override fun findPaperByLabel(label: String): Optional<Resource> =
         neo4jRepository.findPaperByLabel(label).map(Neo4jResource::toResource)
 
-    override fun findByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId): Iterable<Resource> =
-        neo4jRepository.findByClassAndObservatoryId(`class`, id).map(Neo4jResource::toResource)
+    override fun findAllByClassAndObservatoryId(
+        `class`: ThingId,
+        id: ObservatoryId,
+        pageable: Pageable
+    ): Page<Resource> =
+        neo4jRepository.findAllByClassAndObservatoryId(`class`, id, pageable)
+            .map(Neo4jResource::toResource)
 
     override fun findPaperById(id: ThingId): Optional<Resource> =
         neo4jRepository.findPaperById(id)
@@ -231,6 +243,6 @@ class SpringDataNeo4jResourceAdapter(
     override fun findAllContributorIds(pageable: Pageable) =
         neo4jRepository.findAllContributorIds(pageable)
 
-    override fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
-        neo4jRepository.findComparisonsByOrganizationId(id, pageable).map(Neo4jResource::toResource)
+    override fun findAllComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllComparisonsByOrganizationId(id, pageable).map(Neo4jResource::toResource)
 }

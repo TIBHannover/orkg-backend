@@ -2,23 +2,21 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
+import eu.tib.orkg.prototype.statements.api.BundleRepresentation
 import eu.tib.orkg.prototype.statements.BundleRepresentationAdapter
+import eu.tib.orkg.prototype.statements.api.StatementRepresentation
 import eu.tib.orkg.prototype.statements.StatementRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.BundleConfiguration
-import eu.tib.orkg.prototype.statements.api.BundleRepresentation
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateStatementUseCase
-import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.CreateStatement
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
-import eu.tib.orkg.prototype.statements.domain.model.StatementRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import java.security.Principal
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.MediaType

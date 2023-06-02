@@ -55,8 +55,12 @@ class SpringDataNeo4jClassAdapter(
 
     override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Class> =
         when (labelSearchString) {
-            is ExactSearchString -> neo4jRepository.findAllByLabel(labelSearchString.value, pageable)
-            is FuzzySearchString -> neo4jRepository.findAllByLabelContaining(labelSearchString.value, pageable)
+            is ExactSearchString -> neo4jRepository.findAllByLabel(labelSearchString.query, pageable)
+            is FuzzySearchString -> neo4jRepository.findAllByLabelContaining(
+                label = labelSearchString.query,
+                minLabelLength = labelSearchString.input.length,
+                pageable = pageable
+            )
         }.map(Neo4jClass::toClass)
 
     override fun findByUri(uri: String): Optional<Class> = neo4jRepository.findByUri(uri).map(Neo4jClass::toClass)

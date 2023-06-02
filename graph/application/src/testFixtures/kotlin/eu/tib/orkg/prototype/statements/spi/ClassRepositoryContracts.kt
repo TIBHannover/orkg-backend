@@ -128,16 +128,17 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
         }
         context("by label") {
             val expectedCount = 3
+            val label = "label to find"
             val classes = fabricator.random<List<Class>>().toMutableList()
             (0 until 3).forEach {
-                classes[it] = classes[it].copy(label = "label to find")
+                classes[it] = classes[it].copy(label = label)
             }
             val expected = classes.take(expectedCount)
 
             context("with exact matching") {
                 classes.forEach(repository::save)
                 val result = repository.findAllByLabel(
-                    SearchString.of("label to find", exactMatch = true),
+                    SearchString.of(label, exactMatch = true),
                     PageRequest.of(0, 5)
                 )
 
@@ -162,7 +163,7 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
             context("with fuzzy matching") {
                 classes.forEach(repository::save)
                 val result = repository.findAllByLabel(
-                    SearchString.of("label to find", exactMatch = false),
+                    SearchString.of("label find", exactMatch = false),
                     PageRequest.of(0, 5)
                 )
 

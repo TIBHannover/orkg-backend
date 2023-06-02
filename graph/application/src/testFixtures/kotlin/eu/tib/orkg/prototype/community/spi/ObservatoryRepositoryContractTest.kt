@@ -27,17 +27,14 @@ interface ObservatoryRepositoryContractTest {
     fun `successfully restores all properties after saving`() {
         val expected = createObservatory(1)
 
-        val actual = repository.findById(expected.id!!).orElse(null)
+        val actual = repository.findById(expected.id).orElse(null)
 
         actual shouldNotBe null
         actual.asClue {
             it.id shouldBe expected.id
             it.name shouldBe expected.name
             it.description shouldBe expected.description
-            it.researchField?.asClue { researchField ->
-                researchField.id shouldBe expected.researchField?.id
-                researchField.label shouldBe expected.researchField?.label
-            }
+            it.researchField shouldBe expected.researchField
             it.organizationIds.size shouldBe expected.organizationIds.size
             it.organizationIds shouldContainAll expected.organizationIds
             it.displayId shouldBe expected.displayId
@@ -48,7 +45,7 @@ interface ObservatoryRepositoryContractTest {
     fun `When searching several observatories by organization id, it returns the correct result`() {
         val expected = createObservatory(1)
 
-        val actual = repository.findByOrganizationId(expected.organizationIds.first(), PageRequest.of(0, 5))
+        val actual = repository.findAllByOrganizationId(expected.organizationIds.first(), PageRequest.of(0, 5))
         actual.content shouldNotBe null
         actual.content shouldContainAll setOf(expected)
         actual.size shouldBe 5
@@ -61,7 +58,7 @@ interface ObservatoryRepositoryContractTest {
     fun `When searching an observatory by its name, it returns the correct result`() {
         val expected = createObservatory(1)
 
-        val actual = repository.findByName(expected.name!!).orElse(null)
+        val actual = repository.findByName(expected.name).orElse(null)
 
         actual shouldNotBe null
         actual shouldBe expected
@@ -71,7 +68,7 @@ interface ObservatoryRepositoryContractTest {
     fun `When searching an observatory by its display Id, it returns the correct result`() {
         val expected = createObservatory(1)
 
-        val actual = repository.findByDisplayId(expected.displayId!!).orElse(null)
+        val actual = repository.findByDisplayId(expected.displayId).orElse(null)
 
         actual shouldNotBe null
         actual shouldBe expected
@@ -81,7 +78,7 @@ interface ObservatoryRepositoryContractTest {
     fun `When searching several observatories by research field id, it returns the correct result`() {
         val expected = createObservatory(1)
 
-        val actual = repository.findByResearchField(ThingId(expected.researchField?.id!!), PageRequest.of(0, 5))
+        val actual = repository.findAllByResearchField(expected.researchField!!, PageRequest.of(0, 5))
 
         actual shouldNotBe null
         actual.content shouldContainAll setOf(expected)
@@ -102,7 +99,7 @@ interface ObservatoryRepositoryContractTest {
     @Test
     fun `When searching observatories by incorrect research field id, it returns the incorrect result`() {
         createObservatory(0)
-        val actual = repository.findByResearchField(ThingId("R1"), PageRequest.of(0, 5))
+        val actual = repository.findAllByResearchField(ThingId("R1"), PageRequest.of(0, 5))
 
         actual.size shouldBe 5
         actual.number shouldBe 0

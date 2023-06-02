@@ -39,8 +39,8 @@
       "label": "Featured Comparison"
     },
     {
-      "id": "ContributionTemplate",
-      "label": "Contribution Template"
+      "id": "NodeShape",
+      "label": "Node shape"
     },
     {
       "id": "ResearchField",
@@ -84,7 +84,7 @@
     },
     {
       "id": "DCLocation",
-      "label": "dc:Location"
+      "label": "dc:Location",
       "uri": "http://purl.org/dc/terms/Location"
     },
     {
@@ -198,6 +198,10 @@
     {
       "id": "SupplementaryInformationDescription",
       "label": "SupplementaryInformationDescription"
+    },
+    {
+      "id": "PropertyShape",
+      "label": "Property shape"
     }
   ],
 
@@ -283,8 +287,8 @@
       "id": "TemplateOfPredicate"
     },
     {
-      "label": "Template of class",
-      "id": "TemplateOfClass"
+      "label": "target class",
+      "id": "sh:targetClass"
     },
     {
       "label": "Template sub-template",
@@ -307,16 +311,20 @@
       "id": "reference"
     },
     {
-      "label": "Template component",
-      "id": "TemplateComponent"
+      "label": "property",
+      "id": "sh:property"
     },
     {
-      "label": "Template component property",
-      "id": "TemplateComponentProperty"
+      "label": "path",
+      "id": "sh:path"
     },
     {
-      "label": "Template component value",
-      "id": "TemplateComponentValue"
+      "label": "class",
+      "id": "sh:class"
+    },
+    {
+      "label": "datatype",
+      "id": "sh:datatype"
     },
     {
       "label": "Order",
@@ -331,28 +339,36 @@
       "id": "RelatedFigure"
     },
     {
-      "label": "Template Component Validation Rule",
-      "id": "TemplateComponentValidationRule"
+      "label": "min inclusive",
+      "id": "sh:minInclusive"
+    },
+    {
+      "label": "max inclusive",
+      "id": "sh:maxInclusive"
+    },
+    {
+      "label": "pattern",
+      "id": "sh:pattern"
     },
     {
       "label": "Template Label Format",
       "id": "TemplateLabelFormat"
     },
     {
-      "label": "TemplateStrict",
-      "id": "TemplateStrict"
+      "label": "closed",
+      "id": "sh:closed"
     },
     {
-      "label": "TemplateComponentOrder",
-      "id": "TemplateComponentOrder"
+      "label": "order",
+      "id": "sh:order"
     },
     {
-      "label": "TemplateComponentOccurrenceMin",
-      "id": "TemplateComponentOccurrenceMin"
+      "label": "min count",
+      "id": "sh:minCount"
     },
     {
-      "label": "TemplateComponentOccurrenceMax",
-      "id": "TemplateComponentOccurrenceMax"
+      "label": "max count",
+      "id": "sh:maxCount"
     },
     {
       "label": "Image",

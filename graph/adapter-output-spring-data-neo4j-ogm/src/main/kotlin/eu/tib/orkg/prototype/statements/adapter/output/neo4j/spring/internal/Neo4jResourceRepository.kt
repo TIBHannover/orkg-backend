@@ -21,6 +21,7 @@ private const val `class` = "${'$'}`class`"
 private const val id = "${'$'}id"
 private const val visibility = "${'$'}visibility"
 private const val verified = "${'$'}verified"
+private const val minLabelLength = "${'$'}minLabelLength"
 
 private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_resource_on_label"
 
@@ -85,13 +86,17 @@ RETURN COUNT(node)""")
 
     @Query("""
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
-YIELD node
+YIELD node, score
+WHERE SIZE(node.label) >= $minLabelLength
+WITH node, score
+ORDER BY SIZE(node.label) ASC, score DESC
 RETURN node""",
         countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
 YIELD node
+WHERE SIZE(node.label) >= $minLabelLength
 RETURN COUNT(node)""")
-    fun findAllByLabelContaining(label: String, pageable: Pageable): Page<Neo4jResource>
+    fun findAllByLabelContaining(label: String, minLabelLength: Int, pageable: Pageable): Page<Neo4jResource>
 
     // TODO: limit the selection of sortBy values to (label & id) only because they are explicit in the query
     @Query(value = """MATCH (node:`Resource`) WHERE $`class` IN labels(node) WITH node, node.label AS label, node.id AS id, node.created_at AS created_at $RETURN_NODE""",
@@ -116,15 +121,17 @@ RETURN COUNT(node)""")
 
     @Query(value = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
-YIELD node
-WHERE $`class` IN labels(node)
+YIELD node, score
+WHERE SIZE(node.label) >= $minLabelLength AND $`class` IN labels(node)
+WITH node, score
+ORDER BY SIZE(node.label) ASC, score DESC
 RETURN node""",
         countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
 YIELD node
-WHERE $`class` IN labels(node)
+WHERE SIZE(node.label) >= $minLabelLength AND $`class` IN labels(node)
 RETURN COUNT(node)""")
-    fun findAllByClassAndLabelContaining(`class`: ThingId, label: String, pageable: Pageable): Page<Neo4jResource>
+    fun findAllByClassAndLabelContaining(`class`: ThingId, label: String, minLabelLength: Int, pageable: Pageable): Page<Neo4jResource>
 
     @Query(value = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
@@ -140,15 +147,17 @@ RETURN COUNT(node)""")
 
     @Query(value = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
-YIELD node
-WHERE $`class` IN labels(node) AND node.created_by = $createdBy
+YIELD node, score
+WHERE SIZE(node.label) >= $minLabelLength AND $`class` IN labels(node) AND node.created_by = $createdBy
+WITH node, score
+ORDER BY SIZE(node.label) ASC, score DESC
 RETURN node""",
         countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
 YIELD node
-WHERE $`class` IN labels(node) AND node.created_by = $createdBy
+WHERE SIZE(node.label) >= $minLabelLength AND $`class` IN labels(node) AND node.created_by = $createdBy
 RETURN COUNT(node)""")
-    fun findAllByClassAndLabelContainingAndCreatedBy(`class`: ThingId, label: String, createdBy: ContributorId, pageable: Pageable): Page<Neo4jResource>
+    fun findAllByClassAndLabelContainingAndCreatedBy(`class`: ThingId, label: String, minLabelLength: Int, createdBy: ContributorId, pageable: Pageable): Page<Neo4jResource>
 
     @Query(value = """MATCH (node:`Resource`) WITH labels(node) AS labels, node WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels) WITH node, node.label AS label, node.id AS id, node.created_at AS created_at $RETURN_NODE""",
         countQuery = """MATCH (node:`Resource`) WITH labels(node) AS labels, node WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels) WITH COUNT(node) as cnt RETURN cnt""")
@@ -170,17 +179,19 @@ RETURN COUNT(node)""")
 
     @Query(value = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
-YIELD node
-WITH labels(node) AS labels, node
-WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels)
+YIELD node, score
+WITH labels(node) AS labels, node, score
+WHERE SIZE(node.label) >= $minLabelLength AND NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels)
+WITH node, score
+ORDER BY SIZE(node.label) ASC, score DESC
 RETURN node""",
         countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
 YIELD node
 WITH labels(node) AS labels, node
-WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels)
+WHERE SIZE(node.label) >= $minLabelLength AND NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels)
 RETURN COUNT(node)""")
-    fun findAllIncludingAndExcludingClassesByLabelContaining(includeClasses: Set<ThingId>, excludeClasses: Set<ThingId>, label: String, pageable: Pageable): Page<Neo4jResource>
+    fun findAllIncludingAndExcludingClassesByLabelContaining(includeClasses: Set<ThingId>, excludeClasses: Set<ThingId>, label: String, minLabelLength: Int, pageable: Pageable): Page<Neo4jResource>
 
     @Query("""MATCH (node:Paper:Resource) WHERE not 'PaperDeleted' IN labels(node) AND node.label = $label $RETURN_NODE LIMIT 1""")
     fun findPaperByLabel(label: String?): Optional<Neo4jResource>
@@ -188,8 +199,16 @@ RETURN COUNT(node)""")
     @Query("""MATCH (node:Paper:Resource) WHERE not 'PaperDeleted' IN labels(node) AND node.label = $label $RETURN_NODE""")
     fun findAllPapersByLabel(label: String): Iterable<Neo4jResource>
 
-    @Query("""MATCH (n {observatory_id: ${'$'}id}) WHERE ${'$'}class in LABELS(n) RETURN n""")
-    fun findByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId): Iterable<Neo4jResource>
+    @Query("""
+MATCH (n:Thing {observatory_id: $id})
+WHERE $`class` in LABELS(n)
+RETURN n
+ORDER BY n.created_at""",
+        countQuery = """
+MATCH (n:Thing {observatory_id: $id})
+WHERE $`class` in LABELS(n)
+RETURN COUNT(n)""")
+    fun findAllByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId, pageable: Pageable): Page<Neo4jResource>
 
     @Query("""$MATCH_PAPER_BY_ID $WITH_NODE_PROPERTIES $RETURN_NODE""")
     fun findPaperById(id: ThingId): Optional<Neo4jResource>
@@ -203,9 +222,9 @@ RETURN COUNT(node)""")
     @Transactional
     fun deleteById(id: ThingId): Iterable<Long>
 
-    @Query(value = """MATCH (n:Comparison:Resource {organization_id: $id }) RETURN n""",
-        countQuery = """MATCH (n:Comparison:Resource {organization_id: $id }) RETURN COUNT(n)""")
-    fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Neo4jResource>
+    @Query(value = """MATCH (n:Comparison:Resource {organization_id: $id}) RETURN n""",
+        countQuery = """MATCH (n:Comparison:Resource {organization_id: $id}) RETURN COUNT(n)""")
+    fun findAllComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Neo4jResource>
 
     @Query("""$MATCH_PAPER WHERE $VERIFIED_IS $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE""",
         countQuery = """$MATCH_PAPER WHERE $VERIFIED_IS $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")

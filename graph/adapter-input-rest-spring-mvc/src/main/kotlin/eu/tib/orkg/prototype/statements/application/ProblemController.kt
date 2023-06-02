@@ -5,10 +5,10 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.AuthorRepresentationAdapter
 import eu.tib.orkg.prototype.statements.FieldPerProblemRepresentationAdapter
-import eu.tib.orkg.prototype.statements.ResourceRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.FieldWithFreqRepresentation
 import eu.tib.orkg.prototype.statements.api.PaperAuthorRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
+import eu.tib.orkg.prototype.statements.ResourceRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
@@ -42,7 +42,7 @@ class ProblemController(
     override val statementService: StatementUseCases,
     override val templateRepository: TemplateRepository,
     override val flags: FeatureFlagService,
-) : ResourceRepresentationAdapter, AuthorRepresentationAdapter, FieldPerProblemRepresentationAdapter {
+) : BaseController(), ResourceRepresentationAdapter, AuthorRepresentationAdapter, FieldPerProblemRepresentationAdapter {
 
     @GetMapping("/{problemId}/fields")
     fun getFieldPerProblem(@PathVariable problemId: ThingId): Iterable<FieldWithFreqRepresentation> {
@@ -130,7 +130,7 @@ class ProblemController(
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     fun markUnlisted(@PathVariable id: ThingId) {
-        resourceService.markAsUnlisted(id)
+        resourceService.markAsUnlisted(id, ContributorId(authenticatedUserId()))
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")

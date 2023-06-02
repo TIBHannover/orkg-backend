@@ -17,6 +17,7 @@ kotlinx-coroutines-bom = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-bo
 spring-boot-bom = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
 # Libraries
 annotations-jsr305 = { module = "com.google.code.findbugs:jsr305", version = "3.0.2" }
+contractual = { module = "com.redfin:contractual", version = "3.0.0" }
 forkhandles-fabrikate4k = { module = "dev.forkhandles:fabrikate4k", version.ref = "forkhandles" }
 forkhandles-result4k = { module = "dev.forkhandles:result4k", version.ref = "forkhandles" }
 forkhandles-values4k = { module = "dev.forkhandles:values4k", version.ref = "forkhandles" }
@@ -28,6 +29,7 @@ kotest-extensions-spring = { module = "io.kotest.extensions:kotest-extensions-sp
 kotest-extensions-testcontainers = { module = "io.kotest.extensions:kotest-extensions-testcontainers", version = "1.3.4" }
 kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
+spring-mockk = { module = "com.ninja-squad:springmockk", version = "2.0.1" }
 testcontainers-core = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
 testcontainers-junit5 = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 testcontainers-neo4j = { module = "org.testcontainers:neo4j", version.ref = "testcontainers" }

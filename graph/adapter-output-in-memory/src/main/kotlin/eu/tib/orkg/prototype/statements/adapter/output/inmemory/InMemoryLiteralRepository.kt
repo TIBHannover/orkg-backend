@@ -30,5 +30,8 @@ class InMemoryLiteralRepository : InMemoryRepository<ThingId, Literal>(
     override fun findById(id: ThingId) = Optional.ofNullable(entities[id])
 
     override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable) =
-        findAllFilteredAndPaged(pageable) { it.label.matches(labelSearchString) }
+        entities.values
+            .filter { it.label.matches(labelSearchString) }
+            .sortedWith(compareBy { it.label.length })
+            .paged(pageable)
 }

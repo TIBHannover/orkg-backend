@@ -9,6 +9,7 @@ import org.springframework.data.neo4j.repository.query.Query
 
 private const val ids = "${'$'}ids"
 private const val label = "${'$'}label"
+private const val minLabelLength = "${'$'}minLabelLength"
 
 private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
 private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_class_on_label"
@@ -37,16 +38,18 @@ RETURN COUNT(node)""")
     fun findAllByLabel(label: String, pageable: Pageable): Page<Neo4jClass>
 
     @Query("""
-WITH SIZE($label) AS size
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
-YIELD node
+YIELD node, score
+WHERE SIZE(node.label) >= $minLabelLength
+WITH node, score
+ORDER BY SIZE(node.label) ASC, score DESC
 RETURN node, [[(node)-[r:`RELATED`]->(t:`Thing`) | [r, t]]] $PAGE_PARAMS""",
         countQuery = """
-WITH SIZE($label) AS size
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
 YIELD node
+WHERE SIZE(node.label) >= $minLabelLength
 RETURN COUNT(node)""")
-    fun findAllByLabelContaining(label: String, pageable: Pageable): Page<Neo4jClass>
+    fun findAllByLabelContaining(label: String, minLabelLength: Int, pageable: Pageable): Page<Neo4jClass>
 
     fun findByUri(uri: String): Optional<Neo4jClass>
 

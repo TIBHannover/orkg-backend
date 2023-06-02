@@ -7,10 +7,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Papers can now automatically be un-listed and re-listed based on a quality score.
+  The quality score is determined by the following metrics:
+  - At least one author has to be present
+  - At least one contribution with properties has to be present
+  - The title has to be not-blank
+  
+  (See: [!512](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/512))
+- Unlisted resources now include a property called `unlisted_by`, indicating the user who unlisted the resource.
+  (See: [!512](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/512))
+
+### Changed
+- The endpoint `/api/resources/{id}/timeline` no longer returns results past the creation time of the resource.
+  (See: [!545](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/545))
+- Templates now use the SHACL shapes vocabulary.
+  (Closes: [#484](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/484))
+- Changing the visibility of a resource now properly sets the `unlisted_by` property.
+  (See: [!565](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/565))
+- The endpoint `/api/observatories/research-field/{id}/observatories` was moved to `/api/observatories/?research_field={id}`.
+  (See: [#498](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/498))
+- The endpoint `/api/observatories/stats/observatories` was moved to `/api/stats/observatories` and now returns the total count of resources (`total`) for each observatory and the `resources` field has been renamed to `papers`.
+  (Closes: [#406](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/185);
+  See: [#498](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/498))
+- The following endpoints now feature pagination:
+    - `/api/observatories/`
+    - `/api/observatories/{id}/papers`
+    - `/api/observatories/{id}/comparisons`
+    - `/api/observatories/{id}/users`
+    - `/api/stats/observatories`.
+
+  (Closes: [#185](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/185),
+  [#268](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/268),
+  [#403](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/403),
+  [#405](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/45),
+  [#450](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/450);
+  See: [#498](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/498))
+- The observatory representation now contains the members.
+  (Closes: [#404](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/404);
+  See: [#498](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/498))
+
+## [0.33.0] - 2023-05-30
+### Added
 - The backend version can now be determined via `/api/version`.
   (See: [!543](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/543))
 - RDF-Dumps now include the class hierarchy.
   (See: [!542](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/542))
+
+### Changed
+- Fuzzy search by label now returns more relevant results
+  (See: [!541](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/541))
 
 ### Fixed
 - Fixed query for finding statements by subject class, predicate id and object label
@@ -376,7 +421,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.32.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.33.0...master
+[0.32.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.33.0
 [0.32.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.32.0
 [0.31.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.31.1
 [0.31.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.31.0

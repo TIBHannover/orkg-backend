@@ -80,11 +80,26 @@ interface Neo4jStatementRepository :
 
     fun findByStatementId(id: StatementId): Optional<Neo4jStatement>
 
-    @Query("""MATCH (:`Thing`)-[r:`RELATED` {statement_id: $id}]->(o) DELETE r WITH [n IN [o] WHERE "Literal" IN LABELS(n) AND NOT (n)--()] AS l FOREACH(n IN l | DELETE n)""")
-    fun deleteByStatementId(id: StatementId)
+    @Query("""
+MATCH (:`Thing`)-[r:`RELATED` {statement_id: $id}]->(o)
+DELETE r
+WITH o
+WHERE "Literal" IN LABELS(o) AND NOT (o)--()
+WITH o.id AS id, o
+DELETE o
+RETURN id""")
+    fun deleteByStatementId(id: StatementId): Optional<ThingId>
 
-    @Query("""UNWIND $ids AS id MATCH (:`Thing`)-[r:`RELATED` {statement_id: id}]->(o) DELETE r WITH [n IN [o] WHERE "Literal" IN LABELS(n) AND NOT (n)--()] AS l FOREACH(n IN l | DELETE n)""")
-    fun deleteByStatementIds(ids: Set<StatementId>)
+    @Query("""
+UNWIND $ids AS id
+MATCH (:`Thing`)-[r:`RELATED` {statement_id: id}]->(o)
+DELETE r
+WITH o
+WHERE "Literal" IN LABELS(o) AND NOT (o)--()
+WITH o.id AS id, o
+DELETE o
+RETURN id""")
+    fun deleteByStatementIds(ids: Set<StatementId>): Set<ThingId>
 
     @Query("$MATCH_STATEMENT $BY_SUBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
     countQuery = "$MATCH_STATEMENT $BY_SUBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_COUNT")
@@ -244,11 +259,11 @@ CALL apoc.path.subgraphAll(n, {relationshipFilter: ">", labelFilter: "-ResearchF
 YIELD relationships
 UNWIND relationships AS rel
 WITH rel AS p, endNode(rel) AS o, n
-WITH COLLECT(p) + COLLECT(o) + COLLECT(n) as nodes
-WITH DISTINCT nodes
+WITH COLLECT(p) + COLLECT(o) + COLLECT(n) as nodes, n
+WITH DISTINCT nodes, n
 UNWIND nodes as node
-WITH node
-WHERE node.created_by IS NOT NULL AND node.created_at IS NOT NULL
+WITH node, n
+WHERE node.created_by IS NOT NULL AND node.created_at IS NOT NULL AND node.created_at >= n.created_at
 WITH node.created_by AS createdBy, apoc.text.regreplace(node.created_at, "^(\d+-\d+-\d+T\d+:\d+):\d+(?:\.\d+)?(.*)${'$'}", "${'$'}1:00${'$'}2") AS timestamp
 WITH createdBy, apoc.date.parse(timestamp, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX") AS ms
 WITH DISTINCT [createdBy, apoc.date.format(ms, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX")] AS edit
@@ -259,11 +274,11 @@ CALL apoc.path.subgraphAll(n, {relationshipFilter: ">", labelFilter: "-ResearchF
 YIELD relationships
 UNWIND relationships AS rel
 WITH rel AS p, endNode(rel) AS o, n
-WITH COLLECT(p) + COLLECT(o) + COLLECT(n) as nodes
-WITH DISTINCT nodes
+WITH COLLECT(p) + COLLECT(o) + COLLECT(n) as nodes, n
+WITH DISTINCT nodes, n
 UNWIND nodes as node
-WITH node
-WHERE node.created_by IS NOT NULL AND node.created_at IS NOT NULL
+WITH node, n
+WHERE node.created_by IS NOT NULL AND node.created_at IS NOT NULL AND node.created_at >= n.created_at
 WITH node.created_by AS createdBy, apoc.text.regreplace(node.created_at, "^(\d+-\d+-\d+T\d+:\d+):\d+(?:\.\d+)?(.*)${'$'}", "${'$'}1:00${'$'}2") AS timestamp
 WITH createdBy, apoc.date.parse(timestamp, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX") AS ms
 WITH DISTINCT [createdBy, apoc.date.format(ms, "ms", "yyyy-MM-dd'T'HH:mm:ssXXX")] AS edit
@@ -275,7 +290,7 @@ RETURN COUNT(edit) AS cnt""")
 
     @Query(value = """MATCH (n:Comparison:Resource {organization_id: $id })-[r:RELATED {predicate_id: 'compareContribution'}]->(rc:Contribution:Resource)-[rr:RELATED {predicate_id: 'P32'}]->(p:Problem:Resource) RETURN DISTINCT p""",
         countQuery = """MATCH (n:Comparison:Resource {organization_id: $id })-[r:RELATED {predicate_id: 'compareContribution'}]->(rc:Contribution:Resource)-[rr:RELATED {predicate_id: 'P32'}]->(p:Problem:Resource) RETURN count(DISTINCT p)""")
-    fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Neo4jResource>
+    fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Neo4jResource>
 
     @Query("""$MATCH_STATEMENT WHERE sub.`id`=$subjectId AND rel.`predicate_id` = $predicateId AND obj.`id`=$objectId $RETURN_STATEMENT LIMIT 1""")
     fun findBySubjectIdAndPredicateIdAndObjectId(subjectId: ThingId, predicateId: ThingId, objectId: ThingId): Optional<Neo4jStatement>

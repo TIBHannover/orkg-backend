@@ -62,6 +62,10 @@ data class Neo4jResource(
     @Property("visibility")
     var visibility: Visibility? = null
 
+    @Property("unlisted_by")
+    @Convert(ContributorIdConverter::class)
+    var unlistedBy: ContributorId? = null
+
     @Property("organization_id")
     @Convert(OrganizationIdConverter::class)
     var organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
@@ -88,7 +92,8 @@ data class Neo4jResource(
         observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
         extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
         organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
-        visibility: Visibility = Visibility.DEFAULT
+        visibility: Visibility = Visibility.DEFAULT,
+        unlistedBy: ContributorId? = null
     ) : this(null) {
         this.label = label
         this.id = resourceId
@@ -97,6 +102,7 @@ data class Neo4jResource(
         this.extractionMethod = extractionMethod
         this.organizationId = organizationId
         this.visibility = visibility
+        this.unlistedBy = unlistedBy
     }
 
     fun toResource() =
@@ -111,6 +117,7 @@ data class Neo4jResource(
             organizationId = organizationId,
             visibility = visibility!!,
             verified = verified,
+            unlistedBy = unlistedBy
         )
 
     override fun toThing() = toResource()

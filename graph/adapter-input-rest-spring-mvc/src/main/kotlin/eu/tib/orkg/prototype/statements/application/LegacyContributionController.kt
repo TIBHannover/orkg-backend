@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.data.domain.Pageable
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 class LegacyContributionController(
     private val neo4jResourceService: ResourceUseCases,
     private val service: ResourceUseCases
-) {
+) : BaseController() {
     @GetMapping("/metadata/featured", params = ["featured=true"])
     fun getFeaturedContributions(pageable: Pageable) =
         neo4jResourceService.loadFeaturedContributions(pageable)
@@ -56,7 +57,7 @@ class LegacyContributionController(
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     fun markUnlisted(@PathVariable id: ThingId) {
-        neo4jResourceService.markAsUnlisted(id)
+        neo4jResourceService.markAsUnlisted(id, ContributorId(authenticatedUserId()))
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")

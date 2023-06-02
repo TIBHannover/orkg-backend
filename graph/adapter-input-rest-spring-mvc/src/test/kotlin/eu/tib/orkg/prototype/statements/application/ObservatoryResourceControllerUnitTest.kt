@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype.statements.application
 
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.auth.spi.UserRepository
-import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
@@ -11,7 +10,6 @@ import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.services.StatisticsService
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import io.mockk.every
 import io.mockk.verify
@@ -22,7 +20,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -33,7 +30,7 @@ import org.springframework.web.context.WebApplicationContext
 @ContextConfiguration(classes = [ObservatoryResourceController::class, ExceptionHandler::class])
 @WebMvcTest(controllers = [ObservatoryResourceController::class])
 @DisplayName("Given an ObservatoryResourceController controller")
-internal class ObservatoryControllerUnitTest {
+internal class ObservatoryResourceControllerUnitTest {
 
     private lateinit var mockMvc: MockMvc
 
@@ -77,13 +74,13 @@ internal class ObservatoryControllerUnitTest {
             classes = setOf(ThingId("Paper"))
         )
         every {
-            resourceService.findPapersByObservatoryId(id = id)
-        } returns listOf(paperResource)
+            resourceService.findAllPapersByObservatoryId(id, any())
+        } returns PageImpl(listOf(paperResource))
 
         mockMvc.perform(get("/api/observatories/$id/papers"))
             .andExpect(status().isOk)
 
-        verify(exactly = 1) { resourceService.findPapersByObservatoryId(id) }
+        verify(exactly = 1) { resourceService.findAllPapersByObservatoryId(id, any()) }
     }
 
     @Test
@@ -94,13 +91,13 @@ internal class ObservatoryControllerUnitTest {
             classes = setOf(ThingId("Comparison"))
         )
         every {
-            resourceService.findComparisonsByObservatoryId(id = id)
-        } returns listOf(comparisonResource)
+            resourceService.findAllComparisonsByObservatoryId(id, any())
+        } returns PageImpl(listOf(comparisonResource))
 
         mockMvc.perform(get("/api/observatories/$id/comparisons"))
             .andExpect(status().isOk)
 
-        verify(exactly = 1) { resourceService.findComparisonsByObservatoryId(id) }
+        verify(exactly = 1) { resourceService.findAllComparisonsByObservatoryId(id, any()) }
     }
 
     @Test
@@ -110,15 +107,13 @@ internal class ObservatoryControllerUnitTest {
             observatoryId = id,
             classes = setOf(ThingId("Problem"))
         )
-        val pageable = PageRequest.of(0, 20)
-
         every {
-            resourceService.findProblemsByObservatoryId(id, any())
-        } returns PageImpl(listOf(problemResource), pageable, 1)
+            resourceService.findAllProblemsByObservatoryId(id, any())
+        } returns PageImpl(listOf(problemResource))
 
         mockMvc.perform(get("/api/observatories/$id/problems"))
             .andExpect(status().isOk)
 
-        verify(exactly = 1) { resourceService.findProblemsByObservatoryId(id, any()) }
+        verify(exactly = 1) { resourceService.findAllProblemsByObservatoryId(id, any()) }
     }
 }

@@ -62,9 +62,10 @@ fun <R : LiteralRepository> literalRepositoryContract(
     describe("finding several literals") {
         context("by label") {
             val expectedCount = 3
+            val label = "label to find"
             val literals = fabricator.random<List<Literal>>().toMutableList()
             (0 until 3).forEach {
-                literals[it] = literals[it].copy(label = "label to find")
+                literals[it] = literals[it].copy(label = label)
             }
 
             val expected = literals.take(expectedCount)
@@ -72,7 +73,7 @@ fun <R : LiteralRepository> literalRepositoryContract(
             context("with exact matching") {
                 literals.forEach(repository::save)
                 val result = repository.findAllByLabel(
-                    SearchString.of("label to find", exactMatch = true),
+                    SearchString.of(label, exactMatch = true),
                     PageRequest.of(0, 5)
                 )
 
@@ -97,7 +98,7 @@ fun <R : LiteralRepository> literalRepositoryContract(
             context("with fuzzy matching") {
                 literals.forEach(repository::save)
                 val result = repository.findAllByLabel(
-                    SearchString.of("to find", exactMatch = false),
+                    SearchString.of("label find", exactMatch = false),
                     PageRequest.of(0, 5)
                 )
 

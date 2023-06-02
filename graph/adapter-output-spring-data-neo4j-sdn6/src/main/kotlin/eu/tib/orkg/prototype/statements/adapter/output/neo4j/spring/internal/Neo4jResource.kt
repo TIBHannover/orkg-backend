@@ -39,6 +39,9 @@ class Neo4jResource: Neo4jThing() {
     @Property("visibility")
     var visibility: Visibility? = null
 
+    @Property("unlisted_by")
+    var unlistedBy: ContributorId? = null
+
     @Property("organization_id")
     var organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
 
@@ -68,6 +71,7 @@ class Neo4jResource: Neo4jThing() {
         organizationId = organizationId,
         visibility = visibility!!,
         verified = verified,
+        unlistedBy = unlistedBy
     )
 
     override fun toThing() = toResource()

@@ -492,46 +492,46 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
 
     fun createTemplateAndTypedResource(value: String): ThingId {
         // create required classes and predicates
-        val templateClass = classService.createClass(
-            id = "ContributionTemplate",
-            label = "Contribution Template"
+        val nodeShapeClass = classService.createClass(
+            id = "NodeShape",
+            label = "Node shape"
         )
         val throwAwayClass = classService.createClass(label = "Templated Class")
         val templateLabelPredicate = predicateService.createPredicate(
             id = "TemplateLabelFormat",
             label = "Template label format"
         )
-        val templateClassPredicate = predicateService.createPredicate(
-            id = "TemplateOfClass",
-            label = "Template of class"
+        val targetClassPredicate = predicateService.createPredicate(
+            id = "sh:targetClass",
+            label = "target class"
         )
-        val templateComponentPredicate = predicateService.createPredicate(
-            id = "TemplateComponent",
-            label = "Template component"
+        val propertyPredicate = predicateService.createPredicate(
+            id = "sh:property",
+            label = "property"
         )
-        val templateComponentClass = classService.createClass(
-            id = "TemplateComponentClass",
-            label = "Template component class"
+        val propertyShapeClass = classService.createClass(
+            id = "PropertyShape",
+            label = "Property shape"
         )
         val throwAwayProperty = predicateService.create("Temp property")
-        val templateComponentPropertyPredicate = predicateService.createPredicate(
-            id = "TemplateComponentProperty",
-            label = "Template component property"
+        val pathPredicate = predicateService.createPredicate(
+            id = "sh:path",
+            label = "path"
         )
         // create the template
         val template = service.createResource(
-            classes = setOf(templateClass.value),
+            classes = setOf(nodeShapeClass.value),
             label = "Throw-way template"
         )
         val labelFormat = literalService.create("xx{${throwAwayProperty.id}}xx")
         statementService.create(template, templateLabelPredicate, labelFormat.id)
-        statementService.create(template, templateClassPredicate, throwAwayClass)
+        statementService.create(template, targetClassPredicate, throwAwayClass)
         val templateComponent = service.createResource(
-            classes = setOf(templateComponentClass.value),
+            classes = setOf(propertyShapeClass.value),
             label = "component 1"
         )
-        statementService.create(template, templateComponentPredicate, templateComponent)
-        statementService.create(templateComponent, templateComponentPropertyPredicate, throwAwayProperty.id)
+        statementService.create(template, propertyPredicate, templateComponent)
+        statementService.create(templateComponent, pathPredicate, throwAwayProperty.id)
         // Create resource and type it
         val templatedResource = service.createResource(
             classes = setOf(throwAwayClass.value),

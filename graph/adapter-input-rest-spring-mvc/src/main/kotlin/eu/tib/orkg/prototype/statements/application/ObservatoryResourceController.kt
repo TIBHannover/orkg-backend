@@ -2,8 +2,8 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
-import eu.tib.orkg.prototype.statements.ResourceRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
+import eu.tib.orkg.prototype.statements.ResourceRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
@@ -28,19 +28,28 @@ class ObservatoryResourceController(
 ) : ResourceRepresentationAdapter {
 
     @GetMapping("{id}/papers")
-    fun findPapersByObservatoryId(@PathVariable id: ObservatoryId): Iterable<ResourceRepresentation> =
-        resourceService.findPapersByObservatoryId(id).mapToResourceRepresentation()
+    fun findAllPapersByObservatoryId(
+        @PathVariable id: ObservatoryId,
+        pageable: Pageable
+    ): Page<ResourceRepresentation> =
+        resourceService.findAllPapersByObservatoryId(id, pageable).mapToResourceRepresentation()
 
     @GetMapping("{id}/comparisons")
-    fun findComparisonsByObservatoryId(@PathVariable id: ObservatoryId): Iterable<ResourceRepresentation> =
-        resourceService.findComparisonsByObservatoryId(id).mapToResourceRepresentation()
+    fun findAllComparisonsByObservatoryId(
+        @PathVariable id: ObservatoryId,
+        pageable: Pageable
+    ): Page<ResourceRepresentation> =
+        resourceService.findAllComparisonsByObservatoryId(id, pageable).mapToResourceRepresentation()
 
     @GetMapping("{id}/problems")
-    fun findProblemsByObservatoryId(@PathVariable id: ObservatoryId, pageable: Pageable): Page<ResourceRepresentation> =
-        resourceService.findProblemsByObservatoryId(id, pageable).mapToResourceRepresentation()
+    fun findAllProblemsByObservatoryId(
+        @PathVariable id: ObservatoryId,
+        pageable: Pageable
+    ): Page<ResourceRepresentation> =
+        resourceService.findAllProblemsByObservatoryId(id, pageable).mapToResourceRepresentation()
 
     @GetMapping("{id}/class")
-    fun findProblemsByObservatoryId(
+    fun findAllResourcesByClassInAndVisibilityAndObservatoryId(
         @PathVariable id: ObservatoryId,
         @RequestParam(value = "classes") classes: Set<ThingId>,
         @RequestParam("featured", required = false, defaultValue = "false")

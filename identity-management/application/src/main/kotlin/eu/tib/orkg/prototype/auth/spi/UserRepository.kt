@@ -2,6 +2,8 @@ package eu.tib.orkg.prototype.auth.spi
 
 import eu.tib.orkg.prototype.auth.domain.User
 import java.util.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 
 typealias UserId = UUID
 typealias ObservatoryId = UUID
@@ -13,12 +15,6 @@ interface UserRepository {
     fun findByEmailIgnoreCase(email: String): Optional<User>
 
     fun findById(id: UserId): Optional<User>
-
-    fun findByObservatoryId(id: ObservatoryId): Iterable<User>
-
-    fun findByOrganizationId(id: OrganizationId): Iterable<User>
-
-    fun findByIdIn(ids: Array<UserId>): List<User>
 
     fun deleteAll()
 }

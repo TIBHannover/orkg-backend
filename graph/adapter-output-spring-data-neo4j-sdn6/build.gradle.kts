@@ -29,7 +29,7 @@ testing {
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
                     exclude(module = "mockito-core")
                 }
-                implementation("com.ninja-squad:springmockk:2.0.1")
+                implementation(libs.spring.mockk)
                 implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
             }
             targets {
@@ -47,11 +47,6 @@ dependencies {
     api(enforcedPlatform(SpringBootPlugin.BOM_COORDINATES)) // TODO: align with platform when upgrade is done
     "containerTestApi"(enforcedPlatform(SpringBootPlugin.BOM_COORDINATES)) // TODO: align with platform when upgrade is done
 
-    // TODO: remove when domain was moved
-    api(project(":library")) {
-        exclude(group = "org.neo4j", module = "neo4j-ogm-bolt-native-types")
-        exclude(group = "org.liquibase", module = "liquibase-core") // Do not bring in forced version (via platform)
-    }
     api(project(":graph:application"))
 
     // Pagination (e.g. Page, Pageable, etc.)

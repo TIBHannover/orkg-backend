@@ -8,6 +8,7 @@ import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.data.neo4j.repository.query.Query
 
 private const val label = "${'$'}label"
+private const val minLabelLength = "${'$'}minLabelLength"
 
 private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
 private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_literal_on_label"
@@ -31,11 +32,15 @@ RETURN COUNT(node)""")
 
     @Query("""
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
-YIELD node
+YIELD node, score
+WHERE SIZE(node.label) >= $minLabelLength
+WITH node, score
+ORDER BY SIZE(node.label) ASC, score DESC
 RETURN node $PAGE_PARAMS""",
         countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
 YIELD node
+WHERE SIZE(node.label) >= $minLabelLength
 RETURN COUNT(node)""")
-    fun findAllByLabelContaining(label: String, pageable: Pageable): Page<Neo4jLiteral>
+    fun findAllByLabelContaining(label: String, minLabelLength: Int, pageable: Pageable): Page<Neo4jLiteral>
 }

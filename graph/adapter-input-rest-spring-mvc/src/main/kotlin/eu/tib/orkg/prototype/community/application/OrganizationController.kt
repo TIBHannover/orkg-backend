@@ -1,9 +1,10 @@
 package eu.tib.orkg.prototype.community.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import eu.tib.orkg.prototype.community.ObservatoryRepresentation
+import eu.tib.orkg.prototype.community.ObservatoryRepresentationAdapter
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.community.api.OrganizationUseCases
-import eu.tib.orkg.prototype.community.domain.model.Observatory
 import eu.tib.orkg.prototype.community.domain.model.Organization
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationType
@@ -15,6 +16,7 @@ import eu.tib.orkg.prototype.files.api.ImageUseCases
 import eu.tib.orkg.prototype.files.application.InvalidImageData
 import eu.tib.orkg.prototype.files.application.InvalidMimeType
 import eu.tib.orkg.prototype.files.domain.model.ImageData
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateOrganizationUseCases
 import eu.tib.orkg.prototype.statements.application.BaseController
 import java.io.ByteArrayInputStream
@@ -53,8 +55,9 @@ class OrganizationController(
     private val service: OrganizationUseCases,
     private val observatoryService: ObservatoryUseCases,
     private val contributorService: ContributorService,
-    private val imageService: ImageUseCases
-) : BaseController() {
+    private val imageService: ImageUseCases,
+    override val resourceRepository: ResourceUseCases
+) : BaseController(), ObservatoryRepresentationAdapter {
 
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -100,9 +103,10 @@ class OrganizationController(
     }
 
     @GetMapping("{id}/observatories")
-    fun findObservatoriesByOrganization(@PathVariable id: OrganizationId): List<Observatory> {
-        return observatoryService.findObservatoriesByOrganizationId(id, PageRequest.of(0, Int.MAX_VALUE)).content
-    }
+    fun findObservatoriesByOrganization(@PathVariable id: OrganizationId): List<ObservatoryRepresentation> =
+        observatoryService.findAllByOrganizationId(id, PageRequest.of(0, Int.MAX_VALUE))
+            .mapToObservatoryRepresentation()
+            .content
 
     @GetMapping("{id}/users")
     fun findUsersByOrganizationId(@PathVariable id: OrganizationId): Iterable<Contributor> =

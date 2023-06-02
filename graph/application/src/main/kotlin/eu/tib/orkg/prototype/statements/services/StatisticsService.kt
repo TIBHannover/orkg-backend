@@ -12,7 +12,7 @@ import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
 import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ChangeLogResponse
-import eu.tib.orkg.prototype.statements.spi.ObservatoryResources
+import eu.tib.orkg.prototype.statements.spi.ObservatoryStats
 import eu.tib.orkg.prototype.statements.spi.StatsRepository
 import eu.tib.orkg.prototype.statements.spi.TrendingResearchProblems
 import java.time.LocalDate
@@ -74,8 +74,8 @@ class StatisticsService(
     override fun getObservatoryComparisonsCount(id: ObservatoryId): Long =
         statsRepository.getObservatoryComparisonsCount(id)
 
-    override fun getObservatoriesPapersAndComparisonsCount(): List<ObservatoryResources> =
-        statsRepository.getObservatoriesPapersAndComparisonsCount()
+    override fun getObservatoriesPapersAndComparisonsCount(pageable: Pageable): Page<ObservatoryStats> =
+        statsRepository.getObservatoriesPapersAndComparisonsCount(pageable)
 
     override fun getTopCurrentContributors(
         days: Long,

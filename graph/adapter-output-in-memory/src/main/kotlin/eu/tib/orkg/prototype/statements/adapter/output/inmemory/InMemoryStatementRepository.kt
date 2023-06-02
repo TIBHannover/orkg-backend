@@ -279,7 +279,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
     override fun checkIfResourceHasStatements(id: ThingId): Boolean =
         entities.values.any { it.subject.id.value == id.value || it.`object`.id.value == id.value }
 
-    override fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
+    override fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
         entities.values.filter {
             it.subject is Resource && comparisonClass in (it.subject as Resource).classes && (it.subject as Resource).organizationId == id
                 && it.predicate.id == compareContribution

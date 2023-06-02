@@ -201,8 +201,8 @@ class SpringDataNeo4jStatementAdapter(
     override fun checkIfResourceHasStatements(id: ThingId): Boolean =
         neo4jRepository.checkIfResourceHasStatements(id)
 
-    override fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
-        neo4jRepository.findProblemsByOrganizationId(id, pageable).map(Neo4jResource::toResource)
+    override fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllProblemsByOrganizationId(id, pageable).map(Neo4jResource::toResource)
 
     override fun findBySubjectIdAndPredicateIdAndObjectId(
         subjectId: ThingId,

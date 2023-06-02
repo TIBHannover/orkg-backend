@@ -2,14 +2,14 @@ package eu.tib.orkg.prototype.community.services
 
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.OrganizationEntity
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
+import eu.tib.orkg.prototype.community.api.CreateObservatoryUseCase
 import eu.tib.orkg.prototype.community.application.OrganizationNotFound
 import eu.tib.orkg.prototype.community.domain.model.Observatory
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.community.domain.model.ResearchField
 import eu.tib.orkg.prototype.community.spi.ObservatoryRepository
 import eu.tib.orkg.prototype.createObservatory
-import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.mockk.every
 import io.mockk.mockk
@@ -25,27 +25,34 @@ class ObservatoryServiceTests {
 
     private val repository: ObservatoryRepository = mockk()
     private val organizationRepository: PostgresOrganizationRepository = mockk()
-    private val resourceUseCases: ResourceUseCases = mockk()
+    private val resourceRepository: ResourceRepository = mockk()
 
-    private val service = ObservatoryService(repository, organizationRepository, resourceUseCases)
+    private val service = ObservatoryService(repository, organizationRepository, resourceRepository)
 
     @Test
     fun `Creating an observatory`() {
         val observatory = createObservatory(setOf(OrganizationId(UUID.randomUUID())))
         val organizationId = observatory.organizationIds.single()
+        val researchField = createResource().copy(
+            id = observatory.researchField!!,
+            classes = setOf(ThingId("ResearchField"))
+        )
 
         every { repository.save(observatory) } returns Unit
+        every { resourceRepository.findById(observatory.researchField!!) } returns Optional.of(researchField)
         every { organizationRepository.findById(organizationId.value) } returns Optional.of(
             OrganizationEntity(organizationId.value)
         )
 
         service.create(
-            id = observatory.id,
-            name = observatory.name!!,
-            description = observatory.description!!,
-            organizationId = organizationId,
-            researchField = ThingId(observatory.researchField?.id!!),
-            displayId = observatory.displayId!!
+            CreateObservatoryUseCase.CreateCommand(
+                id = observatory.id,
+                name = observatory.name,
+                description = observatory.description!!,
+                organizationId = organizationId,
+                researchField = observatory.researchField!!,
+                displayId = observatory.displayId
+            )
         )
 
         verify(exactly = 1) { repository.save(observatory) }
@@ -60,12 +67,14 @@ class ObservatoryServiceTests {
 
         shouldThrow<OrganizationNotFound> {
             service.create(
-                id = null,
-                name = "test",
-                description = "test",
-                organizationId = oId,
-                researchField = ThingId("R1"),
-                displayId = "test"
+                CreateObservatoryUseCase.CreateCommand(
+                    id = null,
+                    name = "test",
+                    description = "test",
+                    organizationId = oId,
+                    researchField = ThingId("R1"),
+                    displayId = "test"
+                )
             )
         }
 
@@ -77,12 +86,12 @@ class ObservatoryServiceTests {
         val observatory = createObservatory(setOf(OrganizationId(UUID.randomUUID())))
         val newResource = createResource()
 
-        every { repository.findByName(observatory.name!!) } returns Optional.of(observatory)
-        every { resourceUseCases.findById(ThingId(observatory.researchField?.id!!)) } returns Optional.of(newResource)
+        every { repository.findByName(observatory.name) } returns Optional.of(observatory)
+        every { resourceRepository.findById(observatory.researchField!!) } returns Optional.of(newResource)
 
-        service.findByName(observatory.name!!)
+        service.findByName(observatory.name)
 
-        verify(exactly = 1) { repository.findByName(observatory.name!!) }
+        verify(exactly = 1) { repository.findByName(observatory.name) }
     }
 
     @Test
@@ -90,12 +99,12 @@ class ObservatoryServiceTests {
         val observatory = createObservatory(setOf(OrganizationId(UUID.randomUUID())))
         val newResource = createResource()
 
-        every { repository.findByDisplayId(observatory.displayId!!) } returns Optional.of(observatory)
-        every { resourceUseCases.findById(ThingId(observatory.researchField?.id!!)) } returns Optional.of(newResource)
+        every { repository.findByDisplayId(observatory.displayId) } returns Optional.of(observatory)
+        every { resourceRepository.findById(observatory.researchField!!) } returns Optional.of(newResource)
 
-        service.findByDisplayId(observatory.displayId!!)
+        service.findByDisplayId(observatory.displayId)
 
-        verify(exactly = 1) { repository.findByDisplayId(observatory.displayId!!) }
+        verify(exactly = 1) { repository.findByDisplayId(observatory.displayId) }
     }
 
     @Test
@@ -103,58 +112,61 @@ class ObservatoryServiceTests {
         val observatory = createObservatory(setOf(OrganizationId(UUID.randomUUID())))
         val newResource = createResource()
 
-        every { repository.findById(observatory.id!!) } returns Optional.of(observatory)
-        every { resourceUseCases.findById(ThingId(observatory.researchField?.id!!)) } returns Optional.of(newResource)
+        every { repository.findById(observatory.id) } returns Optional.of(observatory)
+        every { resourceRepository.findById(observatory.researchField!!) } returns Optional.of(newResource)
 
-        service.findById(observatory.id!!)
+        service.findById(observatory.id)
 
-        verify(exactly = 1) { repository.findById(observatory.id!!) }
+        verify(exactly = 1) { repository.findById(observatory.id) }
     }
 
     @Test
-    fun `Find an observatory by research field after creating it`() {
-        val observatory = createObservatory(setOf(OrganizationId(UUID.randomUUID())))
-        val newResource = createResource()
-        val newResearchField = ResearchField(newResource.id.value, newResource.label)
+    fun `Finding several observatories by research field`() {
+        val researchField = createResource(
+            classes = setOf(ThingId("ResearchField"))
+        )
+        val observatory = createObservatory(setOf(OrganizationId(UUID.randomUUID()))).copy(
+            researchField = researchField.id
+        )
         val page: Page<Observatory> = PageImpl(listOf(observatory))
-        val researchFieldId = ThingId(newResearchField.id!!)
+        val researchFieldId = researchField.id
         val pageRequest = PageRequest.of(0, Int.MAX_VALUE)
 
-        every { repository.findByResearchField(researchFieldId, pageRequest) } returns page
-        every { resourceUseCases.findById(ThingId(observatory.researchField?.id!!)) } returns Optional.of(newResource)
+        every { resourceRepository.findById(researchFieldId) } returns Optional.of(researchField)
+        every { repository.findAllByResearchField(researchFieldId, pageRequest) } returns page
 
-        service.findObservatoriesByResearchField(researchFieldId, pageRequest)
+        service.findAllByResearchField(researchFieldId, pageRequest)
 
-        verify(exactly = 1) { repository.findByResearchField(researchFieldId, pageRequest) }
+        verify(exactly = 1) { repository.findAllByResearchField(researchFieldId, pageRequest) }
     }
 
     @Test
-    fun `Find an observatory by organization Id after creating it`() {
+    fun `Finding several observatories by organization Id`() {
         val observatory = createObservatory(setOf(OrganizationId(UUID.randomUUID())))
         val newResource = createResource()
         val page: Page<Observatory> = PageImpl(listOf(observatory))
         val pageRequest = PageRequest.of(0, Int.MAX_VALUE)
         val organizationId = observatory.organizationIds.single()
 
-        every { repository.findByOrganizationId(organizationId, pageRequest) } returns page
-        every { resourceUseCases.findById(ThingId(observatory.researchField?.id!!)) } returns Optional.of(newResource)
+        every { repository.findAllByOrganizationId(organizationId, pageRequest) } returns page
+        every { resourceRepository.findById(observatory.researchField!!) } returns Optional.of(newResource)
 
-        service.findObservatoriesByOrganizationId(organizationId, pageRequest)
+        service.findAllByOrganizationId(organizationId, pageRequest)
 
-        verify(exactly = 1) { repository.findByOrganizationId(organizationId, pageRequest) }
+        verify(exactly = 1) { repository.findAllByOrganizationId(organizationId, pageRequest) }
     }
 
     @Test
-    fun `List all observatories`() {
+    fun `Find all observatories`() {
         val observatory = createObservatory(setOf(OrganizationId(UUID.randomUUID())))
         val newResource = createResource()
         val page: Page<Observatory> = PageImpl(listOf(observatory))
         val pageRequest = PageRequest.of(0, Int.MAX_VALUE)
 
         every { repository.findAll(pageRequest) } returns page
-        every { resourceUseCases.findById(ThingId(observatory.researchField?.id!!)) } returns Optional.of(newResource)
+        every { resourceRepository.findById(observatory.researchField!!) } returns Optional.of(newResource)
 
-        service.listObservatories(pageRequest)
+        service.findAll(pageRequest)
 
         verify(exactly = 1) { repository.findAll(pageRequest) }
     }

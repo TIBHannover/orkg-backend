@@ -26,9 +26,9 @@ class OrganizationResourceController(
 
     @GetMapping("{id}/comparisons")
     fun findComparisonsByOrganizationId(@PathVariable id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation> =
-        resourceService.findComparisonsByOrganizationId(id, pageable).mapToResourceRepresentation()
+        resourceService.findAllComparisonsByOrganizationId(id, pageable).mapToResourceRepresentation()
 
     @GetMapping("{id}/problems")
     fun findProblemsByOrganizationId(@PathVariable id: OrganizationId, pageable: Pageable): Page<ResourceRepresentation> =
-        resourceService.findProblemsByOrganizationId(id, pageable).mapToResourceRepresentation()
+        resourceService.findAllProblemsByOrganizationId(id, pageable).mapToResourceRepresentation()
 }

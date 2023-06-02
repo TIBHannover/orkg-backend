@@ -1,24 +1,23 @@
 package eu.tib.orkg.prototype.community.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import eu.tib.orkg.prototype.community.ObservatoryRepresentation
+import eu.tib.orkg.prototype.community.ObservatoryRepresentationAdapter
+import eu.tib.orkg.prototype.community.api.CreateObservatoryUseCase.*
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
-import eu.tib.orkg.prototype.community.domain.model.Observatory
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.community.domain.model.ResearchField
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.application.ResearchFieldNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.services.StatisticsService
-import eu.tib.orkg.prototype.statements.spi.ObservatoryResources
 import java.util.*
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
-import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -28,6 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
@@ -35,75 +35,65 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/observatories/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ObservatoryController(
     private val service: ObservatoryUseCases,
-    private val resourceService: ResourceUseCases,
     private val contributorService: ContributorService,
-    private val statisticsService: StatisticsService
-) {
-
+    override val resourceRepository: ResourceUseCases
+) : ObservatoryRepresentationAdapter {
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    fun addObservatory(
-        @RequestBody @Valid observatory: CreateObservatoryRequest,
+    fun create(
+        @RequestBody @Valid request: CreateObservatoryRequest,
         uriComponentsBuilder: UriComponentsBuilder
-    ): ResponseEntity<Any> {
-        if (service.findByName(observatory.observatoryName).isPresent) {
-            throw ObservatoryAlreadyExists.withName(observatory.observatoryName)
-        } else if (service.findByDisplayId(observatory.displayId).isPresent) {
-            throw ObservatoryAlreadyExists.withDisplayId(observatory.displayId)
+    ): ResponseEntity<ObservatoryRepresentation> {
+        if (service.findByName(request.name).isPresent) {
+            throw ObservatoryAlreadyExists.withName(request.name)
+        } else if (service.findByDisplayId(request.displayId).isPresent) {
+            throw ObservatoryAlreadyExists.withDisplayId(request.displayId)
         }
-        val id = service.create(
-            id = null,
-            observatory.observatoryName,
-            observatory.description,
-            observatory.organizationId,
-            observatory.researchField,
-            observatory.displayId
-        )
+        val id = service.create(request.toCreateCommand())
         val location = uriComponentsBuilder
             .path("api/observatories/{id}")
             .buildAndExpand(id)
             .toUri()
-        return ResponseEntity.created(location).body(service.findById(id).get())
+        return ResponseEntity.created(location).body(service.findById(id).mapToObservatoryRepresentation().get())
     }
 
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: String): Observatory {
+    fun findById(@PathVariable id: String): ObservatoryRepresentation {
         return if (isValidUUID(id)) {
             service
                 .findById(ObservatoryId(UUID.fromString(id)))
+                .mapToObservatoryRepresentation()
                 .orElseThrow { ObservatoryNotFound(ObservatoryId(UUID.fromString(id))) }
         } else {
             service
                 .findByDisplayId(id)
+                .mapToObservatoryRepresentation()
                 .orElseThrow { ObservatoryURLNotFound(id) }
         }
     }
 
     @GetMapping("/")
-    fun findObservatories(): List<Observatory> {
-        return service.listObservatories(PageRequest.of(0, Int.MAX_VALUE)).content
-    }
+    fun findAll(
+        @RequestParam(value = "research_field", required = false) researchField: ThingId?,
+        pageable: Pageable
+    ): Page<ObservatoryRepresentation> =
+        when (researchField) {
+            null -> service.findAll(pageable)
+            else -> service.findAllByResearchField(researchField, pageable)
+        }.mapToObservatoryRepresentation()
 
     @GetMapping("{id}/users")
-    fun findUsersByObservatoryId(@PathVariable id: ObservatoryId): Iterable<Contributor> =
-        contributorService.findAllByObservatoryId(id, PageRequest.of(0, Int.MAX_VALUE)).content
-
-    @GetMapping("research-field/{id}/observatories")
-    fun findObservatoriesByResearchField(
-        @PathVariable id: ThingId
-    ): List<Observatory>? {
-        resourceService.findById(id).orElseThrow { ResearchFieldNotFound(id) }
-        return service.findObservatoriesByResearchField(id, PageRequest.of(0, Int.MAX_VALUE)).content
-    }
+    fun findAllUsersByObservatoryId(
+        @PathVariable id: ObservatoryId,
+        pageable: Pageable
+    ): Page<Contributor> =
+        contributorService.findAllByObservatoryId(id, pageable)
 
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    fun updateObservatoryName(@PathVariable id: ObservatoryId, @RequestBody @Valid name: UpdateRequest): Observatory {
-        service
-            .findById(id)
-            .orElseThrow { ObservatoryNotFound(id) }
-
-        return service.changeName(id, name.value)
+    fun updateObservatoryName(@PathVariable id: ObservatoryId, @RequestBody @Valid name: UpdateRequest): ObservatoryRepresentation {
+        service.changeName(id, name.value)
+        return service.findById(id).mapToObservatoryRepresentation().get()
     }
 
     @RequestMapping("{id}/description", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
@@ -111,12 +101,9 @@ class ObservatoryController(
     fun updateObservatoryDescription(
         @PathVariable id: ObservatoryId,
         @RequestBody @Valid description: UpdateRequest
-    ): Observatory {
-        service
-            .findById(id)
-            .orElseThrow { ObservatoryNotFound(id) }
-
-        return service.changeDescription(id, description.value)
+    ): ObservatoryRepresentation {
+        service.changeDescription(id, description.value)
+        return service.findById(id).mapToObservatoryRepresentation().get()
     }
 
     @RequestMapping("{id}/research_field", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
@@ -124,13 +111,9 @@ class ObservatoryController(
     fun updateObservatoryResearchField(
         @PathVariable id: ObservatoryId,
         @RequestBody @Valid request: UpdateRequest
-    ): Observatory {
-        service
-            .findById(id)
-            .orElseThrow { ObservatoryNotFound(id) }
-        val researchField = resourceService.findById(ThingId(request.value))
-            .orElseThrow { ResearchFieldNotFound(ThingId(request.value)) }
-        return service.changeResearchField(id, ResearchField(researchField.id.value, researchField.label))
+    ): ObservatoryRepresentation {
+        service.changeResearchField(id, ThingId(request.value))
+        return service.findById(id).mapToObservatoryRepresentation().get()
     }
 
     @RequestMapping("add/{id}/organization", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
@@ -138,12 +121,9 @@ class ObservatoryController(
     fun addObservatoryOrganization(
         @PathVariable id: ObservatoryId,
         @RequestBody organizationRequest: UpdateOrganizationRequest
-    ): Observatory {
-        service
-            .findById(id)
-            .orElseThrow { ObservatoryNotFound(id) }
-
-        return service.addOrganization(id, organizationRequest.organizationId)
+    ): ObservatoryRepresentation {
+        service.addOrganization(id, organizationRequest.organizationId)
+        return service.findById(id).mapToObservatoryRepresentation().get()
     }
 
     @RequestMapping("delete/{id}/organization", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
@@ -151,17 +131,9 @@ class ObservatoryController(
     fun deleteObservatoryOrganization(
         @PathVariable id: ObservatoryId,
         @RequestBody organizationRequest: UpdateOrganizationRequest
-    ): Observatory {
-        service
-            .findById(id)
-            .orElseThrow { ObservatoryNotFound(id) }
-
-        return service.deleteOrganization(id, organizationRequest.organizationId)
-    }
-
-    @GetMapping("stats/observatories")
-    fun findObservatoriesWithStats(): List<ObservatoryResources> {
-        return statisticsService.getObservatoriesPapersAndComparisonsCount()
+    ): ObservatoryRepresentation {
+        service.deleteOrganization(id, organizationRequest.organizationId)
+        return service.findById(id).mapToObservatoryRepresentation().get()
     }
 
     fun isValidUUID(id: String): Boolean {
@@ -174,7 +146,7 @@ class ObservatoryController(
 
     data class CreateObservatoryRequest(
         @JsonProperty("observatory_name")
-        val observatoryName: String,
+        val name: String,
         @JsonProperty("organization_id")
         val organizationId: OrganizationId,
         val description: String,
@@ -187,7 +159,15 @@ class ObservatoryController(
         @field:NotBlank
         @JsonProperty("display_id")
         val displayId: String
-    )
+    ) {
+        fun toCreateCommand() = CreateCommand(
+            name = name,
+            description = description,
+            organizationId = organizationId,
+            researchField = researchField,
+            displayId = displayId
+        )
+    }
 
     data class UpdateRequest(
         @field:NotBlank

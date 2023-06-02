@@ -280,7 +280,7 @@ RETURN COUNT(edit) AS cnt""")
 
     @Query(value = """MATCH (n:Comparison:Resource {organization_id: $id })-[r:RELATED {predicate_id: 'compareContribution'}]->(rc:Contribution:Resource)-[rr:RELATED {predicate_id: 'P32'}]->(p:Problem:Resource) RETURN DISTINCT p""",
         countQuery = """MATCH (n:Comparison:Resource {organization_id: $id })-[r:RELATED {predicate_id: 'compareContribution'}]->(rc:Contribution:Resource)-[rr:RELATED {predicate_id: 'P32'}]->(p:Problem:Resource) RETURN count(DISTINCT p)""")
-    fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Neo4jResource>
+    fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Neo4jResource>
 
     @Query("""$MATCH_STATEMENT WHERE sub.`id`=$subjectId AND rel.`predicate_id` = $predicateId AND obj.`id`=$objectId $RETURN_STATEMENT LIMIT 1""")
     fun findBySubjectIdAndPredicateIdAndObjectId(subjectId: ThingId, predicateId: ThingId, objectId: ThingId): Optional<Neo4jStatement>

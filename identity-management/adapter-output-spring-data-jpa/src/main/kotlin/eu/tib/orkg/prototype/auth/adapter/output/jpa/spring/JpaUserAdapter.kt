@@ -4,8 +4,11 @@ import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.JpaRoleRepo
 import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.JpaUserRepository
 import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.UserEntity
 import eu.tib.orkg.prototype.auth.domain.User
+import eu.tib.orkg.prototype.auth.spi.ObservatoryId
 import eu.tib.orkg.prototype.auth.spi.UserRepository
 import java.util.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
 @Component

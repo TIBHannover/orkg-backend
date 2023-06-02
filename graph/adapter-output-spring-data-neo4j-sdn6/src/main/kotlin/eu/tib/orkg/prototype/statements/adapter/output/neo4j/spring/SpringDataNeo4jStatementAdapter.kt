@@ -619,7 +619,7 @@ class SpringDataNeo4jStatementAdapter(
             .one() ?: false
     }
 
-    override fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> {
+    override fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> {
         val problem = name("p")
         val match = match(
                 comparisonNode()

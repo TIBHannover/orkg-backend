@@ -178,13 +178,16 @@ class ResourceService(
             VisibilityFilter.DELETED -> repository.findAllByVisibility(Visibility.DELETED, pageable)
         }
 
-    override fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Resource> =
-        repository.findByClassAndObservatoryId(paperClass, id)
+    override fun findAllPapersByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
+        repository.findAllByClassAndObservatoryId(paperClass, id, pageable)
 
-    override fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<Resource> =
-        repository.findByClassAndObservatoryId(comparisonClass, id)
+    override fun findAllComparisonsByObservatoryId(
+        id: ObservatoryId,
+        pageable: Pageable
+    ): Page<Resource> =
+        repository.findAllByClassAndObservatoryId(comparisonClass, id, pageable)
 
-    override fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
+    override fun findAllProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
         statementRepository.findProblemsByObservatoryId(id, pageable)
 
     override fun findAllByClassInAndVisibilityAndObservatoryId(
@@ -432,11 +435,11 @@ class ResourceService(
             .map { it.visibility == Visibility.UNLISTED || it.visibility == Visibility.DELETED }
             .orElseThrow { ResourceNotFound.withId(id) }
 
-    override fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
-        repository.findComparisonsByOrganizationId(id, pageable)
+    override fun findAllComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
+        repository.findAllComparisonsByOrganizationId(id, pageable)
 
-    override fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
-        statementRepository.findProblemsByOrganizationId(id, pageable)
+    override fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
+        statementRepository.findAllProblemsByOrganizationId(id, pageable)
 
     override fun hasStatements(id: ThingId): Boolean = statementRepository.checkIfResourceHasStatements(id)
 

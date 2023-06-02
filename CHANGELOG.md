@@ -24,6 +24,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (Closes: [#484](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/484))
 - Changing the visibility of a resource now properly sets the `unlisted_by` property.
   (See: [!565](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/565))
+- The endpoint `/api/observatories/research-field/{id}/observatories` was moved to `/api/observatories/?research_field={id}`.
+  (See: [#498](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/498))
+- The endpoint `/api/observatories/stats/observatories` was moved to `/api/stats/observatories` and now returns the total count of resources (`total`) for each observatory and the `resources` field has been renamed to `papers`.
+  (Closes: [#406](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/185);
+  See: [#498](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/498))
+- The following endpoints now feature pagination:
+    - `/api/observatories/`
+    - `/api/observatories/{id}/papers`
+    - `/api/observatories/{id}/comparisons`
+    - `/api/observatories/{id}/users`
+    - `/api/stats/observatories`.
+
+  (Closes: [#185](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/185),
+  [#268](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/268),
+  [#403](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/403),
+  [#405](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/45),
+  [#450](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/450);
+  See: [#498](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/498))
+- The observatory representation now contains the members.
+  (Closes: [#404](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/404);
+  See: [#498](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/498))
 
 ## [0.33.0] - 2023-05-30
 ### Added

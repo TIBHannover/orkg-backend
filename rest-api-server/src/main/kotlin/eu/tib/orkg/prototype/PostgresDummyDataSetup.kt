@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.community.api.ConferenceSeriesUseCases
+import eu.tib.orkg.prototype.community.api.CreateObservatoryUseCase
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.community.api.OrganizationUseCases
 import eu.tib.orkg.prototype.community.domain.model.ConferenceSeries
@@ -17,7 +18,6 @@ import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.application.BadPeerReviewType
-import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -136,25 +136,25 @@ class PostgresDummyDataSetup(
 
     private fun generateObservatories(observatories: List<Observatory>): List<Observatory> {
         observatories.forEach {
-            val observatory = observatoryService.findById(it.id!!).orElseGet {
-                val id = observatoryService.create(
+            val observatory = observatoryService.findById(it.id).orElseGet {
+                val command = CreateObservatoryUseCase.CreateCommand(
                     id = it.id,
-                    name = it.name!!,
+                    name = it.name,
                     description = it.description ?: "",
                     organizationId = it.organizationIds.first(),
-                    researchField = Optional.ofNullable(it.researchField?.id)
-                        .map(::ThingId)
+                    researchField = Optional.ofNullable(it.researchField)
                         .filter { id -> resourceService.findById(id).isPresent }
                         .orElse(null),
-                    displayId = it.displayId!!
+                    displayId = it.displayId
                 )
+                val id = observatoryService.create(command)
                 observatoryService.findById(id).get()
             }
 
             for (organizationId in it.organizationIds) {
                 if (organizationId !in observatory.organizationIds) {
                     // There should exist a better method for adding organizations to an observatory but this is all we got
-                    observatoryService.addOrganization(observatory.id!!, organizationId)
+                    observatoryService.addOrganization(observatory.id, organizationId)
                 }
             }
         }
@@ -171,7 +171,7 @@ class PostgresDummyDataSetup(
                 }
             }
         }
-        observatories.associateWith { fetchObservatoryContributors(it.id!!) }.forEach {
+        observatories.associateWith { fetchObservatoryContributors(it.id) }.forEach {
             for (contributor in it.value) {
                 userAffiliation.compute(contributor.id.value) { _, value ->
                     value?.first to it.key.id

@@ -199,8 +199,16 @@ RETURN COUNT(node)""")
     @Query("""MATCH (node:Paper:Resource) WHERE not 'PaperDeleted' IN labels(node) AND node.label = $label $RETURN_NODE""")
     fun findAllPapersByLabel(label: String): Iterable<Neo4jResource>
 
-    @Query("""MATCH (n {observatory_id: ${'$'}id}) WHERE ${'$'}class in LABELS(n) RETURN n""")
-    fun findByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId): Iterable<Neo4jResource>
+    @Query("""
+MATCH (n:Thing {observatory_id: $id})
+WHERE $`class` in LABELS(n)
+RETURN n
+ORDER BY n.created_at""",
+        countQuery = """
+MATCH (n:Thing {observatory_id: $id})
+WHERE $`class` in LABELS(n)
+RETURN COUNT(n)""")
+    fun findAllByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId, pageable: Pageable): Page<Neo4jResource>
 
     @Query("""$MATCH_PAPER_BY_ID $WITH_NODE_PROPERTIES $RETURN_NODE""")
     fun findPaperById(id: ThingId): Optional<Neo4jResource>
@@ -214,9 +222,9 @@ RETURN COUNT(node)""")
     @Transactional
     fun deleteById(id: ThingId): Iterable<Long>
 
-    @Query(value = """MATCH (n:Comparison:Resource {organization_id: $id }) RETURN n""",
-        countQuery = """MATCH (n:Comparison:Resource {organization_id: $id }) RETURN COUNT(n)""")
-    fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Neo4jResource>
+    @Query(value = """MATCH (n:Comparison:Resource {organization_id: $id}) RETURN n""",
+        countQuery = """MATCH (n:Comparison:Resource {organization_id: $id}) RETURN COUNT(n)""")
+    fun findAllComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Neo4jResource>
 
     @Query("""$MATCH_PAPER WHERE $VERIFIED_IS $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE""",
         countQuery = """$MATCH_PAPER WHERE $VERIFIED_IS $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")

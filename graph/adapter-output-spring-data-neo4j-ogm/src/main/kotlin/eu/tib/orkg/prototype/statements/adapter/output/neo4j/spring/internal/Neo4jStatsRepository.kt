@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ChangeLogResponse
 import eu.tib.orkg.prototype.statements.spi.FieldsStats
-import eu.tib.orkg.prototype.statements.spi.ObservatoryResources
+import eu.tib.orkg.prototype.statements.spi.ObservatoryStats
 import eu.tib.orkg.prototype.statements.spi.TrendingResearchProblems
 import java.util.*
 import org.springframework.data.domain.Page
@@ -30,8 +30,21 @@ interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
     @Query("""MATCH (n:Comparison:Resource {observatory_id: $id}) RETURN COUNT(n) As totalComparisons""")
     fun getObservatoryComparisonsCount(id: ObservatoryId): Long
 
-    @Query("""MATCH (n:Paper:Resource) WHERE n.observatory_id<>'00000000-0000-0000-0000-000000000000' WITH DISTINCT (n.observatory_id) AS observatoryId, COUNT(n) AS resources OPTIONAL MATCH (c:Comparison:Resource) where c.observatory_id<>'00000000-0000-0000-0000-000000000000' AND c.observatory_id = observatoryId WITH DISTINCT (c.observatory_id) as cobservatoryId, count(c) as comparisons, resources, observatoryId RETURN observatoryId, resources, comparisons""")
-    fun getObservatoriesPapersAndComparisonsCount(): List<ObservatoryResources>
+    @Query("""
+MATCH (n:Paper:Resource)
+WHERE n.observatory_id <> '00000000-0000-0000-0000-000000000000'
+WITH n.observatory_id AS observatoryId, COUNT(n) AS papers
+OPTIONAL MATCH (c:Comparison:Resource)
+WHERE c.observatory_id <> '00000000-0000-0000-0000-000000000000' AND c.observatory_id = observatoryId
+WITH observatoryId, COUNT(c) AS comparisons, papers
+WITH observatoryId, comparisons, papers, comparisons + papers AS total
+ORDER BY total DESC
+RETURN observatoryId, papers, comparisons, total""",
+    countQuery = """
+MATCH (n:Paper:Resource)
+WHERE n.observatory_id <> '00000000-0000-0000-0000-000000000000'
+RETURN COUNT(DISTINCT(n.observatory_id))""")
+    fun getObservatoriesPapersAndComparisonsCount(pageable: Pageable): Page<ObservatoryStats>
 
     @Query("""
 CALL {

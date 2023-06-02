@@ -19,6 +19,7 @@ import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 
 interface ResourceRepositoryContractTest {
     val repository: ResourceRepository
@@ -111,6 +112,7 @@ interface ResourceRepositoryContractTest {
 
     @Test
     fun `given a resource with a class, when searched by it's class and observatory ID, it should be found`() {
+        val pageable: Pageable = PageRequest.of(0, 5)
         val observatoryId = ObservatoryId(UUID.randomUUID())
         val classes = setOf(ThingId("ToBeFound"), ThingId("Other"))
         val resource = createResource().copy(
@@ -121,13 +123,15 @@ interface ResourceRepositoryContractTest {
         )
         repository.save(resource)
 
-        val result = repository.findByClassAndObservatoryId(ThingId("ToBeFound"), observatoryId)
-        result.count() shouldBe 1
-        result.first().id shouldBe ThingId("R1234")
+        val result = repository.findAllByClassAndObservatoryId(ThingId("ToBeFound"), observatoryId, pageable)
+        result.content shouldNotBe null
+        result.content.count() shouldBe 1
+        result.content.first().id shouldBe ThingId("R1234")
     }
 
     @Test
     fun `given a resource with a class, when searched by it's class and observatory ID, it should not be found`() {
+        val pageable: Pageable = PageRequest.of(0, 5)
         val observatoryId = ObservatoryId(UUID.randomUUID())
         val classes = setOf(ThingId("NotToBeFound"), ThingId("Other"))
         val resource = createResource().copy(
@@ -138,8 +142,9 @@ interface ResourceRepositoryContractTest {
         )
         repository.save(resource)
 
-        val result = repository.findByClassAndObservatoryId(ThingId("ToBeFound"), observatoryId)
-        result.count() shouldBe 0
+        val result = repository.findAllByClassAndObservatoryId(ThingId("ToBeFound"), observatoryId, pageable)
+        result.content shouldNotBe null
+        result.content.count() shouldBe 0
     }
 
     @Test

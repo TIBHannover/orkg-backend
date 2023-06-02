@@ -1,19 +1,14 @@
 package eu.tib.orkg.prototype.community.domain.model
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.contributions.domain.model.Contributor
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 
 data class Observatory(
-    val id: ObservatoryId?,
-    val name: String?,
+    val id: ObservatoryId,
+    val name: String,
     val description: String?,
-    @JsonProperty("research_field")
-    val researchField: ResearchField?,
-    val members: Set<Contributor> = emptySet(),
-    @JsonProperty("organization_ids")
+    val researchField: ThingId?,
+    val members: Set<ContributorId> = emptySet(),
     val organizationIds: Set<OrganizationId> = emptySet(),
-    @JsonProperty("display_id")
-    val displayId: String? = null
+    val displayId: String
 )
-
-data class ResearchField(var id: String?, var label: String?)

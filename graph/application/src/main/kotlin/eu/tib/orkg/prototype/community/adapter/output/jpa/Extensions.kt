@@ -4,23 +4,27 @@ import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.JpaUserRepo
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.ObservatoryEntity
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresObservatoryRepository
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
+import eu.tib.orkg.prototype.community.application.OrganizationNotFound
 import eu.tib.orkg.prototype.community.domain.model.Observatory
+import eu.tib.orkg.prototype.statements.application.UserNotFound
 
 internal fun PostgresObservatoryRepository.toObservatoryEntity(
     observatory: Observatory,
     organizationRepository: PostgresOrganizationRepository,
     userRepository: JpaUserRepository,
 ): ObservatoryEntity =
-    this.findById(observatory.id?.value!!).orElse(ObservatoryEntity()).apply {
+    findById(observatory.id.value).orElse(ObservatoryEntity()).apply {
         id = observatory.id.value
         name = observatory.name
         description = observatory.description
-        researchField = observatory.researchField?.id
+        researchField = observatory.researchField?.value
         users = observatory.members.map {
-            userRepository.findById(it.id.value).get()
+            userRepository.findById(it.value)
+                .orElseThrow { UserNotFound(it.value) }
         }.toMutableSet()
         displayId = observatory.displayId
         organizations = observatory.organizationIds.map {
-            organizationRepository.findById(it.value).get()
+            organizationRepository.findById(it.value)
+                .orElseThrow { OrganizationNotFound(it.value.toString()) }
         }.toMutableSet()
     }

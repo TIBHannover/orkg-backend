@@ -28,19 +28,28 @@ class ObservatoryResourceController(
 ) : ResourceRepresentationAdapter {
 
     @GetMapping("{id}/papers")
-    fun findPapersByObservatoryId(@PathVariable id: ObservatoryId): Iterable<ResourceRepresentation> =
-        resourceService.findPapersByObservatoryId(id).mapToResourceRepresentation()
+    fun findAllPapersByObservatoryId(
+        @PathVariable id: ObservatoryId,
+        pageable: Pageable
+    ): Page<ResourceRepresentation> =
+        resourceService.findAllPapersByObservatoryId(id, pageable).mapToResourceRepresentation()
 
     @GetMapping("{id}/comparisons")
-    fun findComparisonsByObservatoryId(@PathVariable id: ObservatoryId): Iterable<ResourceRepresentation> =
-        resourceService.findComparisonsByObservatoryId(id).mapToResourceRepresentation()
+    fun findAllComparisonsByObservatoryId(
+        @PathVariable id: ObservatoryId,
+        pageable: Pageable
+    ): Page<ResourceRepresentation> =
+        resourceService.findAllComparisonsByObservatoryId(id, pageable).mapToResourceRepresentation()
 
     @GetMapping("{id}/problems")
-    fun findProblemsByObservatoryId(@PathVariable id: ObservatoryId, pageable: Pageable): Page<ResourceRepresentation> =
-        resourceService.findProblemsByObservatoryId(id, pageable).mapToResourceRepresentation()
+    fun findAllProblemsByObservatoryId(
+        @PathVariable id: ObservatoryId,
+        pageable: Pageable
+    ): Page<ResourceRepresentation> =
+        resourceService.findAllProblemsByObservatoryId(id, pageable).mapToResourceRepresentation()
 
     @GetMapping("{id}/class")
-    fun findProblemsByObservatoryId(
+    fun findAllResourcesByClassInAndVisibilityAndObservatoryId(
         @PathVariable id: ObservatoryId,
         @RequestParam(value = "classes") classes: Set<ThingId>,
         @RequestParam("featured", required = false, defaultValue = "false")

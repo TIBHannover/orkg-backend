@@ -11,7 +11,7 @@ import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.createUser
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.application.ResourceControllerIntegrationTest
+import eu.tib.orkg.prototype.statements.application.ResourceControllerIntegrationTest.RestDoc.pageOfDetailedResourcesResponseFields
 import eu.tib.orkg.prototype.statements.application.RestDocumentationBaseTest
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import org.assertj.core.api.Assertions.*
@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Observatory Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-class ObservatoryControllerTest : RestDocumentationBaseTest() {
+class ObservatoryControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var userService: AuthUseCase
@@ -55,7 +55,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
         service.removeAll()
         classService.removeAll()
 
-        assertThat(observatoryService.listObservatories(PageRequest.of(0, 10))).hasSize(0)
+        assertThat(observatoryService.findAll(PageRequest.of(0, 10))).hasSize(0)
         assertThat(resourceService.findAll(PageRequest.of(0, 10))).hasSize(0)
         assertThat(service.listOrganizations()).hasSize(0)
         assertThat(classService.findAll(PageRequest.of(0, 10))).hasSize(0)
@@ -78,7 +78,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    listOfObservatoriesResponseFields()
+                    pageOfObservatoryResponseFields()
                 )
             )
     }
@@ -120,11 +120,11 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/observatories/$observatoryId/papers"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andDo(
                 document(
                     snippet,
-                    ResourceControllerIntegrationTest.listOfResourcesResponseFields()
+                    pageOfDetailedResourcesResponseFields()
                 )
             )
     }
@@ -145,12 +145,12 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
 
         mockMvc
             .perform(getRequestTo("/api/observatories/$observatoryId/comparisons"))
-            .andExpect(jsonPath("$", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(status().isOk)
             .andDo(
                 document(
                     snippet,
-                    ResourceControllerIntegrationTest.listOfResourcesResponseFields()
+                    pageOfDetailedResourcesResponseFields()
                 )
             )
     }
@@ -176,7 +176,7 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    ResourceControllerIntegrationTest.pageOfDetailedResourcesResponseFields()
+                    pageOfDetailedResourcesResponseFields()
                 )
             )
     }
@@ -240,5 +240,10 @@ class ObservatoryControllerTest : RestDocumentationBaseTest() {
         fun listOfObservatoriesResponseFields(): ResponseFieldsSnippet =
             responseFields(fieldWithPath("[]").description("A list of observatories"))
                 .andWithPrefix("[].", observatoryResponseFields())
+
+        fun pageOfObservatoryResponseFields(): ResponseFieldsSnippet =
+            responseFields(pageableDetailedFieldParameters())
+                .andWithPrefix("content[].", observatoryResponseFields())
+                .andWithPrefix("")
     }
 }

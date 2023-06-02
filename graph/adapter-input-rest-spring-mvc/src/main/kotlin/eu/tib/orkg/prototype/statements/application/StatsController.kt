@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
 import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.ChangeLog
+import eu.tib.orkg.prototype.statements.spi.ObservatoryStats
 import eu.tib.orkg.prototype.statements.spi.TrendingResearchProblems
 import java.util.*
 import org.springframework.data.domain.Page
@@ -127,4 +128,8 @@ class StatsController(private val service: RetrieveStatisticsUseCase) {
         pageable: Pageable
     ): Page<RetrieveStatisticsUseCase.ContributorRecord> =
         service.getTopCurrentContributorsByResearchFieldExcludeSubFields(id, days, pageable)
+
+    @GetMapping("/observatories")
+    fun getObservatoriesPapersAndComparisonsCount(pageable: Pageable): Page<ObservatoryStats> =
+        service.getObservatoriesPapersAndComparisonsCount(pageable)
 }

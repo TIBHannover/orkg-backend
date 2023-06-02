@@ -179,8 +179,13 @@ class SpringDataNeo4jResourceAdapter(
     override fun findPaperByLabel(label: String): Optional<Resource> =
         neo4jRepository.findPaperByLabel(label).map(Neo4jResource::toResource)
 
-    override fun findByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId): Iterable<Resource> =
-        neo4jRepository.findByClassAndObservatoryId(`class`, id).map(Neo4jResource::toResource)
+    override fun findAllByClassAndObservatoryId(
+        `class`: ThingId,
+        id: ObservatoryId,
+        pageable: Pageable
+    ): Page<Resource> =
+        neo4jRepository.findAllByClassAndObservatoryId(`class`, id, pageable)
+            .map(Neo4jResource::toResource)
 
     override fun findPaperById(id: ThingId): Optional<Resource> =
         neo4jRepository.findPaperById(id)
@@ -238,6 +243,6 @@ class SpringDataNeo4jResourceAdapter(
     override fun findAllContributorIds(pageable: Pageable) =
         neo4jRepository.findAllContributorIds(pageable)
 
-    override fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
-        neo4jRepository.findComparisonsByOrganizationId(id, pageable).map(Neo4jResource::toResource)
+    override fun findAllComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllComparisonsByOrganizationId(id, pageable).map(Neo4jResource::toResource)
 }

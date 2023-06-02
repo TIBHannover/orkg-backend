@@ -43,11 +43,11 @@ interface RetrieveResourceUseCase {
     fun findByDOI(doi: String): Optional<Resource>
     fun findById(id: ThingId): Optional<Resource>
     fun findByTitle(title: String): Optional<Resource>
-    fun findComparisonsByObservatoryId(id: ObservatoryId): Iterable<Resource>
+    fun findAllComparisonsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource>
     fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId>
     fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor>
-    fun findPapersByObservatoryId(id: ObservatoryId): Iterable<Resource>
-    fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource>
+    fun findAllPapersByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource>
+    fun findAllProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource>
     fun findAllByClassInAndVisibilityAndObservatoryId(
         classes: Set<ThingId>,
         visibility: VisibilityFilter,
@@ -59,8 +59,8 @@ interface RetrieveResourceUseCase {
         visibility: VisibilityFilter,
         pageable: Pageable
     ): Page<Resource>
-    fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
-    fun findProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
+    fun findAllComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
+    fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
     fun hasStatements(id: ThingId): Boolean
 }
 

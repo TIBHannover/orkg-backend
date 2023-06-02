@@ -113,9 +113,10 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
     override fun findPaperByLabel(label: String) =
         Optional.ofNullable(entities.values.firstOrNull { it.label == label && paperClass in it.classes })
 
-    // TODO: rename to findAllByClassAndObservatoryId
-    override fun findByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId): Iterable<Resource> =
-        entities.values.filter { `class` in it.classes && it.observatoryId == id }
+    override fun findAllByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId, pageable: Pageable): Page<Resource> =
+        findAllFilteredAndPaged(pageable) {
+            `class` in it.classes && it.observatoryId == id
+        }
 
     // TODO: Create a method with class parameter (and possibly unlisted, featured and verified flags)
     override fun findPaperById(id: ThingId) =
@@ -136,7 +137,7 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
             .paged(pageable)
 
     // TODO: Create a method with a generic class parameter
-    override fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable) =
+    override fun findAllComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable) =
         findAllFilteredAndPaged(pageable) {
             comparisonClass in it.classes && it.organizationId == id
         }

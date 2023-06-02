@@ -5,9 +5,9 @@ import eu.tib.orkg.prototype.auth.domain.User
 import eu.tib.orkg.prototype.community.domain.model.Observatory
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.community.domain.model.ResearchField
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.*
@@ -37,8 +37,9 @@ class ObservatoryEntity() {
     @Column(name = "research_field")
     var researchField: String? = null
 
-    @OneToMany(mappedBy = "id", cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-    var users: MutableSet<UserEntity>? = mutableSetOf()
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "observatory_id")
+    var users: MutableSet<UserEntity>? = null
 
     @Column(name = "display_id")
     var displayId: String? = null
@@ -56,12 +57,12 @@ class ObservatoryEntity() {
 fun ObservatoryEntity.toObservatory() =
     Observatory(
         id = ObservatoryId(id!!),
-        name = name,
+        name = name!!,
         description = description,
-        researchField = ResearchField(researchField, null),
-        members = users!!.map(UserEntity::toUser).map(User::toContributor).toSet(),
-        organizationIds = organizations!!.map { OrganizationId(it.id!!) }.toSet(),
-        displayId = displayId
+        researchField = researchField?.let { ThingId(it) },
+        members = users.orEmpty().map { ContributorId(it.id!!) }.toSet(),
+        organizationIds = organizations.orEmpty().map { OrganizationId(it.id!!) }.toSet(),
+        displayId = displayId!!
     )
 
 fun User.toContributor() =

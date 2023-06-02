@@ -104,7 +104,7 @@ fun createObservatory(organizationIds: Set<OrganizationId>) = Observatory(
     id = ObservatoryId(UUID.fromString("95565e51-2b80-4c28-918c-6fbc5e2a9b33")),
     name = "Test Observatory",
     description = "Example Description",
-    researchField = ResearchField("R1234", null),
+    researchField = ThingId("R1234"),
     organizationIds = organizationIds,
     displayId = "test_observatory"
 )

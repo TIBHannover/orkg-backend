@@ -29,7 +29,7 @@ class JpaContributorAdapter(
             .map(User::toContributor)
 
     override fun findAllByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Contributor> =
-        repository.findByObservatoryId(id.value, pageable)
+        repository.findAllByObservatoryId(id.value, pageable)
             .map(UserEntity::toUser)
             .map(User::toContributor)
 

@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype
 
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
+import eu.tib.orkg.prototype.community.api.CreateObservatoryUseCase
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.community.api.OrganizationUseCases
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
@@ -119,6 +120,15 @@ fun ObservatoryUseCases.createObservatory(
     description: String = "Example description",
     displayId: String = name.toDisplayId(),
     id: ObservatoryId? = null
-) = this.create(id, name, description, organizationId, researchField, displayId)
+) = this.create(
+    CreateObservatoryUseCase.CreateCommand(
+        id = id,
+        name = name,
+        description = description,
+        organizationId = organizationId,
+        researchField = researchField,
+        displayId = displayId
+    )
+)
 
 private fun String.toDisplayId() = this.lowercase().replace(Regex("[^a-zA-Z0-9_]"), "_")

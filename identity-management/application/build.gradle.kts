@@ -13,6 +13,7 @@ dependencies {
 
     implementation(project(":common:exceptions"))
 
+    api("org.springframework.data:spring-data-commons")
     api("org.springframework:spring-context")
     api("org.springframework:spring-tx")
     implementation("org.springframework.security:spring-security-crypto") // for PasswordEncoder

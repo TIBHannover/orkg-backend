@@ -8,15 +8,12 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.QueryResult
 
-// This is mapped to the result obtained from UNION of several contributions
-typealias ResultObject = Map<String, Any?>
-
 interface StatsRepository {
     fun getGraphMetaData(): Iterable<HashMap<String, Any>>
     fun getResearchFieldsPapersCount(): Iterable<FieldsStats>
     fun getObservatoryPapersCount(id: ObservatoryId): Long
     fun getObservatoryComparisonsCount(id: ObservatoryId): Long
-    fun getObservatoriesPapersAndComparisonsCount(): List<ObservatoryResources>
+    fun getObservatoriesPapersAndComparisonsCount(pageable: Pageable): Page<ObservatoryStats>
     fun getTopCurrentContributorIdsAndContributionsCount(
         date: String,
         pageable: Pageable
@@ -53,11 +50,12 @@ data class FieldsStats(
  * Observatory resources
  */
 @QueryResult
-data class ObservatoryResources(
+data class ObservatoryStats(
     @JsonProperty("observatory_id")
     val observatoryId: String,
-    val resources: Long = 0,
-    val comparisons: Long = 0
+    val papers: Long = 0,
+    val comparisons: Long = 0,
+    val total: Long = 0
 )
 
 /**

@@ -43,11 +43,11 @@ interface ResourceRepository : EntityRepository<Resource, ThingId> {
     ): Page<Resource>
     fun findPaperByLabel(label: String): Optional<Resource>
     fun findAllPapersByLabel(label: String): Iterable<Resource>
-    fun findByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId): Iterable<Resource>
+    fun findAllByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId, pageable: Pageable): Page<Resource>
     fun findPaperById(id: ThingId): Optional<Resource>
     fun findAllPapersByVerified(verified: Boolean, pageable: Pageable): Page<Resource>
     fun findAllContributorIds(pageable: Pageable): Page<ContributorId>
-    fun findComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
+    fun findAllComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
 
     fun findAllByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource>
     fun findAllListed(pageable: Pageable): Page<Resource>

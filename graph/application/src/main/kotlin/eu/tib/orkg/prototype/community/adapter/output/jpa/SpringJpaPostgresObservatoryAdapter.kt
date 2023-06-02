@@ -30,8 +30,8 @@ class SpringJpaPostgresObservatoryAdapter(
     override fun findById(id: ObservatoryId): Optional<Observatory> =
         postgresRepository.findById(id.value).map(ObservatoryEntity::toObservatory)
 
-    override fun findByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Observatory> =
-        postgresRepository.findByOrganizationsId(id.value, pageable).map(ObservatoryEntity::toObservatory)
+    override fun findAllByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Observatory> =
+        postgresRepository.findAllByOrganizationsId(id.value, pageable).map(ObservatoryEntity::toObservatory)
 
     override fun findByName(name: String): Optional<Observatory> =
         postgresRepository.findByName(name).map(ObservatoryEntity::toObservatory)
@@ -39,8 +39,8 @@ class SpringJpaPostgresObservatoryAdapter(
     override fun findByDisplayId(displayId: String): Optional<Observatory> =
         postgresRepository.findByDisplayId(displayId).map(ObservatoryEntity::toObservatory)
 
-    override fun findByResearchField(researchField: ThingId, pageable: Pageable): Page<Observatory> =
-        postgresRepository.findByResearchField(researchField.value, pageable).map(ObservatoryEntity::toObservatory)
+    override fun findAllByResearchField(researchField: ThingId, pageable: Pageable): Page<Observatory> =
+        postgresRepository.findAllByResearchField(researchField.value, pageable).map(ObservatoryEntity::toObservatory)
 
     override fun findAll(pageable: Pageable): Page<Observatory> =
         postgresRepository.findAll(pageable).map(ObservatoryEntity::toObservatory)

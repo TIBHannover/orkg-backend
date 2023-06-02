@@ -2,10 +2,10 @@ package eu.tib.orkg.prototype.statements.api
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Stats
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.ChangeLog
-import eu.tib.orkg.prototype.statements.spi.ObservatoryResources
+import eu.tib.orkg.prototype.statements.spi.ObservatoryStats
 import eu.tib.orkg.prototype.statements.spi.TrendingResearchProblems
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -36,7 +36,7 @@ interface RetrieveStatisticsUseCase {
     /**
      * Get paper count and comparison count
      */
-    fun getObservatoriesPapersAndComparisonsCount(): Iterable<ObservatoryResources>
+    fun getObservatoriesPapersAndComparisonsCount(pageable: Pageable): Page<ObservatoryStats>
 
     /**
      * Get top contributors

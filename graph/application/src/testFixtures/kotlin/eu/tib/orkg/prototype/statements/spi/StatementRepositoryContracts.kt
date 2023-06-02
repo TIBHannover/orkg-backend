@@ -28,8 +28,6 @@ import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.time.format.DateTimeFormatter.ofPattern
-import kotlin.math.absoluteValue
-import org.orkg.statements.testing.createClass
 import org.orkg.statements.testing.createLiteral
 import org.orkg.statements.testing.createPredicate
 import org.orkg.statements.testing.createResource
@@ -989,7 +987,7 @@ fun <
                 researchProblem
             }
 
-            val result = repository.findProblemsByOrganizationId(organizationId, PageRequest.of(0, 5))
+            val result = repository.findAllProblemsByOrganizationId(organizationId, PageRequest.of(0, 5))
 
             it("returns the correct result") {
                 result shouldNotBe null

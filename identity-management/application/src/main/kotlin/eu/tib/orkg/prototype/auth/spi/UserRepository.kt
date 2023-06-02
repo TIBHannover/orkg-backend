@@ -2,6 +2,8 @@ package eu.tib.orkg.prototype.auth.spi
 
 import eu.tib.orkg.prototype.auth.domain.User
 import java.util.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 
 typealias UserId = UUID
 typealias ObservatoryId = UUID

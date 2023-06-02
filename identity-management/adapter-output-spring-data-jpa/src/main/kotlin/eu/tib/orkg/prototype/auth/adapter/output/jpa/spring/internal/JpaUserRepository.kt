@@ -16,7 +16,7 @@ interface JpaUserRepository :
 
     override fun findById(id: UUID): Optional<UserEntity>
 
-    fun findByObservatoryId(id: UUID, pageable: Pageable): Page<UserEntity>
+    fun findAllByObservatoryId(id: UUID, pageable: Pageable): Page<UserEntity>
 
     fun findByOrganizationId(id: UUID, pageable: Pageable): Page<UserEntity>
 

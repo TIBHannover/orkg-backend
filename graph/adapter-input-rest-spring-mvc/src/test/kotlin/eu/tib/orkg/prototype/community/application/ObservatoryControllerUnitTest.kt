@@ -1,14 +1,9 @@
-package eu.tib.orkg.prototype.statements.application
+package eu.tib.orkg.prototype.community.application
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.auth.spi.UserRepository
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
-import eu.tib.orkg.prototype.community.application.ObservatoryAlreadyExists
-import eu.tib.orkg.prototype.community.application.ObservatoryController
-import eu.tib.orkg.prototype.community.application.ObservatoryNotFound
-import eu.tib.orkg.prototype.community.application.ObservatoryURLNotFound
-import eu.tib.orkg.prototype.community.application.OrganizationNotFound
 import eu.tib.orkg.prototype.community.domain.model.Observatory
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
@@ -19,10 +14,11 @@ import eu.tib.orkg.prototype.createObservatory
 import eu.tib.orkg.prototype.createOrganization
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.application.pageOf
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.services.StatisticsService
-import eu.tib.orkg.prototype.statements.spi.ObservatoryResources
 import io.mockk.every
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.verify
 import java.util.*
 import org.junit.jupiter.api.BeforeEach
@@ -31,8 +27,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
@@ -46,7 +42,7 @@ import org.springframework.web.context.WebApplicationContext
 
 @ContextConfiguration(classes = [ObservatoryController::class, ExceptionHandler::class])
 @WebMvcTest(controllers = [ObservatoryController::class])
-@DisplayName("Given an ObservatoryController controller")
+@DisplayName("Given an Observatory controller")
 internal class ObservatoryControllerUnitTest {
 
     private lateinit var mockMvc: MockMvc
@@ -68,12 +64,9 @@ internal class ObservatoryControllerUnitTest {
     @MockkBean
     private lateinit var contributorService: ContributorService
 
-    @MockkBean
-    private lateinit var resourceService: ResourceUseCases
-
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
-    private lateinit var statisticsService: StatisticsService
+    private lateinit var resourceUseCases: ResourceUseCases
 
     @BeforeEach
     fun setup() {
@@ -82,62 +75,64 @@ internal class ObservatoryControllerUnitTest {
 
     @Test
     fun `Fetching the observatory after creating, status must be 200`() {
-        val organizationsIds = (0..1).map { createOrganization().id!! }.toSet()
+        val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
         val observatory = createObservatory(organizationsIds)
-        every { observatoryUseCases.findById(observatory.id!!) } returns Optional.of(observatory)
+
+        every { observatoryUseCases.findById(observatory.id) } returns Optional.of(observatory)
+        every { resourceUseCases.findById(any()) } returns Optional.empty()
 
         mockMvc.perform(get("/api/observatories/${observatory.id}/"))
             .andExpect(status().isOk)
 
-        verify(exactly = 1) { observatoryUseCases.findById(observatory.id!!) }
+        verify(exactly = 1) { observatoryUseCases.findById(observatory.id) }
     }
 
     @Test
     fun `Creating the observatory with duplicate name, status must be 400`() {
-        val organizationsIds = (0..1).map { createOrganization().id!! }.toSet()
+        val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
         val observatory = createObservatory(organizationsIds)
         val body = ObservatoryController.CreateObservatoryRequest(
-            observatoryName = observatory.name!!,
+            name = observatory.name,
             organizationId = observatory.organizationIds.single(),
             description = observatory.description!!,
-            researchField = ThingId(observatory.researchField?.id!!),
-            displayId = observatory.displayId!!
+            researchField = observatory.researchField!!,
+            displayId = observatory.displayId
         )
-        every { observatoryUseCases.findByName(observatory.name!!) } returns Optional.of(observatory)
+        every { observatoryUseCases.findByName(observatory.name) } returns Optional.of(observatory)
 
         mockMvc.performPost("/api/observatories/", body)
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.path").value("/api/observatories/"))
-            .andExpect(jsonPath("$.message").value(ObservatoryAlreadyExists.withName(observatory.name!!).message))
+            .andExpect(jsonPath("$.message").value(ObservatoryAlreadyExists.withName(observatory.name).message))
 
         verify(exactly = 0) {
-            observatoryUseCases.create(any(), any(), any(), any(), any(), any())
+            observatoryUseCases.create(any())
         }
     }
 
     @Test
     fun `Creating the observatory with duplicate displayId, status must be 400`() {
-        val organizationsIds = (0..1).map { createOrganization().id!! }.toSet()
+        val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
         val observatory = createObservatory(organizationsIds)
 
         val body = ObservatoryController.CreateObservatoryRequest(
-            observatoryName = "observatoryName",
+            name = "observatoryName",
             organizationId = observatory.organizationIds.single(),
             description = observatory.description!!,
-            researchField = ThingId(observatory.researchField?.id!!),
-            displayId = observatory.displayId!!
+            researchField = observatory.researchField!!,
+            displayId = observatory.displayId
         )
         every { observatoryUseCases.findByName("observatoryName") } returns Optional.empty()
-        every { observatoryUseCases.findByDisplayId(observatory.displayId!!) } returns Optional.of(observatory)
+        every { observatoryUseCases.findByDisplayId(observatory.displayId) } returns Optional.of(observatory)
 
         mockMvc.performPost("/api/observatories/", body)
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.path").value("/api/observatories/"))
-            .andExpect(jsonPath("$.message").value(ObservatoryAlreadyExists.withDisplayId(observatory.displayId!!).message))
+            .andExpect(jsonPath("$.message").value(ObservatoryAlreadyExists.withDisplayId(observatory.displayId).message))
 
-        verify(exactly = 0) { observatoryUseCases.create(any(), any(), any(), any(), any(), any()) }
+        verify(exactly = 0) { observatoryUseCases.create(any()) }
     }
 
     @Test
@@ -159,12 +154,10 @@ internal class ObservatoryControllerUnitTest {
 
         every { observatoryUseCases.findByName(any()) } returns Optional.empty()
         every { observatoryUseCases.findByDisplayId(any()) } returns Optional.empty()
-        every {
-            observatoryUseCases.create(any(), any(), any(), organizationId, any(), any())
-        } throws OrganizationNotFound(organizationId)
+        every { observatoryUseCases.create(any()) } throws OrganizationNotFound(organizationId)
 
         val body = ObservatoryController.CreateObservatoryRequest(
-            observatoryName = "test",
+            name = "test",
             organizationId = organizationId,
             description = "test observatory",
             researchField = ThingId("R45"),
@@ -180,15 +173,16 @@ internal class ObservatoryControllerUnitTest {
 
     @Test
     fun `Fetching the observatory with display Id, status must be 200`() {
-        val organizationsIds = (0..1).map { createOrganization().id!! }.toSet()
+        val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
         val observatory = createObservatory(organizationsIds)
 
-        every { observatoryUseCases.findByDisplayId(observatory.displayId!!) } returns Optional.of(observatory)
+        every { observatoryUseCases.findByDisplayId(observatory.displayId) } returns Optional.of(observatory)
+        every { resourceUseCases.findById(any()) } returns Optional.empty()
 
         mockMvc.perform(get("/api/observatories/${observatory.displayId}/"))
             .andExpect(status().isOk)
 
-        verify(exactly = 1) { observatoryUseCases.findByDisplayId(observatory.displayId!!) }
+        verify(exactly = 1) { observatoryUseCases.findByDisplayId(observatory.displayId) }
     }
 
     @Test
@@ -205,30 +199,48 @@ internal class ObservatoryControllerUnitTest {
 
     @Test
     fun `Fetching all observatories, status must be 200`() {
-        val organizationsIds = (0..1).map { createOrganization().id!! }.toSet()
+        val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
         val observatory1 = createObservatory(organizationsIds)
         val observatory2 = createObservatory(organizationsIds)
-        val pageable = PageRequest.of(0, Int.MAX_VALUE)
-        val page: Page<Observatory> = PageImpl(listOf(observatory1, observatory2))
+        val pageable: Pageable = PageRequest.of(0, 10)
+        val page: Page<Observatory> = pageOf(pageable, observatory1, observatory2)
 
-        every { observatoryUseCases.listObservatories(pageable) } returns page
+        every { observatoryUseCases.findAll(any()) } returns page
+        every { resourceUseCases.findById(any()) } returns Optional.empty()
 
         mockMvc.perform(get("/api/observatories/"))
             .andExpect(status().isOk)
 
-        verify(exactly = 1) { observatoryUseCases.listObservatories(pageable) }
+        verify(exactly = 1) { observatoryUseCases.findAll(any()) }
+    }
+
+    @Test
+    fun `Fetching all observatories by research field, status must be 200`() {
+        val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
+        val observatory1 = createObservatory(organizationsIds)
+        val observatory2 = createObservatory(organizationsIds)
+        val pageable: Pageable = PageRequest.of(0, 10)
+        val page: Page<Observatory> = pageOf(pageable, observatory1, observatory2)
+
+        every { observatoryUseCases.findAllByResearchField(observatory1.researchField!!, any()) } returns page
+        every { resourceUseCases.findById(any()) } returns Optional.empty()
+
+        mockMvc.perform(get("/api/observatories/?research_field=${observatory1.researchField}"))
+            .andExpect(status().isOk)
+
+        verify(exactly = 1) { observatoryUseCases.findAllByResearchField(observatory1.researchField!!, any()) }
     }
 
     @Test
     fun `Given the observatory name is replaced, when service succeeds, then status is 200 OK and observatory is returned`() {
-        val organizationsIds = (0..1).map { createOrganization().id!! }.toSet()
+        val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
         val observatory = createObservatory(organizationsIds)
         val updatedName = "new observatory"
         val body = ObservatoryController.UpdateRequest(updatedName)
-        val updatedObservatory = observatory.copy(name = updatedName)
 
-        every { observatoryUseCases.findById(observatory.id!!) } returns Optional.of(observatory)
-        every { observatoryUseCases.changeName(observatory.id!!, updatedName) } returns updatedObservatory
+        every { observatoryUseCases.findById(observatory.id) } returns Optional.of(observatory)
+        every { observatoryUseCases.changeName(observatory.id, updatedName) } just runs
+        every { resourceUseCases.findById(any()) } returns Optional.empty()
 
         mockMvc.performPut("/api/observatories/${observatory.id}/name", body)
             .andExpect(status().isOk)
@@ -239,14 +251,14 @@ internal class ObservatoryControllerUnitTest {
 
     @Test
     fun `Updating the observatory with invalid name, then status must be 400`() {
-        val organizationsIds = (0..1).map { createOrganization().id!! }.toSet()
+        val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
         val observatory = createObservatory(organizationsIds)
         val observatoryId = observatory.id
         val updatedName = ""
         val body = ObservatoryController.UpdateRequest(updatedName)
-        val updatedObservatory = observatory.copy(name = updatedName)
-        every { observatoryUseCases.findById(observatoryId!!) } returns Optional.of(observatory)
-        every { observatoryUseCases.changeName(observatoryId!!, updatedName) } returns updatedObservatory
+
+        every { observatoryUseCases.findById(observatoryId) } returns Optional.of(observatory)
+        every { observatoryUseCases.changeName(observatoryId, updatedName) } just runs
 
         mockMvc.performPut("/api/observatories/$observatoryId/name", body)
             .andExpect(status().isBadRequest)
@@ -264,7 +276,8 @@ internal class ObservatoryControllerUnitTest {
         val id = ObservatoryId(UUID.randomUUID())
         val updatedName = "name"
         val body = ObservatoryController.UpdateRequest(updatedName)
-        every { observatoryUseCases.findById(id) } returns Optional.empty()
+
+        every { observatoryUseCases.changeName(id, updatedName) } throws ObservatoryNotFound(id)
 
         mockMvc.performPut("/api/observatories/$id/name", body)
             .andExpect(status().isNotFound)
@@ -281,14 +294,15 @@ internal class ObservatoryControllerUnitTest {
 
     @Test
     fun `Given the observatory description is replaced, when service succeeds, then status is 200 OK and observatory is returned`() {
-        val organizationsIds = (0..1).map { createOrganization().id!! }.toSet()
+        val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
         val observatory = createObservatory(organizationsIds)
-        val id = observatory.id!!
+        val id = observatory.id
         val updatedDescription = "new description"
         val body = ObservatoryController.UpdateRequest(updatedDescription)
-        val updatedObservatory = observatory.copy(description = updatedDescription)
+
         every { observatoryUseCases.findById(id) } returns Optional.of(observatory)
-        every { observatoryUseCases.changeDescription(id, updatedDescription) } returns updatedObservatory
+        every { observatoryUseCases.changeDescription(id, updatedDescription) } just runs
+        every { resourceUseCases.findById(any()) } returns Optional.empty()
 
         mockMvc.performPut("/api/observatories/$id/description", body)
             .andExpect(status().isOk)
@@ -299,15 +313,15 @@ internal class ObservatoryControllerUnitTest {
 
     @Test
     fun `Given the observatory organization is replaced, when service succeeds, then status is 200 OK and observatory is returned`() {
-        val organizationsIds = (0..1).map { createOrganization().id!! }.toSet()
+        val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
         val observatory = createObservatory(organizationsIds)
-        val id = observatory.id!!
+        val id = observatory.id
         val updatedOrganizationId = createOrganization().id
         val body = ObservatoryController.UpdateOrganizationRequest(updatedOrganizationId!!)
-        val updatedObservatory = observatory.copy(organizationIds = setOf(updatedOrganizationId))
 
         every { observatoryUseCases.findById(id) } returns Optional.of(observatory)
-        every { observatoryUseCases.addOrganization(id, updatedOrganizationId) } returns updatedObservatory
+        every { observatoryUseCases.addOrganization(id, updatedOrganizationId) } just runs
+        every { resourceUseCases.findById(any()) } returns Optional.empty()
 
         mockMvc.performPut("/api/observatories/add/$id/organization", body)
             .andExpect(status().isOk)
@@ -319,9 +333,10 @@ internal class ObservatoryControllerUnitTest {
     @Test
     fun `Updating the organization of non existing observatory, then status must be 404`() {
         val id = ObservatoryId(UUID.randomUUID())
-        val updatedOrganizationId = createOrganization().id
-        val body = ObservatoryController.UpdateOrganizationRequest(updatedOrganizationId!!)
-        every { observatoryUseCases.findById(id) } returns Optional.empty()
+        val updatedOrganizationId = OrganizationId(UUID.randomUUID())
+        val body = ObservatoryController.UpdateOrganizationRequest(updatedOrganizationId)
+
+        every { observatoryUseCases.addOrganization(id, updatedOrganizationId) } throws ObservatoryNotFound(id)
 
         mockMvc.performPut("/api/observatories/add/$id/organization", body)
             .andExpect(status().isNotFound)
@@ -338,14 +353,15 @@ internal class ObservatoryControllerUnitTest {
 
     @Test
     fun `Updating the observatory with no existing organization, then status must be 404`() {
-        val organizationsIds = (0..1).map { createOrganization().id!! }.toSet()
+        val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
         val observatory = createObservatory(organizationsIds)
 
         val organizationId = OrganizationId(UUID.randomUUID())
         val body = ObservatoryController.UpdateOrganizationRequest(organizationId)
-        every { observatoryUseCases.findById(observatory.id!!) } returns Optional.of(observatory)
+
+        every { observatoryUseCases.findById(observatory.id) } returns Optional.of(observatory)
         every {
-            observatoryUseCases.addOrganization(observatory.id!!, organizationId)
+            observatoryUseCases.addOrganization(observatory.id, organizationId)
         } throws OrganizationNotFound(organizationId)
 
         mockMvc.performPut("/api/observatories/add/${observatory.id}/organization", body)
@@ -366,7 +382,8 @@ internal class ObservatoryControllerUnitTest {
         val id = ObservatoryId(UUID.randomUUID())
         val updatedDescription = "description"
         val body = ObservatoryController.UpdateRequest(updatedDescription)
-        every { observatoryUseCases.findById(id) } returns Optional.empty()
+
+        every { observatoryUseCases.changeDescription(id, updatedDescription) } throws ObservatoryNotFound(id)
 
         mockMvc.performPut("/api/observatories/$id/description", body)
             .andExpect(status().isNotFound)
@@ -383,14 +400,14 @@ internal class ObservatoryControllerUnitTest {
 
     @Test
     fun `Updating the observatory with invalid description, the status is 400`() {
-        val organizationsIds = (0..1).map { createOrganization().id!! }.toSet()
+        val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
         val observatory = createObservatory(organizationsIds)
-        val id = observatory.id!!
+        val id = observatory.id
         val updatedDescription = ""
         val body = ObservatoryController.UpdateRequest(updatedDescription)
-        val updatedObservatory = observatory.copy(description = updatedDescription)
+
         every { observatoryUseCases.findById(id) } returns Optional.of(observatory)
-        every { observatoryUseCases.changeDescription(id, updatedDescription) } returns updatedObservatory
+        every { observatoryUseCases.changeDescription(id, updatedDescription) } just runs
 
         mockMvc.performPut("/api/observatories/$id/description", body)
             .andExpect(status().isBadRequest)
@@ -405,17 +422,16 @@ internal class ObservatoryControllerUnitTest {
 
     @Test
     fun `Given the observatory research field is replaced, when service succeeds, then status is 200 OK and observatory is returned`() {
-        val organizationsIds = (0..1).map { createOrganization().id!! }.toSet()
+        val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
         val observatory = createObservatory(organizationsIds)
-        val id = observatory.id!!
+        val id = observatory.id
         val newResource = createResource()
-        val newResearchField = ResearchField(newResource.id.value, newResource.label)
-        val body = ObservatoryController.UpdateRequest(newResearchField.id!!)
-        val updatedObservatory = observatory.copy(researchField = newResearchField)
+        val newResearchField = newResource.id
+        val body = ObservatoryController.UpdateRequest(newResearchField.value)
 
         every { observatoryUseCases.findById(id) } returns Optional.of(observatory)
-        every { resourceService.findById(newResource.id) } returns Optional.of(newResource)
-        every { observatoryUseCases.changeResearchField(id, newResearchField) } returns updatedObservatory
+        every { observatoryUseCases.changeResearchField(id, newResearchField) } just runs
+        every { resourceUseCases.findById(any()) } returns Optional.empty()
 
         mockMvc.performPut("/api/observatories/$id/research_field", body)
             .andExpect(status().isOk)
@@ -426,9 +442,7 @@ internal class ObservatoryControllerUnitTest {
 
     @Test
     fun `Updating the observatory with wrong research field, status is 400`() {
-        val organizationsIds = (0..1).map { createOrganization().id!! }.toSet()
-        val observatory = createObservatory(organizationsIds)
-        val id = observatory.id!!
+        val id = ObservatoryId(UUID.randomUUID())
         val newResearchField = ResearchField("", "")
         val body = ObservatoryController.UpdateRequest(newResearchField.id!!)
 
@@ -446,11 +460,10 @@ internal class ObservatoryControllerUnitTest {
     @Test
     fun `Updating the research field of non existing observatory, status is 404`() {
         val id = ObservatoryId(UUID.randomUUID())
-        val newResource = createResource()
-        val newResearchField = ResearchField(newResource.id.value, newResource.label)
-        val body = ObservatoryController.UpdateRequest(value = newResearchField.id!!)
-        every { observatoryUseCases.findById(id) } returns Optional.empty()
-        every { resourceService.findById(newResource.id) } returns Optional.of(newResource)
+        val researchFieldId = ThingId("R1234")
+        val body = ObservatoryController.UpdateRequest(researchFieldId.value)
+
+        every { observatoryUseCases.changeResearchField(id, researchFieldId) } throws ObservatoryNotFound(id)
 
         mockMvc.performPut("/api/observatories/$id/research_field", body)
             .andExpect(status().isNotFound)
@@ -466,27 +479,16 @@ internal class ObservatoryControllerUnitTest {
     }
 
     @Test
-    fun `Given the observatory id, when service succeeds, then status is 200 OK and observatory statistics are returned`() {
-        val id = ObservatoryId(UUID.randomUUID())
-        val response = ObservatoryResources(id.value.toString(), 1, 0)
-        every { statisticsService.getObservatoriesPapersAndComparisonsCount() } returns listOf(response)
-
-        mockMvc.perform(get("/api/observatories/stats/observatories"))
-            .andExpect(status().isOk)
-
-        verify(exactly = 1) { statisticsService.getObservatoriesPapersAndComparisonsCount() }
-    }
-
-    @Test
     fun `Given the observatory id, delete the linked organization, when service succeeds, then status is 200 OK`() {
-        val organizationsIds = (0..1).map { createOrganization().id!! }.toSet()
+        val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
         val observatory = createObservatory(organizationsIds)
-        val id = observatory.id!!
+        val id = observatory.id
         val organizationId = organizationsIds.single()
         val body = ObservatoryController.UpdateOrganizationRequest(organizationId)
 
         every { observatoryUseCases.findById(id) } returns Optional.of(observatory)
-        every { observatoryUseCases.deleteOrganization(id, organizationId) } returns observatory
+        every { observatoryUseCases.deleteOrganization(id, organizationId) } just runs
+        every { resourceUseCases.findById(any()) } returns Optional.empty()
 
         mockMvc.performPut("/api/observatories/delete/$id/organization", body)
             .andExpect(status().isOk)
@@ -500,7 +502,8 @@ internal class ObservatoryControllerUnitTest {
         val id = ObservatoryId(UUID.randomUUID())
         val organizationId = OrganizationId(UUID.randomUUID())
         val body = ObservatoryController.UpdateOrganizationRequest(organizationId)
-        every { observatoryUseCases.findById(id) } returns Optional.empty()
+
+        every { observatoryUseCases.deleteOrganization(id, organizationId) } throws ObservatoryNotFound(id)
 
         mockMvc.performPut("/api/observatories/delete/$id/organization", body)
             .andExpect(status().isNotFound)
@@ -517,15 +520,15 @@ internal class ObservatoryControllerUnitTest {
 
     @Test
     fun `Given the observatory id, delete the non existing organization, then status is 404`() {
-        val organizationsIds = (0..1).map { createOrganization().id!! }.toSet()
+        val organizationsIds = setOf(OrganizationId(UUID.randomUUID()))
         val observatory = createObservatory(organizationsIds)
 
         val organizationId = OrganizationId(UUID.randomUUID())
         // deleting non-existing organization
         val body = ObservatoryController.UpdateOrganizationRequest(organizationId)
 
-        every { observatoryUseCases.findById(observatory.id!!) } returns Optional.of(observatory)
-        every { observatoryUseCases.deleteOrganization(observatory.id!!, organizationId) } throws OrganizationNotFound(organizationId)
+        every { observatoryUseCases.findById(observatory.id) } returns Optional.of(observatory)
+        every { observatoryUseCases.deleteOrganization(observatory.id, organizationId) } throws OrganizationNotFound(organizationId)
 
         mockMvc.performPut("/api/observatories/delete/${observatory.id}/organization", body)
             .andExpect(status().isNotFound)

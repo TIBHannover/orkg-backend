@@ -13,15 +13,15 @@ interface ObservatoryRepository {
 
     fun findById(id: ObservatoryId): Optional<Observatory>
 
-    fun findByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Observatory>
-
     fun findByName(name: String): Optional<Observatory>
 
     fun findByDisplayId(displayId: String): Optional<Observatory>
 
-    fun findByResearchField(researchField: ThingId, pageable: Pageable): Page<Observatory>
-
     fun findAll(pageable: Pageable): Page<Observatory>
+
+    fun findAllByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Observatory>
+
+    fun findAllByResearchField(researchField: ThingId, pageable: Pageable): Page<Observatory>
 
     fun deleteAll()
 }

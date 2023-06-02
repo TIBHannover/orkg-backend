@@ -1,14 +1,9 @@
-package eu.tib.orkg.prototype.statements.application
+package eu.tib.orkg.prototype.community.application
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.community.api.OrganizationUseCases
-import eu.tib.orkg.prototype.community.application.EncodedImage
-import eu.tib.orkg.prototype.community.application.InvalidImageEncoding
-import eu.tib.orkg.prototype.community.application.LogoNotFound
-import eu.tib.orkg.prototype.community.application.OrganizationController
-import eu.tib.orkg.prototype.community.application.OrganizationNotFound
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationType
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
@@ -63,7 +58,7 @@ import org.springframework.web.context.WebApplicationContext
 
 @ContextConfiguration(classes = [OrganizationController::class, ExceptionHandler::class])
 @WebMvcTest(controllers = [OrganizationController::class])
-@DisplayName("Given an OrganizationController controller")
+@DisplayName("Given an Organization controller")
 internal class OrganizationControllerUnitTest {
 
     private lateinit var mockMvc: MockMvc

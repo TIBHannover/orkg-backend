@@ -12,11 +12,13 @@ import eu.tib.orkg.prototype.statements.spi.statementRepositoryContract
 import io.kotest.core.spec.style.DescribeSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
+import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.ContextConfiguration
 
 @DataNeo4jTest
+@EnableCaching
 @ContextConfiguration(
     classes = [
         SpringDataNeo4jStatementAdapter::class,

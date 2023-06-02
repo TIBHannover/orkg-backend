@@ -80,11 +80,26 @@ interface Neo4jStatementRepository :
 
     fun findByStatementId(id: StatementId): Optional<Neo4jStatement>
 
-    @Query("""MATCH (:`Thing`)-[r:`RELATED` {statement_id: $id}]->(o) DELETE r WITH [n IN [o] WHERE "Literal" IN LABELS(n) AND NOT (n)--()] AS l FOREACH(n IN l | DELETE n)""")
-    fun deleteByStatementId(id: StatementId)
+    @Query("""
+MATCH (:`Thing`)-[r:`RELATED` {statement_id: $id}]->(o)
+DELETE r
+WITH o
+WHERE "Literal" IN LABELS(o) AND NOT (o)--()
+WITH o.id AS id, o
+DELETE o
+RETURN id""")
+    fun deleteByStatementId(id: StatementId): Optional<ThingId>
 
-    @Query("""UNWIND $ids AS id MATCH (:`Thing`)-[r:`RELATED` {statement_id: id}]->(o) DELETE r WITH [n IN [o] WHERE "Literal" IN LABELS(n) AND NOT (n)--()] AS l FOREACH(n IN l | DELETE n)""")
-    fun deleteByStatementIds(ids: Set<StatementId>)
+    @Query("""
+UNWIND $ids AS id
+MATCH (:`Thing`)-[r:`RELATED` {statement_id: id}]->(o)
+DELETE r
+WITH o
+WHERE "Literal" IN LABELS(o) AND NOT (o)--()
+WITH o.id AS id, o
+DELETE o
+RETURN id""")
+    fun deleteByStatementIds(ids: Set<StatementId>): Set<ThingId>
 
     @Query("$MATCH_STATEMENT $BY_SUBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_STATEMENT",
     countQuery = "$MATCH_STATEMENT $BY_SUBJECT_ID $WITH_SORTABLE_FIELDS $RETURN_COUNT")

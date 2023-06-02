@@ -23,13 +23,11 @@ import org.neo4j.cypherdsl.core.Cypher.anyNode
 import org.neo4j.cypherdsl.core.Cypher.asExpression
 import org.neo4j.cypherdsl.core.Cypher.call
 import org.neo4j.cypherdsl.core.Cypher.listOf
-import org.neo4j.cypherdsl.core.Cypher.listWith
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.optionalMatch
-import org.neo4j.cypherdsl.core.Cypher.raw
 import org.neo4j.cypherdsl.core.Cypher.returning
 import org.neo4j.cypherdsl.core.Cypher.union
 import org.neo4j.cypherdsl.core.Cypher.unwind
@@ -39,6 +37,7 @@ import org.neo4j.cypherdsl.core.Functions.count
 import org.neo4j.cypherdsl.core.Functions.countDistinct
 import org.neo4j.cypherdsl.core.Functions.labels
 import org.neo4j.cypherdsl.core.Predicates.exists
+import org.springframework.cache.CacheManager
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.core.Neo4jClient
@@ -54,7 +53,8 @@ private const val RELATED = "RELATED"
 class SpringDataNeo4jStatementAdapter(
     private val neo4jStatementIdGenerator: Neo4jStatementIdGenerator,
     private val predicateRepository: PredicateRepository,
-    override val neo4jClient: Neo4jClient
+    override val neo4jClient: Neo4jClient,
+    private val cacheManager: CacheManager? = null,
 ) : SpringDataNeo4jAdapter(neo4jClient), StatementRepository {
 
     override fun nextIdentity(): StatementId {
@@ -100,52 +100,56 @@ class SpringDataNeo4jStatementAdapter(
 
     override fun deleteByStatementId(id: StatementId) {
         val o = name("o")
-        val n = name("n")
         val l = name("l")
-        val node = anyNode().named(n)
+        val node = anyNode().named(o)
         val relation = node("Thing")
-            .relationshipTo(anyNode().named(o), RELATED)
+            .relationshipTo(node, RELATED)
             .withProperties("statement_id", literalOf<String>(id.value))
         val query = match(relation)
             .delete(relation)
-            .with(
-                listWith(n).`in`(listOf(o))
-                    .where(
-                        literalOf<String>("Literal").`in`(labels(node))
-                            .and(node.relationshipBetween(anyNode()).asCondition().not())
-                    ).returning(n)
-                    .`as`(l)
-            ).returningRaw(raw("FOREACH(n IN l | DELETE n)"))
+            .with(o)
+            .where(
+                literalOf<String>("Literal").`in`(labels(node))
+                    .and(node.relationshipBetween(anyNode()).asCondition().not())
+            ).with(o.property("id").`as`(l), o.`as`(o))
+            .delete(o)
+            .returning(l)
             .build()
 
-        neo4jClient.query(query.cypher).run()
+        neo4jClient.query(query.cypher)
+            .fetchAs<ThingId>()
+            .one()
+            ?.let(::evictFromCaches)
     }
 
     override fun deleteByStatementIds(ids: Set<StatementId>) {
         val o = name("o")
-        val n = name("n")
         val l = name("l")
         val id = name("id")
-        val node = anyNode().named(n)
+        val node = anyNode().named(o)
         val relation = node("Thing")
-            .relationshipTo(anyNode().named(o), RELATED)
+            .relationshipTo(node, RELATED)
             .withProperties("statement_id", id)
         val query = unwind(literalOf<Set<String>>(ids.map { it.value }))
             .`as`(id)
             .with(id)
             .match(relation)
             .delete(relation)
-            .with(
-                listWith(n).`in`(listOf(o))
-                    .where(
-                        literalOf<String>("Literal").`in`(labels(node))
-                            .and(node.relationshipBetween(anyNode()).asCondition().not())
-                    ).returning(n)
-                    .`as`(l)
-            ).returningRaw(raw("FOREACH(n IN l | DELETE n)"))
+            .with(o)
+            .where(
+                literalOf<String>("Literal").`in`(labels(node))
+                    .and(node.relationshipBetween(anyNode()).asCondition().not())
+            ).with(o.property("id").`as`(l), o.`as`(o))
+            .delete(o)
+            .returning(l)
             .build()
 
-        neo4jClient.query(query.cypher).run()
+        val literals = neo4jClient.query(query.cypher)
+            .fetchAs<ThingId>()
+            .all()
+        if (literals.isNotEmpty()) {
+            literals.forEach(::evictFromCaches)
+        }
     }
 
     override fun deleteAll() {
@@ -710,5 +714,11 @@ class SpringDataNeo4jStatementAdapter(
         if (blacklist.isNotEmpty() || whitelist.isNotEmpty())
             conf["labelFilter"] = labelFilter
         return conf
+    }
+
+    private fun evictFromCaches(id: ThingId) {
+        cacheManager?.getCache(LITERAL_ID_TO_LITERAL_CACHE)?.evictIfPresent(id)
+        cacheManager?.getCache(LITERAL_ID_TO_LITERAL_EXISTS_CACHE)?.evictIfPresent(id)
+        cacheManager?.getCache(THING_ID_TO_THING_CACHE)?.evictIfPresent(id)
     }
 }

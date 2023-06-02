@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.discussions.application
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.auth.domain.UserService
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.discussions.DiscussionCommentRepresentationAdapter
 import eu.tib.orkg.prototype.discussions.api.CreateDiscussionCommentUseCase.CreateCommand
 import eu.tib.orkg.prototype.discussions.api.DiscussionCommentRepresentation
 import eu.tib.orkg.prototype.discussions.api.DiscussionUseCases
@@ -33,14 +34,14 @@ import org.springframework.web.util.UriComponentsBuilder
 class DiscussionController(
     private val service: DiscussionUseCases,
     private val userService: UserService
-) {
+) : DiscussionCommentRepresentationAdapter {
     @PostMapping("/topic/{topic}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun createDiscussionComment(
         @PathVariable topic: ThingId,
         @RequestBody @Valid request: CreateCommentRequest,
         uriComponentsBuilder: UriComponentsBuilder,
         principal: Principal?
-    ): ResponseEntity<Any> {
+    ): ResponseEntity<DiscussionCommentRepresentation> {
         if (principal?.name == null)
             return ResponseEntity(HttpStatus.UNAUTHORIZED)
         val userId = UUID.fromString(principal.name)
@@ -56,24 +57,26 @@ class DiscussionController(
             .path("api/discussions/topic/{topic}/{comment}")
             .buildAndExpand(topic, comment)
             .toUri()
-        return created(location).body(service.findByTopicAndCommentId(topic, comment).get())
+        return created(location).body(
+            service.findByTopicAndCommentId(topic, comment).mapToDiscussionCommentRepresentation().get()
+        )
     }
 
     @GetMapping("/topic/{topic}")
     fun findDiscussionComments(
         @PathVariable topic: ThingId,
         pageable: Pageable
-    ): Page<DiscussionCommentRepresentation> {
-        return service.findAllByTopic(topic, pageable)
-    }
+    ): Page<DiscussionCommentRepresentation> =
+        service.findAllByTopic(topic, pageable).mapToDiscussionCommentRepresentation()
 
     @GetMapping("/topic/{topic}/{comment}")
     fun findDiscussionComment(
         @PathVariable topic: ThingId,
         @PathVariable comment: DiscussionCommentId
-    ): DiscussionCommentRepresentation {
-        return service.findByTopicAndCommentId(topic, comment).orElseThrow { CommentNotFound(comment) }
-    }
+    ): DiscussionCommentRepresentation =
+        service.findByTopicAndCommentId(topic, comment)
+            .mapToDiscussionCommentRepresentation()
+            .orElseThrow { CommentNotFound(comment) }
 
     @DeleteMapping("/topic/{topic}/{comment}")
     fun deleteDiscussionComment(

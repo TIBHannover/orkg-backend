@@ -39,9 +39,9 @@ private val reservedClassIds = setOf(
 
 internal data class StatementMapper(
     val predicateRepository: PredicateRepository,
-    val subject: String = "s",
-    val relation: String = "r",
-    val `object`: String = "o",
+    val subject: String = "sub",
+    val relation: String = "rel",
+    val `object`: String = "obj",
 ) : BiFunction<TypeSystem, Record, GeneralStatement> {
     constructor(
         predicateRepository: PredicateRepository,

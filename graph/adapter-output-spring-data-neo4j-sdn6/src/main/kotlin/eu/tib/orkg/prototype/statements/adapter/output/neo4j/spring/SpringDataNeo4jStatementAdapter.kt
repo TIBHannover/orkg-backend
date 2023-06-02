@@ -32,11 +32,14 @@ import org.neo4j.cypherdsl.core.Cypher.returning
 import org.neo4j.cypherdsl.core.Cypher.union
 import org.neo4j.cypherdsl.core.Cypher.unwind
 import org.neo4j.cypherdsl.core.Cypher.valueAt
+import org.neo4j.cypherdsl.core.ExposesReturning
 import org.neo4j.cypherdsl.core.Functions.collect
 import org.neo4j.cypherdsl.core.Functions.count
 import org.neo4j.cypherdsl.core.Functions.countDistinct
 import org.neo4j.cypherdsl.core.Functions.labels
 import org.neo4j.cypherdsl.core.Predicates.exists
+import org.neo4j.cypherdsl.core.StatementBuilder
+import org.neo4j.cypherdsl.core.SymbolicName
 import org.springframework.cache.CacheManager
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -69,10 +72,10 @@ class SpringDataNeo4jStatementAdapter(
     override fun save(statement: GeneralStatement) {
         val subject = node("Thing")
             .withProperties("id", literalOf<String>(statement.subject.id.value))
-            .named("s")
+            .named("sub")
         val `object` = node("Thing")
             .withProperties("id", literalOf<String>(statement.`object`.id.value))
-            .named("o")
+            .named("obj")
         val query = match(subject)
             .match(`object`)
             .create(
@@ -87,7 +90,7 @@ class SpringDataNeo4jStatementAdapter(
     }
 
     override fun count(): Long {
-        val r = name("r")
+        val r = name("rel")
         val query = match(anyNode().relationshipTo(anyNode(), RELATED).named(r))
             .returning(count(r))
             .build()
@@ -99,7 +102,7 @@ class SpringDataNeo4jStatementAdapter(
     override fun delete(statement: GeneralStatement) = deleteByStatementId(statement.id!!)
 
     override fun deleteByStatementId(id: StatementId) {
-        val o = name("o")
+        val o = name("obj")
         val l = name("l")
         val node = anyNode().named(o)
         val relation = node("Thing")
@@ -123,7 +126,7 @@ class SpringDataNeo4jStatementAdapter(
     }
 
     override fun deleteByStatementIds(ids: Set<StatementId>) {
-        val o = name("o")
+        val o = name("obj")
         val l = name("l")
         val id = name("id")
         val node = anyNode().named(o)
@@ -153,7 +156,7 @@ class SpringDataNeo4jStatementAdapter(
     }
 
     override fun deleteAll() {
-        val r = name("r")
+        val r = name("rel")
         val query = match(
             anyNode().relationshipTo(anyNode(), RELATED)
                 .named(r)
@@ -163,12 +166,12 @@ class SpringDataNeo4jStatementAdapter(
     }
 
     override fun findAll(pageable: Pageable): Page<GeneralStatement> {
-        val r = name("r")
+        val r = name("rel")
         val subject = anyNode()
         val `object` = anyNode()
         val match = match(subject.relationshipTo(`object`, RELATED).named(r))
         val query = match
-            .returning(r, subject.`as`("s"), `object`.`as`("o"))
+            .returningWithSortableFields(r, subject, `object`)
             .build(pageable)
         val countQuery = match
             .returning(count(r))
@@ -180,7 +183,7 @@ class SpringDataNeo4jStatementAdapter(
     }
 
     override fun countStatementsAboutResource(id: ThingId): Long {
-        val r = name("r")
+        val r = name("rel")
         val subject = node("Thing")
         val `object` = node("Resource")
             .withProperties("id", literalOf<String>(id.value))
@@ -195,7 +198,7 @@ class SpringDataNeo4jStatementAdapter(
     }
 
     override fun countStatementsAboutResources(resourceIds: Set<ThingId>): Map<ThingId, Long> {
-        val r = name("r")
+        val r = name("rel")
         val subject = node("Thing")
         val `object` = node("Resource")
         val resourceId = `object`.property("id")
@@ -218,7 +221,7 @@ class SpringDataNeo4jStatementAdapter(
         val id = name("id")
         val statementId = name("statementId")
         val owner = name("owner")
-        val r = name("r")
+        val r = name("rel")
         val subject = node("Thing")
         val `object` = node("Thing")
         val query = unwind(literalOf<Set<String>>(statementIds.map(StatementId::value)))
@@ -241,14 +244,14 @@ class SpringDataNeo4jStatementAdapter(
     }
 
     override fun findByStatementId(id: StatementId): Optional<GeneralStatement> {
-        val r = name("r")
+        val r = name("rel")
         val subject = node("Thing")
         val `object` = node("Thing")
         val query = match(
                 subject.relationshipTo(`object`, RELATED).withProperties(
                     "statement_id", literalOf<String>(id.value)
                 ).named(r)
-            ).returning(r, subject.`as`("s"), `object`.`as`("o"))
+            ).returning(r, subject.`as`("sub"), `object`.`as`("obj"))
             .build()
         return neo4jClient.query(query.cypher)
             .fetchAs(GeneralStatement::class.java)
@@ -367,7 +370,7 @@ class SpringDataNeo4jStatementAdapter(
             .yield(relationships)
             .with(relationships)
             .unwind(relationships).`as`(rel)
-            .returning(startNode(rel).`as`("s"), rel.`as`("r"), endNode(rel).`as`("o"))
+            .returning(startNode(rel).`as`("sub"), rel.`as`("rel"), endNode(rel).`as`("obj"))
             .orderBy(rel.property("created_at").descending())
             .build()
         return neo4jClient.query(query.cypher)
@@ -389,7 +392,7 @@ class SpringDataNeo4jStatementAdapter(
     }
 
     override fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount> {
-        val r = name("r")
+        val r = name("rel")
         val c = name("c")
         val id = name("id")
         val match = match(anyNode().relationshipTo(anyNode(), RELATED).named(r))
@@ -467,7 +470,6 @@ class SpringDataNeo4jStatementAdapter(
             .one()
     }
 
-    // TODO: Update endpoint to use pagination once we upgraded to Neo4j 4.0
     override fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> {
         val problem = name("p")
         val idLiteral = literalOf<String>(id.value.toString())
@@ -646,7 +648,7 @@ class SpringDataNeo4jStatementAdapter(
         predicateId: ThingId,
         objectId: ThingId
     ): Optional<GeneralStatement> {
-        val r = name("r")
+        val r = name("rel")
         val subject = node("Thing")
         val `object` = node("Thing")
         val subjectIdLiteral = literalOf<String>(subjectId.value)
@@ -659,7 +661,8 @@ class SpringDataNeo4jStatementAdapter(
                 r.property("predicate_id").eq(predicateIdLiteral)
                     .and(subject.property("id").eq(subjectIdLiteral))
                     .and(`object`.property("id").eq(objectIdLiteral))
-            ).returning(r, subject.`as`("s"), `object`.`as`("o"))
+            )
+            .returningWithSortableFields(r, subject, `object`)
             .limit(1)
             .build()
         return neo4jClient.query(query.cypher)
@@ -674,13 +677,13 @@ class SpringDataNeo4jStatementAdapter(
         `object`: CNode = node("Thing"),
         filter: (subject: CNode, relationship: CRelationship, `object`: CNode) -> Condition
     ): Page<GeneralStatement> {
-        val r = name("r")
+        val r = name("rel")
         val relation = subject.relationshipTo(`object`, RELATED)
             .named(r)
         val condition = filter(subject, relation, `object`)
         val match = match(relation).where(condition)
         val query = match
-            .returning(r, subject.`as`("s"), `object`.`as`("o"))
+            .returningWithSortableFields(r, subject, `object`)
             .build(pageable)
         val countQuery = match
             .returning(count(r))
@@ -720,5 +723,22 @@ class SpringDataNeo4jStatementAdapter(
         cacheManager?.getCache(LITERAL_ID_TO_LITERAL_CACHE)?.evictIfPresent(id)
         cacheManager?.getCache(LITERAL_ID_TO_LITERAL_EXISTS_CACHE)?.evictIfPresent(id)
         cacheManager?.getCache(THING_ID_TO_THING_CACHE)?.evictIfPresent(id)
+    }
+
+    private fun StatementBuilder.ExposesWith.returningWithSortableFields(
+        relation: SymbolicName,
+        subject: CNode,
+        `object`: CNode
+    ): StatementBuilder.OngoingReadingAndReturn {
+        val sub = name("sub")
+        val obj = name("obj")
+        val rel = name("rel")
+        return with(
+            relation.`as`(rel),
+            subject.`as`(sub.value),
+            `object`.`as`(obj.value),
+            relation.property("created_at").`as`("created_at"),
+            relation.property("created_by").`as`("created_by")
+        ).returning(rel, sub, obj)
     }
 }

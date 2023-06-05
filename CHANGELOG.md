@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.34.0] - 2023-06-05
 ### Added
 - Papers can now automatically be un-listed and re-listed based on a quality score.
   The quality score is determined by the following metrics:
@@ -421,8 +423,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.33.0...master
-[0.32.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.33.0
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.34.0...master
+[0.34.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.34.0
+[0.33.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.33.0
 [0.32.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.32.0
 [0.31.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.31.1
 [0.31.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.31.0

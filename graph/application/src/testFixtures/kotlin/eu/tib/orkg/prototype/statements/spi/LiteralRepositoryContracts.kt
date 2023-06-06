@@ -62,7 +62,7 @@ fun <R : LiteralRepository> literalRepositoryContract(
     describe("finding several literals") {
         context("by label") {
             val expectedCount = 3
-            val label = "label to find"
+            val label = "label-to-find"
             val literals = fabricator.random<List<Literal>>().toMutableList()
             (0 until 3).forEach {
                 literals[it] = literals[it].copy(label = label)

@@ -29,6 +29,11 @@ internal class SearchStringTest {
             fun `Inserts wildcards after words`() {
                 FuzzySearchString("""some label""").query shouldBe """some* AND label*"""
             }
+
+            @Test
+            fun `Removes dashes when used within a word`() {
+                FuzzySearchString("""few-shot""").query shouldBe """few* AND shot*"""
+            }
         }
 
         @Nested

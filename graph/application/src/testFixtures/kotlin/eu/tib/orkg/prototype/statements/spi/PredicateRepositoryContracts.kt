@@ -60,7 +60,7 @@ fun <R : PredicateRepository> predicateRepositoryContract(repository: R) = descr
     describe("finding several predicates") {
         context("by label") {
             val expectedCount = 3
-            val label = "label to find"
+            val label = "label-to-find"
             val predicates = fabricator.random<List<Predicate>>().toMutableList()
             (0 until 3).forEach {
                 predicates[it] = predicates[it].copy(label = label)

@@ -88,7 +88,11 @@ class SpringDataNeo4jResourceAdapter(
 
     override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Resource> =
         when (labelSearchString) {
-            is ExactSearchString -> neo4jRepository.findAllByLabel(labelSearchString.query, pageable)
+            is ExactSearchString -> neo4jRepository.findAllByLabel(
+                query = labelSearchString.query,
+                label = labelSearchString.input,
+                pageable = pageable
+            )
             is FuzzySearchString -> neo4jRepository.findAllByLabelContaining(
                 label = labelSearchString.query,
                 minLabelLength = labelSearchString.input.length,
@@ -111,7 +115,8 @@ class SpringDataNeo4jResourceAdapter(
         when (labelSearchString) {
             is ExactSearchString -> neo4jRepository.findAllByClassAndLabel(
                 `class` = `class`,
-                label = labelSearchString.query,
+                query = labelSearchString.query,
+                label = labelSearchString.input,
                 pageable = pageable
             )
             is FuzzySearchString -> neo4jRepository.findAllByClassAndLabelContaining(
@@ -131,7 +136,8 @@ class SpringDataNeo4jResourceAdapter(
         when (labelSearchString) {
             is ExactSearchString -> neo4jRepository.findAllByClassAndLabelAndCreatedBy(
                 `class` = `class`,
-                label = labelSearchString.query,
+                query = labelSearchString.query,
+                label = labelSearchString.input,
                 createdBy = createdBy,
                 pageable = pageable
             )
@@ -165,7 +171,8 @@ class SpringDataNeo4jResourceAdapter(
             is ExactSearchString -> neo4jRepository.findAllIncludingAndExcludingClassesByLabel(
                 includeClasses = includeClasses,
                 excludeClasses = excludeClasses,
-                label = labelSearchString.query,
+                query = labelSearchString.query,
+                label = labelSearchString.input,
                 pageable = pageable
             )
             is FuzzySearchString -> neo4jRepository.findAllIncludingAndExcludingClassesByLabelContaining(

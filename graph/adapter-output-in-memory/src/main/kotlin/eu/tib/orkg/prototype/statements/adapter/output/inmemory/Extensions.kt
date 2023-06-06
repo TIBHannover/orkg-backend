@@ -5,12 +5,12 @@ import eu.tib.orkg.prototype.statements.domain.model.FuzzySearchString
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 
 internal fun String.matches(searchString: SearchString): Boolean = when (searchString) {
-    is ExactSearchString -> equals(searchString.query, ignoreCase = true)
+    is ExactSearchString -> equals(searchString.input, ignoreCase = true)
     is FuzzySearchString -> {
-        val searchWords = searchString.query
-            .split(" AND ")
-            .map { it.replace(Regex("\\*$"), "") }
-        val words = split(" ")
+        val searchWords = searchString.input
+            .replace(Regex("""(\w)-(\w)"""), """$1 $2""")
+            .split(" ")
+        val words = split(" ", "-")
         searchWords.all { searchWord ->
             when {
                 searchWord.startsWith("-") -> words.all {

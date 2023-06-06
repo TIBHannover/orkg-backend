@@ -19,7 +19,8 @@ class FuzzySearchString(value: String) : SearchString {
     init {
         this.input = value.normalize()
         this.query = QueryParser.escape(this.input)
-            .replace(Regex("""\\([+-]\w)"""), "$1")
+            .replace(Regex("""(^|\W)\\([+-]\w)"""), "$1$2")
+            .replace(Regex("""(\w)\\-(\w)"""), """$1 $2""")
             .replace(Regex("""(\w)(\s|$)"""), "$1*$2")
             .replace(Regex("""\s"""), " AND ")
     }

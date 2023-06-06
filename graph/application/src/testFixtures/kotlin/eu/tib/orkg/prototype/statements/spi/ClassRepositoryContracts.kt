@@ -128,7 +128,7 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
         }
         context("by label") {
             val expectedCount = 3
-            val label = "label to find"
+            val label = "label-to-find"
             val classes = fabricator.random<List<Class>>().toMutableList()
             (0 until 3).forEach {
                 classes[it] = classes[it].copy(label = label)

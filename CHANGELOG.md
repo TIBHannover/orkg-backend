@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fixed problems with hyphens when using search endpoints
   (Closes: [#487](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/487))
+- Stabilized sort order for search endpoints
+  (Closes: [#486](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/486))
 
 ## [0.34.0] - 2023-06-05
 ### Added

@@ -23,6 +23,8 @@ interface Neo4jLiteralRepository : Neo4jRepository<Neo4jLiteral, Long> {
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)
 YIELD node
 WHERE toLower(node.label) = toLower($label)
+WITH node
+ORDER BY node.created_at ASC
 RETURN node $PAGE_PARAMS""",
         countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)
@@ -36,7 +38,7 @@ CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
 YIELD node, score
 WHERE SIZE(node.label) >= $minLabelLength
 WITH node, score
-ORDER BY SIZE(node.label) ASC, score DESC
+ORDER BY SIZE(node.label) ASC, score DESC, node.created_at ASC
 RETURN node $PAGE_PARAMS""",
         countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)

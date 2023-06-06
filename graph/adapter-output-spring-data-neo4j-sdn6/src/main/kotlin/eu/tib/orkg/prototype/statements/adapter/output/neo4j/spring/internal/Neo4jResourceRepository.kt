@@ -76,6 +76,8 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)
 YIELD node
 WHERE toLower(node.label) = toLower($label)
+WITH node
+ORDER BY node.created_at ASC
 RETURN node $PAGE_PARAMS""",
     countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)
@@ -89,7 +91,7 @@ CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
 YIELD node, score
 WHERE SIZE(node.label) >= $minLabelLength
 WITH node, score
-ORDER BY SIZE(node.label) ASC, score DESC
+ORDER BY SIZE(node.label) ASC, score DESC, node.created_at ASC
 RETURN node $PAGE_PARAMS""",
         countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
@@ -111,6 +113,8 @@ RETURN COUNT(node)""")
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)
 YIELD node
 WHERE toLower(node.label) = toLower($label) AND $`class` IN labels(node)
+WITH node
+ORDER BY node.created_at ASC
 RETURN node $PAGE_PARAMS""",
         countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)
@@ -124,7 +128,7 @@ CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
 YIELD node, score
 WHERE SIZE(node.label) >= $minLabelLength AND $`class` IN labels(node)
 WITH node, score
-ORDER BY SIZE(node.label) ASC, score DESC
+ORDER BY SIZE(node.label) ASC, score DESC, node.created_at ASC
 RETURN node $PAGE_PARAMS""",
         countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
@@ -137,6 +141,8 @@ RETURN COUNT(node)""")
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)
 YIELD node
 WHERE toLower(node.label) = toLower($label) AND $`class` IN labels(node) AND node.created_by = $createdBy
+WITH node
+ORDER BY node.created_at ASC
 RETURN node $PAGE_PARAMS""",
         countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)
@@ -150,7 +156,7 @@ CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
 YIELD node, score
 WHERE SIZE(node.label) >= $minLabelLength AND $`class` IN labels(node) AND node.created_by = $createdBy
 WITH node, score
-ORDER BY SIZE(node.label) ASC, score DESC
+ORDER BY SIZE(node.label) ASC, score DESC, node.created_at ASC
 RETURN node $PAGE_PARAMS""",
         countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
@@ -168,6 +174,8 @@ CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)
 YIELD node
 WITH labels(node) AS labels, node
 WHERE toLower(node.label) = toLower($label) AND NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels)
+WITH node
+ORDER BY node.created_at ASC
 RETURN node $PAGE_PARAMS""",
         countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)
@@ -183,7 +191,7 @@ YIELD node, score
 WITH labels(node) AS labels, node, score
 WHERE SIZE(node.label) >= $minLabelLength AND NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels)
 WITH node, score
-ORDER BY SIZE(node.label) ASC, score DESC
+ORDER BY SIZE(node.label) ASC, score DESC, node.created_at ASC
 RETURN node $PAGE_PARAMS""",
         countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)

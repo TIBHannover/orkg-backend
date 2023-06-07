@@ -1,7 +1,6 @@
-package eu.tib.orkg.prototype.contenttypes.services
+package eu.tib.orkg.prototype.statements.api
 
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import org.springframework.data.domain.PageRequest
 
 object Predicates {
     val hasDOI = ThingId("P26")
@@ -25,22 +24,4 @@ object Classes {
     val paper = ThingId("Paper")
     val paperDeleted = ThingId("PaperDeleted")
     val contribution = ThingId("Contribution")
-}
-
-object PageRequests {
-    val ALL: PageRequest = PageRequest.of(0, Int.MAX_VALUE)
-}
-
-object Identifiers {
-    val paper = mapOf(
-        Predicates.hasDOI to "doi"
-    )
-    val author = mapOf(
-        Predicates.hasORCID to "orcid",
-        Predicates.hasGoogleScholarId to "google_scholar",
-        Predicates.hasResearchGateId to "research_gate",
-        Predicates.hasLinkedInId to "linked_in",
-        Predicates.hasWikidataId to "wikidata",
-        Predicates.hasWebOfScienceId to "web_of_science"
-    )
 }

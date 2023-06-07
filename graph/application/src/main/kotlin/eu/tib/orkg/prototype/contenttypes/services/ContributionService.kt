@@ -3,6 +3,8 @@ package eu.tib.orkg.prototype.contenttypes.services
 import eu.tib.orkg.prototype.contenttypes.api.ContributionUseCases
 import eu.tib.orkg.prototype.contenttypes.application.ContributionNotFound
 import eu.tib.orkg.prototype.contenttypes.domain.model.Contribution
+import eu.tib.orkg.prototype.statements.api.Classes
+import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository

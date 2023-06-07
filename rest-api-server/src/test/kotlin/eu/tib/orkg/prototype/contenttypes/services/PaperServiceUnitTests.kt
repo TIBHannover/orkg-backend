@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.contenttypes.services
 
 import eu.tib.orkg.prototype.contenttypes.application.PaperNotFound
 import eu.tib.orkg.prototype.createResource
+import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository

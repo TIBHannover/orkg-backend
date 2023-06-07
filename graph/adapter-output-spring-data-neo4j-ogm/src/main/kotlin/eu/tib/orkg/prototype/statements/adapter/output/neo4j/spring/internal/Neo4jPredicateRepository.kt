@@ -9,6 +9,7 @@ import org.springframework.data.neo4j.repository.Neo4jRepository
 import org.springframework.transaction.annotation.Transactional
 
 private const val ids = "${'$'}ids"
+private const val query = "${'$'}query"
 private const val label = "${'$'}label"
 private const val minLabelLength = "${'$'}minLabelLength"
 
@@ -23,23 +24,25 @@ interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, Long> {
     override fun findAll(pageable: Pageable): Page<Neo4jPredicate>
 
     @Query("""
-CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)
 YIELD node
 WHERE toLower(node.label) = toLower($label)
+WITH node
+ORDER BY node.created_at ASC
 RETURN node, [[(node)-[r:`RELATED`]->(t:`Thing`) | [r, t]]]""",
         countQuery = """
-CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)
 YIELD node
 WHERE toLower(node.label) = toLower($label)
 RETURN COUNT(node)""")
-    fun findAllByLabel(label: String, pageable: Pageable): Page<Neo4jPredicate>
+    fun findAllByLabel(query: String, label: String, pageable: Pageable): Page<Neo4jPredicate>
 
     @Query("""
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
 YIELD node, score
 WHERE SIZE(node.label) >= $minLabelLength
 WITH node, score
-ORDER BY SIZE(node.label) ASC, score DESC
+ORDER BY SIZE(node.label) ASC, score DESC, node.created_at ASC
 RETURN node, [[(node)-[r:`RELATED`]->(t:`Thing`) | [r, t]]]""",
         countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)

@@ -9,7 +9,7 @@ One Observatory can be managed by many organizations.
 
 A `GET` request lists all organizations:
 
-operation::observatory-controller-test-index[snippets='curl-request,http-response']
+operation::observatory-controller-integration-test-index[snippets='curl-request,http-response']
 
 ////
 [[observatory-create]]
@@ -20,12 +20,12 @@ The response will be `200 Created` when successful.
 The observatories can be retrieved by following the URI in the `Location` header field.
 
 // FIXME: implement missing test
-operation::observatory-controller-test-add[snippets='request-fields,curl-request,http-response']
+operation::observatory-controller-integration-test-add[snippets='request-fields,curl-request,http-response']
 
 The response body consists of the following fields:
 
 // FIXME: implement missing test
-operation::observatory-controller-test-add[snippets='response-fields']
+operation::observatory-controller-integration-test-add[snippets='response-fields']
 ////
 
 [[observatories-fetch]]
@@ -33,4 +33,4 @@ operation::observatory-controller-test-add[snippets='response-fields']
 
 A `GET` request provides information about a resource.
 
-operation::observatory-controller-test-fetch[snippets='curl-request,http-response']
+operation::observatory-controller-integration-test-fetch[snippets='curl-request,http-response']

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 private const val classes = "${'$'}classes"
 private const val includeClasses = "${'$'}includeClasses"
 private const val excludeClasses = "${'$'}excludeClasses"
+private const val query = "${'$'}query"
 private const val label = "${'$'}label"
 private const val createdBy = "${'$'}createdBy"
 private const val `class` = "${'$'}`class`"
@@ -73,23 +74,25 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     fun findById(id: ThingId?): Optional<Neo4jResource>
 
     @Query("""
-CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)
 YIELD node
 WHERE toLower(node.label) = toLower($label)
+WITH node
+ORDER BY node.created_at ASC
 RETURN node""",
         countQuery = """
-CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)
 YIELD node
 WHERE toLower(node.label) = toLower($label)
 RETURN COUNT(node)""")
-    fun findAllByLabel(label: String, pageable: Pageable): Page<Neo4jResource>
+    fun findAllByLabel(query: String, label: String, pageable: Pageable): Page<Neo4jResource>
 
     @Query("""
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
 YIELD node, score
 WHERE SIZE(node.label) >= $minLabelLength
 WITH node, score
-ORDER BY SIZE(node.label) ASC, score DESC
+ORDER BY SIZE(node.label) ASC, score DESC, node.created_at ASC
 RETURN node""",
         countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
@@ -108,23 +111,25 @@ RETURN COUNT(node)""")
     fun findAllByClassAndCreatedBy(`class`: ThingId, createdBy: ContributorId, pageable: Pageable): Page<Neo4jResource>
 
     @Query(value = """
-CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)
 YIELD node
 WHERE toLower(node.label) = toLower($label) AND $`class` IN labels(node)
+WITH node
+ORDER BY node.created_at ASC
 RETURN node""",
         countQuery = """
-CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)
 YIELD node
 WHERE toLower(node.label) = toLower($label) AND $`class` IN labels(node)
 RETURN COUNT(node)""")
-    fun findAllByClassAndLabel(`class`: ThingId, label: String, pageable: Pageable): Page<Neo4jResource>
+    fun findAllByClassAndLabel(`class`: ThingId, query: String, label: String, pageable: Pageable): Page<Neo4jResource>
 
     @Query(value = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
 YIELD node, score
 WHERE SIZE(node.label) >= $minLabelLength AND $`class` IN labels(node)
 WITH node, score
-ORDER BY SIZE(node.label) ASC, score DESC
+ORDER BY SIZE(node.label) ASC, score DESC, node.created_at ASC
 RETURN node""",
         countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
@@ -134,23 +139,25 @@ RETURN COUNT(node)""")
     fun findAllByClassAndLabelContaining(`class`: ThingId, label: String, minLabelLength: Int, pageable: Pageable): Page<Neo4jResource>
 
     @Query(value = """
-CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)
 YIELD node
 WHERE toLower(node.label) = toLower($label) AND $`class` IN labels(node) AND node.created_by = $createdBy
+WITH node
+ORDER BY node.created_at ASC
 RETURN node""",
         countQuery = """
-CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)
 YIELD node
 WHERE toLower(node.label) = toLower($label) AND $`class` IN labels(node) AND node.created_by = $createdBy
 RETURN COUNT(node)""")
-    fun findAllByClassAndLabelAndCreatedBy(`class`: ThingId, label: String, createdBy: ContributorId, pageable: Pageable): Page<Neo4jResource>
+    fun findAllByClassAndLabelAndCreatedBy(`class`: ThingId, query: String, label: String, createdBy: ContributorId, pageable: Pageable): Page<Neo4jResource>
 
     @Query(value = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
 YIELD node, score
 WHERE SIZE(node.label) >= $minLabelLength AND $`class` IN labels(node) AND node.created_by = $createdBy
 WITH node, score
-ORDER BY SIZE(node.label) ASC, score DESC
+ORDER BY SIZE(node.label) ASC, score DESC, node.created_at ASC
 RETURN node""",
         countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
@@ -164,18 +171,20 @@ RETURN COUNT(node)""")
     fun findAllIncludingAndExcludingClasses(includeClasses: Set<ThingId>, excludeClasses: Set<ThingId>, pageable: Pageable): Page<Neo4jResource>
 
     @Query(value = """
-CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)
 YIELD node
 WITH labels(node) AS labels, node
 WHERE toLower(node.label) = toLower($label) AND NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels)
+WITH node
+ORDER BY node.created_at ASC
 RETURN node""",
         countQuery = """
-CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
+CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)
 YIELD node
 WITH labels(node) AS labels, node
 WHERE toLower(node.label) = toLower($label) AND NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels)
 RETURN COUNT(node)""")
-    fun findAllIncludingAndExcludingClassesByLabel(includeClasses: Set<ThingId>, excludeClasses: Set<ThingId>, label: String, pageable: Pageable): Page<Neo4jResource>
+    fun findAllIncludingAndExcludingClassesByLabel(includeClasses: Set<ThingId>, excludeClasses: Set<ThingId>, query: String, label: String, pageable: Pageable): Page<Neo4jResource>
 
     @Query(value = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)
@@ -183,7 +192,7 @@ YIELD node, score
 WITH labels(node) AS labels, node, score
 WHERE SIZE(node.label) >= $minLabelLength AND NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels)
 WITH node, score
-ORDER BY SIZE(node.label) ASC, score DESC
+ORDER BY SIZE(node.label) ASC, score DESC, node.created_at ASC
 RETURN node""",
         countQuery = """
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $label)

@@ -8,7 +8,7 @@ Bulk operations on statements. Helps performing multiple calls together.
 
 A `GET` request to get statements of multiple resources in the subject position.
 
-operation::bulk-statement-controller-test-lookup-by-subjects[snippets='curl-request,http-response']
+operation::bulk-statement-controller-integration-test-lookup-by-subjects[snippets='curl-request,http-response']
 
 [[bulk-statements-fetch-by-object]]
 === Fetch by Objects

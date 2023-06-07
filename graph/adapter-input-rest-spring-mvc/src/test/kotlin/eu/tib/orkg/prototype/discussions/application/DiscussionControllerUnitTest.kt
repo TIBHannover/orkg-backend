@@ -11,7 +11,6 @@ import eu.tib.orkg.prototype.discussions.api.CreateDiscussionCommentUseCase
 import eu.tib.orkg.prototype.discussions.api.DiscussionUseCases
 import eu.tib.orkg.prototype.discussions.domain.model.DiscussionComment
 import eu.tib.orkg.prototype.discussions.domain.model.DiscussionCommentId
-import eu.tib.orkg.prototype.discussions.services.toDiscussionCommentRepresentation
 import eu.tib.orkg.prototype.statements.application.UserNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.mockk.MockKGateway.VerificationResult.*
@@ -90,7 +89,7 @@ internal class DiscussionControllerUnitTest {
         every { mockPrincipal.name } returns userId.toString()
         every { userService.findById(userId) } returns Optional.of(user)
         every { discussionService.create(createCommand) } returns comment.id
-        every { discussionService.findByTopicAndCommentId(topic, comment.id) } returns Optional.of(comment.toDiscussionCommentRepresentation())
+        every { discussionService.findByTopicAndCommentId(topic, comment.id) } returns Optional.of(comment)
 
         val request = mapOf(
             "message" to comment.message
@@ -239,7 +238,7 @@ internal class DiscussionControllerUnitTest {
             createdAt = OffsetDateTime.now()
         )
 
-        every { discussionService.findByTopicAndCommentId(topic, id) } returns Optional.of(comment.toDiscussionCommentRepresentation())
+        every { discussionService.findByTopicAndCommentId(topic, id) } returns Optional.of(comment)
 
         mockMvc.perform(get("/api/discussions/topic/$topic/$id"))
             .andExpect(status().isOk)
@@ -276,7 +275,7 @@ internal class DiscussionControllerUnitTest {
             createdAt = OffsetDateTime.now()
         )
         val page = PageImpl(
-            listOf(comment.toDiscussionCommentRepresentation()),
+            listOf(comment),
             PageRequest.of(0, 5),
             1
         )

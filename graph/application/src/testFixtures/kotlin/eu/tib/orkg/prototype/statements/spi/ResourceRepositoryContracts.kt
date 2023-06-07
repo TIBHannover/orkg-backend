@@ -135,7 +135,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
     describe("finding several resources") {
         context("by label") {
             val expectedCount = 3
-            val label = "label to find"
+            val label = "label-to-find"
             val resources = fabricator.random<List<Resource>>().toMutableList()
             (0 until 3).forEach {
                 resources[it] = resources[it].copy(label = label)
@@ -266,7 +266,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             val expectedCount = 3
             val resources = fabricator.random<List<Resource>>().toMutableList()
             val `class` = fabricator.random<ThingId>()
-            val label = "label to find"
+            val label = "label-to-find"
             (0 until 6).forEach {
                 resources[it] = resources[it].copy(classes = resources[it].classes + `class`)
             }
@@ -333,7 +333,7 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             val expectedCount = 2
             val resources = fabricator.random<List<Resource>>().toMutableList()
             val `class` = fabricator.random<ThingId>()
-            val label = "label to find"
+            val label = "label-to-find"
             val contributor = fabricator.random<ContributorId>()
             (0 until 6).forEach {
                 resources[it] = resources[it].copy(classes = resources[it].classes + `class`)

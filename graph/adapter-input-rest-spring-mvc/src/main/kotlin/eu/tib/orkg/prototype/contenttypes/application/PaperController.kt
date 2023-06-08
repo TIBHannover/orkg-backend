@@ -16,23 +16,25 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
+private const val PAPER_JSON_V2 = "application/vnd.orkg.paper.v2+json"
+
 @RestController
-@RequestMapping("/api/content-types/papers/", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/api/papers/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class PaperController(
     private val service: PaperUseCases
 ) : BaseController(), PaperRepresentationAdapter {
-    @GetMapping("/{id}")
+    @GetMapping("/{id}", produces = [PAPER_JSON_V2])
     fun findById(
         @PathVariable id: ThingId
     ): PaperRepresentation = service.findById(id).toPaperRepresentation()
 
-    @GetMapping("/{id}/contributors")
+    @GetMapping("/{id}/contributors", produces = [PAPER_JSON_V2])
     fun findAllContributorsByPaperId(
         @PathVariable id: ThingId,
         pageable: Pageable
     ): Page<ContributorId> = service.findAllContributorsByPaperId(id, pageable)
 
-    @GetMapping("/")
+    @GetMapping("/", produces = [PAPER_JSON_V2])
     fun findAll(
         @RequestParam("doi", required = false) doi: String?,
         @RequestParam("title", required = false) title: String?,

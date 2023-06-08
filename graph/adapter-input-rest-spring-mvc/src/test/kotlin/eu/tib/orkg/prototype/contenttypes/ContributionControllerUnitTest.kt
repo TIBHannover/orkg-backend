@@ -58,7 +58,7 @@ internal class ContributionControllerUnitTest {
         val contribution = createDummyContribution()
         every { contributionService.findById(contribution.id) } returns contribution
 
-        get("/api/content-types/contributions/${contribution.id}")
+        get("/api/contributions/${contribution.id}")
             .andExpect(status().isOk)
 
         verify(exactly = 1) { contributionService.findById(contribution.id) }
@@ -70,16 +70,19 @@ internal class ContributionControllerUnitTest {
         val exception = ContributionNotFound(id)
         every { contributionService.findById(id) } throws exception
 
-        get("/api/content-types/contributions/$id")
+        get("/api/contributions/$id")
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
-            .andExpect(jsonPath("$.path").value("/api/content-types/contributions/$id"))
+            .andExpect(jsonPath("$.path").value("/api/contributions/$id"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
         verify(exactly = 1) { contributionService.findById(id) }
     }
 
-    private fun get(string: String) = mockMvc.perform(MockMvcRequestBuilders.get(string))
+    private fun get(string: String) = mockMvc.perform(
+        MockMvcRequestBuilders.get(string)
+            .accept("application/vnd.orkg.contribution.v2+json")
+    )
 
     private fun createDummyContribution() = Contribution(
         id = ThingId("R123"),

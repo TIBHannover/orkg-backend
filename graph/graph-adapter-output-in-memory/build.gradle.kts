@@ -11,14 +11,14 @@ testing {
         val test by getting(JvmTestSuite::class) {
             useJUnitJupiter()
             dependencies {
-                implementation(testFixtures(project(":graph:application")))
+                implementation(testFixtures(project(":graph:graph-application")))
             }
         }
     }
 }
 
 dependencies {
-    api(project(":graph:application"))
+    api(project(":graph:graph-application"))
     api("org.springframework.data:spring-data-commons")
     implementation(libs.forkhandles.values4k)
 }

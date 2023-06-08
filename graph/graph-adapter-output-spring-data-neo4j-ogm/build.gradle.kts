@@ -16,7 +16,7 @@ testing {
             useJUnitJupiter()
             dependencies {
                 implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":graph:application")))
+                implementation(testFixtures(project(":graph:graph-application")))
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
@@ -32,7 +32,7 @@ testing {
             dependencies {
                 implementation(project())
                 implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":graph:application")))
+                implementation(testFixtures(project(":graph:graph-application")))
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
@@ -56,7 +56,7 @@ dependencies {
     api(platform(project(":platform")))
     "containerTestApi"(platform(project(":platform")))
 
-    api(project(":graph:application"))
+    api(project(":graph:graph-application"))
 
     // Pagination (e.g. Page, Pageable, etc.)
     api("org.springframework.data:spring-data-commons")

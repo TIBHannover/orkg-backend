@@ -22,9 +22,9 @@ dependencies {
     constraints {
         api(project(":library"))
         api(project(":testing:spring"))
-        api(project(":graph:application"))
-        api(project(":graph:adapter-input-rest-spring-mvc"))
-        api(project(":graph:adapter-output-spring-data-neo4j-ogm"))
+        api(project(":graph:graph-application"))
+        api(project(":graph:graph-adapter-input-rest-spring-mvc"))
+        api(project(":graph:graph-adapter-output-spring-data-neo4j-ogm"))
 
         api("org.liquibase:liquibase-core") {
             version {

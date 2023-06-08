@@ -60,7 +60,7 @@ testing {
             useJUnitJupiter()
             dependencies {
                 implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":graph:application")))
+                implementation(testFixtures(project(":graph:graph-application")))
                 implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation("org.springframework.boot:spring-boot-starter-test") {
@@ -79,7 +79,7 @@ testing {
             dependencies {
                 implementation(project())
                 implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":graph:application")))
+                implementation(testFixtures(project(":graph:graph-application")))
                 implementation(project(":library"))
                 implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
@@ -129,11 +129,11 @@ dependencies {
     // This is supposed to go away at some point:
     implementation(project(":library"))
     // This project is essentially a "configuration" project in Spring's sense, so we depend on all components:
-    implementation(project(":identity-management:application"))
-    implementation(project(":identity-management:adapter-output-spring-data-jpa"))
-    implementation(project(":graph:application"))
-    implementation(project(":graph:adapter-input-rest-spring-mvc"))
-    implementation(project(":graph:adapter-output-spring-data-neo4j-ogm"))
+    implementation(project(":identity-management:idm-application"))
+    implementation(project(":identity-management:idm-adapter-output-spring-data-jpa"))
+    implementation(project(":graph:graph-application"))
+    implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
+    implementation(project(":graph:graph-adapter-output-spring-data-neo4j-ogm"))
     implementation(project(":widget"))
 
     implementation(libs.forkhandles.result4k)

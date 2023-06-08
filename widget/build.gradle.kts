@@ -5,6 +5,6 @@ plugins {
 dependencies {
     api(platform(project(":platform")))
 
-    implementation(project(":graph:application"))
+    implementation(project(":graph:graph-application"))
     implementation("com.fasterxml.jackson.core:jackson-databind")
 }

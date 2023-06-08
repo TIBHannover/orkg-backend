@@ -11,7 +11,7 @@ plugins {
 dependencies {
     api(platform(project(":platform")))
 
-    api(project(":identity-management:application"))
+    api(project(":identity-management:idm-application"))
 
     api("org.springframework:spring-context")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -25,8 +25,4 @@ testing {
             useJUnitJupiter()
         }
     }
-}
-
-tasks.withType<Jar> {
-    archiveBaseName.set("orkg${project.path}".replace(":", "-"))
 }

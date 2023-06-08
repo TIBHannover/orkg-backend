@@ -10,15 +10,15 @@ include(
     // services. This name might also reflect better that we may be able to split it out as a separate application (or
     // "microservice", if you prefer.) Also, we will share the ports from within the domain project for the time being.
     // This may change in the future.
-    "graph:application",
-    "graph:adapter-input-rest-spring-mvc",
-    "graph:adapter-output-spring-data-neo4j-ogm",
-    "graph:adapter-output-spring-data-neo4j-sdn6",
-    "graph:adapter-output-in-memory",
+    "graph:graph-application",
+    "graph:graph-adapter-input-rest-spring-mvc",
+    "graph:graph-adapter-output-spring-data-neo4j-ogm",
+    "graph:graph-adapter-output-spring-data-neo4j-sdn6",
+    "graph:graph-adapter-output-in-memory",
 )
 include(
-    "identity-management:application",
-    "identity-management:adapter-output-spring-data-jpa",
+    "identity-management:idm-application",
+    "identity-management:idm-adapter-output-spring-data-jpa",
 )
 include("widget")
 include("rest-api-server")

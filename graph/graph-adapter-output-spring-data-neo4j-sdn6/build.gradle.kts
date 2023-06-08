@@ -20,7 +20,7 @@ testing {
             dependencies {
                 implementation(project())
                 implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":graph:application"))) {
+                implementation(testFixtures(project(":graph:graph-application"))) {
                     exclude(group = "org.neo4j", module = "neo4j-ogm-bolt-native-types")
                     exclude(group = "org.liquibase", module = "liquibase-core") // Do not bring in forced version (via platform)
                 }
@@ -47,7 +47,7 @@ dependencies {
     api(enforcedPlatform(SpringBootPlugin.BOM_COORDINATES)) // TODO: align with platform when upgrade is done
     "containerTestApi"(enforcedPlatform(SpringBootPlugin.BOM_COORDINATES)) // TODO: align with platform when upgrade is done
 
-    api(project(":graph:application"))
+    api(project(":graph:graph-application"))
 
     // Pagination (e.g. Page, Pageable, etc.)
     api("org.springframework.data:spring-data-commons")

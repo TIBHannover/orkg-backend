@@ -29,7 +29,3 @@ testing {
         }
     }
 }
-
-tasks.withType<Jar> {
-    archiveBaseName.set("orkg${project.path}".replace(":", "-"))
-}

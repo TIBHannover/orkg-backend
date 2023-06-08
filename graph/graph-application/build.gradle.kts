@@ -11,8 +11,8 @@ plugins {
 dependencies {
     api(platform(project(":platform")))
     api(project(":common:exceptions"))
-    implementation(project(":identity-management:application"))
-    implementation(project(":identity-management:adapter-output-spring-data-jpa"))
+    implementation(project(":identity-management:idm-application"))
+    implementation(project(":identity-management:idm-adapter-output-spring-data-jpa"))
 
     implementation("org.springframework.data:spring-data-commons")
     implementation("org.springframework:spring-core") // Spring MimeType
@@ -39,7 +39,7 @@ dependencies {
         exclude(group = "commons-collections", module = "commons-collections") // Version 3, vulnerable
     }
 
-    testFixturesApi(project(":identity-management:adapter-output-spring-data-jpa"))
+    testFixturesApi(project(":identity-management:idm-adapter-output-spring-data-jpa"))
     testFixturesApi(libs.bundles.kotest)
     testFixturesApi("org.springframework.data:spring-data-commons")
     testFixturesImplementation("org.springframework.boot:spring-boot-starter-data-jpa")

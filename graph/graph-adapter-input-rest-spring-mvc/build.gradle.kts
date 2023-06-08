@@ -13,7 +13,7 @@ testing {
             useJUnitJupiter()
             dependencies {
                 implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":graph:application")))
+                implementation(testFixtures(project(":graph:graph-application")))
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
@@ -29,8 +29,8 @@ testing {
 dependencies {
     api(platform(project(":platform")))
 
-    api(project(":graph:application"))
-    api(project(":identity-management:application")) // only for ExceptionHandler
+    api(project(":graph:graph-application"))
+    api(project(":identity-management:idm-application")) // only for ExceptionHandler
 
     api("org.springframework.data:spring-data-commons")
 

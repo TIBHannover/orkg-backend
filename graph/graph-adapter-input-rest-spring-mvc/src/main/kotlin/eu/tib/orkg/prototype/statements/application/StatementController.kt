@@ -82,11 +82,22 @@ class StatementController(
         @RequestParam("subjectClass", required = false) subjectClass: ThingId?,
         pageable: Pageable
     ): Page<StatementRepresentation> =
+        findByPredicateAndLiteralAndSubjectClassWithLiteralAsParameter(predicateId, literal, subjectClass, pageable)
+
+    @GetMapping("/predicate/{predicateId}/literals")
+    fun findByPredicateAndLiteralAndSubjectClassWithLiteralAsParameter(
+        @PathVariable predicateId: ThingId,
+        @RequestParam("q") literal: String,
+        @RequestParam("subjectClass", required = false) subjectClass: ThingId?,
+        pageable: Pageable
+    ): Page<StatementRepresentation> =
         when (subjectClass) {
             null -> statementService.findAllByPredicateAndLabel(predicateId, literal, pageable)
             else -> statementService.findAllByPredicateAndLabelAndSubjectClass(
-                predicateId, literal, subjectClass,
-                pageable
+                predicateId = predicateId,
+                literal = literal,
+                subjectClass = subjectClass,
+                pagination = pageable
             )
         }.mapToStatementRepresentation()
 

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 private const val PAPER_JSON_V2 = "application/vnd.orkg.paper.v2+json"
 
 @RestController
-@RequestMapping("/api/papers/", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/api/papers", produces = [MediaType.APPLICATION_JSON_VALUE])
 class PaperController(
     private val service: PaperUseCases
 ) : BaseController(), PaperRepresentationAdapter {
@@ -34,7 +34,7 @@ class PaperController(
         pageable: Pageable
     ): Page<ContributorId> = service.findAllContributorsByPaperId(id, pageable)
 
-    @GetMapping("/", produces = [PAPER_JSON_V2])
+    @GetMapping(produces = [PAPER_JSON_V2])
     fun findAll(
         @RequestParam("doi", required = false) doi: String?,
         @RequestParam("title", required = false) title: String?,

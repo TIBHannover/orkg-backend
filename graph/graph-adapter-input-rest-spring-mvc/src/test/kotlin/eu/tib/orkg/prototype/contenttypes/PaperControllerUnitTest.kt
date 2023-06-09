@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.contenttypes
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
@@ -48,9 +47,6 @@ internal class PaperControllerUnitTest {
     private lateinit var mockMvc: MockMvc
 
     @Autowired
-    private lateinit var objectMapper: ObjectMapper
-
-    @Autowired
     private lateinit var context: WebApplicationContext
 
     @MockkBean
@@ -96,7 +92,7 @@ internal class PaperControllerUnitTest {
         val papers = listOf(createDummyPaper())
         every { paperService.findAll(any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
 
-        get("/api/papers/")
+        get("/api/papers")
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -111,7 +107,7 @@ internal class PaperControllerUnitTest {
         val doi = papers.first().identifiers["doi"]!!
         every { paperService.findAllByDOI(doi, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
 
-        get("/api/papers/?doi=$doi")
+        get("/api/papers?doi=$doi")
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -126,7 +122,7 @@ internal class PaperControllerUnitTest {
         val title = papers.first().title
         every { paperService.findAllByTitle(title, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
 
-        get("/api/papers/?title=$title")
+        get("/api/papers?title=$title")
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -141,7 +137,7 @@ internal class PaperControllerUnitTest {
         val visibility = VisibilityFilter.ALL_LISTED
         every { paperService.findAllByVisibility(visibility, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
 
-        get("/api/papers/?visibility=$visibility")
+        get("/api/papers?visibility=$visibility")
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -156,7 +152,7 @@ internal class PaperControllerUnitTest {
         val contributorId = papers.first().createdBy
         every { paperService.findAllByContributor(contributorId, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
 
-        get("/api/papers/?created_by=$contributorId")
+        get("/api/papers?created_by=$contributorId")
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -172,10 +168,10 @@ internal class PaperControllerUnitTest {
         val contributorId = papers.first().createdBy
         val exception = TooManyParameters.atMostOneOf("doi", "title", "visibility", "created_by")
 
-        get("/api/papers/?title=$title&created_by=$contributorId")
+        get("/api/papers?title=$title&created_by=$contributorId")
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
-            .andExpect(jsonPath("$.path").value("/api/papers/"))
+            .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
     }
 

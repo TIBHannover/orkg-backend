@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.contenttypes
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.contenttypes.api.ContributionUseCases
@@ -34,9 +33,6 @@ import org.springframework.web.context.WebApplicationContext
 internal class ContributionControllerUnitTest {
 
     private lateinit var mockMvc: MockMvc
-
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
 
     @Autowired
     private lateinit var context: WebApplicationContext

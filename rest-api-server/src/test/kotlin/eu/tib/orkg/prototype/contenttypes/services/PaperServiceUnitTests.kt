@@ -31,7 +31,10 @@ class PaperServiceUnitTests {
         every { resourceRepository.findPaperById(expected.id) } returns Optional.of(expected)
         every { statementRepository.findAllBySubject(expected.id, PageRequests.ALL) } returns Page.empty(PageRequests.ALL)
 
-        service.findById(expected.id).asClue { paper ->
+        val actual = service.findById(expected.id)
+
+        actual.isPresent shouldBe true
+        actual.get().asClue { paper ->
             paper.id shouldBe expected.id
             paper.title shouldBe expected.label
             paper.researchFields shouldNotBe null
@@ -60,19 +63,6 @@ class PaperServiceUnitTests {
 
         verify(exactly = 1) { resourceRepository.findPaperById(expected.id) }
         verify(exactly = 1) { statementRepository.findAllBySubject(expected.id, any()) }
-    }
-
-    @Test
-    fun `Given a paper does not exist, when fetching it by id, then an exception is thrown`() {
-        val id = ThingId("Missing")
-        every { resourceRepository.findPaperById(id) } returns Optional.empty()
-
-        assertThrows<PaperNotFound> {
-            service.findById(id)
-        }
-
-        verify(exactly = 1) { resourceRepository.findPaperById(id) }
-        verify(exactly = 0) { statementRepository.findAllBySubject(id, any()) }
     }
 
     @Test

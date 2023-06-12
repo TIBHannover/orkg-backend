@@ -63,20 +63,20 @@ internal class PaperControllerUnitTest {
 
     @Test
     fun `Given a paper, when it is fetched by id and service succeeds, then status is 200 OK and contribution is returned`() {
-        val contribution = createDummyPaper()
-        every { paperService.findById(contribution.id) } returns contribution
+        val paper = createDummyPaper()
+        every { paperService.findById(paper.id) } returns Optional.of(paper)
 
-        get("/api/papers/${contribution.id}")
+        get("/api/papers/${paper.id}")
             .andExpect(status().isOk)
 
-        verify(exactly = 1) { paperService.findById(contribution.id) }
+        verify(exactly = 1) { paperService.findById(paper.id) }
     }
 
     @Test
     fun `Given a paper, when it is fetched by id and service reports missing paper, then status is 404 NOT FOUND`() {
         val id = ThingId("Missing")
         val exception = PaperNotFound(id)
-        every { paperService.findById(id) } throws exception
+        every { paperService.findById(id) } returns Optional.empty()
 
         get("/api/papers/$id")
             .andExpect(status().isNotFound)

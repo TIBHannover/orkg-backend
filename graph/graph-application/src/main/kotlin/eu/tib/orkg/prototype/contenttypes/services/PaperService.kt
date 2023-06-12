@@ -19,6 +19,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -28,10 +29,9 @@ class PaperService(
     private val resourceRepository: ResourceRepository,
     private val statementRepository: StatementRepository
 ) : PaperUseCases {
-    override fun findById(id: ThingId): Paper =
+    override fun findById(id: ThingId): Optional<Paper> =
         resourceRepository.findPaperById(id)
             .map { it.toPaper() }
-            .orElseThrow { PaperNotFound(id) }
 
     override fun findAll(pageable: Pageable): Page<Paper> =
         resourceRepository.findAllByClass(Classes.paper, pageable)

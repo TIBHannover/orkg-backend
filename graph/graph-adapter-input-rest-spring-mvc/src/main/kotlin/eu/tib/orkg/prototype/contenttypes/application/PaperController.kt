@@ -26,7 +26,9 @@ class PaperController(
     @GetMapping("/{id}", produces = [PAPER_JSON_V2])
     fun findById(
         @PathVariable id: ThingId
-    ): PaperRepresentation = service.findById(id).toPaperRepresentation()
+    ): PaperRepresentation = service.findById(id)
+        .mapToPaperRepresentation()
+        .orElseThrow { PaperNotFound(id) }
 
     @GetMapping("/{id}/contributors", produces = [PAPER_JSON_V2])
     fun findAllContributorsByPaperId(

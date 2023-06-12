@@ -12,10 +12,14 @@ import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import java.time.OffsetDateTime
+import java.util.*
 import org.springframework.data.domain.Page
 
 interface PaperRepresentationAdapter : AuthorRepresentationAdapter, LabeledObjectRepresentationAdapter,
     PublicationInfoRepresentationAdapter {
+
+    fun Optional<Paper>.mapToPaperRepresentation() : Optional<PaperRepresentation> =
+        map { it.toPaperRepresentation() }
 
     fun Page<Paper>.mapToPaperRepresentation() : Page<PaperRepresentation> =
         map { it.toPaperRepresentation() }

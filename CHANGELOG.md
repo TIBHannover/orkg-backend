@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added an alternative endpoint to query statements with a given predicate and literal called `/api/statements/predicate/{predicate_id}/literals/?q={literal}`
+  (See: [!578](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/578))
 
 ## [0.34.1] - 2023-06-06
 ### Fixed

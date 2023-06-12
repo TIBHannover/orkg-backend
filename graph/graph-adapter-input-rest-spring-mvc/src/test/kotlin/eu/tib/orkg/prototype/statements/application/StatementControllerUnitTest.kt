@@ -11,6 +11,7 @@ import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.createStatement
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
+import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import io.mockk.Runs
@@ -20,6 +21,7 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.verify
 import io.mockk.verifyAll
+import java.net.URLEncoder
 import java.security.Principal
 import java.util.*
 import org.junit.jupiter.api.AfterEach
@@ -35,6 +37,7 @@ import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -259,6 +262,30 @@ internal class StatementControllerUnitTest {
 
             verify(exactly = 0) { statementService.delete(st.id!!) }
             verifyAll { principal.name }
+        }
+    }
+
+    @Test
+    fun `Given several statements, when searched by predicate id and object literal, then status is 200 OK and statements are returned`() {
+        val statement = createStatement(
+            subject = createResource(),
+            predicate = createPredicate(),
+            `object` = createLiteral(
+                value = "path/to/resource"
+            )
+        )
+
+        every { statementService.findAllByPredicateAndLabel(any(), any(), any()) } returns pageOf(statement)
+        every { statementService.countStatementsAboutResources(any()) } returns emptyMap()
+        every { flags.isFormattedLabelsEnabled() } returns false
+
+        mockMvc.perform(get("/api/statements/predicate/${statement.predicate.id}/literals?q=${statement.`object`.label}"))
+            .andExpect(status().isOk)
+
+        verify(exactly = 1) {
+            statementService.findAllByPredicateAndLabel(statement.predicate.id, statement.`object`.label, any())
+            statementService.countStatementsAboutResources(any())
+            flags.isFormattedLabelsEnabled()
         }
     }
 

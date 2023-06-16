@@ -207,7 +207,7 @@ class SpringDataNeo4jClassHierarchyAdapter(
                     .withProperties("id", literalOf<String>(id.value))
                     .relationshipTo(node("Class").named(p), SUBCLASS_OF)
                     .length(0, null)
-            ).with(collect(p).add(c).`as`(classes))
+            ).with(collect(p).add(collect(c)).`as`(classes))
             .unwind(classes)
             .`as`(`class`)
             .withDistinct(`class`)

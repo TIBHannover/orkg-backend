@@ -13,7 +13,11 @@ interface RetrieveObservatoryUseCase {
 
     fun findAllByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Observatory>
 
+    fun findAllResearchFields(pageable: Pageable): Page<ThingId>
+
     fun findByName(name: String): Optional<Observatory>
+
+    fun findAllByNameContains(name: String, pageable: Pageable): Page<Observatory>
 
     fun findById(id: ObservatoryId): Optional<Observatory>
 

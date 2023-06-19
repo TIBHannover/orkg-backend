@@ -130,6 +130,12 @@ class StatsController(private val service: RetrieveStatisticsUseCase) {
         service.getTopCurrentContributorsByResearchFieldExcludeSubFields(id, days, pageable)
 
     @GetMapping("/observatories")
-    fun getObservatoriesPapersAndComparisonsCount(pageable: Pageable): Page<ObservatoryStats> =
-        service.getObservatoriesPapersAndComparisonsCount(pageable)
+    fun findAllObservatoryStats(pageable: Pageable): Page<ObservatoryStats> =
+        service.findAllObservatoryStats(pageable)
+
+    @GetMapping("/observatories/{id}")
+    fun findObservatoryStatsById(
+        @PathVariable id: ObservatoryId
+    ): ObservatoryStats =
+        service.findObservatoryStatsById(id)
 }

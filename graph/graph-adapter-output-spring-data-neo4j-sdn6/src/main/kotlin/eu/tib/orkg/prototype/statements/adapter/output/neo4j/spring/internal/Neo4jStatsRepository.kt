@@ -43,7 +43,17 @@ RETURN observatoryId, papers, comparisons, total $PAGE_PARAMS""",
 MATCH (n:Paper:Resource)
 WHERE n.observatory_id <> '00000000-0000-0000-0000-000000000000'
 RETURN COUNT(DISTINCT(n.observatory_id))""")
-    fun getObservatoriesPapersAndComparisonsCount(pageable: Pageable): Page<ObservatoryStats>
+    fun findAllObservatoryStats(pageable: Pageable): Page<ObservatoryStats>
+
+    @Query("""
+OPTIONAL MATCH (n:Paper:Resource {observatory_id: $id})
+WITH n.observatory_id AS observatoryId, COUNT(n) AS papers
+OPTIONAL MATCH (c:Comparison:Resource {observatory_id: $id})
+WITH observatoryId, COUNT(c) AS comparisons, papers
+WITH observatoryId, comparisons, papers, comparisons + papers AS total
+ORDER BY total DESC
+RETURN $id AS observatoryId, papers, comparisons, total""")
+    fun findObservatoryStatsById(id: ObservatoryId): ObservatoryStats
 
     @Query("""
 CALL {
@@ -57,7 +67,7 @@ CALL {
     UNION ALL
     MATCH (n:Problem:Resource) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date RETURN n.created_by AS id, COUNT(n) AS contributions
 } WITH id, contributions
-RETURN id, SUM(contributions) AS contributions""",
+RETURN id, SUM(contributions) AS contributions $PAGE_PARAMS""",
         countQuery = """
 CALL {
     MATCH (n:Paper:Resource) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date RETURN DISTINCT n.created_by AS id
@@ -105,7 +115,7 @@ UNWIND nodes AS n
 WITH DISTINCT n
 WHERE n[0] IS NOT NULL AND n[0].created_by <> "00000000-0000-0000-0000-000000000000" AND n[0].created_at > $date
 WITH n[0].created_by AS contributor, SUM(n[1][0]) AS papers, SUM(n[1][1]) AS contributions, SUM(n[1][2]) AS comparisons, SUM(n[1][3]) AS visualizations, SUM(n[1][4]) AS problems
-RETURN contributor, papers, contributions, comparisons, visualizations, problems, (papers + contributions + comparisons + visualizations + problems) AS total""",
+RETURN contributor, papers, contributions, comparisons, visualizations, problems, (papers + contributions + comparisons + visualizations + problems) AS total $PAGE_PARAMS""",
     countQuery = """
 CALL {
     MATCH (field:ResearchField:Resource {id: $id})
@@ -152,7 +162,7 @@ UNWIND nodes AS n
 WITH DISTINCT n
 WHERE n[0] IS NOT NULL AND n[0].created_by <> "00000000-0000-0000-0000-000000000000" AND n[0].created_at > $date
 WITH n[0].created_by AS contributor, SUM(n[1][0]) AS papers, SUM(n[1][1]) AS contributions, SUM(n[1][2]) AS comparisons, SUM(n[1][3]) AS visualizations, SUM(n[1][4]) AS problems
-RETURN contributor, papers, contributions, comparisons, visualizations, problems, (papers + contributions + comparisons + visualizations + problems) AS total""",
+RETURN contributor, papers, contributions, comparisons, visualizations, problems, (papers + contributions + comparisons + visualizations + problems) AS total $PAGE_PARAMS""",
         countQuery = """
 MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(r:ResearchField:Resource {id: $id})
 OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution:Resource)
@@ -179,8 +189,7 @@ CALL {
     UNION ALL
     MATCH (sub:Comparison:Resource) WITH labels(sub) AS labels, sub WHERE NOT 'ComparisonDeleted' IN labels RETURN sub
 } WITH sub
-RETURN sub.id AS id, sub.label AS label, sub.created_at AS createdAt, COALESCE(sub.created_by, '00000000-0000-0000-0000-000000000000') AS createdBy, labels(sub) AS classes ORDER BY createdAt DESC
-""",
+RETURN sub.id AS id, sub.label AS label, sub.created_at AS createdAt, COALESCE(sub.created_by, '00000000-0000-0000-0000-000000000000') AS createdBy, labels(sub) AS classes ORDER BY createdAt DESC $PAGE_PARAMS""",
         countQuery = """
 CALL {
     MATCH (sub:Paper:Resource) WITH labels(sub) AS labels, sub WHERE NOT 'PaperDeleted' IN labels RETURN sub
@@ -217,7 +226,7 @@ WITH [p, c, v] AS nodes
 UNWIND nodes AS n
 WITH DISTINCT n
 WHERE n IS NOT NULL
-RETURN n.id AS id, n.label AS label, n.created_at AS createdAt, COALESCE(n.created_by, '00000000-0000-0000-0000-000000000000') AS createdBy, labels(n) AS classes""",
+RETURN n.id AS id, n.label AS label, n.created_at AS createdAt, COALESCE(n.created_by, '00000000-0000-0000-0000-000000000000') AS createdBy, labels(n) AS classes $PAGE_PARAMS""",
         countQuery = """
 CALL {
     MATCH (field:ResearchField:Resource {id: $id})

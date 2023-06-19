@@ -13,6 +13,7 @@ import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.createObservatory
 import eu.tib.orkg.prototype.createOrganization
 import eu.tib.orkg.prototype.createResource
+import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.application.pageOf
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -212,6 +213,30 @@ internal class ObservatoryControllerUnitTest {
             .andExpect(status().isOk)
 
         verify(exactly = 1) { observatoryUseCases.findAll(any()) }
+    }
+
+    @Test
+    fun `Fetching all observatories by name containing, status must be 200 OK`() {
+        val observatory = createObservatory(setOf(OrganizationId(UUID.randomUUID())))
+        val pageable: Pageable = PageRequest.of(0, 10)
+        val page: Page<Observatory> = pageOf(pageable, observatory)
+
+        every { observatoryUseCases.findAllByNameContains("Label", any()) } returns page
+        every { resourceUseCases.findById(any()) } returns Optional.empty()
+
+        mockMvc.perform(get("/api/observatories/?q=Label"))
+            .andExpect(status().isOk)
+
+        verify(exactly = 1) { observatoryUseCases.findAllByNameContains("Label", any()) }
+    }
+
+    @Test
+    fun `Fetching all observatories with too many parameters, status must be 400 BAD REQUEST`() {
+        mockMvc.perform(get("/api/observatories/?q=Label&research_field=R1234"))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.path").value("/api/observatories/"))
+            .andExpect(jsonPath("$.message").value(TooManyParameters.atMostOneOf("q", "research_field").message))
     }
 
     @Test
@@ -541,6 +566,29 @@ internal class ObservatoryControllerUnitTest {
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.path").value("/api/observatories/delete/${observatory.id}/organization"))
             .andExpect(jsonPath("$.message").value(OrganizationNotFound(organizationId).message))
+    }
+
+    @Test
+    fun `When fetching all research fields used in observatories, status must be 200`() {
+        val id = ThingId("R123")
+        val label = "fancy research field"
+        val pageable = PageRequest.of(0, 10)
+        val page: Page<ThingId> = pageOf(pageable, id)
+        val resource = createResource().copy(
+            id = id,
+            label = label,
+            classes = setOf(ThingId("ResearchField"))
+        )
+
+        every { observatoryUseCases.findAllResearchFields(any()) } returns page
+        every { resourceUseCases.findById(id) } returns Optional.of(resource)
+
+        mockMvc.perform(get("/api/observatories/research-fields"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.content[0].id").value(id.value))
+            .andExpect(jsonPath("$.content[0].label").value(label))
+
+        verify(exactly = 1) { observatoryUseCases.findAllResearchFields(any()) }
     }
 
     private fun MockMvc.performPut(urlTemplate: String, updateRequest: Any): ResultActions = perform(

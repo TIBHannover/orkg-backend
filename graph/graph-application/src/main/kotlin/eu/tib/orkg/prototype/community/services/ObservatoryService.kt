@@ -9,9 +9,7 @@ import eu.tib.orkg.prototype.community.domain.model.Observatory
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.spi.ObservatoryRepository
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.ResearchFieldNotFound
-import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import java.util.*
@@ -55,8 +53,14 @@ class ObservatoryService(
     override fun findAllByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Observatory> =
         postgresObservatoryRepository.findAllByOrganizationId(id, pageable)
 
+    override fun findAllResearchFields(pageable: Pageable): Page<ThingId> =
+        postgresObservatoryRepository.findAllResearchFields(pageable)
+
     override fun findByName(name: String): Optional<Observatory> =
         postgresObservatoryRepository.findByName(name)
+
+    override fun findAllByNameContains(name: String, pageable: Pageable): Page<Observatory> =
+        postgresObservatoryRepository.findAllByNameContains(name, pageable)
 
     override fun findById(id: ObservatoryId): Optional<Observatory> =
         postgresObservatoryRepository.findById(id)

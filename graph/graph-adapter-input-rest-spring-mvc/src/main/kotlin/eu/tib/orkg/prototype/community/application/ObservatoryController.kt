@@ -3,12 +3,14 @@ package eu.tib.orkg.prototype.community.application
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.community.ObservatoryRepresentation
 import eu.tib.orkg.prototype.community.ObservatoryRepresentationAdapter
+import eu.tib.orkg.prototype.community.ResearchFieldRepresentation
 import eu.tib.orkg.prototype.community.api.CreateObservatoryUseCase.*
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
@@ -74,13 +76,25 @@ class ObservatoryController(
 
     @GetMapping("/")
     fun findAll(
+        @RequestParam(value = "q", required = false) name: String?,
         @RequestParam(value = "research_field", required = false) researchField: ThingId?,
         pageable: Pageable
-    ): Page<ObservatoryRepresentation> =
-        when (researchField) {
-            null -> service.findAll(pageable)
-            else -> service.findAllByResearchField(researchField, pageable)
+    ): Page<ObservatoryRepresentation> {
+        if (name != null && researchField != null) {
+            throw TooManyParameters.atMostOneOf("q", "research_field")
+        }
+        return when {
+            name != null -> service.findAllByNameContains(name, pageable)
+            researchField != null -> service.findAllByResearchField(researchField, pageable)
+            else -> service.findAll(pageable)
         }.mapToObservatoryRepresentation()
+    }
+
+    @GetMapping("/research-fields")
+    fun findAllResearchFields(
+        pageable: Pageable
+    ): Page<ResearchFieldRepresentation> =
+        service.findAllResearchFields(pageable).mapToResearchFieldRepresentation()
 
     @GetMapping("{id}/users")
     fun findAllUsersByObservatoryId(

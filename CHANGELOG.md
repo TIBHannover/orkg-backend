@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added an alternative endpoint to query statements with a given predicate and literal called `/api/statements/predicate/{predicate_id}/literals/?q={literal}`
   (See: [!578](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/578))
+- It is now possible to search observatories by name via `/api/observatories/?q={searchString}`
+    (See: [!581](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/581))
+- It is now possible to fetch stats for about single observatory via `/api/stats/observatories/{id}`
+  (See: [!581](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/581))
+- It is now possible to fetch all research fields that belong to an observatories via `/api/observatories/research-fields`
+  (See: [!581](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/581))
 ### Changed
 - Fuzzy search by label now returns more results
   (See: [!579](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/579))

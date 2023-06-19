@@ -36,7 +36,12 @@ interface RetrieveStatisticsUseCase {
     /**
      * Get paper count and comparison count
      */
-    fun getObservatoriesPapersAndComparisonsCount(pageable: Pageable): Page<ObservatoryStats>
+    fun findAllObservatoryStats(pageable: Pageable): Page<ObservatoryStats>
+
+    /**
+     * Get paper count and comparison count by observatory id
+     */
+    fun findObservatoryStatsById(id: ObservatoryId): ObservatoryStats
 
     /**
      * Get top contributors

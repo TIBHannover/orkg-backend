@@ -10,11 +10,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.data.domain.Page
 
-private val researchFieldClassId = ThingId("ResearchField")
-
 interface ObservatoryRepresentationAdapter : ResearchFieldRepresentationAdapter {
-    val resourceRepository: ResourceUseCases
-
     fun Optional<Observatory>.mapToObservatoryRepresentation(): Optional<ObservatoryRepresentation> =
         map { it.toObservatoryRepresentation() }
 

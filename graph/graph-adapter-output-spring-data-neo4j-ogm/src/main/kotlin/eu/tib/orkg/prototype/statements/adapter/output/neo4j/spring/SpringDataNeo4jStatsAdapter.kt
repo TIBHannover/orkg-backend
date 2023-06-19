@@ -31,8 +31,11 @@ class SpringDataNeo4jStatsAdapter(
     override fun getObservatoryComparisonsCount(id: ObservatoryId): Long =
         neo4jRepository.getObservatoryComparisonsCount(id)
 
-    override fun getObservatoriesPapersAndComparisonsCount(pageable: Pageable): Page<ObservatoryStats> =
-        neo4jRepository.getObservatoriesPapersAndComparisonsCount(pageable)
+    override fun findAllObservatoryStats(pageable: Pageable): Page<ObservatoryStats> =
+        neo4jRepository.findAllObservatoryStats(pageable)
+
+    override fun findObservatoryStatsById(id: ObservatoryId): ObservatoryStats =
+        neo4jRepository.findObservatoryStatsById(id)
 
     override fun getTopCurrentContributorIdsAndContributionsCount(
         date: String,

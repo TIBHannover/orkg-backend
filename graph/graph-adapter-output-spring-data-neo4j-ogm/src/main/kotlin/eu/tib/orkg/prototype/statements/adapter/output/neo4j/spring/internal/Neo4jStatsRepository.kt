@@ -44,7 +44,17 @@ RETURN observatoryId, papers, comparisons, total""",
 MATCH (n:Paper:Resource)
 WHERE n.observatory_id <> '00000000-0000-0000-0000-000000000000'
 RETURN COUNT(DISTINCT(n.observatory_id))""")
-    fun getObservatoriesPapersAndComparisonsCount(pageable: Pageable): Page<ObservatoryStats>
+    fun findAllObservatoryStats(pageable: Pageable): Page<ObservatoryStats>
+
+    @Query("""
+OPTIONAL MATCH (n:Paper:Resource {observatory_id: $id})
+WITH n.observatory_id AS observatoryId, COUNT(n) AS papers
+OPTIONAL MATCH (c:Comparison:Resource {observatory_id: $id})
+WITH observatoryId, COUNT(c) AS comparisons, papers
+WITH observatoryId, comparisons, papers, comparisons + papers AS total
+ORDER BY total DESC
+RETURN $id AS observatoryId, papers, comparisons, total""")
+    fun findObservatoryStatsById(id: ObservatoryId): ObservatoryStats
 
     @Query("""
 CALL {

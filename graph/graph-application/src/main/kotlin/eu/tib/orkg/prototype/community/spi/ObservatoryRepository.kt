@@ -15,6 +15,8 @@ interface ObservatoryRepository {
 
     fun findByName(name: String): Optional<Observatory>
 
+    fun findAllByNameContains(name: String, pageable: Pageable): Page<Observatory>
+
     fun findByDisplayId(displayId: String): Optional<Observatory>
 
     fun findAll(pageable: Pageable): Page<Observatory>
@@ -22,6 +24,8 @@ interface ObservatoryRepository {
     fun findAllByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Observatory>
 
     fun findAllByResearchField(researchField: ThingId, pageable: Pageable): Page<Observatory>
+
+    fun findAllResearchFields(pageable: Pageable): Page<ThingId>
 
     fun deleteAll()
 }

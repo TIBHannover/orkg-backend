@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.JpaUserRepository
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresObservatoryRepository
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
+import eu.tib.orkg.prototype.community.application.ObservatoryNotFound
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
@@ -74,8 +75,15 @@ class StatisticsService(
     override fun getObservatoryComparisonsCount(id: ObservatoryId): Long =
         statsRepository.getObservatoryComparisonsCount(id)
 
-    override fun getObservatoriesPapersAndComparisonsCount(pageable: Pageable): Page<ObservatoryStats> =
-        statsRepository.getObservatoriesPapersAndComparisonsCount(pageable)
+    override fun findAllObservatoryStats(pageable: Pageable): Page<ObservatoryStats> =
+        statsRepository.findAllObservatoryStats(pageable)
+
+    override fun findObservatoryStatsById(id: ObservatoryId): ObservatoryStats {
+        if (!observatoryRepository.existsById(id.value)) {
+            throw ObservatoryNotFound(id)
+        }
+        return statsRepository.findObservatoryStatsById(id)
+    }
 
     override fun getTopCurrentContributors(
         days: Long,

@@ -53,12 +53,26 @@ class StatsControllerUnitTest {
         val id = ObservatoryId(UUID.randomUUID())
         val response = ObservatoryStats(id.value.toString(), 1, 0)
         every {
-            statisticsService.getObservatoriesPapersAndComparisonsCount(any())
+            statisticsService.findAllObservatoryStats(any())
         } returns pageOf(response)
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/stats/observatories"))
             .andExpect(MockMvcResultMatchers.status().isOk)
 
-        verify(exactly = 1) { statisticsService.getObservatoriesPapersAndComparisonsCount(any()) }
+        verify(exactly = 1) { statisticsService.findAllObservatoryStats(any()) }
+    }
+
+    @Test
+    fun `When retrieving stats about a single observatoriy and service succeeds, then status is 200 OK and observatory statistics are returned`() {
+        val id = ObservatoryId(UUID.randomUUID())
+        val response = ObservatoryStats(id.value.toString(), 1, 0)
+        every {
+            statisticsService.findObservatoryStatsById(id)
+        } returns response
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/stats/observatories/$id"))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+
+        verify(exactly = 1) { statisticsService.findObservatoryStatsById(id) }
     }
 }

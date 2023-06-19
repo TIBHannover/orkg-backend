@@ -13,7 +13,8 @@ interface StatsRepository {
     fun getResearchFieldsPapersCount(): Iterable<FieldsStats>
     fun getObservatoryPapersCount(id: ObservatoryId): Long
     fun getObservatoryComparisonsCount(id: ObservatoryId): Long
-    fun getObservatoriesPapersAndComparisonsCount(pageable: Pageable): Page<ObservatoryStats>
+    fun findAllObservatoryStats(pageable: Pageable): Page<ObservatoryStats>
+    fun findObservatoryStatsById(id: ObservatoryId): ObservatoryStats
     fun getTopCurrentContributorIdsAndContributionsCount(
         date: String,
         pageable: Pageable

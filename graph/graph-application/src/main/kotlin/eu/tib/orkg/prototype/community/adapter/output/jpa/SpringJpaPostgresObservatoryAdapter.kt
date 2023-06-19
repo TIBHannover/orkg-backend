@@ -36,6 +36,9 @@ class SpringJpaPostgresObservatoryAdapter(
     override fun findByName(name: String): Optional<Observatory> =
         postgresRepository.findByName(name).map(ObservatoryEntity::toObservatory)
 
+    override fun findAllByNameContains(name: String, pageable: Pageable): Page<Observatory> =
+        postgresRepository.findAllByNameContainsIgnoreCase(name, pageable).map(ObservatoryEntity::toObservatory)
+
     override fun findByDisplayId(displayId: String): Optional<Observatory> =
         postgresRepository.findByDisplayId(displayId).map(ObservatoryEntity::toObservatory)
 
@@ -44,6 +47,9 @@ class SpringJpaPostgresObservatoryAdapter(
 
     override fun findAll(pageable: Pageable): Page<Observatory> =
         postgresRepository.findAll(pageable).map(ObservatoryEntity::toObservatory)
+
+    override fun findAllResearchFields(pageable: Pageable): Page<ThingId> =
+        postgresRepository.findAllResearchFields(pageable).map { ThingId(it) }
 
     override fun deleteAll() = postgresRepository.deleteAll()
 }

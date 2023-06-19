@@ -166,6 +166,8 @@ class TooManyParameters private constructor(
     companion object {
         fun requiresExactlyOneOf(first: String, second: String, vararg parameters: String) =
             TooManyParameters("Too many parameters: Only exactly one out of ${formatParameters(first, second, *parameters)} is allowed.")
+        fun atMostOneOf(first: String, second: String, vararg parameters: String) =
+            TooManyParameters("Too many parameters: At most one out of ${formatParameters(first, second, *parameters)} is allowed.")
     }
 }
 

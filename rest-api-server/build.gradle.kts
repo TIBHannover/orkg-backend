@@ -48,6 +48,8 @@ configurations {
     create("asciidoctor")
 }
 
+val restdocs: Configuration by configurations.creating
+
 idea {
     module {
         isDownloadJavadoc = downloadJavadoc?.let(String::toBoolean) ?: false
@@ -185,6 +187,7 @@ dependencies {
     // Documentation
     //
     "asciidoctor"("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.7.RELEASE")
+    restdocs(project(mapOf("path" to ":graph:graph-adapter-input-rest-spring-mvc", "configuration" to "restdocs")))
 }
 
 tasks.named("check") {
@@ -239,10 +242,22 @@ tasks {
         }
     }
 
+    val extractRestDocsSnippets by creating(Copy::class) {
+        from(restdocs) {
+            eachFile {
+                // We only have absolute file locations when the configuration is resolved.
+                // In order to keep the directory structure, we need to construct a relative path two levels up.
+                relativePath = RelativePath(true, file.relativeTo(file.toPath().parent.parent.toFile()).toString())
+            }
+        }
+        into(layout.buildDirectory.dir("generated-snippets"))
+    }
+
     named("asciidoctor", AsciidoctorTask::class).configure {
         // Declare all generated Asciidoc snippets as inputs. This connects the tasks, so dependsOn() is not required.
         // Other outputs are filtered, because they do not affect the output of this task.
-        inputs.files(integrationTest.get().outputs.files.asFileTree.matching { include("**/*.adoc") })
+        val integrationTestOutputs = integrationTest.get().outputs.files.asFileTree.matching { include("**/*.adoc") }
+        inputs.files(integrationTestOutputs, extractRestDocsSnippets.outputs)
             .withPathSensitivity(PathSensitivity.RELATIVE)
             .ignoreEmptyDirectories()
             .withPropertyName("restdocSnippets")

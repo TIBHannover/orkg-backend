@@ -14,6 +14,8 @@ import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
+import eu.tib.orkg.prototype.testing.spring.restdocs.RestDocsTest
+import eu.tib.orkg.prototype.testing.annotations.UsesMocking
 import io.mockk.Runs
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
@@ -25,7 +27,6 @@ import java.net.URLEncoder
 import java.security.Principal
 import java.util.*
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -41,21 +42,15 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import org.springframework.web.context.WebApplicationContext
 
 @ContextConfiguration(classes = [StatementController::class, ExceptionHandler::class])
 @WebMvcTest(controllers = [StatementController::class])
 @DisplayName("Given a Statement controller")
-internal class StatementControllerUnitTest {
-
-    private lateinit var mockMvc: MockMvc
+@UsesMocking
+internal class StatementControllerUnitTest : RestDocsTest("statements") {
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
-
-    @Autowired
-    private lateinit var context: WebApplicationContext
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
@@ -75,15 +70,10 @@ internal class StatementControllerUnitTest {
     @MockkBean
     private lateinit var principal: Principal
 
-    @BeforeEach
-    fun setup() {
-        clearAllMocks()
-        mockMvc = MockMvcBuilders.webAppContextSetup(context).build()
-    }
-
     @AfterEach
     fun verifyMockedCalls() {
         confirmVerified(userRepository, statementService, principal)
+        clearAllMocks()
     }
 
     @Test

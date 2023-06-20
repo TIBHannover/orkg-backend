@@ -7,6 +7,11 @@ plugins {
     kotlin("plugin.spring")
 }
 
+val restdocs: Configuration by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+}
+
 testing {
     suites {
         val test by getting(JvmTestSuite::class) {
@@ -21,6 +26,8 @@ testing {
                 }
                 implementation("org.springframework.security:spring-security-test")
                 implementation(libs.spring.mockk)
+                implementation(libs.spring.restdocs)
+                implementation(libs.forkhandles.fabrikate4k)
             }
         }
     }
@@ -28,6 +35,8 @@ testing {
 
 dependencies {
     api(platform(project(":platform")))
+
+    testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
 
     api(project(":graph:graph-application"))
     api(project(":identity-management:idm-application")) // only for ExceptionHandler
@@ -47,4 +56,9 @@ dependencies {
     implementation("org.eclipse.rdf4j:rdf4j-client:3.7.7") {
         exclude(group = "commons-collections", module = "commons-collections") // Version 3, vulnerable
     }
+
+    restdocs(fileTree(layout.buildDirectory.dir("generated-snippets")) {
+        builtBy("test")
+        include("**/*.adoc")
+    })
 }

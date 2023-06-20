@@ -2,46 +2,58 @@ package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
+import dev.forkhandles.fabrikate.FabricatorConfig
+import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
+import eu.tib.orkg.prototype.createLiteral
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.application.LiteralController.LiteralCreateRequest
 import eu.tib.orkg.prototype.statements.application.LiteralController.LiteralUpdateRequest
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.MAX_LABEL_LENGTH
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.testing.andExpectPage
+import eu.tib.orkg.prototype.testing.annotations.UsesMocking
+import eu.tib.orkg.prototype.testing.spring.restdocs.RestDocsTest
+import eu.tib.orkg.prototype.testing.spring.restdocs.documentedGetRequestTo
+import eu.tib.orkg.prototype.testing.spring.restdocs.timestampFieldWithPath
 import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
 import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.*
-import org.junit.jupiter.api.BeforeEach
+import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.matchesPattern
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.orkg.statements.testing.withCustomMappings
+import org.orkg.statements.testing.withLiteralIds
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType.APPLICATION_JSON
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import org.springframework.web.context.WebApplicationContext
 
 @ContextConfiguration(classes = [LiteralController::class, ExceptionHandler::class])
 @WebMvcTest(controllers = [LiteralController::class])
 @DisplayName("Given a Literal controller")
-class LiteralControllerUnitTest {
-
-    private lateinit var mockMvc: MockMvc
-
-    @Autowired
-    private lateinit var context: WebApplicationContext
+@UsesMocking
+internal class LiteralControllerUnitTest : RestDocsTest("literals") {
 
     @Autowired
     private lateinit var objectMapper: ObjectMapper
@@ -53,9 +65,57 @@ class LiteralControllerUnitTest {
     @MockkBean
     private lateinit var userRepository: AuthUseCase
 
-    @BeforeEach
-    fun setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context).build()
+    @Test
+    @DisplayName("correctly serializes an existing literal")
+    fun getSingle() {
+        val id = "L1234"
+        val literal = createLiteral(id = id).copy(
+            createdAt = OffsetDateTime.of(2023, 6, 1, 15, 19, 4, 778631092, ZoneOffset.ofHours(2)),
+        )
+        every { literalService.findById(any()) } returns Optional.of(literal)
+
+        mockMvc.perform(documentedGetRequestTo("/api/literals/{id}", id))
+            .andExpect(status().isOk)
+            // Explicitly test all properties of the representation. This works as serialization test.
+            .andExpect(jsonPath("$.id", `is`("L1234")))
+            .andExpect(jsonPath("$.label", `is`("some literal value")))
+            .andExpect(jsonPath("$.datatype", `is`("xsd:string")))
+            .andExpect(jsonPath("$.created_at", `is`("2023-06-01T15:19:04.778631092+02:00")))
+            .andExpect(jsonPath("$.created_by", `is`("679ad2bd-ceb3-4f26-80ec-b6eab7a5e8c1")))
+            .andExpect(jsonPath("$._class", `is`("literal")))
+            // Document the representation for later reference.
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(parameterWithName("id").description("The identifier of the literal to retrieve.")),
+                    responseFields(
+                        // The order here determines the order in the generated table. More relevant items should be up.
+                        fieldWithPath("id").description("The identifier of the literal."),
+                        fieldWithPath("label").description("The literal value."),
+                        fieldWithPath("datatype").description("The datatype of the literal. Can be a (prefixed) URI."),
+                        timestampFieldWithPath("created_at", "the literal was created"),
+                        // TODO: Add links to documentation of special user UUIDs.
+                        fieldWithPath("created_by").description("The UUID of the user or service who created this literal."),
+                        fieldWithPath("_class").description("An indicator which type of entity was returned. Always has the value \"`literal`\".")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+    }
+
+    @Test
+    @DisplayName("correctly serializes multiple literals as page")
+    fun getPaged() {
+        // Keep the collection size small, because the output ends up in the doc. Use a seed to keep output stable.
+        val config = FabricatorConfig(seed = 1, collectionSizes = 3..3).withStandardMappings()
+        val literals = Fabrikate(config).withCustomMappings().withLiteralIds().random<List<Literal>>()
+        // Pretend we wanted to obtain only 3 elements, but 15 are available:
+        val page: Page<Literal> = PageImpl(literals, PageRequest.of(0, literals.size), 15)
+        every { literalService.findAll(any()) } returns page
+
+        mockMvc.perform(documentedGetRequestTo("/api/literals/"))
+            .andExpect(status().isOk)
+            .andExpectPage()
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test
@@ -74,7 +134,7 @@ class LiteralControllerUnitTest {
         mockMvc
             .perform(creationOf(literal))
             .andExpect(status().isCreated)
-            .andExpect(header().string("Location", "http://localhost/api/literals/L1"))
+            .andExpect(header().string("Location", matchesPattern("https?://.+/api/literals/L1")))
 
         verify(exactly = 1) {
             literalService.create(ContributorId("f2d66c90-3cbf-4d4f-951f-0fc470f682c4"), "", "xsd:string")
@@ -183,7 +243,7 @@ class LiteralControllerUnitTest {
         mockMvc
             .perform(creationOf(literal))
             .andExpect(status().isCreated)
-            .andExpect(header().string("Location", "http://localhost/api/literals/L1"))
+            .andExpect(header().string("Location", matchesPattern("https?://.+/api/literals/L1")))
 
         verify(exactly = 1) {
             literalService.create(ContributorId("f2d66c90-3cbf-4d4f-951f-0fc470f682c4"), "irrelevant", "irrelevant")

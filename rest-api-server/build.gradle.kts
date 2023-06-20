@@ -28,7 +28,6 @@ plugins {
     alias(libs.plugins.spring.boot)
 
     id("org.jetbrains.dokka") version "0.10.1"
-    id("de.jansauer.printcoverage") version "2.0.0"
     id("org.asciidoctor.jvm.convert") version "3.3.2"
     id("com.google.cloud.tools.jib") version "3.1.1"
     // The taskinfo plugin currently does not work with Gradle 7.6: https://gitlab.com/barfuin/gradle-taskinfo/-/issues/20
@@ -204,8 +203,6 @@ tasks {
     val check by existing {
         dependsOn(named<JacocoReport>("testCodeCoverageReport"))
     }
-    val printCoverage by existing { mustRunAfter(check) }
-    val build by existing { dependsOn(printCoverage) }
 
     withType<Test>().configureEach {
         useJUnitPlatform {

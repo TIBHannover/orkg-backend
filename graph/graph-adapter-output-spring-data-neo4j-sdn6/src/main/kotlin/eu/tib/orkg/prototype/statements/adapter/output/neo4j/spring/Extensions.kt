@@ -18,16 +18,23 @@ import java.net.URI
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.function.BiFunction
+import java.util.stream.Collectors
 import org.jetbrains.annotations.Contract
+import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Expression
 import org.neo4j.cypherdsl.core.FunctionInvocation
+import org.neo4j.cypherdsl.core.Functions
+import org.neo4j.cypherdsl.core.ResultStatement
+import org.neo4j.cypherdsl.core.StatementBuilder
 import org.neo4j.cypherdsl.core.SymbolicName
 import org.neo4j.driver.Record
 import org.neo4j.driver.Value
 import org.neo4j.driver.types.MapAccessor
 import org.neo4j.driver.types.Node
 import org.neo4j.driver.types.TypeSystem
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 
 private val reservedClassIds = setOf(
     "Thing",
@@ -154,3 +161,18 @@ internal fun paperNode() = node("Paper", "Resource")
 internal fun comparisonNode() = node("Comparison", "Resource")
 internal fun problemNode() = node("Problem", "Resource")
 internal fun contributionNode() = node("Contribution", "Resource")
+
+internal fun StatementBuilder.TerminalExposesOrderBy.build(pageable: Pageable): ResultStatement =
+    orderBy(pageable.sort).skip(pageable.offset).limit(pageable.pageSize).build()
+
+internal fun StatementBuilder.TerminalExposesOrderBy.orderBy(sort: Sort): StatementBuilder.OngoingMatchAndReturnWithOrder =
+    orderBy(sort.get().map {
+        var expression: Expression = name(it.property)
+        if (it.isIgnoreCase) {
+            expression = Functions.toLower(expression)
+        }
+        when (it.direction) {
+            Sort.Direction.DESC -> expression.descending()
+            else -> expression.ascending()
+        }
+    }.collect(Collectors.toList()))

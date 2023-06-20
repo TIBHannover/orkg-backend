@@ -28,7 +28,6 @@ plugins {
     alias(libs.plugins.spring.boot)
 
     id("org.jetbrains.dokka") version "0.10.1"
-    id("de.jansauer.printcoverage") version "2.0.0"
     id("org.asciidoctor.jvm.convert") version "3.3.2"
     id("com.google.cloud.tools.jib") version "3.1.1"
     // The taskinfo plugin currently does not work with Gradle 7.6: https://gitlab.com/barfuin/gradle-taskinfo/-/issues/20
@@ -47,6 +46,8 @@ configurations {
     // The Asciidoctor Gradle plug-in does not create it anymore, so we have to...
     create("asciidoctor")
 }
+
+val restdocs: Configuration by configurations.creating
 
 idea {
     module {
@@ -185,6 +186,7 @@ dependencies {
     // Documentation
     //
     "asciidoctor"("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.7.RELEASE")
+    restdocs(project(mapOf("path" to ":graph:graph-adapter-input-rest-spring-mvc", "configuration" to "restdocs")))
 }
 
 tasks.named("check") {
@@ -201,8 +203,6 @@ tasks {
     val check by existing {
         dependsOn(named<JacocoReport>("testCodeCoverageReport"))
     }
-    val printCoverage by existing { mustRunAfter(check) }
-    val build by existing { dependsOn(printCoverage) }
 
     withType<Test>().configureEach {
         useJUnitPlatform {
@@ -239,10 +239,22 @@ tasks {
         }
     }
 
+    val extractRestDocsSnippets by creating(Copy::class) {
+        from(restdocs) {
+            eachFile {
+                // We only have absolute file locations when the configuration is resolved.
+                // In order to keep the directory structure, we need to construct a relative path two levels up.
+                relativePath = RelativePath(true, file.relativeTo(file.toPath().parent.parent.toFile()).toString())
+            }
+        }
+        into(layout.buildDirectory.dir("generated-snippets"))
+    }
+
     named("asciidoctor", AsciidoctorTask::class).configure {
         // Declare all generated Asciidoc snippets as inputs. This connects the tasks, so dependsOn() is not required.
         // Other outputs are filtered, because they do not affect the output of this task.
-        inputs.files(integrationTest.get().outputs.files.asFileTree.matching { include("**/*.adoc") })
+        val integrationTestOutputs = integrationTest.get().outputs.files.asFileTree.matching { include("**/*.adoc") }
+        inputs.files(integrationTestOutputs, extractRestDocsSnippets.outputs)
             .withPathSensitivity(PathSensitivity.RELATIVE)
             .ignoreEmptyDirectories()
             .withPropertyName("restdocSnippets")

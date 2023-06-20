@@ -54,7 +54,9 @@ testing {
 
 dependencies {
     api(platform(project(":platform")))
+    testApi(enforcedPlatform(libs.junit5.bom)) // TODO: Remove after upgrade
     "containerTestApi"(platform(project(":platform")))
+    "containerTestApi"(enforcedPlatform(libs.junit5.bom)) // TODO: Remove after upgrade
 
     api(project(":graph:graph-application"))
 

@@ -1,5 +1,6 @@
 package org.orkg.statements.testing
 
+import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
@@ -77,6 +78,20 @@ fun Fabrikate.withCustomMappings(): Fabrikate {
         )
     }
     return this
+}
+
+/** Helper method to generate a simple number (as string) for use in IDs, so that they look a bit nicer. */
+private fun FabricatorConfig.simpleNumberString(maxLength: Int = 4): String =
+    List(random.nextInt(1, maxLength + 1)) { random.nextInt(1, 10) }.joinToString("", transform = Int::toString)
+
+/** Generate IDs that follow the literal ID convention, for use in documentation tests. */
+fun FabricatorConfig.withLiteralIds(): FabricatorConfig = apply {
+    register { ThingId("L${simpleNumberString()}") }
+}
+
+// Helper method to work with current withCustomMappings() implementation.
+fun Fabrikate.withLiteralIds(): Fabrikate = apply {
+    config.withLiteralIds()
 }
 
 inline fun <reified T : Any> Fabrikate.random(size: Int): List<T> {

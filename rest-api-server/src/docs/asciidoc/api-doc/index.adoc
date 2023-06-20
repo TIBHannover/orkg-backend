@@ -1,9 +1,10 @@
 = ORKG REST API Documentation
 :doctype: book
 :toc: right
+
+// Non-document attributes
 include::../_default-attributes.adoc[]
 :pagination_note: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>.
-
 
 [[overview]]
 == Overview
@@ -79,6 +80,9 @@ In a `POST` request, the response will contain an entity describing or containin
 | `404 Not Found`
 | The requested resource could not be found but may be available again in the future. Subsequent requests by the client are permissible.
 |===
+
+All responses with error codes that do not indicate success will contain a payload that describes the error.
+Their structure is documented in the section about <<error-represenation,Error representation>>.
 
 ////
 === Hypermedia
@@ -332,9 +336,10 @@ They can appear in the object position in <<Statements,statements>>.
 [[literals-list]]
 === Listing Literals
 
-A `GET` request lists all literals:
+A `GET` request returns a <<sorting-and-pagination,paged>> list of literals.
+If no paging request parameters are provided, the default values will be used.
 
-operation::literal-controller-integration-test-index[snippets='curl-request,http-response']
+operation::literals-get-paged[snippets='curl-request,http-response']
 
 [[literals-create]]
 === Creating Literals
@@ -363,9 +368,9 @@ operation::literal-controller-integration-test-edit[snippets='curl-request,http-
 [[literals-fetch]]
 === Fetching a literal
 
-A `GET` request provides information about a literal.
+A `GET` request provides information about a <<literal-represenation,literal>>.
 
-operation::literal-controller-integration-test-fetch[snippets='curl-request,http-response']
+operation::literals-get-single[snippets='curl-request,http-response']
 
 [[literals-lookup]]
 === Lookup a literal by label
@@ -394,9 +399,21 @@ include::parts/datasets-benchmarks.adoc[]
 [[sorting-and-pagination]]
 == Sorting and Pagination
 
-For all request that lists a set of results, pagination and sorting are applied automatically.
+For all request that lists entities, pagination and sorting are applied automatically.
+The attributes of paged responses are described in the section about <<page-representation, Page representations>>.
 
-For sorting by default it is disabled. It can be enabled by specifying which key to sort on.
+Endpoints supporting paging all take the following (optional) request parameters:
+
+[cols="1,3"]
+include::{snippets}/paged-page/request-parameters.adoc[]
+
+An example of a response of a paged list looks like this:
+
+include::{snippets}/paged-page/response-body.adoc[]
+
+NOTE: The elements in `content` can be objects of arbitrary structure and are sorted according to the request parameters, if the endpoint supports it.
+
+By default, sorting is done by the `created_at` property (time-based).
 
 [cols="e,m"]
 .Sorting keys allowed by the API
@@ -417,3 +434,36 @@ For sorting by default it is disabled. It can be enabled by specifying which key
 |obj.label    |the label of the object
 |obj.created  |the creation timestamp of the object
 |=======================
+
+
+== Representations
+
+This section contains the _resource definitions_ (also called _representations_) of the entities of this API.
+
+=== Basic Types
+
+[[timestamp-representation]]
+==== Timestamps
+
+All timestamps used in this API are in https://wikipedia.org/wiki/ISO_8601[ISO 8601] format.
+Although nanosecond precision is available currently, clients MUST NOT rely on it, as it might be subject to change.
+
+[[error-represenation]]
+=== Errors
+
+[cols="1,1,3"]
+include::{snippets}/errors-simple-message-exception/response-fields.adoc[]
+
+[[page-representation]]
+=== Pages
+
+[cols="1,1,3"]
+include::{snippets}/paged-page/response-fields.adoc[]
+
+=== Entities
+
+[[literal-represenation]]
+==== Literal
+
+[cols="1,1,3"]
+include::{snippets}/literals-get-single/response-fields.adoc[]

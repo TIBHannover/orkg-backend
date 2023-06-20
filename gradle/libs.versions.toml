@@ -30,6 +30,7 @@ kotest-extensions-testcontainers = { module = "io.kotest.extensions:kotest-exten
 kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
 spring-mockk = { module = "com.ninja-squad:springmockk", version = "2.0.1" }
+spring-restdocs = { module = "org.springframework.restdocs:spring-restdocs-mockmvc", version = "" } # Provided by Spring
 testcontainers-core = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
 testcontainers-junit5 = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 testcontainers-neo4j = { module = "org.testcontainers:neo4j", version.ref = "testcontainers" }

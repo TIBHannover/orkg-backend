@@ -11,3 +11,11 @@ The provided endpoints aggregate these concepts and provide a unified contributi
 A `GET` request provides information about a contribution.
 
 operation::contributions-get-single[snippets='curl-request,http-response,response-fields']
+
+[[contributions-list]]
+=== Listing contributions
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributions-fetch,contributions>>.
+If no paging request parameters are provided, the default values will be used.
+
+operation::contributions-get-paged[snippets='curl-request']

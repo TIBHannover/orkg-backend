@@ -8,8 +8,10 @@ import eu.tib.orkg.prototype.contenttypes.application.ContributionController
 import eu.tib.orkg.prototype.contenttypes.application.ContributionNotFound
 import eu.tib.orkg.prototype.contenttypes.domain.model.Contribution
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
+import eu.tib.orkg.prototype.statements.application.pageOf
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
+import eu.tib.orkg.prototype.testing.andExpectPage
 import eu.tib.orkg.prototype.testing.spring.restdocs.RestDocsTest
 import eu.tib.orkg.prototype.testing.spring.restdocs.documentedGetRequestTo
 import eu.tib.orkg.prototype.testing.spring.restdocs.timestampFieldWithPath
@@ -81,6 +83,20 @@ internal class ContributionControllerUnitTest : RestDocsTest("contributions") {
             .andExpect(jsonPath("$.message").value(exception.message))
 
         verify(exactly = 1) { contributionService.findById(id) }
+    }
+
+    @Test
+    @DisplayName("Given several contributions, then status is 200 OK and contributions are returned")
+    fun getPaged() {
+        val contribution = createDummyContribution()
+        every { contributionService.findAll(any()) } returns pageOf(contribution)
+
+        mockMvc.perform(documentedGetRequestTo("/api/contributions", accept = CONTRIBUTION_JSON_V2, contentType = CONTRIBUTION_JSON_V2))
+            .andExpect(status().isOk)
+            .andExpectPage()
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { contributionService.findAll(any()) }
     }
 
     private fun get(string: String) = mockMvc.perform(

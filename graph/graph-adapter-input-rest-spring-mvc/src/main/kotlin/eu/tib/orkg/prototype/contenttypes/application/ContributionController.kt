@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 const val CONTRIBUTION_JSON_V2 = "application/vnd.orkg.contribution.v2+json"
 
 @RestController
-@RequestMapping("/api/contributions/", produces = [MediaType.APPLICATION_JSON_VALUE])
+@RequestMapping("/api/contributions", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ContributionController(
     private val service: ContributionUseCases
 ) : BaseController(), ContributionRepresentationAdapter {
@@ -25,7 +25,7 @@ class ContributionController(
     ): ContributionRepresentation =
         service.findById(id).toContributionRepresentation()
 
-    @GetMapping("/", produces = [CONTRIBUTION_JSON_V2])
+    @GetMapping(produces = [CONTRIBUTION_JSON_V2])
     fun findAll(pageable: Pageable): Page<ContributionRepresentation> =
         service.findAll(pageable).mapToContributionRepresentation()
 }

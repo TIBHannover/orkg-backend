@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contenttypes.api.PaperUseCases
+import eu.tib.orkg.prototype.contenttypes.application.PAPER_JSON_V2
 import eu.tib.orkg.prototype.contenttypes.application.PaperController
 import eu.tib.orkg.prototype.contenttypes.application.PaperNotFound
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
@@ -18,36 +19,33 @@ import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
+import eu.tib.orkg.prototype.testing.andExpectPage
+import eu.tib.orkg.prototype.testing.spring.restdocs.RestDocsTest
+import eu.tib.orkg.prototype.testing.spring.restdocs.documentedGetRequestTo
+import eu.tib.orkg.prototype.testing.spring.restdocs.timestampFieldWithPath
 import io.mockk.every
 import io.mockk.verify
 import java.time.OffsetDateTime
 import java.util.*
 import org.hamcrest.Matchers.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
+import org.springframework.restdocs.headers.HeaderDocumentation.*
+import org.springframework.restdocs.payload.PayloadDocumentation.*
+import org.springframework.restdocs.request.RequestDocumentation.*
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import org.springframework.web.context.WebApplicationContext
 
 @ContextConfiguration(classes = [PaperController::class, ExceptionHandler::class])
 @WebMvcTest(controllers = [PaperController::class])
 @DisplayName("Given a Paper controller")
-internal class PaperControllerUnitTest {
-
-    private lateinit var mockMvc: MockMvc
-
-    @Autowired
-    private lateinit var context: WebApplicationContext
+internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @MockkBean
     private lateinit var paperService: PaperUseCases
@@ -56,18 +54,59 @@ internal class PaperControllerUnitTest {
     @MockkBean
     private lateinit var userRepository: AuthUseCase
 
-    @BeforeEach
-    fun setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context).build()
-    }
-
     @Test
-    fun `Given a paper, when it is fetched by id and service succeeds, then status is 200 OK and contribution is returned`() {
+    @DisplayName("Given a paper, when it is fetched by id and service succeeds, then status is 200 OK and contribution is returned")
+    fun getSingle() {
         val paper = createDummyPaper()
         every { paperService.findById(paper.id) } returns Optional.of(paper)
 
-        get("/api/papers/${paper.id}")
+        mockMvc.perform(documentedGetRequestTo("/api/papers/{id}", paper.id, accept = PAPER_JSON_V2, contentType = PAPER_JSON_V2))
             .andExpect(status().isOk)
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the paper to retrieve.")
+                    ),
+                    responseFields(
+                        // The order here determines the order in the generated table. More relevant items should be up.
+                        fieldWithPath("id").description("The identifier of the paper."),
+                        fieldWithPath("title").description("The title of the paper."),
+                        fieldWithPath("research_fields").description("The list of research fields the paper is assigned to."),
+                        fieldWithPath("research_fields[].id").description("The id of the research field."),
+                        fieldWithPath("research_fields[].label").description("The label of the research field."),
+                        fieldWithPath("identifiers").description("The unique identifiers of the paper."),
+                        fieldWithPath("identifiers.doi").description("The DOI of the paper. (optional)").optional(),
+                        fieldWithPath("publication_info").description("The publication info of the paper.").optional(),
+                        fieldWithPath("publication_info.published_month").description("The month in which the paper was published. (optional)").optional(),
+                        fieldWithPath("publication_info.published_year").description("The year in which the paper was published. (optional)").optional(),
+                        fieldWithPath("publication_info.published_in").description("The venue where the paper was published. (optional)").optional(),
+                        fieldWithPath("publication_info.url").description("The URL to the original paper. (optional)").optional(),
+                        fieldWithPath("authors").description("The list of authors that originally contributed to the paper."),
+                        fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].name").description("The name of the author."),
+                        fieldWithPath("authors[].identifiers").description("The unique identifiers of the author."),
+                        fieldWithPath("authors[].identifiers.orcid").description("The ORCID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.google_scholar").type("String").description("The Google Scholar ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.research_gate").type("String").description("The ResearchGate ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.linked_in").type("String").description("The LinkedIn ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.wikidata").type("String").description("The Wikidata ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.web_of_science").type("String").description("The Web of Science id of the author. (optional)").optional(),
+                        fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
+                        fieldWithPath("contributions").description("The list of contributions of the paper."),
+                        fieldWithPath("contributions[].id").description("The ID of the contribution."),
+                        fieldWithPath("contributions[].label").description("The label of the contribution."),
+                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to."),
+                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to."),
+                        fieldWithPath("extraction_method").description("""The method used to extract the paper resource. Can be one of "unknown", "manual" or "automatic"."""),
+                        timestampFieldWithPath("created_at", "the paper resource was created"),
+                        // TODO: Add links to documentation of special user UUIDs.
+                        fieldWithPath("created_by").description("The UUID of the user or service who created this paper."),
+                        fieldWithPath("verified").description("Determines if the paper was verified by a curator."),
+                        fieldWithPath("visibility").description("""Visibility of the paper. Can be one of "default", "featured", "unlisted" or "deleted".""")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { paperService.findById(paper.id) }
     }
@@ -88,15 +127,25 @@ internal class PaperControllerUnitTest {
     }
 
     @Test
-    fun `Given several papers, when they are fetched, then status is 200 OK and papers are returned`() {
+    @DisplayName("Given several papers, when they are fetched, then status is 200 OK and papers are returned")
+    fun getPaged() {
         val papers = listOf(createDummyPaper())
         every { paperService.findAll(any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
 
-        get("/api/papers")
+        mockMvc.perform(documentedGetRequestTo("/api/papers", accept = PAPER_JSON_V2, contentType = PAPER_JSON_V2))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(1))
+            .andExpectPage()
+            .andDo(
+                documentationHandler.document(
+                    requestParameters(
+                        parameterWithName("research_field").description("Optional filter for research field id.").optional(),
+                        parameterWithName("title").description("Optional filter for the title of the paper. Uses exact matching.").optional(),
+                        parameterWithName("visibility").description("""Optional filter for visibility. Either of "listed", "featured", "unlisted" or "deleted".""").optional(),
+                        parameterWithName("created_by").description("Optional filter for research field id.").optional(),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { paperService.findAll(any()) }
     }
@@ -176,16 +225,16 @@ internal class PaperControllerUnitTest {
     }
 
     @Test
-    fun `Given a paper, when contributors are fetched, then status 200 OK and contributors are returned`() {
-        val id = ThingId("R123")
+    @DisplayName("Given a paper, when contributors are fetched, then status 200 OK and contributors are returned")
+    fun getContributors() {
+        val id = ThingId("R8186")
         val contributors = listOf(ContributorId(UUID.randomUUID()))
         every { paperService.findAllContributorsByPaperId(id, any()) } returns PageImpl(contributors, PageRequest.of(0, 5), 1)
 
-        get("/api/papers/$id/contributors")
+        mockMvc.perform(documentedGetRequestTo("/api/papers/{id}/contributors", id, accept = PAPER_JSON_V2, contentType = PAPER_JSON_V2))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
-            .andExpect(jsonPath("$.number").value(0)) // page number
-            .andExpect(jsonPath("$.totalElements").value(1))
+            .andExpectPage()
+            .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { paperService.findAllContributorsByPaperId(id, any()) }
     }
@@ -211,7 +260,7 @@ internal class PaperControllerUnitTest {
     )
 
     private fun createDummyPaper() = Paper(
-        id = ThingId("R123"),
+        id = ThingId("R8186"),
         title = "Dummy Paper Title",
         researchFields = listOf(
             LabeledObject(
@@ -235,9 +284,9 @@ internal class PaperControllerUnitTest {
         authors = listOf(
             Author(
                 id = ThingId("147"),
-                name = "Author 1",
+                name = "Josiah Stinkney Carberry",
                 identifiers = mapOf(
-                    "doi" to "10.1007/s00787-010-0130-8"
+                    "orcid" to "0000-0002-1825-0097"
                 ),
                 homepage = "https://example.org"
             ),

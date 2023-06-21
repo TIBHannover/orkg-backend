@@ -23,8 +23,13 @@ fun timestampFieldWithPath(path: String, suffix: String): FieldDescriptor = fiel
     )
     .type(OffsetDateTime::class.simpleName)
 
-fun documentedGetRequestTo(urlTemplate: String, vararg uriValues: Any): MockHttpServletRequestBuilder =
+fun documentedGetRequestTo(
+    urlTemplate: String,
+    vararg uriValues: Any,
+    accept: String = MediaType.APPLICATION_JSON_VALUE,
+    contentType: String = MediaType.APPLICATION_JSON_VALUE
+): MockHttpServletRequestBuilder =
     RestDocumentationRequestBuilders.get(urlTemplate, *uriValues)
-        .accept(MediaType.APPLICATION_JSON)
-        .contentType(MediaType.APPLICATION_JSON)
+        .accept(accept)
+        .contentType(contentType)
         .characterEncoding("utf-8")

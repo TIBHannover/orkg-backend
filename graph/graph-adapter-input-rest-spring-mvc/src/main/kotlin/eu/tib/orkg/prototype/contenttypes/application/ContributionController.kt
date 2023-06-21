@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-private const val CONTRIBUTION_JSON_V2 = "application/vnd.orkg.contribution.v2+json"
+const val CONTRIBUTION_JSON_V2 = "application/vnd.orkg.contribution.v2+json"
 
 @RestController
 @RequestMapping("/api/contributions/", produces = [MediaType.APPLICATION_JSON_VALUE])

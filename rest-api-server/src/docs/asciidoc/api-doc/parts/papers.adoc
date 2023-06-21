@@ -2,7 +2,36 @@
 == Papers
 
 Papers represent a collection of concepts in the knowledge graph.
-They can be seen as a collection of <<Resources,resources>>, <<Literals,literals>> and <<Predicates,predicates>>
+They can be seen as a collection of <<Resources,resources>>, <<Literals,literals>> and <<Predicates,predicates>>.
+The provided endpoints aggregate these concepts and provide a unified paper representation.
+
+[[papers-fetch]]
+=== Fetching a paper
+
+A `GET` request provides information about a paper.
+
+operation::papers-get-single[snippets='curl-request,response-fields']
+
+[[papers-list]]
+=== Listing papers
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<papers-fetch,papers>>.
+If no paging request parameters are provided, the default values will be used.
+
+operation::papers-get-paged[snippets='curl-request']
+
+The following list of request parameters are supported:
+
+NOTE: Only one request parameter can be used at a time.
+
+operation::papers-get-paged[snippets='request-parameters']
+
+[[papers-contributors]]
+=== Fetching contributors for a paper
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributors,contributors>> ids.
+
+operation::papers-get-contributors[snippets='curl-request']
 
 ////
 [[papers-create]]

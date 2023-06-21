@@ -1,0 +1,13 @@
+[[contributions]]
+== Contributions
+
+Contributions represent a collection of concepts in the knowledge graph.
+They can be seen as a collection of <<Resources,resources>>, <<Literals,literals>> and <<Predicates,predicates>>.
+The provided endpoints aggregate these concepts and provide a unified contribution representation.
+
+[[contributions-fetch]]
+=== Fetching a contribution
+
+A `GET` request provides information about a contribution.
+
+operation::contributions-get-single[snippets='curl-request,http-response,response-fields']

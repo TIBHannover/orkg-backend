@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-private const val PAPER_JSON_V2 = "application/vnd.orkg.paper.v2+json"
+const val PAPER_JSON_V2 = "application/vnd.orkg.paper.v2+json"
 
 @RestController
 @RequestMapping("/api/papers", produces = [MediaType.APPLICATION_JSON_VALUE])

@@ -3,39 +3,37 @@ package eu.tib.orkg.prototype.contenttypes
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.contenttypes.api.ContributionUseCases
+import eu.tib.orkg.prototype.contenttypes.application.CONTRIBUTION_JSON_V2
 import eu.tib.orkg.prototype.contenttypes.application.ContributionController
 import eu.tib.orkg.prototype.contenttypes.application.ContributionNotFound
 import eu.tib.orkg.prototype.contenttypes.domain.model.Contribution
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
+import eu.tib.orkg.prototype.testing.spring.restdocs.RestDocsTest
+import eu.tib.orkg.prototype.testing.spring.restdocs.documentedGetRequestTo
+import eu.tib.orkg.prototype.testing.spring.restdocs.timestampFieldWithPath
 import io.mockk.every
 import io.mockk.verify
 import java.util.*
 import org.hamcrest.Matchers.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
+import org.springframework.restdocs.payload.PayloadDocumentation
+import org.springframework.restdocs.payload.PayloadDocumentation.*
+import org.springframework.restdocs.request.RequestDocumentation
+import org.springframework.restdocs.request.RequestDocumentation.*
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import org.springframework.web.context.WebApplicationContext
 
 @ContextConfiguration(classes = [ContributionController::class, ExceptionHandler::class])
 @WebMvcTest(controllers = [ContributionController::class])
 @DisplayName("Given a Contribution controller")
-internal class ContributionControllerUnitTest {
-
-    private lateinit var mockMvc: MockMvc
-
-    @Autowired
-    private lateinit var context: WebApplicationContext
+internal class ContributionControllerUnitTest : RestDocsTest("contributions") {
 
     @MockkBean
     private lateinit var contributionService: ContributionUseCases
@@ -44,18 +42,28 @@ internal class ContributionControllerUnitTest {
     @MockkBean
     private lateinit var userRepository: AuthUseCase
 
-    @BeforeEach
-    fun setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(context).build()
-    }
-
     @Test
-    fun `Given a contribution, when it is fetched by id and service succeeds, then status is 200 OK and contribution is returned`() {
+    @DisplayName("Given a contribution, when it is fetched by id and service succeeds, then status is 200 OK and contribution is returned")
+    fun getSingle() {
         val contribution = createDummyContribution()
         every { contributionService.findById(contribution.id) } returns contribution
 
-        get("/api/contributions/${contribution.id}")
+        mockMvc.perform(documentedGetRequestTo("/api/contributions/{id}", contribution.id, accept = CONTRIBUTION_JSON_V2, contentType = CONTRIBUTION_JSON_V2))
             .andExpect(status().isOk)
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the contribution to retrieve.")
+                    ),
+                    responseFields(
+                        fieldWithPath("id").description("The identifier of the contribution."),
+                        fieldWithPath("label").description("The label of the contribution."),
+                        subsectionWithPath("properties").description("A map of predicate ids to lists of thing ids, that represent the statements that this contribution consists of."),
+                        fieldWithPath("visibility").description("""Visibility of the contribution. Can be one of "default", "featured", "unlisted" or "deleted".""")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { contributionService.findById(contribution.id) }
     }
@@ -81,8 +89,8 @@ internal class ContributionControllerUnitTest {
     )
 
     private fun createDummyContribution() = Contribution(
-        id = ThingId("R123"),
-        label = "Dummy Contribution Label",
+        id = ThingId("R8199"),
+        label = "ORKG System",
         properties = mapOf(
             ThingId("R456") to listOf(
                 ThingId("R789"),

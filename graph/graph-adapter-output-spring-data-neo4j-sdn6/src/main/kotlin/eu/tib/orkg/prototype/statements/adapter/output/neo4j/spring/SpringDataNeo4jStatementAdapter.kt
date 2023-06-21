@@ -43,6 +43,7 @@ import org.neo4j.cypherdsl.core.SymbolicName
 import org.springframework.cache.CacheManager
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.data.neo4j.core.fetchAs
 import org.springframework.data.neo4j.core.mappedBy
@@ -169,11 +170,11 @@ class SpringDataNeo4jStatementAdapter(
         val r = name("rel")
         val subject = anyNode()
         val `object` = anyNode()
-        val match = match(subject.relationshipTo(`object`, RELATED).named(r))
-        val query = match
+        val match = { match(subject.relationshipTo(`object`, RELATED).named(r)) }
+        val query = match()
             .returningWithSortableFields(r, subject, `object`)
             .build(pageable)
-        val countQuery = match
+        val countQuery = match()
             .returning(count(r))
             .build()
         return neo4jClient.query(query.cypher)
@@ -395,12 +396,13 @@ class SpringDataNeo4jStatementAdapter(
         val r = name("rel")
         val c = name("c")
         val id = name("id")
-        val match = match(anyNode().relationshipTo(anyNode(), RELATED).named(r))
-        val query = match
-            .returning(r.property("predicate_id").`as`(id), count(r).`as`(c))
+        val match = { match(anyNode().relationshipTo(anyNode(), RELATED).named(r)) }
+        val query = match()
+            .with(r.property("predicate_id").`as`(id), count(r).`as`(c))
             .orderBy(c.descending(), id.ascending())
+            .returning(id, c)
             .build(pageable)
-        val countQuery = match
+        val countQuery = match()
             .returning(countDistinct(r.property("predicate_id")))
             .build()
         return neo4jClient.query(query.cypher)
@@ -497,28 +499,33 @@ class SpringDataNeo4jStatementAdapter(
     override fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> {
         val problem = name("p")
         val idLiteral = literalOf<String>(id.value.toString())
-        val call = call(union(
-            match(
-                paperNode()
-                    .withProperties("organization_id", idLiteral)
-                    .relationshipTo(contributionNode(), RELATED)
-                    .withProperties("predicate_id", literalOf<String>("P31"))
-                    .relationshipTo(problemNode().named(problem), RELATED)
-                    .properties("predicate_id", literalOf<String>("P32"))
-            ).returning(problem)
-                .build(),
-            match(
-                node("Problem")
-                    .named(problem)
-                    .withProperties("observatory_id", idLiteral)
-            ).returning(problem)
-                .build()
-        ))
-        val query = call
+        val call = {
+            call(
+                union(
+                    match(
+                        paperNode()
+                            .withProperties("organization_id", idLiteral)
+                            .relationshipTo(contributionNode(), RELATED)
+                            .withProperties("predicate_id", literalOf<String>("P31"))
+                            .relationshipTo(problemNode().named(problem), RELATED)
+                            .properties("predicate_id", literalOf<String>("P32"))
+                    ).returning(problem)
+                        .build(),
+                    match(
+                        node("Problem")
+                            .named(problem)
+                            .withProperties("observatory_id", idLiteral)
+                    ).returning(problem)
+                        .build()
+                )
+            )
+        }
+        val query = call()
+            .with(problem)
+            .orderBy(problem.property("id").ascending())
             .returning(problem)
-            .orderBy(problem.property("id"))
             .build(pageable)
-        val countQuery = call
+        val countQuery = call()
             .returning(count(problem))
             .build()
         return neo4jClient.query(query.cypher)
@@ -538,25 +545,28 @@ class SpringDataNeo4jStatementAdapter(
         val nodes = name("nodes")
         val node = name("node")
         val createdBy = name("createdBy")
-        val match = match(
+        val match = {
+            match(
                 node("Resource")
                     .withProperties("id", literalOf<String>(id.value))
                     .named(n)
             ).call("apoc.path.subgraphAll")
-            .withArgs(n, asExpression(apocConfiguration))
-            .yield(relationships)
-            .with(relationships, n)
-            .unwind(relationships).`as`(rel)
-            .with(collect(rel).`as`(rel), collect(endNode(rel)).`as`(nodes), n.`as`(n))
-            .withDistinct(rel.add(nodes).add(n).`as`(nodes))
-            .unwind(nodes).`as`(node)
-            .withDistinct(node.property("created_by").`as`(createdBy))
-            .where(createdBy.isNotNull)
-        val query = match
+                .withArgs(n, asExpression(apocConfiguration))
+                .yield(relationships)
+                .with(relationships, n)
+                .unwind(relationships).`as`(rel)
+                .with(collect(rel).`as`(rel), collect(endNode(rel)).`as`(nodes), n.`as`(n))
+                .withDistinct(rel.add(nodes).add(n).`as`(nodes))
+                .unwind(nodes).`as`(node)
+                .withDistinct(node.property("created_by").`as`(createdBy))
+                .where(createdBy.isNotNull)
+        }
+        val query = match()
+            .with(createdBy)
+            .orderBy(createdBy.ascending())
             .returning(createdBy)
-            .orderBy(createdBy)
             .build(pageable)
-        val countQuery = match
+        val countQuery = match()
             .returning(count(createdBy))
             .build()
         return neo4jClient.query(query.cypher)
@@ -587,43 +597,46 @@ class SpringDataNeo4jStatementAdapter(
                 literalOf<String>("yyyy-MM-dd'T'HH:mm:ssXXX")
             ).asFunction()
         ).`as`("edit")
-        val match = match(
+        val match = {
+            match(
                 node("Resource")
                     .withProperties("id", literalOf<String>(id.value))
                     .named(n)
             ).call("apoc.path.subgraphAll")
-            .withArgs(n, asExpression(apocConfiguration))
-            .yield(relationships)
-            .with(relationships, n)
-            .unwind(relationships).`as`(rel)
-            .withDistinct(collect(rel).add(collect(endNode(rel))).add(collect(n)).`as`(nodes), n.asExpression())
-            .unwind(nodes).`as`(node)
-            .with(node, n)
-            .where(
-                node.property("created_by").isNotNull
-                    .and(node.property("created_at").isNotNull)
-                    .and(node.property("created_at").gte(n.property("created_at")))
-            )
-            .with(
-                node.property("created_by").`as`(createdBy),
-                call("apoc.text.regreplace").withArgs(
-                    node.property("created_at"),
-                    literalOf<String>("""^(\d+-\d+-\d+T\d+:\d+):\d+(?:\.\d+)?(.*)$"""),
-                    literalOf<String>("$1:00$2")
-                ).asFunction().`as`(timestamp)
-            ).with(
-                createdBy,
-                call("apoc.date.parse").withArgs(
-                    timestamp,
-                    literalOf<String>("ms"),
-                    literalOf<String>("yyyy-MM-dd'T'HH:mm:ssXXX")
-                ).asFunction().`as`(ms).asExpression()
-            ).withDistinct(edit)
-        val query = match
-            .returning(valueAt(edit, 0).`as`(createdBy), valueAt(edit, 1).`as`(createdAt))
+                .withArgs(n, asExpression(apocConfiguration))
+                .yield(relationships)
+                .with(relationships, n)
+                .unwind(relationships).`as`(rel)
+                .withDistinct(collect(rel).add(collect(endNode(rel))).add(collect(n)).`as`(nodes), n.asExpression())
+                .unwind(nodes).`as`(node)
+                .with(node, n)
+                .where(
+                    node.property("created_by").isNotNull
+                        .and(node.property("created_at").isNotNull)
+                        .and(node.property("created_at").gte(n.property("created_at")))
+                )
+                .with(
+                    node.property("created_by").`as`(createdBy),
+                    call("apoc.text.regreplace").withArgs(
+                        node.property("created_at"),
+                        literalOf<String>("""^(\d+-\d+-\d+T\d+:\d+):\d+(?:\.\d+)?(.*)$"""),
+                        literalOf<String>("$1:00$2")
+                    ).asFunction().`as`(timestamp)
+                ).with(
+                    createdBy,
+                    call("apoc.date.parse").withArgs(
+                        timestamp,
+                        literalOf<String>("ms"),
+                        literalOf<String>("yyyy-MM-dd'T'HH:mm:ssXXX")
+                    ).asFunction().`as`(ms).asExpression()
+                ).withDistinct(edit)
+        }
+        val query = match()
+            .with(valueAt(edit, 0).`as`(createdBy), valueAt(edit, 1).`as`(createdAt))
             .orderBy(createdAt.descending())
+            .returning(createdBy, createdAt)
             .build(pageable)
-        val countQuery = match
+        val countQuery = match()
             .returning(count(edit))
             .build()
         return neo4jClient.query(query.cypher)
@@ -647,7 +660,8 @@ class SpringDataNeo4jStatementAdapter(
 
     override fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource> {
         val problem = name("p")
-        val match = match(
+        val match = {
+            match(
                 comparisonNode()
                     .withProperties("organization_id", literalOf<String>(id.value.toString()))
                     .relationshipTo(contributionNode(), RELATED)
@@ -655,10 +669,11 @@ class SpringDataNeo4jStatementAdapter(
                     .relationshipTo(problemNode().named(problem), RELATED)
                     .properties("predicate_id", literalOf<String>("P32"))
             )
-        val query = match
+        }
+        val query = match()
             .returningDistinct(problem)
             .build(pageable)
-        val countQuery = match
+        val countQuery = match()
             .returning(countDistinct(problem))
             .build()
         return neo4jClient.query(query.cypher)
@@ -705,11 +720,11 @@ class SpringDataNeo4jStatementAdapter(
         val relation = subject.relationshipTo(`object`, RELATED)
             .named(r)
         val condition = filter(subject, relation, `object`)
-        val match = match(relation).where(condition)
-        val query = match
+        val match = { match(relation).where(condition) }
+        val query = match()
             .returningWithSortableFields(r, subject, `object`)
             .build(pageable)
-        val countQuery = match
+        val countQuery = match()
             .returning(count(r))
             .build()
         return neo4jClient.query(query.cypher)

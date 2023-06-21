@@ -1,7 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import org.neo4j.cypherdsl.core.ResultStatement
-import org.neo4j.cypherdsl.core.StatementBuilder
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -16,7 +15,4 @@ abstract class SpringDataNeo4jAdapter(protected open val neo4jClient: Neo4jClien
             .one() ?: 0
         return PageImpl(all().toList(), pageable, total)
     }
-
-    protected fun StatementBuilder.TerminalExposesSkip.build(pageable: Pageable): ResultStatement =
-        skip(pageable.offset).limit(pageable.pageSize).build() // FIXME: sorting
 }

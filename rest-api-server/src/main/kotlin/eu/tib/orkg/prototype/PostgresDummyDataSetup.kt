@@ -1,10 +1,14 @@
 package eu.tib.orkg.prototype
 
+import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer
+import com.fasterxml.jackson.databind.module.SimpleModule
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.community.api.ConferenceSeriesUseCases
-import eu.tib.orkg.prototype.community.api.CreateObservatoryUseCase
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.community.api.OrganizationUseCases
 import eu.tib.orkg.prototype.community.domain.model.ConferenceSeries
@@ -14,10 +18,12 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.Organization
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.PeerReviewType
+import eu.tib.orkg.prototype.community.spi.ObservatoryRepository
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.application.BadPeerReviewType
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -37,11 +43,33 @@ import org.springframework.stereotype.Component
 class PostgresDummyDataSetup(
     private val userService: AuthUseCase,
     private val observatoryService: ObservatoryUseCases,
+    private val observatoryRepository: ObservatoryRepository,
     private val organizationService: OrganizationUseCases,
     private val conferenceSeriesService: ConferenceSeriesUseCases,
     private val resourceService: ResourceUseCases,
     private val objectMapper: ObjectMapper
 ) : ApplicationRunner {
+
+    class ObservatoryDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<Observatory?>(vc) {
+        override fun deserialize(jp: JsonParser, ctxt: DeserializationContext?): Observatory {
+            val node: JsonNode = jp.codec.readTree(jp)
+            return Observatory(
+                id = ObservatoryId(UUID.fromString(node["id"].asText())),
+                name = node["name"].asText(),
+                description = node["description"].asText(),
+                researchField = node["research_field"]["id"].takeIf { !it.isNull }?.let { ThingId(it.asText()) },
+                members = node["members"].map { ContributorId(UUID.fromString(it.asText())) }.toSet(),
+                organizationIds = node["organization_ids"].map { OrganizationId(UUID.fromString(it.asText())) }.toSet(),
+                displayId = node["display_id"].asText()
+            )
+        }
+    }
+
+    init {
+        objectMapper.registerModule(
+            SimpleModule().addDeserializer(Observatory::class.java, ObservatoryDeserializer())
+        )
+    }
 
     @Autowired
     private lateinit var context: ConfigurableApplicationContext
@@ -51,7 +79,8 @@ class PostgresDummyDataSetup(
         generateUsers(users)
         val organizations = fetchOrganizations() + fetchConferences()
         generateOrganizations(organizations)
-        val observatories = fetchObservatories()
+        val observatories = mutableListOf<Observatory>()
+        fetchObservatories(observatories::add)
         generateObservatories(observatories)
         updateUserAffiliation(organizations, observatories)
         fetchConferenceSeries(::putConferenceSeries)
@@ -108,47 +137,21 @@ class PostgresDummyDataSetup(
         // Ignore images as they are stored locally and depend on controller logic
     }
 
-    private fun fetchObservatories(): List<Observatory> {
-        val client = HttpClient.newBuilder().build()
-        val request = HttpRequest.newBuilder()
-            .uri(URI.create("https://orkg.org/api/observatories/"))
-            .build()
-        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-        return objectMapper.readValue(response.body(), object : TypeReference<List<Observatory>>() {})
-    }
-
-    private fun fetchConferenceSeries(action: (ConferenceSeries) -> Unit) {
-        val client = HttpClient.newBuilder().build()
-        var page = 0
-        while (true) {
-            val request = HttpRequest.newBuilder()
-                .uri(URI.create("https://orkg.org/api/conference-series/?page=$page&size=50"))
-                .build()
-            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-            val pageResponse = objectMapper.readTree(response.body()) // We cant parse Page or PageImpl without custom deserializers
-            pageResponse.path("content")
-                .map { objectMapper.treeToValue(it, ConferenceSeries::class.java) }
-                .forEach(action)
-            if (pageResponse.path("last").asBoolean(true)) return
-            page++
+    private fun fetchObservatories(action: (Observatory) -> Unit) =
+        fetchPaged(Observatory::class.java, action) { page ->
+            "https://orkg.org/api/observatories/?page=$page&size=50"
         }
-    }
+
+    private fun fetchConferenceSeries(action: (ConferenceSeries) -> Unit) =
+        fetchPaged(ConferenceSeries::class.java, action) { page ->
+            "https://orkg.org/api/conference-series/?page=$page&size=50"
+        }
 
     private fun generateObservatories(observatories: List<Observatory>): List<Observatory> {
         observatories.forEach {
             val observatory = observatoryService.findById(it.id).orElseGet {
-                val command = CreateObservatoryUseCase.CreateCommand(
-                    id = it.id,
-                    name = it.name,
-                    description = it.description ?: "",
-                    organizationId = it.organizationIds.first(),
-                    researchField = Optional.ofNullable(it.researchField)
-                        .filter { id -> resourceService.findById(id).isPresent }
-                        .orElse(null),
-                    displayId = it.displayId
-                )
-                val id = observatoryService.create(command)
-                observatoryService.findById(id).get()
+                observatoryRepository.save(it.copy(members = emptySet()))
+                observatoryService.findById(it.id).get()
             }
 
             for (organizationId in it.organizationIds) {
@@ -213,18 +216,35 @@ class PostgresDummyDataSetup(
         userService.registerUser("""$email@example.org""", """$uuid""", name, uuid)
     }
 
-    private fun fetchOrganizationContributors(id: OrganizationId) =
-        fetchContributors("https://orkg.org/api/organizations/$id/users")
-
-    private fun fetchObservatoryContributors(id: ObservatoryId) =
-        fetchContributors("https://orkg.org/api/observatories/$id/users")
-
-    private fun fetchContributors(url: String): List<Contributor> {
+    private fun fetchOrganizationContributors(id: OrganizationId): List<Contributor> {
         val client = HttpClient.newBuilder().build()
         val request = HttpRequest.newBuilder()
-            .uri(URI.create(url))
+            .uri(URI.create("https://orkg.org/api/organizations/$id/users"))
             .build()
         val response = client.send(request, HttpResponse.BodyHandlers.ofString())
         return objectMapper.readValue(response.body(), object : TypeReference<List<Contributor>>() {})
+    }
+
+    private fun fetchObservatoryContributors(id: ObservatoryId): List<Contributor> =
+        mutableListOf<Contributor>().apply { fetchObservatoryContributors(id, this::add) }
+
+    private fun fetchObservatoryContributors(id: ObservatoryId, action: (Contributor) -> Unit) =
+        fetchPaged(Contributor::class.java, action) { page -> "https://orkg.org/api/observatories/$id/users?page=$page&size=50" }
+
+    private fun <T> fetchPaged(`class`: Class<T>, action: (T) -> Unit, url: (Int) -> String) {
+        val client = HttpClient.newBuilder().build()
+        var page = 0
+        while (true) {
+            val request = HttpRequest.newBuilder()
+                .uri(URI.create(url(page)))
+                .build()
+            val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+            val pageResponse = objectMapper.readTree(response.body()) // We cant parse Page or PageImpl without custom deserializers
+            pageResponse.path("content")
+                .map { objectMapper.treeToValue(it, `class`) }
+                .forEach(action)
+            if (pageResponse.path("last").asBoolean(true)) return
+            page++
+        }
     }
 }

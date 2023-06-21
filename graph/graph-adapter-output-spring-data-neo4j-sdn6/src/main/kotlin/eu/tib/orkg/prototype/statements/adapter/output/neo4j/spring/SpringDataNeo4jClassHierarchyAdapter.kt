@@ -113,7 +113,8 @@ class SpringDataNeo4jClassHierarchyAdapter(
         val g =  node("Class")
             .named("g")
         val childCount = name("childCount")
-        val match = match(
+        val match = {
+            match(
                 node("Class")
                     .named(c)
                     .relationshipTo(
@@ -123,13 +124,16 @@ class SpringDataNeo4jClassHierarchyAdapter(
                         SUBCLASS_OF
                     )
             )
-        val query = match
+        }
+        val query = match()
             .optionalMatch(
                 g.relationshipTo(anyNode().named(c))
-            ).returning(c, count(g).`as`(childCount))
+            )
+            .with(c.`as`(c), count(g).`as`(childCount))
             .orderBy(c.property("id").ascending())
+            .returning(c, childCount)
             .build(pageable)
-        val countQuery = match
+        val countQuery = match()
             .returning(count(c))
             .build()
         return neo4jClient.query(query.cypher)
@@ -176,17 +180,20 @@ class SpringDataNeo4jClassHierarchyAdapter(
     override fun findAllRoots(pageable: Pageable): Page<Class> {
         val r = name("r")
         val root = node("Class").named(r)
-        val match = match(root)
-            .where(
-                root.relationshipTo(node("Class"), SUBCLASS_OF)
-                    .asCondition()
-                    .not()
-            )
-        val query = match
-            .returning(root)
+        val match = {
+            match(root)
+                .where(
+                    root.relationshipTo(node("Class"), SUBCLASS_OF)
+                        .asCondition()
+                        .not()
+                )
+        }
+        val query = match()
+            .with(root)
             .orderBy(root.property("id").ascending())
+            .returning(root)
             .build(pageable)
-        val countQuery = match
+        val countQuery = match()
             .returning(count(root))
             .build()
         return neo4jClient.query(query.cypher)
@@ -201,26 +208,29 @@ class SpringDataNeo4jClassHierarchyAdapter(
         val classes = name("classes")
         val `class` = name("class")
         val parentId = name("parent_id")
-        val match = match(
+        val match = {
+            match(
                 node("Class")
                     .named(c)
                     .withProperties("id", literalOf<String>(id.value))
                     .relationshipTo(node("Class").named(p), SUBCLASS_OF)
                     .length(0, null)
             ).with(collect(p).add(collect(c)).`as`(classes))
-            .unwind(classes)
-            .`as`(`class`)
-            .withDistinct(`class`)
-        val query = match
+                .unwind(classes)
+                .`as`(`class`)
+                .withDistinct(`class`)
+        }
+        val query = match()
             .optionalMatch(
                 anyNode()
                     .named(`class`)
                     .relationshipTo(node("Class").named(p), SUBCLASS_OF)
             )
-            .returning(`class`, p.property("id").`as`(parentId))
+            .with(`class`.`as`(`class`), p.property("id").`as`(parentId))
             .orderBy(`class`.property("id").ascending())
+            .returning(`class`, parentId)
             .build(pageable)
-        val countQuery = match
+        val countQuery = match()
             .returning(count(`class`))
             .build()
         return neo4jClient.query(query.cypher)

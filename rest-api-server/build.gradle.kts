@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
+import org.orkg.gradle.withSnippets
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 
@@ -186,7 +187,7 @@ dependencies {
     // Documentation
     //
     "asciidoctor"("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.7.RELEASE")
-    restdocs(project(mapOf("path" to ":graph:graph-adapter-input-rest-spring-mvc", "configuration" to "restdocs")))
+    restdocs(project(withSnippets(":graph:graph-adapter-input-rest-spring-mvc")))
 }
 
 tasks.named("check") {

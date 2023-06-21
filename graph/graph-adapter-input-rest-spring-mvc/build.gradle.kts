@@ -3,13 +3,9 @@
 
 plugins {
     id("org.orkg.kotlin-conventions")
+    id("org.orkg.spring-restdocs-producer")
     alias(libs.plugins.spring.boot) apply false
     kotlin("plugin.spring")
-}
-
-val restdocs: Configuration by configurations.creating {
-    isCanBeConsumed = true
-    isCanBeResolved = false
 }
 
 testing {
@@ -56,9 +52,4 @@ dependencies {
     implementation("org.eclipse.rdf4j:rdf4j-client:3.7.7") {
         exclude(group = "commons-collections", module = "commons-collections") // Version 3, vulnerable
     }
-
-    restdocs(fileTree(layout.buildDirectory.dir("generated-snippets")) {
-        builtBy("test")
-        include("**/*.adoc")
-    })
 }

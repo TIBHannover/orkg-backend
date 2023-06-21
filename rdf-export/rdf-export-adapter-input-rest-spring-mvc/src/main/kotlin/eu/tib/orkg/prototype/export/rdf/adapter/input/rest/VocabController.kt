@@ -72,7 +72,6 @@ class VocabController(
     fun `class`(
         @PathVariable id: ThingId,
         @RequestHeader("Accept") acceptHeader: String,
-        uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<String> {
         val model = service.rdfModelForClass(id)
             // TODO: Return meaningful message to the user

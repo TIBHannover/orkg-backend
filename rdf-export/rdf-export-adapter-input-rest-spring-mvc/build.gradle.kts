@@ -1,6 +1,3 @@
-// JVM Test Suite is still incubating, but expected to be stable soon, so disabling the warning.
-@file:Suppress("UnstableApiUsage")
-
 plugins {
     id("org.orkg.kotlin-conventions")
     id("org.orkg.spring-restdocs-producer")
@@ -18,7 +15,7 @@ testing {
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-                    // exclude(module = "mockito-core") // TODO: uncomment when migrated to MockK
+                    exclude(module = "mockito-core")
                 }
                 implementation("org.springframework.security:spring-security-test")
                 implementation(libs.spring.mockk)
@@ -32,25 +29,17 @@ testing {
 dependencies {
     api(platform(project(":platform")))
 
-    testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
+    implementation(project(":rdf-export:rdf-export-application"))
+    implementation(project(":graph:graph-adapter-input-rest-spring-mvc")) // TODO: break dependency
 
-    api(project(":graph:graph-application"))
-    api(project(":identity-management:idm-application")) // only for ExceptionHandler
-
-    api("org.springframework:spring-context")
-    api("org.springframework.data:spring-data-commons")
-
-    implementation(libs.forkhandles.result4k)
-    implementation(libs.forkhandles.values4k)
-
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework:spring-context")
+    implementation("org.springframework.data:spring-data-commons")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-data-neo4j") // only for ExceptionHandler
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin") // to (de)serialize data classes
 
-    // RDF
     implementation("org.eclipse.rdf4j:rdf4j-client:3.7.7") {
         exclude(group = "commons-collections", module = "commons-collections") // Version 3, vulnerable
     }
+
+    testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
 }

@@ -381,7 +381,8 @@ operation::literal-controller-integration-test-lookup[snippets='curl-request,htt
 
 include::parts/papers.adoc[]
 
-include::parts/rdf.adoc[]
+[[rdf-integration]]
+include::parts/rdf.adoc[leveloffset=+1]
 
 [[contributors]]
 include::parts/contributors.adoc[leveloffset=+1]

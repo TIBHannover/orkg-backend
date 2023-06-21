@@ -1,3 +1,5 @@
+= RDF Integration
+
 [[rdf]]
 == RDF Dump
 
@@ -68,3 +70,13 @@ This collection of HTTP `Accept` headers are allowed by the system and the corre
 |application/turtle    | Turtle
 |text/turtle  | Turtle
 |=======================
+
+== RDF Hints
+
+Resource information can be obtained from the `/api/rdf/hints` endpoint.
+It supports the following request parameters:
+
+include::{snippets}/rdf-hints-test-filter-resources/request-parameters.adoc[]
+
+NOTE: The `type` parameter differs from the conventions used in this document.
+`property` refers to <<predicates,predicates>>, `item` to <<resources,resources>>.

@@ -34,10 +34,6 @@ dependencies {
     }
     // Search string parsing
     implementation("org.apache.lucene:lucene-queryparser:9.5.0")
-    // RDF
-    implementation("org.eclipse.rdf4j:rdf4j-client:3.7.7") {
-        exclude(group = "commons-collections", module = "commons-collections") // Version 3, vulnerable
-    }
 
     testFixturesApi(project(":identity-management:idm-adapter-output-spring-data-jpa"))
     testFixturesApi(libs.bundles.kotest)

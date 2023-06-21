@@ -20,6 +20,10 @@ include(
     "identity-management:idm-application",
     "identity-management:idm-adapter-output-spring-data-jpa",
 )
+include(
+    "rdf-export:rdf-export-application",
+    "rdf-export:rdf-export-adapter-input-rest-spring-mvc",
+)
 include("widget")
 include("rest-api-server")
 

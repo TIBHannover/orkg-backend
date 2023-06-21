@@ -136,6 +136,8 @@ dependencies {
     implementation(project(":graph:graph-application"))
     implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
     implementation(project(":graph:graph-adapter-output-spring-data-neo4j-ogm"))
+    implementation(project(":rdf-export:rdf-export-application"))
+    implementation(project(":rdf-export:rdf-export-adapter-input-rest-spring-mvc"))
     implementation(project(":widget"))
 
     implementation(libs.forkhandles.result4k)
@@ -188,6 +190,7 @@ dependencies {
     //
     "asciidoctor"("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.7.RELEASE")
     restdocs(project(withSnippets(":graph:graph-adapter-input-rest-spring-mvc")))
+    restdocs(project(withSnippets(":rdf-export:rdf-export-adapter-input-rest-spring-mvc")))
 }
 
 tasks.named("check") {
@@ -255,10 +258,11 @@ tasks {
         // Declare all generated Asciidoc snippets as inputs. This connects the tasks, so dependsOn() is not required.
         // Other outputs are filtered, because they do not affect the output of this task.
         val integrationTestOutputs = integrationTest.get().outputs.files.asFileTree.matching { include("**/*.adoc") }
-        inputs.files(integrationTestOutputs, extractRestDocsSnippets.outputs)
+        val docSources = files(sourceDir).asFileTree.matching { include("**/*.adoc") }
+        inputs.files(docSources, integrationTestOutputs, extractRestDocsSnippets.outputs)
             .withPathSensitivity(PathSensitivity.RELATIVE)
             .ignoreEmptyDirectories()
-            .withPropertyName("restdocSnippets")
+            .withPropertyName("asciidocFiles")
 
         configurations("asciidoctor")
         // TODO: Use {includedir} in documentation, change strategy afterwards

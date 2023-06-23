@@ -1,14 +1,15 @@
 package eu.tib.orkg.prototype.contenttypes.services
 
+import eu.tib.orkg.prototype.contenttypes.api.Identifiers
 import eu.tib.orkg.prototype.contenttypes.api.PaperUseCases
 import eu.tib.orkg.prototype.contenttypes.application.PaperNotFound
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
 import eu.tib.orkg.prototype.contenttypes.domain.model.Paper
 import eu.tib.orkg.prototype.contenttypes.domain.model.PublicationInfo
+import eu.tib.orkg.prototype.contenttypes.domain.model.toContributions
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.api.Classes
-import eu.tib.orkg.prototype.contenttypes.api.Identifiers
 import eu.tib.orkg.prototype.shared.PageRequests
+import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.domain.model.Literal
@@ -82,9 +83,7 @@ class PaperService(
             authors = statements.wherePredicate(Predicates.hasAuthor).objects()
                 .filter { it is Resource || it is Literal }
                 .pmap { it.toAuthor() },
-            contributions = statements.wherePredicate(Predicates.hasContribution)
-                .objectIdsWithLabel()
-                .sortedBy { it.id },
+            contributions = statements.toContributions(),
             observatories = listOf(observatoryId),
             organizations = listOf(organizationId),
             extractionMethod = extractionMethod,

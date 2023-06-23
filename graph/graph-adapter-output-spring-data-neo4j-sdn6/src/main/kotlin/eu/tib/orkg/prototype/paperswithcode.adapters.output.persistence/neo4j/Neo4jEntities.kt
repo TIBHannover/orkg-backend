@@ -26,7 +26,6 @@ data class Neo4jBenchmarkSummary(
 }
 
 data class Neo4jDataset(
-    @field:Transient
     val dataset: Neo4jResource,
     val totalModels: Long,
     val totalPapers: Long,

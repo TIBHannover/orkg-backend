@@ -74,12 +74,7 @@ class PaperService(
                 .objectIdsWithLabel()
                 .sortedBy { it.id },
             identifiers = statements.mapIdentifiers(Identifiers.paper),
-            publicationInfo = PublicationInfo(
-                publishedMonth = statements.wherePredicate(Predicates.monthPublished).firstObjectLabel()?.toIntOrNull(),
-                publishedYear = statements.wherePredicate(Predicates.yearPublished).firstObjectLabel()?.toLongOrNull(),
-                publishedIn = statements.wherePredicate(Predicates.hasVenue).firstObjectLabel(),
-                url = statements.wherePredicate(Predicates.hasURL).firstObjectLabel()
-            ),
+            publicationInfo = PublicationInfo.from(statements),
             authors = statements.wherePredicate(Predicates.hasAuthor).objects()
                 .filter { it is Resource || it is Literal }
                 .pmap { it.toAuthor() },

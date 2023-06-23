@@ -83,6 +83,8 @@ testing {
                 implementation(testFixtures(project(":testing:spring")))
                 implementation(testFixtures(project(":graph:graph-application")))
                 implementation(project(":library"))
+                implementation(project(":discussions:discussions-adapter-output-spring-data-jpa-postgres"))
+                implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa-postgres"))
                 implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation("org.springframework.boot:spring-boot-starter-test") {
@@ -136,6 +138,9 @@ dependencies {
     implementation(project(":graph:graph-application"))
     implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
     implementation(project(":graph:graph-adapter-output-spring-data-neo4j-ogm"))
+    implementation(project(":discussions:discussions-adapter-output-spring-data-jpa-postgres"))
+    implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa-postgres"))
+    implementation(project(":feature-flags:feature-flags-adapter-output-spring-properties"))
     implementation(project(":rdf-export:rdf-export-application"))
     implementation(project(":rdf-export:rdf-export-adapter-input-rest-spring-mvc"))
     implementation(project(":widget"))

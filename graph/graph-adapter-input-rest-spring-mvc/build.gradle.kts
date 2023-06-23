@@ -36,6 +36,7 @@ dependencies {
 
     api(project(":graph:graph-application"))
     api(project(":identity-management:idm-application")) // only for ExceptionHandler
+    api(project(":feature-flags:feature-flags-ports"))
 
     api("org.springframework:spring-context")
     api("org.springframework.data:spring-data-commons")

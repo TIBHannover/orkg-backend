@@ -21,6 +21,16 @@ include(
     "identity-management:idm-adapter-output-spring-data-jpa",
 )
 include(
+    ":discussions:discussions-adapter-output-spring-data-jpa-postgres",
+)
+include(
+    ":media-storage:media-storage-adapter-output-spring-data-jpa-postgres",
+)
+include(
+    ":feature-flags:feature-flags-ports",
+    ":feature-flags:feature-flags-adapter-output-spring-properties",
+)
+include(
     "rdf-export:rdf-export-application",
     "rdf-export:rdf-export-adapter-input-rest-spring-mvc",
 )

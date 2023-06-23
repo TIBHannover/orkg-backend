@@ -11,8 +11,13 @@ plugins {
 }
 
 dependencies {
-    // Configure all projects for test and coverage aggregation. Ignore parent projects, or those without code.
-    val ignoredProjects = setOf(":platform", ":common", ":graph", ":identity-management", ":testing", ":rdf-export")
+    // Configure all projects for test and coverage aggregation. Ignore parent projects, or those without (tested) code.
+    val parentProjects = subprojects
+        .map(Project::getPath)
+        .filter { path -> path.count { it == ':' } < 2 }
+        .filterNot { it == ":rest-api-server" } // Not a parent project
+        .toSet()
+    val ignoredProjects = setOf(":platform", ":testing:kotest", ":testing:spring") union parentProjects
     subprojects
         .filterNot { it.path in ignoredProjects || it.path.contains("sdn6") }
         .onEach(::jacocoAggregation)

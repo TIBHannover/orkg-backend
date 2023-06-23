@@ -7,14 +7,12 @@ import eu.tib.orkg.prototype.discussions.domain.model.DiscussionCommentId
 import eu.tib.orkg.prototype.discussions.spi.DiscussionCommentRepository
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
 @Component
 class SpringJpaPostgresDiscussionCommentAdapter(
-    @Qualifier("postgresDiscussionCommentRepository")
     private val repository: PostgresDiscussionCommentRepository
 ) : DiscussionCommentRepository {
     override fun save(comment: DiscussionComment) {

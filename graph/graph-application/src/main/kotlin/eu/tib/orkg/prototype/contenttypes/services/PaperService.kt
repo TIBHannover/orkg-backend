@@ -66,7 +66,7 @@ class PaperService(
 
     private fun Resource.toPaper(): Paper {
         val statements = statementRepository.findAllBySubject(id, PageRequests.ALL).content
-            .filter { it.`object`.label.isNotBlank() }
+            .withoutObjectsHavingBlankLabels()
         return Paper(
             id = id,
             title = label,

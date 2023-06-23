@@ -30,7 +30,7 @@ class ContributionService(
 
     private fun Resource.toContribution(): Contribution {
         val statements = statementRepository.findAllBySubject(id, PageRequests.ALL).content
-            .filter { it.`object`.label.isNotBlank() }
+            .withoutObjectsHavingBlankLabels()
         return Contribution(
             id = this@toContribution.id,
             label = this@toContribution.label,

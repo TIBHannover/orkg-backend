@@ -26,3 +26,6 @@ internal fun List<GeneralStatement>.firstObjectLabel(): String? = firstOrNull()?
 internal fun List<GeneralStatement>.mapIdentifiers(identifiers: Map<ThingId, String>) =
     filter { it.predicate.id in identifiers.keys }
         .associate { identifiers[it.predicate.id]!! to it.`object`.label }
+
+internal fun List<GeneralStatement>.withoutObjectsHavingBlankLabels(): List<GeneralStatement> =
+    filter { it.`object`.label.isNotBlank() }

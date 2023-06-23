@@ -99,7 +99,7 @@ class PaperService(
 
     private fun Resource.toAuthor(): Author {
         val statements = statementRepository.findAllBySubject(id, PageRequests.ALL).content
-            .filter { it.`object`.label.isNotBlank() }
+            .withoutObjectsHavingBlankLabels()
         return Author(
             id = id,
             name = label,

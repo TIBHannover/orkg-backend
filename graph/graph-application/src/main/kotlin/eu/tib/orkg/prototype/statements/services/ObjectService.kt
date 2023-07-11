@@ -17,10 +17,10 @@ import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateResourceUseCase
 import eu.tib.orkg.prototype.statements.application.ClassNotFound
-import eu.tib.orkg.prototype.statements.application.LiteralNotFound
 import eu.tib.orkg.prototype.statements.application.PredicateNotFound
-import eu.tib.orkg.prototype.statements.application.ResourceNotFound
+import eu.tib.orkg.prototype.statements.application.ThingNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
+import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.stereotype.Service
@@ -32,6 +32,7 @@ class ObjectService(
     private val predicateService: PredicateUseCases,
     private val statementService: StatementUseCases,
     private val classService: ClassUseCases,
+    private val thingService: ThingService,
     private val contributorService: ContributorService,
 ) : CreateObjectUseCase {
 
@@ -121,13 +122,8 @@ class ObjectService(
             val predicateId = extractPredicate(predicate, predicates)
             checkIfPredicateExists(predicateId!!.value)
             for (jsonObject in value) {
-                if (jsonObject.isExisting()) // Add an existing resource or literal
-                    when {
-                        jsonObject.isExistingLiteral() -> checkIfLiteralExists(jsonObject.`@id`!!)
-                        jsonObject.isExistingResource() -> checkIfResourceExists(jsonObject.`@id`!!)
-                        jsonObject.isExistingPredicate() -> checkIfPredicateExists(jsonObject.`@id`!!)
-                        jsonObject.isExistingClass() -> checkIfClassExists(jsonObject.`@id`!!)
-                    }
+                if (jsonObject.isExisting() && !jsonObject.isTempResource()) // Add an existing entity
+                    checkIfThingExists(ThingId(jsonObject.`@id`!!))
                 if (jsonObject.isTyped()) // Check for existing classes
                     jsonObject.classes!!.forEach { checkIfClassExists(it) }
                 if (jsonObject.hasSubsequentStatements()) checkObjectStatements(jsonObject.values!!, predicates)
@@ -156,26 +152,19 @@ class ObjectService(
             for (jsonObject in value) {
                 when {
                     jsonObject.isExisting() -> { // Add an existing resource or literal
-                        when {
-                            jsonObject.isExistingResource() || jsonObject.isExistingLiteral() || jsonObject.isExistingPredicate() || jsonObject.isExistingClass() -> {
-                                if (jsonObject.isExistingResource()) {
-                                    // Update existing resources with pre-defined classes
-                                    typeResourceBasedOnPredicate(predicateId, jsonObject)
-                                }
-                                statementService.add(userId, subject, predicateId!!, ThingId(jsonObject.`@id`!!))
-                            }
-                            jsonObject.isTempResource() -> {
-                                if (!tempResources.containsKey(jsonObject.`@id`)) resourceQueue.add(
-                                    TempResource(
-                                        subject,
-                                        predicateId!!,
-                                        jsonObject.`@id`!!
-                                    )
+                        if (!jsonObject.isTempResource())
+                            statementService.add(userId, subject, predicateId!!, ThingId(jsonObject.`@id`!!))
+                        else {
+                            if (!tempResources.containsKey(jsonObject.`@id`)) resourceQueue.add(
+                                TempResource(
+                                    subject,
+                                    predicateId!!,
+                                    jsonObject.`@id`!!
                                 )
-                                else {
-                                    val tempId = tempResources[jsonObject.`@id`]
-                                    statementService.add(userId, subject, predicateId!!, tempId!!)
-                                }
+                            )
+                            else {
+                                val tempId = tempResources[jsonObject.`@id`]
+                                statementService.add(userId, subject, predicateId!!, tempId!!)
                             }
                         }
                     }
@@ -264,22 +253,6 @@ class ObjectService(
     }
 
     // <editor-fold desc="Helper Functions">
-
-    /**
-     * Type an existing resource with the range of the predicate if required
-     */
-    private fun typeResourceBasedOnPredicate(
-        predicateId: ThingId?,
-        resource: ObjectStatement
-    ) {
-        MAP_PREDICATE_CLASSES[predicateId!!.value]?.let { ThingId(it) }?.let {
-            val res = resourceService.findById(ThingId(resource.`@id`!!)).get()
-            val newClasses = res.classes.toMutableSet()
-            newClasses.add(it)
-            resourceService.update(UpdateResourceUseCase.UpdateCommand(id = res.id, label = null, classes = newClasses))
-        }
-    }
-
     /**
      * Check if a predicate is existing
      * o/w throw out a suitable exception
@@ -289,26 +262,15 @@ class ObjectService(
     }
 
     /**
-     * Check if a literal is existing
-     * o/w throw out a suitable exception
-     */
-    private fun checkIfLiteralExists(literalId: String) {
-        if (!literalService.exists(ThingId(literalId))) throw LiteralNotFound(literalId)
-    }
-
-    /**
-     * Check if a resource is existing
-     * o/w throw out a suitable exception
-     */
-    private fun checkIfResourceExists(resourceId: String) {
-        if (!resourceService.exists(ThingId(resourceId))) throw ResourceNotFound.withId(resourceId)
-    }
-
-    /**
      * Check if a class exists, otherwise throw out suitable exception.
      */
     private fun checkIfClassExists(it: String) {
         if (!classService.exists(ThingId(it))) throw ClassNotFound.withId(it)
+    }
+
+    private fun checkIfThingExists(id: ThingId) {
+        if (!thingService.exists(id))
+            throw ThingNotFound.withThingId(id)
     }
 
     /**

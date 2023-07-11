@@ -7,10 +7,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import kotlin.collections.HashMap
 
-const val RESOURCE_EXISTING_KEY = "resource"
-const val LITERAL_EXISTING_KEY = "literal"
-const val PREDICATE_EXISTING_KEY = "predicate"
-const val CLASS_EXISTING_KEY = "class"
 
 interface CreateObjectUseCase {
 
@@ -29,7 +25,7 @@ interface CreateObjectUseCase {
          * of predicates to be processed
          */
         fun hasTempPredicates() =
-            this.predicates != null && this.predicates.isNotEmpty()
+            !this.predicates.isNullOrEmpty()
     }
 
     data class NamedObject(
@@ -46,19 +42,18 @@ interface CreateObjectUseCase {
          * of statements to be added recursively
          */
         fun hasSubsequentStatements() =
-            this.values != null && this.values.isNotEmpty()
+            !this.values.isNullOrEmpty()
 
         /**
          * Check if the resource is typed
          * i.e., it has classes
          */
         fun isTyped() =
-            this.classes != null && this.classes.isNotEmpty()
+            !this.classes.isNullOrEmpty()
     }
 
     data class ObjectStatement(
         val `@id`: String?,
-        val `@type`: String?,
         val classes: List<String>?,
         val `@temp`: String?,
         val text: String?,
@@ -75,51 +70,6 @@ interface CreateObjectUseCase {
             this.`@id` != null
 
         /**
-         * Check if an entity is existing and explicitly typed.
-         * Allowed types are: [class, resource, predicate, literal]
-         */
-        fun isTypedExisting() =
-            this.isExisting() && this.`@type` != null
-
-        /**
-         * Check if the entity is existing as a resource
-         * If it is typed with resource
-         * o/w if the id starts with an R
-         */
-        fun isExistingResource() =
-            this.isExisting() && when (this.`@type`) {
-                null -> this.`@id`!!.startsWith("R")
-                RESOURCE_EXISTING_KEY -> true
-                else -> false
-            }
-
-        /**
-         * Check if the entity is existing as a literal
-         * If it is typed with literal
-         * o/w if the id starts with an L
-         */
-        fun isExistingLiteral() =
-            this.isExisting() && when (this.`@type`) {
-                null -> this.`@id`!!.startsWith("L")
-                LITERAL_EXISTING_KEY -> true
-                else -> false
-            }
-
-        /**
-         * Check if the entity is existing as a class
-         * If it is typed with class
-         */
-        fun isExistingClass() =
-            this.isTypedExisting() && this.`@type` == CLASS_EXISTING_KEY
-
-        /**
-         * Check if the entity is existing as a predicate
-         * If it is typed with predicate
-         */
-        fun isExistingPredicate() =
-            this.isTypedExisting() && this.`@type` == PREDICATE_EXISTING_KEY
-
-        /**
          * Check if the resource is a temp resource
          * i.e., its id starts with an _
          */
@@ -131,7 +81,7 @@ interface CreateObjectUseCase {
          * i.e., it has classes
          */
         fun isTyped() =
-            this.classes != null && this.classes.isNotEmpty()
+            !this.classes.isNullOrEmpty()
 
         /**
          * Check if this is a new resource to be created
@@ -152,7 +102,7 @@ interface CreateObjectUseCase {
          * of statements to be added recursively
          */
         fun hasSubsequentStatements() =
-            this.values != null && this.values.isNotEmpty()
+            !this.values.isNullOrEmpty()
     }
 
     data class TempResource(

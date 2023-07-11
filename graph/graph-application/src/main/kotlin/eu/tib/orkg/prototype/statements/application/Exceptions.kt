@@ -38,6 +38,15 @@ class ClassNotFound private constructor(
     }
 }
 
+class ThingNotFound private constructor(
+    override val message: String
+) : SimpleMessageException(HttpStatus.NOT_FOUND, message) {
+    companion object {
+        fun withThingId(id: ThingId) = withId(id.value)
+        fun withId(id: String) = ThingNotFound("""Thing "$id" not found.""")
+    }
+}
+
 class PredicateNotFound : SimpleMessageException {
     constructor(id: String) : super(HttpStatus.NOT_FOUND, """Predicate "$id" not found.""")
     constructor(id: ThingId) : this(id.value)

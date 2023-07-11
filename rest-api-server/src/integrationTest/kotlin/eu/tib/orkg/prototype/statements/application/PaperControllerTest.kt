@@ -87,7 +87,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
         classService.createClasses("Paper", "Contribution", "Problem", "ResearchField", "Author", "Venue")
 
         resourceService.createResource(id = "R12", label = "Computer Science")
-        resourceService.createResource(id = "R3003", label = "Question Answering over Linked Data")
+        resourceService.createResource(id = "CUSTOM_ID", label = "Question Answering over Linked Data")
     }
 
     @Test
@@ -103,7 +103,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
                     mapOf(
                         "name" to "Contribution 1",
                         "values" to mapOf(
-                            "P32" to listOf(mapOf("@id" to "R3003")),
+                            "P32" to listOf(mapOf("@id" to "CUSTOM_ID")),
                             "HAS_EVALUATION" to listOf(mapOf(
                                 "@temp" to "_b24c054a-fdde-68a7-c655-d4e7669a2079",
                                 "label" to "MOTO"
@@ -142,8 +142,8 @@ class PaperControllerTest : RestDocumentationBaseTest() {
                     name = "Contribution 1",
                     classes = emptyList(),
                     values = HashMap(mapOf(
-                        "P32" to listOf(ObjectStatement(`@id` = "R3003", "resource", null, null, null, null, null, null)),
-                        "HAS_EVALUATION" to listOf(ObjectStatement(null, "resource", null, null, null, null, label = "MOTO", null))
+                        "P32" to listOf(ObjectStatement(`@id` = "CUSTOM_ID", null, null, null, null, null, null)),
+                        "HAS_EVALUATION" to listOf(ObjectStatement(null, null, null, null, null, label = "MOTO", null))
                     ))
                 )),
             authors = null,
@@ -170,7 +170,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
                     mapOf(
                         "name" to "Contribution 2",
                         "values" to mapOf(
-                            "P32" to listOf(mapOf("@id" to "R3003")),
+                            "P32" to listOf(mapOf("@id" to "CUSTOM_ID")),
                             "HAS_EVALUATION" to listOf(mapOf(
                                 "@temp" to "_b24c054a-fdde-68a7-c655-d4e7669a2079",
                                 "label" to "MOTO"
@@ -216,7 +216,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
                     mapOf(
                         "name" to "Contribution 2",
                         "values" to mapOf(
-                            "P32" to listOf(mapOf("@id" to "R3003")),
+                            "P32" to listOf(mapOf("@id" to "CUSTOM_ID")),
                             "HAS_EVALUATION" to listOf(mapOf(
                                 "@temp" to "_b24c054a-fdde-68a7-c655-d4e7669a2079",
                                 "label" to "MOTO"
@@ -262,7 +262,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
                     mapOf(
                         "name" to "Contribution 2",
                         "values" to mapOf(
-                            "P32" to listOf(mapOf("@id" to "R3003")),
+                            "P32" to listOf(mapOf("@id" to "CUSTOM_ID")),
                             "HAS_EVALUATION" to listOf(mapOf(
                                 "@temp" to "_b24c054a-fdde-68a7-c655-d4e7669a2079",
                                 "label" to "MOTO"
@@ -308,7 +308,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
                     mapOf(
                         "name" to "Contribution 2",
                         "values" to mapOf(
-                            "P32" to listOf(mapOf("@id" to "R3003")),
+                            "P32" to listOf(mapOf("@id" to "CUSTOM_ID")),
                             "HAS_EVALUATION" to listOf(mapOf(
                                 "@temp" to "_b24c054a-fdde-68a7-c655-d4e7669a2079",
                                 "label" to "MOTO"

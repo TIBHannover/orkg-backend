@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.35.1] - 2023-07-11
 ### Changed
 - Linking to existing IDs in the paper and object endpoints uses `ThingId` lookup and doesn't rely on `@type` property anymore.
   (See: [!594](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/594))
@@ -447,7 +449,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.35.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.35.1...master
+[0.35.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.35.1
 [0.35.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.35.0
 [0.34.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.34.1
 [0.34.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.34.0

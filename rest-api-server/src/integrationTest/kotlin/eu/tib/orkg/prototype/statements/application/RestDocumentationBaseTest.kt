@@ -15,6 +15,7 @@ import org.springframework.restdocs.headers.ResponseHeadersSnippet
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.patch
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.put
 import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest
@@ -100,6 +101,13 @@ abstract class RestDocumentationBaseTest : Neo4jTestContainersBaseTest() {
             .accept(APPLICATION_JSON)
             .contentType(APPLICATION_JSON)
             .characterEncoding("utf-8")
+
+    protected fun patchRequestWithBody(url: String, body: Map<String, Any?>): MockHttpServletRequestBuilder =
+        patch(url)
+            .accept(APPLICATION_JSON)
+            .contentType(APPLICATION_JSON)
+            .characterEncoding("utf-8")
+            .content(objectMapper.writeValueAsString(body))
 
     protected fun deleteRequest(url: String): MockHttpServletRequestBuilder =
         delete(url)

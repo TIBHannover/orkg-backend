@@ -9,6 +9,7 @@ import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 import org.springframework.http.HttpStatus.OK
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.PostMapping
@@ -18,11 +19,11 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/auth", produces = [MediaType.APPLICATION_JSON_VALUE])
 class AuthController(
     private val userService: AuthUseCase
 ) {
-    @PostMapping("/register")
+    @PostMapping("/register", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(OK)
     fun registerUser(@RequestBody @Valid request: RegisterUserRequest): ResponseEntity<*> {
         // TODO: Move logic to service

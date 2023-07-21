@@ -4,7 +4,9 @@ import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.createClasses
 import eu.tib.orkg.prototype.createPredicates
 import eu.tib.orkg.prototype.createResource
+import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase.*
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.CreatePaperUseCase.*
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
@@ -85,7 +87,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
         classService.createClasses("Paper", "Contribution", "Problem", "ResearchField", "Author", "Venue")
 
         resourceService.createResource(id = "R12", label = "Computer Science")
-        resourceService.createResource(id = "R3003", label = "Question Answering over Linked Data")
+        resourceService.createResource(id = "CUSTOM_ID", label = "Question Answering over Linked Data")
     }
 
     @Test
@@ -101,7 +103,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
                     mapOf(
                         "name" to "Contribution 1",
                         "values" to mapOf(
-                            "P32" to listOf(mapOf("@id" to "R3003")),
+                            "P32" to listOf(mapOf("@id" to "CUSTOM_ID")),
                             "HAS_EVALUATION" to listOf(mapOf(
                                 "@temp" to "_b24c054a-fdde-68a7-c655-d4e7669a2079",
                                 "label" to "MOTO"
@@ -140,8 +142,8 @@ class PaperControllerTest : RestDocumentationBaseTest() {
                     name = "Contribution 1",
                     classes = emptyList(),
                     values = HashMap(mapOf(
-                        "P32" to listOf(ObjectStatement(`@id` = "R3003", "resource", null, null, null, null, null, null)),
-                        "HAS_EVALUATION" to listOf(ObjectStatement(null, "resource", null, null, null, null, label = "MOTO", null))
+                        "P32" to listOf(ObjectStatement(`@id` = "CUSTOM_ID", null, null, null, null, null, null)),
+                        "HAS_EVALUATION" to listOf(ObjectStatement(null, null, null, null, null, label = "MOTO", null))
                     ))
                 )),
             authors = null,
@@ -156,7 +158,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     fun `shouldn't merge if DOI is empty`() {
         val originalPaper = createDummyPaperObject(doi = "")
 
-        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).id.value
+        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
 
         val paperWithEmptyDOI = mapOf(
             "paper" to mapOf(
@@ -168,7 +170,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
                     mapOf(
                         "name" to "Contribution 2",
                         "values" to mapOf(
-                            "P32" to listOf(mapOf("@id" to "R3003")),
+                            "P32" to listOf(mapOf("@id" to "CUSTOM_ID")),
                             "HAS_EVALUATION" to listOf(mapOf(
                                 "@temp" to "_b24c054a-fdde-68a7-c655-d4e7669a2079",
                                 "label" to "MOTO"
@@ -202,7 +204,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     fun `merge papers that exists on title`() {
         val originalPaper = createDummyPaperObject()
 
-        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).id.value
+        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
 
         val paperWithSameTitle = mapOf(
             "paper" to mapOf(
@@ -214,7 +216,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
                     mapOf(
                         "name" to "Contribution 2",
                         "values" to mapOf(
-                            "P32" to listOf(mapOf("@id" to "R3003")),
+                            "P32" to listOf(mapOf("@id" to "CUSTOM_ID")),
                             "HAS_EVALUATION" to listOf(mapOf(
                                 "@temp" to "_b24c054a-fdde-68a7-c655-d4e7669a2079",
                                 "label" to "MOTO"
@@ -248,7 +250,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     fun `merge papers that exists on doi`() {
         val originalPaper = createDummyPaperObject()
 
-        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).id.value
+        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
 
         val paperWithSameDOI = mapOf(
             "paper" to mapOf(
@@ -260,7 +262,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
                     mapOf(
                         "name" to "Contribution 2",
                         "values" to mapOf(
-                            "P32" to listOf(mapOf("@id" to "R3003")),
+                            "P32" to listOf(mapOf("@id" to "CUSTOM_ID")),
                             "HAS_EVALUATION" to listOf(mapOf(
                                 "@temp" to "_b24c054a-fdde-68a7-c655-d4e7669a2079",
                                 "label" to "MOTO"
@@ -294,7 +296,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     fun `merge papers if both title and DOI exist`() {
         val originalPaper = createDummyPaperObject()
 
-        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).id.value
+        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
 
         val paperWithSameTitleAndDOI = mapOf(
             "paper" to mapOf(
@@ -306,7 +308,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
                     mapOf(
                         "name" to "Contribution 2",
                         "values" to mapOf(
-                            "P32" to listOf(mapOf("@id" to "R3003")),
+                            "P32" to listOf(mapOf("@id" to "CUSTOM_ID")),
                             "HAS_EVALUATION" to listOf(mapOf(
                                 "@temp" to "_b24c054a-fdde-68a7-c655-d4e7669a2079",
                                 "label" to "MOTO"

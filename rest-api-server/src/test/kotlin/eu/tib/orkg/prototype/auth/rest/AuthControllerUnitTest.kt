@@ -1,12 +1,12 @@
 package eu.tib.orkg.prototype.auth.rest
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import eu.tib.orkg.prototype.AuthorizationServerUnitTestWorkaround
 import eu.tib.orkg.prototype.auth.adapter.input.rest.spring.AuthController
 import eu.tib.orkg.prototype.auth.adapter.input.rest.spring.AuthController.RegisterUserRequest
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.auth.domain.Role
 import eu.tib.orkg.prototype.auth.domain.User
+import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import java.time.LocalDateTime
 import java.util.*
 import org.junit.jupiter.api.BeforeEach
@@ -20,6 +20,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -27,8 +28,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup
 import org.springframework.web.context.WebApplicationContext
 
+@ContextConfiguration(classes = [AuthController::class, ExceptionHandler::class])
 @WebMvcTest(controllers = [AuthController::class])
-@AuthorizationServerUnitTestWorkaround
 class AuthControllerUnitTest {
 
     private lateinit var mockMvc: MockMvc

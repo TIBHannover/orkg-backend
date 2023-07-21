@@ -679,6 +679,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
     private fun datasetSummaryResponseFields() =
         listOf(
             fieldWithPath("model_name").description("The model name used on the dataset").optional(),
+            fieldWithPath("model_id").description("The model id used on the dataset").optional(),
             fieldWithPath("metric").description("The metric used in the evaluation"),
             fieldWithPath("score").description("the score of the evaluation with the corresponding metric"),
             fieldWithPath("paper_id").description("The paper id is where the evaluation is published"),

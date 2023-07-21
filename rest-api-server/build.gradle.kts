@@ -1,11 +1,12 @@
 @file:Suppress("UnstableApiUsage")
 
 import org.asciidoctor.gradle.jvm.AsciidoctorTask
+import org.orkg.gradle.withSnippets
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 group = "eu.tib"
-version = "0.30.3"
+version = "0.35.1"
 
 val neo4jVersion = "3.5.+" // should match version in Dockerfile
 val springDataNeo4jVersion = "5.3.4"
@@ -28,7 +29,6 @@ plugins {
     alias(libs.plugins.spring.boot)
 
     id("org.jetbrains.dokka") version "0.10.1"
-    id("de.jansauer.printcoverage") version "2.0.0"
     id("org.asciidoctor.jvm.convert") version "3.3.2"
     id("com.google.cloud.tools.jib") version "3.1.1"
     // The taskinfo plugin currently does not work with Gradle 7.6: https://gitlab.com/barfuin/gradle-taskinfo/-/issues/20
@@ -48,6 +48,8 @@ configurations {
     create("asciidoctor")
 }
 
+val restdocs: Configuration by configurations.creating
+
 idea {
     module {
         isDownloadJavadoc = downloadJavadoc?.let(String::toBoolean) ?: false
@@ -60,7 +62,7 @@ testing {
             useJUnitJupiter()
             dependencies {
                 implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":graph:application")))
+                implementation(testFixtures(project(":graph:graph-application")))
                 implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation("org.springframework.boot:spring-boot-starter-test") {
@@ -70,8 +72,7 @@ testing {
                     // TODO: We currently have a mixture of MockK and Mockito tests. After migration, we should disable Mockito.
                     // exclude(module = "mockito-core")
                 }
-                implementation("com.ninja-squad:springmockk:2.0.1")
-                implementation("com.redfin:contractual:3.0.0")
+                implementation(libs.spring.mockk)
             }
         }
         val integrationTest by registering(JvmTestSuite::class) {
@@ -80,7 +81,10 @@ testing {
             dependencies {
                 implementation(project())
                 implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":graph:application")))
+                implementation(testFixtures(project(":graph:graph-application")))
+                implementation(project(":library"))
+                implementation(project(":discussions:discussions-adapter-output-spring-data-jpa-postgres"))
+                implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa-postgres"))
                 implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation("org.springframework.boot:spring-boot-starter-test") {
@@ -90,8 +94,7 @@ testing {
                     // TODO: We currently have a mixture of MockK and Mockito tests. After migration, we should disable Mockito.
                     // exclude(module = "mockito-core")
                 }
-                implementation("com.ninja-squad:springmockk:2.0.1")
-                implementation("com.redfin:contractual:3.0.0")
+                implementation(libs.spring.mockk)
                 implementation("org.springframework.boot:spring-boot-starter-data-jpa")
                 implementation("org.postgresql:postgresql")
             }
@@ -130,11 +133,17 @@ dependencies {
     // This is supposed to go away at some point:
     implementation(project(":library"))
     // This project is essentially a "configuration" project in Spring's sense, so we depend on all components:
-    implementation(project(":identity-management:application"))
-    implementation(project(":identity-management:adapter-output-spring-data-jpa"))
-    implementation(project(":graph:application"))
-    implementation(project(":graph:adapter-input-rest-spring-mvc"))
-    implementation(project(":graph:adapter-output-spring-data-neo4j-ogm"))
+    implementation(project(":identity-management:idm-application"))
+    implementation(project(":identity-management:idm-adapter-output-spring-data-jpa"))
+    implementation(project(":graph:graph-application"))
+    implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
+    implementation(project(":graph:graph-adapter-output-spring-data-neo4j-ogm"))
+    implementation(project(":discussions:discussions-adapter-output-spring-data-jpa-postgres"))
+    implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa-postgres"))
+    implementation(project(":feature-flags:feature-flags-adapter-output-spring-properties"))
+    implementation(project(":rdf-export:rdf-export-application"))
+    implementation(project(":rdf-export:rdf-export-adapter-input-rest-spring-mvc"))
+    implementation(project(":widget"))
 
     implementation(libs.forkhandles.result4k)
     implementation(libs.forkhandles.values4k)
@@ -171,6 +180,8 @@ dependencies {
     implementation("com.github.ben-manes.caffeine:caffeine")
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("io.github.stepio.coffee-boots:coffee-boots:3.0.0")
+    // Data Faker
+    implementation("net.datafaker:datafaker:1.7.0")
     // Monitoring
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.jolokia:jolokia-core")
@@ -181,11 +192,12 @@ dependencies {
     // Note: Version Catalogs are not yet supported in the test suites plugin
     "integrationTestImplementation"(libs.bundles.testcontainers)
     "integrationTestImplementation"(libs.bundles.kotest)
-
     //
     // Documentation
     //
-    "asciidoctor"("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.4.RELEASE")
+    "asciidoctor"("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.7.RELEASE")
+    restdocs(project(withSnippets(":graph:graph-adapter-input-rest-spring-mvc")))
+    restdocs(project(withSnippets(":rdf-export:rdf-export-adapter-input-rest-spring-mvc")))
 }
 
 tasks.named("check") {
@@ -202,8 +214,6 @@ tasks {
     val check by existing {
         dependsOn(named<JacocoReport>("testCodeCoverageReport"))
     }
-    val printCoverage by existing { mustRunAfter(check) }
-    val build by existing { dependsOn(printCoverage) }
 
     withType<Test>().configureEach {
         useJUnitPlatform {
@@ -240,13 +250,26 @@ tasks {
         }
     }
 
+    val extractRestDocsSnippets by creating(Copy::class) {
+        from(restdocs) {
+            eachFile {
+                // We only have absolute file locations when the configuration is resolved.
+                // In order to keep the directory structure, we need to construct a relative path two levels up.
+                relativePath = RelativePath(true, file.relativeTo(file.toPath().parent.parent.toFile()).toString())
+            }
+        }
+        into(layout.buildDirectory.dir("generated-snippets"))
+    }
+
     named("asciidoctor", AsciidoctorTask::class).configure {
         // Declare all generated Asciidoc snippets as inputs. This connects the tasks, so dependsOn() is not required.
         // Other outputs are filtered, because they do not affect the output of this task.
-        inputs.files(integrationTest.get().outputs.files.asFileTree.matching { include("**/*.adoc") })
+        val integrationTestOutputs = integrationTest.get().outputs.files.asFileTree.matching { include("**/*.adoc") }
+        val docSources = files(sourceDir).asFileTree.matching { include("**/*.adoc") }
+        inputs.files(docSources, integrationTestOutputs, extractRestDocsSnippets.outputs)
             .withPathSensitivity(PathSensitivity.RELATIVE)
             .ignoreEmptyDirectories()
-            .withPropertyName("restdocSnippets")
+            .withPropertyName("asciidocFiles")
 
         configurations("asciidoctor")
         // TODO: Use {includedir} in documentation, change strategy afterwards
@@ -317,4 +340,15 @@ kapt {
     // The problem seems to be that the Neo4j annotation processor leaks into the classpath.
     // TODO: Check if classpath leakage is fixed in later versions.
     includeCompileClasspath = false
+}
+
+springBoot {
+    buildInfo()
+}
+
+normalization {
+    runtimeClasspath {
+        // This only affects build cache key calculation. The file will be included in the build.
+        ignore("**/build-info.properties")
+    }
 }

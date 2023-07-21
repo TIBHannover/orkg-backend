@@ -1,9 +1,10 @@
 = ORKG REST API Documentation
 :doctype: book
 :toc: right
+
+// Non-document attributes
 include::../_default-attributes.adoc[]
 :pagination_note: This is a paginated, and sortable call, check the table below for allowed keys for sorting <<sorting-and-pagination>>.
-
 
 [[overview]]
 == Overview
@@ -80,6 +81,9 @@ In a `POST` request, the response will contain an entity describing or containin
 | The requested resource could not be found but may be available again in the future. Subsequent requests by the client are permissible.
 |===
 
+All responses with error codes that do not indicate success will contain a payload that describes the error.
+Their structure is documented in the section about <<error-represenation,Error representation>>.
+
 ////
 === Hypermedia
 === Pagination
@@ -115,7 +119,7 @@ This allows storing and retrieving provenance information about them.
 
 A `GET` request lists all the statements:
 
-operation::statement-controller-test-index[snippets='request-parameters,curl-request,http-response']
+operation::statement-controller-integration-test-index[snippets='request-parameters,curl-request,http-response']
 
 TIP: {pagination_note}
 
@@ -137,7 +141,7 @@ Creating statements can be done in two ways:
 
 Create a statement by submitting three IDs via `POST`:
 
-operation::statement-controller-test-add-with-resource[snippets='curl-request,http-response']
+operation::statement-controller-integration-test-add-with-resource[snippets='curl-request,http-response']
 
 [[statements-delete]]
 === Deleting a statement
@@ -145,21 +149,21 @@ Delete a statement by providing the ID of the statement via a `DELETE` call:
 
 The response will be `204 No Content` when successful.
 
-operation::statement-controller-test-delete-literal-statement[snippets='curl-request,http-response']
+operation::statement-controller-integration-test-delete-literal-statement[snippets='curl-request,http-response']
 
 [[statements-fetch]]
 === Fetching a statement
 
 A `GET` request provides information about a statement.
 
-operation::statement-controller-test-fetch[snippets='curl-request,http-response']
+operation::statement-controller-integration-test-fetch[snippets='curl-request,http-response']
 
 [[statements-lookup-by-subject]]
 === Lookup statements by subject
 
 A `GET` request lists all the statements with a given subject:
 
-operation::statement-controller-test-lookup-by-subject[snippets='request-parameters,curl-request,http-response']
+operation::statement-controller-integration-test-lookup-by-subject[snippets='request-parameters,curl-request,http-response']
 
 TIP: {pagination_note}
 
@@ -168,7 +172,7 @@ TIP: {pagination_note}
 
 A `GET` request lists all the statements with a given predicate:
 
-operation::statement-controller-test-lookup-by-predicate[snippets='request-parameters,curl-request,http-response']
+operation::statement-controller-integration-test-lookup-by-predicate[snippets='request-parameters,curl-request,http-response']
 
 TIP: {pagination_note}
 
@@ -185,7 +189,7 @@ Furthermore, to be able to further control which statements to fetch, a black/wh
 
 The endpoint also provide the parameter `includeFirst` which by default is `True` meaning it will not apply black/white listing on first level.
 
-operation::statement-controller-fetch-bundle[snippets='request-parameters,curl-request,http-response']
+operation::statement-controller-integration-test-fetch-bundle[snippets='curl-request,http-response']
 
 include::parts/bulk-statements.adoc[]
 
@@ -202,7 +206,7 @@ They can appear in the subject or object position in <<Statements,statements>>.
 
 A `GET` request lists all resources:
 
-operation::resource-controller-test-index[snippets='request-parameters,curl-request,http-response']
+operation::resource-controller-integration-test-index[snippets='request-parameters,curl-request,http-response']
 
 TIP: {pagination_note}
 
@@ -216,11 +220,11 @@ The resource can be retrieved by following the URI in the `Location` header fiel
 
 NOTE: The created resource is returned in the body for convenience. This might be subject to change.
 
-operation::resource-controller-test-add[snippets='request-fields,curl-request,http-response']
+operation::resource-controller-integration-test-add[snippets='request-fields,curl-request,http-response']
 
 The response body consists of the following fields:
 
-operation::resource-controller-test-add[snippets='response-fields']
+operation::resource-controller-integration-test-add[snippets='response-fields']
 
 [[resources-edit]]
 === Editing a resource
@@ -229,21 +233,21 @@ A `PUT` request updates a resource with a new given label.
 The response will be `200 OK` when successful.
 The created resource is returned in the body for convenience.
 
-operation::resource-controller-test-edit[snippets='curl-request,http-response']
+operation::resource-controller-integration-test-edit[snippets='curl-request,http-response']
 
 [[resources-fetch]]
 === Fetching a resource
 
 A `GET` request provides information about a resource.
 
-operation::resource-controller-test-fetch[snippets='curl-request,http-response']
+operation::resource-controller-integration-test-fetch[snippets='curl-request,http-response']
 
 [[resources-lookup]]
 === Lookup a resource by label
 
 Resources can be looked up by label by providing a search fragment.
 
-operation::resource-controller-test-lookup[snippets='request-parameters,curl-request,http-response']
+operation::resource-controller-integration-test-lookup[snippets='request-parameters,curl-request,http-response']
 
 TIP: {pagination_note}
 
@@ -257,15 +261,15 @@ Note: This request is only acceptable if you have sufficient permissions.
 
 a successful request return a No-Content HTTP status code.
 
-operation::resource-controller-test-delete-resource-success[snippets='curl-request,http-response']
+operation::resource-controller-integration-test-delete-resource-success[snippets='curl-request,http-response']
 
 If the resource doesn't exist, the API returns a 404 status code.
 
-operation::resource-controller-test-delete-resource-not-found[snippets='curl-request,http-response']
+operation::resource-controller-integration-test-delete-resource-not-found[snippets='curl-request,http-response']
 
 To safely delete a resource, the resource shouldn't have any statements related to it. In this case a Forbidden HTTP status is returned.
 
-operation::resource-controller-test-delete-resource-forbidden[snippets='curl-request,http-response']
+operation::resource-controller-integration-test-delete-resource-forbidden[snippets='curl-request,http-response']
 
 [[predicates]]
 == Predicates
@@ -332,9 +336,10 @@ They can appear in the object position in <<Statements,statements>>.
 [[literals-list]]
 === Listing Literals
 
-A `GET` request lists all literals:
+A `GET` request returns a <<sorting-and-pagination,paged>> list of literals.
+If no paging request parameters are provided, the default values will be used.
 
-operation::literal-controller-test-index[snippets='curl-request,http-response']
+operation::literals-get-paged[snippets='curl-request,http-response']
 
 [[literals-create]]
 === Creating Literals
@@ -345,11 +350,11 @@ The resource can be retrieved by following the URI in the `Location` header fiel
 
 NOTE: The created literal is returned in the body for convenience. This might be subject to change.
 
-operation::literal-controller-test-add[snippets='request-fields,curl-request,http-response']
+operation::literal-controller-integration-test-add[snippets='request-fields,curl-request,http-response']
 
 The response body consists of the following fields:
 
-operation::literal-controller-test-add[snippets='response-fields']
+operation::literal-controller-integration-test-add[snippets='response-fields']
 
 [[literals-edit]]
 === Editing a literal
@@ -358,25 +363,26 @@ A `PUT` request updates a literal with a new value through the label property.
 The response will be `200 OK` when successful.
 The created literal is returned in the body for convenience.
 
-operation::literal-controller-test-edit[snippets='curl-request,http-response']
+operation::literal-controller-integration-test-edit[snippets='curl-request,http-response']
 
 [[literals-fetch]]
 === Fetching a literal
 
-A `GET` request provides information about a literal.
+A `GET` request provides information about a <<literal-represenation,literal>>.
 
-operation::literal-controller-test-fetch[snippets='curl-request,http-response']
+operation::literals-get-single[snippets='curl-request,http-response']
 
 [[literals-lookup]]
 === Lookup a literal by label
 
 Literals can be looked up by label by providing a search fragment.
 
-operation::literal-controller-test-lookup[snippets='curl-request,http-response']
+operation::literal-controller-integration-test-lookup[snippets='curl-request,http-response']
 
 include::parts/papers.adoc[]
 
-include::parts/rdf.adoc[]
+[[rdf-integration]]
+include::parts/rdf.adoc[leveloffset=+1]
 
 [[contributors]]
 include::parts/contributors.adoc[leveloffset=+1]
@@ -394,9 +400,21 @@ include::parts/datasets-benchmarks.adoc[]
 [[sorting-and-pagination]]
 == Sorting and Pagination
 
-For all request that lists a set of results, pagination and sorting are applied automatically.
+For all request that lists entities, pagination and sorting are applied automatically.
+The attributes of paged responses are described in the section about <<page-representation, Page representations>>.
 
-For sorting by default it is disabled. It can be enabled by specifying which key to sort on.
+Endpoints supporting paging all take the following (optional) request parameters:
+
+[cols="1,3"]
+include::{snippets}/paged-page/request-parameters.adoc[]
+
+An example of a response of a paged list looks like this:
+
+include::{snippets}/paged-page/response-body.adoc[]
+
+NOTE: The elements in `content` can be objects of arbitrary structure and are sorted according to the request parameters, if the endpoint supports it.
+
+By default, sorting is done by the `created_at` property (time-based).
 
 [cols="e,m"]
 .Sorting keys allowed by the API
@@ -417,3 +435,36 @@ For sorting by default it is disabled. It can be enabled by specifying which key
 |obj.label    |the label of the object
 |obj.created  |the creation timestamp of the object
 |=======================
+
+
+== Representations
+
+This section contains the _resource definitions_ (also called _representations_) of the entities of this API.
+
+=== Basic Types
+
+[[timestamp-representation]]
+==== Timestamps
+
+All timestamps used in this API are in https://wikipedia.org/wiki/ISO_8601[ISO 8601] format.
+Although nanosecond precision is available currently, clients MUST NOT rely on it, as it might be subject to change.
+
+[[error-represenation]]
+=== Errors
+
+[cols="1,1,3"]
+include::{snippets}/errors-simple-message-exception/response-fields.adoc[]
+
+[[page-representation]]
+=== Pages
+
+[cols="1,1,3"]
+include::{snippets}/paged-page/response-fields.adoc[]
+
+=== Entities
+
+[[literal-represenation]]
+==== Literal
+
+[cols="1,1,3"]
+include::{snippets}/literals-get-single/response-fields.adoc[]

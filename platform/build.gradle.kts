@@ -20,11 +20,9 @@ dependencies {
 
     // Declare constraints on all components that need alignment (aka. our modules)
     constraints {
-        api(project(":library"))
-        api(project(":testing:spring"))
-        api(project(":graph:application"))
-        api(project(":graph:adapter-input-rest-spring-mvc"))
-        api(project(":graph:adapter-output-spring-data-neo4j-ogm"))
+        rootProject.subprojects.filterNot { it.name == name || it.name.contains("sdn6") }.forEach { subproject ->
+            api(subproject)
+        }
 
         api("org.liquibase:liquibase-core") {
             version {

@@ -6,10 +6,133 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.35.1] - 2023-07-11
+### Changed
+- Linking to existing IDs in the paper and object endpoints uses `ThingId` lookup and doesn't rely on `@type` property anymore.
+  (See: [!594](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/594))
+
+## [0.35.0] - 2023-06-22
+### Added
+- Added an alternative endpoint to query statements with a given predicate and literal called `/api/statements/predicate/{predicate_id}/literals/?q={literal}`
+  (See: [!578](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/578))
+- It is now possible to search observatories by name via `/api/observatories/?q={searchString}`
+    (See: [!581](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/581))
+- It is now possible to fetch stats for about single observatory via `/api/stats/observatories/{id}`
+  (See: [!581](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/581))
+- It is now possible to fetch all research fields that belong to an observatories via `/api/observatories/research-fields`
+  (See: [!581](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/581))
+### Changed
+- Fuzzy search by label now returns more results
+  (See: [!579](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/579))
+
+## [0.34.1] - 2023-06-06
+### Fixed
+- Fixed problems with hyphens when using search endpoints
+  (Closes: [#487](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/487))
+- Stabilized sort order for search endpoints
+  (Closes: [#486](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/486))
+
+## [0.34.0] - 2023-06-05
+### Added
+- Papers can now automatically be un-listed and re-listed based on a quality score.
+  The quality score is determined by the following metrics:
+  - At least one author has to be present
+  - At least one contribution with properties has to be present
+  - The title has to be not-blank
+  
+  (See: [!512](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/512))
+- Unlisted resources now include a property called `unlisted_by`, indicating the user who unlisted the resource.
+  (See: [!512](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/512))
+
+### Changed
+- The endpoint `/api/resources/{id}/timeline` no longer returns results past the creation time of the resource.
+  (See: [!545](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/545))
+- Templates now use the SHACL shapes vocabulary.
+  (Closes: [#484](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/484))
+- Changing the visibility of a resource now properly sets the `unlisted_by` property.
+  (See: [!565](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/565))
+- The endpoint `/api/observatories/research-field/{id}/observatories` was moved to `/api/observatories/?research_field={id}`.
+  (See: [#498](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/498))
+- The endpoint `/api/observatories/stats/observatories` was moved to `/api/stats/observatories` and now returns the total count of resources (`total`) for each observatory and the `resources` field has been renamed to `papers`.
+  (Closes: [#406](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/185);
+  See: [#498](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/498))
+- The following endpoints now feature pagination:
+    - `/api/observatories/`
+    - `/api/observatories/{id}/papers`
+    - `/api/observatories/{id}/comparisons`
+    - `/api/observatories/{id}/users`
+    - `/api/stats/observatories`.
+
+  (Closes: [#185](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/185),
+  [#268](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/268),
+  [#403](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/403),
+  [#405](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/45),
+  [#450](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/450);
+  See: [#498](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/498))
+- The observatory representation now contains the members.
+  (Closes: [#404](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/404);
+  See: [#498](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/498))
+
+## [0.33.0] - 2023-05-30
+### Added
+- The backend version can now be determined via `/api/version`.
+  (See: [!543](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/543))
+- RDF-Dumps now include the class hierarchy.
+  (See: [!542](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/542))
+
+### Changed
+- Fuzzy search by label now returns more relevant results
+  (See: [!541](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/541))
+
+### Fixed
+- Fixed query for finding statements by subject class, predicate id and object label
+  (Closes: [#485](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/485))
+- Creating labels that exceed the maximum allowed length will no longer result in "500 Internal server error".
+  (See: [!558](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/558))
+
+## [0.32.0] - 2023-05-24
+### Changed
+- All IDs need to be globally unique now.
+  (See: [!515](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/515))
+
+## [0.31.1] - 2023-05-17
+### Fixed
+- Loading of predicate and class description works again.
+  (See: [!537](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/537))
+- Fixed queries for finding contributions related to research problem.
+  (See: [!536](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/536))
+
+## [0.31.0] - 2023-05-16
+### Fixed
+- Fixed an issue with looking up venues during paper creation.
+  (See: [!528](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/528))
+- Does not cause internal errors anymore when invalid `Accept` header field is sent.
+  (See: [!521](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/521))
+- Fixed an issue when creating RDF dumps with the default configuration.
+  (See: [!534](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/534))
+- RDF dumps can be created on Windows again.
+  (Closes: [#480](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/480))
+### Added
+- Support for fulltext search on labels of resources, classes, predicates and literals.
+  (Closes: [#211](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/211),
+           [#212](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/212);
+   See: [!504](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/504),
+        [!505](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/505),
+        [!506](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/506),
+        [!507](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/507))
+- Class hierarchies are now supported.
+  (Closes: [#421](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/421))
+
+## [0.30.4] - 2023-05-15
 ### Fixed
 - The default file permissions on the RDF dump were changed to not cause issues in deployment. (See: [!526](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/526))
 - When adding a paper, publication year and month are now set correctly.
   (Closes: [#476](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/476))
+- Updating a single statement works now.
+  (Closes: [#477](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/477))
+- All issues when updating organization are fixed now.
+  (See: [!527](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/527))
 
 ## [0.30.3] - 2023-05-05
 ### Changed
@@ -326,7 +449,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.30.3...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.35.1...master
+[0.35.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.35.1
+[0.35.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.35.0
+[0.34.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.34.1
+[0.34.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.34.0
+[0.33.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.33.0
+[0.32.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.32.0
+[0.31.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.31.1
+[0.31.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.31.0
+[0.30.4]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.30.4
 [0.30.3]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.30.3
 [0.30.2]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.30.2
 [0.30.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.30.1

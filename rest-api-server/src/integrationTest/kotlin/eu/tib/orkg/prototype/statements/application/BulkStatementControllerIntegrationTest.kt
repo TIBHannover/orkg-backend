@@ -1,7 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import eu.tib.orkg.prototype.statements.adapter.input.rest.bulk.BulkStatementEditRequest
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
@@ -133,7 +132,7 @@ class BulkStatementControllerIntegrationTest : RestDocumentationBaseTest() {
         val st1 = service.create(s.id, p1.id, r1.id)
         val st2 = service.create(s.id, p2.id, r2.id)
 
-        mockMvc.perform(deleteRequest("/api/statements/?ids=${st1.id},${st2.id}"))
+        mockMvc.perform(deleteRequest("/api/statements/?ids=$st1,$st2"))
             .andExpect(status().isNoContent)
             .andDo(
                 document(
@@ -161,13 +160,13 @@ class BulkStatementControllerIntegrationTest : RestDocumentationBaseTest() {
         val newO = resourceService.create("Hannover, Germany")
 
         val payload = mapper.writeValueAsString(
-            BulkStatementEditRequest(
-                predicateId = newP.id,
-                objectId = newO.id,
+            mapOf(
+                "predicate_id" to newP.id,
+                "object_id" to newO.id,
             )
         )
 
-        mockMvc.perform(putRequest("/api/statements/?ids=${st.id},${st2.id}").content(payload))
+        mockMvc.perform(putRequest("/api/statements/?ids=$st,$st2").content(payload))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$[0].statement.predicate.id").value(newP.id.value))
             .andExpect(jsonPath("$[1].statement.object.id").value(newO.id.value))

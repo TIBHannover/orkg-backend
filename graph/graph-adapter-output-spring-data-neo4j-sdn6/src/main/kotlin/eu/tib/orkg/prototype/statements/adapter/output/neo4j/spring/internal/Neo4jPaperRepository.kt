@@ -18,7 +18,7 @@ CALL apoc.path.expandConfig(r, {relationshipFilter: "<RELATED", labelFilter: "/P
 YIELD path
 WITH last(nodes(path)) AS paper, apoc.coll.reverse(apoc.coll.flatten([r in relationships(path) | [r, startNode(r)]])) AS path
 UNWIND path AS thing
-MATCH (t:Thing})
+MATCH (t:Thing)
 WHERE t.id = thing.id
 RETURN paper, COLLECT(t) AS path $PAGE_PARAMS""",
         countQuery = """

@@ -8,6 +8,7 @@ import eu.tib.orkg.prototype.statements.application.StatementNotFound
 import eu.tib.orkg.prototype.statements.application.StatementObjectNotFound
 import eu.tib.orkg.prototype.statements.application.StatementPredicateNotFound
 import eu.tib.orkg.prototype.statements.application.StatementSubjectNotFound
+import eu.tib.orkg.prototype.statements.application.ThingNotFound
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
@@ -205,6 +206,9 @@ class StatementService(
         configuration: BundleConfiguration,
         includeFirst: Boolean
     ): Bundle {
+        if (thingRepository.findByThingId(thingId).isEmpty) {
+            throw ThingNotFound.withThingId(thingId)
+        }
         return when (includeFirst) {
             true -> createBundleFirstIncluded(thingId, configuration)
             false -> createBundle(thingId, configuration)

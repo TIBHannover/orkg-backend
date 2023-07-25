@@ -10,6 +10,7 @@ import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.createStatement
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
+import eu.tib.orkg.prototype.statements.api.BundleConfiguration
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -276,6 +277,28 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             statementService.findAllByPredicateAndLabel(statement.predicate.id, statement.`object`.label, any())
             statementService.countStatementsAboutResources(any())
             flags.isFormattedLabelsEnabled()
+        }
+    }
+
+    @Test
+    fun `Given a thing id, when fetched as a bundle but thing does not exist, then status is 404 NOT FOUND`() {
+        val thingId = ThingId("DoesNotExist")
+        val exception = ThingNotFound.withThingId(thingId)
+
+        every {
+            statementService.fetchAsBundle(thingId, any(), false)
+        } throws exception
+
+        mockMvc.perform(get("/api/statements/$thingId/bundle?includeFirst=false"))
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(404))
+            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.path").value("/api/statements/$thingId/bundle"))
+
+        verify(exactly = 1) {
+            statementService.fetchAsBundle(thingId, any(), false)
         }
     }
 

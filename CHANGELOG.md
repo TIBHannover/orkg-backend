@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- The endpoint `/api/statements/{thingId}/bundle` now returns status 404 when the given thing does not exist in the graph
+  (Closes: [#494](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/494))
 
 ## [0.35.1] - 2023-07-11
 ### Changed

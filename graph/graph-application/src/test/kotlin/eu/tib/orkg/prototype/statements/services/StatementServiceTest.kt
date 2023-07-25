@@ -7,10 +7,14 @@ import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.createStatement
 import eu.tib.orkg.prototype.createUser
+import eu.tib.orkg.prototype.statements.api.BundleConfiguration
+import eu.tib.orkg.prototype.statements.application.ThingNotFound
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import eu.tib.orkg.prototype.statements.spi.OwnershipInfo
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
+import eu.tib.orkg.prototype.statements.spi.ThingRepository
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldNotBe
@@ -23,16 +27,17 @@ import io.mockk.verify
 import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.junit.jupiter.api.assertThrows
 
 class StatementServiceTest : DescribeSpec({
 
+    val thingRepository: ThingRepository = mockk()
     val statementRepository: StatementRepository = mockk()
     val userService: UserService = mockk()
     val literalRepository: LiteralRepository = mockk()
 
-    @Suppress("UNUSED_VARIABLE")
     val service = StatementService(
-        thingRepository = mockk(),
+        thingRepository,
         predicateService = mockk(),
         statementRepository,
         literalRepository
@@ -160,6 +165,24 @@ class StatementServiceTest : DescribeSpec({
                 verify(exactly = 1) { statementRepository.determineOwnership(allStatementIds) }
                 verify(exactly = 1) { userService.findById(contributorId.value) }
                 verify(exactly = 1) { statementRepository.deleteByStatementIds(allStatementIds) }
+            }
+        }
+    }
+    describe("fetching statements as a bundle") {
+        context("by thing id") {
+            context("when thing does not exist") {
+                val id = ThingId("DoesNotExist")
+                val configuration = BundleConfiguration.firstLevelConf()
+
+                it("throws an exception") {
+                    every { thingRepository.findByThingId(id) } returns Optional.empty()
+
+                    assertThrows<ThingNotFound> {
+                        service.fetchAsBundle(id, configuration, false)
+                    }
+
+                    verify(exactly = 1) { thingRepository.findByThingId(id) }
+                }
             }
         }
     }

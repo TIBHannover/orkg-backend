@@ -82,9 +82,9 @@ testing {
                 implementation(project())
                 implementation(testFixtures(project(":testing:spring")))
                 implementation(testFixtures(project(":graph:graph-application")))
-                implementation(project(":library"))
                 implementation(project(":discussions:discussions-adapter-output-spring-data-jpa-postgres"))
                 implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa-postgres"))
+                implementation(project(":feature-flags:feature-flags-ports"))
                 implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation("org.springframework.boot:spring-boot-starter-test") {
@@ -97,6 +97,7 @@ testing {
                 implementation(libs.spring.mockk)
                 implementation("org.springframework.boot:spring-boot-starter-data-jpa")
                 implementation("org.postgresql:postgresql")
+                implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
             }
             targets {
                 all {
@@ -130,16 +131,16 @@ dependencies {
     // Upgrade for security reasons. Can be removed after Spring upgrade.
     implementation(platform("org.apache.logging.log4j:log4j-bom:2.19.0"))
 
-    // This is supposed to go away at some point:
-    implementation(project(":library"))
     // This project is essentially a "configuration" project in Spring's sense, so we depend on all components:
     implementation(project(":identity-management:idm-application"))
+    implementation(project(":identity-management:idm-adapter-input-rest-spring-security"))
     implementation(project(":identity-management:idm-adapter-output-spring-data-jpa"))
     implementation(project(":graph:graph-application"))
     implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
     implementation(project(":graph:graph-adapter-output-spring-data-neo4j-ogm"))
     implementation(project(":discussions:discussions-adapter-output-spring-data-jpa-postgres"))
     implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa-postgres"))
+    implementation(project(":feature-flags:feature-flags-ports"))
     implementation(project(":feature-flags:feature-flags-adapter-output-spring-properties"))
     implementation(project(":rdf-export:rdf-export-application"))
     implementation(project(":rdf-export:rdf-export-adapter-input-rest-spring-mvc"))
@@ -167,6 +168,8 @@ dependencies {
     // JAXB stuff. Was removed from Java 9. Seems to be needed for OAuth2.
     implementation(libs.bundles.jaxb)
     implementation(libs.annotations.jsr305) // provides @Nullable and other JSR305 annotations
+    // File uploads
+    implementation("commons-fileupload:commons-fileupload:1.5")
     // RDF
     implementation("org.eclipse.rdf4j:rdf4j-client:3.7.7") {
         exclude(group = "commons-collections", module = "commons-collections") // Version 3, vulnerable

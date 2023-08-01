@@ -43,12 +43,12 @@ allOpen {
     annotation("javax.persistence.Embeddable")
 }
 
-configurations {
-    // The Asciidoctor Gradle plug-in does not create it anymore, so we have to...
-    create("asciidoctor")
+val restdocs by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
 }
 
-val restdocs: Configuration by configurations.creating
+val asciidoctor by configurations.creating
 
 idea {
     module {
@@ -196,7 +196,7 @@ dependencies {
     //
     // Documentation
     //
-    "asciidoctor"("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.7.RELEASE")
+    asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.7.RELEASE")
     restdocs(project(withSnippets(":graph:graph-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":rdf-export:rdf-export-adapter-input-rest-spring-mvc")))
 }
@@ -251,23 +251,34 @@ tasks {
         }
     }
 
-    val extractRestDocsSnippets by creating(Copy::class) {
-        from(restdocs) {
-            eachFile {
-                // We only have absolute file locations when the configuration is resolved.
-                // In order to keep the directory structure, we need to construct a relative path two levels up.
-                relativePath = RelativePath(true, file.relativeTo(file.toPath().parent.parent.toFile()).toString())
+    val generatedSnippets = fileTree(layout.buildDirectory.dir("generated-snippets")) {
+        include("**/*.adoc")
+        builtBy(integrationTest)
+    }
+
+    val aggregatedSnippetsDir = layout.buildDirectory.dir("restdocs-snippets")
+
+    val aggregateRestDocsSnippets by registering(Copy::class) {
+        group = "documentation"
+
+        // Explicitly add a dependency on the configuration, because it will not resolve otherwise.
+        dependsOn(restdocs)
+
+        // Obtain the list of ZIP files (and extract them). This only works if the configuration was resolved.
+        restdocs.files.forEach {
+            from(zipTree(it)) {
+                include("**/*.adoc")
             }
         }
-        into(layout.buildDirectory.dir("generated-snippets"))
+        from(generatedSnippets)
+        into(aggregatedSnippetsDir)
     }
 
     named("asciidoctor", AsciidoctorTask::class).configure {
         // Declare all generated Asciidoc snippets as inputs. This connects the tasks, so dependsOn() is not required.
         // Other outputs are filtered, because they do not affect the output of this task.
-        val integrationTestOutputs = integrationTest.get().outputs.files.asFileTree.matching { include("**/*.adoc") }
         val docSources = files(sourceDir).asFileTree.matching { include("**/*.adoc") }
-        inputs.files(docSources, integrationTestOutputs, extractRestDocsSnippets.outputs)
+        inputs.files(docSources, aggregateRestDocsSnippets)
             .withPathSensitivity(PathSensitivity.RELATIVE)
             .ignoreEmptyDirectories()
             .withPropertyName("asciidocFiles")
@@ -290,7 +301,8 @@ tasks {
                 "toc" to "left",
                 "icons" to "font",
                 "linkattrs" to "true",
-                "encoding" to "utf-8"
+                "encoding" to "utf-8",
+                "snippets" to aggregatedSnippetsDir,
             )
         )
 

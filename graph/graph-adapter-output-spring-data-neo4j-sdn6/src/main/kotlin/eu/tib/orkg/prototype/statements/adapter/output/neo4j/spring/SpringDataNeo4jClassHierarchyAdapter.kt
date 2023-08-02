@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
+import eu.tib.orkg.prototype.dsl.CypherQueryBuilder
 import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.ChildClass
 import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.ClassHierarchyEntry
 import eu.tib.orkg.prototype.statements.domain.model.Class
@@ -36,20 +37,29 @@ class SpringDataNeo4jClassHierarchyAdapter(
 ) : SpringDataNeo4jAdapter(neo4jClient), ClassHierarchyRepository, ClassRelationRepository {
 
     override fun save(classRelation: ClassSubclassRelation) {
-        val child = node("Class")
-        val parent = node("Class")
-        val query = match(child)
-            .where(
-                child.property("id").eq(literalOf<String>(classRelation.child.id.value))
-            ).match(parent).where(
-                parent.property("id").eq(literalOf<String>(classRelation.parent.id.value))
-            ).create(
-                child.relationshipTo(parent, SUBCLASS_OF).withProperties(
-                    "created_by", literalOf<String>(classRelation.createdBy.value.toString()),
-                    "created_at", literalOf<String>(classRelation.createdAt.format(ISO_OFFSET_DATE_TIME))
-                )
-            ).build()
-        neo4jClient.query(query.cypher).run()
+        CypherQueryBuilder(neo4jClient)
+            .withQuery {
+                val child = node("Class")
+                val parent = node("Class")
+                match(child)
+                    .where(
+                        child.property("id").eq(parameter("childId"))
+                    ).match(parent).where(
+                        parent.property("id").eq(parameter("parentId"))
+                    ).create(
+                        child.relationshipTo(parent, SUBCLASS_OF).withProperties(
+                            "created_by", parameter("createdBy"),
+                            "created_at", parameter("createdAt")
+                        )
+                    )
+            }
+            .withParameters(
+                "childId" to classRelation.child.id.value,
+                "parentId" to classRelation.parent.id.value,
+                "createdBy" to classRelation.createdBy.value.toString(),
+                "createdAt" to classRelation.createdAt.format(ISO_OFFSET_DATE_TIME)
+            )
+            .run()
     }
 
     override fun saveAll(classRelations: Set<ClassSubclassRelation>) {
@@ -107,40 +117,38 @@ class SpringDataNeo4jClassHierarchyAdapter(
         neo4jClient.query(query.cypher).run()
     }
 
-    override fun findChildren(id: ThingId, pageable: Pageable): Page<ChildClass> {
-        val c = name("c")
-        val p = name("p")
-        val g =  node("Class")
-            .named("g")
-        val childCount = name("childCount")
-        val match = {
+    override fun findChildren(id: ThingId, pageable: Pageable): Page<ChildClass> = CypherQueryBuilder(neo4jClient)
+        .withCommonQuery {
             match(
                 node("Class")
-                    .named(c)
+                    .named("c")
                     .relationshipTo(
                         node("Class")
-                            .named(p)
-                            .withProperties("id", literalOf<String>(id.value)),
+                            .named("p")
+                            .withProperties("id", parameter("id")),
                         SUBCLASS_OF
                     )
             )
         }
-        val query = match()
-            .optionalMatch(
-                g.relationshipTo(anyNode().named(c))
-            )
-            .with(c.`as`(c), count(g).`as`(childCount))
-            .orderBy(c.property("id").ascending())
-            .returning(c, childCount)
-            .build(pageable)
-        val countQuery = match()
-            .returning(count(c))
-            .build()
-        return neo4jClient.query(query.cypher)
-            .fetchAs(ChildClass::class.java)
-            .mappedBy { _, record -> ChildClass(record[c].asNode().toClass(), record[childCount].asLong()) }
-            .paged(pageable, countQuery)
-    }
+        .withQuery { commonQuery ->
+            val c = name("c")
+            val g =  node("Class").named("g")
+            commonQuery
+                .optionalMatch(g.relationshipTo(anyNode().named(c)))
+                .returning(c, count(g).`as`("childCount"))
+                .orderBy(c.property("id").ascending())
+        }
+        .withCountQuery { commonQuery ->
+            commonQuery.returning(count(name("c")))
+        }
+        .withParameters(
+            "id" to id.value
+        )
+        .fetchAs(ChildClass::class)
+        .mappedBy { _, record ->
+            ChildClass(record["c"].asNode().toClass(), record["childCount"].asLong())
+        }
+        .fetch(pageable)
 
     override fun findParent(id: ThingId): Optional<Class> {
         val p = name("p")

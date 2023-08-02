@@ -8,7 +8,6 @@ import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.data.neo4j.core.fetchAs
 
 abstract class SpringDataNeo4jAdapter(protected open val neo4jClient: Neo4jClient) {
-
     protected fun <T> Neo4jClient.RecordFetchSpec<T>.paged(pageable: Pageable, countQuery: ResultStatement): Page<T> {
         val total = neo4jClient.query(countQuery.cypher)
             .fetchAs<Long>()

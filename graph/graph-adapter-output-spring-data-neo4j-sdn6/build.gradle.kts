@@ -13,7 +13,12 @@ plugins {
 
 testing {
     suites {
-        val test by getting(JvmTestSuite::class)
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
+            dependencies {
+                implementation(libs.spring.mockk)
+            }
+        }
         val containerTest by registering(JvmTestSuite::class) {
             testType.set(TestSuiteType.FUNCTIONAL_TEST)
             useJUnitJupiter()

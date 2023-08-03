@@ -16,7 +16,15 @@ testing {
         val test by getting(JvmTestSuite::class) {
             useJUnitJupiter()
             dependencies {
+                implementation(testFixtures(project(":testing:spring")))
+                implementation(testFixtures(project(":graph:graph-application")))
+                implementation("org.springframework.boot:spring-boot-starter-test") {
+                    exclude(group = "junit", module = "junit")
+                    exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+                    exclude(module = "mockito-core")
+                }
                 implementation(libs.spring.mockk)
+                implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
             }
         }
         val containerTest by registering(JvmTestSuite::class) {

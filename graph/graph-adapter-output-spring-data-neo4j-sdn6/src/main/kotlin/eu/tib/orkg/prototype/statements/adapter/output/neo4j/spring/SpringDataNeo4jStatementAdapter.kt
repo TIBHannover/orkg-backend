@@ -121,9 +121,9 @@ class SpringDataNeo4jStatementAdapter(
             .build()
 
         neo4jClient.query(query.cypher)
-            .fetchAs<ThingId>()
+            .fetchAs(ThingId::class.java)
             .one()
-            ?.let(::evictFromCaches)
+            .ifPresent(::evictFromCaches)
     }
 
     override fun deleteByStatementIds(ids: Set<StatementId>) {

@@ -287,6 +287,14 @@ tasks {
         // TODO: Use {includedir} in documentation, change strategy afterwards
         baseDirFollowsSourceFile()
 
+        asciidoctorj {
+            modules {
+                diagram.use()
+                diagram.version("2.2.10")
+            }
+            fatalWarnings(missingIncludes())
+        }
+
         // outputs.upToDateWhen { false }
         outputOptions {
             backends("html5")
@@ -338,12 +346,6 @@ spotless {
     }
     kotlinGradle {
         ktlint()
-    }
-}
-
-asciidoctorj {
-    modules {
-        diagram.use()
     }
 }
 

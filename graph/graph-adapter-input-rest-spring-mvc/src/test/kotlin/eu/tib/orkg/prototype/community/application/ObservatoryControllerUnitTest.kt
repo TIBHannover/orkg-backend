@@ -13,9 +13,9 @@ import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.createObservatory
 import eu.tib.orkg.prototype.createOrganization
 import eu.tib.orkg.prototype.createResource
+import eu.tib.orkg.prototype.pageOf
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.application.TooManyParameters
-import eu.tib.orkg.prototype.statements.application.pageOf
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.mockk.every
 import io.mockk.just
@@ -37,7 +37,8 @@ import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
@@ -204,7 +205,7 @@ internal class ObservatoryControllerUnitTest {
         val observatory1 = createObservatory(organizationsIds)
         val observatory2 = createObservatory(organizationsIds)
         val pageable: Pageable = PageRequest.of(0, 10)
-        val page: Page<Observatory> = pageOf(pageable, observatory1, observatory2)
+        val page: Page<Observatory> = pageOf(observatory1, observatory2, pageable = pageable)
 
         every { observatoryUseCases.findAll(any()) } returns page
         every { resourceUseCases.findById(any()) } returns Optional.empty()
@@ -219,7 +220,7 @@ internal class ObservatoryControllerUnitTest {
     fun `Fetching all observatories by name containing, status must be 200 OK`() {
         val observatory = createObservatory(setOf(OrganizationId(UUID.randomUUID())))
         val pageable: Pageable = PageRequest.of(0, 10)
-        val page: Page<Observatory> = pageOf(pageable, observatory)
+        val page: Page<Observatory> = pageOf(observatory, pageable = pageable)
 
         every { observatoryUseCases.findAllByNameContains("Label", any()) } returns page
         every { resourceUseCases.findById(any()) } returns Optional.empty()
@@ -245,7 +246,7 @@ internal class ObservatoryControllerUnitTest {
         val observatory1 = createObservatory(organizationsIds)
         val observatory2 = createObservatory(organizationsIds)
         val pageable: Pageable = PageRequest.of(0, 10)
-        val page: Page<Observatory> = pageOf(pageable, observatory1, observatory2)
+        val page: Page<Observatory> = pageOf(observatory1, observatory2, pageable = pageable)
 
         every { observatoryUseCases.findAllByResearchField(observatory1.researchField!!, any()) } returns page
         every { resourceUseCases.findById(any()) } returns Optional.empty()
@@ -573,7 +574,7 @@ internal class ObservatoryControllerUnitTest {
         val id = ThingId("R123")
         val label = "fancy research field"
         val pageable = PageRequest.of(0, 10)
-        val page: Page<ThingId> = pageOf(pageable, id)
+        val page: Page<ThingId> = pageOf(id, pageable = pageable)
         val resource = createResource().copy(
             id = id,
             label = label,

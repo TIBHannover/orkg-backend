@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.auth.spi.UserRepository
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
+import eu.tib.orkg.prototype.pageOf
 import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
 import eu.tib.orkg.prototype.statements.spi.ObservatoryStats
 import io.mockk.every

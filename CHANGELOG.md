@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!605](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/605))
 - The endpoint `/api/statements/{thingId}/bundle` now returns status 404 when the given thing does not exist in the graph
   (Closes: [#494](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/494))
+### Fixed
+- Fixed missing snippets from REST-API documentation.
+  (See: [!604](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/604))
 
 ## [0.35.1] - 2023-07-11
 ### Changed

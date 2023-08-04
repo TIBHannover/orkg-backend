@@ -34,7 +34,7 @@ import org.springframework.core.io.ClassPathResource
 /**
  * Creates a resource that uses as many defaults as possible.
  */
-fun createResource() = Resource(ThingId("R1"), "Default Label", OffsetDateTime.now())
+fun createResource(id: ThingId = ThingId("R1")) = Resource(id, "Default Label", OffsetDateTime.now())
 
 fun createClass(id: String = "OK"): Class = Class(
     id = ThingId(id),

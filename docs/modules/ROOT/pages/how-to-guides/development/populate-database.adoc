@@ -1,0 +1,13 @@
+= How to populate the Postgres database with dummy data
+
+Sometimes a Neo4j database dump does not contain all information needed for debugging, e.g. user accounts, organizations and observatories.
+They are stored in a separate Postgres database that cannot be shared for security reasons.
+To populate the Postgres database with dummy data you can use the following gradle task:
+
+[source,shell]
+----
+./gradlew populatePostgresDatabase
+----
+
+It will automatically generate dummy user accounts for contributors found in the Neo4j database.
+Additionally, all organizations and observatories will be fetched from the live server and stored in the local Postgres database.

@@ -28,3 +28,25 @@ fun documentedGetRequestTo(urlTemplate: String, vararg uriValues: Any): MockHttp
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON)
         .characterEncoding("utf-8")
+
+fun documentedDeleteRequestTo(
+    urlTemplate: String,
+    vararg uriValues: Any,
+    accept: String = MediaType.APPLICATION_JSON_VALUE,
+    contentType: String = MediaType.APPLICATION_JSON_VALUE
+): MockHttpServletRequestBuilder =
+    RestDocumentationRequestBuilders.delete(urlTemplate, *uriValues)
+        .accept(accept)
+        .contentType(contentType)
+        .characterEncoding("utf-8")
+
+fun documentedPutRequestTo(
+    urlTemplate: String,
+    vararg uriValues: Any,
+    accept: String = MediaType.APPLICATION_JSON_VALUE,
+    contentType: String = MediaType.APPLICATION_JSON_VALUE
+): MockHttpServletRequestBuilder =
+    RestDocumentationRequestBuilders.put(urlTemplate, *uriValues)
+        .accept(accept)
+        .contentType(contentType)
+        .characterEncoding("utf-8")

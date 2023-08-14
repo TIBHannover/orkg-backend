@@ -149,7 +149,7 @@ Delete a statement by providing the ID of the statement via a `DELETE` call:
 
 The response will be `204 No Content` when successful.
 
-operation::statement-controller-integration-test-delete-literal-statement[snippets='curl-request,http-response']
+operation::statements-delete-literal-statement_is-no-content[snippets='curl-request,http-response']
 
 [[statements-fetch]]
 === Fetching a statement

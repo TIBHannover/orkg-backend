@@ -43,12 +43,12 @@ allOpen {
     annotation("javax.persistence.Embeddable")
 }
 
-configurations {
-    // The Asciidoctor Gradle plug-in does not create it anymore, so we have to...
-    create("asciidoctor")
+val restdocs by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
 }
 
-val restdocs: Configuration by configurations.creating
+val asciidoctor by configurations.creating
 
 idea {
     module {
@@ -82,9 +82,9 @@ testing {
                 implementation(project())
                 implementation(testFixtures(project(":testing:spring")))
                 implementation(testFixtures(project(":graph:graph-application")))
-                implementation(project(":library"))
                 implementation(project(":discussions:discussions-adapter-output-spring-data-jpa-postgres"))
                 implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa-postgres"))
+                implementation(project(":feature-flags:feature-flags-ports"))
                 implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation("org.springframework.boot:spring-boot-starter-test") {
@@ -97,6 +97,7 @@ testing {
                 implementation(libs.spring.mockk)
                 implementation("org.springframework.boot:spring-boot-starter-data-jpa")
                 implementation("org.postgresql:postgresql")
+                implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
             }
             targets {
                 all {
@@ -130,16 +131,16 @@ dependencies {
     // Upgrade for security reasons. Can be removed after Spring upgrade.
     implementation(platform("org.apache.logging.log4j:log4j-bom:2.19.0"))
 
-    // This is supposed to go away at some point:
-    implementation(project(":library"))
     // This project is essentially a "configuration" project in Spring's sense, so we depend on all components:
     implementation(project(":identity-management:idm-application"))
+    implementation(project(":identity-management:idm-adapter-input-rest-spring-security"))
     implementation(project(":identity-management:idm-adapter-output-spring-data-jpa"))
     implementation(project(":graph:graph-application"))
     implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
     implementation(project(":graph:graph-adapter-output-spring-data-neo4j-ogm"))
     implementation(project(":discussions:discussions-adapter-output-spring-data-jpa-postgres"))
     implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa-postgres"))
+    implementation(project(":feature-flags:feature-flags-ports"))
     implementation(project(":feature-flags:feature-flags-adapter-output-spring-properties"))
     implementation(project(":rdf-export:rdf-export-application"))
     implementation(project(":rdf-export:rdf-export-adapter-input-rest-spring-mvc"))
@@ -169,6 +170,8 @@ dependencies {
     // JAXB stuff. Was removed from Java 9. Seems to be needed for OAuth2.
     implementation(libs.bundles.jaxb)
     implementation(libs.annotations.jsr305) // provides @Nullable and other JSR305 annotations
+    // File uploads
+    implementation("commons-fileupload:commons-fileupload:1.5")
     // RDF
     implementation("org.eclipse.rdf4j:rdf4j-client:3.7.7") {
         exclude(group = "commons-collections", module = "commons-collections") // Version 3, vulnerable
@@ -195,7 +198,7 @@ dependencies {
     //
     // Documentation
     //
-    "asciidoctor"("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.7.RELEASE")
+    asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.7.RELEASE")
     restdocs(project(withSnippets(":graph:graph-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":rdf-export:rdf-export-adapter-input-rest-spring-mvc")))
 }
@@ -250,23 +253,34 @@ tasks {
         }
     }
 
-    val extractRestDocsSnippets by creating(Copy::class) {
-        from(restdocs) {
-            eachFile {
-                // We only have absolute file locations when the configuration is resolved.
-                // In order to keep the directory structure, we need to construct a relative path two levels up.
-                relativePath = RelativePath(true, file.relativeTo(file.toPath().parent.parent.toFile()).toString())
+    val generatedSnippets = fileTree(layout.buildDirectory.dir("generated-snippets")) {
+        include("**/*.adoc")
+        builtBy(integrationTest)
+    }
+
+    val aggregatedSnippetsDir = layout.buildDirectory.dir("restdocs-snippets")
+
+    val aggregateRestDocsSnippets by registering(Copy::class) {
+        group = "documentation"
+
+        // Explicitly add a dependency on the configuration, because it will not resolve otherwise.
+        dependsOn(restdocs)
+
+        // Obtain the list of ZIP files (and extract them). This only works if the configuration was resolved.
+        restdocs.files.forEach {
+            from(zipTree(it)) {
+                include("**/*.adoc")
             }
         }
-        into(layout.buildDirectory.dir("generated-snippets"))
+        from(generatedSnippets)
+        into(aggregatedSnippetsDir)
     }
 
     named("asciidoctor", AsciidoctorTask::class).configure {
         // Declare all generated Asciidoc snippets as inputs. This connects the tasks, so dependsOn() is not required.
         // Other outputs are filtered, because they do not affect the output of this task.
-        val integrationTestOutputs = integrationTest.get().outputs.files.asFileTree.matching { include("**/*.adoc") }
         val docSources = files(sourceDir).asFileTree.matching { include("**/*.adoc") }
-        inputs.files(docSources, integrationTestOutputs, extractRestDocsSnippets.outputs)
+        inputs.files(docSources, aggregateRestDocsSnippets)
             .withPathSensitivity(PathSensitivity.RELATIVE)
             .ignoreEmptyDirectories()
             .withPropertyName("asciidocFiles")
@@ -274,6 +288,14 @@ tasks {
         configurations("asciidoctor")
         // TODO: Use {includedir} in documentation, change strategy afterwards
         baseDirFollowsSourceFile()
+
+        asciidoctorj {
+            modules {
+                diagram.use()
+                diagram.version("2.2.10")
+            }
+            fatalWarnings(missingIncludes())
+        }
 
         // outputs.upToDateWhen { false }
         outputOptions {
@@ -289,7 +311,8 @@ tasks {
                 "toc" to "left",
                 "icons" to "font",
                 "linkattrs" to "true",
-                "encoding" to "utf-8"
+                "encoding" to "utf-8",
+                "snippets" to aggregatedSnippetsDir,
             )
         )
 
@@ -325,12 +348,6 @@ spotless {
     }
     kotlinGradle {
         ktlint()
-    }
-}
-
-asciidoctorj {
-    modules {
-        diagram.use()
     }
 }
 

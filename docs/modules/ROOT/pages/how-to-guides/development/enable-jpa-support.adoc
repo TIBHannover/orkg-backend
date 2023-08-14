@@ -1,0 +1,28 @@
+= How to enable JPA support in IntelliJ IDEA
+
+JPA support is enabled by default but might not be configured correctly.
+This leads to red lines in code sections that use JPA, namely the database entities, and IDEA complaining about these errors on every commit although there is no problem.
+To enable JPA support with Spring, you can do the following:
+
+. Add the development database to the project:
+.. Select menu:View[Tool Windows > Database] to open the Database View.
+.. Using the btn:[+] button, select menu:Data Source[PostgreSQL].
+.. Fill in the settings to connect to your local (Docker-based) PostgreSQL database.
+Most of the defaults should be correct.
+(If in doubt, "postgres" is most likely the right value.)
+Install the PostgreSQL driver if you have not done so already.
+Test the connection using the "Test Connection" button.
+(Remember that the Docker container needs to be running.)
+When a connection can be established, save the settings with btn:[OK].
+. Connect the data source to the Persistence manager:
+.. Select menu:View[Tool Windows > Persistence] to open the Persistence View.
+You should see one entry for the "main" module of the project.
+.. Expand the entries.
+You should see the "entityManagerFactory" component and a list of all JPA entities defined in the project.
+.. Right-click on "entityManagerFactory" and select "Assign Data Sources…" from the menu.
+.. In the window, click into the empty field in the "Data Source" column.
+Select the entry of the previously defined data source (labeled "postgres@localhost" by default).
+Click btn:[OK].
+.. Select and entity and press kbd:[F4] (Go to Source).
+Verify that the errors on the `@Column` annotations are gone.
+If you still see errors, try starting the API (`bootRun` task in Gradle) to update your database to the latest schema.

@@ -1,7 +1,6 @@
 rootProject.name = "orkg-prototype"
 
 include("platform")
-include("library")
 include("common:exceptions")
 include("testing:kotest")
 include("testing:spring")
@@ -18,6 +17,7 @@ include(
 )
 include(
     "identity-management:idm-application",
+    "identity-management:idm-adapter-input-rest-spring-security",
     "identity-management:idm-adapter-output-spring-data-jpa",
 )
 include(

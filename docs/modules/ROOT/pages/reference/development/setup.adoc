@@ -1,0 +1,38 @@
+= Development setup
+:fn-idea-license: footnote:[Ultimate Edition is recommended due to Spring integration. TIB/L3S members should contact their group leaders for a license.]
+
+== Development environment and tools
+
+Developers are free to choose the tools they feel most comfortable with.
+However, the following tools are recommended:
+
+* https://www.jetbrains.com/idea/[IntelliJ IDEA]{fn-idea-license} for working with the code
+** https://www.jetbrains.com/toolbox-app/[Toolbox App] for installing JetBrains products and managing IDE versions
+* http://sdkman.io/[SDKMAN] for managing JDKs
+* https://www.docker.com/[Docker] and https://docs.docker.com/compose/[Docker Compose] for managing (development) containers
+* https://github.com/zaquestion/lab[lab], if you want to interact with GitLab via the command-line (optional)
+
+Developers should also be familiar with https://gradle.org/[Gradle], our build management tool, as well as https://asciidoctor.org/[Asciidoctor], our documentation tool.
+(Both _do not_ need to be installed.)
+
+Gradle is provided with the repository and does _not_ need to be installed separately.
+The `gradlew` wrapper script can be used to call it from the command-line.
+(IntelliJ IDEA will automatically pick it up.)
+
+Asciidoctor is installed via a Gradle plug-in and can be run from Gradle by executing the `asciidoctor` task.
+
+== Programming language and libraries
+
+Developers should be familiar with the following languages, frameworks and/or libraries used by the ORKG backend:
+
+* https://kotlinlang.org/[Kotlin] (JVM), the programming language used
+* https://spring.io/projects/spring-boot[Spring Boot] as well as
+** https://spring.io/projects/spring-data[Spring Data], specifically https://spring.io/projects/spring-data-jpa[Spring Data JPA] and https://spring.io/projects/spring-data-neo4j[Spring Data Neo4j]
+** https://spring.io/projects/spring-security[Spring Security], specifically https://spring.io/projects/spring-security-oauth[Spring Security OAuth]
+* https://assertj.github.io/doc/[AssertJ] for testing
+
+== Downloading JavaDoc artifacts
+
+If you like reading the documentation inside IDEA, Gradle needs to download the `javadoc` artifacts of all dependencies.
+You can set `downloadJavadoc=true` in your personal Gradle properties file, located at `~/.gradle/gradle.properties`.
+If not set, Gradle is configured to not download the documentation (to be consistent with the default behavior).

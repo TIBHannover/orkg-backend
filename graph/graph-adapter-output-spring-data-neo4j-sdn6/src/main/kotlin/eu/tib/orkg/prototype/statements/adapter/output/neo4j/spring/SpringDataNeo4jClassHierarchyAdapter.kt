@@ -1,5 +1,10 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
+import eu.tib.orkg.prototype.dsl.CypherQueryBuilder
+import eu.tib.orkg.prototype.dsl.PagedQueryBuilder.countOver
+import eu.tib.orkg.prototype.dsl.PagedQueryBuilder.mappedBy
+import eu.tib.orkg.prototype.dsl.SingleQueryBuilder.fetchAs
+import eu.tib.orkg.prototype.dsl.SingleQueryBuilder.mappedBy
 import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.ChildClass
 import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.ClassHierarchyEntry
 import eu.tib.orkg.prototype.statements.domain.model.Class
@@ -25,7 +30,6 @@ import org.neo4j.cypherdsl.core.Predicates.exists
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.core.Neo4jClient
-import org.springframework.data.neo4j.core.fetchAs
 import org.springframework.stereotype.Component
 
 private const val SUBCLASS_OF = "SUBCLASS_OF"
@@ -36,133 +40,140 @@ class SpringDataNeo4jClassHierarchyAdapter(
 ) : SpringDataNeo4jAdapter(neo4jClient), ClassHierarchyRepository, ClassRelationRepository {
 
     override fun save(classRelation: ClassSubclassRelation) {
-        val child = node("Class")
-        val parent = node("Class")
-        val query = match(child)
-            .where(
-                child.property("id").eq(literalOf<String>(classRelation.child.id.value))
-            ).match(parent).where(
-                parent.property("id").eq(literalOf<String>(classRelation.parent.id.value))
-            ).create(
-                child.relationshipTo(parent, SUBCLASS_OF).withProperties(
-                    "created_by", literalOf<String>(classRelation.createdBy.value.toString()),
-                    "created_at", literalOf<String>(classRelation.createdAt.format(ISO_OFFSET_DATE_TIME))
-                )
-            ).build()
-        neo4jClient.query(query.cypher).run()
+        CypherQueryBuilder(neo4jClient)
+            .withQuery {
+                val child = node("Class")
+                val parent = node("Class")
+                match(child)
+                    .where(
+                        child.property("id").eq(parameter("childId"))
+                    ).match(parent).where(
+                        parent.property("id").eq(parameter("parentId"))
+                    ).create(
+                        child.relationshipTo(parent, SUBCLASS_OF).withProperties(
+                            "created_by", parameter("createdBy"),
+                            "created_at", parameter("createdAt")
+                        )
+                    )
+            }
+            .withParameters(
+                "childId" to classRelation.child.id.value,
+                "parentId" to classRelation.parent.id.value,
+                "createdBy" to classRelation.createdBy.value.toString(),
+                "createdAt" to classRelation.createdAt.format(ISO_OFFSET_DATE_TIME)
+            )
+            .run()
     }
 
     override fun saveAll(classRelations: Set<ClassSubclassRelation>) {
-        val child = node("Class")
-        val parent = node("Class")
-        val rows = parameter("rows")
-        val row = name("row")
-        val r = child.relationshipTo(parent, SUBCLASS_OF).named("r")
-        val query = unwind(rows).`as`(row)
-            .with(row)
-            .match(child).where(
-                child.property("id").eq(row.property("child_id"))
-            ).match(parent).where(
-                parent.property("id").eq(row.property("parent_id"))
-            ).create(
-                r.withProperties(
-                    "created_by", row.property("created_by"),
-                    "created_at", row.property("created_at")
-                )
-            ).returning(id(r))
-            .build()
-        neo4jClient.query(query.cypher)
-            .bindAll(mapOf(
+        CypherQueryBuilder(neo4jClient)
+            .withQuery {
+                val child = node("Class")
+                val parent = node("Class")
+                val rows = parameter("rows")
+                val row = name("row")
+                val r = child.relationshipTo(parent, SUBCLASS_OF).named("r")
+                unwind(rows).`as`(row)
+                    .with(row)
+                    .match(child).where(
+                        child.property("id").eq(row.property("child_id"))
+                    ).match(parent).where(
+                        parent.property("id").eq(row.property("parent_id"))
+                    ).create(
+                        r.withProperties(
+                            "created_by", row.property("created_by"),
+                            "created_at", row.property("created_at")
+                        )
+                    ).returning(id(r))
+            }
+            .withParameters(
                 "rows" to classRelations.map {
-                    mapOf<String, String>(
+                    mapOf(
                         "child_id" to it.child.id.value,
                         "parent_id" to it.parent.id.value,
                         "created_by" to it.createdBy.value.toString(),
                         "created_at" to it.createdAt.format(ISO_OFFSET_DATE_TIME)
                     )
                 }
-            )).run()
+            )
+            .run()
     }
 
     override fun deleteByChildId(childId: ThingId) {
-        val r = name("r")
-        val query = match(
-                node("Class")
-                    .withProperties("id", literalOf<String>(childId.value))
-                    .relationshipTo(node("Class"), SUBCLASS_OF)
-                    .named(r)
-            ).delete(r)
-            .build()
-        neo4jClient.query(query.cypher).run()
+        CypherQueryBuilder(neo4jClient)
+            .withQuery {
+                val r = name("r")
+                match(
+                    node("Class")
+                        .withProperties("id", parameter("childId"))
+                        .relationshipTo(node("Class"), SUBCLASS_OF)
+                        .named(r)
+                ).delete(r)
+            }
+            .withParameters("childId" to childId.value)
+            .run()
     }
 
     override fun deleteAll() {
-        val r = name("r")
-        val query = match(
-                node("Class")
-                    .relationshipTo(node("Class"), SUBCLASS_OF)
-                    .named(r)
-            ).delete(r)
-            .build()
-        neo4jClient.query(query.cypher).run()
+        CypherQueryBuilder(neo4jClient)
+            .withQuery {
+                val r = name("r")
+                match(
+                    node("Class")
+                        .relationshipTo(node("Class"), SUBCLASS_OF)
+                        .named(r)
+                ).delete(r)
+            }
+            .run()
     }
 
-    override fun findChildren(id: ThingId, pageable: Pageable): Page<ChildClass> {
-        val c = name("c")
-        val p = name("p")
-        val g =  node("Class")
-            .named("g")
-        val childCount = name("childCount")
-        val match = {
+    override fun findChildren(id: ThingId, pageable: Pageable): Page<ChildClass> = CypherQueryBuilder(neo4jClient)
+        .withCommonQuery {
             match(
                 node("Class")
-                    .named(c)
+                    .named("c")
                     .relationshipTo(
                         node("Class")
-                            .named(p)
-                            .withProperties("id", literalOf<String>(id.value)),
+                            .named("p")
+                            .withProperties("id", parameter("id")),
                         SUBCLASS_OF
                     )
             )
         }
-        val query = match()
-            .optionalMatch(
-                g.relationshipTo(anyNode().named(c))
-            )
-            .with(c.`as`(c), count(g).`as`(childCount))
-            .orderBy(c.property("id").ascending())
-            .returning(c, childCount)
-            .build(pageable)
-        val countQuery = match()
-            .returning(count(c))
-            .build()
-        return neo4jClient.query(query.cypher)
-            .fetchAs(ChildClass::class.java)
-            .mappedBy { _, record -> ChildClass(record[c].asNode().toClass(), record[childCount].asLong()) }
-            .paged(pageable, countQuery)
-    }
+        .withQuery { commonQuery ->
+            val c = name("c")
+            val g =  node("Class").named("g")
+            commonQuery
+                .optionalMatch(g.relationshipTo(anyNode().named(c)))
+                .returning(c, count(g).`as`("childCount"))
+                .orderBy(c.property("id").ascending())
+        }
+        .countOver("c")
+        .withParameters("id" to id.value)
+        .mappedBy { _, record -> ChildClass(record["c"].asNode().toClass(), record["childCount"].asLong()) }
+        .fetch(pageable)
 
-    override fun findParent(id: ThingId): Optional<Class> {
-        val p = name("p")
-        val query = match(
+    override fun findParent(id: ThingId): Optional<Class> = CypherQueryBuilder(neo4jClient)
+        .withQuery {
+            val p = name("p")
+            match(
                 node("Class")
-                    .withProperties("id", literalOf<String>(id.value))
+                    .withProperties("id", parameter("id"))
                     .relationshipTo(anyNode("Class").named(p), SUBCLASS_OF)
             ).returning(p)
-            .build()
-        return neo4jClient.query(query.cypher)
-            .fetchAs(Class::class.java)
-            .mappedBy(ClassMapper(p))
-            .one()
-    }
+        }
+        .withParameters("id" to id.value)
+        .mappedBy(ClassMapper("p"))
+        .one()
 
-    override fun findRoot(id: ThingId): Optional<Class> {
-        val r = name("r")
-        val root = anyNode("Class")
-            .named(r)
-        val query = match(
+    override fun findRoot(id: ThingId): Optional<Class> = CypherQueryBuilder(neo4jClient)
+        .withQuery {
+            val r = name("r")
+            val root = anyNode("Class")
+                .named(r)
+            match(
                 node("Class")
-                    .withProperties("id", literalOf<String>(id.value))
+                    .withProperties("id", parameter("id"))
                     .relationshipTo(root, SUBCLASS_OF)
                     .unbounded()
             ).where(
@@ -170,17 +181,14 @@ class SpringDataNeo4jClassHierarchyAdapter(
                     .asCondition()
                     .not()
             ).returning(root)
-            .build()
-        return neo4jClient.query(query.cypher)
-            .fetchAs(Class::class.java)
-            .mappedBy(ClassMapper(r))
-            .one()
-    }
+        }
+        .withParameters("id" to id.value)
+        .mappedBy(ClassMapper("r"))
+        .one()
 
-    override fun findAllRoots(pageable: Pageable): Page<Class> {
-        val r = name("r")
-        val root = node("Class").named(r)
-        val match = {
+    override fun findAllRoots(pageable: Pageable): Page<Class> = CypherQueryBuilder(neo4jClient)
+        .withCommonQuery {
+            val root = node("Class").named("r")
             match(root)
                 .where(
                     root.relationshipTo(node("Class"), SUBCLASS_OF)
@@ -188,31 +196,26 @@ class SpringDataNeo4jClassHierarchyAdapter(
                         .not()
                 )
         }
-        val query = match()
-            .with(root)
-            .orderBy(root.property("id").ascending())
-            .returning(root)
-            .build(pageable)
-        val countQuery = match()
-            .returning(count(root))
-            .build()
-        return neo4jClient.query(query.cypher)
-            .fetchAs(Class::class.java)
-            .mappedBy(ClassMapper(r))
-            .paged(pageable, countQuery)
-    }
+        .withQuery { commonQuery ->
+            val r = name("r")
+            commonQuery.with(r)
+                .orderBy(r.property("id").ascending())
+                .returning(r)
+        }
+        .countOver("r")
+        .mappedBy(ClassMapper("r"))
+        .fetch(pageable)
 
-    override fun findClassHierarchy(id: ThingId, pageable: Pageable): Page<ClassHierarchyEntry> {
-        val p = name("p")
-        val c = name("c")
-        val classes = name("classes")
-        val `class` = name("class")
-        val parentId = name("parent_id")
-        val match = {
+    override fun findClassHierarchy(id: ThingId, pageable: Pageable): Page<ClassHierarchyEntry> = CypherQueryBuilder(neo4jClient)
+        .withCommonQuery {
+            val p = name("p")
+            val c = name("c")
+            val classes = name("classes")
+            val `class` = name("class")
             match(
                 node("Class")
                     .named(c)
-                    .withProperties("id", literalOf<String>(id.value))
+                    .withProperties("id", parameter("id"))
                     .relationshipTo(node("Class").named(p), SUBCLASS_OF)
                     .length(0, null)
             ).with(collect(p).add(collect(c)).`as`(classes))
@@ -220,35 +223,36 @@ class SpringDataNeo4jClassHierarchyAdapter(
                 .`as`(`class`)
                 .withDistinct(`class`)
         }
-        val query = match()
-            .optionalMatch(
-                anyNode()
-                    .named(`class`)
-                    .relationshipTo(node("Class").named(p), SUBCLASS_OF)
-            )
-            .with(`class`.`as`(`class`), p.property("id").`as`(parentId))
-            .orderBy(`class`.property("id").ascending())
-            .returning(`class`, parentId)
-            .build(pageable)
-        val countQuery = match()
-            .returning(count(`class`))
-            .build()
-        return neo4jClient.query(query.cypher)
-            .fetchAs(ClassHierarchyEntry::class.java)
-            .mappedBy { _, record -> ClassHierarchyEntry(record[`class`].asNode().toClass(), record[parentId].toThingId()) }
-            .paged(pageable, countQuery)
-    }
+        .withQuery { commonQuery ->
+            val p = name("p")
+            val `class` = name("class")
+            val parentId = name("parent_id")
+            commonQuery
+                .optionalMatch(
+                    anyNode()
+                        .named(`class`)
+                        .relationshipTo(node("Class").named(p), SUBCLASS_OF)
+                )
+                .with(`class`.`as`(`class`), p.property("id").`as`(parentId))
+                .orderBy(`class`.property("id").ascending())
+                .returning(`class`, parentId)
+        }
+        .countOver("class")
+        .withParameters("id" to id.value)
+        .mappedBy { _, record -> ClassHierarchyEntry(record["class"].asNode().toClass(), record["parent_id"].toThingId()) }
+        .fetch(pageable)
 
-    override fun countClassInstances(id: ThingId): Long {
-        val r = name("r")
-        val c = name("c")
-        val ids = name("ids")
-        val i = name("i")
-        val label = name("label")
-        val instance = node("Thing")
-            .named(i)
-        val idLiteral = literalOf<String>(id.value)
-        val query = match(
+    override fun countClassInstances(id: ThingId): Long = CypherQueryBuilder(neo4jClient)
+        .withQuery {
+            val r = name("r")
+            val c = name("c")
+            val ids = name("ids")
+            val i = name("i")
+            val label = name("label")
+            val instance = node("Thing")
+                .named(i)
+            val idLiteral = parameter("id")
+            match(
                 node("Class")
                     .named(c)
                     .relationshipTo(
@@ -258,43 +262,44 @@ class SpringDataNeo4jClassHierarchyAdapter(
                         SUBCLASS_OF
                     ).unbounded()
             ).with(collect(c.property("id")).add(idLiteral).`as`(ids))
-            .match(instance)
-            .where(any(label).`in`(labels(instance)).where(label.`in`(ids)))
-            .returning(count(i))
-            .build()
-        return neo4jClient.query(query.cypher)
-            .fetchAs<Long>()
-            .one() ?: 0
-    }
+                .match(instance)
+                .where(any(label).`in`(labels(instance)).where(label.`in`(ids)))
+                .returning(count(i))
+        }
+        .withParameters("id" to id.value)
+        .fetchAs<Long>()
+        .one()
+        .orElse(0)
 
-    override fun existsChild(id: ThingId, childId: ThingId): Boolean {
-        val c = node("Class")
-            .named("c")
-            .withProperties("id", literalOf<String>(childId.value))
-        val query = match(c)
-            .returning(
-                exists(
-                    c.relationshipTo(
-                        node("Class")
-                            .withProperties("id", literalOf<String>(id.value)),
-                        SUBCLASS_OF
-                    ).unbounded()
+    override fun existsChild(id: ThingId, childId: ThingId): Boolean = CypherQueryBuilder(neo4jClient)
+        .withQuery {
+            val c = node("Class")
+                .named("c")
+                .withProperties("id", literalOf<String>(childId.value))
+            match(c)
+                .returning(
+                    exists(
+                        c.relationshipTo(
+                            node("Class")
+                                .withProperties("id", literalOf<String>(id.value)),
+                            SUBCLASS_OF
+                        ).unbounded()
+                    )
                 )
-            ).build()
-        return neo4jClient.query(query.cypher)
-            .fetchAs<Boolean>()
-            .one() ?: false
-    }
+        }
+        .fetchAs<Boolean>()
+        .one()
+        .orElse(false)
 
-    override fun existsChildren(id: ThingId): Boolean {
-        val c = node("Class")
-            .named("c")
-            .withProperties("id", literalOf<String>(id.value))
-        val query = match(c)
-            .returning(exists(node("Class").relationshipTo(c, SUBCLASS_OF)))
-            .build()
-        return neo4jClient.query(query.cypher)
-            .fetchAs<Boolean>()
-            .one() ?: false
-    }
+    override fun existsChildren(id: ThingId): Boolean = CypherQueryBuilder(neo4jClient)
+        .withQuery {
+            val c = node("Class")
+                .named("c")
+                .withProperties("id", literalOf<String>(id.value))
+            match(c)
+                .returning(exists(node("Class").relationshipTo(c, SUBCLASS_OF)))
+        }
+        .fetchAs<Boolean>()
+        .one()
+        .orElse(false)
 }

@@ -9,14 +9,22 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 /**
  * Verifies that the fields of a [Page] appear in the JSON output.
  */
-fun ResultActions.andExpectPage(): ResultActions = this
-    .andExpect(jsonPath("$.content", `is`(notNullValue())))
-    .andExpect(jsonPath("$.totalElements", `is`(notNullValue())))
-    .andExpect(jsonPath("$.totalPages", `is`(notNullValue())))
-    .andExpect(jsonPath("$.last", `is`(notNullValue())))
-    .andExpect(jsonPath("$.first", `is`(notNullValue())))
-    .andExpect(jsonPath("$.number", `is`(notNullValue())))
-    .andExpect(jsonPath("$.numberOfElements", `is`(notNullValue())))
-    .andExpect(jsonPath("$.size", `is`(notNullValue())))
-    .andExpect(jsonPath("$.empty", `is`(notNullValue())))
-    .andExpect(jsonPath("$.sort", `is`(notNullValue())))
+fun ResultActions.andExpectPage(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.content", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.totalElements", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.totalPages", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.last", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.first", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.number", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.numberOfElements", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.size", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.empty", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.sort", `is`(notNullValue())))
+
+fun ResultActions.andExpectStatement(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.subject", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.predicate", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.object", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.created_by", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))

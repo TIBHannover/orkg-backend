@@ -13,7 +13,7 @@ WARNING: This endpoint is deprecated. Clients are advised to update, because thi
 Dumps cannot be created on-the-fly anymore, but can be downloaded from `/files/rdf-dumps`.
 The response will be `301 Moved Permanently`, pointing to the latest version of the dump.
 
-operation::rdf-controller-test-index[snippets='curl-request,http-response']
+operation::rdf-hints-legacy-redirect-to-dump[snippets='curl-request,http-response']
 
 [[resolvable-vocab]]
 == Resolvable Vocabulary

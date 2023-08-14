@@ -25,6 +25,8 @@ import org.orkg.statements.testing.createResource
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import org.springframework.restdocs.headers.HeaderDocumentation
+import org.springframework.restdocs.headers.HeaderDocumentation.*
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.test.context.ContextConfiguration
@@ -58,9 +60,17 @@ internal class RdfControllerUnitTest : RestDocsTest("rdf-hints") {
 
     @Test
     fun legacyRedirectToDump() {
-        mockMvc.perform(get(DUMP_ENDPOINT))
+        mockMvc.perform(documentedGetRequestTo(DUMP_ENDPOINT).accept("application/n-triples"))
             .andExpect(status().isMovedPermanently)
             .andExpect(header().string("Location", endsWith("/files/rdf-dumps/rdf-export-orkg.nt")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("Location to the rdf dump.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
     }
 
     @Test

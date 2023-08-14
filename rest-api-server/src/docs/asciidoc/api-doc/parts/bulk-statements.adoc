@@ -8,25 +8,25 @@ Bulk operations on statements. Helps performing multiple calls together.
 
 A `GET` request to get statements of multiple resources in the subject position.
 
-operation::bulk-statement-controller-integration-test-lookup-by-subjects[snippets='curl-request,http-response']
+operation::bulk-statements-lookup-by-subjects[snippets='curl-request,http-response']
 
 [[bulk-statements-fetch-by-object]]
 === Fetch by Objects
 
 A `GET` request to get statements of multiple resources/literals in the object position.
 
-operation::bulk-statement-controller-integration-test-lookup-by-objects[snippets='curl-request,http-response']
+operation::bulk-statements-lookup-by-objects[snippets='curl-request,http-response']
 
 [[bulk-statements-edit]]
 === Edit Statements
 
 A `PUT` request to edit multiple statements, with the same update body
 
-operation::bulk-statement-controller-integration-test-edit-resource-statements[snippets='curl-request,response-fields,http-response']
+operation::bulk-statements-edit-resource-statements[snippets='curl-request,response-fields,http-response']
 
 [[bulk-statements-delete]]
 === Delete Statements
 
 A `DELETE` request to delete multiple statements simultaneously
 
-operation::bulk-statement-controller-integration-test-delete-resource-statements[snippets='curl-request,http-response']
+operation::bulk-statements-delete[snippets='curl-request,http-response']

@@ -9,13 +9,14 @@ import eu.tib.orkg.prototype.createLiteral
 import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.createStatement
+import eu.tib.orkg.prototype.pageOf
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
-import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import eu.tib.orkg.prototype.testing.spring.restdocs.RestDocsTest
 import eu.tib.orkg.prototype.testing.annotations.UsesMocking
+import eu.tib.orkg.prototype.testing.spring.restdocs.documentedDeleteRequestTo
 import io.mockk.Runs
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
@@ -23,17 +24,16 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.verify
 import io.mockk.verifyAll
-import java.net.URLEncoder
 import java.security.Principal
 import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
+import org.springframework.restdocs.request.RequestDocumentation.*
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
@@ -183,7 +183,8 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
     @DisplayName("Given a user is logged in")
     inner class UserLoggedIn {
         @Test
-        fun `when deleting a statement with a literal object and service reports success, then status is 204 NO CONTENT`() {
+        @DisplayName("when deleting a statement with a literal object and service reports success, then status is 204 NO CONTENT")
+        fun deleteLiteralStatement_isNoContent() {
             val s = createResource().copy(label = "one")
             val p = createPredicate().copy(label = "has symbol")
             val l = createLiteral().copy(label = "1")
@@ -193,8 +194,16 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             every { principal.name } returns userId.toString()
             every { statementService.delete(st.id!!) } just Runs
 
-            mockMvc.delete("/api/statements/${st.id}", principal)
+            mockMvc.perform(documentedDeleteRequestTo("/api/statements/{id}", st.id!!).principal(principal))
                 .andExpect(status().isNoContent)
+                .andDo(
+                    documentationHandler.document(
+                        pathParameters(
+                            parameterWithName("id").description("The identifier of the statement to delete.")
+                        )
+                    )
+                )
+                .andDo(generateDefaultDocSnippets())
 
             verify(exactly = 1) { statementService.delete(st.id!!) }
             verifyAll { principal.name }
@@ -276,6 +285,28 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             statementService.findAllByPredicateAndLabel(statement.predicate.id, statement.`object`.label, any())
             statementService.countStatementsAboutResources(any())
             flags.isFormattedLabelsEnabled()
+        }
+    }
+
+    @Test
+    fun `Given a thing id, when fetched as a bundle but thing does not exist, then status is 404 NOT FOUND`() {
+        val thingId = ThingId("DoesNotExist")
+        val exception = ThingNotFound.withThingId(thingId)
+
+        every {
+            statementService.fetchAsBundle(thingId, any(), false)
+        } throws exception
+
+        mockMvc.perform(get("/api/statements/$thingId/bundle?includeFirst=false"))
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(404))
+            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.path").value("/api/statements/$thingId/bundle"))
+
+        verify(exactly = 1) {
+            statementService.fetchAsBundle(thingId, any(), false)
         }
     }
 

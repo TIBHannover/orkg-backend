@@ -4,11 +4,14 @@
   "accessCodeLifespanUserAction": 300,
   "accessTokenLifespan": 300,
   "accessTokenLifespanForImplicitFlow": 900,
+  "accountTheme": "",
   "actionTokenGeneratedByAdminLifespan": 43200,
   "actionTokenGeneratedByUserLifespan": 300,
   "adminEventsDetailsEnabled": false,
   "adminEventsEnabled": true,
+  "adminTheme": "",
   "attributes": {
+    "acr.loa.map": "{}",
     "adminEventsExpiration": "",
     "cibaAuthRequestedUserHint": "login_hint",
     "cibaBackchannelTokenDeliveryMode": "poll",
@@ -18,6 +21,7 @@
     "clientOfflineSessionMaxLifespan": "0",
     "clientSessionIdleTimeout": "0",
     "clientSessionMaxLifespan": "0",
+    "frontendUrl": "",
     "oauth2DeviceCodeLifespan": "600",
     "oauth2DevicePollingInterval": "5",
     "parRequestUriLifespan": "60",
@@ -1613,13 +1617,13 @@
         "config": {
           "allowed-protocol-mapper-types": [
             "saml-user-attribute-mapper",
-            "saml-user-property-mapper",
             "oidc-sha256-pairwise-sub-mapper",
-            "oidc-usermodel-attribute-mapper",
-            "saml-role-list-mapper",
             "oidc-address-mapper",
+            "oidc-usermodel-attribute-mapper",
+            "oidc-full-name-mapper",
+            "saml-role-list-mapper",
             "oidc-usermodel-property-mapper",
-            "oidc-full-name-mapper"
+            "saml-user-property-mapper"
           ]
         },
         "id": "cd207b34-53a9-41f1-bfc7-4fb65a13ac15",
@@ -1647,14 +1651,14 @@
       {
         "config": {
           "allowed-protocol-mapper-types": [
-            "saml-role-list-mapper",
-            "oidc-usermodel-attribute-mapper",
-            "oidc-usermodel-property-mapper",
-            "oidc-full-name-mapper",
             "saml-user-attribute-mapper",
+            "oidc-full-name-mapper",
+            "oidc-usermodel-attribute-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
+            "saml-role-list-mapper",
             "oidc-address-mapper",
             "saml-user-property-mapper",
-            "oidc-sha256-pairwise-sub-mapper"
+            "oidc-usermodel-property-mapper"
           ]
         },
         "id": "580b53ab-0f05-45a3-9ef5-f82d34e93c39",
@@ -1667,7 +1671,7 @@
     "org.keycloak.userprofile.UserProfileProvider": [
       {
         "config": {},
-        "id": "972c5147-eb1e-4267-a861-c001fe43e242",
+        "id": "f7268a05-5bda-4d0f-a2cf-2675558b3830",
         "providerId": "declarative-user-profile",
         "subComponents": {}
       }
@@ -1681,6 +1685,7 @@
     "web-origins",
     "acr"
   ],
+  "defaultLocale": "en",
   "defaultOptionalClientScopes": [
     "offline_access",
     "address",
@@ -1697,9 +1702,12 @@
   },
   "defaultSignatureAlgorithm": "RS256",
   "directGrantFlow": "direct grant",
+  "displayName": "ORKG",
+  "displayNameHtml": "",
   "dockerAuthenticationFlow": "docker auth",
   "duplicateEmailsAllowed": false,
   "editUsernameAllowed": false,
+  "emailTheme": "",
   "enabled": true,
   "enabledEventTypes": [
     "SEND_RESET_PASSWORD",
@@ -1791,8 +1799,9 @@
   "id": "c6754611-056a-43ed-9e15-ad6b65406947",
   "identityProviderMappers": [],
   "identityProviders": [],
-  "internationalizationEnabled": false,
+  "internationalizationEnabled": true,
   "keycloakVersion": "21.1.1",
+  "loginTheme": "orkg",
   "loginWithEmailAllowed": true,
   "maxDeltaTimeSeconds": 43200,
   "maxFailureWaitSeconds": 900,
@@ -1820,7 +1829,7 @@
   "quickLoginCheckMilliSeconds": 1000,
   "realm": "orkg-dev",
   "refreshTokenMaxReuse": 0,
-  "registrationAllowed": true,
+  "registrationAllowed": false,
   "registrationEmailAsUsername": false,
   "registrationFlow": "registration",
   "rememberMe": false,
@@ -2298,9 +2307,12 @@
   "ssoSessionIdleTimeoutRememberMe": 0,
   "ssoSessionMaxLifespan": 36000,
   "ssoSessionMaxLifespanRememberMe": 0,
-  "supportedLocales": [],
+  "supportedLocales": [
+    "de",
+    "en"
+  ],
   "userManagedAccessAllowed": false,
-  "verifyEmail": false,
+  "verifyEmail": true,
   "waitIncrementSeconds": 60,
   "webAuthnPolicyAcceptableAaguids": [],
   "webAuthnPolicyAttestationConveyancePreference": "not specified",

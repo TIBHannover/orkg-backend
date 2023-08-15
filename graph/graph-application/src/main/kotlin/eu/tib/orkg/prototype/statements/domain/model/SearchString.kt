@@ -13,13 +13,8 @@ sealed interface SearchString {
 }
 
 class FuzzySearchString(value: String) : SearchString {
-    override val query: String
-    override val input: String
-
-    init {
-        this.input = value.normalize()
-        this.query = this.input.toFuzzyQuery()
-    }
+    override val input: String = value.normalize()
+    override val query: String = input.toFuzzyQuery()
 
     private fun String.toFuzzyQuery(): String {
         val builder = StringBuilder()
@@ -50,18 +45,13 @@ class FuzzySearchString(value: String) : SearchString {
             }
         }
 
-        return builder.toString().trim()
+        return builder.toString().trim().ifBlank { "*" }
     }
 }
 
 class ExactSearchString(value: String) : SearchString {
-    override val query: String
-    override val input: String
-
-    init {
-        this.input = value.normalize()
-        this.query = QueryParser.escape(this.input)
-    }
+    override val input: String = value.normalize()
+    override val query: String = QueryParser.escape(input)
 }
 
 private data class StringReader(val string: String) {

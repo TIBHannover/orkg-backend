@@ -10,8 +10,13 @@ internal class SearchStringTest {
         @Nested
         inner class Query {
             @Test
+            fun `Parses empty strings as wildcard`() {
+                FuzzySearchString("").query shouldBe "*"
+            }
+
+            @Test
             fun `Removes special characters`() {
-                FuzzySearchString("""+-&|!(){}[]^"~*?:\""").query shouldBe ""
+                FuzzySearchString("""+-&|!(){}[]^"~*?:\""").query shouldBe "*"
             }
 
             @Test
@@ -42,7 +47,7 @@ internal class SearchStringTest {
 
             @Test
             fun `Parses blank blank strings correctly`() {
-                FuzzySearchString("""    """).query shouldBe ""
+                FuzzySearchString("""    """).query shouldBe "*"
             }
         }
 

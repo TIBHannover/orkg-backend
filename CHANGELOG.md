@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!602](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/602))
 - Fixed missing snippets from REST-API documentation.
   (See: [!604](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/604))
+- Fixed incorrect entity count for class hierarchy endpoint `/api/classes/{id}/hierarchy`
+  (See: [!608](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/608))
+- Fixed internal server error for endpoint `/api/classes/roots`
+  (See: [!608](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/608))
 
 ## [0.35.1] - 2023-07-11
 ### Changed

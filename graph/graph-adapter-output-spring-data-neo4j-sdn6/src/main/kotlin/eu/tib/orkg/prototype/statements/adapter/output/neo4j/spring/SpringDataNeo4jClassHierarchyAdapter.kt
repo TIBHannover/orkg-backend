@@ -208,17 +208,15 @@ class SpringDataNeo4jClassHierarchyAdapter(
 
     override fun findClassHierarchy(id: ThingId, pageable: Pageable): Page<ClassHierarchyEntry> = CypherQueryBuilder(neo4jClient)
         .withCommonQuery {
-            val p = name("p")
             val c = name("c")
             val classes = name("classes")
             val `class` = name("class")
             match(
                 node("Class")
-                    .named(c)
                     .withProperties("id", parameter("id"))
-                    .relationshipTo(node("Class").named(p), SUBCLASS_OF)
+                    .relationshipTo(node("Class").named(c), SUBCLASS_OF)
                     .length(0, null)
-            ).with(collect(p).add(collect(c)).`as`(classes))
+            ).with(collect(c).`as`(classes))
                 .unwind(classes)
                 .`as`(`class`)
                 .withDistinct(`class`)
@@ -244,7 +242,6 @@ class SpringDataNeo4jClassHierarchyAdapter(
 
     override fun countClassInstances(id: ThingId): Long = CypherQueryBuilder(neo4jClient)
         .withQuery {
-            val r = name("r")
             val c = name("c")
             val ids = name("ids")
             val i = name("i")
@@ -257,11 +254,11 @@ class SpringDataNeo4jClassHierarchyAdapter(
                     .named(c)
                     .relationshipTo(
                         node("Class")
-                            .named(r)
                             .withProperties("id", idLiteral),
                         SUBCLASS_OF
-                    ).unbounded()
-            ).with(collect(c.property("id")).add(idLiteral).`as`(ids))
+                    )
+                    .length(0, null)
+            ).with(collect(c.property("id")).`as`(ids))
                 .match(instance)
                 .where(any(label).`in`(labels(instance)).where(label.`in`(ids)))
                 .returning(count(i))

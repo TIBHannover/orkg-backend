@@ -8,14 +8,14 @@ import eu.tib.orkg.prototype.statements.api.ChildClassRepresentation
 import eu.tib.orkg.prototype.statements.api.ClassHierarchyEntryRepresentation
 import eu.tib.orkg.prototype.statements.api.ClassHierarchyUseCases
 import eu.tib.orkg.prototype.statements.api.ClassRepresentation
-import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.*
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.http.ResponseEntity.*
+import org.springframework.http.ResponseEntity.created
+import org.springframework.http.ResponseEntity.noContent
+import org.springframework.http.ResponseEntity.ok
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -82,7 +82,6 @@ class ClassHierarchyController(
 
     @GetMapping("/roots")
     fun findAllRoots(
-        @PathVariable id: ThingId,
         pageable: Pageable
     ): Page<ClassRepresentation> = service.findAllRoots(pageable).mapToClassRepresentation()
 

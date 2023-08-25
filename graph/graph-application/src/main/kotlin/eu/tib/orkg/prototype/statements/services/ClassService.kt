@@ -17,14 +17,13 @@ import eu.tib.orkg.prototype.statements.api.InvalidURI
 import eu.tib.orkg.prototype.statements.api.UpdateClassUseCase
 import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
 import eu.tib.orkg.prototype.statements.domain.model.Class
-import eu.tib.orkg.prototype.statements.domain.model.Clock
 import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
-import eu.tib.orkg.prototype.statements.domain.model.SystemClock
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import java.net.URI
 import java.net.URISyntaxException
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
 import org.springframework.data.domain.Page
@@ -36,7 +35,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class ClassService(
     private val repository: ClassRepository,
-    private val clock: Clock = SystemClock(),
+    private val clock: Clock = Clock.systemDefaultZone(),
 ) : ClassUseCases {
     override fun create(command: CreateClassUseCase.CreateCommand): ThingId {
         val id = if (command.id != null) ThingId(command.id) else repository.nextIdentity()
@@ -45,7 +44,7 @@ class ClassService(
             label = Label.ofOrNull(command.label)?.value
                 ?: throw IllegalArgumentException("Invalid label: ${command.label}"),
             uri = command.uri,
-            createdAt = clock.now(),
+            createdAt = OffsetDateTime.now(clock),
             createdBy = command.contributorId ?: ContributorId.createUnknownContributor(),
         )
         repository.save(newClass)

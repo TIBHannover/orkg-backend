@@ -4,7 +4,6 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.application.PredicateCantBeDeleted
-import eu.tib.orkg.prototype.statements.domain.model.Clock
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
@@ -13,7 +12,9 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.time.Instant
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat
@@ -24,10 +25,8 @@ class PredicateServiceUnitTest {
 
     private val repository: PredicateRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
-    private val staticClock: Clock = object : Clock {
-        override fun now(): OffsetDateTime = OffsetDateTime.of(2022, 11, 29, 11, 20, 33, 12345, ZoneOffset.ofHours(1))
-    }
-
+    private val fixedTime = OffsetDateTime.of(2022, 11, 14, 14, 9, 23, 12345, ZoneOffset.ofHours(1))
+    private val staticClock = java.time.Clock.fixed(Instant.from(fixedTime), ZoneId.systemDefault())
     private val service = PredicateService(repository, statementRepository, staticClock)
 
     @Test
@@ -83,7 +82,7 @@ class PredicateServiceUnitTest {
                 Predicate(
                     id = mockPredicateId,
                     label = "irrelevant",
-                    createdAt = staticClock.now(),
+                    createdAt = OffsetDateTime.now(staticClock),
                     createdBy = ContributorId(UUID(0, 0)),
                 )
             )
@@ -104,7 +103,7 @@ class PredicateServiceUnitTest {
                 Predicate(
                     id = mockPredicateId,
                     label = "irrelevant",
-                    createdAt = staticClock.now(),
+                    createdAt = OffsetDateTime.now(staticClock),
                     createdBy = randomContributorId,
                 )
             )

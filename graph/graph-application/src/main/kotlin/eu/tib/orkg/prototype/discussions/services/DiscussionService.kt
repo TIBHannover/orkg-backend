@@ -12,11 +12,11 @@ import eu.tib.orkg.prototype.discussions.domain.model.DiscussionComment
 import eu.tib.orkg.prototype.discussions.domain.model.DiscussionCommentId
 import eu.tib.orkg.prototype.discussions.spi.DiscussionCommentRepository
 import eu.tib.orkg.prototype.statements.application.UserNotFound
-import eu.tib.orkg.prototype.statements.domain.model.Clock
 import eu.tib.orkg.prototype.statements.domain.model.Literal
-import eu.tib.orkg.prototype.statements.domain.model.SystemClock
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ThingRepository
+import java.time.Clock
+import java.time.OffsetDateTime
 import java.util.*
 import java.util.regex.Pattern
 import org.springframework.data.domain.Page
@@ -31,7 +31,7 @@ class DiscussionService(
     private val repository: DiscussionCommentRepository,
     private val thingRepository: ThingRepository,
     private val userService: UserService,
-    private val clock: Clock = SystemClock()
+    private val clock: Clock = Clock.systemDefaultZone(),
 ) : DiscussionUseCases {
     override fun create(command: CreateDiscussionCommentUseCase.CreateCommand): DiscussionCommentId {
         thingRepository.findByThingId(command.topic)
@@ -40,7 +40,8 @@ class DiscussionService(
         if (!command.message.isValid())
             throw InvalidContent()
         val uuid = repository.nextIdentity()
-        val comment = DiscussionComment(uuid, command.topic, command.message, command.createdBy, clock.now())
+        val comment =
+            DiscussionComment(uuid, command.topic, command.message, command.createdBy, OffsetDateTime.now(clock))
         repository.save(comment)
         return uuid
     }

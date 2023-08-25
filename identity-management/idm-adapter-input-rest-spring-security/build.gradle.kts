@@ -33,11 +33,12 @@ dependencies {
 
     testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
 
-    api(project(":graph:graph-application"))
-    api(project(":identity-management:idm-application"))
+    implementation(project(":common:exceptions"))
+    implementation(project(":graph:graph-application"))
+    implementation(project(":identity-management:idm-application"))
 
-    api("org.springframework:spring-context")
-    api("org.springframework.data:spring-data-commons")
+    implementation("org.springframework:spring-context")
+    implementation("org.springframework.data:spring-data-commons")
 
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")

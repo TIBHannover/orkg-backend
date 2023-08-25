@@ -34,12 +34,13 @@ dependencies {
 
     testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
 
-    api(project(":graph:graph-application"))
-    api(project(":identity-management:idm-application")) // only for ExceptionHandler
-    api(project(":feature-flags:feature-flags-ports"))
+    implementation(project(":common:exceptions"))
+    implementation(project(":graph:graph-application"))
+    implementation(project(":identity-management:idm-application")) // only for ExceptionHandler
+    implementation(project(":feature-flags:feature-flags-ports"))
 
-    api("org.springframework:spring-context")
-    api("org.springframework.data:spring-data-commons")
+    implementation("org.springframework:spring-context")
+    implementation("org.springframework.data:spring-data-commons")
 
     implementation(libs.forkhandles.result4k)
     implementation(libs.forkhandles.values4k)

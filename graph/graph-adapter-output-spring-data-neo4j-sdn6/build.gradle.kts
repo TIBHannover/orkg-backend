@@ -32,6 +32,7 @@ testing {
             useJUnitJupiter()
             dependencies {
                 implementation(project())
+                implementation(libs.kotest.extensions.spring)
                 implementation(testFixtures(project(":testing:spring")))
                 implementation(testFixtures(project(":graph:graph-application"))) {
                     exclude(group = "org.neo4j", module = "neo4j-ogm-bolt-native-types")
@@ -60,10 +61,10 @@ dependencies {
     api(enforcedPlatform(SpringBootPlugin.BOM_COORDINATES)) // TODO: align with platform when upgrade is done
     "containerTestApi"(enforcedPlatform(SpringBootPlugin.BOM_COORDINATES)) // TODO: align with platform when upgrade is done
 
-    api(project(":graph:graph-application"))
+    implementation(project(":graph:graph-application"))
 
     // Pagination (e.g. Page, Pageable, etc.)
-    api("org.springframework.data:spring-data-commons")
+    implementation("org.springframework.data:spring-data-commons")
 
     // Forkhandles
     implementation(libs.forkhandles.values4k)
@@ -72,7 +73,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
 
     // Caching
-    api("org.springframework.boot:spring-boot-starter-cache")
+    implementation("org.springframework.boot:spring-boot-starter-cache")
 }
 
 tasks.named("check") {

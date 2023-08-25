@@ -29,8 +29,11 @@ testing {
 dependencies {
     api(platform(project(":platform")))
 
+    implementation(project(":common:exceptions"))
     implementation(project(":rdf-export:rdf-export-application"))
+    implementation(project(":graph:graph-application"))
     implementation(project(":graph:graph-adapter-input-rest-spring-mvc")) // TODO: break dependency
+    implementation(project(":feature-flags:feature-flags-ports"))
 
     implementation("org.springframework:spring-context")
     implementation("org.springframework.data:spring-data-commons")

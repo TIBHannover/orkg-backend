@@ -82,6 +82,7 @@ testing {
                 implementation(project())
                 implementation(testFixtures(project(":testing:spring")))
                 implementation(testFixtures(project(":graph:graph-application")))
+                implementation(project(":identity-management:idm-application"))
                 implementation(project(":discussions:discussions-adapter-output-spring-data-jpa-postgres"))
                 implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa-postgres"))
                 implementation(project(":feature-flags:feature-flags-ports"))
@@ -132,6 +133,7 @@ dependencies {
     implementation(platform("org.apache.logging.log4j:log4j-bom:2.19.0"))
 
     // This project is essentially a "configuration" project in Spring's sense, so we depend on all components:
+    implementation(project(":common:exceptions"))
     implementation(project(":identity-management:idm-application"))
     implementation(project(":identity-management:idm-adapter-input-rest-spring-security"))
     implementation(project(":identity-management:idm-adapter-output-spring-data-jpa"))

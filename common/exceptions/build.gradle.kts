@@ -10,5 +10,5 @@ plugins {
 dependencies {
     api(platform(project(":platform")))
 
-    api("org.springframework:spring-web")
+    implementation("org.springframework:spring-web")
 }

@@ -13,7 +13,7 @@ import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.services.PaperService
+import eu.tib.orkg.prototype.statements.services.LegacyPaperService
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.not
@@ -38,7 +38,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Paper Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-class PaperControllerTest : RestDocumentationBaseTest() {
+class LegacyPaperControllerTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var predicateService: PredicateUseCases
@@ -53,7 +53,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     private lateinit var statementService: StatementUseCases
 
     @Autowired
-    private lateinit var paperService: PaperService
+    private lateinit var legacyPaperService: LegacyPaperService
 
     @Autowired
     private lateinit var userService: AuthUseCase
@@ -132,7 +132,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     }
 
     fun createDummyPaperObject(title: String = "long title here", doi: String = "doi.id.here", researchField: String = "R12"): CreatePaperRequest =
-        CreatePaperRequest(null, Paper(
+        CreatePaperRequest(null, PaperDefinition(
             title = title,
             doi = doi,
             researchField = ThingId(researchField),
@@ -158,7 +158,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     fun `shouldn't merge if DOI is empty`() {
         val originalPaper = createDummyPaperObject(doi = "")
 
-        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
+        val originalId = legacyPaperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
 
         val paperWithEmptyDOI = mapOf(
             "paper" to mapOf(
@@ -204,7 +204,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     fun `merge papers that exists on title`() {
         val originalPaper = createDummyPaperObject()
 
-        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
+        val originalId = legacyPaperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
 
         val paperWithSameTitle = mapOf(
             "paper" to mapOf(
@@ -250,7 +250,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     fun `merge papers that exists on doi`() {
         val originalPaper = createDummyPaperObject()
 
-        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
+        val originalId = legacyPaperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
 
         val paperWithSameDOI = mapOf(
             "paper" to mapOf(
@@ -296,7 +296,7 @@ class PaperControllerTest : RestDocumentationBaseTest() {
     fun `merge papers if both title and DOI exist`() {
         val originalPaper = createDummyPaperObject()
 
-        val originalId = paperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
+        val originalId = legacyPaperService.addPaperContent(originalPaper, false, UUID.randomUUID()).value
 
         val paperWithSameTitleAndDOI = mapOf(
             "paper" to mapOf(

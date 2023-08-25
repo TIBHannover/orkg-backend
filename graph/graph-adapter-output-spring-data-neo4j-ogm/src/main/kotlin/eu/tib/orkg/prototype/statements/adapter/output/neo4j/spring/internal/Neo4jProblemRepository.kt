@@ -1,13 +1,12 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
-import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j.BENCHMARK_CLASS
 import eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j.BENCHMARK_PREDICATE
 import eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j.DATASET_CLASS
 import eu.tib.orkg.prototype.paperswithcode.adapters.output.persistence.neo4j.DATASET_PREDICATE
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import java.util.*
-import org.neo4j.ogm.annotation.Property
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.annotation.Query

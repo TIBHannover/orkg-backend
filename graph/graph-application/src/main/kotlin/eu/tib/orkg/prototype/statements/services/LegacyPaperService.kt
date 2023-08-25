@@ -10,10 +10,10 @@ import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase.NamedObject
 import eu.tib.orkg.prototype.statements.api.CreatePaperUseCase
 import eu.tib.orkg.prototype.statements.api.CreatePaperUseCase.CreatePaperRequest
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
+import eu.tib.orkg.prototype.statements.api.LegacyRetrievePaperUseCase
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.api.RetrievePaperUseCase
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.OrcidNotValid
 import eu.tib.orkg.prototype.statements.application.OrphanOrcidValue
@@ -31,7 +31,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
-class PaperService(
+class LegacyPaperService(
     private val resourceService: ResourceUseCases,
     private val literalService: LiteralUseCases,
     private val predicateService: PredicateUseCases,
@@ -40,7 +40,7 @@ class PaperService(
     private val objectService: ObjectService,
     private val resourceRepository: ResourceRepository,
     private val repository: PaperRepository,
-) : RetrievePaperUseCase, CreatePaperUseCase {
+) : LegacyRetrievePaperUseCase, CreatePaperUseCase {
     /**
      * Main entry point, to create paper and check contributions
      * Using the Object endpoint to handle recursive object creation

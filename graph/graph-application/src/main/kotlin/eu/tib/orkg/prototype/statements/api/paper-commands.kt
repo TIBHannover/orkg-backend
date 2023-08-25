@@ -17,7 +17,7 @@ interface CreatePaperUseCase {
      */
     data class CreatePaperRequest(
         val predicates: List<HashMap<String, String>>?,
-        val paper: Paper
+        val paper: PaperDefinition
     )
 
     /**
@@ -25,7 +25,7 @@ interface CreatePaperUseCase {
      * contains meta-information of papers
      * and helper methods
      */
-    data class Paper(
+    data class PaperDefinition(
         val title: String,
         val doi: String?,
         val authors: List<Author>?,

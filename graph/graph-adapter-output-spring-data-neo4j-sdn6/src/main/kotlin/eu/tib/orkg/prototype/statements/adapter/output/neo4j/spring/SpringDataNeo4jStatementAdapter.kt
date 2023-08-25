@@ -472,6 +472,30 @@ class SpringDataNeo4jStatementAdapter(
             .one()
     }
 
+    override fun findAllPapersByDOI(doi: String, pageable: Pageable): Page<Resource> {
+        val p = name("p")
+        val paper = paperNode()
+            .named(p)
+        val l = name("l")
+        val match = match(
+            paper.relationshipTo(node("Literal").named(l), RELATED)
+                .withProperties("predicate_id", literalOf<String>(ObjectService.ID_DOI_PREDICATE))
+        ).where(
+            paper.hasLabels("PaperDeleted").not()
+                .and(toUpper(l.property("label")).eq(toUpper(literalOf<String>(doi))))
+        )
+        val query = match
+            .returningDistinct(p)
+            .build(pageable)
+        val count = match
+            .returning(countDistinct(p))
+            .build()
+        return neo4jClient.query(query.cypher)
+            .fetchAs(Resource::class.java)
+            .mappedBy(ResourceMapper(p))
+            .paged(pageable, count)
+    }
+
     override fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> {
         val problem = name("p")
         val idLiteral = literalOf<String>(id.value.toString())

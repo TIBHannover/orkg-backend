@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.contenttypes.domain.model
+package eu.tib.orkg.prototype.statements.domain.model
 
 enum class Visibility {
     DEFAULT,

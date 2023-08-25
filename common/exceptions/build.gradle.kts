@@ -11,4 +11,5 @@ dependencies {
     api(platform(project(":platform")))
 
     implementation("org.springframework:spring-web")
+    implementation("org.springframework.data:spring-data-commons")
 }

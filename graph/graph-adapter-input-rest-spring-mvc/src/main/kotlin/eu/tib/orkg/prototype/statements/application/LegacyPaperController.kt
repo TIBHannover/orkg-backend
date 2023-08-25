@@ -8,7 +8,7 @@ import eu.tib.orkg.prototype.statements.ResourceRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.CreatePaperUseCase
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.services.PaperService
+import eu.tib.orkg.prototype.statements.services.LegacyPaperService
 import eu.tib.orkg.prototype.statements.services.ResourceService
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
 import org.springframework.data.domain.Page
@@ -27,8 +27,8 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/api/papers/", produces = [MediaType.APPLICATION_JSON_VALUE])
-class PaperController(
-    private val service: PaperService,
+class LegacyPaperController(
+    private val service: LegacyPaperService,
     private val resourceService: ResourceService,
     override val statementService: StatementUseCases,
     override val templateRepository: TemplateRepository,

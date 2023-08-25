@@ -2,9 +2,9 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -241,7 +241,7 @@ RETURN COUNT(n)""")
 
     @Query("""MATCH (node:Resource) $WHERE_VISIBILITY $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE""",
         countQuery = """MATCH (node:Resource) $WHERE_VISIBILITY $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")
-    fun findAllByVisibility(visibility: Visibility?, pageable: Pageable): Page<Neo4jResource>
+    fun findAllByVisibility(visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
 
     @Query("""$MATCH_LISTED_RESOURCE $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE""",
         countQuery = """$MATCH_LISTED_RESOURCE $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")
@@ -249,7 +249,7 @@ RETURN COUNT(n)""")
 
     @Query("""$MATCH_PAPER $WHERE_VISIBILITY $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE""",
         countQuery = """$MATCH_PAPER $WHERE_VISIBILITY $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")
-    fun findAllPapersByVisibility(visibility: Visibility?, pageable: Pageable): Page<Neo4jResource>
+    fun findAllPapersByVisibility(visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
 
     @Query("""$MATCH_LISTED_PAPER $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE""",
         countQuery = """$MATCH_LISTED_PAPER $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")

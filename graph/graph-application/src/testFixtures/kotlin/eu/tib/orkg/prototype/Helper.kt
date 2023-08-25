@@ -6,13 +6,17 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.Organization
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationType
-import eu.tib.orkg.prototype.community.domain.model.ResearchField
+import eu.tib.orkg.prototype.contenttypes.domain.model.Author
+import eu.tib.orkg.prototype.contenttypes.domain.model.ObjectIdAndLabel
+import eu.tib.orkg.prototype.contenttypes.domain.model.Paper
+import eu.tib.orkg.prototype.contenttypes.domain.model.PublicationInfo
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.files.domain.model.Image
 import eu.tib.orkg.prototype.files.domain.model.ImageData
 import eu.tib.orkg.prototype.files.domain.model.ImageId
 import eu.tib.orkg.prototype.statements.api.UpdateOrganizationUseCases
 import eu.tib.orkg.prototype.statements.domain.model.Class
+import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
@@ -20,6 +24,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import java.io.BufferedReader
 import java.io.StringWriter
 import java.io.Writer
@@ -141,3 +146,66 @@ fun ((Writer) -> Unit).asString(): String {
     this(writer)
     return writer.toString()
 }
+
+fun createDummyPaper() = Paper(
+    id = ThingId("R8186"),
+    title = "Dummy Paper Title",
+    researchFields = listOf(
+        ObjectIdAndLabel(
+            id = ThingId("R456"),
+            label = "Research Field 1"
+        ),
+        ObjectIdAndLabel(
+            id = ThingId("R789"),
+            label = "Research Field 2"
+        )
+    ),
+    identifiers = mapOf(
+        "doi" to "10.1000/182"
+    ),
+    publicationInfo = PublicationInfo(
+        publishedMonth = 4,
+        publishedYear = 2023,
+        publishedIn = "Fancy Conference",
+        url = "https://example.org"
+    ),
+    authors = listOf(
+        Author(
+            id = ThingId("147"),
+            name = "Josiah Stinkney Carberry",
+            identifiers = mapOf(
+                "orcid" to "0000-0002-1825-0097"
+            ),
+            homepage = "https://example.org"
+        ),
+        Author(
+            id = null,
+            name = "Author 2",
+            identifiers = emptyMap(),
+            homepage = null
+        )
+    ),
+    contributions = listOf(
+        ObjectIdAndLabel(
+            id = ThingId("R258"),
+            label = "Contribution 1"
+        ),
+        ObjectIdAndLabel(
+            id = ThingId("R396"),
+            label = "Contribution 2"
+        )
+    ),
+    observatories = listOf(
+        ObservatoryId("cb71eebf-8afd-4fe3-9aea-d0966d71cece"),
+        ObservatoryId("73b2e081-9b50-4d55-b464-22d94e8a25f6")
+    ),
+    organizations = listOf(
+        OrganizationId("a700c55f-aae2-4696-b7d5-6e8b89f66a8f"),
+        OrganizationId("1f63b1da-3c70-4492-82e0-770ca94287ea")
+    ),
+    extractionMethod = ExtractionMethod.UNKNOWN,
+    createdAt = OffsetDateTime.parse("2023-04-12T16:05:05.959539600+02:00"),
+    createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
+    visibility = Visibility.DEFAULT,
+    verified = false
+)

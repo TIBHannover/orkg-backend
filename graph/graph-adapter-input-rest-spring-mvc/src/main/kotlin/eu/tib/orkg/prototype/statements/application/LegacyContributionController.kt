@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/contributions", produces = [MediaType.APPLICATION_JSON_VALUE])
-class ContributionController(
+class LegacyContributionController(
     private val neo4jResourceService: ResourceUseCases,
     private val service: ResourceUseCases
 ) : BaseController() {

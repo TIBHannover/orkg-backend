@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype.statements
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.PaperResourceWithPathRepresentation
 import eu.tib.orkg.prototype.statements.api.PathRepresentation
@@ -11,6 +10,7 @@ import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
 import eu.tib.orkg.prototype.statements.domain.model.PaperResourceWithPath
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.services.FormattedLabels
 import eu.tib.orkg.prototype.statements.services.StatementCounts
 import java.time.OffsetDateTime

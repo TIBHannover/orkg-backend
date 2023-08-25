@@ -206,6 +206,16 @@ ORDER BY rel.created_at DESC"""
     fun findByDOI(doi: String): Optional<Neo4jResource>
 
     @Query("""
+MATCH (node:Paper:Resource)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(l:Literal)
+WHERE not 'PaperDeleted' in labels(node) AND toUpper(l.label) = toUpper($doi)
+RETURN DISTINCT node""",
+        countQuery = """
+MATCH (node:Paper:Resource)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(l:Literal)
+WHERE not 'PaperDeleted' in labels(node) AND toUpper(l.label) = toUpper($doi)
+RETURN COUNT(DISTINCT node)""")
+    fun findAllPapersByDOI(doi: String, pageable: Pageable): Page<Neo4jResource>
+
+    @Query("""
 CALL {
     MATCH (:Paper:Resource {observatory_id: $id})-[:RELATED {predicate_id:"P31"}]->(:Contribution:Resource)-[:RELATED {predicate_id:"P32"}]->(r:Problem:Resource) RETURN r
     UNION

@@ -215,6 +215,14 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
                 && it.`object` is Literal && it.`object`.label.uppercase() == doi.uppercase()
         }).map { it.subject as Resource }
 
+    override fun findAllPapersByDOI(doi: String, pageable: Pageable): Page<Resource> =
+        entities.values.filter {
+            it.subject is Resource && with(it.subject as Resource) {
+                paperClass in classes && paperDeletedClass !in classes
+            }   && it.predicate.id == hasDOI
+                && it.`object` is Literal && it.`object`.label.uppercase() == doi.uppercase()
+        }.map { it.subject as Resource }.distinct().paged(pageable)
+
     // TODO: rename to findAllProblemsByObservatoryId
     override fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
         // FIXME: Create a union with all Problems that are not used in statements

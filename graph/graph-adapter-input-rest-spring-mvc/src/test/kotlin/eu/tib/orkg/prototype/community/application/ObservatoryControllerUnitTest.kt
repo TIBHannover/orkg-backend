@@ -13,9 +13,9 @@ import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.createObservatory
 import eu.tib.orkg.prototype.createOrganization
 import eu.tib.orkg.prototype.createResource
-import eu.tib.orkg.prototype.pageOf
+import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.application.TooManyParameters
+import eu.tib.orkg.prototype.pageOf
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.mockk.every
 import io.mockk.just

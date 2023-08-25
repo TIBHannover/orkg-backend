@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added new endpoints to fetch papers and contributions
+  (Closes: [#295](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/295),
+  [#286](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/286),
+  See: [!501](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/501))
 ### Changed
 - Moved parts of the documentation to Antora
   (See: [!605](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/605))

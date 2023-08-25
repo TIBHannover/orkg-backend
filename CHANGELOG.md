@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (See: [!605](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/605))
 - The endpoint `/api/statements/{thingId}/bundle` now returns status 404 when the given thing does not exist in the graph
   (Closes: [#494](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/494))
+- The endpoint `/api/widgets/` now ignores casing when matching papers by title
+  (Closes: [#497](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/497))
 ### Fixed
 - Fixed entity endpoints sometimes returning status 500 when searching by label
   (See: [!602](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/602))

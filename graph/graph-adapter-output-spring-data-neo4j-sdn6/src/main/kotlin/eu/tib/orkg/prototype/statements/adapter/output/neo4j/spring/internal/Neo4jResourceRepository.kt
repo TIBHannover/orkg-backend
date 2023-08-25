@@ -201,10 +201,10 @@ WHERE SIZE(node.label) >= $minLabelLength AND NOT ANY(c in $excludeClasses WHERE
 RETURN COUNT(node)""")
     fun findAllIncludingAndExcludingClassesByLabelContaining(includeClasses: Set<ThingId>, excludeClasses: Set<ThingId>, label: String, minLabelLength: Int, pageable: Pageable): Page<Neo4jResource>
 
-    @Query("""MATCH (node:Paper:Resource) WHERE not 'PaperDeleted' IN labels(node) AND node.label = $label $RETURN_NODE LIMIT 1""")
+    @Query("""MATCH (node:Paper:Resource) WHERE NOT 'PaperDeleted' IN labels(node) AND toLower(node.label) = toLower($label) $RETURN_NODE LIMIT 1""")
     fun findPaperByLabel(label: String?): Optional<Neo4jResource>
 
-    @Query("""MATCH (node:Paper:Resource) WHERE not 'PaperDeleted' IN labels(node) AND node.label = $label $RETURN_NODE""")
+    @Query("""MATCH (node:Paper:Resource) WHERE NOT 'PaperDeleted' IN labels(node) AND toLower(node.label) = toLower($label) $RETURN_NODE""")
     fun findAllPapersByLabel(label: String): Iterable<Neo4jResource>
 
     @Query("""

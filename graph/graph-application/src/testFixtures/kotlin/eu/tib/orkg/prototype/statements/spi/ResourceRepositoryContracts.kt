@@ -132,6 +132,21 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
         }
     }
 
+    describe("finding a paper") {
+        context("by label") {
+            it("returns the correct result") {
+                val resource = fabricator.random<Resource>().copy(
+                    label = "label to find",
+                    classes = setOf(ThingId("Paper"))
+                )
+                repository.save(resource)
+                val actual = repository.findPaperByLabel("LABEL to find")
+                actual.isPresent shouldBe true
+                actual.get() shouldBe resource
+            }
+        }
+    }
+
     describe("finding several resources") {
         context("by label") {
             val expectedCount = 3
@@ -730,7 +745,8 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
         context("by label") {
             val expectedCount = 3
             val resources = fabricator.random<MutableList<Resource>>()
-            repeat(5) {
+            resources[0] = resources[0].copy(label = "LABEL to find")
+            (1 until 5).forEach {
                 resources[it] = resources[it].copy(label = "label to find")
             }
             repeat(3) {

@@ -48,7 +48,7 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
         Optional.ofNullable(entities[id])
 
     override fun findAllPapersByLabel(label: String) =
-        entities.values.filter { it.label == label && paperClass in it.classes && paperDeletedClass !in it.classes}
+        entities.values.filter { it.label.equals(label, ignoreCase = true) && paperClass in it.classes && paperDeletedClass !in it.classes}
 
     override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable) =
         entities.values
@@ -111,7 +111,7 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
         .paged(pageable)
 
     override fun findPaperByLabel(label: String) =
-        Optional.ofNullable(entities.values.firstOrNull { it.label == label && paperClass in it.classes })
+        Optional.ofNullable(entities.values.firstOrNull { it.label.equals(label, ignoreCase = true) && paperClass in it.classes })
 
     override fun findAllByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId, pageable: Pageable): Page<Resource> =
         findAllFilteredAndPaged(pageable) {

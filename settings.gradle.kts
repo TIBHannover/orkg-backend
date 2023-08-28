@@ -34,6 +34,11 @@ include(
     "rdf-export:rdf-export-application",
     "rdf-export:rdf-export-adapter-input-rest-spring-mvc",
 )
+include(
+    "licenses:licenses-application",
+    "licenses:licenses-adapter-input-rest-spring-mvc",
+    "licenses:licenses-adapter-output-spring",
+)
 include("widget")
 include("rest-api-server")
 

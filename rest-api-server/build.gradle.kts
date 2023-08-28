@@ -146,6 +146,9 @@ dependencies {
     implementation(project(":feature-flags:feature-flags-adapter-output-spring-properties"))
     implementation(project(":rdf-export:rdf-export-application"))
     implementation(project(":rdf-export:rdf-export-adapter-input-rest-spring-mvc"))
+    implementation(project(":licenses:licenses-application"))
+    implementation(project(":licenses:licenses-adapter-input-rest-spring-mvc"))
+    implementation(project(":licenses:licenses-adapter-output-spring"))
     implementation(project(":widget"))
 
     implementation(libs.forkhandles.result4k)
@@ -201,6 +204,7 @@ dependencies {
     asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.7.RELEASE")
     restdocs(project(withSnippets(":graph:graph-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":rdf-export:rdf-export-adapter-input-rest-spring-mvc")))
+    restdocs(project(withSnippets(":licenses:licenses-adapter-input-rest-spring-mvc")))
 }
 
 tasks.named("check") {

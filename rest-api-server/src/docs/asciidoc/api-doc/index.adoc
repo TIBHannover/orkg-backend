@@ -401,6 +401,12 @@ include::parts/research-fields.adoc[]
 
 include::parts/datasets-benchmarks.adoc[]
 
+[[reproducibility-score]]
+== Reproducibility Score
+The reproducibility score measures the availability, accessibility, linkability, and license of a resource.
+
+include::parts/licenses.adoc[]
+
 [[sorting-and-pagination]]
 == Sorting and Pagination
 

@@ -3,6 +3,8 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.dsl.CypherQueryBuilder
+import eu.tib.orkg.prototype.dsl.SingleQueryBuilder.fetchAs
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatementIdGenerator
 import eu.tib.orkg.prototype.statements.api.BundleConfiguration
 import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase.PredicateUsageCount
@@ -28,8 +30,10 @@ import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Cypher.name
 import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.optionalMatch
+import org.neo4j.cypherdsl.core.Cypher.parameter
 import org.neo4j.cypherdsl.core.Cypher.returning
 import org.neo4j.cypherdsl.core.Cypher.union
+import org.neo4j.cypherdsl.core.Cypher.unionAll
 import org.neo4j.cypherdsl.core.Cypher.unwind
 import org.neo4j.cypherdsl.core.Cypher.valueAt
 import org.neo4j.cypherdsl.core.ExposesReturning
@@ -37,6 +41,7 @@ import org.neo4j.cypherdsl.core.Functions.collect
 import org.neo4j.cypherdsl.core.Functions.count
 import org.neo4j.cypherdsl.core.Functions.countDistinct
 import org.neo4j.cypherdsl.core.Functions.labels
+import org.neo4j.cypherdsl.core.Functions.sum
 import org.neo4j.cypherdsl.core.Predicates.exists
 import org.neo4j.cypherdsl.core.StatementBuilder
 import org.neo4j.cypherdsl.core.SymbolicName
@@ -428,29 +433,35 @@ class SpringDataNeo4jStatementAdapter(
             .one()
     }
 
-    override fun countPredicateUsage(id: ThingId): Long {
-        val idLiteral = literalOf<String>(id.value)
-        val r1 = name("r1")
-        val r2 = name("r2")
-        val relations = name("relations")
-        val nodes = name("nodes")
-        val query = optionalMatch(
-                node("Thing")
-                    .relationshipTo(node("Thing"), RELATED)
-                    .named(r1)
-                    .withProperties("predicate_id", idLiteral))
-            .optionalMatch(
-                node("Predicate")
-                    .withProperties("id", idLiteral)
-                    .relationshipBetween(node("Thing"), RELATED)
-                    .named(r2)
-            ).with(countDistinct(r1).`as`(relations), countDistinct(r2).`as`(nodes))
-            .returning(nodes.add(relations))
-            .build()
-        return neo4jClient.query(query.cypher)
-            .fetchAs<Long>()
-            .one() ?: 0
-    }
+    override fun countPredicateUsage(id: ThingId): Long = CypherQueryBuilder(neo4jClient)
+        .withQuery {
+            val r1 = node("Thing")
+                .relationshipTo(node("Thing"), RELATED)
+                .withProperties("predicate_id", parameter("id"))
+            val r2 = node("Predicate")
+                .withProperties("id", parameter("id"))
+                .relationshipBetween(node("Thing"), RELATED)
+            val cnt = name("cnt")
+            call(
+                unionAll(
+                    optionalMatch(r1)
+                        .returning(countDistinct(r1.asExpression()).`as`(cnt))
+                        .build(),
+                    optionalMatch(r2)
+                        .where(r2.property("predicate_id").ne(literalOf<String>("description")))
+                        .returning(countDistinct(r2.asExpression()).`as`(cnt))
+                        .build()
+                )
+            )
+            .with(cnt)
+            .returning(sum(cnt.asExpression()))
+        }
+        .withParameters(
+            "id" to id.value
+        )
+        .fetchAs<Long>()
+        .one()
+        .orElse(0)
 
     override fun findByDOI(doi: String): Optional<Resource> {
         val p = name("p")

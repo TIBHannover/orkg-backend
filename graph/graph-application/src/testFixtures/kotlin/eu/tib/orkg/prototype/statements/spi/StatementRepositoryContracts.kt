@@ -5,6 +5,7 @@ import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.statements.api.BundleConfiguration
+import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase.PredicateUsageCount
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
@@ -778,12 +779,17 @@ fun <
                             subject = subject
                         )
                         saveStatement(statement)
+                        val description = fabricator.random<GeneralStatement>().copy(
+                            subject = subject,
+                            predicate = createPredicate(id = Predicates.description)
+                        )
+                        saveStatement(description)
 
                         val actual = repository.countPredicateUsage(subject.id)
                         actual shouldBe 1
                     }
                 }
-                context("as a subject") {
+                context("as an object") {
                     it("returns the correct result") {
                         val `object` = fabricator.random<Predicate>()
                         val statement = fabricator.random<GeneralStatement>().copy(

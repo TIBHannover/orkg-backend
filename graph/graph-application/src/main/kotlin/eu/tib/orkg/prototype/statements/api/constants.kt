@@ -18,6 +18,7 @@ object Predicates {
     val hasWikidataId = ThingId("P76020")
     val hasWebOfScienceId = ThingId("P58083")
     val hasWebsite = ThingId("website")
+    val description = ThingId("description")
 }
 
 object Classes {

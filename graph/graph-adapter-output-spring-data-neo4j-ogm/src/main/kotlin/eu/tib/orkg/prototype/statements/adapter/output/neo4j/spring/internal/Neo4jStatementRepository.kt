@@ -199,7 +199,13 @@ ORDER BY rel.created_at DESC"""
     @Query("""MATCH (n:Paper:Resource)-[:RELATED {predicate_id: 'P31'}]->(:Resource {id: $id}), (n)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(L:Literal) RETURN L""")
     fun findDOIByContributionId(id: ThingId): Optional<Neo4jLiteral>
 
-    @Query("""OPTIONAL MATCH (:Thing)-[r1:RELATED {predicate_id: $id}]->(:Thing) OPTIONAL MATCH (:Predicate {id: $id})-[r2:RELATED]-(:Thing) WITH COUNT(DISTINCT r1) as relations, COUNT(DISTINCT r2) as nodes RETURN relations + nodes as cnt""")
+    @Query("""
+CALL {
+    OPTIONAL MATCH (:Thing)-[r1:RELATED {predicate_id: $id}]->(:Thing) RETURN COUNT(DISTINCT r1) AS cnt
+    UNION ALL
+    OPTIONAL MATCH (:Predicate {id: $id})-[r2:RELATED]-(:Thing) WHERE r2.predicate_id <> "description" RETURN COUNT(DISTINCT r2) AS cnt
+} WITH cnt
+RETURN SUM(cnt)""")
     fun countPredicateUsage(id: ThingId): Long
 
     @Query("""MATCH (node:Paper:Resource)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(l:Literal) WHERE not 'PaperDeleted' in labels(node) AND toUpper(l.label) = toUpper($doi) RETURN node LIMIT 1""")

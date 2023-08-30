@@ -202,9 +202,10 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
 
     override fun countPredicateUsage(id: ThingId): Long =
         entities.values.count {
-            it.subject is Predicate && (it.subject as Predicate).id == id
+            (it.subject is Predicate && (it.subject as Predicate).id == id
                 || it.predicate.id == id
-                || it.`object` is Predicate && (it.`object` as Predicate).id == id
+                || it.`object` is Predicate && (it.`object` as Predicate).id == id)
+                && it.predicate.id.value != "description"
         }.toLong()
 
     override fun findByDOI(doi: String): Optional<Resource> =

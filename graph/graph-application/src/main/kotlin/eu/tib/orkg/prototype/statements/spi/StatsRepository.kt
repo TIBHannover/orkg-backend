@@ -15,6 +15,7 @@ interface StatsRepository {
     fun getObservatoryComparisonsCount(id: ObservatoryId): Long
     fun findAllObservatoryStats(pageable: Pageable): Page<ObservatoryStats>
     fun findObservatoryStatsById(id: ObservatoryId): ObservatoryStats
+    fun findResearchFieldStatsById(id: ThingId, includeSubfields: Boolean): ResearchFieldStats
     fun getTopCurrentContributorIdsAndContributionsCount(
         date: String,
         pageable: Pageable
@@ -54,6 +55,16 @@ data class FieldsStats(
 data class ObservatoryStats(
     @JsonProperty("observatory_id")
     val observatoryId: String,
+    val papers: Long = 0,
+    val comparisons: Long = 0,
+    val total: Long = 0
+)
+
+/**
+ * Data class for fetching research field stats
+ */
+data class ResearchFieldStats(
+    val id: ThingId,
     val papers: Long = 0,
     val comparisons: Long = 0,
     val total: Long = 0

@@ -54,4 +54,9 @@ A `GET` request lists all contributors under the entire tree of the specified re
 A `GET` request lists all comparisons under the specified research field and sub research fields.
 //TODO:A sample request and response will be added later when the unit tests have been written.
 
+[[research-fields-statistics]]
+=== Listing statistics about a research field
 
+A `GET` request lists statistics about a research field. Optionally accounts for subfields.
+
+operation::stats-research-fields[snippets='curl-request,http-response']

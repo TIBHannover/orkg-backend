@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ChangeLogResponse
 import eu.tib.orkg.prototype.statements.spi.FieldsStats
 import eu.tib.orkg.prototype.statements.spi.ObservatoryStats
+import eu.tib.orkg.prototype.statements.spi.ResearchFieldStats
 import eu.tib.orkg.prototype.statements.spi.TrendingResearchProblems
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -44,6 +45,22 @@ MATCH (n:Paper:Resource)
 WHERE n.observatory_id <> '00000000-0000-0000-0000-000000000000'
 RETURN COUNT(DISTINCT(n.observatory_id))""")
     fun findAllObservatoryStats(pageable: Pageable): Page<ObservatoryStats>
+
+    @Query("""
+MATCH (rsf:ResearchField:Resource {id: $id})
+OPTIONAL MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(rsf)
+OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(:Contribution:Resource)<-[:RELATED {predicate_id: "compareContribution"}]-(cmp:Comparison:Resource)
+WITH rsf.id AS id, COUNT(DISTINCT ppr) AS papers, COUNT(DISTINCT cmp) AS comparisons
+RETURN id, papers, comparisons, (papers + comparisons) AS total""")
+    fun findResearchFieldStatsById(id: ThingId): ResearchFieldStats
+
+    @Query("""
+MATCH (rsf:ResearchField:Resource)<-[:RELATED*0.. {predicate_id: "P36"}]-(:ResearchField:Resource {id: $id})
+OPTIONAL MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(rsf)
+OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(:Contribution:Resource)<-[:RELATED {predicate_id: "compareContribution"}]-(cmp:Comparison:Resource)
+WITH $id AS id, COUNT(DISTINCT ppr) AS papers, COUNT(DISTINCT cmp) AS comparisons
+RETURN id, papers, comparisons, (papers + comparisons) AS total""")
+    fun findResearchFieldStatsByIdIncludingSubfields(id: ThingId): ResearchFieldStats
 
     @Query("""
 OPTIONAL MATCH (n:Paper:Resource {observatory_id: $id})

@@ -1,6 +1,8 @@
 package eu.tib.orkg.prototype.export.rdf.domain
 
 import eu.tib.orkg.prototype.export.rdf.api.ExportRDFUseCase
+import eu.tib.orkg.prototype.statements.api.Classes
+import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
@@ -13,6 +15,7 @@ import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
+import eu.tib.orkg.prototype.statements.spi.ThingRepository
 import eu.tib.orkg.prototype.statements.spi.forEach
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
@@ -48,6 +51,7 @@ class RDFService(
     private val predicateRepository: PredicateRepository,
     private val resourceRepository: ResourceRepository,
     private val classesRepository: ClassRepository,
+    private val thingRepository: ThingRepository,
     private val classHierarchyRepository: ClassHierarchyRepository
 ) : ExportRDFUseCase {
     override fun dumpToNTriple(writer: Writer) {
@@ -177,8 +181,12 @@ fun Predicate.toNTriple(writer: Writer) {
 fun Resource.toNTriple(writer: Writer) {
     val cPrefix = RdfConstants.CLASS_NS
     val rPrefix = RdfConstants.RESOURCE_NS
-    writer.write("<$rPrefix${this.id}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Resource> .\n")
-    classes.forEach { writer.write("<$rPrefix${this.id}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <$cPrefix${it.value}> .\n") }
+    if (Classes.list in classes) {
+        writer.write("<$rPrefix$id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Seq> .\n")
+    } else {
+        writer.write("<$rPrefix${this.id}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <${cPrefix}Resource> .\n")
+        classes.forEach { writer.write("<$rPrefix${this.id}> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <$cPrefix${it.value}> .\n") }
+    }
     writer.write("<$rPrefix${this.id}> <http://www.w3.org/2000/01/rdf-schema#label> \"${escapeLiterals(label)}\"^^<http://www.w3.org/2001/XMLSchema#string> .\n")
 }
 
@@ -187,7 +195,10 @@ fun Resource.toNTriple(writer: Writer) {
  */
 fun GeneralStatement.toNTriple(writer: Writer) {
     val pPrefix = RdfConstants.PREDICATE_NS
-    val statement = "${serializeThing(subject)} <$pPrefix${predicate.id}> ${serializeThing(`object`)} .\n"
+    val statement = if (predicate.id == Predicates.hasListElement && index != null && subject is Resource && Classes.list in (subject as Resource).classes) {
+        "${serializeThing(subject)} <http://www.w3.org/1999/02/22-rdf-syntax-ns#_${index!! + 1}> ${serializeThing(`object`)} .\n"
+    }
+    else "${serializeThing(subject)} <$pPrefix${predicate.id}> ${serializeThing(`object`)} .\n"
     if (statement[0] == '"')
         // Ignore literal
         // TODO: log this somewhere

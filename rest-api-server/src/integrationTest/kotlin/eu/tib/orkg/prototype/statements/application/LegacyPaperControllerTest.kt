@@ -4,10 +4,11 @@ import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.createClasses
 import eu.tib.orkg.prototype.createPredicates
 import eu.tib.orkg.prototype.createResource
-import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase.*
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase.*
 import eu.tib.orkg.prototype.statements.api.CreatePaperUseCase.*
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
+import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
@@ -72,7 +73,7 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
 
         predicateService.createPredicates(
             "P26" to "Has DOI",
-            "P27" to "Has Author",
+            "hasAuthors" to "Has Authors",
             "P28" to "Has publication month",
             "P29" to "Has publication year",
             "P30" to "Has Research field",
@@ -81,7 +82,8 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
             "HAS_EVALUATION" to "Has evaluation",
             "url" to "Has url",
             "HAS_ORCID" to "Has ORCID",
-            "HAS_VENUE" to "Has Venue"
+            "HAS_VENUE" to "Has Venue",
+            Predicates.hasListElement.value to "has list element"
         )
 
         classService.createClasses("Paper", "Contribution", "Problem", "ResearchField", "Author", "Venue")

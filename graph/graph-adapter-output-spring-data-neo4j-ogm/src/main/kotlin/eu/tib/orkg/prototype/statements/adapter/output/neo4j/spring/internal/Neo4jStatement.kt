@@ -47,12 +47,16 @@ data class Neo4jStatement(
     @Property("created_at")
     var createdAt: OffsetDateTime? = null
 
+    @Property("index")
+    var index: Int? = null
+
     constructor(
         statementId: StatementId,
         subject: Neo4jThing,
         predicateId: ThingId,
         `object`: Neo4jThing,
-        createdBy: ContributorId = ContributorId.createUnknownContributor()
+        createdBy: ContributorId = ContributorId.createUnknownContributor(),
+        index: Int?
     ) :
         this(null) {
         this.statementId = statementId
@@ -60,6 +64,7 @@ data class Neo4jStatement(
         this.predicateId = predicateId
         this.`object` = `object`
         this.createdBy = createdBy
+        this.index = index
     }
 
     override fun toString(): String {

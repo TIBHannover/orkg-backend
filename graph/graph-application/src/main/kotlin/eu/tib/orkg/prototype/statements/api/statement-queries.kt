@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 
 interface RetrieveStatementUseCase {
     fun exists(id: StatementId): Boolean
@@ -43,7 +44,7 @@ interface RetrieveStatementUseCase {
         pagination: Pageable
     ): Page<GeneralStatement>
 
-    fun fetchAsBundle(thingId: ThingId, configuration: BundleConfiguration, includeFirst: Boolean): Bundle
+    fun fetchAsBundle(thingId: ThingId, configuration: BundleConfiguration, includeFirst: Boolean, sort: Sort): Bundle
 
     fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount>
 

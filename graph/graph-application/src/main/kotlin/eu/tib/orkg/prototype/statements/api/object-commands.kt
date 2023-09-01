@@ -7,7 +7,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import kotlin.collections.HashMap
 
-
 interface CreateObjectUseCase {
 
     fun createObject(

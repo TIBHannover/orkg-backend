@@ -34,24 +34,44 @@ fun documentedGetRequestTo(
         .contentType(contentType)
         .characterEncoding("utf-8")
 
-fun documentedDeleteRequestTo(
+fun documentedPostRequestTo(
     urlTemplate: String,
     vararg uriValues: Any,
-    accept: String = MediaType.APPLICATION_JSON_VALUE,
-    contentType: String = MediaType.APPLICATION_JSON_VALUE
+    body: String
 ): MockHttpServletRequestBuilder =
-    RestDocumentationRequestBuilders.delete(urlTemplate, *uriValues)
-        .accept(accept)
-        .contentType(contentType)
-        .characterEncoding("utf-8")
+    RestDocumentationRequestBuilders.post(urlTemplate, *uriValues)
+        .accept(MediaType.APPLICATION_JSON_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        .characterEncoding(Charsets.UTF_8.name())
+        .content(body)
 
 fun documentedPutRequestTo(
     urlTemplate: String,
     vararg uriValues: Any,
-    accept: String = MediaType.APPLICATION_JSON_VALUE,
-    contentType: String = MediaType.APPLICATION_JSON_VALUE
+    body: String
 ): MockHttpServletRequestBuilder =
     RestDocumentationRequestBuilders.put(urlTemplate, *uriValues)
-        .accept(accept)
-        .contentType(contentType)
-        .characterEncoding("utf-8")
+        .accept(MediaType.APPLICATION_JSON_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        .characterEncoding(Charsets.UTF_8.name())
+        .content(body)
+
+fun documentedPatchRequestTo(
+    urlTemplate: String,
+    vararg uriValues: Any,
+    body: String
+): MockHttpServletRequestBuilder =
+    RestDocumentationRequestBuilders.patch(urlTemplate, *uriValues)
+        .accept(MediaType.APPLICATION_JSON_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        .characterEncoding(Charsets.UTF_8.name())
+        .content(body)
+
+fun documentedDeleteRequestTo(
+    urlTemplate: String,
+    vararg uriValues: Any
+): MockHttpServletRequestBuilder =
+    RestDocumentationRequestBuilders.delete(urlTemplate, *uriValues)
+        .accept(MediaType.APPLICATION_JSON_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        .characterEncoding(Charsets.UTF_8.name())

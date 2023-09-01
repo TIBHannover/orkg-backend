@@ -26,9 +26,10 @@ import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.util.*
 import org.springframework.cache.CacheManager
-import org.springframework.cache.caffeine.CaffeineCacheManager
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 
 typealias PredicateLookupTable = Map<ThingId, Predicate>
@@ -54,6 +55,10 @@ class SpringDataNeo4jStatementAdapter(
 
     override fun save(statement: GeneralStatement) {
         neo4jRepository.save(statement.toNeo4jStatement())
+    }
+
+    override fun saveAll(statements: Set<GeneralStatement>) {
+        neo4jRepository.saveAll(statements.map { it.toNeo4jStatement() })
     }
 
     override fun count(): Long = neo4jRepository.count()
@@ -124,6 +129,17 @@ class SpringDataNeo4jStatementAdapter(
     override fun findByStatementId(id: StatementId): Optional<GeneralStatement> =
         neo4jRepository.findByStatementId(id).map { it.toStatement() }
 
+    override fun findAllByStatementIdIn(ids: Set<StatementId>, pageable: Pageable): Page<GeneralStatement> {
+        // Fix OGM interpreting a singleton list as a string value of the first element
+        return if (ids.size == 1) {
+            findByStatementId(ids.single())
+                .map<Page<GeneralStatement>> { PageImpl(listOf(it), pageable, 1) }
+                .orElseGet { Page.empty(pageable) }
+        } else {
+            neo4jRepository.findAllByStatementIdIn(ids, pageable).map { it.toStatement() }
+        }
+    }
+
     override fun findAllBySubject(subjectId: ThingId, pageable: Pageable): Page<GeneralStatement> =
         neo4jRepository.findAllBySubject(subjectId, pageable).map { it.toStatement() }
 
@@ -171,8 +187,8 @@ class SpringDataNeo4jStatementAdapter(
     override fun findAllByObjects(objectIds: List<ThingId>, pageable: Pageable): Page<GeneralStatement> =
         neo4jRepository.findAllByObjects(objectIds, pageable).map { it.toStatement() }
 
-    override fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration): Iterable<GeneralStatement> =
-        neo4jRepository.fetchAsBundle(id, configuration.toApocConfiguration()).map { it.toStatement() }
+    override fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration, sort: Sort): Iterable<GeneralStatement> =
+        neo4jRepository.fetchAsBundle(id, configuration.toApocConfiguration(), sort).map { it.toStatement() }
 
     override fun exists(id: StatementId): Boolean = neo4jRepository.existsByStatementId(id)
 

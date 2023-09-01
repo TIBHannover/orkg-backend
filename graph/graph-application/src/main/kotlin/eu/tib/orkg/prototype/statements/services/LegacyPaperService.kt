@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.statements.api.CreateListUseCase
 import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase.CreateObjectRequest
 import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase.NamedObject
 import eu.tib.orkg.prototype.statements.api.CreatePaperUseCase
@@ -40,6 +41,7 @@ class LegacyPaperService(
     private val objectService: ObjectService,
     private val resourceRepository: ResourceRepository,
     private val repository: PaperRepository,
+    private val listService: ListService,
 ) : LegacyRetrievePaperUseCase, CreatePaperUseCase {
     /**
      * Main entry point, to create paper and check contributions
@@ -237,7 +239,7 @@ class LegacyPaperService(
     ) {
         val pattern = ObjectService.ORCID_REGEX.toRegex()
         if (paper.paper.hasAuthors()) {
-            paper.paper.authors!!.forEach { it ->
+            val authors = paper.paper.authors!!.map { it ->
                 if (!it.hasId()) {
                     if (it.hasNameAndOrcid()) {
                         // Check if ORCID is a valid string
@@ -258,12 +260,7 @@ class LegacyPaperService(
                                 ) // TODO: Hide values by using default values for the parameters
                             ).firstOrNull { it.predicate.id == ObjectService.OrcidPredicate }
                                 ?: throw OrphanOrcidValue(orcidValue)
-                            statementService.add(
-                                userId,
-                                paperId,
-                                ObjectService.AuthorPredicate,
-                                (authorStatement.subject as Resource).id
-                            )
+                            (authorStatement.subject as Resource).id
                         } else {
                             // create resource
                             val authorId = resourceService.create(
@@ -276,29 +273,35 @@ class LegacyPaperService(
                                     organizationId = organizationId
                                 )
                             )
-                            statementService.add(
-                                userId, paperId, ObjectService.AuthorPredicate, authorId
-                            )
                             // Create orcid literal
                             val orcid = literalService.create(userId, orcidValue)
                             // Add ORCID id to the new resource
                             statementService.add(
                                 userId, authorId, ObjectService.OrcidPredicate, orcid.id
                             )
+                            authorId
                         }
                     } else {
-                        // create literal and link it
-                        statementService.add(
-                            userId,
-                            paperId,
-                            ObjectService.AuthorPredicate,
-                            literalService.create(userId, it.label!!).id
-                        )
+                        // create literal
+                        literalService.create(userId, it.label!!).id
                     }
                 } else {
-                    statementService.add(userId, paperId, ObjectService.AuthorPredicate, it.id!!)
+                    it.id!!
                 }
             }
+            val listId = listService.create(
+                CreateListUseCase.CreateCommand(
+                    label = "Authors",
+                    elements = authors,
+                    contributorId = userId
+                )
+            )
+            statementService.create(
+                userId = userId,
+                subject = paperId,
+                predicate = ObjectService.hasAuthorsPredicate,
+                `object` = listId
+            )
         }
     }
 

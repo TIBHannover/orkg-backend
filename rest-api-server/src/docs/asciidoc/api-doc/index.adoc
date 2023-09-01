@@ -379,6 +379,8 @@ Literals can be looked up by label by providing a search fragment.
 
 operation::literal-controller-integration-test-lookup[snippets='curl-request,http-response']
 
+include::parts/lists.adoc[]
+
 [[papers]]
 include::parts/papers.adoc[]
 

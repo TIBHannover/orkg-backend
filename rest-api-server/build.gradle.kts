@@ -244,6 +244,17 @@ tasks {
         finalizedBy("bootRun")
     }
 
+    register("runListMigrations").configure {
+        group = "migration"
+        description = "Migrates the current database to use list entities."
+        doFirst {
+            named<BootRun>("bootRun").configure {
+                args("--spring.profiles.active=development,listMigrations")
+            }
+        }
+        finalizedBy("bootRun")
+    }
+
     named("dokka", org.jetbrains.dokka.gradle.DokkaTask::class).configure {
         outputFormat = "html"
         configuration {

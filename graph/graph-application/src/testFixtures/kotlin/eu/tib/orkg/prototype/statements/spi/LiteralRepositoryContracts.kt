@@ -46,7 +46,7 @@ fun <R : LiteralRepository> literalRepositoryContract(
                 it.createdBy shouldBe expected.createdBy
             }
         }
-        it("updates an already existing statement") {
+        it("updates an already existing literal") {
             val original: Literal = fabricator.random()
             repository.save(original)
             val found = repository.findById(original.id).get()

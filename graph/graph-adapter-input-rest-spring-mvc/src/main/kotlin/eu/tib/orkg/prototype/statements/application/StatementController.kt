@@ -17,6 +17,7 @@ import java.security.Principal
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.MediaType
@@ -176,7 +177,8 @@ class StatementController(
         @RequestParam("maxLevel", required = false) maxLevel: Int?,
         @RequestParam("blacklist", required = false, defaultValue = "") blacklist: List<ThingId>,
         @RequestParam("whitelist", required = false, defaultValue = "") whitelist: List<ThingId>,
-        @RequestParam("includeFirst", required = false, defaultValue = "true") includeFirst: Boolean
+        @RequestParam("includeFirst", required = false, defaultValue = "true") includeFirst: Boolean,
+        sort: Sort
     ): BundleRepresentation =
         statementService.fetchAsBundle(
             thingId,
@@ -185,6 +187,7 @@ class StatementController(
                 minLevel, maxLevel,
                 blacklist, whitelist
             ),
-            includeFirst
+            includeFirst,
+            sort
         ).toBundleRepresentation()
 }

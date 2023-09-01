@@ -3,14 +3,15 @@ package eu.tib.orkg.prototype.statements.services
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.application.InvalidClassCollection
 import eu.tib.orkg.prototype.statements.application.InvalidClassFilter
-import eu.tib.orkg.prototype.statements.application.ResourceCantBeDeleted
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
+import eu.tib.orkg.prototype.statements.application.ResourceUsedInStatement
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -36,6 +37,13 @@ typealias FormattedLabels = Map<ThingId, FormattedLabel?>
 
 private val paperClass = ThingId("Paper")
 private val comparisonClass = ThingId("Comparison")
+private val reservedClassIds = setOf(
+    ThingId("Literal"),
+    ThingId("Class"),
+    ThingId("Predicate"),
+    ThingId("Resource"),
+    Classes.list
+)
 
 @Service
 @Transactional
@@ -53,7 +61,7 @@ class ResourceService(
 
     override fun create(command: CreateResourceUseCase.CreateCommand): ThingId {
         val id = command.id ?: repository.nextIdentity()
-        if (command.classes.isNotEmpty() && !classRepository.existsAll(command.classes)) {
+        if (command.classes.isNotEmpty() && (!classRepository.existsAll(command.classes) || command.classes.any { it in reservedClassIds })) {
             throw InvalidClassCollection(command.classes)
         }
         val resource = Resource(
@@ -221,7 +229,7 @@ class ResourceService(
         // update all the properties
         if (command.label != null) found = found.copy(label = command.label)
         if (command.classes != null) {
-            if (command.classes.isNotEmpty() && !classRepository.existsAll(command.classes)) {
+            if (command.classes.isNotEmpty() && (!classRepository.existsAll(command.classes) || command.classes.any { it in reservedClassIds })) {
                 throw InvalidClassCollection(command.classes)
             }
             found = found.copy(classes = command.classes)
@@ -236,7 +244,7 @@ class ResourceService(
         val resource = repository.findById(id).orElseThrow { ResourceNotFound.withId(id) }
 
         if (statementRepository.checkIfResourceHasStatements(resource.id))
-            throw ResourceCantBeDeleted(resource.id)
+            throw ResourceUsedInStatement(resource.id)
 
         repository.deleteById(resource.id)
     }

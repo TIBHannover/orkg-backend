@@ -196,5 +196,5 @@ data class CreateClassRequest(
     or a name that is not one of the reserved ones.
      */
     fun hasValidName(): Boolean =
-        this.id == null || this.id.value !in listOf("Predicate", "Resource", "Class", "Literal", "Thing")
+        this.id == null || this.id.value !in listOf("Predicate", "Resource", "Class", "Literal", "List", "Thing")
 }

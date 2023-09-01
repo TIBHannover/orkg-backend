@@ -3,7 +3,7 @@ package eu.tib.orkg.prototype.statements.services
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
-import eu.tib.orkg.prototype.statements.application.PredicateCantBeDeleted
+import eu.tib.orkg.prototype.statements.application.PredicateUsedInStatement
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
@@ -117,7 +117,7 @@ class PredicateServiceUnitTest {
         every { repository.findById(mockPredicate.id) } returns Optional.of(mockPredicate)
         every { statementRepository.countPredicateUsage(mockPredicate.id) } returns 1
 
-        shouldThrow<PredicateCantBeDeleted> {
+        shouldThrow<PredicateUsedInStatement> {
             service.delete(mockPredicate.id)
         }
 

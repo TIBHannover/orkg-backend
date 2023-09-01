@@ -1,17 +1,24 @@
 package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.statements.api.BundleConfiguration
+import eu.tib.orkg.prototype.statements.api.Classes
+import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateStatementUseCase
+import eu.tib.orkg.prototype.statements.application.ForbiddenStatementDeletion
+import eu.tib.orkg.prototype.statements.application.ForbiddenStatementSubject
 import eu.tib.orkg.prototype.statements.application.StatementNotFound
 import eu.tib.orkg.prototype.statements.application.StatementObjectNotFound
 import eu.tib.orkg.prototype.statements.application.StatementPredicateNotFound
 import eu.tib.orkg.prototype.statements.application.StatementSubjectNotFound
 import eu.tib.orkg.prototype.statements.application.ThingNotFound
+import eu.tib.orkg.prototype.statements.application.UnmodifiableStatement
 import eu.tib.orkg.prototype.statements.domain.model.Bundle
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
+import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -23,6 +30,7 @@ import java.time.OffsetDateTime
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -79,6 +87,10 @@ class StatementService(
         val foundSubject = thingRepository.findByThingId(subject)
             .orElseThrow { StatementSubjectNotFound(subject) }
 
+        if (predicate == Predicates.hasListElement && foundSubject is Resource && Classes.list in foundSubject.classes) {
+            throw ForbiddenStatementSubject.isList()
+        }
+
         val foundPredicate = predicateService.findById(predicate)
             .orElseThrow { StatementPredicateNotFound(predicate) }
 
@@ -109,6 +121,10 @@ class StatementService(
         val foundSubject = thingRepository.findByThingId(subject)
             .orElseThrow { StatementSubjectNotFound(subject) }
 
+        if (predicate == Predicates.hasListElement && foundSubject is Resource && Classes.list in foundSubject.classes) {
+            throw ForbiddenStatementSubject.isList()
+        }
+
         val foundPredicate = predicateService.findById(predicate)
             .orElseThrow { StatementPredicateNotFound(predicate) }
 
@@ -135,7 +151,12 @@ class StatementService(
      * @param statementId the ID of the statement to delete.
      */
     override fun delete(statementId: StatementId) {
-        statementRepository.deleteByStatementId(statementId)
+        statementRepository.findByStatementId(statementId).ifPresent {
+            if (it.predicate.id == Predicates.hasListElement && it.subject is Resource && Classes.list in it.subject.classes) {
+                throw ForbiddenStatementDeletion.usedInList()
+            }
+            statementRepository.deleteByStatementId(statementId)
+        }
     }
 
     /**
@@ -144,6 +165,11 @@ class StatementService(
      * @param statementIds the set of IDs of the statements to delete.
      */
     override fun delete(statementIds: Set<StatementId>) {
+        statementRepository.findAllByStatementIdIn(statementIds, PageRequests.ALL).forEach {
+            if (it.predicate.id == Predicates.hasListElement && it.subject is Resource && Classes.list in it.subject.classes) {
+                throw ForbiddenStatementDeletion.usedInList()
+            }
+        }
         statementRepository.deleteByStatementIds(statementIds)
     }
 
@@ -151,12 +177,22 @@ class StatementService(
         var found = statementRepository.findByStatementId(command.statementId)
             .orElseThrow { StatementNotFound(command.statementId.value) }
 
+        if (found.predicate.id == Predicates.hasListElement && found.subject is Resource && Classes.list in (found.subject as Resource).classes) {
+            throw UnmodifiableStatement.subjectIsList()
+        }
+
         val literal: Thing? = found.`object`.takeIf { it is Literal }
 
         command.subjectId?.let {
-            @Suppress("UNUSED_VARIABLE") // It is unused, because commented out. This method needs a re-write.
+            //  This method needs a re-write.
             val foundSubject = thingRepository.findByThingId(command.subjectId)
                 .orElseThrow { StatementSubjectNotFound(command.subjectId) }
+
+            if ((found.predicate.id == Predicates.hasListElement || command.predicateId == Predicates.hasListElement)
+                && foundSubject is Resource && Classes.list in foundSubject.classes
+            ) {
+                throw ForbiddenStatementSubject.isList()
+            }
             // found = found.copy(subject = foundSubject) // TODO: does this make sense?
         }
 
@@ -204,14 +240,15 @@ class StatementService(
     override fun fetchAsBundle(
         thingId: ThingId,
         configuration: BundleConfiguration,
-        includeFirst: Boolean
+        includeFirst: Boolean,
+        sort: Sort
     ): Bundle {
         if (thingRepository.findByThingId(thingId).isEmpty) {
             throw ThingNotFound.withThingId(thingId)
         }
         return when (includeFirst) {
-            true -> createBundleFirstIncluded(thingId, configuration)
-            false -> createBundle(thingId, configuration)
+            true -> createBundleFirstIncluded(thingId, configuration, sort)
+            false -> createBundle(thingId, configuration, sort)
         }
     }
 
@@ -234,9 +271,10 @@ class StatementService(
      */
     private fun createBundle(
         thingId: ThingId,
-        configuration: BundleConfiguration
+        configuration: BundleConfiguration,
+        sort: Sort
     ): Bundle = Bundle(
-        thingId, statementRepository.fetchAsBundle(thingId, configuration).toMutableList()
+        thingId, statementRepository.fetchAsBundle(thingId, configuration, sort).toMutableList()
     )
 
     /**
@@ -250,10 +288,15 @@ class StatementService(
      */
     private fun createBundleFirstIncluded(
         thingId: ThingId,
-        configuration: BundleConfiguration
-    ): Bundle = createBundle(thingId, configuration) + Bundle(
-        thingId, statementRepository.fetchAsBundle(thingId, BundleConfiguration.firstLevelConf()).toMutableList()
-    )
+        configuration: BundleConfiguration,
+        sort: Sort
+    ): Bundle =
+        createBundle(thingId, configuration, sort).merge(
+            Bundle(
+                thingId,
+                statementRepository.fetchAsBundle(thingId, BundleConfiguration.firstLevelConf(), sort).toMutableList()
+            ), sort
+        )
 
     override fun removeAll() = statementRepository.deleteAll()
 }

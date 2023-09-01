@@ -53,6 +53,7 @@ interface StatementRepresentationAdapter : ThingRepresentationAdapter {
                 this@toRepresentation.`object`.toThingRepresentation(statementCounts, formattedLabels)
             override val createdAt: OffsetDateTime = this@toRepresentation.createdAt!!
             override val createdBy: ContributorId = this@toRepresentation.createdBy
+            override val index: Int? = this@toRepresentation.index
         }
 
     private fun List<GeneralStatement>.resources() =

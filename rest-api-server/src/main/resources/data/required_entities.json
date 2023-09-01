@@ -202,6 +202,10 @@
     {
       "id": "PropertyShape",
       "label": "Property shape"
+    },
+    {
+      "id": "List",
+      "label": "List"
     }
   ],
 
@@ -401,6 +405,22 @@
     {
       "label": "contains",
       "id": "contains"
+    },
+    {
+      "label": "has authors",
+      "id": "hasAuthors"
+    },
+    {
+      "label": "has sections",
+      "id": "hasSections"
+    },
+    {
+      "label": "has entities",
+      "id": "hasEntities"
+    },
+    {
+       "label": "has list element",
+       "id": "hasListElement"
     }
   ]
 }

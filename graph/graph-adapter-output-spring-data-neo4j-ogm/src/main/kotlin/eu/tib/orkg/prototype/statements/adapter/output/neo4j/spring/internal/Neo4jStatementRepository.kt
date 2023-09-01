@@ -11,6 +11,7 @@ import eu.tib.orkg.prototype.statements.spi.StatementRepository.*
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
@@ -54,7 +55,7 @@ private const val RETURN_COUNT = "RETURN count(rel) AS count"
  * Partial query that "flattens" the object into "columns" that can be sorted by SDN.
  */
 private const val WITH_SORTABLE_FIELDS =
-    """WITH sub, obj, rel, rel.created_at AS created_at, rel.created_by AS created_by"""
+    """WITH sub, obj, rel, rel.created_at AS created_at, rel.created_by AS created_by, rel.index AS index"""
 
 // Custom queries
 
@@ -79,6 +80,8 @@ interface Neo4jStatementRepository :
     override fun findById(id: Long): Optional<Neo4jStatement>
 
     fun findByStatementId(id: StatementId): Optional<Neo4jStatement>
+
+    fun findAllByStatementIdIn(ids: Set<StatementId>, pageable: Pageable): Page<Neo4jStatement>
 
     @Query("""
 MATCH (:`Thing`)-[r:`RELATED` {statement_id: $id}]->(o)
@@ -180,15 +183,16 @@ RETURN COUNT(rel) as cnt""")
         pagination: Pageable
     ): Page<Neo4jStatement>
 
-    @Query(
-        """MATCH (n:Thing {id: $id})
+    @Query("""
+MATCH (n:Thing {id: $id})
 CALL apoc.path.subgraphAll(n, $configuration)
 YIELD relationships
 UNWIND relationships as rel
-RETURN startNode(rel) as subject, rel as predicate, endNode(rel) as object
-ORDER BY rel.created_at DESC"""
-    )
-    fun fetchAsBundle(id: ThingId, configuration: Map<String, Any>): Iterable<Neo4jStatement>
+WITH startNode(rel) as sub, rel, endNode(rel) as obj
+$WITH_SORTABLE_FIELDS
+ORDER BY rel.created_at DESC
+$RETURN_STATEMENT""")
+    fun fetchAsBundle(id: ThingId, configuration: Map<String, Any>, sort: Sort): Iterable<Neo4jStatement>
 
     @Query(
         """MATCH ()-[r:RELATED]->() RETURN r.predicate_id as id, COUNT(r) as count ORDER BY count DESC, id""",

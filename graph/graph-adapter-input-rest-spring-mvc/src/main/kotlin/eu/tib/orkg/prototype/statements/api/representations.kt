@@ -147,6 +147,8 @@ interface StatementRepresentation : StatementProvenanceMetadata {
     val subject: ThingRepresentation
     val predicate: PredicateRepresentation
     val `object`: ThingRepresentation
+    @get:JsonInclude(Include.NON_NULL)
+    val index: Int?
 }
 
 interface StatementProvenanceMetadata {
@@ -155,4 +157,12 @@ interface StatementProvenanceMetadata {
 
     @get:JsonProperty("created_by")
     val createdBy: ContributorId
+}
+
+interface ListRepresentation : ProvenanceMetadata {
+    val id: ThingId
+    val label: String
+    val elements: List<ThingId>
+    @get:JsonProperty("_class")
+    val jsonClass: String
 }

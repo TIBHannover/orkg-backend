@@ -83,7 +83,8 @@ internal fun Neo4jStatement.toStatement(
     predicate = neo4jPredicateRepository.findById(predicateId!!).get().toPredicate(),
     `object` = `object`!!.toThing(),
     createdAt = createdAt!!,
-    createdBy = createdBy
+    createdBy = createdBy,
+    index = index
 )
 
 internal fun Neo4jStatement.toStatement(lookupTable: PredicateLookupTable): GeneralStatement = GeneralStatement(
@@ -93,7 +94,8 @@ internal fun Neo4jStatement.toStatement(lookupTable: PredicateLookupTable): Gene
         ?: throw IllegalStateException("Predicate $predicateId not found in lookup table. This is a bug."),
     `object` = `object`!!.toThing(),
     createdAt = createdAt!!,
-    createdBy = createdBy
+    createdBy = createdBy,
+    index = index
 )
 
 internal fun GeneralStatement.toNeo4jStatement(
@@ -106,11 +108,22 @@ internal fun GeneralStatement.toNeo4jStatement(
     // Need to fetch the internal ID of a (possibly) existing entity to prevent creating a new one.
     neo4jStatementRepository.findByStatementId(id!!).orElse(Neo4jStatement()).apply {
         statementId = this@toNeo4jStatement.id
-        subject = this@toNeo4jStatement.subject.toNeo4jThing(neo4jClassRepository, neo4jLiteralRepository, neo4jPredicateRepository, neo4jResourceRepository)
-        `object` = this@toNeo4jStatement.`object`.toNeo4jThing(neo4jClassRepository, neo4jLiteralRepository, neo4jPredicateRepository, neo4jResourceRepository)
+        subject = this@toNeo4jStatement.subject.toNeo4jThing(
+            neo4jClassRepository,
+            neo4jLiteralRepository,
+            neo4jPredicateRepository,
+            neo4jResourceRepository
+        )
+        `object` = this@toNeo4jStatement.`object`.toNeo4jThing(
+            neo4jClassRepository,
+            neo4jLiteralRepository,
+            neo4jPredicateRepository,
+            neo4jResourceRepository
+        )
         predicateId = this@toNeo4jStatement.predicate.id
         createdBy = this@toNeo4jStatement.createdBy
         createdAt = this@toNeo4jStatement.createdAt
+        index = this@toNeo4jStatement.index
     }
 
 internal fun Thing.toNeo4jThing(

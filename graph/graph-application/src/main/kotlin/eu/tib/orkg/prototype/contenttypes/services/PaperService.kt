@@ -75,9 +75,14 @@ class PaperService(
                 .sortedBy { it.id },
             identifiers = statements.mapIdentifiers(Identifiers.paper),
             publicationInfo = PublicationInfo.from(statements),
-            authors = statements.wherePredicate(Predicates.hasAuthor).objects()
-                .filter { it is Resource || it is Literal }
-                .pmap { it.toAuthor() },
+            authors = statements.wherePredicate(Predicates.hasAuthors).firstOrNull()?.let { hasAuthors ->
+                statementRepository.findAllBySubjectAndPredicate(hasAuthors.`object`.id, Predicates.hasListElement, PageRequests.ALL)
+                    .content
+                    .sortedBy { it.index }
+                    .objects()
+                    .filter { it is Resource || it is Literal }
+                    .pmap { it.toAuthor() }
+            }.orEmpty(),
             contributions = statements.toContributions(),
             observatories = listOf(observatoryId),
             organizations = listOf(organizationId),

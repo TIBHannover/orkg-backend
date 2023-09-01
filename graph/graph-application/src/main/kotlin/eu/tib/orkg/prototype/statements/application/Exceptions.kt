@@ -57,6 +57,8 @@ class StatementNotFound : SimpleMessageException {
     constructor(id: StatementId) : this(id.value)
 }
 
+class ListNotFound(id: ThingId) : SimpleMessageException(HttpStatus.NOT_FOUND, """List "$id" not found.""")
+
 class ContributorNotFound(id: ContributorId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Contributor "$id" not found.""")
 
@@ -69,10 +71,10 @@ class ResearchProblemNotFound(id: ThingId) :
 class DatasetNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Dataset "$id" not found.""")
 
-class ResourceCantBeDeleted(id: ThingId) :
+class ResourceUsedInStatement(id: ThingId) :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Unable to delete resource "$id" because it is used in at least one statement.""")
 
-class PredicateCantBeDeleted(id: ThingId) :
+class PredicateUsedInStatement(id: ThingId) :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Unable to delete predicate "$id" because it is used in at least one statement.""")
 
 class ClassNotAllowed(`class`: String) :
@@ -131,6 +133,33 @@ class StatementPredicateNotFound(id: ThingId) :
 class StatementObjectNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Object "$id" not found.""")
 
+class ForbiddenStatementSubject private constructor(
+    override val message: String
+) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, null) {
+    companion object {
+        fun isList() =
+            ForbiddenStatementSubject("A list cannot be used as a subject for a statement. Please see the documentation on how to manage lists.")
+    }
+}
+
+class UnmodifiableStatement private constructor(
+    override val message: String
+) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, null) {
+    companion object {
+        fun subjectIsList() =
+            UnmodifiableStatement("A statement with a list as it's subject cannot be modified. Please see the documentation on how to manage lists.")
+    }
+}
+
+class ForbiddenStatementDeletion private constructor(
+    override val message: String
+) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, null) {
+    companion object {
+        fun usedInList() =
+            ForbiddenStatementDeletion("A statement cannot be deleted when it is used in a list. Please see the documentation on how to manage lists.")
+    }
+}
+
 class DOIRegistrationError(doi: String) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Unable to register DOI "$doi".""")
 
@@ -142,6 +171,8 @@ class DOIServiceUnavailable : LoggedMessageException {
     constructor(responseMessage: String, errorResponse: String) :
         super(HttpStatus.SERVICE_UNAVAILABLE, """DOI service returned "$responseMessage" with error response: $errorResponse""")
 }
+
+class ListElementNotFound : PropertyValidationException("element", "All elements inside the list have to exist.")
 
 class InvalidSubclassRelation(childId: ThingId, parentId: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """The class "$childId" cannot be a subclass of "$parentId"."""")

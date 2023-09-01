@@ -7,8 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Added a new endpoint to fetch license information for external sites
+- Added a new endpoint to fetch license information for external sites.
   (Closes: [#495](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/495))
+- Added support for ordered lists.
+  (Closes: [#175](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/175))
 ### Fixed
 - Benchmark queries can handle optional models and codes now.
   (Closes: [#492](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/492))

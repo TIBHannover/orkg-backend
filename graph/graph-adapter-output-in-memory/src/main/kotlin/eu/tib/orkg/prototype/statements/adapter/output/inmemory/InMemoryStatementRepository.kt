@@ -17,9 +17,11 @@ import eu.tib.orkg.prototype.statements.spi.OwnershipInfo
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.text.SimpleDateFormat
+import java.time.OffsetDateTime
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 
 private val paperClass = ThingId("Paper")
 private val paperDeletedClass = ThingId("PaperDeleted")
@@ -40,6 +42,10 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         entities[statement.id!!] = statement
     }
 
+    override fun saveAll(statements: Set<GeneralStatement>) {
+        statements.forEach(::save)
+    }
+
     override fun count(): Long = entities.size.toLong()
 
     override fun delete(statement: GeneralStatement) {
@@ -55,6 +61,9 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
 
     override fun findByStatementId(id: StatementId): Optional<GeneralStatement> =
         Optional.ofNullable(entities[id])
+
+    override fun findAllByStatementIdIn(ids: Set<StatementId>, pageable: Pageable): Page<GeneralStatement> =
+        findAllFilteredAndPaged(pageable) { it.id in ids}
 
     override fun findAllBySubject(subjectId: ThingId, pageable: Pageable) =
         findAllFilteredAndPaged(pageable) { it.subject.id == subjectId }
@@ -109,20 +118,20 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
     }
 
     override fun findAllBySubjects(
-        subjectIds: List<ThingId>,
+        subjectIds: kotlin.collections.List<ThingId>,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
         it.subject.id in subjectIds
     }
 
     override fun findAllByObjects(
-        objectIds: List<ThingId>,
+        objectIds: kotlin.collections.List<ThingId>,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
         it.`object`.id in objectIds
     }
 
-    override fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration): Iterable<GeneralStatement> =
+    override fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration, sort: Sort): Iterable<GeneralStatement> =
         entities.values.find { it.subject.id == id }?.let {
             val exclude = mutableSetOf<GeneralStatement>()
             findSubgraph(it.subject.id) { statement, level ->
@@ -156,7 +165,38 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
                 }
                 return@findSubgraph true
             }.filter { statement -> statement !in exclude }
-        } ?: emptySet()
+        }?.sortedWith(sort.comparator) ?: emptySet()
+
+    private val Sort.comparator: Comparator<GeneralStatement>
+        get() = if (isUnsorted) {
+            Comparator.comparing<GeneralStatement?, OffsetDateTime> { it.createdAt }.reversed()
+        } else {
+            Comparator { a, b ->
+                var result = 0
+                for (order in this) {
+                    result = when (order.property) {
+                        "created_at" -> order.compare(a.createdAt, b.createdAt)
+                        "created_by" -> order.compare(a.createdBy.value, b.createdBy.value)
+                        "index" -> order.compare(a.index, b.index)
+                        else -> 0 // TODO: Throw exception?
+                    }
+                    if (result != 0) {
+                        break
+                    }
+                }
+                result
+            }
+        }
+
+    private fun <T : Comparable<T>> Sort.Order.compare(a : T?, b: T?): Int {
+        val result = when {
+            a == null && b == null -> 0
+            a == null -> 1
+            b == null -> -1
+            else -> a.compareTo(b)
+        }
+        return if (isAscending) result else -result
+    }
 
     override fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount> {
         val predicateIdToUsageCount = mutableMapOf<ThingId, Long>()

@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.data.domain.Sort
 import org.springframework.http.MediaType
 import org.springframework.restdocs.request.RequestDocumentation.*
 import org.springframework.security.test.context.support.WithMockUser
@@ -294,7 +295,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
         val exception = ThingNotFound.withThingId(thingId)
 
         every {
-            statementService.fetchAsBundle(thingId, any(), false)
+            statementService.fetchAsBundle(thingId, any(), false, Sort.unsorted())
         } throws exception
 
         mockMvc.perform(get("/api/statements/$thingId/bundle?includeFirst=false"))
@@ -306,7 +307,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             .andExpect(jsonPath("$.path").value("/api/statements/$thingId/bundle"))
 
         verify(exactly = 1) {
-            statementService.fetchAsBundle(thingId, any(), false)
+            statementService.fetchAsBundle(thingId, any(), false, Sort.unsorted())
         }
     }
 

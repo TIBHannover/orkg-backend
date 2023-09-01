@@ -5,8 +5,8 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.UpdatePredicateUseCase
-import eu.tib.orkg.prototype.statements.application.PredicateCantBeDeleted
 import eu.tib.orkg.prototype.statements.application.PredicateNotFound
+import eu.tib.orkg.prototype.statements.application.PredicateUsedInStatement
 import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
@@ -99,7 +99,7 @@ class PredicateService(
         val predicate = findById(predicateId).orElseThrow { PredicateNotFound(predicateId) }
 
         if (statementRepository.countPredicateUsage(predicate.id) > 0)
-            throw PredicateCantBeDeleted(predicate.id)
+            throw PredicateUsedInStatement(predicate.id)
 
         repository.deleteById(predicate.id)
     }

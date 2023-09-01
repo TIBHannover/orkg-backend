@@ -2,6 +2,8 @@ package eu.tib.orkg.prototype.ranking.spi
 
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
+import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
@@ -10,6 +12,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
+import eu.tib.orkg.prototype.statements.spi.ListRepository
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
@@ -18,6 +21,7 @@ import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import org.orkg.statements.testing.createPredicate
 import org.orkg.statements.testing.withCustomMappings
 
 fun <
@@ -26,6 +30,7 @@ fun <
     L : LiteralRepository,
     R : ResourceRepository,
     P : PredicateRepository,
+    I : ListRepository,
     U : RankingService
 > rankingServiceContract(
     statementRepository: S,
@@ -33,6 +38,7 @@ fun <
     literalRepository: L,
     resourceRepository: R,
     predicateRepository: P,
+    listRepository: I,
     service: U
 ) = describeSpec {
     beforeTest {
@@ -41,6 +47,7 @@ fun <
         literalRepository.deleteAll()
         resourceRepository.deleteAll()
         predicateRepository.deleteAll()
+        predicateRepository.save(createPredicate(id = Predicates.hasListElement, label = "has list element"))
     }
 
     val fabricator = Fabrikate(
@@ -197,36 +204,26 @@ fun <
         val literatureList = fabricator.random<Resource>().copy(
             classes = setOf(ThingId("LiteratureList"))
         )
-        val listSection = fabricator.random<Resource>().copy(
-            classes = setOf(ThingId("ListSection"))
-        )
-        val entry = fabricator.random<Resource>()
         val paper = fabricator.random<Resource>().copy(
             classes = setOf(ThingId("Paper"))
         )
-        val hasSection = fabricator.random<Predicate>().copy(
-            id = ThingId("HasSection")
+        val entry = fabricator.random<eu.tib.orkg.prototype.statements.domain.model.List>().copy(
+            elements = listOf(paper.id)
         )
-        val hasEntry = fabricator.random<Predicate>().copy(
-            id = ThingId("HasEntry")
+        val section = fabricator.random<eu.tib.orkg.prototype.statements.domain.model.List>().copy(
+            elements = listOf(entry.id)
         )
-        val hasPaper = fabricator.random<Predicate>().copy(
-            id = ThingId("HasPaper")
+        val hasSections = fabricator.random<Predicate>().copy(
+            id = ThingId("HasSections")
         )
+
+        resourceRepository.save(paper)
+        listRepository.save(entry, ContributorId.createUnknownContributor())
+        listRepository.save(section, ContributorId.createUnknownContributor())
         saveStatement(fabricator.random<GeneralStatement>().copy(
             subject = literatureList,
-            predicate = hasSection,
-            `object` = listSection
-        ))
-        saveStatement(fabricator.random<GeneralStatement>().copy(
-            subject = listSection,
-            predicate = hasEntry,
-            `object` = entry
-        ))
-        saveStatement(fabricator.random<GeneralStatement>().copy(
-            subject = entry,
-            predicate = hasPaper,
-            `object` = paper
+            predicate = hasSections,
+            `object` = resourceRepository.findById(section.id).get()
         ))
 
         val expected = 1

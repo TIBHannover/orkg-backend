@@ -1,10 +1,13 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.createClasses
+import eu.tib.orkg.prototype.createList
 import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.ListUseCases
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
+import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.ResourceControllerIntegrationTest.RestDoc.resourceResponseFields
@@ -48,6 +51,9 @@ class ComparisonControllerTest : RestDocumentationBaseTest() {
     @Autowired
     private lateinit var statementService: StatementUseCases
 
+    @Autowired
+    private lateinit var listService: ListUseCases
+
     @BeforeEach
     fun setup() {
         predicateService.removeAll()
@@ -58,10 +64,11 @@ class ComparisonControllerTest : RestDocumentationBaseTest() {
         classService.createClasses("Author", "Paper", "Contribution", "Comparison")
 
         // Init predicates
-        predicateService.createPredicate("Has Author", id = "P27")
+        predicateService.createPredicate("Has Authors", id = "hasAuthors")
         predicateService.createPredicate("Has Contribution", id = "P31")
         predicateService.createPredicate("Compares Contribution", id = "compareContribution")
         predicateService.createPredicate("publication year", id = "P29")
+        predicateService.createPredicate("has list element", id = Predicates.hasListElement.value)
     }
 
     @Test
@@ -89,10 +96,15 @@ class ComparisonControllerTest : RestDocumentationBaseTest() {
         val comparison = resourceService.createResource(label = "Comparison", classes = setOf("Comparison"))
 
         // Link authors to papers
-        statementService.create(paper1, ThingId("P27"), author1)
-        statementService.create(paper2, ThingId("P27"), author2)
-        statementService.create(paper3, ThingId("P27"), authorResource)
-        statementService.create(paper4, ThingId("P27"), authorNotNeeded)
+        val paper1AuthorsList = listService.createList("Authors", listOf(author1))
+        val paper2AuthorsList = listService.createList("Authors", listOf(author2))
+        val paper3AuthorsList = listService.createList("Authors", listOf(authorResource))
+        val paper4AuthorsList = listService.createList("Authors", listOf(authorNotNeeded))
+
+        statementService.create(paper1, ThingId("hasAuthors"), paper1AuthorsList)
+        statementService.create(paper2, ThingId("hasAuthors"), paper2AuthorsList)
+        statementService.create(paper3, ThingId("hasAuthors"), paper3AuthorsList)
+        statementService.create(paper4, ThingId("hasAuthors"), paper4AuthorsList)
 
         // Link paper 1 to year
         statementService.create(paper1, ThingId("P29"), year)

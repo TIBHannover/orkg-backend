@@ -36,7 +36,7 @@ import org.neo4j.cypherdsl.core.Cypher.union
 import org.neo4j.cypherdsl.core.Cypher.unionAll
 import org.neo4j.cypherdsl.core.Cypher.unwind
 import org.neo4j.cypherdsl.core.Cypher.valueAt
-import org.neo4j.cypherdsl.core.ExposesReturning
+import org.neo4j.cypherdsl.core.Expression
 import org.neo4j.cypherdsl.core.Functions.collect
 import org.neo4j.cypherdsl.core.Functions.count
 import org.neo4j.cypherdsl.core.Functions.countDistinct
@@ -89,7 +89,42 @@ class SpringDataNeo4jStatementAdapter(
                     "statement_id", literalOf<String>(statement.id?.value),
                     "predicate_id", literalOf<String>(statement.predicate.id.value),
                     "created_by", literalOf<String>(statement.createdBy.value.toString()),
-                    "created_at", literalOf<String>(statement.createdAt?.format(ISO_OFFSET_DATE_TIME))
+                    "created_at", literalOf<String>(statement.createdAt?.format(ISO_OFFSET_DATE_TIME)),
+                    "index", literalOf<Int>(statement.index)
+                )
+            ).build()
+        neo4jClient.query(query.cypher).run()
+    }
+
+    override fun saveAll(statements: Set<GeneralStatement>) {
+        val data = listOf(
+            statements.map {
+                listOf(
+                    literalOf<String>(it.subject.id.value),
+                    literalOf<String>(it.`object`.id.value),
+                    literalOf<String>(it.id?.value),
+                    literalOf<String>(it.predicate.id.value),
+                    literalOf<String>(it.createdBy.value.toString()),
+                    literalOf<String>(it.createdAt?.format(ISO_OFFSET_DATE_TIME)),
+                    literalOf<Int>(it.index)
+                )
+            }
+        )
+        val statement = name("statement")
+        val subject = node("Thing").named("s")
+        val `object` = node("Thing").named("o")
+        val query = unwind(data)
+            .`as`(statement)
+            .with(statement)
+            .match(subject.withProperties("id", valueAt(statement, 0)))
+            .match(`object`.withProperties("id", valueAt(statement, 1)))
+            .create(
+                subject.relationshipTo(`object`, RELATED).withProperties(
+                    "statement_id", valueAt(statement, 2),
+                    "predicate_id", valueAt(statement, 3),
+                    "created_by", valueAt(statement, 4),
+                    "created_at", valueAt(statement, 5),
+                    "index", valueAt(statement, 6)
                 )
             ).build()
         neo4jClient.query(query.cypher).run()
@@ -265,6 +300,33 @@ class SpringDataNeo4jStatementAdapter(
             .one()
     }
 
+    override fun findAllByStatementIdIn(ids: Set<StatementId>, pageable: Pageable): Page<GeneralStatement> {
+        val r = name("r")
+        val id = name("id")
+        val subject = node("Thing")
+        val `object` = node("Thing")
+        val unwind = {
+            unwind(literalOf<Set<String>>(ids.map { it.value }))
+                .`as`(id)
+                .with(id)
+                .match(
+                    subject.relationshipTo(`object`, RELATED).withProperties(
+                        "statement_id", id
+                    ).named(r)
+                )
+        }
+        val query = unwind()
+            .returningWithSortableFields(r, subject, `object`)
+            .build(pageable)
+        val count = unwind()
+            .returning(count(r))
+            .build()
+        return neo4jClient.query(query.cypher)
+            .fetchAs(GeneralStatement::class.java)
+            .mappedBy(StatementMapper(predicateRepository))
+            .paged(pageable, count)
+    }
+
     override fun findAllBySubject(subjectId: ThingId, pageable: Pageable): Page<GeneralStatement> =
         findAllFilteredAndPaged(pageable) { subject, _, _ ->
             subject.property("id").eq(literalOf<String>(subjectId.value))
@@ -363,21 +425,25 @@ class SpringDataNeo4jStatementAdapter(
             `object`.property("id").`in`(literalOf<List<String>>(objectIds.map { it.value }))
         }
 
-    override fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration): Iterable<GeneralStatement> {
+    override fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration, sort: Sort): Iterable<GeneralStatement> {
         val n = name("n")
         val relationships = name("relationships")
         val rel = name("rel")
         val node = node("Thing")
             .withProperties("id", literalOf<String>(id.value))
             .named(n)
+        val sub = name("sub")
+        val obj = name("obj")
         val query = match(node)
             .call("apoc.path.subgraphAll")
             .withArgs(n, asExpression(configuration.toApocConfiguration()))
             .yield(relationships)
             .with(relationships)
             .unwind(relationships).`as`(rel)
-            .returning(startNode(rel).`as`("sub"), rel.`as`("rel"), endNode(rel).`as`("obj"))
+            .with(startNode(rel).`as`(sub), rel.`as`("rel"), endNode(rel).`as`(obj))
             .orderBy(rel.property("created_at").descending())
+            .returningWithSortableFields(rel, sub, obj)
+            .orderBy(sort)
             .build()
         return neo4jClient.query(query.cypher)
             .fetchAs(GeneralStatement::class.java)
@@ -779,16 +845,24 @@ class SpringDataNeo4jStatementAdapter(
         relation: SymbolicName,
         subject: CNode,
         `object`: CNode
+    ): StatementBuilder.OngoingReadingAndReturn =
+        returningWithSortableFields(relation, subject.asExpression(), `object`.asExpression())
+
+    private fun StatementBuilder.ExposesWith.returningWithSortableFields(
+        relation: SymbolicName,
+        subject: Expression,
+        `object`: Expression
     ): StatementBuilder.OngoingReadingAndReturn {
         val sub = name("sub")
         val obj = name("obj")
         val rel = name("rel")
         return with(
             relation.`as`(rel),
-            subject.`as`(sub.value),
-            `object`.`as`(obj.value),
+            subject.`as`(sub),
+            `object`.`as`(obj),
             relation.property("created_at").`as`("created_at"),
-            relation.property("created_by").`as`("created_by")
+            relation.property("created_by").`as`("created_by"),
+            relation.property("index").`as`("index")
         ).returning(rel, sub, obj)
     }
 }

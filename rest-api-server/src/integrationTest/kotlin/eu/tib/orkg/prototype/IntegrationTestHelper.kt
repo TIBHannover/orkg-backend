@@ -10,8 +10,10 @@ import eu.tib.orkg.prototype.community.domain.model.OrganizationType
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.files.domain.model.ImageId
 import eu.tib.orkg.prototype.statements.api.CreateClassUseCase
+import eu.tib.orkg.prototype.statements.api.CreateListUseCase
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
+import eu.tib.orkg.prototype.statements.api.ListUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
@@ -130,5 +132,12 @@ fun ObservatoryUseCases.createObservatory(
         displayId = displayId
     )
 )
+
+fun ListUseCases.createList(
+    label: String,
+    elements: List<ThingId>,
+    id: ThingId? = null,
+    contributorId: ContributorId? = null,
+) = create(CreateListUseCase.CreateCommand(label, elements, id, contributorId))
 
 private fun String.toDisplayId() = this.lowercase().replace(Regex("[^a-zA-Z0-9_]"), "_")

@@ -30,7 +30,8 @@ MATCH (b)-[:RELATED {predicate_id: '$QUANTITY_PREDICATE'}]->(q:$QUANTITY_CLASS)
 MATCH (s:Literal)<-[:RELATED {predicate_id: '$NUMERIC_VALUE_PREDICATE'}]-(qv:$QUANTITY_VALUE_CLASS)<-[:RELATED {predicate_id: '$QUANTITY_VALUE_PREDICATE'}]-(q)-[:RELATED {predicate_id: '$METRIC_PREDICATE'}]->(mt:$METRIC_CLASS)
 MATCH (c)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper)
 OPTIONAL MATCH (month:Literal)-[:RELATED {predicate_id: 'P28'}]-(p)-[:RELATED {predicate_id: 'P29'}]-(year:Literal)
-OPTIONAL MATCH (md:$MODEL_CLASS)<-[:RELATED {predicate_id: '$MODEL_PREDICATE'}]-(c)-[:RELATED {predicate_id: '$SOURCE_CODE_PREDICATE'}]->(l:Literal)
+OPTIONAL MATCH (c)-[:RELATED {predicate_id: '$MODEL_PREDICATE'}]->(md:$MODEL_CLASS)
+OPTIONAL MATCH (c)-[:RELATED {predicate_id: '$SOURCE_CODE_PREDICATE'}]->(l:Literal)
 RETURN p AS paper, month.label AS month, year.label AS year, COLLECT(DISTINCT l.label) AS codes, md.id AS modelId, md.label AS model, mt.label AS metric, s.label AS score
     """,
         countQuery = """
@@ -47,7 +48,8 @@ MATCH (b)-[:RELATED {predicate_id: '$QUANTITY_PREDICATE'}]->(q:$QUANTITY_CLASS)
 MATCH (s:Literal)<-[:RELATED {predicate_id: '$NUMERIC_VALUE_PREDICATE'}]-(qv:$QUANTITY_VALUE_CLASS)<-[:RELATED {predicate_id: '$QUANTITY_VALUE_PREDICATE'}]-(q)-[:RELATED {predicate_id: '$METRIC_PREDICATE'}]->(mt:$METRIC_CLASS)
 MATCH (c)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper)
 OPTIONAL MATCH (month:Literal)-[:RELATED {predicate_id: 'P28'}]-(p)-[:RELATED {predicate_id: 'P29'}]-(year:Literal)
-OPTIONAL MATCH (md:$MODEL_CLASS)<-[:RELATED {predicate_id: '$MODEL_PREDICATE'}]-(c)-[:RELATED {predicate_id: '$SOURCE_CODE_PREDICATE'}]->(l:Literal)
+OPTIONAL MATCH (c)-[:RELATED {predicate_id: '$MODEL_PREDICATE'}]->(md:$MODEL_CLASS)
+OPTIONAL MATCH (c)-[:RELATED {predicate_id: '$SOURCE_CODE_PREDICATE'}]->(l:Literal)
 RETURN p AS paper, month.label AS month, year.label AS year, COLLECT(DISTINCT l.label) AS codes, md.id AS modelId, md.label AS model, mt.label AS metric, s.label AS score
     """,
         countQuery = """

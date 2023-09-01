@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added a new endpoint to fetch license information for external sites
   (Closes: [#495](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/495))
+### Fixed
+- Benchmark queries can handle optional models and codes now.
+  (Closes: [#492](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/492))
 
 ## [0.36.0] - 2023-08-28
 ### Added

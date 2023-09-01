@@ -17,6 +17,7 @@ import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.time.OffsetDateTime
 import org.neo4j.ogm.session.SessionFactory
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
@@ -38,11 +39,13 @@ class ListMigrationRunner(
     private val predicateRepository: PredicateRepository,
     private val sessionFactory: SessionFactory
 ) : ApplicationRunner {
+    private val logger = LoggerFactory.getLogger(this::class.java.name)
 
     @Autowired
     private lateinit var context: ConfigurableApplicationContext
 
     override fun run(args: ApplicationArguments?) {
+        logger.info("Starting list migration...")
         with(sessionFactory.openSession()) {
             query("""MATCH (:LiteratureList)-[:RELATED {predicate_id: "HasSection"}]->(:ListSection)-[:RELATED {predicate_id: "HasEntry"}]->(:Resource)-[r:RELATED {predicate_id: "HasPaper"}]->(:Resource) SET r.predicate_id = "HasLink" RETURN COUNT(r)""", emptyMap<String, Any>())
         }
@@ -92,6 +95,7 @@ class ListMigrationRunner(
 //            migrateStatementsToList(it, Predicates.hasEntity, hasEntitiesPredicate, "Entities")
 //        }
         context.close()
+        logger.info("List migration complete")
     }
 
     private fun migrateStatementsToList(resource: Resource, oldPredicateId: ThingId, newPredicate: Predicate, label: String) {
@@ -211,11 +215,13 @@ class ListMigrationRunner(
         }
 
     private fun forEachResource(classId: ThingId, consumer: (Resource) -> Unit) {
+        logger.info("Migrating resources of class $classId...")
         var page = resourceRepository.findAllByClass(classId, PageRequest.of(0, chunkSize))
         page.content.forEach(consumer)
         while (page.hasNext()) {
             page = resourceRepository.findAllByClass(classId, PageRequest.of(page.number + 1, chunkSize))
             page.content.forEach(consumer)
         }
+        logger.info("Migration of resources of class $classId complete")
     }
 }

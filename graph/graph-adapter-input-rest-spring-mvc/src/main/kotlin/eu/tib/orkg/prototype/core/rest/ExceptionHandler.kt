@@ -8,6 +8,7 @@ import eu.tib.orkg.prototype.shared.SimpleMessageException
 import eu.tib.orkg.prototype.toSnakeCase
 import java.time.OffsetDateTime
 import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletRequestWrapper
 import org.springframework.data.neo4j.exception.UncategorizedNeo4jException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -174,27 +175,32 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
     }
 
     private fun logException(throwable: Throwable, request: WebRequest) {
-        val message = StringBuilder(
-            """Request: ${request.requestURI}${request.parameterMap.toParameterString()}, Headers: ${request.headerMap}"""
-        )
+        val message = buildString {
+            append("Request: ")
+            append(request.requestURI)
+            append(request.parameterMap.toParameterString())
+            append(", Headers: ")
+            append(request.headerMap)
 
-        if (request is ServletWebRequest) {
-            val nativeRequest: HttpServletRequest = request.request
-            message.insert(0, " ")
-            message.insert(0, nativeRequest.method)
+            if (request is ServletWebRequest) {
+                val nativeRequest: HttpServletRequest = request.request
+                insert(0, " ")
+                insert(0, nativeRequest.method)
 
-            if (nativeRequest is ContentCachingRequestWrapper) {
-                val requestBody = String(nativeRequest.contentAsByteArray)
-                if (requestBody.isNotBlank()) {
-                    message.append(", Payload: ")
-                    message.append(requestBody)
+                val body: String = when (nativeRequest) {
+                    is ContentCachingRequestWrapper -> nativeRequest.contentAsByteArray
+                    is HttpServletRequestWrapper -> nativeRequest.inputStream.readAllBytes()
+                    else -> ByteArray(0)
+                }.let { String(it) }
+
+                if (body.isNotEmpty()) {
+                    append(", Payload: ")
+                    append(body)
                 }
-            } else {
-                message.append(nativeRequest.javaClass.name)
             }
         }
 
-        logger.error(message.toString(), throwable)
+        logger.error(message, throwable)
     }
 
     data class ErrorResponse(

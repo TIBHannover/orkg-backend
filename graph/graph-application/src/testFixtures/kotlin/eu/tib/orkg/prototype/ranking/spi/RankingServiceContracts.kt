@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype.ranking.spi
 
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
@@ -38,7 +37,7 @@ fun <
     literalRepository: L,
     resourceRepository: R,
     predicateRepository: P,
-    listRepository: I,
+    @Suppress("UNUSED_PARAMETER") listRepository: I,
     service: U
 ) = describeSpec {
     beforeTest {
@@ -204,26 +203,36 @@ fun <
         val literatureList = fabricator.random<Resource>().copy(
             classes = setOf(ThingId("LiteratureList"))
         )
+        val listSection = fabricator.random<Resource>().copy(
+            classes = setOf(ThingId("ListSection"))
+        )
+        val entry = fabricator.random<Resource>()
         val paper = fabricator.random<Resource>().copy(
             classes = setOf(ThingId("Paper"))
         )
-        val entry = fabricator.random<eu.tib.orkg.prototype.statements.domain.model.List>().copy(
-            elements = listOf(paper.id)
+        val hasSection = fabricator.random<Predicate>().copy(
+            id = ThingId("HasSection")
         )
-        val section = fabricator.random<eu.tib.orkg.prototype.statements.domain.model.List>().copy(
-            elements = listOf(entry.id)
+        val hasEntry = fabricator.random<Predicate>().copy(
+            id = ThingId("HasEntry")
         )
-        val hasSections = fabricator.random<Predicate>().copy(
-            id = ThingId("HasSections")
+        val hasPaper = fabricator.random<Predicate>().copy(
+            id = ThingId("HasPaper")
         )
-
-        resourceRepository.save(paper)
-        listRepository.save(entry, ContributorId.createUnknownContributor())
-        listRepository.save(section, ContributorId.createUnknownContributor())
         saveStatement(fabricator.random<GeneralStatement>().copy(
             subject = literatureList,
-            predicate = hasSections,
-            `object` = resourceRepository.findById(section.id).get()
+            predicate = hasSection,
+            `object` = listSection
+        ))
+        saveStatement(fabricator.random<GeneralStatement>().copy(
+            subject = listSection,
+            predicate = hasEntry,
+            `object` = entry
+        ))
+        saveStatement(fabricator.random<GeneralStatement>().copy(
+            subject = entry,
+            predicate = hasPaper,
+            `object` = paper
         ))
 
         val expected = 1

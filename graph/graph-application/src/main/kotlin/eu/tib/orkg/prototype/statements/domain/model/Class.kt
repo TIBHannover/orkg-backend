@@ -11,8 +11,7 @@ data class Class(
     val uri: URI?,
     val createdAt: OffsetDateTime,
     val createdBy: ContributorId = ContributorId.createUnknownContributor(),
-) : Thing {
-    var description: String? = null
-}
+    val description: String? = null
+) : Thing
 
 fun Class?.toOptional() = Optional.ofNullable(this)

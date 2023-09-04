@@ -3,6 +3,8 @@ package eu.tib.orkg.prototype.statements.api
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 
 object Predicates {
+    val description = ThingId("description")
+    val hasDOI = ThingId("P26")
     val hasAuthor = ThingId("P27")
     val hasAuthors = ThingId("hasAuthors")
     val hasSection = ThingId("HasSection")
@@ -11,7 +13,6 @@ object Predicates {
     val hasEntity = ThingId("HasEntity")
     val hasEntities = ThingId("hasEntities")
     val hasListElement = ThingId("hasListElement")
-    val hasDOI = ThingId("P26")
     val monthPublished = ThingId("P28")
     val yearPublished = ThingId("P29")
     val hasResearchField = ThingId("P30")
@@ -27,7 +28,6 @@ object Predicates {
     val hasWebsite = ThingId("website")
     val hasSubfield = ThingId("P36")
     val comparesContribution = ThingId("compareContribution")
-    val description = ThingId("description")
 }
 
 object Classes {

@@ -2,7 +2,9 @@ package eu.tib.orkg.prototype.statements.spi
 
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
+import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.domain.model.Class
+import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.kotest.assertions.asClue
@@ -14,12 +16,28 @@ import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
 import java.net.URI
 import org.orkg.statements.testing.createClass
+import org.orkg.statements.testing.createLiteral
+import org.orkg.statements.testing.createPredicate
+import org.orkg.statements.testing.createStatement
 import org.orkg.statements.testing.withCustomMappings
 import org.springframework.data.domain.PageRequest
 
-fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec {
+fun <
+    C : ClassRepository,
+    S : StatementRepository,
+    L : LiteralRepository,
+    P : PredicateRepository
+> classRepositoryContract(
+    repository: C,
+    statementRepository: S,
+    literalRepository: L,
+    predicateRepository: P
+) = describeSpec {
     beforeTest {
+        statementRepository.deleteAll()
         repository.deleteAll()
+        literalRepository.deleteAll()
+        predicateRepository.deleteAll()
     }
 
     val fabricator = Fabrikate(
@@ -31,8 +49,19 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
 
     describe("saving a class") {
         it("saves and loads all properties correctly") {
-            val expected: Class = fabricator.random()
+            val expected: Class = fabricator.random<Class>().copy(
+                description = "some class description"
+            )
             repository.save(expected)
+
+            val descriptionStatement = createStatement(
+                subject = expected,
+                predicate = createPredicate(id = Predicates.description),
+                `object` = createLiteral(label = expected.description!!),
+            )
+            predicateRepository.save(descriptionStatement.predicate)
+            literalRepository.save(descriptionStatement.`object` as Literal)
+            statementRepository.save(descriptionStatement)
 
             val actual = repository.findById(expected.id).orElse(null)
 
@@ -44,7 +73,7 @@ fun <R : ClassRepository> classRepositoryContract(repository: R) = describeSpec 
                 it.createdAt shouldBe expected.createdAt
                 it.createdBy shouldBe expected.createdBy
                 it.id shouldBe expected.id
-                it.description shouldBe it.description
+                it.description shouldBe expected.description
             }
         }
         it("updates an already existing class") {

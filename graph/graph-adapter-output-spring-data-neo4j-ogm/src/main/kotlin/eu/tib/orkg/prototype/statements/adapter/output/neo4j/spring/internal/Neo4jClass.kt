@@ -55,19 +55,14 @@ data class Neo4jClass(
     @Property("created_at")
     var createdAt: OffsetDateTime? = null
 
-    fun toClass(): Class {
-        val aURI: URI? = if (uri != null) URI.create(uri!!) else null
-        val clazz = Class(
-            id = id!!,
-            label = label!!,
-            uri = aURI,
-            createdAt = createdAt!!,
-            createdBy = createdBy,
-        )
-        if (subjectOf.isNotEmpty())
-            clazz.description = subjectOf.firstOrNull { it.predicateId?.value == "description" }?.`object`?.label
-        return clazz
-    }
+    fun toClass(): Class = Class(
+        id = id!!,
+        label = label!!,
+        uri = if (uri != null) URI.create(uri!!) else null,
+        createdAt = createdAt!!,
+        createdBy = createdBy,
+        description = subjectOf.singleOrNull { it.predicateId?.value == "description" }?.`object`?.label
+    )
 
     override fun toThing() = toClass()
 }

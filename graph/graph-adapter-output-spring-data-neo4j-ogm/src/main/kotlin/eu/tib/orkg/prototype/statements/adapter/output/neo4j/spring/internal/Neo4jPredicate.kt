@@ -41,17 +41,13 @@ data class Neo4jPredicate(
     var subjectOf: MutableSet<Neo4jStatement> = mutableSetOf()
 ) : Neo4jThing {
 
-    fun toPredicate(): Predicate {
-        val predicate = Predicate(
-            id = id!!,
-            label = label!!,
-            createdAt = createdAt!!,
-            createdBy = createdBy
-        )
-        if (subjectOf.isNotEmpty())
-            predicate.description = subjectOf.firstOrNull { it.predicateId?.value == "description" }?.`object`?.label
-        return predicate
-    }
+    fun toPredicate(): Predicate = Predicate(
+        id = id!!,
+        label = label!!,
+        createdAt = createdAt!!,
+        createdBy = createdBy,
+        description = subjectOf.singleOrNull { it.predicateId?.value == "description" }?.`object`?.label
+    )
 
     override fun toThing() = toPredicate()
 }

@@ -2,6 +2,9 @@ package eu.tib.orkg.prototype.statements.spi
 
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
+import eu.tib.orkg.prototype.statements.api.Predicates
+import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
+import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -12,13 +15,26 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
+import java.time.OffsetDateTime
+import org.orkg.statements.testing.createLiteral
 import org.orkg.statements.testing.createPredicate
+import org.orkg.statements.testing.createStatement
 import org.orkg.statements.testing.withCustomMappings
 import org.springframework.data.domain.PageRequest
 
-fun <R : PredicateRepository> predicateRepositoryContract(repository: R) = describeSpec {
+fun <
+    R : PredicateRepository,
+    S: StatementRepository,
+    L: LiteralRepository
+> predicateRepositoryContract(
+    repository: R,
+    statementRepository: S,
+    literalRepository: L
+) = describeSpec {
     beforeTest {
+        statementRepository.deleteAll()
         repository.deleteAll()
+        literalRepository.deleteAll()
     }
 
     val fabricator = Fabrikate(
@@ -30,8 +46,19 @@ fun <R : PredicateRepository> predicateRepositoryContract(repository: R) = descr
 
     describe("saving a predicate") {
         it("saves and loads all properties correctly") {
-            val expected: Predicate = fabricator.random()
+            val expected: Predicate = fabricator.random<Predicate>().copy(
+                description = "some predicate description"
+            )
             repository.save(expected)
+
+            val descriptionStatement = createStatement(
+                subject = expected,
+                predicate = createPredicate(id = Predicates.description),
+                `object` = createLiteral(label = expected.description!!)
+            )
+            repository.save(descriptionStatement.predicate)
+            literalRepository.save(descriptionStatement.`object` as Literal)
+            statementRepository.save(descriptionStatement)
 
             val actual = repository.findById(expected.id).orElse(null)
 

@@ -10,4 +10,5 @@ fun createPredicate(
     label: String = "some predicate label",
     createdAt: OffsetDateTime = OffsetDateTime.now(),
     createdBy: ContributorId = ContributorId("a56cfd65-8d29-4eae-a252-1b806fe88d3c"),
-) = Predicate(id, label, createdAt, createdBy)
+    description: String? = null
+) = Predicate(id, label, createdAt, createdBy, description)

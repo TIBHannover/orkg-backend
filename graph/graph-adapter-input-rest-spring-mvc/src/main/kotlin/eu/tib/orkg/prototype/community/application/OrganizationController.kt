@@ -8,9 +8,9 @@ import eu.tib.orkg.prototype.community.api.OrganizationUseCases
 import eu.tib.orkg.prototype.community.domain.model.Organization
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationType
+import eu.tib.orkg.prototype.community.spi.OrganizationRepository
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
 import eu.tib.orkg.prototype.files.api.CreateImageUseCase
 import eu.tib.orkg.prototype.files.api.ImageUseCases
 import eu.tib.orkg.prototype.files.application.InvalidImageData
@@ -54,9 +54,9 @@ private val encodedImagePattern = Regex("""^data:(.*);base64,([A-Za-z0-9+/]+=*)$
 class OrganizationController(
     private val service: OrganizationUseCases,
     private val observatoryService: ObservatoryUseCases,
-    private val contributorService: ContributorService,
     private val imageService: ImageUseCases,
-    override val resourceRepository: ResourceUseCases
+    override val resourceRepository: ResourceUseCases,
+    private val organizationRepository: OrganizationRepository,
 ) : BaseController(), ObservatoryRepresentationAdapter {
 
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
@@ -110,7 +110,7 @@ class OrganizationController(
 
     @GetMapping("{id}/users")
     fun findUsersByOrganizationId(@PathVariable id: OrganizationId): Iterable<Contributor> =
-        contributorService.findAllByOrganizationId(id, PageRequest.of(0, Int.MAX_VALUE)).content
+        organizationRepository.allMembers(id, PageRequest.of(0, Int.MAX_VALUE)).content
 
     @GetMapping("/conferences")
     fun findOrganizationsConferences(): Iterable<Organization> = service.listConferences()

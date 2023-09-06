@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.services
 
-import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.JpaUserRepository
+import eu.tib.orkg.prototype.auth.spi.UserRepository
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresObservatoryRepository
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import eu.tib.orkg.prototype.contributions.spi.ContributorRepository
@@ -25,7 +25,7 @@ import org.junit.jupiter.api.assertThrows
 class StatisticsServiceUnitTests {
 
     private val statsRepository: StatsRepository = mockk()
-    private val userRepository: JpaUserRepository = mockk()
+    private val userRepository: UserRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()
     private val observatoryRepository: PostgresObservatoryRepository = mockk()
     private val organizationRepository: PostgresOrganizationRepository = mockk()

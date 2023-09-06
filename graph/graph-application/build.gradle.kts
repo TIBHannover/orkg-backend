@@ -12,7 +12,7 @@ dependencies {
     api(platform(project(":platform")))
     implementation(project(":common:exceptions"))
     implementation(project(":identity-management:idm-application"))
-    implementation(project(":identity-management:idm-adapter-output-spring-data-jpa"))
+    implementation(project(":identity-management:idm-adapter-output-spring-data-jpa")) // for JpaUserRepository in observatories
 
     implementation("org.springframework.data:spring-data-commons")
     implementation("org.springframework:spring-core") // Spring MimeType
@@ -35,9 +35,8 @@ dependencies {
     // Search string parsing
     implementation("org.apache.lucene:lucene-queryparser:9.5.0")
 
-    testFixturesApi(project(":identity-management:idm-adapter-output-spring-data-jpa"))
     testFixturesApi(libs.kotest.runner)
-    testFixturesImplementation(project(":identity-management:idm-application"))
+    testFixturesImplementation(testFixtures(project(":identity-management:idm-application")))
     testFixturesImplementation("org.springframework.data:spring-data-commons")
     testFixturesImplementation("org.springframework.boot:spring-boot-starter-data-jpa")
     testFixturesImplementation(libs.forkhandles.fabrikate4k)
@@ -52,6 +51,7 @@ testing {
         val test by getting(JvmTestSuite::class) {
             useJUnitJupiter()
             dependencies {
+                implementation(testFixtures(project(":identity-management:idm-application")))
                 implementation(libs.contractual)
                 implementation(libs.spring.mockk)
             }

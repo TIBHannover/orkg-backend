@@ -2,20 +2,19 @@ package eu.tib.orkg.prototype.community.application
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
-import eu.tib.orkg.prototype.auth.spi.UserRepository
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.community.domain.model.Observatory
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.ResearchField
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.community.spi.ObservatoryRepository
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.createObservatory
 import eu.tib.orkg.prototype.createOrganization
 import eu.tib.orkg.prototype.createResource
+import eu.tib.orkg.prototype.pageOf
 import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.pageOf
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.mockk.every
 import io.mockk.just
@@ -60,15 +59,11 @@ internal class ObservatoryControllerUnitTest {
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
-    private lateinit var userRepository: UserRepository
-
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
-    @MockkBean
-    private lateinit var contributorService: ContributorService
-
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
-    @MockkBean
     private lateinit var resourceUseCases: ResourceUseCases
+
+    @MockkBean
+    private lateinit var observatoryRepository: ObservatoryRepository
+
 
     @BeforeEach
     fun setup() {

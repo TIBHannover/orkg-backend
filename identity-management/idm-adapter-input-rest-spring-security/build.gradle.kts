@@ -34,7 +34,7 @@ dependencies {
     testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
 
     implementation(project(":common:exceptions"))
-    implementation(project(":graph:graph-application"))
+    implementation(project(":graph:graph-application")) // TODO: break dependency, coupling of observatories
     implementation(project(":identity-management:idm-application"))
 
     implementation("org.springframework:spring-context")

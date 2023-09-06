@@ -1,16 +1,15 @@
 package eu.tib.orkg.prototype.statements.services
 
-import eu.tib.orkg.prototype.auth.domain.Role
 import eu.tib.orkg.prototype.auth.domain.UserService
+import eu.tib.orkg.prototype.auth.testing.fixtures.createAdminUser
+import eu.tib.orkg.prototype.auth.testing.fixtures.createUser
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.createStatement
-import eu.tib.orkg.prototype.createUser
 import eu.tib.orkg.prototype.statements.api.BundleConfiguration
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.Predicates
-import eu.tib.orkg.prototype.statements.api.UpdateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.UpdateStatementUseCase
 import eu.tib.orkg.prototype.statements.application.ForbiddenStatementDeletion
 import eu.tib.orkg.prototype.statements.application.ForbiddenStatementSubject
@@ -195,7 +194,7 @@ class StatementServiceUnitTest : DescribeSpec({
             val contributorId = randomContributorId()
             val statement = createStatement(subject, predicate, `object`)
                 .copy(id = statementId, createdBy = contributorId)
-            val user = createUser(contributorId.value).toUser()
+            val user = createUser(contributorId.value)
             every { statementRepository.findByStatementId(statementId) } returns Optional.of(statement)
 
             it("deletes the statement") {
@@ -227,9 +226,7 @@ class StatementServiceUnitTest : DescribeSpec({
             contributorId.value shouldNotBe statement.createdBy
 
             it("deletes the statement if the user is a curator") {
-                val user = createUser(contributorId.value)
-                    .toUser()
-                    .copy(roles = setOf(Role("ROLE_ADMIN")))
+                val user = createAdminUser(contributorId.value)
                 every { userService.findById(contributorId.value) } returns Optional.of(user)
                 every { statementRepository.deleteByStatementId(any()) } just Runs
 
@@ -294,7 +291,7 @@ class StatementServiceUnitTest : DescribeSpec({
         xcontext("all statements are owned by contributor") {
             val statementIds = (1..4).map { StatementId("S$it") }.toSet()
             val contributorId = randomContributorId()
-            val user = createUser(contributorId.value).toUser()
+            val user = createUser(contributorId.value)
             val fakeResult = statementIds.map { OwnershipInfo(it, contributorId) }.toSet()
             every { statementRepository.determineOwnership(statementIds) } returns fakeResult
 
@@ -324,7 +321,7 @@ class StatementServiceUnitTest : DescribeSpec({
             every { statementRepository.determineOwnership(allStatementIds) } returns fakeResult
 
             it("deletes no statements, but does not complain") {
-                val user = createUser(contributorId.value).toUser()
+                val user = createUser(contributorId.value)
                 every { userService.findById(contributorId.value) } returns Optional.of(user)
 
                 withContext(Dispatchers.IO) {
@@ -336,8 +333,7 @@ class StatementServiceUnitTest : DescribeSpec({
             }
 
             it("deletes all statements if the user is a curator") {
-                val user = createUser(contributorId.value).toUser()
-                    .copy(roles = setOf(Role("ROLE_ADMIN")))
+                val user = createAdminUser(contributorId.value)
                 every { userService.findById(contributorId.value) } returns Optional.of(user)
                 every { statementRepository.deleteByStatementIds(allStatementIds) } just Runs
 

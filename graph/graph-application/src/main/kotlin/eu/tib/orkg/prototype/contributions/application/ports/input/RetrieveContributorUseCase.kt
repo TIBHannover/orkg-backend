@@ -20,9 +20,5 @@ interface RetrieveContributorUseCase {
      */
     fun findById(id: ContributorId): Optional<Contributor>
 
-    fun findAllByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Contributor>
-
-    fun findAllByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Contributor>
-
     fun findAllByIds(ids: List<ContributorId>): List<Contributor>
 }

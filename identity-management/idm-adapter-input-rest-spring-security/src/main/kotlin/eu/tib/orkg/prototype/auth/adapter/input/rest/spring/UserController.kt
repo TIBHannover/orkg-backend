@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.auth.adapter.input.rest.spring
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
+import eu.tib.orkg.prototype.community.api.ObservatoryAuthUseCases
 import eu.tib.orkg.prototype.auth.domain.CurrentPasswordInvalid
 import eu.tib.orkg.prototype.auth.domain.PasswordsDoNotMatch
 import eu.tib.orkg.prototype.auth.domain.Role
@@ -36,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/user", produces = [MediaType.APPLICATION_JSON_VALUE])
 class UserController(
     private val userService: AuthUseCase,
+    private val observatoryAuthUseCases: ObservatoryAuthUseCases,
 ) {
     @GetMapping("/")
     fun lookupUserDetails(principal: Principal?): ResponseEntity<UserDetails> {
@@ -94,7 +96,7 @@ class UserController(
             throw UserIsAlreadyMemberOfOrganization(userObservatory.organizationId)
         }
         return ok(
-            userService.addUserObservatory(
+            observatoryAuthUseCases.addUserObservatory(
                 userObservatory.observatoryId.value,
                 userObservatory.organizationId.value,
                 user
@@ -105,7 +107,7 @@ class UserController(
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping("{id}/observatory")
     fun deleteUserObservatory(@PathVariable id: ContributorId) {
-        userService.deleteUserObservatory(id.value)
+        observatoryAuthUseCases.deleteUserObservatory(id.value)
     }
 
     /**

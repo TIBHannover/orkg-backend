@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype
 
-import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.UserEntity
 import eu.tib.orkg.prototype.community.domain.model.Observatory
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.Organization
@@ -29,7 +28,6 @@ import java.io.BufferedReader
 import java.io.StringWriter
 import java.io.Writer
 import java.net.URI
-import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.util.*
 import javax.activation.MimeType
@@ -93,17 +91,6 @@ fun createOrganization() = Organization(
     type = OrganizationType.GENERAL,
     logoId = null
 )
-
-fun createUser(id: UUID = UUID.fromString("ee06bdf3-d6f3-41d1-8af2-64c583d9057e")) = UserEntity().apply {
-    this.id = id
-    email = "user@example.org"
-    password = "secret"
-    displayName = "Example User"
-    enabled = true
-    created = LocalDateTime.now()
-    organizationId = null
-    observatoryId = null
-}
 
 fun createObservatory(organizationIds: Set<OrganizationId>) = Observatory(
     id = ObservatoryId(UUID.fromString("95565e51-2b80-4c28-918c-6fbc5e2a9b33")),

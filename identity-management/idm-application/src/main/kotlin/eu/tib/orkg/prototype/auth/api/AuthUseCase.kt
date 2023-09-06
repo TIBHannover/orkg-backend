@@ -3,12 +3,7 @@ package eu.tib.orkg.prototype.auth.api
 import eu.tib.orkg.prototype.auth.domain.User
 import java.util.*
 
-interface AuthUseCase : RegisterUserUseCase, ManageUserSettingUseCases, FindUserUseCases {
-    // TODO: More obscure use cases, that we should change or decouple:
-    fun addUserObservatory(observatoryId: UUID, organizationId: UUID, contributor: User): User
-    fun updateOrganizationAndObservatory(userId: UUID, organizationId: UUID?, observatoryId: UUID?)
-    fun deleteUserObservatory(contributor: UUID)
-}
+interface AuthUseCase : RegisterUserUseCase, ManageUserSettingUseCases, FindUserUseCases
 
 interface RegisterUserUseCase {
     fun registerUser(anEmail: String, aPassword: String, aDisplayName: String?, userId: UUID? = null): UUID

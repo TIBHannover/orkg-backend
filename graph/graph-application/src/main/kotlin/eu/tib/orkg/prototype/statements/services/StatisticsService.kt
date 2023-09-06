@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.services
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.JpaUserRepository
+import eu.tib.orkg.prototype.auth.spi.UserRepository
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresObservatoryRepository
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import eu.tib.orkg.prototype.community.application.ObservatoryNotFound
@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class StatisticsService(
     private val statsRepository: StatsRepository,
-    private val userRepository: JpaUserRepository,
+    private val userRepository: UserRepository,
     private val contributorRepository: ContributorRepository,
     private val observatoryRepository: PostgresObservatoryRepository,
     private val organizationRepository: PostgresOrganizationRepository,

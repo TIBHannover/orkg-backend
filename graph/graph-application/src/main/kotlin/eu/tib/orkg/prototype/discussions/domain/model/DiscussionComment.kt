@@ -10,4 +10,6 @@ data class DiscussionComment(
     val message: String,
     val createdBy: ContributorId,
     val createdAt: OffsetDateTime
-)
+) {
+    fun isOwnedBy(contributor: ContributorId): Boolean = createdBy == contributor
+}

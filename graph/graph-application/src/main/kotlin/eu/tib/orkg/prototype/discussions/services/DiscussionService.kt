@@ -1,7 +1,6 @@
 package eu.tib.orkg.prototype.discussions.services
 
-import eu.tib.orkg.prototype.auth.domain.Role
-import eu.tib.orkg.prototype.auth.domain.UserService
+import eu.tib.orkg.prototype.auth.api.FindUserUseCases
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.discussions.api.CreateDiscussionCommentUseCase
 import eu.tib.orkg.prototype.discussions.api.DiscussionUseCases
@@ -30,7 +29,7 @@ private val urlPattern = Pattern.compile("""https?://.*|www\..+""")
 class DiscussionService(
     private val repository: DiscussionCommentRepository,
     private val thingRepository: ThingRepository,
-    private val userService: UserService,
+    private val userService: FindUserUseCases,
     private val clock: Clock = Clock.systemDefaultZone(),
 ) : DiscussionUseCases {
     override fun create(command: CreateDiscussionCommentUseCase.CreateCommand): DiscussionCommentId {
@@ -61,8 +60,8 @@ class DiscussionService(
     override fun delete(contributorId: ContributorId, topic: ThingId, id: DiscussionCommentId) {
         val user = userService.findById(contributorId.value)
             .orElseThrow { UserNotFound(contributorId.value) }
-        repository.findById(id).ifPresent {
-            if (it.createdBy.value != user.id && "ROLE_ADMIN" !in user.roles.map(Role::name)) {
+        repository.findById(id).ifPresent { comment ->
+            if (!comment.isOwnedBy(ContributorId(user.id)) && !user.isAdmin) {
                 throw Unauthorized()
             }
             repository.deleteById(id)

@@ -83,6 +83,7 @@ testing {
                 implementation(testFixtures(project(":testing:spring")))
                 implementation(testFixtures(project(":graph:graph-application")))
                 implementation(project(":identity-management:idm-application"))
+                implementation(project(":identity-management:idm-adapter-output-spring-data-jpa")) // for JpaUserAdapter in DiscussionCommentAdapter
                 implementation(project(":discussions:discussions-adapter-output-spring-data-jpa-postgres"))
                 implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa-postgres"))
                 implementation(project(":feature-flags:feature-flags-ports"))

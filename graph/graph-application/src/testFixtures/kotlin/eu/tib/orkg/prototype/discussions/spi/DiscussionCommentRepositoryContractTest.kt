@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.discussions.spi
 
 import eu.tib.orkg.prototype.auth.spi.UserRepository
+import eu.tib.orkg.prototype.auth.testing.fixtures.createUser
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.createUser
 import eu.tib.orkg.prototype.discussions.domain.model.DiscussionComment
 import eu.tib.orkg.prototype.discussions.domain.model.DiscussionCommentId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -29,7 +29,7 @@ interface DiscussionCommentRepositoryContractTest {
             createdBy = ContributorId(UUID.randomUUID()),
             createdAt = OffsetDateTime.now()
         )
-        userRepository.save(createUser(comment.createdBy.value).toUser())
+        userRepository.save(createUser(comment.createdBy.value))
         repository.save(comment)
 
         val result = repository.findById(comment.id)
@@ -65,7 +65,7 @@ interface DiscussionCommentRepositoryContractTest {
             createdBy = ContributorId(UUID.randomUUID()),
             createdAt = OffsetDateTime.now()
         )
-        userRepository.save(createUser(comment.createdBy.value).toUser())
+        userRepository.save(createUser(comment.createdBy.value))
         repository.save(comment)
         repository.findById(comment.id).isPresent shouldBe true
 
@@ -95,7 +95,7 @@ interface DiscussionCommentRepositoryContractTest {
         )
         comments.forEachIndexed { index, it ->
             userRepository.save(
-                createUser(it.createdBy.value).toUser().copy(
+                createUser(it.createdBy.value).copy(
                     // Make each email unique to satisfy db constraints
                     email = "user$index@example.org"
                 )

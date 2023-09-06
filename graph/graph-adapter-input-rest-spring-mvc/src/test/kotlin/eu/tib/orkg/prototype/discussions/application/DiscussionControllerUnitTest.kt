@@ -4,22 +4,21 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.auth.domain.UserService
 import eu.tib.orkg.prototype.auth.spi.UserRepository
+import eu.tib.orkg.prototype.auth.testing.fixtures.createUser
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
-import eu.tib.orkg.prototype.createUser
 import eu.tib.orkg.prototype.discussions.api.CreateDiscussionCommentUseCase
 import eu.tib.orkg.prototype.discussions.api.DiscussionUseCases
 import eu.tib.orkg.prototype.discussions.domain.model.DiscussionComment
 import eu.tib.orkg.prototype.discussions.domain.model.DiscussionCommentId
 import eu.tib.orkg.prototype.statements.application.UserNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import io.mockk.MockKGateway.VerificationResult.*
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.security.Principal
 import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter.*
+import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.util.*
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.BeforeEach
@@ -32,7 +31,9 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -72,7 +73,7 @@ internal class DiscussionControllerUnitTest {
         val topic = ThingId("C1234")
         val userId = UUID.randomUUID()
         val mockPrincipal = mockk<Principal>()
-        val user = createUser(id = userId).toUser()
+        val user = createUser(id = userId)
         val comment = DiscussionComment(
             id = DiscussionCommentId(UUID.randomUUID()),
             topic = topic,
@@ -152,7 +153,7 @@ internal class DiscussionControllerUnitTest {
         val topic = ThingId("C1234")
         val mockPrincipal = mockk<Principal>()
         val userId = UUID.randomUUID()
-        val user = createUser(id = userId).toUser()
+        val user = createUser(id = userId)
 
         every { mockPrincipal.name } returns userId.toString()
         every { userService.findById(userId) } returns Optional.of(user)
@@ -176,7 +177,7 @@ internal class DiscussionControllerUnitTest {
         val topic = ThingId("C1234")
         val mockPrincipal = mockk<Principal>()
         val userId = UUID.randomUUID()
-        val user = createUser(id = userId).toUser()
+        val user = createUser(id = userId)
         every { mockPrincipal.name } returns userId.toString()
         every { userService.findById(userId) } returns Optional.of(user)
         every { discussionService.create(any()) } throws InvalidContent()

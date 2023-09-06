@@ -15,6 +15,7 @@ testing {
             dependencies {
                 implementation(testFixtures(project(":testing:spring")))
                 implementation(testFixtures(project(":graph:graph-application")))
+                implementation(testFixtures(project(":identity-management:idm-application")))
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")

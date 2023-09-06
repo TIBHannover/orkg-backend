@@ -102,6 +102,8 @@ class InvalidLabel : PropertyValidationException("label", "A label must not be b
 
 class InvalidLiteralLabel : PropertyValidationException("label", "A literal must be at most $MAX_LABEL_LENGTH characters long.")
 
+class InvalidLiteralDatatype: PropertyValidationException("datatype", "A literal datatype must be a URI or a \"xsd:\"-prefixed type")
+
 class InvalidURI : PropertyValidationException("uri", "The provided URI is not a valid URI.")
 
 class UserNotFound : SimpleMessageException {

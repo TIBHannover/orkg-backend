@@ -11,9 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (Closes: [#495](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/495))
 - Added support for ordered lists.
   (Closes: [#175](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/175))
+### Changed
+- Literal datatypes need to be a valid URI or prefixed with `xsd:`.
 ### Fixed
 - Benchmark queries can handle optional models and codes now.
   (Closes: [#492](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/492))
+- Literal datatypes are now correctly exported to RDF.
+  (Closes: [#503](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/503))
 
 ## [0.36.0] - 2023-08-28
 ### Added

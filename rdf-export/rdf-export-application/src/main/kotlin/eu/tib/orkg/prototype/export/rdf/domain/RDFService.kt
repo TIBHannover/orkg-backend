@@ -222,6 +222,13 @@ private fun serializeThing(thing: Thing): String {
         is Resource -> "<$rPrefix${thing.id}>"
         is Predicate -> "<$pPrefix${thing.id}>"
         is Class -> "<$cPrefix${thing.id}>"
-        is Literal -> "\"${escapeLiterals(thing.label)}\"^^<http://www.w3.org/2001/XMLSchema#string>"
+        is Literal -> "\"${escapeLiterals(thing.label)}\"^^<${thing.datatype.toDatatypeURL()}>"
     }
 }
+
+private fun String.toDatatypeURL(): String =
+    // This will have issues if other prefixes are used.
+    if (this.startsWith("xsd:"))
+        "http://www.w3.org/2001/XMLSchema#${replace("xsd:", "")}"
+    else
+        this

@@ -63,15 +63,3 @@ interface RetrieveResourceUseCase {
     fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
     fun hasStatements(id: ThingId): Boolean
 }
-
-fun interface ResourceGenerator {
-    fun generate(): Resource
-}
-
-fun interface IterableResourcesGenerator {
-    fun generate(): Iterable<Resource>
-}
-
-fun interface PagedResourcesGenerator {
-    fun generate(): Page<Resource>
-}

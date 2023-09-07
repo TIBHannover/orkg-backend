@@ -45,6 +45,13 @@ private val reservedClassIds = setOf(
     Classes.list
 )
 
+/** The set of classes that can be published, meaning a DOI can be registered for them. */
+val publishableClasses: Set<ThingId> = setOf(
+    ThingId("Paper"),
+    ThingId("Comparison"),
+    ThingId("SmartReviewPublished"),
+)
+
 @Service
 @Transactional
 class ResourceService(
@@ -162,14 +169,18 @@ class ResourceService(
         )
     }
 
+    override fun findByDOI(doi: String): Optional<Resource> =
+        statementRepository.findByDOI(doi)
+            .filter { it.classes.intersect(publishableClasses).isNotEmpty() }
+
     fun validateClassFilter(includeClasses: Set<ThingId>, excludeClasses: Set<ThingId>) {
         for (includedClass in includeClasses)
             if (includedClass in excludeClasses)
                 throw InvalidClassFilter(includedClass)
     }
 
-    override fun findByDOI(doi: String): Optional<Resource> =
-        statementRepository.findByDOI(doi)
+    override fun findPaperByDOI(doi: String): Optional<Resource> =
+        statementRepository.findPaperByDOI(doi)
 
     override fun findByTitle(title: String): Optional<Resource> =
         repository.findPaperByLabel(title)

@@ -5,7 +5,7 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.BundleConfiguration
-import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase.*
+import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase.PredicateUsageCount
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -70,7 +70,12 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount>
     fun findDOIByContributionId(id: ThingId): Optional<Literal>
     fun countPredicateUsage(id: ThingId): Long
+
+    /** Find any resource by DOI. */
     fun findByDOI(doi: String): Optional<Resource>
+
+    /** Find a paper resource by DOI. */
+    fun findPaperByDOI(doi: String): Optional<Resource>
     fun findAllPapersByDOI(doi: String, pageable: Pageable): Page<Resource>
     fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource>
     fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId>

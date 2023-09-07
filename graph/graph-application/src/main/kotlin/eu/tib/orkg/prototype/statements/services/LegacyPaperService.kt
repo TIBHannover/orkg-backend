@@ -115,7 +115,7 @@ class LegacyPaperService(
     ): ThingId {
         // Do this in a sequential order, first check for DOI and then title, otherwise we create a new paper
         if (request.paper.hasDOI()) {
-            val byDOI = resourceService.findByDOI(request.paper.doi!!)
+            val byDOI = resourceService.findPaperByDOI(request.paper.doi!!)
             if (byDOI.isPresent) return byDOI.get().id
         }
         val byTitle = resourceService.findAllByTitle(request.paper.title)

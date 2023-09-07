@@ -575,6 +575,22 @@ class SpringDataNeo4jStatementAdapter(
 
     override fun findByDOI(doi: String): Optional<Resource> = CypherQueryBuilder(neo4jClient)
         .withQuery {
+            val p = node("Resource").named("p")
+            val l = name("l")
+            match(
+                p.relationshipTo(node("Literal").named(l), RELATED)
+                    .withProperties("predicate_id", literalOf<String>(ObjectService.ID_DOI_PREDICATE))
+            ).where(
+                toUpper(l.property("label")).eq(toUpper(parameter("doi")))
+            ).returning(p)
+                .limit(1)
+        }
+        .withParameters("doi" to doi)
+        .mappedBy(ResourceMapper("p"))
+        .one()
+
+    override fun findPaperByDOI(doi: String): Optional<Resource> = CypherQueryBuilder(neo4jClient)
+        .withQuery {
             val p = name("p")
             val paper = paperNode()
                 .named(p)

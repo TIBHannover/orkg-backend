@@ -904,6 +904,32 @@ fun <
         }
     }
 
+    describe("finding a resource by DOI") {
+        it("always returns the resource") {
+            val hasDOI = createPredicate(id = ThingId("P26"))
+            val doi = fabricator.random<String>()
+            val resource = createResource(classes = setOf(ThingId(fabricator.random())))
+            val resourceHasDoi = createStatement(
+                subject = resource,
+                predicate = hasDOI,
+                `object` = createLiteral(label = doi)
+            )
+            saveStatement(resourceHasDoi)
+
+            val actual = repository.findByDOI(doi)
+            actual.isPresent shouldBe true
+            actual.get() shouldBe resource
+
+            val upper = repository.findByDOI(doi.uppercase())
+            upper.isPresent shouldBe true
+            upper.get() shouldBe resource
+
+            val lower = repository.findByDOI(doi.lowercase())
+            lower.isPresent shouldBe true
+            lower.get() shouldBe resource
+        }
+    }
+
     describe("counting predicate usage") {
         context("for a single predicate") {
             context("when no statements exist") {
@@ -1020,15 +1046,15 @@ fun <
                 )
                 saveStatement(paperHasDoi)
 
-                val actual = repository.findByDOI(doi)
+                val actual = repository.findPaperByDOI(doi)
                 actual.isPresent shouldBe true
                 actual.get() shouldBe paper
 
-                val upper = repository.findByDOI(doi.uppercase())
+                val upper = repository.findPaperByDOI(doi.uppercase())
                 upper.isPresent shouldBe true
                 upper.get() shouldBe paper
 
-                val lower = repository.findByDOI(doi.lowercase())
+                val lower = repository.findPaperByDOI(doi.lowercase())
                 lower.isPresent shouldBe true
                 lower.get() shouldBe paper
             }
@@ -1043,7 +1069,7 @@ fun <
                 )
                 saveStatement(paperHasDoi)
 
-                val actual = repository.findByDOI(doi)
+                val actual = repository.findPaperByDOI(doi)
                 actual.isPresent shouldBe false
             }
         }

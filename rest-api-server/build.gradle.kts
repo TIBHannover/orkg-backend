@@ -30,6 +30,7 @@ plugins {
 
     id("org.jetbrains.dokka") version "0.10.1"
     id("org.asciidoctor.jvm.convert") version "3.3.2"
+    id("org.asciidoctor.jvm.gems") version "3.3.2"
     id("com.google.cloud.tools.jib") version "3.1.1"
     // The taskinfo plugin currently does not work with Gradle 7.6: https://gitlab.com/barfuin/gradle-taskinfo/-/issues/20
     // It was used only occasionally for debugging, and can be re-enabled again later (if needed).
@@ -206,6 +207,7 @@ dependencies {
     restdocs(project(withSnippets(":graph:graph-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":rdf-export:rdf-export-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":licenses:licenses-adapter-input-rest-spring-mvc")))
+    restdocs(project(withSnippets(":widget")))
 }
 
 tasks.named("check") {
@@ -311,6 +313,17 @@ tasks {
                 diagram.version("2.2.10")
             }
             fatalWarnings(missingIncludes())
+
+            // Work-around for JRE 16+, because Java's internal APIs are no longer available due to JPMS.
+            // This should be fixed in the Asciidoctor plugin, but never was.
+            inProcess = org.asciidoctor.gradle.base.process.ProcessMode.JAVA_EXEC
+            forkOptions {
+                jvmArgs(
+                    "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED",
+                    "--add-opens", "java.base/java.io=ALL-UNNAMED",
+                    "--add-opens", "java.base/java.security=ALL-UNNAMED",
+                )
+            }
         }
 
         // outputs.upToDateWhen { false }

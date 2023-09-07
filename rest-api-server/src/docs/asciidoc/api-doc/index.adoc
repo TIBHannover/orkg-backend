@@ -1,6 +1,7 @@
 = ORKG REST API Documentation
 :doctype: book
 :toc: right
+:icons: font
 
 // Non-document attributes
 include::../_default-attributes.adoc[]
@@ -408,6 +409,9 @@ include::parts/datasets-benchmarks.adoc[]
 The reproducibility score measures the availability, accessibility, linkability, and license of a resource.
 
 include::parts/licenses.adoc[]
+
+[[widget]]
+include::parts/widget.adoc[leveloffset=+1]
 
 [[sorting-and-pagination]]
 == Sorting and Pagination

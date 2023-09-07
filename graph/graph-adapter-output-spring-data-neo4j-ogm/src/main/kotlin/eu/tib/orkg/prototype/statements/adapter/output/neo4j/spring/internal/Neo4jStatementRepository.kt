@@ -7,7 +7,6 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.services.ObjectService
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
-import eu.tib.orkg.prototype.statements.spi.StatementRepository.*
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -212,8 +211,11 @@ CALL {
 RETURN SUM(cnt)""")
     fun countPredicateUsage(id: ThingId): Long
 
-    @Query("""MATCH (node:Paper:Resource)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(l:Literal) WHERE not 'PaperDeleted' in labels(node) AND toUpper(l.label) = toUpper($doi) RETURN node LIMIT 1""")
+    @Query("""MATCH (node:Resource)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(l:Literal) WHERE toUpper(l.label) = toUpper($doi) RETURN node LIMIT 1""")
     fun findByDOI(doi: String): Optional<Neo4jResource>
+
+    @Query("""MATCH (node:Paper:Resource)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(l:Literal) WHERE not 'PaperDeleted' in labels(node) AND toUpper(l.label) = toUpper($doi) RETURN node LIMIT 1""")
+    fun findPaperByDOI(doi: String): Optional<Neo4jResource>
 
     @Query("""
 MATCH (node:Paper:Resource)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(l:Literal)

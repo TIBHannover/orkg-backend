@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added a new endpoint to fetch license information for external sites.
   (Closes: [#495](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/495))
+- The widget API was extended to return the class of the resources found.
+  (Closes: [#500](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/500))
 - Added support for ordered lists.
   (Closes: [#175](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/175))
 ### Changed

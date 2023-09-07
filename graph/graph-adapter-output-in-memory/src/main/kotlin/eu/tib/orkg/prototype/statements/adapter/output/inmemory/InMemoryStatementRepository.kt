@@ -240,6 +240,12 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
             }
         })
 
+    override fun findByDOI(doi: String): Optional<Resource> =
+        Optional.ofNullable(entities.values.find {
+            it.subject is Resource && it.predicate.id == hasDOI
+                    && it.`object` is Literal && it.`object`.label.uppercase() == doi.uppercase()
+        }).map { it.subject as Resource }
+
     override fun countPredicateUsage(id: ThingId): Long =
         entities.values.count {
             (it.subject is Predicate && (it.subject as Predicate).id == id
@@ -248,7 +254,7 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
                 && it.predicate.id.value != "description"
         }.toLong()
 
-    override fun findByDOI(doi: String): Optional<Resource> =
+    override fun findPaperByDOI(doi: String): Optional<Resource> =
         Optional.ofNullable(entities.values.find {
             it.subject is Resource && with(it.subject as Resource) {
                 paperClass in classes && paperDeletedClass !in classes

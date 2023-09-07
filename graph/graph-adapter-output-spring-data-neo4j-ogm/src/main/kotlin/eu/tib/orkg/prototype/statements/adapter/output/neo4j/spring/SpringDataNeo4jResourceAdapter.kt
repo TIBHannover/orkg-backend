@@ -210,12 +210,12 @@ class SpringDataNeo4jResourceAdapter(
         neo4jRepository.findAllListed(pageable)
             .map(Neo4jResource::toResource)
 
-    override fun findAllPapersByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllPapersByVisibility(visibility, pageable)
+    override fun findAllByClassAndVisibility(classId: ThingId, visibility: Visibility, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllByClassAndVisibility(classId, visibility, pageable)
             .map(Neo4jResource::toResource)
 
-    override fun findAllListedPapers(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllListedPapers(pageable)
+    override fun findAllListedByClass(classId: ThingId, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllListedByClass(classId, pageable)
             .map(Neo4jResource::toResource)
 
     override fun findAllByClassInAndVisibility(

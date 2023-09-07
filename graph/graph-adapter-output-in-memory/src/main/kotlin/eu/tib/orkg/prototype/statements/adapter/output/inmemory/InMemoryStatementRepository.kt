@@ -24,7 +24,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 
 private val paperClass = ThingId("Paper")
-private val paperDeletedClass = ThingId("PaperDeleted")
 private val problemClass = ThingId("Problem")
 private val comparisonClass = ThingId("Comparison")
 private val contributionClass = ThingId("Contribution")
@@ -239,13 +238,6 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
                 it.`object` as Literal
             }
         })
-
-    override fun findByDOI(doi: String): Optional<Resource> =
-        Optional.ofNullable(entities.values.find {
-            it.subject is Resource && it.predicate.id == hasDOI
-                    && it.`object` is Literal && it.`object`.label.uppercase() == doi.uppercase()
-        }).map { it.subject as Resource }
-
     override fun countPredicateUsage(id: ThingId): Long =
         entities.values.count {
             (it.subject is Predicate && (it.subject as Predicate).id == id
@@ -254,21 +246,22 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
                 && it.predicate.id.value != "description"
         }.toLong()
 
-    override fun findPaperByDOI(doi: String): Optional<Resource> =
+    override fun findByDOI(doi: String): Optional<Resource> =
         Optional.ofNullable(entities.values.find {
-            it.subject is Resource && with(it.subject as Resource) {
-                paperClass in classes && paperDeletedClass !in classes
-            }   && it.predicate.id == hasDOI
+            it.subject is Resource && it.predicate.id == hasDOI
                 && it.`object` is Literal && it.`object`.label.uppercase() == doi.uppercase()
         }).map { it.subject as Resource }
 
-    override fun findAllPapersByDOI(doi: String, pageable: Pageable): Page<Resource> =
-        entities.values.filter {
-            it.subject is Resource && with(it.subject as Resource) {
-                paperClass in classes && paperDeletedClass !in classes
-            }   && it.predicate.id == hasDOI
-                && it.`object` is Literal && it.`object`.label.uppercase() == doi.uppercase()
-        }.map { it.subject as Resource }.distinct().paged(pageable)
+    override fun findAllBySubjectClassAndDOI(subjectClass: ThingId, doi: String, pageable: Pageable): Page<Resource> =
+        entities.values
+            .filter {
+                it.subject is Resource && with(it.subject as Resource) {
+                    subjectClass in classes
+                } && it.predicate.id == hasDOI && it.`object` is Literal && it.`object`.label.uppercase() == doi.uppercase()
+            }
+            .map { it.subject as Resource }
+            .distinct()
+            .paged(pageable)
 
     // TODO: rename to findAllProblemsByObservatoryId
     override fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =

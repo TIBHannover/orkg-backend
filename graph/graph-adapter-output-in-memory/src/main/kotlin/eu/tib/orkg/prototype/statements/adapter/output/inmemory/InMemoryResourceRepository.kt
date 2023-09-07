@@ -148,11 +148,11 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
     override fun findAllListed(pageable: Pageable): Page<Resource> =
         findAllFilteredAndPaged(pageable) { it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED }
 
-    override fun findAllPapersByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource> =
-        findAllFilteredAndPaged(pageable) { it.visibility == visibility && paperClass in it.classes }
+    override fun findAllByClassAndVisibility(classId: ThingId, visibility: Visibility, pageable: Pageable): Page<Resource> =
+        findAllFilteredAndPaged(pageable) { it.visibility == visibility && classId in it.classes }
 
-    override fun findAllListedPapers(pageable: Pageable): Page<Resource> =
-        findAllFilteredAndPaged(pageable) { (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED) && paperClass in it.classes }
+    override fun findAllListedByClass(classId: ThingId, pageable: Pageable): Page<Resource> =
+        findAllFilteredAndPaged(pageable) { (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED) && classId in it.classes }
 
     override fun findAllByClassInAndVisibility(
         classes: Set<ThingId>,

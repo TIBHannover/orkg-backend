@@ -203,13 +203,10 @@ class SpringDataNeo4jStatementAdapter(
     override fun findByDOI(doi: String): Optional<Resource> =
         neo4jRepository.findByDOI(doi).map(Neo4jResource::toResource)
 
+    override fun findAllBySubjectClassAndDOI(subjectClass: ThingId, doi: String, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllBySubjectClassAndDOI(subjectClass, doi, pageable).map(Neo4jResource::toResource)
+
     override fun countPredicateUsage(id: ThingId) = neo4jRepository.countPredicateUsage(id)
-
-    override fun findPaperByDOI(doi: String): Optional<Resource> =
-        neo4jRepository.findPaperByDOI(doi).map(Neo4jResource::toResource)
-
-    override fun findAllPapersByDOI(doi: String, pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllPapersByDOI(doi, pageable).map(Neo4jResource::toResource)
 
     override fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
         neo4jRepository.findProblemsByObservatoryId(id, pageable).map(Neo4jResource::toResource)

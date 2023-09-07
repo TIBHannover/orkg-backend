@@ -589,46 +589,26 @@ class SpringDataNeo4jStatementAdapter(
         .mappedBy(ResourceMapper("p"))
         .one()
 
-    override fun findPaperByDOI(doi: String): Optional<Resource> = CypherQueryBuilder(neo4jClient)
-        .withQuery {
-            val p = name("p")
-            val paper = paperNode()
-                .named(p)
-            val l = name("l")
-            match(
-                paper.relationshipTo(node("Literal").named(l), RELATED)
-                    .withProperties("predicate_id", literalOf<String>(ObjectService.ID_DOI_PREDICATE))
-            ).where(
-                paper.hasLabels("PaperDeleted").not()
-                    .and(toUpper(l.property("label")).eq(toUpper(parameter("doi"))))
-            ).returning(p)
-                .limit(1)
-        }
-        .withParameters("doi" to doi)
-        .mappedBy(ResourceMapper("p"))
-        .one()
-
-    override fun findAllPapersByDOI(doi: String, pageable: Pageable): Page<Resource> = CypherQueryBuilder(neo4jClient)
-        .withCommonQuery {
-            val paper = paperNode().named("p")
-            val l = name("l")
-            match(
-                paper.relationshipTo(node("Literal").named(l), RELATED)
-                    .withProperties("predicate_id", literalOf<String>(ObjectService.ID_DOI_PREDICATE))
-            ).where(
-                paper.hasLabels("PaperDeleted").not()
-                    .and(toUpper(l.property("label")).eq(toUpper(parameter("doi"))))
-            )
-        }
-        .withQuery { commonQuery ->
-            commonQuery.returningDistinct(name("p"))
-        }
-        .countDistinctOver("p")
-        .withParameters(
-            "doi" to doi
-        )
-        .mappedBy(ResourceMapper("p"))
-        .fetch(pageable)
+    override fun findAllBySubjectClassAndDOI(subjectClass: ThingId, doi: String, pageable: Pageable): Page<Resource> =
+        CypherQueryBuilder(neo4jClient)
+            .withCommonQuery {
+                val resource = node("Resource")
+                    .named("n")
+                val l = name("l")
+                match(
+                    resource.relationshipTo(node("Literal").named(l), RELATED)
+                        .withProperties("predicate_id", literalOf<String>(ObjectService.ID_DOI_PREDICATE))
+                ).where(
+                    resource.hasLabels(subjectClass.value)
+                        .and(toUpper(l.property("label")).eq(toUpper(parameter("doi"))))
+                )
+            }.withQuery { commonQuery ->
+                commonQuery.returningDistinct("n")
+            }
+            .countDistinctOver("n")
+            .withParameters("doi" to doi)
+            .mappedBy(ResourceMapper("n"))
+            .fetch(pageable)
 
     override fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
         CypherQueryBuilder(neo4jClient)

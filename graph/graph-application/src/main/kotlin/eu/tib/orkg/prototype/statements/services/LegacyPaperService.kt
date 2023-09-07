@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.Contributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.CreateListUseCase
 import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase.CreateObjectRequest
 import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase.NamedObject
@@ -115,7 +116,8 @@ class LegacyPaperService(
     ): ThingId {
         // Do this in a sequential order, first check for DOI and then title, otherwise we create a new paper
         if (request.paper.hasDOI()) {
-            val byDOI = resourceService.findPaperByDOI(request.paper.doi!!)
+            val byDOI = resourceService.findByDOI(request.paper.doi!!)
+                .filter { Classes.paper in it.classes }
             if (byDOI.isPresent) return byDOI.get().id
         }
         val byTitle = resourceService.findAllByTitle(request.paper.title)

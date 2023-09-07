@@ -25,14 +25,12 @@ fun timestampFieldWithPath(path: String, suffix: String): FieldDescriptor = fiel
 
 fun documentedGetRequestTo(
     urlTemplate: String,
-    vararg uriValues: Any,
-    accept: String = MediaType.APPLICATION_JSON_VALUE,
-    contentType: String = MediaType.APPLICATION_JSON_VALUE
+    vararg uriValues: Any
 ): MockHttpServletRequestBuilder =
     RestDocumentationRequestBuilders.get(urlTemplate, *uriValues)
-        .accept(accept)
-        .contentType(contentType)
-        .characterEncoding("utf-8")
+        .accept(MediaType.APPLICATION_JSON_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        .characterEncoding(Charsets.UTF_8.name())
 
 fun documentedPostRequestTo(
     urlTemplate: String,

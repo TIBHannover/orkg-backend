@@ -179,9 +179,6 @@ class ResourceService(
                 throw InvalidClassFilter(includedClass)
     }
 
-    override fun findPaperByDOI(doi: String): Optional<Resource> =
-        statementRepository.findPaperByDOI(doi)
-
     override fun findByTitle(title: String): Optional<Resource> =
         repository.findPaperByLabel(title)
 
@@ -335,16 +332,16 @@ class ResourceService(
     }
 
     override fun loadFeaturedPapers(pageable: Pageable): Page<Resource> =
-        repository.findAllPapersByVisibility(Visibility.FEATURED, pageable)
+        repository.findAllByClassAndVisibility(Classes.paper, Visibility.FEATURED, pageable)
 
     override fun loadNonFeaturedPapers(pageable: Pageable): Page<Resource> =
-        repository.findAllPapersByVisibility(Visibility.DEFAULT, pageable)
+        repository.findAllByClassAndVisibility(Classes.paper, Visibility.DEFAULT, pageable)
 
     override fun loadUnlistedPapers(pageable: Pageable): Page<Resource> =
-        repository.findAllPapersByVisibility(Visibility.UNLISTED, pageable)
+        repository.findAllByClassAndVisibility(Classes.paper, Visibility.UNLISTED, pageable)
 
     override fun loadListedPapers(pageable: Pageable): Page<Resource> =
-        repository.findAllListedPapers(pageable)
+        repository.findAllListedByClass(Classes.paper, pageable)
 
     override fun getFeaturedPaperFlag(id: ThingId): Boolean =
         repository.findPaperById(id)

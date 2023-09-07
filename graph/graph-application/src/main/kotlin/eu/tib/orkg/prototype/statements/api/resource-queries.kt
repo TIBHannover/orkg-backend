@@ -45,7 +45,6 @@ interface RetrieveResourceUseCase {
     fun findByDOI(doi: String): Optional<Resource>
 
     /** Find a paper resource by DOI. */
-    fun findPaperByDOI(doi: String): Optional<Resource>
     fun findById(id: ThingId): Optional<Resource>
     fun findByTitle(title: String): Optional<Resource>
     fun findAllComparisonsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource>

@@ -48,7 +48,10 @@ internal class ContributionControllerUnitTest : RestDocsTest("contributions") {
         val contribution = createDummyContribution()
         every { contributionService.findById(contribution.id) } returns contribution
 
-        mockMvc.perform(documentedGetRequestTo("/api/contributions/{id}", contribution.id, accept = CONTRIBUTION_JSON_V2, contentType = CONTRIBUTION_JSON_V2))
+        documentedGetRequestTo("/api/contributions/{id}", contribution.id)
+            .accept(CONTRIBUTION_JSON_V2)
+            .contentType(CONTRIBUTION_JSON_V2)
+            .perform()
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
@@ -89,7 +92,10 @@ internal class ContributionControllerUnitTest : RestDocsTest("contributions") {
         val contribution = createDummyContribution()
         every { contributionService.findAll(any()) } returns pageOf(contribution)
 
-        mockMvc.perform(documentedGetRequestTo("/api/contributions", accept = CONTRIBUTION_JSON_V2, contentType = CONTRIBUTION_JSON_V2))
+        documentedGetRequestTo("/api/contributions")
+            .accept(CONTRIBUTION_JSON_V2)
+            .contentType(CONTRIBUTION_JSON_V2)
+            .perform()
             .andExpect(status().isOk)
             .andExpectPage()
             .andDo(generateDefaultDocSnippets())

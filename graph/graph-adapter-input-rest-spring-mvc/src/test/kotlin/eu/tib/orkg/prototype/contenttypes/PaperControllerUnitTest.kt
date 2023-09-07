@@ -49,12 +49,15 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     private lateinit var userRepository: AuthUseCase
 
     @Test
-    @DisplayName("Given a paper, when it is fetched by id and service succeeds, then status is 200 OK and contribution is returned")
+    @DisplayName("Given a paper, when it is fetched by id and service succeeds, then status is 200 OK and paper is returned")
     fun getSingle() {
         val paper = createDummyPaper()
         every { paperService.findById(paper.id) } returns Optional.of(paper)
 
-        mockMvc.perform(documentedGetRequestTo("/api/papers/{id}", paper.id, accept = PAPER_JSON_V2, contentType = PAPER_JSON_V2))
+        documentedGetRequestTo("/api/papers/{id}", paper.id)
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
             .andExpect(status().isOk)
             .andDo(
                 documentationHandler.document(
@@ -126,7 +129,10 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val papers = listOf(createDummyPaper())
         every { paperService.findAll(any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
 
-        mockMvc.perform(documentedGetRequestTo("/api/papers", accept = PAPER_JSON_V2, contentType = PAPER_JSON_V2))
+        documentedGetRequestTo("/api/papers")
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
             .andExpect(status().isOk)
             .andExpectPage()
             .andDo(
@@ -225,7 +231,10 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val contributors = listOf(ContributorId(UUID.randomUUID()))
         every { paperService.findAllContributorsByPaperId(id, any()) } returns PageImpl(contributors, PageRequest.of(0, 5), 1)
 
-        mockMvc.perform(documentedGetRequestTo("/api/papers/{id}/contributors", id, accept = PAPER_JSON_V2, contentType = PAPER_JSON_V2))
+        documentedGetRequestTo("/api/papers/{id}/contributors", id)
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
             .andExpect(status().isOk)
             .andExpectPage()
             .andDo(generateDefaultDocSnippets())
@@ -250,6 +259,6 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     private fun get(string: String) = mockMvc.perform(
         MockMvcRequestBuilders.get(string)
-            .accept("application/vnd.orkg.paper.v2+json")
+            .accept(PAPER_JSON_V2)
     )
 }

@@ -22,7 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize
 
 @RestController
 @RequestMapping("/api/comparisons", produces = [MediaType.APPLICATION_JSON_VALUE])
-class ComparisonController(
+class LegacyComparisonController(
     private val service: ResourceUseCases,
     private val authorService: AuthorService,
     override val statementService: StatementUseCases,

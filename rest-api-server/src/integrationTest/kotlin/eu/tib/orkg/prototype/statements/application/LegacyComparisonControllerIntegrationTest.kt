@@ -34,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional
 @DisplayName("Comparison Controller")
 @Transactional
 @Import(MockUserDetailsService::class)
-class ComparisonControllerTest : RestDocumentationBaseTest() {
+class LegacyComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Autowired
     private lateinit var resourceService: ResourceUseCases

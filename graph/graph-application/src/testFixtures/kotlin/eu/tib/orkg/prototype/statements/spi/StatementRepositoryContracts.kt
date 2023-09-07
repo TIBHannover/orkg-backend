@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.BundleConfiguration
+import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase.PredicateUsageCount
 import eu.tib.orkg.prototype.statements.domain.model.Class
@@ -32,7 +33,6 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 import java.time.format.DateTimeFormatter.ofPattern
 import java.util.*
-import kotlin.Comparator
 import org.orkg.statements.testing.createLiteral
 import org.orkg.statements.testing.createPredicate
 import org.orkg.statements.testing.createResource
@@ -1033,57 +1033,15 @@ fun <
         }
     }
 
-    describe("finding a paper") {
-        val doi = fabricator.random<String>()
-        val hasDoi = createPredicate(id = ThingId("P26"))
-        context("by doi") {
-            it("returns the correct result") {
-                val paper = createResource(classes = setOf(ThingId("Paper")))
-                val paperHasDoi = createStatement(
-                    subject = paper,
-                    predicate = hasDoi,
-                    `object` = createLiteral(label = doi)
-                )
-                saveStatement(paperHasDoi)
-
-                val actual = repository.findPaperByDOI(doi)
-                actual.isPresent shouldBe true
-                actual.get() shouldBe paper
-
-                val upper = repository.findPaperByDOI(doi.uppercase())
-                upper.isPresent shouldBe true
-                upper.get() shouldBe paper
-
-                val lower = repository.findPaperByDOI(doi.lowercase())
-                lower.isPresent shouldBe true
-                lower.get() shouldBe paper
-            }
-            it("does not return deleted papers") {
-                val paper = createResource(
-                    classes = setOf(ThingId("Paper"), ThingId("PaperDeleted"))
-                )
-                val paperHasDoi = createStatement(
-                    subject = paper,
-                    predicate = hasDoi,
-                    `object` = createLiteral(label = doi)
-                )
-                saveStatement(paperHasDoi)
-
-                val actual = repository.findPaperByDOI(doi)
-                actual.isPresent shouldBe false
-            }
-        }
-    }
-
     describe("finding several papers") {
         val doi = fabricator.random<String>()
         val hasDoi = createPredicate(id = ThingId("P26"))
-        context("by doi") {
+        context("by class and doi") {
             val doiLiteral = createLiteral(label = doi)
 
             val paper =  createResource(
                 id = fabricator.random(),
-                classes = setOf(ThingId("Paper"))
+                classes = setOf(Classes.paper)
             )
             val paperHasDoi = createStatement(
                 id = fabricator.random(),
@@ -1094,7 +1052,7 @@ fun <
 
             val deletedPaper = createResource(
                 id = fabricator.random(),
-                classes = setOf(ThingId("Paper"), ThingId("PaperDeleted"))
+                classes = setOf(Classes.paperDeleted)
             )
             val deletedPaperHasDoi = createStatement(
                 id = fabricator.random(),
@@ -1107,7 +1065,7 @@ fun <
                 saveStatement(paperHasDoi)
                 saveStatement(deletedPaperHasDoi)
 
-                val result = repository.findAllPapersByDOI(doi, PageRequest.of(0, 5))
+                val result = repository.findAllBySubjectClassAndDOI(Classes.paper, doi, PageRequest.of(0, 5))
 
                 it("returns the correct result") {
                     result shouldNotBe null
@@ -1132,7 +1090,7 @@ fun <
                 saveStatement(paperHasDoi)
                 saveStatement(deletedPaperHasDoi)
 
-                val result = repository.findAllPapersByDOI(doi.uppercase(), PageRequest.of(0, 5))
+                val result = repository.findAllBySubjectClassAndDOI(Classes.paper, doi.uppercase(), PageRequest.of(0, 5))
 
                 it("returns the correct result") {
                     result shouldNotBe null
@@ -1157,7 +1115,7 @@ fun <
                 saveStatement(paperHasDoi)
                 saveStatement(deletedPaperHasDoi)
 
-                val result = repository.findAllPapersByDOI(doi.lowercase(), PageRequest.of(0, 5))
+                val result = repository.findAllBySubjectClassAndDOI(Classes.paper, doi.lowercase(), PageRequest.of(0, 5))
 
                 it("returns the correct result") {
                     result shouldNotBe null

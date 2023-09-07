@@ -9,3 +9,12 @@ class PaperNotFound(id: ThingId) :
 
 class ContributionNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Contribution "$id" not found.""")
+
+class ComparisonNotFound(id: ThingId) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Comparison "$id" not found.""")
+
+class ComparisonRelatedResourceNotFound(id: ThingId) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Comparison related resource "$id" not found.""")
+
+class ComparisonRelatedFigureNotFound(id: ThingId) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Comparison related figure "$id" not found.""")

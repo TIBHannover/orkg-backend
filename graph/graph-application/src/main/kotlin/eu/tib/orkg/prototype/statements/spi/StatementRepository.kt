@@ -73,10 +73,8 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
 
     /** Find any resource by DOI. */
     fun findByDOI(doi: String): Optional<Resource>
+    fun findAllBySubjectClassAndDOI(subjectClass: ThingId, doi: String, pageable: Pageable): Page<Resource>
 
-    /** Find a paper resource by DOI. */
-    fun findPaperByDOI(doi: String): Optional<Resource>
-    fun findAllPapersByDOI(doi: String, pageable: Pageable): Page<Resource>
     fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource>
     fun findAllContributorsByResourceId(id: ThingId, pageable: Pageable): Page<ContributorId>
     fun findTimelineByResourceId(id: ThingId, pageable: Pageable): Page<ResourceContributor>

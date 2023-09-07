@@ -52,8 +52,8 @@ interface ResourceRepository : EntityRepository<Resource, ThingId> {
     fun findAllByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource>
     fun findAllListed(pageable: Pageable): Page<Resource>
 
-    fun findAllPapersByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource>
-    fun findAllListedPapers(pageable: Pageable): Page<Resource>
+    fun findAllByClassAndVisibility(classId: ThingId, visibility: Visibility, pageable: Pageable): Page<Resource>
+    fun findAllListedByClass(classId: ThingId, pageable: Pageable): Page<Resource>
 
     fun findAllByClassInAndVisibility(classes: Set<ThingId>, visibility: Visibility, pageable: Pageable): Page<Resource>
     fun findAllListedByClassIn(classes: Set<ThingId>, pageable: Pageable): Page<Resource>

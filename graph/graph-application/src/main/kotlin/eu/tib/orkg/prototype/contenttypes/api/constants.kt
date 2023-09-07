@@ -6,6 +6,9 @@ object Identifiers {
     val paper = mapOf(
         Predicates.hasDOI to "doi"
     )
+    val comparison = mapOf(
+        Predicates.hasDOI to "doi"
+    )
     val author = mapOf(
         Predicates.hasORCID to "orcid",
         Predicates.hasGoogleScholarId to "google_scholar",

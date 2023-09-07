@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
+import java.net.URI
 import java.time.OffsetDateTime
 
 interface PaperRepresentation {
@@ -60,4 +61,51 @@ interface ContributionRepresentation {
     val label: String
     val properties: Map<ThingId, List<ThingId>>
     val visibility: Visibility
+}
+
+interface ComparisonRepresentation {
+    val id: ThingId
+    val title: String
+    val description: String?
+    @get:JsonProperty("research_fields")
+    val researchFields: List<LabeledObjectRepresentation>
+    val identifiers: Map<String, String>
+    @get:JsonProperty("publication_info")
+    val publicationInfo: PublicationInfoRepresentation
+    val authors: List<AuthorRepresentation>
+    val contributions: List<LabeledObjectRepresentation>
+    val visualizations: List<LabeledObjectRepresentation>
+    @get:JsonProperty("related_figures")
+    val relatedFigures: List<LabeledObjectRepresentation>
+    @get:JsonProperty("related_resources")
+    val relatedResources: List<LabeledObjectRepresentation>
+    val references: List<String>
+    val observatories: List<ObservatoryId>
+    val organizations: List<OrganizationId>
+    @get:JsonProperty("extraction_method")
+    val extractionMethod: ExtractionMethod
+    @get:JsonProperty("created_at")
+    val createdAt: OffsetDateTime
+    @get:JsonProperty("created_by")
+    val createdBy: ContributorId
+    @get:JsonProperty("previous_version")
+    val previousVersion: ThingId?
+    @get:JsonProperty("is_anonymized")
+    val isAnonymized: Boolean
+    val visibility: Visibility
+}
+
+interface ComparisonRelatedResourceRepresentation {
+    val id: ThingId
+    val label: String
+    val image: String?
+    val url: String?
+    val description: String?
+}
+
+interface ComparisonRelatedFigureRepresentation {
+    val id: ThingId
+    val label: String
+    val image: String?
+    val description: String?
 }

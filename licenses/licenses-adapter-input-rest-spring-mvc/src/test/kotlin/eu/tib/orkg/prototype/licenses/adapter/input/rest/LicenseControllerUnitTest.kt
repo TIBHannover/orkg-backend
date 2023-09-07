@@ -16,14 +16,12 @@ import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.http.MediaType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -43,7 +41,10 @@ internal class LicenseControllerUnitTest : RestDocsTest("licenses") {
 
         every { licenseService.determineLicense(URI.create(uri)) } returns license
 
-        mockMvc.perform(documentedGetRequestTo("/api/licenses?uri={uri}", uri, accept = LICENSE_JSON_V1, contentType = LICENSE_JSON_V1))
+        documentedGetRequestTo("/api/licenses?uri={uri}", uri)
+            .accept(LICENSE_JSON_V1)
+            .contentType(LICENSE_JSON_V1)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.license", `is`("CC-BY-4.0")))
             .andDo(
@@ -64,7 +65,10 @@ internal class LicenseControllerUnitTest : RestDocsTest("licenses") {
 
         every { licenseService.determineLicense(uri) } throws exception
 
-        mockMvc.perform(getRequestTo("/api/licenses?uri={uri}", uri, accept = LICENSE_JSON_V1, contentType = LICENSE_JSON_V1))
+        get("/api/licenses?uri={uri}", uri)
+            .accept(LICENSE_JSON_V1)
+            .contentType(LICENSE_JSON_V1)
+            .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(404))
             .andExpect(jsonPath("$.error").value("Not Found"))
@@ -82,7 +86,10 @@ internal class LicenseControllerUnitTest : RestDocsTest("licenses") {
 
         every { licenseService.determineLicense(uri) } throws exception
 
-        mockMvc.perform(getRequestTo("/api/licenses?uri={uri}", uri, accept = LICENSE_JSON_V1, contentType = LICENSE_JSON_V1))
+        get("/api/licenses?uri={uri}", uri)
+            .accept(LICENSE_JSON_V1)
+            .contentType(LICENSE_JSON_V1)
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.error").value("Bad Request"))
@@ -92,15 +99,4 @@ internal class LicenseControllerUnitTest : RestDocsTest("licenses") {
 
         verify(exactly = 1) { licenseService.determineLicense(uri) }
     }
-
-    private fun getRequestTo(
-        urlTemplate: String,
-        vararg uriValues: Any,
-        accept: String = MediaType.APPLICATION_JSON_VALUE,
-        contentType: String = MediaType.APPLICATION_JSON_VALUE
-    ): MockHttpServletRequestBuilder =
-        MockMvcRequestBuilders.get(urlTemplate, *uriValues)
-            .accept(accept)
-            .contentType(contentType)
-            .characterEncoding(Charsets.UTF_8.name())
 }

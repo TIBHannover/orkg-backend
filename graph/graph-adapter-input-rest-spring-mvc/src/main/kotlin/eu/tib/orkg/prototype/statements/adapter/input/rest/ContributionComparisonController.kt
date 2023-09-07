@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.adapter.input.rest
 
 import eu.tib.orkg.prototype.statements.application.TooFewIDsError
-import eu.tib.orkg.prototype.statements.application.port.`in`.RetrieveComparisonContributionsUseCase
+import eu.tib.orkg.prototype.contenttypes.api.RetrieveComparisonContributionsUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ContributionInfo
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.springframework.data.domain.Page

@@ -218,14 +218,14 @@ RETURN SUM(cnt)""")
     fun findPaperByDOI(doi: String): Optional<Neo4jResource>
 
     @Query("""
-MATCH (node:Paper:Resource)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(l:Literal)
-WHERE not 'PaperDeleted' in labels(node) AND toUpper(l.label) = toUpper($doi)
+MATCH (node:Resource)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(l:Literal)
+WHERE $subjectClass IN LABELS(node) AND toUpper(l.label) = toUpper($doi)
 RETURN DISTINCT node""",
         countQuery = """
-MATCH (node:Paper:Resource)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(l:Literal)
-WHERE not 'PaperDeleted' in labels(node) AND toUpper(l.label) = toUpper($doi)
+MATCH (node:Resource)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(l:Literal)
+WHERE $subjectClass IN LABELS(node) AND toUpper(l.label) = toUpper($doi)
 RETURN COUNT(DISTINCT node)""")
-    fun findAllPapersByDOI(doi: String, pageable: Pageable): Page<Neo4jResource>
+    fun findAllBySubjectClassAndDOI(subjectClass: ThingId, doi: String, pageable: Pageable): Page<Neo4jResource>
 
     @Query("""
 CALL {

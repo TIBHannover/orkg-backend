@@ -14,6 +14,7 @@ import org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPri
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.ResultHandler
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
@@ -56,4 +57,6 @@ abstract class RestDocsTest(private val prefix: String) {
      * Syntactic sugar to generate the default documentation snippets (`curl-request.adoc`, etc.).
      */
     protected fun generateDefaultDocSnippets(): ResultHandler = documentationHandler
+
+    protected fun MockHttpServletRequestBuilder.perform(): ResultActions = mockMvc.perform(this)
 }

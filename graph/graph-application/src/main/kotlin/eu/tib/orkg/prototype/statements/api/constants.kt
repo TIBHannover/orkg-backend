@@ -26,8 +26,16 @@ object Predicates {
     val hasWikidataId = ThingId("P76020")
     val hasWebOfScienceId = ThingId("P58083")
     val hasWebsite = ThingId("website")
+    val hasPreviousVersion = ThingId("hasPreviousVersion")
+    val reference = ThingId("reference")
     val hasSubfield = ThingId("P36")
     val comparesContribution = ThingId("compareContribution")
+    val hasVisualization = ThingId("hasVisualization")
+    val isAnonymized = ThingId("IsAnonymized")
+    val hasRelatedFigure = ThingId("RelatedFigure")
+    val hasRelatedResource = ThingId("RelatedResource")
+    val hasImage = ThingId("Image")
+    val hasSubject = ThingId("hasSubject")
 }
 
 object Classes {
@@ -44,4 +52,21 @@ object Classes {
     val visualization = ThingId("Visualization")
     val contribution = ThingId("Contribution")
     val researchField = ThingId("ResearchField")
+    val comparisonRelatedFigure = ThingId("ComparisonRelatedFigure")
+    val comparisonRelatedResource = ThingId("ComparisonRelatedResource")
+}
+
+object Literals {
+    enum class XSD(private val fragment: String) {
+        STRING("string"),
+        INT("integer"),
+        DECIMAL("decimal"),
+        DATE("date"),
+        BOOLEAN ("boolean"),
+        FLOAT("float"),
+        URI("anyURI");
+
+        val prefixedUri: String get() = "xsd:$fragment"
+        val uri: String get() = "http://www.w3.org/2001/XMLSchema#$fragment"
+    }
 }

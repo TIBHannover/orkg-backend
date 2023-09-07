@@ -388,6 +388,9 @@ include::parts/papers.adoc[]
 [[contributions]]
 include::parts/contributions.adoc[]
 
+[[comparisons]]
+include::parts/comparisons.adoc[leveloffset=+1]
+
 [[rdf-integration]]
 include::parts/rdf.adoc[leveloffset=+1]
 

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Added new endpoints for fetching comparisons
+  (See: [!622](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/622))
 - Added a new endpoint to fetch license information for external sites.
   (Closes: [#495](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/495))
 - The widget API was extended to return the class of the resources found.

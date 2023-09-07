@@ -7,7 +7,6 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
-import java.net.URI
 import java.time.OffsetDateTime
 
 interface PaperRepresentation {
@@ -108,4 +107,20 @@ interface ComparisonRelatedFigureRepresentation {
     val label: String
     val image: String?
     val description: String?
+}
+
+interface VisualizationRepresentation {
+    val id: ThingId
+    val title: String
+    val description: String?
+    val authors: List<AuthorRepresentation>
+    val observatories: List<ObservatoryId>
+    val organizations: List<OrganizationId>
+    @get:JsonProperty("extraction_method")
+    val extractionMethod: ExtractionMethod
+    @get:JsonProperty("created_at")
+    val createdAt: OffsetDateTime
+    @get:JsonProperty("created_by")
+    val createdBy: ContributorId
+    val visibility: Visibility
 }

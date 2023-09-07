@@ -18,3 +18,6 @@ class ComparisonRelatedResourceNotFound(id: ThingId) :
 
 class ComparisonRelatedFigureNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Comparison related figure "$id" not found.""")
+
+class VisualizationNotFound(id: ThingId) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Visualization "$id" not found.""")

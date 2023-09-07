@@ -391,6 +391,9 @@ include::parts/contributions.adoc[]
 [[comparisons]]
 include::parts/comparisons.adoc[leveloffset=+1]
 
+[[visualizations]]
+include::parts/visualizations.adoc[leveloffset=+1]
+
 [[rdf-integration]]
 include::parts/rdf.adoc[leveloffset=+1]
 

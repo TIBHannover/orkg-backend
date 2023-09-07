@@ -5,3 +5,5 @@ interface PaperUseCases : RetrievePaperUseCase
 interface ContributionUseCases : RetrieveContributionUseCase
 
 interface ComparisonUseCases : RetrieveComparisonUseCase, RetrieveComparisonContributionsUseCase
+
+interface VisualizationUseCases : RetrieveVisualizationUseCase

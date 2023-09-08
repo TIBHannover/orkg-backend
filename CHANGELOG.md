@@ -6,10 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.37.0] - 2023-09-08
 ### Added
-- Added new endpoints for fetching visualizations
+- Added new endpoints for fetching visualizations.
   (See: [!624](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/624))
-- Added new endpoints for fetching comparisons
+- Added new endpoints for fetching comparisons.
   (See: [!622](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/622))
 - Added a new endpoint to fetch license information for external sites.
   (Closes: [#495](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/495))
@@ -490,7 +492,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.36.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.37.0...master
+[0.37.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.37.0
 [0.36.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.36.0
 [0.35.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.35.1
 [0.35.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.35.0

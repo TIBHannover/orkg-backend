@@ -36,6 +36,8 @@ interface ListUseCases : CreateListUseCase, RetrieveListUseCase, UpdateListUseCa
 
 interface ClassHierarchyUseCases : CreateClassHierarchyUseCase, RetrieveClassHierarchyUseCase, DeleteClassHierarchyUseCase
 
+interface ResearchFieldHierarchyUseCases : RetrieveResearchFieldHierarchyUseCase
+
 // FIXME: we need to refactor those as well
 interface OtherResourceUseCases :
     MarkAsVerifiedUseCase,

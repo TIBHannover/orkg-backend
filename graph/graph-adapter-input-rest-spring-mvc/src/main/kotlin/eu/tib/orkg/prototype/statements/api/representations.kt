@@ -141,6 +141,17 @@ data class ClassHierarchyEntryRepresentation(
     val parentId: ThingId?
 )
 
+data class ResearchFieldWithChildCountRepresentation(
+    val resource: ResourceRepresentation,
+    @JsonProperty("child_count")
+    val childCount: Long
+)
+
+data class ResearchFieldHierarchyEntryRepresentation(
+    val resource: ResourceRepresentation,
+    @JsonProperty("parent_ids")
+    val parentIds: Set<ThingId>
+)
 
 interface StatementRepresentation : StatementProvenanceMetadata {
     val id: StatementId

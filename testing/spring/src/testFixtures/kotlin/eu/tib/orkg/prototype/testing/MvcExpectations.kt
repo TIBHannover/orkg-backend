@@ -29,6 +29,23 @@ fun ResultActions.andExpectStatement(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.created_by", `is`(notNullValue())))
     .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))
 
+fun ResultActions.andExpectResource(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.label", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.classes").isArray)
+    .andExpect(jsonPath("$path.shared", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.created_by", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.featured", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.unlisted", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.verified", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.organization_id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.observatory_id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.extraction_method", `is`(notNullValue())))
+    .andExpect(jsonPath("$path._class").value("resource"))
+//    .andExpect(jsonPath("$path.formatted_label", `is`(notNullValue())))
+//    .andExpect(jsonPath("$path.unlisted_by", `is`(notNullValue())))
+
 fun ResultActions.andExpectComparison(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.id", `is`(notNullValue())))
     .andExpect(jsonPath("$path.title", `is`(notNullValue())))
@@ -95,3 +112,13 @@ fun ResultActions.andExpectVisualization(path: String = "$"): ResultActions = th
     .andExpect(jsonPath("$path.created_by", `is`(notNullValue())))
     .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))
     .andExpect(jsonPath("$path.visibility", `is`(notNullValue())))
+
+fun ResultActions.andExpectResearchFieldWithChildCount(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.child_count", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.resource", `is`(notNullValue())))
+    .andExpectResource("$path.resource")
+
+fun ResultActions.andExpectResearchFieldHierarchyEntry(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.parent_ids").isArray)
+    .andExpect(jsonPath("$path.resource", `is`(notNullValue())))
+    .andExpectResource("$path.resource")

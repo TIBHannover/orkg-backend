@@ -293,7 +293,7 @@ class LegacyPaperService(
             }
             val listId = listService.create(
                 CreateListUseCase.CreateCommand(
-                    label = "Authors",
+                    label = "authors list",
                     elements = authors,
                     contributorId = userId
                 )

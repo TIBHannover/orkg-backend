@@ -3,13 +3,13 @@ package eu.tib.orkg.prototype.statements.spi
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.statements.api.Predicates
-import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.List
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
+import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -162,6 +162,24 @@ fun <
             it("sorts the results by internal index") {
                 result.content.zipWithNext { a, b ->
                     elements.indexOf(a) shouldBeLessThan elements.indexOf(b)
+                }
+            }
+        }
+    }
+
+    describe("deleting a list") {
+        context("by id") {
+            context("with elements") {
+                val list: List = fabricator.random()
+                list.elements.size shouldBeGreaterThan 0
+                list.elements.forEach {
+                    resourceRepository.save(createResource(id = it))
+                }
+                repository.save(list, list.createdBy)
+
+                it("returns success") {
+                    repository.delete(list.id)
+                    repository.findById(list.id).isPresent shouldBe false
                 }
             }
         }

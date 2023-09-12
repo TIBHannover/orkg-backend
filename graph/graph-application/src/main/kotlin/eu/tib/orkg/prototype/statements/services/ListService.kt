@@ -59,10 +59,10 @@ class ListService(
     override fun update(id: ThingId, command: UpdateListUseCase.UpdateCommand) {
         val list = repository.findById(id).orElseThrow { ListNotFound(id) }
         val label = command.label?.let {
-            Label.ofOrNull(command.label)?.value ?: throw InvalidLabel()
+            Label.ofOrNull(it)?.value ?: throw InvalidLabel()
         }
-        val elements = command.elements?.apply {
-            if (!thingRepository.existsAll(command.elements.toSet()))
+        val elements = command.elements?.also {
+            if (it.isNotEmpty() && !thingRepository.existsAll(it.toSet()))
                 throw ListElementNotFound()
         }
         repository.save(

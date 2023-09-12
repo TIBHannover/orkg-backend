@@ -263,6 +263,28 @@ class ListServiceUnitTests {
     }
 
     @Test
+    fun `given a list is updated, when elements are empty, it returns success`() {
+        val id = ThingId("List1")
+        val command = UpdateListUseCase.UpdateCommand(
+            label = "label",
+            elements = listOf()
+        )
+        val list = createList(id = id, elements = listOf(ThingId("R25")))
+        val expected = list.copy(
+            label = command.label!!,
+            elements = command.elements!!
+        )
+
+        every { repository.findById(id) } returns Optional.of(list)
+        every { repository.save(any(), any()) } just runs
+
+        service.update(id, command)
+
+        verify(exactly = 1) { repository.findById(id) }
+        verify(exactly = 1) { repository.save(expected, ContributorId.createUnknownContributor()) }
+    }
+
+    @Test
     fun `given a list, when its elements are fetched, it returns success`() {
         val id = ThingId("List1")
         val elements = listOf(

@@ -15,8 +15,6 @@ import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.ThingRepository
-import org.springframework.stereotype.Component
-import java.lang.IllegalStateException
 import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
@@ -24,6 +22,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import org.springframework.stereotype.Component
 
 @Component
 class ListAdapter(
@@ -98,7 +97,13 @@ class ListAdapter(
 
     override fun exists(id: ThingId): Boolean = resourceRepository.exists(id)
 
-    override fun delete(id: ThingId) = resourceRepository.deleteById(id)
+    override fun delete(id: ThingId)  {
+        val statements = statementRepository.findAllBySubject(id, PageRequests.ALL)
+        if (!statements.isEmpty) {
+            statementRepository.deleteByStatementIds(statements.map { it.id!! }.toSet())
+        }
+        resourceRepository.deleteById(id)
+    }
 
     private fun Resource.toList(): List = List(
         id = id,

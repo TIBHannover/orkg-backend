@@ -11,11 +11,13 @@ import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.pageOf
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
+import eu.tib.orkg.prototype.testing.andExpectContribution
 import eu.tib.orkg.prototype.testing.andExpectPage
 import eu.tib.orkg.prototype.testing.spring.restdocs.RestDocsTest
 import eu.tib.orkg.prototype.testing.spring.restdocs.documentedGetRequestTo
 import io.mockk.every
 import io.mockk.verify
+import java.util.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -46,13 +48,14 @@ internal class ContributionControllerUnitTest : RestDocsTest("contributions") {
     @DisplayName("Given a contribution, when it is fetched by id and service succeeds, then status is 200 OK and contribution is returned")
     fun getSingle() {
         val contribution = createDummyContribution()
-        every { contributionService.findById(contribution.id) } returns contribution
+        every { contributionService.findById(contribution.id) } returns Optional.of(contribution)
 
         documentedGetRequestTo("/api/contributions/{id}", contribution.id)
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
             .andExpect(status().isOk)
+            .andExpectContribution()
             .andDo(
                 documentationHandler.document(
                     pathParameters(
@@ -61,6 +64,7 @@ internal class ContributionControllerUnitTest : RestDocsTest("contributions") {
                     responseFields(
                         fieldWithPath("id").description("The identifier of the contribution."),
                         fieldWithPath("label").description("The label of the contribution."),
+                        fieldWithPath("classes").description("The classes of the contribution resource."),
                         subsectionWithPath("properties").description("A map of predicate ids to lists of thing ids, that represent the statements that this contribution consists of."),
                         fieldWithPath("visibility").description("""Visibility of the contribution. Can be one of "default", "featured", "unlisted" or "deleted".""")
                     )
@@ -75,7 +79,7 @@ internal class ContributionControllerUnitTest : RestDocsTest("contributions") {
     fun `Given a contribution, when it is fetched by id and service reports missing contribution, then status is 404 NOT FOUND`() {
         val id = ThingId("Missing")
         val exception = ContributionNotFound(id)
-        every { contributionService.findById(id) } throws exception
+        every { contributionService.findById(id) } returns Optional.empty()
 
         get("/api/contributions/$id")
             .andExpect(status().isNotFound)
@@ -98,6 +102,7 @@ internal class ContributionControllerUnitTest : RestDocsTest("contributions") {
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
+            .andExpectContribution("$.content[*]")
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { contributionService.findAll(any()) }
@@ -111,6 +116,7 @@ internal class ContributionControllerUnitTest : RestDocsTest("contributions") {
     private fun createDummyContribution() = Contribution(
         id = ThingId("R8199"),
         label = "ORKG System",
+        classes = setOf(ThingId("C123")),
         properties = mapOf(
             ThingId("R456") to listOf(
                 ThingId("R789"),

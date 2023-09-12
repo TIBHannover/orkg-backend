@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.application
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
@@ -30,18 +29,21 @@ import org.hamcrest.Matchers
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.statements.testing.createList
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.restdocs.payload.PayloadDocumentation.*
-import org.springframework.restdocs.request.RequestDocumentation.*
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -50,9 +52,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @WebMvcTest(controllers = [ListController::class])
 @DisplayName("Given a List controller")
 internal class ListControllerUnitTest : RestDocsTest("lists") {
-
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
 
     @MockkBean
     private lateinit var listService: ListUseCases
@@ -147,7 +146,7 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
         every { listService.create(any()) } returns id
         every { listService.findById(any()) } returns Optional.of(list)
 
-        mockMvc.perform(documentedPostRequestTo("/api/lists", body = request))
+        mockMvc.perform(documentedPostRequestTo("/api/lists").content(request))
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/lists/$id")))
             .andDo(

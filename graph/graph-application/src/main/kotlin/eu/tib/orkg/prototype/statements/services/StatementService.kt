@@ -244,7 +244,7 @@ class StatementService(
         sort: Sort
     ): Bundle {
         if (thingRepository.findByThingId(thingId).isEmpty) {
-            throw ThingNotFound.withThingId(thingId)
+            throw ThingNotFound(thingId)
         }
         return when (includeFirst) {
             true -> createBundleFirstIncluded(thingId, configuration, sort)

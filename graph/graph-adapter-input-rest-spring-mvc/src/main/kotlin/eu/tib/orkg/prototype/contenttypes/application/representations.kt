@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
+import java.net.URI
 import java.time.OffsetDateTime
 
 interface PaperRepresentation {
@@ -40,14 +41,14 @@ interface PublicationInfoRepresentation {
     val publishedYear: Long?
     @get:JsonProperty("published_in")
     val publishedIn: String?
-    val url: String?
+    val url: URI?
 }
 
 interface AuthorRepresentation {
     val id: ThingId?
     val name: String
     val identifiers: Map<String, String>
-    val homepage: String?
+    val homepage: URI?
 }
 
 interface LabeledObjectRepresentation {
@@ -58,6 +59,7 @@ interface LabeledObjectRepresentation {
 interface ContributionRepresentation {
     val id: ThingId
     val label: String
+    val classes: Set<ThingId>
     val properties: Map<ThingId, List<ThingId>>
     val visibility: Visibility
 }

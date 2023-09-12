@@ -1,14 +1,35 @@
 package eu.tib.orkg.prototype.contenttypes.services
 
+import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
+import eu.tib.orkg.prototype.community.spi.ObservatoryRepository
 import eu.tib.orkg.prototype.contenttypes.api.Identifiers
 import eu.tib.orkg.prototype.contenttypes.api.PaperUseCases
 import eu.tib.orkg.prototype.contenttypes.application.PaperNotFound
 import eu.tib.orkg.prototype.contenttypes.domain.model.Paper
 import eu.tib.orkg.prototype.contenttypes.domain.model.PublicationInfo
+import eu.tib.orkg.prototype.contenttypes.services.actions.AuthorValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.ContributionValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.ObservatoryValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.OrganizationValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.PaperAction
+import eu.tib.orkg.prototype.contenttypes.services.actions.PaperAuthorCreator
+import eu.tib.orkg.prototype.contenttypes.services.actions.PaperContentsCreator
+import eu.tib.orkg.prototype.contenttypes.services.actions.PaperExistenceValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.PaperPublicationInfoCreator
+import eu.tib.orkg.prototype.contenttypes.services.actions.PaperResearchFieldCreator
+import eu.tib.orkg.prototype.contenttypes.services.actions.PaperResourceCreator
+import eu.tib.orkg.prototype.contenttypes.services.actions.ResearchFieldValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.TempIdValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.ThingDefinitionValidator
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.statements.api.Classes
+import eu.tib.orkg.prototype.statements.api.ListUseCases
+import eu.tib.orkg.prototype.statements.api.LiteralUseCases
+import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.Predicates
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
@@ -16,15 +37,27 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
+import eu.tib.orkg.prototype.statements.spi.ThingRepository
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import eu.tib.orkg.prototype.contenttypes.api.CreateContributionUseCase.CreateCommand as CreateContributionCommand
+import eu.tib.orkg.prototype.contenttypes.api.CreatePaperUseCase.CreateCommand as CreatePaperCommand
+import eu.tib.orkg.prototype.contenttypes.services.actions.ContributionAction.State as ContributionState
 
 @Service
 class PaperService(
     private val resourceRepository: ResourceRepository,
-    private val statementRepository: StatementRepository
+    private val statementRepository: StatementRepository,
+    private val observatoryRepository: ObservatoryRepository,
+    private val organizationRepository: PostgresOrganizationRepository,
+    private val thingRepository: ThingRepository,
+    private val resourceService: ResourceUseCases,
+    private val statementService: StatementUseCases,
+    private val literalService: LiteralUseCases,
+    private val predicateService: PredicateUseCases,
+    private val listService: ListUseCases
 ) : PaperUseCases {
     override fun findById(id: ThingId): Optional<Paper> =
         resourceRepository.findPaperById(id)
@@ -60,6 +93,36 @@ class PaperService(
             .map { statementRepository.findAllContributorsByResourceId(id, pageable) }
             .orElseThrow { PaperNotFound(id) }
 
+    override fun create(command: CreatePaperCommand): ThingId {
+        val steps = listOf(
+            TempIdValidator(),
+            PaperExistenceValidator(resourceRepository, resourceService, statementRepository),
+            ResearchFieldValidator(resourceRepository),
+            ObservatoryValidator(observatoryRepository),
+            OrganizationValidator(organizationRepository),
+            AuthorValidator(resourceRepository, statementRepository),
+            ThingDefinitionValidator(thingRepository),
+            ContributionValidator(thingRepository),
+            PaperResourceCreator(resourceService),
+            PaperAuthorCreator(resourceService, statementService, literalService, listService),
+            PaperResearchFieldCreator(statementService),
+            PaperPublicationInfoCreator(resourceService, resourceRepository, statementService, literalService),
+            PaperContentsCreator(resourceService, statementService, literalService, predicateService, statementRepository, listService)
+        )
+        return steps.fold(PaperAction.State()) { state, executor -> executor(command, state) }.paperId!!
+    }
+
+    override fun createContribution(command: CreateContributionCommand): ThingId {
+        val steps = listOf(
+            TempIdValidator(),
+            PaperExistenceValidator(resourceRepository, resourceService, statementRepository),
+            ThingDefinitionValidator(thingRepository),
+            ContributionValidator(thingRepository),
+            PaperContentsCreator(resourceService, statementService, literalService, predicateService, statementRepository, listService)
+        )
+        return steps.fold(ContributionState()) { state, executor -> executor(command, state) }.contributionId!!
+    }
+
     private fun Resource.toPaper(): Paper {
         val statements = statementRepository.findAllBySubject(id, PageRequests.ALL)
             .content
@@ -67,8 +130,10 @@ class PaperService(
         return Paper(
             id = id,
             title = label,
-            researchFields = statements.wherePredicate(Predicates.hasResearchField).objectIdsAndLabel(),
-            identifiers = statements.mapIdentifiers(Identifiers.paper),
+            researchFields = statements.wherePredicate(Predicates.hasResearchField)
+                .objectIdsAndLabel()
+                .sortedBy { it.id },
+            identifiers = statements.associateIdentifiers(Identifiers.paper),
             publicationInfo = PublicationInfo.from(statements),
             authors = statements.authors(statementRepository),
             contributions = statements.wherePredicate(Predicates.hasContribution).objectIdsAndLabel(),

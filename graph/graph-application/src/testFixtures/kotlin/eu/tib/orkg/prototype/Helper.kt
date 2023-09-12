@@ -1,14 +1,18 @@
 package eu.tib.orkg.prototype
 
+import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.OrganizationEntity
 import eu.tib.orkg.prototype.community.domain.model.Observatory
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.Organization
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationType
+import eu.tib.orkg.prototype.contenttypes.api.CreateContributionUseCase
+import eu.tib.orkg.prototype.contenttypes.api.CreatePaperUseCase
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
 import eu.tib.orkg.prototype.contenttypes.domain.model.Comparison
 import eu.tib.orkg.prototype.contenttypes.domain.model.ComparisonRelatedFigure
 import eu.tib.orkg.prototype.contenttypes.domain.model.ComparisonRelatedResource
+import eu.tib.orkg.prototype.contenttypes.domain.model.Contribution
 import eu.tib.orkg.prototype.contenttypes.domain.model.ObjectIdAndLabel
 import eu.tib.orkg.prototype.contenttypes.domain.model.Paper
 import eu.tib.orkg.prototype.contenttypes.domain.model.PublicationInfo
@@ -17,6 +21,8 @@ import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.files.domain.model.Image
 import eu.tib.orkg.prototype.files.domain.model.ImageData
 import eu.tib.orkg.prototype.files.domain.model.ImageId
+import eu.tib.orkg.prototype.statements.api.Literals
+import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.api.UpdateOrganizationUseCases
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
@@ -44,7 +50,31 @@ import org.springframework.data.domain.Pageable
 /**
  * Creates a resource that uses as many defaults as possible.
  */
-fun createResource(id: ThingId = ThingId("R1")) = Resource(id, "Default Label", OffsetDateTime.now())
+fun createResource(
+    id: ThingId = ThingId("R1"),
+    label: String = "Default Label",
+    createdAt: OffsetDateTime = OffsetDateTime.now(),
+    classes: Set<ThingId> = emptySet(),
+    createdBy: ContributorId = ContributorId.createUnknownContributor(),
+    observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
+    extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
+    organizationId: OrganizationId = OrganizationId.createUnknownOrganization(),
+    visibility: Visibility = Visibility.DEFAULT,
+    verified: Boolean? = null,
+    unlistedBy: ContributorId? = null
+) = Resource(
+    id = id,
+    label = label,
+    createdAt = createdAt,
+    classes = classes,
+    createdBy = createdBy,
+    observatoryId = observatoryId,
+    extractionMethod = extractionMethod,
+    organizationId = organizationId,
+    visibility = visibility,
+    verified = verified,
+    unlistedBy = unlistedBy
+)
 
 fun createClass(id: String = "OK"): Class = Class(
     id = ThingId(id),
@@ -89,24 +119,40 @@ fun createStatement(subject: Thing, predicate: Predicate, `object`: Thing) = Gen
     createdBy = ContributorId("34da5516-7901-4b0d-94c5-b062082e11a7")
 )
 
-fun createOrganization() = Organization(
-    id = OrganizationId(UUID.fromString("d02073bc-30fd-481e-9167-f3fc3595d590")),
-    name = "some organization name",
-    createdBy = ContributorId("ee06bdf3-d6f3-41d1-8af2-64c583d9057e"),
-    homepage = "https://example.org",
-    displayId = "some display id",
-    type = OrganizationType.GENERAL,
-    logoId = null
-)
+fun createOrganization(
+    id: OrganizationId = OrganizationId(UUID.fromString("d02073bc-30fd-481e-9167-f3fc3595d590")),
+    name: String = "some organization name",
+    createdBy: ContributorId = ContributorId("ee06bdf3-d6f3-41d1-8af2-64c583d9057e"),
+    homepage: String = "https://example.org",
+    observatories: Set<ObservatoryId> = emptySet(),
+    displayId: String = "some display id",
+    type: OrganizationType = OrganizationType.GENERAL,
+    logoId: ImageId? = null
+) = Organization(id, name, createdBy, homepage, observatories, displayId, type, logoId)
 
-fun createObservatory(organizationIds: Set<OrganizationId>) = Observatory(
-    id = ObservatoryId(UUID.fromString("95565e51-2b80-4c28-918c-6fbc5e2a9b33")),
-    name = "Test Observatory",
-    description = "Example Description",
-    researchField = ThingId("R1234"),
-    organizationIds = organizationIds,
-    displayId = "test_observatory"
-)
+/**
+ * This method should only be used for mocking purposes, as does not return a valid database entity.
+ */
+fun Organization.toOrganizationEntity(): OrganizationEntity =
+    OrganizationEntity().also {
+        it.id = id!!.value
+        it.name = name
+        it.createdBy = createdBy?.value
+        it.url = homepage
+        it.displayId = displayId
+        it.type = type
+        it.logoId = logoId?.value
+    }
+
+fun createObservatory(
+    organizationIds: Set<OrganizationId> = emptySet(),
+    id: ObservatoryId = ObservatoryId(UUID.fromString("95565e51-2b80-4c28-918c-6fbc5e2a9b33")),
+    name: String = "Test Observatory",
+    description: String = "Example Description",
+    researchField: ThingId = ThingId("R1234"),
+    members: Set<ContributorId> = emptySet(),
+    displayId: String = "test_observatory"
+) = Observatory(id, name,  description, researchField, members, organizationIds, displayId)
 
 val testImage: URI = URI.create("classpath:/images/test_image.png")
 val encodedTestImage: URI = URI.create("classpath:/images/test_image_encoded.txt")
@@ -161,7 +207,7 @@ fun createDummyPaper() = Paper(
         publishedMonth = 4,
         publishedYear = 2023,
         publishedIn = "Fancy Conference",
-        url = "https://example.org"
+        url = URI.create("https://example.org")
     ),
     authors = listOf(
         Author(
@@ -170,7 +216,7 @@ fun createDummyPaper() = Paper(
             identifiers = mapOf(
                 "orcid" to "0000-0002-1825-0097"
             ),
-            homepage = "https://example.org"
+            homepage = URI.create("https://example.org")
         ),
         Author(
             id = null,
@@ -204,6 +250,16 @@ fun createDummyPaper() = Paper(
     verified = false
 )
 
+fun createDummyContribution() = Contribution(
+    id = ThingId("R15634"),
+    label = "Contribution",
+    classes = setOf(ThingId("C123")),
+    properties = mapOf(
+        Predicates.hasEvaluation to listOf(ThingId("R123"))
+    ),
+    visibility = Visibility.DEFAULT
+)
+
 fun createDummyComparison() = Comparison(
     id = ThingId("R8186"),
     title = "Dummy Comparison Title",
@@ -225,7 +281,7 @@ fun createDummyComparison() = Comparison(
         publishedMonth = 4,
         publishedYear = 2023,
         publishedIn = "ORKG",
-        url = "https://example.org"
+        url = URI.create("https://example.org")
     ),
     authors = listOf(
         Author(
@@ -234,7 +290,7 @@ fun createDummyComparison() = Comparison(
             identifiers = mapOf(
                 "orcid" to "0000-0002-1825-0097"
             ),
-            homepage = "https://example.org"
+            homepage = URI.create("https://example.org")
         ),
         Author(
             id = null,
@@ -329,7 +385,7 @@ fun createDummyVisualization() = Visualization(
             identifiers = mapOf(
                 "orcid" to "0000-0002-1825-0097"
             ),
-            homepage = "https://example.org"
+            homepage = URI.create("https://example.org")
         ),
         Author(
             id = null,
@@ -350,6 +406,154 @@ fun createDummyVisualization() = Visualization(
     createdAt = OffsetDateTime.parse("2023-04-12T16:05:05.959539600+02:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     visibility = Visibility.DEFAULT
+)
+
+fun dummyCreatePaperCommand() = CreatePaperUseCase.CreateCommand(
+    contributorId = ContributorId(UUID.randomUUID()),
+    title = "test",
+    researchFields = listOf(ThingId("R12")),
+    identifiers = mapOf("doi" to "dummy.doi.numbers"),
+    publicationInfo = PublicationInfo(
+        publishedYear = 2015,
+        publishedMonth = 5,
+        publishedIn = "conference",
+        url = URI.create("http://example.org")
+    ),
+    authors = listOf(
+        Author(
+            id = ThingId("R123"),
+            name = "Author with id"
+        ),
+        Author(
+            name = "Author with orcid",
+            identifiers = mapOf("orcid" to "0000-1111-2222-3333")
+        ),
+        Author(
+            id = ThingId("R456"),
+            name = "Author with id and orcid",
+            identifiers = mapOf("orcid" to "1111-2222-3333-4444")
+        ),
+        Author(
+            name = "Author with homepage",
+            homepage = URI.create("http://example.org/author")
+        ),
+        Author(
+            name = "Author that just has a name"
+        )
+    ),
+    observatories = listOf(ObservatoryId(UUID.randomUUID())),
+    organizations = listOf(OrganizationId(UUID.randomUUID())),
+    contents = CreatePaperUseCase.CreateCommand.PaperContents(
+        resources = mapOf(
+            "#temp1" to CreatePaperUseCase.CreateCommand.ResourceDefinition(
+                label = "MOTO",
+                classes = setOf(ThingId("R2000"))
+            )
+        ),
+        literals = mapOf(
+            "#temp2" to CreatePaperUseCase.CreateCommand.LiteralDefinition(
+                label = "0.1",
+                dataType = Literals.XSD.DECIMAL.prefixedUri
+            )
+        ),
+        predicates = mapOf(
+            "#temp3" to CreatePaperUseCase.CreateCommand.PredicateDefinition(
+                label = "hasResult",
+                description = "has result"
+            ),
+            "#temp4" to CreatePaperUseCase.CreateCommand.PredicateDefinition(
+                label = "hasLiteral"
+            )
+        ),
+        contributions = listOf(
+            CreatePaperUseCase.CreateCommand.Contribution(
+                label = "Contribution 1",
+                classes = setOf(ThingId("C123")),
+                statements = mapOf(
+                    Predicates.hasResearchProblem.value to listOf(
+                        CreatePaperUseCase.CreateCommand.StatementObjectDefinition("R3003")
+                    ),
+                    Predicates.hasEvaluation.value to listOf(
+                        CreatePaperUseCase.CreateCommand.StatementObjectDefinition("#temp1")
+                    )
+                )
+            ),
+            CreatePaperUseCase.CreateCommand.Contribution(
+                label = "Contribution 2",
+                statements = mapOf(
+                    Predicates.hasResearchProblem.value to listOf(
+                        CreatePaperUseCase.CreateCommand.StatementObjectDefinition("R3003")
+                    ),
+                    Predicates.hasEvaluation.value to listOf(
+                        CreatePaperUseCase.CreateCommand.StatementObjectDefinition("#temp1"),
+                        CreatePaperUseCase.CreateCommand.StatementObjectDefinition(
+                            id = "R3004",
+                            statements = mapOf(
+                                "#temp3" to listOf(
+                                    CreatePaperUseCase.CreateCommand.StatementObjectDefinition("R3003"),
+                                    CreatePaperUseCase.CreateCommand.StatementObjectDefinition("#temp2")
+                                ),
+                                "#temp4" to listOf(
+                                    CreatePaperUseCase.CreateCommand.StatementObjectDefinition("#temp1")
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    ),
+    extractionMethod = ExtractionMethod.MANUAL
+)
+
+fun dummyCreateContributionCommand() = CreateContributionUseCase.CreateCommand(
+    contributorId = ContributorId(UUID.randomUUID()),
+    paperId = ThingId("R123"),
+    resources = mapOf(
+        "#temp1" to CreatePaperUseCase.CreateCommand.ResourceDefinition(
+            label = "MOTO",
+            classes = setOf(ThingId("R2000"))
+        )
+    ),
+    literals = mapOf(
+        "#temp2" to CreatePaperUseCase.CreateCommand.LiteralDefinition(
+            label = "0.1",
+            dataType = Literals.XSD.DECIMAL.prefixedUri
+        )
+    ),
+    predicates = mapOf(
+        "#temp3" to CreatePaperUseCase.CreateCommand.PredicateDefinition(
+            label = "hasResult",
+            description = "has result"
+        ),
+        "#temp4" to CreatePaperUseCase.CreateCommand.PredicateDefinition(
+            label = "hasLiteral"
+        )
+    ),
+    contribution = CreatePaperUseCase.CreateCommand.Contribution(
+        label = "Contribution 1",
+        classes = setOf(ThingId("C123")),
+        statements = mapOf(
+            Predicates.hasResearchProblem.value to listOf(
+                CreatePaperUseCase.CreateCommand.StatementObjectDefinition("R3003")
+            ),
+            Predicates.hasEvaluation.value to listOf(
+                CreatePaperUseCase.CreateCommand.StatementObjectDefinition("#temp1"),
+                CreatePaperUseCase.CreateCommand.StatementObjectDefinition(
+                    id = "R3004",
+                    statements = mapOf(
+                        "#temp3" to listOf(
+                            CreatePaperUseCase.CreateCommand.StatementObjectDefinition("R3003"),
+                            CreatePaperUseCase.CreateCommand.StatementObjectDefinition("#temp2")
+                        ),
+                        "#temp4" to listOf(
+                            CreatePaperUseCase.CreateCommand.StatementObjectDefinition("#temp1")
+                        )
+                    )
+                )
+            )
+        )
+    )
 )
 
 fun <T> pageOf(vararg values: T, pageable: Pageable = Pageable.unpaged()): Page<T> =

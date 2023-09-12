@@ -407,6 +407,10 @@
       "id": "contains"
     },
     {
+      "label": "has website",
+      "id": "website"
+    },
+    {
       "label": "has authors",
       "id": "hasAuthors"
     },

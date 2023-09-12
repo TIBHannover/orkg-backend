@@ -9,6 +9,7 @@ typealias ContributionSubGraph = Map<ThingId, List<ThingId>>
 data class Contribution(
     val id: ThingId,
     val label: String,
+    val classes: Set<ThingId>,
     val properties: ContributionSubGraph,
     val visibility: Visibility
 )

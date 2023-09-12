@@ -11,6 +11,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
+import java.net.URI
 import java.util.stream.Collectors
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -32,11 +33,11 @@ internal fun List<GeneralStatement>.objects() = map { it.`object` }
 
 internal fun List<GeneralStatement>.firstObjectLabel(): String? = firstOrNull()?.`object`?.label
 
-internal fun List<GeneralStatement>.firstObjectId(): ThingId? = firstOrNull()?.`object`?.id
-
-internal fun List<GeneralStatement>.mapIdentifiers(identifiers: Map<ThingId, String>) =
+internal fun List<GeneralStatement>.associateIdentifiers(identifiers: Map<ThingId, String>) =
     filter { it.predicate.id in identifiers.keys }
         .associate { identifiers[it.predicate.id]!! to it.`object`.label }
+
+internal fun List<GeneralStatement>.firstObjectId(): ThingId? = firstOrNull()?.`object`?.id
 
 internal fun List<GeneralStatement>.withoutObjectsWithBlankLabels(): List<GeneralStatement> =
     filter { it.`object`.label.isNotBlank() }
@@ -55,8 +56,8 @@ internal fun Resource.toAuthor(statementRepository: StatementRepository): Author
     return Author(
         id = id,
         name = label,
-        identifiers = statements.mapIdentifiers(Identifiers.author),
-        homepage = statements.wherePredicate(Predicates.hasWebsite).firstObjectLabel()
+        identifiers = statements.associateIdentifiers(Identifiers.author),
+        homepage = statements.wherePredicate(Predicates.hasWebsite).firstObjectLabel()?.let { URI.create(it) }
     )
 }
 

@@ -2,37 +2,82 @@ package eu.tib.orkg.prototype.contenttypes
 
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.contenttypes.api.ContributionUseCases
 import eu.tib.orkg.prototype.contenttypes.api.PaperUseCases
+import eu.tib.orkg.prototype.contenttypes.application.AmbiguousAuthor
+import eu.tib.orkg.prototype.contenttypes.application.AuthorNotFound
+import eu.tib.orkg.prototype.contenttypes.application.CONTRIBUTION_JSON_V2
+import eu.tib.orkg.prototype.contenttypes.application.DuplicateTempIds
+import eu.tib.orkg.prototype.contenttypes.application.EmptyContribution
+import eu.tib.orkg.prototype.contenttypes.application.InvalidStatementSubject
+import eu.tib.orkg.prototype.contenttypes.application.InvalidTempId
+import eu.tib.orkg.prototype.contenttypes.application.OnlyOneObservatoryAllowed
+import eu.tib.orkg.prototype.contenttypes.application.OnlyOneOrganizationAllowed
+import eu.tib.orkg.prototype.contenttypes.application.OnlyOneResearchFieldAllowed
 import eu.tib.orkg.prototype.contenttypes.application.PAPER_JSON_V2
+import eu.tib.orkg.prototype.contenttypes.application.PaperAlreadyExists
 import eu.tib.orkg.prototype.contenttypes.application.PaperController
+import eu.tib.orkg.prototype.contenttypes.application.PaperController.CreatePaperRequest
+import eu.tib.orkg.prototype.contenttypes.application.PaperController.CreatePaperRequest.AuthorDTO
+import eu.tib.orkg.prototype.contenttypes.application.PaperController.CreatePaperRequest.ContributionDTO
+import eu.tib.orkg.prototype.contenttypes.application.PaperController.CreatePaperRequest.ListDefinitionDTO
+import eu.tib.orkg.prototype.contenttypes.application.PaperController.CreatePaperRequest.LiteralDefinitionDTO
+import eu.tib.orkg.prototype.contenttypes.application.PaperController.CreatePaperRequest.PaperContentsDTO
+import eu.tib.orkg.prototype.contenttypes.application.PaperController.CreatePaperRequest.PredicateDefinitionDTO
+import eu.tib.orkg.prototype.contenttypes.application.PaperController.CreatePaperRequest.PublicationInfoDTO
+import eu.tib.orkg.prototype.contenttypes.application.PaperController.CreatePaperRequest.ResourceDefinitionDTO
+import eu.tib.orkg.prototype.contenttypes.application.PaperController.CreatePaperRequest.StatementObjectDefinitionDTO
 import eu.tib.orkg.prototype.contenttypes.application.PaperNotFound
+import eu.tib.orkg.prototype.contenttypes.application.ThingIsNotAClass
+import eu.tib.orkg.prototype.contenttypes.application.ThingIsNotAPredicate
+import eu.tib.orkg.prototype.contenttypes.application.ThingNotDefined
+import eu.tib.orkg.prototype.contenttypes.domain.model.Author
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.createDummyPaper
 import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
+import eu.tib.orkg.prototype.statements.application.ThingNotFound
+import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.testing.andExpectPage
+import eu.tib.orkg.prototype.testing.andExpectPaper
 import eu.tib.orkg.prototype.testing.spring.restdocs.RestDocsTest
 import eu.tib.orkg.prototype.testing.spring.restdocs.documentedGetRequestTo
+import eu.tib.orkg.prototype.testing.spring.restdocs.documentedPostRequestTo
 import eu.tib.orkg.prototype.testing.spring.restdocs.timestampFieldWithPath
+import io.mockk.clearAllMocks
+import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.verify
+import java.net.URI
 import java.util.*
+import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.hasSize
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -46,7 +91,21 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
+    private lateinit var contributionService: ContributionUseCases
+
+    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
+    @MockkBean
     private lateinit var userRepository: AuthUseCase
+
+    @BeforeEach
+    fun resetState() {
+        clearAllMocks()
+    }
+
+    @AfterEach
+    fun verifyMocks() {
+        confirmVerified(paperService, contributionService, userRepository)
+    }
 
     @Test
     @DisplayName("Given a paper, when it is fetched by id and service succeeds, then status is 200 OK and paper is returned")
@@ -59,6 +118,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .contentType(PAPER_JSON_V2)
             .perform()
             .andExpect(status().isOk)
+            .andExpectPaper()
             .andDo(
                 documentationHandler.document(
                     pathParameters(
@@ -115,6 +175,9 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.findById(id) } returns Optional.empty()
 
         get("/api/papers/$id")
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
             .andExpect(jsonPath("$.path").value("/api/papers/$id"))
@@ -135,6 +198,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
+            .andExpectPaper("$.content[*]")
             .andDo(
                 documentationHandler.document(
                     requestParameters(
@@ -157,6 +221,9 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.findAllByDOI(doi, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
 
         get("/api/papers?doi=$doi")
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -172,6 +239,9 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.findAllByTitle(title, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
 
         get("/api/papers?title=$title")
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -187,6 +257,9 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.findAllByVisibility(visibility, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
 
         get("/api/papers?visibility=$visibility")
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -202,6 +275,9 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.findAllByContributor(contributorId, any()) } returns PageImpl(papers, PageRequest.of(0, 5), 1)
 
         get("/api/papers?created_by=$contributorId")
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(1)))
             .andExpect(jsonPath("$.number").value(0)) // page number
@@ -218,6 +294,9 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         val exception = TooManyParameters.atMostOneOf("doi", "title", "visibility", "created_by")
 
         get("/api/papers?title=$title&created_by=$contributorId")
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.path").value("/api/papers"))
@@ -232,8 +311,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.findAllContributorsByPaperId(id, any()) } returns PageImpl(contributors, PageRequest.of(0, 5), 1)
 
         documentedGetRequestTo("/api/papers/{id}/contributors", id)
-            .accept(PAPER_JSON_V2)
-            .contentType(PAPER_JSON_V2)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
@@ -249,6 +328,9 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         every { paperService.findAllContributorsByPaperId(id, any()) } throws exception
 
         get("/api/papers/$id/contributors")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .perform()
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
             .andExpect(jsonPath("$.path").value("/api/papers/$id/contributors"))
@@ -257,8 +339,759 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         verify(exactly = 1) { paperService.findAllContributorsByPaperId(id, any()) }
     }
 
-    private fun get(string: String) = mockMvc.perform(
-        MockMvcRequestBuilders.get(string)
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @DisplayName("Given a paper request, when service succeeds, it creates and returns the paper")
+    fun create() {
+        val id = ThingId("R123")
+        every { paperService.create(any()) } returns id
+
+        documentedPostRequestTo("/api/papers")
+            .content(createPaperRequest())
             .accept(PAPER_JSON_V2)
-    )
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/papers/$id")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the newly created resource can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("title").description("The title of the paper."),
+                        fieldWithPath("research_fields").description("The list of research fields the paper will be assigned to."),
+                        fieldWithPath("identifiers").description("The unique identifiers of the paper."),
+                        fieldWithPath("identifiers.doi").description("The DOI of the paper. (optional)").optional(),
+                        fieldWithPath("publication_info").description("The publication info of the paper.").optional(),
+                        fieldWithPath("publication_info.published_month").description("The month in which the paper was published. (optional)").optional(),
+                        fieldWithPath("publication_info.published_year").description("The year in which the paper was published. (optional)").optional(),
+                        fieldWithPath("publication_info.published_in").description("The venue where the paper was published. (optional)").optional(),
+                        fieldWithPath("publication_info.url").description("The URL to the original paper. (optional)").optional(),
+                        fieldWithPath("authors").description("The list of authors that originally contributed to the paper."),
+                        fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].name").description("The name of the author."),
+                        fieldWithPath("authors[].identifiers").description("The unique identifiers of the author."),
+                        fieldWithPath("authors[].identifiers.orcid").description("The ORCID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.google_scholar").type("String").description("The Google Scholar ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.research_gate").type("String").description("The ResearchGate ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.linked_in").type("String").description("The LinkedIn ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.wikidata").type("String").description("The Wikidata ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.web_of_science").type("String").description("The Web of Science id of the author. (optional)").optional(),
+                        fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
+                        fieldWithPath("contents").description("Definition of the contents of the paper."),
+                        fieldWithPath("contents.resources").description("Definition of resources that need to be created."),
+                        fieldWithPath("contents.resources.*.label").description("The label of the resource."),
+                        fieldWithPath("contents.resources.*.classes").description("The list of classes of the resource."),
+                        fieldWithPath("contents.literals").description("Definition of literals that need to be created."),
+                        fieldWithPath("contents.literals.*.label").description("The value of the literal."),
+                        fieldWithPath("contents.literals.*.data_type").description("The data type of the literal."),
+                        fieldWithPath("contents.predicates").description("Definition of predicates that need to be created."),
+                        fieldWithPath("contents.predicates.*.label").description("The label of the predicate."),
+                        fieldWithPath("contents.predicates.*.description").description("The description of the predicate."),
+                        fieldWithPath("contents.lists").description("Definition of lists that need to be created."),
+                        fieldWithPath("contents.lists.*.label").description("The label of the list."),
+                        fieldWithPath("contents.lists.*.elements").description("The IDs of the elements of the list."),
+                        fieldWithPath("contents.contributions").description("List of definitions of contribution that need to be created."),
+                        fieldWithPath("contents.contributions[].label").description("Label of the contribution."),
+                        fieldWithPath("contents.contributions[].classes").description("The classes of the contribution resource."),
+                        subsectionWithPath("contents.contributions[].statements").description("Recursive map of statements contained within the contribution."),
+                        fieldWithPath("contents.contributions[].statements.*[].id").description("The ID of the object of the statement."),
+                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to."),
+                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to."),
+                        fieldWithPath("extraction_method").description("""The method used to extract the paper resource. Can be one of "unknown", "manual" or "automatic".""")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { paperService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper request, when service reports only one research field allowed, then status is 403 FORBIDDEN`() {
+        val exception = OnlyOneResearchFieldAllowed()
+        every { paperService.create(any()) } throws exception
+
+        post("/api/papers", createPaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isForbidden)
+            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper request, when service reports only one organization allowed, then status is 403 FORBIDDEN`() {
+        val exception = OnlyOneOrganizationAllowed()
+        every { paperService.create(any()) } throws exception
+
+        post("/api/papers", createPaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isForbidden)
+            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper request, when service reports only one observatory allowed, then status is 403 FORBIDDEN`() {
+        val exception = OnlyOneObservatoryAllowed()
+        every { paperService.create(any()) } throws exception
+
+        post("/api/papers", createPaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isForbidden)
+            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper request, when service reports thing not defined, then status is 400 BAD REQUEST`() {
+        val exception = ThingNotDefined("R123")
+        every { paperService.create(any()) } throws exception
+
+        post("/api/papers", createPaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper request, when service reports author not found, then status is 404 NOT FOUND`() {
+        val exception = AuthorNotFound(ThingId("R123"))
+        every { paperService.create(any()) } throws exception
+
+        post("/api/papers", createPaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper request, when service reports duplicate temp ids, then status is 400 BAD REQUEST`() {
+        val exception = DuplicateTempIds(mapOf("#temp1" to 2))
+        every { paperService.create(any()) } throws exception
+
+        post("/api/papers", createPaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper request, when service reports invalid temp id, then status is 400 BAD REQUEST`() {
+        val exception = InvalidTempId("invalid")
+        every { paperService.create(any()) } throws exception
+
+        post("/api/papers", createPaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper request, when service reports paper already exists with title, then status is 403 FORBIDDEN`() {
+        val exception = PaperAlreadyExists.withTitle("paper title")
+        every { paperService.create(any()) } throws exception
+
+        post("/api/papers", createPaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isForbidden)
+            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper request, when service reports paper already exists with identifier, then status is 403 FORBIDDEN`() {
+        val exception = PaperAlreadyExists.withIdentifier("paper title")
+        every { paperService.create(any()) } throws exception
+
+        post("/api/papers", createPaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isForbidden)
+            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper request, when service reports ambiguous author, then status is 400 BAD REQUEST`() {
+        val exception = AmbiguousAuthor(
+            Author(
+                id = ThingId("R123"),
+                name = "author",
+                identifiers = mapOf("orcid" to "0000-1111-2222-3333")
+            )
+        )
+        every { paperService.create(any()) } throws exception
+
+        post("/api/papers", createPaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper request, when service reports thing id is not a class, then status is 400 BAD REQUEST`() {
+        val exception = ThingIsNotAClass(ThingId("R123"))
+        every { paperService.create(any()) } throws exception
+
+        post("/api/papers", createPaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper request, when service reports thing id is not a predicate, then status is 400 BAD REQUEST`() {
+        val exception = ThingIsNotAPredicate("R123")
+        every { paperService.create(any()) } throws exception
+
+        post("/api/papers", createPaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper request, when service reports invalid statement subject, then status is 400 BAD REQUEST`() {
+        val exception = InvalidStatementSubject("R123")
+        every { paperService.create(any()) } throws exception
+
+        post("/api/papers", createPaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper request, when service reports thing not found, then status is 404 NOT FOUND`() {
+        val exception = ThingNotFound("R123")
+        every { paperService.create(any()) } throws exception
+
+        post("/api/papers", createPaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper request, when service reports empty contributions, then status is 403 FORBIDDEN`() {
+        val exception = EmptyContribution(0)
+        every { paperService.create(any()) } throws exception
+
+        post("/api/papers", createPaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isForbidden)
+            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @DisplayName("Given a contribution request, when service succeeds, it creates and returns the contribution")
+    fun createContribution() {
+        val paperId = ThingId("R3541")
+        val contributionId = ThingId("R123")
+        every { paperService.createContribution(any()) } returns contributionId
+
+        documentedPostRequestTo("/api/papers/{id}/contributions", paperId)
+            .content(createContributionRequest())
+            .accept(CONTRIBUTION_JSON_V2)
+            .contentType(CONTRIBUTION_JSON_V2)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/contributions/$contributionId")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the newly created resource can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("resources").description("Definition of resources that need to be created."),
+                        fieldWithPath("resources.*.label").description("The label of the resource."),
+                        fieldWithPath("resources.*.classes").description("The list of classes of the resource."),
+                        fieldWithPath("literals").description("Definition of literals that need to be created."),
+                        fieldWithPath("literals.*.label").description("The value of the literal."),
+                        fieldWithPath("literals.*.data_type").description("The data type of the literal."),
+                        fieldWithPath("predicates").description("Definition of predicates that need to be created."),
+                        fieldWithPath("predicates.*.label").description("The label of the predicate."),
+                        fieldWithPath("predicates.*.description").description("The description of the predicate."),
+                        fieldWithPath("lists").description("Definition of lists that need to be created."),
+                        fieldWithPath("lists.*.label").description("The label of the list."),
+                        fieldWithPath("lists.*.elements").description("The IDs of the elements of the list."),
+                        fieldWithPath("contribution").description("List of definitions of contribution that need to be created."),
+                        fieldWithPath("contribution.label").description("Label of the contribution."),
+                        fieldWithPath("contribution.classes").description("The classes of the contribution resource."),
+                        subsectionWithPath("contribution.statements").description("Recursive map of statements contained within the contribution."),
+                        fieldWithPath("contribution.statements.*[].id").description("The ID of the object of the statement.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { paperService.createContribution(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a contribution request, when service reports invalid temp id, then status is 400 BAD REQUEST`() {
+        val paperId = ThingId("R123")
+        val exception = InvalidTempId("invalid")
+        every { paperService.createContribution(any()) } throws exception
+
+        post("/api/papers/$paperId/contributions", createContributionRequest())
+            .accept(CONTRIBUTION_JSON_V2)
+            .contentType(CONTRIBUTION_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.createContribution(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a contribution request, when service reports duplicate temp ids, then status is 400 BAD REQUEST`() {
+        val paperId = ThingId("R123")
+        val exception = DuplicateTempIds(mapOf("#temp1" to 2))
+        every { paperService.createContribution(any()) } throws exception
+
+        post("/api/papers/$paperId/contributions", createContributionRequest())
+            .accept(CONTRIBUTION_JSON_V2)
+            .contentType(CONTRIBUTION_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.createContribution(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a contribution request, when service reports paper not found, then status is 404 NOT FOUND`() {
+        val paperId = ThingId("R123")
+        val exception = PaperNotFound(ThingId("R123"))
+        every { paperService.createContribution(any()) } throws exception
+
+        post("/api/papers/$paperId/contributions", createContributionRequest())
+            .accept(CONTRIBUTION_JSON_V2)
+            .contentType(CONTRIBUTION_JSON_V2)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.createContribution(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a contribution request, when service reports thing not defined, then status is 400 BAD REQUEST`() {
+        val paperId = ThingId("R123")
+        val exception = ThingNotDefined("R123")
+        every { paperService.createContribution(any()) } throws exception
+
+        post("/api/papers/$paperId/contributions", createContributionRequest())
+            .accept(CONTRIBUTION_JSON_V2)
+            .contentType(CONTRIBUTION_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.createContribution(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a contribution request, when service reports thing not found, then status is 404 NOT FOUND`() {
+        val paperId = ThingId("R123")
+        val exception = ThingNotFound("R123")
+        every { paperService.createContribution(any()) } throws exception
+
+        post("/api/papers/$paperId/contributions", createContributionRequest())
+            .accept(CONTRIBUTION_JSON_V2)
+            .contentType(CONTRIBUTION_JSON_V2)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.createContribution(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a contribution request, when service reports thing id is not a class, then status is 400 BAD REQUEST`() {
+        val paperId = ThingId("R123")
+        val exception = ThingIsNotAClass(ThingId("R123"))
+        every { paperService.createContribution(any()) } throws exception
+
+        post("/api/papers/$paperId/contributions", createContributionRequest())
+            .accept(CONTRIBUTION_JSON_V2)
+            .contentType(CONTRIBUTION_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.createContribution(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a contribution request, when service reports thing id is not a predicate, then status is 400 BAD REQUEST`() {
+        val paperId = ThingId("R123")
+        val exception = ThingIsNotAPredicate("R123")
+        every { paperService.createContribution(any()) } throws exception
+
+        post("/api/papers/$paperId/contributions", createContributionRequest())
+            .accept(CONTRIBUTION_JSON_V2)
+            .contentType(CONTRIBUTION_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.createContribution(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a contribution request, when service reports invalid statement subject, then status is 400 BAD REQUEST`() {
+        val paperId = ThingId("R123")
+        val exception = InvalidStatementSubject("R123")
+        every { paperService.createContribution(any()) } throws exception
+
+        post("/api/papers/$paperId/contributions", createContributionRequest())
+            .accept(CONTRIBUTION_JSON_V2)
+            .contentType(CONTRIBUTION_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.createContribution(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a contribution request, when service reports empty contribution, then status is 403 FORBIDDEN`() {
+        val paperId = ThingId("R123")
+        val exception = EmptyContribution()
+        every { paperService.createContribution(any()) } throws exception
+
+        post("/api/papers/$paperId/contributions", createContributionRequest())
+            .accept(CONTRIBUTION_JSON_V2)
+            .contentType(CONTRIBUTION_JSON_V2)
+            .perform()
+            .andExpect(status().isForbidden)
+            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.createContribution(any()) }
+    }
+
+    private fun createPaperRequest() =
+        CreatePaperRequest(
+            title = "example paper",
+            researchFields = listOf(ThingId("R12")),
+            identifiers = mapOf("doi" to "10.48550 / arXiv.2304.05327"),
+            publicationInfo = PublicationInfoDTO(
+                publishedMonth = 5,
+                publishedYear = 2015,
+                publishedIn = "conference",
+                url = URI.create("https://www.example.org")
+            ),
+            authors = listOf(
+                AuthorDTO(
+                    id = ThingId("R123"),
+                    name = "Author with id",
+                    identifiers = null,
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author with orcid",
+                    identifiers = mapOf("orcid" to "0000-1111-2222-3333"),
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = ThingId("R456"),
+                    name = "Author with id and orcid",
+                    identifiers = mapOf("orcid" to "1111-2222-3333-4444"),
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author with homepage",
+                    identifiers = null,
+                    homepage = URI.create("http://example.org/author")
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author that just has a name",
+                    identifiers = null,
+                    homepage = null
+                )
+            ),
+            observatories = listOf(
+                ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
+            ),
+            organizations = listOf(
+                OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
+            ),
+            contents = PaperContentsDTO(
+                resources = mapOf(
+                    "#temp1" to ResourceDefinitionDTO(
+                        label = "MOTO",
+                        classes = setOf(ThingId("Result"))
+                    )
+                ),
+                literals = mapOf(
+                    "#temp2" to LiteralDefinitionDTO(
+                        label = "0.1",
+                        dataType = "xsd:decimal"
+                    )
+                ),
+                predicates = mapOf(
+                    "#temp3" to PredicateDefinitionDTO(
+                        label = "hasResult",
+                        description = "has result"
+                    )
+                ),
+                lists = mapOf(
+                    "#temp4" to ListDefinitionDTO(
+                        label = "list",
+                        elements = listOf("#temp1", "C123")
+                    )
+                ),
+                contributions = listOf(
+                    ContributionDTO(
+                        label = "Contribution 1",
+                        classes = setOf(ThingId("C123")),
+                        statements = mapOf(
+                            "P32" to listOf(
+                                StatementObjectDefinitionDTO(
+                                    id = "R3003",
+                                    statements = null
+                                )
+                            ),
+                            "HAS_EVALUATION" to listOf(
+                                StatementObjectDefinitionDTO(
+                                    id = "#temp1",
+                                    statements = null
+                                ),
+                                StatementObjectDefinitionDTO(
+                                    id = "R3004",
+                                    statements = mapOf(
+                                        "#temp3" to listOf(
+                                            StatementObjectDefinitionDTO(
+                                                id = "R3003",
+                                                statements = null
+                                            ),
+                                            StatementObjectDefinitionDTO(
+                                                id = "#temp2",
+                                                statements = null
+                                            ),
+                                            StatementObjectDefinitionDTO(
+                                                id = "#temp4",
+                                                statements = null
+                                            )
+                                        ),
+                                        "P32" to listOf(
+                                            StatementObjectDefinitionDTO(
+                                                id = "#temp2",
+                                                statements = null
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            ),
+            extractionMethod = ExtractionMethod.MANUAL
+        )
+
+    private fun createContributionRequest() =
+        PaperController.CreateContributionRequest(
+            resources = mapOf(
+                "#temp1" to ResourceDefinitionDTO(
+                    label = "MOTO",
+                    classes = setOf(ThingId("Result"))
+                )
+            ),
+            literals = mapOf(
+                "#temp2" to LiteralDefinitionDTO(
+                    label = "0.1",
+                    dataType = "xsd:decimal"
+                )
+            ),
+            predicates = mapOf(
+                "#temp3" to PredicateDefinitionDTO(
+                    label = "hasResult",
+                    description = "has result"
+                )
+            ),
+            lists = mapOf(
+                "#temp4" to ListDefinitionDTO(
+                    label = "list",
+                    elements = listOf("#temp1", "C123")
+                )
+            ),
+            contribution = ContributionDTO(
+                label = "Contribution 1",
+                classes = setOf(ThingId("C123")),
+                statements = mapOf(
+                    "P32" to listOf(
+                        StatementObjectDefinitionDTO(
+                            id = "R3003",
+                            statements = null
+                        )
+                    ),
+                    "HAS_EVALUATION" to listOf(
+                        StatementObjectDefinitionDTO(
+                            id = "#temp1",
+                            statements = null
+                        ),
+                        StatementObjectDefinitionDTO(
+                            id = "R3004",
+                            statements = mapOf(
+                                "#temp3" to listOf(
+                                    StatementObjectDefinitionDTO(
+                                        id = "R3003",
+                                        statements = null
+                                    ),
+                                    StatementObjectDefinitionDTO(
+                                        id = "#temp2",
+                                        statements = null
+                                    ),
+                                    StatementObjectDefinitionDTO(
+                                        id = "#temp4",
+                                        statements = null
+                                    )
+                                ),
+                                "P32" to listOf(
+                                    StatementObjectDefinitionDTO(
+                                        id = "#temp2",
+                                        statements = null
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
 }

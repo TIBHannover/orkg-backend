@@ -18,8 +18,8 @@ interface UpdateListUseCase {
     fun update(id: ThingId, command: UpdateCommand)
 
     data class UpdateCommand(
-        val label: String?,
-        val elements: List<ThingId>?,
+        val label: String? = null,
+        val elements: List<ThingId>? = null,
         val contributorId: ContributorId? = null
     )
 }

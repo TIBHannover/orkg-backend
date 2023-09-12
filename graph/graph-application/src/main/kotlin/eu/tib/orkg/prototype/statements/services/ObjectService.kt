@@ -274,7 +274,7 @@ class ObjectService(
 
     private fun checkIfThingExists(id: ThingId) {
         if (!thingService.exists(id))
-            throw ThingNotFound.withThingId(id)
+            throw ThingNotFound(id)
     }
 
     /**

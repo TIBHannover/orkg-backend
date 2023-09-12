@@ -34,25 +34,11 @@ A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributor
 
 operation::papers-get-contributors[snippets='curl-request']
 
-////
 [[papers-create]]
 === Creating papers
 
 A `POST` request creates a new paper with all the given parameters.
 The response will be `201 Created` when successful.
-The paper root resource (object) can be retrieved by following the URI in the `Location` header field.
+The paper (object) can be retrieved by following the URI in the `Location` header field.
 
-NOTE: The created paper root resource is returned in the body for convenience. This might be subject to change.
-
-// FIXME: implement missing test
-operation::paper-controller-test-add[snippets='request-fields,curl-request,http-response']
-
-For more details on how the request would look like see https://gitlab.com/TIBHannover/orkg/orkg-backend/issues/77[Gitlab issue].
-
-The response body consists of the following fields:
-
-// FIXME: implement missing test
-operation::paper-controller-test-add[snippets='response-fields']
-
-NOTE: The Resources, Literals, Predicates part of the request are checked and an error is returned when some is missing or non-existing.
-////
+operation::papers-create[snippets='request-fields,curl-request,http-response']

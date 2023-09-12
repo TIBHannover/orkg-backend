@@ -23,7 +23,9 @@ class ContributionController(
     fun findById(
         @PathVariable id: ThingId
     ): ContributionRepresentation =
-        service.findById(id).toContributionRepresentation()
+        service.findById(id)
+            .mapToContributionRepresentation()
+            .orElseThrow { ContributionNotFound(id) }
 
     @GetMapping(produces = [CONTRIBUTION_JSON_V2])
     fun findAll(pageable: Pageable): Page<ContributionRepresentation> =

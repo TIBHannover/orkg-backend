@@ -29,6 +29,32 @@ fun ResultActions.andExpectStatement(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.created_by", `is`(notNullValue())))
     .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))
 
+fun ResultActions.andExpectPaper(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.title", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.research_fields").isArray)
+    .andExpect(jsonPath("$path.identifiers", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.publication_info", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.publication_info.published_month").exists())
+    .andExpect(jsonPath("$path.publication_info.published_year").exists())
+    .andExpect(jsonPath("$path.publication_info.published_in").exists())
+    .andExpect(jsonPath("$path.publication_info.url").exists())
+    .andExpect(jsonPath("$path.authors").isArray)
+    .andExpect(jsonPath("$path.authors[*].id").exists())
+    .andExpect(jsonPath("$path.authors[*].name", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.authors[*].identifiers").exists())
+    .andExpect(jsonPath("$path.authors[*].homepage").exists())
+    .andExpect(jsonPath("$path.contributions").exists())
+    .andExpect(jsonPath("$path.contributions[*].id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.contributions[*].label", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.observatories").isArray)
+    .andExpect(jsonPath("$path.organizations").isArray)
+    .andExpect(jsonPath("$path.extraction_method", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.created_by", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.verified", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.visibility", `is`(notNullValue())))
+
 fun ResultActions.andExpectResource(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.id", `is`(notNullValue())))
     .andExpect(jsonPath("$path.label", `is`(notNullValue())))
@@ -82,6 +108,13 @@ fun ResultActions.andExpectComparison(path: String = "$"): ResultActions = this
     .andExpect(jsonPath("$path.created_at", `is`(notNullValue())))
     .andExpect(jsonPath("$path.previous_version", `is`(notNullValue())))
     .andExpect(jsonPath("$path.is_anonymized", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.visibility", `is`(notNullValue())))
+
+fun ResultActions.andExpectContribution(path: String = "$"): ResultActions = this
+    .andExpect(jsonPath("$path.id", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.label", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.classes", `is`(notNullValue())))
+    .andExpect(jsonPath("$path.properties", `is`(notNullValue())))
     .andExpect(jsonPath("$path.visibility", `is`(notNullValue())))
 
 fun ResultActions.andExpectComparisonRelatedResource(path: String = "$"): ResultActions = this

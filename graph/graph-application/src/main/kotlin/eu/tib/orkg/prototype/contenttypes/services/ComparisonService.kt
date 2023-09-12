@@ -122,7 +122,7 @@ class ComparisonService(
             title = label,
             description = statements.wherePredicate(Predicates.description).firstObjectLabel(),
             researchFields = statements.wherePredicate(Predicates.hasSubject).objectIdsAndLabel(),
-            identifiers = statements.mapIdentifiers(Identifiers.comparison),
+            identifiers = statements.associateIdentifiers(Identifiers.comparison),
             publicationInfo = PublicationInfo.from(statements),
             authors = statements.authors(statementRepository),
             contributions = statements.wherePredicate(Predicates.comparesContribution).objectIdsAndLabel(),

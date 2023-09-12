@@ -4,19 +4,20 @@ import eu.tib.orkg.prototype.contenttypes.services.firstObjectLabel
 import eu.tib.orkg.prototype.contenttypes.services.wherePredicate
 import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
+import java.net.URI
 
 data class PublicationInfo(
     val publishedMonth: Int?,
     val publishedYear: Long?,
     val publishedIn: String?,
-    val url: String?
+    val url: URI?
 ) {
     companion object {
         fun from(statements: Iterable<GeneralStatement>): PublicationInfo = PublicationInfo(
             publishedMonth = statements.wherePredicate(Predicates.monthPublished).firstObjectLabel()?.toIntOrNull(),
             publishedYear = statements.wherePredicate(Predicates.yearPublished).firstObjectLabel()?.toLongOrNull(),
             publishedIn = statements.wherePredicate(Predicates.hasVenue).firstObjectLabel(),
-            url = statements.wherePredicate(Predicates.hasURL).firstObjectLabel()
+            url = statements.wherePredicate(Predicates.hasURL).firstObjectLabel()?.let { URI.create(it) }
         )
     }
 }

@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.contenttypes.api
 
-interface PaperUseCases : RetrievePaperUseCase
+interface PaperUseCases : RetrievePaperUseCase, CreatePaperUseCase, CreateContributionUseCase
 
 interface ContributionUseCases : RetrieveContributionUseCase
 

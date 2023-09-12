@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added new endpoints to fetch research field hierarchies
   (See: [!606](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/606))
+- Added new endpoints for creating papers and contributions.
+  (Closes: [#279](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/279),
+  See: [!582](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/582))
 ### Fixed
 - Lists that still have elements can now be deleted.
   (See: [!627](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/627))

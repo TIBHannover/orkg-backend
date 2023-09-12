@@ -84,7 +84,7 @@ testing {
                 implementation(testFixtures(project(":testing:spring")))
                 implementation(testFixtures(project(":graph:graph-application")))
                 implementation(project(":identity-management:idm-application"))
-                implementation(project(":identity-management:idm-adapter-output-spring-data-jpa")) // for JpaUserAdapter in DiscussionCommentAdapter
+                implementation(project(":identity-management:idm-adapter-output-spring-data-jpa")) // for JpaUserAdapter
                 implementation(project(":discussions:discussions-adapter-output-spring-data-jpa-postgres"))
                 implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa-postgres"))
                 implementation(project(":feature-flags:feature-flags-ports"))
@@ -136,9 +136,9 @@ dependencies {
 
     // This project is essentially a "configuration" project in Spring's sense, so we depend on all components:
     implementation(project(":common:exceptions"))
-    implementation(project(":identity-management:idm-application"))
-    implementation(project(":identity-management:idm-adapter-input-rest-spring-security"))
-    implementation(project(":identity-management:idm-adapter-output-spring-data-jpa"))
+    compileOnly(project(":identity-management:idm-application")) // only ports used, replace later
+    runtimeOnly(project(":identity-management:idm-adapter-input-rest-spring-security"))
+    runtimeOnly(project(":identity-management:idm-adapter-output-spring-data-jpa"))
     implementation(project(":graph:graph-application"))
     implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
     implementation(project(":graph:graph-adapter-output-spring-data-neo4j-ogm"))

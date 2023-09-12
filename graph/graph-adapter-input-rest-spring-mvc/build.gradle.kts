@@ -37,7 +37,6 @@ dependencies {
 
     implementation(project(":common:exceptions"))
     implementation(project(":graph:graph-application"))
-    implementation(project(":identity-management:idm-application")) // only for ExceptionHandler
     implementation(project(":feature-flags:feature-flags-ports"))
 
     implementation("org.springframework:spring-context")
@@ -49,7 +48,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-data-neo4j") // only for ExceptionHandler
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin") // to (de)serialize data classes
 
     // RDF

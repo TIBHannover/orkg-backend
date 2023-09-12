@@ -2,10 +2,9 @@ package eu.tib.orkg.prototype.discussions.application
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
-import eu.tib.orkg.prototype.auth.domain.UserService
-import eu.tib.orkg.prototype.auth.spi.UserRepository
-import eu.tib.orkg.prototype.auth.testing.fixtures.createUser
+import eu.tib.orkg.prototype.community.testing.fixtures.createContributor
 import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.contributions.spi.ContributorRepository
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.discussions.api.CreateDiscussionCommentUseCase
 import eu.tib.orkg.prototype.discussions.api.DiscussionUseCases
@@ -57,11 +56,7 @@ internal class DiscussionControllerUnitTest {
     private lateinit var discussionService: DiscussionUseCases
 
     @MockkBean
-    private lateinit var userService: UserService
-
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
-    @MockkBean
-    private lateinit var userRepository: UserRepository
+    private lateinit var contributorRepository: ContributorRepository
 
     @BeforeEach
     fun setup() {
@@ -71,14 +66,13 @@ internal class DiscussionControllerUnitTest {
     @Test
     fun `Given a comment is created, when service succeeds, then status is 200 OK and comment is returned`() {
         val topic = ThingId("C1234")
-        val userId = UUID.randomUUID()
         val mockPrincipal = mockk<Principal>()
-        val user = createUser(id = userId)
+        val contributor = createContributor()
         val comment = DiscussionComment(
             id = DiscussionCommentId(UUID.randomUUID()),
             topic = topic,
             message = "Some comment",
-            createdBy = ContributorId(userId),
+            createdBy = contributor.id,
             createdAt = OffsetDateTime.now()
         )
         val createCommand = CreateDiscussionCommentUseCase.CreateCommand(
@@ -87,8 +81,8 @@ internal class DiscussionControllerUnitTest {
             createdBy = comment.createdBy
         )
 
-        every { mockPrincipal.name } returns userId.toString()
-        every { userService.findById(userId) } returns Optional.of(user)
+        every { mockPrincipal.name } returns contributor.id.toString()
+        every { contributorRepository.findById(contributor.id) } returns Optional.of(contributor)
         every { discussionService.create(createCommand) } returns comment.id
         every { discussionService.findByTopicAndCommentId(topic, comment.id) } returns Optional.of(comment)
 
@@ -128,10 +122,10 @@ internal class DiscussionControllerUnitTest {
     fun `Given a comment is created, when user is not found, then status is 400 BAD REQUEST`() {
         val topic = ThingId("C1234")
         val mockPrincipal = mockk<Principal>()
-        val userId = UUID.randomUUID()
+        val contributorId = ContributorId(UUID.randomUUID())
 
-        every { mockPrincipal.name } returns userId.toString()
-        every { userService.findById(userId) } returns Optional.empty()
+        every { mockPrincipal.name } returns contributorId.toString()
+        every { contributorRepository.findById(contributorId) } returns Optional.empty()
 
         val request = mapOf(
             "message" to "irrelevant"
@@ -141,7 +135,7 @@ internal class DiscussionControllerUnitTest {
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status").value(400))
             .andExpect(jsonPath("$.error").value("Bad Request"))
-            .andExpect(jsonPath("$.message").value("""User "$userId" not found."""))
+            .andExpect(jsonPath("$.message").value("""User "$contributorId" not found."""))
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.path").value("/api/discussions/topic/$topic"))
 
@@ -152,11 +146,10 @@ internal class DiscussionControllerUnitTest {
     fun `Given a comment is created, when service reports topic not found, then status is 404 NOT FOUND`() {
         val topic = ThingId("C1234")
         val mockPrincipal = mockk<Principal>()
-        val userId = UUID.randomUUID()
-        val user = createUser(id = userId)
+        val contributor = createContributor()
 
-        every { mockPrincipal.name } returns userId.toString()
-        every { userService.findById(userId) } returns Optional.of(user)
+        every { mockPrincipal.name } returns contributor.id.toString()
+        every { contributorRepository.findById(contributor.id) } returns Optional.of(contributor)
         every { discussionService.create(any()) } throws TopicNotFound(topic)
 
         val request = mapOf(
@@ -176,10 +169,9 @@ internal class DiscussionControllerUnitTest {
     fun `Given a comment is created, when service reports invalid message contents, then status is 402 FORBIDDEN`() {
         val topic = ThingId("C1234")
         val mockPrincipal = mockk<Principal>()
-        val userId = UUID.randomUUID()
-        val user = createUser(id = userId)
-        every { mockPrincipal.name } returns userId.toString()
-        every { userService.findById(userId) } returns Optional.of(user)
+        val contributor = createContributor()
+        every { mockPrincipal.name } returns contributor.id.toString()
+        every { contributorRepository.findById(contributor.id) } returns Optional.of(contributor)
         every { discussionService.create(any()) } throws InvalidContent()
 
         val request = mapOf(

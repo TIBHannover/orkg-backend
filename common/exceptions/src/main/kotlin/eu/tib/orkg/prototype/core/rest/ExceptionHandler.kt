@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.core.rest
 
-import eu.tib.orkg.prototype.auth.domain.UserRegistrationException
 import eu.tib.orkg.prototype.shared.ForbiddenOperationException
 import eu.tib.orkg.prototype.shared.LoggedMessageException
 import eu.tib.orkg.prototype.shared.PropertyValidationException
@@ -12,7 +11,9 @@ import javax.servlet.http.HttpServletRequestWrapper
 import org.springframework.data.neo4j.exception.UncategorizedNeo4jException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatus.*
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.FORBIDDEN
+import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -23,6 +24,7 @@ import org.springframework.web.context.request.WebRequest
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import org.springframework.web.util.ContentCachingRequestWrapper
+
 
 @ControllerAdvice
 class ExceptionHandler : ResponseEntityExceptionHandler() {
@@ -58,20 +60,6 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
                 FieldValidationError(field = ex.property, message = ex.message)
             )
         }
-
-    @ExceptionHandler(UserRegistrationException::class)
-    fun handleUserRegistrationException(
-        ex: UserRegistrationException,
-        request: WebRequest
-    ): ResponseEntity<Any> {
-        val payload = MessageErrorResponse(
-            status = ex.status.value(),
-            error = ex.status.reasonPhrase,
-            path = request.requestURI,
-            message = ex.message
-        )
-        return ResponseEntity(payload, ex.status)
-    }
 
     @ExceptionHandler(LoggedMessageException::class)
     fun handleLoggedMessageException(
@@ -114,10 +102,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         return ResponseEntity(payload, BAD_REQUEST)
     }
 
-    @ExceptionHandler(value = [
-        RuntimeException::class,
-        UncategorizedNeo4jException::class
-    ])
+    @ExceptionHandler(value = [RuntimeException::class, UncategorizedNeo4jException::class])
     fun handleRuntimeException(
         ex: RuntimeException,
         request: WebRequest
@@ -238,7 +223,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
     )
 }
 
-private val WebRequest.requestURI: String
+val WebRequest.requestURI: String
     get() = when (this) {
         is ServletWebRequest -> request.requestURI
         else -> contextPath // most likely this is empty

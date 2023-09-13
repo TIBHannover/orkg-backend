@@ -1,7 +1,7 @@
-package eu.tib.orkg.prototype.contributions.domain.model
+package eu.tib.orkg.prototype.community.domain.model
 
-import eu.tib.orkg.prototype.contributions.application.ports.input.RetrieveContributorUseCase
-import eu.tib.orkg.prototype.contributions.spi.ContributorRepository
+import eu.tib.orkg.prototype.community.api.RetrieveContributorUseCase
+import eu.tib.orkg.prototype.community.spi.ContributorRepository
 import java.util.*
 import javax.transaction.Transactional
 import org.springframework.stereotype.Service

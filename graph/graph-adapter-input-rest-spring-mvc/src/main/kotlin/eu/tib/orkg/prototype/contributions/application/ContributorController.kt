@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.contributions.application
 
-import eu.tib.orkg.prototype.contributions.application.ports.input.RetrieveContributorUseCase
-import eu.tib.orkg.prototype.contributions.domain.model.Contributor
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.api.RetrieveContributorUseCase
+import eu.tib.orkg.prototype.community.domain.model.Contributor
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.ContributorNotFound
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping

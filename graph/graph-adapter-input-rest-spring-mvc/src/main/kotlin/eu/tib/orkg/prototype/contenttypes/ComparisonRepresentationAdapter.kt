@@ -7,7 +7,7 @@ import eu.tib.orkg.prototype.contenttypes.application.ComparisonRepresentation
 import eu.tib.orkg.prototype.contenttypes.application.LabeledObjectRepresentation
 import eu.tib.orkg.prototype.contenttypes.application.PublicationInfoRepresentation
 import eu.tib.orkg.prototype.contenttypes.domain.model.Comparison
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility

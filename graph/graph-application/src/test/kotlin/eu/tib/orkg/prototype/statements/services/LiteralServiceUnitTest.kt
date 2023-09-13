@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.services
 
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.application.InvalidLiteralDatatype
 import eu.tib.orkg.prototype.statements.application.InvalidLiteralLabel
 import eu.tib.orkg.prototype.statements.domain.model.MAX_LABEL_LENGTH

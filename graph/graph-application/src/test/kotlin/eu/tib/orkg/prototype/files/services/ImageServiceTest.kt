@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.files.services
 
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.files.api.CreateImageUseCase
 import eu.tib.orkg.prototype.files.application.InvalidMimeType
 import eu.tib.orkg.prototype.files.domain.model.Image

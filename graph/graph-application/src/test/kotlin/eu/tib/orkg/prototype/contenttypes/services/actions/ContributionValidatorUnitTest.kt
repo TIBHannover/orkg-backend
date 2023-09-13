@@ -1,12 +1,12 @@
 package eu.tib.orkg.prototype.contenttypes.services.actions
 
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.contenttypes.api.CreateContributionUseCase
 import eu.tib.orkg.prototype.contenttypes.api.CreatePaperUseCase
 import eu.tib.orkg.prototype.contenttypes.application.EmptyContribution
 import eu.tib.orkg.prototype.contenttypes.application.InvalidStatementSubject
 import eu.tib.orkg.prototype.contenttypes.application.ThingIsNotAClass
 import eu.tib.orkg.prototype.contenttypes.application.ThingIsNotAPredicate
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.createClass
 import eu.tib.orkg.prototype.createLiteral
 import eu.tib.orkg.prototype.createPredicate

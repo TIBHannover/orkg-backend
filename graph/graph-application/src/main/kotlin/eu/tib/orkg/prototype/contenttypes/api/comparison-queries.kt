@@ -3,7 +3,7 @@ package eu.tib.orkg.prototype.contenttypes.api
 import eu.tib.orkg.prototype.contenttypes.domain.model.Comparison
 import eu.tib.orkg.prototype.contenttypes.domain.model.ComparisonRelatedFigure
 import eu.tib.orkg.prototype.contenttypes.domain.model.ComparisonRelatedResource
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.domain.model.ContributionInfo
 import eu.tib.orkg.prototype.statements.domain.model.ThingId

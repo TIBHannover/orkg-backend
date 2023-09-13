@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.contenttypes.ComparisonRelatedFigureRepresentationA
 import eu.tib.orkg.prototype.contenttypes.ComparisonRelatedResourceRepresentationAdapter
 import eu.tib.orkg.prototype.contenttypes.ComparisonRepresentationAdapter
 import eu.tib.orkg.prototype.contenttypes.api.ComparisonUseCases
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.application.BaseController

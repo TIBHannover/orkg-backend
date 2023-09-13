@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import java.time.OffsetDateTime
 
 data class GeneralStatement(

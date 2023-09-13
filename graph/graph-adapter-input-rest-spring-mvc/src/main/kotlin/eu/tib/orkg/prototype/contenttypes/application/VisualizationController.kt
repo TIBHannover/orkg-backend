@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.contenttypes.application
 
 import eu.tib.orkg.prototype.contenttypes.VisualizationRepresentationAdapter
 import eu.tib.orkg.prototype.contenttypes.api.VisualizationUseCases
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.application.BaseController

@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.contenttypes
 
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contenttypes.api.ContributionUseCases
@@ -34,7 +35,6 @@ import eu.tib.orkg.prototype.contenttypes.application.ThingIsNotAClass
 import eu.tib.orkg.prototype.contenttypes.application.ThingIsNotAPredicate
 import eu.tib.orkg.prototype.contenttypes.application.ThingNotDefined
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.createDummyPaper
 import eu.tib.orkg.prototype.shared.TooManyParameters

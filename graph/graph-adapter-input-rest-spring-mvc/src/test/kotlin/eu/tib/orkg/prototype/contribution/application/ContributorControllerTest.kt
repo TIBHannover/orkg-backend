@@ -2,9 +2,9 @@ package eu.tib.orkg.prototype.contribution.application
 
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.contributions.application.ContributorController
-import eu.tib.orkg.prototype.contributions.application.ports.input.RetrieveContributorUseCase
-import eu.tib.orkg.prototype.contributions.domain.model.Contributor
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.api.RetrieveContributorUseCase
+import eu.tib.orkg.prototype.community.domain.model.Contributor
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import io.mockk.every
 import java.time.OffsetDateTime

@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.contenttypes.services
 
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.community.spi.ObservatoryRepository
 import eu.tib.orkg.prototype.contenttypes.api.Identifiers
 import eu.tib.orkg.prototype.contenttypes.api.PaperUseCases
@@ -21,7 +22,6 @@ import eu.tib.orkg.prototype.contenttypes.services.actions.PaperResourceCreator
 import eu.tib.orkg.prototype.contenttypes.services.actions.ResearchFieldValidator
 import eu.tib.orkg.prototype.contenttypes.services.actions.TempIdValidator
 import eu.tib.orkg.prototype.contenttypes.services.actions.ThingDefinitionValidator
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.ListUseCases

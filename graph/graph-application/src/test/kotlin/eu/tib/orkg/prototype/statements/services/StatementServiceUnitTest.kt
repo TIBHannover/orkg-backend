@@ -3,7 +3,7 @@ package eu.tib.orkg.prototype.statements.services
 import eu.tib.orkg.prototype.auth.domain.UserService
 import eu.tib.orkg.prototype.auth.testing.fixtures.createAdminUser
 import eu.tib.orkg.prototype.auth.testing.fixtures.createUser
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.createStatement

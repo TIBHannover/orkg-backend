@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.discussions.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.contributions.spi.ContributorRepository
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.spi.ContributorRepository
 import eu.tib.orkg.prototype.discussions.DiscussionCommentRepresentationAdapter
 import eu.tib.orkg.prototype.discussions.api.CreateDiscussionCommentUseCase.CreateCommand
 import eu.tib.orkg.prototype.discussions.api.DiscussionCommentRepresentation

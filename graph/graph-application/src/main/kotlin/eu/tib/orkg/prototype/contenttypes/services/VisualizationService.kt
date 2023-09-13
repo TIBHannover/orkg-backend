@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.contenttypes.services
 
 import eu.tib.orkg.prototype.contenttypes.api.VisualizationUseCases
 import eu.tib.orkg.prototype.contenttypes.domain.model.Visualization
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.Predicates

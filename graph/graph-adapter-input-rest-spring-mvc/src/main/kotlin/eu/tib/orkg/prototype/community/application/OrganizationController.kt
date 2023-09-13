@@ -9,8 +9,8 @@ import eu.tib.orkg.prototype.community.domain.model.Organization
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationType
 import eu.tib.orkg.prototype.community.spi.OrganizationRepository
-import eu.tib.orkg.prototype.contributions.domain.model.Contributor
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.Contributor
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.files.api.CreateImageUseCase
 import eu.tib.orkg.prototype.files.api.ImageUseCases
 import eu.tib.orkg.prototype.files.application.InvalidImageData
@@ -123,7 +123,8 @@ class OrganizationController(
         @RequestPart("logo", required = false) logo: MultipartFile?
     ): ResponseEntity<Any> {
         val userId = authenticatedUserId()
-        service.update(ContributorId(userId), UpdateOrganizationUseCases.UpdateOrganizationRequest(
+        service.update(
+            ContributorId(userId), UpdateOrganizationUseCases.UpdateOrganizationRequest(
             id = id,
             name = request?.name,
             url = request?.url,

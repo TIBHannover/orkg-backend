@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.ChildClassRepresentationAdapter
 import eu.tib.orkg.prototype.statements.ClassHierarchyEntryRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.ChildClassRepresentation

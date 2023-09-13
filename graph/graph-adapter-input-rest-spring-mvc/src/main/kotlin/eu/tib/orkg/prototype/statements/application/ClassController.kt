@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import dev.forkhandles.result4k.onFailure
 import dev.forkhandles.values.ofOrNull
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.ClassRepresentation
 import eu.tib.orkg.prototype.statements.ClassRepresentationAdapter

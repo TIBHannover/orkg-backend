@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.contributions.domain.model
+package eu.tib.orkg.prototype.community.domain.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty

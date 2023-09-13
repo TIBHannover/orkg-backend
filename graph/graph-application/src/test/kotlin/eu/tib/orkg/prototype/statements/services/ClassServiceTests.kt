@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.services
 
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.createClass
 import eu.tib.orkg.prototype.createClassWithoutURI
 import eu.tib.orkg.prototype.statements.api.AlreadyInUse

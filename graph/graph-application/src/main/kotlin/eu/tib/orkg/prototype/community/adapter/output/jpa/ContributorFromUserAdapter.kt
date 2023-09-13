@@ -1,11 +1,11 @@
-package eu.tib.orkg.prototype.contributions.adapter.output.jpa
+package eu.tib.orkg.prototype.community.adapter.output.jpa
 
 import eu.tib.orkg.prototype.auth.domain.User
 import eu.tib.orkg.prototype.auth.spi.UserRepository
 import eu.tib.orkg.prototype.community.domain.model.toContributor
-import eu.tib.orkg.prototype.contributions.domain.model.Contributor
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.contributions.spi.ContributorRepository
+import eu.tib.orkg.prototype.community.domain.model.Contributor
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.spi.ContributorRepository
 import java.util.*
 import org.springframework.stereotype.Component
 

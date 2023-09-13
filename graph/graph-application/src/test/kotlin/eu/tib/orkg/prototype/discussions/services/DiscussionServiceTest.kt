@@ -3,7 +3,7 @@ package eu.tib.orkg.prototype.discussions.services
 import eu.tib.orkg.prototype.auth.domain.Role
 import eu.tib.orkg.prototype.auth.domain.UserService
 import eu.tib.orkg.prototype.auth.testing.fixtures.createUser
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.createClass
 import eu.tib.orkg.prototype.createLiteral
 import eu.tib.orkg.prototype.discussions.api.CreateDiscussionCommentUseCase

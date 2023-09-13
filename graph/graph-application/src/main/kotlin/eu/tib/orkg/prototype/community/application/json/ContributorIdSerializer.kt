@@ -1,9 +1,9 @@
-package eu.tib.orkg.prototype.contributions.application.json
+package eu.tib.orkg.prototype.community.application.json
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 
 class ContributorIdSerializer : JsonSerializer<ContributorId>() {
     override fun serialize(

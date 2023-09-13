@@ -7,7 +7,7 @@ import eu.tib.orkg.prototype.contenttypes.application.LabeledObjectRepresentatio
 import eu.tib.orkg.prototype.contenttypes.application.PaperRepresentation
 import eu.tib.orkg.prototype.contenttypes.application.PublicationInfoRepresentation
 import eu.tib.orkg.prototype.contenttypes.domain.model.Paper
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility

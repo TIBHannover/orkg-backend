@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.discussions.services
 
 import eu.tib.orkg.prototype.auth.api.FindUserUseCases
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.discussions.api.CreateDiscussionCommentUseCase
 import eu.tib.orkg.prototype.discussions.api.DiscussionUseCases
 import eu.tib.orkg.prototype.discussions.application.InvalidContent

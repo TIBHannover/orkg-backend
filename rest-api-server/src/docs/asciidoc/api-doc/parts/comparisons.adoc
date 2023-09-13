@@ -19,6 +19,8 @@ operation::comparisons-get-single[snippets='curl-request,response-fields']
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<comparisons-fetch,comparisons>>.
 If no paging request parameters are provided, the default values will be used.
 
+NOTE: Fetching comparisons by DOI, title or contributor does also return previous versions of comparisons.
+
 operation::comparisons-get-paged[snippets='curl-request']
 
 The following list of request parameters are supported:

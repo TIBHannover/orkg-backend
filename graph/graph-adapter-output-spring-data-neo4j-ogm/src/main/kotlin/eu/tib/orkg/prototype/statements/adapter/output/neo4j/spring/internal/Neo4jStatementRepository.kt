@@ -1,10 +1,11 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.community.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.services.ObjectService
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import java.util.*
@@ -27,6 +28,7 @@ private const val id = "${'$'}id"
 private const val ids = "${'$'}ids"
 private const val resourceIds = "${'$'}resourceIds"
 private const val doi = "${'$'}doi"
+private const val visibility = "${'$'}visibility"
 
 /**
  * Partial query that matches a statement.
@@ -69,6 +71,15 @@ private const val WHERE_SUBJECT_ID_IN =
 
 private const val WHERE_OBJECT_ID_IN =
     """WHERE obj.`id` IN $objectIds"""
+
+private const val MATCH_COMPARISON = """MATCH (node:Comparison:Resource)"""
+private const val MATCH_LISTED_COMPARISON = """MATCH (node:Comparison:Resource) WHERE (node.visibility = "DEFAULT" OR node.visibility = "FEATURED")"""
+private const val NO_PREVIOUS_VERSION = """NOT EXISTS((node)<-[:RELATED {predicate_id: "hasPreviousVersion"}]-(:Comparison))"""
+private const val AND_WHERE_VISIBILITY = """AND node.visibility = $visibility"""
+private const val WITH_NODE_PROPERTIES = """WITH node, node.label AS label, node.id AS id, node.created_at AS created_at"""
+private const val ORDER_BY_CREATED_AT = """ORDER BY created_at"""
+private const val RETURN_NODE = """RETURN node"""
+private const val RETURN_NODE_COUNT = """RETURN count(node)"""
 
 interface Neo4jStatementRepository :
     Neo4jRepository<Neo4jStatement, Long> {
@@ -308,6 +319,18 @@ RETURN COUNT(edit) AS cnt""")
     fun findBySubjectIdAndPredicateIdAndObjectId(subjectId: ThingId, predicateId: ThingId, objectId: ThingId): Optional<Neo4jStatement>
 
     fun findAllByStatementIdIn(statementIds: Set<StatementId>): List<Neo4jStatement>
+
+    @Query("""$MATCH_COMPARISON WHERE $NO_PREVIOUS_VERSION $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE""",
+        countQuery = """$MATCH_COMPARISON WHERE $NO_PREVIOUS_VERSION $RETURN_NODE_COUNT""")
+    fun findAllCurrentComparisons(pageable: Pageable): Page<Neo4jResource>
+
+    @Query("""$MATCH_LISTED_COMPARISON AND $NO_PREVIOUS_VERSION $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE""",
+        countQuery = """$MATCH_LISTED_COMPARISON AND $NO_PREVIOUS_VERSION $RETURN_NODE_COUNT""")
+    fun findAllCurrentListedComparisons(pageable: Pageable): Page<Neo4jResource>
+
+    @Query("""$MATCH_COMPARISON WHERE $NO_PREVIOUS_VERSION $AND_WHERE_VISIBILITY $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE""",
+        countQuery = """$MATCH_COMPARISON WHERE $NO_PREVIOUS_VERSION $AND_WHERE_VISIBILITY $RETURN_NODE_COUNT""")
+    fun findAllCurrentComparisonsByVisibility(visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
 }
 
 @QueryResult

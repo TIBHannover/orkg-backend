@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClassRepository
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteral
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteralRepository
@@ -21,6 +21,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.OwnershipInfo
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
@@ -229,6 +230,15 @@ class SpringDataNeo4jStatementAdapter(
         objectId: ThingId
     ): Optional<GeneralStatement> =
         neo4jRepository.findBySubjectIdAndPredicateIdAndObjectId(subjectId, predicateId, objectId).map { it.toStatement() }
+
+    override fun findAllCurrentComparisons(pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllCurrentComparisons(pageable).map(Neo4jResource::toResource)
+
+    override fun findAllCurrentListedComparisons(pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllCurrentListedComparisons(pageable).map(Neo4jResource::toResource)
+
+    override fun findAllCurrentComparisonsByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllCurrentComparisonsByVisibility(visibility, pageable).map(Neo4jResource::toResource)
 
     private fun Neo4jStatement.toStatement() = toStatement(neo4jPredicateRepository)
 

@@ -1,9 +1,11 @@
 package eu.tib.orkg.prototype.statements.adapter.output.inmemory
 
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.BundleConfiguration
+import eu.tib.orkg.prototype.statements.api.Classes
+import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase.PredicateUsageCount
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
@@ -13,6 +15,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.OwnershipInfo
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
@@ -20,6 +23,7 @@ import java.text.SimpleDateFormat
 import java.time.OffsetDateTime
 import java.util.*
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 
@@ -355,6 +359,41 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
     ): Optional<GeneralStatement> = Optional.ofNullable(entities.values.firstOrNull {
         it.subject.id == subjectId && it.predicate.id == predicateId && it.`object`.id == objectId
     })
+
+    override fun findAllCurrentComparisons(pageable: Pageable): Page<Resource> =
+        entities.values
+            .filter {
+                it.subject is Resource && Classes.comparison in (it.subject as Resource).classes
+                    && findAllByObjectAndPredicate(it.subject.id, Predicates.hasPreviousVersion, PageRequest.of(0, 1)).isEmpty
+            }
+            .map { it.subject as Resource }
+            .distinct()
+            .sortedBy { it.createdAt }
+            .paged(pageable)
+
+    override fun findAllCurrentListedComparisons(pageable: Pageable): Page<Resource> =
+        entities.values
+            .filter {
+                it.subject is Resource && with(it.subject as Resource) {
+                    Classes.comparison in classes && (visibility == Visibility.DEFAULT || visibility == Visibility.FEATURED)
+                } && findAllByObjectAndPredicate(it.subject.id, Predicates.hasPreviousVersion, PageRequest.of(0, 1)).isEmpty
+            }
+            .map { it.subject as Resource }
+            .distinct()
+            .sortedBy { it.createdAt }
+            .paged(pageable)
+
+    override fun findAllCurrentComparisonsByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource> =
+        entities.values
+            .filter {
+                it.subject is Resource && with(it.subject as Resource) {
+                    Classes.comparison in classes && this.visibility == visibility
+                } && findAllByObjectAndPredicate(it.subject.id, Predicates.hasPreviousVersion, PageRequest.of(0, 1)).isEmpty
+            }
+            .map { it.subject as Resource }
+            .distinct()
+            .sortedBy { it.createdAt }
+            .paged(pageable)
 
     private fun findSubgraph(
         root: ThingId,

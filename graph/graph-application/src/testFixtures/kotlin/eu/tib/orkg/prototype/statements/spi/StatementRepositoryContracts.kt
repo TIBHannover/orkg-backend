@@ -5,6 +5,7 @@ import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
+import eu.tib.orkg.prototype.pageOf
 import eu.tib.orkg.prototype.statements.api.BundleConfiguration
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.Predicates
@@ -17,6 +18,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
@@ -1481,6 +1483,164 @@ fun <
                 val actual = repository.determineOwnership(emptySet())
 
                 actual shouldBe expected
+            }
+        }
+    }
+
+    describe("finding several current comparisons") {
+        context("without filters") {
+            val comparisons = fabricator.random<List<Resource>>()
+                .map { it.copy(classes = setOf(Classes.comparison)) }
+            val predicate = fabricator.random<Predicate>().copy(id = Predicates.hasPreviousVersion)
+
+            // Workaround for in-memory repository, because it can only return comparisons that are used in at least one statement
+            saveStatement(
+                fabricator.random<GeneralStatement>().copy(
+                    subject = comparisons[0],
+                    predicate = fabricator.random<Predicate>().copy(id = Predicates.description),
+                    `object` = fabricator.random<Literal>()
+                )
+            )
+
+            comparisons.zipWithNext { a, b ->
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = a,
+                        predicate = predicate,
+                        `object` = b
+                    )
+                )
+            }
+
+            val pageable = PageRequest.of(0, 5)
+            val expected = pageOf(comparisons[0], pageable = PageRequest.of(0, 5))
+            val result = repository.findAllCurrentComparisons(pageable)
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.content.size
+                result.content shouldContainAll expected.content
+            }
+            it("pages the result correctly") {
+                result.size shouldBe expected.size
+                result.number shouldBe expected.number
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.totalElements
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
+        context("by listed visibility") {
+            val comparisons = fabricator.random<List<Resource>>()
+                .map { it.copy(visibility = Visibility.UNLISTED, classes = setOf(Classes.comparison)) }
+                .toMutableList()
+            comparisons[0] = comparisons[0].copy(visibility = Visibility.DEFAULT)
+            comparisons[1] = comparisons[1].copy(visibility = Visibility.DEFAULT)
+            comparisons[2] = comparisons[2].copy(visibility = Visibility.FEATURED)
+            comparisons[3] = comparisons[3].copy(visibility = Visibility.FEATURED)
+
+            // Workaround for in-memory repository, because it can only return comparisons that are used in at least one statement
+            val description = fabricator.random<Predicate>().copy(id = Predicates.description)
+            comparisons.forEach {
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = it,
+                        predicate = description,
+                        `object` = fabricator.random<Literal>()
+                    )
+                )
+            }
+
+            val hasPreviousVersion = fabricator.random<Predicate>().copy(id = Predicates.hasPreviousVersion)
+            saveStatement(
+                fabricator.random<GeneralStatement>().copy(
+                    subject = comparisons[0],
+                    predicate = hasPreviousVersion,
+                    `object` = comparisons[1]
+                )
+            )
+            saveStatement(
+                fabricator.random<GeneralStatement>().copy(
+                    subject = comparisons[2],
+                    predicate = hasPreviousVersion,
+                    `object` = comparisons[3]
+                )
+            )
+
+            val pageable = PageRequest.of(0, 5)
+            val expected = pageOf(comparisons[0], comparisons[2], pageable = PageRequest.of(0, 5))
+            val result = repository.findAllCurrentListedComparisons(pageable)
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.content.size
+                result.content shouldContainAll expected.content
+            }
+            it("pages the result correctly") {
+                result.size shouldBe expected.size
+                result.number shouldBe expected.number
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.totalElements
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
+            }
+        }
+        context("by visibility") {
+            val comparisons = fabricator.random<List<Resource>>()
+                .map { it.copy(visibility = Visibility.FEATURED, classes = setOf(Classes.comparison)) }
+                .toMutableList()
+            comparisons[0] = comparisons[0].copy(visibility = Visibility.DEFAULT)
+            comparisons[1] = comparisons[1].copy(visibility = Visibility.DEFAULT)
+
+            // Workaround for in-memory repository, because it can only return comparisons that are used in at least one statement
+            val description = fabricator.random<Predicate>().copy(id = Predicates.description)
+            comparisons.forEach {
+                saveStatement(
+                    fabricator.random<GeneralStatement>().copy(
+                        subject = it,
+                        predicate = description,
+                        `object` = fabricator.random<Literal>()
+                    )
+                )
+            }
+
+            val hasPreviousVersion = fabricator.random<Predicate>().copy(id = Predicates.hasPreviousVersion)
+            saveStatement(
+                fabricator.random<GeneralStatement>().copy(
+                    subject = comparisons[0],
+                    predicate = hasPreviousVersion,
+                    `object` = comparisons[1]
+                )
+            )
+
+            val pageable = PageRequest.of(0, 5)
+            val expected = pageOf(comparisons[0], pageable = pageable)
+            val result = repository.findAllCurrentComparisonsByVisibility(Visibility.DEFAULT, pageable)
+
+            it("returns the correct result") {
+                result shouldNotBe null
+                result.content shouldNotBe null
+                result.content.size shouldBe expected.content.size
+                result.content shouldContainAll expected.content
+            }
+            it("pages the result correctly") {
+                result.size shouldBe expected.size
+                result.number shouldBe expected.number
+                result.totalPages shouldBe 1
+                result.totalElements shouldBe expected.totalElements
+            }
+            it("sorts the results by creation date by default") {
+                result.content.zipWithNext { a, b ->
+                    a.createdAt shouldBeLessThan b.createdAt
+                }
             }
         }
     }

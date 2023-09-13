@@ -11,6 +11,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -81,6 +82,10 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun checkIfResourceHasStatements(id: ThingId): Boolean
     fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
     fun findBySubjectIdAndPredicateIdAndObjectId(subjectId: ThingId, predicateId: ThingId, objectId: ThingId): Optional<GeneralStatement>
+
+    fun findAllCurrentComparisons(pageable: Pageable): Page<Resource>
+    fun findAllCurrentListedComparisons(pageable: Pageable): Page<Resource>
+    fun findAllCurrentComparisonsByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource>
 }
 
 @QueryResult

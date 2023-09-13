@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.dsl.CypherQueryBuilder
 import eu.tib.orkg.prototype.dsl.PagedQueryBuilder.countDistinctOver
 import eu.tib.orkg.prototype.dsl.PagedQueryBuilder.countOver
@@ -12,12 +12,14 @@ import eu.tib.orkg.prototype.dsl.SingleQueryBuilder.fetchAs
 import eu.tib.orkg.prototype.dsl.SingleQueryBuilder.mappedBy
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatementIdGenerator
 import eu.tib.orkg.prototype.statements.api.BundleConfiguration
+import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase.PredicateUsageCount
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.services.ObjectService
 import eu.tib.orkg.prototype.statements.spi.OwnershipInfo
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
@@ -37,6 +39,7 @@ import org.neo4j.cypherdsl.core.Cypher.node
 import org.neo4j.cypherdsl.core.Cypher.optionalMatch
 import org.neo4j.cypherdsl.core.Cypher.parameter
 import org.neo4j.cypherdsl.core.Cypher.returning
+import org.neo4j.cypherdsl.core.Cypher.sort
 import org.neo4j.cypherdsl.core.Cypher.union
 import org.neo4j.cypherdsl.core.Cypher.unionAll
 import org.neo4j.cypherdsl.core.Cypher.unwind
@@ -50,6 +53,7 @@ import org.neo4j.cypherdsl.core.Functions.sum
 import org.neo4j.cypherdsl.core.Node
 import org.neo4j.cypherdsl.core.Predicates.exists
 import org.neo4j.cypherdsl.core.Relationship
+import org.neo4j.cypherdsl.core.SortItem
 import org.neo4j.cypherdsl.core.StatementBuilder
 import org.springframework.cache.CacheManager
 import org.springframework.data.domain.Page
@@ -814,6 +818,75 @@ class SpringDataNeo4jStatementAdapter(
         .mappedBy(StatementMapper(predicateRepository))
         .one()
 
+    override fun findAllCurrentComparisons(pageable: Pageable): Page<Resource> = CypherQueryBuilder(neo4jClient)
+        .withCommonQuery {
+            val cmp = comparisonNode().named("node")
+            match(cmp).where(
+                exists(
+                    comparisonNode()
+                        .relationshipTo(cmp, "RELATED")
+                        .withProperties("predicate_id", literalOf<String>(Predicates.hasPreviousVersion.value))
+                ).not()
+            )
+        }
+        .withQuery { commonQuery ->
+            commonQuery.withSortableFields("node")
+                .orderBy(sort(name("created_at")))
+                .returning("node")
+        }
+        .countOver("node")
+        .mappedBy(ResourceMapper("node"))
+        .fetch(pageable)
+
+    override fun findAllCurrentListedComparisons(pageable: Pageable): Page<Resource> = CypherQueryBuilder(neo4jClient)
+        .withCommonQuery {
+            val cmp = comparisonNode().named("node")
+            match(cmp).where(
+                exists(
+                    comparisonNode()
+                        .relationshipTo(cmp, "RELATED")
+                        .withProperties("predicate_id", literalOf<String>(Predicates.hasPreviousVersion.value))
+                ).not()
+                    .and(
+                        cmp.property("visibility").eq(literalOf<String>("DEFAULT"))
+                            .or(cmp.property("visibility").eq(literalOf<String>("FEATURED")))
+                    )
+            )
+        }
+        .withQuery { commonQuery ->
+            commonQuery.withSortableFields("node")
+                .orderBy(sort(name("created_at")))
+                .returning("node")
+        }
+        .countOver("node")
+        .mappedBy(ResourceMapper("node"))
+        .fetch(pageable)
+
+    override fun findAllCurrentComparisonsByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource> =
+        CypherQueryBuilder(neo4jClient)
+            .withCommonQuery {
+                val cmp = comparisonNode().named("node")
+                match(cmp).where(
+                    exists(
+                        comparisonNode()
+                            .relationshipTo(cmp, "RELATED")
+                            .withProperties("predicate_id", literalOf<String>(Predicates.hasPreviousVersion.value))
+                    ).not()
+                        .and(
+                            cmp.property("visibility").eq(parameter("visibility"))
+                        )
+                )
+            }
+            .withQuery { commonQuery ->
+                commonQuery.withSortableFields("node")
+                    .orderBy(sort(name("created_at")))
+                    .returning("node")
+            }
+            .countOver("node")
+            .withParameters("visibility" to visibility.name)
+            .mappedBy(ResourceMapper("node"))
+            .fetch(pageable)
+
     private fun findAllFilteredAndPaged(
         parameters: Map<String, Any>,
         pageable: Pageable,
@@ -891,4 +964,15 @@ class SpringDataNeo4jStatementAdapter(
             relation.property("index").`as`("index")
         ).returning(rel, sub, obj)
     }
+
+    private fun StatementBuilder.ExposesWith.withSortableFields(node: String) =
+        withSortableFields(name(node))
+
+    private fun StatementBuilder.ExposesWith.withSortableFields(node: Expression) =
+        with(
+            node,
+            node.property("label").`as`("label"),
+            node.property("id").`as`("id"),
+            node.property("created_at").`as`("created_at")
+        )
 }

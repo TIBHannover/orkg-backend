@@ -43,7 +43,7 @@ class ComparisonService(
             .map { it.toComparison() }
 
     override fun findAll(pageable: Pageable): Page<Comparison> =
-        resourceRepository.findAllByClass(Classes.comparison, pageable)
+        statementRepository.findAllCurrentComparisons(pageable)
             .pmap { it.toComparison() }
 
     override fun findAllByDOI(doi: String, pageable: Pageable): Page<Comparison> =
@@ -56,11 +56,11 @@ class ComparisonService(
 
     override fun findAllByVisibility(visibility: VisibilityFilter, pageable: Pageable): Page<Comparison> =
         when (visibility) {
-            VisibilityFilter.ALL_LISTED -> resourceRepository.findAllListedByClass(Classes.comparison, pageable)
-            VisibilityFilter.NON_FEATURED -> resourceRepository.findAllByClassAndVisibility(Classes.comparison, Visibility.DEFAULT, pageable)
-            VisibilityFilter.UNLISTED -> resourceRepository.findAllByClassAndVisibility(Classes.comparison, Visibility.UNLISTED, pageable)
-            VisibilityFilter.FEATURED -> resourceRepository.findAllByClassAndVisibility(Classes.comparison, Visibility.FEATURED, pageable)
-            VisibilityFilter.DELETED -> resourceRepository.findAllByClassAndVisibility(Classes.comparison, Visibility.DELETED, pageable)
+            VisibilityFilter.ALL_LISTED -> statementRepository.findAllCurrentListedComparisons(pageable)
+            VisibilityFilter.NON_FEATURED -> statementRepository.findAllCurrentComparisonsByVisibility(Visibility.DEFAULT, pageable)
+            VisibilityFilter.UNLISTED -> statementRepository.findAllCurrentComparisonsByVisibility(Visibility.UNLISTED, pageable)
+            VisibilityFilter.FEATURED -> statementRepository.findAllCurrentComparisonsByVisibility(Visibility.FEATURED, pageable)
+            VisibilityFilter.DELETED -> statementRepository.findAllCurrentComparisonsByVisibility(Visibility.DELETED, pageable)
         }.pmap { it.toComparison() }
 
     override fun findRelatedResourceById(comparisonId: ThingId, id: ThingId): Optional<ComparisonRelatedResource> =

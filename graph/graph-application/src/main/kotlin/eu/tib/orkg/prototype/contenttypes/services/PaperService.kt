@@ -38,7 +38,9 @@ import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.ThingRepository
+import java.net.URI
 import java.util.*
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -57,7 +59,10 @@ class PaperService(
     private val statementService: StatementUseCases,
     private val literalService: LiteralUseCases,
     private val predicateService: PredicateUseCases,
-    private val listService: ListUseCases
+    private val listService: ListUseCases,
+    private val publishingService: PublishingService,
+    @Value("\${orkg.publishing.base-url.paper}")
+    private val paperPublishBaseUri: String = "http://localhost/paper/"
 ) : PaperUseCases {
     override fun findById(id: ThingId): Optional<Paper> =
         resourceRepository.findPaperById(id)
@@ -121,6 +126,22 @@ class PaperService(
             PaperContentsCreator(resourceService, statementService, literalService, predicateService, statementRepository, listService)
         )
         return steps.fold(ContributionState()) { state, executor -> executor(command, state) }.contributionId!!
+    }
+
+    override fun publish(id: ThingId, subject: String, description: String) {
+        val paper = findById(id).orElseThrow { PaperNotFound(id) }
+        publishingService.publish(
+            PublishingService.PublishCommand(
+                id = id,
+                title = paper.title,
+                subject = subject,
+                description = description,
+                url = URI.create("$paperPublishBaseUri/").resolve(id.value),
+                creators = paper.authors,
+                resourceType = Classes.paper,
+                relatedIdentifiers = emptyList()
+            )
+        )
     }
 
     private fun Resource.toPaper(): Paper {

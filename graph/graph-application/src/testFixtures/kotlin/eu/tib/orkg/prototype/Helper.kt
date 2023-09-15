@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype
 
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.OrganizationEntity
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.community.domain.model.Observatory
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.Organization
@@ -17,10 +18,12 @@ import eu.tib.orkg.prototype.contenttypes.domain.model.ObjectIdAndLabel
 import eu.tib.orkg.prototype.contenttypes.domain.model.Paper
 import eu.tib.orkg.prototype.contenttypes.domain.model.PublicationInfo
 import eu.tib.orkg.prototype.contenttypes.domain.model.Visualization
-import eu.tib.orkg.prototype.community.domain.model.ContributorId
+import eu.tib.orkg.prototype.contenttypes.services.PublishingService
+import eu.tib.orkg.prototype.contenttypes.spi.DoiService
 import eu.tib.orkg.prototype.files.domain.model.Image
 import eu.tib.orkg.prototype.files.domain.model.ImageData
 import eu.tib.orkg.prototype.files.domain.model.ImageId
+import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.Literals
 import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.api.UpdateOrganizationUseCases
@@ -407,6 +410,61 @@ fun createDummyVisualization() = Visualization(
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
     visibility = Visibility.DEFAULT
 )
+
+fun dummyPublishCommand(): PublishingService.PublishCommand =
+    PublishingService.PublishCommand(
+        id = ThingId("R123"),
+        title = "Paper title",
+        subject = "Paper subject",
+        description = "Description of the paper",
+        url = URI.create("https://example.org"),
+        creators = listOf(
+            Author(
+                id = ThingId("147"),
+                name = "Josiah Stinkney Carberry",
+                identifiers = mapOf(
+                    "orcid" to "0000-0002-1825-0097"
+                ),
+                homepage = URI.create("https://example.org")
+            ),
+            Author(
+                id = null,
+                name = "Author 2",
+                identifiers = emptyMap(),
+                homepage = null
+            )
+        ),
+        resourceType = Classes.paper,
+        relatedIdentifiers = listOf("10.1000/183")
+    )
+
+fun dummyRegisterDoiCommand(): DoiService.RegisterCommand =
+    DoiService.RegisterCommand(
+        suffix = "182",
+        title = "Paper title",
+        subject = "Paper subject",
+        description = "Description of the paper",
+        url = URI.create("https://example.org"),
+        creators = listOf(
+            Author(
+                id = ThingId("147"),
+                name = "Josiah Stinkney Carberry",
+                identifiers = mapOf(
+                    "orcid" to "0000-0002-1825-0097"
+                ),
+                homepage = URI.create("https://example.org")
+            ),
+            Author(
+                id = null,
+                name = "Author 2",
+                identifiers = emptyMap(),
+                homepage = null
+            )
+        ),
+        resourceType = Classes.paper.value,
+        resourceTypeGeneral = "Dataset",
+        relatedIdentifiers = listOf("10.48366/r609337")
+    )
 
 fun dummyCreatePaperCommand() = CreatePaperUseCase.CreateCommand(
     contributorId = ContributorId(UUID.randomUUID()),

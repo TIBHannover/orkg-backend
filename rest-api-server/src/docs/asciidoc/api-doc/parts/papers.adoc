@@ -42,3 +42,12 @@ The response will be `201 Created` when successful.
 The paper (object) can be retrieved by following the URI in the `Location` header field.
 
 operation::papers-create[snippets='request-fields,curl-request,http-response']
+
+[[papers-publish]]
+=== Publishing papers
+
+A `POST` request publishes an existing paper with the given parameters.
+It assigns a DOI to the paper and adds additional publication information, such as month and year published.
+The response will be `204 No Content` when successful.
+
+operation::papers-publish[snippets='request-fields,curl-request,http-response']

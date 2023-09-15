@@ -56,3 +56,12 @@ operation::comparisons-related-figure-get-single[snippets='curl-request,response
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<comparisons-related-figure-fetch,comparison related figures>>.
 
 operation::comparisons-related-figure-get-single[snippets='curl-request']
+
+[[comparisons-publish]]
+== Publishing comparisons
+
+A `POST` request publishes an existing comparison with the given parameters.
+It assigns a DOI to the comparison and adds additional publication information, such as month and year published.
+The response will be `204 No Content` when successful.
+
+operation::comparisons-publish[snippets='request-fields,curl-request,http-response']

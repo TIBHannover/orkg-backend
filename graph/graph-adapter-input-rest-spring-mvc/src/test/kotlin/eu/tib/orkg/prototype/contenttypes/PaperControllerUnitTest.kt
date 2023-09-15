@@ -39,6 +39,7 @@ import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.createDummyPaper
 import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
+import eu.tib.orkg.prototype.statements.application.DOIServiceUnavailable
 import eu.tib.orkg.prototype.statements.application.ThingNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -51,6 +52,8 @@ import eu.tib.orkg.prototype.testing.spring.restdocs.timestampFieldWithPath
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.verify
 import java.net.URI
 import java.util.*
@@ -77,6 +80,7 @@ import org.springframework.restdocs.request.RequestDocumentation.requestParamete
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -340,6 +344,87 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
+    @DisplayName("Given a paper, when publishing, then status 204 NO CONTENT")
+    fun publish() {
+        val id = ThingId("R123")
+        val request = mapOf(
+            "subject" to "paper subject",
+            "description" to "paper description"
+        )
+
+        every { paperService.publish(id, any(), any()) } just runs
+
+        documentedPostRequestTo("/api/papers/{id}/publish", id)
+            .content(request)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("api/papers/$id")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the paper to publish.")
+                    ),
+                    requestFields(
+                        fieldWithPath("subject").description("The subject of the paper."),
+                        fieldWithPath("description").description("The description of the paper.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { paperService.publish(id, any(), any()) }
+    }
+
+    @Test
+    fun `Given a paper, when publishing but service reports missing paper, then status is 404 NOT FOUND`() {
+        val id = ThingId("R123")
+        val request = mapOf(
+            "subject" to "paper subject",
+            "description" to "paper description"
+        )
+        val exception = PaperNotFound(id)
+
+        every { paperService.publish(id, any(), any()) } throws exception
+
+        post("/api/papers/$id/publish")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request))
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers/$id/publish"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.publish(id, any(), any()) }
+    }
+
+    @Test
+    fun `Given a paper, when publishing but service reports doi service unavailable, then status is 503 SERVICE UNAVAILABLE`() {
+        val id = ThingId("R123")
+        val request = mapOf(
+            "subject" to "paper subject",
+            "description" to "paper description"
+        )
+        val exception = DOIServiceUnavailable(500, "Internal error")
+
+        every { paperService.publish(id, any(), any()) } throws exception
+
+        post("/api/papers/$id/publish")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request))
+            .perform()
+            .andExpect(status().isServiceUnavailable)
+            .andExpect(jsonPath("$.status").value(HttpStatus.SERVICE_UNAVAILABLE.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers/$id/publish"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.publish(id, any(), any()) }
+    }
+
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
     @DisplayName("Given a paper request, when service succeeds, it creates and returns the paper")
     fun create() {

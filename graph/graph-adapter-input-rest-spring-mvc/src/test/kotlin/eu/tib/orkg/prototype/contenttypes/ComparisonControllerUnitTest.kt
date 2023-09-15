@@ -8,6 +8,7 @@ import eu.tib.orkg.prototype.contenttypes.application.ComparisonController
 import eu.tib.orkg.prototype.contenttypes.application.ComparisonNotFound
 import eu.tib.orkg.prototype.contenttypes.application.ComparisonRelatedFigureNotFound
 import eu.tib.orkg.prototype.contenttypes.application.ComparisonRelatedResourceNotFound
+import eu.tib.orkg.prototype.contenttypes.application.PaperNotFound
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.createDummyComparison
 import eu.tib.orkg.prototype.createDummyComparisonRelatedFigure
@@ -15,6 +16,7 @@ import eu.tib.orkg.prototype.createDummyComparisonRelatedResource
 import eu.tib.orkg.prototype.pageOf
 import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
+import eu.tib.orkg.prototype.statements.application.DOIServiceUnavailable
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.testing.andExpectComparison
 import eu.tib.orkg.prototype.testing.andExpectComparisonRelatedFigure
@@ -22,10 +24,14 @@ import eu.tib.orkg.prototype.testing.andExpectComparisonRelatedResource
 import eu.tib.orkg.prototype.testing.andExpectPage
 import eu.tib.orkg.prototype.testing.spring.restdocs.RestDocsTest
 import eu.tib.orkg.prototype.testing.spring.restdocs.documentedGetRequestTo
+import eu.tib.orkg.prototype.testing.spring.restdocs.documentedPostRequestTo
 import eu.tib.orkg.prototype.testing.spring.restdocs.timestampFieldWithPath
 import io.mockk.every
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.verify
 import java.util.*
+import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -33,13 +39,16 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.http.MediaType
+import org.springframework.restdocs.payload.PayloadDocumentation
+import org.springframework.restdocs.payload.PayloadDocumentation.*
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -399,5 +408,87 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andExpectComparisonRelatedFigure("$.content[*]")
 
         verify(exactly = 1) { comparisonService.findAllRelatedFigures(comparisonId, any()) }
+    }
+
+    @Test
+    @DisplayName("Given a comparison, when publishing, then status 204 NO CONTENT")
+    fun publish() {
+        val id = ThingId("R123")
+        val request = mapOf(
+            "subject" to "comparison subject",
+            "description" to "comparison description"
+        )
+
+        every { comparisonService.publish(id, any(), any()) } just runs
+
+        documentedPostRequestTo("/api/comparisons/{id}/publish", id)
+            .content(request)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("api/comparisons/$id")))
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("id").description("The identifier of the comparison to publish.")
+                    ),
+                    requestFields(
+                        fieldWithPath("subject").description("The subject of the comparison."),
+                        fieldWithPath("description").description("The description of the comparison.")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { comparisonService.publish(id, any(), any()) }
+    }
+
+    @Test
+    fun `Given a comparison, when publishing but service reports missing comparison, then status is 404 NOT FOUND`() {
+        val id = ThingId("R123")
+        val request = mapOf(
+            "subject" to "comparison subject",
+            "description" to "comparison description"
+        )
+        val exception = PaperNotFound(id)
+
+        every { comparisonService.publish(id, any(), any()) } throws exception
+
+        post("/api/comparisons/$id/publish")
+            .content(request)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.path").value("/api/comparisons/$id/publish"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { comparisonService.publish(id, any(), any()) }
+    }
+
+    @Test
+    fun `Given a comparison, when publishing but service reports doi service unavailable, then status is 503 SERVICE UNAVAILABLE`() {
+        val id = ThingId("R123")
+        val request = mapOf(
+            "subject" to "comparison subject",
+            "description" to "comparison description"
+        )
+        val exception = DOIServiceUnavailable(500, "Internal error")
+
+        every { comparisonService.publish(id, any(), any()) } throws exception
+
+        post("/api/comparisons/$id/publish")
+            .content(request)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
+            .perform()
+            .andExpect(status().isServiceUnavailable)
+            .andExpect(jsonPath("$.status").value(HttpStatus.SERVICE_UNAVAILABLE.value()))
+            .andExpect(jsonPath("$.path").value("/api/comparisons/$id/publish"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { comparisonService.publish(id, any(), any()) }
     }
 }

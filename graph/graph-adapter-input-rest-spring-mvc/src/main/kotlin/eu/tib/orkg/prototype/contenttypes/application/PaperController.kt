@@ -19,6 +19,7 @@ import eu.tib.orkg.prototype.statements.application.BaseController
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI
+import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 import org.springframework.data.domain.Page
@@ -100,6 +101,20 @@ class PaperController(
         val id = service.createContribution(request.toCreateCommand(userId, paperId))
         val location = uriComponentsBuilder
             .path("api/contributions/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return noContent().location(location).build()
+    }
+
+    @PostMapping("/{id}/publish", produces = [MediaType.APPLICATION_JSON_VALUE], consumes = [MediaType.APPLICATION_JSON_VALUE])
+    fun publish(
+        @PathVariable id: ThingId,
+        @RequestBody @Valid request: PublishRequest,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<Any> {
+        service.publish(id, request.subject, request.description)
+        val location = uriComponentsBuilder
+            .path("api/papers/{id}")
             .buildAndExpand(id)
             .toUri()
         return noContent().location(location).build()
@@ -286,4 +301,11 @@ class PaperController(
                 contribution = contribution.toCreateCommand()
             )
     }
+
+    data class PublishRequest(
+        @NotBlank
+        val subject: String,
+        @NotBlank
+        val description: String
+    )
 }

@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.configuration
+package eu.tib.orkg.prototype.contenttypes.adapter.output.datacite
 
 import java.util.Base64
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -13,7 +13,6 @@ class DataCiteConfiguration {
     final var url: String? = null
     final var publish: String? = null
 
-    fun encodeCredentials(): String? {
-        return Base64.getEncoder().encodeToString(("${this.username}:${this.password}").toByteArray())
-    }
+    val encodedCredentials: String get() =
+        Base64.getEncoder().encodeToString("$username:$password".toByteArray())
 }

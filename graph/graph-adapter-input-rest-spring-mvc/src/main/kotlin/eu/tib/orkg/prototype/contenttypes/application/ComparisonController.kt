@@ -1,22 +1,28 @@
 package eu.tib.orkg.prototype.contenttypes.application
 
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.contenttypes.ComparisonRelatedFigureRepresentationAdapter
 import eu.tib.orkg.prototype.contenttypes.ComparisonRelatedResourceRepresentationAdapter
 import eu.tib.orkg.prototype.contenttypes.ComparisonRepresentationAdapter
 import eu.tib.orkg.prototype.contenttypes.api.ComparisonUseCases
-import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.application.BaseController
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import javax.validation.Valid
+import javax.validation.constraints.NotBlank
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.util.UriComponentsBuilder
 
 const val COMPARISON_JSON_V2 = "application/vnd.orkg.comparison.v2+json"
 
@@ -87,4 +93,25 @@ class ComparisonController(
     ): Page<ComparisonRelatedFigureRepresentation> =
         service.findAllRelatedFigures(id, pageable)
             .mapToComparisonRelatedFigureRepresentation()
+
+    @PostMapping("/{id}/publish", consumes = [MediaType.APPLICATION_JSON_VALUE])
+    fun publish(
+        @PathVariable id: ThingId,
+        @RequestBody @Valid request: PublishRequest,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<Any> {
+        service.publish(id, request.subject, request.description)
+        val location = uriComponentsBuilder
+            .path("api/comparisons/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return ResponseEntity.noContent().location(location).build()
+    }
+
+    data class PublishRequest(
+        @NotBlank
+        val subject: String,
+        @NotBlank
+        val description: String
+    )
 }

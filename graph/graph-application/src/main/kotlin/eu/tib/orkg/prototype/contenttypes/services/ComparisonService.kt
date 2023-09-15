@@ -1,16 +1,16 @@
 package eu.tib.orkg.prototype.contenttypes.services
 
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.contenttypes.api.ComparisonUseCases
 import eu.tib.orkg.prototype.contenttypes.api.Identifiers
 import eu.tib.orkg.prototype.contenttypes.application.ComparisonNotFound
-import eu.tib.orkg.prototype.contenttypes.application.ComparisonRelatedFigureNotFound
 import eu.tib.orkg.prototype.contenttypes.domain.model.Comparison
 import eu.tib.orkg.prototype.contenttypes.domain.model.ComparisonRelatedFigure
 import eu.tib.orkg.prototype.contenttypes.domain.model.ComparisonRelatedResource
 import eu.tib.orkg.prototype.contenttypes.domain.model.PublicationInfo
-import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.statements.api.Classes
+import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.Literals
 import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
@@ -24,7 +24,9 @@ import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.ContributionComparisonRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
+import java.net.URI
 import java.util.*
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -35,7 +37,11 @@ import org.springframework.transaction.annotation.Transactional
 class ComparisonService(
     private val repository: ContributionComparisonRepository,
     private val resourceRepository: ResourceRepository,
-    private val statementRepository: StatementRepository
+    private val statementRepository: StatementRepository,
+    private val publishingService: PublishingService,
+    private val literalService: LiteralUseCases,
+    @Value("\${orkg.publishing.base-url.comparison}")
+    private val comparisonPublishBaseUri: String = "http://localhost/comparison/"
 ) : ComparisonUseCases {
     override fun findById(id: ThingId): Optional<Comparison> =
         resourceRepository.findById(id)
@@ -87,6 +93,26 @@ class ComparisonService(
 
     override fun findContributionsDetailsById(ids: List<ThingId>, pageable: Pageable): Page<ContributionInfo> =
         repository.findContributionsDetailsById(ids, pageable)
+
+    override fun publish(id: ThingId, subject: String, description: String) {
+        val comparison = findById(id).orElseThrow { ComparisonNotFound(id) }
+        publishingService.publish(
+            PublishingService.PublishCommand(
+                id = id,
+                title = comparison.title,
+                subject = subject,
+                description = description,
+                url = URI.create("$comparisonPublishBaseUri/").resolve(id.value),
+                creators = comparison.authors,
+                resourceType = Classes.comparison,
+                relatedIdentifiers = comparison.contributions.mapNotNull { contribution ->
+                    literalService.findDOIByContributionId(contribution.id)
+                        .map { it.label }
+                        .orElse(null)
+                }
+            )
+        )
+    }
 
     private fun Thing.toComparisonRelatedResource(): ComparisonRelatedResource {
         val statements = statementRepository.findAllBySubject(id, PageRequests.ALL)

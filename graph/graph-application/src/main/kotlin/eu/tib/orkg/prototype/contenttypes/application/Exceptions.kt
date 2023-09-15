@@ -76,3 +76,9 @@ class EmptyContribution : SimpleMessageException {
     constructor(): super(HttpStatus.FORBIDDEN, """Contribution does not contain any statements.""")
     constructor(index: Int): super(HttpStatus.FORBIDDEN, """Contribution at index "$index" does not contain any statements.""")
 }
+
+class DoiAlreadyRegistered(id: ThingId) :
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Resource "$id" already has a DOI.""")
+
+class UnpublishableThing(id: ThingId) :
+    SimpleMessageException(HttpStatus.FORBIDDEN, """Thing "$id" cannot be published.""")

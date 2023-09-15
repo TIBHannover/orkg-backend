@@ -54,6 +54,7 @@ testing {
                 implementation(testFixtures(project(":identity-management:idm-application")))
                 implementation(libs.contractual)
                 implementation(libs.spring.mockk)
+                implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
             }
         }
     }

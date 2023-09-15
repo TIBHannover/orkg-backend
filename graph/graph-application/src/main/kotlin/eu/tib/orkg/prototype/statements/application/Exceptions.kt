@@ -158,9 +158,6 @@ class ForbiddenStatementDeletion private constructor(
     }
 }
 
-class DOIRegistrationError(doi: String) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """Unable to register DOI "$doi".""")
-
 class TooFewIDsError(ids: List<ThingId>) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Too few ids: At least two ids are required. Got only "${ids.size}".""")
 
@@ -168,6 +165,8 @@ class DOIServiceUnavailable : LoggedMessageException {
     constructor(cause: Throwable) : super(HttpStatus.SERVICE_UNAVAILABLE, """DOI service unavailable""", cause)
     constructor(responseMessage: String, errorResponse: String) :
         super(HttpStatus.SERVICE_UNAVAILABLE, """DOI service returned "$responseMessage" with error response: $errorResponse""")
+    constructor(status: Int, responseMessage: String) :
+        super(HttpStatus.SERVICE_UNAVAILABLE, """DOI service returned "$status" with error response: $responseMessage""")
 }
 
 class ListElementNotFound : PropertyValidationException("element", "All elements inside the list have to exist.")

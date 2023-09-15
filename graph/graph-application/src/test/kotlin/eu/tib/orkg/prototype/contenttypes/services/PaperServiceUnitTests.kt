@@ -27,6 +27,7 @@ import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.ThingRepository
 import io.kotest.assertions.asClue
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.clearAllMocks
@@ -52,18 +53,21 @@ class PaperServiceUnitTests {
     private val literalService: LiteralUseCases = mockk()
     private val predicateService: PredicateUseCases = mockk()
     private val listService: ListUseCases = mockk()
+    private val publishingService: PublishingService = mockk()
 
     private val service = PaperService(
-        resourceRepository,
-        statementRepository,
-        observatoryRepository,
-        organizationRepository,
-        thingRepository,
-        resourceService,
-        statementService,
-        literalService,
-        predicateService,
-        listService,
+        resourceRepository = resourceRepository,
+        statementRepository = statementRepository,
+        observatoryRepository = observatoryRepository,
+        organizationRepository = organizationRepository,
+        thingRepository = thingRepository,
+        resourceService = resourceService,
+        statementService = statementService,
+        literalService = literalService,
+        predicateService = predicateService,
+        listService = listService,
+        publishingService = publishingService,
+        paperPublishBaseUri = "https://orkg.org/paper/"
     )
 
     @BeforeEach
@@ -83,7 +87,8 @@ class PaperServiceUnitTests {
             statementService,
             literalService,
             predicateService,
-            listService
+            listService,
+            publishingService
         )
     }
 
@@ -260,5 +265,97 @@ class PaperServiceUnitTests {
 
         verify(exactly = 1) { resourceRepository.findPaperById(id) }
         verify(exactly = 0) { statementRepository.findAllContributorsByResourceId(id, any()) }
+    }
+
+    @Test
+    fun `Given a paper, when publishing, it returns success`() {
+        val paper = createResource()
+        val subject = "Paper subject"
+        val description = "Fancy paper description"
+        val resourceAuthorId = ThingId("R132564")
+        val authorList = createResource().copy(classes = setOf(Classes.list), id = ThingId("R536456"))
+
+        every { resourceRepository.findPaperById(paper.id) } returns Optional.of(paper)
+        every { statementRepository.findAllBySubject(paper.id, PageRequests.ALL) } returns pageOf(
+            createStatement(
+                subject = paper,
+                predicate = createPredicate(id = Predicates.hasAuthors.value),
+                `object` = authorList
+            )
+        )
+        every { statementRepository.findAllBySubjectAndPredicate(authorList.id, Predicates.hasListElement, any()) } returns pageOf(
+            createStatement(
+                subject = paper,
+                predicate = createPredicate(id = Predicates.hasListElement.value),
+                `object` = createLiteral(value = "Author 1")
+            ),
+            createStatement(
+                subject = paper,
+                predicate = createPredicate(id = Predicates.hasListElement.value),
+                `object` = createResource().copy(id = resourceAuthorId, label = "Author 2", classes = setOf(Classes.author))
+            )
+        )
+        every { statementRepository.findAllBySubject(resourceAuthorId, any()) } returns pageOf(
+            createStatement(
+                subject = paper,
+                predicate = createPredicate(id = Predicates.hasORCID.value),
+                `object` = createLiteral().copy(label = "0000-1111-2222-3333")
+            ),
+            createStatement(
+                subject = paper,
+                predicate = createPredicate(id = Predicates.hasWebsite.value),
+                `object` = createLiteral().copy(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri)
+            )
+        )
+        every { publishingService.publish(any()) } returns "1324/56789"
+
+        service.publish(paper.id, subject, description)
+
+        verify(exactly = 1) { resourceRepository.findPaperById(paper.id) }
+        verify(exactly = 1) { statementRepository.findAllBySubject(paper.id, PageRequests.ALL) }
+        verify(exactly = 1) {
+            publishingService.publish(
+                withArg {
+                    it.id shouldBe paper.id
+                    it.title shouldBe paper.label
+                    it.subject shouldBe subject
+                    it.description shouldBe description
+                    it.url shouldBe URI.create("https://orkg.org/paper/${paper.id}")
+                    it.creators shouldBe listOf(
+                        Author(
+                            id = null,
+                            name = "Author 1",
+                            identifiers = emptyMap(),
+                            homepage = null
+                        ),
+                        Author(
+                            id = resourceAuthorId,
+                            name = "Author 2",
+                            identifiers = mapOf(
+                                "orcid" to "0000-1111-2222-3333"
+                            ),
+                            homepage = URI.create("https://example.org")
+                        )
+                    )
+                    it.resourceType shouldBe Classes.paper
+                    it.relatedIdentifiers shouldBe emptyList()
+                }
+            )
+        }
+        verify(exactly = 1) { statementRepository.findAllBySubjectAndPredicate(authorList.id, Predicates.hasListElement, any()) }
+        verify(exactly = 1) { statementRepository.findAllBySubject(resourceAuthorId, any()) }
+    }
+
+    @Test
+    fun `Given a paper, when publishing but service reports missing paper, it throws an exception`() {
+        val id = ThingId("Missing")
+
+        every { resourceRepository.findPaperById(id) } returns Optional.empty()
+
+        shouldThrow<PaperNotFound> {
+            service.publish(id, "Paper subject", "Fancy paper description")
+        }
+
+        verify(exactly = 1) { resourceRepository.findPaperById(id) }
     }
 }

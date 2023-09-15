@@ -78,3 +78,7 @@ interface CreateContributionUseCase {
         contribution: CreatePaperUseCase.CreateCommand.Contribution
     ) : CreatePaperUseCase.CreateCommand.PaperContents(resources, literals, predicates, lists, listOf(contribution))
 }
+
+interface PublishPaperUseCase {
+    fun publish(id: ThingId, subject: String, description: String)
+}

@@ -48,7 +48,8 @@ class StatementController(
     @GetMapping("/")
     fun findAll(
         pageable: Pageable
-    ): Iterable<StatementRepresentation> = statementService.findAll(pageable).mapToStatementRepresentation()
+    ): Page<StatementRepresentation> =
+        statementService.findAll(pageable).mapToStatementRepresentation()
 
     @GetMapping("/{statementId}")
     fun findById(@PathVariable statementId: StatementId): StatementRepresentation =

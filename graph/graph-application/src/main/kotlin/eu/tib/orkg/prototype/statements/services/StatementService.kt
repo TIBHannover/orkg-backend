@@ -45,8 +45,8 @@ class StatementService(
     private val literalRepository: LiteralRepository,
 ) : StatementUseCases {
 
-    override fun findAll(pagination: Pageable): Iterable<GeneralStatement> =
-        statementRepository.findAll(pagination).content
+    override fun findAll(pagination: Pageable): Page<GeneralStatement> =
+        statementRepository.findAll(pagination)
 
     override fun findById(statementId: StatementId): Optional<GeneralStatement> =
         statementRepository.findByStatementId(statementId)

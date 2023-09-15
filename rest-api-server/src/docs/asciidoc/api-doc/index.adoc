@@ -120,7 +120,7 @@ This allows storing and retrieving provenance information about them.
 
 A `GET` request lists all the statements:
 
-operation::statement-controller-integration-test-index[snippets='request-parameters,curl-request,http-response']
+operation::statement-controller-integration-test-index[snippets='curl-request,http-response']
 
 TIP: {pagination_note}
 
@@ -164,7 +164,7 @@ operation::statement-controller-integration-test-fetch[snippets='curl-request,ht
 
 A `GET` request lists all the statements with a given subject:
 
-operation::statement-controller-integration-test-lookup-by-subject[snippets='request-parameters,curl-request,http-response']
+operation::statement-controller-integration-test-lookup-by-subject[snippets='curl-request,http-response']
 
 TIP: {pagination_note}
 
@@ -173,7 +173,7 @@ TIP: {pagination_note}
 
 A `GET` request lists all the statements with a given predicate:
 
-operation::statement-controller-integration-test-lookup-by-predicate[snippets='request-parameters,curl-request,http-response']
+operation::statement-controller-integration-test-lookup-by-predicate[snippets='curl-request,http-response']
 
 TIP: {pagination_note}
 

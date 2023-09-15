@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (Closes: [#279](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/279),
   See: [!582](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/582))
 ### Changed
+- Statements are paged by default now. (See: [!327](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/327))
 - Fetching several comparisons no longer returns previous version comparisons when no filter is set or filtering by visibility.
   (See: [!630](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/630))
 ### Fixed

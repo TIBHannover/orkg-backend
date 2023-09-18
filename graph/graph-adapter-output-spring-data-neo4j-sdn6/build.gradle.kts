@@ -5,7 +5,8 @@ import org.springframework.boot.gradle.plugin.SpringBootPlugin
 
 
 plugins {
-    id("org.orkg.kotlin-conventions")
+    // id("org.orkg.kotlin-conventions") // TODO: re-apply after upgrading
+    kotlin("jvm") // TODO: remove on upgrade
     id("org.springframework.boot") version "2.7.8" apply false
     kotlin("plugin.spring")
     alias(libs.plugins.spotless)

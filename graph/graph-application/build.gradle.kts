@@ -35,7 +35,10 @@ dependencies {
     // Search string parsing
     implementation("org.apache.lucene:lucene-queryparser:9.5.0")
 
-    testFixturesApi(libs.kotest.runner)
+    testFixturesApi(platform(project(":platform")))
+    testFixturesApi(libs.kotest.runner) {
+        exclude(group = "org.jetbrains.kotlin")
+    }
     testFixturesImplementation(testFixtures(project(":identity-management:idm-application")))
     testFixturesImplementation("org.springframework.data:spring-data-commons")
     testFixturesImplementation("org.springframework.boot:spring-boot-starter-data-jpa")

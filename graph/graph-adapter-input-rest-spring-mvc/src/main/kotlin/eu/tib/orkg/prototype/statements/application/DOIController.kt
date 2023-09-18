@@ -14,6 +14,7 @@ import eu.tib.orkg.prototype.statements.services.StatementService
 import eu.tib.orkg.prototype.statements.services.publishableClasses
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import java.net.URI
+import javax.validation.constraints.Size
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -43,7 +44,7 @@ class DOIController(
         val doi = "${dataciteConfiguration.doiPrefix}/${request.resourceId}"
         doiService.register(
             DoiService.RegisterCommand(
-                suffix = doi,
+                suffix = request.resourceId.value,
                 title = request.title,
                 description = request.description,
                 subject = request.subject,

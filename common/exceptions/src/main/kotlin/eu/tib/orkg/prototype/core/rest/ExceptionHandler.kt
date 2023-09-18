@@ -173,10 +173,10 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
                 insert(0, nativeRequest.method)
 
                 val body: String = when (nativeRequest) {
-                    is ContentCachingRequestWrapper -> nativeRequest.contentAsByteArray
-                    is HttpServletRequestWrapper -> nativeRequest.inputStream.readAllBytes()
-                    else -> ByteArray(0)
-                }.let { String(it) }
+                    is ContentCachingRequestWrapper -> String(nativeRequest.contentAsByteArray)
+                    is HttpServletRequestWrapper -> nativeRequest.request.javaClass.name
+                    else -> ""
+                }
 
                 if (body.isNotEmpty()) {
                     append(", Payload: ")

@@ -9,12 +9,20 @@ import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.services.FormattedLabels
 import eu.tib.orkg.prototype.statements.services.StatementCounts
 import java.util.*
+import org.springframework.data.domain.Page
 
 interface ThingRepresentationAdapter : ResourceRepresentationAdapter, ClassRepresentationAdapter,
-    LiteralRepresentationAdapter, PredicateRepresentationAdapter {
+    LiteralRepresentationAdapter, PredicateRepresentationAdapter, ListRepresentationAdapter {
 
     fun Optional<Thing>.mapToThingRepresentation(): Optional<ThingRepresentation> =
         map { it.toThingRepresentation() }
+
+    fun Page<Thing>.mapToThingRepresentation(): Page<ThingRepresentation> {
+        val resources = content.filterIsInstance<Resource>()
+        val statementCounts = countsFor(resources)
+        val formattedLabelCount = formatLabelFor(resources)
+        return map { it.toThingRepresentation(statementCounts, formattedLabelCount) }
+    }
 
     private fun Thing.toThingRepresentation(): ThingRepresentation =
         when (this) {

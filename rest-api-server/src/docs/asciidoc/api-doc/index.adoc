@@ -1,6 +1,7 @@
 = ORKG REST API Documentation
 :doctype: book
 :toc: right
+:icons: font
 
 // Non-document attributes
 include::../_default-attributes.adoc[]
@@ -119,7 +120,7 @@ This allows storing and retrieving provenance information about them.
 
 A `GET` request lists all the statements:
 
-operation::statement-controller-integration-test-index[snippets='request-parameters,curl-request,http-response']
+operation::statement-controller-integration-test-index[snippets='curl-request,http-response']
 
 TIP: {pagination_note}
 
@@ -163,7 +164,7 @@ operation::statement-controller-integration-test-fetch[snippets='curl-request,ht
 
 A `GET` request lists all the statements with a given subject:
 
-operation::statement-controller-integration-test-lookup-by-subject[snippets='request-parameters,curl-request,http-response']
+operation::statement-controller-integration-test-lookup-by-subject[snippets='curl-request,http-response']
 
 TIP: {pagination_note}
 
@@ -172,7 +173,7 @@ TIP: {pagination_note}
 
 A `GET` request lists all the statements with a given predicate:
 
-operation::statement-controller-integration-test-lookup-by-predicate[snippets='request-parameters,curl-request,http-response']
+operation::statement-controller-integration-test-lookup-by-predicate[snippets='curl-request,http-response']
 
 TIP: {pagination_note}
 
@@ -379,7 +380,19 @@ Literals can be looked up by label by providing a search fragment.
 
 operation::literal-controller-integration-test-lookup[snippets='curl-request,http-response']
 
+include::parts/lists.adoc[]
+
+[[papers]]
 include::parts/papers.adoc[]
+
+[[contributions]]
+include::parts/contributions.adoc[]
+
+[[comparisons]]
+include::parts/comparisons.adoc[leveloffset=+1]
+
+[[visualizations]]
+include::parts/visualizations.adoc[leveloffset=+1]
 
 [[rdf-integration]]
 include::parts/rdf.adoc[leveloffset=+1]
@@ -396,6 +409,15 @@ include::parts/problems.adoc[]
 include::parts/research-fields.adoc[]
 
 include::parts/datasets-benchmarks.adoc[]
+
+[[reproducibility-score]]
+== Reproducibility Score
+The reproducibility score measures the availability, accessibility, linkability, and license of a resource.
+
+include::parts/licenses.adoc[]
+
+[[widget]]
+include::parts/widget.adoc[leveloffset=+1]
 
 [[sorting-and-pagination]]
 == Sorting and Pagination

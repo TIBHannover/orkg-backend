@@ -10,5 +10,10 @@ plugins {
 dependencies {
     api(platform(project(":platform")))
 
-    api("org.springframework:spring-web")
+    implementation("org.apache.tomcat.embed:tomcat-embed-core") // for HttpServletRequest
+    implementation("org.springframework.data:spring-data-commons")
+    implementation("org.springframework.data:spring-data-neo4j") // for UncategorizedNeo4jException
+    implementation("org.springframework.security:spring-security-core") // for AccessDeniedException
+    implementation("org.springframework:spring-web")
+    implementation("org.springframework:spring-webmvc")
 }

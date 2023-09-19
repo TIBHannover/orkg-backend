@@ -1,11 +1,12 @@
 package eu.tib.orkg.prototype.statements.api
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.ChangeLog
 import eu.tib.orkg.prototype.statements.spi.ObservatoryStats
+import eu.tib.orkg.prototype.statements.spi.ResearchFieldStats
 import eu.tib.orkg.prototype.statements.spi.TrendingResearchProblems
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -42,6 +43,11 @@ interface RetrieveStatisticsUseCase {
      * Get paper count and comparison count by observatory id
      */
     fun findObservatoryStatsById(id: ObservatoryId): ObservatoryStats
+
+    /**
+     * Get paper count and comparison count by research field id. Optionally accounts for subfields.
+     */
+    fun findResearchFieldStatsById(id: ThingId, includeSubfields: Boolean): ResearchFieldStats
 
     /**
      * Get top contributors

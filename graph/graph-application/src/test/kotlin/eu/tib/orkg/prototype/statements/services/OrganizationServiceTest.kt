@@ -6,7 +6,7 @@ import eu.tib.orkg.prototype.community.application.OrganizationNotFound
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationType
 import eu.tib.orkg.prototype.community.services.OrganizationService
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.files.api.CreateImageUseCase
 import eu.tib.orkg.prototype.files.api.ImageUseCases
 import eu.tib.orkg.prototype.files.domain.model.ImageId

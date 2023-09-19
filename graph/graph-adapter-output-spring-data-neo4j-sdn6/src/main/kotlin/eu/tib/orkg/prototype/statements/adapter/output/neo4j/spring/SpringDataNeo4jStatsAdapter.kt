@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jContributorRecord
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jStatsRepository
 import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
@@ -9,6 +9,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ChangeLogResponse
 import eu.tib.orkg.prototype.statements.spi.FieldsStats
 import eu.tib.orkg.prototype.statements.spi.ObservatoryStats
+import eu.tib.orkg.prototype.statements.spi.ResearchFieldStats
 import eu.tib.orkg.prototype.statements.spi.StatsRepository
 import eu.tib.orkg.prototype.statements.spi.TrendingResearchProblems
 import org.springframework.data.domain.Page
@@ -36,6 +37,13 @@ class SpringDataNeo4jStatsAdapter(
 
     override fun findObservatoryStatsById(id: ObservatoryId): ObservatoryStats =
         neo4jRepository.findObservatoryStatsById(id)
+
+    override fun findResearchFieldStatsById(id: ThingId, includeSubfields: Boolean): ResearchFieldStats =
+        if (includeSubfields) {
+            neo4jRepository.findResearchFieldStatsByIdIncludingSubfields(id)
+        } else {
+            neo4jRepository.findResearchFieldStatsById(id)
+        }
 
     override fun getTopCurrentContributorIdsAndContributionsCount(
         date: String,

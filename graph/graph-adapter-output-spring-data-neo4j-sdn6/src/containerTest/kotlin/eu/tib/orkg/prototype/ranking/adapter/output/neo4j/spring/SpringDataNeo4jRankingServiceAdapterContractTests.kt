@@ -3,13 +3,16 @@ package eu.tib.orkg.prototype.ranking.adapter.output.neo4j.spring
 import eu.tib.orkg.prototype.Neo4jContainerInitializer
 import eu.tib.orkg.prototype.ranking.spi.RankingService
 import eu.tib.orkg.prototype.ranking.spi.rankingServiceContract
+import eu.tib.orkg.prototype.statements.adapter.output.facade.ListAdapter
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.Neo4jConfiguration
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.SpringDataNeo4jClassAdapter
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.SpringDataNeo4jLiteralAdapter
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.SpringDataNeo4jPredicateAdapter
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.SpringDataNeo4jResourceAdapter
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.SpringDataNeo4jStatementAdapter
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.SpringDataNeo4jThingAdapter
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
+import eu.tib.orkg.prototype.statements.spi.ListRepository
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
@@ -31,6 +34,8 @@ import org.springframework.test.context.ContextConfiguration
         SpringDataNeo4jPredicateAdapter::class,
         SpringDataNeo4jLiteralAdapter::class,
         SpringDataNeo4jClassAdapter::class,
+        SpringDataNeo4jThingAdapter::class,
+        ListAdapter::class,
         SpringDataNeo4jRankingServiceAdapter::class
     ],
     initializers = [
@@ -45,6 +50,7 @@ internal class SpringDataNeo4jRankingServiceAdapterContractTests(
     @Autowired private val springDataNeo4jLiteralAdapter: LiteralRepository,
     @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,
     @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository,
+    @Autowired private val listAdapter: ListRepository,
     @Autowired private val springDataNeo4jRankingServiceAdapter: RankingService
 ) : DescribeSpec({
     include(
@@ -54,6 +60,7 @@ internal class SpringDataNeo4jRankingServiceAdapterContractTests(
             springDataNeo4jLiteralAdapter,
             springDataNeo4jResourceAdapter,
             springDataNeo4jPredicateAdapter,
+            listAdapter,
             springDataNeo4jRankingServiceAdapter
         )
     )

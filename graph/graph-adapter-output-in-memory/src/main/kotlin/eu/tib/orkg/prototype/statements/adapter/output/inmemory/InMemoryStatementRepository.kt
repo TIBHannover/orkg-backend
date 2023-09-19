@@ -1,9 +1,11 @@
 package eu.tib.orkg.prototype.statements.adapter.output.inmemory
 
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.BundleConfiguration
+import eu.tib.orkg.prototype.statements.api.Classes
+import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase.PredicateUsageCount
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
@@ -13,16 +15,19 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.OwnershipInfo
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.text.SimpleDateFormat
+import java.time.OffsetDateTime
 import java.util.*
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 
 private val paperClass = ThingId("Paper")
-private val paperDeletedClass = ThingId("PaperDeleted")
 private val problemClass = ThingId("Problem")
 private val comparisonClass = ThingId("Comparison")
 private val contributionClass = ThingId("Contribution")
@@ -40,6 +45,10 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
         entities[statement.id!!] = statement
     }
 
+    override fun saveAll(statements: Set<GeneralStatement>) {
+        statements.forEach(::save)
+    }
+
     override fun count(): Long = entities.size.toLong()
 
     override fun delete(statement: GeneralStatement) {
@@ -55,6 +64,9 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
 
     override fun findByStatementId(id: StatementId): Optional<GeneralStatement> =
         Optional.ofNullable(entities[id])
+
+    override fun findAllByStatementIdIn(ids: Set<StatementId>, pageable: Pageable): Page<GeneralStatement> =
+        findAllFilteredAndPaged(pageable) { it.id in ids}
 
     override fun findAllBySubject(subjectId: ThingId, pageable: Pageable) =
         findAllFilteredAndPaged(pageable) { it.subject.id == subjectId }
@@ -109,20 +121,20 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
     }
 
     override fun findAllBySubjects(
-        subjectIds: List<ThingId>,
+        subjectIds: kotlin.collections.List<ThingId>,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
         it.subject.id in subjectIds
     }
 
     override fun findAllByObjects(
-        objectIds: List<ThingId>,
+        objectIds: kotlin.collections.List<ThingId>,
         pageable: Pageable
     ) = findAllFilteredAndPaged(pageable) {
         it.`object`.id in objectIds
     }
 
-    override fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration): Iterable<GeneralStatement> =
+    override fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration, sort: Sort): Iterable<GeneralStatement> =
         entities.values.find { it.subject.id == id }?.let {
             val exclude = mutableSetOf<GeneralStatement>()
             findSubgraph(it.subject.id) { statement, level ->
@@ -156,7 +168,38 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
                 }
                 return@findSubgraph true
             }.filter { statement -> statement !in exclude }
-        } ?: emptySet()
+        }?.sortedWith(sort.comparator) ?: emptySet()
+
+    private val Sort.comparator: Comparator<GeneralStatement>
+        get() = if (isUnsorted) {
+            Comparator.comparing<GeneralStatement?, OffsetDateTime> { it.createdAt }.reversed()
+        } else {
+            Comparator { a, b ->
+                var result = 0
+                for (order in this) {
+                    result = when (order.property) {
+                        "created_at" -> order.compare(a.createdAt, b.createdAt)
+                        "created_by" -> order.compare(a.createdBy.value, b.createdBy.value)
+                        "index" -> order.compare(a.index, b.index)
+                        else -> 0 // TODO: Throw exception?
+                    }
+                    if (result != 0) {
+                        break
+                    }
+                }
+                result
+            }
+        }
+
+    private fun <T : Comparable<T>> Sort.Order.compare(a : T?, b: T?): Int {
+        val result = when {
+            a == null && b == null -> 0
+            a == null -> 1
+            b == null -> -1
+            else -> a.compareTo(b)
+        }
+        return if (isAscending) result else -result
+    }
 
     override fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount> {
         val predicateIdToUsageCount = mutableMapOf<ThingId, Long>()
@@ -199,21 +242,30 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
                 it.`object` as Literal
             }
         })
-
     override fun countPredicateUsage(id: ThingId): Long =
         entities.values.count {
-            it.subject is Predicate && (it.subject as Predicate).id == id
+            (it.subject is Predicate && (it.subject as Predicate).id == id
                 || it.predicate.id == id
-                || it.`object` is Predicate && (it.`object` as Predicate).id == id
+                || it.`object` is Predicate && (it.`object` as Predicate).id == id)
+                && it.predicate.id.value != "description"
         }.toLong()
 
     override fun findByDOI(doi: String): Optional<Resource> =
         Optional.ofNullable(entities.values.find {
-            it.subject is Resource && with(it.subject as Resource) {
-                paperClass in classes && paperDeletedClass !in classes
-            }   && it.predicate.id == hasDOI
+            it.subject is Resource && it.predicate.id == hasDOI
                 && it.`object` is Literal && it.`object`.label.uppercase() == doi.uppercase()
         }).map { it.subject as Resource }
+
+    override fun findAllBySubjectClassAndDOI(subjectClass: ThingId, doi: String, pageable: Pageable): Page<Resource> =
+        entities.values
+            .filter {
+                it.subject is Resource && with(it.subject as Resource) {
+                    subjectClass in classes
+                } && it.predicate.id == hasDOI && it.`object` is Literal && it.`object`.label.uppercase() == doi.uppercase()
+            }
+            .map { it.subject as Resource }
+            .distinct()
+            .paged(pageable)
 
     // TODO: rename to findAllProblemsByObservatoryId
     override fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
@@ -307,6 +359,41 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
     ): Optional<GeneralStatement> = Optional.ofNullable(entities.values.firstOrNull {
         it.subject.id == subjectId && it.predicate.id == predicateId && it.`object`.id == objectId
     })
+
+    override fun findAllCurrentComparisons(pageable: Pageable): Page<Resource> =
+        entities.values
+            .filter {
+                it.subject is Resource && Classes.comparison in (it.subject as Resource).classes
+                    && findAllByObjectAndPredicate(it.subject.id, Predicates.hasPreviousVersion, PageRequest.of(0, 1)).isEmpty
+            }
+            .map { it.subject as Resource }
+            .distinct()
+            .sortedBy { it.createdAt }
+            .paged(pageable)
+
+    override fun findAllCurrentListedComparisons(pageable: Pageable): Page<Resource> =
+        entities.values
+            .filter {
+                it.subject is Resource && with(it.subject as Resource) {
+                    Classes.comparison in classes && (visibility == Visibility.DEFAULT || visibility == Visibility.FEATURED)
+                } && findAllByObjectAndPredicate(it.subject.id, Predicates.hasPreviousVersion, PageRequest.of(0, 1)).isEmpty
+            }
+            .map { it.subject as Resource }
+            .distinct()
+            .sortedBy { it.createdAt }
+            .paged(pageable)
+
+    override fun findAllCurrentComparisonsByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource> =
+        entities.values
+            .filter {
+                it.subject is Resource && with(it.subject as Resource) {
+                    Classes.comparison in classes && this.visibility == visibility
+                } && findAllByObjectAndPredicate(it.subject.id, Predicates.hasPreviousVersion, PageRequest.of(0, 1)).isEmpty
+            }
+            .map { it.subject as Resource }
+            .distinct()
+            .sortedBy { it.createdAt }
+            .paged(pageable)
 
     private fun findSubgraph(
         root: ThingId,

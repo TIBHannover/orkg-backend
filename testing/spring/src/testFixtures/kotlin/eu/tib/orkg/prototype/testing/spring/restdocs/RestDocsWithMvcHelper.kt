@@ -23,30 +23,51 @@ fun timestampFieldWithPath(path: String, suffix: String): FieldDescriptor = fiel
     )
     .type(OffsetDateTime::class.simpleName)
 
-fun documentedGetRequestTo(urlTemplate: String, vararg uriValues: Any): MockHttpServletRequestBuilder =
-    RestDocumentationRequestBuilders.get(urlTemplate, *uriValues)
-        .accept(MediaType.APPLICATION_JSON)
-        .contentType(MediaType.APPLICATION_JSON)
-        .characterEncoding("utf-8")
-
-fun documentedDeleteRequestTo(
+fun documentedGetRequestTo(
     urlTemplate: String,
-    vararg uriValues: Any,
-    accept: String = MediaType.APPLICATION_JSON_VALUE,
-    contentType: String = MediaType.APPLICATION_JSON_VALUE
+    vararg uriValues: Any
 ): MockHttpServletRequestBuilder =
-    RestDocumentationRequestBuilders.delete(urlTemplate, *uriValues)
-        .accept(accept)
-        .contentType(contentType)
-        .characterEncoding("utf-8")
+    RestDocumentationRequestBuilders.get(urlTemplate, *uriValues)
+        .accept(MediaType.APPLICATION_JSON_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        .characterEncoding(Charsets.UTF_8.name())
+
+fun documentedPostRequestTo(
+    urlTemplate: String,
+    vararg uriValues: Any
+): MockHttpServletRequestBuilder =
+    RestDocumentationRequestBuilders.post(urlTemplate, *uriValues)
+        .accept(MediaType.APPLICATION_JSON_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        .characterEncoding(Charsets.UTF_8.name())
 
 fun documentedPutRequestTo(
     urlTemplate: String,
     vararg uriValues: Any,
-    accept: String = MediaType.APPLICATION_JSON_VALUE,
-    contentType: String = MediaType.APPLICATION_JSON_VALUE
+    body: String
 ): MockHttpServletRequestBuilder =
     RestDocumentationRequestBuilders.put(urlTemplate, *uriValues)
-        .accept(accept)
-        .contentType(contentType)
-        .characterEncoding("utf-8")
+        .accept(MediaType.APPLICATION_JSON_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        .characterEncoding(Charsets.UTF_8.name())
+        .content(body)
+
+fun documentedPatchRequestTo(
+    urlTemplate: String,
+    vararg uriValues: Any,
+    body: String
+): MockHttpServletRequestBuilder =
+    RestDocumentationRequestBuilders.patch(urlTemplate, *uriValues)
+        .accept(MediaType.APPLICATION_JSON_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        .characterEncoding(Charsets.UTF_8.name())
+        .content(body)
+
+fun documentedDeleteRequestTo(
+    urlTemplate: String,
+    vararg uriValues: Any
+): MockHttpServletRequestBuilder =
+    RestDocumentationRequestBuilders.delete(urlTemplate, *uriValues)
+        .accept(MediaType.APPLICATION_JSON_VALUE)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        .characterEncoding(Charsets.UTF_8.name())

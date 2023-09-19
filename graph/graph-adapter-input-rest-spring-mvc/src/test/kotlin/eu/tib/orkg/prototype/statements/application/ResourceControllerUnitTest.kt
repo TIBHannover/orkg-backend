@@ -1,13 +1,18 @@
 package eu.tib.orkg.prototype.statements.application
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.auth.spi.UserRepository
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.community.domain.model.Contributor
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorService
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
+import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
+import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase.*
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
+import eu.tib.orkg.prototype.statements.api.UpdateResourceUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
@@ -23,9 +28,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+import org.springframework.http.MediaType
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -63,6 +73,9 @@ internal class ResourceControllerUnitTest {
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var flags: FeatureFlagService
+
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
 
     @BeforeEach
     fun setup() {
@@ -140,4 +153,68 @@ internal class ResourceControllerUnitTest {
             .andExpect(jsonPath("$.timestamp").exists())
             .andExpect(jsonPath("$.path").value("/api/resources/$id/timeline"))
     }
+
+    @Test
+    @WithMockUser(username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `When creating a resource, and service reports invalid class collection, then status is 400 BAD REQUEST`() {
+        val command = CreateResourceRequest(
+            id = null,
+            label = "irrelevant",
+            classes = setOf(ThingId("List"))
+        )
+        val exception = InvalidClassCollection(command.classes)
+
+        every { contributorService.findById(any()) } returns Optional.of(
+            Contributor(
+                id = ContributorId(UUID.randomUUID()),
+                name = "irrelevant",
+                joinedAt = OffsetDateTime.now()
+            )
+        )
+        every { resourceService.create(any<CreateCommand>()) } throws exception
+
+        mockMvc.performPost("/api/resources/", command)
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.path").value("/api/resources/"))
+    }
+
+    @Test
+    @WithMockUser(username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `When updating a resource, and service reports invalid class collection, then status is 400 BAD REQUEST`() {
+        val resource = createResource()
+        val command = UpdateResourceUseCase.UpdateCommand(
+            id = resource.id,
+            classes = setOf(ThingId("List"))
+        )
+        val exception = InvalidClassCollection(command.classes!!)
+
+        every { resourceService.findById(any()) } returns Optional.of(resource)
+        every { resourceService.update(command) } throws exception
+
+        mockMvc.performPut("/api/resources/${resource.id}", command)
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(400))
+            .andExpect(jsonPath("$.message").value(exception.message))
+            .andExpect(jsonPath("$.error").value(exception.status.reasonPhrase))
+            .andExpect(jsonPath("$.timestamp").exists())
+            .andExpect(jsonPath("$.path").value("/api/resources/${resource.id}"))
+    }
+
+    private fun MockMvc.performPost(urlTemplate: String, request: Any): ResultActions = perform(
+        post(urlTemplate)
+            .contentType(MediaType.APPLICATION_JSON)
+            .characterEncoding("UTF-8")
+            .content(objectMapper.writeValueAsString(request))
+    )
+
+    private fun MockMvc.performPut(urlTemplate: String, request: Any): ResultActions = perform(
+        put(urlTemplate)
+            .contentType(MediaType.APPLICATION_JSON)
+            .characterEncoding("UTF-8")
+            .content(objectMapper.writeValueAsString(request))
+    )
 }

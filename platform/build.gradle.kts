@@ -12,6 +12,10 @@ dependencies {
     api(enforcedPlatform(kotlin("bom", "1.7.10")))
     api(platform(libs.forkhandles.bom))
     api(enforcedPlatform(libs.spring.boot.bom)) {
+        // We want to use a more recent Kotlin and JUnit version
+        exclude(group = "org.jetbrains.kotlin")
+        exclude(group = "org.jetbrains.kotlinx")
+        exclude(group = "org.junit.platform")
         // We need a bugfix, so we exclude it here and set a constraint later
         exclude(group = "org.liquibase", module = "liquibase-core")
     }

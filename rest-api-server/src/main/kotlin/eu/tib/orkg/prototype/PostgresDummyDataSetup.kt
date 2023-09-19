@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.module.SimpleModule
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
+import eu.tib.orkg.prototype.community.api.DummyDataUseCases
 import eu.tib.orkg.prototype.community.api.ConferenceSeriesUseCases
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.community.api.OrganizationUseCases
@@ -19,8 +20,8 @@ import eu.tib.orkg.prototype.community.domain.model.Organization
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.PeerReviewType
 import eu.tib.orkg.prototype.community.spi.ObservatoryRepository
-import eu.tib.orkg.prototype.contributions.domain.model.Contributor
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.Contributor
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.application.BadPeerReviewType
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -47,7 +48,8 @@ class PostgresDummyDataSetup(
     private val organizationService: OrganizationUseCases,
     private val conferenceSeriesService: ConferenceSeriesUseCases,
     private val resourceService: ResourceUseCases,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
+    private val dummyDataUseCases: DummyDataUseCases,
 ) : ApplicationRunner {
 
     class ObservatoryDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<Observatory?>(vc) {
@@ -185,7 +187,7 @@ class PostgresDummyDataSetup(
             if (userService.findById(it.key).isEmpty) {
                 registerFakeUser(it.key)
             }
-            userService.updateOrganizationAndObservatory(it.key, it.value.first?.value, it.value.second?.value)
+            dummyDataUseCases.updateOrganizationAndObservatory(it.key, it.value.first?.value, it.value.second?.value)
         }
     }
 

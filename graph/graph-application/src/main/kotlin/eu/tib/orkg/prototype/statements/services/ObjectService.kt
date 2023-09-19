@@ -2,21 +2,24 @@ package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.contributions.domain.model.Contributor
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.community.domain.model.Contributor
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorService
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase
 import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase.CreateObjectRequest
 import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase.ObjectStatement
 import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase.TempResource
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
+import eu.tib.orkg.prototype.statements.api.ListUseCases
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateResourceUseCase
 import eu.tib.orkg.prototype.statements.application.ClassNotFound
+import eu.tib.orkg.prototype.statements.application.ListNotFound
+import eu.tib.orkg.prototype.statements.application.LiteralNotFound
 import eu.tib.orkg.prototype.statements.application.PredicateNotFound
 import eu.tib.orkg.prototype.statements.application.ThingNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
@@ -32,6 +35,7 @@ class ObjectService(
     private val predicateService: PredicateUseCases,
     private val statementService: StatementUseCases,
     private val classService: ClassUseCases,
+    private val listService: ListUseCases,
     private val thingService: ThingService,
     private val contributorService: ContributorService,
 ) : CreateObjectUseCase {
@@ -270,7 +274,15 @@ class ObjectService(
 
     private fun checkIfThingExists(id: ThingId) {
         if (!thingService.exists(id))
-            throw ThingNotFound.withThingId(id)
+            throw ThingNotFound(id)
+    }
+
+    /**
+     * Check if a list exists, otherwise throw out suitable exception.
+     */
+    private fun checkIfListExists(listId: String) {
+        val id = ThingId(listId)
+        if (!listService.exists(id)) throw ListNotFound(id)
     }
 
     /**
@@ -295,7 +307,7 @@ class ObjectService(
     companion object Constants {
         // IDs of predicates
         const val ID_DOI_PREDICATE = "P26"
-        private const val ID_AUTHOR_PREDICATE = "P27"
+        private const val ID_AUTHORS_PREDICATE = "hasAuthors"
         private const val ID_PUBDATE_MONTH_PREDICATE = "P28"
         private const val ID_PUBDATE_YEAR_PREDICATE = "P29"
         private const val ID_RESEARCH_FIELD_PREDICATE = "P30"
@@ -319,7 +331,7 @@ class ObjectService(
         // Properties
         val ContributionPredicate = ThingId(ID_CONTRIBUTION_PREDICATE)
         val DoiPredicate = ThingId(ID_DOI_PREDICATE)
-        val AuthorPredicate = ThingId(ID_AUTHOR_PREDICATE)
+        val hasAuthorsPredicate = ThingId(ID_AUTHORS_PREDICATE)
         val PublicationMonthPredicate = ThingId(ID_PUBDATE_MONTH_PREDICATE)
         val PublicationYearPredicate = ThingId(ID_PUBDATE_YEAR_PREDICATE)
         val ResearchFieldPredicate = ThingId(ID_RESEARCH_FIELD_PREDICATE)

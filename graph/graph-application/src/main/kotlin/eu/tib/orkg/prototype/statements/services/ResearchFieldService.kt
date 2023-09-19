@@ -1,14 +1,8 @@
 package eu.tib.orkg.prototype.statements.services
 
-import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.JpaUserRepository
-import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.UserEntity
-import eu.tib.orkg.prototype.auth.domain.User
 import eu.tib.orkg.prototype.community.domain.model.ResearchField
-import eu.tib.orkg.prototype.community.domain.model.toContributor
-import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
-import eu.tib.orkg.prototype.contributions.domain.model.Contributor
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.contributions.spi.ContributorRepository
+import eu.tib.orkg.prototype.community.domain.model.Contributor
+import eu.tib.orkg.prototype.community.spi.ContributorRepository
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.FindResearchFieldsQuery
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
@@ -16,6 +10,7 @@ import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase.*
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.ResearchFieldRepository
 import java.util.*
 import org.springframework.data.domain.Page

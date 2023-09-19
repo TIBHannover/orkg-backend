@@ -36,6 +36,10 @@ orkg:
     doiPrefix: "10.7484"
     url: "https://api.test.datacite.org/dois"
     publish: "draft"
+  publishing:
+    base-url:
+      paper: "http://localhost/paper/"
+      comparison: "http://localhost/comparison/"
 keycloak:
   realm: orkg-dev
   auth-server-url: http://localhost:8888

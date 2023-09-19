@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
@@ -41,17 +41,13 @@ data class Neo4jPredicate(
     var subjectOf: MutableSet<Neo4jStatement> = mutableSetOf()
 ) : Neo4jThing {
 
-    fun toPredicate(): Predicate {
-        val predicate = Predicate(
-            id = id!!,
-            label = label!!,
-            createdAt = createdAt!!,
-            createdBy = createdBy
-        )
-        if (subjectOf.isNotEmpty())
-            predicate.description = subjectOf.firstOrNull { it.predicateId?.value == "description" }?.`object`?.label
-        return predicate
-    }
+    fun toPredicate(): Predicate = Predicate(
+        id = id!!,
+        label = label!!,
+        createdAt = createdAt!!,
+        createdBy = createdBy,
+        description = subjectOf.singleOrNull { it.predicateId?.value == "description" }?.`object`?.label
+    )
 
     override fun toThing() = toPredicate()
 }

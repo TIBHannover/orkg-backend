@@ -2,8 +2,7 @@ package eu.tib.orkg.prototype.statements.domain.model
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import java.time.OffsetDateTime
 
 data class Resource(

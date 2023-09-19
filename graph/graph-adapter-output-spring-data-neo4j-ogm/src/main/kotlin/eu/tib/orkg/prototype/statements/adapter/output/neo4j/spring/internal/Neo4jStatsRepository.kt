@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ChangeLogResponse
 import eu.tib.orkg.prototype.statements.spi.FieldsStats
 import eu.tib.orkg.prototype.statements.spi.ObservatoryStats
+import eu.tib.orkg.prototype.statements.spi.ResearchFieldStats
 import eu.tib.orkg.prototype.statements.spi.TrendingResearchProblems
 import java.util.*
 import org.springframework.data.domain.Page
@@ -55,6 +56,22 @@ WITH observatoryId, comparisons, papers, comparisons + papers AS total
 ORDER BY total DESC
 RETURN $id AS observatoryId, papers, comparisons, total""")
     fun findObservatoryStatsById(id: ObservatoryId): ObservatoryStats
+
+    @Query("""
+MATCH (rsf:ResearchField:Resource {id: $id})
+OPTIONAL MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(rsf)
+OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(:Contribution:Resource)<-[:RELATED {predicate_id: "compareContribution"}]-(cmp:Comparison:Resource)
+WITH rsf.id AS id, COUNT(DISTINCT ppr) AS papers, COUNT(DISTINCT cmp) AS comparisons
+RETURN id, papers, comparisons, (papers + comparisons) AS total""")
+    fun findResearchFieldStatsById(id: ThingId): Neo4jResearchFieldStats
+
+    @Query("""
+MATCH (rsf:ResearchField:Resource)<-[:RELATED*0.. {predicate_id: "P36"}]-(:ResearchField:Resource {id: $id})
+OPTIONAL MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(rsf)
+OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(:Contribution:Resource)<-[:RELATED {predicate_id: "compareContribution"}]-(cmp:Comparison:Resource)
+WITH $id AS id, COUNT(DISTINCT ppr) AS papers, COUNT(DISTINCT cmp) AS comparisons
+RETURN id, papers, comparisons, (papers + comparisons) AS total""")
+    fun findResearchFieldStatsByIdIncludingSubfields(id: ThingId): Neo4jResearchFieldStats
 
     @Query("""
 CALL {
@@ -288,4 +305,12 @@ data class Neo4jContributorRecord(
     val problems: Long,
     val visualizations: Long,
     val total: Long
+)
+
+@QueryResult
+data class Neo4jResearchFieldStats(
+    val id: String,
+    val papers: Long = 0,
+    val comparisons: Long = 0,
+    val total: Long = 0
 )

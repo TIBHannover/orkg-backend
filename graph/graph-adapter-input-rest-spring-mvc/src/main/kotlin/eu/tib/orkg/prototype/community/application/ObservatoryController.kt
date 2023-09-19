@@ -4,14 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.community.ObservatoryRepresentation
 import eu.tib.orkg.prototype.community.ObservatoryRepresentationAdapter
 import eu.tib.orkg.prototype.community.ResearchFieldRepresentation
-import eu.tib.orkg.prototype.community.api.CreateObservatoryUseCase.*
+import eu.tib.orkg.prototype.community.api.CreateObservatoryUseCase.CreateCommand
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.contributions.domain.model.Contributor
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.community.spi.ObservatoryRepository
+import eu.tib.orkg.prototype.community.domain.model.Contributor
+import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
-import eu.tib.orkg.prototype.statements.application.TooManyParameters
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import javax.validation.Valid
@@ -37,8 +37,8 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/observatories/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ObservatoryController(
     private val service: ObservatoryUseCases,
-    private val contributorService: ContributorService,
-    override val resourceRepository: ResourceUseCases
+    override val resourceRepository: ResourceUseCases,
+    private val observatoryRepository: ObservatoryRepository,
 ) : ObservatoryRepresentationAdapter {
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -101,7 +101,7 @@ class ObservatoryController(
         @PathVariable id: ObservatoryId,
         pageable: Pageable
     ): Page<Contributor> =
-        contributorService.findAllByObservatoryId(id, pageable)
+        observatoryRepository.allMembers(id, pageable)
 
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")

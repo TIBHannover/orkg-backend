@@ -1,0 +1,28 @@
+= Visualizations
+
+Visualizations represent a collection of concepts in the knowledge graph.
+They can be seen as a collection of <<Resources,resources>>, <<Literals,literals>> and <<Predicates,predicates>>.
+The provided endpoints aggregate these concepts into a visualization representation.
+
+NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
+
+[[visualizations-fetch]]
+== Fetching a visualization
+
+A `GET` request provides information about a visualization.
+
+operation::visualizations-get-single[snippets='curl-request,response-fields']
+
+[[visualizations-list]]
+== Listing visualizations
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<visualizations-fetch,visualizations>>.
+If no paging request parameters are provided, the default values will be used.
+
+operation::visualizations-get-paged[snippets='curl-request']
+
+The following list of request parameters are supported:
+
+NOTE: Only one request parameter can be used at a time.
+
+operation::visualizations-get-paged[snippets='request-parameters']

@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import java.net.URI
 import java.time.OffsetDateTime
 import java.util.*
@@ -11,8 +11,7 @@ data class Class(
     val uri: URI?,
     val createdAt: OffsetDateTime,
     val createdBy: ContributorId = ContributorId.createUnknownContributor(),
-) : Thing {
-    var description: String? = null
-}
+    val description: String? = null
+) : Thing
 
 fun Class?.toOptional() = Optional.ofNullable(this)

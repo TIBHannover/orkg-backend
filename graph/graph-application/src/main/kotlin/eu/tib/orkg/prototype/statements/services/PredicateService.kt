@@ -1,20 +1,19 @@
 package eu.tib.orkg.prototype.statements.services
 
 import dev.forkhandles.values.ofOrNull
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.UpdatePredicateUseCase
-import eu.tib.orkg.prototype.statements.application.PredicateCantBeDeleted
 import eu.tib.orkg.prototype.statements.application.PredicateNotFound
-import eu.tib.orkg.prototype.statements.domain.model.Clock
+import eu.tib.orkg.prototype.statements.application.PredicateUsedInStatement
 import eu.tib.orkg.prototype.statements.domain.model.Label
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
-import eu.tib.orkg.prototype.statements.domain.model.SystemClock
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
+import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
 import org.springframework.data.domain.Page
@@ -27,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional
 class PredicateService(
     private val repository: PredicateRepository,
     private val statementRepository: StatementRepository,
-    private val clock: Clock = SystemClock()
+    private val clock: Clock = Clock.systemDefaultZone(),
 ) : PredicateUseCases {
     @Transactional(readOnly = true)
     override fun exists(id: ThingId): Boolean = repository.exists(id)
@@ -38,7 +37,7 @@ class PredicateService(
             id = id,
             label = Label.ofOrNull(command.label)?.value
                 ?: throw IllegalArgumentException("Invalid label: ${command.label}"),
-            createdAt = clock.now(),
+            createdAt = OffsetDateTime.now(clock),
             createdBy = command.contributorId ?: ContributorId.createUnknownContributor()
         )
         repository.save(predicate)
@@ -100,7 +99,7 @@ class PredicateService(
         val predicate = findById(predicateId).orElseThrow { PredicateNotFound(predicateId) }
 
         if (statementRepository.countPredicateUsage(predicate.id) > 0)
-            throw PredicateCantBeDeleted(predicate.id)
+            throw PredicateUsedInStatement(predicate.id)
 
         repository.deleteById(predicate.id)
     }

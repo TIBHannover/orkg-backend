@@ -17,4 +17,6 @@ interface UserRepository {
     fun findById(id: UserId): Optional<User>
 
     fun deleteAll()
+
+    fun count(): Long
 }

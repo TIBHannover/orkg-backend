@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.services
 
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.createClass
 import eu.tib.orkg.prototype.createClassWithoutURI
 import eu.tib.orkg.prototype.statements.api.AlreadyInUse
@@ -13,7 +13,6 @@ import eu.tib.orkg.prototype.statements.api.InvalidURI
 import eu.tib.orkg.prototype.statements.api.UpdateClassUseCase.ReplaceCommand
 import eu.tib.orkg.prototype.statements.api.UpdateNotAllowed
 import eu.tib.orkg.prototype.statements.domain.model.Class
-import eu.tib.orkg.prototype.statements.domain.model.Clock
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.toOptional
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
@@ -21,7 +20,9 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.net.URI
+import java.time.Instant
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.*
 import org.assertj.core.api.Assertions.assertThat
@@ -31,10 +32,8 @@ import org.junit.jupiter.api.assertThrows
 class ClassServiceTests {
 
     private val repository: ClassRepository = mockk()
-    private val staticClock: Clock = object : Clock {
-        override fun now(): OffsetDateTime = OffsetDateTime.of(2022, 11, 14, 14, 9, 23, 12345, ZoneOffset.ofHours(1))
-    }
-
+    private val fixedTime = OffsetDateTime.of(2022, 11, 14, 14, 9, 23, 12345, ZoneOffset.ofHours(1))
+    private val staticClock = java.time.Clock.fixed(Instant.from(fixedTime), ZoneId.systemDefault())
     private val service = ClassService(repository, staticClock)
 
     @Test
@@ -91,7 +90,7 @@ class ClassServiceTests {
                     id = mockClassId,
                     label = "irrelevant",
                     uri = null,
-                    createdAt = staticClock.now(),
+                    createdAt = OffsetDateTime.now(staticClock),
                     createdBy = ContributorId(UUID(0, 0)),
                 )
             )
@@ -113,7 +112,7 @@ class ClassServiceTests {
                     id = mockClassId,
                     label = "irrelevant",
                     uri = null,
-                    createdAt = staticClock.now(),
+                    createdAt = OffsetDateTime.now(staticClock),
                     createdBy = randomContributorId,
                 )
             )

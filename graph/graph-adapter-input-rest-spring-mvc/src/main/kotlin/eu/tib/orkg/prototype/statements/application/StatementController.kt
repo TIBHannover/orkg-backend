@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.BundleRepresentation
 import eu.tib.orkg.prototype.statements.BundleRepresentationAdapter
@@ -17,6 +17,7 @@ import java.security.Principal
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.MediaType
@@ -47,7 +48,8 @@ class StatementController(
     @GetMapping("/")
     fun findAll(
         pageable: Pageable
-    ): Iterable<StatementRepresentation> = statementService.findAll(pageable).mapToStatementRepresentation()
+    ): Page<StatementRepresentation> =
+        statementService.findAll(pageable).mapToStatementRepresentation()
 
     @GetMapping("/{statementId}")
     fun findById(@PathVariable statementId: StatementId): StatementRepresentation =
@@ -176,7 +178,8 @@ class StatementController(
         @RequestParam("maxLevel", required = false) maxLevel: Int?,
         @RequestParam("blacklist", required = false, defaultValue = "") blacklist: List<ThingId>,
         @RequestParam("whitelist", required = false, defaultValue = "") whitelist: List<ThingId>,
-        @RequestParam("includeFirst", required = false, defaultValue = "true") includeFirst: Boolean
+        @RequestParam("includeFirst", required = false, defaultValue = "true") includeFirst: Boolean,
+        sort: Sort
     ): BundleRepresentation =
         statementService.fetchAsBundle(
             thingId,
@@ -185,6 +188,7 @@ class StatementController(
                 minLevel, maxLevel,
                 blacklist, whitelist
             ),
-            includeFirst
+            includeFirst,
+            sort
         ).toBundleRepresentation()
 }

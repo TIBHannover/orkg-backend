@@ -32,7 +32,11 @@ interface ResourceUseCases : CreateResourceUseCase, RetrieveResourceUseCase, Upd
 interface StatementUseCases : CreateStatementUseCase, RetrieveStatementUseCase, UpdateStatementUseCase,
     DeleteStatementUseCase
 
+interface ListUseCases : CreateListUseCase, RetrieveListUseCase, UpdateListUseCase, DeleteListUseCase
+
 interface ClassHierarchyUseCases : CreateClassHierarchyUseCase, RetrieveClassHierarchyUseCase, DeleteClassHierarchyUseCase
+
+interface ResearchFieldHierarchyUseCases : RetrieveResearchFieldHierarchyUseCase
 
 // FIXME: we need to refactor those as well
 interface OtherResourceUseCases :

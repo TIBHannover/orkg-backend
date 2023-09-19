@@ -23,10 +23,10 @@ fun Fabrikate.withCustomMappings(): Fabrikate {
             label = random(),
             createdAt = random(),
             uri = random(),
-            createdBy = random()
-        ).apply {
-            description = random()
-        }
+            createdBy = random(),
+            // Do not create a random description for tests as it is saved via statements
+            // description = random()
+        )
         // TODO: generate predicates and resources too?
     }
     // register fabricator for Class because _class needs to be set correctly
@@ -36,10 +36,10 @@ fun Fabrikate.withCustomMappings(): Fabrikate {
             label = random(),
             createdAt = random(),
             uri = random(),
-            createdBy = random()
-        ).apply {
-            description = random()
-        }
+            createdBy = random(),
+            // Do not create a random description for tests as it is saved via statements
+            // description = random()
+        )
     }
     // register fabricator for Predicate because _class needs to be set correctly
     config.register {
@@ -47,10 +47,10 @@ fun Fabrikate.withCustomMappings(): Fabrikate {
             id = random(),
             label = random(),
             createdAt = random(),
-            createdBy = random()
-        ).apply {
-            description = random()
-        }
+            createdBy = random(),
+            // Do not create a random description for tests as it is saved via statements
+            // description = random()
+        )
     }
     // register fabricator for Literal because _class needs to be set correctly
     config.register {

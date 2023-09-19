@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.export.rdf.domain.RDFService
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -12,6 +12,7 @@ import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
+import eu.tib.orkg.prototype.statements.spi.ThingRepository
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.DescribeSpec
@@ -40,13 +41,14 @@ internal class RdfServiceIntegrationTest : DescribeSpec({
     val classRepository: ClassRepository = mockk()
     val predicateRepository: PredicateRepository = mockk()
     val resourceRepository: ResourceRepository = mockk()
+    val thingRepository: ThingRepository = mockk()
     val classHierarchyRepository: ClassHierarchyRepository = mockk()
-
     val service = RDFService(
         statementRepository,
         predicateRepository,
         resourceRepository,
         classRepository,
+        thingRepository,
         classHierarchyRepository
     )
 

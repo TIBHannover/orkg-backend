@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.files.adapter.output.jpa.internal
 
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.files.domain.model.Image
 import eu.tib.orkg.prototype.files.domain.model.ImageData
 import eu.tib.orkg.prototype.files.domain.model.ImageId

@@ -6,7 +6,7 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 group = "eu.tib"
-version = "0.35.1"
+version = "0.37.0"
 
 val neo4jVersion = "3.5.+" // should match version in Dockerfile
 val springDataNeo4jVersion = "5.3.4"
@@ -30,6 +30,7 @@ plugins {
 
     id("org.jetbrains.dokka") version "0.10.1"
     id("org.asciidoctor.jvm.convert") version "3.3.2"
+    id("org.asciidoctor.jvm.gems") version "3.3.2"
     id("com.google.cloud.tools.jib") version "3.1.1"
     // The taskinfo plugin currently does not work with Gradle 7.6: https://gitlab.com/barfuin/gradle-taskinfo/-/issues/20
     // It was used only occasionally for debugging, and can be re-enabled again later (if needed).
@@ -82,6 +83,8 @@ testing {
                 implementation(project())
                 implementation(testFixtures(project(":testing:spring")))
                 implementation(testFixtures(project(":graph:graph-application")))
+                implementation(project(":identity-management:idm-application"))
+                implementation(project(":identity-management:idm-adapter-output-spring-data-jpa")) // for JpaUserAdapter
                 implementation(project(":discussions:discussions-adapter-output-spring-data-jpa-postgres"))
                 implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa-postgres"))
                 implementation(project(":feature-flags:feature-flags-ports"))
@@ -132,9 +135,10 @@ dependencies {
     implementation(platform("org.apache.logging.log4j:log4j-bom:2.19.0"))
 
     // This project is essentially a "configuration" project in Spring's sense, so we depend on all components:
-    implementation(project(":identity-management:idm-application"))
-    implementation(project(":identity-management:idm-adapter-input-rest-spring-security"))
-    implementation(project(":identity-management:idm-adapter-output-spring-data-jpa"))
+    implementation(project(":common:exceptions"))
+    compileOnly(project(":identity-management:idm-application")) // only ports used, replace later
+    runtimeOnly(project(":identity-management:idm-adapter-input-rest-spring-security"))
+    runtimeOnly(project(":identity-management:idm-adapter-output-spring-data-jpa"))
     implementation(project(":graph:graph-application"))
     implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
     implementation(project(":graph:graph-adapter-output-spring-data-neo4j-ogm"))
@@ -144,6 +148,9 @@ dependencies {
     implementation(project(":feature-flags:feature-flags-adapter-output-spring-properties"))
     implementation(project(":rdf-export:rdf-export-application"))
     implementation(project(":rdf-export:rdf-export-adapter-input-rest-spring-mvc"))
+    implementation(project(":licenses:licenses-application"))
+    implementation(project(":licenses:licenses-adapter-input-rest-spring-mvc"))
+    implementation(project(":licenses:licenses-adapter-output-spring"))
     implementation(project(":widget"))
 
     implementation(libs.forkhandles.result4k)
@@ -201,6 +208,8 @@ dependencies {
     asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.7.RELEASE")
     restdocs(project(withSnippets(":graph:graph-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":rdf-export:rdf-export-adapter-input-rest-spring-mvc")))
+    restdocs(project(withSnippets(":licenses:licenses-adapter-input-rest-spring-mvc")))
+    restdocs(project(withSnippets(":widget")))
 }
 
 tasks.named("check") {
@@ -235,6 +244,17 @@ tasks {
         doFirst {
             named<BootRun>("bootRun").configure {
                 args("--spring.profiles.active=development,datagen")
+            }
+        }
+        finalizedBy("bootRun")
+    }
+
+    register("runListMigrations").configure {
+        group = "migration"
+        description = "Migrates the current database to use list entities."
+        doFirst {
+            named<BootRun>("bootRun").configure {
+                args("--spring.profiles.active=development,listMigrations")
             }
         }
         finalizedBy("bootRun")
@@ -295,6 +315,17 @@ tasks {
                 diagram.version("2.2.10")
             }
             fatalWarnings(missingIncludes())
+
+            // Work-around for JRE 16+, because Java's internal APIs are no longer available due to JPMS.
+            // This should be fixed in the Asciidoctor plugin, but never was.
+            inProcess = org.asciidoctor.gradle.base.process.ProcessMode.JAVA_EXEC
+            forkOptions {
+                jvmArgs(
+                    "--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED",
+                    "--add-opens", "java.base/java.io=ALL-UNNAMED",
+                    "--add-opens", "java.base/java.security=ALL-UNNAMED",
+                )
+            }
         }
 
         // outputs.upToDateWhen { false }

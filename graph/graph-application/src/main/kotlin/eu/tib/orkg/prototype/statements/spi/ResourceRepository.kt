@@ -2,11 +2,11 @@ package eu.tib.orkg.prototype.statements.spi
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -52,8 +52,8 @@ interface ResourceRepository : EntityRepository<Resource, ThingId> {
     fun findAllByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource>
     fun findAllListed(pageable: Pageable): Page<Resource>
 
-    fun findAllPapersByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource>
-    fun findAllListedPapers(pageable: Pageable): Page<Resource>
+    fun findAllByClassAndVisibility(classId: ThingId, visibility: Visibility, pageable: Pageable): Page<Resource>
+    fun findAllListedByClass(classId: ThingId, pageable: Pageable): Page<Resource>
 
     fun findAllByClassInAndVisibility(classes: Set<ThingId>, visibility: Visibility, pageable: Pageable): Page<Resource>
     fun findAllListedByClassIn(classes: Set<ThingId>, pageable: Pageable): Page<Resource>

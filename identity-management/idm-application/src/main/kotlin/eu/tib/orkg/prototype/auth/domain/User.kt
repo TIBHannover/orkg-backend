@@ -16,5 +16,6 @@ data class User(
     val organizationId: OrganizationId?,
     val observatoryId: ObservatoryId?,
 ) {
-    val isCurator: Boolean = roles.contains(Role("ROLE_ADMIN")) // FIXME: should be its own status
+    val isCurator: Boolean = Role("ROLE_ADMIN") in roles // FIXME: should be its own status
+    val isAdmin: Boolean = Role("ROLE_ADMIN") in roles
 }

@@ -2,7 +2,9 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import eu.tib.orkg.prototype.IndexInitializer
 import eu.tib.orkg.prototype.Neo4jContainerInitializer
+import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
+import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.predicateRepositoryContract
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.core.spec.style.describeSpec
@@ -23,14 +25,31 @@ import org.springframework.data.neo4j.core.fetchAs
 import org.springframework.test.context.ContextConfiguration
 
 @DataNeo4jTest
-@ContextConfiguration(classes = [SpringDataNeo4jPredicateAdapter::class], initializers = [Neo4jContainerInitializer::class])
+@ContextConfiguration(
+    classes = [
+        SpringDataNeo4jStatementAdapter::class,
+        SpringDataNeo4jPredicateAdapter::class,
+        SpringDataNeo4jLiteralAdapter::class
+    ],
+    initializers = [
+        Neo4jContainerInitializer::class
+    ]
+)
 @Import(value = [Neo4jConfiguration::class, IndexInitializer::class])
 @ComponentScan(basePackages = ["eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal"])
 internal class SpringDataNeo4jPredicateAdapterContractTests(
     @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository,
+    @Autowired private val springDataNeo4jStatementAdapter: StatementRepository,
+    @Autowired private val springDataNeo4jLiteralAdapter: LiteralRepository,
     @Autowired private val neo4jClient: Neo4jClient
 ) : DescribeSpec({
-    include(predicateRepositoryContract(springDataNeo4jPredicateAdapter))
+    include(
+        predicateRepositoryContract(
+            springDataNeo4jPredicateAdapter,
+            springDataNeo4jStatementAdapter,
+            springDataNeo4jLiteralAdapter
+        )
+    )
     include(neo4jPredicateRepositoryContract(springDataNeo4jPredicateAdapter, neo4jClient))
 })
 

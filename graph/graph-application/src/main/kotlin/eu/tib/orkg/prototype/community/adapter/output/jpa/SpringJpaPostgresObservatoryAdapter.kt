@@ -1,14 +1,18 @@
 package eu.tib.orkg.prototype.community.adapter.output.jpa
 
 import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.JpaUserRepository
+import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.UserEntity
+import eu.tib.orkg.prototype.auth.domain.User
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.ObservatoryEntity
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresObservatoryRepository
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
+import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.toContributor
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.toObservatory
 import eu.tib.orkg.prototype.community.domain.model.Observatory
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.spi.ObservatoryRepository
+import eu.tib.orkg.prototype.community.domain.model.Contributor
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.data.domain.Page
@@ -52,4 +56,8 @@ class SpringJpaPostgresObservatoryAdapter(
         postgresRepository.findAllResearchFields(pageable).map { ThingId(it) }
 
     override fun deleteAll() = postgresRepository.deleteAll()
+
+    // TODO: refactor
+    override fun allMembers(id: ObservatoryId, pageable: Pageable): Page<Contributor> =
+        userRepository.findAllByObservatoryId(id.value, pageable).map(UserEntity::toUser).map(User::toContributor)
 }

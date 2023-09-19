@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.files.services
 
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.files.api.CreateImageUseCase
 import eu.tib.orkg.prototype.files.application.InvalidMimeType
 import eu.tib.orkg.prototype.files.domain.model.Image
@@ -9,13 +9,14 @@ import eu.tib.orkg.prototype.files.domain.model.ImageId
 import eu.tib.orkg.prototype.files.spi.ImageRepository
 import eu.tib.orkg.prototype.loadRawImage
 import eu.tib.orkg.prototype.statements.api.UpdateOrganizationUseCases
-import eu.tib.orkg.prototype.statements.domain.model.Clock
 import eu.tib.orkg.prototype.testImage
 import io.kotest.assertions.throwables.shouldThrow
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.time.Instant
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.*
 import javax.activation.MimeType
@@ -23,9 +24,8 @@ import org.junit.jupiter.api.Test
 
 class ImageServiceTest {
     private val repository: ImageRepository = mockk()
-    private val staticClock: Clock = object : Clock {
-        override fun now(): OffsetDateTime = OffsetDateTime.of(2022, 11, 14, 14, 9, 23, 12345, ZoneOffset.ofHours(1))
-    }
+    private val fixedTime = OffsetDateTime.of(2022, 11, 14, 14, 9, 23, 12345, ZoneOffset.ofHours(1))
+    private val staticClock = java.time.Clock.fixed(Instant.from(fixedTime), ZoneId.systemDefault())
     private val service = ImageService(repository, staticClock)
 
     @Test
@@ -39,7 +39,17 @@ class ImageServiceTest {
         service.create(CreateImageUseCase.CreateCommand(image.data, image.mimeType, contributor))
 
         verify(exactly = 1) { repository.nextIdentity() }
-        verify(exactly = 1) { repository.save(Image(id, image.data, image.mimeType, contributor, staticClock.now())) }
+        verify(exactly = 1) {
+            repository.save(
+                Image(
+                    id,
+                    image.data,
+                    image.mimeType,
+                    contributor,
+                    OffsetDateTime.now(staticClock),
+                )
+            )
+        }
     }
 
     @Test

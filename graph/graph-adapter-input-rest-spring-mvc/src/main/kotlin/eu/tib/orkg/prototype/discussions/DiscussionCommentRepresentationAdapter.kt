@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.discussions
 
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.discussions.api.DiscussionCommentRepresentation
 import eu.tib.orkg.prototype.discussions.domain.model.DiscussionComment
 import eu.tib.orkg.prototype.discussions.domain.model.DiscussionCommentId

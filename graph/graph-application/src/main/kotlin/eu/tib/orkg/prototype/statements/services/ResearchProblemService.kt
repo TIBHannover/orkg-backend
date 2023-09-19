@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.statements.services
 
-import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.paperswithcode.application.port.output.FindResearchProblemQuery
 import eu.tib.orkg.prototype.researchproblem.application.domain.ResearchProblem
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
@@ -10,6 +9,7 @@ import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.application.ResourceNotFound
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository
 import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.ContributorPerProblem
 import java.time.format.DateTimeFormatter

@@ -21,9 +21,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestBody
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
-import org.springframework.restdocs.payload.ResponseFieldsSnippet
-import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -83,15 +80,7 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    requestParameters(
-                        parameterWithName("page").description("Page number of items to fetch (default: 0)").optional(),
-                        parameterWithName("items").description("Number of items to fetch per page (default: 10)")
-                            .optional(),
-                        parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
-                        parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
-                    ),
-                    sharedListOfStatementsResponseFields()
-                        .and(subsectionWithPath("[].object").description("An object. Can be either a resource or a literal."))
+                    pageOfStatementsWithAnyObjectResponseFields()
                 )
             )
     }
@@ -117,7 +106,7 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    statementResponseFields()
+                    statementWithResourceResponseFields()
                 )
             )
     }
@@ -165,14 +154,7 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    requestParameters(
-                        parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
-                        parameterWithName("items").description("Number of items to fetch per page (default: 10)")
-                            .optional(),
-                        parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
-                        parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
-                    ),
-                    statementListResponseFields()
+                    pageOfStatementsWithAnyObjectResponseFields()
                 )
             )
     }
@@ -196,14 +178,7 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    requestParameters(
-                        parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
-                        parameterWithName("items").description("Number of items to fetch per page (default: 10)")
-                            .optional(),
-                        parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
-                        parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
-                    ),
-                    statementListResponseFields()
+                    pageOfStatementsWithAnyObjectResponseFields()
                 )
             )
     }
@@ -226,14 +201,7 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    requestParameters(
-                        parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
-                        parameterWithName("items").description("Number of items to fetch per page (default: 10)")
-                            .optional(),
-                        parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
-                        parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
-                    ),
-                    statementListResponseFields()
+                    pageOfStatementsWithAnyObjectResponseFields()
                 )
             )
     }
@@ -258,15 +226,7 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    requestParameters(
-                        parameterWithName("page").description("Page number of items to fetch (default: 1)").optional(),
-                        parameterWithName("items").description("Number of items to fetch per page (default: 10)")
-                            .optional(),
-                        parameterWithName("sortBy").description("Key to sort by (default: not provided)").optional(),
-                        parameterWithName("desc").description("Direction of the sorting (default: false)").optional()
-                    ),
-                    sharedListOfStmtSubPredResponseFields()
-                        .and(subsectionWithPath("content[].object").description("An object. Can be either a resource or a literal."))
+                    pageOfStatementsWithAnyObjectResponseFields()
                 )
             )
     }
@@ -290,7 +250,7 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     createdResponseHeaders(),
-                    statementResponseFields()
+                    statementWithResourceResponseFields()
                 )
             )
     }
@@ -342,7 +302,7 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     requestBody(),
-                    statementResponseFields()
+                    statementWithResourceResponseFields()
                 )
             )
     }
@@ -443,7 +403,7 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
             )
     }
 
-    private fun bundleResponseFields(): ResponseFieldsSnippet =
+    private fun bundleResponseFields() =
         responseFields(
             listOf(
                 fieldWithPath("root").description("The root ID of the object"),
@@ -452,8 +412,8 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
         )
             .andWithPrefix("statements[].", statementFields())
             .andWithPrefix("statements[].subject.", resourceResponseFields())
-        .andWithPrefix("statements[].predicate.", predicateResponseFields())
-        .andWithPrefix("statements[].object.", resourceResponseFields())
+            .andWithPrefix("statements[].predicate.", predicateResponseFields())
+            .andWithPrefix("statements[].object.", resourceResponseFields())
 
     private fun statementFields() = listOf(
         fieldWithPath("id").description("The statement ID"),
@@ -461,46 +421,21 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
         fieldWithPath("created_by").description("The ID of the user that created the statement. All zeros if unknown.")
     )
 
-    private fun sharedStatementResponseFields(): ResponseFieldsSnippet =
+    private fun pageOfStatementsWithAnyObjectResponseFields() =
+        responseFields(pageableDetailedFieldParameters())
+            .andWithPrefix("content[].", statementFields())
+            .andWithPrefix("content[].subject.", resourceResponseFields())
+            .andWithPrefix("content[].predicate.", predicateResponseFields())
+            .and(subsectionWithPath("content[].object").description("An object. Can be either a resource or a literal."))
+
+    private fun sharedStatementResponseFields() =
         responseFields(statementFields())
             .andWithPrefix("subject.", resourceResponseFields())
             .andWithPrefix("predicate.", predicateResponseFields())
 
-    private fun sharedListOfStatementsResponseFields(): ResponseFieldsSnippet =
-        responseFields(fieldWithPath("[]").description("A list of statements."))
-            .andWithPrefix("[].", statementFields())
-            .andWithPrefix("[].subject.", resourceResponseFields())
-            .andWithPrefix("[].predicate.", predicateResponseFields())
-
-    private fun sharedListOfStmtSubPredResponseFields(): ResponseFieldsSnippet =
-        responseFields(pageableDetailedFieldParameters()).and(
-            fieldWithPath("content[].id").description("The content ID")
-        ).and(
-            fieldWithPath("content[].created_by").description("The content created by")
-        ).and(
-            fieldWithPath("content[].created_at").description("The content created at")
-        )
-            .andWithPrefix("content[].", statementFields())
-            .andWithPrefix("content[].subject.", resourceResponseFields())
-            .andWithPrefix("content[].predicate.", predicateResponseFields())
-
-    private fun statementResponseFields() = sharedStatementResponseFields()
+    private fun statementWithResourceResponseFields() = sharedStatementResponseFields()
         .andWithPrefix("object.", resourceResponseFields())
 
     private fun statementWithLiteralResponseFields() = sharedStatementResponseFields()
         .andWithPrefix("object.", literalResponseFields())
-
-    fun statementListResponseFields(): ResponseFieldsSnippet =
-        responseFields(pageableDetailedFieldParameters()).and(
-            fieldWithPath("content[].id").description("The content ID")
-        ).and(
-            fieldWithPath("content[].created_by").description("The content created by")
-        ).and(
-            fieldWithPath("content[].created_at").description("The content created at")
-        )
-            .andWithPrefix("")
-            .andWithPrefix("content[].object.", resourceResponseFields())
-            .andWithPrefix("content[].subject.", resourceResponseFields())
-            .andWithPrefix("content[].predicate.", predicateResponseFields())
-            .andWithPrefix("")
 }

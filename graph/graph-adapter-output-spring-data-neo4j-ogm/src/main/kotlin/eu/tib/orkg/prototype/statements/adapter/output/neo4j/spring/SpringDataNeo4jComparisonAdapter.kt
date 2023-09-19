@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
-import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jComparisonRepository
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.ComparisonRepository
 import java.util.*
 import org.springframework.data.domain.Page

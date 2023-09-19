@@ -1,11 +1,13 @@
 package eu.tib.orkg.prototype
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.ranking.spi.RankingService
+import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
+import eu.tib.orkg.prototype.statements.spi.ListRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
@@ -20,7 +22,6 @@ import org.springframework.data.domain.Sort.Order
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 
-private val hasAuthor = ThingId("P27")
 private val hasDoi = ThingId("P26")
 private val hasContribution = ThingId("P31")
 private val paperClass = ThingId("Paper")
@@ -30,6 +31,7 @@ private val paperClass = ThingId("Paper")
 class PaperRanker(
     @Autowired private val resourceRepository: ResourceRepository,
     @Autowired private val rankingService: RankingService,
+    @Autowired private val listRepository: ListRepository
 ) {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 
@@ -89,7 +91,12 @@ class PaperRanker(
         val authors: MutableSet<ThingId> = mutableSetOf()
         rankingService.findAllStatementsAboutPaper(paper.id).forEach {
             when (it.first) {
-                hasAuthor -> authors += it.second
+                Predicates.hasAuthor -> authors += it.second
+                Predicates.hasAuthors -> {
+                    listRepository.findById(it.second).ifPresent { list ->
+                        authors += list.elements
+                    }
+                }
                 hasDoi -> stats.doi = it.second
                 hasContribution -> contributions += it.second
             }

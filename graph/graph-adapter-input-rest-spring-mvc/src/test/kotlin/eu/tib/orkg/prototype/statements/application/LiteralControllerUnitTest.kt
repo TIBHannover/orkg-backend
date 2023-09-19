@@ -1,11 +1,10 @@
 package eu.tib.orkg.prototype.statements.application
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.createLiteral
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
@@ -32,7 +31,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.statements.testing.withCustomMappings
 import org.orkg.statements.testing.withLiteralIds
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -54,9 +52,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @DisplayName("Given a Literal controller")
 @UsesMocking
 internal class LiteralControllerUnitTest : RestDocsTest("literals") {
-
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
 
     @MockkBean
     private lateinit var literalService: LiteralUseCases

@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements
 
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.PredicateRepresentation
 import eu.tib.orkg.prototype.statements.api.StatementRepresentation
 import eu.tib.orkg.prototype.statements.api.ThingRepresentation
@@ -53,6 +53,7 @@ interface StatementRepresentationAdapter : ThingRepresentationAdapter {
                 this@toRepresentation.`object`.toThingRepresentation(statementCounts, formattedLabels)
             override val createdAt: OffsetDateTime = this@toRepresentation.createdAt!!
             override val createdBy: ContributorId = this@toRepresentation.createdBy
+            override val index: Int? = this@toRepresentation.index
         }
 
     private fun List<GeneralStatement>.resources() =

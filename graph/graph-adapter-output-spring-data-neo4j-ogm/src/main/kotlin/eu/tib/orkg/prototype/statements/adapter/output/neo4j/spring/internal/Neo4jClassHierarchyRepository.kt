@@ -33,11 +33,23 @@ interface Neo4jClassHierarchyRepository : Neo4jRepository<Neo4jClass, Long> {
     @Query("""MATCH (c:Class {id: $id}) RETURN EXISTS((c)<-[:$relation]-(:Class)) as exists""")
     fun existsChildren(id: ThingId): Boolean
 
-    @Query("""MATCH (c:Class {id: $id})-[:$relation*0..]->(p:Class) WITH collect(p) + COLLECT(c) AS classes UNWIND classes AS class WITH DISTINCT class OPTIONAL MATCH (class)-[:$relation]->(p:Class) RETURN class, p.id AS parentId ORDER BY class.id ASC""",
-        countQuery = """MATCH (c:Class {id: $id})-[:$relation*0..]->(p:Class) WITH collect(p) + COLLECT(c) AS classes RETURN COUNT(DISTINCT classes)""")
+    @Query("""
+MATCH (:Class {id: $id})-[:$relation*0..]->(c:Class)
+WITH COLLECT(c) AS classes
+UNWIND classes AS class
+WITH DISTINCT class
+OPTIONAL MATCH (class)-[:$relation]->(p:Class)
+WITH class, p.id AS parentId
+ORDER BY class.id ASC
+RETURN class, parentId""",
+        countQuery = """
+MATCH (:Class {id: $id})-[:$relation*0..]->(c:Class)
+WITH COLLECT(c) AS classes
+UNWIND classes AS class
+RETURN COUNT(DISTINCT class)""")
     fun findClassHierarchy(id: ThingId, pageable: Pageable): Page<Neo4jClassHierarchyEntry>
 
-    @Query("""MATCH (r:Class {id: $id})<-[:$relation*]-(c:Class) WITH collect(c.id) + $id AS ids MATCH (i:Thing) WHERE ANY(label IN labels(i) WHERE label IN ids) RETURN count(i)""")
+    @Query("""MATCH (:Class {id: $id})<-[:$relation*0..]-(c:Class) WITH COLLECT(c.id) AS ids MATCH (i:Thing) WHERE ANY(label IN LABELS(i) WHERE label IN ids) RETURN COUNT(i)""")
     fun countClassInstances(id: ThingId): Long
 }
 

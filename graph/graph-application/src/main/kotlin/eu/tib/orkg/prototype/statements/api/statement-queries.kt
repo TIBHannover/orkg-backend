@@ -7,11 +7,12 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 
 interface RetrieveStatementUseCase {
     fun exists(id: StatementId): Boolean
     // legacy methods:
-    fun findAll(pagination: Pageable): Iterable<GeneralStatement>
+    fun findAll(pagination: Pageable): Page<GeneralStatement>
     fun findById(statementId: StatementId): Optional<GeneralStatement>
     fun findAllBySubject(subjectId: ThingId, pagination: Pageable): Page<GeneralStatement>
     fun findAllByPredicate(predicateId: ThingId, pagination: Pageable): Page<GeneralStatement>
@@ -43,7 +44,7 @@ interface RetrieveStatementUseCase {
         pagination: Pageable
     ): Page<GeneralStatement>
 
-    fun fetchAsBundle(thingId: ThingId, configuration: BundleConfiguration, includeFirst: Boolean): Bundle
+    fun fetchAsBundle(thingId: ThingId, configuration: BundleConfiguration, includeFirst: Boolean, sort: Sort): Bundle
 
     fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount>
 

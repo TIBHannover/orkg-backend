@@ -9,7 +9,7 @@ dependencies {
 
     compileOnly(project(":feature-flags:feature-flags-ports"))
 
-    api("org.springframework:spring-context")
+    implementation("org.springframework:spring-context")
     implementation("org.springframework.boot:spring-boot-starter")
 
     implementation(libs.bundles.jaxb)

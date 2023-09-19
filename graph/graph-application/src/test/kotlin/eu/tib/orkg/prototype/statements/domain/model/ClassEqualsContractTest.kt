@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.domain.model
 
 import com.redfin.contractual.EqualsContract
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import java.net.URI
 import java.time.OffsetDateTime
 import java.util.*

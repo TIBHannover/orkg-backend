@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorService
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.AuthorRepresentationAdapter
 import eu.tib.orkg.prototype.statements.FieldPerProblemRepresentationAdapter

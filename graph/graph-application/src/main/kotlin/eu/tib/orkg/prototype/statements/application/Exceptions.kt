@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.shared.ForbiddenOperationException
 import eu.tib.orkg.prototype.shared.LoggedMessageException
 import eu.tib.orkg.prototype.shared.PropertyValidationException
@@ -38,15 +38,6 @@ class ClassNotFound private constructor(
     }
 }
 
-class ThingNotFound private constructor(
-    override val message: String
-) : SimpleMessageException(HttpStatus.NOT_FOUND, message) {
-    companion object {
-        fun withThingId(id: ThingId) = withId(id.value)
-        fun withId(id: String) = ThingNotFound("""Thing "$id" not found.""")
-    }
-}
-
 class PredicateNotFound : SimpleMessageException {
     constructor(id: String) : super(HttpStatus.NOT_FOUND, """Predicate "$id" not found.""")
     constructor(id: ThingId) : this(id.value)
@@ -56,6 +47,13 @@ class StatementNotFound : SimpleMessageException {
     constructor(id: String) : super(HttpStatus.NOT_FOUND, """Statement "$id" not found.""")
     constructor(id: StatementId) : this(id.value)
 }
+
+class ThingNotFound : SimpleMessageException {
+    constructor(id: String) : super(HttpStatus.NOT_FOUND, """Thing "$id" not found.""")
+    constructor(id: ThingId) : this(id.value)
+}
+
+class ListNotFound(id: ThingId) : SimpleMessageException(HttpStatus.NOT_FOUND, """List "$id" not found.""")
 
 class ContributorNotFound(id: ContributorId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Contributor "$id" not found.""")
@@ -69,10 +67,10 @@ class ResearchProblemNotFound(id: ThingId) :
 class DatasetNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Dataset "$id" not found.""")
 
-class ResourceCantBeDeleted(id: ThingId) :
+class ResourceUsedInStatement(id: ThingId) :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Unable to delete resource "$id" because it is used in at least one statement.""")
 
-class PredicateCantBeDeleted(id: ThingId) :
+class PredicateUsedInStatement(id: ThingId) :
     SimpleMessageException(HttpStatus.FORBIDDEN, """Unable to delete predicate "$id" because it is used in at least one statement.""")
 
 class ClassNotAllowed(`class`: String) :
@@ -99,6 +97,8 @@ class InvalidUUID(uuid: String, cause: Throwable?) :
 class InvalidLabel : PropertyValidationException("label", "A label must not be blank or contain newlines and must be at most $MAX_LABEL_LENGTH characters long.")
 
 class InvalidLiteralLabel : PropertyValidationException("label", "A literal must be at most $MAX_LABEL_LENGTH characters long.")
+
+class InvalidLiteralDatatype: PropertyValidationException("datatype", "A literal datatype must be a URI or a \"xsd:\"-prefixed type")
 
 class InvalidURI : PropertyValidationException("uri", "The provided URI is not a valid URI.")
 
@@ -131,8 +131,32 @@ class StatementPredicateNotFound(id: ThingId) :
 class StatementObjectNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Object "$id" not found.""")
 
-class DOIRegistrationError(doi: String) :
-    SimpleMessageException(HttpStatus.BAD_REQUEST, """Unable to register DOI "$doi".""")
+class ForbiddenStatementSubject private constructor(
+    override val message: String
+) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, null) {
+    companion object {
+        fun isList() =
+            ForbiddenStatementSubject("A list cannot be used as a subject for a statement. Please see the documentation on how to manage lists.")
+    }
+}
+
+class UnmodifiableStatement private constructor(
+    override val message: String
+) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, null) {
+    companion object {
+        fun subjectIsList() =
+            UnmodifiableStatement("A statement with a list as it's subject cannot be modified. Please see the documentation on how to manage lists.")
+    }
+}
+
+class ForbiddenStatementDeletion private constructor(
+    override val message: String
+) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, null) {
+    companion object {
+        fun usedInList() =
+            ForbiddenStatementDeletion("A statement cannot be deleted when it is used in a list. Please see the documentation on how to manage lists.")
+    }
+}
 
 class TooFewIDsError(ids: List<ThingId>) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Too few ids: At least two ids are required. Got only "${ids.size}".""")
@@ -141,7 +165,11 @@ class DOIServiceUnavailable : LoggedMessageException {
     constructor(cause: Throwable) : super(HttpStatus.SERVICE_UNAVAILABLE, """DOI service unavailable""", cause)
     constructor(responseMessage: String, errorResponse: String) :
         super(HttpStatus.SERVICE_UNAVAILABLE, """DOI service returned "$responseMessage" with error response: $errorResponse""")
+    constructor(status: Int, responseMessage: String) :
+        super(HttpStatus.SERVICE_UNAVAILABLE, """DOI service returned "$status" with error response: $responseMessage""")
 }
+
+class ListElementNotFound : PropertyValidationException("element", "All elements inside the list have to exist.")
 
 class InvalidSubclassRelation(childId: ThingId, parentId: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """The class "$childId" cannot be a subclass of "$parentId"."""")
@@ -157,31 +185,6 @@ class ParentClassAlreadyHasChildren(id: ThingId) :
 
 class BadPeerReviewType(badValue: String):
     SimpleMessageException(HttpStatus.BAD_REQUEST, """The value "$badValue" is not a valid peer review type.""")
-
-class MissingParameter private constructor(
-    override val message: String
-) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, null) {
-    companion object {
-        fun requiresAll(parameter: String, vararg parameters: String) =
-            MissingParameter("Missing parameters: All parameters out of ${formatParameters(parameter, *parameters)} are required.")
-        fun requiresAtLeastOneOf(parameter: String, vararg parameters: String) =
-            MissingParameter("Missing parameter: At least one parameter out of ${formatParameters(parameter, *parameters)} is required.")
-    }
-}
-
-class TooManyParameters private constructor(
-    override val message: String
-) : SimpleMessageException(HttpStatus.BAD_REQUEST, message, null) {
-    companion object {
-        fun requiresExactlyOneOf(first: String, second: String, vararg parameters: String) =
-            TooManyParameters("Too many parameters: Only exactly one out of ${formatParameters(first, second, *parameters)} is allowed.")
-        fun atMostOneOf(first: String, second: String, vararg parameters: String) =
-            TooManyParameters("Too many parameters: At most one out of ${formatParameters(first, second, *parameters)} is allowed.")
-    }
-}
-
-private fun formatParameters(vararg parameters: String) =
-    setOf(*parameters).joinToString { "\"$it\"" }
 
 /**
  * Exception indicating that a property was blank when it was not supposed to be.

@@ -25,4 +25,6 @@ class SpringDataNeo4jThingAdapter(
     override fun findAll(): Iterable<Thing> = neo4jRepository.findAll().map(Neo4jThing::toThing)
 
     override fun findAll(pageable: Pageable): Page<Thing> = neo4jRepository.findAll(pageable).map(Neo4jThing::toThing)
+
+    override fun existsAll(ids: Set<ThingId>): Boolean = neo4jRepository.existsAll(ids)
 }

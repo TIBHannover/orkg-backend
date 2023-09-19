@@ -6,14 +6,64 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added new endpoints to fetch research field hierarchies
+  (See: [!606](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/606))
+- Added new endpoints for creating papers and contributions.
+  (Closes: [#279](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/279),
+  See: [!582](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/582))
+### Changed
+- Statements are paged by default now. (See: [!327](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/327))
+- Fetching several comparisons no longer returns previous version comparisons when no filter is set or filtering by visibility.
+  (See: [!630](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/630))
+### Fixed
+- Lists that still have elements can now be deleted.
+  (See: [!627](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/627))
+- Lists can now be updated with an empty element list.
+  (See: [!627](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/627))
+
+## [0.37.0] - 2023-09-08
+### Added
+- Added new endpoints for fetching visualizations.
+  (See: [!624](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/624))
+- Added new endpoints for fetching comparisons.
+  (See: [!622](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/622))
+- Added a new endpoint to fetch license information for external sites.
+  (Closes: [#495](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/495))
+- The widget API was extended to return the class of the resources found.
+  (Closes: [#500](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/500))
+- Added support for ordered lists.
+  (Closes: [#175](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/175))
+### Changed
+- Literal datatypes need to be a valid URI or prefixed with `xsd:`.
+### Fixed
+- Benchmark queries can handle optional models and codes now.
+  (Closes: [#492](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/492))
+- Literal datatypes are now correctly exported to RDF.
+  (Closes: [#503](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/503))
+
+## [0.36.0] - 2023-08-28
+### Added
+- Added new endpoints to fetch papers and contributions
+  (Closes: [#295](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/295),
+  [#286](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/286),
+  See: [!501](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/501))
 ### Changed
 - Moved parts of the documentation to Antora
   (See: [!605](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/605))
 - The endpoint `/api/statements/{thingId}/bundle` now returns status 404 when the given thing does not exist in the graph
   (Closes: [#494](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/494))
+- The endpoint `/api/widgets/` now ignores casing when matching papers by title
+  (Closes: [#497](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/497))
 ### Fixed
+- Fixed entity endpoints sometimes returning status 500 when searching by label
+  (See: [!602](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/602))
 - Fixed missing snippets from REST-API documentation.
   (See: [!604](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/604))
+- Fixed incorrect entity count for class hierarchy endpoint `/api/classes/{id}/hierarchy`
+  (See: [!608](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/608))
+- Fixed internal server error for endpoint `/api/classes/roots`
+  (See: [!608](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/608))
 
 ## [0.35.1] - 2023-07-11
 ### Changed
@@ -457,7 +507,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.35.1...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.37.0...master
+[0.37.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.37.0
+[0.36.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.36.0
 [0.35.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.35.1
 [0.35.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.35.0
 [0.34.1]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.34.1

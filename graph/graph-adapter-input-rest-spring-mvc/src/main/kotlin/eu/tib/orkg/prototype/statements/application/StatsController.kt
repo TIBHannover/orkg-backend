@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.ChangeLog
 import eu.tib.orkg.prototype.statements.spi.ObservatoryStats
+import eu.tib.orkg.prototype.statements.spi.ResearchFieldStats
 import eu.tib.orkg.prototype.statements.spi.TrendingResearchProblems
 import java.util.*
 import org.springframework.data.domain.Page
@@ -138,4 +139,11 @@ class StatsController(private val service: RetrieveStatisticsUseCase) {
         @PathVariable id: ObservatoryId
     ): ObservatoryStats =
         service.findObservatoryStatsById(id)
+
+    @GetMapping("/research-fields/{id}")
+    fun findResearchFieldStatsById(
+        @PathVariable id: ThingId,
+        @RequestParam(required = false, defaultValue = "false") includeSubfields: Boolean,
+    ): ResearchFieldStats =
+        service.findResearchFieldStatsById(id, includeSubfields)
 }

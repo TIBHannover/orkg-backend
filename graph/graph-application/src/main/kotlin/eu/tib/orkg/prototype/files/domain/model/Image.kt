@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.files.domain.model
 
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import java.time.OffsetDateTime
 import javax.activation.MimeType
 

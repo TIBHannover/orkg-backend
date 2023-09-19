@@ -3,11 +3,12 @@ package eu.tib.orkg.prototype.statements.spi
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
@@ -129,6 +130,21 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             repository.save(expected)
             repository.deleteById(expected.id)
             repository.findById(expected.id).isPresent shouldBe false
+        }
+    }
+
+    describe("finding a paper") {
+        context("by label") {
+            it("returns the correct result") {
+                val resource = fabricator.random<Resource>().copy(
+                    label = "label to find",
+                    classes = setOf(ThingId("Paper"))
+                )
+                repository.save(resource)
+                val actual = repository.findPaperByLabel("LABEL to find")
+                actual.isPresent shouldBe true
+                actual.get() shouldBe resource
+            }
         }
     }
 
@@ -730,7 +746,8 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
         context("by label") {
             val expectedCount = 3
             val resources = fabricator.random<MutableList<Resource>>()
-            repeat(5) {
+            resources[0] = resources[0].copy(label = "LABEL to find")
+            (1 until 5).forEach {
                 resources[it] = resources[it].copy(label = "label to find")
             }
             repeat(3) {
@@ -836,9 +853,9 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                 context("when visibility is $visibility") {
                     resources.forEach(repository::save)
 
-                    val expected = resources.filter { it.visibility == visibility && ThingId("Paper") in it.classes }
+                    val expected = resources.filter { it.visibility == visibility && Classes.paper in it.classes }
                     expected.size shouldBe 3
-                    val result = repository.findAllPapersByVisibility(visibility, PageRequest.of(0, 5))
+                    val result = repository.findAllByClassAndVisibility(Classes.paper, visibility, PageRequest.of(0, 5))
 
                     it("returns the correct result") {
                         result shouldNotBe null
@@ -871,11 +888,10 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
             resources.forEach(repository::save)
 
             val expected = resources.filter {
-                (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED)
-                    && ThingId("Paper") in it.classes
+                (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED) && Classes.paper in it.classes
             }
             expected.size shouldBe 6
-            val result = repository.findAllListedPapers(PageRequest.of(0, 10))
+            val result = repository.findAllListedByClass(Classes.paper, PageRequest.of(0, 10))
 
             it("returns the correct result") {
                 result shouldNotBe null

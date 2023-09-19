@@ -2,17 +2,18 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
+import eu.tib.orkg.prototype.statements.domain.model.List
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import java.net.URI
 import java.time.OffsetDateTime
@@ -35,6 +36,7 @@ import org.neo4j.driver.types.Node
 import org.neo4j.driver.types.TypeSystem
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import org.springframework.data.neo4j.core.Neo4jClient
 
 private val reservedClassIds = setOf(
     "Thing",
@@ -66,7 +68,8 @@ internal data class StatementMapper(
             createdAt = relation["created_at"].toOffsetDateTime(),
             createdBy = relation["created_by"].toContributorId(),
             subject = record[subject].asNode().toThing(),
-            `object` = record[`object`].asNode().toThing()
+            `object` = record[`object`].asNode().toThing(),
+            index = relation["index"].asNullableInt()
         )
     }
 }
@@ -79,6 +82,20 @@ internal data class LiteralMapper(val name: String) : BiFunction<TypeSystem, Rec
 internal data class ResourceMapper(val name: String) : BiFunction<TypeSystem, Record, Resource> {
     constructor(symbolicName: SymbolicName) : this(symbolicName.value)
     override fun apply(typeSystem: TypeSystem, record: Record) = record[name].asNode().toResource()
+}
+
+internal data class ListMapper(val name: String, val elements: String) : BiFunction<TypeSystem, Record, List> {
+    constructor(name: SymbolicName, elements: SymbolicName) : this(name.value, elements.value)
+    override fun apply(typeSystem: TypeSystem, record: Record): List {
+        val node = record[name]
+        return List(
+            id = node["id"].toThingId()!!,
+            label = node["label"].asString(),
+            elements = record[elements].toThingIds(),
+            createdAt = node["created_at"].toOffsetDateTime(),
+            createdBy = node["created_by"].toContributorId(),
+        )
+    }
 }
 
 internal data class ClassMapper(val name: String) : BiFunction<TypeSystem, Record, Class> {
@@ -140,6 +157,8 @@ internal fun Value.toOrganizationId() = if (isNull) OrganizationId.createUnknown
 internal fun Value.toExtractionMethod() = if (isNull) ExtractionMethod.UNKNOWN else ExtractionMethod.valueOf(asString())
 internal fun Value.toThingId() = if (isNull) null else ThingId(asString())
 internal fun Value.toVisibility() = if (isNull) Visibility.DEFAULT else Visibility.valueOf(asString())
+internal fun Value.toThingIds() = asList().map { ThingId(it as String) }
+internal fun Value.asNullableInt() = if (isNull) null else asInt()
 
 @Contract(pure = true)
 internal fun startNode(symbolicName: SymbolicName): FunctionInvocation =
@@ -156,6 +175,9 @@ internal fun toUpper(expression: Expression): FunctionInvocation =
     FunctionInvocation.create({ "toUpper" }, expression)
 
 internal operator fun MapAccessor.get(symbolicName: SymbolicName): Value = this[symbolicName.value]
+
+internal fun Neo4jClient.UnboundRunnableSpec.fetchCountAsBoolean() =
+    fetchAs(Long::class.java).first().map { it > 0 }.orElseGet { false }
 
 internal fun paperNode() = node("Paper", "Resource")
 internal fun comparisonNode() = node("Comparison", "Resource")

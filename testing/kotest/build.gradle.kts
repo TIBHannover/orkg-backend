@@ -7,6 +7,6 @@ plugins {
 dependencies {
     api(platform(project(":platform")))
 
-    testFixturesApi(libs.kotest.runner)
+    testFixturesImplementation(libs.kotest.runner)
     testFixturesImplementation("org.apache.commons:commons-lang3")
 }

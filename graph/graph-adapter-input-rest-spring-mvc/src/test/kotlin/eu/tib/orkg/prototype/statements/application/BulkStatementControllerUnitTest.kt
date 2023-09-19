@@ -1,9 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
-import dev.forkhandles.fabrikate.FabricatorConfig
-import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.createResource
@@ -21,10 +18,7 @@ import eu.tib.orkg.prototype.testing.spring.restdocs.RestDocsTest
 import eu.tib.orkg.prototype.testing.spring.restdocs.documentedDeleteRequestTo
 import eu.tib.orkg.prototype.testing.spring.restdocs.documentedGetRequestTo
 import eu.tib.orkg.prototype.testing.spring.restdocs.documentedPutRequestTo
-import io.kotest.matchers.shouldBe
-import io.mockk.CaptureMatcher
 import io.mockk.clearAllMocks
-import io.mockk.clearMocks
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
@@ -38,17 +32,14 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.statements.testing.createPredicate
-import org.orkg.statements.testing.withCustomMappings
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageRequest
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
-import org.springframework.restdocs.request.RequestDocumentation.*
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -56,9 +47,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @WebMvcTest(controllers = [BulkStatementController::class])
 @UsesMocking
 internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements") {
-
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
 
     @MockkBean
     private lateinit var statementService: StatementUseCases
@@ -212,7 +200,7 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         every { flags.isFormattedLabelsEnabled() } returns false
 
         mockMvc
-            .perform(documentedPutRequestTo("/api/statements/?ids={ids}", "${s1.id},${s2.id}").content(payload))
+            .perform(documentedPutRequestTo("/api/statements/?ids={ids}", "${s1.id},${s2.id}", body = payload))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$").isArray)
             .andExpect(jsonPath("$", hasSize<Int>(2)))

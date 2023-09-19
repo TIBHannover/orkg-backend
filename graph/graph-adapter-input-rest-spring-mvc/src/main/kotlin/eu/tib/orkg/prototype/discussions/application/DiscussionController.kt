@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.discussions.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.auth.domain.UserService
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.spi.ContributorRepository
 import eu.tib.orkg.prototype.discussions.DiscussionCommentRepresentationAdapter
 import eu.tib.orkg.prototype.discussions.api.CreateDiscussionCommentUseCase.CreateCommand
 import eu.tib.orkg.prototype.discussions.api.DiscussionCommentRepresentation
@@ -19,7 +19,8 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.http.ResponseEntity.*
+import org.springframework.http.ResponseEntity.created
+import org.springframework.http.ResponseEntity.noContent
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -33,7 +34,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/discussions/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class DiscussionController(
     private val service: DiscussionUseCases,
-    private val userService: UserService
+    private val userService: ContributorRepository,
 ) : DiscussionCommentRepresentationAdapter {
     @PostMapping("/topic/{topic}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun createDiscussionComment(
@@ -44,13 +45,13 @@ class DiscussionController(
     ): ResponseEntity<DiscussionCommentRepresentation> {
         if (principal?.name == null)
             return ResponseEntity(HttpStatus.UNAUTHORIZED)
-        val userId = UUID.fromString(principal.name)
-        val user = userService.findById(userId).orElseThrow { UserNotFound(userId) }
+        val contributorId = ContributorId(UUID.fromString(principal.name))
+        val contributor = userService.findById(contributorId).orElseThrow { UserNotFound(contributorId.value) }
         val comment = service.create(
             CreateCommand(
                 topic = topic,
                 message = request.message,
-                createdBy = ContributorId(user.id)
+                createdBy = contributor.id,
             )
         )
         val location = uriComponentsBuilder

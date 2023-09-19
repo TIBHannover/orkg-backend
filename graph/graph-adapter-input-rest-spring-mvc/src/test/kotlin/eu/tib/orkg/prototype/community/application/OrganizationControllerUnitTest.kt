@@ -6,8 +6,8 @@ import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.community.api.OrganizationUseCases
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationType
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorService
+import eu.tib.orkg.prototype.community.spi.OrganizationRepository
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.createOrganization
 import eu.tib.orkg.prototype.encodedTestImage
@@ -82,15 +82,15 @@ internal class OrganizationControllerUnitTest {
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
-    private lateinit var contributorService: ContributorService
-
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
-    @MockkBean
     private lateinit var imageService: ImageUseCases
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
     private lateinit var resourceService: ResourceUseCases
+
+    @MockkBean
+    private lateinit var organizationRepository: OrganizationRepository
+
 
     @BeforeEach
     fun setup() {

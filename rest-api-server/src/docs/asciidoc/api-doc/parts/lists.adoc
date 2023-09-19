@@ -1,0 +1,43 @@
+[[lists]]
+== Lists
+
+Lists represent an ordered collection of statements in the knowledge graph.
+Their elements are defined by <<statements,statement>> using the "has list element" predicate and a special "index" property, indicating the position in the list.
+The elements of a list can only be modified using the dedicated list endpoints.
+
+[[lists-create]]
+=== Creating lists
+
+A `POST` request creates a new list with all the given parameters.
+The response will be `201 Created` when successful.
+The list resource (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::lists-create[snippets='request-fields,curl-request']
+
+The response body consists of the following fields:
+
+NOTE: The created list resource is returned in the body for convenience. This might be subject to change.
+
+operation::lists-create[snippets='http-response']
+
+[[list-fetch]]
+=== Fetching a list
+
+A `GET` request provides information about a list.
+
+operation::lists-get-single[snippets='curl-request,http-response,response-fields']
+
+[[list-elements]]
+=== Fetching list elements
+A `GET` request returns a <<sorting-and-pagination,paged>> list of elements, in order, with their full representations (see <<resources,resources>>, <<classes,classes>>, <<predicates,predicates>>, <<literals,literals>>), that are part of the list.
+If no paging request parameters are provided, the default values will be used.
+
+operation::lists-get-elements[snippets='curl-request']
+
+[[lists-update]]
+=== Updating lists
+
+A `PATCH` request updates a list with all the given parameters.
+The response will be `204 No Content` when successful.
+
+operation::lists-update[snippets='request-fields,curl-request']

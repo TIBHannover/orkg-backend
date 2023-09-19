@@ -2,8 +2,7 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceIdGenerator
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceRepository
@@ -12,6 +11,7 @@ import eu.tib.orkg.prototype.statements.domain.model.FuzzySearchString
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import java.util.*
 import org.springframework.cache.annotation.CacheConfig
@@ -210,12 +210,12 @@ class SpringDataNeo4jResourceAdapter(
         neo4jRepository.findAllListed(pageable)
             .map(Neo4jResource::toResource)
 
-    override fun findAllPapersByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllPapersByVisibility(visibility, pageable)
+    override fun findAllByClassAndVisibility(classId: ThingId, visibility: Visibility, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllByClassAndVisibility(classId, visibility, pageable)
             .map(Neo4jResource::toResource)
 
-    override fun findAllListedPapers(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAllListedPapers(pageable)
+    override fun findAllListedByClass(classId: ThingId, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllListedByClass(classId, pageable)
             .map(Neo4jResource::toResource)
 
     override fun findAllByClassInAndVisibility(

@@ -4,5 +4,11 @@ import eu.tib.orkg.prototype.statements.spi.predicateRepositoryContract
 import io.kotest.core.spec.style.DescribeSpec
 
 internal class InMemoryPredicateAdapterContractTests : DescribeSpec({
-    include(predicateRepositoryContract(InMemoryPredicateRepository()))
+    include(
+        predicateRepositoryContract(
+            InMemoryPredicateRepository(),
+            InMemoryStatementRepository(),
+            InMemoryLiteralRepository()
+        )
+    )
 })

@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 import eu.tib.orkg.prototype.IndexInitializer
 import eu.tib.orkg.prototype.Neo4jContainerInitializer
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
-import eu.tib.orkg.prototype.statements.spi.ContributionComparisonRepository
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
@@ -25,7 +24,7 @@ import org.springframework.test.context.ContextConfiguration
         SpringDataNeo4jResourceAdapter::class,
         SpringDataNeo4jPredicateAdapter::class,
         SpringDataNeo4jLiteralAdapter::class,
-        SpringDataNeo4jClassAdapter::class,
+        SpringDataNeo4jClassAdapter::class
     ],
     initializers = [
         Neo4jContainerInitializer::class
@@ -38,7 +37,7 @@ internal class SpringDataNeo4jStatementAdapterContractTests(
     @Autowired private val springDataNeo4jClassAdapter: ClassRepository,
     @Autowired private val springDataNeo4jLiteralAdapter: LiteralRepository,
     @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,
-    @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository,
+    @Autowired private val springDataNeo4jPredicateAdapter: PredicateRepository
 ) : DescribeSpec({
     include(
         statementRepositoryContract(

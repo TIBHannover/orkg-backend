@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import dev.forkhandles.result4k.onFailure
 import dev.forkhandles.values.ofOrNull
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.ClassRepresentation
 import eu.tib.orkg.prototype.statements.ClassRepresentationAdapter
@@ -196,5 +196,5 @@ data class CreateClassRequest(
     or a name that is not one of the reserved ones.
      */
     fun hasValidName(): Boolean =
-        this.id == null || this.id.value !in listOf("Predicate", "Resource", "Class", "Literal", "Thing")
+        this.id == null || this.id.value !in listOf("Predicate", "Resource", "Class", "Literal", "List", "Thing")
 }

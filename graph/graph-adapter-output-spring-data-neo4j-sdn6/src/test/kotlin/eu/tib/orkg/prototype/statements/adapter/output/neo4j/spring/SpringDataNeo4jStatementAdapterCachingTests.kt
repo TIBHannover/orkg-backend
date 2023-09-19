@@ -103,6 +103,7 @@ internal class SpringDataNeo4jStatementAdapterCachingTests {
             .andThen { throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!") }
         every { neo4jClient.query(any<String>()) }.returns(mockUnboundRunnableSpec)
             .andThen { throw IllegalStateException("If you see this message, deleteByStatement() was called more than once!") }
+        every { mockUnboundRunnableSpec.bindAll(any()) } returns mockUnboundRunnableSpec
         every { mockUnboundRunnableSpec.fetchAs(ThingId::class.java) } returns mockMappingSpec
         every { mockMappingSpec.one() } returns Optional.of(literalId)
 
@@ -120,6 +121,7 @@ internal class SpringDataNeo4jStatementAdapterCachingTests {
         statementAdapter.deleteByStatementId(statement.id!!)
         // Verify the deletion happened
         verify(exactly = 1) { neo4jClient.query(any<String>()) }
+        verify(exactly = 1) { mockUnboundRunnableSpec.bindAll(any()) }
         verify(exactly = 1) { mockUnboundRunnableSpec.fetchAs(ThingId::class.java) }
         verify(exactly = 1) { mockMappingSpec.one() }
 

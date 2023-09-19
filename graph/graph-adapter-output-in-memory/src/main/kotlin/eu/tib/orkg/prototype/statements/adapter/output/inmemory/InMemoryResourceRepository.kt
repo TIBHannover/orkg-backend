@@ -2,11 +2,11 @@ package eu.tib.orkg.prototype.statements.adapter.output.inmemory
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.contenttypes.domain.model.Visibility
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import java.util.*
 import org.springframework.data.domain.Page
@@ -48,7 +48,7 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
         Optional.ofNullable(entities[id])
 
     override fun findAllPapersByLabel(label: String) =
-        entities.values.filter { it.label == label && paperClass in it.classes && paperDeletedClass !in it.classes}
+        entities.values.filter { it.label.equals(label, ignoreCase = true) && paperClass in it.classes && paperDeletedClass !in it.classes}
 
     override fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable) =
         entities.values
@@ -111,7 +111,7 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
         .paged(pageable)
 
     override fun findPaperByLabel(label: String) =
-        Optional.ofNullable(entities.values.firstOrNull { it.label == label && paperClass in it.classes })
+        Optional.ofNullable(entities.values.firstOrNull { it.label.equals(label, ignoreCase = true) && paperClass in it.classes })
 
     override fun findAllByClassAndObservatoryId(`class`: ThingId, id: ObservatoryId, pageable: Pageable): Page<Resource> =
         findAllFilteredAndPaged(pageable) {
@@ -148,11 +148,11 @@ class InMemoryResourceRepository : InMemoryRepository<ThingId, Resource>(
     override fun findAllListed(pageable: Pageable): Page<Resource> =
         findAllFilteredAndPaged(pageable) { it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED }
 
-    override fun findAllPapersByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource> =
-        findAllFilteredAndPaged(pageable) { it.visibility == visibility && paperClass in it.classes }
+    override fun findAllByClassAndVisibility(classId: ThingId, visibility: Visibility, pageable: Pageable): Page<Resource> =
+        findAllFilteredAndPaged(pageable) { it.visibility == visibility && classId in it.classes }
 
-    override fun findAllListedPapers(pageable: Pageable): Page<Resource> =
-        findAllFilteredAndPaged(pageable) { (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED) && paperClass in it.classes }
+    override fun findAllListedByClass(classId: ThingId, pageable: Pageable): Page<Resource> =
+        findAllFilteredAndPaged(pageable) { (it.visibility == Visibility.DEFAULT || it.visibility == Visibility.FEATURED) && classId in it.classes }
 
     override fun findAllByClassInAndVisibility(
         classes: Set<ThingId>,

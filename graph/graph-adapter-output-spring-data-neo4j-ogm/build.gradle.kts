@@ -31,6 +31,7 @@ testing {
             useJUnitJupiter()
             dependencies {
                 implementation(project())
+                implementation(libs.kotest.extensions.spring)
                 implementation(testFixtures(project(":testing:spring")))
                 implementation(testFixtures(project(":graph:graph-application")))
                 implementation("org.springframework.boot:spring-boot-starter-test") {
@@ -58,10 +59,10 @@ dependencies {
     "containerTestApi"(platform(project(":platform")))
     "containerTestApi"(enforcedPlatform(libs.junit5.bom)) // TODO: Remove after upgrade
 
-    api(project(":graph:graph-application"))
+    implementation(project(":graph:graph-application"))
 
     // Pagination (e.g. Page, Pageable, etc.)
-    api("org.springframework.data:spring-data-commons")
+    implementation("org.springframework.data:spring-data-commons")
 
     // Forkhandles
     implementation(libs.forkhandles.values4k)
@@ -73,7 +74,7 @@ dependencies {
     implementation("org.neo4j:neo4j-ogm-bolt-native-types")
 
     // Caching
-    api("org.springframework.boot:spring-boot-starter-cache")
+    implementation("org.springframework.boot:spring-boot-starter-cache")
 }
 
 tasks.named("check") {

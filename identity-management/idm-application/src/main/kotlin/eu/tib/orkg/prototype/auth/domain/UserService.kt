@@ -64,34 +64,4 @@ class UserService(
         user = user.copy(roles = user.roles + role)
         repository.save(user)
     }
-
-    override fun addUserObservatory(
-        observatoryId: UUID,
-        organizationId: UUID,
-        contributor: User
-    ): User {
-        // FIXME: check if user exists?
-        val user = contributor.copy(
-            observatoryId = observatoryId,
-            organizationId = organizationId,
-        )
-        repository.save(user)
-        return user
-    }
-
-    override fun updateOrganizationAndObservatory(
-        userId: UUID,
-        organizationId: UUID?,
-        observatoryId: UUID?
-    ) {
-        var user = repository.findById(userId).orElseThrow { throw RuntimeException("No user with ID $userId") }
-        user = user.copy(organizationId = organizationId, observatoryId = observatoryId)
-        repository.save(user)
-    }
-
-    override fun deleteUserObservatory(contributor: UUID) {
-        var user = repository.findById(contributor).orElseThrow { UserNotFound(contributor) }
-        user = user.copy(observatoryId = null, organizationId = null)
-        repository.save(user)
-    }
 }

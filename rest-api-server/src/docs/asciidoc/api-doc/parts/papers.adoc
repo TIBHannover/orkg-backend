@@ -1,28 +1,53 @@
-[[papers]]
 == Papers
 
 Papers represent a collection of concepts in the knowledge graph.
-They can be seen as a collection of <<Resources,resources>>, <<Literals,literals>> and <<Predicates,predicates>>
+They can be seen as a collection of <<Resources,resources>>, <<Literals,literals>> and <<Predicates,predicates>>.
+The provided endpoints aggregate these concepts into a paper representation.
 
-////
+NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
+
+[[papers-fetch]]
+=== Fetching a paper
+
+A `GET` request provides information about a paper.
+
+operation::papers-get-single[snippets='curl-request,response-fields']
+
+[[papers-list]]
+=== Listing papers
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<papers-fetch,papers>>.
+If no paging request parameters are provided, the default values will be used.
+
+operation::papers-get-paged[snippets='curl-request']
+
+The following list of request parameters are supported:
+
+NOTE: Only one request parameter can be used at a time.
+
+operation::papers-get-paged[snippets='request-parameters']
+
+[[papers-contributors]]
+=== Fetching contributors for a paper
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<contributors,contributors>> ids.
+
+operation::papers-get-contributors[snippets='curl-request']
+
 [[papers-create]]
 === Creating papers
 
 A `POST` request creates a new paper with all the given parameters.
 The response will be `201 Created` when successful.
-The paper root resource (object) can be retrieved by following the URI in the `Location` header field.
+The paper (object) can be retrieved by following the URI in the `Location` header field.
 
-NOTE: The created paper root resource is returned in the body for convenience. This might be subject to change.
+operation::papers-create[snippets='request-fields,curl-request,http-response']
 
-// FIXME: implement missing test
-operation::paper-controller-test-add[snippets='request-fields,curl-request,http-response']
+[[papers-publish]]
+=== Publishing papers
 
-For more details on how the request would look like see https://gitlab.com/TIBHannover/orkg/orkg-backend/issues/77[Gitlab issue].
+A `POST` request publishes an existing paper with the given parameters.
+It assigns a DOI to the paper and adds additional publication information, such as month and year published.
+The response will be `204 No Content` when successful.
 
-The response body consists of the following fields:
-
-// FIXME: implement missing test
-operation::paper-controller-test-add[snippets='response-fields']
-
-NOTE: The Resources, Literals, Predicates part of the request are checked and an error is returned when some is missing or non-existing.
-////
+operation::papers-publish[snippets='request-fields,curl-request,http-response']

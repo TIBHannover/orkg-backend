@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter
@@ -47,12 +47,16 @@ data class Neo4jStatement(
     @Property("created_at")
     var createdAt: OffsetDateTime? = null
 
+    @Property("index")
+    var index: Int? = null
+
     constructor(
         statementId: StatementId,
         subject: Neo4jThing,
         predicateId: ThingId,
         `object`: Neo4jThing,
-        createdBy: ContributorId = ContributorId.createUnknownContributor()
+        createdBy: ContributorId = ContributorId.createUnknownContributor(),
+        index: Int?
     ) :
         this(null) {
         this.statementId = statementId
@@ -60,6 +64,7 @@ data class Neo4jStatement(
         this.predicateId = predicateId
         this.`object` = `object`
         this.createdBy = createdBy
+        this.index = index
     }
 
     override fun toString(): String {

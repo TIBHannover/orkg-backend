@@ -1,19 +1,23 @@
 package eu.tib.orkg.prototype.statements.services
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.JpaUserRepository
+import eu.tib.orkg.prototype.auth.spi.UserRepository
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresObservatoryRepository
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import eu.tib.orkg.prototype.community.application.ObservatoryNotFound
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.contributions.domain.model.Contributor
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.contributions.spi.ContributorRepository
+import eu.tib.orkg.prototype.community.domain.model.Contributor
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.spi.ContributorRepository
+import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
+import eu.tib.orkg.prototype.statements.application.ResearchFieldNotFound
 import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ChangeLogResponse
 import eu.tib.orkg.prototype.statements.spi.ObservatoryStats
+import eu.tib.orkg.prototype.statements.spi.ResearchFieldStats
+import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatsRepository
 import eu.tib.orkg.prototype.statements.spi.TrendingResearchProblems
 import java.time.LocalDate
@@ -28,10 +32,11 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class StatisticsService(
     private val statsRepository: StatsRepository,
-    private val userRepository: JpaUserRepository,
+    private val userRepository: UserRepository,
     private val contributorRepository: ContributorRepository,
     private val observatoryRepository: PostgresObservatoryRepository,
-    private val organizationRepository: PostgresOrganizationRepository
+    private val organizationRepository: PostgresOrganizationRepository,
+    private val resourceRepository: ResourceRepository
 ) : RetrieveStatisticsUseCase {
     val internalClassLabels: (String) -> Boolean = { it !in setOf("Thing", "Resource") }
 
@@ -84,6 +89,12 @@ class StatisticsService(
         }
         return statsRepository.findObservatoryStatsById(id)
     }
+
+    override fun findResearchFieldStatsById(id: ThingId, includeSubfields: Boolean): ResearchFieldStats =
+        resourceRepository.findById(id)
+            .filter { Classes.researchField in it.classes }
+            .map { statsRepository.findResearchFieldStatsById(id, includeSubfields) }
+            .orElseThrow { ResearchFieldNotFound(id) }
 
     override fun getTopCurrentContributors(
         days: Long,

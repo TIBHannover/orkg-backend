@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.neo4j.mapping.ContributorIdConverter

@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.api
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -40,7 +40,11 @@ interface RetrieveResourceUseCase {
         label: SearchString,
         pageable: Pageable
     ): Page<Resource>
+
+    /** Find any resource by DOI that has one of the publishable classes. */
     fun findByDOI(doi: String): Optional<Resource>
+
+    /** Find a paper resource by DOI. */
     fun findById(id: ThingId): Optional<Resource>
     fun findByTitle(title: String): Optional<Resource>
     fun findAllComparisonsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource>
@@ -62,16 +66,4 @@ interface RetrieveResourceUseCase {
     fun findAllComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
     fun findAllProblemsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Resource>
     fun hasStatements(id: ThingId): Boolean
-}
-
-fun interface ResourceGenerator {
-    fun generate(): Resource
-}
-
-fun interface IterableResourcesGenerator {
-    fun generate(): Iterable<Resource>
-}
-
-fun interface PagedResourcesGenerator {
-    fun generate(): Page<Resource>
 }

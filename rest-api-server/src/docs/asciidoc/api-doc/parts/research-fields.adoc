@@ -54,4 +54,48 @@ A `GET` request lists all contributors under the entire tree of the specified re
 A `GET` request lists all comparisons under the specified research field and sub research fields.
 //TODO:A sample request and response will be added later when the unit tests have been written.
 
+[[research-fields-list-children]]
+=== Listing subfields
 
+A `GET` request lists all sub research fields of a research field.
+
+operation::research-fields-find-children[snippets='curl-request,http-response']
+
+include::{snippets}/research-fields-research-field-with-child-count/response-fields.adoc[]
+
+[[research-fields-list-parents]]
+=== Listing parent research fields
+
+A `GET` request lists all parent research fields of a research field.
+
+operation::research-fields-find-parents[snippets='curl-request,http-response']
+
+[[research-fields-list-roots]]
+=== Listing root research fields of a subfield
+
+A `GET` request lists all root research fields of the specified research field.
+
+operation::research-fields-find-roots[snippets='curl-request,http-response']
+
+[[research-fields-list-all-roots]]
+=== Listing all root research fields
+
+A `GET` requests lists all root research fields.
+
+operation::research-fields-find-all-roots[snippets='curl-request,http-response']
+
+[[research-fields-list-hierarchy]]
+=== Listing research field hierarchy
+
+A `GET` request lists all paths from root research fields to the specified research field.
+
+operation::research-fields-find-hierarchy[snippets='curl-request,http-response']
+
+include::{snippets}/research-fields-research-field-hierarchy-entry/response-fields.adoc[]
+
+[[research-fields-statistics]]
+=== Listing statistics about a research field
+
+A `GET` request lists statistics about a research field. Optionally accounts for subfields.
+
+operation::stats-research-fields[snippets='curl-request,http-response']

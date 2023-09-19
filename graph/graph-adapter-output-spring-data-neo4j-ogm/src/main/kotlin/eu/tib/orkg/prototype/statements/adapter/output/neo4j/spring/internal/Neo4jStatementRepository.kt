@@ -1,16 +1,17 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
-import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.services.ObjectService
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
-import eu.tib.orkg.prototype.statements.spi.StatementRepository.*
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.data.neo4j.repository.Neo4jRepository
@@ -27,6 +28,7 @@ private const val id = "${'$'}id"
 private const val ids = "${'$'}ids"
 private const val resourceIds = "${'$'}resourceIds"
 private const val doi = "${'$'}doi"
+private const val visibility = "${'$'}visibility"
 
 /**
  * Partial query that matches a statement.
@@ -54,7 +56,7 @@ private const val RETURN_COUNT = "RETURN count(rel) AS count"
  * Partial query that "flattens" the object into "columns" that can be sorted by SDN.
  */
 private const val WITH_SORTABLE_FIELDS =
-    """WITH sub, obj, rel, rel.created_at AS created_at, rel.created_by AS created_by"""
+    """WITH sub, obj, rel, rel.created_at AS created_at, rel.created_by AS created_by, rel.index AS index"""
 
 // Custom queries
 
@@ -70,6 +72,15 @@ private const val WHERE_SUBJECT_ID_IN =
 private const val WHERE_OBJECT_ID_IN =
     """WHERE obj.`id` IN $objectIds"""
 
+private const val MATCH_COMPARISON = """MATCH (node:Comparison:Resource)"""
+private const val MATCH_LISTED_COMPARISON = """MATCH (node:Comparison:Resource) WHERE (node.visibility = "DEFAULT" OR node.visibility = "FEATURED")"""
+private const val NO_PREVIOUS_VERSION = """NOT EXISTS((node)<-[:RELATED {predicate_id: "hasPreviousVersion"}]-(:Comparison))"""
+private const val AND_WHERE_VISIBILITY = """AND node.visibility = $visibility"""
+private const val WITH_NODE_PROPERTIES = """WITH node, node.label AS label, node.id AS id, node.created_at AS created_at"""
+private const val ORDER_BY_CREATED_AT = """ORDER BY created_at"""
+private const val RETURN_NODE = """RETURN node"""
+private const val RETURN_NODE_COUNT = """RETURN count(node)"""
+
 interface Neo4jStatementRepository :
     Neo4jRepository<Neo4jStatement, Long> {
     fun existsByStatementId(id: StatementId): Boolean
@@ -79,6 +90,8 @@ interface Neo4jStatementRepository :
     override fun findById(id: Long): Optional<Neo4jStatement>
 
     fun findByStatementId(id: StatementId): Optional<Neo4jStatement>
+
+    fun findAllByStatementIdIn(ids: Set<StatementId>, pageable: Pageable): Page<Neo4jStatement>
 
     @Query("""
 MATCH (:`Thing`)-[r:`RELATED` {statement_id: $id}]->(o)
@@ -180,15 +193,16 @@ RETURN COUNT(rel) as cnt""")
         pagination: Pageable
     ): Page<Neo4jStatement>
 
-    @Query(
-        """MATCH (n:Thing {id: $id})
+    @Query("""
+MATCH (n:Thing {id: $id})
 CALL apoc.path.subgraphAll(n, $configuration)
 YIELD relationships
 UNWIND relationships as rel
-RETURN startNode(rel) as subject, rel as predicate, endNode(rel) as object
-ORDER BY rel.created_at DESC"""
-    )
-    fun fetchAsBundle(id: ThingId, configuration: Map<String, Any>): Iterable<Neo4jStatement>
+WITH startNode(rel) as sub, rel, endNode(rel) as obj
+$WITH_SORTABLE_FIELDS
+ORDER BY rel.created_at DESC
+$RETURN_STATEMENT""")
+    fun fetchAsBundle(id: ThingId, configuration: Map<String, Any>, sort: Sort): Iterable<Neo4jStatement>
 
     @Query(
         """MATCH ()-[r:RELATED]->() RETURN r.predicate_id as id, COUNT(r) as count ORDER BY count DESC, id""",
@@ -199,11 +213,30 @@ ORDER BY rel.created_at DESC"""
     @Query("""MATCH (n:Paper:Resource)-[:RELATED {predicate_id: 'P31'}]->(:Resource {id: $id}), (n)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(L:Literal) RETURN L""")
     fun findDOIByContributionId(id: ThingId): Optional<Neo4jLiteral>
 
-    @Query("""OPTIONAL MATCH (:Thing)-[r1:RELATED {predicate_id: $id}]->(:Thing) OPTIONAL MATCH (:Predicate {id: $id})-[r2:RELATED]-(:Thing) WITH COUNT(DISTINCT r1) as relations, COUNT(DISTINCT r2) as nodes RETURN relations + nodes as cnt""")
+    @Query("""
+CALL {
+    OPTIONAL MATCH (:Thing)-[r1:RELATED {predicate_id: $id}]->(:Thing) RETURN COUNT(DISTINCT r1) AS cnt
+    UNION ALL
+    OPTIONAL MATCH (:Predicate {id: $id})-[r2:RELATED]-(:Thing) WHERE r2.predicate_id <> "description" RETURN COUNT(DISTINCT r2) AS cnt
+} WITH cnt
+RETURN SUM(cnt)""")
     fun countPredicateUsage(id: ThingId): Long
 
-    @Query("""MATCH (node:Paper:Resource)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(l:Literal) WHERE not 'PaperDeleted' in labels(node) AND toUpper(l.label) = toUpper($doi) RETURN node LIMIT 1""")
+    @Query("""MATCH (node:Resource)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(l:Literal) WHERE toUpper(l.label) = toUpper($doi) RETURN node LIMIT 1""")
     fun findByDOI(doi: String): Optional<Neo4jResource>
+
+    @Query("""MATCH (node:Paper:Resource)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(l:Literal) WHERE not 'PaperDeleted' in labels(node) AND toUpper(l.label) = toUpper($doi) RETURN node LIMIT 1""")
+    fun findPaperByDOI(doi: String): Optional<Neo4jResource>
+
+    @Query("""
+MATCH (node:Resource)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(l:Literal)
+WHERE $subjectClass IN LABELS(node) AND toUpper(l.label) = toUpper($doi)
+RETURN DISTINCT node""",
+        countQuery = """
+MATCH (node:Resource)-[:RELATED {predicate_id: "${ObjectService.ID_DOI_PREDICATE}"}]->(l:Literal)
+WHERE $subjectClass IN LABELS(node) AND toUpper(l.label) = toUpper($doi)
+RETURN COUNT(DISTINCT node)""")
+    fun findAllBySubjectClassAndDOI(subjectClass: ThingId, doi: String, pageable: Pageable): Page<Neo4jResource>
 
     @Query("""
 CALL {
@@ -286,6 +319,18 @@ RETURN COUNT(edit) AS cnt""")
     fun findBySubjectIdAndPredicateIdAndObjectId(subjectId: ThingId, predicateId: ThingId, objectId: ThingId): Optional<Neo4jStatement>
 
     fun findAllByStatementIdIn(statementIds: Set<StatementId>): List<Neo4jStatement>
+
+    @Query("""$MATCH_COMPARISON WHERE $NO_PREVIOUS_VERSION $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE""",
+        countQuery = """$MATCH_COMPARISON WHERE $NO_PREVIOUS_VERSION $RETURN_NODE_COUNT""")
+    fun findAllCurrentComparisons(pageable: Pageable): Page<Neo4jResource>
+
+    @Query("""$MATCH_LISTED_COMPARISON AND $NO_PREVIOUS_VERSION $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE""",
+        countQuery = """$MATCH_LISTED_COMPARISON AND $NO_PREVIOUS_VERSION $RETURN_NODE_COUNT""")
+    fun findAllCurrentListedComparisons(pageable: Pageable): Page<Neo4jResource>
+
+    @Query("""$MATCH_COMPARISON WHERE $NO_PREVIOUS_VERSION $AND_WHERE_VISIBILITY $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE""",
+        countQuery = """$MATCH_COMPARISON WHERE $NO_PREVIOUS_VERSION $AND_WHERE_VISIBILITY $RETURN_NODE_COUNT""")
+    fun findAllCurrentComparisonsByVisibility(visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
 }
 
 @QueryResult

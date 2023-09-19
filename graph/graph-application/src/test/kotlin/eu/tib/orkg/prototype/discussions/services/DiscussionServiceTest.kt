@@ -2,10 +2,10 @@ package eu.tib.orkg.prototype.discussions.services
 
 import eu.tib.orkg.prototype.auth.domain.Role
 import eu.tib.orkg.prototype.auth.domain.UserService
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.auth.testing.fixtures.createUser
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.createClass
 import eu.tib.orkg.prototype.createLiteral
-import eu.tib.orkg.prototype.createUser
 import eu.tib.orkg.prototype.discussions.api.CreateDiscussionCommentUseCase
 import eu.tib.orkg.prototype.discussions.application.InvalidContent
 import eu.tib.orkg.prototype.discussions.application.TopicNotFound
@@ -14,14 +14,16 @@ import eu.tib.orkg.prototype.discussions.domain.model.DiscussionComment
 import eu.tib.orkg.prototype.discussions.domain.model.DiscussionCommentId
 import eu.tib.orkg.prototype.discussions.spi.DiscussionCommentRepository
 import eu.tib.orkg.prototype.statements.application.UserNotFound
-import eu.tib.orkg.prototype.statements.domain.model.Clock
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ThingRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.time.Clock
+import java.time.Instant
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.*
 import org.junit.jupiter.api.Test
@@ -30,13 +32,13 @@ import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 
+@Suppress("HttpUrlsUsage")
 class DiscussionServiceTest {
     private val repository: DiscussionCommentRepository = mockk()
     private val thingRepository: ThingRepository = mockk()
     private val userService: UserService = mockk()
-    private val staticClock: Clock = object : Clock {
-        override fun now(): OffsetDateTime = OffsetDateTime.of(2022, 11, 14, 14, 9, 23, 12345, ZoneOffset.ofHours(1))
-    }
+    private val fixedTime = OffsetDateTime.of(2022, 11, 14, 14, 9, 23, 12345, ZoneOffset.ofHours(1))
+    private val staticClock = Clock.fixed(Instant.from(fixedTime), ZoneId.systemDefault())
     private val service = DiscussionService(repository, thingRepository, userService, staticClock)
 
     @Test
@@ -61,7 +63,7 @@ class DiscussionServiceTest {
                     topic = topic,
                     message = comment,
                     createdBy = contributor,
-                    createdAt = staticClock.now()
+                    createdAt = OffsetDateTime.now(staticClock),
                 )
             )
         }
@@ -275,7 +277,7 @@ class DiscussionServiceTest {
                     topic = topic,
                     message = comment,
                     createdBy = contributor,
-                    createdAt = staticClock.now()
+                    createdAt = OffsetDateTime.now(staticClock),
                 )
             )
         }
@@ -346,7 +348,7 @@ class DiscussionServiceTest {
             topic = topic,
             message = "Some comment",
             createdBy = ContributorId(UUID.randomUUID()),
-            createdAt = staticClock.now()
+            createdAt = OffsetDateTime.now(staticClock),
         )
 
         every { thingRepository.findByThingId(any()) } returns Optional.of(createClass().copy(id = topic))
@@ -394,9 +396,9 @@ class DiscussionServiceTest {
             topic = topic,
             message = "Some comment",
             createdBy = userId,
-            createdAt = staticClock.now()
+            createdAt = OffsetDateTime.now(staticClock),
         )
-        val user = createUser(id = userId.value).toUser()
+        val user = createUser(id = userId.value)
 
         every { userService.findById(userId.value) } returns Optional.of(user)
         every { repository.findById(comment.id) } returns Optional.of(comment)
@@ -417,9 +419,9 @@ class DiscussionServiceTest {
             topic = topic,
             message = "Some comment",
             createdBy = userId,
-            createdAt = staticClock.now()
+            createdAt = OffsetDateTime.now(staticClock),
         )
-        val user = createUser(id = userId.value).toUser()
+        val user = createUser(id = userId.value)
 
         every { repository.findById(any()) } returns Optional.of(comment)
         every { userService.findById(userId.value) } returns Optional.of(user)
@@ -439,7 +441,7 @@ class DiscussionServiceTest {
             topic = topic,
             message = "Some comment",
             createdBy = userId,
-            createdAt = staticClock.now()
+            createdAt = OffsetDateTime.now(staticClock),
         )
 
         every { repository.findById(any()) } returns Optional.of(comment)
@@ -457,7 +459,7 @@ class DiscussionServiceTest {
         val topic = ThingId("C123")
         val userId = ContributorId(UUID.randomUUID())
         val id = DiscussionCommentId(UUID.randomUUID())
-        val user = createUser(id = userId.value).toUser()
+        val user = createUser(id = userId.value)
 
         every { userService.findById(userId.value) } returns Optional.of(user)
         every { repository.findById(id) } returns Optional.empty()
@@ -476,9 +478,9 @@ class DiscussionServiceTest {
             topic = topic,
             message = "Some comment",
             createdBy = ContributorId(UUID.randomUUID()),
-            createdAt = staticClock.now()
+            createdAt = OffsetDateTime.now(staticClock),
         )
-        val user = createUser(id = userId.value).toUser()
+        val user = createUser(id = userId.value)
 
         every { userService.findById(userId.value) } returns Optional.of(user)
         every { repository.findById(comment.id) } returns Optional.of(comment)
@@ -500,9 +502,9 @@ class DiscussionServiceTest {
             topic = topic,
             message = "Some comment",
             createdBy = ContributorId(UUID.randomUUID()),
-            createdAt = staticClock.now()
+            createdAt = OffsetDateTime.now(staticClock),
         )
-        val user = createUser(id = userId.value).toUser().copy(roles = setOf(Role("ROLE_ADMIN")))
+        val user = createUser(id = userId.value).copy(roles = setOf(Role("ROLE_ADMIN")))
 
         every { userService.findById(userId.value) } returns Optional.of(user)
         every { repository.findById(comment.id) } returns Optional.of(comment)

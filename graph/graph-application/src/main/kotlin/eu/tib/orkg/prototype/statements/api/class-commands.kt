@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.api
 
 import dev.forkhandles.result4k.Result
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.net.URI

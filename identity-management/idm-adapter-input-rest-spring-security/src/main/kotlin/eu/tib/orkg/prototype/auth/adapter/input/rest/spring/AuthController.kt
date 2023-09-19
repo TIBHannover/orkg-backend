@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.auth.domain.PasswordsDoNotMatch
 import eu.tib.orkg.prototype.auth.domain.UserAlreadyRegistered
+import eu.tib.orkg.prototype.auth.domain.UserRegistrationException
+import eu.tib.orkg.prototype.core.rest.requestURI
 import javax.validation.Valid
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
@@ -12,11 +14,13 @@ import org.springframework.http.HttpStatus.OK
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.context.request.WebRequest
 
 @RestController
 @RequestMapping("/api/auth", produces = [MediaType.APPLICATION_JSON_VALUE])
@@ -63,4 +67,18 @@ class AuthController(
     data class RegisteredUserResponse(
         val status: String
     )
+
+    @ExceptionHandler(UserRegistrationException::class)
+    fun handleUserRegistrationException(
+        ex: UserRegistrationException,
+        request: WebRequest
+    ): ResponseEntity<Any> {
+        val payload = eu.tib.orkg.prototype.core.rest.ExceptionHandler.MessageErrorResponse(
+            status = ex.status.value(),
+            error = ex.status.reasonPhrase,
+            path = request.requestURI,
+            message = ex.message
+        )
+        return ResponseEntity(payload, ex.status)
+    }
 }

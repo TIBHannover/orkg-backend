@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.*
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ComparisonAuthorInfo
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.FormattedLabel
@@ -141,12 +141,25 @@ data class ClassHierarchyEntryRepresentation(
     val parentId: ThingId?
 )
 
+data class ResearchFieldWithChildCountRepresentation(
+    val resource: ResourceRepresentation,
+    @JsonProperty("child_count")
+    val childCount: Long
+)
+
+data class ResearchFieldHierarchyEntryRepresentation(
+    val resource: ResourceRepresentation,
+    @JsonProperty("parent_ids")
+    val parentIds: Set<ThingId>
+)
 
 interface StatementRepresentation : StatementProvenanceMetadata {
     val id: StatementId
     val subject: ThingRepresentation
     val predicate: PredicateRepresentation
     val `object`: ThingRepresentation
+    @get:JsonInclude(Include.NON_NULL)
+    val index: Int?
 }
 
 interface StatementProvenanceMetadata {
@@ -155,4 +168,12 @@ interface StatementProvenanceMetadata {
 
     @get:JsonProperty("created_by")
     val createdBy: ContributorId
+}
+
+interface ListRepresentation : ProvenanceMetadata {
+    val id: ThingId
+    val label: String
+    val elements: List<ThingId>
+    @get:JsonProperty("_class")
+    val jsonClass: String
 }

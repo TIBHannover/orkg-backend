@@ -7,9 +7,9 @@ plugins {
 dependencies {
     api(platform(project(":platform")))
 
-    api(project(":graph:graph-application")) // TODO: needed?
+    implementation(project(":graph:graph-application")) // TODO: needed?
 
-    api("org.springframework:spring-context")
+    implementation("org.springframework:spring-context")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")

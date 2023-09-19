@@ -1,9 +1,8 @@
 package eu.tib.orkg.prototype.statements.application
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.createLiteral
 import eu.tib.orkg.prototype.createPredicate
@@ -14,8 +13,8 @@ import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
-import eu.tib.orkg.prototype.testing.spring.restdocs.RestDocsTest
 import eu.tib.orkg.prototype.testing.annotations.UsesMocking
+import eu.tib.orkg.prototype.testing.spring.restdocs.RestDocsTest
 import eu.tib.orkg.prototype.testing.spring.restdocs.documentedDeleteRequestTo
 import io.mockk.Runs
 import io.mockk.clearAllMocks
@@ -30,10 +29,11 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.data.domain.Sort
 import org.springframework.http.MediaType
-import org.springframework.restdocs.request.RequestDocumentation.*
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
@@ -48,9 +48,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @DisplayName("Given a Statement controller")
 @UsesMocking
 internal class StatementControllerUnitTest : RestDocsTest("statements") {
-
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
@@ -291,10 +288,10 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
     @Test
     fun `Given a thing id, when fetched as a bundle but thing does not exist, then status is 404 NOT FOUND`() {
         val thingId = ThingId("DoesNotExist")
-        val exception = ThingNotFound.withThingId(thingId)
+        val exception = ThingNotFound(thingId)
 
         every {
-            statementService.fetchAsBundle(thingId, any(), false)
+            statementService.fetchAsBundle(thingId, any(), false, Sort.unsorted())
         } throws exception
 
         mockMvc.perform(get("/api/statements/$thingId/bundle?includeFirst=false"))
@@ -306,7 +303,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
             .andExpect(jsonPath("$.path").value("/api/statements/$thingId/bundle"))
 
         verify(exactly = 1) {
-            statementService.fetchAsBundle(thingId, any(), false)
+            statementService.fetchAsBundle(thingId, any(), false, Sort.unsorted())
         }
     }
 

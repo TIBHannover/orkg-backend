@@ -1,13 +1,16 @@
 package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.createClasses
+import eu.tib.orkg.prototype.createList
 import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
+import eu.tib.orkg.prototype.statements.api.ListUseCases
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
+import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.application.ResourceControllerIntegrationTest.RestDoc.resourceResponseFields
@@ -52,6 +55,9 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
     private lateinit var statementService: StatementUseCases
 
     @Autowired
+    private lateinit var listService: ListUseCases
+
+    @Autowired
     private lateinit var userService: AuthUseCase
 
     @BeforeEach
@@ -62,8 +68,9 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
 
         classService.createClasses("Problem", "Contribution", "Author", "Paper")
         predicateService.createPredicate(id = "P32", label = "addresses")
-        predicateService.createPredicate(id = "P27", label = "Has Author")
+        predicateService.createPredicate(id = "hasAuthors", label = "Has Authors")
         predicateService.createPredicate(id = "P31", label = "Has Contribution")
+        predicateService.createPredicate(id = Predicates.hasListElement.value, label = "has list element")
     }
 
     @Test
@@ -129,11 +136,15 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
         val problem2 = resourceService.createResource(setOf("Problem"), label = "Problem Y")
 
         // Link authors to papers
-        statementService.create(paper1, ThingId("P27"), author1)
-        statementService.create(paper1, ThingId("P27"), author2)
-        statementService.create(paper2, ThingId("P27"), author2)
-        statementService.create(paper3, ThingId("P27"), author1)
-        statementService.create(paper4, ThingId("P27"), author2)
+        val paper1AuthorsList = listService.createList("Authors", listOf(author1, author2))
+        val paper2AuthorsList = listService.createList("Authors", listOf(author2))
+        val paper3AuthorsList = listService.createList("Authors", listOf(author1))
+        val paper4AuthorsList = listService.createList("Authors", listOf(author2))
+
+        statementService.create(paper1, ThingId("hasAuthors"), paper1AuthorsList)
+        statementService.create(paper2, ThingId("hasAuthors"), paper2AuthorsList)
+        statementService.create(paper3, ThingId("hasAuthors"), paper3AuthorsList)
+        statementService.create(paper4, ThingId("hasAuthors"), paper4AuthorsList)
 
         // Link papers to contributions
         statementService.create(paper1, ThingId("P31"), cont1)

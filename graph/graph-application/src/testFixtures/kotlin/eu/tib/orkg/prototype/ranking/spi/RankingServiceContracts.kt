@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.ranking.spi
 
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
+import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
@@ -10,6 +11,7 @@ import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
+import eu.tib.orkg.prototype.statements.spi.ListRepository
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
@@ -18,6 +20,7 @@ import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import org.orkg.statements.testing.createPredicate
 import org.orkg.statements.testing.withCustomMappings
 
 fun <
@@ -26,6 +29,7 @@ fun <
     L : LiteralRepository,
     R : ResourceRepository,
     P : PredicateRepository,
+    I : ListRepository,
     U : RankingService
 > rankingServiceContract(
     statementRepository: S,
@@ -33,6 +37,7 @@ fun <
     literalRepository: L,
     resourceRepository: R,
     predicateRepository: P,
+    @Suppress("UNUSED_PARAMETER") listRepository: I,
     service: U
 ) = describeSpec {
     beforeTest {
@@ -41,6 +46,7 @@ fun <
         literalRepository.deleteAll()
         resourceRepository.deleteAll()
         predicateRepository.deleteAll()
+        predicateRepository.save(createPredicate(id = Predicates.hasListElement, label = "has list element"))
     }
 
     val fabricator = Fabrikate(

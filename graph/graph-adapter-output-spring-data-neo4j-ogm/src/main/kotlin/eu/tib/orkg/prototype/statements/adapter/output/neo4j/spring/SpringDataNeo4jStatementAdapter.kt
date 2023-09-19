@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClassRepository
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteral
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jLiteralRepository
@@ -21,14 +21,16 @@ import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.OwnershipInfo
 import eu.tib.orkg.prototype.statements.spi.ResourceContributor
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.util.*
 import org.springframework.cache.CacheManager
-import org.springframework.cache.caffeine.CaffeineCacheManager
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 
 typealias PredicateLookupTable = Map<ThingId, Predicate>
@@ -54,6 +56,10 @@ class SpringDataNeo4jStatementAdapter(
 
     override fun save(statement: GeneralStatement) {
         neo4jRepository.save(statement.toNeo4jStatement())
+    }
+
+    override fun saveAll(statements: Set<GeneralStatement>) {
+        neo4jRepository.saveAll(statements.map { it.toNeo4jStatement() })
     }
 
     override fun count(): Long = neo4jRepository.count()
@@ -124,6 +130,17 @@ class SpringDataNeo4jStatementAdapter(
     override fun findByStatementId(id: StatementId): Optional<GeneralStatement> =
         neo4jRepository.findByStatementId(id).map { it.toStatement() }
 
+    override fun findAllByStatementIdIn(ids: Set<StatementId>, pageable: Pageable): Page<GeneralStatement> {
+        // Fix OGM interpreting a singleton list as a string value of the first element
+        return if (ids.size == 1) {
+            findByStatementId(ids.single())
+                .map<Page<GeneralStatement>> { PageImpl(listOf(it), pageable, 1) }
+                .orElseGet { Page.empty(pageable) }
+        } else {
+            neo4jRepository.findAllByStatementIdIn(ids, pageable).map { it.toStatement() }
+        }
+    }
+
     override fun findAllBySubject(subjectId: ThingId, pageable: Pageable): Page<GeneralStatement> =
         neo4jRepository.findAllBySubject(subjectId, pageable).map { it.toStatement() }
 
@@ -171,8 +188,8 @@ class SpringDataNeo4jStatementAdapter(
     override fun findAllByObjects(objectIds: List<ThingId>, pageable: Pageable): Page<GeneralStatement> =
         neo4jRepository.findAllByObjects(objectIds, pageable).map { it.toStatement() }
 
-    override fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration): Iterable<GeneralStatement> =
-        neo4jRepository.fetchAsBundle(id, configuration.toApocConfiguration()).map { it.toStatement() }
+    override fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration, sort: Sort): Iterable<GeneralStatement> =
+        neo4jRepository.fetchAsBundle(id, configuration.toApocConfiguration(), sort).map { it.toStatement() }
 
     override fun exists(id: StatementId): Boolean = neo4jRepository.existsByStatementId(id)
 
@@ -184,10 +201,13 @@ class SpringDataNeo4jStatementAdapter(
     override fun findDOIByContributionId(id: ThingId): Optional<Literal> =
         neo4jRepository.findDOIByContributionId(id).map(Neo4jLiteral::toLiteral)
 
-    override fun countPredicateUsage(id: ThingId) = neo4jRepository.countPredicateUsage(id)
-
     override fun findByDOI(doi: String): Optional<Resource> =
         neo4jRepository.findByDOI(doi).map(Neo4jResource::toResource)
+
+    override fun findAllBySubjectClassAndDOI(subjectClass: ThingId, doi: String, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllBySubjectClassAndDOI(subjectClass, doi, pageable).map(Neo4jResource::toResource)
+
+    override fun countPredicateUsage(id: ThingId) = neo4jRepository.countPredicateUsage(id)
 
     override fun findProblemsByObservatoryId(id: ObservatoryId, pageable: Pageable): Page<Resource> =
         neo4jRepository.findProblemsByObservatoryId(id, pageable).map(Neo4jResource::toResource)
@@ -210,6 +230,15 @@ class SpringDataNeo4jStatementAdapter(
         objectId: ThingId
     ): Optional<GeneralStatement> =
         neo4jRepository.findBySubjectIdAndPredicateIdAndObjectId(subjectId, predicateId, objectId).map { it.toStatement() }
+
+    override fun findAllCurrentComparisons(pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllCurrentComparisons(pageable).map(Neo4jResource::toResource)
+
+    override fun findAllCurrentListedComparisons(pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllCurrentListedComparisons(pageable).map(Neo4jResource::toResource)
+
+    override fun findAllCurrentComparisonsByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource> =
+        neo4jRepository.findAllCurrentComparisonsByVisibility(visibility, pageable).map(Neo4jResource::toResource)
 
     private fun Neo4jStatement.toStatement() = toStatement(neo4jPredicateRepository)
 

@@ -1,12 +1,14 @@
 package eu.tib.orkg.prototype.statements.services
 
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
+import eu.tib.orkg.prototype.statements.application.InvalidLiteralDatatype
 import eu.tib.orkg.prototype.statements.application.InvalidLiteralLabel
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.MAX_LABEL_LENGTH
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.toUriOrNull
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.time.OffsetDateTime
@@ -29,6 +31,10 @@ class LiteralService(
         if (label.length > MAX_LABEL_LENGTH) {
             throw InvalidLiteralLabel()
         }
+        // Note: "xsd:foo" is a valid URI, so is everything starting with a letter followed by a colon.
+        // There is no easy way around that, because other valid URIs use "prefix-like" structures, such as URNs.
+        if (datatype.startsWith("xsd:").not() && datatype.toUriOrNull() == null)
+            throw InvalidLiteralDatatype()
         val literalId = repository.nextIdentity()
         val newLiteral = Literal(
             label = label,

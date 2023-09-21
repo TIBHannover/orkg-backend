@@ -49,7 +49,7 @@ private const val MATCH_LITERATURE_LISTS_RELATED_TO_PROBLEM_WITH_ID = """MATCH (
 private const val MATCH_SMART_REVIEWS_RELATED_TO_PROBLEM_WITH_ID = """MATCH (:Problem:Resource {id: $id})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(node:SmartReview:Resource)"""
 private const val MATCH_VISUALIZATIONS_RELATED_TO_PROBLEM_WITH_ID = """MATCH (:Problem:Resource {id: $id})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)-[:RELATED {predicate_id: 'hasVisualization'}]->(node:Visualization:Resource)"""
 
-private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
+private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 
 interface Neo4jProblemRepository :
     Neo4jRepository<Neo4jResource, Long> {

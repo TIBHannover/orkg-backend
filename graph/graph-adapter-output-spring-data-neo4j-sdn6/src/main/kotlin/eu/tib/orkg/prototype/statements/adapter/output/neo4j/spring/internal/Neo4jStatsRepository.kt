@@ -15,6 +15,7 @@ import org.springframework.data.neo4j.repository.query.Query
 private const val date = "${'$'}date"
 private const val id = "${'$'}id"
 private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
+private const val ORDER_BY_PAGE_PARAMS = ":#{orderBy(#pageable)} $PAGE_PARAMS"
 
 interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
 
@@ -36,7 +37,7 @@ WHERE c.observatory_id <> '00000000-0000-0000-0000-000000000000' AND c.observato
 WITH observatoryId, COUNT(c) AS comparisons, papers
 WITH observatoryId, comparisons, papers, comparisons + papers AS total
 ORDER BY total DESC
-RETURN observatoryId, papers, comparisons, total $PAGE_PARAMS""",
+RETURN observatoryId, papers, comparisons, total $ORDER_BY_PAGE_PARAMS""",
     countQuery = """
 MATCH (n:Paper:Resource)
 WHERE n.observatory_id <> '00000000-0000-0000-0000-000000000000'
@@ -267,7 +268,7 @@ WHERE n IS NOT NULL
 RETURN COUNT(n)""")
     fun getChangeLogByResearchField(id: ThingId, pageable: Pageable): Page<Neo4jResource>
 
-    @Query("""MATCH (paper: Paper:Resource)-[:RELATED {predicate_id: 'P31'}]->(c1: Contribution)-[:RELATED{predicate_id: 'P32'}]-> (r:Problem:Resource) WHERE paper.created_by <> '00000000-0000-0000-0000-000000000000' WITH r.id AS id, r.label AS researchProblem, COUNT(paper) AS papersCount, COLLECT(DISTINCT paper.created_by) AS contributor RETURN id, researchProblem, papersCount $PAGE_PARAMS""",
+    @Query("""MATCH (paper: Paper:Resource)-[:RELATED {predicate_id: 'P31'}]->(c1: Contribution)-[:RELATED{predicate_id: 'P32'}]-> (r:Problem:Resource) WHERE paper.created_by <> '00000000-0000-0000-0000-000000000000' WITH r.id AS id, r.label AS researchProblem, COUNT(paper) AS papersCount, COLLECT(DISTINCT paper.created_by) AS contributor RETURN id, researchProblem, papersCount $ORDER_BY_PAGE_PARAMS""",
         countQuery = "MATCH (paper: Paper:Resource)-[:RELATED {predicate_id: 'P31'}]->(c1: Contribution)-[:RELATED{predicate_id: 'P32'}]-> (r:Problem:Resource) WHERE paper.created_by <> '00000000-0000-0000-0000-000000000000' WITH r.id AS id, r.label AS researchProblem, COUNT(paper) AS papersCount, COLLECT(DISTINCT paper.created_by) AS contributor RETURN count(researchProblem) as cnt")
     fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems>
 

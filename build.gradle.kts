@@ -19,7 +19,7 @@ dependencies {
         .toSet()
     val ignoredProjects = setOf(":platform", ":testing:kotest", ":testing:spring") union parentProjects
     subprojects
-        .filterNot { it.path in ignoredProjects || it.path.contains("sdn6") }
+        .filterNot { it.path in ignoredProjects }
         .onEach(::jacocoAggregation)
         .onEach(::testReportAggregation)
 }

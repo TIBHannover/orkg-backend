@@ -30,5 +30,9 @@ class Neo4jContainerInitializer : ApplicationContextInitializer<ConfigurableAppl
         "spring.data.neo4j.username=neo4j",
         "spring.data.neo4j.password=${neo4j.adminPassword}",
         "spring.data.neo4j.use-native-types=true", // TODO: Remove after upgrade, not supported anymore
+//        "spring.neo4j.uri=${neo4j.boltUrl}",
+//        "spring.neo4j.authentication.username=neo4j",
+//        "spring.neo4j.authentication.password=${neo4j.adminPassword}"
+
     )
 }

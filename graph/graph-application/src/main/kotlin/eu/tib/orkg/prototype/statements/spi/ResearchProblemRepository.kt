@@ -43,10 +43,6 @@ interface ResearchProblemRepository {
 
     data class ContributorPerProblem(
         val user: String,
-        val freq: Long
-    ) {
-        val contributor: UUID = UUID.fromString(user)
-        val isAnonymous: Boolean
-            get() = contributor == UUID(0, 0)
-    }
+        val freq: Long,
+    )
 }

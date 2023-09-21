@@ -49,7 +49,7 @@ class StatsControllerUnitTest : RestDocsTest("stats") {
     @Test
     fun `When retrieving stats about observatories and service succeeds, then status is 200 OK and observatory statistics are returned`() {
         val id = ObservatoryId(UUID.randomUUID())
-        val response = ObservatoryStats(id.value.toString(), 1, 0)
+        val response = ObservatoryStats(id, 1, 0)
         every {
             statisticsService.findAllObservatoryStats(any())
         } returns pageOf(response)
@@ -63,7 +63,7 @@ class StatsControllerUnitTest : RestDocsTest("stats") {
     @Test
     fun `When retrieving stats about a single observatory and service succeeds, then status is 200 OK and observatory statistics are returned`() {
         val id = ObservatoryId(UUID.randomUUID())
-        val response = ObservatoryStats(id.value.toString(), 1, 0)
+        val response = ObservatoryStats(id, 1, 0)
         every {
             statisticsService.findObservatoryStatsById(id)
         } returns response

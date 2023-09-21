@@ -1,5 +1,15 @@
 package eu.tib.orkg.prototype
 
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.services.ResourceService
+import eu.tib.orkg.prototype.statements.spi.ClassRepository
+import eu.tib.orkg.prototype.statements.spi.ComparisonRepository
+import eu.tib.orkg.prototype.statements.spi.ContributionRepository
+import eu.tib.orkg.prototype.statements.spi.ResourceRepository
+import eu.tib.orkg.prototype.statements.spi.SmartReviewRepository
+import eu.tib.orkg.prototype.statements.spi.StatementRepository
+import eu.tib.orkg.prototype.statements.spi.VisualizationRepository
 import java.util.stream.Stream
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -10,6 +20,10 @@ import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.provider.ArgumentsSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultMatcher
@@ -27,6 +41,27 @@ class CorsTest {
 
     @Autowired
     private lateinit var context: WebApplicationContext
+
+    @Autowired
+    private lateinit var comparisonRepository: ComparisonRepository
+
+    @Autowired
+    private lateinit var contributionRepository: ContributionRepository
+
+    @Autowired
+    private lateinit var visualizationRepository: VisualizationRepository
+
+    @Autowired
+    private lateinit var smartReviewRepository: SmartReviewRepository
+
+    @Autowired
+    private lateinit var repository: ResourceRepository
+
+    @Autowired
+    private lateinit var statementRepository: StatementRepository
+
+    @Autowired
+    private lateinit var classRepository: ClassRepository
 
     @BeforeEach
     fun setup() {
@@ -68,4 +103,20 @@ class CorsTest {
 
     private fun allAllowedMethodsPresent(): ResultMatcher =
         header().string("Access-Control-Allow-Methods", "OPTIONS,GET,HEAD,POST,PUT,PATCH,DELETE")
+
+    @Configuration
+    inner class TestConfiguration {
+        @Bean
+        fun resourceService(): ResourceUseCases = object : ResourceService(
+            comparisonRepository,
+            contributionRepository,
+            visualizationRepository,
+            smartReviewRepository,
+            repository,
+            statementRepository,
+            classRepository
+        ) {
+            override fun findAll(pageable: Pageable): Page<Resource> = Page.empty(pageable)
+        }
+    }
 }

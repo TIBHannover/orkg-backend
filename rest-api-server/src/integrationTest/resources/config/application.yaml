@@ -17,4 +17,4 @@ spring:
     # generate-ddl: true
 logging:
   level:
-    org.neo4j.ogm.drivers: DEBUG
+    org.springframework.data.neo4j: DEBUG

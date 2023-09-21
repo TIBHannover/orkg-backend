@@ -3,6 +3,7 @@
 
 plugins {
     id("org.orkg.kotlin-conventions")
+    id("org.orkg.neo4j-conventions")
     id("java-test-fixtures")
     alias(libs.plugins.spotless)
     kotlin("plugin.spring")
@@ -22,7 +23,9 @@ dependencies {
     implementation(libs.forkhandles.result4k)
     implementation(libs.forkhandles.values4k)
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
+    implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
+        exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
+    }
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {

@@ -12,11 +12,14 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
+import java.util.function.BiFunction
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.neo4j.driver.Record
+import org.neo4j.driver.types.TypeSystem
 import org.orkg.statements.testing.createStatement
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.CacheManager
@@ -97,6 +100,7 @@ internal class SpringDataNeo4jStatementAdapterCachingTests {
         // Required to mock the Neo4Client DSL
         val mockUnboundRunnableSpec = mockk<UnboundRunnableSpec>()
         val mockMappingSpec = mockk<Neo4jClient.MappingSpec<ThingId>>()
+        val mockRecordFetchSpec = mockk<Neo4jClient.RecordFetchSpec<ThingId>>()
 
         every { mockedNeo4jLiteralRepository.findById(literalId) }.returns(Optional.of(neo4jLiteral))
             .andThen(Optional.of(neo4jLiteral))
@@ -105,7 +109,8 @@ internal class SpringDataNeo4jStatementAdapterCachingTests {
             .andThen { throw IllegalStateException("If you see this message, deleteByStatement() was called more than once!") }
         every { mockUnboundRunnableSpec.bindAll(any()) } returns mockUnboundRunnableSpec
         every { mockUnboundRunnableSpec.fetchAs(ThingId::class.java) } returns mockMappingSpec
-        every { mockMappingSpec.one() } returns Optional.of(literalId)
+        every { mockMappingSpec.mappedBy(any<BiFunction<TypeSystem, Record, ThingId>>()) } returns mockRecordFetchSpec
+        every { mockRecordFetchSpec.one() } returns Optional.of(literalId)
 
         // Obtain literal from Literal repository
         assertThat(literalAdapter.findById(literalId).get()).isEqualTo(literal)
@@ -123,7 +128,8 @@ internal class SpringDataNeo4jStatementAdapterCachingTests {
         verify(exactly = 1) { neo4jClient.query(any<String>()) }
         verify(exactly = 1) { mockUnboundRunnableSpec.bindAll(any()) }
         verify(exactly = 1) { mockUnboundRunnableSpec.fetchAs(ThingId::class.java) }
-        verify(exactly = 1) { mockMappingSpec.one() }
+        verify(exactly = 1) { mockMappingSpec.mappedBy(any<BiFunction<TypeSystem, Record, ThingId>>()) }
+        verify(exactly = 1) { mockRecordFetchSpec.one() }
 
         // Verify that the cache was evicted
         assertThat(literalAdapter.findById(literalId).get()).isEqualTo(literal)

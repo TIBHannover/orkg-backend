@@ -8,10 +8,7 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 group = "eu.tib"
 version = "0.38.0"
 
-val neo4jVersion = "3.5.+" // should match version in Dockerfile
-val springDataNeo4jVersion = "5.3.4"
-val springSecurityOAuthVersion = "2.3.8"
-val testContainersVersion = "1.17.3"
+val springSecurityOAuthVersion = "2.5.2"
 
 val containerRegistryLocation = "registry.gitlab.com/tibhannover/orkg/orkg-backend"
 val dockerImageTag: String? by project
@@ -21,6 +18,7 @@ val downloadJavadoc: String? by project
 
 plugins {
     id("org.orkg.kotlin-conventions")
+    id("org.orkg.neo4j-conventions")
     kotlin("kapt")
     kotlin("plugin.spring")
     kotlin("plugin.jpa")
@@ -100,7 +98,10 @@ testing {
                 implementation(libs.spring.mockk)
                 implementation("org.springframework.boot:spring-boot-starter-data-jpa")
                 implementation("org.postgresql:postgresql")
-                implementation("org.springframework.boot:spring-boot-starter-data-neo4j")
+                implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
+                    exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
+                }
+                implementation(libs.spring.boot.starter.neo4j.migrations)
             }
             targets {
                 all {
@@ -127,6 +128,7 @@ dependencies {
     // Platform alignment for ORKG components
     api(platform(project(":platform")))
     testApi(enforcedPlatform(libs.junit5.bom))
+    "integrationTestApi"(platform(project(":platform")))
     "integrationTestApi"(enforcedPlatform(libs.junit5.bom))
 
     kapt(platform(project(":platform")))
@@ -141,7 +143,7 @@ dependencies {
     runtimeOnly(project(":identity-management:idm-adapter-output-spring-data-jpa"))
     implementation(project(":graph:graph-application"))
     implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
-    implementation(project(":graph:graph-adapter-output-spring-data-neo4j-ogm"))
+    implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6"))
     implementation(project(":discussions:discussions-adapter-output-spring-data-jpa-postgres"))
     implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa-postgres"))
     implementation(project(":feature-flags:feature-flags-ports"))
@@ -159,18 +161,19 @@ dependencies {
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.hibernate:hibernate-core:5.6.9.Final") // TODO: remove after upgrade to 2.7
     implementation("org.postgresql:postgresql")
     implementation("org.liquibase:liquibase-core")
     implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
-        exclude(module = "neo4j-ogm-http-driver")
+        exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
     }
-    implementation("org.neo4j:neo4j-ogm-bolt-native-types")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.security.oauth:spring-security-oauth2:$springSecurityOAuthVersion.RELEASE")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-cache")
-    implementation("org.springframework.data:spring-data-neo4j:$springDataNeo4jVersion.RELEASE")
+    implementation("org.springframework.data:spring-data-neo4j")
+    implementation(libs.spring.boot.starter.neo4j.migrations)
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     // JAXB stuff. Was removed from Java 9. Seems to be needed for OAuth2.
     implementation(libs.bundles.jaxb)

@@ -71,7 +71,7 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     @Query("""MATCH (node:`Resource` {id: $id}) WHERE $HAS_CLASSES $WITH_NODE_PROPERTIES $RETURN_NODE""")
     fun findByIdAndClassesContaining(id: ThingId, classes: Set<ThingId>): Neo4jResource?
 
-    fun findById(id: ThingId?): Optional<Neo4jResource>
+    fun findById(id: ThingId): Optional<Neo4jResource>
 
     @Query("""
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)

@@ -11,7 +11,6 @@ include(
     // This may change in the future.
     "graph:graph-application",
     "graph:graph-adapter-input-rest-spring-mvc",
-    "graph:graph-adapter-output-spring-data-neo4j-ogm",
     "graph:graph-adapter-output-spring-data-neo4j-sdn6",
     "graph:graph-adapter-output-in-memory",
 )

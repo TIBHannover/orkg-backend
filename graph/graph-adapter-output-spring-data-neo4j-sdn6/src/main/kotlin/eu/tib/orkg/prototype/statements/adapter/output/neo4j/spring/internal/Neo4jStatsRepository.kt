@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.spi.ChangeLogResponse
 import eu.tib.orkg.prototype.statements.spi.FieldsStats
 import eu.tib.orkg.prototype.statements.spi.ObservatoryStats
 import eu.tib.orkg.prototype.statements.spi.ResearchFieldStats
@@ -17,9 +17,6 @@ private const val id = "${'$'}id"
 private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
 
 interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
-
-    @Query("""CALL apoc.meta.stats()""")
-    fun getGraphMetaData(): Iterable<HashMap<String, Any>>
 
     @Query("""MATCH (n:ResearchField:Resource) WITH n OPTIONAL MATCH (n)-[:RELATED*0..3 {predicate_id: 'P36'}]->(r:ResearchField:Resource) OPTIONAL MATCH (r)<-[:RELATED {predicate_id: 'P30'}]-(p:Paper:Resource) RETURN n.id AS fieldId, n.label AS field, COUNT(p) AS papers""")
     fun getResearchFieldsPapersCount(): Iterable<FieldsStats>
@@ -83,8 +80,8 @@ CALL {
     MATCH (n:Visualization:Resource) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date RETURN n.created_by AS id, COUNT(n) AS contributions
     UNION ALL
     MATCH (n:Problem:Resource) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date RETURN n.created_by AS id, COUNT(n) AS contributions
-} WITH id, contributions
-RETURN id, SUM(contributions) AS contributions $PAGE_PARAMS""",
+} WITH id, contributions, SUM(contributions) AS total
+RETURN id AS contributor, 0 AS papers, contributions, 0 AS comparisons, 0 AS visualizations, 0 AS problems, total $PAGE_PARAMS""",
         countQuery = """
 CALL {
     MATCH (n:Paper:Resource) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date RETURN DISTINCT n.created_by AS id
@@ -98,7 +95,7 @@ CALL {
     MATCH (n:Problem:Resource) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date RETURN DISTINCT n.created_by AS id
 } WITH DISTINCT id
 RETURN COUNT(id)""")
-    fun getTopCurrentContributorIdsAndContributionsCount(date: String, pageable: Pageable): Page<Neo4jContributorRecord>
+    fun getTopCurrentContributorIdsAndContributionsCount(date: String, pageable: Pageable): Page<RetrieveStatisticsUseCase.ContributorRecord>
 
     /**
      * This query fetches the contributor IDs from sub research fields as well.
@@ -157,7 +154,7 @@ WITH DISTINCT n
 WHERE n IS NOT NULL AND n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
 WITH DISTINCT n.created_by AS contributor
 RETURN COUNT(contributor)""")
-    fun getTopCurContribIdsAndContribCountByResearchFieldId(id: ThingId, date: String, pageable: Pageable): Page<Neo4jContributorRecord>
+    fun getTopCurContribIdsAndContribCountByResearchFieldId(id: ThingId, date: String, pageable: Pageable): Page<RetrieveStatisticsUseCase.ContributorRecord>
 
     /**
      * This query fetches the contributor ID from only research fields and excludes sub research fields.
@@ -192,7 +189,7 @@ WITH DISTINCT n
 WHERE n IS NOT NULL AND n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
 WITH DISTINCT n.created_by AS contributor
 RETURN COUNT(contributor)""")
-    fun getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(id: ThingId, date: String, pageable: Pageable): Page<Neo4jContributorRecord>
+    fun getTopCurContribIdsAndContribCountByResearchFieldIdExcludeSubFields(id: ThingId, date: String, pageable: Pageable): Page<RetrieveStatisticsUseCase.ContributorRecord>
 
     @Query("""
 CALL {
@@ -206,7 +203,8 @@ CALL {
     UNION ALL
     MATCH (sub:Comparison:Resource) WITH labels(sub) AS labels, sub WHERE NOT 'ComparisonDeleted' IN labels RETURN sub
 } WITH sub
-RETURN sub.id AS id, sub.label AS label, sub.created_at AS createdAt, COALESCE(sub.created_by, '00000000-0000-0000-0000-000000000000') AS createdBy, labels(sub) AS classes ORDER BY createdAt DESC $PAGE_PARAMS""",
+ORDER BY sub.created_at DESC
+RETURN sub $PAGE_PARAMS""",
         countQuery = """
 CALL {
     MATCH (sub:Paper:Resource) WITH labels(sub) AS labels, sub WHERE NOT 'PaperDeleted' IN labels RETURN sub
@@ -221,7 +219,7 @@ CALL {
 } WITH sub
 RETURN COUNT(sub)
 """)
-    fun getChangeLog(pageable: Pageable): Page<ChangeLogResponse>
+    fun getChangeLog(pageable: Pageable): Page<Neo4jResource>
 
     @Query("""
 CALL {
@@ -243,7 +241,9 @@ WITH [p, c, v] AS nodes
 UNWIND nodes AS n
 WITH DISTINCT n
 WHERE n IS NOT NULL
-RETURN n.id AS id, n.label AS label, n.created_at AS createdAt, COALESCE(n.created_by, '00000000-0000-0000-0000-000000000000') AS createdBy, labels(n) AS classes $PAGE_PARAMS""",
+WITH n
+ORDER BY n.created_at DESC
+RETURN n $PAGE_PARAMS""",
         countQuery = """
 CALL {
     MATCH (field:ResearchField:Resource {id: $id})
@@ -265,7 +265,7 @@ UNWIND nodes AS n
 WITH DISTINCT n
 WHERE n IS NOT NULL
 RETURN COUNT(n)""")
-    fun getChangeLogByResearchField(id: ThingId, pageable: Pageable): Page<ChangeLogResponse>
+    fun getChangeLogByResearchField(id: ThingId, pageable: Pageable): Page<Neo4jResource>
 
     @Query("""MATCH (paper: Paper:Resource)-[:RELATED {predicate_id: 'P31'}]->(c1: Contribution)-[:RELATED{predicate_id: 'P32'}]-> (r:Problem:Resource) WHERE paper.created_by <> '00000000-0000-0000-0000-000000000000' WITH r.id AS id, r.label AS researchProblem, COUNT(paper) AS papersCount, COLLECT(DISTINCT paper.created_by) AS contributor RETURN id, researchProblem, papersCount $PAGE_PARAMS""",
         countQuery = "MATCH (paper: Paper:Resource)-[:RELATED {predicate_id: 'P31'}]->(c1: Contribution)-[:RELATED{predicate_id: 'P32'}]-> (r:Problem:Resource) WHERE paper.created_by <> '00000000-0000-0000-0000-000000000000' WITH r.id AS id, r.label AS researchProblem, COUNT(paper) AS papersCount, COLLECT(DISTINCT paper.created_by) AS contributor RETURN count(researchProblem) as cnt")
@@ -274,13 +274,3 @@ RETURN COUNT(n)""")
     @Query("""MATCH (n:Thing) WHERE NOT (n)--() RETURN COUNT(n) AS orphanedNodes""")
     fun getOrphanedNodesCount(): Long
 }
-
-data class Neo4jContributorRecord(
-    val contributor: String, // TODO: Should be ContributorId
-    val comparisons: Long,
-    val papers: Long,
-    val contributions: Long,
-    val problems: Long,
-    val visualizations: Long,
-    val total: Long
-)

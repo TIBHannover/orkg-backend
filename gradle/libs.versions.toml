@@ -5,8 +5,9 @@ kotest = "5.4.0"
 kotlinx-coroutines = "1.6.4"
 testcontainers = "1.17.3"
 spotless = "6.2.1"
-spring-boot = "2.3.5.RELEASE"
+spring-boot = "2.4.13"
 spring-dependency-management = "1.0.11.RELEASE"
+jackson = "2.13.4"
 
 [libraries]
 # BOMs
@@ -15,6 +16,7 @@ forkhandles-bom = { module = "dev.forkhandles:forkhandles-bom", version.ref = "f
 junit5-bom = { module = "org.junit:junit-bom", version.ref = "junit5" }
 kotlinx-coroutines-bom = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-bom", version.ref = "kotlinx-coroutines" }
 spring-boot-bom = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
+jackson-bom = { module = "com.fasterxml.jackson:jackson-bom", version.ref = "jackson" }
 # Libraries
 annotations-jsr305 = { module = "com.google.code.findbugs:jsr305", version = "3.0.2" }
 contractual = { module = "com.redfin:contractual", version = "3.0.0" }
@@ -30,7 +32,8 @@ kotest-extensions-testcontainers = { module = "io.kotest.extensions:kotest-exten
 kotest-framework-datatest = { module = "io.kotest:kotest-framework-datatest", version.ref = "kotest" }
 kotest-property = { module = "io.kotest:kotest-property", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
-spring-mockk = { module = "com.ninja-squad:springmockk", version = "2.0.1" }
+spring-boot-starter-neo4j-migrations = { module = "eu.michael-simons.neo4j:neo4j-migrations-spring-boot-starter", version = "1.16.1" }
+spring-mockk = { module = "com.ninja-squad:springmockk", version = "3.1.2" }
 spring-restdocs = { module = "org.springframework.restdocs:spring-restdocs-mockmvc", version = "" } # Provided by Spring
 testcontainers-core = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
 testcontainers-junit5 = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }

@@ -15,6 +15,6 @@ fun createNeo4jLiteral(
     this.id = id
     this.label = label
     this.datatype = datatype
-    this.createdAt = createdAt
-    this.createdBy = createdBy
+    this.created_at = createdAt
+    this.created_by = createdBy
 }

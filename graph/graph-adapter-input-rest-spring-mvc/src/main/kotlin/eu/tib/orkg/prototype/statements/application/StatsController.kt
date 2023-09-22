@@ -46,7 +46,7 @@ class StatsController(private val service: RetrieveStatisticsUseCase) {
      */
     @GetMapping("/fields")
     @ResponseStatus(HttpStatus.OK)
-    fun getFields(): ResponseEntity<Map<String, Int>> {
+    fun getFields(): ResponseEntity<Map<ThingId, Int>> {
         return ResponseEntity.ok(service.getFieldsStats())
     }
 

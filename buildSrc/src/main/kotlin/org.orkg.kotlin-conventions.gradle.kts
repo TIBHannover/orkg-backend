@@ -34,8 +34,10 @@ kotlin {
     }
 }
 
+/*
 java {
     consistentResolution {
         useCompileClasspathVersions()
     }
 }
+*/

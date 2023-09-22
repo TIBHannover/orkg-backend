@@ -259,14 +259,14 @@ class SpringDataNeo4jResourceAdapter(
         neo4jRepository.findById(this.id).orElse(Neo4jResource()).apply {
             id = this@toNeo4jResource.id
             label = this@toNeo4jResource.label
-            createdBy = this@toNeo4jResource.createdBy
-            createdAt = this@toNeo4jResource.createdAt
-            observatoryId = this@toNeo4jResource.observatoryId
-            extractionMethod = this@toNeo4jResource.extractionMethod
+            created_by = this@toNeo4jResource.createdBy
+            created_at = this@toNeo4jResource.createdAt
+            observatory_id = this@toNeo4jResource.observatoryId
+            extraction_method = this@toNeo4jResource.extractionMethod
             verified = this@toNeo4jResource.verified
             visibility = this@toNeo4jResource.visibility
-            organizationId = this@toNeo4jResource.organizationId
+            organization_id = this@toNeo4jResource.organizationId
             classes = this@toNeo4jResource.classes
-            unlistedBy = this@toNeo4jResource.unlistedBy
+            unlisted_by = this@toNeo4jResource.unlistedBy
         }
 }

@@ -5,23 +5,23 @@ import eu.tib.orkg.prototype.auth.spi.UserRepository
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresObservatoryRepository
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import eu.tib.orkg.prototype.community.application.ObservatoryNotFound
-import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.Contributor
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.spi.ContributorRepository
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
 import eu.tib.orkg.prototype.statements.application.ResearchFieldNotFound
+import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.Stats
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.statements.spi.ChangeLogResponse
 import eu.tib.orkg.prototype.statements.spi.ObservatoryStats
 import eu.tib.orkg.prototype.statements.spi.ResearchFieldStats
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatsRepository
 import eu.tib.orkg.prototype.statements.spi.TrendingResearchProblems
 import java.time.LocalDate
-import java.util.*
+import java.time.format.DateTimeFormatter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -38,8 +38,6 @@ class StatisticsService(
     private val organizationRepository: PostgresOrganizationRepository,
     private val resourceRepository: ResourceRepository
 ) : RetrieveStatisticsUseCase {
-    val internalClassLabels: (String) -> Boolean = { it !in setOf("Thing", "Resource") }
-
     override fun getStats(extra: List<String>?): Stats {
         val metadata = statsRepository.getGraphMetaData()
         val labels = metadata.first()["labels"] as Map<*, *>
@@ -69,7 +67,7 @@ class StatisticsService(
             organizationsCount, orphanedNodesCount, extraCounts)
     }
 
-    override fun getFieldsStats(): Map<String, Int> {
+    override fun getFieldsStats(): Map<ThingId, Int> {
         val counts = statsRepository.getResearchFieldsPapersCount()
         return counts.associate { it.fieldId to it.papers.toInt() }
     }
@@ -138,17 +136,20 @@ class StatisticsService(
             pageable
         )
 
-    private fun getChangeLogsWithProfile(changeLogs: Page<ChangeLogResponse>, pageable: Pageable): Page<ChangeLog> {
+    private fun getChangeLogsWithProfile(changeLogs: Page<Resource>, pageable: Pageable): Page<ChangeLog> {
         val refinedChangeLog = mutableListOf<ChangeLog>()
-        val userIdList = changeLogs.content.map { ContributorId(UUID.fromString(it.createdBy)) }
+        val userIdList = changeLogs.content.map { it.createdBy }
         val mapValues = contributorRepository.findAllByIds(userIdList).groupBy(Contributor::id)
 
         changeLogs.forEach { changeLogResponse ->
-            val contributor = mapValues[ContributorId(changeLogResponse.createdBy)]?.first()
-            val filteredClasses = changeLogResponse.classes.filter(internalClassLabels)
+            val contributor = mapValues[changeLogResponse.createdBy]?.first()
             refinedChangeLog.add(
-                ChangeLog(changeLogResponse.id, changeLogResponse.label, changeLogResponse.createdAt,
-                filteredClasses, Profile(contributor?.id, contributor?.name, contributor?.gravatarId, contributor?.avatarURL)
+                ChangeLog(
+                    id = changeLogResponse.id.value,
+                    label = changeLogResponse.label,
+                    createdAt = changeLogResponse.createdAt.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME),
+                    classes = changeLogResponse.classes.map { it.value },
+                    profile = Profile(contributor?.id, contributor?.name, contributor?.gravatarId, contributor?.avatarURL)
                 )
             )
         }

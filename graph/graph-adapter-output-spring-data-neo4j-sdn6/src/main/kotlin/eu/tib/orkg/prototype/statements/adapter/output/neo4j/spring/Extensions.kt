@@ -159,6 +159,8 @@ internal fun Value.toThingId() = if (isNull) null else ThingId(asString())
 internal fun Value.toVisibility() = if (isNull) Visibility.DEFAULT else Visibility.valueOf(asString())
 internal fun Value.toThingIds() = asList().map { ThingId(it as String) }
 internal fun Value.asNullableInt() = if (isNull) null else asInt()
+internal fun Value.asNullableLong() = if (isNull) null else asLong()
+internal fun Value.asNullableNode() = if (isNull) null else asNode()
 
 @Contract(pure = true)
 internal fun startNode(symbolicName: SymbolicName): FunctionInvocation =
@@ -175,9 +177,6 @@ internal fun toUpper(expression: Expression): FunctionInvocation =
     FunctionInvocation.create({ "toUpper" }, expression)
 
 internal operator fun MapAccessor.get(symbolicName: SymbolicName): Value = this[symbolicName.value]
-
-internal fun Neo4jClient.UnboundRunnableSpec.fetchCountAsBoolean() =
-    fetchAs(Long::class.java).first().map { it > 0 }.orElseGet { false }
 
 internal fun paperNode() = node("Paper", "Resource")
 internal fun comparisonNode() = node("Comparison", "Resource")

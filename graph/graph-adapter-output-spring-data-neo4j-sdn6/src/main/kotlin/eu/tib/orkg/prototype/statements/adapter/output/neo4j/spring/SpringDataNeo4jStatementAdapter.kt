@@ -53,7 +53,6 @@ import org.neo4j.cypherdsl.core.Functions.sum
 import org.neo4j.cypherdsl.core.Node
 import org.neo4j.cypherdsl.core.Predicates.exists
 import org.neo4j.cypherdsl.core.Relationship
-import org.neo4j.cypherdsl.core.SortItem
 import org.neo4j.cypherdsl.core.StatementBuilder
 import org.springframework.cache.CacheManager
 import org.springframework.data.domain.Page
@@ -183,7 +182,8 @@ class SpringDataNeo4jStatementAdapter(
                     .returning(l)
             }
             .withParameters("id" to id.value)
-            .fetchAs<ThingId>()
+            .fetchAs(ThingId::class)
+            .mappedBy { _, r -> r["l"].toThingId()!! }
             .one()
             .ifPresent(::evictFromCaches)
     }

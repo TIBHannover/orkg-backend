@@ -29,10 +29,8 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.transaction.annotation.Transactional
 
 @DisplayName("Comparison Controller")
-@Transactional
 @Import(MockUserDetailsService::class)
 class LegacyComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
 
@@ -75,8 +73,8 @@ class LegacyComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun getTopAuthorsOfComparison() {
         // create authors
-        val author1 = literalService.create("Author 1").id
-        val author2 = literalService.create("Author 1").id
+        val author1 = literalService.create("Duplicate Author").id
+        val author2 = literalService.create("Duplicate Author").id
         val authorNotNeeded = literalService.create("Ignore me").id
         val authorResource = resourceService.createResource(label = "Famous author", classes = setOf("Author"))
         // create papers

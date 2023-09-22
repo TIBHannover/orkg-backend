@@ -22,7 +22,7 @@ interface RetrieveStatisticsUseCase {
     /**
      * Get paper count for each research field
      */
-    fun getFieldsStats(): Map<String, Int>
+    fun getFieldsStats(): Map<ThingId, Int>
 
     /**
      * Get paper count by observatory ID
@@ -85,11 +85,11 @@ interface RetrieveStatisticsUseCase {
 
     data class ContributorRecord(
         val contributor: ContributorId,
-        val comparisons: Long,
-        val papers: Long,
-        val contributions: Long,
-        val problems: Long,
-        val visualizations: Long,
-        val total: Long
+        val comparisons: Long = 0,
+        val papers: Long = 0,
+        val contributions: Long = 0,
+        val problems: Long = 0,
+        val visualizations: Long = 0,
+        val total: Long = 0
     )
 }

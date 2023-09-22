@@ -8,7 +8,7 @@ import eu.tib.orkg.prototype.toSnakeCase
 import java.time.OffsetDateTime
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletRequestWrapper
-import org.springframework.data.neo4j.exception.UncategorizedNeo4jException
+import org.neo4j.driver.exceptions.Neo4jException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
@@ -102,7 +102,7 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         return ResponseEntity(payload, BAD_REQUEST)
     }
 
-    @ExceptionHandler(value = [RuntimeException::class, UncategorizedNeo4jException::class])
+    @ExceptionHandler(value = [RuntimeException::class, Neo4jException::class])
     fun handleRuntimeException(
         ex: RuntimeException,
         request: WebRequest

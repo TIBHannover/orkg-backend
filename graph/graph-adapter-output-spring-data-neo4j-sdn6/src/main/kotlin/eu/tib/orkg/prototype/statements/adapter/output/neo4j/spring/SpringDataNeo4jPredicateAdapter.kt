@@ -92,7 +92,7 @@ class SpringDataNeo4jPredicateAdapter(
         neo4jRepository.findById(this.id).orElse(Neo4jPredicate()).apply {
             id = this@toNeo4jPredicate.id
             label = this@toNeo4jPredicate.label
-            createdBy = this@toNeo4jPredicate.createdBy
-            createdAt = this@toNeo4jPredicate.createdAt
+            created_by = this@toNeo4jPredicate.createdBy
+            created_at = this@toNeo4jPredicate.createdAt
         }
 }

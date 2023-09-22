@@ -17,6 +17,7 @@ import eu.tib.orkg.prototype.statements.services.AuthorService
 import eu.tib.orkg.prototype.statements.services.ResourceService
 import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.*
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -78,7 +79,7 @@ class ProblemController(
         pageable: Pageable
     ): ResponseEntity<Iterable<Any>> {
         val contributors = service.findContributorsPerProblem(problemId, pageable).map {
-            val user = contributorService.findById(ContributorId(it.contributor)).get()
+            val user = contributorService.findById(ContributorId(it.user)).get()
             object {
                 val user = user
                 val contributions = it.freq

@@ -1,12 +1,9 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
-import org.springframework.data.neo4j.annotation.QueryResult
-
 /**
  * Class representing the components to build the formatted label
  * for a resource that is typed with a class (created from template)
  */
-@QueryResult
 data class TemplatedResource(
     /**
      * The id of the template used on this resource

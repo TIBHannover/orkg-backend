@@ -3,6 +3,7 @@
 
 plugins {
     id("org.orkg.kotlin-conventions")
+    id("org.orkg.neo4j-conventions")
     kotlin("plugin.spring")
     alias(libs.plugins.spotless)
 }

@@ -10,29 +10,27 @@ javaPlatform {
 dependencies {
     // Extend existing platforms
     api(enforcedPlatform(kotlin("bom", "1.7.10")))
+    // api(enforcedPlatform(libs.jackson.bom))
     api(platform(libs.forkhandles.bom))
-    api(enforcedPlatform(libs.spring.boot.bom)) {
+    api(platform(libs.spring.boot.bom)) {
         // We want to use a more recent Kotlin and JUnit version
         exclude(group = "org.jetbrains.kotlin")
         exclude(group = "org.jetbrains.kotlinx")
         exclude(group = "org.junit.platform")
+        exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
+        exclude(group = "org.springframework.data", module = "spring-data-commons") // TODO: remove after upgrade to 2.7
+        exclude(group = "org.neo4j.driver", module = "neo4j-java-driver") // TODO: remove after upgrade to 2.7
+        exclude(group = "org.hibernate", module = "hibernate-core") // TODO: remove after upgrade to 2.7
         // We need a bugfix, so we exclude it here and set a constraint later
-        exclude(group = "org.liquibase", module = "liquibase-core")
+        // exclude(group = "org.liquibase", module = "liquibase-core")
     }
     api(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
     api(enforcedPlatform(libs.kotlinx.coroutines.bom)) // Required for Kotest. TODO: can be removed after upgrade to Spring Boot 2.7
 
     // Declare constraints on all components that need alignment (aka. our modules)
     constraints {
-        rootProject.subprojects.filterNot { it.name == name || it.name.contains("sdn6") }.forEach { subproject ->
+        rootProject.subprojects.filterNot { it.name == name }.forEach { subproject ->
             api(subproject)
-        }
-
-        api("org.liquibase:liquibase-core") {
-            version {
-                strictly("[3.10,4.0[")
-                prefer("3.10.3")
-            }
         }
 
         /*

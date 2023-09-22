@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.spring")
     id("jacoco")
+    id("org.orkg.neo4j-conventions")
 }
 
 dependencies {

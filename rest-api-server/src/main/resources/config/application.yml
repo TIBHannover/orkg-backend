@@ -95,7 +95,6 @@ spring:
     neo4j:
       uri: 'bolt://localhost:7687'
       #auto-index: validate
-      use-native-types: true
   datasource:
     url: 'jdbc:postgresql://localhost/postgres'
     username: postgres
@@ -109,5 +108,4 @@ spring:
     # generate-ddl: true
 logging:
   level:
-    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
-    org.neo4j.ogm.drivers.bolt.request.BoltRequest: DEBUG
+    org.springframework.data.neo4j: DEBUG

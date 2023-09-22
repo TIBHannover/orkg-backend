@@ -3,7 +3,6 @@ package eu.tib.orkg.prototype.configuration
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -11,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer.withDefaults
+import org.springframework.security.config.annotation.SecurityConfigurerAdapter
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -66,26 +66,34 @@ class AuthorizationServerConfiguration(
 }
 
 @Configuration
+class SecurityConfig {
+    @Bean
+    fun authProvider(userDetailsService: UserDetailsService, passwordEncoder: PasswordEncoder): AuthenticationProvider =
+        DaoAuthenticationProvider().apply {
+            setUserDetailsService(userDetailsService)
+            setPasswordEncoder(passwordEncoder)
+        }
+
+    @Bean
+    fun configureGlobal(provider: AuthenticationProvider): SecurityConfigurerAdapter<AuthenticationManager, AuthenticationManagerBuilder> =
+        object : SecurityConfigurerAdapter<AuthenticationManager, AuthenticationManagerBuilder>() {
+            override fun configure(builder: AuthenticationManagerBuilder) {
+                builder.authenticationProvider(provider)
+            }
+        }
+
+    @Bean
+    fun passwordEncoder(): PasswordEncoder =
+        PasswordEncoderFactories.createDelegatingPasswordEncoder()
+}
+
+@Configuration
 @EnableResourceServer
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-class ResourceServerConfiguration(
-    private val userDetailsService: UserDetailsService
-) : ResourceServerConfigurerAdapter() {
+class ResourceServerConfiguration : ResourceServerConfigurerAdapter() {
 
     // global security concerns
-
-    @Bean
-    fun authProvider(): AuthenticationProvider =
-        DaoAuthenticationProvider().apply {
-            setUserDetailsService(userDetailsService)
-            setPasswordEncoder(passwordEncoder())
-        }
-
-    @Autowired
-    fun configureGlobal(auth: AuthenticationManagerBuilder) {
-        auth.authenticationProvider(authProvider())
-    }
 
     // http security concerns
     override fun configure(http: HttpSecurity) {
@@ -99,10 +107,6 @@ class ResourceServerConfiguration(
             .and()
             .csrf().disable()
     }
-
-    @Bean
-    fun passwordEncoder(): PasswordEncoder =
-        PasswordEncoderFactories.createDelegatingPasswordEncoder()
 }
 
 /**

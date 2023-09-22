@@ -1,15 +1,18 @@
 package eu.tib.orkg.prototype.statements.spi
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
+import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import java.time.OffsetDateTime
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.neo4j.annotation.QueryResult
+import org.springframework.data.neo4j.core.convert.ConvertWith
 
 interface StatsRepository {
-    fun getGraphMetaData(): Iterable<HashMap<String, Any>>
+    fun getGraphMetaData(): Iterable<Map<String, Any?>>
     fun getResearchFieldsPapersCount(): Iterable<FieldsStats>
     fun getObservatoryPapersCount(id: ObservatoryId): Long
     fun getObservatoryComparisonsCount(id: ObservatoryId): Long
@@ -30,8 +33,8 @@ interface StatsRepository {
         date: String,
         pageable: Pageable
     ): Page<RetrieveStatisticsUseCase.ContributorRecord>
-    fun getChangeLog(pageable: Pageable): Page<ChangeLogResponse>
-    fun getChangeLogByResearchField(id: ThingId, pageable: Pageable): Page<ChangeLogResponse>
+    fun getChangeLog(pageable: Pageable): Page<Resource>
+    fun getChangeLogByResearchField(id: ThingId, pageable: Pageable): Page<Resource>
     fun getTrendingResearchProblems(pageable: Pageable): Page<TrendingResearchProblems>
     fun getOrphanedNodesCount(): Long
 }
@@ -40,9 +43,8 @@ interface StatsRepository {
  * Data class for fetching
  * field statistics
  */
-@QueryResult
 data class FieldsStats(
-    val fieldId: String,
+    val fieldId: ThingId,
     val field: String,
     val papers: Long
 )
@@ -51,10 +53,9 @@ data class FieldsStats(
  * Data class for fetching
  * Observatory resources
  */
-@QueryResult
 data class ObservatoryStats(
     @JsonProperty("observatory_id")
-    val observatoryId: String,
+    val observatoryId: ObservatoryId,
     val papers: Long = 0,
     val comparisons: Long = 0,
     val total: Long = 0
@@ -72,28 +73,11 @@ data class ResearchFieldStats(
 
 /**
  * Data class comprising of resource ID,
- * label, time of creation/modification,
- * creator and corresponding classes
- */
-@QueryResult
-data class ChangeLogResponse(
-    val id: String,
-    val label: String,
-    @JsonProperty("created_at")
-    val createdAt: String,
-    @JsonProperty("created_by")
-    val createdBy: String,
-    val classes: List<String>
-)
-
-/**
- * Data class comprising of resource ID,
  * research problem and total number of
  * papers per research problem
  */
-@QueryResult
 data class TrendingResearchProblems(
-    val id: String,
+    val id: ThingId,
     val researchProblem: String,
     val papersCount: Long
 )

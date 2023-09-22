@@ -98,7 +98,7 @@ class SpringDataNeo4jThingAdapterCachingTests {
     fun `fetching a thing by ID should be cached`() {
         val thingId = ThingId("R1")
         val resource = createResource().copy(id = thingId)
-        every { mock.findByThingId(thingId) } returns Optional.of(resource) andThen {
+        every { mock.findByThingId(thingId) } returns Optional.of(resource) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
 
@@ -119,7 +119,7 @@ class SpringDataNeo4jThingAdapterCachingTests {
         val thingId = ThingId("R1")
         val `class` = createClass().copy(id = thingId)
         val modified = `class`.copy(label = "new label")
-        every { mock.findByThingId(thingId) } returns Optional.of(`class`) andThen Optional.of(modified) andThen {
+        every { mock.findByThingId(thingId) } returns Optional.of(`class`) andThen Optional.of(modified) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { classMock.save(modified) } returns Unit
@@ -145,7 +145,7 @@ class SpringDataNeo4jThingAdapterCachingTests {
         val thingId = ThingId("R1")
         val literal = createLiteral().copy(id = thingId)
         val modified = literal.copy(label = "new label")
-        every { mock.findByThingId(thingId) } returns Optional.of(literal) andThen Optional.of(modified) andThen {
+        every { mock.findByThingId(thingId) } returns Optional.of(literal) andThen Optional.of(modified) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { literalMock.save(modified) } returns Unit
@@ -171,7 +171,7 @@ class SpringDataNeo4jThingAdapterCachingTests {
         val thingId = ThingId("R1")
         val predicate = createPredicate().copy(id = thingId)
         val modified = predicate.copy(label = "new label")
-        every { mock.findByThingId(thingId) } returns Optional.of(predicate) andThen Optional.of(modified) andThen {
+        every { mock.findByThingId(thingId) } returns Optional.of(predicate) andThen Optional.of(modified) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { predicateMock.save(modified) } returns Unit
@@ -197,7 +197,7 @@ class SpringDataNeo4jThingAdapterCachingTests {
         val thingId = ThingId("R1")
         val resource = createResource().copy(id = thingId)
         val modified = resource.copy(label = "new label")
-        every { mock.findByThingId(thingId) } returns Optional.of(resource) andThen Optional.of(modified) andThen {
+        every { mock.findByThingId(thingId) } returns Optional.of(resource) andThen Optional.of(modified) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { resourceMock.save(modified) } returns Unit
@@ -223,7 +223,7 @@ class SpringDataNeo4jThingAdapterCachingTests {
     fun `deleting a predicate should evict it from the thing cache`() {
         val thingId = ThingId("R1")
         val predicate = createPredicate().copy(id = thingId)
-        every { mock.findByThingId(thingId) } returns Optional.of(predicate) andThen Optional.of(predicate) andThen {
+        every { mock.findByThingId(thingId) } returns Optional.of(predicate) andThen Optional.of(predicate) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { predicateMock.deleteById(predicate.id) } returns Unit
@@ -252,7 +252,7 @@ class SpringDataNeo4jThingAdapterCachingTests {
     fun `deleting a resource should evict it from the thing cache`() {
         val thingId = ThingId("R1")
         val resource = createResource().copy(id = thingId)
-        every { mock.findByThingId(thingId) } returns Optional.of(resource) andThen Optional.of(resource) andThen {
+        every { mock.findByThingId(thingId) } returns Optional.of(resource) andThen Optional.of(resource) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { resourceMock.deleteById(resource.id) } returns Unit

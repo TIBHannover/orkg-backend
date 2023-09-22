@@ -64,7 +64,7 @@ class SpringDataNeo4jResourceAdapterCachingTests {
     @Test
     fun `fetching a resource by ID should be cached`() {
         val resource = createResource().copy(id = ThingId("R1"))
-        every { mock.findById(ThingId("R1")) } returns Optional.of(resource) andThen {
+        every { mock.findById(ThingId("R1")) } returns Optional.of(resource) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
 
@@ -84,10 +84,10 @@ class SpringDataNeo4jResourceAdapterCachingTests {
     fun `saving a resource should evict it from the id-to-resource cache`() {
         val resource = createResource().copy(id = ThingId("R1"))
         val modified = resource.copy(label = "new label")
-        every { mock.findById(ThingId("R1")) } returns Optional.of(resource) andThen Optional.of(modified) andThen {
+        every { mock.findById(ThingId("R1")) } returns Optional.of(resource) andThen Optional.of(modified) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
-        every { mock.exists(ThingId("R1")) } returns true andThen {
+        every { mock.exists(ThingId("R1")) } returns true andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { mock.save(modified) } returns Unit
@@ -121,7 +121,7 @@ class SpringDataNeo4jResourceAdapterCachingTests {
 
     @Test
     fun `exists check of a resource by ID should be cached`() {
-        every { mock.exists(ThingId("R1")) } returns true andThen {
+        every { mock.exists(ThingId("R1")) } returns true andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
 
@@ -140,7 +140,7 @@ class SpringDataNeo4jResourceAdapterCachingTests {
     @Test
     fun `deleting a resource should evict it from the id-to-resource cache`() {
         val resource = createResource().copy(id = ThingId("R1"))
-        every { mock.findById(ThingId("R1")) } returns Optional.of(resource) andThen Optional.of(resource) andThen {
+        every { mock.findById(ThingId("R1")) } returns Optional.of(resource) andThen Optional.of(resource) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { adapter.deleteById(ThingId("R1")) } returns Unit
@@ -167,7 +167,7 @@ class SpringDataNeo4jResourceAdapterCachingTests {
 
     @Test
     fun `deleting a resource should evict it from the id-to-resource-exists cache`() {
-        every { mock.exists(ThingId("R1")) } returns true andThen false andThen {
+        every { mock.exists(ThingId("R1")) } returns true andThen false andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { adapter.deleteById(ThingId("R1")) } returns Unit

@@ -104,9 +104,9 @@ internal class SpringDataNeo4jStatementAdapterCachingTests {
 
         every { mockedNeo4jLiteralRepository.findById(literalId) }.returns(Optional.of(neo4jLiteral))
             .andThen(Optional.of(neo4jLiteral))
-            .andThen { throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!") }
+            .andThenAnswer { throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!") }
         every { neo4jClient.query(any<String>()) }.returns(mockUnboundRunnableSpec)
-            .andThen { throw IllegalStateException("If you see this message, deleteByStatement() was called more than once!") }
+            .andThenAnswer { throw IllegalStateException("If you see this message, deleteByStatement() was called more than once!") }
         every { mockUnboundRunnableSpec.bindAll(any()) } returns mockUnboundRunnableSpec
         every { mockUnboundRunnableSpec.fetchAs(ThingId::class.java) } returns mockMappingSpec
         every { mockMappingSpec.mappedBy(any<BiFunction<TypeSystem, Record, ThingId>>()) } returns mockRecordFetchSpec

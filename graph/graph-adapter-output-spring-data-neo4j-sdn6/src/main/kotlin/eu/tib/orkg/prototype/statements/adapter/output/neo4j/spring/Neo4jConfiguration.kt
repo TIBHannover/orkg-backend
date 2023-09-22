@@ -45,8 +45,8 @@ class Neo4jConfiguration {
 
     @Bean
     fun neo4jClient(
-        driver: Driver?,
-        databaseSelectionProvider: DatabaseSelectionProvider?
+        driver: Driver,
+        databaseSelectionProvider: DatabaseSelectionProvider
     ): Neo4jClient {
         return Neo4jClient.create(driver, databaseSelectionProvider)
     }

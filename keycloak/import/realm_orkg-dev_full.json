@@ -1824,7 +1824,6 @@
     "totpAppFreeOTPName",
     "totpAppGoogleName"
   ],
-  "passwordPolicy": "hashAlgorithm(bcrypt) and hashIterations(10)",
   "permanentLockout": false,
   "quickLoginCheckMilliSeconds": 1000,
   "realm": "orkg-dev",

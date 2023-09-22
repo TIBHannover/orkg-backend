@@ -2,8 +2,9 @@ package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.domain.model.Resource
+import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import org.assertj.core.api.Assertions.assertThat
@@ -46,7 +47,10 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
         val label = "a label with whitespace"
         service.create(label)
 
-        val result = service.findAllByLabelContaining(PageRequest.of(0, 10), label)
+        val result = service.findAllByLabel(
+            label = SearchString.of(label, exactMatch = true),
+            pageable = PageRequest.of(0, 10)
+        )
 
         assertThat(result).hasSize(1)
         assertThat(result.first().label).isEqualTo(label)
@@ -58,7 +62,10 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
         val label = "a label with whitespace"
         service.create(label)
 
-        val result = service.findAllByLabelContaining(PageRequest.of(0, 10), "  $label\t ")
+        val result = service.findAllByLabel(
+            label = SearchString.of("  $label\t ", exactMatch = true),
+            pageable = PageRequest.of(0, 10)
+        )
 
         assertThat(result).hasSize(1)
         assertThat(result.first().label).isEqualTo(label)
@@ -70,7 +77,10 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
         val label = "a label with whitespace"
         service.create(label)
 
-        val result = service.findAllByLabelContaining(PageRequest.of(0, 10), "bel wi")
+        val result = service.findAllByLabel(
+            label = SearchString.of("label with", exactMatch = false),
+            pageable = PageRequest.of(0, 10)
+        )
 
         assertThat(result).hasSize(1)
         assertThat(result.first().label).isEqualTo(label)
@@ -82,7 +92,10 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
         val label = "a label with whitespace"
         service.create(label)
 
-        val result = service.findAllByLabelContaining(PageRequest.of(0, 10), "label \t  with")
+        val result = service.findAllByLabel(
+            label = SearchString.of("label \t  with", exactMatch = false),
+            pageable = PageRequest.of(0, 10)
+        )
 
         assertThat(result).hasSize(1)
         assertThat(result.first().label).isEqualTo(label)
@@ -94,7 +107,10 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
         val label = "one two  three   four"
         service.create(label)
 
-        val result = service.findAllByLabelContaining(PageRequest.of(0, 10), "one two three four")
+        val result = service.findAllByLabel(
+            label = SearchString.of("one two three four", exactMatch = false),
+            pageable = PageRequest.of(0, 10)
+        )
 
         assertThat(result).hasSize(1)
         assertThat(result.first().label).isEqualTo(label)
@@ -107,7 +123,7 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
         service.create("second")
         val pagination = PageRequest.of(0, 10)
         val resources = service.findAll(pagination)
-        val labels = resources.map(ResourceRepresentation::label)
+        val labels = resources.map(Resource::label)
 
         assertThat(resources).hasSize(2)
         assertThat(labels).containsExactlyInAnyOrder("first", "second")
@@ -120,7 +136,10 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
         service.create("first")
         service.create("second")
 
-        val result = service.findAllByLabel(pagination, "not in the list")
+        val result = service.findAllByLabel(
+            label = SearchString.of("not in the list", exactMatch = true),
+            pageable = pagination
+        )
 
         assertThat(result).isEmpty()
     }
@@ -134,7 +153,10 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
         service.create("yet another")
         val pagination = PageRequest.of(0, 10)
 
-        val result = service.findAllByLabel(pagination, "same")
+        val result = service.findAllByLabel(
+            label = SearchString.of("same", exactMatch = true),
+            pageable = pagination
+        )
 
         assertThat(result).hasSize(2)
     }
@@ -144,7 +166,7 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
     fun shouldNotReturnResourceContainingSubstring() {
         val pagination = PageRequest.of(0, 10)
         service.create("this is part of the test")
-        assertThat(service.findAllByLabel(pagination, "part")).isEmpty()
+        assertThat(service.findAllByLabel(SearchString.of("part", exactMatch = true), pagination)).isEmpty()
     }
 
     @Test
@@ -155,7 +177,10 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
         service.create("part at the beginning")
         service.create("something else")
         val pagination = PageRequest.of(0, 10)
-        val result = service.findAllByLabelContaining(pagination, "part")
+        val result = service.findAllByLabel(
+            label = SearchString.of("part", exactMatch = false),
+            pageable = pagination
+        )
 
         assertThat(result).hasSize(3)
     }
@@ -175,17 +200,18 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
     @DisplayName("should allow regex special chars in resource label")
     fun shouldAllowRegexSpecialCharsInLabel() {
         val res = service.create("C\$razy LAb(el. he*r?").id
-        val found = service.findAllByLabelContaining(
-            PageRequest.of(1, 10), "LAb(el."
+        val found = service.findAllByLabel(
+            label = SearchString.of("LAb(el.", exactMatch = false),
+            pageable = PageRequest.of(1, 10)
         )
         assertThat(found).isNotNull
-        assertThat(found.map(ResourceRepresentation::id).contains(res))
+        assertThat(found.map(Resource::id).contains(res))
     }
 
     @Test
     fun `when several resources of a class exist with the same label, partial search should return all of them`() {
         val researchProblemClass = classService.create("ResearchProblem").id
-        val resources = mutableListOf<ResourceRepresentation>()
+        val resources = mutableListOf<Resource>()
         repeat(5) {
             resources += service.create(
                 CreateResourceUseCase.CreateCommand(
@@ -197,10 +223,13 @@ class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
         assertThat(service.findAll(PageRequest.of(0, 10_000)).totalElements).isEqualTo(5)
 
         val page = PageRequest.of(0, 10)
-        val found = service.findAllByClassAndLabelContaining(page, researchProblemClass, "Testing the Darwin")
-            .map(ResourceRepresentation::id)
+        val found = service.findAllByClassAndLabel(
+            id = researchProblemClass,
+            label = SearchString.of("Testing the Darwin", exactMatch = false),
+            pageable = page
+        ).map(Resource::id)
 
         assertThat(found.totalElements).isEqualTo(5)
-        assertThat(found.content).containsExactlyInAnyOrderElementsOf(resources.map(ResourceRepresentation::id))
+        assertThat(found.content).containsExactlyInAnyOrderElementsOf(resources.map(Resource::id))
     }
 }

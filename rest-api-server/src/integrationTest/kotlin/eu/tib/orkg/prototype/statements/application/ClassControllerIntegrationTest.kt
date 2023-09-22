@@ -24,7 +24,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation
 import org.springframework.security.test.context.support.WithUserDetails
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -94,7 +93,6 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
         mockMvc
             .perform(getRequestTo("/api/classes/?uri=http://example.org/exists"))
             .andExpect(status().isOk)
-            .andDo(MockMvcResultHandlers.print())
             .andExpect(jsonPath("$.id").value(id))
             .andExpect(jsonPath("$.label").value(label))
             .andExpect(jsonPath("$.uri").value(uri.toString()))
@@ -382,23 +380,26 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
             fieldWithPath("unlisted").description("Unlisted Value").optional().ignored()
         )
 
-    private fun classListResponseFields() =
-        listOf(
-            fieldWithPath("id").description("The class ID").optional(),
-            fieldWithPath("label").description("The class label"),
-            fieldWithPath("uri").description("An optional URI to describe the class (RDF)").optional(),
-            fieldWithPath("created_at").description("The class creation datetime"),
-            fieldWithPath("created_by").description("The ID of the user that created the class. All zeros if unknown."),
-            fieldWithPath("description").description("The description of the class, if exists.").optional(),
-            fieldWithPath("_class").optional().ignored(),
-            fieldWithPath("featured").description("Featured Value").optional().ignored(),
-            fieldWithPath("unlisted").description("Unlisted Value").optional().ignored()
-        )
+    companion object RestDoc {
+        fun classListResponseFields() =
+            listOf(
+                fieldWithPath("id").description("The class ID").optional(),
+                fieldWithPath("label").description("The class label"),
+                fieldWithPath("uri").description("An optional URI to describe the class (RDF)").optional(),
+                fieldWithPath("created_at").description("The class creation datetime"),
+                fieldWithPath("created_by").description("The ID of the user that created the class. All zeros if unknown."),
+                fieldWithPath("description").description("The description of the class, if exists.").optional(),
+                fieldWithPath("_class").optional().ignored(),
+                fieldWithPath("featured").description("Featured Value").optional().ignored(),
+                fieldWithPath("unlisted").description("Unlisted Value").optional().ignored()
+            )
+    }
 
     private fun resourceListDetailedResponseFields() =
         responseFields(pageableDetailedFieldParameters())
-            .andWithPrefix("content[].", resourceListInnerResponseFields()
-                    ).andWithPrefix("")
+            .andWithPrefix(
+                "content[].", resourceListInnerResponseFields()
+            ).andWithPrefix("")
 
     fun resourceListInnerResponseFields() = listOf(
         fieldWithPath("id").description("The resource ID"),

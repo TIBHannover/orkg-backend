@@ -72,6 +72,9 @@ build:
     - ./gradlew --build-cache asciidoctor
     - mkdir -p public
     - cp -r rest-api-server/build/docs/asciidoc/* public/
+  artifacts:
+    paths:
+      - public
 
 # Attempt to build the documentation although we do not deploy it to GitLab Pages.
 # This ensures that everything works as expected and prevents surprises when merging.
@@ -83,9 +86,6 @@ dummy-doc-build:
 # Deploy documentation to GitLab Pages.
 pages:
   extends: .build-documentation
-  artifacts:
-    paths:
-      - public
   only:
     - master
 
@@ -128,7 +128,7 @@ include:
 container_scanning:
   stage: verify
   variables:
-    DOCKER_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    CS_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
   needs:
     - job: docker-build
       optional: true

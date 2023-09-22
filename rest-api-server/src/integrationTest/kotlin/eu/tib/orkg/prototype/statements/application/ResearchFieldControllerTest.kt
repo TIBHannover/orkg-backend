@@ -12,15 +12,14 @@ import eu.tib.orkg.prototype.statements.auth.MockUserDetailsService
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation
-import org.springframework.restdocs.payload.PayloadDocumentation
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -67,7 +66,6 @@ class ResearchFieldControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @Disabled("Because of the ID problem of Predicates")
     @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
     fun getProblemsPerField() {
         // Create Research Field
@@ -121,12 +119,8 @@ class ResearchFieldControllerTest : RestDocumentationBaseTest() {
     }
 
     private fun researchProblemsPerResearchFieldFields(): ResponseFieldsSnippet =
-        PayloadDocumentation.responseFields(
-            listOf(
-                fieldWithPath("[]").description("A list of problems."),
-                fieldWithPath("[].problem").description("The problem resource"),
-                fieldWithPath("[].papers").description("The number of papers addressing this problem")
-            )
-        )
-        .andWithPrefix("[].problem.", resourceResponseFields())
+        responseFields(pageableDetailedFieldParameters())
+            .andWithPrefix("content[].problem.", resourceResponseFields())
+            .andWithPrefix("content[]", fieldWithPath("papers").description("The number of papers addressing this problem"))
+            .andWithPrefix("")
 }

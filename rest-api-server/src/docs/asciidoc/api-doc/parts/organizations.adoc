@@ -9,7 +9,7 @@ These can handle further smaller groups named <<observatories>>.
 
 A `GET` request lists all organizations:
 
-operation::organization-controller-test-index[snippets='curl-request,http-response']
+operation::organization-controller-integration-test-index[snippets='curl-request,http-response']
 
 ////
 [[organization-create]]
@@ -33,4 +33,4 @@ operation::organization-controller-test-add[snippets='response-fields']
 
 A `GET` request provides information about a resource.
 
-operation::organization-controller-test-fetch[snippets='curl-request,http-response']
+operation::organization-controller-integration-test-fetch[snippets='curl-request,http-response']

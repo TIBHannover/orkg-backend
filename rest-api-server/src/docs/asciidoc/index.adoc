@@ -7,4 +7,3 @@ For general information on ORKG, visit https://projects.tib.eu/orkg/.
 == Documentation Index
 
 * <<api-doc/index.adoc#,ORKG REST API>>
-* Documentation related to <<development.adoc#,development>>

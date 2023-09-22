@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.statements.infrastructure.neo4j
 
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
+import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
 import java.util.*
@@ -44,15 +44,18 @@ class Neo4jStatementServiceTest : Neo4jTestContainersBaseTest() {
         val predicateId = predicateService.create("predicate").id
         val objectId = resourceService.create("object").id
 
-        val statement = service.create(
+        val id = service.create(
             subjectId,
             predicateId,
             objectId
         )
+        val statement = service.findById(id)
 
-        assertThat((statement.subject as ResourceRepresentation).id).isEqualTo(subjectId)
-        assertThat(statement.predicate.id).isEqualTo(predicateId)
-        assertThat((statement.`object` as ResourceRepresentation).id).isEqualTo(objectId)
+        assertThat(statement).isPresent
+        assertThat(statement.get()).isNotNull
+        assertThat((statement.get().subject as Resource).id).isEqualTo(subjectId)
+        assertThat(statement.get().predicate.id).isEqualTo(predicateId)
+        assertThat((statement.get().`object` as Resource).id).isEqualTo(objectId)
     }
 
     @Test
@@ -88,13 +91,13 @@ class Neo4jStatementServiceTest : Neo4jTestContainersBaseTest() {
         service.create(r1, p1, r3)
         service.create(r3, p2, r1)
 
-        val result = service.findById(statement.id)
+        val result = service.findById(statement)
 
         assertThat(result).isPresent
-        assertThat(result.get().id).isEqualTo(statement.id)
-        assertThat((result.get().subject as ResourceRepresentation).id).isEqualTo(r1)
+        assertThat(result.get().id).isEqualTo(statement)
+        assertThat((result.get().subject as Resource).id).isEqualTo(r1)
         assertThat(result.get().predicate.id).isEqualTo(p1)
-        assertThat((result.get().`object` as ResourceRepresentation).id).isEqualTo(r2)
+        assertThat((result.get().`object` as Resource).id).isEqualTo(r2)
     }
 
     @Test
@@ -149,7 +152,7 @@ class Neo4jStatementServiceTest : Neo4jTestContainersBaseTest() {
         val s1 = service.create(r1, p1, r2)
         val s2 = service.create(r1, p1, r2)
 
-        assertThat(s2.id).isEqualTo(s1.id)
+        assertThat(s2).isEqualTo(s1)
         assertThat(service.findAll(pagination)).hasSize(1)
     }
 }

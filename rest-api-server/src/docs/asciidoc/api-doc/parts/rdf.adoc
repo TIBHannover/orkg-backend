@@ -1,3 +1,5 @@
+= RDF Integration
+
 [[rdf]]
 == RDF Dump
 
@@ -6,13 +8,12 @@ The ORKG provides a dump of the entire graph in RDF, the dump is in N-Triples fo
 [[rdf-dump]]
 === Getting dump
 
-A `GET` request creates a dump of the graph and returns it as file.
-The response will be `200 OK` when successful.
-As a result of the request a file will be provided with the name `dump.nt` that can be used or imported into other RDF stores.
+WARNING: This endpoint is deprecated. Clients are advised to update, because this endpoint will be removed in the future.
 
-NOTE: The created paper root resource is returned in the body for convenience. This might be subject to change.
+Dumps cannot be created on-the-fly anymore, but can be downloaded from `/files/rdf-dumps`.
+The response will be `301 Moved Permanently`, pointing to the latest version of the dump.
 
-operation::rdf-controller-test-index[snippets='curl-request,http-response']
+operation::rdf-hints-legacy-redirect-to-dump[snippets='curl-request,http-response']
 
 [[resolvable-vocab]]
 == Resolvable Vocabulary
@@ -69,3 +70,13 @@ This collection of HTTP `Accept` headers are allowed by the system and the corre
 |application/turtle    | Turtle
 |text/turtle  | Turtle
 |=======================
+
+== RDF Hints
+
+Resource information can be obtained from the `/api/rdf/hints` endpoint.
+It supports the following request parameters:
+
+include::{snippets}/rdf-hints-test-filter-resources/request-parameters.adoc[]
+
+NOTE: The `type` parameter differs from the conventions used in this document.
+`property` refers to <<predicates,predicates>>, `item` to <<resources,resources>>.

@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm")
     jacoco
@@ -15,16 +13,16 @@ tasks {
         useJUnitPlatform()
     }
 
-    withType<JacocoReport>().configureEach {
-        reports {
-            xml.required.set(true)
-        }
-    }
-
     // Create reproducible archives
     withType<AbstractArchiveTask>().configureEach {
         isPreserveFileTimestamps = false
         isReproducibleFileOrder = true
+    }
+}
+
+val jacocoTestReport by tasks.getting(JacocoReport::class) {
+    reports {
+        xml.required.set(true)
     }
 }
 
@@ -33,5 +31,11 @@ kotlin {
         (this as JavaToolchainSpec).apply {
             languageVersion.set(JavaLanguageVersion.of(11))
         }
+    }
+}
+
+java {
+    consistentResolution {
+        useCompileClasspathVersions()
     }
 }

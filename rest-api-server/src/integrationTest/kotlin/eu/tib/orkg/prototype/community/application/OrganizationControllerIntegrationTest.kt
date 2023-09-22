@@ -4,7 +4,7 @@ import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.community.api.OrganizationUseCases
 import eu.tib.orkg.prototype.community.domain.model.OrganizationType
-import eu.tib.orkg.prototype.contributions.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.createClasses
 import eu.tib.orkg.prototype.createObservatory
 import eu.tib.orkg.prototype.createOrganization
@@ -56,7 +56,7 @@ class OrganizationControllerIntegrationTest : RestDocumentationBaseTest() {
         classService.removeAll()
 
         assertThat(service.listOrganizations()).hasSize(0)
-        assertThat(observatoryService.listObservatories(PageRequest.of(0, 10))).hasSize(0)
+        assertThat(observatoryService.findAll(PageRequest.of(0, 10))).hasSize(0)
         assertThat(resourceService.findAll(PageRequest.of(0, 10))).hasSize(0)
         assertThat(classService.findAll(PageRequest.of(0, 10))).hasSize(0)
 
@@ -110,7 +110,7 @@ class OrganizationControllerIntegrationTest : RestDocumentationBaseTest() {
             .andDo(
                 document(
                     snippet,
-                    ObservatoryControllerTest.listOfObservatoriesResponseFields()
+                    ObservatoryControllerIntegrationTest.listOfObservatoriesResponseFields()
                 )
             )
     }

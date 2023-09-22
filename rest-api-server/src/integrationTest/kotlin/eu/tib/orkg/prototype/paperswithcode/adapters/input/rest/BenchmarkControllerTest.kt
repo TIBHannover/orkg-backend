@@ -624,6 +624,94 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
             )
     }
 
+    @Test
+    fun fetchDatasetSummaryWithModelsWithoutCode() {
+        // This is a regression test for the bug reported here https://gitlab.com/TIBHannover/orkg/orkg-papers/-/issues/14#note_1426964102
+
+        val dataset = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "some dataset")
+
+        val problem1 = resourceService.createResource(setOf("Problem"), label = "Fancy problem")
+        val problem2 = resourceService.createResource(setOf("Problem"), label = "not so fancy problem")
+
+        val paper = resourceService.createResource(setOf("Paper"), label = "paper")
+        val contribution1 = resourceService.createResource(setOf("Contribution"), label = "Contribution 1")
+        val contribution2 = resourceService.createResource(setOf("Contribution"), label = "Contribution 2")
+
+        val benchmark1 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark 1")
+        val benchmark2 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark 2")
+
+        val model1 = resourceService.createResource(setOf(labelsAndClasses.modelClass), label = "Model 1")
+        val model2 = resourceService.createResource(setOf(labelsAndClasses.modelClass), label = "Model 2")
+
+        val scoreOfM1B1E1 = literalService.create("2.55")
+        val scoreOfM1B1E2 = literalService.create("4548")
+        val scoreOfM1B2E1 = literalService.create("3M")
+
+        val quantityB1E1 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 1")
+        val quantityB1E2 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 2")
+        val quantityB2E1 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 1")
+
+        val metric1 = resourceService.createResource(setOf(labelsAndClasses.metricClass), label = "Metric 1")
+        val metric2 = resourceService.createResource(setOf(labelsAndClasses.metricClass), label = "Metric 2")
+
+        val quantityValueB1E1 = resourceService.createResource(
+            classes = setOf(labelsAndClasses.quantityValueClass),
+            label = "Quantity Value 1"
+        )
+        val quantityValueB1E2 = resourceService.createResource(
+            classes = setOf(labelsAndClasses.quantityValueClass),
+            label = "Quantity Value 2"
+        )
+        val quantityValueB2E1 = resourceService.createResource(
+            classes = setOf(labelsAndClasses.quantityValueClass),
+            label = "Quantity Value 3"
+        )
+
+        statementService.create(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E1)
+        statementService.create(benchmark1, ThingId(labelsAndClasses.quantityPredicate), quantityB1E2)
+        statementService.create(benchmark2, ThingId(labelsAndClasses.quantityPredicate), quantityB2E1)
+
+        statementService.create(quantityB1E1, ThingId(labelsAndClasses.metricPredicate), metric1)
+        statementService.create(quantityB1E2, ThingId(labelsAndClasses.metricPredicate), metric2)
+        statementService.create(quantityB2E1, ThingId(labelsAndClasses.metricPredicate), metric1)
+
+        statementService.create(quantityB1E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E1)
+        statementService.create(quantityB1E2, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E2)
+        statementService.create(quantityB2E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB2E1)
+
+        statementService.create(quantityValueB1E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E1.id)
+        statementService.create(quantityValueB1E2, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E2.id)
+        statementService.create(quantityValueB2E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B2E1.id)
+
+        statementService.create(paper, ThingId("P31"), contribution1)
+        statementService.create(paper, ThingId("P31"), contribution2)
+
+        statementService.create(contribution1, ThingId(labelsAndClasses.benchmarkPredicate), benchmark1)
+        statementService.create(contribution2, ThingId(labelsAndClasses.benchmarkPredicate), benchmark2)
+
+        statementService.create(contribution1, ThingId("P32"), problem1)
+        statementService.create(contribution2, ThingId("P32"), problem2)
+
+        statementService.create(contribution1, ThingId(labelsAndClasses.modelPredicate), model1)
+        statementService.create(contribution2, ThingId(labelsAndClasses.modelPredicate), model2)
+
+        statementService.create(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset)
+        statementService.create(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset)
+
+        mockMvc
+            .perform(getRequestTo("/api/datasets/$dataset/problem/$problem1/summary"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.content", hasSize<Int>(2)))
+            .andExpect(jsonPath("$.number").value(0)) // page number
+            .andExpect(jsonPath("$.totalElements").value(2))
+            .andDo(
+                document(
+                    snippet,
+                    datasetSummaryPageResponseFields()
+                )
+            )
+    }
+
     private fun researchFieldResponseFields() =
         listOf(
             fieldWithPath("id").description("Research field ID").type(String::class).optional(), // FIXME: PwC
@@ -679,6 +767,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
     private fun datasetSummaryResponseFields() =
         listOf(
             fieldWithPath("model_name").description("The model name used on the dataset").optional(),
+            fieldWithPath("model_id").description("The model id used on the dataset").optional(),
             fieldWithPath("metric").description("The metric used in the evaluation"),
             fieldWithPath("score").description("the score of the evaluation with the corresponding metric"),
             fieldWithPath("paper_id").description("The paper id is where the evaluation is published"),

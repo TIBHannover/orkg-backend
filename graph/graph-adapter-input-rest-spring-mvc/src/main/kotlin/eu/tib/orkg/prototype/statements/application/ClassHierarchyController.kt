@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
+import eu.tib.orkg.prototype.shared.annotations.PreAuthorizeCurator
 import eu.tib.orkg.prototype.statements.ChildClassRepresentationAdapter
 import eu.tib.orkg.prototype.statements.ClassHierarchyEntryRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.ChildClassRepresentation
@@ -16,7 +17,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.ok
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -48,7 +48,7 @@ class ClassHierarchyController(
         .orElseGet { noContent().build() }
 
     @DeleteMapping("/{id}/parent")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun deleteParentRelation(
         @PathVariable id: ThingId,
         uriComponentsBuilder: UriComponentsBuilder
@@ -58,7 +58,7 @@ class ClassHierarchyController(
     }
 
     @PostMapping("/{id}/parent", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun postParentRelation(
         @PathVariable id: ThingId,
         @RequestBody request: CreateParentRequest,
@@ -86,7 +86,7 @@ class ClassHierarchyController(
     ): Page<ClassRepresentation> = service.findAllRoots(pageable).mapToClassRepresentation()
 
     @PostMapping("/{id}/children", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun postChildrenRelation(
         @PathVariable id: ThingId,
         @RequestBody request: CreateChildrenRequest,
@@ -101,7 +101,7 @@ class ClassHierarchyController(
     }
 
     @PatchMapping("/{id}/children", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun patchChildrenRelation(
         @PathVariable id: ThingId,
         @RequestBody request: CreateChildrenRequest,

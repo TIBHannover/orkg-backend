@@ -2,17 +2,18 @@ package eu.tib.orkg.prototype.auth.adapter.input.rest.spring
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
-import eu.tib.orkg.prototype.community.api.ObservatoryAuthUseCases
 import eu.tib.orkg.prototype.auth.domain.CurrentPasswordInvalid
 import eu.tib.orkg.prototype.auth.domain.PasswordsDoNotMatch
 import eu.tib.orkg.prototype.auth.domain.Role
 import eu.tib.orkg.prototype.auth.domain.User
+import eu.tib.orkg.prototype.community.api.ObservatoryAuthUseCases
 import eu.tib.orkg.prototype.community.application.UserIsAlreadyMemberOfObservatory
 import eu.tib.orkg.prototype.community.application.UserIsAlreadyMemberOfOrganization
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.toContributor
-import eu.tib.orkg.prototype.community.domain.model.ContributorId
+import eu.tib.orkg.prototype.shared.annotations.PreAuthorizeCurator
 import eu.tib.orkg.prototype.statements.application.UserNotFound
 import java.security.Principal
 import java.util.*
@@ -24,7 +25,6 @@ import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -85,7 +85,7 @@ class UserController(
         return ok(UserDetails(user))
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     @PutMapping("/observatory", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun updateUserObservatory(@RequestBody @Valid userObservatory: UserObservatoryRequest): ResponseEntity<Any> {
         val user = userService.findByEmail(userObservatory.userEmail).orElseThrow { UserNotFound(userObservatory.userEmail) }
@@ -104,7 +104,7 @@ class UserController(
         )
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     @DeleteMapping("{id}/observatory")
     fun deleteUserObservatory(@PathVariable id: ContributorId) {
         observatoryAuthUseCases.deleteUserObservatory(id.value)

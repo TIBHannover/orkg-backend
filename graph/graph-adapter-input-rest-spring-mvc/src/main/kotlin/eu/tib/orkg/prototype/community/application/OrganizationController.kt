@@ -5,17 +5,18 @@ import eu.tib.orkg.prototype.community.ObservatoryRepresentation
 import eu.tib.orkg.prototype.community.ObservatoryRepresentationAdapter
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.community.api.OrganizationUseCases
+import eu.tib.orkg.prototype.community.domain.model.Contributor
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.community.domain.model.Organization
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationType
 import eu.tib.orkg.prototype.community.spi.OrganizationRepository
-import eu.tib.orkg.prototype.community.domain.model.Contributor
-import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.files.api.CreateImageUseCase
 import eu.tib.orkg.prototype.files.api.ImageUseCases
 import eu.tib.orkg.prototype.files.application.InvalidImageData
 import eu.tib.orkg.prototype.files.application.InvalidMimeType
 import eu.tib.orkg.prototype.files.domain.model.ImageData
+import eu.tib.orkg.prototype.shared.annotations.PreAuthorizeCurator
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateOrganizationUseCases
 import eu.tib.orkg.prototype.statements.application.BaseController
@@ -34,7 +35,6 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent
 import org.springframework.http.ResponseEntity.ok
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -60,7 +60,7 @@ class OrganizationController(
 ) : BaseController(), ObservatoryRepresentationAdapter {
 
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun addOrganization(
         @RequestBody @Valid organization: CreateOrganizationRequest,
         uriComponentsBuilder: UriComponentsBuilder
@@ -116,7 +116,7 @@ class OrganizationController(
     fun findOrganizationsConferences(): Iterable<Organization> = service.listConferences()
 
     @PatchMapping("{id}", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun updateOrganization(
         @PathVariable id: OrganizationId,
         @RequestPart("properties", required = false) @Valid request: UpdateOrganizationRequest?,
@@ -146,7 +146,7 @@ class OrganizationController(
     }
 
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun updateOrganizationName(
         @PathVariable id: OrganizationId,
         @RequestBody @Valid name: UpdateRequest,
@@ -158,7 +158,7 @@ class OrganizationController(
     }
 
     @RequestMapping("{id}/url", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun updateOrganizationUrl(
         @PathVariable id: OrganizationId,
         @RequestBody @Valid url: UpdateRequest
@@ -170,7 +170,7 @@ class OrganizationController(
     }
 
     @RequestMapping("{id}/type", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun updateOrganizationType(
         @PathVariable id: OrganizationId,
         @RequestBody @Valid type: UpdateRequest
@@ -182,7 +182,7 @@ class OrganizationController(
     }
 
     @RequestMapping("{id}/logo", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun updateOrganizationLogo(
         @PathVariable id: OrganizationId,
         @RequestBody @Valid submittedLogo: UpdateRequest,

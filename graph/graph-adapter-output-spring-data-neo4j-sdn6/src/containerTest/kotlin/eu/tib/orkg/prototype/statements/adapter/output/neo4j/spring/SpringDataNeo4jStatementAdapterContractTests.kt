@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
-import eu.tib.orkg.prototype.IndexInitializer
+import ac.simons.neo4j.migrations.springframework.boot.autoconfigure.MigrationsAutoConfiguration
 import eu.tib.orkg.prototype.Neo4jContainerInitializer
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
@@ -10,6 +10,7 @@ import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.statementRepositoryContract
 import io.kotest.core.spec.style.DescribeSpec
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.ComponentScan
@@ -30,7 +31,8 @@ import org.springframework.test.context.ContextConfiguration
         Neo4jContainerInitializer::class
     ]
 )
-@Import(value = [Neo4jConfiguration::class, IndexInitializer::class])
+@Import(value = [Neo4jConfiguration::class])
+@ImportAutoConfiguration(MigrationsAutoConfiguration::class)
 @ComponentScan(basePackages = ["eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal"])
 internal class SpringDataNeo4jStatementAdapterContractTests(
     @Autowired private val springDataNeo4jStatementAdapter: StatementRepository,

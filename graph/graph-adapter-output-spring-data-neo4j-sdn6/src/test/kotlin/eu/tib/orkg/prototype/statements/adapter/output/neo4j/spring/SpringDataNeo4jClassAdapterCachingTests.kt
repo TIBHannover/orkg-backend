@@ -63,7 +63,7 @@ class SpringDataNeo4jClassAdapterCachingTests {
     @Test
     fun `fetching a class by ID should be cached`() {
         val `class` = createClass().copy(id = ThingId("C1"))
-        every { mock.findById(ThingId("C1")) } returns Optional.of(`class`) andThen {
+        every { mock.findById(ThingId("C1")) } returns Optional.of(`class`) andThenAnswer  {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
 
@@ -83,10 +83,10 @@ class SpringDataNeo4jClassAdapterCachingTests {
     fun `saving a class should evict it from the id-to-class cache`() {
         val `class` = createClass().copy(id = ThingId("C1"))
         val modified = `class`.copy(label = "new label")
-        every { mock.findById(ThingId("C1")) } returns Optional.of(`class`) andThen Optional.of(modified) andThen {
+        every { mock.findById(ThingId("C1")) } returns Optional.of(`class`) andThen Optional.of(modified) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
-        every { mock.exists(ThingId("C1")) } returns true andThen {
+        every { mock.exists(ThingId("C1")) } returns true andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { mock.save(modified) } returns Unit
@@ -120,7 +120,7 @@ class SpringDataNeo4jClassAdapterCachingTests {
 
     @Test
     fun `exists check of a class by ID should be cached`() {
-        every { mock.exists(ThingId("C1")) } returns true andThen {
+        every { mock.exists(ThingId("C1")) } returns true andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
 

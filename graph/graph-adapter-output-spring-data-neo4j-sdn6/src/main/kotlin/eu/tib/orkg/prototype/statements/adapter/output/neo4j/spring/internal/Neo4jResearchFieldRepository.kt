@@ -51,7 +51,7 @@ private const val MATCH_SMART_REVIEW_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATC
 private const val MATCH_LITERATURE_LIST_RELATED_TO_RESEARCH_FIELD = """MATCH (node:LiteratureListPublished:Resource)-[:RELATED]->(:LiteratureList:Resource)-[:RELATED {predicate_id: 'P30'}]->(field:ResearchField:Resource)"""
 private const val MATCH_LITERATURE_LIST_RELATED_TO_RESEARCH_FIELD_WITH_ID = """MATCH (node:LiteratureListPublished:Resource)-[:RELATED]->(:LiteratureList:Resource)-[:RELATED {predicate_id: 'P30'}]->(:ResearchField:Resource {id: $id})"""
 
-private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
+private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 
 interface Neo4jResearchFieldRepository :
     Neo4jRepository<Neo4jResource, Long> {

@@ -25,7 +25,8 @@ private const val verified = "${'$'}verified"
 private const val minLabelLength = "${'$'}minLabelLength"
 private const val classId = "${'$'}classId"
 
-private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
+private const val PAGE_PARAMS = ":#{orderBy(#pageable)}"
+private const val ORDER_BY_PAGE_PARAMS = "$PAGE_PARAMS SKIP ${'$'}skip LIMIT ${'$'}limit"
 private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_resource_on_label"
 
 /**
@@ -71,7 +72,7 @@ interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
     @Query("""MATCH (node:`Resource` {id: $id}) WHERE $HAS_CLASSES $WITH_NODE_PROPERTIES $RETURN_NODE""")
     fun findByIdAndClassesContaining(id: ThingId, classes: Set<ThingId>): Neo4jResource?
 
-    fun findById(id: ThingId?): Optional<Neo4jResource>
+    fun findById(id: ThingId): Optional<Neo4jResource>
 
     @Query("""
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)
@@ -102,11 +103,11 @@ RETURN COUNT(node)""")
     fun findAllByLabelContaining(label: String, minLabelLength: Int, pageable: Pageable): Page<Neo4jResource>
 
     // TODO: limit the selection of sortBy values to (label & id) only because they are explicit in the query
-    @Query(value = """MATCH (node:`Resource`) WHERE $`class` IN labels(node) WITH node, node.label AS label, node.id AS id, node.created_at AS created_at $RETURN_NODE $PAGE_PARAMS""",
+    @Query(value = """MATCH (node:`Resource`) WHERE $`class` IN labels(node) $WITH_NODE_PROPERTIES $RETURN_NODE $ORDER_BY_PAGE_PARAMS""",
         countQuery = """MATCH (node:`Resource`) WHERE $`class` IN labels(node) WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllByClass(`class`: ThingId, pageable: Pageable): Page<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WHERE $`class` IN labels(node) AND node.created_by = $createdBy WITH node, node.label AS label, node.id AS id, node.created_at AS created_at $RETURN_NODE $PAGE_PARAMS""",
+    @Query(value = """MATCH (node:`Resource`) WHERE $`class` IN labels(node) AND node.created_by = $createdBy $WITH_NODE_PROPERTIES $RETURN_NODE $ORDER_BY_PAGE_PARAMS""",
         countQuery = """MATCH (node:`Resource`) WHERE $`class` IN labels(node) AND node.created_by = $createdBy WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllByClassAndCreatedBy(`class`: ThingId, createdBy: ContributorId, pageable: Pageable): Page<Neo4jResource>
 
@@ -166,7 +167,7 @@ WHERE SIZE(node.label) >= $minLabelLength AND $`class` IN labels(node) AND node.
 RETURN COUNT(node)""")
     fun findAllByClassAndLabelContainingAndCreatedBy(`class`: ThingId, label: String, minLabelLength: Int, createdBy: ContributorId, pageable: Pageable): Page<Neo4jResource>
 
-    @Query(value = """MATCH (node:`Resource`) WITH labels(node) AS labels, node WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels) WITH node, node.label AS label, node.id AS id, node.created_at AS created_at $RETURN_NODE $PAGE_PARAMS""",
+    @Query(value = """MATCH (node:`Resource`) WITH labels(node) AS labels, node WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels) $WITH_NODE_PROPERTIES $RETURN_NODE $ORDER_BY_PAGE_PARAMS""",
         countQuery = """MATCH (node:`Resource`) WITH labels(node) AS labels, node WHERE NOT ANY(c in $excludeClasses WHERE c IN labels) AND ALL(c in $includeClasses WHERE c IN labels) WITH COUNT(node) as cnt RETURN cnt""")
     fun findAllIncludingAndExcludingClasses(includeClasses: Set<ThingId>, excludeClasses: Set<ThingId>, pageable: Pageable): Page<Neo4jResource>
 
@@ -212,7 +213,7 @@ RETURN COUNT(node)""")
 MATCH (n:Thing {observatory_id: $id})
 WHERE $`class` in LABELS(n)
 RETURN n
-ORDER BY n.created_at $PAGE_PARAMS""",
+ORDER BY n.created_at $ORDER_BY_PAGE_PARAMS""",
         countQuery = """
 MATCH (n:Thing {observatory_id: $id})
 WHERE $`class` in LABELS(n)
@@ -222,7 +223,7 @@ RETURN COUNT(n)""")
     @Query("""$MATCH_PAPER_BY_ID $WITH_NODE_PROPERTIES $RETURN_NODE""")
     fun findPaperById(id: ThingId): Optional<Neo4jResource>
 
-    @Query(value = """MATCH (n:`Resource`) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" RETURN DISTINCT n.created_by ORDER BY n.created_by ASC $PAGE_PARAMS""",
+    @Query(value = """MATCH (n:`Resource`) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" RETURN DISTINCT n.created_by ORDER BY n.created_by ASC $ORDER_BY_PAGE_PARAMS""",
         countQuery = """MATCH (n:`Resource`) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" RETURN COUNT(DISTINCT n.created_by) as cnt""")
     fun findAllContributorIds(pageable: Pageable): Page<String> // FIXME: This should be ContributorId
 
@@ -231,43 +232,43 @@ RETURN COUNT(n)""")
     @Transactional
     fun deleteById(id: ThingId): Iterable<Long>
 
-    @Query(value = """MATCH (n:Comparison:Resource {organization_id: $id}) RETURN n $PAGE_PARAMS""",
+    @Query(value = """MATCH (n:Comparison:Resource {organization_id: $id}) RETURN n $ORDER_BY_PAGE_PARAMS""",
         countQuery = """MATCH (n:Comparison:Resource {organization_id: $id}) RETURN COUNT(n)""")
     fun findAllComparisonsByOrganizationId(id: OrganizationId, pageable: Pageable): Page<Neo4jResource>
 
-    @Query("""$MATCH_PAPER WHERE $VERIFIED_IS $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $PAGE_PARAMS""",
+    @Query("""$MATCH_PAPER WHERE $VERIFIED_IS $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $ORDER_BY_PAGE_PARAMS""",
         countQuery = """$MATCH_PAPER WHERE $VERIFIED_IS $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")
     fun findAllPapersByVerified(verified: Boolean, pageable: Pageable): Page<Neo4jResource>
 
-    @Query("""MATCH (node:Resource) $WHERE_VISIBILITY $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $PAGE_PARAMS""",
+    @Query("""MATCH (node:Resource) $WHERE_VISIBILITY $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $ORDER_BY_PAGE_PARAMS""",
         countQuery = """MATCH (node:Resource) $WHERE_VISIBILITY $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")
     fun findAllByVisibility(visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
 
-    @Query("""$MATCH_LISTED_RESOURCE $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $PAGE_PARAMS""",
+    @Query("""$MATCH_LISTED_RESOURCE $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $ORDER_BY_PAGE_PARAMS""",
         countQuery = """$MATCH_LISTED_RESOURCE $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")
     fun findAllListed(pageable: Pageable): Page<Neo4jResource>
 
-    @Query("""$MATCH_RESOURCE $WHERE_VISIBILITY $AND_CLASS_ID_IN_LABELS $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $PAGE_PARAMS""",
+    @Query("""$MATCH_RESOURCE $WHERE_VISIBILITY $AND_CLASS_ID_IN_LABELS $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $ORDER_BY_PAGE_PARAMS""",
         countQuery = """$MATCH_RESOURCE $WHERE_VISIBILITY $AND_CLASS_ID_IN_LABELS $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")
     fun findAllByClassAndVisibility(classId: ThingId, visibility: Visibility, pageable: Pageable): Page<Neo4jResource>
 
-    @Query("""$MATCH_LISTED_RESOURCE $AND_CLASS_ID_IN_LABELS $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $PAGE_PARAMS""",
+    @Query("""$MATCH_LISTED_RESOURCE $AND_CLASS_ID_IN_LABELS $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $ORDER_BY_PAGE_PARAMS""",
         countQuery = """$MATCH_LISTED_RESOURCE $AND_CLASS_ID_IN_LABELS $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")
     fun findAllListedByClass(classId: ThingId, pageable: Pageable): Page<Neo4jResource>
 
-    @Query("""MATCH (node:Resource) $WHERE_VISIBILITY AND ANY(c in $classes WHERE c IN labels(node)) $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $PAGE_PARAMS""",
+    @Query("""MATCH (node:Resource) $WHERE_VISIBILITY AND ANY(c in $classes WHERE c IN labels(node)) $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $ORDER_BY_PAGE_PARAMS""",
         countQuery = """MATCH (node:Resource) $WHERE_VISIBILITY AND ANY(c in $classes WHERE c IN labels(node)) $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")
     fun findAllByClassInAndVisibility(classes: Set<ThingId>, visibility: Visibility?, pageable: Pageable): Page<Neo4jResource>
 
-    @Query("""$MATCH_LISTED_RESOURCE AND ANY(c in $classes WHERE c IN labels(node)) $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $PAGE_PARAMS""",
+    @Query("""$MATCH_LISTED_RESOURCE AND ANY(c in $classes WHERE c IN labels(node)) $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $ORDER_BY_PAGE_PARAMS""",
         countQuery = """$MATCH_LISTED_RESOURCE AND ANY(c in $classes WHERE c IN labels(node)) $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")
     fun findAllListedByClassIn(classes: Set<ThingId>, pageable: Pageable): Page<Neo4jResource>
 
-    @Query("""MATCH (node:Resource) $WHERE_VISIBILITY AND ANY(c in $classes WHERE c IN labels(node)) AND node.observatory_id=$id $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $PAGE_PARAMS""",
+    @Query("""MATCH (node:Resource) $WHERE_VISIBILITY AND ANY(c in $classes WHERE c IN labels(node)) AND node.observatory_id=$id $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $ORDER_BY_PAGE_PARAMS""",
         countQuery = """MATCH (node:Resource) $WHERE_VISIBILITY AND ANY(c in $classes WHERE c IN labels(node)) AND node.observatory_id=$id $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")
     fun findAllByClassInAndVisibilityAndObservatoryId(classes: Set<ThingId>, visibility: Visibility?, id: ObservatoryId, pageable: Pageable): Page<Neo4jResource>
 
-    @Query("""$MATCH_LISTED_RESOURCE AND ANY(c in $classes WHERE c IN labels(node)) AND node.observatory_id=$id $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $PAGE_PARAMS""",
+    @Query("""$MATCH_LISTED_RESOURCE AND ANY(c in $classes WHERE c IN labels(node)) AND node.observatory_id=$id $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE $ORDER_BY_PAGE_PARAMS""",
         countQuery = """$MATCH_LISTED_RESOURCE AND ANY(c in $classes WHERE c IN labels(node)) AND node.observatory_id=$id $WITH_NODE_PROPERTIES $ORDER_BY_CREATED_AT $RETURN_NODE_COUNT""")
     fun findAllListedByClassInAndObservatoryId(classes: Set<ThingId>, id: ObservatoryId, pageable: Pageable): Page<Neo4jResource>
 }

@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.statements.spi
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.api.BundleConfiguration
 import eu.tib.orkg.prototype.statements.api.RetrieveStatementUseCase.PredicateUsageCount
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
@@ -16,7 +16,6 @@ import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
-import org.springframework.data.neo4j.annotation.QueryResult
 import org.springframework.transaction.annotation.Transactional
 
 interface StatementRepository : EntityRepository<GeneralStatement, StatementId> {
@@ -88,7 +87,6 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun findAllCurrentComparisonsByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource>
 }
 
-@QueryResult
 data class ResourceContributor(
     @JsonProperty("created_by")
     val createdBy: String, // FIXME: This should be ContributorId

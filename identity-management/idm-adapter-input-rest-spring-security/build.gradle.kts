@@ -3,6 +3,7 @@
 
 plugins {
     id("org.orkg.kotlin-conventions")
+    id("org.orkg.neo4j-conventions")
     //id("org.orkg.spring-restdocs-producer")
     alias(libs.plugins.spring.boot) apply false
     kotlin("plugin.spring")

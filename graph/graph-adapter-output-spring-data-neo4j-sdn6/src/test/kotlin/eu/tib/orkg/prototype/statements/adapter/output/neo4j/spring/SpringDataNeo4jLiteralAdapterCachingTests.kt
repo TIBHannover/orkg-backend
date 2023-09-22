@@ -63,7 +63,7 @@ class SpringDataNeo4jLiteralAdapterCachingTests {
     @Test
     fun `fetching a literal by ID should be cached`() {
         val literal = createLiteral().copy(id = ThingId("L1"))
-        every { mock.findById(ThingId("L1")) } returns Optional.of(literal) andThen {
+        every { mock.findById(ThingId("L1")) } returns Optional.of(literal) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
 
@@ -83,10 +83,10 @@ class SpringDataNeo4jLiteralAdapterCachingTests {
     fun `saving a literal should evict it from the id-to-literal cache`() {
         val literal = createLiteral().copy(id = ThingId("L1"))
         val modified = literal.copy(label = "new label")
-        every { mock.findById(ThingId("L1")) } returns Optional.of(literal) andThen Optional.of(modified) andThen {
+        every { mock.findById(ThingId("L1")) } returns Optional.of(literal) andThen Optional.of(modified) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
-        every { mock.exists(ThingId("L1")) } returns true andThen {
+        every { mock.exists(ThingId("L1")) } returns true andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { mock.save(modified) } returns Unit
@@ -120,7 +120,7 @@ class SpringDataNeo4jLiteralAdapterCachingTests {
 
     @Test
     fun `exists check of a literal by ID should be cached`() {
-        every { mock.exists(ThingId("L1")) } returns true andThen {
+        every { mock.exists(ThingId("L1")) } returns true andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
 

@@ -51,7 +51,7 @@ class CacheWarmup(
     }
 
     private fun warmupHome() {
-        val featuredResearchField = ThingId(statsService.getFieldsStats().toList().maxByOrNull { it.second }?.first!!)
+        val featuredResearchField = statsService.getFieldsStats().toList().maxByOrNull { it.second }?.first!!
         statementService.findAllBySubjectAndPredicate(featuredResearchField, ThingId("P36"), PageRequest.of(0, 9999))
         listOf(VisibilityFilter.FEATURED, VisibilityFilter.ALL_LISTED).forEach { visibility ->
             researchFieldService.findAllEntitiesBasedOnClassesByResearchField(

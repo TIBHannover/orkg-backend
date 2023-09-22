@@ -40,7 +40,7 @@ private const val ORDER_BY_CREATED_AT = """ORDER BY created_at"""
 
 private const val MATCH_LISTED_SMART_REVIEW = """$MATCH_SMART_REVIEW WHERE (node.visibility = "DEFAULT" OR node.visibility = "FEATURED")"""
 
-private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
+private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 
 interface Neo4jSmartReviewRepository :
     Neo4jRepository<Neo4jResource, Long> {

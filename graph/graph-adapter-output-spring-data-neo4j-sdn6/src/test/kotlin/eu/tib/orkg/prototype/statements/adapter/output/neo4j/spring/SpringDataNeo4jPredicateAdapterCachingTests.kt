@@ -60,7 +60,7 @@ class SpringDataNeo4jPredicateAdapterCachingTests {
     @Test
     fun `fetching a predicate by ID should be cached`() {
         val predicate = createPredicate().copy(id = ThingId("P1"))
-        every { mock.findById(ThingId("P1")) } returns Optional.of(predicate) andThen {
+        every { mock.findById(ThingId("P1")) } returns Optional.of(predicate) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
 
@@ -78,7 +78,7 @@ class SpringDataNeo4jPredicateAdapterCachingTests {
     fun `saving a predicate should evict it from the cache`() {
         val predicate = createPredicate().copy(id = ThingId("P1"))
         val modified = predicate.copy(label = "new label")
-        every { mock.findById(ThingId("P1")) } returns Optional.of(predicate) andThen Optional.of(modified) andThen {
+        every { mock.findById(ThingId("P1")) } returns Optional.of(predicate) andThen Optional.of(modified) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { mock.save(modified) } returns Unit
@@ -103,7 +103,7 @@ class SpringDataNeo4jPredicateAdapterCachingTests {
     @Test
     fun `deleting a predicate should evict it from the cache`() {
         val predicate = createPredicate().copy(id = ThingId("P1"))
-        every { mock.findById(ThingId("P1")) } returns Optional.of(predicate) andThen Optional.of(predicate) andThen {
+        every { mock.findById(ThingId("P1")) } returns Optional.of(predicate) andThen Optional.of(predicate) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
         every { adapter.deleteById(ThingId("P1")) } returns Unit

@@ -66,7 +66,7 @@ fun CreateResourceUseCase.createResource(
     extractionMethod: ExtractionMethod? = null
 ): ThingId = this.create(
     CreateResourceUseCase.CreateCommand(
-        id = Optional.ofNullable(id).map(::ThingId).orElse(null),
+        id = id?.let(::ThingId),
         label = label ?: "label",
         classes = classes.map(::ThingId).toSet(),
         extractionMethod = extractionMethod ?: ExtractionMethod.UNKNOWN

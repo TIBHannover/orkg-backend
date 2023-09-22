@@ -91,7 +91,7 @@ class SpringDataNeo4jClassAdapter(
             id = this@toNeo4jClass.id
             label = this@toNeo4jClass.label
             uri = this@toNeo4jClass.uri?.toString()
-            createdBy = this@toNeo4jClass.createdBy
-            createdAt = this@toNeo4jClass.createdAt
+            created_by = this@toNeo4jClass.createdBy
+            created_at = this@toNeo4jClass.createdAt
         }
 }

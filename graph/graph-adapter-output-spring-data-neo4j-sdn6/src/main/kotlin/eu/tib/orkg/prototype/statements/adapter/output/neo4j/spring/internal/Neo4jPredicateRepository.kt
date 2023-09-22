@@ -13,7 +13,7 @@ private const val query = "${'$'}query"
 private const val label = "${'$'}label"
 private const val minLabelLength = "${'$'}minLabelLength"
 
-private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
+private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_predicate_on_label"
 
 interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, Long> {

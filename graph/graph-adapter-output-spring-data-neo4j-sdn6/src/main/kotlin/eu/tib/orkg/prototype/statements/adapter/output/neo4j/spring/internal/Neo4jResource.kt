@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -20,18 +20,12 @@ private val ReservedClassIds = setOf(
 )
 
 @Node("Resource")
-class Neo4jResource: Neo4jThing() {
-    @Property("created_by")
-    var createdBy: ContributorId = ContributorId.createUnknownContributor()
-
-    @Property("created_at")
-    var createdAt: OffsetDateTime? = null
-
+class Neo4jResource : Neo4jThing() {
     @Property("observatory_id")
-    var observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory()
+    var observatory_id: ObservatoryId = ObservatoryId.createUnknownObservatory()
 
     @Property("extraction_method")
-    var extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
+    var extraction_method: ExtractionMethod = ExtractionMethod.UNKNOWN
 
     @Property("verified")
     var verified: Boolean? = null
@@ -40,10 +34,10 @@ class Neo4jResource: Neo4jThing() {
     var visibility: Visibility? = null
 
     @Property("unlisted_by")
-    var unlistedBy: ContributorId? = null
+    var unlisted_by: ContributorId? = null
 
     @Property("organization_id")
-    var organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
+    var organization_id: OrganizationId = OrganizationId.createUnknownOrganization()
 
     /**
      * List of node labels. Labels other than the `Resource` label are mapped to classes.
@@ -63,15 +57,15 @@ class Neo4jResource: Neo4jThing() {
     fun toResource() = Resource(
         id = id!!,
         label = label!!,
-        createdAt = createdAt!!,
+        createdAt = created_at!!,
         classes = classes - ReservedClassIds,
-        createdBy = createdBy,
-        observatoryId = observatoryId,
-        extractionMethod = extractionMethod,
-        organizationId = organizationId,
+        createdBy = created_by,
+        observatoryId = observatory_id,
+        extractionMethod = extraction_method,
+        organizationId = organization_id,
         visibility = visibility!!,
         verified = verified,
-        unlistedBy = unlistedBy
+        unlistedBy = unlisted_by
     )
 
     override fun toThing() = toResource()

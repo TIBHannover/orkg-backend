@@ -16,7 +16,6 @@ import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import java.time.OffsetDateTime
-import org.neo4j.ogm.session.SessionFactory
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.ApplicationArguments
@@ -24,6 +23,7 @@ import org.springframework.boot.ApplicationRunner
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.annotation.Profile
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
 
 private const val chunkSize = 10_000
@@ -37,7 +37,7 @@ class ListMigrationRunner(
     private val predicateService: PredicateService,
     private val statementRepository: StatementRepository,
     private val predicateRepository: PredicateRepository,
-    private val sessionFactory: SessionFactory
+    private val neo4jClient: Neo4jClient
 ) : ApplicationRunner {
     private val logger = LoggerFactory.getLogger(this::class.java.name)
 
@@ -46,9 +46,8 @@ class ListMigrationRunner(
 
     override fun run(args: ApplicationArguments?) {
         logger.info("Starting list migration...")
-        with(sessionFactory.openSession()) {
-            query("""MATCH (:LiteratureList)-[:RELATED {predicate_id: "HasSection"}]->(:ListSection)-[:RELATED {predicate_id: "HasEntry"}]->(:Resource)-[r:RELATED {predicate_id: "HasPaper"}]->(:Resource) SET r.predicate_id = "HasLink" RETURN COUNT(r)""", emptyMap<String, Any>())
-        }
+        neo4jClient.query("""MATCH (:LiteratureList)-[:RELATED {predicate_id: "HasSection"}]->(:ListSection)-[:RELATED {predicate_id: "HasEntry"}]->(:Resource)-[r:RELATED {predicate_id: "HasPaper"}]->(:Resource) SET r.predicate_id = "HasLink" RETURN COUNT(r)""")
+            .run()
         val hasAuthorsPredicate = findOrCreatePredicate(
             label = "authors",
             id = Predicates.hasAuthors

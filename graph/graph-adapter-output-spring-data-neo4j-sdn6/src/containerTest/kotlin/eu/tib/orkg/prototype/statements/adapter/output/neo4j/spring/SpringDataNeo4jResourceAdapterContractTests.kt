@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
-import eu.tib.orkg.prototype.IndexInitializer
+import ac.simons.neo4j.migrations.springframework.boot.autoconfigure.MigrationsAutoConfiguration
 import eu.tib.orkg.prototype.Neo4jContainerInitializer
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.resourceRepositoryContract
@@ -15,6 +15,7 @@ import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Functions.labels
 import org.orkg.statements.testing.createResource
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
@@ -24,7 +25,8 @@ import org.springframework.test.context.ContextConfiguration
 
 @DataNeo4jTest
 @ContextConfiguration(classes = [SpringDataNeo4jResourceAdapter::class], initializers = [Neo4jContainerInitializer::class])
-@Import(value = [Neo4jConfiguration::class, IndexInitializer::class])
+@Import(value = [Neo4jConfiguration::class])
+@ImportAutoConfiguration(MigrationsAutoConfiguration::class)
 @ComponentScan(basePackages = ["eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal"])
 internal class SpringDataNeo4jResourceAdapterContractTests(
     @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,

@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal
 import eu.tib.orkg.prototype.auth.domain.Role
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.FetchType
 import javax.persistence.Id
 import javax.persistence.ManyToMany
 import javax.persistence.Table

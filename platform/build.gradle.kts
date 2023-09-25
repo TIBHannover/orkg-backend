@@ -9,7 +9,7 @@ javaPlatform {
 
 dependencies {
     // Extend existing platforms
-    api(enforcedPlatform(kotlin("bom", "1.7.10")))
+    api(enforcedPlatform(kotlin("bom", "1.9.10")))
     // api(enforcedPlatform(libs.jackson.bom))
     api(platform(libs.forkhandles.bom))
     api(platform(libs.spring.boot.bom)) {

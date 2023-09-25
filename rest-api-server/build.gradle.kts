@@ -102,6 +102,7 @@ testing {
                     exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
                 }
                 implementation(libs.spring.boot.starter.neo4j.migrations)
+                implementation("org.keycloak:keycloak-admin-client:22.0.3")
             }
             targets {
                 all {

@@ -57,8 +57,6 @@ fun <
             `object` = resourceRepository.findById(childId).get()
         ).copy(id = StatementId("S$parentId-$childId"))
 
-    fun StatementRepository.saveAll(statements: Set<GeneralStatement>) = statements.forEach(::save)
-
     //      1     4
     //    /   \
     //   2     3

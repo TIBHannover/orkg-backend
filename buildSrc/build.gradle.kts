@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    val kotlinVersion = "1.7.10"
+    val kotlinVersion = "1.9.10"
     // Kotlin conventions
     api("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     // Spring conventions
@@ -31,7 +31,7 @@ dependencies {
 tasks {
     withType<KotlinCompile>().configureEach {
         kotlinOptions {
-            jvmTarget = "11"
+            jvmTarget = "17"
         }
     }
 }

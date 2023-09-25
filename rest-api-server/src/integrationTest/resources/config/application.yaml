@@ -18,3 +18,8 @@ spring:
 logging:
   level:
     org.springframework.data.neo4j: DEBUG
+keycloak:
+  realm: orkg-dev
+  resource: orkg-frontend
+  credentials:
+    secret: pk6zY383L6rznH6MfsPoXdj1MQYdQFMW

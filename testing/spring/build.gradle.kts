@@ -28,4 +28,5 @@ dependencies {
     }
     testFixturesImplementation(libs.spring.mockk)
     testFixturesImplementation(libs.spring.restdocs)
+    testFixturesApi("com.github.dasniko:testcontainers-keycloak:3.0.0")
 }

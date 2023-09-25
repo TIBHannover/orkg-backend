@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.statements.client
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.net.URI
-import java.util.Base64
+import java.util.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -15,15 +15,15 @@ import org.springframework.web.client.postForObject
 
 class OrkgApiClient(private val port: Int = 80) {
 
-    @Value("orkg.client.oauth2.client-id")
-    private var clientId = "orkg-client"
+    @Value("keycloak.resource")
+    private var clientId = "orkg-frontend"
 
-    @Value("orkg.client.oauth2.client-secret")
-    private var clientSecret = "secret"
+    @Value("keycloak.credentials.secret")
+    private var clientSecret = "pk6zY383L6rznH6MfsPoXdj1MQYdQFMW"
 
-    fun getAccessToken(username: String, password: String): String? {
+    fun getAccessToken(username: String, password: String, path: String): String? {
         // TODO: externalize settings
-        val uri = URI("http", null, "localhost", port, "/oauth/token", null, null)
+        val uri = URI("http", null, "localhost", port, path, "client_id=orkg-frontend&response_type=code", null)
         val url = uri.toString()
 
         val params = getRequestParameters(username, password)
@@ -41,6 +41,29 @@ class OrkgApiClient(private val port: Int = 80) {
             add("Authorization", "Basic ${encodeCredentials()}")
             contentType = APPLICATION_FORM_URLENCODED
         }
+
+    fun registerUser(username: String, password: String, path: String) {
+        val uri = URI("http", null, "localhost", port, path, "client_id=orkg-frontend&response_type=code", null)
+        val url = uri.toString()
+
+        val params = LinkedMultiValueMap<String, String>().apply {
+            add("username", username)
+            add("new-password", password)
+            add("password-confirm", password)
+            add("firstName", "User")
+            add("lastName", "ORKG")
+            add("email", username)
+        }
+        val headers = HttpHeaders().apply {
+            contentType = APPLICATION_FORM_URLENCODED
+        }
+        val request = HttpEntity(params, headers)
+
+        val restTemplate = RestTemplate().apply {
+            messageConverters.add(StringHttpMessageConverter())
+        }
+        restTemplate.postForObject<String?>(url, request)
+    }
 
     private fun getRequestParameters(
         username: String,

@@ -71,7 +71,7 @@ services:
       - 'postgres-data:/var/lib/postgresql/data/pgdata'
 
   keycloak:
-    image: quay.io/keycloak/keycloak:21.1.1
+    image: quay.io/keycloak/keycloak:22.0.3
     command:
       - start-dev
       - --import-realm
@@ -83,8 +83,8 @@ services:
       KC_HOSTNAME_URL: http://localhost:8888
       DB_VENDOR: H2
     volumes:
-      - ./keycloak/import:/opt/keycloak/data/import:ro
-      - ./keycloak/providers:/opt/keycloak/providers:ro
+      - ./rest-api-server/src/integrationTest/resources/keycloak/import:/opt/keycloak/data/import:ro
+      - ./rest-api-server/src/integrationTest/resources/keycloak/providers:/opt/keycloak/providers:ro
     networks:
       - backend
 

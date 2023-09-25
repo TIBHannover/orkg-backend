@@ -19,7 +19,6 @@ class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
 
     @Test
     fun test() {
-        // TODO: replace with API call and enable transaction management
         val realm = "orkg-dev"
 
         val keycloak = KeycloakBuilder.builder()
@@ -41,27 +40,32 @@ class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
                 UserRepresentation().apply {
                     username = email
                     this.email = email
-                    createdTimestamp = System.currentTimeMillis() // TODO: This may need to be in seconds
+                    createdTimestamp = System.currentTimeMillis()
                     isEnabled = true
+                    isEmailVerified = true
                     credentials = listOf(
                         CredentialRepresentation().apply {
                             type = CredentialRepresentation.PASSWORD
                             userLabel = "password"
-                            createdDate = System.currentTimeMillis() // TODO: This may need to be in seconds
+                            createdDate = System.currentTimeMillis()
                             isTemporary = false
                             secretData = objectMapper.writeValueAsString(
                                 mapOf(
-                                    "value" to password,
+                                    "value" to "yiEmC+ZPHpcF5AL70YEJ/jUcsD3RVJbD9A2AO/iNp4Y=",
+                                    "salt" to "c9/klVHsyTa/hnZRBktBkw==",
                                     "additionalParameters" to emptyMap<String, String>()
                                 )
                             )
                             credentialData = objectMapper.writeValueAsString(
                                 mapOf(
+                                    "hashIterations" to 27500,
+                                    "algorithm" to "pbkdf2-sha256",
                                     "additionalParameters" to emptyMap<String, String>()
                                 )
                             )
                         }
                     )
+                    realmRoles = listOf("default-roles-orkg-dev")
                 }
             )
         println(response)

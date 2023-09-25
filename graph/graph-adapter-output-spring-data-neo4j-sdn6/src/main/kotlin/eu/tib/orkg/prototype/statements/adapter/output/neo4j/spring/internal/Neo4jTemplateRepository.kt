@@ -11,11 +11,11 @@ interface Neo4jTemplateRepository : Neo4jRepository<Neo4jResource, Long> {
 
     @Query("""
 MATCH (res:Resource {id: $id})
-WITH [x IN LABELS(res) WHERE NOT x IN ['Thing', 'Resource']][0] AS class, res
-MATCH (format:Literal)<-[:RELATED {predicate_id:'TemplateLabelFormat'}]-(template:NodeShape)-[:RELATED {predicate_id:'sh:targetClass'}]->(cls:Class {id: class}) 
+WITH [x IN LABELS(res) WHERE NOT x IN ['Thing', 'Resource']][0] AS classId, res
+MATCH (format:Literal)<-[:RELATED {predicate_id:'TemplateLabelFormat'}]-(template:NodeShape)-[:RELATED {predicate_id:'sh:targetClass'}]->(cls:Class {id: classId}) 
 MATCH (res)-[p:RELATED]->(o:Thing)
-WITH COLLECT(p.predicate_id) AS predicates, COLLECT(o.label) AS values, class, format.label AS format, template.id AS id, template.label AS label
-RETURN id, label, class, format, predicates, values
+WITH COLLECT(p.predicate_id) AS predicates, COLLECT(o.label) AS values, classId, format.label AS format, template.id AS id, template.label AS label
+RETURN id, label, classId, format, predicates, values
     """)
     fun findTemplateSpecs(id: ThingId): Optional<TemplatedResource>
 }

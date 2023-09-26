@@ -7,7 +7,7 @@ import org.springframework.data.neo4j.repository.query.Query
 
 private const val id = "${'$'}id"
 
-interface Neo4jTemplateRepository : Neo4jRepository<Neo4jResource, Long> {
+interface Neo4jTemplateRepository : Neo4jRepository<Neo4jResource, ThingId> {
 
     @Query("""
 MATCH (res:Resource {id: $id})

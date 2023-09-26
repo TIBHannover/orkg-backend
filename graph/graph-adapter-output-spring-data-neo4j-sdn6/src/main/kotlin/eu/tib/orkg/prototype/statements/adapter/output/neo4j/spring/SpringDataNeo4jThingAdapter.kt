@@ -20,7 +20,7 @@ class SpringDataNeo4jThingAdapter(
     private val neo4jRepository: Neo4jThingRepository
 ) : ThingRepository {
     @Cacheable(key = "#id", cacheNames = [THING_ID_TO_THING_CACHE])
-    override fun findByThingId(id: ThingId): Optional<Thing> = neo4jRepository.findByThingId(id).map(Neo4jThing::toThing)
+    override fun findByThingId(id: ThingId): Optional<Thing> = neo4jRepository.findById(id).map(Neo4jThing::toThing)
 
     override fun findAll(): Iterable<Thing> = neo4jRepository.findAll().map(Neo4jThing::toThing)
 

@@ -10,7 +10,7 @@ private const val id = "${'$'}id"
 
 private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
 
-interface Neo4jPaperRepository : Neo4jRepository<Neo4jResource, Long> {
+interface Neo4jPaperRepository : Neo4jRepository<Neo4jResource, ThingId> {
 
     @Query("""
 MATCH (r:Resource {id: $id})

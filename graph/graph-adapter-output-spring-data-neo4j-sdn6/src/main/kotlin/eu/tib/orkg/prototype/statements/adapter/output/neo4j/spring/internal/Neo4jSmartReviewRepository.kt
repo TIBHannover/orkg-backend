@@ -43,7 +43,7 @@ private const val MATCH_LISTED_SMART_REVIEW = """$MATCH_SMART_REVIEW WHERE (node
 private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 
 interface Neo4jSmartReviewRepository :
-    Neo4jRepository<Neo4jResource, Long> {
+    Neo4jRepository<Neo4jResource, ThingId> {
 
     @Query("""$MATCH_SMART_REVIEW_BY_ID $WITH_NODE_PROPERTIES $RETURN_NODE""")
     fun findSmartReviewByResourceId(id: ThingId): Optional<Neo4jResource>

@@ -10,7 +10,7 @@ private const val id = "${'$'}id"
 
 private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 
-interface Neo4jResearchFieldHierarchyRepository : Neo4jRepository<Neo4jResource, Long> {
+interface Neo4jResearchFieldHierarchyRepository : Neo4jRepository<Neo4jResource, ThingId> {
     @Query("""
 MATCH (p:ResearchField {id: $id})-[:RELATED {predicate_id: "P36"}]->(c:ResearchField)
 OPTIONAL MATCH (c)-[:RELATED {predicate_id: "P36"}]->(g:ResearchField)

@@ -16,8 +16,8 @@ private const val minLabelLength = "${'$'}minLabelLength"
 private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_predicate_on_label"
 
-interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, Long> {
-    fun existsById(id: ThingId): Boolean
+interface Neo4jPredicateRepository : Neo4jRepository<Neo4jPredicate, ThingId> {
+    override fun existsById(id: ThingId): Boolean
 
     override fun findAll(pageable: Pageable): Page<Neo4jPredicate>
 
@@ -49,7 +49,7 @@ WHERE SIZE(node.label) >= $minLabelLength
 RETURN COUNT(node)""")
     fun findAllByLabelContaining(label: String, minLabelLength: Int, pageable: Pageable): Page<Neo4jPredicate>
 
-    fun findById(id: ThingId?): Optional<Neo4jPredicate>
+    override fun findById(id: ThingId): Optional<Neo4jPredicate>
 
     // @Query was added manually because of a strange bug that it is not reproducible. It seems that the OGM generates
     // a query containing a string literal when the set only has one element, which the driver refused as an invalid
@@ -58,8 +58,6 @@ RETURN COUNT(node)""")
     @Query("""MATCH (n:`Predicate`) WHERE n.id in $ids RETURN n""")
     fun findAllByIdIn(ids: Set<ThingId>): Iterable<Neo4jPredicate>
 
-    // The return type has to be Iterable<Long> due to type erasure, as java.lang.Long or Iterable<java.lang.Long> is
-    // required by Spring, but we want to use kotlin.Long whenever possible
     @Transactional
-    fun deleteById(id: ThingId): Iterable<Long>
+    override fun deleteById(id: ThingId)
 }

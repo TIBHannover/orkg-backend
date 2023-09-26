@@ -10,7 +10,7 @@ import org.springframework.data.neo4j.repository.query.Query
 private const val ids = "${'$'}ids"
 private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 
-interface Neo4jContributionComparisonRepository : Neo4jRepository<Neo4jResource, Long> {
+interface Neo4jContributionComparisonRepository : Neo4jRepository<Neo4jResource, ThingId> {
     @Query(value = """UNWIND $ids AS id
 MATCH (cont:Contribution:Resource {id: id})<-[:RELATED {predicate_id: 'P31'}]-(p:Paper)
 OPTIONAL MATCH (p)-[:RELATED {predicate_id: 'P29'}]->(year:Thing)

@@ -43,7 +43,7 @@ private const val MATCH_LISTED_COMPARISON = """$MATCH_COMPARISON WHERE (node.vis
 private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 
 interface Neo4jComparisonRepository :
-    Neo4jRepository<Neo4jResource, Long> {
+    Neo4jRepository<Neo4jResource, ThingId> {
 
     @Query("""$MATCH_COMPARISON_BY_ID $WITH_NODE_PROPERTIES $RETURN_NODE""")
     fun findComparisonByResourceId(id: ThingId): Optional<Neo4jResource>

@@ -17,7 +17,7 @@ private const val id = "${'$'}id"
 private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
 private const val ORDER_BY_PAGE_PARAMS = ":#{orderBy(#pageable)} $PAGE_PARAMS"
 
-interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, Long> {
+interface Neo4jStatsRepository : Neo4jRepository<Neo4jResource, ThingId> {
 
     @Query("""MATCH (n:ResearchField:Resource) WITH n OPTIONAL MATCH (n)-[:RELATED*0..3 {predicate_id: 'P36'}]->(r:ResearchField:Resource) OPTIONAL MATCH (r)<-[:RELATED {predicate_id: 'P30'}]-(p:Paper:Resource) RETURN n.id AS fieldId, n.label AS field, COUNT(p) AS papers""")
     fun getResearchFieldsPapersCount(): Iterable<FieldsStats>

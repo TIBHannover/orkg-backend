@@ -14,10 +14,10 @@ private const val minLabelLength = "${'$'}minLabelLength"
 private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
 private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_literal_on_label"
 
-interface Neo4jLiteralRepository : Neo4jRepository<Neo4jLiteral, Long> {
-    fun existsById(id: ThingId): Boolean
+interface Neo4jLiteralRepository : Neo4jRepository<Neo4jLiteral, ThingId> {
+    override fun existsById(id: ThingId): Boolean
 
-    fun findById(id: ThingId): Optional<Neo4jLiteral>
+    override fun findById(id: ThingId): Optional<Neo4jLiteral>
 
     @Query("""
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)

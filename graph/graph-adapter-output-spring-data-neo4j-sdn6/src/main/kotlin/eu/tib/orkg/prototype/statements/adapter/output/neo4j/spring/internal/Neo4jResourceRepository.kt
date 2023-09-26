@@ -66,13 +66,13 @@ private const val ORDER_BY_CREATED_AT = """ORDER BY created_at"""
 private const val MATCH_RESOURCE = """MATCH (node:`Resource`)"""
 private const val MATCH_LISTED_RESOURCE = """MATCH (node:Resource) WHERE (node.visibility = "DEFAULT" OR node.visibility = "FEATURED")"""
 
-interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, Long> {
-    fun existsById(id: ThingId): Boolean
+interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, ThingId> {
+    override fun existsById(id: ThingId): Boolean
 
     @Query("""MATCH (node:`Resource` {id: $id}) WHERE $HAS_CLASSES $WITH_NODE_PROPERTIES $RETURN_NODE""")
     fun findByIdAndClassesContaining(id: ThingId, classes: Set<ThingId>): Neo4jResource?
 
-    fun findById(id: ThingId): Optional<Neo4jResource>
+    override fun findById(id: ThingId): Optional<Neo4jResource>
 
     @Query("""
 CALL db.index.fulltext.queryNodes("$FULLTEXT_INDEX_FOR_LABEL", $query)
@@ -227,10 +227,8 @@ RETURN COUNT(n)""")
         countQuery = """MATCH (n:`Resource`) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" RETURN COUNT(DISTINCT n.created_by) as cnt""")
     fun findAllContributorIds(pageable: Pageable): Page<String> // FIXME: This should be ContributorId
 
-    // The return type has to be Iterable<Long> due to type erasure as java.lang.Long or Iterable<java.lang.Long> is
-    // required by Spring, but we want to use kotlin.Long whenever possible
     @Transactional
-    fun deleteById(id: ThingId): Iterable<Long>
+    override fun deleteById(id: ThingId)
 
     @Query(value = """MATCH (n:Comparison:Resource {organization_id: $id}) RETURN n $ORDER_BY_PAGE_PARAMS""",
         countQuery = """MATCH (n:Comparison:Resource {organization_id: $id}) RETURN COUNT(n)""")

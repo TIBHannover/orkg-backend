@@ -25,8 +25,8 @@ private const val verified = "${'$'}verified"
 private const val minLabelLength = "${'$'}minLabelLength"
 private const val classId = "${'$'}classId"
 
-private const val PAGE_PARAMS = ":#{orderBy(#pageable)}"
-private const val ORDER_BY_PAGE_PARAMS = "$PAGE_PARAMS SKIP ${'$'}skip LIMIT ${'$'}limit"
+private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
+private const val ORDER_BY_PAGE_PARAMS = ":#{orderBy(#pageable)} $PAGE_PARAMS"
 private const val FULLTEXT_INDEX_FOR_LABEL = "fulltext_idx_for_resource_on_label"
 
 /**

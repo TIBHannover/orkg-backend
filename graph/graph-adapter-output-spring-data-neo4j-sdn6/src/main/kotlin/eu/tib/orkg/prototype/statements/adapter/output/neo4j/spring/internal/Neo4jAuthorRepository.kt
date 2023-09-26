@@ -12,7 +12,7 @@ private const val problemId = "${'$'}problemId"
 private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 
 interface Neo4jAuthorRepository :
-    Neo4jRepository<Neo4jResource, Long> {
+    Neo4jRepository<Neo4jResource, ThingId> {
 
     @Query("""
 MATCH (c:Comparison:Resource {id: $id})-[rel:RELATED {predicate_id: 'compareContribution'}]->(cont:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper:Resource)-[:RELATED {predicate_id: 'hasAuthors'}]->(l:List)-[r:RELATED {predicate_id: "hasListElement"}]->(a:Thing)

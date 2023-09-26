@@ -52,10 +52,10 @@ private const val MATCH_VISUALIZATIONS_RELATED_TO_PROBLEM_WITH_ID = """MATCH (:P
 private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 
 interface Neo4jProblemRepository :
-    Neo4jRepository<Neo4jResource, Long> {
+    Neo4jRepository<Neo4jResource, ThingId> {
 
     @Query("""MATCH (node:Problem:Resource {id: $id}) RETURN node""")
-    fun findById(id: ThingId): Optional<Neo4jResource>
+    override fun findById(id: ThingId): Optional<Neo4jResource>
 
     // Contributions
 

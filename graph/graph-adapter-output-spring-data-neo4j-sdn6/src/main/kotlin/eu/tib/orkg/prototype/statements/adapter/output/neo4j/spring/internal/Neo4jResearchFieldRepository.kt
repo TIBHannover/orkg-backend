@@ -54,9 +54,9 @@ private const val MATCH_LITERATURE_LIST_RELATED_TO_RESEARCH_FIELD_WITH_ID = """M
 private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 
 interface Neo4jResearchFieldRepository :
-    Neo4jRepository<Neo4jResource, Long> {
+    Neo4jRepository<Neo4jResource, ThingId> {
     @Query("""MATCH (field:ResearchField:Resource {id: $id}) RETURN field""")
-    fun findById(id: ThingId): Optional<Neo4jResource>
+    override fun findById(id: ThingId): Optional<Neo4jResource>
 
     @Query("""MATCH (field:ResearchField:Resource {id: $fieldId})<-[:RELATED {predicate_id: 'P30'}]-(paper:Paper:Resource)-[:RELATED {predicate_id: 'P31'}]->(cont:Contribution:Resource)-[:RELATED {predicate_id: 'P32'}]->(problem:Problem:Resource)
                     WITH COUNT(paper) AS papers, problem

@@ -11,7 +11,7 @@ private const val problemId = "${'$'}problemId"
 private const val id = "${'$'}id"
 private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 
-interface Neo4jDatasetRepository : Neo4jRepository<Neo4jResource, Long> {
+interface Neo4jDatasetRepository : Neo4jRepository<Neo4jResource, ThingId> {
 
     @Query("""
 MATCH (:Problem {id: $id})<-[:RELATED {predicate_id: 'P32'}]-(cont:Contribution)<-[:RELATED {predicate_id: 'P31'}]-(p:Paper)

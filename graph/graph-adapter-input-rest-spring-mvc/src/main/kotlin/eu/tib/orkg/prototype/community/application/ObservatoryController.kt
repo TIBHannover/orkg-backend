@@ -6,11 +6,12 @@ import eu.tib.orkg.prototype.community.ObservatoryRepresentationAdapter
 import eu.tib.orkg.prototype.community.ResearchFieldRepresentation
 import eu.tib.orkg.prototype.community.api.CreateObservatoryUseCase.CreateCommand
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
+import eu.tib.orkg.prototype.community.domain.model.Contributor
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.spi.ObservatoryRepository
-import eu.tib.orkg.prototype.community.domain.model.Contributor
 import eu.tib.orkg.prototype.shared.TooManyParameters
+import eu.tib.orkg.prototype.shared.annotations.PreAuthorizeCurator
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
@@ -22,7 +23,6 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -41,7 +41,7 @@ class ObservatoryController(
     private val observatoryRepository: ObservatoryRepository,
 ) : ObservatoryRepresentationAdapter {
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun create(
         @RequestBody @Valid request: CreateObservatoryRequest,
         uriComponentsBuilder: UriComponentsBuilder
@@ -104,14 +104,14 @@ class ObservatoryController(
         observatoryRepository.allMembers(id, pageable)
 
     @RequestMapping("{id}/name", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun updateObservatoryName(@PathVariable id: ObservatoryId, @RequestBody @Valid name: UpdateRequest): ObservatoryRepresentation {
         service.changeName(id, name.value)
         return service.findById(id).mapToObservatoryRepresentation().get()
     }
 
     @RequestMapping("{id}/description", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun updateObservatoryDescription(
         @PathVariable id: ObservatoryId,
         @RequestBody @Valid description: UpdateRequest
@@ -121,7 +121,7 @@ class ObservatoryController(
     }
 
     @RequestMapping("{id}/research_field", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun updateObservatoryResearchField(
         @PathVariable id: ObservatoryId,
         @RequestBody @Valid request: UpdateRequest
@@ -131,7 +131,7 @@ class ObservatoryController(
     }
 
     @RequestMapping("add/{id}/organization", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun addObservatoryOrganization(
         @PathVariable id: ObservatoryId,
         @RequestBody organizationRequest: UpdateOrganizationRequest
@@ -141,7 +141,7 @@ class ObservatoryController(
     }
 
     @RequestMapping("delete/{id}/organization", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun deleteObservatoryOrganization(
         @PathVariable id: ObservatoryId,
         @RequestBody organizationRequest: UpdateOrganizationRequest

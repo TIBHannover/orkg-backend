@@ -2,14 +2,15 @@ package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import dev.forkhandles.values.ofOrNull
-import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
-import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.community.domain.model.ContributorService
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
+import eu.tib.orkg.prototype.shared.annotations.PreAuthorizeCurator
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.ResourceRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
+import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.UpdateResourceUseCase
@@ -30,7 +31,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
 import org.springframework.http.ResponseEntity.notFound
 import org.springframework.http.ResponseEntity.ok
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -144,7 +144,7 @@ class ResourceController(
     }
 
     @RequestMapping("{id}/observatory", method = [RequestMethod.POST, RequestMethod.PUT], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun updateWithObservatory(
         @PathVariable id: ThingId,
         @RequestBody request: UpdateResourceObservatoryRequest
@@ -171,7 +171,7 @@ class ResourceController(
         service.findTimelineByResourceId(id, pageable)
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun delete(@PathVariable id: ThingId): ResponseEntity<Unit> {
         service.delete(id)
         return ResponseEntity.noContent().build()
@@ -187,13 +187,13 @@ class ResourceController(
 
     @PutMapping("/{id}/metadata/featured")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun markFeatured(@PathVariable id: ThingId) {
         service.markAsFeatured(id)
     }
 
     @DeleteMapping("/{id}/metadata/featured")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun unmarkFeatured(@PathVariable id: ThingId) {
         service.markAsNonFeatured(id)
     }
@@ -214,13 +214,13 @@ class ResourceController(
 
     @PutMapping("/{id}/metadata/unlisted")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun markUnlisted(@PathVariable id: ThingId) {
         service.markAsUnlisted(id, ContributorId(authenticatedUserId()))
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun unmarkUnlisted(@PathVariable id: ThingId) {
         service.markAsListed(id)
     }

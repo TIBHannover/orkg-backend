@@ -1,5 +1,7 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal
 
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
+
 /**
  * Class representing the components to build the formatted label
  * for a resource that is typed with a class (created from template)
@@ -8,7 +10,7 @@ data class TemplatedResource(
     /**
      * The id of the template used on this resource
      */
-    val id: String,
+    val id: ThingId,
     /**
      * The label of the template applied on this resource
      */
@@ -16,7 +18,7 @@ data class TemplatedResource(
     /**
      * The class of the resource that is typed based on a template
      */
-    val `class`: String,
+    val classId: String,
     /**
      * The formatting string; used to create the final formatted label
      * This string contains placeholders for property IDs that should be replaced by values

@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.TemplatedResource
+import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -54,9 +55,9 @@ class FormattedLabelTest {
         values: List<String>
     ): String =
         TemplatedResource(
-            id = "R0",
+            id = ThingId("R0"),
             label = "test template",
-            `class` = "C0",
+            classId = "C0",
             format = format,
             predicates = predicates,
             values = values

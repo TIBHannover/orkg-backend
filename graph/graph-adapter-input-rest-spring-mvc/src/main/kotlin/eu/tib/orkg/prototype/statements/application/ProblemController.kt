@@ -2,28 +2,26 @@ package eu.tib.orkg.prototype.statements.application
 
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.community.domain.model.ContributorService
+import eu.tib.orkg.prototype.shared.annotations.PreAuthorizeCurator
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.AuthorRepresentationAdapter
 import eu.tib.orkg.prototype.statements.FieldPerProblemRepresentationAdapter
+import eu.tib.orkg.prototype.statements.ResourceRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.FieldWithFreqRepresentation
 import eu.tib.orkg.prototype.statements.api.PaperAuthorRepresentation
 import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
-import eu.tib.orkg.prototype.statements.ResourceRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchProblemUseCase
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.AuthorService
 import eu.tib.orkg.prototype.statements.services.ResourceService
-import eu.tib.orkg.prototype.statements.spi.ResearchProblemRepository.*
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
-import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -104,14 +102,14 @@ class ProblemController(
         service.loadNonFeaturedProblems(pageable)
 
     @PutMapping("/{id}/metadata/featured")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     @ResponseStatus(HttpStatus.OK)
     fun markFeatured(@PathVariable id: ThingId) {
         resourceService.markAsFeatured(id)
     }
 
     @DeleteMapping("/{id}/metadata/featured")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun unmarkFeatured(@PathVariable id: ThingId) {
         resourceService.markAsNonFeatured(id)
     }
@@ -128,14 +126,14 @@ class ProblemController(
         service.loadListedProblems(pageable)
 
     @PutMapping("/{id}/metadata/unlisted")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     @ResponseStatus(HttpStatus.OK)
     fun markUnlisted(@PathVariable id: ThingId) {
         resourceService.markAsUnlisted(id, ContributorId(authenticatedUserId()))
     }
 
     @DeleteMapping("/{id}/metadata/unlisted")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorizeCurator
     fun unmarkUnlisted(@PathVariable id: ThingId) {
         resourceService.markAsListed(id)
     }

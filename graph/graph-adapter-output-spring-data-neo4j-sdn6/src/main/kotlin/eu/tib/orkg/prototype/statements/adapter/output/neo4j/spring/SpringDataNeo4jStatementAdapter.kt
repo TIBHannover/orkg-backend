@@ -212,7 +212,7 @@ class SpringDataNeo4jStatementAdapter(
                     .returning(l)
             }
             .withParameters("ids" to ids.map { it.value })
-            .fetchAs<ThingId>()
+            .mappedBy { _, r -> r["l"].toThingId()!! }
             .all()
 
         if (literals.isNotEmpty()) {

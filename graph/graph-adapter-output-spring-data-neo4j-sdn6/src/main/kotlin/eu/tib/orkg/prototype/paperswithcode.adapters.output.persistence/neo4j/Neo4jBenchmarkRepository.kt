@@ -10,7 +10,7 @@ import org.springframework.data.neo4j.repository.query.Query
 private const val id = "${'$'}id"
 private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 
-interface Neo4jBenchmarkRepository : Neo4jRepository<Neo4jResource, Long> {
+interface Neo4jBenchmarkRepository : Neo4jRepository<Neo4jResource, ThingId> {
 
     @Query("""
 MATCH (:ResearchField {id: $id})-[:RELATED* {predicate_id: 'P36'}]->(f:ResearchField)

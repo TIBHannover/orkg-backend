@@ -1,10 +1,13 @@
 package eu.tib.orkg.prototype.statements.adapter.output.inmemory
 
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
+import java.time.OffsetDateTime
 import java.util.*
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 class InMemoryPredicateRepository : InMemoryRepository<ThingId, Predicate>(
@@ -37,5 +40,14 @@ class InMemoryPredicateRepository : InMemoryRepository<ThingId, Predicate>(
             id = ThingId("P${++count}")
         }
         return id
+    }
+
+    override fun findAllWithFilters(
+        createdBy: ContributorId?,
+        createdAt: OffsetDateTime?,
+        pageable: Pageable
+    ): Page<Predicate> = findAllFilteredAndPaged(pageable, pageable.sort.predicateComparator) {
+        (createdBy == null || createdBy == it.createdBy)
+            && (createdAt == null || createdAt == it.createdAt)
     }
 }

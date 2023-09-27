@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResource
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceIdGenerator
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jResourceRepository
+import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.domain.model.ExactSearchString
 import eu.tib.orkg.prototype.statements.domain.model.FuzzySearchString
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -13,13 +14,17 @@ import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import org.springframework.cache.annotation.CacheConfig
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.cache.annotation.Caching
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
 
 const val RESOURCE_ID_TO_RESOURCE_CACHE = "resource-id-to-resource"
@@ -29,7 +34,8 @@ const val RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE = "resource-id-to-resource-exists
 @CacheConfig(cacheNames = [RESOURCE_ID_TO_RESOURCE_CACHE, RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE])
 class SpringDataNeo4jResourceAdapter(
     private val neo4jRepository: Neo4jResourceRepository,
-    private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator
+    private val neo4jResourceIdGenerator: Neo4jResourceIdGenerator,
+    private val neo4jClient: Neo4jClient
 ) : ResourceRepository {
     override fun findByIdAndClasses(id: ThingId, classes: Set<ThingId>): Resource? =
         neo4jRepository.findByIdAndClassesContaining(id, classes)?.toResource()
@@ -74,7 +80,73 @@ class SpringDataNeo4jResourceAdapter(
     }
 
     override fun findAll(pageable: Pageable): Page<Resource> =
-        neo4jRepository.findAll(pageable).map(Neo4jResource::toResource)
+        findAllWithFilters(pageable = pageable)
+
+    override fun findAllWithFilters(
+        classes: Set<ThingId>,
+        visibility: VisibilityFilter?,
+        organizationId: OrganizationId?,
+        observatoryId: ObservatoryId?,
+        createdBy: ContributorId?,
+        createdAt: OffsetDateTime?,
+        pageable: Pageable
+    ): Page<Resource> {
+        val where = buildString {
+            if (visibility != null) {
+                if (visibility == VisibilityFilter.ALL_LISTED) {
+                    append(""" AND (n.visibility = "DEFAULT" OR n.visibility = "FEATURED")""")
+                } else {
+                    append(" AND n.visibility = ${'$'}visibility")
+                }
+            }
+            if (organizationId != null) {
+                append(" AND n.organization_id = ${'$'}organizationId")
+            }
+            if (observatoryId != null) {
+                append(" AND n.observatory_id = ${'$'}observatoryId")
+            }
+            if (createdBy != null) {
+                append(" AND n.created_by = ${'$'}createdBy")
+            }
+            if (createdAt != null) {
+                append(" AND n.created_at = ${'$'}createdAt")
+            }
+            appendOrderByOptimizations(pageable, createdAt, createdBy)
+        }.replaceFirst(" AND", "WHERE")
+
+        val classLabels = classes.joinToString(separator = "") { ":`$it`" }
+        val query = """
+            MATCH (n:Resource$classLabels) $where
+            RETURN n, n.id AS id, n.label AS label, n.created_by AS created_by, n.created_at AS created_at
+            SKIP ${'$'}skip LIMIT ${'$'}limit""".sortedWith(pageable.sort).trimIndent()
+        val countQuery = """
+            MATCH (n:Resource$classLabels) $where
+            RETURN COUNT(n)""".trimIndent()
+        val parameters = mapOf(
+            "visibility" to when (visibility) {
+                VisibilityFilter.UNLISTED -> Visibility.UNLISTED
+                VisibilityFilter.FEATURED -> Visibility.FEATURED
+                VisibilityFilter.NON_FEATURED -> Visibility.DEFAULT
+                VisibilityFilter.DELETED -> Visibility.DELETED
+                else -> null
+            }?.name,
+            "organizationId" to organizationId?.value?.toString(),
+            "observatoryId" to observatoryId?.value?.toString(),
+            "createdBy" to createdBy?.value?.toString(),
+            "createdAt" to createdAt?.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+        )
+        val elements = neo4jClient.query(query)
+            .bindAll(parameters + mapOf("skip" to pageable.offset, "limit" to pageable.pageSize))
+            .fetchAs(Resource::class.java)
+            .mappedBy(ResourceMapper("n"))
+            .all()
+        val count = neo4jClient.query(countQuery)
+            .bindAll(parameters)
+            .fetchAs(Long::class.java)
+            .one()
+            .orElse(0)
+        return PageImpl(elements.toList(), pageable, count)
+    }
 
     @Cacheable(key = "#id", cacheNames = [RESOURCE_ID_TO_RESOURCE_EXISTS_CACHE])
     override fun exists(id: ThingId): Boolean = neo4jRepository.existsById(id)

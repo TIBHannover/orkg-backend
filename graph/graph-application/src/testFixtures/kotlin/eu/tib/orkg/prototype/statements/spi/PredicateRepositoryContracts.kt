@@ -11,6 +11,7 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
+import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -19,8 +20,10 @@ import java.time.OffsetDateTime
 import org.orkg.statements.testing.createLiteral
 import org.orkg.statements.testing.createPredicate
 import org.orkg.statements.testing.createStatement
+import org.orkg.statements.testing.random
 import org.orkg.statements.testing.withCustomMappings
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 
 fun <
     R : PredicateRepository,
@@ -142,6 +145,89 @@ fun <
                 xit("sorts the results by creation date by default") {
                     result.content.zipWithNext { a, b ->
                         a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+        }
+        context("with filters") {
+            context("using no parameters") {
+                val resources = fabricator.random<Predicate>(10)
+                resources.forEach(repository::save)
+
+                val pageable = PageRequest.of(0, 10)
+                val result = repository.findAllWithFilters(pageable = pageable)
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe resources.size
+                    result.content shouldContainAll resources
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 10
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe resources.size
+                }
+                xit("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+            context("using several parameters") {
+                val resources = fabricator.random<MutableList<Predicate>>()
+                resources.forEach(repository::save)
+
+                val expected = listOf(resources[0])
+                val pageable = PageRequest.of(0, 10)
+                val result = repository.findAllWithFilters(
+                    createdBy = resources.first().createdBy,
+                    createdAt = resources.first().createdAt,
+                    pageable = pageable
+                )
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expected.size
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 10
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 1
+                    result.totalElements shouldBe expected.size
+                }
+                xit("sorts the results by creation date by default") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdAt shouldBeLessThan b.createdAt
+                    }
+                }
+            }
+            context("using sorting parameters") {
+                val resources = fabricator.random<List<Predicate>>()
+                resources.forEach(repository::save)
+
+                val expected = resources.sortedByDescending { it.createdBy.value.toString() }.take(10)
+                val pageable = PageRequest.of(0, 10, Sort.by("created_by").descending())
+                val result = repository.findAllWithFilters(pageable = pageable)
+
+                it("returns the correct result") {
+                    result shouldNotBe null
+                    result.content shouldNotBe null
+                    result.content.size shouldBe expected.size
+                    result.content shouldContainAll expected
+                }
+                it("pages the result correctly") {
+                    result.size shouldBe 10
+                    result.number shouldBe 0
+                    result.totalPages shouldBe 2
+                    result.totalElements shouldBe resources.size
+                }
+                it("sorts the results by descending created by") {
+                    result.content.zipWithNext { a, b ->
+                        a.createdBy.value.toString() shouldBeGreaterThan b.createdBy.value.toString()
                     }
                 }
             }

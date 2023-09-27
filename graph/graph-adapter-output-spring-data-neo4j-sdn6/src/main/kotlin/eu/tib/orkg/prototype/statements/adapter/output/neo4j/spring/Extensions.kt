@@ -36,7 +36,6 @@ import org.neo4j.driver.types.Node
 import org.neo4j.driver.types.TypeSystem
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
-import org.springframework.data.neo4j.core.Neo4jClient
 
 private val reservedClassIds = setOf(
     "Thing",
@@ -96,6 +95,11 @@ internal data class ListMapper(val name: String, val elements: String) : BiFunct
             createdBy = node["created_by"].toContributorId(),
         )
     }
+}
+
+internal data class PredicateMapper(val name: String) : BiFunction<TypeSystem, Record, Predicate> {
+    constructor(symbolicName: SymbolicName) : this(symbolicName.value)
+    override fun apply(typeSystem: TypeSystem, record: Record) = record[name].asNode().toPredicate()
 }
 
 internal data class ClassMapper(val name: String) : BiFunction<TypeSystem, Record, Class> {
@@ -197,3 +201,41 @@ internal fun StatementBuilder.TerminalExposesOrderBy.orderBy(sort: Sort): Statem
             else -> expression.ascending()
         }
     }.collect(Collectors.toList()))
+
+internal fun String.sortedWith(sort: Sort): String =
+    if (sort.isUnsorted) {
+        this
+    } else {
+        StringBuilder(this)
+            .insert(lastIndexOf("SKIP"),"ORDER BY ${sort.toNeo4jSnippet()} ")
+            .toString()
+    }
+
+internal fun Sort.toNeo4jSnippet(): String =
+    stream().map { it.toNeo4jSnippet() }.collect(Collectors.joining(", "))
+
+internal fun Sort.Order.toNeo4jSnippet(): String = buildString {
+    if (isIgnoreCase) {
+        append("toLower(").append(property).append(")")
+    } else {
+        append(property)
+    }
+    append(" ").append(direction)
+}
+
+internal fun StringBuilder.appendOrderByOptimizations(pageable: Pageable, createdAt: OffsetDateTime?, createdBy: ContributorId?) {
+    val properties = pageable.sort.map { it.property }
+
+    if (createdAt == null && "created_at" in properties) {
+        append(" AND n.created_at IS NOT NULL")
+    }
+    if (createdBy == null && "created_by" in properties) {
+        append(" AND n.created_by IS NOT NULL")
+    }
+    if ("id" in properties) {
+        append(" AND n.id IS NOT NULL")
+    }
+    if ("label" in properties) {
+        append(" AND n.label IS NOT NULL")
+    }
+}

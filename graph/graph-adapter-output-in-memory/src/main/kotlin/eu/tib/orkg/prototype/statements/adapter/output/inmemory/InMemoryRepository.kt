@@ -18,10 +18,11 @@ abstract class InMemoryRepository<ID, T>(
 
     protected fun findAllFilteredAndPaged(
         pageable: Pageable,
+        comparator: Comparator<T> = defaultComparator,
         predicate: (T) -> Boolean
     ) = entities.values
         .filter(predicate)
-        .sortedWith(defaultComparator)
+        .sortedWith(comparator)
         .paged(pageable)
 }
 

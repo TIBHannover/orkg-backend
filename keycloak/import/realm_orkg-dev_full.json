@@ -18,7 +18,7 @@
     "clientOfflineSessionMaxLifespan": "0",
     "clientSessionIdleTimeout": "0",
     "clientSessionMaxLifespan": "0",
-    "frontendUrl": "http://localhost:3000",
+    "frontendUrl": "http://localhost:8888",
     "oauth2DeviceCodeLifespan": "600",
     "oauth2DevicePollingInterval": "5",
     "parRequestUriLifespan": "60",
@@ -611,7 +611,8 @@
             "id.token.claim": "true",
             "jsonType.label": "String",
             "multivalued": "true",
-            "user.attribute": "foo"
+            "user.attribute": "foo",
+            "userinfo.token.claim": "true"
           },
           "consentRequired": false,
           "id": "7bc3d21a-0ac6-4491-971d-b0d7af5cfc52",
@@ -659,7 +660,8 @@
         {
           "config": {
             "access.token.claim": "true",
-            "id.token.claim": "true"
+            "id.token.claim": "true",
+            "userinfo.token.claim": "true"
           },
           "consentRequired": false,
           "id": "a645abeb-c5f4-4152-9d10-9645b38c2f6a",
@@ -1280,16 +1282,21 @@
       "webOrigins": []
     },
     {
-      "adminUrl": "http://localhost:3000",
+      "adminUrl": "",
       "alwaysDisplayInConsole": false,
       "attributes": {
+        "acr.loa.map": "{}",
         "backchannel.logout.revoke.offline.tokens": "false",
         "backchannel.logout.session.required": "true",
-        "client.secret.creation.time": "1695798407",
+        "client.secret.creation.time": "1695800104",
+        "client_credentials.use_refresh_token": "false",
         "display.on.consent.screen": "false",
-        "login_theme": "keycloak",
         "oauth2.device.authorization.grant.enabled": "false",
-        "oidc.ciba.grant.enabled": "false"
+        "oidc.ciba.grant.enabled": "false",
+        "require.pushed.authorization.requests": "false",
+        "tls.client.certificate.bound.access.tokens": "false",
+        "token.response.type.bearer.lower-case": "false",
+        "use.refresh.tokens": "true"
       },
       "authenticationFlowBindingOverrides": {},
       "baseUrl": "",
@@ -1309,7 +1316,7 @@
       "enabled": true,
       "frontchannelLogout": true,
       "fullScopeAllowed": true,
-      "id": "7ef80da9-e8ac-48ee-a7c5-0ec4c04420df",
+      "id": "0be63039-ed04-4a52-99b5-8a7709997795",
       "implicitFlowEnabled": false,
       "name": "ORKG Frontend",
       "nodeReRegistrationTimeout": -1,
@@ -1323,20 +1330,22 @@
       "protocol": "openid-connect",
       "publicClient": false,
       "redirectUris": [
-        "http://localhost:3000/*"
+        "/*"
       ],
-      "rootUrl": "http://localhost:3000",
+      "rootUrl": "",
       "secret": "**********",
       "serviceAccountsEnabled": false,
       "standardFlowEnabled": true,
       "surrogateAuthRequired": false,
       "webOrigins": [
-        "http://localhost:3000"
+        "/*"
       ]
     },
     {
       "alwaysDisplayInConsole": false,
-      "attributes": {},
+      "attributes": {
+        "post.logout.redirect.uris": "+"
+      },
       "authenticationFlowBindingOverrides": {},
       "bearerOnly": true,
       "clientAuthenticatorType": "client-secret",
@@ -1509,14 +1518,14 @@
       {
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-full-name-mapper",
             "oidc-address-mapper",
-            "oidc-usermodel-attribute-mapper",
-            "saml-user-attribute-mapper",
+            "oidc-full-name-mapper",
             "saml-user-property-mapper",
+            "oidc-usermodel-property-mapper",
+            "oidc-usermodel-attribute-mapper",
             "saml-role-list-mapper",
-            "oidc-sha256-pairwise-sub-mapper",
-            "oidc-usermodel-property-mapper"
+            "saml-user-attribute-mapper",
+            "oidc-sha256-pairwise-sub-mapper"
           ]
         },
         "id": "ea631604-bceb-4eaf-b5d1-70e7e0b13959",
@@ -1536,14 +1545,14 @@
       {
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-full-name-mapper",
             "oidc-usermodel-property-mapper",
-            "oidc-sha256-pairwise-sub-mapper",
             "saml-role-list-mapper",
-            "saml-user-attribute-mapper",
-            "oidc-address-mapper",
             "oidc-usermodel-attribute-mapper",
-            "saml-user-property-mapper"
+            "saml-user-property-mapper",
+            "saml-user-attribute-mapper",
+            "oidc-full-name-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
+            "oidc-address-mapper"
           ]
         },
         "id": "ee1eaa15-b55e-44be-81e5-c7f763ede3ad",
@@ -1595,6 +1604,14 @@
         "providerId": "max-clients",
         "subComponents": {},
         "subType": "anonymous"
+      }
+    ],
+    "org.keycloak.userprofile.UserProfileProvider": [
+      {
+        "config": {},
+        "id": "496bc3a9-d1d0-499d-bc45-92e4d0bf1e6e",
+        "providerId": "declarative-user-profile",
+        "subComponents": {}
       }
     ]
   },
@@ -1658,9 +1675,9 @@
   "otpPolicyPeriod": 30,
   "otpPolicyType": "totp",
   "otpSupportedApplications": [
+    "totpAppGoogleName",
     "totpAppMicrosoftAuthenticatorName",
-    "totpAppFreeOTPName",
-    "totpAppGoogleName"
+    "totpAppFreeOTPName"
   ],
   "permanentLockout": false,
   "quickLoginCheckMilliSeconds": 1000,

@@ -71,7 +71,7 @@ services:
       - 'postgres-data:/var/lib/postgresql/data/pgdata'
 
   keycloak:
-    image: quay.io/keycloak/keycloak:21.1.1
+    image: quay.io/keycloak/keycloak:22.0.3
     command:
       - start-dev
       - --import-realm

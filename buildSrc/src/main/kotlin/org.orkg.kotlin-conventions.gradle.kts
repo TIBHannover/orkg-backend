@@ -28,9 +28,7 @@ val jacocoTestReport by tasks.getting(JacocoReport::class) {
 
 kotlin {
     jvmToolchain {
-        (this as JavaToolchainSpec).apply {
-            languageVersion.set(JavaLanguageVersion.of(11))
-        }
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 

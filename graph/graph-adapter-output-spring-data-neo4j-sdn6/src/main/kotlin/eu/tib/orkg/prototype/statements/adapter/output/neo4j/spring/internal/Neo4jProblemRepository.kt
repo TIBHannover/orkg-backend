@@ -32,9 +32,9 @@ private const val visibility = "${'$'}visibility"
 
 private const val MATCH_PROBLEM = """MATCH (node:`Resource`:`Problem`)"""
 
-private const val WHERE_VISIBILITY = """WHERE node.visibility = $visibility"""
+private const val WHERE_VISIBILITY = """WHERE node.visibility = $visibility AND node.created_at IS NOT NULL"""
 
-private const val WHERE_VISIBILITY_IS_LISTED = """WHERE (node.visibility = "DEFAULT" OR node.visibility = "FEATURED")"""
+private const val WHERE_VISIBILITY_IS_LISTED = """WHERE (node.visibility = "DEFAULT" OR node.visibility = "FEATURED") AND node.created_at IS NOT NULL"""
 
 private const val ORDER_BY_CREATED_AT = """ORDER BY created_at"""
 

@@ -34,11 +34,11 @@ private const val MATCH_COMPARISON = """MATCH (node:`Resource`:`Comparison`)"""
 
 private const val MATCH_COMPARISON_BY_ID = """MATCH (node:`Resource`:`Comparison` {id: $id})"""
 
-private const val WHERE_VISIBILITY = """WHERE node.visibility = $visibility"""
+private const val WHERE_VISIBILITY = """WHERE node.visibility = $visibility AND node.created_at IS NOT NULL"""
 
 private const val ORDER_BY_CREATED_AT = """ORDER BY created_at"""
 
-private const val MATCH_LISTED_COMPARISON = """$MATCH_COMPARISON WHERE (node.visibility = "DEFAULT" OR node.visibility = "FEATURED")"""
+private const val MATCH_LISTED_COMPARISON = """$MATCH_COMPARISON WHERE (node.visibility = "DEFAULT" OR node.visibility = "FEATURED") AND node.created_at IS NOT NULL"""
 
 private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 

@@ -34,11 +34,11 @@ private const val MATCH_CONTRIBUTION = """MATCH (node:`Resource`:`Contribution`)
 
 private const val MATCH_CONTRIBUTION_BY_ID = """MATCH (node:`Resource`:`Contribution` {id: $id})"""
 
-private const val WHERE_VISIBILITY = """WHERE node.visibility = $visibility"""
+private const val WHERE_VISIBILITY = """WHERE node.visibility = $visibility AND node.created_at IS NOT NULL"""
 
 private const val ORDER_BY_CREATED_AT = """ORDER BY created_at"""
 
-private const val MATCH_LISTED_CONTRIBUTION = """$MATCH_CONTRIBUTION WHERE (node.visibility = "DEFAULT" OR node.visibility = "FEATURED")"""
+private const val MATCH_LISTED_CONTRIBUTION = """$MATCH_CONTRIBUTION WHERE (node.visibility = "DEFAULT" OR node.visibility = "FEATURED") AND node.created_at IS NOT NULL"""
 
 private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 

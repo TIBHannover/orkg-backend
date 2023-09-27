@@ -55,7 +55,7 @@ private const val HAS_CLASSES = """ANY(collectionFields IN $classes WHERE collec
 private const val MATCH_PAPER = """MATCH (node:`Resource`:`Paper`)"""
 private const val MATCH_PAPER_BY_ID = """MATCH (node:`Resource`:`Paper` {id: $id})"""
 
-private const val WHERE_VISIBILITY = """WHERE node.visibility = $visibility"""
+private const val WHERE_VISIBILITY = """WHERE node.visibility = $visibility AND node.created_at IS NOT NULL"""
 
 private const val AND_CLASS_ID_IN_LABELS = "AND $classId IN LABELS(node)"
 
@@ -64,7 +64,7 @@ private const val VERIFIED_IS = """COALESCE(node.verified, false) = $verified"""
 private const val ORDER_BY_CREATED_AT = """ORDER BY created_at"""
 
 private const val MATCH_RESOURCE = """MATCH (node:`Resource`)"""
-private const val MATCH_LISTED_RESOURCE = """MATCH (node:Resource) WHERE (node.visibility = "DEFAULT" OR node.visibility = "FEATURED")"""
+private const val MATCH_LISTED_RESOURCE = """MATCH (node:Resource) WHERE (node.visibility = "DEFAULT" OR node.visibility = "FEATURED") AND node.created_at IS NOT NULL"""
 
 interface Neo4jResourceRepository : Neo4jRepository<Neo4jResource, ThingId> {
     override fun existsById(id: ThingId): Boolean

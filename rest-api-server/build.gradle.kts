@@ -103,6 +103,7 @@ testing {
                 }
                 implementation(libs.spring.boot.starter.neo4j.migrations)
                 implementation("org.keycloak:keycloak-admin-client:22.0.3")
+                implementation("io.rest-assured:rest-assured") // for Keycloak tests
             }
             targets {
                 all {

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test
 import org.testcontainers.junit.jupiter.Testcontainers
 
 const val KEYCLOAK_VERSION = "22.0.3"
+const val KEYCLOAK_TEST_REALM = "orkg-dev"
 
 @Testcontainers
 abstract class KeycloakTestContainersBaseTest {
@@ -25,11 +26,5 @@ abstract class KeycloakTestContainersBaseTest {
         @JvmStatic
         @BeforeAll
         fun startContainer() = container.start()
-    }
-
-    @Test
-    @DisplayName("container is set up and running")
-    fun containerStarted() {
-        Assertions.assertThat(container.isRunning).isTrue
     }
 }

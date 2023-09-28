@@ -425,6 +425,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
         verify(exactly = 1) { paperService.publish(id, any(), any()) }
     }
 
+    @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
     @DisplayName("Given a paper request, when service succeeds, it creates and returns the paper")
     fun create() {

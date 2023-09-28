@@ -1395,7 +1395,7 @@
                 "/*"
             ],
             "rootUrl": "",
-            "secret": "**********",
+            "secret": "secret",
             "serviceAccountsEnabled": false,
             "standardFlowEnabled": true,
             "surrogateAuthRequired": false,

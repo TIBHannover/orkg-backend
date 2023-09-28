@@ -19,7 +19,7 @@ class OrkgApiClient(private val port: Int = 80) {
     private var clientId = "orkg-frontend"
 
     @Value("keycloak.credentials.secret")
-    private var clientSecret = "pk6zY383L6rznH6MfsPoXdj1MQYdQFMW"
+    private var clientSecret = "secret"
 
     fun getAccessToken(username: String, password: String, path: String): String? {
         // TODO: externalize settings

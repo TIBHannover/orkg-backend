@@ -22,4 +22,4 @@ keycloak:
   realm: orkg-dev
   resource: orkg-frontend
   credentials:
-    secret: pk6zY383L6rznH6MfsPoXdj1MQYdQFMW
+    secret: secret

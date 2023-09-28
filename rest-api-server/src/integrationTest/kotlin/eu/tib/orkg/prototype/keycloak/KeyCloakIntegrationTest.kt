@@ -1,17 +1,14 @@
 package eu.tib.orkg.prototype.keycloak
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import dasniko.testcontainers.keycloak.KeycloakContainer
 import eu.tib.orkg.prototype.statements.client.OrkgApiClient
 import eu.tib.orkg.prototype.testing.KEYCLOAK_TEST_REALM
 import eu.tib.orkg.prototype.testing.KeycloakTestContainersBaseTest
 import io.restassured.RestAssured.given
-import org.assertj.core.api.Assertions
+import io.restassured.http.ContentType
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
-import org.keycloak.representations.idm.CredentialRepresentation
-import org.keycloak.representations.idm.UserRepresentation
 
 private const val loginPath = "/realms/orkg-dev/login-actions/registration"
 private const val tokenPath = "/realms/orkg-dev/protocol/openid-connect/token"
@@ -20,8 +17,6 @@ private fun KeycloakContainer.wellKnownUrl(realm: String): String =
     "$authServerUrl/realms/$realm/.well-known/openid-configuration"
 
 class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
-
-    private val objectMapper: ObjectMapper = ObjectMapper()
 
     @Test
     fun `obtains the account service information and successfully connects to it`() {
@@ -45,63 +40,52 @@ class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
     fun test() {
         assert(container.isRunning)
 
-        val realm = "orkg-dev"
+        val tokenEndpoint = given().`when`().get(container.wellKnownUrl("master"))
+            .then().statusCode(200)
+            .extract().path<String>("token_endpoint")
 
-        val keycloak = container.keycloakAdminClient
+        // TODO: might be better to use client credentials grant.
+        val adminAccessToken =
+            given().contentType(ContentType.URLENC.withCharset(Charsets.UTF_8))
+                // TODO: use OAuth2Constants?
+                .formParam("client_id", "admin-cli")
+                .formParam("grant_type", "password")
+                .formParam("username", container.adminUsername)
+                .formParam("password", container.adminPassword)
+                .`when`().post(tokenEndpoint)
+                .then().statusCode(200)
+                .extract().path<String>("access_token")
 
-        /*
-        val keycloak = KeycloakBuilder.builder()
-            .grantType(OAuth2Constants.PASSWORD)
-            .serverUrl("http://localhost:${container.httpPort}")
-            .realm(realm)
-            .clientId("admin-cli")
-            .username("admin")
-            .password("admin")
-            .build()
-        */
-
-        val email = "user@example.org"
-        val password = "user"
-
-        val response = keycloak
-            .realm(realm)
-            .users()
-            .create(
-                UserRepresentation().apply {
-                    username = email
-                    this.email = email
-                    createdTimestamp = System.currentTimeMillis()
-                    isEnabled = true
-                    isEmailVerified = true
-                    credentials = listOf(
-                        CredentialRepresentation().apply {
-                            type = CredentialRepresentation.PASSWORD
-                            userLabel = "password"
-                            createdDate = System.currentTimeMillis()
-                            isTemporary = false
-                            secretData = objectMapper.writeValueAsString(
-                                mapOf(
-                                    "value" to "yiEmC+ZPHpcF5AL70YEJ/jUcsD3RVJbD9A2AO/iNp4Y=",
-                                    "salt" to "c9/klVHsyTa/hnZRBktBkw==",
-                                    "additionalParameters" to emptyMap<String, String>()
-                                )
-                            )
-                            credentialData = objectMapper.writeValueAsString(
-                                mapOf(
-                                    "hashIterations" to 27500,
-                                    "algorithm" to "pbkdf2-sha256",
-                                    "additionalParameters" to emptyMap<String, String>()
-                                )
-                            )
-                        }
-                    )
-                    realmRoles = listOf("default-roles-orkg-dev")
-                }
+        // Create the user
+        val userId = given()
+            .log().all()
+            .contentType(ContentType.JSON.withCharset(Charsets.UTF_8))
+            .body(
+                mapOf(
+                    "firstName" to "John",
+                    "lastName" to "Doe",
+                    "email" to "user@example.org",
+                    "enabled" to "true",
+                    "username" to "user",
+                    "emailVerified" to "true",
+                )
             )
-        println(response)
+            .auth().oauth2(adminAccessToken)
+            .`when`().post("${container.authServerUrl}/admin/realms/$KEYCLOAK_TEST_REALM/users")
+            .then().statusCode(201)
+            .extract().header("Location")
+
+        // Set the password
+        given()
+            .log().all()
+            .contentType(ContentType.JSON.withCharset(Charsets.UTF_8))
+            .body(mapOf("type" to "password", "temporary" to false, "value" to "password"))
+            .auth().oauth2(adminAccessToken)
+            .`when`().put("$userId/reset-password")
+            .then().statusCode(204)
 
         val client = OrkgApiClient(container.httpPort)
-        val token = client.getAccessToken(email, password, tokenPath)
-        Assertions.assertThat(token).isNotNull()
+        val token = client.getAccessToken(username = "user", password = "password", path = tokenPath)
+        assertThat(token).isNotNull()
     }
 }

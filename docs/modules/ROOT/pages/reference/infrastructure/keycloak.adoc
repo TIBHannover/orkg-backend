@@ -1,0 +1,44 @@
+= Authorization Server: Keycloak
+
+// TODO: describe development setup
+
+== Clients
+
+// TODO: describe clients, as well as types
+
+* frontend:
+** Client Credentials flow or authorization code flow?
+** confidential or public client?
+* pyton package:
+** Client Credentials flow or authorization code flow?
+** confidential or public client?
+
+== Roles
+
+// TODO: describe roles for ORKG
+
+
+////
+
+Authentication
+
+OIDC: client includes scope=openid in the initial request
+
+////
+
+== Glossary
+
+different names for the same concepts
+
+|====
+| OAuth2 | OICD
+| values | claims
+| grant types | flows
+| Authorization code flow | Authorization code flow
+| ? | Hybrid flow
+| implicit flow | implicit flow (deprecated)
+| Client Credentials flow | no equivalent
+| Device flow | no equivalent
+|====
+
+// Back-Channel Logout

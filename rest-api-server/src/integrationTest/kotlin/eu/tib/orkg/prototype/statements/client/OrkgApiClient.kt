@@ -39,7 +39,7 @@ class OrkgApiClient(private val port: Int = 80) {
     /**
      * Obtain a new access token.
      */
-    fun getAccessToken(username: String, password: String, path: String): String? =
+    fun getAccessToken(username: String, password: String, @Suppress("UNUSED_PARAMETER") path: String): String? =
         tokensFor(username, password).accessToken
 
     /**
@@ -85,6 +85,7 @@ class OrkgApiClient(private val port: Int = 80) {
      * Provides access to the elements in the OIDC token response.
      */
     data class TokenResponse(
+        // TODO: extend as needed
         val accessToken: String?,
         val tokenType: String?,
         val expiresIn: String?,
@@ -92,6 +93,7 @@ class OrkgApiClient(private val port: Int = 80) {
     )
 
     private data class OIDCDiscovery(
+        // TODO: extend as needed
         val tokenEndpoint: String
     )
 

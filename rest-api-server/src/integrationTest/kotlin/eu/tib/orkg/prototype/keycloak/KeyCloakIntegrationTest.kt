@@ -84,7 +84,7 @@ class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
 
         val client = OrkgApiClient(container.httpPort)
         val token = client.getAccessToken(username = "user", password = "password", path = tokenPath)
-        val tokens = client.getTokens(username = "user", password = "password")
+        val tokens = client.tokensFor(username = "user", password = "password")
         assertThat(token).isNotNull()
         assertThat(tokens.accessToken).isNotNull()
     }

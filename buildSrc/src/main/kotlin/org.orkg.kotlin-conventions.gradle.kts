@@ -5,9 +5,9 @@ plugins {
 
 configurations.all {
     resolutionStrategy.eachDependency {
-        if (requested.group == "ch.qos.logback") {
-            useVersion("1.3.11")
-            because("must be compatible with slf4j-api 2.x")
+        if (requested.group == "org.slf4j") {
+            useVersion("1.7.36")
+            because("we have different versions in the classpath, but this one is used in Spring Boot <= 3.0")
         }
     }
 }

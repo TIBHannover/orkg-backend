@@ -7,7 +7,6 @@ import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import io.restassured.internal.mapping.Jackson2Mapper
 import java.net.URI
-import java.util.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -91,15 +90,15 @@ class OrkgApiClient(private val port: Int = 80) {
         val expiresIn: String?,
         val scope: String?
     )
-}
 
-internal data class OIDCDiscovery(
-    val tokenEndpoint: String
-)
+    private data class OIDCDiscovery(
+        val tokenEndpoint: String
+    )
 
-internal val objectMapper = Jackson2Mapper { _, _ ->
-    ObjectMapper().findAndRegisterModules().apply {
-        configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
-        setPropertyNamingStrategy(SNAKE_CASE)
+    private val objectMapper = Jackson2Mapper { _, _ ->
+        ObjectMapper().findAndRegisterModules().apply {
+            configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
+            setPropertyNamingStrategy(SNAKE_CASE)
+        }
     }
 }

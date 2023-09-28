@@ -39,6 +39,7 @@ class OrkgApiClient(private val port: Int = 80) {
     /**
      * Obtain a new access token.
      */
+    @Deprecated("To be removed", replaceWith = ReplaceWith("tokensFor(username, password).accessToken"))
     fun getAccessToken(username: String, password: String, @Suppress("UNUSED_PARAMETER") path: String): String? =
         tokensFor(username, password).accessToken
 

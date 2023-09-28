@@ -1,6 +1,11 @@
 package eu.tib.orkg.prototype.statements.client
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
+import com.fasterxml.jackson.databind.ObjectMapper
+import io.restassured.RestAssured.given
+import io.restassured.http.ContentType
+import io.restassured.internal.mapping.Jackson2Mapper
 import java.net.URI
 import java.util.*
 import org.springframework.beans.factory.annotation.Value
@@ -21,6 +26,11 @@ class OrkgApiClient(private val port: Int = 80) {
     @Value("keycloak.credentials.secret")
     private var clientSecret = "secret"
 
+    private val realm = "orkg-dev"
+
+    /**
+     * Obtain an access token by logging in.
+     */
     fun getAccessToken(username: String, password: String, path: String): String? {
         // TODO: externalize settings
         val uri = URI("http", null, "localhost", port, path, "client_id=$clientId&response_type=code", null)
@@ -34,6 +44,31 @@ class OrkgApiClient(private val port: Int = 80) {
             messageConverters.add(StringHttpMessageConverter())
         }
         return restTemplate.postForObject<TokenResponse>(url, request).accessToken
+    }
+
+    /**
+     * Obtain tokens from via the token endpoint.
+     */
+    fun getTokens(username: String, password: String): TokenResponse {
+        val wellKnownUrl =
+            URI("http", null, "localhost", port, "/realms/$realm/.well-known/openid-configuration", null, null)
+        val tokenEndpoint = given()
+            .log().ifValidationFails()
+            .`when`().get(wellKnownUrl)
+            .then().statusCode(200)
+            .extract().path<String>("token_endpoint")
+
+        return given()
+            .log().ifValidationFails()
+            .contentType(ContentType.URLENC.withCharset(Charsets.UTF_8))
+            .formParam("client_id", clientId)
+            .formParam("client_secret", clientSecret)
+            .formParam("grant_type", "password")
+            .formParam("username", username)
+            .formParam("password", password)
+            .`when`().post(tokenEndpoint)
+            .then().statusCode(200)
+            .extract().`as`(TokenResponse::class.java, objectMapper)
     }
 
     private fun getRequestHeaders() =
@@ -84,7 +119,7 @@ class OrkgApiClient(private val port: Int = 80) {
     /**
      * Helper class to provide access to the elements in the OAuth2 token response.
      */
-    internal data class TokenResponse(
+    data class TokenResponse(
         @JsonProperty("access_token")
         val accessToken: String?,
         @JsonProperty("token_type")
@@ -94,4 +129,10 @@ class OrkgApiClient(private val port: Int = 80) {
         @JsonProperty("scope")
         val scope: String?
     )
+}
+
+internal val objectMapper = Jackson2Mapper { _, _ ->
+    ObjectMapper().findAndRegisterModules().apply {
+        configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
+    }
 }

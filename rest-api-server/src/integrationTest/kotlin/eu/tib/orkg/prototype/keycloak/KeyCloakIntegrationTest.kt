@@ -10,9 +10,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 
-private const val loginPath = "/realms/orkg-dev/login-actions/registration"
-private const val tokenPath = "/realms/orkg-dev/protocol/openid-connect/token"
-
 private fun KeycloakContainer.wellKnownUrl(realm: String): String =
     "$authServerUrl/realms/$realm/.well-known/openid-configuration"
 
@@ -83,9 +80,7 @@ class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
             .then().statusCode(204)
 
         val client = OrkgApiClient(container.httpPort)
-        val token = client.getAccessToken(username = "user", password = "password", path = tokenPath)
         val tokens = client.tokensFor(username = "user", password = "password")
-        assertThat(token).isNotNull()
         assertThat(tokens.accessToken).isNotNull()
     }
 }

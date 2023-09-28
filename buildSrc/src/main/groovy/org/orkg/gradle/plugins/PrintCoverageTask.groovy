@@ -5,7 +5,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 
-class PrintCoverageTask extends DefaultTask {
+abstract class PrintCoverageTask extends DefaultTask {
     @Input
     abstract final Property<File> aggregatedCoverageReport = project.objects.property(File)
 

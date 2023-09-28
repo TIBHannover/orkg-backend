@@ -364,6 +364,7 @@ tasks {
 }
 
 jib {
+    from.image = "gcr.io/distroless/java17"
     to {
         image = containerRegistryLocation
     }

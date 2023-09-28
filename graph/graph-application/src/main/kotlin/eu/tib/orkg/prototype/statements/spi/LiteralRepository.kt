@@ -1,8 +1,10 @@
 package eu.tib.orkg.prototype.statements.spi
 
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import java.time.OffsetDateTime
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -17,4 +19,9 @@ interface LiteralRepository {
     fun findAll(pageable: Pageable): Page<Literal>
     fun findById(id: ThingId): Optional<Literal>
     fun findAllByLabel(labelSearchString: SearchString, pageable: Pageable): Page<Literal>
+    fun findAllWithFilters(
+        createdBy: ContributorId? = null,
+        createdAt: OffsetDateTime? = null,
+        pageable: Pageable
+    ): Page<Literal>
 }

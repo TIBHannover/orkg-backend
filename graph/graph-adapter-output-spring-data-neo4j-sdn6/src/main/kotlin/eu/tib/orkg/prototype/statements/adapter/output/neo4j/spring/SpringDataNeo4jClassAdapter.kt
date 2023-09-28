@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClass
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClassIdGenerator
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jClassRepository
@@ -9,13 +10,17 @@ import eu.tib.orkg.prototype.statements.domain.model.FuzzySearchString
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import org.springframework.cache.annotation.CacheConfig
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.cache.annotation.Caching
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
 
 const val CLASS_ID_TO_CLASS_CACHE = "class-id-to-class"
@@ -26,6 +31,7 @@ const val CLASS_ID_TO_CLASS_EXISTS_CACHE = "class-id-to-class-exists"
 class SpringDataNeo4jClassAdapter(
     private val neo4jRepository: Neo4jClassRepository,
     private val neo4jClassIdGenerator: Neo4jClassIdGenerator,
+    private val neo4jClient: Neo4jClient
 ) : ClassRepository {
     @Caching(
         evict = [
@@ -37,7 +43,48 @@ class SpringDataNeo4jClassAdapter(
         neo4jRepository.save(c.toNeo4jClass())
     }
 
-    override fun findAll(pageable: Pageable): Page<Class> = neo4jRepository.findAll(pageable).map(Neo4jClass::toClass)
+    override fun findAll(pageable: Pageable): Page<Class> =
+        findAllWithFilters(pageable = pageable)
+
+    override fun findAllWithFilters(
+        uri: String?,
+        createdBy: ContributorId?,
+        createdAt: OffsetDateTime?,
+        pageable: Pageable
+    ): Page<Class> {
+        val where = buildString {
+            if (createdBy != null) {
+                append(" AND n.created_by = ${'$'}createdBy")
+            }
+            if (createdAt != null) {
+                append(" AND n.created_at = ${'$'}createdAt")
+            }
+            appendOrderByOptimizations(pageable, createdAt, createdBy)
+        }.replaceFirst(" AND", "WHERE")
+        val query = """
+            MATCH (n:Class) $where
+            RETURN n, n.id AS id, n.label AS label, n.created_by AS created_by, n.created_at AS created_at
+            SKIP ${'$'}skip LIMIT ${'$'}limit""".sortedWith(pageable.sort).trimIndent()
+        val countQuery = """
+            MATCH (n:Class) $where
+            RETURN COUNT(n)""".trimIndent()
+        val parameters = mapOf(
+            "uri" to uri,
+            "createdBy" to createdBy?.value?.toString(),
+            "createdAt" to createdAt?.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+        )
+        val elements = neo4jClient.query(query)
+            .bindAll(parameters + mapOf("skip" to pageable.offset, "limit" to pageable.pageSize))
+            .fetchAs(Class::class.java)
+            .mappedBy(ClassMapper("n"))
+            .all()
+        val count = neo4jClient.query(countQuery)
+            .bindAll(parameters)
+            .fetchAs(Long::class.java)
+            .one()
+            .orElse(0)
+        return PageImpl(elements.toList(), pageable, count)
+    }
 
     @Cacheable(key = "#id", cacheNames = [CLASS_ID_TO_CLASS_EXISTS_CACHE])
     override fun exists(id: ThingId): Boolean = neo4jRepository.existsById(id)

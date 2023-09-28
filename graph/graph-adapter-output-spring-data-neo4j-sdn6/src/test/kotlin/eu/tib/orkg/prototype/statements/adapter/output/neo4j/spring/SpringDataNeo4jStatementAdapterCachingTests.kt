@@ -171,6 +171,7 @@ internal class SpringDataNeo4jStatementAdapterCachingTests {
             SpringDataNeo4jLiteralAdapter(
                 neo4jRepository = neo4jLiteralRepository,
                 neo4jLiteralIdGenerator = mockk(),
+                neo4jClient()
             )
 
         // The "real" repositories used by both adapters, where we want to mock the interaction.

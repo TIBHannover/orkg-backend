@@ -1,12 +1,19 @@
 package eu.tib.orkg.prototype.statements.adapter.output.inmemory
 
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.domain.model.Class
+import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.domain.model.toOptional
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
+import java.time.OffsetDateTime
 import java.util.*
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 
 class InMemoryClassRepository : InMemoryRepository<ThingId, Class>(
     compareBy(Class::createdAt)
@@ -28,6 +35,17 @@ class InMemoryClassRepository : InMemoryRepository<ThingId, Class>(
 
     override fun findByUri(uri: String) =
         entities.values.firstOrNull { it.uri.toString() == uri }.toOptional()
+
+    override fun findAllWithFilters(
+        uri: String?,
+        createdBy: ContributorId?,
+        createdAt: OffsetDateTime?,
+        pageable: Pageable
+    ): Page<Class> = findAllFilteredAndPaged(pageable, pageable.sort.classComparator) {
+        (uri == null || uri == it.uri.toString())
+            && (createdBy == null || createdBy == it.createdBy)
+            && (createdAt == null || createdAt == it.createdAt)
+    }
 
     override fun deleteAll() {
         entities.clear()

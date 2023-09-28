@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.dsl
 
+import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.sortedWith
 import java.util.*
 import java.util.function.BiFunction
 import java.util.stream.Collectors
@@ -312,27 +313,6 @@ class PagedQueryBuilderImpl {
                 .one()
                 .orElse(0)
             return PageImpl(content, pageable, count)
-        }
-
-        private fun String.sortedWith(sort: Sort): String =
-            if (sort.isUnsorted) {
-                this
-            } else {
-                StringBuilder(this)
-                    .insert(lastIndexOf("SKIP"),"ORDER BY ${sort.toNeo4jSnippet()} ")
-                    .toString()
-            }
-
-        private fun Sort.toNeo4jSnippet(): String =
-            stream().map { it.toNeo4jSnippet() }.collect(Collectors.joining(", "))
-
-        private fun Order.toNeo4jSnippet(): String = buildString {
-            if (isIgnoreCase) {
-                append("toLower(").append(property).append(")")
-            } else {
-                append(property)
-            }
-            append(" ").append(direction)
         }
     }
 }

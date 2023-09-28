@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jPredicate
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jPredicateIdGenerator
 import eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring.internal.Neo4jPredicateRepository
@@ -9,13 +10,17 @@ import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import org.springframework.cache.annotation.CacheConfig
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.cache.annotation.Caching
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.stereotype.Component
 
 const val PREDICATE_ID_TO_PREDICATE_CACHE = "predicate-id-to-predicate"
@@ -24,10 +29,11 @@ const val PREDICATE_ID_TO_PREDICATE_CACHE = "predicate-id-to-predicate"
 @CacheConfig(cacheNames = [PREDICATE_ID_TO_PREDICATE_CACHE])
 class SpringDataNeo4jPredicateAdapter(
     private val neo4jRepository: Neo4jPredicateRepository,
-    private val idGenerator: Neo4jPredicateIdGenerator
+    private val idGenerator: Neo4jPredicateIdGenerator,
+    private val neo4jClient: Neo4jClient
 ) : PredicateRepository {
     override fun findAll(pageable: Pageable): Page<Predicate> =
-        neo4jRepository.findAll(pageable).map(Neo4jPredicate::toPredicate)
+        findAllWithFilters(pageable = pageable)
 
     override fun exists(id: ThingId): Boolean = neo4jRepository.existsById(id)
 
@@ -86,6 +92,44 @@ class SpringDataNeo4jPredicateAdapter(
             id = idGenerator.nextIdentity()
         } while (neo4jRepository.existsById(id))
         return id
+    }
+
+    override fun findAllWithFilters(
+        createdBy: ContributorId?,
+        createdAt: OffsetDateTime?,
+        pageable: Pageable
+    ): Page<Predicate> {
+        val where = buildString {
+            if (createdBy != null) {
+                append(" AND n.created_by = ${'$'}createdBy")
+            }
+            if (createdAt != null) {
+                append(" AND n.created_at = ${'$'}createdAt")
+            }
+            appendOrderByOptimizations(pageable, createdAt, createdBy)
+        }.replaceFirst(" AND", "WHERE")
+        val query = """
+            MATCH (n:Predicate) $where
+            RETURN n, n.id AS id, n.label AS label, n.created_by AS created_by, n.created_at AS created_at
+            SKIP ${'$'}skip LIMIT ${'$'}limit""".sortedWith(pageable.sort).trimIndent()
+        val countQuery = """
+            MATCH (n:Predicate) $where
+            RETURN COUNT(n)""".trimIndent()
+        val parameters = mapOf(
+            "createdBy" to createdBy?.value?.toString(),
+            "createdAt" to createdAt?.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+        )
+        val elements = neo4jClient.query(query)
+            .bindAll(parameters + mapOf("skip" to pageable.offset, "limit" to pageable.pageSize))
+            .fetchAs(Predicate::class.java)
+            .mappedBy(PredicateMapper("n"))
+            .all()
+        val count = neo4jClient.query(countQuery)
+            .bindAll(parameters)
+            .fetchAs(Long::class.java)
+            .one()
+            .orElse(0)
+        return PageImpl(elements.toList(), pageable, count)
     }
 
     private fun Predicate.toNeo4jPredicate() =

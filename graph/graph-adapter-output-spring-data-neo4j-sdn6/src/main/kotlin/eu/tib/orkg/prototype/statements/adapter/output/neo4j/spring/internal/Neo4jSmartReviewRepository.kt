@@ -34,11 +34,11 @@ private const val MATCH_SMART_REVIEW = """MATCH (node:`Resource`:`SmartReviewPub
 
 private const val MATCH_SMART_REVIEW_BY_ID = """MATCH (node:`Resource`:`SmartReviewPublished` {id: $id})"""
 
-private const val WHERE_VISIBILITY = """WHERE node.visibility = $visibility"""
+private const val WHERE_VISIBILITY = """WHERE node.visibility = $visibility AND node.created_at IS NOT NULL"""
 
 private const val ORDER_BY_CREATED_AT = """ORDER BY created_at"""
 
-private const val MATCH_LISTED_SMART_REVIEW = """$MATCH_SMART_REVIEW WHERE (node.visibility = "DEFAULT" OR node.visibility = "FEATURED")"""
+private const val MATCH_LISTED_SMART_REVIEW = """$MATCH_SMART_REVIEW WHERE (node.visibility = "DEFAULT" OR node.visibility = "FEATURED") AND node.created_at IS NOT NULL"""
 
 private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 

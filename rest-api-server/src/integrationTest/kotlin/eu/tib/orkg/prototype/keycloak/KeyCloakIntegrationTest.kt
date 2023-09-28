@@ -37,7 +37,7 @@ class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
     }
 
     @Test
-    fun test() {
+    fun `obtain access token for regular user`() {
         assert(container.isRunning)
 
         val tokenEndpoint = given().`when`().get(container.wellKnownUrl("master"))
@@ -45,20 +45,19 @@ class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
             .extract().path<String>("token_endpoint")
 
         // TODO: might be better to use client credentials grant.
-        val adminAccessToken =
-            given().contentType(ContentType.URLENC.withCharset(Charsets.UTF_8))
-                // TODO: use OAuth2Constants?
-                .formParam("client_id", "admin-cli")
-                .formParam("grant_type", "password")
-                .formParam("username", container.adminUsername)
-                .formParam("password", container.adminPassword)
-                .`when`().post(tokenEndpoint)
-                .then().statusCode(200)
-                .extract().path<String>("access_token")
+        val adminAccessToken = given()
+            .contentType(ContentType.URLENC.withCharset(Charsets.UTF_8))
+            // TODO: use OAuth2Constants?
+            .formParam("client_id", "admin-cli")
+            .formParam("grant_type", "password")
+            .formParam("username", container.adminUsername)
+            .formParam("password", container.adminPassword)
+            .`when`().post(tokenEndpoint)
+            .then().statusCode(200)
+            .extract().path<String>("access_token")
 
         // Create the user
         val userId = given()
-            .log().all()
             .contentType(ContentType.JSON.withCharset(Charsets.UTF_8))
             .body(
                 mapOf(
@@ -77,7 +76,6 @@ class KeyCloakIntegrationTest : KeycloakTestContainersBaseTest() {
 
         // Set the password
         given()
-            .log().all()
             .contentType(ContentType.JSON.withCharset(Charsets.UTF_8))
             .body(mapOf("type" to "password", "temporary" to false, "value" to "password"))
             .auth().oauth2(adminAccessToken)

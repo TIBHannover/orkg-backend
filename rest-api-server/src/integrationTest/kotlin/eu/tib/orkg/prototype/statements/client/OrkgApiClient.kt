@@ -23,7 +23,7 @@ class OrkgApiClient(private val port: Int = 80) {
 
     fun getAccessToken(username: String, password: String, path: String): String? {
         // TODO: externalize settings
-        val uri = URI("http", null, "localhost", port, path, "client_id=orkg-frontend&response_type=code", null)
+        val uri = URI("http", null, "localhost", port, path, "client_id=$clientId&response_type=code", null)
         val url = uri.toString()
 
         val params = getRequestParameters(username, password)

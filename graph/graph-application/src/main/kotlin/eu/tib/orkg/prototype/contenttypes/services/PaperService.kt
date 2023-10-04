@@ -16,6 +16,7 @@ import eu.tib.orkg.prototype.contenttypes.services.actions.PaperAction
 import eu.tib.orkg.prototype.contenttypes.services.actions.PaperAuthorCreator
 import eu.tib.orkg.prototype.contenttypes.services.actions.PaperContentsCreator
 import eu.tib.orkg.prototype.contenttypes.services.actions.PaperExistenceValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.PaperIdentifierCreator
 import eu.tib.orkg.prototype.contenttypes.services.actions.PaperPublicationInfoCreator
 import eu.tib.orkg.prototype.contenttypes.services.actions.PaperResearchFieldCreator
 import eu.tib.orkg.prototype.contenttypes.services.actions.PaperResourceCreator
@@ -109,6 +110,7 @@ class PaperService(
             ThingDefinitionValidator(thingRepository),
             ContributionValidator(thingRepository),
             PaperResourceCreator(resourceService),
+            PaperIdentifierCreator(statementService, literalService),
             PaperAuthorCreator(resourceService, statementService, literalService, listService),
             PaperResearchFieldCreator(statementService),
             PaperPublicationInfoCreator(resourceService, resourceRepository, statementService, literalService),

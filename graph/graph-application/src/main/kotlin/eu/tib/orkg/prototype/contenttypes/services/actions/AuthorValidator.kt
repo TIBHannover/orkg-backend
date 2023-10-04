@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.contenttypes.services.actions
 
-import eu.tib.orkg.prototype.contenttypes.api.CreatePaperUseCase
 import eu.tib.orkg.prototype.contenttypes.api.Identifiers
 import eu.tib.orkg.prototype.contenttypes.application.AmbiguousAuthor
 import eu.tib.orkg.prototype.contenttypes.application.AuthorNotFound

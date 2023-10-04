@@ -1,7 +1,6 @@
 plugins {
-    kotlin("jvm")
+    id("org.orkg.kotlin-conventions")
     kotlin("plugin.spring")
-    id("jacoco")
     id("org.orkg.neo4j-conventions")
 }
 
@@ -28,27 +27,5 @@ testing {
                 implementation("org.assertj:assertj-core")
             }
         }
-    }
-}
-
-// TODO: The following section was copied from the convention plugin and can be deleted when using Gradle 8+
-
-tasks {
-    withType<JacocoReport>().configureEach {
-        reports {
-            xml.required.set(true)
-        }
-    }
-
-    // Create reproducible archives
-    withType<AbstractArchiveTask>().configureEach {
-        isPreserveFileTimestamps = false
-        isReproducibleFileOrder = true
-    }
-}
-
-kotlin {
-    jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }

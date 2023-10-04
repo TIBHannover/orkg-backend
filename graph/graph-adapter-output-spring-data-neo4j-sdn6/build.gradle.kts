@@ -1,9 +1,8 @@
 // JVM Test Suite is still incubating, but expected to be stable soon, so disabling the warning.
 @file:Suppress("UnstableApiUsage")
 
-
 plugins {
-    id("org.orkg.kotlin-conventions") // TODO: re-apply after upgrading
+    id("org.orkg.kotlin-conventions")
     id("org.orkg.neo4j-conventions")
     //kotlin("jvm") // TODO: remove on upgrade
     alias(libs.plugins.spring.boot) apply false

@@ -21,6 +21,7 @@ dependencies {
         exclude(group = "org.springframework.data", module = "spring-data-commons") // TODO: remove after upgrade to 2.7
         exclude(group = "org.neo4j.driver", module = "neo4j-java-driver") // TODO: remove after upgrade to 2.7
         exclude(group = "org.hibernate", module = "hibernate-core") // TODO: remove after upgrade to 2.7
+        exclude(group = "org.slf4j") // TODO: remove after upgrade to 2.7
         // We need a bugfix, so we exclude it here and set a constraint later
         // exclude(group = "org.liquibase", module = "liquibase-core")
     }

@@ -48,7 +48,7 @@ class PaperContentsCreator(
                 contents = command,
                 validatedIds = state.validatedIds,
                 bakedStatements = state.bakedStatements
-            )[0]
+            ).single()
         )
 
     internal fun createPaperContents(

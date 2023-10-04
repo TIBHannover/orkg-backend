@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- The new paper endpoint now creates pre-existing identifiers.
+  (Closes: [#509](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/509))
 
 ## [0.38.0] - 2023-09-21
 ### Added

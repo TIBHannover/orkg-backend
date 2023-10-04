@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.contenttypes.services.actions
 
-import eu.tib.orkg.prototype.contenttypes.api.CreatePaperUseCase
 import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 

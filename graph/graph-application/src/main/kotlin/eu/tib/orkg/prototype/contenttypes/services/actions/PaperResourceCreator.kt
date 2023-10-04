@@ -1,6 +1,5 @@
 package eu.tib.orkg.prototype.contenttypes.services.actions
 
-import eu.tib.orkg.prototype.contenttypes.api.CreatePaperUseCase
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases

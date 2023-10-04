@@ -1,7 +1,5 @@
 package eu.tib.orkg.prototype.contenttypes.services.actions
 
-import eu.tib.orkg.prototype.contenttypes.api.CreateContributionUseCase
-import eu.tib.orkg.prototype.contenttypes.api.CreatePaperUseCase
 import eu.tib.orkg.prototype.contenttypes.api.Identifiers
 import eu.tib.orkg.prototype.contenttypes.application.PaperAlreadyExists
 import eu.tib.orkg.prototype.contenttypes.application.PaperNotFound

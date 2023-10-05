@@ -31,11 +31,9 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.transaction.annotation.Transactional
 
 @Suppress("HttpUrlsUsage")
 @DisplayName("Benchmark Controller")
-@Transactional
 @Import(MockUserDetailsService::class)
 class BenchmarkControllerTest : RestDocumentationBaseTest() {
 
@@ -155,6 +153,21 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
             )
     }
 
+    /**
+     * Test setup:
+     *
+     * ```
+     *   (benchPaper:Paper)--->(fieldWithDataset:ResearchField)
+     *         |
+     *         v
+     *    (benchCont)---->(problem1:Problem)
+     *               | \->(problem2:Problem)
+     *               +--->(benchmark:Benchmark)
+     *               |          |--->(dataset1:Dataset)
+     *               |          \--->(dataset2:Dataset)
+     *               \----(code:Literal) // 5x
+     * ```
+     */
     @Test
     fun fetchBenchmarkSummaryForResearchField() {
         val fieldWithDataset = resourceService.createResource(setOf("ResearchField"), label = "Field with a dataset")
@@ -188,11 +201,16 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
         mockMvc
-            .perform(getRequestTo("/api/benchmarks/summary/research-field/$fieldWithDataset"))
+            .perform(getRequestTo("/api/benchmarks/summary/research-field/$fieldWithDataset?sort=problem.id,ASC"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
-            .andExpect(jsonPath("$.content[0].research_problem.id", equalTo(problem1.value)))
-            .andExpect(jsonPath("$.content[1].research_problem.id", equalTo(problem2.value)))
+            // The resulting summaries are "duplicates", but listed for each research problem:
+            .andExpect(jsonPath("$.content[*].research_problem.id", containsInAnyOrder(problem1.value, problem2.value)))
+            .andExpect(jsonPath("$.content[0].research_fields[*].label", equalTo(listOf("Field with a dataset"))))
+            .andExpect(jsonPath("$.content[0].total_papers", equalTo(1)))
+            .andExpect(jsonPath("$.content[0].total_datasets", equalTo(2)))
+            .andExpect(jsonPath("$.content[0].total_codes", equalTo(5)))
+            .andExpect(jsonPath("$.content[1].research_fields[*].label", equalTo(listOf("Field with a dataset"))))
             .andExpect(jsonPath("$.content[1].total_papers", equalTo(1)))
             .andExpect(jsonPath("$.content[1].total_datasets", equalTo(2)))
             .andExpect(jsonPath("$.content[1].total_codes", equalTo(5)))
@@ -421,7 +439,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(benchmark2, ThingId(labelsAndClasses.datasetPredicate), dataset2)
 
         mockMvc
-            .perform(getRequestTo("/api/datasets/research-problem/$problem"))
+            .perform(getRequestTo("/api/datasets/research-problem/$problem?sort=totalModels,DESC"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.content[0].total_papers", equalTo(1)))

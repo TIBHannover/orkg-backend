@@ -20,6 +20,7 @@ dependencies {
         exclude(group = "org.springframework.data", module="spring-data-jpa")
     }
 
+    testFixturesCompileOnly(libs.spring.boot.starter.neo4j.migrations)
     testFixturesImplementation("org.springframework.data:spring-data-commons:2.6.10")
     testFixturesImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "junit", module = "junit")

@@ -1,9 +1,11 @@
 package eu.tib.orkg.prototype.testing
 
+import ac.simons.neo4j.migrations.springframework.boot.autoconfigure.MigrationsAutoConfiguration
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
@@ -18,6 +20,7 @@ const val NEO4J_VERSION = "4.4-community"
 @Testcontainers
 @SpringBootTest // TODO: This should be "downgraded" to @DataNeo4jTest after decoupling services and output adapters
 @TestConstructor(autowireMode = ALL)
+@ImportAutoConfiguration(MigrationsAutoConfiguration::class)
 abstract class Neo4jTestContainersBaseTest {
     companion object {
         // It is important to not use @Containers here, so we can manage the life-cycle.

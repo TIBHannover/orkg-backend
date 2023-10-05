@@ -88,6 +88,7 @@ class DOIController(
         data class Creator(
             @JsonProperty("creator")
             val name: String,
+            @Size(min = 19, max = 19)
             val orcid: String?
         )
     }

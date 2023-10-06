@@ -22,8 +22,6 @@ class SpringDataNeo4jThingAdapter(
     @Cacheable(key = "#id", cacheNames = [THING_ID_TO_THING_CACHE])
     override fun findByThingId(id: ThingId): Optional<Thing> = neo4jRepository.findById(id).map(Neo4jThing::toThing)
 
-    override fun findAll(): Iterable<Thing> = neo4jRepository.findAll().map(Neo4jThing::toThing)
-
     override fun findAll(pageable: Pageable): Page<Thing> = neo4jRepository.findAll(pageable).map(Neo4jThing::toThing)
 
     override fun existsAll(ids: Set<ThingId>): Boolean = neo4jRepository.existsAll(ids)

@@ -69,7 +69,7 @@ class StatisticsServiceUnitTests {
         )
 
         every { resourceRepository.findById(id) } returns Optional.of(researchField)
-        every { statsRepository.findResearchFieldStatsById(id, any()) } returns stats
+        every { statsRepository.findResearchFieldStatsById(id, any()) } returns Optional.of(stats)
 
         service.findResearchFieldStatsById(id, false)
 

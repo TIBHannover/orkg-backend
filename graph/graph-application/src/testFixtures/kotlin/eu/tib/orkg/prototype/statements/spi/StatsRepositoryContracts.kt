@@ -123,7 +123,8 @@ fun <
 
             context("excluding subfields") {
                 it("returns the correct result") {
-                    excludingSubfields.asClue {
+                    excludingSubfields.isPresent shouldBe true
+                    excludingSubfields.get().asClue {
                         it.id shouldBe r1.id
                         it.papers shouldBe 1
                         it.comparisons shouldBe 2
@@ -133,7 +134,8 @@ fun <
             }
             context("including subfields") {
                 it("returns the correct result") {
-                    includingSubfields.asClue {
+                    includingSubfields.isPresent shouldBe true
+                    includingSubfields.get().asClue {
                         it.id shouldBe r1.id
                         it.papers shouldBe 4
                         it.comparisons shouldBe 3

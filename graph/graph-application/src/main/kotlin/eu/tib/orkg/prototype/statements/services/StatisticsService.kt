@@ -85,13 +85,13 @@ class StatisticsService(
         if (!observatoryRepository.existsById(id.value)) {
             throw ObservatoryNotFound(id)
         }
-        return statsRepository.findObservatoryStatsById(id)
+        return statsRepository.findObservatoryStatsById(id).orElseGet { ObservatoryStats(id) }
     }
 
     override fun findResearchFieldStatsById(id: ThingId, includeSubfields: Boolean): ResearchFieldStats =
         resourceRepository.findById(id)
             .filter { Classes.researchField in it.classes }
-            .map { statsRepository.findResearchFieldStatsById(id, includeSubfields) }
+            .map { statsRepository.findResearchFieldStatsById(id, includeSubfields).orElseGet { ResearchFieldStats(id) } }
             .orElseThrow { ResearchFieldNotFound(id) }
 
     override fun getTopCurrentContributors(

@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.api.RetrieveStatisticsUseCase
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.time.OffsetDateTime
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.core.convert.ConvertWith
@@ -17,8 +18,8 @@ interface StatsRepository {
     fun getObservatoryPapersCount(id: ObservatoryId): Long
     fun getObservatoryComparisonsCount(id: ObservatoryId): Long
     fun findAllObservatoryStats(pageable: Pageable): Page<ObservatoryStats>
-    fun findObservatoryStatsById(id: ObservatoryId): ObservatoryStats
-    fun findResearchFieldStatsById(id: ThingId, includeSubfields: Boolean): ResearchFieldStats
+    fun findObservatoryStatsById(id: ObservatoryId): Optional<ObservatoryStats>
+    fun findResearchFieldStatsById(id: ThingId, includeSubfields: Boolean): Optional<ResearchFieldStats>
     fun getTopCurrentContributorIdsAndContributionsCount(
         date: String,
         pageable: Pageable

@@ -7,6 +7,7 @@ import eu.tib.orkg.prototype.statements.spi.FieldsStats
 import eu.tib.orkg.prototype.statements.spi.ObservatoryStats
 import eu.tib.orkg.prototype.statements.spi.ResearchFieldStats
 import eu.tib.orkg.prototype.statements.spi.TrendingResearchProblems
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.repository.Neo4jRepository
@@ -50,7 +51,7 @@ OPTIONAL MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(rsf)
 OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(:Contribution:Resource)<-[:RELATED {predicate_id: "compareContribution"}]-(cmp:Comparison:Resource)
 WITH rsf.id AS id, COUNT(DISTINCT ppr) AS papers, COUNT(DISTINCT cmp) AS comparisons
 RETURN id, papers, comparisons, (papers + comparisons) AS total""")
-    fun findResearchFieldStatsById(id: ThingId): ResearchFieldStats
+    fun findResearchFieldStatsById(id: ThingId): Optional<ResearchFieldStats>
 
     @Query("""
 MATCH (rsf:ResearchField:Resource)<-[:RELATED*0.. {predicate_id: "P36"}]-(:ResearchField:Resource {id: $id})
@@ -58,7 +59,7 @@ OPTIONAL MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(rsf)
 OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(:Contribution:Resource)<-[:RELATED {predicate_id: "compareContribution"}]-(cmp:Comparison:Resource)
 WITH $id AS id, COUNT(DISTINCT ppr) AS papers, COUNT(DISTINCT cmp) AS comparisons
 RETURN id, papers, comparisons, (papers + comparisons) AS total""")
-    fun findResearchFieldStatsByIdIncludingSubfields(id: ThingId): ResearchFieldStats
+    fun findResearchFieldStatsByIdIncludingSubfields(id: ThingId): Optional<ResearchFieldStats>
 
     @Query("""
 OPTIONAL MATCH (n:Paper:Resource {observatory_id: $id})
@@ -68,7 +69,7 @@ WITH observatoryId, COUNT(c) AS comparisons, papers
 WITH observatoryId, comparisons, papers, comparisons + papers AS total
 ORDER BY total DESC
 RETURN $id AS observatoryId, papers, comparisons, total""")
-    fun findObservatoryStatsById(id: ObservatoryId): ObservatoryStats
+    fun findObservatoryStatsById(id: ObservatoryId): Optional<ObservatoryStats>
 
     @Query("""
 CALL {

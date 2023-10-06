@@ -11,6 +11,7 @@ import eu.tib.orkg.prototype.statements.spi.ObservatoryStats
 import eu.tib.orkg.prototype.statements.spi.ResearchFieldStats
 import eu.tib.orkg.prototype.statements.spi.StatsRepository
 import eu.tib.orkg.prototype.statements.spi.TrendingResearchProblems
+import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.neo4j.core.Neo4jClient
@@ -36,10 +37,10 @@ class SpringDataNeo4jStatsAdapter(
     override fun findAllObservatoryStats(pageable: Pageable): Page<ObservatoryStats> =
         neo4jRepository.findAllObservatoryStats(pageable)
 
-    override fun findObservatoryStatsById(id: ObservatoryId): ObservatoryStats =
+    override fun findObservatoryStatsById(id: ObservatoryId): Optional<ObservatoryStats> =
         neo4jRepository.findObservatoryStatsById(id)
 
-    override fun findResearchFieldStatsById(id: ThingId, includeSubfields: Boolean): ResearchFieldStats =
+    override fun findResearchFieldStatsById(id: ThingId, includeSubfields: Boolean): Optional<ResearchFieldStats> =
         if (includeSubfields) {
             neo4jRepository.findResearchFieldStatsByIdIncludingSubfields(id)
         } else {

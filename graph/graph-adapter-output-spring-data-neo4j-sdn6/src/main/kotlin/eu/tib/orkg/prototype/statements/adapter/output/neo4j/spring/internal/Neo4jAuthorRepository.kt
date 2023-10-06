@@ -29,8 +29,9 @@ RETURN COUNT(DISTINCT authorLabel) as cnt""")
 
     @Query(value = """
 MATCH (problem:Problem:Resource {id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper:Resource)-[:RELATED {predicate_id: 'hasAuthors'}]->(:List)-[:RELATED {predicate_id: "hasListElement"}]->(author:Thing)
-RETURN DISTINCT author.label AS author, author AS thing, COUNT(paper.id) AS papers
-ORDER BY papers DESC, author $PAGE_PARAMS""",
+WITH DISTINCT author.label AS author, author AS thing, COUNT(paper.id) AS papers
+ORDER BY papers DESC, author
+RETURN author, thing, papers $PAGE_PARAMS""",
         countQuery = """
 MATCH (problem:Problem:Resource {id: $problemId})<-[:RELATED {predicate_id: 'P32'}]-(:Contribution:Resource)<-[:RELATED {predicate_id: 'P31'}]-(paper:Paper:Resource)-[:RELATED {predicate_id: 'hasAuthors'}]->(:List)-[:RELATED {predicate_id: "hasListElement"}]->(author:Thing)
 WITH DISTINCT author.label AS author, author AS thing

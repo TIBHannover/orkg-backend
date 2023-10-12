@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype
+package eu.tib.orkg.prototype.testing
 
 import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.context.ApplicationContextInitializer
@@ -22,17 +22,12 @@ class Neo4jContainerInitializer : ApplicationContextInitializer<ConfigurableAppl
 
     override fun initialize(applicationContext: ConfigurableApplicationContext) {
         neo4jContainer.start()
-        TestPropertyValues.of(settingsForSDN5(neo4jContainer)).applyTo(applicationContext)
+        TestPropertyValues.of(settingsForSDN(neo4jContainer)).applyTo(applicationContext)
     }
 
-    private fun settingsForSDN5(neo4j: Neo4jContainer<*>) = listOf(
-        "spring.data.neo4j.uri=${neo4j.boltUrl}",
-        "spring.data.neo4j.username=neo4j",
-        "spring.data.neo4j.password=${neo4j.adminPassword}",
-        "spring.data.neo4j.use-native-types=true", // TODO: Remove after upgrade, not supported anymore
-//        "spring.neo4j.uri=${neo4j.boltUrl}",
-//        "spring.neo4j.authentication.username=neo4j",
-//        "spring.neo4j.authentication.password=${neo4j.adminPassword}"
-
+    private fun settingsForSDN(neo4j: Neo4jContainer<*>) = listOf(
+        "spring.neo4j.uri=${neo4j.boltUrl}",
+        "spring.neo4j.authentication.username=neo4j",
+        "spring.neo4j.authentication.password=${neo4j.adminPassword}"
     )
 }

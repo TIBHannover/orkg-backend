@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
-import eu.tib.orkg.prototype.Neo4jContainerInitializer
+import eu.tib.orkg.prototype.testing.Neo4jContainerInitializer
 import eu.tib.orkg.prototype.statements.adapter.output.facade.ListAdapter
 import eu.tib.orkg.prototype.statements.spi.ListRepository
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
@@ -8,8 +8,6 @@ import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.listRepositoryContract
 import io.kotest.core.spec.style.DescribeSpec
-import org.neo4j.cypherdsl.core.Cypher.*
-import org.neo4j.cypherdsl.core.Functions.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
 import org.springframework.cache.annotation.EnableCaching

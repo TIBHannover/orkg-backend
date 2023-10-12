@@ -5,7 +5,7 @@ import eu.tib.orkg.prototype.statements.services.ClassService
 import eu.tib.orkg.prototype.statements.services.PredicateService
 import eu.tib.orkg.prototype.statements.services.ResourceService
 import eu.tib.orkg.prototype.statements.services.StatementService
-import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
+import eu.tib.orkg.prototype.testing.annotations.Neo4jContainerIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -19,7 +19,8 @@ import org.springframework.transaction.annotation.Transactional
 @Tag("development")
 @DisplayName("Example Data")
 @Transactional
-class ExampleDataTest : Neo4jTestContainersBaseTest() {
+@Neo4jContainerIntegrationTest
+class ExampleDataTest {
 
     @Autowired
     private lateinit var resourceService: ResourceService

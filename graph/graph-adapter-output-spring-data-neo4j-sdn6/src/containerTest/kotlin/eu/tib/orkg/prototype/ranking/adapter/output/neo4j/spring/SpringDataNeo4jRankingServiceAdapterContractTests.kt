@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.ranking.adapter.output.neo4j.spring
 
-import eu.tib.orkg.prototype.Neo4jContainerInitializer
+import eu.tib.orkg.prototype.testing.Neo4jContainerInitializer
 import eu.tib.orkg.prototype.ranking.spi.RankingService
 import eu.tib.orkg.prototype.ranking.spi.rankingServiceContract
 import eu.tib.orkg.prototype.statements.adapter.output.facade.ListAdapter

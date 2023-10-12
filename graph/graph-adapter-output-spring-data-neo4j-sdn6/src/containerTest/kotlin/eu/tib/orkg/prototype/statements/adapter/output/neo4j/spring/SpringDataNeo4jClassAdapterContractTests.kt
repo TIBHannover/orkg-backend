@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import ac.simons.neo4j.migrations.springframework.boot.autoconfigure.MigrationsAutoConfiguration
-import eu.tib.orkg.prototype.Neo4jContainerInitializer
+import eu.tib.orkg.prototype.testing.Neo4jContainerInitializer
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository

@@ -1,4 +1,4 @@
-package eu.tib.orkg.prototype.statements.infrastructure.neo4j
+package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
@@ -6,7 +6,7 @@ import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
+import eu.tib.orkg.prototype.testing.annotations.Neo4jContainerIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -14,7 +14,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 
-class Neo4jResourceServiceTest : Neo4jTestContainersBaseTest() {
+@Neo4jContainerIntegrationTest
+class ResourceServiceIntegrationTest {
 
     @Autowired
     private lateinit var service: ResourceUseCases

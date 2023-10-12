@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.application
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
+import eu.tib.orkg.prototype.testing.annotations.Neo4jContainerIntegrationTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -39,8 +39,9 @@ import org.springframework.web.context.WebApplicationContext
  * It initializes MockMVc with a stand-alone set-up for testing a controller
  * in isolation. Additionally, spring-restdoc will be pre-configured.
  */
+@Neo4jContainerIntegrationTest
 @ExtendWith(RestDocumentationExtension::class)
-abstract class RestDocumentationBaseTest : Neo4jTestContainersBaseTest() {
+abstract class RestDocumentationBaseTest {
 
     protected lateinit var mockMvc: MockMvc
 

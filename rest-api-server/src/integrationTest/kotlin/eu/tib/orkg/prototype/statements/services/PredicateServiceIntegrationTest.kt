@@ -1,8 +1,7 @@
-package eu.tib.orkg.prototype.statements.infrastructure.neo4j
+package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
-import eu.tib.orkg.prototype.statements.services.PredicateService
-import eu.tib.orkg.prototype.testing.Neo4jTestContainersBaseTest
+import eu.tib.orkg.prototype.testing.annotations.Neo4jContainerIntegrationTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -10,7 +9,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 
-class PredicateServiceIntegrationTest : Neo4jTestContainersBaseTest() {
+@Neo4jContainerIntegrationTest
+class PredicateServiceIntegrationTest {
 
     @Autowired
     private lateinit var service: PredicateService

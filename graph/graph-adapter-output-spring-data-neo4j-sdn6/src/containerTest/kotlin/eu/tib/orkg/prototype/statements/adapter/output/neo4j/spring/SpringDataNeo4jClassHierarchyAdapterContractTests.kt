@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
-import eu.tib.orkg.prototype.Neo4jContainerInitializer
+import eu.tib.orkg.prototype.testing.Neo4jContainerInitializer
 import eu.tib.orkg.prototype.statements.spi.ClassHierarchyRepository
 import eu.tib.orkg.prototype.statements.spi.ClassRelationRepository
 import eu.tib.orkg.prototype.statements.spi.ClassRepository

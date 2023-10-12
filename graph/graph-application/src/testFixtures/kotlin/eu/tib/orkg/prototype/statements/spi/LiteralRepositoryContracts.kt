@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype.statements.spi
 
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
-import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -14,9 +13,9 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
-import org.orkg.statements.testing.createLiteral
-import org.orkg.statements.testing.random
-import org.orkg.statements.testing.withCustomMappings
+import eu.tib.orkg.prototype.random
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
+import eu.tib.orkg.prototype.withCustomMappings
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 

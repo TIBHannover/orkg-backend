@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.contenttypes.services.actions
 
-import eu.tib.orkg.prototype.dummyCreatePaperCommand
+import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreatePaperCommand
 import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ThingId

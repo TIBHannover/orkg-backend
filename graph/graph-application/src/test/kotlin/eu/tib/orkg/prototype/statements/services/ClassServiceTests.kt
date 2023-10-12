@@ -3,8 +3,8 @@ package eu.tib.orkg.prototype.statements.services
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
-import eu.tib.orkg.prototype.createClass
-import eu.tib.orkg.prototype.createClassWithoutURI
+import eu.tib.orkg.prototype.statements.testing.fixtures.createClass
+import eu.tib.orkg.prototype.statements.testing.fixtures.createClassWithoutURI
 import eu.tib.orkg.prototype.statements.api.AlreadyInUse
 import eu.tib.orkg.prototype.statements.api.ClassNotFound
 import eu.tib.orkg.prototype.statements.api.CreateClassUseCase
@@ -228,7 +228,7 @@ class ClassServiceTests {
     fun `given a class is replaced, when only valid inputs are provided, then updates and returns success`() {
         val classToReplace = ThingId("ToReplace")
         val originalClass = createClass()
-        val replacingClass = createClass().copy(label = "other label")
+        val replacingClass = createClass(label = "other label")
         val expectedClass = originalClass.copy(id = classToReplace, label = replacingClass.label)
         every { repository.findById(classToReplace) } returns Optional.of(originalClass)
         every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
@@ -243,7 +243,7 @@ class ClassServiceTests {
     @Test
     fun `given a class is replaced, when an invalid label is provided, then returns an error`() {
         val classToReplace = ThingId("ToReplace")
-        val replacingClass = createClass().copy(label = "invalid\nlabel", uri = URI.create("https://example.com/NEW"))
+        val replacingClass = createClass(label = "invalid\nlabel", uri = URI.create("https://example.com/NEW"))
 
         val actual = service.replace(classToReplace, command = replacingClass.toReplaceCommand())
 
@@ -255,7 +255,7 @@ class ClassServiceTests {
     fun `given a class is replaced, when no URI is provided and the class has a URI, then returns an error`() {
         val classToReplace = ThingId("ToReplace")
         val replacingClass = createClassWithoutURI().copy(label = "other label")
-        val existingClass = createClass().copy(id = classToReplace)
+        val existingClass = createClass(id = classToReplace)
         every { repository.findById(classToReplace) } returns existingClass.toOptional()
 
         val actual = service.replace(classToReplace, command = replacingClass.toReplaceCommand())
@@ -267,8 +267,8 @@ class ClassServiceTests {
     @Test
     fun `given a class is replaced, when a URI is provided and the class has the same URI, then updates return success`() {
         val classToReplace = ThingId("ToReplace")
-        val existingClass = createClass().copy(id = classToReplace)
-        val replacingClass = createClass().copy(label = "other label")
+        val existingClass = createClass(id = classToReplace)
+        val replacingClass = createClass(label = "other label")
         val expectedClass = existingClass.copy(id = classToReplace, label = replacingClass.label)
         every { repository.findById(classToReplace) } returns existingClass.toOptional()
         every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
@@ -285,7 +285,7 @@ class ClassServiceTests {
         val classToReplace = ThingId("ToReplace")
         val existingClass = createClassWithoutURI().copy(id = classToReplace)
         val replacingClass =
-            createClass().copy(uri = URI.create("https://example.com/NEW"), label = existingClass.label)
+            createClass(uri = URI.create("https://example.com/NEW"), label = existingClass.label)
         val expectedClass = existingClass.copy(id = classToReplace, uri = replacingClass.uri)
         every { repository.findById(classToReplace) } returns existingClass.toOptional()
         every { service.findByURI(expectedClass.uri!!) } returns Optional.empty()
@@ -302,7 +302,7 @@ class ClassServiceTests {
         val classToReplace = ThingId("ToReplace")
         val existingClass = createClassWithoutURI().copy(id = classToReplace)
         val replacingClass =
-            createClass().copy(uri = URI.create("https://example.com/NEW"), label = existingClass.label)
+            createClass(uri = URI.create("https://example.com/NEW"), label = existingClass.label)
         val expectedClass = existingClass.copy(id = classToReplace, uri = replacingClass.uri)
         val differentWithSameURI = createClassWithoutURI().copy(id = ThingId("different"), uri = expectedClass.uri)
         every { repository.findById(classToReplace) } returns existingClass.toOptional()
@@ -319,8 +319,8 @@ class ClassServiceTests {
     fun `given a class is replaced, when a URI is provided and the class has a different URI, then returns an error`() {
         val classToReplace = ThingId("ToReplace")
         val replacingClass =
-            createClass().copy(label = "other label", uri = URI.create("https://example.com/NEW")).toReplaceCommand()
-        val existingClass = createClass().copy(id = classToReplace)
+            createClass(label = "other label", uri = URI.create("https://example.com/NEW")).toReplaceCommand()
+        val existingClass = createClass(id = classToReplace)
         every { repository.findById(classToReplace) } returns existingClass.toOptional()
 
         val actual = service.replace(classToReplace, command = replacingClass)

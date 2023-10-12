@@ -4,9 +4,6 @@ import eu.tib.orkg.prototype.auth.domain.UserService
 import eu.tib.orkg.prototype.auth.testing.fixtures.createAdminUser
 import eu.tib.orkg.prototype.auth.testing.fixtures.createUser
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
-import eu.tib.orkg.prototype.createPredicate
-import eu.tib.orkg.prototype.createResource
-import eu.tib.orkg.prototype.createStatement
 import eu.tib.orkg.prototype.statements.api.BundleConfiguration
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.Predicates
@@ -22,6 +19,9 @@ import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import eu.tib.orkg.prototype.statements.spi.OwnershipInfo
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.ThingRepository
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createStatement
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.DescribeSpec
@@ -66,7 +66,7 @@ class StatementServiceUnitTest : DescribeSpec({
                 val listId = ThingId("L1")
 
                 every { thingRepository.findByThingId(listId) } returns Optional.of(
-                    createResource().copy(
+                    createResource(
                         id = listId,
                         label = "irrelevant",
                         classes = setOf(Classes.list)
@@ -93,7 +93,7 @@ class StatementServiceUnitTest : DescribeSpec({
                 val listId = ThingId("L1")
 
                 every { thingRepository.findByThingId(listId) } returns Optional.of(
-                    createResource().copy(
+                    createResource(
                         id = listId,
                         label = "irrelevant",
                         classes = setOf(Classes.list)
@@ -124,11 +124,11 @@ class StatementServiceUnitTest : DescribeSpec({
                 )
                 val existingStatement = GeneralStatement(
                     id = id,
-                    subject = createResource().copy(
+                    subject = createResource(
                         id = listId,
                         classes = setOf(Classes.list)
                     ),
-                    predicate = createPredicate(id = Predicates.hasListElement.value),
+                    predicate = createPredicate(Predicates.hasListElement),
                     `object` = createResource(),
                     createdBy = ContributorId(UUID.randomUUID()),
                     createdAt = OffsetDateTime.now()
@@ -163,7 +163,7 @@ class StatementServiceUnitTest : DescribeSpec({
                     createdBy = ContributorId(UUID.randomUUID()),
                     createdAt = OffsetDateTime.now()
                 )
-                val list = createResource().copy(
+                val list = createResource(
                     id = listId,
                     classes = setOf(Classes.list)
                 )
@@ -192,8 +192,12 @@ class StatementServiceUnitTest : DescribeSpec({
             val `object` = createResource()
             val statementId = StatementId("S_EXISTS")
             val contributorId = randomContributorId()
-            val statement = createStatement(subject, predicate, `object`)
-                .copy(id = statementId, createdBy = contributorId)
+            val statement = createStatement(id = statementId,
+                subject = subject,
+                predicate = predicate,
+                `object` = `object`,
+                createdBy = contributorId
+            )
             val user = createUser(contributorId.value)
             every { statementRepository.findByStatementId(statementId) } returns Optional.of(statement)
 
@@ -219,8 +223,13 @@ class StatementServiceUnitTest : DescribeSpec({
             val `object` = createResource()
             val statementId = StatementId("S_EXISTS")
             val contributorId = randomContributorId()
-            val statement = createStatement(subject, predicate, `object`)
-                .copy(id = statementId, createdBy = randomContributorId())
+            val statement = createStatement(
+                id = statementId,
+                subject = subject,
+                predicate = predicate,
+                `object` = `object`,
+                createdBy = randomContributorId()
+            )
             every { statementRepository.findByStatementId(statementId) } returns Optional.of(statement)
             // Safeguard for broken test assumption
             contributorId.value shouldNotBe statement.createdBy
@@ -242,12 +251,10 @@ class StatementServiceUnitTest : DescribeSpec({
         context("with a list as a subject and hasListElement as a predicate") {
             val id = StatementId("S1")
             val fakeStatement = createStatement(
-                subject = createResource().copy(
+                subject = createResource(
                     classes = setOf(ThingId("List"))
                 ),
-                predicate = createPredicate(
-                    id = Predicates.hasListElement.value
-                ),
+                predicate = createPredicate(Predicates.hasListElement),
                 `object` = createResource()
             )
 
@@ -267,7 +274,7 @@ class StatementServiceUnitTest : DescribeSpec({
         context("with a list as a subject and does not has hasListElement as a predicate") {
             val id = StatementId("S1")
             val fakeStatement = createStatement(
-                subject = createResource().copy(
+                subject = createResource(
                     classes = setOf(ThingId("List"))
                 ),
                 `object` = createResource()
@@ -350,12 +357,10 @@ class StatementServiceUnitTest : DescribeSpec({
             val ids = (1..4).map { StatementId("S$it") }.toSet()
             val fakeStatements = ids.map {
                 createStatement(
-                    subject = createResource().copy(
+                    subject = createResource(
                         classes = setOf(ThingId("List"))
                     ),
-                    predicate = createPredicate(
-                        id = Predicates.hasListElement.value
-                    ),
+                    predicate = createPredicate(Predicates.hasListElement),
                     `object` = createResource()
                 )
             }

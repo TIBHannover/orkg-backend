@@ -5,7 +5,7 @@ import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.auth.spi.UserRepository
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
-import eu.tib.orkg.prototype.createClass
+import eu.tib.orkg.prototype.statements.testing.fixtures.createClass
 import eu.tib.orkg.prototype.statements.api.ClassHierarchyUseCases
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
@@ -69,7 +69,7 @@ internal class ClassHierarchyControllerUnitTest {
     fun `Given a parent class id, when searched for its children, then status is 200 OK and children class ids are returned`() {
         val parentId = ThingId("parent")
         val childId = ThingId("child")
-        val response = RetrieveClassHierarchyUseCase.ChildClass(createClass().copy(id = childId), 1)
+        val response = RetrieveClassHierarchyUseCase.ChildClass(createClass(id = childId), 1)
 
         every { classHierarchyService.findChildren(parentId, any()) } returns PageImpl(listOf(response))
 
@@ -95,7 +95,7 @@ internal class ClassHierarchyControllerUnitTest {
         val parentId = ThingId("parent")
         val childId = ThingId("child")
 
-        every { classHierarchyService.findParent(childId) } returns Optional.of(createClass().copy(id = parentId))
+        every { classHierarchyService.findParent(childId) } returns Optional.of(createClass(id = parentId))
 
         get("/api/classes/$childId/parent")
             .andExpect(status().isOk)
@@ -127,7 +127,7 @@ internal class ClassHierarchyControllerUnitTest {
         val rootId = ThingId("root")
         val childId = ThingId("child")
 
-        every { classHierarchyService.findRoot(childId) } returns Optional.of(createClass().copy(id = rootId))
+        every { classHierarchyService.findRoot(childId) } returns Optional.of(createClass(id = rootId))
 
         get("/api/classes/$childId/root")
             .andExpect(status().isOk)
@@ -408,7 +408,7 @@ internal class ClassHierarchyControllerUnitTest {
     fun `Given a class id, when the class hierarchy is fetched, then status is 200 OK`() {
         val childId = ThingId("child")
         val parentId = ThingId("parent")
-        val childClass = createClass().copy(id = childId)
+        val childClass = createClass(id = childId)
 
         every { classHierarchyService.findClassHierarchy(childId, any()) } returns PageImpl(
             listOf(

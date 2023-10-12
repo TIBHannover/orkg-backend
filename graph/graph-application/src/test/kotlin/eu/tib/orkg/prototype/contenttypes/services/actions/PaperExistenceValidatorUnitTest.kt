@@ -2,13 +2,13 @@ package eu.tib.orkg.prototype.contenttypes.services.actions
 
 import eu.tib.orkg.prototype.contenttypes.application.PaperAlreadyExists
 import eu.tib.orkg.prototype.contenttypes.application.PaperNotFound
-import eu.tib.orkg.prototype.dummyCreateContributionCommand
-import eu.tib.orkg.prototype.dummyCreatePaperCommand
-import eu.tib.orkg.prototype.createLiteral
-import eu.tib.orkg.prototype.createPredicate
-import eu.tib.orkg.prototype.createResource
-import eu.tib.orkg.prototype.createStatement
-import eu.tib.orkg.prototype.pageOf
+import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreateContributionCommand
+import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreatePaperCommand
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createStatement
+import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
@@ -107,8 +107,8 @@ class PaperExistenceValidatorUnitTest {
         val doi = command.identifiers["doi"]!!
         val statement = createStatement(
             subject = createResource(),
-            predicate = createPredicate(id = Predicates.hasDOI.value),
-            `object` = createLiteral(value = doi)
+            predicate = createPredicate(Predicates.hasDOI),
+            `object` = createLiteral(label = doi)
         )
         val expected = PaperAlreadyExists.withIdentifier(doi)
 

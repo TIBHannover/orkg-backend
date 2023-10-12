@@ -7,11 +7,11 @@ import eu.tib.orkg.prototype.community.spi.ObservatoryRepository
 import eu.tib.orkg.prototype.contenttypes.application.PaperNotFound
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
 import eu.tib.orkg.prototype.contenttypes.domain.model.ObjectIdAndLabel
-import eu.tib.orkg.prototype.createLiteral
-import eu.tib.orkg.prototype.createPredicate
-import eu.tib.orkg.prototype.createResource
-import eu.tib.orkg.prototype.createStatement
-import eu.tib.orkg.prototype.pageOf
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createStatement
+import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.ListUseCases
@@ -94,7 +94,7 @@ class PaperServiceUnitTests {
 
     @Test
     fun `Given a paper exists, when fetching it by id, then it is returned`() {
-        val expected = createResource().copy(
+        val expected = createResource(
             classes = setOf(Classes.comparison),
             organizationId = OrganizationId(UUID.randomUUID()),
             observatoryId = ObservatoryId(UUID.randomUUID())
@@ -106,14 +106,14 @@ class PaperServiceUnitTests {
         val publishedMonth = 1
         val publishedIn = "Conference"
         val publishedUrl = "https://example.org/conference"
-        val authorList = createResource().copy(classes = setOf(Classes.list), id = ThingId("R536456"))
+        val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
 
         every { resourceRepository.findPaperById(expected.id) } returns Optional.of(expected)
         every { statementRepository.findAllBySubject(expected.id, any()) } returns pageOf(
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.hasResearchField.value),
-                `object` = createResource().copy(
+                predicate = createPredicate(Predicates.hasResearchField),
+                `object` = createResource(
                     id = researchFieldId,
                     classes = setOf(Classes.researchField),
                     label = "Research Field 1"
@@ -121,38 +121,38 @@ class PaperServiceUnitTests {
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.hasDOI.value),
-                `object` = createLiteral(doi)
+                predicate = createPredicate(Predicates.hasDOI),
+                `object` = createLiteral(label = doi)
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.yearPublished.value),
-                `object` = createLiteral().copy(label = publishedYear.toString(), datatype = Literals.XSD.DECIMAL.prefixedUri)
+                predicate = createPredicate(Predicates.yearPublished),
+                `object` = createLiteral(label = publishedYear.toString(), datatype = Literals.XSD.DECIMAL.prefixedUri)
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.monthPublished.value),
-                `object` = createLiteral().copy(label = publishedMonth.toString(), datatype = Literals.XSD.INT.prefixedUri)
+                predicate = createPredicate(Predicates.monthPublished),
+                `object` = createLiteral(label = publishedMonth.toString(), datatype = Literals.XSD.INT.prefixedUri)
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.hasVenue.value),
-                `object` = createLiteral().copy(label = publishedIn)
+                predicate = createPredicate(Predicates.hasVenue),
+                `object` = createLiteral(label = publishedIn)
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.hasURL.value),
-                `object` = createLiteral().copy(label = publishedUrl, datatype = Literals.XSD.URI.prefixedUri)
+                predicate = createPredicate(Predicates.hasURL),
+                `object` = createLiteral(label = publishedUrl, datatype = Literals.XSD.URI.prefixedUri)
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.hasAuthors.value),
+                predicate = createPredicate(Predicates.hasAuthors),
                 `object` = authorList
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.hasContribution.value),
-                `object` = createResource().copy(
+                predicate = createPredicate(Predicates.hasContribution),
+                `object` = createResource(
                     classes = setOf(Classes.contribution),
                     label = "Contribution",
                     id = ThingId("Contribution123")
@@ -162,25 +162,25 @@ class PaperServiceUnitTests {
         every { statementRepository.findAllBySubjectAndPredicate(authorList.id, Predicates.hasListElement, any()) } returns pageOf(
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.hasListElement.value),
-                `object` = createLiteral(value = "Author 1")
+                predicate = createPredicate(Predicates.hasListElement),
+                `object` = createLiteral(label = "Author 1")
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.hasListElement.value),
-                `object` = createResource().copy(id = resourceAuthorId, label = "Author 2", classes = setOf(Classes.author))
+                predicate = createPredicate(Predicates.hasListElement),
+                `object` = createResource(id = resourceAuthorId, label = "Author 2", classes = setOf(Classes.author))
             )
         )
         every { statementRepository.findAllBySubject(resourceAuthorId, any()) } returns pageOf(
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.hasORCID.value),
-                `object` = createLiteral().copy(label = "0000-1111-2222-3333")
+                predicate = createPredicate(Predicates.hasORCID),
+                `object` = createLiteral(label = "0000-1111-2222-3333")
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.hasWebsite.value),
-                `object` = createLiteral().copy(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri)
+                predicate = createPredicate(Predicates.hasWebsite),
+                `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri)
             )
         )
 
@@ -273,38 +273,38 @@ class PaperServiceUnitTests {
         val subject = "Paper subject"
         val description = "Fancy paper description"
         val resourceAuthorId = ThingId("R132564")
-        val authorList = createResource().copy(classes = setOf(Classes.list), id = ThingId("R536456"))
+        val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
 
         every { resourceRepository.findPaperById(paper.id) } returns Optional.of(paper)
         every { statementRepository.findAllBySubject(paper.id, PageRequests.ALL) } returns pageOf(
             createStatement(
                 subject = paper,
-                predicate = createPredicate(id = Predicates.hasAuthors.value),
+                predicate = createPredicate(Predicates.hasAuthors),
                 `object` = authorList
             )
         )
         every { statementRepository.findAllBySubjectAndPredicate(authorList.id, Predicates.hasListElement, any()) } returns pageOf(
             createStatement(
                 subject = paper,
-                predicate = createPredicate(id = Predicates.hasListElement.value),
-                `object` = createLiteral(value = "Author 1")
+                predicate = createPredicate(Predicates.hasListElement),
+                `object` = createLiteral(label = "Author 1")
             ),
             createStatement(
                 subject = paper,
-                predicate = createPredicate(id = Predicates.hasListElement.value),
-                `object` = createResource().copy(id = resourceAuthorId, label = "Author 2", classes = setOf(Classes.author))
+                predicate = createPredicate(Predicates.hasListElement),
+                `object` = createResource(id = resourceAuthorId, label = "Author 2", classes = setOf(Classes.author))
             )
         )
         every { statementRepository.findAllBySubject(resourceAuthorId, any()) } returns pageOf(
             createStatement(
                 subject = paper,
-                predicate = createPredicate(id = Predicates.hasORCID.value),
-                `object` = createLiteral().copy(label = "0000-1111-2222-3333")
+                predicate = createPredicate(Predicates.hasORCID),
+                `object` = createLiteral(label = "0000-1111-2222-3333")
             ),
             createStatement(
                 subject = paper,
-                predicate = createPredicate(id = Predicates.hasWebsite.value),
-                `object` = createLiteral().copy(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri)
+                predicate = createPredicate(Predicates.hasWebsite),
+                `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri)
             )
         )
         every { publishingService.publish(any()) } returns "1324/56789"

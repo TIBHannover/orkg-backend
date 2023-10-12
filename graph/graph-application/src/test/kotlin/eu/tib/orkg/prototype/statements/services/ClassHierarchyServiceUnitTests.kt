@@ -1,14 +1,13 @@
 package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
-import eu.tib.orkg.prototype.createClass
+import eu.tib.orkg.prototype.statements.testing.fixtures.createClass
 import eu.tib.orkg.prototype.statements.application.ClassNotFound
 import eu.tib.orkg.prototype.statements.application.InvalidSubclassRelation
 import eu.tib.orkg.prototype.statements.application.ParentClassAlreadyExists
 import eu.tib.orkg.prototype.statements.application.ParentClassAlreadyHasChildren
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassHierarchyRepository
-import eu.tib.orkg.prototype.statements.spi.ClassHierarchyRepository.*
 import eu.tib.orkg.prototype.statements.spi.ClassRelationRepository
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import io.mockk.every
@@ -32,7 +31,7 @@ class ClassHierarchyServiceUnitTests {
         val parentId = ThingId("identical")
         val childId = ThingId("identical")
 
-        every { classRepository.findById(parentId) } returns Optional.of(createClass().copy(id = parentId))
+        every { classRepository.findById(parentId) } returns Optional.of(createClass(id = parentId))
 
         val exception = assertThrows<InvalidSubclassRelation> {
             service.create(ContributorId.createUnknownContributor(), parentId, setOf(childId), false)
@@ -45,7 +44,7 @@ class ClassHierarchyServiceUnitTests {
         val parentId = ThingId("parent")
         val childId = ThingId("child")
 
-        every { classRepository.findById(parentId) } returns Optional.of(createClass().copy(id = parentId))
+        every { classRepository.findById(parentId) } returns Optional.of(createClass(id = parentId))
         every { repository.existsChildren(parentId) } returns true
 
         val exception = assertThrows<ParentClassAlreadyHasChildren> {
@@ -59,7 +58,7 @@ class ClassHierarchyServiceUnitTests {
         val parentId = ThingId("parent")
         val childId = ThingId("child")
 
-        every { classRepository.findById(parentId) } returns Optional.of(createClass().copy(id = parentId))
+        every { classRepository.findById(parentId) } returns Optional.of(createClass(id = parentId))
         every { classRepository.findById(childId) } returns Optional.empty()
 
         val exception = assertThrows<ClassNotFound> {
@@ -73,7 +72,7 @@ class ClassHierarchyServiceUnitTests {
         val parentId = ThingId("parent")
         val childId = ThingId("child")
 
-        every { classRepository.findById(childId) } returns Optional.of(createClass().copy(id = childId))
+        every { classRepository.findById(childId) } returns Optional.of(createClass(id = childId))
         every { classRepository.findById(parentId) } returns Optional.empty()
 
         val exception = assertThrows<ClassNotFound> {
@@ -87,9 +86,9 @@ class ClassHierarchyServiceUnitTests {
         val parentId = ThingId("parent")
         val childId = ThingId("child")
 
-        every { classRepository.findById(childId) } returns Optional.of(createClass().copy(id = childId))
-        every { classRepository.findById(parentId) } returns Optional.of(createClass().copy(id = parentId))
-        every { repository.findParent(childId) } returns Optional.of(createClass().copy(id = parentId))
+        every { classRepository.findById(childId) } returns Optional.of(createClass(id = childId))
+        every { classRepository.findById(parentId) } returns Optional.of(createClass(id = parentId))
+        every { repository.findParent(childId) } returns Optional.of(createClass(id = parentId))
 
         val exception = assertThrows<ParentClassAlreadyExists> {
             service.create(ContributorId.createUnknownContributor(), parentId, setOf(childId), false)
@@ -102,8 +101,8 @@ class ClassHierarchyServiceUnitTests {
         val parentId = ThingId("parent")
         val childId = ThingId("child")
 
-        every { classRepository.findById(childId) } returns Optional.of(createClass().copy(id = childId))
-        every { classRepository.findById(parentId) } returns Optional.of(createClass().copy(id = parentId))
+        every { classRepository.findById(childId) } returns Optional.of(createClass(id = childId))
+        every { classRepository.findById(parentId) } returns Optional.of(createClass(id = parentId))
         every { repository.findParent(childId) } returns Optional.empty()
         every { repository.existsChild(childId, parentId) } returns true
 
@@ -118,8 +117,8 @@ class ClassHierarchyServiceUnitTests {
         val parentId = ThingId("parent")
         val childId = ThingId("child")
 
-        every { classRepository.findById(childId) } returns Optional.of(createClass().copy(id = childId))
-        every { classRepository.findById(parentId) } returns Optional.of(createClass().copy(id = parentId))
+        every { classRepository.findById(childId) } returns Optional.of(createClass(id = childId))
+        every { classRepository.findById(parentId) } returns Optional.of(createClass(id = parentId))
         every { repository.findParent(childId) } returns Optional.empty()
         every { repository.existsChild(childId, parentId) } returns false
         every { relationRepository.saveAll(any()) } returns Unit
@@ -146,7 +145,7 @@ class ClassHierarchyServiceUnitTests {
         val childId = ThingId("child")
         val pageable = PageRequest.of(0, 5)
 
-        every { classRepository.findById(childId) } returns Optional.of(createClass().copy(id = childId))
+        every { classRepository.findById(childId) } returns Optional.of(createClass(id = childId))
         every { repository.findChildren(childId, pageable) } returns PageImpl(listOf())
 
         service.findChildren(childId, pageable)
@@ -170,8 +169,8 @@ class ClassHierarchyServiceUnitTests {
     fun `given a class id, when the parent class is fetched, it returns success`() {
         val childId = ThingId("child")
 
-        every { classRepository.findById(childId) } returns Optional.of(createClass().copy(id = childId))
-        every { repository.findParent(childId) } returns Optional.of(createClass().copy(id = ThingId("parent")))
+        every { classRepository.findById(childId) } returns Optional.of(createClass(id = childId))
+        every { repository.findParent(childId) } returns Optional.of(createClass(id = ThingId("parent")))
 
         service.findParent(childId)
 
@@ -182,7 +181,7 @@ class ClassHierarchyServiceUnitTests {
     fun `given a class id, when the non-existing parent class is fetched, it returns success`() {
         val childId = ThingId("child")
 
-        every { classRepository.findById(childId) } returns Optional.of(createClass().copy(id = childId))
+        every { classRepository.findById(childId) } returns Optional.of(createClass(id = childId))
         every { repository.findParent(childId) } returns Optional.empty()
 
         service.findParent(childId)
@@ -206,8 +205,8 @@ class ClassHierarchyServiceUnitTests {
     fun `given a class id, when the root class is fetched, it returns success`() {
         val childId = ThingId("child")
 
-        every { classRepository.findById(childId) } returns Optional.of(createClass().copy(id = childId))
-        every { repository.findRoot(childId) } returns Optional.of(createClass().copy(id = ThingId("root")))
+        every { classRepository.findById(childId) } returns Optional.of(createClass(id = childId))
+        every { repository.findRoot(childId) } returns Optional.of(createClass(id = ThingId("root")))
 
         service.findRoot(childId)
 
@@ -218,7 +217,7 @@ class ClassHierarchyServiceUnitTests {
     fun `given a class id, when the non-existing root class is fetched, it returns success`() {
         val childId = ThingId("child")
 
-        every { classRepository.findById(childId) } returns Optional.of(createClass().copy(id = childId))
+        every { classRepository.findById(childId) } returns Optional.of(createClass(id = childId))
         every { repository.findRoot(childId) } returns Optional.empty()
 
         service.findRoot(childId)
@@ -243,7 +242,7 @@ class ClassHierarchyServiceUnitTests {
         val childId = ThingId("child")
         val pageable = PageRequest.of(0, 5)
 
-        every { classRepository.findById(childId) } returns Optional.of(createClass().copy(id = childId))
+        every { classRepository.findById(childId) } returns Optional.of(createClass(id = childId))
         every { repository.findClassHierarchy(childId, pageable) } returns PageImpl(listOf())
 
         service.findClassHierarchy(childId, pageable)
@@ -267,7 +266,7 @@ class ClassHierarchyServiceUnitTests {
     fun `given a class id, when counting its instances, it returns success`() {
         val childId = ThingId("child")
 
-        every { classRepository.findById(childId) } returns Optional.of(createClass().copy(id = childId))
+        every { classRepository.findById(childId) } returns Optional.of(createClass(id = childId))
         every { repository.countClassInstances(childId) } returns 5
 
         service.countClassInstances(childId)
@@ -291,7 +290,7 @@ class ClassHierarchyServiceUnitTests {
     fun `given a class relation is deleted, it returns success`() {
         val childId = ThingId("child")
 
-        every { classRepository.findById(childId) } returns Optional.of(createClass().copy(id = childId))
+        every { classRepository.findById(childId) } returns Optional.of(createClass(id = childId))
         every { relationRepository.deleteByChildId(childId) } returns Unit
 
         service.delete(childId)

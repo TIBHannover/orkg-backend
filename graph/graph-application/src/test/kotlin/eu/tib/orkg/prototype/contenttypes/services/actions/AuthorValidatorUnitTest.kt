@@ -3,12 +3,12 @@ package eu.tib.orkg.prototype.contenttypes.services.actions
 import eu.tib.orkg.prototype.contenttypes.application.AmbiguousAuthor
 import eu.tib.orkg.prototype.contenttypes.application.AuthorNotFound
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
-import eu.tib.orkg.prototype.dummyCreatePaperCommand
-import eu.tib.orkg.prototype.createLiteral
-import eu.tib.orkg.prototype.createPredicate
-import eu.tib.orkg.prototype.createResource
-import eu.tib.orkg.prototype.createStatement
-import eu.tib.orkg.prototype.pageOf
+import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreatePaperCommand
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createStatement
+import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.Predicates
@@ -51,8 +51,8 @@ class AuthorValidatorUnitTest {
         val command = dummyCreatePaperCommand()
         val state = PaperState()
 
-        val author1 = createResource().copy(id = ThingId("R123"), classes = setOf(Classes.author))
-        val author2 = createResource().copy(id = ThingId("R456"), classes = setOf(Classes.author))
+        val author1 = createResource(id = ThingId("R123"), classes = setOf(Classes.author))
+        val author2 = createResource(id = ThingId("R456"), classes = setOf(Classes.author))
 
         every { resourceRepository.findById(author1.id) } returns Optional.of(author1)
         every { resourceRepository.findById(author2.id) } returns Optional.of(author2)
@@ -74,8 +74,8 @@ class AuthorValidatorUnitTest {
         } returns pageOf(
             createStatement(
                 subject = author2,
-                predicate = createPredicate(Predicates.hasORCID.value),
-                `object` = createLiteral("1111-2222-3333-4444")
+                predicate = createPredicate(Predicates.hasORCID),
+                `object` = createLiteral(label = "1111-2222-3333-4444")
             )
         )
 
@@ -166,8 +166,8 @@ class AuthorValidatorUnitTest {
         )
         val state = PaperState()
 
-        val author1 = createResource().copy(id = ThingId("R123"), classes = setOf(Classes.author))
-        val author2 = createResource().copy(id = ThingId("R456"), classes = setOf(Classes.author))
+        val author1 = createResource(id = ThingId("R123"), classes = setOf(Classes.author))
+        val author2 = createResource(id = ThingId("R456"), classes = setOf(Classes.author))
 
         every { resourceRepository.findById(author1.id) } returns Optional.of(author1)
         every {
@@ -180,8 +180,8 @@ class AuthorValidatorUnitTest {
         } returns pageOf(
             createStatement(
                 subject = author2,
-                predicate = createPredicate(Predicates.hasORCID.value),
-                `object` = createLiteral("0000-1111-2222-3333")
+                predicate = createPredicate(Predicates.hasORCID),
+                `object` = createLiteral(label = "0000-1111-2222-3333")
             )
         )
 
@@ -214,8 +214,8 @@ class AuthorValidatorUnitTest {
         )
         val state = PaperState()
 
-        val author1 = createResource().copy(id = ThingId("R123"), classes = setOf(Classes.author))
-        val author2 = createResource().copy(id = ThingId("R456"), classes = setOf(Classes.author))
+        val author1 = createResource(id = ThingId("R123"), classes = setOf(Classes.author))
+        val author2 = createResource(id = ThingId("R456"), classes = setOf(Classes.author))
 
         every { resourceRepository.findById(author1.id) } returns Optional.of(author1)
         every {
@@ -228,8 +228,8 @@ class AuthorValidatorUnitTest {
         } returns pageOf(
             createStatement(
                 subject = author1,
-                predicate = createPredicate(Predicates.hasORCID.value),
-                `object` = createLiteral("0000-1111-2222-3333")
+                predicate = createPredicate(Predicates.hasORCID),
+                `object` = createLiteral(label = "0000-1111-2222-3333")
             )
         )
         every {
@@ -242,8 +242,8 @@ class AuthorValidatorUnitTest {
         } returns pageOf(
             createStatement(
                 subject = author2,
-                predicate = createPredicate(Predicates.hasResearchGateId.value),
-                `object` = createLiteral("1111-2222-3333-4444")
+                predicate = createPredicate(Predicates.hasResearchGateId),
+                `object` = createLiteral(label = "1111-2222-3333-4444")
             )
         )
 

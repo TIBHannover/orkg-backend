@@ -4,15 +4,15 @@ import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
-import eu.tib.orkg.prototype.createLiteral
-import eu.tib.orkg.prototype.createPredicate
-import eu.tib.orkg.prototype.createResource
-import eu.tib.orkg.prototype.createStatement
-import eu.tib.orkg.prototype.pageOf
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
+import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createStatement
 import eu.tib.orkg.prototype.testing.annotations.UsesMocking
 import eu.tib.orkg.prototype.testing.spring.restdocs.RestDocsTest
 import eu.tib.orkg.prototype.testing.spring.restdocs.documentedDeleteRequestTo
@@ -182,10 +182,10 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
         @Test
         @DisplayName("when deleting a statement with a literal object and service reports success, then status is 204 NO CONTENT")
         fun deleteLiteralStatement_isNoContent() {
-            val s = createResource().copy(label = "one")
-            val p = createPredicate().copy(label = "has symbol")
-            val l = createLiteral().copy(label = "1")
-            val st = createStatement(s, p, l)
+            val s = createResource(label = "one")
+            val p = createPredicate(label = "has symbol")
+            val l = createLiteral(label = "1")
+            val st = createStatement(subject = s, predicate = p, `object` = l)
             val userId = UUID.randomUUID()
 
             every { principal.name } returns userId.toString()
@@ -208,10 +208,10 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
 
         @Test
         fun `when deleting a statement with a resource object and service reports success, then status is 204 NO CONTENT`() {
-            val s = createResource().copy(label = "one")
-            val p = createPredicate().copy(label = "has symbol")
-            val l = createResource().copy(label = "1")
-            val st = createStatement(s, p, l)
+            val s = createResource(label = "one")
+            val p = createPredicate(label = "has symbol")
+            val l = createResource(label = "1")
+            val st = createStatement(subject = s, predicate = p, `object` = l)
             val userId = UUID.randomUUID()
 
             every { principal.name } returns userId.toString()
@@ -230,10 +230,10 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
     inner class UserNotLoggedIn {
         @Test
         fun `when trying to delete a statement with a literal object, then status is 403 FORBIDDEN`() {
-            val s = createResource().copy(label = "one")
-            val p = createPredicate().copy(label = "has symbol")
-            val l = createLiteral().copy(label = "1")
-            val st = createStatement(s, p, l)
+            val s = createResource(label = "one")
+            val p = createPredicate(label = "has symbol")
+            val l = createLiteral(label = "1")
+            val st = createStatement(subject = s, predicate = p, `object` = l)
 
             every { principal.name } returns null
 
@@ -246,10 +246,10 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
 
         @Test
         fun `when trying to delete a statement with a resource object, then status is 403 FORBIDDEN`() {
-            val s = createResource().copy(label = "one")
-            val p = createPredicate().copy(label = "has symbol")
-            val l = createResource().copy(label = "1")
-            val st = createStatement(s, p, l)
+            val s = createResource(label = "one")
+            val p = createPredicate(label = "has symbol")
+            val l = createResource(label = "1")
+            val st = createStatement(subject = s, predicate = p, `object` = l)
 
             every { principal.name } returns null
 
@@ -266,9 +266,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
         val statement = createStatement(
             subject = createResource(),
             predicate = createPredicate(),
-            `object` = createLiteral(
-                value = "path/to/resource"
-            )
+            `object` = createLiteral(label = "path/to/resource")
         )
 
         every { statementService.findAllByPredicateAndLabel(any(), any(), any()) } returns pageOf(statement)

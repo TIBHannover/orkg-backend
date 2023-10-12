@@ -10,10 +10,10 @@ import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.Thing
+import eu.tib.orkg.prototype.withCustomMappings
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.shouldBe
-import org.orkg.statements.testing.withCustomMappings
 
 fun <
     T : StatsRepository,

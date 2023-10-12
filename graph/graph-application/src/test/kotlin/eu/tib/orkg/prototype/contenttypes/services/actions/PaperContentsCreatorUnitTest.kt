@@ -2,11 +2,7 @@ package eu.tib.orkg.prototype.contenttypes.services.actions
 
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.contenttypes.api.CreatePaperUseCase
-import eu.tib.orkg.prototype.createClass
-import eu.tib.orkg.prototype.createLiteral
-import eu.tib.orkg.prototype.createPredicate
-import eu.tib.orkg.prototype.createResource
-import eu.tib.orkg.prototype.dummyCreatePaperCommand
+import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreatePaperCommand
 import eu.tib.orkg.prototype.shared.Either
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.CreateListUseCase
@@ -23,6 +19,10 @@ import eu.tib.orkg.prototype.statements.api.UpdateListUseCase
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
+import eu.tib.orkg.prototype.statements.testing.fixtures.createClass
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
@@ -86,8 +86,8 @@ class PaperContentsCreatorUnitTest {
                 )
             )
         )
-        val template = createClass(id = "C123")
-        val resource = createResource(id = ThingId("R3003"))
+        val template = createClass(ThingId("C123"))
+        val resource = createResource(ThingId("R3003"))
         val paperId = ThingId("R15632")
 
         val command = dummyCreatePaperCommand().copy(
@@ -393,7 +393,7 @@ class PaperContentsCreatorUnitTest {
             ),
             contributions = emptyList()
         )
-        val literal = createLiteral(value = literalDefinition.label)
+        val literal = createLiteral(label = literalDefinition.label)
 
         every {
             literalService.create(
@@ -506,7 +506,7 @@ class PaperContentsCreatorUnitTest {
             contributions = emptyList()
         )
         val predicateId = ThingId("R456")
-        val literal = createLiteral(value = predicateDefinition.label)
+        val literal = createLiteral(label = predicateDefinition.label)
 
         every {
             predicateService.create(
@@ -771,7 +771,7 @@ class PaperContentsCreatorUnitTest {
         )
         val resourceId = ThingId("R456")
         val predicateId = ThingId("R789")
-        val literal = createLiteral(value = literalDefinition.label)
+        val literal = createLiteral(label = literalDefinition.label)
 
         every {
             resourceService.create(
@@ -913,9 +913,9 @@ class PaperContentsCreatorUnitTest {
             contributions = emptyList()
         )
         val statement = GeneralStatement(
-            subject = createResource(id = ThingId("R1000")),
-            predicate = createPredicate(id = "R2000"),
-            `object` = createLiteral(id = "R3000"),
+            subject = createResource(ThingId("R1000")),
+            predicate = createPredicate(ThingId("R2000")),
+            `object` = createLiteral(ThingId("R3000")),
             createdAt = OffsetDateTime.now()
         )
 

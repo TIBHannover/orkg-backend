@@ -7,17 +7,17 @@ import eu.tib.orkg.prototype.contenttypes.application.EmptyContribution
 import eu.tib.orkg.prototype.contenttypes.application.InvalidStatementSubject
 import eu.tib.orkg.prototype.contenttypes.application.ThingIsNotAClass
 import eu.tib.orkg.prototype.contenttypes.application.ThingIsNotAPredicate
-import eu.tib.orkg.prototype.createClass
-import eu.tib.orkg.prototype.createLiteral
-import eu.tib.orkg.prototype.createPredicate
-import eu.tib.orkg.prototype.createResource
-import eu.tib.orkg.prototype.dummyCreateContributionCommand
-import eu.tib.orkg.prototype.dummyCreatePaperCommand
+import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreateContributionCommand
+import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreatePaperCommand
 import eu.tib.orkg.prototype.shared.Either
 import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.application.ThingNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ThingRepository
+import eu.tib.orkg.prototype.statements.testing.fixtures.createClass
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
@@ -61,10 +61,10 @@ class ContributionValidatorUnitTest {
             )
         )
 
-        val template = createClass(id = "C123")
-        val `class` = createClass(id = "R3004")
-        val hasResearchProblem = createPredicate(id = Predicates.hasResearchProblem.value)
-        val hasEvaluation = createPredicate(id = Predicates.hasEvaluation.value)
+        val template = createClass(ThingId("C123"))
+        val `class` = createClass(ThingId("R3004"))
+        val hasResearchProblem = createPredicate(Predicates.hasResearchProblem)
+        val hasEvaluation = createPredicate(Predicates.hasEvaluation)
 
         every { thingRepository.findByThingId(`class`.id) } returns Optional.of(`class`)
         every { thingRepository.findByThingId(template.id) } returns Optional.of(template)
@@ -120,7 +120,7 @@ class ContributionValidatorUnitTest {
                 "#temp4" to Either.left("#temp4")
             )
         )
-        val template = createClass(id = "C123")
+        val template = createClass(ThingId("C123"))
 
         every { thingRepository.findByThingId(template.id) } returns Optional.empty()
 
@@ -189,10 +189,10 @@ class ContributionValidatorUnitTest {
             )
         )
 
-        val template = createClass(id = "C123")
-        val `class` = createClass(id = "R3004")
-        val hasResearchProblem = createPredicate(id = Predicates.hasResearchProblem.value)
-        val hasEvaluation = createPredicate(id = Predicates.hasEvaluation.value)
+        val template = createClass(ThingId("C123"))
+        val `class` = createClass(ThingId("R3004"))
+        val hasResearchProblem = createPredicate(Predicates.hasResearchProblem)
+        val hasEvaluation = createPredicate(Predicates.hasEvaluation)
 
         every { thingRepository.findByThingId(`class`.id) } returns Optional.of(`class`)
         every { thingRepository.findByThingId(template.id) } returns Optional.of(template)
@@ -245,7 +245,7 @@ class ContributionValidatorUnitTest {
                 "#temp4" to Either.left("#temp4")
             )
         )
-        val template = createClass(id = "C123")
+        val template = createClass(ThingId("C123"))
 
         every { thingRepository.findByThingId(template.id) } returns Optional.empty()
 
@@ -452,8 +452,8 @@ class ContributionValidatorUnitTest {
                 tempIds = setOf("#temp1"),
                 contents = contents,
                 validatedIds = mutableMapOf(
-                    literalId to Either.right(createLiteral(id = literalId)),
-                    Predicates.hasEvaluation.value to Either.right(createPredicate(id = Predicates.hasEvaluation.value))
+                    literalId to Either.right(createLiteral(ThingId(literalId))),
+                    Predicates.hasEvaluation.value to Either.right(createPredicate(Predicates.hasEvaluation))
                 ),
                 destination = mutableSetOf()
             )
@@ -494,7 +494,7 @@ class ContributionValidatorUnitTest {
                 contents = contents,
                 validatedIds = mutableMapOf(
                     "#temp1" to Either.left("#temp1"),
-                    Predicates.hasEvaluation.value to Either.right(createPredicate(id = Predicates.hasEvaluation.value))
+                    Predicates.hasEvaluation.value to Either.right(createPredicate(Predicates.hasEvaluation))
                 ),
                 destination = mutableSetOf()
             )

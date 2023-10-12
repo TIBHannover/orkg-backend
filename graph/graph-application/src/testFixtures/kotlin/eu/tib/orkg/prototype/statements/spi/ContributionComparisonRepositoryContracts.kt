@@ -3,19 +3,19 @@ package eu.tib.orkg.prototype.statements.spi
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
-import eu.tib.orkg.prototype.createClass
-import eu.tib.orkg.prototype.createPredicate
 import eu.tib.orkg.prototype.statements.domain.model.ContributionInfo
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.testing.fixtures.createClass
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
+import eu.tib.orkg.prototype.withCustomMappings
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.shouldBe
 import java.time.OffsetDateTime
-import org.orkg.statements.testing.withCustomMappings
 import org.springframework.data.domain.PageRequest
 
 fun <
@@ -44,11 +44,11 @@ fun <
     val pageable = PageRequest.of(0, 10)
 
     val createRequiredEntities: () -> Unit = {
-        classRepository.save(createClass("Paper"))
-        classRepository.save(createClass("Contribution"))
+        classRepository.save(createClass(ThingId("Paper")))
+        classRepository.save(createClass(ThingId("Contribution")))
 
-        predicateRepository.save(createPredicate("P29"))
-        predicateRepository.save(createPredicate("P31"))
+        predicateRepository.save(createPredicate(ThingId("P29")))
+        predicateRepository.save(createPredicate(ThingId("P31")))
     }
 
     beforeTest {

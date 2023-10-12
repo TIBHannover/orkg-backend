@@ -5,7 +5,7 @@ import eu.tib.orkg.prototype.auth.spi.UserRepository
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.ContributorService
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
-import eu.tib.orkg.prototype.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
@@ -69,7 +69,7 @@ internal class ObservatoryResourceControllerUnitTest {
     @Test
     fun `Given the observatory id, when service succeeds, then status is 200 OK and papers list is returned`() {
         val id = ObservatoryId(UUID.randomUUID())
-        val paperResource = createResource().copy(
+        val paperResource = createResource(
             observatoryId = id,
             classes = setOf(ThingId("Paper"))
         )
@@ -86,7 +86,7 @@ internal class ObservatoryResourceControllerUnitTest {
     @Test
     fun `Given the observatory id, when service succeeds, then status is 200 OK and comparisons list is returned`() {
         val id = ObservatoryId(UUID.randomUUID())
-        val comparisonResource = createResource().copy(
+        val comparisonResource = createResource(
             observatoryId = id,
             classes = setOf(ThingId("Comparison"))
         )
@@ -103,7 +103,7 @@ internal class ObservatoryResourceControllerUnitTest {
     @Test
     fun `Given the observatory id, when service succeeds, then status is 200 OK and problems list is returned`() {
         val id = ObservatoryId(UUID.randomUUID())
-        val problemResource = createResource().copy(
+        val problemResource = createResource(
             observatoryId = id,
             classes = setOf(ThingId("Problem"))
         )

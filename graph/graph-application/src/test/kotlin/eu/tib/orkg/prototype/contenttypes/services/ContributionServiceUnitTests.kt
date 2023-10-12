@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.contenttypes.services
 
 
-import eu.tib.orkg.prototype.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
 import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
@@ -25,7 +25,7 @@ class ContributionServiceUnitTests {
 
     @Test
     fun `Given a contribution exists, when fetching it by id, then it is returned`() {
-        val expected = createResource().copy(
+        val expected = createResource(
             classes = setOf(Classes.contribution)
         )
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)

@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.contenttypes.services.actions
 
 import eu.tib.orkg.prototype.contenttypes.application.OnlyOneResearchFieldAllowed
-import eu.tib.orkg.prototype.dummyCreatePaperCommand
-import eu.tib.orkg.prototype.createResource
+import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreatePaperCommand
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.application.ResearchFieldNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -39,7 +39,7 @@ class ResearchFieldValidatorUnitTest {
     fun `Given a paper create command, when validating its research field, it returns success`() {
         val command = dummyCreatePaperCommand()
         val state = PaperState()
-        val researchField = createResource().copy(
+        val researchField = createResource(
             id = command.researchFields[0],
             classes = setOf(Classes.researchField)
         )
@@ -75,7 +75,7 @@ class ResearchFieldValidatorUnitTest {
     fun `Given a paper create command, when resource its not a research field, it throws an exception`() {
         val command = dummyCreatePaperCommand()
         val state = PaperState()
-        val researchField = createResource().copy(
+        val researchField = createResource(
             id = command.researchFields[0]
         )
 

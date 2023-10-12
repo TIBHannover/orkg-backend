@@ -1,10 +1,10 @@
 package eu.tib.orkg.prototype.export.rdf.domain
 
-import eu.tib.orkg.prototype.asString
-import eu.tib.orkg.prototype.createLiteral
-import eu.tib.orkg.prototype.createPredicate
-import eu.tib.orkg.prototype.createResource
-import eu.tib.orkg.prototype.createStatement
+import eu.tib.orkg.prototype.export.rdf.testing.fixtures.asString
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createStatement
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -20,9 +20,9 @@ internal class StatementRDFTest {
             |
         """.trimMargin()
         val statement = createStatement(
-            subject = createResource().copy(id = ThingId("R100"), label = "subject"),
-            predicate = createPredicate().copy(id = ThingId("P200")),
-            `object` = createResource().copy(id = ThingId("R300"), label = "object")
+            subject = createResource(id = ThingId("R100"), label = "subject"),
+            predicate = createPredicate(id = ThingId("P200")),
+            `object` = createResource(id = ThingId("R300"), label = "object")
         )
         assertThat(statement::toNTriple.asString()).isEqualTo(expectedOutput)
     }
@@ -34,9 +34,9 @@ internal class StatementRDFTest {
             |
         """.trimMargin()
         val statement = createStatement(
-            subject = createResource().copy(id = ThingId("R100"), label = "subject"),
-            predicate = createPredicate().copy(id = ThingId("P200")),
-            `object` = createLiteral().copy(id = ThingId("L300"), label = "object")
+            subject = createResource(id = ThingId("R100"), label = "subject"),
+            predicate = createPredicate(id = ThingId("P200")),
+            `object` = createLiteral(id = ThingId("L300"), label = "object")
         )
         assertThat(statement::toNTriple.asString()).isEqualTo(expectedOutput)
     }
@@ -48,9 +48,9 @@ internal class StatementRDFTest {
             |
         """.trimMargin()
         val statement = createStatement(
-            subject = createResource().copy(id = ThingId("R100"), label = "subject"),
-            predicate = createPredicate().copy(id = ThingId("P200")),
-            `object` = createLiteral().copy(id = ThingId("L300"), label = "object", datatype = "xsd:integer")
+            subject = createResource(id = ThingId("R100"), label = "subject"),
+            predicate = createPredicate(id = ThingId("P200")),
+            `object` = createLiteral(id = ThingId("L300"), label = "object", datatype = "xsd:integer")
         )
         assertThat(statement::toNTriple.asString()).isEqualTo(expectedOutput)
     }
@@ -62,9 +62,9 @@ internal class StatementRDFTest {
             |
         """.trimMargin()
         val statement = createStatement(
-            subject = createResource().copy(id = ThingId("R100"), label = "subject"),
-            predicate = createPredicate().copy(id = ThingId("P200")),
-            `object` = createLiteral().copy(
+            subject = createResource(id = ThingId("R100"), label = "subject"),
+            predicate = createPredicate(id = ThingId("P200")),
+            `object` = createLiteral(
                 id = ThingId("L300"), label = "object", datatype = "http://example.org/myDataType"
             )
         )
@@ -78,9 +78,9 @@ internal class StatementRDFTest {
             |
         """.trimMargin()
         val statement = createStatement(
-            subject = createResource().copy(id = ThingId("R100"), label = "subject", classes = setOf(Classes.list)),
-            predicate = createPredicate().copy(id = Predicates.hasListElement),
-            `object` = createLiteral().copy(id = ThingId("L300"), label = "object")
+            subject = createResource(id = ThingId("R100"), label = "subject", classes = setOf(Classes.list)),
+            predicate = createPredicate(id = Predicates.hasListElement),
+            `object` = createLiteral(id = ThingId("L300"), label = "object")
         ).copy(index = 5)
         assertThat(statement::toNTriple.asString()).isEqualTo(expectedOutput)
     }
@@ -92,9 +92,9 @@ internal class StatementRDFTest {
             |
         """.trimMargin()
         val statement = createStatement(
-            subject = createResource().copy(id = ThingId("R100"), label = "subject"),
-            predicate = createPredicate().copy(id = Predicates.hasListElement),
-            `object` = createLiteral().copy(id = ThingId("L300"), label = "object")
+            subject = createResource(id = ThingId("R100"), label = "subject"),
+            predicate = createPredicate(id = Predicates.hasListElement),
+            `object` = createLiteral(id = ThingId("L300"), label = "object")
         )
         assertThat(statement::toNTriple.asString()).isEqualTo(expectedOutput)
     }

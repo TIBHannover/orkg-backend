@@ -6,6 +6,10 @@ import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.domain.model.List
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.testing.fixtures.createList
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
+import eu.tib.orkg.prototype.withCustomMappings
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
@@ -14,10 +18,6 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
-import org.orkg.statements.testing.createList
-import org.orkg.statements.testing.createPredicate
-import org.orkg.statements.testing.createResource
-import org.orkg.statements.testing.withCustomMappings
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 

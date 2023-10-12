@@ -3,11 +3,11 @@ package eu.tib.orkg.prototype.contenttypes.services
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
-import eu.tib.orkg.prototype.createLiteral
-import eu.tib.orkg.prototype.createPredicate
-import eu.tib.orkg.prototype.createResource
-import eu.tib.orkg.prototype.createStatement
-import eu.tib.orkg.prototype.pageOf
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createStatement
+import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -31,32 +31,32 @@ class VisualizationServiceUnitTests {
 
     @Test
     fun `Given a visualization exists, when fetching it by id, then it is returned`() {
-        val expected = createResource().copy(
+        val expected = createResource(
             classes = setOf(Classes.visualization),
             organizationId = OrganizationId(UUID.randomUUID()),
             observatoryId = ObservatoryId(UUID.randomUUID())
         )
         val description = "Description of a visualization"
-        val authorList = createResource().copy(classes = setOf(Classes.list), id = ThingId("R536456"))
+        val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
 
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
         every { statementRepository.findAllBySubject(expected.id, any()) } returns pageOf(
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.hasAuthors.value),
+                predicate = createPredicate(Predicates.hasAuthors),
                 `object` = authorList
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.description.value),
-                `object` = createLiteral(value = description)
+                predicate = createPredicate(Predicates.description),
+                `object` = createLiteral(label = description)
             )
         )
         every { statementRepository.findAllBySubjectAndPredicate(authorList.id, Predicates.hasListElement, any()) } returns pageOf(
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.hasListElement.value),
-                `object` = createLiteral(value = "Author 1")
+                predicate = createPredicate(Predicates.hasListElement),
+                `object` = createLiteral(label = "Author 1")
             )
         )
 

@@ -3,12 +3,12 @@ package eu.tib.orkg.prototype.statements.spi
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.ClassSubclassRelation
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.testing.fixtures.createClass
 import io.kotest.assertions.asClue
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.shouldBe
 import java.time.OffsetDateTime
 import java.util.*
-import org.orkg.statements.testing.createClass
 import org.springframework.data.domain.PageRequest
 
 fun <

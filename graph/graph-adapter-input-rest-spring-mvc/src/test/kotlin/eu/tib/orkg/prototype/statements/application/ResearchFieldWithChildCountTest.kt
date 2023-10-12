@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.ResearchFieldWithChildCountRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.ResearchFieldWithChildCountRepresentation
@@ -20,7 +20,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
@@ -53,7 +52,7 @@ internal class ResearchFieldWithChildCountTest : RestDocsTest("research-fields")
     ) : ResearchFieldWithChildCountRepresentationAdapter {
         @GetMapping("/subfield")
         fun dummySubResearchField(): ResearchFieldWithChildCountRepresentation =
-            ResearchFieldWithChildCount(createResource().copy(classes = setOf(ThingId("ResearchField"))), 5)
+            ResearchFieldWithChildCount(createResource(classes = setOf(ThingId("ResearchField"))), 5)
                 .toResearchFieldWithChildCountRepresentation(emptyMap(), emptyMap())
     }
 }

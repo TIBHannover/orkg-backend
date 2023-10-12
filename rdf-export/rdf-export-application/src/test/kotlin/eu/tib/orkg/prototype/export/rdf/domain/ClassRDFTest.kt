@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.export.rdf.domain
 
-import eu.tib.orkg.prototype.createClass
+import eu.tib.orkg.prototype.statements.testing.fixtures.createClass
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassHierarchyRepository
 import io.mockk.every
@@ -22,7 +22,7 @@ internal class ClassRDFTest {
             |<http://orkg.org/orkg/class/C100> <http://www.w3.org/2000/01/rdf-schema#label> "some dummy label"^^<http://www.w3.org/2001/XMLSchema#string> .
             |
         """.trimMargin()
-        val `class` = createClass().copy(id = ThingId("C100"), label = "some dummy label", uri = null)
+        val `class` = createClass(id = ThingId("C100"), label = "some dummy label", uri = null)
 
         every { classHierarchyRepository.findParent(`class`.id) } returns Optional.empty()
 
@@ -39,7 +39,7 @@ internal class ClassRDFTest {
             |<http://orkg.org/orkg/class/C100> <http://www.w3.org/2000/01/rdf-schema#label> "some dummy label"^^<http://www.w3.org/2001/XMLSchema#string> .
             |
         """.trimMargin()
-        val `class` = createClass().copy(id = ThingId("C100"), label = "some dummy label", uri = URI("null"))
+        val `class` = createClass(id = ThingId("C100"), label = "some dummy label", uri = URI("null"))
 
         every { classHierarchyRepository.findParent(`class`.id) } returns Optional.empty()
 
@@ -57,7 +57,7 @@ internal class ClassRDFTest {
             |<http://orkg.org/orkg/class/C100> <http://www.w3.org/2000/01/rdf-schema#label> "some dummy label"^^<http://www.w3.org/2001/XMLSchema#string> .
             |
         """.trimMargin()
-        val `class` = createClass().copy(id = ThingId("C100"), label = "some dummy label")
+        val `class` = createClass(id = ThingId("C100"), label = "some dummy label")
 
         every { classHierarchyRepository.findParent(`class`.id) } returns Optional.empty()
 
@@ -76,8 +76,8 @@ internal class ClassRDFTest {
             |<http://orkg.org/orkg/class/C100> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://orkg.org/orkg/class/C101> .
             |
         """.trimMargin()
-        val `class` = createClass().copy(id = ThingId("C100"), label = "some dummy label")
-        val parent = createClass().copy(id = ThingId("C101"))
+        val `class` = createClass(id = ThingId("C100"), label = "some dummy label")
+        val parent = createClass(id = ThingId("C101"))
 
         every { classHierarchyRepository.findParent(`class`.id) } returns Optional.of(parent)
 

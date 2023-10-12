@@ -16,7 +16,7 @@ import org.neo4j.cypherdsl.core.Cypher.anyNode
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Functions.labels
-import org.orkg.statements.testing.createClass
+import eu.tib.orkg.prototype.statements.testing.fixtures.createClass
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest

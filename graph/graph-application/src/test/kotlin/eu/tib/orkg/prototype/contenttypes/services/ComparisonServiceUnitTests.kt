@@ -5,12 +5,8 @@ import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contenttypes.application.ComparisonNotFound
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
 import eu.tib.orkg.prototype.contenttypes.domain.model.ObjectIdAndLabel
-import eu.tib.orkg.prototype.createLiteral
-import eu.tib.orkg.prototype.createPredicate
-import eu.tib.orkg.prototype.createResource
-import eu.tib.orkg.prototype.createStatement
-import eu.tib.orkg.prototype.pageOf
 import eu.tib.orkg.prototype.shared.PageRequests
+import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.Literals
@@ -20,6 +16,10 @@ import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.ContributionComparisonRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createStatement
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
@@ -49,7 +49,7 @@ class ComparisonServiceUnitTests {
 
     @Test
     fun `Given a comparison exists, when fetching it by id, then it is returned`() {
-        val expected = createResource().copy(
+        val expected = createResource(
             classes = setOf(Classes.comparison),
             organizationId = OrganizationId(UUID.randomUUID()),
             observatoryId = ObservatoryId(UUID.randomUUID())
@@ -60,14 +60,14 @@ class ComparisonServiceUnitTests {
         val publicationYear: Long = 2016
         val publicationMonth = 1
         val reference = "https://orkg.org"
-        val authorList = createResource().copy(classes = setOf(Classes.list), id = ThingId("R536456"))
+        val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
 
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
         every { statementRepository.findAllBySubject(expected.id, any()) } returns pageOf(
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.hasSubject.value),
-                `object` = createResource().copy(
+                predicate = createPredicate(Predicates.hasSubject),
+                `object` = createResource(
                     id = researchFieldId,
                     classes = setOf(Classes.researchField),
                     label = "Research Field 1"
@@ -75,28 +75,28 @@ class ComparisonServiceUnitTests {
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.hasDOI.value),
-                `object` = createLiteral(doi)
+                predicate = createPredicate(Predicates.hasDOI),
+                `object` = createLiteral(label = doi)
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.yearPublished.value),
-                `object` = createLiteral().copy(label = publicationYear.toString(), datatype = Literals.XSD.DECIMAL.prefixedUri)
+                predicate = createPredicate(Predicates.yearPublished),
+                `object` = createLiteral(label = publicationYear.toString(), datatype = Literals.XSD.DECIMAL.prefixedUri)
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.monthPublished.value),
-                `object` = createLiteral().copy(label = publicationMonth.toString(), datatype = Literals.XSD.INT.prefixedUri)
+                predicate = createPredicate(Predicates.monthPublished),
+                `object` = createLiteral(label = publicationMonth.toString(), datatype = Literals.XSD.INT.prefixedUri)
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.hasAuthors.value),
+                predicate = createPredicate(Predicates.hasAuthors),
                 `object` = authorList
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.comparesContribution.value),
-                `object` = createResource().copy(
+                predicate = createPredicate(Predicates.comparesContribution),
+                `object` = createResource(
                     classes = setOf(Classes.contribution),
                     label = "Contribution",
                     id = ThingId("Contribution")
@@ -104,8 +104,8 @@ class ComparisonServiceUnitTests {
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.hasVisualization.value),
-                `object` = createResource().copy(
+                predicate = createPredicate(Predicates.hasVisualization),
+                `object` = createResource(
                     classes = setOf(Classes.visualization),
                     label = "Visualization",
                     id = ThingId("Visualization")
@@ -113,8 +113,8 @@ class ComparisonServiceUnitTests {
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.hasRelatedResource.value),
-                `object` = createResource().copy(
+                predicate = createPredicate(Predicates.hasRelatedResource),
+                `object` = createResource(
                     classes = setOf(Classes.comparisonRelatedResource),
                     label = "ComparisonRelatedResource",
                     id = ThingId("ComparisonRelatedResource")
@@ -122,8 +122,8 @@ class ComparisonServiceUnitTests {
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.hasRelatedFigure.value),
-                `object` = createResource().copy(
+                predicate = createPredicate(Predicates.hasRelatedFigure),
+                `object` = createResource(
                     classes = setOf(Classes.comparisonRelatedFigure),
                     label = "ComparisonRelatedFigure",
                     id = ThingId("ComparisonRelatedFigure")
@@ -131,25 +131,25 @@ class ComparisonServiceUnitTests {
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.reference.value),
-                `object` = createLiteral(value = reference)
+                predicate = createPredicate(Predicates.reference),
+                `object` = createLiteral(label = reference)
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.isAnonymized.value),
-                `object` = createLiteral().copy(label = "true", datatype = Literals.XSD.BOOLEAN.prefixedUri)
+                predicate = createPredicate(Predicates.isAnonymized),
+                `object` = createLiteral(label = "true", datatype = Literals.XSD.BOOLEAN.prefixedUri)
             ),
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.hasPreviousVersion.value),
+                predicate = createPredicate(Predicates.hasPreviousVersion),
                 `object` = createResource(id = previousVersion)
             )
         )
         every { statementRepository.findAllBySubjectAndPredicate(authorList.id, Predicates.hasListElement, any()) } returns pageOf(
             createStatement(
                 subject = expected,
-                predicate = createPredicate(id = Predicates.hasListElement.value),
-                `object` = createLiteral(value = "Author 1")
+                predicate = createPredicate(Predicates.hasListElement),
+                `object` = createLiteral(label = "Author 1")
             )
         )
 
@@ -218,26 +218,26 @@ class ComparisonServiceUnitTests {
 
     @Test
     fun `Given a comparison, when publishing, it returns success`() {
-        val comparison = createResource().copy(
+        val comparison = createResource(
             classes = setOf(Classes.comparison),
             organizationId = OrganizationId(UUID.randomUUID()),
             observatoryId = ObservatoryId(UUID.randomUUID())
         )
         val resourceAuthorId = ThingId("R132564")
-        val authorList = createResource().copy(classes = setOf(Classes.list), id = ThingId("R536456"))
+        val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
         val relatedDoi = "1472/58369"
 
         every { resourceRepository.findById(comparison.id) } returns Optional.of(comparison)
         every { statementRepository.findAllBySubject(comparison.id, any()) } returns pageOf(
             createStatement(
                 subject = comparison,
-                predicate = createPredicate(id = Predicates.hasAuthors.value),
+                predicate = createPredicate(Predicates.hasAuthors),
                 `object` = authorList
             ),
             createStatement(
                 subject = comparison,
-                predicate = createPredicate(id = Predicates.comparesContribution.value),
-                `object` = createResource().copy(
+                predicate = createPredicate(Predicates.comparesContribution),
+                `object` = createResource(
                     classes = setOf(Classes.contribution),
                     label = "Contribution",
                     id = ThingId("Contribution")
@@ -247,28 +247,28 @@ class ComparisonServiceUnitTests {
         every { statementRepository.findAllBySubjectAndPredicate(authorList.id, Predicates.hasListElement, any()) } returns pageOf(
             createStatement(
                 subject = comparison,
-                predicate = createPredicate(id = Predicates.hasListElement.value),
-                `object` = createLiteral(value = "Author 1")
+                predicate = createPredicate(Predicates.hasListElement),
+                `object` = createLiteral(label = "Author 1")
             ),
             createStatement(
                 subject = comparison,
-                predicate = createPredicate(id = Predicates.hasListElement.value),
-                `object` = createResource().copy(id = resourceAuthorId, label = "Author 2", classes = setOf(Classes.author))
+                predicate = createPredicate(Predicates.hasListElement),
+                `object` = createResource(id = resourceAuthorId, label = "Author 2", classes = setOf(Classes.author))
             )
         )
         every { statementRepository.findAllBySubject(resourceAuthorId, any()) } returns pageOf(
             createStatement(
                 subject = comparison,
-                predicate = createPredicate(id = Predicates.hasORCID.value),
-                `object` = createLiteral().copy(label = "0000-1111-2222-3333")
+                predicate = createPredicate(Predicates.hasORCID),
+                `object` = createLiteral(label = "0000-1111-2222-3333")
             ),
             createStatement(
                 subject = comparison,
-                predicate = createPredicate(id = Predicates.hasWebsite.value),
-                `object` = createLiteral().copy(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri)
+                predicate = createPredicate(Predicates.hasWebsite),
+                `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri)
             )
         )
-        every { literalService.findDOIByContributionId(ThingId("Contribution")) } returns Optional.of(createLiteral(relatedDoi))
+        every { literalService.findDOIByContributionId(ThingId("Contribution")) } returns Optional.of(createLiteral(label = relatedDoi))
         every { publishingService.publish(any()) } returns "1324/56789"
 
         service.publish(comparison.id, "Research Field 1", "comparison description")

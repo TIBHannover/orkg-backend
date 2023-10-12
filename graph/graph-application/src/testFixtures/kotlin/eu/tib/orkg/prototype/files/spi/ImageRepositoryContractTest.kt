@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.files.spi
 
-import eu.tib.orkg.prototype.testImage
+import eu.tib.orkg.prototype.files.testing.fixtures.testImage
 import eu.tib.orkg.prototype.files.domain.model.ImageId
-import eu.tib.orkg.prototype.loadImage
+import eu.tib.orkg.prototype.files.testing.fixtures.loadImage
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe

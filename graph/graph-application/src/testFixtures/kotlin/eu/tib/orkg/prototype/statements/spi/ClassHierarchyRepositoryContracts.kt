@@ -4,14 +4,14 @@ import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.ChildC
 import eu.tib.orkg.prototype.statements.api.RetrieveClassHierarchyUseCase.ClassHierarchyEntry
 import eu.tib.orkg.prototype.statements.domain.model.ClassSubclassRelation
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.testing.fixtures.createClass
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import java.time.OffsetDateTime
-import org.orkg.statements.testing.createClass
-import org.orkg.statements.testing.createResource
 import org.springframework.data.domain.PageRequest
 
 fun <

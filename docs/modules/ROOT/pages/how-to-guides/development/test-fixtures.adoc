@@ -1,0 +1,12 @@
+= Conventions for test fixtures
+
+In oder to keep the code structured and helper functions findable for easier reuse, it is helpful to define basic guidelines on where certain pieces of code should be placed.
+The following list defines a set of rules for organizing classes and functions for test fixtures:
+
+- All factory methods should go to their own package, following naming structure of `eu.tib.orkg.\{module\}.testing.fixtures`, where `module` is the current context, e.g. "statements", "community", etc.
+- All factory methods should go to a file, organized around the concept of the modules.
+  For example, `createResource()` could either go to `FactoryFunctions` or `ResourceFactoryFunctions`, depending on how many variants there are.
+- Functions starting with create should have a deterministic behavior, meaning they create the same default instance every time.
+- Functions providing random values should start with random and vary all of their attributes.
+- Extension classes should have a name prefix, indicating the context the extensions.
+  For example, a class with extension functions for `Fabrikate` should be named `FabrikateExtensions`.

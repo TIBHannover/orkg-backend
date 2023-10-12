@@ -10,10 +10,10 @@ import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.files.api.CreateImageUseCase
 import eu.tib.orkg.prototype.files.api.ImageUseCases
 import eu.tib.orkg.prototype.files.domain.model.ImageId
-import eu.tib.orkg.prototype.loadImage
-import eu.tib.orkg.prototype.loadRawImage
+import eu.tib.orkg.prototype.files.testing.fixtures.loadImage
+import eu.tib.orkg.prototype.files.testing.fixtures.loadRawImage
 import eu.tib.orkg.prototype.statements.api.UpdateOrganizationUseCases
-import eu.tib.orkg.prototype.testImage
+import eu.tib.orkg.prototype.files.testing.fixtures.testImage
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk

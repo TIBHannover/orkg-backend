@@ -4,9 +4,9 @@ import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrgan
 import eu.tib.orkg.prototype.community.application.OrganizationNotFound
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contenttypes.application.OnlyOneOrganizationAllowed
-import eu.tib.orkg.prototype.dummyCreatePaperCommand
-import eu.tib.orkg.prototype.createOrganization
-import eu.tib.orkg.prototype.toOrganizationEntity
+import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreatePaperCommand
+import eu.tib.orkg.prototype.community.testing.fixtures.createOrganization
+import eu.tib.orkg.prototype.community.testing.fixtures.toOrganizationEntity
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks

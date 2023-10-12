@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.export.rdf.domain
 
-import eu.tib.orkg.prototype.asString
-import eu.tib.orkg.prototype.createResource
+import eu.tib.orkg.prototype.export.rdf.testing.fixtures.asString
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import org.assertj.core.api.Assertions.assertThat
@@ -16,7 +16,7 @@ internal class ResourceRDFTest {
             |<http://orkg.org/orkg/resource/R100> <http://www.w3.org/2000/01/rdf-schema#label> "some dummy label"^^<http://www.w3.org/2001/XMLSchema#string> .
             |
         """.trimMargin()
-        val resource = createResource().copy(ThingId("R100"), label = "some dummy label")
+        val resource = createResource(ThingId("R100"), label = "some dummy label")
         assertThat(resource::toNTriple.asString()).isEqualTo(expectedOutput)
     }
 
@@ -27,7 +27,7 @@ internal class ResourceRDFTest {
             |<http://orkg.org/orkg/resource/R100> <http://www.w3.org/2000/01/rdf-schema#label> "some dummy label"^^<http://www.w3.org/2001/XMLSchema#string> .
             |
         """.trimMargin()
-        val resource = createResource().copy(ThingId("R100"), label = "some dummy label", classes = setOf(Classes.list))
+        val resource = createResource(ThingId("R100"), label = "some dummy label", classes = setOf(Classes.list))
         assertThat(resource::toNTriple.asString()).isEqualTo(expectedOutput)
     }
 }

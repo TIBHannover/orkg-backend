@@ -1,10 +1,6 @@
 package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
-import eu.tib.orkg.prototype.createClass
-import eu.tib.orkg.prototype.createLiteral
-import eu.tib.orkg.prototype.createPredicate
-import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.api.CreateListUseCase
 import eu.tib.orkg.prototype.statements.api.UpdateListUseCase
 import eu.tib.orkg.prototype.statements.application.InvalidLabel
@@ -14,6 +10,11 @@ import eu.tib.orkg.prototype.statements.domain.model.List
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ListRepository
 import eu.tib.orkg.prototype.statements.spi.ThingRepository
+import eu.tib.orkg.prototype.statements.testing.fixtures.createClass
+import eu.tib.orkg.prototype.statements.testing.fixtures.createList
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.just
@@ -27,7 +28,6 @@ import java.time.ZoneOffset
 import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.orkg.statements.testing.createList
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 
@@ -151,7 +151,7 @@ class ListServiceUnitTests {
             label = "label",
             elements = listOf(ThingId("R1"))
         )
-        val list = createList(id = id)
+        val list = createList(id)
         val expected = list.copy(
             label = command.label!!,
             elements = command.elements!!

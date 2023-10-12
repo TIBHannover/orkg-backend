@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
+import eu.tib.orkg.prototype.statements.testing.fixtures.createStatement
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -20,7 +21,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.neo4j.driver.Record
 import org.neo4j.driver.types.TypeSystem
-import org.orkg.statements.testing.createStatement
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.CacheManager
 import org.springframework.cache.annotation.EnableCaching
@@ -94,9 +94,7 @@ internal class SpringDataNeo4jStatementAdapterCachingTests {
         val literalId = ThingId("L1")
         val neo4jLiteral = createNeo4jLiteral(id = literalId)
         val literal = neo4jLiteral.toLiteral()
-        val statement = createStatement(
-            id = StatementId(1), `object` = literal
-        )
+        val statement = createStatement(id = StatementId(1), `object` = literal)
         // Required to mock the Neo4Client DSL
         val mockUnboundRunnableSpec = mockk<UnboundRunnableSpec>()
         val mockMappingSpec = mockk<Neo4jClient.MappingSpec<ThingId>>()

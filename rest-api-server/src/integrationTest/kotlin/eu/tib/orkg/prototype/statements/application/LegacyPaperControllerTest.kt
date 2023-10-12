@@ -5,8 +5,10 @@ import eu.tib.orkg.prototype.createClasses
 import eu.tib.orkg.prototype.createPredicates
 import eu.tib.orkg.prototype.createResource
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
-import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase.*
-import eu.tib.orkg.prototype.statements.api.CreatePaperUseCase.*
+import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase.NamedObject
+import eu.tib.orkg.prototype.statements.api.CreateObjectUseCase.ObjectStatement
+import eu.tib.orkg.prototype.statements.api.CreatePaperUseCase.CreatePaperRequest
+import eu.tib.orkg.prototype.statements.api.CreatePaperUseCase.PaperDefinition
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases

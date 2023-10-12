@@ -1,13 +1,9 @@
 package eu.tib.orkg.prototype.contenttypes.services.actions
 
-import eu.tib.orkg.prototype.createLiteral
-import eu.tib.orkg.prototype.dummyCreatePaperCommand
-import eu.tib.orkg.prototype.statements.api.Classes
-import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
-import eu.tib.orkg.prototype.statements.api.CreateStatementUseCase
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
+import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreatePaperCommand
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.Predicates
-import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -45,7 +41,7 @@ class PaperIdentifierCreatorUnitTest {
         val state = PaperState(paperId = paperId)
 
         val doi = command.identifiers["doi"]!!
-        val doiLiteral = createLiteral(value = doi)
+        val doiLiteral = createLiteral(label = doi)
 
         every { literalService.create(doi) } returns doiLiteral
         every { statementService.create(paperId, Predicates.hasDOI, doiLiteral.id) } returns StatementId("S435")

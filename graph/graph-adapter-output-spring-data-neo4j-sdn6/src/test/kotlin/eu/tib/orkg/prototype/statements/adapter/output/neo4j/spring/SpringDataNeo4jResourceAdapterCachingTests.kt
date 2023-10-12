@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
 import io.mockk.clearMocks
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.orkg.statements.testing.createResource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.CacheManager
 import org.springframework.cache.annotation.EnableCaching
@@ -63,7 +63,7 @@ class SpringDataNeo4jResourceAdapterCachingTests {
 
     @Test
     fun `fetching a resource by ID should be cached`() {
-        val resource = createResource().copy(id = ThingId("R1"))
+        val resource = createResource(ThingId("R1"))
         every { mock.findById(ThingId("R1")) } returns Optional.of(resource) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
@@ -82,7 +82,7 @@ class SpringDataNeo4jResourceAdapterCachingTests {
 
     @Test
     fun `saving a resource should evict it from the id-to-resource cache`() {
-        val resource = createResource().copy(id = ThingId("R1"))
+        val resource = createResource(ThingId("R1"))
         val modified = resource.copy(label = "new label")
         every { mock.findById(ThingId("R1")) } returns Optional.of(resource) andThen Optional.of(modified) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
@@ -139,7 +139,7 @@ class SpringDataNeo4jResourceAdapterCachingTests {
 
     @Test
     fun `deleting a resource should evict it from the id-to-resource cache`() {
-        val resource = createResource().copy(id = ThingId("R1"))
+        val resource = createResource(ThingId("R1"))
         every { mock.findById(ThingId("R1")) } returns Optional.of(resource) andThen Optional.of(resource) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }

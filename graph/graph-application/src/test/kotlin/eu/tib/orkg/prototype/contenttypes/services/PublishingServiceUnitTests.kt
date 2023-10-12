@@ -3,12 +3,12 @@ package eu.tib.orkg.prototype.contenttypes.services
 import eu.tib.orkg.prototype.contenttypes.application.DoiAlreadyRegistered
 import eu.tib.orkg.prototype.contenttypes.application.UnpublishableThing
 import eu.tib.orkg.prototype.contenttypes.spi.DoiService
-import eu.tib.orkg.prototype.createLiteral
-import eu.tib.orkg.prototype.createPredicate
-import eu.tib.orkg.prototype.createResource
-import eu.tib.orkg.prototype.createStatement
-import eu.tib.orkg.prototype.dummyPublishCommand
-import eu.tib.orkg.prototype.pageOf
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createStatement
+import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyPublishCommand
+import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
@@ -62,13 +62,13 @@ class PublishingServiceUnitTests {
         val id = command.id
         val doi = "PREFIX/$id"
         val resource = createResource(id = id).copy(classes = setOf(Classes.paper))
-        val literal = createLiteral(value = doi, id = "L1")
-        val year = createLiteral().copy(
+        val literal = createLiteral(label = doi)
+        val year = createLiteral(
             id = ThingId("L2"),
             label = "2023",
             datatype = Literals.XSD.INT.prefixedUri
         )
-        val month = createLiteral().copy(
+        val month = createLiteral(
             id = ThingId("L3"),
             label = "9",
             datatype = Literals.XSD.INT.prefixedUri
@@ -147,8 +147,8 @@ class PublishingServiceUnitTests {
         every { statementService.findAllBySubjectAndPredicate(id, Predicates.hasDOI, PageRequests.SINGLE) } returns pageOf(
             createStatement(
                 subject = resource,
-                predicate = createPredicate(Predicates.hasDOI.value),
-                `object` = createLiteral("10.1000/183")
+                predicate = createPredicate(Predicates.hasDOI),
+                `object` = createLiteral(label = "10.1000/183")
             )
         )
 

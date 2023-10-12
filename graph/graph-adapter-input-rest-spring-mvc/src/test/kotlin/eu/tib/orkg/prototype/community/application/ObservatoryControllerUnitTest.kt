@@ -9,10 +9,10 @@ import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.ResearchField
 import eu.tib.orkg.prototype.community.spi.ObservatoryRepository
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
-import eu.tib.orkg.prototype.createObservatory
-import eu.tib.orkg.prototype.createOrganization
-import eu.tib.orkg.prototype.createResource
-import eu.tib.orkg.prototype.pageOf
+import eu.tib.orkg.prototype.community.testing.fixtures.createObservatory
+import eu.tib.orkg.prototype.community.testing.fixtures.createOrganization
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
+import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -570,7 +570,7 @@ internal class ObservatoryControllerUnitTest {
         val label = "fancy research field"
         val pageable = PageRequest.of(0, 10)
         val page: Page<ThingId> = pageOf(id, pageable = pageable)
-        val resource = createResource().copy(
+        val resource = createResource(
             id = id,
             label = label,
             classes = setOf(ThingId("ResearchField"))

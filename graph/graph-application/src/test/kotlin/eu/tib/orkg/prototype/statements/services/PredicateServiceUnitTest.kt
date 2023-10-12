@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.services
 
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
-import eu.tib.orkg.prototype.createPredicate
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
 import eu.tib.orkg.prototype.statements.api.CreatePredicateUseCase
 import eu.tib.orkg.prototype.statements.application.PredicateUsedInStatement
 import eu.tib.orkg.prototype.statements.domain.model.Predicate

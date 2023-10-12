@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.export.rdf.domain
 
-import eu.tib.orkg.prototype.asString
-import eu.tib.orkg.prototype.createPredicate
+import eu.tib.orkg.prototype.export.rdf.testing.fixtures.asString
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

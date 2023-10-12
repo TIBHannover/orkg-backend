@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.domain
 
-import eu.tib.orkg.prototype.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
 import eu.tib.orkg.prototype.shared.MissingParameter
 import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.statements.api.ResolveDOIUseCase.WidgetInfo
@@ -66,7 +66,7 @@ internal class ResolveDOIServiceSpec : DescribeSpec({
         }
         describe("a resource with this DOI is found") {
             withData(classNamesAndOutputs) { (publishedClassName, numStatements) ->
-                val resource = createResource().copy(label = "some irrelevant title")
+                val resource = createResource(label = "some irrelevant title")
                     .copy(classes = setOf(ThingId(publishedClassName)))
                 every { resourceUseCases.findByDOI("some DOI") } returns Optional.of(resource)
                 if (numStatements != null)
@@ -103,7 +103,7 @@ internal class ResolveDOIServiceSpec : DescribeSpec({
         }
         describe("a resource with this title is found") {
             withData(classNamesAndOutputs) { (publishedClassName, numStatements) ->
-                val resource = createResource().copy(label = "some irrelevant title")
+                val resource = createResource(label = "some irrelevant title")
                     .copy(classes = setOf(ThingId(publishedClassName)))
                 every { resourceUseCases.findByDOI("some DOI") } returns Optional.of(resource)
                 if (numStatements != null)

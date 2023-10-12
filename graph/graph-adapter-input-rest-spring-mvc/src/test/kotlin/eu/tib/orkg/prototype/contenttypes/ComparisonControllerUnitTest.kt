@@ -10,10 +10,10 @@ import eu.tib.orkg.prototype.contenttypes.application.ComparisonRelatedFigureNot
 import eu.tib.orkg.prototype.contenttypes.application.ComparisonRelatedResourceNotFound
 import eu.tib.orkg.prototype.contenttypes.application.PaperNotFound
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
-import eu.tib.orkg.prototype.createDummyComparison
-import eu.tib.orkg.prototype.createDummyComparisonRelatedFigure
-import eu.tib.orkg.prototype.createDummyComparisonRelatedResource
-import eu.tib.orkg.prototype.pageOf
+import eu.tib.orkg.prototype.contenttypes.testing.fixtures.createDummyComparison
+import eu.tib.orkg.prototype.contenttypes.testing.fixtures.createDummyComparisonRelatedFigure
+import eu.tib.orkg.prototype.contenttypes.testing.fixtures.createDummyComparisonRelatedResource
+import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.application.DOIServiceUnavailable
@@ -40,7 +40,6 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.restdocs.payload.PayloadDocumentation
 import org.springframework.restdocs.payload.PayloadDocumentation.*
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters

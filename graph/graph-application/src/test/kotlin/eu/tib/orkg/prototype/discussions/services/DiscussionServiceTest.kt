@@ -4,8 +4,8 @@ import eu.tib.orkg.prototype.auth.domain.Role
 import eu.tib.orkg.prototype.auth.domain.UserService
 import eu.tib.orkg.prototype.auth.testing.fixtures.createUser
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
-import eu.tib.orkg.prototype.createClass
-import eu.tib.orkg.prototype.createLiteral
+import eu.tib.orkg.prototype.statements.testing.fixtures.createClass
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
 import eu.tib.orkg.prototype.discussions.api.CreateDiscussionCommentUseCase
 import eu.tib.orkg.prototype.discussions.application.InvalidContent
 import eu.tib.orkg.prototype.discussions.application.TopicNotFound
@@ -48,7 +48,7 @@ class DiscussionServiceTest {
         val comment = "Some comment"
         val contributor = ContributorId(UUID.randomUUID())
 
-        every { thingRepository.findByThingId(any()) } returns Optional.of(createClass().copy(id = topic))
+        every { thingRepository.findByThingId(any()) } returns Optional.of(createClass(id = topic))
         every { repository.nextIdentity() } returns id
         every { repository.save(any()) } returns Unit
 
@@ -262,7 +262,7 @@ class DiscussionServiceTest {
         val topic = ThingId("C123")
         val contributor = ContributorId(UUID.randomUUID())
 
-        every { thingRepository.findByThingId(any()) } returns Optional.of(createClass().copy(id = topic))
+        every { thingRepository.findByThingId(any()) } returns Optional.of(createClass(id = topic))
         every { repository.nextIdentity() } returns id
         every { repository.save(any()) } returns Unit
 
@@ -289,7 +289,7 @@ class DiscussionServiceTest {
         val comment = "Some comment"
         val contributor = ContributorId(UUID.randomUUID())
 
-        every { thingRepository.findByThingId(any()) } returns Optional.of(createLiteral().copy(id = topic))
+        every { thingRepository.findByThingId(any()) } returns Optional.of(createLiteral(id = topic))
 
         shouldThrow<TopicNotFound> {
             service.create(CreateDiscussionCommentUseCase.CreateCommand(topic, comment, contributor))
@@ -304,7 +304,7 @@ class DiscussionServiceTest {
         val topic = ThingId("C123")
         val pageable = PageRequest.of(0, 5)
 
-        every { thingRepository.findByThingId(any()) } returns Optional.of(createClass().copy(id = topic))
+        every { thingRepository.findByThingId(any()) } returns Optional.of(createClass(id = topic))
         every { repository.findAllByTopic(topic, pageable) } returns Page.empty()
 
         service.findAllByTopic(topic, pageable)
@@ -331,7 +331,7 @@ class DiscussionServiceTest {
         val topic = ThingId("C123")
         val pageable = PageRequest.of(0, 5)
 
-        every { thingRepository.findByThingId(any()) } returns Optional.of(createLiteral().copy(id = topic))
+        every { thingRepository.findByThingId(any()) } returns Optional.of(createLiteral(id = topic))
 
         shouldThrow<TopicNotFound> {
             service.findAllByTopic(topic, pageable)
@@ -351,7 +351,7 @@ class DiscussionServiceTest {
             createdAt = OffsetDateTime.now(staticClock),
         )
 
-        every { thingRepository.findByThingId(any()) } returns Optional.of(createClass().copy(id = topic))
+        every { thingRepository.findByThingId(any()) } returns Optional.of(createClass(id = topic))
         every { repository.findById(comment.id) } returns Optional.of(comment)
 
         service.findByTopicAndCommentId(topic, comment.id)
@@ -378,7 +378,7 @@ class DiscussionServiceTest {
         val topic = ThingId("C123")
         val id = DiscussionCommentId(UUID.randomUUID())
 
-        every { thingRepository.findByThingId(any()) } returns Optional.of(createLiteral().copy(id = topic))
+        every { thingRepository.findByThingId(any()) } returns Optional.of(createLiteral(id = topic))
 
         shouldThrow<TopicNotFound> {
             service.findByTopicAndCommentId(topic, id)

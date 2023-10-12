@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.LiteralRepository
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
 import io.mockk.clearMocks
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.orkg.statements.testing.createLiteral
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.CacheManager
 import org.springframework.cache.annotation.EnableCaching
@@ -62,7 +62,7 @@ class SpringDataNeo4jLiteralAdapterCachingTests {
 
     @Test
     fun `fetching a literal by ID should be cached`() {
-        val literal = createLiteral().copy(id = ThingId("L1"))
+        val literal = createLiteral(ThingId("L1"))
         every { mock.findById(ThingId("L1")) } returns Optional.of(literal) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
@@ -81,7 +81,7 @@ class SpringDataNeo4jLiteralAdapterCachingTests {
 
     @Test
     fun `saving a literal should evict it from the id-to-literal cache`() {
-        val literal = createLiteral().copy(id = ThingId("L1"))
+        val literal = createLiteral(ThingId("L1"))
         val modified = literal.copy(label = "new label")
         every { mock.findById(ThingId("L1")) } returns Optional.of(literal) andThen Optional.of(modified) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")

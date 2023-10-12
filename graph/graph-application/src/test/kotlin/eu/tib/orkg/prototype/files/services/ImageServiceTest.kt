@@ -7,9 +7,9 @@ import eu.tib.orkg.prototype.files.domain.model.Image
 import eu.tib.orkg.prototype.files.domain.model.ImageData
 import eu.tib.orkg.prototype.files.domain.model.ImageId
 import eu.tib.orkg.prototype.files.spi.ImageRepository
-import eu.tib.orkg.prototype.loadRawImage
+import eu.tib.orkg.prototype.files.testing.fixtures.loadRawImage
 import eu.tib.orkg.prototype.statements.api.UpdateOrganizationUseCases
-import eu.tib.orkg.prototype.testImage
+import eu.tib.orkg.prototype.files.testing.fixtures.testImage
 import io.kotest.assertions.throwables.shouldThrow
 import io.mockk.every
 import io.mockk.mockk

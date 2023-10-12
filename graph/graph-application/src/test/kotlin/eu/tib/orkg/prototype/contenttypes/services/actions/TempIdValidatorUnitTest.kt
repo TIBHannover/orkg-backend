@@ -2,8 +2,8 @@ package eu.tib.orkg.prototype.contenttypes.services.actions
 
 import eu.tib.orkg.prototype.contenttypes.application.DuplicateTempIds
 import eu.tib.orkg.prototype.contenttypes.application.InvalidTempId
-import eu.tib.orkg.prototype.dummyCreateContributionCommand
-import eu.tib.orkg.prototype.dummyCreatePaperCommand
+import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreateContributionCommand
+import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreatePaperCommand
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test

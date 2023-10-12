@@ -1,10 +1,10 @@
 package eu.tib.orkg.prototype.contenttypes.services.actions
 
 import eu.tib.orkg.prototype.contenttypes.domain.model.PublicationInfo
-import eu.tib.orkg.prototype.dummyCreatePaperCommand
-import eu.tib.orkg.prototype.createLiteral
-import eu.tib.orkg.prototype.createResource
-import eu.tib.orkg.prototype.pageOf
+import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreatePaperCommand
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
+import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
@@ -94,7 +94,7 @@ class PaperPublicationInfoCreatorUnitTest {
         val state = PaperState(
             paperId = paperId
         )
-        val monthLiteral = createLiteral(value = month.toString())
+        val monthLiteral = createLiteral(label = month.toString())
 
         every {
             literalService.create(
@@ -154,7 +154,7 @@ class PaperPublicationInfoCreatorUnitTest {
         val state = PaperState(
             paperId = paperId
         )
-        val yearLiteral = createLiteral(value = year.toString())
+        val yearLiteral = createLiteral(label = year.toString())
 
         every {
             literalService.create(
@@ -347,7 +347,7 @@ class PaperPublicationInfoCreatorUnitTest {
         val state = PaperState(
             paperId = paperId
         )
-        val urlLiteral = createLiteral(value = url.toString())
+        val urlLiteral = createLiteral(label = url.toString())
 
         every {
             literalService.create(

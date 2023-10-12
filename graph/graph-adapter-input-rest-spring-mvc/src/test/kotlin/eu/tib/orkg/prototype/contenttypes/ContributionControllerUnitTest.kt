@@ -8,7 +8,7 @@ import eu.tib.orkg.prototype.contenttypes.application.ContributionController
 import eu.tib.orkg.prototype.contenttypes.application.ContributionNotFound
 import eu.tib.orkg.prototype.contenttypes.domain.model.Contribution
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
-import eu.tib.orkg.prototype.pageOf
+import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.testing.andExpectContribution

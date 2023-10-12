@@ -3,14 +3,15 @@ package eu.tib.orkg.prototype.statements.application
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
-import eu.tib.orkg.prototype.createResource
-import eu.tib.orkg.prototype.createStatement
-import eu.tib.orkg.prototype.pageOf
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createStatement
+import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
 import eu.tib.orkg.prototype.testing.andExpectPage
 import eu.tib.orkg.prototype.testing.andExpectStatement
 import eu.tib.orkg.prototype.testing.annotations.UsesMocking
@@ -31,7 +32,6 @@ import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.orkg.statements.testing.createPredicate
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -81,10 +81,18 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         val r4 = ThingId("R4")
         val p1 = ThingId("P1")
         val p2 = ThingId("P2")
-        val s1 = createStatement(createResource(r1), createPredicate(p1), createResource(r2))
-            .copy(id = StatementId("S1"))
-        val s2 = createStatement(createResource(r3), createPredicate(p2), createResource(r4))
-            .copy(id = StatementId("S2"))
+        val s1 = createStatement(
+            id = StatementId("S1"),
+            subject = createResource(r1),
+            predicate = createPredicate(p1),
+            `object` = createResource(r2)
+        )
+        val s2 = createStatement(
+            id = StatementId("S2"),
+            subject = createResource(id = r3),
+            predicate = createPredicate(id = p2),
+            `object` = createResource(id = r4)
+        )
         val pageable = PageRequest.of(0, 5)
 
         every { statementService.findAllBySubject(r1, any()) } returns pageOf(s1, pageable = pageable)
@@ -128,10 +136,18 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         val r4 = ThingId("R4")
         val p1 = ThingId("P1")
         val p2 = ThingId("P2")
-        val s1 = createStatement(createResource(r1), createPredicate(p1), createResource(r2))
-            .copy(id = StatementId("S1"))
-        val s2 = createStatement(createResource(r3), createPredicate(p2), createResource(r4))
-            .copy(id = StatementId("S2"))
+        val s1 = createStatement(
+            id = StatementId("S1"),
+            subject = createResource(r1),
+            predicate = createPredicate(p1),
+            `object` = createResource(r2)
+        )
+        val s2 = createStatement(
+            id = StatementId("S2"),
+            subject = createResource(r3),
+            predicate = createPredicate(p2),
+            `object` = createResource(r4)
+        )
         val pageable = PageRequest.of(0, 5)
 
         every { statementService.findAllByObject(r2, any()) } returns pageOf(s1, pageable = pageable)
@@ -175,16 +191,34 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         val r4 = ThingId("R4")
         val p1 = ThingId("P1")
         val p2 = ThingId("P2")
-        val s1 = createStatement(createResource(r1), createPredicate(p1), createResource(r2))
-            .copy(id = StatementId("S1"))
-        val s2 = createStatement(createResource(r3), createPredicate(p2), createResource(r4))
-            .copy(id = StatementId("S2"))
+        val s1 = createStatement(
+            id = StatementId("S1"),
+            subject = createResource(r1),
+            predicate = createPredicate(p1),
+            `object` = createResource(r2)
+        )
+        val s2 = createStatement(
+            id = StatementId("S2"),
+            subject = createResource(r3),
+            predicate = createPredicate(p2),
+            `object` = createResource(r4)
+        )
 
         val newP = createPredicate(ThingId("P3"))
         val newO = createResource(ThingId("R5"))
 
-        val newS1 = createStatement(s1.subject, newP, newO).copy(id = s1.id)
-        val newS2 = createStatement(s2.subject, newP, newO).copy(id = s2.id)
+        val newS1 = createStatement(
+            id = s1.id!!,
+            subject = s1.subject,
+            predicate = newP,
+            `object` = newO
+        )
+        val newS2 = createStatement(
+            id = s2.id!!,
+            subject = s2.subject,
+            predicate = newP,
+            `object` = newO
+        )
 
         val payload = objectMapper.writeValueAsString(
             mapOf(

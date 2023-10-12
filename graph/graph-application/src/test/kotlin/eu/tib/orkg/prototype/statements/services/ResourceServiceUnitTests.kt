@@ -21,7 +21,7 @@ import io.mockk.verify
 import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.orkg.statements.testing.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 

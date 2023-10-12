@@ -12,6 +12,9 @@ import eu.tib.orkg.prototype.statements.spi.ClassRepository
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.TemplateRepository
+import eu.tib.orkg.prototype.statements.testing.fixtures.createClass
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
 import eu.tib.orkg.prototype.testing.annotations.UsesMocking
 import eu.tib.orkg.prototype.testing.spring.restdocs.RestDocsTest
 import eu.tib.orkg.prototype.testing.spring.restdocs.documentedGetRequestTo
@@ -19,14 +22,11 @@ import io.mockk.every
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
-import org.orkg.statements.testing.createClass
-import org.orkg.statements.testing.createPredicate
-import org.orkg.statements.testing.createResource
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
-import org.springframework.restdocs.headers.HeaderDocumentation
-import org.springframework.restdocs.headers.HeaderDocumentation.*
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.test.context.ContextConfiguration

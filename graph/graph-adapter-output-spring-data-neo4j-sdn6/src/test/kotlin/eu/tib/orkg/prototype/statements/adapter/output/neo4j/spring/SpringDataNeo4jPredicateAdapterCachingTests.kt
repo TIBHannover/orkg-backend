@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.PredicateRepository
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
 import io.mockk.clearMocks
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.orkg.statements.testing.createPredicate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.CacheManager
 import org.springframework.cache.annotation.EnableCaching
@@ -59,7 +59,7 @@ class SpringDataNeo4jPredicateAdapterCachingTests {
 
     @Test
     fun `fetching a predicate by ID should be cached`() {
-        val predicate = createPredicate().copy(id = ThingId("P1"))
+        val predicate = createPredicate(ThingId("P1"))
         every { mock.findById(ThingId("P1")) } returns Optional.of(predicate) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
@@ -76,7 +76,7 @@ class SpringDataNeo4jPredicateAdapterCachingTests {
 
     @Test
     fun `saving a predicate should evict it from the cache`() {
-        val predicate = createPredicate().copy(id = ThingId("P1"))
+        val predicate = createPredicate(ThingId("P1"))
         val modified = predicate.copy(label = "new label")
         every { mock.findById(ThingId("P1")) } returns Optional.of(predicate) andThen Optional.of(modified) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
@@ -102,7 +102,7 @@ class SpringDataNeo4jPredicateAdapterCachingTests {
 
     @Test
     fun `deleting a predicate should evict it from the cache`() {
-        val predicate = createPredicate().copy(id = ThingId("P1"))
+        val predicate = createPredicate(ThingId("P1"))
         every { mock.findById(ThingId("P1")) } returns Optional.of(predicate) andThen Optional.of(predicate) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }

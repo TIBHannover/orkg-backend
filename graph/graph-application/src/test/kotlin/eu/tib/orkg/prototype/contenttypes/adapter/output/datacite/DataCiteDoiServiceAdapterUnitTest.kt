@@ -2,7 +2,7 @@ package eu.tib.orkg.prototype.contenttypes.adapter.output.datacite
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import eu.tib.orkg.prototype.dummyRegisterDoiCommand
+import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyRegisterDoiCommand
 import eu.tib.orkg.prototype.statements.application.DOIServiceUnavailable
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow

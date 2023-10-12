@@ -8,7 +8,7 @@ import eu.tib.orkg.prototype.community.domain.model.Observatory
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.Organization
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
-import eu.tib.orkg.prototype.createObservatory
+import eu.tib.orkg.prototype.community.testing.fixtures.createObservatory
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import io.kotest.assertions.asClue
 import io.kotest.matchers.collections.shouldContainAll
@@ -197,7 +197,7 @@ interface ObservatoryRepositoryContractTest {
 
     private fun PostgresOrganizationRepository.createOrganization(): OrganizationId {
         val organizationId = OrganizationId(UUID.randomUUID())
-        val organization = eu.tib.orkg.prototype.createOrganization().copy(
+        val organization = eu.tib.orkg.prototype.community.testing.fixtures.createOrganization().copy(
             id = organizationId,
             displayId = "displayId${organizationId.value}"
         )

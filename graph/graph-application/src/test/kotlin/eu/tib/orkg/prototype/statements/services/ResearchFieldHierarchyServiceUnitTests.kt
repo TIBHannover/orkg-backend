@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.statements.services
 
-import eu.tib.orkg.prototype.createResource
-import eu.tib.orkg.prototype.pageOf
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
+import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.statements.application.ResearchFieldNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResearchFieldHierarchyRepository
@@ -144,5 +144,5 @@ class ResearchFieldHierarchyServiceUnitTests {
     }
 
     private fun createResearchField(id: ThingId) =
-        createResource().copy(id = id, classes = setOf(ThingId("ResearchField")))
+        createResource(id = id, classes = setOf(ThingId("ResearchField")))
 }

@@ -2,6 +2,7 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ClassRepository
+import eu.tib.orkg.prototype.statements.testing.fixtures.createClass
 import io.mockk.clearMocks
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.orkg.statements.testing.createClass
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.CacheManager
 import org.springframework.cache.annotation.EnableCaching
@@ -62,7 +62,7 @@ class SpringDataNeo4jClassAdapterCachingTests {
 
     @Test
     fun `fetching a class by ID should be cached`() {
-        val `class` = createClass().copy(id = ThingId("C1"))
+        val `class` = createClass(ThingId("C1"))
         every { mock.findById(ThingId("C1")) } returns Optional.of(`class`) andThenAnswer  {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")
         }
@@ -81,7 +81,7 @@ class SpringDataNeo4jClassAdapterCachingTests {
 
     @Test
     fun `saving a class should evict it from the id-to-class cache`() {
-        val `class` = createClass().copy(id = ThingId("C1"))
+        val `class` = createClass(ThingId("C1"))
         val modified = `class`.copy(label = "new label")
         every { mock.findById(ThingId("C1")) } returns Optional.of(`class`) andThen Optional.of(modified) andThenAnswer {
             throw IllegalStateException("If you see this message, the method was called more often than expected: Caching did not work!")

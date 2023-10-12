@@ -1,8 +1,8 @@
 package eu.tib.orkg.prototype.contenttypes.services.actions
 
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
-import eu.tib.orkg.prototype.dummyCreatePaperCommand
-import eu.tib.orkg.prototype.createLiteral
+import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreatePaperCommand
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.CreateListUseCase
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
@@ -125,7 +125,7 @@ class PaperAuthorCreatorUnitTest {
             authors = listOf(author),
             paperId = paperId
         )
-        val literal = createLiteral(id = authorId.value, value = author.name)
+        val literal = createLiteral(id = authorId, label = author.name)
         val authorListId = ThingId("R1456")
 
         every {
@@ -212,12 +212,12 @@ class PaperAuthorCreatorUnitTest {
             contributorId = command.contributorId
         )
         val orcidLiteral = createLiteral(
-            id = UUID.randomUUID().toString(),
-            value = author.name
+            id = ThingId(UUID.randomUUID().toString()),
+            label = author.name
         )
         val homepageLiteral = createLiteral(
-            id = UUID.randomUUID().toString(),
-            value = author.homepage.toString()
+            id = ThingId(UUID.randomUUID().toString()),
+            label = author.homepage.toString()
         )
         val authorListId = ThingId("R1456")
 

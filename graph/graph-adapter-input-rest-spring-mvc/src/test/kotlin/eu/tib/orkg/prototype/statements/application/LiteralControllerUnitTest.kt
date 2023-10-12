@@ -6,18 +6,20 @@ import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
-import eu.tib.orkg.prototype.createLiteral
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.application.LiteralController.LiteralCreateRequest
 import eu.tib.orkg.prototype.statements.application.LiteralController.LiteralUpdateRequest
 import eu.tib.orkg.prototype.statements.domain.model.Literal
 import eu.tib.orkg.prototype.statements.domain.model.MAX_LABEL_LENGTH
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
 import eu.tib.orkg.prototype.testing.andExpectPage
 import eu.tib.orkg.prototype.testing.annotations.UsesMocking
 import eu.tib.orkg.prototype.testing.spring.restdocs.RestDocsTest
 import eu.tib.orkg.prototype.testing.spring.restdocs.documentedGetRequestTo
 import eu.tib.orkg.prototype.testing.spring.restdocs.timestampFieldWithPath
+import eu.tib.orkg.prototype.withCustomMappings
+import eu.tib.orkg.prototype.withLiteralIds
 import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
@@ -29,8 +31,6 @@ import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.matchesPattern
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.statements.testing.withCustomMappings
-import org.orkg.statements.testing.withLiteralIds
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -63,9 +63,10 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
     @Test
     @DisplayName("correctly serializes an existing literal")
     fun getSingle() {
-        val id = "L1234"
-        val literal = createLiteral(id = id).copy(
-            createdAt = OffsetDateTime.of(2023, 6, 1, 15, 19, 4, 778631092, ZoneOffset.ofHours(2)),
+        val id = ThingId("L1234")
+        val literal = createLiteral(
+            id = id,
+            createdAt = OffsetDateTime.of(2023, 6, 1, 15, 19, 4, 778631092, ZoneOffset.ofHours(2))
         )
         every { literalService.findById(any()) } returns Optional.of(literal)
 
@@ -73,7 +74,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             .andExpect(status().isOk)
             // Explicitly test all properties of the representation. This works as serialization test.
             .andExpect(jsonPath("$.id", `is`("L1234")))
-            .andExpect(jsonPath("$.label", `is`("some literal value")))
+            .andExpect(jsonPath("$.label", `is`("Default Label")))
             .andExpect(jsonPath("$.datatype", `is`("xsd:string")))
             .andExpect(jsonPath("$.created_at", `is`("2023-06-01T15:19:04.778631092+02:00")))
             .andExpect(jsonPath("$.created_by", `is`("679ad2bd-ceb3-4f26-80ec-b6eab7a5e8c1")))

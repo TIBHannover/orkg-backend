@@ -3,8 +3,8 @@ package eu.tib.orkg.prototype.statements.application
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.auth.spi.UserRepository
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
-import eu.tib.orkg.prototype.createResource
-import eu.tib.orkg.prototype.pageOf
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
+import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.ResearchFieldHierarchyUseCases
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldHierarchyUseCase.ResearchFieldHierarchyEntry
@@ -314,5 +314,5 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
     private fun get(uri: String) = mockMvc.perform(MockMvcRequestBuilders.get(uri))
     
     private fun createResearchField(id: ThingId = ThingId("R1")) =
-        createResource().copy(id = id, classes = setOf(ThingId("ResearchField")))
+        createResource(id = id, classes = setOf(ThingId("ResearchField")))
 }

@@ -8,9 +8,9 @@ import java.net.URI
 import java.time.OffsetDateTime
 import java.util.*
 import java.util.function.Supplier
-import org.orkg.statements.testing.createClass
-import org.orkg.statements.testing.createPredicate
-import org.orkg.statements.testing.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createClass
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
 
 internal class StatementEqualsContractUnitTest : EqualsContract<GeneralStatement> {
     private val equalID = "SOME_ID"

@@ -7,16 +7,16 @@ import eu.tib.orkg.prototype.community.application.OrganizationNotFound
 import eu.tib.orkg.prototype.community.domain.model.Observatory
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.spi.ObservatoryRepository
-import eu.tib.orkg.prototype.createObservatory
+import eu.tib.orkg.prototype.community.testing.fixtures.createObservatory
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
 import io.kotest.assertions.throwables.shouldThrow
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.*
 import org.junit.jupiter.api.Test
-import org.orkg.statements.testing.createResource
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
@@ -33,7 +33,7 @@ class ObservatoryServiceTests {
     fun `Creating an observatory`() {
         val observatory = createObservatory(setOf(OrganizationId(UUID.randomUUID())))
         val organizationId = observatory.organizationIds.single()
-        val researchField = createResource().copy(
+        val researchField = createResource(
             id = observatory.researchField!!,
             classes = setOf(ThingId("ResearchField"))
         )

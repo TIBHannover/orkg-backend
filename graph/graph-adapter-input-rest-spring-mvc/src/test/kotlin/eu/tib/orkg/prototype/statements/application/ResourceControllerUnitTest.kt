@@ -7,7 +7,7 @@ import eu.tib.orkg.prototype.community.domain.model.Contributor
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.community.domain.model.ContributorService
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
-import eu.tib.orkg.prototype.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase.*
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases

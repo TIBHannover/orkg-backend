@@ -1,6 +1,6 @@
 package eu.tib.orkg.prototype.statements.application
 
-import eu.tib.orkg.prototype.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.ResearchFieldHierarchyEntryRepresentationAdapter
 import eu.tib.orkg.prototype.statements.api.ResearchFieldHierarchyEntryRepresentation
@@ -53,7 +53,7 @@ internal class ResearchFieldHierarchyEntryTest : RestDocsTest("research-fields")
         @GetMapping("/hierarchy")
         fun dummyResearchFieldHierarchyEntry(): ResearchFieldHierarchyEntryRepresentation =
             ResearchFieldHierarchyEntry(
-                resource = createResource().copy(classes = setOf(ThingId("ResearchField"))),
+                resource = createResource(classes = setOf(ThingId("ResearchField"))),
                 parentIds = setOf(ThingId("R123"))
             ).toResearchFieldHierarchyEntryRepresentation(emptyMap(), emptyMap())
     }

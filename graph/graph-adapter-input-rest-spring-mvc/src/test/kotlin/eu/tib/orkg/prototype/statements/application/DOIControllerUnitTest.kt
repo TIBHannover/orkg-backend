@@ -6,13 +6,14 @@ import eu.tib.orkg.prototype.contenttypes.adapter.output.datacite.DataCiteConfig
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
 import eu.tib.orkg.prototype.contenttypes.spi.DoiService
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
-import eu.tib.orkg.prototype.pageOf
+import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.LiteralService
 import eu.tib.orkg.prototype.statements.services.StatementService
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
 import eu.tib.orkg.prototype.testing.annotations.UsesMocking
 import eu.tib.orkg.prototype.testing.spring.restdocs.RestDocsTest
 import io.kotest.matchers.shouldBe
@@ -22,7 +23,6 @@ import java.net.URI
 import java.util.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.statements.testing.createResource
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.context.ContextConfiguration

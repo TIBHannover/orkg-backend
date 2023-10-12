@@ -7,7 +7,7 @@ import eu.tib.orkg.prototype.contenttypes.application.VISUALIZATION_JSON_V2
 import eu.tib.orkg.prototype.contenttypes.application.VisualizationController
 import eu.tib.orkg.prototype.contenttypes.application.VisualizationNotFound
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
-import eu.tib.orkg.prototype.createDummyVisualization
+import eu.tib.orkg.prototype.contenttypes.testing.fixtures.createDummyVisualization
 import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.domain.model.ThingId

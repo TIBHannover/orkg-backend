@@ -6,7 +6,7 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
-import eu.tib.orkg.prototype.createClass
+import eu.tib.orkg.prototype.statements.testing.fixtures.createClass
 import eu.tib.orkg.prototype.spring.spi.FeatureFlagService
 import eu.tib.orkg.prototype.statements.api.AlreadyInUse
 import eu.tib.orkg.prototype.statements.api.ClassUseCases
@@ -149,7 +149,7 @@ internal class ClassControllerUnitTest {
     @Test
     fun `Given the class is replaced, when service succeeds, then status is 200 OK and class is returned`() {
         val id = ThingId("EXISTS")
-        val replacingClass = createClass().copy(id = id, label = "new label")
+        val replacingClass = createClass(id = id, label = "new label")
         val body = objectMapper.writeValueAsString(replacingClass)
         every { classService.replace(id, command = any()) } returns Success(Unit)
         every { classService.findById(id) } returns replacingClass.toOptional()
@@ -168,7 +168,7 @@ internal class ClassControllerUnitTest {
     @Test
     fun `Given the class is replaced, when service reports class cannot be found, then status is 404 NOT FOUND`() {
         val id = ThingId("NON-EXISTENT")
-        val replacingClass = createClass().copy(label = "new label")
+        val replacingClass = createClass(label = "new label")
         val body = objectMapper.writeValueAsString(replacingClass)
         every { classService.replace(id, command = any()) } returns Failure(ClassNotFoundProblem)
 
@@ -184,7 +184,7 @@ internal class ClassControllerUnitTest {
     @Test
     fun `Given the class is replaced, when service reports label is invalid, then status is 400 BAD REQUEST and returns error information`() {
         val id = ThingId("EXISTS")
-        val replacingClass = createClass().copy(label = INVALID_LABEL)
+        val replacingClass = createClass(label = INVALID_LABEL)
         val body = objectMapper.writeValueAsString(replacingClass)
         every { classService.replace(id, command = any()) } returns Failure(InvalidLabelProblem)
 
@@ -202,7 +202,7 @@ internal class ClassControllerUnitTest {
     @Test
     fun `Given the class is replaced, when service reports changing URI is not allowed, then status is 403 FORBIDDEN and returns error information`() {
         val id = ThingId("EXISTS")
-        val replacingClass = createClass().copy(label = "new label", uri = URI.create("https://example.com/NEW#uri"))
+        val replacingClass = createClass(label = "new label", uri = URI.create("https://example.com/NEW#uri"))
         val body = objectMapper.writeValueAsString(replacingClass)
         every { classService.replace(id, command = any()) } returns Failure(UpdateNotAllowed)
 
@@ -220,7 +220,7 @@ internal class ClassControllerUnitTest {
     @Test
     fun `Given the class is replaced, when service reports URI is in use, then status is 403 FORBIDDEN and returns error information`() {
         val id = ThingId("EXISTS")
-        val replacingClass = createClass().copy(label = "new label", uri = URI.create("https://example.com/NEW#uri"))
+        val replacingClass = createClass(label = "new label", uri = URI.create("https://example.com/NEW#uri"))
         val body = objectMapper.writeValueAsString(replacingClass)
         every { classService.replace(id, command = any()) } returns Failure(AlreadyInUse)
 

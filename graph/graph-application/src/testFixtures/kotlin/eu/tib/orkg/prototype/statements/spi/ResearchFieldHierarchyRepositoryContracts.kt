@@ -1,19 +1,18 @@
 package eu.tib.orkg.prototype.statements.spi
 
-import eu.tib.orkg.prototype.createPredicate
-import eu.tib.orkg.prototype.createStatement
-import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldHierarchyUseCase.ResearchFieldWithChildCount
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldHierarchyUseCase.ResearchFieldHierarchyEntry
-import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldHierarchyUseCase.ResearchFieldWithChildCount
 import eu.tib.orkg.prototype.statements.domain.model.StatementId
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createStatement
 import io.kotest.core.spec.style.describeSpec
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import java.time.OffsetDateTime
-import org.orkg.statements.testing.createResource
 import org.springframework.data.domain.PageRequest
 
 fun <
@@ -47,7 +46,7 @@ fun <
             )
         }
 
-        predicateRepository.save(createPredicate(id = "P36"))
+        predicateRepository.save(createPredicate(id = ThingId("P36")))
     }
 
     fun createRelation(parentId: ThingId, childId: ThingId) =
@@ -56,8 +55,6 @@ fun <
             predicate = predicateRepository.findById(ThingId("P36")).get(),
             `object` = resourceRepository.findById(childId).get()
         ).copy(id = StatementId("S$parentId-$childId"))
-
-    fun StatementRepository.saveAll(statements: Set<GeneralStatement>) = statements.forEach(::save)
 
     //      1     4
     //    /   \

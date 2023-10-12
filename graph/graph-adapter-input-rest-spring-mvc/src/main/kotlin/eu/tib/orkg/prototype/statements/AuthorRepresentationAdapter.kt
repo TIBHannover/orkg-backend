@@ -1,14 +1,14 @@
 package eu.tib.orkg.prototype.statements
 
 import eu.tib.orkg.prototype.statements.api.AuthorRepresentation
+import eu.tib.orkg.prototype.statements.api.AuthorRepresentation.LiteralAuthorRepresentation
+import eu.tib.orkg.prototype.statements.api.AuthorRepresentation.ResourceAuthorRepresentation
 import eu.tib.orkg.prototype.statements.api.ComparisonAuthorRepresentation
 import eu.tib.orkg.prototype.statements.api.PaperAuthorRepresentation
-import eu.tib.orkg.prototype.statements.api.ResourceRepresentation
 import eu.tib.orkg.prototype.statements.domain.model.Author
 import eu.tib.orkg.prototype.statements.domain.model.Author.LiteralAuthor
 import eu.tib.orkg.prototype.statements.domain.model.Author.ResourceAuthor
 import eu.tib.orkg.prototype.statements.domain.model.ComparisonAuthor
-import eu.tib.orkg.prototype.statements.domain.model.ComparisonAuthorInfo
 import eu.tib.orkg.prototype.statements.domain.model.PaperAuthor
 import eu.tib.orkg.prototype.statements.services.FormattedLabels
 import eu.tib.orkg.prototype.statements.services.StatementCounts
@@ -34,33 +34,22 @@ interface AuthorRepresentationAdapter : ResourceRepresentationAdapter {
         usageCounts: StatementCounts,
         formattedLabels: FormattedLabels
     ): ComparisonAuthorRepresentation =
-        object : ComparisonAuthorRepresentation {
-            override val author: AuthorRepresentation =
-                this@toComparisonAuthorRepresentation.author.toAuthorRepresentation(usageCounts, formattedLabels)
-            override val info: Iterable<ComparisonAuthorInfo> = this@toComparisonAuthorRepresentation.info
-        }
+        ComparisonAuthorRepresentation(author.toAuthorRepresentation(usageCounts, formattedLabels), info)
 
     fun PaperAuthor.toPaperAuthorRepresentation(
         usageCounts: StatementCounts,
         formattedLabels: FormattedLabels
     ): PaperAuthorRepresentation =
-        object : PaperAuthorRepresentation {
-            override val author: AuthorRepresentation =
-                this@toPaperAuthorRepresentation.author.toAuthorRepresentation(usageCounts, formattedLabels)
-            override val papers: Int = this@toPaperAuthorRepresentation.papers
-        }
+        PaperAuthorRepresentation(author.toAuthorRepresentation(usageCounts, formattedLabels), papers)
 
     fun Author.toAuthorRepresentation(
         usageCounts: StatementCounts,
         formattedLabels: FormattedLabels
     ): AuthorRepresentation =
         when (this) {
-            is ResourceAuthor -> object : AuthorRepresentation.ResourceAuthorRepresentation {
-                override val value: ResourceRepresentation =
-                    this@toAuthorRepresentation.value.toResourceRepresentation(usageCounts, formattedLabels)
-            }
-            is LiteralAuthor -> object : AuthorRepresentation.LiteralAuthorRepresentation {
-                override val value: String = this@toAuthorRepresentation.value
-            }
+            is ResourceAuthor -> ResourceAuthorRepresentation(
+                value.toResourceRepresentation(usageCounts, formattedLabels)
+            )
+            is LiteralAuthor -> LiteralAuthorRepresentation(value)
         }
 }

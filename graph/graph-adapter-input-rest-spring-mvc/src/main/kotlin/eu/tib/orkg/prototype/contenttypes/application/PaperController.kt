@@ -6,9 +6,11 @@ import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contenttypes.ContributionRepresentationAdapter
 import eu.tib.orkg.prototype.contenttypes.PaperRepresentationAdapter
+import eu.tib.orkg.prototype.contenttypes.api.ContributionRepresentation
 import eu.tib.orkg.prototype.contenttypes.api.ContributionUseCases
 import eu.tib.orkg.prototype.contenttypes.api.CreateContributionUseCase
 import eu.tib.orkg.prototype.contenttypes.api.CreatePaperUseCase
+import eu.tib.orkg.prototype.contenttypes.api.PaperRepresentation
 import eu.tib.orkg.prototype.contenttypes.api.PaperUseCases
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
 import eu.tib.orkg.prototype.contenttypes.domain.model.PublicationInfo

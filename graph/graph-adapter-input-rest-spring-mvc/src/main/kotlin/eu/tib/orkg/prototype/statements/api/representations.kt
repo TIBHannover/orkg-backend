@@ -20,47 +20,12 @@ sealed interface ThingRepresentation {
     val id: ThingId
 }
 
-interface LiteralRepresentation : ThingRepresentation, ProvenanceMetadata {
-    val label: String
-    val datatype: String
+interface ProvenanceMetadata {
+    @get:JsonProperty("created_at")
+    val createdAt: OffsetDateTime
 
-    // This is added to replace @JsonTypeInfo on the Thing interface
-    @get:JsonProperty("_class")
-    val jsonClass: String
-}
-
-interface ClassRepresentation : ThingRepresentation, ProvenanceMetadata {
-    val label: String
-    val uri: URI?
-    val description: String?
-
-    // This is added to replace @JsonTypeInfo on the Thing interface
-    @get:JsonProperty("_class")
-    val jsonClass: String
-}
-
-interface PredicateRepresentation : ThingRepresentation, ProvenanceMetadata {
-    val label: String
-    val description: String?
-
-    // This is added to replace @JsonTypeInfo on the Thing interface
-    @get:JsonProperty("_class")
-    val jsonClass: String
-}
-
-interface ResourceRepresentation : ThingRepresentation, ResourceProvenanceMetadata, ContentTypeFlags {
-    val label: String
-    val classes: Set<ThingId>
-    val shared: Long
-    @get:JsonProperty("formatted_label")
-    val formattedLabel: FormattedLabel?
-
-    @get:JsonProperty("extraction_method")
-    val extractionMethod: ExtractionMethod
-
-    // This is added to replace @JsonTypeInfo on the Thing interface
-    @get:JsonProperty("_class")
-    val jsonClass: String
+    @get:JsonProperty("created_by")
+    val createdBy: ContributorId
 }
 
 interface ResourceProvenanceMetadata : ProvenanceMetadata {
@@ -69,14 +34,6 @@ interface ResourceProvenanceMetadata : ProvenanceMetadata {
 
     @get:JsonProperty("organization_id")
     val organizationId: OrganizationId
-}
-
-interface ProvenanceMetadata {
-    @get:JsonProperty("created_at")
-    val createdAt: OffsetDateTime
-
-    @get:JsonProperty("created_by")
-    val createdBy: ContributorId
 }
 
 interface ContentTypeFlags {
@@ -89,9 +46,108 @@ interface ContentTypeFlags {
     val unlistedBy: ContributorId?
 }
 
-interface PaperResourceWithPathRepresentation : ResourceRepresentation {
-    val path: PathRepresentation
-}
+data class LiteralRepresentation(
+    override val id: ThingId,
+    val label: String,
+    val datatype: String,
+    override val createdAt: OffsetDateTime,
+    override val createdBy: ContributorId,
+    // This is added to replace @JsonTypeInfo on the Thing data class
+    @get:JsonProperty("_class")
+    val jsonClass: String = "literal"
+) : ThingRepresentation, ProvenanceMetadata
+
+data class ClassRepresentation(
+    override val id: ThingId,
+    val label: String,
+    val uri: URI?,
+    val description: String?,
+    override val createdAt: OffsetDateTime,
+    override val createdBy: ContributorId,
+    // This is added to replace @JsonTypeInfo on the Thing data class
+    @get:JsonProperty("_class")
+    val jsonClass: String = "class"
+) : ThingRepresentation, ProvenanceMetadata
+
+data class PredicateRepresentation(
+    override val id: ThingId,
+    val label: String,
+    val description: String?,
+    override val createdAt: OffsetDateTime,
+    override val createdBy: ContributorId,
+    // This is added to replace @JsonTypeInfo on the Thing data class
+    @get:JsonProperty("_class")
+    val jsonClass: String = "predicate"
+) : ThingRepresentation, ProvenanceMetadata
+
+data class ResourceRepresentation(
+    override val id: ThingId,
+    val label: String,
+    val classes: Set<ThingId>,
+    val shared: Long,
+    override val observatoryId: ObservatoryId,
+    override val organizationId: OrganizationId,
+    override val createdAt: OffsetDateTime,
+    override val createdBy: ContributorId,
+    override val featured: Boolean,
+    override val unlisted: Boolean,
+    override val verified: Boolean,
+    override val unlistedBy: ContributorId?,
+    @get:JsonProperty("formatted_label")
+    val formattedLabel: FormattedLabel?,
+    @get:JsonProperty("extraction_method")
+    val extractionMethod: ExtractionMethod,
+    // This is added to replace @JsonTypeInfo on the Thing data class
+    @get:JsonProperty("_class")
+    val jsonClass: String = "resource"
+) : ThingRepresentation, ResourceProvenanceMetadata, ContentTypeFlags
+
+data class StatementRepresentation(
+    val id: StatementId,
+    val subject: ThingRepresentation,
+    val predicate: PredicateRepresentation,
+    val `object`: ThingRepresentation,
+    override val createdAt: OffsetDateTime,
+    override val createdBy: ContributorId,
+    @get:JsonInclude(Include.NON_NULL)
+    val index: Int?
+) : ProvenanceMetadata
+
+data class ListRepresentation(
+    val id: ThingId,
+    val label: String,
+    val elements: List<ThingId>,
+    override val createdAt: OffsetDateTime,
+    override val createdBy: ContributorId,
+    @get:JsonProperty("_class")
+    val jsonClass: String = "list"
+) : ProvenanceMetadata
+
+// TODO: Replace with data class that has two fields:
+//  resource: ResourceRepresentation
+//  path: PathRepresentation
+data class PaperResourceWithPathRepresentation(
+    val path: PathRepresentation,
+    override val id: ThingId,
+    val label: String,
+    val classes: Set<ThingId>,
+    val shared: Long,
+    override val observatoryId: ObservatoryId,
+    override val organizationId: OrganizationId,
+    override val createdAt: OffsetDateTime,
+    override val createdBy: ContributorId,
+    override val featured: Boolean,
+    override val unlisted: Boolean,
+    override val verified: Boolean,
+    override val unlistedBy: ContributorId?,
+    @get:JsonProperty("formatted_label")
+    val formattedLabel: FormattedLabel?,
+    @get:JsonProperty("extraction_method")
+    val extractionMethod: ExtractionMethod,
+    // This is added to replace @JsonTypeInfo on the Thing data class
+    @get:JsonProperty("_class")
+    val jsonClass: String = "resource"
+) : ThingRepresentation, ResourceProvenanceMetadata, ContentTypeFlags
 
 data class BundleRepresentation(
     @JsonProperty("root")
@@ -101,33 +157,34 @@ data class BundleRepresentation(
 )
 
 sealed interface AuthorRepresentation {
-    interface ResourceAuthorRepresentation : AuthorRepresentation {
+    data class ResourceAuthorRepresentation(
         val value: ResourceRepresentation
-    }
-    interface LiteralAuthorRepresentation : AuthorRepresentation {
+    ) : AuthorRepresentation
+
+    data class LiteralAuthorRepresentation(
         val value: String
-    }
+    ) : AuthorRepresentation
 }
 
-interface PaperAuthorRepresentation {
-    val author: AuthorRepresentation
+data class PaperAuthorRepresentation(
+    val author: AuthorRepresentation,
     val papers: Int
-}
+)
 
-interface ComparisonAuthorRepresentation {
-    val author: AuthorRepresentation
+data class ComparisonAuthorRepresentation(
+    val author: AuthorRepresentation,
     val info: Iterable<ComparisonAuthorInfo>
-}
+)
 
-interface PaperCountPerResearchProblemRepresentation {
-    val problem: ResourceRepresentation
+data class PaperCountPerResearchProblemRepresentation(
+    val problem: ResourceRepresentation,
     val papers: Long
-}
+)
 
-interface FieldWithFreqRepresentation {
-    val field: ResourceRepresentation
+data class FieldWithFreqRepresentation(
+    val field: ResourceRepresentation,
     val freq: Long
-}
+)
 
 data class ChildClassRepresentation(
     val `class`: ClassRepresentation,
@@ -152,28 +209,3 @@ data class ResearchFieldHierarchyEntryRepresentation(
     @JsonProperty("parent_ids")
     val parentIds: Set<ThingId>
 )
-
-interface StatementRepresentation : StatementProvenanceMetadata {
-    val id: StatementId
-    val subject: ThingRepresentation
-    val predicate: PredicateRepresentation
-    val `object`: ThingRepresentation
-    @get:JsonInclude(Include.NON_NULL)
-    val index: Int?
-}
-
-interface StatementProvenanceMetadata {
-    @get:JsonProperty("created_at")
-    val createdAt: OffsetDateTime
-
-    @get:JsonProperty("created_by")
-    val createdBy: ContributorId
-}
-
-interface ListRepresentation : ProvenanceMetadata {
-    val id: ThingId
-    val label: String
-    val elements: List<ThingId>
-    @get:JsonProperty("_class")
-    val jsonClass: String
-}

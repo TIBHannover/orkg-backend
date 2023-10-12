@@ -1,9 +1,9 @@
 package eu.tib.orkg.prototype.community.application
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import eu.tib.orkg.prototype.community.ObservatoryRepresentation
+import eu.tib.orkg.prototype.community.api.ObservatoryRepresentation
 import eu.tib.orkg.prototype.community.ObservatoryRepresentationAdapter
-import eu.tib.orkg.prototype.community.ResearchFieldRepresentation
+import eu.tib.orkg.prototype.community.api.ResearchFieldRepresentation
 import eu.tib.orkg.prototype.community.api.CreateObservatoryUseCase.CreateCommand
 import eu.tib.orkg.prototype.community.api.ObservatoryUseCases
 import eu.tib.orkg.prototype.community.domain.model.Contributor

@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.contenttypes.application
 
 import eu.tib.orkg.prototype.contenttypes.ContributionRepresentationAdapter
+import eu.tib.orkg.prototype.contenttypes.api.ContributionRepresentation
 import eu.tib.orkg.prototype.contenttypes.api.ContributionUseCases
 import eu.tib.orkg.prototype.statements.application.BaseController
 import eu.tib.orkg.prototype.statements.domain.model.ThingId

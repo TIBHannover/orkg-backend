@@ -14,12 +14,17 @@ coffee-boots:
   cache:
     basic-spec: maximumSize=5000,expireAfterAccess=10m,recordStats
 orkg:
-  rdf:
-    dump:
+  export:
+    rdf:
       # cron schedule for the rdf-dump
       # use "-" to disable
       schedule: "-"
       file-name: rdf-export-orkg.nt
+    unpublished-comparisons:
+      # cron schedule for the unpublished comparisons export
+      # use "-" to disable
+      schedule: "-"
+      file-name: comparisons.jsonl
   ranking:
     papers:
       # cron schedule for paper-ranking

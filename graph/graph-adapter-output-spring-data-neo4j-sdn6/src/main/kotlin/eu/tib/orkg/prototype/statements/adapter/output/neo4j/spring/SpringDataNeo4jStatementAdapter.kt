@@ -50,6 +50,7 @@ import org.neo4j.cypherdsl.core.Functions.count
 import org.neo4j.cypherdsl.core.Functions.countDistinct
 import org.neo4j.cypherdsl.core.Functions.labels
 import org.neo4j.cypherdsl.core.Functions.sum
+import org.neo4j.cypherdsl.core.Functions.trim
 import org.neo4j.cypherdsl.core.Node
 import org.neo4j.cypherdsl.core.Predicates.exists
 import org.neo4j.cypherdsl.core.Relationship
@@ -547,6 +548,24 @@ class SpringDataNeo4jStatementAdapter(
         .mappedBy(LiteralMapper("doi"))
         .one()
 
+    override fun findAllDOIsRelatedToComparison(id: ThingId): Iterable<String> = CypherQueryBuilder(neo4jClient)
+        .withQuery {
+            val doi = name("doi")
+            val relations = comparisonNode()
+                .withProperties("id", parameter("id"))
+                .relationshipTo(contributionNode(), RELATED)
+                    .withProperties("predicate_id", literalOf<String>(Predicates.comparesContribution.value))
+                .relationshipFrom(paperNode(), RELATED)
+                    .properties("predicate_id", literalOf<String>(Predicates.hasContribution.value))
+                .relationshipTo(node("Literal").named(doi), RELATED)
+                    .properties("predicate_id", literalOf<String>(Predicates.hasDOI.value))
+            match(relations).returningDistinct(trim(doi.property("label")))
+        }
+        .withParameters("id" to id.value)
+        .fetchAs<String>()
+        .all()
+        .filter { it.isNotBlank() }
+
     override fun countPredicateUsage(id: ThingId): Long = CypherQueryBuilder(neo4jClient)
         .withQuery {
             val r1 = node("Thing")
@@ -886,6 +905,35 @@ class SpringDataNeo4jStatementAdapter(
             .withParameters("visibility" to visibility.name)
             .mappedBy(ResourceMapper("node"))
             .fetch(pageable)
+
+    override fun findAllCurrentListedAndUnpublishedComparisons(pageable: Pageable): Page<Resource> = CypherQueryBuilder(neo4jClient)
+        .withCommonQuery {
+            val cmp = comparisonNode().named("node")
+            match(cmp).where(
+                exists(
+                    comparisonNode().relationshipTo(cmp, "RELATED")
+                        .withProperties("predicate_id", literalOf<String>(Predicates.hasPreviousVersion.value))
+                ).not()
+                    .and(
+                        cmp.property("visibility").eq(literalOf<String>("DEFAULT"))
+                            .or(cmp.property("visibility").eq(literalOf<String>("FEATURED")))
+                    )
+                    .and(
+                        exists(
+                            cmp.relationshipTo(node("Literal"), "RELATED")
+                                .withProperties("predicate_id", literalOf<String>(Predicates.hasDOI.value))
+                        ).not()
+                    )
+            )
+        }
+        .withQuery { commonQuery ->
+            commonQuery.withSortableFields("node")
+                .orderBy(sort(name("created_at")))
+                .returning("node")
+        }
+        .countOver("node")
+        .mappedBy(ResourceMapper("node"))
+        .fetch(pageable)
 
     private fun findAllFilteredAndPaged(
         parameters: Map<String, Any>,

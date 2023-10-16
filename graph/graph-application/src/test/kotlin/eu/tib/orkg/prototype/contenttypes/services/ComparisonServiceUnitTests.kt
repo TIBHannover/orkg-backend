@@ -8,7 +8,6 @@ import eu.tib.orkg.prototype.contenttypes.domain.model.ObjectIdAndLabel
 import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.statements.api.Classes
-import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.Literals
 import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -36,14 +35,12 @@ class ComparisonServiceUnitTests {
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val publishingService: PublishingService = mockk()
-    private val literalService: LiteralUseCases = mockk()
 
     private val service = ComparisonService(
         repository = contributionComparisonRepository,
         resourceRepository = resourceRepository,
         statementRepository = statementRepository,
         publishingService = publishingService,
-        literalService = literalService,
         comparisonPublishBaseUri = "https://orkg.org/comparison/"
     )
 
@@ -268,7 +265,7 @@ class ComparisonServiceUnitTests {
                 `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri)
             )
         )
-        every { literalService.findDOIByContributionId(ThingId("Contribution")) } returns Optional.of(createLiteral(label = relatedDoi))
+        every { statementRepository.findAllDOIsRelatedToComparison(comparison.id) } returns listOf(relatedDoi)
         every { publishingService.publish(any()) } returns "1324/56789"
 
         service.publish(comparison.id, "Research Field 1", "comparison description")
@@ -277,7 +274,7 @@ class ComparisonServiceUnitTests {
         verify(exactly = 1) { statementRepository.findAllBySubject(comparison.id, PageRequests.ALL) }
         verify(exactly = 1) { statementRepository.findAllBySubjectAndPredicate(authorList.id, Predicates.hasListElement, any()) }
         verify(exactly = 1) { statementRepository.findAllBySubject(resourceAuthorId, any()) }
-        verify(exactly = 1) { literalService.findDOIByContributionId(ThingId("Contribution")) }
+        verify(exactly = 1) { statementRepository.findAllDOIsRelatedToComparison(comparison.id) }
         verify(exactly = 1) {
             publishingService.publish(
                 withArg {

@@ -188,7 +188,7 @@ private const val dataCiteRequestJson = """
       },
       "relatedIdentifiers": [
         {
-          "relatedIdentifier": "10.48366/r609337",
+          "relatedIdentifier": "https://doi.org/10.48366/r609337",
           "relatedIdentifierType": "DOI",
           "relationType": "References"
         }

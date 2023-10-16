@@ -242,6 +242,24 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
                 it.`object` as Literal
             }
         })
+
+    override fun findAllDOIsRelatedToComparison(id: ThingId): Iterable<String> =
+        entities.values.filter {
+            it.subject.id == id && it.subject is Resource && Classes.comparison in (it.subject as Resource).classes
+                && it.predicate.id == Predicates.comparesContribution
+                && it.`object` is Resource && Classes.contribution in (it.`object` as Resource).classes
+        }.map { comparisonHasContribution ->
+            val paperIds = entities.values.filter {
+                it.subject is Resource && Classes.paper in (it.subject as Resource).classes
+                    && it.predicate.id == Predicates.hasContribution
+                    && it.`object`.id == comparisonHasContribution.`object`.id
+            }.map { it.subject.id }
+            entities.values
+                .filter { it.subject.id in paperIds && it.predicate.id == Predicates.hasDOI && it.`object` is Literal }
+                .map { (it.`object` as Literal).label.trim() }
+                .filter { it.isNotBlank() }
+        }.flatten().distinct()
+
     override fun countPredicateUsage(id: ThingId): Long =
         entities.values.count {
             (it.subject is Predicate && (it.subject as Predicate).id == id
@@ -389,6 +407,19 @@ class InMemoryStatementRepository : InMemoryRepository<StatementId, GeneralState
                 it.subject is Resource && with(it.subject as Resource) {
                     Classes.comparison in classes && this.visibility == visibility
                 } && findAllByObjectAndPredicate(it.subject.id, Predicates.hasPreviousVersion, PageRequest.of(0, 1)).isEmpty
+            }
+            .map { it.subject as Resource }
+            .distinct()
+            .sortedBy { it.createdAt }
+            .paged(pageable)
+
+    override fun findAllCurrentListedAndUnpublishedComparisons(pageable: Pageable): Page<Resource> =
+        entities.values
+            .filter {
+                it.subject is Resource && with(it.subject as Resource) {
+                    Classes.comparison in classes && (visibility == Visibility.DEFAULT || visibility == Visibility.FEATURED)
+                } && findAllByObjectAndPredicate(it.subject.id, Predicates.hasPreviousVersion, PageRequest.of(0, 1)).isEmpty
+                    && findAllBySubjectAndPredicate(it.subject.id, Predicates.hasDOI, PageRequest.of(0, 1)).isEmpty
             }
             .map { it.subject as Resource }
             .distinct()

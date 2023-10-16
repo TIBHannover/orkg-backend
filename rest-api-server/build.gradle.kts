@@ -150,8 +150,8 @@ dependencies {
     implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa-postgres"))
     implementation(project(":feature-flags:feature-flags-ports"))
     implementation(project(":feature-flags:feature-flags-adapter-output-spring-properties"))
-    implementation(project(":rdf-export:rdf-export-application"))
-    implementation(project(":rdf-export:rdf-export-adapter-input-rest-spring-mvc"))
+    implementation(project(":data-export:data-export-application"))
+    implementation(project(":data-export:data-export-adapter-input-rest-spring-mvc"))
     implementation(project(":licenses:licenses-application"))
     implementation(project(":licenses:licenses-adapter-input-rest-spring-mvc"))
     implementation(project(":licenses:licenses-adapter-output-spring"))
@@ -210,7 +210,7 @@ dependencies {
     //
     asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.7.RELEASE")
     restdocs(project(withSnippets(":graph:graph-adapter-input-rest-spring-mvc")))
-    restdocs(project(withSnippets(":rdf-export:rdf-export-adapter-input-rest-spring-mvc")))
+    restdocs(project(withSnippets(":data-export:data-export-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":licenses:licenses-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":widget")))
 }

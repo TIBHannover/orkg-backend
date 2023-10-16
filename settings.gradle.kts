@@ -30,8 +30,8 @@ include(
     ":feature-flags:feature-flags-adapter-output-spring-properties",
 )
 include(
-    "rdf-export:rdf-export-application",
-    "rdf-export:rdf-export-adapter-input-rest-spring-mvc",
+    "data-export:data-export-application",
+    "data-export:data-export-adapter-input-rest-spring-mvc",
 )
 include(
     "licenses:licenses-application",

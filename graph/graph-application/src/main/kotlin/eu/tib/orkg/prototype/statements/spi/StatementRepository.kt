@@ -69,6 +69,7 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun fetchAsBundle(id: ThingId, configuration: BundleConfiguration, sort: Sort): Iterable<GeneralStatement>
     fun countPredicateUsage(pageable: Pageable): Page<PredicateUsageCount>
     fun findDOIByContributionId(id: ThingId): Optional<Literal>
+    fun findAllDOIsRelatedToComparison(id: ThingId): Iterable<String>
     fun countPredicateUsage(id: ThingId): Long
 
     /** Find any resource by DOI. */
@@ -85,6 +86,7 @@ interface StatementRepository : EntityRepository<GeneralStatement, StatementId> 
     fun findAllCurrentComparisons(pageable: Pageable): Page<Resource>
     fun findAllCurrentListedComparisons(pageable: Pageable): Page<Resource>
     fun findAllCurrentComparisonsByVisibility(visibility: Visibility, pageable: Pageable): Page<Resource>
+    fun findAllCurrentListedAndUnpublishedComparisons(pageable: Pageable): Page<Resource>
 }
 
 data class ResourceContributor(

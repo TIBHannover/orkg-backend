@@ -39,7 +39,6 @@ class ComparisonService(
     private val resourceRepository: ResourceRepository,
     private val statementRepository: StatementRepository,
     private val publishingService: PublishingService,
-    private val literalService: LiteralUseCases,
     @Value("\${orkg.publishing.base-url.comparison}")
     private val comparisonPublishBaseUri: String = "http://localhost/comparison/"
 ) : ComparisonUseCases {
@@ -87,6 +86,10 @@ class ComparisonService(
         statementRepository.findAllBySubjectAndPredicate(comparisonId, Predicates.hasRelatedFigure, pageable)
             .map { it.`object`.toComparisonRelatedFigure() }
 
+    override fun findAllCurrentListedAndUnpublishedComparisons(pageable: Pageable): Page<Comparison> =
+        statementRepository.findAllCurrentListedAndUnpublishedComparisons(pageable)
+            .map { it.toComparison() }
+
     override fun findAllByContributor(contributorId: ContributorId, pageable: Pageable): Page<Comparison> =
         resourceRepository.findAllByClassAndCreatedBy(Classes.comparison, contributorId, pageable)
             .pmap { it.toComparison() }
@@ -105,11 +108,7 @@ class ComparisonService(
                 url = URI.create("$comparisonPublishBaseUri/").resolve(id.value),
                 creators = comparison.authors,
                 resourceType = Classes.comparison,
-                relatedIdentifiers = comparison.contributions.mapNotNull { contribution ->
-                    literalService.findDOIByContributionId(contribution.id)
-                        .map { it.label }
-                        .orElse(null)
-                }
+                relatedIdentifiers = statementRepository.findAllDOIsRelatedToComparison(id).toList()
             )
         )
     }

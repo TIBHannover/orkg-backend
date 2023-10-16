@@ -1,7 +1,4 @@
 spring:
-  # Get rid of "org.postgresql.jdbc.PgConnection.createClob() not implemented" error, see
-  # https://hibernate.atlassian.net/browse/HHH-12368
-  jpa.properties.hibernate.jdbc.lob.non_contextual_creation: true
   data.web.pageable.max-page-size: 2500
   rdf:
     # Vocab prefix not used, still hard coded
@@ -73,11 +70,12 @@ hawtio:
   authenticationEnabled: false
 ---
 spring:
-  profiles: development
-  data:
-    neo4j:
-      uri: 'bolt://localhost:7687'
-      #auto-index: validate
+  config:
+    activate:
+      on-profile:
+        - development
+  neo4j:
+    uri: 'bolt://localhost:7687'
   datasource:
     url: 'jdbc:postgresql://localhost/postgres'
     username: postgres

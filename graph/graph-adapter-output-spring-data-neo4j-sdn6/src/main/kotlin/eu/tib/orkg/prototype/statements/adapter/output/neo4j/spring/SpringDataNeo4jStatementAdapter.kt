@@ -959,7 +959,7 @@ class SpringDataNeo4jStatementAdapter(
 
     private fun BundleConfiguration.toApocConfiguration(): Map<String, Any> {
         val conf = mutableMapOf<String, Any>(
-            "relationshipFilter" to ">",
+            "relationshipFilter" to "RELATED>",
             "bfs" to true
         )
         // configure min and max levels

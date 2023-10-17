@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - It is now possible to filter papers by `visibility`, `research_field` and optionally `include_subfields`
   (See: [!668](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/668))
+- It is now possible to filter comparisons by `visibility`, `research_field` and optionally `include_subfields`
+  (See: [!669](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/669))
 
 ## [0.39.0] - 2023-10-16
 ### Added

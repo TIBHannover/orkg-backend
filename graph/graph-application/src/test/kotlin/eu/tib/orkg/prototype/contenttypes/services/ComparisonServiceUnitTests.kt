@@ -10,6 +10,7 @@ import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.Literals
 import eu.tib.orkg.prototype.statements.api.Predicates
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.ContributionComparisonRepository
@@ -34,12 +35,14 @@ class ComparisonServiceUnitTests {
     private val contributionComparisonRepository: ContributionComparisonRepository = mockk()
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
+    private val researchFieldService: RetrieveResearchFieldUseCase = mockk()
     private val publishingService: PublishingService = mockk()
 
     private val service = ComparisonService(
         repository = contributionComparisonRepository,
         resourceRepository = resourceRepository,
         statementRepository = statementRepository,
+        researchFieldService = researchFieldService,
         publishingService = publishingService,
         comparisonPublishBaseUri = "https://orkg.org/comparison/"
     )

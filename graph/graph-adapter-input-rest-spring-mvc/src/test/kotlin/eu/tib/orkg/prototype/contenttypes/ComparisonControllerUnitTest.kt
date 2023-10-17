@@ -8,13 +8,12 @@ import eu.tib.orkg.prototype.contenttypes.application.ComparisonController
 import eu.tib.orkg.prototype.contenttypes.application.ComparisonNotFound
 import eu.tib.orkg.prototype.contenttypes.application.ComparisonRelatedFigureNotFound
 import eu.tib.orkg.prototype.contenttypes.application.ComparisonRelatedResourceNotFound
-import eu.tib.orkg.prototype.contenttypes.application.PaperNotFound
-import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.contenttypes.testing.fixtures.createDummyComparison
 import eu.tib.orkg.prototype.contenttypes.testing.fixtures.createDummyComparisonRelatedFigure
 import eu.tib.orkg.prototype.contenttypes.testing.fixtures.createDummyComparisonRelatedResource
-import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
+import eu.tib.orkg.prototype.core.rest.ExceptionHandler
 import eu.tib.orkg.prototype.shared.TooManyParameters
+import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.application.DOIServiceUnavailable
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -40,7 +39,9 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.restdocs.payload.PayloadDocumentation.*
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
@@ -172,7 +173,9 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
                         parameterWithName("research_field").description("Optional filter for research field id.").optional(),
                         parameterWithName("title").description("Optional filter for the title of the comparison. Uses exact matching.").optional(),
                         parameterWithName("visibility").description("""Optional filter for visibility. Either of "listed", "featured", "unlisted" or "deleted".""").optional(),
-                        parameterWithName("created_by").description("Optional filter for research field id.").optional(),
+                        parameterWithName("created_by").description("Optional filter for the UUID of the user or service who created the comparison.").optional(),
+                        parameterWithName("research_field").description("Optional filter for research field id.").optional(),
+                        parameterWithName("include_subfields").description("Optional flag for whether subfields are included in the search or not.").optional(),
                     )
                 )
             )
@@ -260,6 +263,38 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.path").value("/api/comparisons"))
             .andExpect(jsonPath("$.message").value(exception.message))
+    }
+
+    @Test
+    fun `Given several comparisons, when they are fetched by visibility and research field id, then status is 200 OK and comparisons are returned`() {
+        val comparisons = listOf(createDummyComparison())
+        val researchFieldId = comparisons.first().researchFields.first().id
+        every {
+            comparisonService.findAllByResearchFieldAndVisibility(
+                researchFieldId = researchFieldId,
+                visibility = VisibilityFilter.ALL_LISTED,
+                includeSubfields = true,
+                pageable = any()
+            )
+        } returns PageImpl(comparisons, PageRequest.of(0, 5), 1)
+
+        get("/api/comparisons?research_field=$researchFieldId&visibility=ALL_LISTED&include_subfields=true")
+            .accept(COMPARISON_JSON_V2)
+            .contentType(COMPARISON_JSON_V2)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.number").value(0)) // page number
+            .andExpect(jsonPath("$.totalElements").value(1))
+
+        verify(exactly = 1) {
+            comparisonService.findAllByResearchFieldAndVisibility(
+                researchFieldId = researchFieldId,
+                visibility = VisibilityFilter.ALL_LISTED,
+                includeSubfields = true,
+                pageable = any()
+            )
+        }
     }
 
     @Test
@@ -450,7 +485,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             "subject" to "comparison subject",
             "description" to "comparison description"
         )
-        val exception = PaperNotFound(id)
+        val exception = ComparisonNotFound(id)
 
         every { comparisonService.publish(id, any(), any()) } throws exception
 

@@ -24,6 +24,12 @@ interface RetrieveComparisonUseCase {
     fun findAllRelatedFigures(comparisonId: ThingId, pageable: Pageable): Page<ComparisonRelatedFigure>
     /* An unpublished comparison is a comparison that does not have a DOI and is not a draft comparison (ComparisonDraft) */
     fun findAllCurrentListedAndUnpublishedComparisons(pageable: Pageable): Page<Comparison>
+    fun findAllByResearchFieldAndVisibility(
+        researchFieldId: ThingId,
+        visibility: VisibilityFilter,
+        includeSubfields: Boolean,
+        pageable: Pageable
+    ): Page<Comparison>
 }
 
 interface RetrieveComparisonContributionsUseCase {

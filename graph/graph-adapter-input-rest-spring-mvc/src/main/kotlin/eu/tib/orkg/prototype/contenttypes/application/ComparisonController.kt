@@ -63,6 +63,16 @@ class ComparisonController(
         }.mapToComparisonRepresentation()
     }
 
+    @GetMapping(params = ["visibility", "research_field"], produces = [COMPARISON_JSON_V2])
+    fun findAll(
+        @RequestParam("visibility") visibility: VisibilityFilter,
+        @RequestParam("research_field") researchField: ThingId,
+        @RequestParam("include_subfields", required = false) includeSubfields: Boolean = false,
+        pageable: Pageable
+    ): Page<ComparisonRepresentation> =
+        service.findAllByResearchFieldAndVisibility(researchField, visibility, includeSubfields, pageable)
+            .mapToComparisonRepresentation()
+
     @GetMapping("/{id}/related-resources/{resourceId}", produces = [COMPARISON_JSON_V2])
     fun findRelatedResourceById(
         @PathVariable("id") id: ThingId,

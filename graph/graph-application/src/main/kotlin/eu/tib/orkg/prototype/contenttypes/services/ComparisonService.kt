@@ -10,9 +10,9 @@ import eu.tib.orkg.prototype.contenttypes.domain.model.ComparisonRelatedResource
 import eu.tib.orkg.prototype.contenttypes.domain.model.PublicationInfo
 import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.statements.api.Classes
-import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.Literals
 import eu.tib.orkg.prototype.statements.api.Predicates
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.domain.model.ContributionInfo
 import eu.tib.orkg.prototype.statements.domain.model.Literal
@@ -38,6 +38,7 @@ class ComparisonService(
     private val repository: ContributionComparisonRepository,
     private val resourceRepository: ResourceRepository,
     private val statementRepository: StatementRepository,
+    private val researchFieldService: RetrieveResearchFieldUseCase,
     private val publishingService: PublishingService,
     @Value("\${orkg.publishing.base-url.comparison}")
     private val comparisonPublishBaseUri: String = "http://localhost/comparison/"
@@ -89,6 +90,15 @@ class ComparisonService(
     override fun findAllCurrentListedAndUnpublishedComparisons(pageable: Pageable): Page<Comparison> =
         statementRepository.findAllCurrentListedAndUnpublishedComparisons(pageable)
             .map { it.toComparison() }
+
+    override fun findAllByResearchFieldAndVisibility(
+        researchFieldId: ThingId,
+        visibility: VisibilityFilter,
+        includeSubfields: Boolean,
+        pageable: Pageable
+    ): Page<Comparison> =
+        researchFieldService.findAllComparisonsByResearchField(researchFieldId, visibility, includeSubfields, pageable)
+            .pmap { it.toComparison() }
 
     override fun findAllByContributor(contributorId: ContributorId, pageable: Pageable): Page<Comparison> =
         resourceRepository.findAllByClassAndCreatedBy(Classes.comparison, contributorId, pageable)

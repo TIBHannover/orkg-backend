@@ -54,6 +54,7 @@ object Classes {
     val paper = ThingId("Paper")
     val paperDeleted = ThingId("PaperDeleted")
     val paperVersion = ThingId("PaperVersion")
+    val problem = ThingId("Problem")
     val researchField = ThingId("ResearchField")
     val review = ThingId("SmartReview")
     val venue = ThingId("Venue")

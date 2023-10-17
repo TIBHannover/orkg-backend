@@ -8,18 +8,20 @@ import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresObser
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.toContributor
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.toObservatory
+import eu.tib.orkg.prototype.community.domain.model.Contributor
 import eu.tib.orkg.prototype.community.domain.model.Observatory
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.spi.ObservatoryRepository
-import eu.tib.orkg.prototype.community.domain.model.Contributor
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.util.*
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
+@Transactional
 class SpringJpaPostgresObservatoryAdapter(
     private val postgresRepository: PostgresObservatoryRepository,
     private val postgresOrganizationRepository: PostgresOrganizationRepository,

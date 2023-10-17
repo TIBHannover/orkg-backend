@@ -6,6 +6,8 @@ import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.UserEntity
 import eu.tib.orkg.prototype.auth.domain.User
 import eu.tib.orkg.prototype.auth.spi.UserRepository
 import java.util.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 
 @Component
@@ -25,6 +27,8 @@ class JpaUserAdapter(
     override fun deleteAll() = repository.deleteAll()
 
     override fun count(): Long = repository.count()
+
+    override fun findAll(pageable: Pageable): Page<User> = repository.findAll(pageable).map(UserEntity::toUser)
 
     internal fun User.toUserEntity(): UserEntity = repository.findById(this.id).orElse(UserEntity()).apply {
         id = this@toUserEntity.id

@@ -38,6 +38,10 @@ include(
     "licenses:licenses-adapter-input-rest-spring-mvc",
     "licenses:licenses-adapter-output-spring",
 )
+include(
+    "profiling:profiling-application",
+    "profiling:profiling-adapter-output-spring-data-neo4j-sdn6"
+)
 include("widget")
 include("rest-api-server")
 

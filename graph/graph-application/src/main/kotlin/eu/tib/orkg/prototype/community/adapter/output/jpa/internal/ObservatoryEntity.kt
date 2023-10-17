@@ -1,4 +1,5 @@
 package eu.tib.orkg.prototype.community.adapter.output.jpa.internal
+
 import com.fasterxml.jackson.annotation.JsonIgnore
 import eu.tib.orkg.prototype.auth.adapter.output.jpa.spring.internal.UserEntity
 import eu.tib.orkg.prototype.auth.domain.User

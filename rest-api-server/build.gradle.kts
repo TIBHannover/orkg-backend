@@ -143,6 +143,8 @@ dependencies {
     compileOnly(project(":identity-management:idm-application")) // only ports used, replace later
     runtimeOnly(project(":identity-management:idm-adapter-input-rest-spring-security"))
     runtimeOnly(project(":identity-management:idm-adapter-output-spring-data-jpa"))
+    runtimeOnly(project(":profiling:profiling-application"))
+    runtimeOnly(project(":profiling:profiling-adapter-output-spring-data-neo4j-sdn6"))
     implementation(project(":graph:graph-application"))
     implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
     implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6"))
@@ -247,6 +249,17 @@ tasks {
         doFirst {
             named<BootRun>("bootRun").configure {
                 args("--spring.profiles.active=development,datagen")
+            }
+        }
+        finalizedBy("bootRun")
+    }
+
+    register("profileNeo4jRepositories").configure {
+        group = "profiling"
+        description = "Profiles neo4j repositories."
+        doFirst {
+            named<BootRun>("bootRun").configure {
+                args("--spring.profiles.active=development,profileRepositories,profileNeo4jRepositories")
             }
         }
         finalizedBy("bootRun")

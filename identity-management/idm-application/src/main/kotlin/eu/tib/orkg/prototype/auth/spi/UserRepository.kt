@@ -18,5 +18,7 @@ interface UserRepository {
 
     fun deleteAll()
 
+    fun findAll(pageable: Pageable): Page<User>
+
     fun count(): Long
 }

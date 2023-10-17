@@ -209,7 +209,9 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         parameterWithName("research_field").description("Optional filter for research field id.").optional(),
                         parameterWithName("title").description("Optional filter for the title of the paper. Uses exact matching.").optional(),
                         parameterWithName("visibility").description("""Optional filter for visibility. Either of "listed", "featured", "unlisted" or "deleted".""").optional(),
-                        parameterWithName("created_by").description("Optional filter for research field id.").optional(),
+                        parameterWithName("created_by").description("Optional filter for the UUID of the user or service who created this paper.").optional(),
+                        parameterWithName("research_field").description("Optional filter for research field id.").optional(),
+                        parameterWithName("include_subfields").description("Optional flag for whether subfields are included in the search or not.").optional(),
                     )
                 )
             )
@@ -305,6 +307,38 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
+    }
+
+    @Test
+    fun `Given several papers, when they are fetched by visibility and research field id, then status is 200 OK and papers are returned`() {
+        val papers = listOf(createDummyPaper())
+        val researchFieldId = papers.first().researchFields.first().id
+        every {
+            paperService.findAllByResearchFieldAndVisibility(
+                researchFieldId = researchFieldId,
+                visibility = VisibilityFilter.ALL_LISTED,
+                includeSubfields = true,
+                pageable = any()
+            )
+        } returns PageImpl(papers, PageRequest.of(0, 5), 1)
+
+        get("/api/papers?research_field=$researchFieldId&visibility=ALL_LISTED&include_subfields=true")
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.content", hasSize<Int>(1)))
+            .andExpect(jsonPath("$.number").value(0)) // page number
+            .andExpect(jsonPath("$.totalElements").value(1))
+
+        verify(exactly = 1) {
+            paperService.findAllByResearchFieldAndVisibility(
+                researchFieldId = researchFieldId,
+                visibility = VisibilityFilter.ALL_LISTED,
+                includeSubfields = true,
+                pageable = any()
+            )
+        }
     }
 
     @Test

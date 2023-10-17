@@ -79,6 +79,16 @@ class PaperController(
         }.mapToPaperRepresentation()
     }
 
+    @GetMapping(params = ["visibility", "research_field"])
+    fun findAll(
+        @RequestParam("visibility") visibility: VisibilityFilter,
+        @RequestParam("research_field") researchField: ThingId,
+        @RequestParam("include_subfields", required = false) includeSubfields: Boolean = false,
+        pageable: Pageable
+    ): Page<PaperRepresentation> =
+        service.findAllByResearchFieldAndVisibility(researchField, visibility, includeSubfields, pageable)
+            .mapToPaperRepresentation()
+
     @PostMapping(consumes = [PAPER_JSON_V2])
     fun create(
         @RequestBody @Validated request: CreatePaperRequest,

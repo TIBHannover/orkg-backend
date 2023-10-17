@@ -15,5 +15,11 @@ interface RetrievePaperUseCase {
     fun findAllByTitle(title: String, pageable: Pageable): Page<Paper>
     fun findAllByContributor(contributorId: ContributorId, pageable: Pageable): Page<Paper>
     fun findAllByVisibility(visibility: VisibilityFilter, pageable: Pageable): Page<Paper>
+    fun findAllByResearchFieldAndVisibility(
+        researchFieldId: ThingId,
+        visibility: VisibilityFilter,
+        includeSubfields: Boolean,
+        pageable: Pageable
+    ): Page<Paper>
     fun findAllContributorsByPaperId(id: ThingId, pageable: Pageable): Page<ContributorId>
 }

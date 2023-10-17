@@ -20,6 +20,7 @@ import eu.tib.orkg.prototype.statements.api.Literals
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
@@ -52,6 +53,7 @@ class PaperServiceUnitTests {
     private val statementService: StatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
     private val predicateService: PredicateUseCases = mockk()
+    private val researchFieldService: RetrieveResearchFieldUseCase = mockk()
     private val listService: ListUseCases = mockk()
     private val publishingService: PublishingService = mockk()
 
@@ -65,6 +67,7 @@ class PaperServiceUnitTests {
         statementService = statementService,
         literalService = literalService,
         predicateService = predicateService,
+        researchFieldService = researchFieldService,
         listService = listService,
         publishingService = publishingService,
         paperPublishBaseUri = "https://orkg.org/paper/"

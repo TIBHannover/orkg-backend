@@ -30,6 +30,7 @@ import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.PredicateUseCases
 import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.domain.model.Resource
@@ -60,6 +61,7 @@ class PaperService(
     private val statementService: StatementUseCases,
     private val literalService: LiteralUseCases,
     private val predicateService: PredicateUseCases,
+    private val researchFieldService: RetrieveResearchFieldUseCase,
     private val listService: ListUseCases,
     private val publishingService: PublishingService,
     @Value("\${orkg.publishing.base-url.paper}")
@@ -89,6 +91,15 @@ class PaperService(
             VisibilityFilter.FEATURED -> resourceRepository.findAllByClassAndVisibility(Classes.paper, Visibility.FEATURED, pageable)
             VisibilityFilter.DELETED -> resourceRepository.findAllByClassAndVisibility(Classes.paper, Visibility.DELETED, pageable)
         }.pmap { it.toPaper() }
+
+    override fun findAllByResearchFieldAndVisibility(
+        researchFieldId: ThingId,
+        visibility: VisibilityFilter,
+        includeSubfields: Boolean,
+        pageable: Pageable
+    ): Page<Paper> =
+        researchFieldService.findAllPapersByResearchField(researchFieldId, visibility, includeSubfields, pageable)
+            .pmap { it.toPaper() }
 
     override fun findAllByContributor(contributorId: ContributorId, pageable: Pageable): Page<Paper> =
         resourceRepository.findAllByClassAndCreatedBy(Classes.paper, contributorId, pageable)

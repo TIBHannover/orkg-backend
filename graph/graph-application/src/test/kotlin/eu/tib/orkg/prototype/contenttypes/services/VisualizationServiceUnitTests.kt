@@ -3,17 +3,18 @@ package eu.tib.orkg.prototype.contenttypes.services
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
-import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
-import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
-import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
-import eu.tib.orkg.prototype.statements.testing.fixtures.createStatement
 import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.Predicates
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createStatement
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -26,8 +27,9 @@ import org.junit.jupiter.api.Test
 class VisualizationServiceUnitTests {
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
+    private val researchFieldService: RetrieveResearchFieldUseCase = mockk()
 
-    private val service = VisualizationService(resourceRepository, statementRepository)
+    private val service = VisualizationService(resourceRepository, statementRepository, researchFieldService)
 
     @Test
     fun `Given a visualization exists, when fetching it by id, then it is returned`() {

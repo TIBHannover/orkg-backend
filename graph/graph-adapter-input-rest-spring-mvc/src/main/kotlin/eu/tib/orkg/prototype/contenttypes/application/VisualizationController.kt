@@ -49,4 +49,14 @@ class VisualizationController(
             else -> service.findAll(pageable)
         }.mapToVisualizationRepresentation()
     }
+
+    @GetMapping(params = ["visibility", "research_field"], produces = [VISUALIZATION_JSON_V2])
+    fun findAll(
+        @RequestParam("visibility") visibility: VisibilityFilter,
+        @RequestParam("research_field") researchField: ThingId,
+        @RequestParam("include_subfields", required = false) includeSubfields: Boolean = false,
+        pageable: Pageable
+    ): Page<VisualizationRepresentation> =
+        service.findAllByResearchFieldAndVisibility(researchField, visibility, includeSubfields, pageable)
+            .mapToVisualizationRepresentation()
 }

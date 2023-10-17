@@ -1,11 +1,12 @@
 package eu.tib.orkg.prototype.contenttypes.services
 
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.contenttypes.api.VisualizationUseCases
 import eu.tib.orkg.prototype.contenttypes.domain.model.Visualization
-import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.Predicates
+import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.SearchString
@@ -23,7 +24,8 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class VisualizationService(
     private val resourceRepository: ResourceRepository,
-    private val statementRepository: StatementRepository
+    private val statementRepository: StatementRepository,
+    private val researchFieldService: RetrieveResearchFieldUseCase
 ) : VisualizationUseCases {
     override fun findById(id: ThingId): Optional<Visualization> =
         resourceRepository.findById(id)
@@ -46,6 +48,15 @@ class VisualizationService(
             VisibilityFilter.FEATURED -> resourceRepository.findAllByClassAndVisibility(Classes.visualization, Visibility.FEATURED, pageable)
             VisibilityFilter.DELETED -> resourceRepository.findAllByClassAndVisibility(Classes.visualization, Visibility.DELETED, pageable)
         }.pmap { it.toVisualization() }
+
+    override fun findAllByResearchFieldAndVisibility(
+        researchFieldId: ThingId,
+        visibility: VisibilityFilter,
+        includeSubfields: Boolean,
+        pageable: Pageable
+    ): Page<Visualization> =
+        researchFieldService.findAllVisualizationsByResearchField(researchFieldId, visibility, includeSubfields, pageable)
+            .pmap { it.toVisualization() }
 
     override fun findAllByContributor(contributorId: ContributorId, pageable: Pageable): Page<Visualization> =
         resourceRepository.findAllByClassAndCreatedBy(Classes.visualization, contributorId, pageable)

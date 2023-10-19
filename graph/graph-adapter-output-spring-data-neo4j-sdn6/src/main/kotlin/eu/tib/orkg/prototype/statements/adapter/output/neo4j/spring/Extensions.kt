@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.adapter.output.neo4j.spring
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
+import eu.tib.orkg.prototype.statements.application.PredicateNotFound
 import eu.tib.orkg.prototype.statements.domain.model.Class
 import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
@@ -63,7 +64,9 @@ internal data class StatementMapper(
         return GeneralStatement(
             id = StatementId(relation["statement_id"].asString()),
             // This could be fetched directly in findByXYZ
-            predicate = predicateRepository.findById(relation["predicate_id"].toThingId()!!).get(),
+            predicate = relation["predicate_id"].toThingId()!!.let {
+                predicateRepository.findById(it).orElseThrow { PredicateNotFound(it) }
+            },
             createdAt = relation["created_at"].toOffsetDateTime(),
             createdBy = relation["created_by"].toContributorId(),
             subject = record[subject].asNode().toThing(),

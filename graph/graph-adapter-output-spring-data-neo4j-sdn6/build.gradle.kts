@@ -63,6 +63,7 @@ dependencies {
     api(platform(project(":platform")))
 
     implementation(project(":graph:graph-application"))
+    implementation(project(":common:exceptions"))
 
     // Pagination (e.g. Page, Pageable, etc.)
     implementation("org.springframework.data:spring-data-commons")

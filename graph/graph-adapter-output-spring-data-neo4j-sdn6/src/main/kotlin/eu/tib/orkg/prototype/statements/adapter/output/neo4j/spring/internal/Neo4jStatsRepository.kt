@@ -83,7 +83,7 @@ CALL {
     UNION ALL
     MATCH (n:Problem:Resource) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date RETURN n.created_by AS id, COUNT(n) AS contributions
 } WITH id, contributions, SUM(contributions) AS total
-RETURN id AS contributor, 0 AS papers, contributions, 0 AS comparisons, 0 AS visualizations, 0 AS problems, total $PAGE_PARAMS""",
+RETURN id AS contributor, 0 AS papers, contributions, 0 AS comparisons, 0 AS visualizations, 0 AS problems, total $ORDER_BY_PAGE_PARAMS""",
         countQuery = """
 CALL {
     MATCH (n:Paper:Resource) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date RETURN DISTINCT n.created_by AS id
@@ -131,7 +131,7 @@ UNWIND nodes AS n
 WITH DISTINCT n
 WHERE n[0] IS NOT NULL AND n[0].created_by <> "00000000-0000-0000-0000-000000000000" AND n[0].created_at > $date
 WITH n[0].created_by AS contributor, SUM(n[1][0]) AS papers, SUM(n[1][1]) AS contributions, SUM(n[1][2]) AS comparisons, SUM(n[1][3]) AS visualizations, SUM(n[1][4]) AS problems
-RETURN contributor, papers, contributions, comparisons, visualizations, problems, (papers + contributions + comparisons + visualizations + problems) AS total $PAGE_PARAMS""",
+RETURN contributor, papers, contributions, comparisons, visualizations, problems, (papers + contributions + comparisons + visualizations + problems) AS total $ORDER_BY_PAGE_PARAMS""",
     countQuery = """
 CALL {
     MATCH (field:ResearchField:Resource {id: $id})
@@ -178,7 +178,7 @@ UNWIND nodes AS n
 WITH DISTINCT n
 WHERE n[0] IS NOT NULL AND n[0].created_by <> "00000000-0000-0000-0000-000000000000" AND n[0].created_at > $date
 WITH n[0].created_by AS contributor, SUM(n[1][0]) AS papers, SUM(n[1][1]) AS contributions, SUM(n[1][2]) AS comparisons, SUM(n[1][3]) AS visualizations, SUM(n[1][4]) AS problems
-RETURN contributor, papers, contributions, comparisons, visualizations, problems, (papers + contributions + comparisons + visualizations + problems) AS total $PAGE_PARAMS""",
+RETURN contributor, papers, contributions, comparisons, visualizations, problems, (papers + contributions + comparisons + visualizations + problems) AS total $ORDER_BY_PAGE_PARAMS""",
         countQuery = """
 MATCH (ppr:Paper:Resource)-[:RELATED {predicate_id: "P30"}]->(r:ResearchField:Resource {id: $id})
 OPTIONAL MATCH (ppr)-[:RELATED {predicate_id: "P31"}]->(ctr:Contribution:Resource)

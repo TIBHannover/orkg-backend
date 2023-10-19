@@ -32,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional
 private const val DEFAULT_FILE_NAME = "rdf-export-orkg.nt"
 
 @Service
-@Transactional
 class RDFService(
     private val statementRepository: StatementRepository,
     private val predicateRepository: PredicateRepository,

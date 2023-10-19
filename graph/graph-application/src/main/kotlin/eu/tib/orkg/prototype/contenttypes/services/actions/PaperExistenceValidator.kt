@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.contenttypes.services.actions
 import eu.tib.orkg.prototype.contenttypes.api.Identifiers
 import eu.tib.orkg.prototype.contenttypes.application.PaperAlreadyExists
 import eu.tib.orkg.prototype.contenttypes.application.PaperNotFound
+import eu.tib.orkg.prototype.identifiers.domain.parse
 import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
@@ -20,11 +21,10 @@ class PaperExistenceValidator(
             throw PaperAlreadyExists.withTitle(resource.label)
         }
 
-        val identifiers = Identifiers.paper associateWith command.identifiers
-        // TODO: Do we want to validate identifier values structurally?
-        identifiers.forEach { (predicate, value) ->
+        val identifiers = Identifiers.paper.parse(command.identifiers)
+        identifiers.forEach { (identifier, value) ->
             val papers = statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
-                predicateId = predicate,
+                predicateId = identifier.predicateId,
                 literal = value,
                 subjectClass = Classes.paper,
                 pageable = PageRequests.SINGLE

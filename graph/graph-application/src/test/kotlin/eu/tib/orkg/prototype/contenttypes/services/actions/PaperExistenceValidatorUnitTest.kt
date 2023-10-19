@@ -4,16 +4,17 @@ import eu.tib.orkg.prototype.contenttypes.application.PaperAlreadyExists
 import eu.tib.orkg.prototype.contenttypes.application.PaperNotFound
 import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreateContributionCommand
 import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreatePaperCommand
-import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
-import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
-import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
-import eu.tib.orkg.prototype.statements.testing.fixtures.createStatement
+import eu.tib.orkg.prototype.identifiers.application.InvalidIdentifier
 import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createStatement
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
@@ -133,6 +134,22 @@ class PaperExistenceValidatorUnitTest {
                 pageable = any()
             )
         }
+    }
+
+    @Test
+    fun `Given a paper create command, when paper identifier is structurally invalid, it throws an exception`() {
+        val command = dummyCreatePaperCommand().copy(
+            identifiers = mapOf(
+                "doi" to "invalid"
+            )
+        )
+        val state = PaperState()
+
+        every { resourceService.findAllByTitle(command.title) } returns pageOf()
+
+        assertThrows<InvalidIdentifier> { paperExistenceValidator(command, state) }.property shouldBe "doi"
+
+        verify(exactly = 1) { resourceService.findAllByTitle(command.title) }
     }
 
     @Test

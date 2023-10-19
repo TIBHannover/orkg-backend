@@ -3,8 +3,8 @@ package eu.tib.orkg.prototype.contenttypes.services
 import eu.tib.orkg.prototype.contenttypes.application.DoiAlreadyRegistered
 import eu.tib.orkg.prototype.contenttypes.application.UnpublishableThing
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
-import eu.tib.orkg.prototype.contenttypes.domain.model.DOI
 import eu.tib.orkg.prototype.contenttypes.spi.DoiService
+import eu.tib.orkg.prototype.identifiers.domain.DOI
 import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.Literals
@@ -53,7 +53,7 @@ class PublishingService(
         statementService.create(
             subject = command.id,
             predicate = Predicates.hasDOI,
-            `object` = literalService.create(label = doi).id
+            `object` = literalService.create(label = doi.value).id
         )
         val now = OffsetDateTime.now(clock)
         statementService.create(

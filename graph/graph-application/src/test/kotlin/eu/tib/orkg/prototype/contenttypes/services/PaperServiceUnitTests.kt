@@ -7,12 +7,9 @@ import eu.tib.orkg.prototype.community.spi.ObservatoryRepository
 import eu.tib.orkg.prototype.contenttypes.application.PaperNotFound
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
 import eu.tib.orkg.prototype.contenttypes.domain.model.ObjectIdAndLabel
-import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
-import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
-import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
-import eu.tib.orkg.prototype.statements.testing.fixtures.createStatement
-import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
+import eu.tib.orkg.prototype.identifiers.domain.DOI
 import eu.tib.orkg.prototype.shared.PageRequests
+import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.ListUseCases
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
@@ -27,6 +24,10 @@ import eu.tib.orkg.prototype.statements.domain.model.Visibility
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 import eu.tib.orkg.prototype.statements.spi.ThingRepository
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createStatement
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
@@ -310,7 +311,7 @@ class PaperServiceUnitTests {
                 `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri)
             )
         )
-        every { publishingService.publish(any()) } returns "1324/56789"
+        every { publishingService.publish(any()) } returns DOI.of("10.1234/56789")
 
         service.publish(paper.id, subject, description)
 

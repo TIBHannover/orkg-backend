@@ -1,7 +1,7 @@
 package eu.tib.orkg.prototype.contenttypes.spi
 
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
-import eu.tib.orkg.prototype.contenttypes.domain.model.DOI
+import eu.tib.orkg.prototype.identifiers.domain.DOI
 import java.net.URI
 
 interface DoiService {

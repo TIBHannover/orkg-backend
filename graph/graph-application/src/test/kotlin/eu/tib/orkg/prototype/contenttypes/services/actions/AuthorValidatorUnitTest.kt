@@ -4,17 +4,18 @@ import eu.tib.orkg.prototype.contenttypes.application.AmbiguousAuthor
 import eu.tib.orkg.prototype.contenttypes.application.AuthorNotFound
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
 import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreatePaperCommand
-import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
-import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
-import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
-import eu.tib.orkg.prototype.statements.testing.fixtures.createStatement
-import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
+import eu.tib.orkg.prototype.identifiers.application.InvalidIdentifier
 import eu.tib.orkg.prototype.shared.PageRequests
+import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
+import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
+import eu.tib.orkg.prototype.statements.testing.fixtures.createStatement
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
@@ -266,5 +267,22 @@ class AuthorValidatorUnitTest {
                 pageable = PageRequests.ALL
             )
         }
+    }
+
+    @Test
+    fun `Given a paper create command, when author identifier is structurally invalid, it throws an exception`() {
+        val command = dummyCreatePaperCommand().copy(
+            authors = listOf(
+                Author(
+                    name = "Invalid Author",
+                    identifiers = mapOf(
+                        "orcid" to "invalid"
+                    )
+                )
+            )
+        )
+        val state = PaperState()
+
+        assertThrows<InvalidIdentifier> { authorValidator(command, state) }.property shouldBe "orcid"
     }
 }

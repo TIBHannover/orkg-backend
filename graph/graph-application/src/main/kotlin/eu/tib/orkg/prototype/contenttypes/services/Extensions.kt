@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.contenttypes.services
 import eu.tib.orkg.prototype.contenttypes.api.Identifiers
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
 import eu.tib.orkg.prototype.contenttypes.domain.model.ObjectIdAndLabel
+import eu.tib.orkg.prototype.identifiers.domain.Identifier
 import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
@@ -33,9 +34,11 @@ internal fun List<GeneralStatement>.objects() = map { it.`object` }
 
 internal fun List<GeneralStatement>.firstObjectLabel(): String? = firstOrNull()?.`object`?.label
 
-internal fun List<GeneralStatement>.associateIdentifiers(identifiers: Map<ThingId, String>) =
-    filter { it.predicate.id in identifiers.keys }
-        .associate { identifiers[it.predicate.id]!! to it.`object`.label }
+internal fun List<GeneralStatement>.associateIdentifiers(identifiers: Set<Identifier>): Map<String, String> =
+    mapNotNull { statement ->
+        identifiers.firstOrNull { statement.predicate.id == it.predicateId }
+            ?.let { identifier -> identifier.id to statement.`object`.label }
+    }.toMap()
 
 internal fun List<GeneralStatement>.firstObjectId(): ThingId? = firstOrNull()?.`object`?.id
 

@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.contenttypes.services.actions
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.contenttypes.api.Identifiers
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
+import eu.tib.orkg.prototype.identifiers.domain.parse
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.CreateListUseCase
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
@@ -64,9 +65,9 @@ class PaperAuthorCreator(
 
         // After validation, author identifiers only contain identifiers that need to be created
         if (!author.identifiers.isNullOrEmpty()) {
-            val identifiers = Identifiers.author associateWith author.identifiers
-            identifiers.forEach { (predicate, value) ->
-                val identifier = literalService.create(
+            val identifiers = Identifiers.author.parse(author.identifiers, validate = false)
+            identifiers.forEach { (identifier, value) ->
+                val literalId = literalService.create(
                     userId = contributorId,
                     label = value,
                     datatype = Literals.XSD.STRING.prefixedUri
@@ -74,8 +75,8 @@ class PaperAuthorCreator(
                 statementService.add(
                     userId = contributorId,
                     subject = authorId,
-                    predicate = predicate,
-                    `object` = identifier
+                    predicate = identifier.predicateId,
+                    `object` = literalId
                 )
             }
         }

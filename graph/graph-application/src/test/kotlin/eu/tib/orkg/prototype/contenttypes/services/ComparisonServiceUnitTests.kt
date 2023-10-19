@@ -5,6 +5,7 @@ import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contenttypes.application.ComparisonNotFound
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
 import eu.tib.orkg.prototype.contenttypes.domain.model.ObjectIdAndLabel
+import eu.tib.orkg.prototype.identifiers.domain.DOI
 import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.statements.api.Classes
@@ -225,7 +226,7 @@ class ComparisonServiceUnitTests {
         )
         val resourceAuthorId = ThingId("R132564")
         val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
-        val relatedDoi = "1472/58369"
+        val relatedDoi = "10.1472/58369"
 
         every { resourceRepository.findById(comparison.id) } returns Optional.of(comparison)
         every { statementRepository.findAllBySubject(comparison.id, any()) } returns pageOf(
@@ -269,7 +270,7 @@ class ComparisonServiceUnitTests {
             )
         )
         every { statementRepository.findAllDOIsRelatedToComparison(comparison.id) } returns listOf(relatedDoi)
-        every { publishingService.publish(any()) } returns "1324/56789"
+        every { publishingService.publish(any()) } returns DOI.of("10.1234/56789")
 
         service.publish(comparison.id, "Research Field 1", "comparison description")
 

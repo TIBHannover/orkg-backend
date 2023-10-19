@@ -1,6 +1,8 @@
 package eu.tib.orkg.prototype.contenttypes.adapter.output.datacite
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import eu.tib.orkg.prototype.contenttypes.spi.DoiService
+import eu.tib.orkg.prototype.datacite.json.DataCiteJson
 import eu.tib.orkg.prototype.datacite.json.DataCiteJson.Attributes
 import eu.tib.orkg.prototype.datacite.json.DataCiteJson.Creator
 import eu.tib.orkg.prototype.datacite.json.DataCiteJson.Description
@@ -10,9 +12,7 @@ import eu.tib.orkg.prototype.datacite.json.DataCiteJson.Rights
 import eu.tib.orkg.prototype.datacite.json.DataCiteJson.Subject
 import eu.tib.orkg.prototype.datacite.json.DataCiteJson.Title
 import eu.tib.orkg.prototype.datacite.json.DataCiteJson.Type
-import eu.tib.orkg.prototype.contenttypes.domain.model.DOI
-import eu.tib.orkg.prototype.contenttypes.spi.DoiService
-import eu.tib.orkg.prototype.datacite.json.DataCiteJson
+import eu.tib.orkg.prototype.identifiers.domain.DOI
 import eu.tib.orkg.prototype.statements.application.DOIServiceUnavailable
 import java.io.IOException
 import java.net.URI
@@ -55,7 +55,7 @@ class DataCiteDoiServiceAdapter(
                 }
                 throw DOIServiceUnavailable(response.statusCode(), responseMessage)
             }
-            return "${dataciteConfiguration.doiPrefix}/${command.suffix}"
+            return DOI.of("${dataciteConfiguration.doiPrefix}/${command.suffix}")
         } catch (e: IOException) {
             throw DOIServiceUnavailable(e)
         } catch (e: InterruptedException) {

@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.contenttypes.services.actions
 import eu.tib.orkg.prototype.contenttypes.api.Identifiers
 import eu.tib.orkg.prototype.contenttypes.application.AmbiguousAuthor
 import eu.tib.orkg.prototype.contenttypes.application.AuthorNotFound
+import eu.tib.orkg.prototype.identifiers.domain.parse
 import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -16,24 +17,23 @@ class AuthorValidator(
     override operator fun invoke(command: CreatePaperCommand, state: PaperState): PaperState {
         val authors = command.authors.distinct().map { author ->
             val resources: MutableSet<ThingId> = mutableSetOf()
-            val missingIdentifiers = mutableMapOf<ThingId, String>()
+            val missingIdentifiers = mutableMapOf<String, String>()
             if (author.id != null) {
                 resources += resourceRepository.findById(author.id)
                     .filter { thing -> Classes.author in thing.classes }
                     .orElseThrow { AuthorNotFound(author.id) }
                     .id
             }
-            val identifiers = Identifiers.author associateWith author.identifiers.orEmpty()
-            // TODO: Do we want to validate identifier values structurally?
-            identifiers.forEach { (predicate, value) ->
+            val identifiers = Identifiers.author.parse(author.identifiers.orEmpty())
+            identifiers.forEach { (identifier, value) ->
                 val authors = statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
-                    predicateId = predicate,
+                    predicateId = identifier.predicateId,
                     literal = value,
                     subjectClass = Classes.author,
                     pageable = PageRequests.ALL
                 )
                 if (authors.isEmpty) {
-                    missingIdentifiers[predicate] = value
+                    missingIdentifiers[identifier.id] = value
                 } else {
                     authors.forEach {
                         if (resources.isNotEmpty() && it.subject.id !in resources) {
@@ -45,7 +45,7 @@ class AuthorValidator(
             }
             author.copy(
                 id = resources.singleOrNull(),
-                identifiers = missingIdentifiers.ifEmpty { null }?.mapKeys { Identifiers.author[it.key]!! }
+                identifiers = missingIdentifiers.ifEmpty { null }
             )
         }
         return state.copy(authors = authors)

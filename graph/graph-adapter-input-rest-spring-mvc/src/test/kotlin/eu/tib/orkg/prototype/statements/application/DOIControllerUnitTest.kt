@@ -6,6 +6,7 @@ import eu.tib.orkg.prototype.contenttypes.adapter.output.datacite.DataCiteConfig
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
 import eu.tib.orkg.prototype.contenttypes.spi.DoiService
 import eu.tib.orkg.prototype.core.rest.ExceptionHandler
+import eu.tib.orkg.prototype.identifiers.domain.DOI
 import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.Predicates
@@ -60,7 +61,7 @@ internal class DOIControllerUnitTest : RestDocsTest("dois") {
         val resourceId = ThingId("R696006")
         val resource = createResource(id = resourceId, classes = setOf(Classes.paper))
         val prefix = "10.165"
-        val doi = "$prefix/$resourceId"
+        val doi = DOI.of("$prefix/$resourceId")
 
         every { resourceRepository.findById(resourceId) } returns Optional.of(resource)
         every { statementService.findAllBySubjectAndPredicate(resourceId, Predicates.hasDOI, any()) } returns pageOf()
@@ -98,7 +99,7 @@ internal class DOIControllerUnitTest : RestDocsTest("dois") {
             .contentType(APPLICATION_JSON)
             .perform()
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.doi").value(doi))
+            .andExpect(jsonPath("$.doi").value(doi.value))
 
         verify(exactly = 1) { resourceRepository.findById(resourceId) }
         verify(exactly = 1) { statementService.findAllBySubjectAndPredicate(resourceId, Predicates.hasDOI, any()) }

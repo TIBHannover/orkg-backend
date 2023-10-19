@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.contenttypes.adapter.output.datacite
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyRegisterDoiCommand
+import eu.tib.orkg.prototype.identifiers.domain.DOI
 import eu.tib.orkg.prototype.statements.application.DOIServiceUnavailable
 import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrow
@@ -69,7 +70,7 @@ class DataCiteDoiServiceAdapterUnitTest {
         every { response.statusCode() } returns 201
 
         val result = adapter.register(command)
-        result shouldBe "$dataCitePrefix/${command.suffix}"
+        result shouldBe DOI.of("$dataCitePrefix/${command.suffix}")
 
         verify(exactly = 1) { dataciteConfiguration.publish }
         verify(exactly = 1) { dataciteConfiguration.url }

@@ -7,11 +7,11 @@ import eu.tib.orkg.prototype.contenttypes.application.UnpublishableThing
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
 import eu.tib.orkg.prototype.contenttypes.spi.DoiService
 import eu.tib.orkg.prototype.shared.PageRequests
+import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.services.LiteralService
 import eu.tib.orkg.prototype.statements.services.StatementService
-import eu.tib.orkg.prototype.statements.services.publishableClasses
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import java.net.URI
 import javax.validation.constraints.Size
@@ -20,6 +20,12 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+
+val publishableClasses: Set<ThingId> = setOf(
+    Classes.paper,
+    Classes.paperVersion,
+    Classes.comparison,
+)
 
 @RestController
 @RequestMapping("/api/dois/", produces = [MediaType.APPLICATION_JSON_VALUE])

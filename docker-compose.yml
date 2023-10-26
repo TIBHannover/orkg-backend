@@ -32,9 +32,9 @@ services:
   neo4j:
     image: neo4j:4.4-community
     ports:
-      - '7474:7474' # HTTP
+      - '127.0.0.1:7474:7474' # HTTP
       #- '::1:7474:7474'
-      - '7687:7687' # BOLT
+      - '127.0.0.1:7687:7687' # BOLT
       #- '::1:7687:7687'
     environment:
       NEO4JLABS_PLUGINS: '["apoc"]'

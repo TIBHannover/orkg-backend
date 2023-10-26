@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Fixed `/api/stats/top/contributors` only returning contributions.
+  (Closes: [#517](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/517))
 
 ## [0.40.0] - 2023-10-19
 ### Added

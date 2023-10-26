@@ -73,28 +73,47 @@ RETURN $id AS observatoryId, papers, comparisons, total""")
 
     @Query("""
 CALL {
-    MATCH (n:Paper:Resource) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date RETURN n.created_by AS id, COUNT(n) AS contributions
+    MATCH (n:Paper:Resource)
+    WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+    RETURN n.created_by AS id, COUNT(n) AS papers, 0 AS comparisons, 0 AS contributions, 0 AS visualizations, 0 AS problems
     UNION ALL
-    MATCH (n:Comparison:Resource) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date RETURN n.created_by AS id, COUNT(n) AS contributions
+    MATCH (n:Comparison:Resource)
+    WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+    RETURN n.created_by AS id, 0 AS papers, COUNT(n) AS comparisons, 0 AS contributions, 0 AS visualizations, 0 AS problems
     UNION ALL
-    MATCH (n:Contribution:Resource) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date RETURN n.created_by AS id, COUNT(n) AS contributions
+    MATCH (n:Contribution:Resource)
+    WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+    RETURN n.created_by AS id, 0 AS papers, 0 AS comparisons, COUNT(n) AS contributions, 0 AS visualizations, 0 AS problems
     UNION ALL
-    MATCH (n:Visualization:Resource) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date RETURN n.created_by AS id, COUNT(n) AS contributions
+    MATCH (n:Visualization:Resource)
+    WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+    RETURN n.created_by AS id, 0 AS papers, 0 AS comparisons, 0 AS contributions, COUNT(n) AS visualizations, 0 AS problems
     UNION ALL
-    MATCH (n:Problem:Resource) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date RETURN n.created_by AS id, COUNT(n) AS contributions
-} WITH id, contributions, SUM(contributions) AS total
-RETURN id AS contributor, 0 AS papers, contributions, 0 AS comparisons, 0 AS visualizations, 0 AS problems, total $ORDER_BY_PAGE_PARAMS""",
+    MATCH (n:Problem:Resource) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+    RETURN n.created_by AS id, 0 AS papers, 0 AS comparisons, 0 AS contributions, 0 AS visualizations, COUNT(n) AS problems
+} WITH id, SUM(papers) AS papers, SUM(contributions) AS contributions, SUM(comparisons) AS comparisons, SUM(visualizations) AS visualizations, SUM(problems) AS problems
+RETURN id AS contributor, papers, contributions, comparisons, visualizations, problems, (papers + contributions + comparisons + visualizations + problems) AS total $ORDER_BY_PAGE_PARAMS""",
         countQuery = """
 CALL {
-    MATCH (n:Paper:Resource) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date RETURN DISTINCT n.created_by AS id
+    MATCH (n:Paper:Resource)
+    WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+    RETURN DISTINCT n.created_by AS id
     UNION ALL
-    MATCH (n:Comparison:Resource) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date RETURN DISTINCT n.created_by AS id
+    MATCH (n:Comparison:Resource)
+    WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+    RETURN DISTINCT n.created_by AS id
     UNION ALL
-    MATCH (n:Contribution:Resource) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date RETURN DISTINCT n.created_by AS id
+    MATCH (n:Contribution:Resource)
+    WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+    RETURN DISTINCT n.created_by AS id
     UNION ALL
-    MATCH (n:Visualization:Resource) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date RETURN DISTINCT n.created_by AS id
+    MATCH (n:Visualization:Resource)
+    WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+    RETURN DISTINCT n.created_by AS id
     UNION ALL
-    MATCH (n:Problem:Resource) WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date RETURN DISTINCT n.created_by AS id
+    MATCH (n:Problem:Resource)
+    WHERE n.created_by <> "00000000-0000-0000-0000-000000000000" AND n.created_at > $date
+    RETURN DISTINCT n.created_by AS id
 } WITH DISTINCT id
 RETURN COUNT(id)""")
     fun getTopCurrentContributorIdsAndContributionsCount(date: String, pageable: Pageable): Page<RetrieveStatisticsUseCase.ContributorRecord>

@@ -51,7 +51,7 @@ class FuzzySearchString(value: String) : SearchString {
 
 class ExactSearchString(value: String) : SearchString {
     override val input: String = value.normalize()
-    override val query: String = QueryParser.escape(input)
+    override val query: String = if (input.isBlank()) "*" else QueryParser.escape(input)
 }
 
 private data class StringReader(val string: String) {

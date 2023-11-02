@@ -65,6 +65,11 @@ internal class SearchStringTest {
         @Nested
         inner class Query {
             @Test
+            fun `Parses empty strings as wildcard`() {
+                ExactSearchString("").query shouldBe "*"
+            }
+
+            @Test
             fun `Escapes special characters`() {
                 ExactSearchString("""+-&|!(){}[]^"~*?:\""").query shouldBe """\+\-\&\|\!\(\)\{\}\[\]\^\"\~\*\?\:\\"""
             }

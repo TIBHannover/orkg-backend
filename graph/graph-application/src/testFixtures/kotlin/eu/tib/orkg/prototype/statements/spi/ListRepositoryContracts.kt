@@ -3,6 +3,7 @@ package eu.tib.orkg.prototype.statements.spi
 import dev.forkhandles.fabrikate.FabricatorConfig
 import dev.forkhandles.fabrikate.Fabrikate
 import eu.tib.orkg.prototype.statements.api.Predicates
+import eu.tib.orkg.prototype.statements.application.ListNotFound
 import eu.tib.orkg.prototype.statements.domain.model.List
 import eu.tib.orkg.prototype.statements.domain.model.Resource
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
@@ -18,6 +19,7 @@ import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldNotMatch
+import org.junit.jupiter.api.assertThrows
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 
@@ -106,21 +108,28 @@ fun <
         }
     }
 
-    it("exists") {
-        val expected: List = fabricator.random()
-        repository.exists(expected.id) shouldBe false
-        expected.elements.forEach {
-            resourceRepository.save(createResource(id = it))
+    context("exists") {
+        it("returns the correct result") {
+            val expected: List = fabricator.random()
+            repository.exists(expected.id) shouldBe false
+            expected.elements.forEach {
+                resourceRepository.save(createResource(id = it))
+            }
+            repository.save(expected, expected.createdBy)
+            repository.exists(expected.id) shouldBe true
+            resourceRepository.deleteAll()
+            repository.exists(expected.id) shouldBe false
         }
-        repository.save(expected, expected.createdBy)
-        repository.exists(expected.id) shouldBe true
-        resourceRepository.deleteAll()
-        repository.exists(expected.id) shouldBe false
+        it("does not match non-list resources") {
+            val resource: Resource = fabricator.random()
+            resourceRepository.save(resource)
+            repository.exists(resource.id) shouldBe false
+        }
     }
 
     describe("requesting a new identity") {
         context("returns a valid id") {
-            it("that is not blank")  {
+            it("that is not blank") {
                 repository.nextIdentity().value shouldNotMatch """\s+"""
             }
         }
@@ -181,6 +190,22 @@ fun <
                     repository.delete(list.id)
                     repository.findById(list.id).isPresent shouldBe false
                 }
+            }
+            it("does not delete non-list resources") {
+                val resource: Resource = fabricator.random()
+                resourceRepository.save(resource)
+                repository.delete(resource.id)
+                resourceRepository.findById(resource.id).isPresent shouldBe true
+            }
+        }
+    }
+
+    describe("finding a list") {
+        context("by id") {
+            it("does not return non-list resources") {
+                val resource: Resource = fabricator.random()
+                resourceRepository.save(resource)
+                repository.findById(resource.id).isPresent shouldBe false
             }
         }
     }

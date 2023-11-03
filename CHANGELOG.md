@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (Closes: [#517](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/517))
 - Fixed request field name for extraction method not being snake case when updating resources.
   (Closes: [#520](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/520))
+- Fixed list endpoints returning results for non-list resources
+  (See: [!692](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/692))
 
 ## [0.40.0] - 2023-10-19
 ### Added

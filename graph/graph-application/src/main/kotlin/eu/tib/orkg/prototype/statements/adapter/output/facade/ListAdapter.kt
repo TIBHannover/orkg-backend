@@ -84,7 +84,9 @@ class ListAdapter(
     }
 
     override fun findById(id: ThingId): Optional<List> =
-        resourceRepository.findById(id).map { it.toList() }
+        resourceRepository.findById(id)
+            .filter { Classes.list in it.classes }
+            .map { it.toList() }
 
     override fun findAllElementsById(id: ThingId, pageable: Pageable): Page<Thing> =
         statementRepository.findAllBySubjectAndPredicate(
@@ -95,14 +97,19 @@ class ListAdapter(
 
     override fun nextIdentity(): ThingId = resourceRepository.nextIdentity()
 
-    override fun exists(id: ThingId): Boolean = resourceRepository.exists(id)
+    override fun exists(id: ThingId): Boolean =
+        resourceRepository.findById(id)
+            .filter { Classes.list in it.classes }
+            .isPresent
 
-    override fun delete(id: ThingId)  {
-        val statements = statementRepository.findAllBySubject(id, PageRequests.ALL)
-        if (!statements.isEmpty) {
-            statementRepository.deleteByStatementIds(statements.map { it.id!! }.toSet())
+    override fun delete(id: ThingId) {
+        if (exists(id)) {
+            val statements = statementRepository.findAllBySubject(id, PageRequests.ALL)
+            if (!statements.isEmpty) {
+                statementRepository.deleteByStatementIds(statements.map { it.id!! }.toSet())
+            }
+            resourceRepository.deleteById(id)
         }
-        resourceRepository.deleteById(id)
     }
 
     private fun Resource.toList(): List = List(

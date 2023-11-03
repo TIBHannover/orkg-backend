@@ -234,7 +234,7 @@ A `PUT` request updates a resource with a new given label.
 The response will be `200 OK` when successful.
 The created resource is returned in the body for convenience.
 
-operation::resource-controller-integration-test-edit[snippets='curl-request,http-response']
+operation::resource-controller-integration-test-edit[snippets='request-fields,curl-request,http-response']
 
 [[resources-fetch]]
 === Fetching a resource

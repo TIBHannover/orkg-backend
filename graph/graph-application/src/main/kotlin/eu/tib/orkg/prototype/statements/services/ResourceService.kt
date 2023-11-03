@@ -244,6 +244,7 @@ class ResourceService(
         }
         if (command.observatoryId != null) found = found.copy(observatoryId = command.observatoryId)
         if (command.organizationId != null) found = found.copy(organizationId = command.organizationId)
+        if (command.extractionMethod != null) found = found.copy(extractionMethod = command.extractionMethod)
 
         repository.save(found)
     }

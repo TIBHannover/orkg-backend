@@ -175,8 +175,9 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     requestFields(
-                        fieldWithPath("label")
-                            .description("The resource label")
+                        fieldWithPath("label").description("The resource label."),
+                        fieldWithPath("classes").type("Array").description("The classes of the resource. (optional)").optional(),
+                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "unknown", "manual" or "automatic". (optional, default: "unknown")""").optional()
                     ),
                     createdResponseHeaders(),
                     responseFields(resourceResponseFields())
@@ -223,11 +224,9 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     requestFields(
-                        fieldWithPath("label")
-                            .description("The updated resource label"),
-                        fieldWithPath("classes")
-                            .description("The classes to which the resource belongs to")
-                            .optional()
+                        fieldWithPath("label").description("The updated resource label. (optional)").optional(),
+                        fieldWithPath("classes").description("The classes to which the resource belongs to. (optional)").optional(),
+                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "unknown", "manual" or "automatic". (optional)""").optional()
                     ),
                     responseFields(resourceResponseFields())
                 )
@@ -251,13 +250,9 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
                 document(
                     snippet,
                     requestFields(
-                        fieldWithPath("label")
-                            .type(String)
-                            .description("The updated resource label")
-                            .optional(),
-                        fieldWithPath("classes")
-                            .description("The classes to which the resource belongs to"
-                            ).optional()
+                        fieldWithPath("label").type("String").description("The updated resource label. (optional)").optional(),
+                        fieldWithPath("classes").description("The classes to which the resource belongs to. (optional)").optional(),
+                        fieldWithPath("extraction_method").type("String").description("""The method used to extract the resource. Can be one of "unknown", "manual" or "automatic". (optional)""").optional()
                     ),
                     responseFields(resourceResponseFields())
                 )

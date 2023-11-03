@@ -138,6 +138,7 @@ class ResourceController(
                 id = id,
                 label = request.label,
                 classes = request.classes,
+                extractionMethod = request.extractionMethod
             )
         )
         return ok(service.findById(id).mapToResourceRepresentation().get())
@@ -254,13 +255,16 @@ data class CreateResourceRequest(
     val id: ThingId?,
     val label: String,
     val classes: Set<ThingId> = emptySet(),
+    @JsonProperty("extraction_method")
     val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
 )
 
 data class UpdateResourceRequest(
     val id: ThingId?,
     val label: String?,
-    val classes: Set<ThingId>?
+    val classes: Set<ThingId>?,
+    @JsonProperty("extraction_method")
+    val extractionMethod: ExtractionMethod?
 )
 
 data class UpdateResourceObservatoryRequest(

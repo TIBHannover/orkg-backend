@@ -40,6 +40,7 @@ interface UpdateResourceUseCase {
         val classes: Set<ThingId>? = null,
         val observatoryId: ObservatoryId? = null,
         val organizationId: OrganizationId? = null,
+        val extractionMethod: ExtractionMethod? = null
     )
 }
 

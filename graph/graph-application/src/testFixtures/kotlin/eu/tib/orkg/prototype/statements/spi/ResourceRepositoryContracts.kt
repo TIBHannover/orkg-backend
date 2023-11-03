@@ -51,13 +51,12 @@ fun <R : ResourceRepository> resourceRepositoryContract(repository: R) = describ
                 it.createdAt shouldBe expected.createdAt
                 it.classes shouldContainExactlyInAnyOrder expected.classes
                 it.createdBy shouldBe expected.createdBy
-                it.observatoryId shouldBe it.observatoryId
-                it.extractionMethod shouldBe it.extractionMethod
-                it.organizationId shouldBe it.organizationId
-                it.visibility shouldBe it.visibility
-                it.verified shouldBe it.verified
-                it.unlistedBy shouldBe it.unlistedBy
-                it.id shouldBe expected.id
+                it.observatoryId shouldBe expected.observatoryId
+                it.extractionMethod shouldBe expected.extractionMethod
+                it.organizationId shouldBe expected.organizationId
+                it.visibility shouldBe expected.visibility
+                it.verified shouldBe expected.verified
+                it.unlistedBy shouldBe expected.unlistedBy
             }
         }
         it("updates an already existing resource") {

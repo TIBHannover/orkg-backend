@@ -6,9 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- It is now possible to update the extraction method for resources.
+  (Closes: [#520](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/520))
 ### Fixed
 - Fixed `/api/stats/top/contributors` only returning contributions.
   (Closes: [#517](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/517))
+- Fixed request field name for extraction method not being snake case when updating resources.
+  (Closes: [#520](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/520))
 
 ## [0.40.0] - 2023-10-19
 ### Added

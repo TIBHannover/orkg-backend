@@ -19,39 +19,15 @@ import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
 
-class PaperContentsCreator(
+abstract class ContributionCreator(
     private val resourceService: ResourceUseCases,
     private val statementService: StatementUseCases,
     private val literalService: LiteralUseCases,
     private val predicateService: PredicateUseCases,
     private val statementRepository: StatementRepository,
     private val listService: ListUseCases
-) : PaperAction, ContributionAction {
-    override operator fun invoke(command: CreatePaperCommand, state: PaperState): PaperState {
-        if (command.contents != null) {
-            createPaperContents(
-                paperId = state.paperId!!,
-                contributorId = command.contributorId,
-                contents = command.contents,
-                validatedIds = state.validatedIds,
-                bakedStatements = state.bakedStatements
-            )
-        }
-        return state
-    }
-
-    override operator fun invoke(command: CreateContributionCommand, state: ContributionState): ContributionState =
-        state.copy(
-            contributionId = createPaperContents(
-                paperId = command.paperId,
-                contributorId = command.contributorId,
-                contents = command,
-                validatedIds = state.validatedIds,
-                bakedStatements = state.bakedStatements
-            ).single()
-        )
-
-    internal fun createPaperContents(
+) {
+    internal fun create(
         paperId: ThingId,
         contributorId: ContributorId,
         contents: CreatePaperUseCase.CreateCommand.PaperContents,

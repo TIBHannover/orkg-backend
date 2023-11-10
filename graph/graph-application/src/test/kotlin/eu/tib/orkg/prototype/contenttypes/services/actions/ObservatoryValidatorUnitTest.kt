@@ -3,11 +3,8 @@ package eu.tib.orkg.prototype.contenttypes.services.actions
 import eu.tib.orkg.prototype.community.application.ObservatoryNotFound
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.spi.ObservatoryRepository
-import eu.tib.orkg.prototype.contenttypes.application.OnlyOneObservatoryAllowed
-import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreatePaperCommand
 import eu.tib.orkg.prototype.community.testing.fixtures.createObservatory
-import io.kotest.assertions.asClue
-import io.kotest.matchers.shouldBe
+import eu.tib.orkg.prototype.contenttypes.application.OnlyOneObservatoryAllowed
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -22,7 +19,7 @@ import org.junit.jupiter.api.assertThrows
 class ObservatoryValidatorUnitTest {
     private val observatoryRepository: ObservatoryRepository = mockk()
 
-    private val observatoryValidator = ObservatoryValidator(observatoryRepository)
+    private val observatoryValidator = object : ObservatoryValidator(observatoryRepository) {}
 
     @BeforeEach
     fun resetState() {
@@ -35,45 +32,31 @@ class ObservatoryValidatorUnitTest {
     }
 
     @Test
-    fun `Given a paper create command, when validating its observatory, it returns success`() {
-        val command = dummyCreatePaperCommand()
-        val state = PaperState()
-        val observatory = createObservatory(id = command.observatories[0])
+    fun `Given a list of observatories, when validating, it returns success`() {
+        val id = ObservatoryId(UUID.randomUUID())
+        val observatory = createObservatory(id = id)
 
         every { observatoryRepository.findById(observatory.id) } returns Optional.of(observatory)
 
-        val result = observatoryValidator(command, state)
-
-        result.asClue {
-            it.tempIds.size shouldBe 0
-            it.validatedIds.size shouldBe 0
-            it.bakedStatements.size shouldBe 0
-            it.authors.size shouldBe 0
-            it.paperId shouldBe null
-        }
+        observatoryValidator.validate(listOf(id))
 
         verify(exactly = 1) { observatoryRepository.findById(observatory.id) }
     }
 
     @Test
-    fun `Given a paper create command, when observatory is missing, it throws an exception`() {
-        val command = dummyCreatePaperCommand()
-        val state = PaperState()
+    fun `Given a list of observatories, when observatory is missing, it throws an exception`() {
+        val id = ObservatoryId(UUID.randomUUID())
 
-        every { observatoryRepository.findById(command.observatories[0]) } returns Optional.empty()
+        every { observatoryRepository.findById(id) } returns Optional.empty()
 
-        assertThrows<ObservatoryNotFound> { observatoryValidator(command, state) }
+        assertThrows<ObservatoryNotFound> { observatoryValidator.validate(listOf(id)) }
 
-        verify(exactly = 1) { observatoryRepository.findById(command.observatories[0]) }
+        verify(exactly = 1) { observatoryRepository.findById(id) }
     }
 
     @Test
-    fun `Given a paper create command, when more than one observatory is specified, it throws an exception`() {
-        val command = dummyCreatePaperCommand().copy(
-            observatories = listOf(ObservatoryId(UUID.randomUUID()), ObservatoryId(UUID.randomUUID()))
-        )
-        val state = PaperState()
-
-        assertThrows<OnlyOneObservatoryAllowed> { observatoryValidator(command, state) }
+    fun `Given a list of observatories, when more than one observatory is specified, it throws an exception`() {
+        val ids = listOf(ObservatoryId(UUID.randomUUID()), ObservatoryId(UUID.randomUUID()))
+        assertThrows<OnlyOneObservatoryAllowed> { observatoryValidator.validate(ids) }
     }
 }

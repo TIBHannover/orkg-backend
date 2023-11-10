@@ -2,7 +2,6 @@ package eu.tib.orkg.prototype.contenttypes.services.actions
 
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.contenttypes.api.CreatePaperUseCase
-import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreatePaperCommand
 import eu.tib.orkg.prototype.shared.Either
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.CreateListUseCase
@@ -19,11 +18,9 @@ import eu.tib.orkg.prototype.statements.api.UpdateListUseCase
 import eu.tib.orkg.prototype.statements.domain.model.GeneralStatement
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.StatementRepository
-import eu.tib.orkg.prototype.statements.testing.fixtures.createClass
 import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
 import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
 import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
-import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
@@ -38,7 +35,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class PaperContentsCreatorUnitTest {
+class ContributionCreatorUnitTest {
     private val statementRepository: StatementRepository = mockk()
     private val resourceService: ResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
@@ -46,14 +43,14 @@ class PaperContentsCreatorUnitTest {
     private val predicateService: PredicateUseCases = mockk()
     private val listService: ListUseCases = mockk()
 
-    private val paperContentsCreatorCreator = PaperContentsCreator(
+    private val contributionContentsCreatorCreator = object : ContributionCreator(
         resourceService = resourceService,
         statementService = statementService,
         literalService = literalService,
         predicateService = predicateService,
         statementRepository = statementRepository,
         listService = listService
-    )
+    ) {}
 
     @BeforeEach
     fun resetState() {
@@ -70,238 +67,6 @@ class PaperContentsCreatorUnitTest {
             predicateService,
             listService
         )
-    }
-
-    @Test
-    fun `Given a paper create command, when creating its contents, it returns success`() {
-        val temp1 = CreatePaperUseCase.CreateCommand.PredicateDefinition(
-            label = "hasResult"
-        )
-        val contributionDefinition = CreatePaperUseCase.CreateCommand.Contribution(
-            label = "Contribution 1",
-            classes = setOf(ThingId("C123")),
-            statements = mapOf(
-                "#temp1" to listOf(
-                    CreatePaperUseCase.CreateCommand.StatementObjectDefinition("R3003")
-                )
-            )
-        )
-        val template = createClass(ThingId("C123"))
-        val resource = createResource(ThingId("R3003"))
-        val paperId = ThingId("R15632")
-
-        val command = dummyCreatePaperCommand().copy(
-            contents = CreatePaperUseCase.CreateCommand.PaperContents(
-                predicates = mapOf("#temp1" to temp1),
-                contributions = listOf(contributionDefinition)
-            )
-        )
-        val state = PaperState(
-            tempIds = setOf("#temp1"),
-            validatedIds = mapOf(
-                "#temp1" to Either.left("#temp1"),
-                template.id.value to Either.right(template),
-                resource.id.value to Either.right(resource)
-            ),
-            bakedStatements = setOf(
-                BakedStatement("^0", "#temp1", "R3003")
-            ),
-            paperId = paperId
-        )
-        val contributionId = ThingId("R456")
-        val predicateId = ThingId("R789")
-
-        every {
-            predicateService.create(
-                CreatePredicateUseCase.CreateCommand(
-                    label = temp1.label,
-                    contributorId = command.contributorId
-                )
-            )
-        } returns predicateId
-        every {
-            resourceService.create(
-                CreateResourceUseCase.CreateCommand(
-                    label = contributionDefinition.label,
-                    classes = setOf(Classes.contribution, ThingId("C123")),
-                    contributorId = command.contributorId
-                )
-            )
-        } returns contributionId
-        every {
-            statementService.add(
-                userId = command.contributorId,
-                subject = paperId,
-                predicate = Predicates.hasContribution,
-                `object` = contributionId
-            )
-        } just runs
-        every {
-            statementService.add(
-                userId = command.contributorId,
-                subject = contributionId,
-                predicate = predicateId,
-                `object` = ThingId("R3003")
-            )
-        } just runs
-
-        val result = paperContentsCreatorCreator(command, state)
-
-        result.asClue {
-            it.tempIds shouldBe state.tempIds
-            it.validatedIds shouldBe state.validatedIds
-            it.bakedStatements shouldBe state.bakedStatements
-            it.authors shouldBe state.authors
-            it.paperId shouldBe state.paperId
-        }
-
-        verify(exactly = 1) {
-            predicateService.create(
-                CreatePredicateUseCase.CreateCommand(
-                    label = temp1.label,
-                    contributorId = command.contributorId
-                )
-            )
-        }
-        verify(exactly = 1) {
-            resourceService.create(
-                CreateResourceUseCase.CreateCommand(
-                    label = contributionDefinition.label,
-                    classes = setOf(Classes.contribution, ThingId("C123")),
-                    contributorId = command.contributorId
-                )
-            )
-        }
-        verify(exactly = 1) {
-            statementService.add(
-                userId = command.contributorId,
-                subject = paperId,
-                predicate = Predicates.hasContribution,
-                `object` = contributionId
-            )
-        }
-        verify(exactly = 1) {
-            statementService.add(
-                userId = command.contributorId,
-                subject = contributionId,
-                predicate = predicateId,
-                `object` = ThingId("R3003")
-            )
-        }
-    }
-
-    @Test
-    fun `Given a contribution create command, when creating its contents, it returns success`() {
-        val contributorId = ContributorId(UUID.randomUUID())
-        val temp1 = CreatePaperUseCase.CreateCommand.PredicateDefinition(
-            label = "hasResult"
-        )
-        val contributionDefinition = CreatePaperUseCase.CreateCommand.Contribution(
-            label = "Contribution 1",
-            statements = mapOf(
-                "#temp1" to listOf(
-                    CreatePaperUseCase.CreateCommand.StatementObjectDefinition("R3003")
-                )
-            )
-        )
-        val resource = createResource(id = ThingId("R3003"))
-        val paperId = ThingId("R15632")
-
-        val command = CreateContributionCommand(
-            paperId = paperId,
-            contributorId = contributorId,
-            predicates = mapOf("#temp1" to temp1),
-            contribution = contributionDefinition
-        )
-        val state = ContributionState(
-            tempIds = setOf("#temp1"),
-            validatedIds = mapOf(
-                "#temp1" to Either.left("#temp1"),
-                resource.id.value to Either.right(resource)
-            ),
-            bakedStatements = setOf(
-                BakedStatement("^0", "#temp1", "R3003")
-            )
-        )
-        val contributionId = ThingId("R456")
-        val predicateId = ThingId("R789")
-
-        every {
-            predicateService.create(
-                CreatePredicateUseCase.CreateCommand(
-                    label = temp1.label,
-                    contributorId = command.contributorId
-                )
-            )
-        } returns predicateId
-        every {
-            resourceService.create(
-                CreateResourceUseCase.CreateCommand(
-                    label = contributionDefinition.label,
-                    classes = setOf(Classes.contribution),
-                    contributorId = command.contributorId
-                )
-            )
-        } returns contributionId
-        every {
-            statementService.add(
-                userId = command.contributorId,
-                subject = paperId,
-                predicate = Predicates.hasContribution,
-                `object` = contributionId
-            )
-        } just runs
-        every {
-            statementService.add(
-                userId = command.contributorId,
-                subject = contributionId,
-                predicate = predicateId,
-                `object` = ThingId("R3003")
-            )
-        } just runs
-
-        val result = paperContentsCreatorCreator(command, state)
-
-        result.asClue {
-            it.tempIds shouldBe state.tempIds
-            it.validatedIds shouldBe state.validatedIds
-            it.bakedStatements shouldBe state.bakedStatements
-            it.contributionId shouldBe contributionId
-        }
-
-        verify(exactly = 1) {
-            predicateService.create(
-                CreatePredicateUseCase.CreateCommand(
-                    label = temp1.label,
-                    contributorId = command.contributorId
-                )
-            )
-        }
-        verify(exactly = 1) {
-            resourceService.create(
-                CreateResourceUseCase.CreateCommand(
-                    label = contributionDefinition.label,
-                    classes = setOf(Classes.contribution),
-                    contributorId = command.contributorId
-                )
-            )
-        }
-        verify(exactly = 1) {
-            statementService.add(
-                userId = command.contributorId,
-                subject = paperId,
-                predicate = Predicates.hasContribution,
-                `object` = contributionId
-            )
-        }
-        verify(exactly = 1) {
-            statementService.add(
-                userId = command.contributorId,
-                subject = contributionId,
-                predicate = predicateId,
-                `object` = ThingId("R3003")
-            )
-        }
     }
 
     @Test
@@ -329,7 +94,7 @@ class PaperContentsCreatorUnitTest {
             )
         } returns ThingId("R456")
 
-        val result = paperContentsCreatorCreator.createPaperContents(
+        val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             contents = contents,
@@ -368,7 +133,7 @@ class PaperContentsCreatorUnitTest {
             contributions = emptyList()
         )
 
-        val result = paperContentsCreatorCreator.createPaperContents(
+        val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             contents = contents,
@@ -403,7 +168,7 @@ class PaperContentsCreatorUnitTest {
             )
         } returns literal
 
-        val result = paperContentsCreatorCreator.createPaperContents(
+        val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             contents = contents,
@@ -437,7 +202,7 @@ class PaperContentsCreatorUnitTest {
             contributions = emptyList()
         )
 
-        val result = paperContentsCreatorCreator.createPaperContents(
+        val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             contents = contents,
@@ -471,7 +236,7 @@ class PaperContentsCreatorUnitTest {
             )
         } returns ThingId("R456")
 
-        val result = paperContentsCreatorCreator.createPaperContents(
+        val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             contents = contents,
@@ -531,7 +296,7 @@ class PaperContentsCreatorUnitTest {
             )
         } just runs
 
-        val result = paperContentsCreatorCreator.createPaperContents(
+        val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             contents = contents,
@@ -579,7 +344,7 @@ class PaperContentsCreatorUnitTest {
             contributions = emptyList()
         )
 
-        val result = paperContentsCreatorCreator.createPaperContents(
+        val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             contents = contents,
@@ -624,7 +389,7 @@ class PaperContentsCreatorUnitTest {
             )
         } just runs
 
-        val result = paperContentsCreatorCreator.createPaperContents(
+        val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             contents = contents,
@@ -671,7 +436,7 @@ class PaperContentsCreatorUnitTest {
             contributions = emptyList()
         )
 
-        val result = paperContentsCreatorCreator.createPaperContents(
+        val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             contents = contents,
@@ -713,7 +478,7 @@ class PaperContentsCreatorUnitTest {
             )
         } just runs
 
-        val result = paperContentsCreatorCreator.createPaperContents(
+        val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             contents = contents,
@@ -806,7 +571,7 @@ class PaperContentsCreatorUnitTest {
             )
         } just runs
 
-        val result = paperContentsCreatorCreator.createPaperContents(
+        val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             contents = contents,
@@ -878,7 +643,7 @@ class PaperContentsCreatorUnitTest {
             )
         } just runs
 
-        val result = paperContentsCreatorCreator.createPaperContents(
+        val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             contents = contents,
@@ -927,7 +692,7 @@ class PaperContentsCreatorUnitTest {
             )
         } returns Optional.of(statement)
 
-        val result = paperContentsCreatorCreator.createPaperContents(
+        val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             contents = contents,

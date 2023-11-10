@@ -1,14 +1,11 @@
 package eu.tib.orkg.prototype.contenttypes.services.actions
 
 import eu.tib.orkg.prototype.contenttypes.application.OnlyOneResearchFieldAllowed
-import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreatePaperCommand
-import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.application.ResearchFieldNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ResourceRepository
-import io.kotest.assertions.asClue
-import io.kotest.matchers.shouldBe
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -23,7 +20,7 @@ import org.junit.jupiter.api.assertThrows
 class ResearchFieldValidatorUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
 
-    private val researchFieldValidator = ResearchFieldValidator(resourceRepository)
+    private val researchFieldValidator = object : ResearchFieldValidator(resourceRepository) {}
 
     @BeforeEach
     fun resetState() {
@@ -36,63 +33,43 @@ class ResearchFieldValidatorUnitTest {
     }
 
     @Test
-    fun `Given a paper create command, when validating its research field, it returns success`() {
-        val command = dummyCreatePaperCommand()
-        val state = PaperState()
-        val researchField = createResource(
-            id = command.researchFields[0],
-            classes = setOf(Classes.researchField)
-        )
+    fun `Given a list of research fields, when validating, it returns success`() {
+        val id = ThingId("R12")
+        val researchField = createResource(id, classes = setOf(Classes.researchField))
 
         every { resourceRepository.findById(researchField.id) } returns Optional.of(researchField)
 
-        val result = researchFieldValidator(command, state)
-
-        result.asClue {
-            it.tempIds.size shouldBe 0
-            it.validatedIds.size shouldBe 0
-            it.bakedStatements.size shouldBe 0
-            it.authors.size shouldBe 0
-            it.paperId shouldBe null
-        }
+        researchFieldValidator.validate(listOf(id))
 
         verify(exactly = 1) { resourceRepository.findById(researchField.id) }
     }
 
     @Test
-    fun `Given a paper create command, when research field is missing, it throws an exception`() {
-        val command = dummyCreatePaperCommand()
-        val state = PaperState()
+    fun `Given a list of research fields, when research field is missing, it throws an exception`() {
+        val id = ThingId("R12")
 
-        every { resourceRepository.findById(command.researchFields[0]) } returns Optional.empty()
+        every { resourceRepository.findById(id) } returns Optional.empty()
 
-        assertThrows<ResearchFieldNotFound> { researchFieldValidator(command, state) }
+        assertThrows<ResearchFieldNotFound> { researchFieldValidator.validate(listOf(id)) }
 
-        verify(exactly = 1) { resourceRepository.findById(command.researchFields[0]) }
+        verify(exactly = 1) { resourceRepository.findById(id) }
     }
 
     @Test
-    fun `Given a paper create command, when resource its not a research field, it throws an exception`() {
-        val command = dummyCreatePaperCommand()
-        val state = PaperState()
-        val researchField = createResource(
-            id = command.researchFields[0]
-        )
+    fun `Given a list of research fields, when resource its not a research field, it throws an exception`() {
+        val id = ThingId("R12")
+        val researchField = createResource(id)
 
         every { resourceRepository.findById(researchField.id) } returns Optional.of(researchField)
 
-        assertThrows<ResearchFieldNotFound> { researchFieldValidator(command, state) }
+        assertThrows<ResearchFieldNotFound> { researchFieldValidator.validate(listOf(id)) }
 
         verify(exactly = 1) { resourceRepository.findById(researchField.id) }
     }
 
     @Test
-    fun `Given a paper create command, when more than one research field is specified, it throws an exception`() {
-        val command = dummyCreatePaperCommand().copy(
-            researchFields = listOf(ThingId("R12"), ThingId("R11"))
-        )
-        val state = PaperState()
-
-        assertThrows<OnlyOneResearchFieldAllowed> { researchFieldValidator(command, state) }
+    fun `Given a list of research fields, when more than one research field is specified, it throws an exception`() {
+        val ids = listOf(ThingId("R12"), ThingId("R11"))
+        assertThrows<OnlyOneResearchFieldAllowed> { researchFieldValidator.validate(ids) }
     }
 }

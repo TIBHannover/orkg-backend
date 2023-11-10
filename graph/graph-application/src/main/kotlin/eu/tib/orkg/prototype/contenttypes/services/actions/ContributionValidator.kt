@@ -1,6 +1,7 @@
 package eu.tib.orkg.prototype.contenttypes.services.actions
 
-import eu.tib.orkg.prototype.contenttypes.api.CreatePaperUseCase
+import eu.tib.orkg.prototype.contenttypes.api.CreatePaperUseCase.CreateCommand.PaperContents
+import eu.tib.orkg.prototype.contenttypes.api.CreatePaperUseCase.CreateCommand.StatementObjectDefinition
 import eu.tib.orkg.prototype.contenttypes.application.EmptyContribution
 import eu.tib.orkg.prototype.contenttypes.application.InvalidStatementSubject
 import eu.tib.orkg.prototype.contenttypes.application.ThingIsNotAClass
@@ -12,18 +13,25 @@ import eu.tib.orkg.prototype.statements.domain.model.Predicate
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.spi.ThingRepository
 
-class ContributionValidator(
+abstract class ContributionValidator(
     override val thingRepository: ThingRepository
-) : PaperAction, ContributionAction, ThingIdValidator {
-    override operator fun invoke(command: CreatePaperCommand, state: PaperState): PaperState {
-        val bakedStatements: MutableSet<BakedStatement> = mutableSetOf()
-        val validatedIds = state.validatedIds.toMutableMap()
-        command.contents?.contributions?.forEachIndexed { index, contribution ->
+) : ThingIdValidator {
+    internal fun validate(
+        bakedStatements: MutableSet<BakedStatement>,
+        validatedIds: MutableMap<String, Either<String, Thing>>,
+        tempIds: Set<String>,
+        contents: PaperContents?
+    ) {
+        contents?.contributions?.forEachIndexed { index, contribution ->
             if (contribution.statements.isEmpty()) {
-                throw EmptyContribution(index)
+                if (contents.contributions.size == 1) {
+                    throw EmptyContribution()
+                } else {
+                    throw EmptyContribution(index)
+                }
             }
             contribution.classes.forEach {
-                validateId(it.value, state.tempIds, validatedIds).onRight { thing ->
+                validateId(it.value, tempIds, validatedIds).onRight { thing ->
                     if (thing !is Class) {
                         throw ThingIsNotAClass(thing.id)
                     }
@@ -32,45 +40,19 @@ class ContributionValidator(
             bakeStatements(
                 subject = "^$index",
                 definitions = contribution.statements,
-                tempIds = state.tempIds,
-                contents = command.contents,
+                tempIds = tempIds,
+                contents = contents,
                 validatedIds = validatedIds,
                 destination = bakedStatements
             )
         }
-        return state.copy(bakedStatements = bakedStatements, validatedIds = validatedIds)
-    }
-
-    override operator fun invoke(command: CreateContributionCommand, state: ContributionState): ContributionState {
-        val bakedStatements: MutableSet<BakedStatement> = mutableSetOf()
-        val validatedIds = state.validatedIds.toMutableMap()
-        val contribution = command.contributions.single()
-        if (contribution.statements.isEmpty()) {
-            throw EmptyContribution()
-        }
-        contribution.classes.forEach {
-            validateId(it.value, state.tempIds, validatedIds).onRight { thing ->
-                if (thing !is Class) {
-                    throw ThingIsNotAClass(thing.id)
-                }
-            }
-        }
-        bakeStatements(
-            subject = "^0",
-            definitions = contribution.statements,
-            tempIds = state.tempIds,
-            contents = command,
-            validatedIds = validatedIds,
-            destination = bakedStatements
-        )
-        return state.copy(bakedStatements = bakedStatements, validatedIds = validatedIds)
     }
 
     internal fun bakeStatements(
         subject: String,
-        definitions: Map<String, List<CreatePaperUseCase.CreateCommand.StatementObjectDefinition>>,
+        definitions: Map<String, List<StatementObjectDefinition>>,
         tempIds: Set<String>,
-        contents: CreatePaperUseCase.CreateCommand.PaperContents,
+        contents: PaperContents,
         validatedIds: MutableMap<String, Either<String, Thing>>,
         destination: MutableSet<BakedStatement>
     ) {

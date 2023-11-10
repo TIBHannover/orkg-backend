@@ -1,6 +1,8 @@
-package eu.tib.orkg.prototype.contenttypes.services.actions
+package eu.tib.orkg.prototype.contenttypes.services.actions.paper
 
 import eu.tib.orkg.prototype.contenttypes.api.Identifiers
+import eu.tib.orkg.prototype.contenttypes.services.actions.CreatePaperCommand
+import eu.tib.orkg.prototype.contenttypes.services.actions.PaperState
 import eu.tib.orkg.prototype.identifiers.domain.parse
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases

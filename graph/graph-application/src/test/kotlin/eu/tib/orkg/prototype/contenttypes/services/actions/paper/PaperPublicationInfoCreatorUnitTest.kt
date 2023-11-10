@@ -1,6 +1,7 @@
-package eu.tib.orkg.prototype.contenttypes.services.actions
+package eu.tib.orkg.prototype.contenttypes.services.actions.paper
 
 import eu.tib.orkg.prototype.contenttypes.domain.model.PublicationInfo
+import eu.tib.orkg.prototype.contenttypes.services.actions.PaperState
 import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreatePaperCommand
 import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
 import eu.tib.orkg.prototype.statements.testing.fixtures.createResource

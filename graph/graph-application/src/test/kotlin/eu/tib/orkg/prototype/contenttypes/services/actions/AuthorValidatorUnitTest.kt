@@ -16,7 +16,6 @@ import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
 import eu.tib.orkg.prototype.statements.testing.fixtures.createPredicate
 import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
 import eu.tib.orkg.prototype.statements.testing.fixtures.createStatement
-import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
@@ -35,7 +34,7 @@ class AuthorValidatorUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
 
-    private val authorValidator = AuthorValidator(resourceRepository, statementRepository)
+    private val authorValidator = object : AuthorValidator(resourceRepository, statementRepository) {}
 
     @BeforeEach
     fun resetState() {
@@ -48,9 +47,8 @@ class AuthorValidatorUnitTest {
     }
 
     @Test
-    fun `Given a paper create command, when validating its authors, it returns success`() {
-        val command = dummyCreatePaperCommand()
-        val state = PaperState()
+    fun `Given a list of authors, when validating, it returns success`() {
+        val authors = dummyCreatePaperCommand().authors
 
         val author1 = createResource(id = ThingId("R123"), classes = setOf(Classes.author))
         val author2 = createResource(id = ThingId("R456"), classes = setOf(Classes.author))
@@ -80,35 +78,29 @@ class AuthorValidatorUnitTest {
             )
         )
 
-        val result = authorValidator(command, state)
+        val result = authorValidator.validate(authors)
 
-        result.asClue {
-            it.tempIds.size shouldBe 0
-            it.validatedIds.size shouldBe 0
-            it.bakedStatements.size shouldBe 0
-            it.authors shouldBe listOf(
-                Author(
-                    id = ThingId("R123"),
-                    name = "Author with id"
-                ),
-                Author(
-                    name = "Author with orcid",
-                    identifiers = mapOf("orcid" to "0000-1111-2222-3333")
-                ),
-                Author(
-                    id = ThingId("R456"),
-                    name = "Author with id and orcid"
-                ),
-                Author(
-                    name = "Author with homepage",
-                    homepage = URI.create("http://example.org/author")
-                ),
-                Author(
-                    name = "Author that just has a name"
-                )
+        result shouldBe listOf(
+            Author(
+                id = ThingId("R123"),
+                name = "Author with id"
+            ),
+            Author(
+                name = "Author with orcid",
+                identifiers = mapOf("orcid" to "0000-1111-2222-3333")
+            ),
+            Author(
+                id = ThingId("R456"),
+                name = "Author with id and orcid"
+            ),
+            Author(
+                name = "Author with homepage",
+                homepage = URI.create("http://example.org/author")
+            ),
+            Author(
+                name = "Author that just has a name"
             )
-            it.paperId shouldBe null
-        }
+        )
 
         verify(exactly = 1) { resourceRepository.findById(author1.id) }
         verify(exactly = 1) { resourceRepository.findById(author2.id) }
@@ -131,41 +123,36 @@ class AuthorValidatorUnitTest {
     }
 
     @Test
-    fun `Given a paper create command, when author does not exist, it throws an exception`() {
-        val command = dummyCreatePaperCommand()
-        val state = PaperState()
+    fun `Given a list of authors, when author does not exist, it throws an exception`() {
+        val authors = dummyCreatePaperCommand().authors
 
         every { resourceRepository.findById(any()) } returns Optional.empty()
 
-        assertThrows<AuthorNotFound> { authorValidator(command, state) }
+        assertThrows<AuthorNotFound> { authorValidator.validate(authors) }
 
         verify(exactly = 1) { resourceRepository.findById(any()) }
     }
 
     @Test
-    fun `Given a paper create command, when author is not a author resource, it throws an exception`() {
-        val command = dummyCreatePaperCommand()
-        val state = PaperState()
+    fun `Given a list of authors, when author is not an author resource, it throws an exception`() {
+        val authors = dummyCreatePaperCommand().authors
 
         every { resourceRepository.findById(any()) } returns Optional.of(createResource())
 
-        assertThrows<AuthorNotFound> { authorValidator(command, state) }
+        assertThrows<AuthorNotFound> { authorValidator.validate(authors) }
 
         verify(exactly = 1) { resourceRepository.findById(any()) }
     }
 
     @Test
-    fun `Given a paper create command, when author is ambiguous because id and identifier match different resources, it throws an exception`() {
-        val command = dummyCreatePaperCommand().copy(
-            authors = listOf(
-                Author(
-                    id = ThingId("R123"),
-                    name = "Author with orcid",
-                    identifiers = mapOf("orcid" to "0000-1111-2222-3333")
-                )
+    fun `Given a list of authors, when author is ambiguous because id and identifier match different resources, it throws an exception`() {
+        val authors = listOf(
+            Author(
+                id = ThingId("R123"),
+                name = "Author with orcid",
+                identifiers = mapOf("orcid" to "0000-1111-2222-3333")
             )
         )
-        val state = PaperState()
 
         val author1 = createResource(id = ThingId("R123"), classes = setOf(Classes.author))
         val author2 = createResource(id = ThingId("R456"), classes = setOf(Classes.author))
@@ -186,7 +173,7 @@ class AuthorValidatorUnitTest {
             )
         )
 
-        assertThrows<AmbiguousAuthor> { authorValidator(command, state) }
+        assertThrows<AmbiguousAuthor> { authorValidator.validate(authors) }
 
         verify(exactly = 1) { resourceRepository.findById(author1.id) }
         verify(exactly = 1) {
@@ -200,20 +187,17 @@ class AuthorValidatorUnitTest {
     }
 
     @Test
-    fun `Given a paper create command, when author is ambiguous because identifiers match different resources, it throws an exception`() {
-        val command = dummyCreatePaperCommand().copy(
-            authors = listOf(
-                Author(
-                    id = ThingId("R123"),
-                    name = "Author with orcid",
-                    identifiers = mapOf(
-                        "orcid" to "0000-1111-2222-3333",
-                        "research_gate" to "1111-2222-3333-4444"
-                    )
+    fun `Given a list of authors, when author is ambiguous because identifiers match different resources, it throws an exception`() {
+        val authors = listOf(
+            Author(
+                id = ThingId("R123"),
+                name = "Author with orcid",
+                identifiers = mapOf(
+                    "orcid" to "0000-1111-2222-3333",
+                    "research_gate" to "1111-2222-3333-4444"
                 )
             )
         )
-        val state = PaperState()
 
         val author1 = createResource(id = ThingId("R123"), classes = setOf(Classes.author))
         val author2 = createResource(id = ThingId("R456"), classes = setOf(Classes.author))
@@ -248,7 +232,7 @@ class AuthorValidatorUnitTest {
             )
         )
 
-        assertThrows<AmbiguousAuthor> { authorValidator(command, state) }
+        assertThrows<AmbiguousAuthor> { authorValidator.validate(authors) }
 
         verify(exactly = 1) { resourceRepository.findById(author1.id) }
         verify(exactly = 1) {
@@ -270,19 +254,16 @@ class AuthorValidatorUnitTest {
     }
 
     @Test
-    fun `Given a paper create command, when author identifier is structurally invalid, it throws an exception`() {
-        val command = dummyCreatePaperCommand().copy(
-            authors = listOf(
-                Author(
-                    name = "Invalid Author",
-                    identifiers = mapOf(
-                        "orcid" to "invalid"
-                    )
+    fun `Given a list of authors, when author identifier is structurally invalid, it throws an exception`() {
+        val authors = listOf(
+            Author(
+                name = "Invalid Author",
+                identifiers = mapOf(
+                    "orcid" to "invalid"
                 )
             )
         )
-        val state = PaperState()
 
-        assertThrows<InvalidIdentifier> { authorValidator(command, state) }.property shouldBe "orcid"
+        assertThrows<InvalidIdentifier> { authorValidator.validate(authors) }.property shouldBe "orcid"
     }
 }

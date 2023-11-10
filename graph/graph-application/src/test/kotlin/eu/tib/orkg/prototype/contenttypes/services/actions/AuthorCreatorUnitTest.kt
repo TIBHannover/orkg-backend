@@ -1,8 +1,7 @@
 package eu.tib.orkg.prototype.contenttypes.services.actions
 
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
-import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreatePaperCommand
-import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.CreateListUseCase
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
@@ -13,8 +12,7 @@ import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
-import io.kotest.assertions.asClue
-import io.kotest.matchers.shouldBe
+import eu.tib.orkg.prototype.statements.testing.fixtures.createLiteral
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -28,18 +26,14 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class PaperAuthorCreatorUnitTest {
+class AuthorCreatorUnitTest {
     private val resourceService: ResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
     private val listService: ListUseCases = mockk()
 
-    private val paperAuthorCreator = PaperAuthorCreator(
-        resourceService = resourceService,
-        statementService = statementService,
-        literalService = literalService,
-        listService = listService
-    )
+    private val authorCreator =
+        object : AuthorCreator(resourceService, statementService, literalService, listService) {}
 
     @BeforeEach
     fun resetState() {
@@ -52,61 +46,49 @@ class PaperAuthorCreatorUnitTest {
     }
 
     @Test
-    fun `Given a paper create command, when linking an existing author to the paper, it returns success`() {
-        val paperId = ThingId("R123")
-        val command = dummyCreatePaperCommand()
+    fun `Given a list of authors, when linking an existing author to the subject resource, it returns success`() {
+        val subjectId = ThingId("R123")
         val authorId = ThingId("R456")
         val author = Author(
             id = authorId,
             name = "Author"
         )
-        val state = PaperState(
-            authors = listOf(author),
-            paperId = paperId
-        )
         val authorListId = ThingId("R1456")
+        val contributorId = ContributorId(UUID.randomUUID())
 
         every {
             listService.create(
                 CreateListUseCase.CreateCommand(
                     label = "authors list",
                     elements = listOf(authorId),
-                    contributorId = command.contributorId
+                    contributorId = contributorId
                 )
             )
         } returns authorListId
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = paperId,
+                userId = contributorId,
+                subject = subjectId,
                 predicate = Predicates.hasAuthors,
                 `object` = authorListId
             )
         } just runs
 
-        val result = paperAuthorCreator(command, state)
-
-        result.asClue {
-            it.tempIds.size shouldBe 0
-            it.validatedIds.size shouldBe 0
-            it.bakedStatements.size shouldBe 0
-            it.authors shouldBe state.authors
-            it.paperId shouldBe state.paperId
-        }
+        authorCreator.create(contributorId, listOf(author), subjectId)
 
         verify(exactly = 1) {
             listService.create(
                 CreateListUseCase.CreateCommand(
                     label = "authors list",
                     elements = listOf(authorId),
-                    contributorId = command.contributorId
+                    contributorId = contributorId
                 )
             )
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = paperId,
+                userId = contributorId,
+                subject = subjectId,
                 predicate = Predicates.hasAuthors,
                 `object` = authorListId
             )
@@ -114,23 +96,19 @@ class PaperAuthorCreatorUnitTest {
     }
 
     @Test
-    fun `Given a paper create command, it crates a new author literal and links it to the paper`() {
-        val paperId = ThingId("R123")
-        val command = dummyCreatePaperCommand()
+    fun `Given a list of authors, it crates a new author literal and links it to the subject resource`() {
+        val subjectId = ThingId("R123")
         val author = Author(
             name = "Author"
         )
         val authorId = ThingId("R456")
-        val state = PaperState(
-            authors = listOf(author),
-            paperId = paperId
-        )
         val literal = createLiteral(id = authorId, label = author.name)
         val authorListId = ThingId("R1456")
+        val contributorId = ContributorId(UUID.randomUUID())
 
         every {
             literalService.create(
-                userId = command.contributorId,
+                userId = contributorId,
                 label = author.name,
                 datatype = Literals.XSD.STRING.prefixedUri
             )
@@ -140,32 +118,24 @@ class PaperAuthorCreatorUnitTest {
                 CreateListUseCase.CreateCommand(
                     label = "authors list",
                     elements = listOf(authorId),
-                    contributorId = command.contributorId
+                    contributorId = contributorId
                 )
             )
         } returns authorListId
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = paperId,
+                userId = contributorId,
+                subject = subjectId,
                 predicate = Predicates.hasAuthors,
                 `object` = authorListId
             )
         } just runs
 
-        val result = paperAuthorCreator(command, state)
-
-        result.asClue {
-            it.tempIds.size shouldBe 0
-            it.validatedIds.size shouldBe 0
-            it.bakedStatements.size shouldBe 0
-            it.authors shouldBe state.authors
-            it.paperId shouldBe state.paperId
-        }
+        authorCreator.create(contributorId, listOf(author), subjectId)
 
         verify(exactly = 1) {
             literalService.create(
-                userId = command.contributorId,
+                userId = contributorId,
                 label = author.name,
                 datatype = Literals.XSD.STRING.prefixedUri
             )
@@ -175,14 +145,14 @@ class PaperAuthorCreatorUnitTest {
                 CreateListUseCase.CreateCommand(
                     label = "authors list",
                     elements = listOf(authorId),
-                    contributorId = command.contributorId
+                    contributorId = contributorId
                 )
             )
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = paperId,
+                userId = contributorId,
+                subject = subjectId,
                 predicate = Predicates.hasAuthors,
                 `object` = authorListId
             )
@@ -190,9 +160,8 @@ class PaperAuthorCreatorUnitTest {
     }
 
     @Test
-    fun `Given a paper create command, it crates a new author resource and links it to the paper`() {
-        val paperId = ThingId("R123")
-        val command = dummyCreatePaperCommand()
+    fun `Given a list of authors, it crates a new author resource and links it to the subject resource`() {
+        val subjectId = ThingId("R123")
         val orcid = "0000-1111-2222-3333"
         val author = Author(
             name = "Author",
@@ -202,14 +171,11 @@ class PaperAuthorCreatorUnitTest {
             homepage = URI.create("https://orkg.org")
         )
         val authorId = ThingId("R456")
-        val state = PaperState(
-            authors = listOf(author),
-            paperId = paperId
-        )
+        val contributorId = ContributorId(UUID.randomUUID())
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             label = author.name,
             classes = setOf(Classes.author),
-            contributorId = command.contributorId
+            contributorId = contributorId
         )
         val orcidLiteral = createLiteral(
             id = ThingId(UUID.randomUUID().toString()),
@@ -224,14 +190,14 @@ class PaperAuthorCreatorUnitTest {
         every { resourceService.create(resourceCreateCommand) } returns authorId
         every {
             literalService.create(
-                userId = command.contributorId,
+                userId = contributorId,
                 label = orcid,
                 datatype = Literals.XSD.STRING.prefixedUri
             )
         } returns orcidLiteral
         every {
             statementService.add(
-                userId = command.contributorId,
+                userId = contributorId,
                 subject = authorId,
                 predicate = Predicates.hasORCID,
                 `object` = orcidLiteral.id
@@ -239,14 +205,14 @@ class PaperAuthorCreatorUnitTest {
         } just runs
         every {
             literalService.create(
-                userId = command.contributorId,
+                userId = contributorId,
                 label = author.homepage.toString(),
                 datatype = Literals.XSD.URI.prefixedUri
             )
         } returns homepageLiteral
         every {
             statementService.add(
-                userId = command.contributorId,
+                userId = contributorId,
                 subject = authorId,
                 predicate = Predicates.hasWebsite,
                 `object` = homepageLiteral.id
@@ -257,40 +223,32 @@ class PaperAuthorCreatorUnitTest {
                 CreateListUseCase.CreateCommand(
                     label = "authors list",
                     elements = listOf(authorId),
-                    contributorId = command.contributorId
+                    contributorId = contributorId
                 )
             )
         } returns authorListId
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = paperId,
+                userId = contributorId,
+                subject = subjectId,
                 predicate = Predicates.hasAuthors,
                 `object` = authorListId
             )
         } just runs
 
-        val result = paperAuthorCreator(command, state)
-
-        result.asClue {
-            it.tempIds.size shouldBe 0
-            it.validatedIds.size shouldBe 0
-            it.bakedStatements.size shouldBe 0
-            it.authors shouldBe state.authors
-            it.paperId shouldBe state.paperId
-        }
+        authorCreator.create(contributorId, listOf(author), subjectId)
 
         verify(exactly = 1) { resourceService.create(resourceCreateCommand) }
         verify(exactly = 1) {
             literalService.create(
-                userId = command.contributorId,
+                userId = contributorId,
                 label = orcid,
                 datatype = Literals.XSD.STRING.prefixedUri
             )
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
+                userId = contributorId,
                 subject = authorId,
                 predicate = Predicates.hasORCID,
                 `object` = orcidLiteral.id
@@ -298,14 +256,14 @@ class PaperAuthorCreatorUnitTest {
         }
         verify(exactly = 1) {
             literalService.create(
-                userId = command.contributorId,
+                userId = contributorId,
                 label = author.homepage.toString(),
                 datatype = Literals.XSD.URI.prefixedUri
             )
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
+                userId = contributorId,
                 subject = authorId,
                 predicate = Predicates.hasWebsite,
                 `object` = homepageLiteral.id
@@ -316,14 +274,14 @@ class PaperAuthorCreatorUnitTest {
                 CreateListUseCase.CreateCommand(
                     label = "authors list",
                     elements = listOf(authorId),
-                    contributorId = command.contributorId
+                    contributorId = contributorId
                 )
             )
         }
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = paperId,
+                userId = contributorId,
+                subject = subjectId,
                 predicate = Predicates.hasAuthors,
                 `object` = authorListId
             )

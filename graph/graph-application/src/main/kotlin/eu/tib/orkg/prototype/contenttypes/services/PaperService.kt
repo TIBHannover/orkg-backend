@@ -8,21 +8,27 @@ import eu.tib.orkg.prototype.contenttypes.api.PaperUseCases
 import eu.tib.orkg.prototype.contenttypes.application.PaperNotFound
 import eu.tib.orkg.prototype.contenttypes.domain.model.Paper
 import eu.tib.orkg.prototype.contenttypes.domain.model.PublicationInfo
-import eu.tib.orkg.prototype.contenttypes.services.actions.AuthorValidator
-import eu.tib.orkg.prototype.contenttypes.services.actions.ContributionValidator
-import eu.tib.orkg.prototype.contenttypes.services.actions.ObservatoryValidator
-import eu.tib.orkg.prototype.contenttypes.services.actions.OrganizationValidator
-import eu.tib.orkg.prototype.contenttypes.services.actions.PaperAction
-import eu.tib.orkg.prototype.contenttypes.services.actions.PaperAuthorCreator
-import eu.tib.orkg.prototype.contenttypes.services.actions.PaperContentsCreator
-import eu.tib.orkg.prototype.contenttypes.services.actions.PaperExistenceValidator
-import eu.tib.orkg.prototype.contenttypes.services.actions.PaperIdentifierCreator
-import eu.tib.orkg.prototype.contenttypes.services.actions.PaperPublicationInfoCreator
-import eu.tib.orkg.prototype.contenttypes.services.actions.PaperResearchFieldCreator
-import eu.tib.orkg.prototype.contenttypes.services.actions.PaperResourceCreator
-import eu.tib.orkg.prototype.contenttypes.services.actions.ResearchFieldValidator
-import eu.tib.orkg.prototype.contenttypes.services.actions.TempIdValidator
-import eu.tib.orkg.prototype.contenttypes.services.actions.ThingDefinitionValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.contribution.ContributionContentsCreator
+import eu.tib.orkg.prototype.contenttypes.services.actions.contribution.ContributionContentsValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.contribution.ContributionPaperExistenceValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.contribution.ContributionTempIdValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.contribution.ContributionThingDefinitionValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.execute
+import eu.tib.orkg.prototype.contenttypes.services.actions.paper.PaperAction
+import eu.tib.orkg.prototype.contenttypes.services.actions.paper.PaperAuthorCreator
+import eu.tib.orkg.prototype.contenttypes.services.actions.paper.PaperAuthorValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.paper.PaperContributionCreator
+import eu.tib.orkg.prototype.contenttypes.services.actions.paper.PaperContributionValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.paper.PaperExistenceValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.paper.PaperIdentifierCreator
+import eu.tib.orkg.prototype.contenttypes.services.actions.paper.PaperObservatoryValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.paper.PaperOrganizationValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.paper.PaperPublicationInfoCreator
+import eu.tib.orkg.prototype.contenttypes.services.actions.paper.PaperResearchFieldCreator
+import eu.tib.orkg.prototype.contenttypes.services.actions.paper.PaperResearchFieldValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.paper.PaperResourceCreator
+import eu.tib.orkg.prototype.contenttypes.services.actions.paper.PaperTempIdValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.paper.PaperThingDefinitionValidator
 import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.ListUseCases
@@ -48,7 +54,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import eu.tib.orkg.prototype.contenttypes.api.CreateContributionUseCase.CreateCommand as CreateContributionCommand
 import eu.tib.orkg.prototype.contenttypes.api.CreatePaperUseCase.CreateCommand as CreatePaperCommand
-import eu.tib.orkg.prototype.contenttypes.services.actions.ContributionAction.State as ContributionState
+import eu.tib.orkg.prototype.contenttypes.services.actions.contribution.ContributionAction.State as ContributionState
 
 @Service
 class PaperService(
@@ -112,33 +118,33 @@ class PaperService(
 
     override fun create(command: CreatePaperCommand): ThingId {
         val steps = listOf(
-            TempIdValidator(),
-            PaperExistenceValidator(resourceRepository, resourceService, statementRepository),
-            ResearchFieldValidator(resourceRepository),
-            ObservatoryValidator(observatoryRepository),
-            OrganizationValidator(organizationRepository),
-            AuthorValidator(resourceRepository, statementRepository),
-            ThingDefinitionValidator(thingRepository),
-            ContributionValidator(thingRepository),
+            PaperTempIdValidator(),
+            PaperExistenceValidator(resourceService, statementRepository),
+            PaperResearchFieldValidator(resourceRepository),
+            PaperObservatoryValidator(observatoryRepository),
+            PaperOrganizationValidator(organizationRepository),
+            PaperAuthorValidator(resourceRepository, statementRepository),
+            PaperThingDefinitionValidator(thingRepository),
+            PaperContributionValidator(thingRepository),
             PaperResourceCreator(resourceService),
             PaperIdentifierCreator(statementService, literalService),
             PaperAuthorCreator(resourceService, statementService, literalService, listService),
             PaperResearchFieldCreator(statementService),
             PaperPublicationInfoCreator(resourceService, resourceRepository, statementService, literalService),
-            PaperContentsCreator(resourceService, statementService, literalService, predicateService, statementRepository, listService)
+            PaperContributionCreator(resourceService, statementService, literalService, predicateService, statementRepository, listService)
         )
-        return steps.fold(PaperAction.State()) { state, executor -> executor(command, state) }.paperId!!
+        return steps.execute(command, PaperAction.State()).paperId!!
     }
 
     override fun createContribution(command: CreateContributionCommand): ThingId {
         val steps = listOf(
-            TempIdValidator(),
-            PaperExistenceValidator(resourceRepository, resourceService, statementRepository),
-            ThingDefinitionValidator(thingRepository),
-            ContributionValidator(thingRepository),
-            PaperContentsCreator(resourceService, statementService, literalService, predicateService, statementRepository, listService)
+            ContributionTempIdValidator(),
+            ContributionPaperExistenceValidator(resourceRepository),
+            ContributionThingDefinitionValidator(thingRepository),
+            ContributionContentsValidator(thingRepository),
+            ContributionContentsCreator(resourceService, statementService, literalService, predicateService, statementRepository, listService)
         )
-        return steps.fold(ContributionState()) { state, executor -> executor(command, state) }.contributionId!!
+        return steps.execute(command, ContributionState()).contributionId!!
     }
 
     override fun publish(id: ThingId, subject: String, description: String) {

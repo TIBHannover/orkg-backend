@@ -1,5 +1,6 @@
 package eu.tib.orkg.prototype.contenttypes.services.actions
 
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreatePaperCommand
 import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.api.StatementUseCases
@@ -13,14 +14,15 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
+import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class PaperResearchFieldCreatorUnitTest {
+class ResearchFieldCreatorUnitTest {
     private val statementService: StatementUseCases = mockk()
 
-    private val paperResearchFieldCreator = PaperResearchFieldCreator(statementService)
+    private val researchFieldCreator = object : ResearchFieldCreator(statementService) {}
 
     @BeforeEach
     fun resetState() {
@@ -33,38 +35,28 @@ class PaperResearchFieldCreatorUnitTest {
     }
 
     @Test
-    fun `Given a paper create command, when linking research fields, it returns success`() {
-        val paperId = ThingId("R123")
-        val command = dummyCreatePaperCommand()
-        val state = PaperState(
-            paperId = paperId
-        )
+    fun `Given a subject resource, when linking research fields, it returns success`() {
+        val id = ThingId("R12")
+        val contributorId = ContributorId(UUID.randomUUID())
+        val subjectId = ThingId("R123")
 
         every {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.paperId!!,
+                userId = contributorId,
+                subject = subjectId,
                 predicate = Predicates.hasResearchField,
-                `object` = command.researchFields[0]
+                `object` = id
             )
         } just runs
 
-        val result = paperResearchFieldCreator(command, state)
-
-        result.asClue {
-            it.tempIds.size shouldBe 0
-            it.validatedIds.size shouldBe 0
-            it.bakedStatements.size shouldBe 0
-            it.authors.size shouldBe 0
-            it.paperId shouldBe state.paperId
-        }
+        researchFieldCreator.create(contributorId, listOf(id), subjectId)
 
         verify(exactly = 1) {
             statementService.add(
-                userId = command.contributorId,
-                subject = state.paperId!!,
+                userId = contributorId,
+                subject = subjectId,
                 predicate = Predicates.hasResearchField,
-                `object` = command.researchFields[0]
+                `object` = id
             )
         }
     }

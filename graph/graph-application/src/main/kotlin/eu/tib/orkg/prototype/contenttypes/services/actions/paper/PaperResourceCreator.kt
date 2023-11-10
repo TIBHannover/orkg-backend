@@ -1,5 +1,7 @@
-package eu.tib.orkg.prototype.contenttypes.services.actions
+package eu.tib.orkg.prototype.contenttypes.services.actions.paper
 
+import eu.tib.orkg.prototype.contenttypes.services.actions.CreatePaperCommand
+import eu.tib.orkg.prototype.contenttypes.services.actions.PaperState
 import eu.tib.orkg.prototype.statements.api.Classes
 import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.ResourceUseCases

@@ -1,19 +1,11 @@
 package eu.tib.orkg.prototype.contenttypes.services.actions
 
-import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.contenttypes.api.CreatePaperUseCase
 import eu.tib.orkg.prototype.contenttypes.application.ThingIsNotAClass
-import eu.tib.orkg.prototype.statements.testing.fixtures.createClass
-import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
-import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreateContributionCommand
-import eu.tib.orkg.prototype.contenttypes.testing.fixtures.dummyCreatePaperCommand
-import eu.tib.orkg.prototype.shared.Either
-import eu.tib.orkg.prototype.statements.api.Predicates
 import eu.tib.orkg.prototype.statements.application.ThingNotFound
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.statements.spi.ThingRepository
-import io.kotest.assertions.asClue
-import io.kotest.matchers.shouldBe
+import eu.tib.orkg.prototype.statements.testing.fixtures.createResource
 import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -30,7 +22,7 @@ import org.junit.jupiter.api.assertThrows
 class ThingDefinitionValidatorUnitTest {
     private val thingRepository: ThingRepository = mockk()
 
-    private val thingDefinitionValidator = ThingDefinitionValidator(thingRepository)
+    private val thingDefinitionValidator = object : ThingDefinitionValidator(thingRepository) {}
 
     @BeforeEach
     fun resetState() {
@@ -40,105 +32,6 @@ class ThingDefinitionValidatorUnitTest {
     @AfterEach
     fun verifyMocks() {
         confirmVerified(thingRepository)
-    }
-
-    @Test
-    fun `Given a paper create command, when validating its thing definitions, it returns success`() {
-        val command = dummyCreatePaperCommand()
-        val state = PaperState()
-
-        val `class` = createClass(ThingId("R2000"))
-
-        every { thingRepository.findByThingId(`class`.id) } returns Optional.of(`class`)
-
-        val result = thingDefinitionValidator(command, state)
-
-        result.asClue {
-            it.tempIds.size shouldBe 0
-            it.validatedIds shouldBe mapOf(`class`.id.value to Either.right(`class`))
-            it.bakedStatements.size shouldBe 0
-            it.authors.size shouldBe 0
-            it.paperId shouldBe null
-        }
-
-        verify(exactly = 1) { thingRepository.findByThingId(`class`.id) }
-    }
-
-    @Test
-    fun `Given a paper create command, when no things are defined, it returns success`() {
-        val command = dummyCreatePaperCommand().let {
-            it.copy(
-                contents = CreatePaperUseCase.CreateCommand.PaperContents(
-                    resources = emptyMap(),
-                    literals = emptyMap(),
-                    predicates = emptyMap(),
-                    lists = emptyMap(),
-                    contributions = it.contents!!.contributions
-                )
-            )
-        }
-        val state = PaperState()
-
-        val result = thingDefinitionValidator(command, state)
-
-        result.asClue {
-            it.tempIds.size shouldBe 0
-            it.validatedIds.size shouldBe 0
-            it.bakedStatements.size shouldBe 0
-            it.authors.size shouldBe 0
-            it.paperId shouldBe null
-        }
-    }
-
-    @Test
-    fun `Given a contribution create command, when validating its thing definitions, it returns success`() {
-        val command = dummyCreateContributionCommand()
-        val state = ContributionState()
-
-        val `class` = createClass(ThingId("R2000"))
-
-        every { thingRepository.findByThingId(`class`.id) } returns Optional.of(`class`)
-
-        val result = thingDefinitionValidator(command, state)
-
-        result.asClue {
-            it.tempIds.size shouldBe 0
-            it.validatedIds shouldBe mapOf(`class`.id.value to Either.right(`class`))
-            it.bakedStatements.size shouldBe 0
-            it.contributionId shouldBe null
-        }
-
-        verify(exactly = 1) { thingRepository.findByThingId(`class`.id) }
-    }
-
-    @Test
-    fun `Given a contribution create command, when no things are defined, it returns success`() {
-        val command = CreateContributionCommand(
-            contributorId = ContributorId(UUID.randomUUID()),
-            paperId = ThingId("R123"),
-            resources = emptyMap(),
-            literals = emptyMap(),
-            predicates = emptyMap(),
-            lists = emptyMap(),
-            contribution = CreatePaperUseCase.CreateCommand.Contribution(
-                label = "Contribution 1",
-                statements = mapOf(
-                    Predicates.hasResearchProblem.value to listOf(
-                        CreatePaperUseCase.CreateCommand.StatementObjectDefinition("R3003")
-                    )
-                )
-            )
-        )
-        val state = ContributionState()
-
-        val result = thingDefinitionValidator(command, state)
-
-        result.asClue {
-            it.tempIds.size shouldBe 0
-            it.validatedIds.size shouldBe 0
-            it.bakedStatements.size shouldBe 0
-            it.contributionId shouldBe null
-        }
     }
 
     @Test

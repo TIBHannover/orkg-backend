@@ -328,7 +328,7 @@ class SpringDataNeo4jResourceAdapter(
 
     private fun Resource.toNeo4jResource() =
         // We need to fetch the original resource, so "resources" is set properly.
-        neo4jRepository.findById(this.id).orElse(Neo4jResource()).apply {
+        neo4jRepository.findById(this.id).orElseGet(::Neo4jResource).apply {
             id = this@toNeo4jResource.id
             label = this@toNeo4jResource.label
             created_by = this@toNeo4jResource.createdBy

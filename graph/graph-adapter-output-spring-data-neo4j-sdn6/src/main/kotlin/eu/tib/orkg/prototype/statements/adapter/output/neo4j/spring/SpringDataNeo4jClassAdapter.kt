@@ -134,7 +134,7 @@ class SpringDataNeo4jClassAdapter(
     }
 
     private fun Class.toNeo4jClass(): Neo4jClass =
-        neo4jRepository.findById(this.id).orElse(Neo4jClass()).apply {
+        neo4jRepository.findById(this.id).orElseGet(::Neo4jClass).apply {
             id = this@toNeo4jClass.id
             label = this@toNeo4jClass.label
             uri = this@toNeo4jClass.uri?.toString()

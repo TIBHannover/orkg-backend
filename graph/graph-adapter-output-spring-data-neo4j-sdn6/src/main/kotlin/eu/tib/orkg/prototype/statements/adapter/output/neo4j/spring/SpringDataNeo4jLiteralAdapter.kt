@@ -125,7 +125,7 @@ class SpringDataNeo4jLiteralAdapter(
     override fun exists(id: ThingId): Boolean = neo4jRepository.existsById(id)
 
     private fun Literal.toNeo4jLiteral() =
-        neo4jRepository.findById(this.id).orElse(Neo4jLiteral()).apply {
+        neo4jRepository.findById(this.id).orElseGet(::Neo4jLiteral).apply {
             id = this@toNeo4jLiteral.id
             label = this@toNeo4jLiteral.label
             datatype = this@toNeo4jLiteral.datatype

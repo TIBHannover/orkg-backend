@@ -133,7 +133,7 @@ class SpringDataNeo4jPredicateAdapter(
     }
 
     private fun Predicate.toNeo4jPredicate() =
-        neo4jRepository.findById(this.id).orElse(Neo4jPredicate()).apply {
+        neo4jRepository.findById(this.id).orElseGet(::Neo4jPredicate).apply {
             id = this@toNeo4jPredicate.id
             label = this@toNeo4jPredicate.label
             created_by = this@toNeo4jPredicate.createdBy

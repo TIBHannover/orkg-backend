@@ -1,0 +1,26 @@
+= Identifiers
+
+This section lists the supported identifiers for content-type endpoints.
+
+[[document-identifiers]]
+== Document identifiers
+
+[options="header"]
+|==========================
+| Name | Key | Predicate ID
+| DOI  | doi | P26
+|==========================
+
+[[author-identifiers]]
+== Author identifiers
+
+[options="header"]
+|=================================================================
+| Name                          | Key            | Predicate ID
+| ORCID                         | orcid          | HAS_ORCID
+| Google Scholar author ID      | google_scholar | googleScholarID
+| Research Gate profile ID      | research_gate  | researchGateID
+| LinkedIn personal profile ID  | linked_in      | linkedInID
+| Wikidata Identifier           | wikidata       | P76020
+| Web of Science ID             | web_of_science | P58083
+|=================================================================

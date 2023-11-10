@@ -419,6 +419,8 @@ include::parts/licenses.adoc[]
 [[widget]]
 include::parts/widget.adoc[leveloffset=+1]
 
+include::parts/identifiers.adoc[leveloffset=+1]
+
 [[sorting-and-pagination]]
 == Sorting and Pagination
 

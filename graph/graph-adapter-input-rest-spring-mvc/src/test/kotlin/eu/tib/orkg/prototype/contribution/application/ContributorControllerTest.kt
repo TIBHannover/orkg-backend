@@ -20,6 +20,8 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup
@@ -69,6 +71,7 @@ class ContributorControllerTest {
             .perform(contributorRequest(id))
             .andExpect(status().isOk)
             .andExpect(jsonPath("\$.joined_at").value(isISO8601()))
+            .andExpect(header().string("Cache-Control", "max-age=300"))
     }
 
     private fun contributorRequest(id: ContributorId) =

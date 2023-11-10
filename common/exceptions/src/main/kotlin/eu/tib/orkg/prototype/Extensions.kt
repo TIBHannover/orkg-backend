@@ -1,5 +1,9 @@
 package eu.tib.orkg.prototype
 
+import java.time.Duration
+import org.springframework.http.CacheControl
+import org.springframework.http.ResponseEntity
+
 fun String.toSnakeCase(): String =
     if (this.isEmpty()) this else StringBuilder().also {
         this.forEach { c ->
@@ -14,3 +18,6 @@ fun String.toSnakeCase(): String =
             }
         }
     }.toString()
+
+fun <T> T.withCacheControl(duration: Duration): ResponseEntity<T> =
+    ResponseEntity.ok().cacheControl(CacheControl.maxAge(duration)).body(this)

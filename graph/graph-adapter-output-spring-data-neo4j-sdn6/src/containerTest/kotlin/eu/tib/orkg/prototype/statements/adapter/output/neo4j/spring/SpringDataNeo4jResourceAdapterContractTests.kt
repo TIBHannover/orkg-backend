@@ -34,6 +34,10 @@ internal class SpringDataNeo4jResourceAdapterContractTests(
 ) : DescribeSpec({
     include(resourceRepositoryContract(springDataNeo4jResourceAdapter))
     include(neo4jResourceRepositoryContract(springDataNeo4jResourceAdapter, neo4jClient))
+
+    finalizeSpec {
+        springDataNeo4jResourceAdapter.deleteAll()
+    }
 })
 
 fun <R : ResourceRepository, C : Neo4jClient> neo4jResourceRepositoryContract(

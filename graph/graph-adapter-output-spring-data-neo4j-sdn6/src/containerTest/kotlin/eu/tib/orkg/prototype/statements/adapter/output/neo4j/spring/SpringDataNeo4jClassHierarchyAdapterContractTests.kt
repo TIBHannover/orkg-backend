@@ -8,10 +8,12 @@ import eu.tib.orkg.prototype.statements.spi.ResourceRepository
 import eu.tib.orkg.prototype.statements.spi.classHierarchyRepositoryContract
 import eu.tib.orkg.prototype.statements.spi.classRelationRepositoryContract
 import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.shouldBe
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
+import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.ContextConfiguration
 
 @DataNeo4jTest
@@ -48,4 +50,10 @@ internal class SpringDataNeo4jClassHierarchyAdapterContractTests(
             springDataNeo4jClassHierarchyAdapter
         )
     )
+
+    finalizeSpec {
+        springDataNeo4jClassRelationAdapter.deleteAll()
+        springDataNeo4jResourceAdapter.deleteAll()
+        springDataNeo4jClassAdapter.deleteAll()
+    }
 })

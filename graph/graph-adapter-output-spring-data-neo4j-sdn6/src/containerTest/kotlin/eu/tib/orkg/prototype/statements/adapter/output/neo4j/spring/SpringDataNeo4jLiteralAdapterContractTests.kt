@@ -34,6 +34,10 @@ internal class SpringDataNeo4jLiteralAdapterContractTests(
 ) : DescribeSpec({
     include(literalRepositoryContract(springDataNeo4jLiteralAdapter))
     include(neo4jLiteralRepositoryContract(springDataNeo4jLiteralAdapter, neo4jClient))
+
+    finalizeSpec {
+        springDataNeo4jLiteralAdapter.deleteAll()
+    }
 })
 
 fun <R : LiteralRepository, C : Neo4jClient> neo4jLiteralRepositoryContract(

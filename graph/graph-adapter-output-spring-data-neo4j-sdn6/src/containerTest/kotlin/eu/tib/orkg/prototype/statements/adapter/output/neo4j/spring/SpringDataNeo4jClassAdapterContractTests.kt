@@ -57,6 +57,13 @@ internal class SpringDataNeo4jClassAdapterContractTests(
         )
     )
     include(neo4jClassRepositoryContract(springDataNeo4jClassAdapter, neo4jClient))
+
+    finalizeSpec {
+        springDataNeo4jStatementAdapter.deleteAll()
+        springDataNeo4jClassAdapter.deleteAll()
+        springDataNeo4jLiteralAdapter.deleteAll()
+        springDataNeo4jPredicateAdapter.deleteAll()
+    }
 })
 
 fun <R : ClassRepository, C : Neo4jClient> neo4jClassRepositoryContract(

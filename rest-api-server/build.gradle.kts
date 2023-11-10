@@ -8,7 +8,7 @@ import java.time.Instant
 import java.time.format.DateTimeFormatter
 
 group = "eu.tib"
-version = "0.40.0"
+version = "0.41.0"
 
 val springSecurityOAuthVersion = "2.5.2"
 

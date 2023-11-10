@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.41.0] - 2023-11-10
 ### Added
 - It is now possible to update the extraction method for resources.
   (Closes: [#520](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/issues/520))
@@ -536,7 +538,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - This CHANGELOG file. Finally!
 
-[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.40.0...master
+[unreleased]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/compare/0.41.0...master
+[0.41.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.41.0
 [0.40.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.40.0
 [0.39.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.39.0
 [0.38.0]: https://gitlab.com/TIBHannover/orkg/orkg-backend/-/tags/0.38.0

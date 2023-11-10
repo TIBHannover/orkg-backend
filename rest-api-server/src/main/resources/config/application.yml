@@ -29,6 +29,7 @@ orkg:
       schedule: "-"
       workers: 10
       chunk-size: 1000
+      log-file: 'paper-ranking.log'
   init:
     setup:
       entities-file: "data/required_entities.json"

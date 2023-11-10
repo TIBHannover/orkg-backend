@@ -38,6 +38,7 @@ fun <
             classRepository.save(
                 createClass(
                     id = ThingId("${it + 1}"),
+                    uri = null,
                     createdAt = OffsetDateTime.parse("2023-02-17T12:48:28.709687300+01:00")
                 )
             )

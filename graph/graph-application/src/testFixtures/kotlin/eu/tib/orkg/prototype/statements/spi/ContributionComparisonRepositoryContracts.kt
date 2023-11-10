@@ -44,8 +44,8 @@ fun <
     val pageable = PageRequest.of(0, 10)
 
     val createRequiredEntities: () -> Unit = {
-        classRepository.save(createClass(ThingId("Paper")))
-        classRepository.save(createClass(ThingId("Contribution")))
+        classRepository.save(createClass(ThingId("Paper"), uri = null))
+        classRepository.save(createClass(ThingId("Contribution"), uri = null))
 
         predicateRepository.save(createPredicate(ThingId("P29")))
         predicateRepository.save(createPredicate(ThingId("P31")))

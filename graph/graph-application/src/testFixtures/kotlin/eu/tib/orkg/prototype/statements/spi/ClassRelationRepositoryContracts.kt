@@ -28,8 +28,8 @@ fun <
 
     describe("saving a class-subclass relation") {
         it("saves the class-subclass relation correctly") {
-            val parent = createClass(ThingId("1"))
-            val child = createClass(ThingId("2"))
+            val parent = createClass(ThingId("1"), uri = null)
+            val child = createClass(ThingId("2"), uri = null)
             classRepository.save(parent)
             classRepository.save(child)
             repository.save(ClassSubclassRelation(
@@ -46,9 +46,9 @@ fun <
 
     describe("saving several class-subclass relations") {
         it("saves all class-subclass relation correctly") {
-            val root = createClass(ThingId("1"))
-            val childOfRoot = createClass(ThingId("2"))
-            val childOfChild = createClass(ThingId("3"))
+            val root = createClass(ThingId("1"), uri = null)
+            val childOfRoot = createClass(ThingId("2"), uri = null)
+            val childOfChild = createClass(ThingId("3"), uri = null)
             classRepository.save(root)
             classRepository.save(childOfRoot)
             classRepository.save(childOfChild)
@@ -80,8 +80,8 @@ fun <
     describe("deleting a class-subclass relation") {
         context("by child class id") {
             it("removes the class-subclass relation") {
-                val parent = createClass(ThingId("1"))
-                val child = createClass(ThingId("2"))
+                val parent = createClass(ThingId("1"), uri = null)
+                val child = createClass(ThingId("2"), uri = null)
                 classRepository.save(parent)
                 classRepository.save(child)
                 repository.save(ClassSubclassRelation(
@@ -105,8 +105,8 @@ fun <
     it("delete all class-subclass relations") {
         val relations = mutableSetOf<ClassSubclassRelation>()
         repeat(2) {
-            val parent = createClass(ThingId("c$it"))
-            val child = createClass(ThingId("p$it"))
+            val parent = createClass(ThingId("p$it"), uri = null)
+            val child = createClass(ThingId("c$it"), uri = null)
             classRepository.save(parent)
             classRepository.save(child)
             val relation = ClassSubclassRelation(

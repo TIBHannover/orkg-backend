@@ -199,12 +199,12 @@ fun <
 
     context("existence checks for multiple classes") {
         it("returns true when all classes exist") {
-            val ids = (1..3).map { ThingId("$it") }.onEach { repository.save(createClass(id = it)) }
+            val ids = (1..3).map { ThingId("$it") }.onEach { repository.save(createClass(id = it, uri = null)) }
 
             repository.existsAll(ids.toSet()) shouldBe true
         }
         it("returns false when at least one class does not exist") {
-            val ids = (1..3).map { ThingId("$it") }.onEach { repository.save(createClass(id = it)) }
+            val ids = (1..3).map { ThingId("$it") }.onEach { repository.save(createClass(id = it, uri = null)) }
                 .plus(listOf(ThingId("9")))
 
             repository.existsAll(ids.toSet()) shouldBe false
@@ -329,7 +329,7 @@ fun <
 
     it("delete all classes") {
         repeat(3) {
-            repository.save(createClass(id = ThingId("$it")))
+            repository.save(createClass(id = ThingId("$it"), uri = null))
         }
         // ClassRepository has no count method
         repository.findAll(PageRequest.of(0, Int.MAX_VALUE)).totalElements shouldBe 3

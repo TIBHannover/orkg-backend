@@ -4,6 +4,7 @@ import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.statements.domain.model.Thing
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import java.time.OffsetDateTime
+import org.springframework.data.annotation.Version
 import org.springframework.data.neo4j.core.schema.Id
 import org.springframework.data.neo4j.core.schema.Node
 import org.springframework.data.neo4j.core.schema.Property
@@ -14,6 +15,14 @@ abstract class Neo4jThing {
     @Id
     @Property("id")
     var id: ThingId? = null
+
+    /**
+     * This property should not be modified. It is purely used for optimistic locking
+     * and increments automatically whenever the thing gets saved.
+     */
+    @Version
+    @Deprecated("This property is only used for optimistic locking.")
+    var version: Long? = null
 
     @Property("label")
     var label: String? = null

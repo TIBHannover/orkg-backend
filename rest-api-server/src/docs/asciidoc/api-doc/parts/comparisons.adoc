@@ -42,7 +42,7 @@ operation::comparisons-related-resource-get-single[snippets='curl-request,respon
 
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<comparisons-related-resource-fetch,comparison related resources>>.
 
-operation::comparisons-related-resource-get-single[snippets='curl-request']
+operation::comparisons-related-resource-get-paged[snippets='curl-request']
 
 [[comparisons-related-figure-fetch]]
 == Fetching a related figure for a comparison
@@ -56,7 +56,7 @@ operation::comparisons-related-figure-get-single[snippets='curl-request,response
 
 A `GET` request returns a <<sorting-and-pagination,paged>> list of <<comparisons-related-figure-fetch,comparison related figures>>.
 
-operation::comparisons-related-figure-get-single[snippets='curl-request']
+operation::comparisons-related-figure-get-paged[snippets='curl-request']
 
 [[comparisons-publish]]
 == Publishing comparisons

@@ -355,18 +355,27 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     }
 
     @Test
-    fun `Given several comparison related resources, when fetched, then status is 200 OK and comparison related resources are returned`() {
+    @DisplayName("Given several comparison related resources, when fetched, then status is 200 OK and comparison related resources are returned")
+    fun relatedResourceGetPaged() {
         val comparisonId = ThingId("R123")
         val comparisonRelatedResource = listOf(createDummyComparisonRelatedResource())
 
         every { comparisonService.findAllRelatedResources(comparisonId, any()) } returns pageOf(comparisonRelatedResource)
 
-        get("/api/comparisons/$comparisonId/related-resources")
+        documentedGetRequestTo("/api/comparisons/{comparisonId}/related-resources", comparisonId)
             .accept(COMPARISON_JSON_V2)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectComparisonRelatedResource("$.content[*]")
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("comparisonId").description("The identifier of the comparison."),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { comparisonService.findAllRelatedResources(comparisonId, any()) }
     }
@@ -428,18 +437,27 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     }
 
     @Test
-    fun `Given several comparison related figures, when fetched, then status is 200 OK and comparison related figures are returned`() {
+    @DisplayName("Given several comparison related figures, when fetched, then status is 200 OK and comparison related figures are returned")
+    fun relatedFigureGetPaged() {
         val comparisonId = ThingId("R123")
         val comparisonRelatedFigure = listOf(createDummyComparisonRelatedFigure())
 
         every { comparisonService.findAllRelatedFigures(comparisonId, any()) } returns pageOf(comparisonRelatedFigure)
 
-        get("/api/comparisons/$comparisonId/related-figures")
+        documentedGetRequestTo("/api/comparisons/{comparisonId}/related-figures", comparisonId)
             .accept(COMPARISON_JSON_V2)
             .perform()
             .andExpect(status().isOk)
             .andExpectPage()
             .andExpectComparisonRelatedFigure("$.content[*]")
+            .andDo(
+                documentationHandler.document(
+                    pathParameters(
+                        parameterWithName("comparisonId").description("The identifier of the comparison."),
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { comparisonService.findAllRelatedFigures(comparisonId, any()) }
     }

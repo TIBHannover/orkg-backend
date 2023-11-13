@@ -2,12 +2,25 @@ package eu.tib.orkg.prototype.contenttypes
 
 import com.ninjasquad.springmockk.MockkBean
 import eu.tib.orkg.prototype.auth.api.AuthUseCase
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contenttypes.api.ComparisonUseCases
+import eu.tib.orkg.prototype.contenttypes.application.AmbiguousAuthor
+import eu.tib.orkg.prototype.contenttypes.application.AuthorDTO
+import eu.tib.orkg.prototype.contenttypes.application.AuthorNotFound
 import eu.tib.orkg.prototype.contenttypes.application.COMPARISON_JSON_V2
 import eu.tib.orkg.prototype.contenttypes.application.ComparisonController
 import eu.tib.orkg.prototype.contenttypes.application.ComparisonNotFound
 import eu.tib.orkg.prototype.contenttypes.application.ComparisonRelatedFigureNotFound
 import eu.tib.orkg.prototype.contenttypes.application.ComparisonRelatedResourceNotFound
+import eu.tib.orkg.prototype.contenttypes.application.ContributionNotFound
+import eu.tib.orkg.prototype.contenttypes.application.OnlyOneObservatoryAllowed
+import eu.tib.orkg.prototype.contenttypes.application.OnlyOneOrganizationAllowed
+import eu.tib.orkg.prototype.contenttypes.application.OnlyOneResearchFieldAllowed
+import eu.tib.orkg.prototype.contenttypes.application.PAPER_JSON_V2
+import eu.tib.orkg.prototype.contenttypes.application.PaperController
+import eu.tib.orkg.prototype.contenttypes.application.RequiresAtLeastTwoContributions
+import eu.tib.orkg.prototype.contenttypes.domain.model.Author
 import eu.tib.orkg.prototype.contenttypes.testing.fixtures.createDummyComparison
 import eu.tib.orkg.prototype.contenttypes.testing.fixtures.createDummyComparisonRelatedFigure
 import eu.tib.orkg.prototype.contenttypes.testing.fixtures.createDummyComparisonRelatedResource
@@ -16,6 +29,8 @@ import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.application.DOIServiceUnavailable
+import eu.tib.orkg.prototype.statements.application.ResearchFieldNotFound
+import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import eu.tib.orkg.prototype.testing.andExpectComparison
 import eu.tib.orkg.prototype.testing.andExpectComparisonRelatedFigure
@@ -29,6 +44,7 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.runs
 import io.mockk.verify
+import java.net.URI
 import java.util.*
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.hasSize
@@ -39,12 +55,14 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.headers.HeaderDocumentation
+import org.springframework.restdocs.headers.HeaderDocumentation.*
+import org.springframework.restdocs.payload.PayloadDocumentation
+import org.springframework.restdocs.payload.PayloadDocumentation.*
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -543,4 +561,247 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
 
         verify(exactly = 1) { comparisonService.publish(id, any(), any()) }
     }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @DisplayName("Given a create comparison request, when service succeeds, it creates and returns the comparison")
+    fun create() {
+        val id = ThingId("R123")
+        every { comparisonService.create(any()) } returns id
+
+        documentedPostRequestTo("/api/comparisons")
+            .content(createComparisonRequest())
+            .accept(COMPARISON_JSON_V2)
+            .contentType(COMPARISON_JSON_V2)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/comparisons/$id")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the newly created resource can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("title").description("The title of the comparison."),
+                        fieldWithPath("description").description("The description of the comparison."),
+                        fieldWithPath("research_fields").description("The list of research fields the comparison will be assigned to."),
+                        fieldWithPath("authors").description("The list of authors that originally contributed to the comparison."),
+                        fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].name").description("The name of the author."),
+                        fieldWithPath("authors[].identifiers").description("The unique identifiers of the author."),
+                        fieldWithPath("authors[].identifiers.orcid").description("The ORCID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.google_scholar").type("String").description("The Google Scholar ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.research_gate").type("String").description("The ResearchGate ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.linked_in").type("String").description("The LinkedIn ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.wikidata").type("String").description("The Wikidata ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.web_of_science").type("String").description("The Web of Science id of the author. (optional)").optional(),
+                        fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
+                        fieldWithPath("contributions[]").description("The ids of the contributions the comparison compares."),
+                        fieldWithPath("references[]").description("The references to external sources that the comparison refers to."),
+                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the comparison belongs to."),
+                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the comparison belongs to."),
+                        fieldWithPath("is_anonymized").description("Whether or not the comparison should be displayed as anonymous."),
+                        fieldWithPath("extraction_method").description("""The method used to extract the comparison resource. Can be one of "unknown", "manual" or "automatic".""")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { comparisonService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a create comparison request, when service reports too few contributions, then status is 400 BAD REQUEST`() {
+        val exception = RequiresAtLeastTwoContributions()
+        every { comparisonService.create(any()) } throws exception
+
+        post("/api/comparisons", createComparisonRequest())
+            .accept(COMPARISON_JSON_V2)
+            .contentType(COMPARISON_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/comparisons"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { comparisonService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a create comparison request, when service reports contribution not found, then status is 404 NOT FOUND`() {
+        val exception = ContributionNotFound(ThingId("R123"))
+        every { comparisonService.create(any()) } throws exception
+
+        post("/api/comparisons", createComparisonRequest())
+            .accept(COMPARISON_JSON_V2)
+            .contentType(COMPARISON_JSON_V2)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.path").value("/api/comparisons"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { comparisonService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a create comparison request, when service reports only one research field allowed, then status is 400 BAD REQUEST`() {
+        val exception = OnlyOneResearchFieldAllowed()
+        every { comparisonService.create(any()) } throws exception
+
+        post("/api/comparisons", createComparisonRequest())
+            .accept(COMPARISON_JSON_V2)
+            .contentType(COMPARISON_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/comparisons"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { comparisonService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a create comparison request, when service reports research field is missing, then status is 404 NOT FOUND`() {
+        val exception = ResearchFieldNotFound(ThingId("R123"))
+        every { comparisonService.create(any()) } throws exception
+
+        post("/api/comparisons", createComparisonRequest())
+            .accept(COMPARISON_JSON_V2)
+            .contentType(COMPARISON_JSON_V2)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.path").value("/api/comparisons"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { comparisonService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a create comparison request, when service reports only one organization allowed, then status is 400 BAD REQUEST`() {
+        val exception = OnlyOneOrganizationAllowed()
+        every { comparisonService.create(any()) } throws exception
+
+        post("/api/comparisons", createComparisonRequest())
+            .accept(COMPARISON_JSON_V2)
+            .contentType(COMPARISON_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/comparisons"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { comparisonService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a create comparison request, when service reports only one observatory allowed, then status is 400 BAD REQUEST`() {
+        val exception = OnlyOneObservatoryAllowed()
+        every { comparisonService.create(any()) } throws exception
+
+        post("/api/comparisons", createComparisonRequest())
+            .accept(COMPARISON_JSON_V2)
+            .contentType(COMPARISON_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/comparisons"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { comparisonService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a create comparison request, when service reports author not found, then status is 404 NOT FOUND`() {
+        val exception = AuthorNotFound(ThingId("R123"))
+        every { comparisonService.create(any()) } throws exception
+
+        post("/api/comparisons", createComparisonRequest())
+            .accept(COMPARISON_JSON_V2)
+            .contentType(COMPARISON_JSON_V2)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.path").value("/api/comparisons"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { comparisonService.create(any()) }
+    }
+    
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a create comparison request, when service reports ambiguous author, then status is 400 BAD REQUEST`() {
+        val exception = AmbiguousAuthor(
+            Author(
+                id = ThingId("R123"),
+                name = "author",
+                identifiers = mapOf("orcid" to "0000-1111-2222-3333")
+            )
+        )
+        every { comparisonService.create(any()) } throws exception
+
+        post("/api/comparisons", createComparisonRequest())
+            .accept(COMPARISON_JSON_V2)
+            .contentType(COMPARISON_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/comparisons"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { comparisonService.create(any()) }
+    }
+    
+    private fun createComparisonRequest() =
+        ComparisonController.CreateComparisonRequest(
+            title = "test",
+            description = "comparison description",
+            researchFields = listOf(ThingId("R12")),
+            authors = listOf(
+                AuthorDTO(
+                    id = ThingId("R123"),
+                    name = "Author with id",
+                    identifiers = null,
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author with orcid",
+                    identifiers = mapOf("orcid" to "0000-1111-2222-3333"),
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = ThingId("R456"),
+                    name = "Author with id and orcid",
+                    identifiers = mapOf("orcid" to "1111-2222-3333-4444"),
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author with homepage",
+                    identifiers = null,
+                    homepage = URI.create("http://example.org/author")
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author that just has a name",
+                    identifiers = null,
+                    homepage = null
+                )
+            ),
+            contributions = listOf(ThingId("R6541"), ThingId("R5364"), ThingId("R9786"), ThingId("R3120")),
+            references = listOf("https://orkg.org/resources/R1000", "paper citation"),
+            observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
+            organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
+            isAnonymized = false,
+            extractionMethod = ExtractionMethod.UNKNOWN
+        )
 }

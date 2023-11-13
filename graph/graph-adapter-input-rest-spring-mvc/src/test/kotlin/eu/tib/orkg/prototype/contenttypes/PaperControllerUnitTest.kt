@@ -21,7 +21,7 @@ import eu.tib.orkg.prototype.contenttypes.application.PAPER_JSON_V2
 import eu.tib.orkg.prototype.contenttypes.application.PaperAlreadyExists
 import eu.tib.orkg.prototype.contenttypes.application.PaperController
 import eu.tib.orkg.prototype.contenttypes.application.PaperController.CreatePaperRequest
-import eu.tib.orkg.prototype.contenttypes.application.PaperController.CreatePaperRequest.AuthorDTO
+import eu.tib.orkg.prototype.contenttypes.application.AuthorDTO
 import eu.tib.orkg.prototype.contenttypes.application.PaperController.CreatePaperRequest.ContributionDTO
 import eu.tib.orkg.prototype.contenttypes.application.PaperController.CreatePaperRequest.ListDefinitionDTO
 import eu.tib.orkg.prototype.contenttypes.application.PaperController.CreatePaperRequest.LiteralDefinitionDTO
@@ -530,7 +530,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    fun `Given a paper request, when service reports only one research field allowed, then status is 403 FORBIDDEN`() {
+    fun `Given a paper request, when service reports only one research field allowed, then status is 400 BAD REQUEST`() {
         val exception = OnlyOneResearchFieldAllowed()
         every { paperService.create(any()) } throws exception
 
@@ -538,8 +538,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isForbidden)
-            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
@@ -548,7 +548,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    fun `Given a paper request, when service reports only one organization allowed, then status is 403 FORBIDDEN`() {
+    fun `Given a paper request, when service reports only one organization allowed, then status is 400 BAD REQUEST`() {
         val exception = OnlyOneOrganizationAllowed()
         every { paperService.create(any()) } throws exception
 
@@ -556,8 +556,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isForbidden)
-            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
@@ -566,7 +566,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    fun `Given a paper request, when service reports only one observatory allowed, then status is 403 FORBIDDEN`() {
+    fun `Given a paper request, when service reports only one observatory allowed, then status is 400 BAD REQUEST`() {
         val exception = OnlyOneObservatoryAllowed()
         every { paperService.create(any()) } throws exception
 
@@ -574,8 +574,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isForbidden)
-            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
@@ -656,7 +656,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    fun `Given a paper request, when service reports paper already exists with title, then status is 403 FORBIDDEN`() {
+    fun `Given a paper request, when service reports paper already exists with title, then status is 400 BAD REQUEST`() {
         val exception = PaperAlreadyExists.withTitle("paper title")
         every { paperService.create(any()) } throws exception
 
@@ -664,8 +664,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isForbidden)
-            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
@@ -674,7 +674,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    fun `Given a paper request, when service reports paper already exists with identifier, then status is 403 FORBIDDEN`() {
+    fun `Given a paper request, when service reports paper already exists with identifier, then status is 400 BAD REQUEST`() {
         val exception = PaperAlreadyExists.withIdentifier("paper title")
         every { paperService.create(any()) } throws exception
 
@@ -682,8 +682,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isForbidden)
-            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
@@ -788,7 +788,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    fun `Given a paper request, when service reports empty contributions, then status is 403 FORBIDDEN`() {
+    fun `Given a paper request, when service reports empty contributions, then status is 400 BAD REQUEST`() {
         val exception = EmptyContribution(0)
         every { paperService.create(any()) } throws exception
 
@@ -796,8 +796,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isForbidden)
-            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.path").value("/api/papers"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
@@ -1004,7 +1004,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    fun `Given a contribution request, when service reports empty contribution, then status is 403 FORBIDDEN`() {
+    fun `Given a contribution request, when service reports empty contribution, then status is 400 BAD REQUEST`() {
         val paperId = ThingId("R123")
         val exception = EmptyContribution()
         every { paperService.createContribution(any()) } throws exception
@@ -1013,8 +1013,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
-            .andExpect(status().isForbidden)
-            .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
             .andExpect(jsonPath("$.path").value("/api/papers/$paperId/contributions"))
             .andExpect(jsonPath("$.message").value(exception.message))
 

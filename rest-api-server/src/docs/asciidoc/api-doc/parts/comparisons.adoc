@@ -58,6 +58,15 @@ A `GET` request returns a <<sorting-and-pagination,paged>> list of <<comparisons
 
 operation::comparisons-related-figure-get-paged[snippets='curl-request']
 
+[[comparisons-create]]
+== Creating comparisons
+
+A `POST` request creates a new comparison with all the given parameters.
+The response will be `201 Created` when successful.
+The comparison (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::comparisons-create[snippets='request-fields,curl-request,http-response']
+
 [[comparisons-publish]]
 == Publishing comparisons
 

@@ -1,6 +1,9 @@
 package eu.tib.orkg.prototype.contenttypes.application
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
+import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.contenttypes.ComparisonRelatedFigureRepresentationAdapter
 import eu.tib.orkg.prototype.contenttypes.ComparisonRelatedResourceRepresentationAdapter
 import eu.tib.orkg.prototype.contenttypes.ComparisonRepresentationAdapter
@@ -8,16 +11,21 @@ import eu.tib.orkg.prototype.contenttypes.api.ComparisonRelatedFigureRepresentat
 import eu.tib.orkg.prototype.contenttypes.api.ComparisonRelatedResourceRepresentation
 import eu.tib.orkg.prototype.contenttypes.api.ComparisonRepresentation
 import eu.tib.orkg.prototype.contenttypes.api.ComparisonUseCases
+import eu.tib.orkg.prototype.contenttypes.api.CreateComparisonUseCase
 import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.application.BaseController
+import eu.tib.orkg.prototype.statements.domain.model.ExtractionMethod
 import eu.tib.orkg.prototype.statements.domain.model.ThingId
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Size
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.noContent
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -73,6 +81,20 @@ class ComparisonController(
         service.findAllByResearchFieldAndVisibility(researchField, visibility, includeSubfields, pageable)
             .mapToComparisonRepresentation()
 
+    @PostMapping(consumes = [COMPARISON_JSON_V2], produces = [COMPARISON_JSON_V2])
+    fun create(
+        @RequestBody @Validated request: CreateComparisonRequest,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<Any> {
+        val userId = ContributorId(authenticatedUserId())
+        val id = service.create(request.toCreateCommand(userId))
+        val location = uriComponentsBuilder
+            .path("api/comparisons/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return noContent().location(location).build()
+    }
+
     @GetMapping("/{id}/related-resources/{resourceId}", produces = [COMPARISON_JSON_V2])
     fun findRelatedResourceById(
         @PathVariable("id") id: ThingId,
@@ -118,7 +140,43 @@ class ComparisonController(
             .path("api/comparisons/{id}")
             .buildAndExpand(id)
             .toUri()
-        return ResponseEntity.noContent().location(location).build()
+        return noContent().location(location).build()
+    }
+
+    data class CreateComparisonRequest(
+        @NotBlank
+        val title: String,
+        @NotBlank
+        val description: String,
+        @Size(min = 1, max = 1)
+        @JsonProperty("research_fields")
+        val researchFields: List<ThingId>,
+        val authors: List<AuthorDTO>,
+        val contributions: List<ThingId>,
+        val references: List<String>,
+        @Size(max = 1)
+        val observatories: List<ObservatoryId>,
+        @Size(max = 1)
+        val organizations: List<OrganizationId>,
+        @JsonProperty("is_anonymized")
+        val isAnonymized: Boolean,
+        @JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
+    ) {
+        fun toCreateCommand(contributorId: ContributorId): CreateComparisonUseCase.CreateCommand =
+            CreateComparisonUseCase.CreateCommand(
+                contributorId = contributorId,
+                title = title,
+                description = description,
+                researchFields = researchFields,
+                authors = authors.map { it.toCreateCommand() },
+                contributions = contributions,
+                references = references,
+                observatories = observatories,
+                organizations = organizations,
+                isAnonymized = isAnonymized,
+                extractionMethod = extractionMethod
+            )
     }
 
     data class PublishRequest(

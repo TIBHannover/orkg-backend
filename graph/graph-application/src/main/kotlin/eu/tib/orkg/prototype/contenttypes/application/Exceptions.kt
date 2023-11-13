@@ -23,14 +23,17 @@ class ComparisonRelatedFigureNotFound(id: ThingId) :
 class VisualizationNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Visualization "$id" not found.""")
 
-class OnlyOneResearchFieldAllowed() :
-    SimpleMessageException(HttpStatus.FORBIDDEN, """Ony one research field is allowed.""")
+class OnlyOneResearchFieldAllowed :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Ony one research field is allowed.""")
 
-class OnlyOneOrganizationAllowed() :
-    SimpleMessageException(HttpStatus.FORBIDDEN, """Ony one organization is allowed.""")
+class OnlyOneOrganizationAllowed :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Ony one organization is allowed.""")
 
-class OnlyOneObservatoryAllowed() :
-    SimpleMessageException(HttpStatus.FORBIDDEN, """Ony one observatory is allowed.""")
+class OnlyOneObservatoryAllowed :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Ony one observatory is allowed.""")
+
+class RequiresAtLeastTwoContributions :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """At least two contributions are required.""")
 
 class ThingNotDefined(id: String) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Thing "$id" not defined.""")
@@ -46,7 +49,7 @@ class InvalidTempId(id: String) :
 
 class PaperAlreadyExists private constructor(
     override val message: String
-) : SimpleMessageException(HttpStatus.FORBIDDEN, message) {
+) : SimpleMessageException(HttpStatus.BAD_REQUEST, message) {
     companion object {
         fun withTitle(title: String) = PaperAlreadyExists("""Paper with title "$title" already exists.""")
         fun withIdentifier(identifier: String) = PaperAlreadyExists("""Paper with identifier "$identifier" already exists.""")
@@ -73,12 +76,12 @@ class InvalidStatementSubject(id: String) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Invalid statement subject "$id".""")
 
 class EmptyContribution : SimpleMessageException {
-    constructor(): super(HttpStatus.FORBIDDEN, """Contribution does not contain any statements.""")
-    constructor(index: Int): super(HttpStatus.FORBIDDEN, """Contribution at index "$index" does not contain any statements.""")
+    constructor(): super(HttpStatus.BAD_REQUEST, """Contribution does not contain any statements.""")
+    constructor(index: Int): super(HttpStatus.BAD_REQUEST, """Contribution at index "$index" does not contain any statements.""")
 }
 
 class DoiAlreadyRegistered(id: ThingId) :
-    SimpleMessageException(HttpStatus.FORBIDDEN, """Resource "$id" already has a DOI.""")
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Resource "$id" already has a DOI.""")
 
 class UnpublishableThing(id: ThingId) :
-    SimpleMessageException(HttpStatus.FORBIDDEN, """Thing "$id" cannot be published.""")
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Thing "$id" cannot be published.""")

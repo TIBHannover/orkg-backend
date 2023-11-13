@@ -1,6 +1,8 @@
 package eu.tib.orkg.prototype.contenttypes.services
 
+import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
+import eu.tib.orkg.prototype.community.spi.ObservatoryRepository
 import eu.tib.orkg.prototype.contenttypes.api.ComparisonUseCases
 import eu.tib.orkg.prototype.contenttypes.api.Identifiers
 import eu.tib.orkg.prototype.contenttypes.application.ComparisonNotFound
@@ -8,11 +10,28 @@ import eu.tib.orkg.prototype.contenttypes.domain.model.Comparison
 import eu.tib.orkg.prototype.contenttypes.domain.model.ComparisonRelatedFigure
 import eu.tib.orkg.prototype.contenttypes.domain.model.ComparisonRelatedResource
 import eu.tib.orkg.prototype.contenttypes.domain.model.PublicationInfo
+import eu.tib.orkg.prototype.contenttypes.services.actions.CreateComparisonCommand
+import eu.tib.orkg.prototype.contenttypes.services.actions.comparison.ComparisonAction
+import eu.tib.orkg.prototype.contenttypes.services.actions.comparison.ComparisonAuthorCreator
+import eu.tib.orkg.prototype.contenttypes.services.actions.comparison.ComparisonAuthorValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.comparison.ComparisonContributionCreator
+import eu.tib.orkg.prototype.contenttypes.services.actions.comparison.ComparisonContributionValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.comparison.ComparisonDescriptionCreator
+import eu.tib.orkg.prototype.contenttypes.services.actions.comparison.ComparisonObservatoryValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.comparison.ComparisonOrganizationValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.comparison.ComparisonResearchFieldCreator
+import eu.tib.orkg.prototype.contenttypes.services.actions.comparison.ComparisonResearchFieldValidator
+import eu.tib.orkg.prototype.contenttypes.services.actions.comparison.ComparisonResourceCreator
+import eu.tib.orkg.prototype.contenttypes.services.actions.execute
 import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.statements.api.Classes
+import eu.tib.orkg.prototype.statements.api.ListUseCases
+import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.Literals
 import eu.tib.orkg.prototype.statements.api.Predicates
+import eu.tib.orkg.prototype.statements.api.ResourceUseCases
 import eu.tib.orkg.prototype.statements.api.RetrieveResearchFieldUseCase
+import eu.tib.orkg.prototype.statements.api.StatementUseCases
 import eu.tib.orkg.prototype.statements.api.VisibilityFilter
 import eu.tib.orkg.prototype.statements.domain.model.ContributionInfo
 import eu.tib.orkg.prototype.statements.domain.model.Literal
@@ -38,6 +57,12 @@ class ComparisonService(
     private val repository: ContributionComparisonRepository,
     private val resourceRepository: ResourceRepository,
     private val statementRepository: StatementRepository,
+    private val observatoryRepository: ObservatoryRepository,
+    private val organizationRepository: PostgresOrganizationRepository,
+    private val resourceService: ResourceUseCases,
+    private val statementService: StatementUseCases,
+    private val literalService: LiteralUseCases,
+    private val listService: ListUseCases,
     private val researchFieldService: RetrieveResearchFieldUseCase,
     private val publishingService: PublishingService,
     @Value("\${orkg.publishing.base-url.comparison}")
@@ -106,6 +131,22 @@ class ComparisonService(
 
     override fun findContributionsDetailsById(ids: List<ThingId>, pageable: Pageable): Page<ContributionInfo> =
         repository.findContributionsDetailsById(ids, pageable)
+
+    override fun create(command: CreateComparisonCommand): ThingId {
+        val steps = listOf(
+            ComparisonContributionValidator(resourceRepository),
+            ComparisonResearchFieldValidator(resourceRepository),
+            ComparisonObservatoryValidator(observatoryRepository),
+            ComparisonOrganizationValidator(organizationRepository),
+            ComparisonAuthorValidator(resourceRepository, statementRepository),
+            ComparisonResourceCreator(resourceService),
+            ComparisonDescriptionCreator(literalService, statementService),
+            ComparisonAuthorCreator(resourceService, statementService, literalService, listService),
+            ComparisonResearchFieldCreator(statementService),
+            ComparisonContributionCreator(statementService)
+        )
+        return steps.execute(command, ComparisonAction.State()).comparisonId!!
+    }
 
     override fun publish(id: ThingId, subject: String, description: String) {
         val comparison = findById(id).orElseThrow { ComparisonNotFound(id) }

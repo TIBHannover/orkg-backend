@@ -12,7 +12,6 @@ import eu.tib.orkg.prototype.contenttypes.api.CreateContributionUseCase
 import eu.tib.orkg.prototype.contenttypes.api.CreatePaperUseCase
 import eu.tib.orkg.prototype.contenttypes.api.PaperRepresentation
 import eu.tib.orkg.prototype.contenttypes.api.PaperUseCases
-import eu.tib.orkg.prototype.contenttypes.domain.model.Author
 import eu.tib.orkg.prototype.contenttypes.domain.model.PublicationInfo
 import eu.tib.orkg.prototype.shared.TooManyParameters
 import eu.tib.orkg.prototype.statements.api.Literals
@@ -167,22 +166,6 @@ class PaperController(
                     publishedYear = publishedYear,
                     publishedIn = publishedIn,
                     url = url
-                )
-        }
-
-        data class AuthorDTO(
-            val id: ThingId?,
-            @NotBlank
-            val name: String,
-            val identifiers: Map<String, String>?,
-            val homepage: URI?
-        ) {
-            fun toCreateCommand(): Author =
-                Author(
-                    id = id,
-                    name = name,
-                    identifiers = identifiers,
-                    homepage = homepage
                 )
         }
 

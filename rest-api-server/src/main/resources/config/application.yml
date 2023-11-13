@@ -22,6 +22,11 @@ orkg:
       # use "-" to disable
       schedule: "-"
       file-name: comparisons.jsonl
+    predicate-id-to-label:
+      # cron schedule for the predicate id to label export
+      # use "-" to disable
+      schedule: "-"
+      file-name: predicate-ids_to_label.json
   ranking:
     papers:
       # cron schedule for paper-ranking

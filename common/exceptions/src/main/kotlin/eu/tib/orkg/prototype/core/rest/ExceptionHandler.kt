@@ -174,8 +174,8 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
 
                 val body: String = when (nativeRequest) {
                     is ContentCachingRequestWrapper -> String(nativeRequest.contentAsByteArray)
-                    is HttpServletRequestWrapper -> nativeRequest.request.javaClass.name
-                    else -> ""
+                    is HttpServletRequestWrapper -> nativeRequest.unwrapPath() // HeaderWriterFilter$HeaderWriterRequest
+                    else -> "Unknown request class"
                 }
 
                 if (body.isNotEmpty()) {
@@ -236,3 +236,10 @@ private fun <K, V> Map<K, Array<V>>.toParameterString() = when {
     entries.isNotEmpty() -> entries.joinToString(separator = "&", prefix = "?") { "${it.key}=${it.value.joinToString(separator = ",")}" }
     else -> String()
 }
+
+private fun HttpServletRequestWrapper.unwrapPath(visited: Set<HttpServletRequestWrapper> = emptySet()): String =
+    when (val r = request) {
+        in visited -> javaClass.name
+        is HttpServletRequestWrapper -> javaClass.name + ";" + r.unwrapPath(visited + r)
+        else -> javaClass.name
+    }

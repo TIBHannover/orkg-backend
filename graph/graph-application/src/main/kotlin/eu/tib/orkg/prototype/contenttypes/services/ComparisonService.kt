@@ -4,6 +4,8 @@ import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrgan
 import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.community.spi.ObservatoryRepository
 import eu.tib.orkg.prototype.contenttypes.api.ComparisonUseCases
+import eu.tib.orkg.prototype.contenttypes.api.CreateComparisonUseCase.CreateComparisonRelatedFigureCommand
+import eu.tib.orkg.prototype.contenttypes.api.CreateComparisonUseCase.CreateComparisonRelatedResourceCommand
 import eu.tib.orkg.prototype.contenttypes.api.Identifiers
 import eu.tib.orkg.prototype.contenttypes.application.ComparisonNotFound
 import eu.tib.orkg.prototype.contenttypes.domain.model.Comparison
@@ -25,6 +27,7 @@ import eu.tib.orkg.prototype.contenttypes.services.actions.comparison.Comparison
 import eu.tib.orkg.prototype.contenttypes.services.actions.execute
 import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.statements.api.Classes
+import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.ListUseCases
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.Literals
@@ -148,6 +151,74 @@ class ComparisonService(
         return steps.execute(command, ComparisonAction.State()).comparisonId!!
     }
 
+    override fun createComparisonRelatedResource(command: CreateComparisonRelatedResourceCommand): ThingId {
+        resourceRepository.findById(command.comparisonId)
+            .filter { Classes.comparison in it.classes }
+            .orElseThrow { ComparisonNotFound(command.comparisonId) }
+        val resourceId = resourceService.create(
+            CreateResourceUseCase.CreateCommand(
+                contributorId = command.contributorId,
+                label = command.label,
+                classes = setOf(Classes.comparisonRelatedResource)
+            )
+        )
+        if (command.image != null) {
+            statementService.add(
+                userId = command.contributorId,
+                subject = resourceId,
+                predicate = Predicates.hasImage,
+                `object` = literalService.create(command.contributorId, command.image).id
+            )
+        }
+        if (command.url != null) {
+            statementService.add(
+                userId = command.contributorId,
+                subject = resourceId,
+                predicate = Predicates.hasURL,
+                `object` = literalService.create(command.contributorId, command.url).id
+            )
+        }
+        if (command.description != null) {
+            statementService.add(
+                userId = command.contributorId,
+                subject = resourceId,
+                predicate = Predicates.description,
+                `object` = literalService.create(command.contributorId, command.description).id
+            )
+        }
+        return resourceId
+    }
+
+    override fun createComparisonRelatedFigure(command: CreateComparisonRelatedFigureCommand): ThingId {
+        resourceRepository.findById(command.comparisonId)
+            .filter { Classes.comparison in it.classes }
+            .orElseThrow { ComparisonNotFound(command.comparisonId) }
+        val figureId = resourceService.create(
+            CreateResourceUseCase.CreateCommand(
+                contributorId = command.contributorId,
+                label = command.label,
+                classes = setOf(Classes.comparisonRelatedFigure)
+            )
+        )
+        if (command.image != null) {
+            statementService.add(
+                userId = command.contributorId,
+                subject = figureId,
+                predicate = Predicates.hasImage,
+                `object` = literalService.create(command.contributorId, command.image).id
+            )
+        }
+        if (command.description != null) {
+            statementService.add(
+                userId = command.contributorId,
+                subject = figureId,
+                predicate = Predicates.description,
+                `object` = literalService.create(command.contributorId, command.description).id
+            )
+        }
+        return figureId
+    }
+
     override fun publish(id: ThingId, subject: String, description: String) {
         val comparison = findById(id).orElseThrow { ComparisonNotFound(id) }
         publishingService.publish(
@@ -176,7 +247,7 @@ class ComparisonService(
             description = statements.wherePredicate(Predicates.description).firstObjectLabel()
         )
     }
-    
+
     private fun Thing.toComparisonRelatedFigure(): ComparisonRelatedFigure {
         val statements = statementRepository.findAllBySubject(id, PageRequests.ALL)
             .content

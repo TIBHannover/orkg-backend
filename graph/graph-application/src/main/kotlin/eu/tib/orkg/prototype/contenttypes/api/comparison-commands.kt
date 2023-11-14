@@ -9,6 +9,8 @@ import eu.tib.orkg.prototype.statements.domain.model.ThingId
 
 interface CreateComparisonUseCase {
     fun create(command: CreateCommand): ThingId
+    fun createComparisonRelatedResource(command: CreateComparisonRelatedResourceCommand): ThingId
+    fun createComparisonRelatedFigure(command: CreateComparisonRelatedFigureCommand): ThingId
 
     data class CreateCommand(
         val contributorId: ContributorId,
@@ -22,6 +24,23 @@ interface CreateComparisonUseCase {
         val organizations: List<OrganizationId>,
         val isAnonymized: Boolean,
         val extractionMethod: ExtractionMethod
+    )
+
+    data class CreateComparisonRelatedResourceCommand(
+        val comparisonId: ThingId,
+        val contributorId: ContributorId,
+        val label: String,
+        val image: String?,
+        val url: String?,
+        val description: String?
+    )
+
+    data class CreateComparisonRelatedFigureCommand(
+        val comparisonId: ThingId,
+        val contributorId: ContributorId,
+        val label: String,
+        val image: String?,
+        val description: String?
     )
 }
 

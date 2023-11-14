@@ -1,9 +1,11 @@
 package eu.tib.orkg.prototype.contenttypes.services
 
 import eu.tib.orkg.prototype.community.adapter.output.jpa.internal.PostgresOrganizationRepository
+import eu.tib.orkg.prototype.community.domain.model.ContributorId
 import eu.tib.orkg.prototype.community.domain.model.ObservatoryId
 import eu.tib.orkg.prototype.community.domain.model.OrganizationId
 import eu.tib.orkg.prototype.community.spi.ObservatoryRepository
+import eu.tib.orkg.prototype.contenttypes.api.CreateComparisonUseCase
 import eu.tib.orkg.prototype.contenttypes.application.ComparisonNotFound
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
 import eu.tib.orkg.prototype.contenttypes.domain.model.ObjectIdAndLabel
@@ -11,6 +13,7 @@ import eu.tib.orkg.prototype.identifiers.domain.DOI
 import eu.tib.orkg.prototype.shared.PageRequests
 import eu.tib.orkg.prototype.spring.testing.fixtures.pageOf
 import eu.tib.orkg.prototype.statements.api.Classes
+import eu.tib.orkg.prototype.statements.api.CreateResourceUseCase
 import eu.tib.orkg.prototype.statements.api.ListUseCases
 import eu.tib.orkg.prototype.statements.api.LiteralUseCases
 import eu.tib.orkg.prototype.statements.api.Literals
@@ -32,7 +35,9 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.runs
 import io.mockk.verify
 import java.net.URI
 import java.util.*
@@ -100,7 +105,10 @@ class ComparisonServiceUnitTests {
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.yearPublished),
-                `object` = createLiteral(label = publicationYear.toString(), datatype = Literals.XSD.DECIMAL.prefixedUri)
+                `object` = createLiteral(
+                    label = publicationYear.toString(),
+                    datatype = Literals.XSD.DECIMAL.prefixedUri
+                )
             ),
             createStatement(
                 subject = expected,
@@ -164,7 +172,13 @@ class ComparisonServiceUnitTests {
                 `object` = createResource(id = previousVersion)
             )
         )
-        every { statementRepository.findAllBySubjectAndPredicate(authorList.id, Predicates.hasListElement, any()) } returns pageOf(
+        every {
+            statementRepository.findAllBySubjectAndPredicate(
+                authorList.id,
+                Predicates.hasListElement,
+                any()
+            )
+        } returns pageOf(
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasListElement),
@@ -232,7 +246,13 @@ class ComparisonServiceUnitTests {
 
         verify(exactly = 1) { resourceRepository.findById(expected.id) }
         verify(exactly = 1) { statementRepository.findAllBySubject(expected.id, any()) }
-        verify(exactly = 1) { statementRepository.findAllBySubjectAndPredicate(authorList.id, Predicates.hasListElement, any()) }
+        verify(exactly = 1) {
+            statementRepository.findAllBySubjectAndPredicate(
+                authorList.id,
+                Predicates.hasListElement,
+                any()
+            )
+        }
     }
 
     @Test
@@ -263,7 +283,13 @@ class ComparisonServiceUnitTests {
                 )
             )
         )
-        every { statementRepository.findAllBySubjectAndPredicate(authorList.id, Predicates.hasListElement, any()) } returns pageOf(
+        every {
+            statementRepository.findAllBySubjectAndPredicate(
+                authorList.id,
+                Predicates.hasListElement,
+                any()
+            )
+        } returns pageOf(
             createStatement(
                 subject = comparison,
                 predicate = createPredicate(Predicates.hasListElement),
@@ -294,7 +320,13 @@ class ComparisonServiceUnitTests {
 
         verify(exactly = 1) { resourceRepository.findById(comparison.id) }
         verify(exactly = 1) { statementRepository.findAllBySubject(comparison.id, PageRequests.ALL) }
-        verify(exactly = 1) { statementRepository.findAllBySubjectAndPredicate(authorList.id, Predicates.hasListElement, any()) }
+        verify(exactly = 1) {
+            statementRepository.findAllBySubjectAndPredicate(
+                authorList.id,
+                Predicates.hasListElement,
+                any()
+            )
+        }
         verify(exactly = 1) { statementRepository.findAllBySubject(resourceAuthorId, any()) }
         verify(exactly = 1) { statementRepository.findAllDOIsRelatedToComparison(comparison.id) }
         verify(exactly = 1) {
@@ -337,5 +369,210 @@ class ComparisonServiceUnitTests {
         shouldThrow<ComparisonNotFound> { service.publish(id, "Comparison subject", "Fancy comparison description") }
 
         verify(exactly = 1) { resourceRepository.findById(id) }
+    }
+
+    @Test
+    fun `Given a comparison related resource create command, it creates the comparison related resource`() {
+        val command = CreateComparisonUseCase.CreateComparisonRelatedResourceCommand(
+            comparisonId = ThingId("R123"),
+            contributorId = ContributorId(UUID.randomUUID()),
+            label = "related resource",
+            image = "https://example.org/test.png",
+            url = "https://orkg.org/resources/R1000",
+            description = "comparison related resource description"
+        )
+        val resourceId = ThingId("R456")
+        val comparison = createResource(classes = setOf(Classes.comparison))
+        val image = createLiteral(ThingId("L1"))
+        val url = createLiteral(ThingId("L2"))
+        val description = createLiteral(ThingId("L3"))
+
+        every { resourceRepository.findById(command.comparisonId) } returns Optional.of(comparison)
+        every {
+            resourceService.create(
+                CreateResourceUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.label,
+                    classes = setOf(Classes.comparisonRelatedResource),
+                )
+            )
+        } returns resourceId
+        every { literalService.create(command.contributorId, command.image!!) } returns image
+        every { literalService.create(command.contributorId, command.url!!) } returns url
+        every { literalService.create(command.contributorId, command.description!!) } returns description
+        every {
+            statementService.add(
+                userId = command.contributorId,
+                subject = resourceId,
+                predicate = Predicates.hasImage,
+                `object` = image.id
+            )
+        } just runs
+        every {
+            statementService.add(
+                userId = command.contributorId,
+                subject = resourceId,
+                predicate = Predicates.hasURL,
+                `object` = url.id
+            )
+        } just runs
+        every {
+            statementService.add(
+                userId = command.contributorId,
+                subject = resourceId,
+                predicate = Predicates.description,
+                `object` = description.id
+            )
+        } just runs
+
+        service.createComparisonRelatedResource(command) shouldBe resourceId
+
+        verify(exactly = 1) { resourceRepository.findById(command.comparisonId) }
+        verify(exactly = 1) {
+            resourceService.create(
+                CreateResourceUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.label,
+                    classes = setOf(Classes.comparisonRelatedResource),
+                )
+            )
+        }
+        verify(exactly = 1) { literalService.create(command.contributorId, command.image!!) }
+        verify(exactly = 1) { literalService.create(command.contributorId, command.url!!) }
+        verify(exactly = 1) { literalService.create(command.contributorId, command.description!!) }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = command.contributorId,
+                subject = resourceId,
+                predicate = Predicates.hasImage,
+                `object` = image.id
+            )
+        }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = command.contributorId,
+                subject = resourceId,
+                predicate = Predicates.hasURL,
+                `object` = url.id
+            )
+        }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = command.contributorId,
+                subject = resourceId,
+                predicate = Predicates.description,
+                `object` = description.id
+            )
+        }
+    }
+
+    @Test
+    fun `Given a comparison related resource create command, when comparison does not exist, it throws an exception`() {
+        val command = CreateComparisonUseCase.CreateComparisonRelatedResourceCommand(
+            comparisonId = ThingId("R123"),
+            contributorId = ContributorId(UUID.randomUUID()),
+            label = "related resource",
+            image = null,
+            url = null,
+            description = null
+        )
+
+        every { resourceRepository.findById(any()) } returns Optional.empty()
+
+        shouldThrow<ComparisonNotFound> { service.createComparisonRelatedResource(command) }
+
+        verify(exactly = 1) { resourceRepository.findById(any()) }
+    }
+
+    @Test
+    fun `Given a comparison related figure create command, it creates the comparison related figure`() {
+        val command = CreateComparisonUseCase.CreateComparisonRelatedFigureCommand(
+            comparisonId = ThingId("R123"),
+            contributorId = ContributorId(UUID.randomUUID()),
+            label = "related figure",
+            image = "https://example.org/test.png",
+            description = "comparison related figure description"
+        )
+        val figureId = ThingId("R456")
+        val comparison = createResource(classes = setOf(Classes.comparison))
+        val image = createLiteral(ThingId("L1"))
+        val description = createLiteral(ThingId("L3"))
+
+        every { resourceRepository.findById(command.comparisonId) } returns Optional.of(comparison)
+        every {
+            resourceService.create(
+                CreateResourceUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.label,
+                    classes = setOf(Classes.comparisonRelatedFigure),
+                )
+            )
+        } returns figureId
+        every { literalService.create(command.contributorId, command.image!!) } returns image
+        every { literalService.create(command.contributorId, command.description!!) } returns description
+        every {
+            statementService.add(
+                userId = command.contributorId,
+                subject = figureId,
+                predicate = Predicates.hasImage,
+                `object` = image.id
+            )
+        } just runs
+        every {
+            statementService.add(
+                userId = command.contributorId,
+                subject = figureId,
+                predicate = Predicates.description,
+                `object` = description.id
+            )
+        } just runs
+
+        service.createComparisonRelatedFigure(command) shouldBe figureId
+
+        verify(exactly = 1) { resourceRepository.findById(command.comparisonId) }
+        verify(exactly = 1) {
+            resourceService.create(
+                CreateResourceUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.label,
+                    classes = setOf(Classes.comparisonRelatedFigure),
+                )
+            )
+        }
+        verify(exactly = 1) { literalService.create(command.contributorId, command.image!!) }
+        verify(exactly = 1) { literalService.create(command.contributorId, command.description!!) }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = command.contributorId,
+                subject = figureId,
+                predicate = Predicates.hasImage,
+                `object` = image.id
+            )
+        }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = command.contributorId,
+                subject = figureId,
+                predicate = Predicates.description,
+                `object` = description.id
+            )
+        }
+    }
+
+    @Test
+    fun `Given a comparison related figure create command, when comparison does not exist, it throws an exception`() {
+        val command = CreateComparisonUseCase.CreateComparisonRelatedFigureCommand(
+            comparisonId = ThingId("R123"),
+            contributorId = ContributorId(UUID.randomUUID()),
+            label = "related figure",
+            image = null,
+            description = null
+        )
+
+        every { resourceRepository.findById(any()) } returns Optional.empty()
+
+        shouldThrow<ComparisonNotFound> { service.createComparisonRelatedFigure(command) }
+
+        verify(exactly = 1) { resourceRepository.findById(any()) }
     }
 }

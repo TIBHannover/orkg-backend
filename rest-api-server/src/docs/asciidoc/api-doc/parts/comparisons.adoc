@@ -67,6 +67,33 @@ The comparison (object) can be retrieved by following the URI in the `Location` 
 
 operation::comparisons-create[snippets='request-fields,curl-request,http-response']
 
+[[comparisons-create]]
+== Creating comparisons
+
+A `POST` request creates a new comparison with all the given parameters.
+The response will be `201 Created` when successful.
+The comparison (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::comparisons-create[snippets='request-fields,curl-request,http-response']
+
+[[comparisons-related-resource-create]]
+== Creating comparison related resources
+
+A `POST` request creates a new comparison related resource with all the given parameters.
+The response will be `201 Created` when successful.
+The comparison related resource (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::comparisons-create-comparison-related-resource[snippets='request-fields,path-parameters,curl-request,http-response']
+
+[[comparisons-related-figure-create]]
+== Creating comparison related figures
+
+A `POST` request creates a new comparison related figure with all the given parameters.
+The response will be `201 Created` when successful.
+The comparison related figure (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::comparisons-create-comparison-related-figure[snippets='request-fields,path-parameters,curl-request,http-response']
+
 [[comparisons-publish]]
 == Publishing comparisons
 

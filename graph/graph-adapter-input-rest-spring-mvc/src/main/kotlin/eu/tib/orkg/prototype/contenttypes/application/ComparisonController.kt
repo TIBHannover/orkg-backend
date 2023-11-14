@@ -112,6 +112,21 @@ class ComparisonController(
         service.findAllRelatedResources(id, pageable)
             .mapToComparisonRelatedResourceRepresentation()
 
+    @PostMapping("/{comparisonId}/related-resources", consumes = [COMPARISON_JSON_V2], produces = [COMPARISON_JSON_V2])
+    fun create(
+        @PathVariable("comparisonId") comparisonId: ThingId,
+        @RequestBody @Validated request: CreateComparisonRelatedResourceRequest,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<Any> {
+        val userId = ContributorId(authenticatedUserId())
+        val id = service.createComparisonRelatedResource(request.toCreateCommand(comparisonId, userId))
+        val location = uriComponentsBuilder
+            .path("api/comparisons/{comparisonId}/related-resources/{id}")
+            .buildAndExpand(comparisonId, id)
+            .toUri()
+        return noContent().location(location).build()
+    }
+
     @GetMapping("/{id}/related-figures/{figureId}", produces = [COMPARISON_JSON_V2])
     fun findRelatedFigureById(
         @PathVariable("id") id: ThingId,
@@ -120,7 +135,7 @@ class ComparisonController(
         service.findRelatedFigureById(id, figureId)
             .mapToComparisonRelatedFigureRepresentation()
             .orElseThrow { ComparisonRelatedFigureNotFound(figureId) }
-    
+
     @GetMapping("/{id}/related-figures", produces = [COMPARISON_JSON_V2])
     fun findAllRelatedFigures(
         @PathVariable id: ThingId,
@@ -128,6 +143,21 @@ class ComparisonController(
     ): Page<ComparisonRelatedFigureRepresentation> =
         service.findAllRelatedFigures(id, pageable)
             .mapToComparisonRelatedFigureRepresentation()
+
+    @PostMapping("/{comparisonId}/related-figures", consumes = [COMPARISON_JSON_V2], produces = [COMPARISON_JSON_V2])
+    fun create(
+        @PathVariable("comparisonId") comparisonId: ThingId,
+        @RequestBody @Validated request: CreateComparisonRelatedFigureRequest,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<Any> {
+        val userId = ContributorId(authenticatedUserId())
+        val id = service.createComparisonRelatedFigure(request.toCreateCommand(comparisonId, userId))
+        val location = uriComponentsBuilder
+            .path("api/comparisons/{comparisonId}/related-figures/{id}")
+            .buildAndExpand(comparisonId, id)
+            .toUri()
+        return noContent().location(location).build()
+    }
 
     @PostMapping("/{id}/publish", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun publish(
@@ -176,6 +206,43 @@ class ComparisonController(
                 organizations = organizations,
                 isAnonymized = isAnonymized,
                 extractionMethod = extractionMethod
+            )
+    }
+
+    data class CreateComparisonRelatedResourceRequest(
+        val label: String,
+        @NotBlank
+        val image: String?,
+        @NotBlank
+        val url: String?,
+        @NotBlank
+        val description: String?
+    ) {
+        fun toCreateCommand(comparisonId: ThingId, contributorId: ContributorId) =
+            CreateComparisonUseCase.CreateComparisonRelatedResourceCommand(
+                comparisonId = comparisonId,
+                contributorId = contributorId,
+                label = label,
+                image = image,
+                url = url,
+                description = description
+            )
+    }
+
+    data class CreateComparisonRelatedFigureRequest(
+        val label: String,
+        @NotBlank
+        val image: String?,
+        @NotBlank
+        val description: String?
+    ) {
+        fun toCreateCommand(comparisonId: ThingId, contributorId: ContributorId) =
+            CreateComparisonUseCase.CreateComparisonRelatedFigureCommand(
+                comparisonId = comparisonId,
+                contributorId = contributorId,
+                label = label,
+                image = image,
+                description = description
             )
     }
 

@@ -17,8 +17,6 @@ import eu.tib.orkg.prototype.contenttypes.application.ContributionNotFound
 import eu.tib.orkg.prototype.contenttypes.application.OnlyOneObservatoryAllowed
 import eu.tib.orkg.prototype.contenttypes.application.OnlyOneOrganizationAllowed
 import eu.tib.orkg.prototype.contenttypes.application.OnlyOneResearchFieldAllowed
-import eu.tib.orkg.prototype.contenttypes.application.PAPER_JSON_V2
-import eu.tib.orkg.prototype.contenttypes.application.PaperController
 import eu.tib.orkg.prototype.contenttypes.application.RequiresAtLeastTwoContributions
 import eu.tib.orkg.prototype.contenttypes.domain.model.Author
 import eu.tib.orkg.prototype.contenttypes.testing.fixtures.createDummyComparison
@@ -55,9 +53,7 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import org.springframework.restdocs.headers.HeaderDocumentation
 import org.springframework.restdocs.headers.HeaderDocumentation.*
-import org.springframework.restdocs.payload.PayloadDocumentation
 import org.springframework.restdocs.payload.PayloadDocumentation.*
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
@@ -759,7 +755,116 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
 
         verify(exactly = 1) { comparisonService.create(any()) }
     }
-    
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @DisplayName("Given a comparison related resource request, when service succeeds, it creates and returns the comparison related resource")
+    fun createComparisonRelatedResource() {
+        val id = ThingId("R123")
+        val comparisonId = ThingId("R100")
+        every { comparisonService.createComparisonRelatedResource(any()) } returns id
+
+        documentedPostRequestTo("/api/comparisons/{comparisonId}/related-resources", comparisonId)
+            .content(createComparisonRelatedResourceRequest())
+            .accept(COMPARISON_JSON_V2)
+            .contentType(COMPARISON_JSON_V2)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/comparisons/$comparisonId/related-resources/$id")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the newly created comparison related resource can be fetched from.")
+                    ),
+                    pathParameters(
+                        parameterWithName("comparisonId").description("The comparison to attach the comparison related resource to.")
+                    ),
+                    requestFields(
+                        fieldWithPath("label").description("The label of the comparison related resource."),
+                        fieldWithPath("image").description("The url to the image of the comparison related resource. (optional)"),
+                        fieldWithPath("url").description("The url of the comparison related resource. (optional)"),
+                        fieldWithPath("description").description("The description of the comparison related resource. (optional)")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { comparisonService.createComparisonRelatedResource(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a comparison related resource request, when service reports missing comparison, then status is 404 NOT FOUND`() {
+        val comparisonId = ThingId("R100")
+        val exception = ComparisonNotFound(comparisonId)
+        every { comparisonService.createComparisonRelatedResource(any()) } throws exception
+
+        post("/api/comparisons/$comparisonId/related-resources", createComparisonRelatedResourceRequest())
+            .accept(COMPARISON_JSON_V2)
+            .contentType(COMPARISON_JSON_V2)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.path").value("/api/comparisons/$comparisonId/related-resources"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { comparisonService.createComparisonRelatedResource(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @DisplayName("Given a comparison related figure request, when service succeeds, it creates and returns the comparison related figure")
+    fun createComparisonRelatedFigure() {
+        val id = ThingId("R123")
+        val comparisonId = ThingId("R100")
+        every { comparisonService.createComparisonRelatedFigure(any()) } returns id
+
+        documentedPostRequestTo("/api/comparisons/{comparisonId}/related-figures", comparisonId)
+            .content(createComparisonRelatedFigureRequest())
+            .accept(COMPARISON_JSON_V2)
+            .contentType(COMPARISON_JSON_V2)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/comparisons/$comparisonId/related-figures/$id")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the newly created comparison related figure can be fetched from.")
+                    ),
+                    pathParameters(
+                        parameterWithName("comparisonId").description("The comparison to attach the comparison related figure to.")
+                    ),
+                    requestFields(
+                        fieldWithPath("label").description("The label of the comparison related figure."),
+                        fieldWithPath("image").description("The url to the image of the comparison related figure. (optional)"),
+                        fieldWithPath("description").description("The description of the comparison related figure. (optional)")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { comparisonService.createComparisonRelatedFigure(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a comparison related figure request, when service reports missing comparison, then status is 404 NOT FOUND`() {
+        val comparisonId = ThingId("R100")
+        val exception = ComparisonNotFound(comparisonId)
+        every { comparisonService.createComparisonRelatedFigure(any()) } throws exception
+
+        post("/api/comparisons/$comparisonId/related-figures", createComparisonRelatedFigureRequest())
+            .accept(COMPARISON_JSON_V2)
+            .contentType(COMPARISON_JSON_V2)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.path").value("/api/comparisons/$comparisonId/related-figures"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { comparisonService.createComparisonRelatedFigure(any()) }
+    }
+
     private fun createComparisonRequest() =
         ComparisonController.CreateComparisonRequest(
             title = "test",
@@ -803,5 +908,20 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
             isAnonymized = false,
             extractionMethod = ExtractionMethod.UNKNOWN
+        )
+
+    private fun createComparisonRelatedResourceRequest() =
+        ComparisonController.CreateComparisonRelatedResourceRequest(
+            label = "related resource",
+            image = "https://example.org/test.png",
+            url = "https://orkg.org/resources/R1000",
+            description = "comparison related resource description"
+        )
+
+    private fun createComparisonRelatedFigureRequest() =
+        ComparisonController.CreateComparisonRelatedFigureRequest(
+            label = "related resource",
+            image = "https://example.org/test.png",
+            description = "comparison related resource description"
         )
 }

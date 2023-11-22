@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Added new endpoints for creating comparisons
+  (See: [!672](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/672))
+- Added new endpoints for creating comparison related resources and figures
+  (See: [!673](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/673))
 - Predicate ids are now exported to json, along with their label.
   (See: [!685](https://gitlab.com/TIBHannover/orkg/orkg-backend/-/merge_requests/685))
 

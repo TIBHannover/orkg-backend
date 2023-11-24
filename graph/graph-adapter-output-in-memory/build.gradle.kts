@@ -12,14 +12,17 @@ testing {
         val test by getting(JvmTestSuite::class) {
             useJUnitJupiter()
             dependencies {
-                implementation(testFixtures(project(":graph:graph-application")))
+                implementation(libs.kotest.runner)
+                implementation(testFixtures(project(":graph:graph-ports-output")))
             }
         }
     }
 }
 
 dependencies {
-    implementation(project(":graph:graph-application"))
+    implementation(project(":common"))
+    implementation(project(":graph:graph-core-model"))
+    implementation(project(":graph:graph-core-services"))
     implementation("org.springframework.data:spring-data-commons")
     implementation(libs.forkhandles.values4k)
 }

@@ -39,7 +39,7 @@
   <root level="INFO">
     <appender-ref ref="CONSOLE" />
   </root>
-  <logger name="eu.tib.orkg.prototype.PaperRanker" level="DEBUG" additivity="false">
+  <logger name="org.orkg.contenttypes.adapter.input.rest.PaperRanker" level="DEBUG" additivity="false">
     <appender-ref ref="PAPER-RANKING-FILE" />
     <appender-ref ref="CONSOLE-INFO" />
   </logger>

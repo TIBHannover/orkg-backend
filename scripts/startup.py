@@ -1,6 +1,6 @@
 import json
-import requests
 import os
+import requests
 
 base_url = 'http://localhost:8000/api/'
 predicates = {}

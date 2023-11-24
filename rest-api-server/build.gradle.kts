@@ -44,12 +44,27 @@ allOpen {
     annotation("javax.persistence.Embeddable")
 }
 
-val restdocs by configurations.creating {
+val restdocs: Configuration by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
+
+val liquibase: Configuration by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
+
+val neo4jMigrations: Configuration by configurations.creating {
     isCanBeConsumed = false
     isCanBeResolved = true
 }
 
 val asciidoctor by configurations.creating
+
+val runtimeClasspath by configurations.getting {
+    extendsFrom(liquibase)
+    extendsFrom(neo4jMigrations)
+}
 
 idea {
     module {
@@ -63,7 +78,6 @@ testing {
             useJUnitJupiter()
             dependencies {
                 implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":graph:graph-application")))
                 implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
                 implementation("org.springframework.boot:spring-boot-starter-test") {
@@ -81,12 +95,31 @@ testing {
             useJUnitJupiter()
             dependencies {
                 implementation(project())
+                implementation(project(":common"))
                 implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":graph:graph-application")))
-                implementation(project(":identity-management:idm-application"))
+                implementation(project(":migrations:liquibase"))
+                implementation(project(":migrations:neo4j-migrations"))
+                implementation(project(":graph:graph-core-model"))
+                implementation(project(":graph:graph-core-services"))
+                implementation(project(":graph:graph-ports-input"))
+                implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
+                implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6"))
+                implementation(project(":content-types:content-types-ports-input"))
+                implementation(project(":content-types:content-types-ports-output"))
+                implementation(project(":content-types:content-types-core-model"))
+                implementation(project(":content-types:content-types-core-services"))
+                implementation(project(":content-types:content-types-adapter-output-web"))
+                implementation(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
+                implementation(project(":identity-management:idm-ports-input"))
+                implementation(project(":identity-management:idm-ports-output"))
+                implementation(project(":identity-management:idm-core-model"))
                 implementation(project(":identity-management:idm-adapter-output-spring-data-jpa")) // for JpaUserAdapter
-                implementation(project(":discussions:discussions-adapter-output-spring-data-jpa-postgres"))
-                implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa-postgres"))
+                implementation(project(":community:community-core-model"))
+                implementation(project(":community:community-ports-input"))
+                implementation(project(":discussions:discussions-adapter-output-spring-data-jpa"))
+                implementation(project(":media-storage:media-storage-core-model"))
+                implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa"))
+                implementation(project(":media-storage:media-storage-adapter-input-serialization"))
                 implementation(project(":feature-flags:feature-flags-ports"))
                 implementation("org.springframework.security:spring-security-test")
                 implementation("org.springframework.restdocs:spring-restdocs-mockmvc")
@@ -139,25 +172,77 @@ dependencies {
     implementation(platform("org.apache.logging.log4j:log4j-bom:2.19.0"))
 
     // This project is essentially a "configuration" project in Spring's sense, so we depend on all components:
-    implementation(project(":common:exceptions"))
-    compileOnly(project(":identity-management:idm-application")) // only ports used, replace later
-    runtimeOnly(project(":identity-management:idm-adapter-input-rest-spring-security"))
-    runtimeOnly(project(":identity-management:idm-adapter-output-spring-data-jpa"))
-    runtimeOnly(project(":profiling:profiling-application"))
-    runtimeOnly(project(":profiling:profiling-adapter-output-spring-data-neo4j-sdn6"))
-    implementation(project(":graph:graph-application"))
-    implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
-    implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6"))
-    implementation(project(":discussions:discussions-adapter-output-spring-data-jpa-postgres"))
-    implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa-postgres"))
+    implementation(project(":common"))
+    implementation(project(":common:serialization"))
+
+    implementation(project(":community:community-adapter-input-rest-spring-mvc"))
+    implementation(project(":community:community-adapter-output-spring-data-jpa"))
+    implementation(project(":community:community-core-model"))
+    implementation(project(":community:community-core-services"))
+    implementation(project(":community:community-ports-input"))
+    implementation(project(":community:community-ports-output"))
+
+    implementation(project(":content-types:content-types-adapter-input-rest-spring-mvc"))
+    implementation(project(":content-types:content-types-adapter-output-spring-data-neo4j-sdn6"))
+    implementation(project(":content-types:content-types-adapter-output-web"))
+    implementation(project(":content-types:content-types-core-model"))
+    implementation(project(":content-types:content-types-core-services"))
+    implementation(project(":content-types:content-types-ports-input"))
+    implementation(project(":content-types:content-types-ports-output"))
+
+    implementation(project(":data-export:data-export-adapters"))
+    implementation(project(":data-export:data-export-core"))
+    implementation(project(":data-export:data-export-ports-input"))
+
+    implementation(project(":discussions:discussions-adapter-input-rest-spring-mvc"))
+    implementation(project(":discussions:discussions-adapter-output-spring-data-jpa"))
+    implementation(project(":discussions:discussions-core-model"))
+    implementation(project(":discussions:discussions-core-services"))
+    implementation(project(":discussions:discussions-ports-input"))
+    implementation(project(":discussions:discussions-ports-output"))
+
     implementation(project(":feature-flags:feature-flags-ports"))
     implementation(project(":feature-flags:feature-flags-adapter-output-spring-properties"))
-    implementation(project(":data-export:data-export-application"))
-    implementation(project(":data-export:data-export-adapter-input-rest-spring-mvc"))
-    implementation(project(":licenses:licenses-application"))
+
+    implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
+    // implementation(project(":graph:graph-adapter-output-in-memory"))
+    implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6"))
+    implementation(project(":graph:graph-core-model"))
+    implementation(project(":graph:graph-core-services"))
+    implementation(project(":graph:graph-ports-input"))
+    implementation(project(":graph:graph-ports-output"))
+
+    implementation(project(":identity-management:idm-ports-input"))
+    // implementation(project(":identity-management:idm-ports-output"))
+    implementation(project(":identity-management:idm-core-model"))
+    implementation(project(":identity-management:idm-core-services"))
+    // only ports used, replace later
+    runtimeOnly(project(":identity-management:idm-adapter-input-rest-spring-security"))
+    runtimeOnly(project(":identity-management:idm-adapter-output-spring-data-jpa"))
+
     implementation(project(":licenses:licenses-adapter-input-rest-spring-mvc"))
-    implementation(project(":licenses:licenses-adapter-output-spring"))
+    implementation(project(":licenses:licenses-core-model"))
+    implementation(project(":licenses:licenses-core-services"))
+    implementation(project(":licenses:licenses-ports-input"))
+
+    implementation(project(":media-storage:media-storage-adapter-input-serialization"))
+    implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa"))
+    implementation(project(":media-storage:media-storage-core-model"))
+    implementation(project(":media-storage:media-storage-ports-input"))
+    implementation(project(":media-storage:media-storage-ports-output"))
+    implementation(project(":media-storage:media-storage-core-services"))
+
+    runtimeOnly(project(":profiling:profiling-adapter-output"))
+    runtimeOnly(project(":profiling:profiling-adapter-output-spring-data-neo4j-sdn6"))
+    runtimeOnly(project(":profiling:profiling-core-model"))
+    runtimeOnly(project(":profiling:profiling-core-services"))
+    runtimeOnly(project(":profiling:profiling-ports-output"))
+
     implementation(project(":widget"))
+
+    // Migrations
+    liquibase(project(mapOf("path" to ":migrations:liquibase", "configuration" to "liquibase")))
+    neo4jMigrations(project(mapOf("path" to ":migrations:neo4j-migrations", "configuration" to "neo4jMigrations")))
 
     implementation(libs.forkhandles.result4k)
     implementation(libs.forkhandles.values4k)
@@ -167,7 +252,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.hibernate:hibernate-core:5.6.9.Final") // TODO: remove after upgrade to 2.7
     implementation("org.postgresql:postgresql")
-    implementation("org.liquibase:liquibase-core")
+    implementation(libs.liquibase)
     implementation("org.springframework.boot:spring-boot-starter-data-neo4j") {
         exclude(group = "org.springframework.data", module = "spring-data-neo4j") // TODO: remove after upgrade to 2.7
     }
@@ -211,9 +296,11 @@ dependencies {
     // Documentation
     //
     asciidoctor("org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.7.RELEASE")
+    restdocs(project(withSnippets(":common")))
     restdocs(project(withSnippets(":graph:graph-adapter-input-rest-spring-mvc")))
-    restdocs(project(withSnippets(":data-export:data-export-adapter-input-rest-spring-mvc")))
+    restdocs(project(withSnippets(":data-export:data-export-adapters")))
     restdocs(project(withSnippets(":licenses:licenses-adapter-input-rest-spring-mvc")))
+    restdocs(project(withSnippets(":content-types:content-types-adapter-input-rest-spring-mvc")))
     restdocs(project(withSnippets(":widget")))
 }
 

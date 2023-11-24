@@ -3,15 +3,16 @@
 plugins {
     id("org.orkg.kotlin-conventions")
     id("org.orkg.spring-restdocs-producer")
-    alias(libs.plugins.spring.boot) apply false
-    kotlin("plugin.spring")
 }
 
 dependencies {
     api(platform(project(":platform")))
 
-    implementation(project(":common:exceptions"))
-    implementation(project(":graph:graph-application"))
+    implementation(project(":common"))
+    implementation(project(":common:serialization"))
+    implementation(project(":graph:graph-core-model"))
+    implementation(project(":graph:graph-ports-input"))
+    implementation(project(":graph:graph-ports-output"))
 
     implementation("org.springframework:spring-context")
     implementation("com.fasterxml.jackson.core:jackson-databind")
@@ -26,7 +27,8 @@ testing {
             useJUnitJupiter()
             dependencies {
                 implementation(testFixtures(project(":testing:kotest")))
-                implementation(testFixtures(project(":graph:graph-application")))
+                implementation(testFixtures(project(":graph:graph-core-model")))
+                implementation(libs.kotest.runner)
                 implementation(libs.spring.mockk)
                 implementation(libs.kotest.framework.datatest)
 

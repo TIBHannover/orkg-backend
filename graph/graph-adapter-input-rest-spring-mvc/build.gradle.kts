@@ -15,8 +15,13 @@ testing {
             useJUnitJupiter()
             dependencies {
                 implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":graph:graph-application")))
-                implementation(testFixtures(project(":identity-management:idm-application")))
+                implementation(testFixtures(project(":graph:graph-core-model")))
+                implementation(project(":media-storage:media-storage-ports-input"))
+                implementation(testFixtures(project(":media-storage:media-storage-core-model")))
+                implementation(project(":identity-management:idm-ports-input"))
+                implementation(project(":identity-management:idm-ports-output"))
+                implementation(testFixtures(project(":identity-management:idm-core-model")))
+                implementation(testFixtures(project(":community:community-core-model")))
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
@@ -36,9 +41,16 @@ dependencies {
 
     testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
 
-    implementation(project(":common:exceptions"))
-    implementation(project(":graph:graph-application"))
+    implementation(project(":common"))
+    implementation(project(":common:serialization"))
+    implementation(project(":graph:graph-core-model"))
+    implementation(project(":graph:graph-core-services"))
     implementation(project(":feature-flags:feature-flags-ports"))
+    implementation(project(":content-types:content-types-core-model"))
+    implementation(project(":content-types:content-types-ports-input"))
+    implementation(project(":content-types:content-types-ports-output"))
+    implementation(project(":community:community-ports-input"))
+    implementation(project(":community:community-core-model"))
 
     implementation("org.springframework:spring-context")
     implementation("org.springframework.data:spring-data-commons")

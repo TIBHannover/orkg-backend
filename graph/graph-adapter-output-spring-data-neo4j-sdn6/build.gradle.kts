@@ -4,10 +4,16 @@
 plugins {
     id("org.orkg.kotlin-conventions")
     id("org.orkg.neo4j-conventions")
+    id("java-test-fixtures")
     //kotlin("jvm") // TODO: remove on upgrade
     alias(libs.plugins.spring.boot) apply false
     kotlin("plugin.spring")
     alias(libs.plugins.spotless)
+}
+
+val neo4jMigrations: Configuration by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
 }
 
 testing {
@@ -16,7 +22,7 @@ testing {
             useJUnitJupiter()
             dependencies {
                 implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":graph:graph-application")))
+                implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
@@ -33,10 +39,17 @@ testing {
             useJUnitJupiter()
             dependencies {
                 implementation(project())
+                implementation(project(":common"))
                 implementation(libs.kotest.extensions.spring)
                 implementation(libs.spring.boot.starter.neo4j.migrations)
                 implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":graph:graph-application")))
+                implementation(project(":graph:graph-ports-output"))
+                implementation(project(":graph:graph-core-services"))
+                implementation(testFixtures(project(":graph:graph-ports-output")))
+                implementation(testFixtures(project(":graph:graph-core-model")))
+                implementation(testFixtures(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6")))
+                implementation(project(":migrations:liquibase"))
+                implementation(project(":migrations:neo4j-migrations"))
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
@@ -61,9 +74,11 @@ testing {
 
 dependencies {
     api(platform(project(":platform")))
+    implementation(project(":graph:graph-core-model"))
+    implementation(project(":graph:graph-core-services"))
 
-    implementation(project(":graph:graph-application"))
-    implementation(project(":common:exceptions"))
+    implementation(project(":common"))
+    implementation(project(":common:neo4j-dsl"))
 
     // Pagination (e.g. Page, Pageable, etc.)
     implementation("org.springframework.data:spring-data-commons")
@@ -80,6 +95,10 @@ dependencies {
 
     // Caching
     implementation("org.springframework.boot:spring-boot-starter-cache")
+
+    neo4jMigrations(project(mapOf("path" to ":migrations:neo4j-migrations", "configuration" to "neo4jMigrations")))
+
+    testFixturesImplementation(project(":common"))
 }
 
 tasks.named("check") {

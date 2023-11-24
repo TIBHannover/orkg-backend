@@ -10,8 +10,9 @@ plugins {
 
 dependencies {
     api(platform(project(":platform")))
-
-    implementation(project(":identity-management:idm-application"))
+    implementation(project(":identity-management:idm-ports-output"))
+    implementation(project(":identity-management:idm-core-model"))
+    implementation(project(":identity-management:idm-core-services"))
 
     implementation("org.springframework:spring-context")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")

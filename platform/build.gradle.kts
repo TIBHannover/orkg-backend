@@ -23,7 +23,7 @@ dependencies {
         exclude(group = "org.hibernate", module = "hibernate-core") // TODO: remove after upgrade to 2.7
         exclude(group = "org.slf4j") // TODO: remove after upgrade to 2.7
         // We need a bugfix, so we exclude it here and set a constraint later
-        // exclude(group = "org.liquibase", module = "liquibase-core")
+        exclude(group = "org.liquibase", module = "liquibase-core")
     }
     api(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
     api(enforcedPlatform(libs.kotlinx.coroutines.bom)) // Required for Kotest. TODO: can be removed after upgrade to Spring Boot 2.7

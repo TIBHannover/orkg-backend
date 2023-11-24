@@ -21,7 +21,7 @@ dependencies {
     }
 
     testFixturesCompileOnly(libs.spring.boot.starter.neo4j.migrations)
-    testFixturesImplementation("org.springframework.data:spring-data-commons:2.6.10")
+    testFixturesImplementation("org.springframework.data:spring-data-commons:2.7.16")
     testFixturesImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "junit", module = "junit")
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
@@ -29,4 +29,5 @@ dependencies {
     }
     testFixturesImplementation(libs.spring.mockk)
     testFixturesImplementation(libs.spring.restdocs)
+    testFixturesImplementation("org.springframework.security:spring-security-core")
 }

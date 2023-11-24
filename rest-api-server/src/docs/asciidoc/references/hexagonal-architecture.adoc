@@ -48,10 +48,10 @@ TBD: domain object, contained core
 Code is organized by contexts.
 A context holds everything that belongs to the application, i.e. ports, use cases, domain objects and services.
 
-The most important package is the `domain` package.
+The most important package is the `identifiers` package.
 It contains all domain objects.
 
-Alongside the `domain` package lives the `application` package.
+Alongside the `identifiers` package lives the `identifiers` package.
 It contains everything that is relevant to organize the domain.
 Application Services encapsulate business logic across domain objects.
 They implement the input ports of the application so that an external system can interact with the domain.
@@ -61,7 +61,7 @@ The sub-packages `application.port.in` and `application.port.out` contain the in
 Input ports are interfaces ending in the name `UseCase` that provide methods for a specific use case.
 Output ports are interfaces ending in `Port`.
 
-All classes and interfaces in the `application` package and its sub-packages form the API and therefore need to be public.
+All classes and interfaces in the `identifiers` package and its sub-packages form the API and therefore need to be public.
 
 ==== Adapters Package
 
@@ -111,7 +111,7 @@ LoadOutPort <|. PersistenceAdapter : implements
 Service -> DomainClass : accesses
 ----
 
-It is located in the `domain` package.
+It is located in the `identifiers` package.
 The use cases for `Foo` are defined in the `FooUseCase` interface that represents the input port of the application and is implemented in the `FooService`.
 The service accesses the `LoadFooPort` to locate and load `Foo`s from an "external" system.
 

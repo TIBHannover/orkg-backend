@@ -8,5 +8,6 @@ dependencies {
     api(platform(project(":platform")))
     implementation(project(":common"))
     implementation(project(":media-storage:media-storage-core-model"))
-    implementation(libs.javax.activation)
+
+    api(libs.javax.activation) // uses MimeType in public API
 }

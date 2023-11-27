@@ -11,28 +11,21 @@ plugins {
 dependencies {
     api(platform(project(":platform")))
 
-    implementation(project(":common"))
-    implementation(project(":identity-management:idm-core-model"))
-    implementation(project(":identity-management:idm-ports-input"))
-    implementation(project(":identity-management:idm-ports-output"))
-    implementation(project(":community:community-core-model"))
-    implementation(project(":community:community-ports-input"))
-    implementation(project(":community:community-ports-output"))
-    implementation(project(":community:community-adapter-output-spring-data-jpa"))
+    api(project(":community:community-ports-input"))
+    api(project(":community:community-ports-output"))
 
+    implementation(project(":community:community-adapter-output-spring-data-jpa")) // for entities, TODO: break dependency
+
+    implementation(project(":common"))
+    implementation(project(":identity-management:idm-ports-output")) // for UserRepository, TODO: break dependency
     implementation(project(":graph:graph-core-model"))
     implementation(project(":graph:graph-ports-output"))
     implementation(project(":media-storage:media-storage-ports-input"))
     implementation(project(":media-storage:media-storage-core-model"))
 
-    implementation("org.springframework.data:spring-data-commons")
     implementation("org.springframework:spring-context")
-    implementation("org.springframework:spring-tx")
-    implementation("org.springframework:spring-web")
-    implementation("org.springframework.security:spring-security-crypto") // for PasswordEncoder
 
-    implementation("org.springframework.data:spring-data-jpa")
-    implementation(libs.javax.activation)
+    implementation("org.springframework.data:spring-data-jpa") // because of adapter, TODO: break dependency
 }
 
 testing {

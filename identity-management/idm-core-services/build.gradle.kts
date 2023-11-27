@@ -11,15 +11,11 @@ plugins {
 dependencies {
     api(platform(project(":platform")))
 
-    implementation(project(":common"))
-    implementation(project(":identity-management:idm-core-model"))
     implementation(project(":identity-management:idm-ports-input"))
     implementation(project(":identity-management:idm-ports-output"))
 
-    implementation("org.springframework.data:spring-data-commons")
-    implementation("org.springframework:spring-context")
-    implementation("org.springframework:spring-tx")
-    implementation("org.springframework:spring-web")
+    implementation(project(":common")) // for exceptions (UserNotFound)
+
     implementation("org.springframework.security:spring-security-crypto") // for PasswordEncoder
 }
 

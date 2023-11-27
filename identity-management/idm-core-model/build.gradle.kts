@@ -12,13 +12,7 @@ plugins {
 dependencies {
     api(platform(project(":platform")))
 
-    implementation(project(":common"))
-
-    implementation("org.springframework.data:spring-data-commons")
-    implementation("org.springframework:spring-context")
-    implementation("org.springframework:spring-tx")
-    implementation("org.springframework:spring-web")
-    implementation("org.springframework.security:spring-security-crypto") // for PasswordEncoder
+    implementation(project(":common")) // for exceptions
 
     implementation(libs.jackson.databind)
 }

@@ -36,32 +36,24 @@ testing {
 dependencies {
     api(platform(project(":platform")))
 
-    testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
+    implementation(project(":community:community-ports-input"))
+    implementation(project(":community:community-ports-output")) // uses repository directly
 
     implementation(project(":common"))
     implementation(project(":common:serialization"))
     implementation(project(":graph:graph-core-model"))
     implementation(project(":graph:graph-core-services"))
     implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
-    implementation(project(":identity-management:idm-ports-input"))
-    implementation(project(":identity-management:idm-ports-output"))
-    implementation(project(":identity-management:idm-core-model"))
-    implementation(project(":identity-management:idm-core-services"))
-    implementation(project(":community:community-ports-input"))
-    implementation(project(":community:community-ports-output"))
-    implementation(project(":community:community-core-model"))
+    implementation(project(":identity-management:idm-core-model")) // for exception, TODO: break dependency
+    implementation(project(":identity-management:idm-ports-input")) // in legacy controller, TODO: break dependency
     implementation(project(":media-storage:media-storage-core-model"))
     implementation(project(":media-storage:media-storage-ports-input"))
-    // TODO: break dependency, coupling of observatories
 
     implementation("org.springframework:spring-context")
     implementation("org.springframework.data:spring-data-commons")
-
-    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin") // to (de)serialize data classes
+    implementation(libs.jackson.core)
 
-
-    implementation(libs.javax.activation)
+    testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
 }

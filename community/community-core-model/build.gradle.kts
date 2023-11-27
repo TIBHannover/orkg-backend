@@ -12,7 +12,8 @@ dependencies {
     api(platform(project(":platform")))
 
     implementation(project(":common"))
-    implementation(project(":identity-management:idm-core-model"))
+
+    implementation(project(":identity-management:idm-core-model")) // for GravatarId, TODO: break dependency
     implementation(project(":media-storage:media-storage-core-model"))
 
     implementation("org.springframework:spring-web")

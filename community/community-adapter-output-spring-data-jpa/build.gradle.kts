@@ -9,20 +9,19 @@ plugins {
 
 dependencies {
     api(platform(project(":platform")))
-    implementation(project(":identity-management:idm-ports-output"))
-    implementation(project(":identity-management:idm-core-model"))
-    implementation(project(":identity-management:idm-core-services"))
-    implementation(project(":identity-management:idm-adapter-output-spring-data-jpa")) // TODO: break dependency
-    implementation(project(":common"))
-    implementation(project(":community:community-core-model"))
+
     implementation(project(":community:community-ports-output"))
+
+    implementation(project(":identity-management:idm-ports-output")) // for UserRepository, TODO: break dependency
+    implementation(project(":identity-management:idm-adapter-output-spring-data-jpa")) // TODO: break dependency
+
+    implementation(project(":common"))
     implementation(project(":graph:graph-core-model"))
     implementation(project(":media-storage:media-storage-core-model"))
 
     implementation("org.springframework:spring-context")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation(libs.jakarta.validation)
 }
 
 testing {

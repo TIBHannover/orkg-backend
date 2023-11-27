@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.security.Principal
 import java.util.*
 import javax.validation.Valid
-import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 import org.orkg.auth.domain.CurrentPasswordInvalid
@@ -13,21 +12,11 @@ import org.orkg.auth.domain.Role
 import org.orkg.auth.domain.User
 import org.orkg.auth.domain.UserNotFound
 import org.orkg.auth.input.AuthUseCase
-import org.orkg.common.ContributorId
-import org.orkg.common.ObservatoryId
-import org.orkg.common.OrganizationId
-import org.orkg.common.annotations.PreAuthorizeCurator
-import org.orkg.community.domain.UserIsAlreadyMemberOfObservatory
-import org.orkg.community.domain.UserIsAlreadyMemberOfOrganization
-import org.orkg.community.domain.toContributor
-import org.orkg.community.input.ObservatoryAuthUseCases
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
-import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -37,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/user", produces = [MediaType.APPLICATION_JSON_VALUE])
 class UserController(
     private val userService: AuthUseCase,
-    private val observatoryAuthUseCases: ObservatoryAuthUseCases,
 ) {
     @GetMapping("/")
     fun lookupUserDetails(principal: Principal?): ResponseEntity<UserDetails> {
@@ -83,31 +71,6 @@ class UserController(
         val user = userService.findById(id).orElseThrow { UserNotFound(id) }
         userService.updateRole(id)
         return ok(UserDetails(user))
-    }
-
-    @PreAuthorizeCurator
-    @PutMapping("/observatory", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun updateUserObservatory(@RequestBody @Valid userObservatory: UserObservatoryRequest): ResponseEntity<Any> {
-        val user = userService.findByEmail(userObservatory.userEmail).orElseThrow { UserNotFound(userObservatory.userEmail) }
-        if (user.observatoryId == userObservatory.observatoryId.value) {
-            throw UserIsAlreadyMemberOfObservatory(userObservatory.observatoryId)
-        }
-        if (user.organizationId == userObservatory.organizationId.value) {
-            throw UserIsAlreadyMemberOfOrganization(userObservatory.organizationId)
-        }
-        return ok(
-            observatoryAuthUseCases.addUserObservatory(
-                userObservatory.observatoryId.value,
-                userObservatory.organizationId.value,
-                user
-            ).toContributor()
-        )
-    }
-
-    @PreAuthorizeCurator
-    @DeleteMapping("{id}/observatory")
-    fun deleteUserObservatory(@PathVariable id: ContributorId) {
-        observatoryAuthUseCases.deleteUserObservatory(id.value)
     }
 
     /**
@@ -170,15 +133,4 @@ class UserController(
     ) {
         fun hasMatchingPasswords() = newPassword == newMatchingPassword
     }
-
-    data class UserObservatoryRequest(
-        @field:Email
-        @field:NotBlank
-        @JsonProperty("user_email")
-        val userEmail: String,
-        @JsonProperty("observatory_id")
-        val observatoryId: ObservatoryId,
-        @JsonProperty("organization_id")
-        val organizationId: OrganizationId
-    )
 }

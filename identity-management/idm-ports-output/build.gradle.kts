@@ -10,9 +10,7 @@ plugins {
 
 dependencies {
     api(platform(project(":platform")))
-
-    implementation(project(":common"))
-    implementation(project(":identity-management:idm-core-model"))
+    api(project(":identity-management:idm-core-model"))
 
     implementation("org.springframework.data:spring-data-commons")
 }

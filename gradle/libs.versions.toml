@@ -27,6 +27,8 @@ forkhandles-result4k = { module = "dev.forkhandles:result4k", version.ref = "for
 forkhandles-values4k = { module = "dev.forkhandles:values4k", version.ref = "forkhandles" }
 jackson-core = { module = "com.fasterxml.jackson.core:jackson-databind", version = "" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version = "" }
+jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version = "" }
+jakarta-validation = { module = "jakarta.validation:jakarta.validation-api", version = "" }
 javax-activation = { module = "javax.activation:activation", version = "1.1" }
 jaxb-api = { module = "javax.xml.bind:jaxb-api", version = "2.3.0" }
 jaxb-runtime = { module = "org.glassfish.jaxb:jaxb-runtime", version = "2.3.7" }

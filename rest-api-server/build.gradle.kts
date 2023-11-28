@@ -7,7 +7,7 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 
-group = "eu.tib"
+group = "org.orkg"
 version = "0.41.0"
 
 val springSecurityOAuthVersion = "2.5.2"

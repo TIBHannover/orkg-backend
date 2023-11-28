@@ -10,7 +10,7 @@ import org.springframework.data.neo4j.repository.query.Query
 
 private const val id = "${'$'}id"
 
-private const val PAGE_PARAMS = "SKIP ${'$'}skip LIMIT ${'$'}limit"
+private const val PAGE_PARAMS = ":#{orderBy(#pageable)} SKIP ${'$'}skip LIMIT ${'$'}limit"
 
 interface Neo4jPaperRepository : Neo4jRepository<Neo4jResource, ThingId> {
 

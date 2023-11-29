@@ -34,7 +34,7 @@ testing {
         val test by getting(JvmTestSuite::class) {
             useJUnitJupiter()
             dependencies {
-                implementation(testFixtures(project(":content-types:content-types-core-model")))
+                implementation(testFixtures(project(":content-types:content-types-ports-output")))
                 implementation("org.assertj:assertj-core")
                 implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
                 implementation(libs.spring.mockk)

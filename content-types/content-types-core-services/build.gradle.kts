@@ -32,10 +32,7 @@ dependencies {
 
     testFixturesImplementation(project(":common"))
     testFixturesImplementation(project(":graph:graph-core-model"))
-    testFixturesImplementation(project(":community:community-core-model"))
     testFixturesImplementation(project(":content-types:content-types-core-model"))
-    testFixturesImplementation(project(":content-types:content-types-ports-input"))
-    testFixturesImplementation(project(":content-types:content-types-ports-output"))
 }
 
 testing {
@@ -46,6 +43,7 @@ testing {
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":testing:spring")))
                 implementation(testFixtures(project(":community:community-core-model")))
+                implementation(testFixtures(project(":content-types:content-types-ports-input")))
                 implementation(project(":media-storage:media-storage-core-model"))
                 implementation("org.assertj:assertj-core")
                 implementation(libs.kotest.runner)

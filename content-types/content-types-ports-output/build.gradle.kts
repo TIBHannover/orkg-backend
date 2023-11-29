@@ -26,7 +26,6 @@ dependencies {
     testFixturesImplementation(project(":graph:graph-core-model"))
     testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))
     testFixturesImplementation(project(":graph:graph-ports-output"))
-    testFixturesImplementation(project(":community:community-core-model"))
     testFixturesImplementation(project(":content-types:content-types-core-model"))
     testFixturesImplementation(libs.forkhandles.fabrikate4k)
     testFixturesImplementation(libs.kotest.runner)

@@ -11,6 +11,7 @@ import org.orkg.graph.adapter.output.neo4j.internal.AttributeConverter
 import org.orkg.graph.domain.StatementId
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.neo4j.core.DatabaseSelectionProvider
 import org.springframework.data.neo4j.core.Neo4jClient
@@ -20,7 +21,8 @@ import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories
 @Configuration
 @EnableNeo4jRepositories("org.orkg.graph.adapter.output.neo4j.internal")
 @EntityScan("org.orkg.graph.adapter.output.neo4j.internal")
-class Neo4jConfiguration {
+@ComponentScan(basePackages = ["org.orkg.graph.adapter.output.neo4j.internal"])
+class GraphNeo4jConfiguration {
     @Bean
     fun neo4jConversions() = Neo4jConversions(
         setOf(
@@ -41,7 +43,6 @@ class Neo4jConfiguration {
     fun neo4jClient(
         driver: Driver,
         databaseSelectionProvider: DatabaseSelectionProvider
-    ): Neo4jClient {
-        return Neo4jClient.create(driver, databaseSelectionProvider)
-    }
+    ): Neo4jClient =
+        Neo4jClient.create(driver, databaseSelectionProvider)
 }

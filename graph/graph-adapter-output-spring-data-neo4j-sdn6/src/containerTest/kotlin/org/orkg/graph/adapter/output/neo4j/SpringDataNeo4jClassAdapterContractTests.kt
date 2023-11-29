@@ -10,7 +10,7 @@ import org.neo4j.cypherdsl.core.Cypher.anyNode
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Functions.labels
-import org.orkg.graph.adapter.output.neo4j.configuration.Neo4jConfiguration
+import org.orkg.graph.adapter.output.neo4j.configuration.GraphNeo4jConfiguration
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.PredicateRepository
@@ -33,15 +33,14 @@ import org.springframework.test.context.ContextConfiguration
         SpringDataNeo4jClassAdapter::class,
         SpringDataNeo4jStatementAdapter::class,
         SpringDataNeo4jLiteralAdapter::class,
-        SpringDataNeo4jPredicateAdapter::class
+        SpringDataNeo4jPredicateAdapter::class,
+        GraphNeo4jConfiguration::class
     ],
     initializers = [
         Neo4jContainerInitializer::class
     ]
 )
-@Import(value = [Neo4jConfiguration::class])
 @ImportAutoConfiguration(MigrationsAutoConfiguration::class)
-@ComponentScan(basePackages = ["org.orkg.graph.adapter.output.neo4j"])
 internal class SpringDataNeo4jClassAdapterContractTests(
     @Autowired private val springDataNeo4jClassAdapter: ClassRepository,
     @Autowired private val springDataNeo4jStatementAdapter: StatementRepository,

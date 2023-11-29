@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.adapter.output.neo4j
 
 import io.kotest.core.spec.style.DescribeSpec
+import org.orkg.contenttypes.adapter.output.neo4j.configuration.ContentTypesNeo4jConfiguration
 import org.orkg.contenttypes.output.ContributionComparisonRepository
 import org.orkg.contenttypes.testing.fixtures.contributionComparisonRepositoryContract
 import org.orkg.graph.adapter.output.neo4j.SpringDataNeo4jClassAdapter
@@ -8,7 +9,7 @@ import org.orkg.graph.adapter.output.neo4j.SpringDataNeo4jLiteralAdapter
 import org.orkg.graph.adapter.output.neo4j.SpringDataNeo4jPredicateAdapter
 import org.orkg.graph.adapter.output.neo4j.SpringDataNeo4jResourceAdapter
 import org.orkg.graph.adapter.output.neo4j.SpringDataNeo4jStatementAdapter
-import org.orkg.graph.adapter.output.neo4j.configuration.Neo4jConfiguration
+import org.orkg.graph.adapter.output.neo4j.configuration.GraphNeo4jConfiguration
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.PredicateRepository
@@ -18,8 +19,6 @@ import org.orkg.testing.Neo4jContainerInitializer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
 import org.springframework.cache.annotation.EnableCaching
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.Import
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories
 import org.springframework.test.context.ContextConfiguration
 
@@ -33,17 +32,11 @@ import org.springframework.test.context.ContextConfiguration
         SpringDataNeo4jLiteralAdapter::class,
         SpringDataNeo4jResourceAdapter::class,
         SpringDataNeo4jPredicateAdapter::class,
+        GraphNeo4jConfiguration::class,
+        ContentTypesNeo4jConfiguration::class
     ],
     initializers = [
         Neo4jContainerInitializer::class
-    ]
-)
-@Import(Neo4jConfiguration::class)
-@EnableNeo4jRepositories("org.orkg.contenttypes.adapter.output.neo4j.internal")
-@ComponentScan(
-    basePackages = [
-        "org.orkg.graph.adapter.output.neo4j.internal",
-        "org.orkg.contenttypes.adapter.output.neo4j.internal"
     ]
 )
 internal class SpringDataNeo4jContributionComparisonAdapterContractTests(

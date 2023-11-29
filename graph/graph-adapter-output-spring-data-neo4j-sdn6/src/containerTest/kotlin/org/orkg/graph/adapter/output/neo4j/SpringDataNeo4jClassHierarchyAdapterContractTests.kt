@@ -1,7 +1,7 @@
 package org.orkg.graph.adapter.output.neo4j
 
 import io.kotest.core.spec.style.DescribeSpec
-import org.orkg.graph.adapter.output.neo4j.configuration.Neo4jConfiguration
+import org.orkg.graph.adapter.output.neo4j.configuration.GraphNeo4jConfiguration
 import org.orkg.graph.output.ClassHierarchyRepository
 import org.orkg.graph.output.ClassRelationRepository
 import org.orkg.graph.output.ClassRepository
@@ -11,8 +11,6 @@ import org.orkg.graph.testing.fixtures.classRelationRepositoryContract
 import org.orkg.testing.Neo4jContainerInitializer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.Import
 import org.springframework.test.context.ContextConfiguration
 
 @DataNeo4jTest
@@ -20,14 +18,13 @@ import org.springframework.test.context.ContextConfiguration
     classes = [
         SpringDataNeo4jClassAdapter::class,
         SpringDataNeo4jClassHierarchyAdapter::class,
-        SpringDataNeo4jResourceAdapter::class
+        SpringDataNeo4jResourceAdapter::class,
+        GraphNeo4jConfiguration::class
     ],
     initializers = [
         Neo4jContainerInitializer::class
     ]
 )
-@Import(Neo4jConfiguration::class)
-@ComponentScan(basePackages = ["org.orkg.graph.adapter.output.neo4j"])
 internal class SpringDataNeo4jClassHierarchyAdapterContractTests(
     @Autowired private val springDataNeo4jClassAdapter: ClassRepository,
     @Autowired private val springDataNeo4jClassRelationAdapter: ClassRelationRepository,

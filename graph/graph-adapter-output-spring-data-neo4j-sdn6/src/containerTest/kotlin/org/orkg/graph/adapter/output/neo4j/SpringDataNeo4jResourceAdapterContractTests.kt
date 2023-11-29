@@ -10,7 +10,7 @@ import org.neo4j.cypherdsl.core.Cypher.anyNode
 import org.neo4j.cypherdsl.core.Cypher.literalOf
 import org.neo4j.cypherdsl.core.Cypher.match
 import org.neo4j.cypherdsl.core.Functions.labels
-import org.orkg.graph.adapter.output.neo4j.configuration.Neo4jConfiguration
+import org.orkg.graph.adapter.output.neo4j.configuration.GraphNeo4jConfiguration
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.resourceRepositoryContract
@@ -18,17 +18,21 @@ import org.orkg.testing.Neo4jContainerInitializer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.Import
 import org.springframework.data.neo4j.core.Neo4jClient
 import org.springframework.data.neo4j.core.fetchAs
 import org.springframework.test.context.ContextConfiguration
 
 @DataNeo4jTest
-@ContextConfiguration(classes = [SpringDataNeo4jResourceAdapter::class], initializers = [Neo4jContainerInitializer::class])
-@Import(value = [Neo4jConfiguration::class])
+@ContextConfiguration(
+    classes = [
+        SpringDataNeo4jResourceAdapter::class,
+        GraphNeo4jConfiguration::class
+    ],
+    initializers = [
+        Neo4jContainerInitializer::class
+    ]
+)
 @ImportAutoConfiguration(MigrationsAutoConfiguration::class)
-@ComponentScan(basePackages = ["org.orkg.graph.adapter.output.neo4j.internal"])
 internal class SpringDataNeo4jResourceAdapterContractTests(
     @Autowired private val springDataNeo4jResourceAdapter: ResourceRepository,
     @Autowired private val neo4jClient: Neo4jClient

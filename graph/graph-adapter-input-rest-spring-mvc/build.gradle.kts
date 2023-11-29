@@ -5,6 +5,7 @@ plugins {
     id("org.orkg.kotlin-conventions")
     id("org.orkg.spring-restdocs-producer")
     id("org.orkg.neo4j-conventions")
+    id("org.orkg.jackson-conventions")
     alias(libs.plugins.spring.boot) apply false
     kotlin("plugin.spring")
 }
@@ -62,9 +63,4 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin") // to (de)serialize data classes
-
-    // RDF
-    implementation("org.eclipse.rdf4j:rdf4j-client:3.7.7") {
-        exclude(group = "commons-collections", module = "commons-collections") // Version 3, vulnerable
-    }
 }

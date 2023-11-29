@@ -8,7 +8,6 @@ testcontainers = "1.17.3"
 spotless = "6.2.1"
 spring-boot = "2.4.13"
 spring-dependency-management = "1.0.11.RELEASE"
-jackson = "2.13.4"
 
 [libraries]
 # BOMs
@@ -17,7 +16,6 @@ forkhandles-bom = { module = "dev.forkhandles:forkhandles-bom", version.ref = "f
 junit5-bom = { module = "org.junit:junit-bom", version.ref = "junit5" }
 kotlinx-coroutines-bom = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-bom", version.ref = "kotlinx-coroutines" }
 spring-boot-bom = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
-jackson-bom = { module = "com.fasterxml.jackson:jackson-bom", version.ref = "jackson" }
 # Libraries
 annotations-jsr305 = { module = "com.google.code.findbugs:jsr305", version = "3.0.2" }
 assertj-core = { module = "org.assertj:assertj-core", version = "" }

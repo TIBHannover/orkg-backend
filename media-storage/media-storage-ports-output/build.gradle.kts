@@ -1,6 +1,7 @@
 plugins {
     id("org.orkg.kotlin-conventions")
     id("java-test-fixtures")
+    id("org.orkg.jackson-conventions")
     kotlin("plugin.spring")
     alias(libs.plugins.spotless)
 }

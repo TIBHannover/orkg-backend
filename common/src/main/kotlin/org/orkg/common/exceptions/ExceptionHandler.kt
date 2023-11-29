@@ -21,7 +21,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import org.springframework.web.util.ContentCachingRequestWrapper
 
-
 @ControllerAdvice
 class ExceptionHandler : ResponseEntityExceptionHandler() {
     override fun handleMethodArgumentNotValid(

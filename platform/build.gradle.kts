@@ -10,7 +10,6 @@ javaPlatform {
 dependencies {
     // Extend existing platforms
     api(enforcedPlatform(kotlin("bom", "1.8.22")))
-    // api(enforcedPlatform(libs.jackson.bom))
     api(platform(libs.forkhandles.bom))
     api(platform(libs.spring.boot.bom)) {
         // We want to use a more recent Kotlin and JUnit version
@@ -27,6 +26,8 @@ dependencies {
     }
     api(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
     api(enforcedPlatform(libs.kotlinx.coroutines.bom)) // Required for Kotest. TODO: can be removed after upgrade to Spring Boot 2.7
+    // Use the virtual platform defined in the alignment rule to manage Jackson versions
+    api(enforcedPlatform("com.fasterxml.jackson:jackson-bom:2.15.3"))
 
     // Declare constraints on all components that need alignment (aka. our modules)
     constraints {

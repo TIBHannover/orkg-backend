@@ -3,6 +3,7 @@
 plugins {
     id("org.orkg.kotlin-conventions")
     id("org.orkg.spring-restdocs-producer")
+    id("org.orkg.jackson-conventions")
 }
 
 dependencies {

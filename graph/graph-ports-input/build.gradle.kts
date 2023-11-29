@@ -1,5 +1,6 @@
 plugins {
     id("org.orkg.kotlin-conventions")
+    id("org.orkg.jackson-conventions")
     alias(libs.plugins.spotless)
     id("org.orkg.neo4j-conventions") // to obtain version of spring-data commons. TODO: remove after upgrade
 }

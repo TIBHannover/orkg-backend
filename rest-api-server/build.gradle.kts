@@ -21,6 +21,7 @@ val downloadJavadoc: String? by project
 plugins {
     id("org.orkg.kotlin-conventions")
     id("org.orkg.neo4j-conventions")
+    id("org.orkg.jackson-conventions")
     kotlin("kapt")
     kotlin("plugin.spring")
     kotlin("plugin.jpa")
@@ -269,10 +270,6 @@ dependencies {
     implementation(libs.annotations.jsr305) // provides @Nullable and other JSR305 annotations
     // File uploads
     implementation("commons-fileupload:commons-fileupload:1.5")
-    // RDF
-    implementation("org.eclipse.rdf4j:rdf4j-client:3.7.7") {
-        exclude(group = "commons-collections", module = "commons-collections") // Version 3, vulnerable
-    }
     implementation("io.github.config4k:config4k:0.4.2") {
         because("Required for parsing the essential entity configuration")
     }

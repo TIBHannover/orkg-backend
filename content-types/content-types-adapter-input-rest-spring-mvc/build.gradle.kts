@@ -6,6 +6,7 @@ plugins {
     id("org.orkg.neo4j-conventions")
     id("org.orkg.spring-restdocs-producer")
     id("java-test-fixtures")
+    id("org.orkg.jackson-conventions")
     kotlin("plugin.spring")
     alias(libs.plugins.spotless)
 }

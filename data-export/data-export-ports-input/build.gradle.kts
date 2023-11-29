@@ -2,6 +2,7 @@ plugins {
     id("org.orkg.kotlin-conventions")
     kotlin("plugin.spring")
     id("org.orkg.neo4j-conventions")
+    id("org.orkg.jackson-conventions")
 }
 
 dependencies {

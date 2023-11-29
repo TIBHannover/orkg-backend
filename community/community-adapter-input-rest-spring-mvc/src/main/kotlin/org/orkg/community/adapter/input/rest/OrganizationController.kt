@@ -8,6 +8,7 @@ import javax.activation.MimeTypeParseException
 import javax.servlet.http.HttpServletResponse
 import javax.validation.Valid
 import javax.validation.constraints.NotBlank
+import javax.validation.constraints.NotNull
 import javax.validation.constraints.Pattern
 import javax.validation.constraints.Size
 import org.apache.tomcat.util.http.fileupload.IOUtils
@@ -241,7 +242,6 @@ class OrganizationController(
 
     data class UpdateRequest(
         @field:NotBlank
-        @field:Size(min = 1)
         val value: String
     )
 

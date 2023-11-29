@@ -137,16 +137,16 @@ class ClassHierarchyController(
 }
 
 data class CreateChildrenRequest(
-    @field:JsonProperty("child_ids")
+    @JsonProperty("child_ids")
     val childIds: Set<ThingId>
 )
 
 data class CountResponse(
-    @field:JsonProperty("count")
+    @JsonProperty("count")
     val count: Long
 )
 
 data class CreateParentRequest(
-    @field:JsonProperty("parent_id")
+    @JsonProperty("parent_id")
     val parentId: ThingId
 )

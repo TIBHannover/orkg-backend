@@ -25,7 +25,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -83,7 +82,7 @@ class ComparisonController(
 
     @PostMapping(consumes = [COMPARISON_JSON_V2], produces = [COMPARISON_JSON_V2])
     fun create(
-        @RequestBody @Validated request: CreateComparisonRequest,
+        @RequestBody @Valid request: CreateComparisonRequest,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<Any> {
         val userId = ContributorId(authenticatedUserId())
@@ -115,7 +114,7 @@ class ComparisonController(
     @PostMapping("/{comparisonId}/related-resources", consumes = [COMPARISON_JSON_V2], produces = [COMPARISON_JSON_V2])
     fun create(
         @PathVariable("comparisonId") comparisonId: ThingId,
-        @RequestBody @Validated request: CreateComparisonRelatedResourceRequest,
+        @RequestBody @Valid request: CreateComparisonRelatedResourceRequest,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<Any> {
         val userId = ContributorId(authenticatedUserId())
@@ -147,7 +146,7 @@ class ComparisonController(
     @PostMapping("/{comparisonId}/related-figures", consumes = [COMPARISON_JSON_V2], produces = [COMPARISON_JSON_V2])
     fun create(
         @PathVariable("comparisonId") comparisonId: ThingId,
-        @RequestBody @Validated request: CreateComparisonRelatedFigureRequest,
+        @RequestBody @Valid request: CreateComparisonRelatedFigureRequest,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<Any> {
         val userId = ContributorId(authenticatedUserId())
@@ -181,6 +180,7 @@ class ComparisonController(
         @Size(min = 1, max = 1)
         @JsonProperty("research_fields")
         val researchFields: List<ThingId>,
+        @field:Valid
         val authors: List<AuthorDTO>,
         val contributions: List<ThingId>,
         val references: List<String>,
@@ -211,11 +211,11 @@ class ComparisonController(
 
     data class CreateComparisonRelatedResourceRequest(
         val label: String,
-        @NotBlank
+        @field:NotBlank
         val image: String?,
-        @NotBlank
+        @field:NotBlank
         val url: String?,
-        @NotBlank
+        @field:NotBlank
         val description: String?
     ) {
         fun toCreateCommand(comparisonId: ThingId, contributorId: ContributorId) =
@@ -231,9 +231,9 @@ class ComparisonController(
 
     data class CreateComparisonRelatedFigureRequest(
         val label: String,
-        @NotBlank
+        @field:NotBlank
         val image: String?,
-        @NotBlank
+        @field:NotBlank
         val description: String?
     ) {
         fun toCreateCommand(comparisonId: ThingId, contributorId: ContributorId) =
@@ -247,9 +247,9 @@ class ComparisonController(
     }
 
     data class PublishRequest(
-        @NotBlank
+        @field:NotBlank
         val subject: String,
-        @NotBlank
+        @field:NotBlank
         val description: String
     )
 }

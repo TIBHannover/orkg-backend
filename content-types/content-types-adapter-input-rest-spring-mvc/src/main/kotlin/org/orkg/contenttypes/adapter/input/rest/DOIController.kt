@@ -2,6 +2,7 @@ package org.orkg.contenttypes.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.net.URI
+import javax.validation.Valid
 import javax.validation.constraints.Size
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
@@ -39,7 +40,7 @@ class DOIController(
     private val literalService: LiteralUseCases
 ) {
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun addDOI(@RequestBody request: CreateDOIRequest): DoiResponse {
+    fun addDOI(@RequestBody @Valid request: CreateDOIRequest): DoiResponse {
         val resource = resourceRepository.findById(request.resourceId)
             .orElseThrow { ResourceNotFound.withId(request.resourceId) }
         if (resource.classes.intersect(publishableClasses).isEmpty()) {
@@ -87,6 +88,7 @@ class DOIController(
         @JsonProperty("related_resources")
         val relatedResources: Set<ThingId>,
         val description: String,
+        @field:Valid
         val authors: List<Creator>,
         val url: URI,
         val type: String,
@@ -96,7 +98,7 @@ class DOIController(
         data class Creator(
             @JsonProperty("creator")
             val name: String,
-            @Size(min = 19, max = 19)
+            @field:Size(min = 19, max = 19)
             val orcid: String?
         )
     }

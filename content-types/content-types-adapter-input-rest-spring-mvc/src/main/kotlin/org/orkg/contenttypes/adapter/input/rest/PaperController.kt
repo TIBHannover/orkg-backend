@@ -3,6 +3,8 @@ package org.orkg.contenttypes.adapter.input.rest
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.net.URI
 import javax.validation.Valid
+import javax.validation.constraints.Max
+import javax.validation.constraints.Min
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 import org.orkg.common.ContributorId
@@ -26,7 +28,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -87,7 +88,7 @@ class PaperController(
 
     @PostMapping(consumes = [PAPER_JSON_V2])
     fun create(
-        @RequestBody @Validated request: CreatePaperRequest,
+        @RequestBody @Valid request: CreatePaperRequest,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<PaperRepresentation> {
         val userId = ContributorId(authenticatedUserId())
@@ -102,7 +103,7 @@ class PaperController(
     @PostMapping("/{id}/contributions", produces = [CONTRIBUTION_JSON_V2], consumes = [CONTRIBUTION_JSON_V2])
     fun createContribution(
         @PathVariable("id") paperId: ThingId,
-        @RequestBody @Validated request: CreateContributionRequest,
+        @RequestBody @Valid request: CreateContributionRequest,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<ContributionRepresentation> {
         val userId = ContributorId(authenticatedUserId())
@@ -129,30 +130,32 @@ class PaperController(
     }
 
     data class CreatePaperRequest(
-        @NotBlank
+        @field:NotBlank
         val title: String,
-        @Size(min = 1, max = 1)
+        @field:Size(min = 1, max = 1)
         @JsonProperty("research_fields")
         val researchFields: List<ThingId>,
         val identifiers: Map<String, String>?,
         @JsonProperty("publication_info")
         val publicationInfo: PublicationInfoDTO?,
         val authors: List<AuthorDTO>,
-        @Size(max = 1)
+        @field:Size(max = 1)
         val observatories: List<ObservatoryId>,
-        @Size(max = 1)
+        @field:Size(max = 1)
         val organizations: List<OrganizationId>,
+        @field:Valid
         val contents: PaperContentsDTO?,
         @JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     ) {
         data class PublicationInfoDTO(
-            @Size(min = 1, max = 12)
+            @field:Min(1)
+            @field:Max(12)
             @JsonProperty("published_month")
             val publishedMonth: Int?,
             @JsonProperty("published_year")
             val publishedYear: Long?,
-            @NotBlank
+            @field:NotBlank
             @JsonProperty("published_in")
             val publishedIn: String?,
             val url: URI?
@@ -167,10 +170,15 @@ class PaperController(
         }
 
         data class PaperContentsDTO(
+            @field:Valid
             val resources: Map<String, ResourceDefinitionDTO>?,
+            @field:Valid
             val literals: Map<String, LiteralDefinitionDTO>?,
+            @field:Valid
             val predicates: Map<String, PredicateDefinitionDTO>?,
+            @field:Valid
             val lists: Map<String, ListDefinitionDTO>?,
+            @field:Valid
             val contributions: List<ContributionDTO>
         ) {
             fun toCreateCommand(): CreatePaperUseCase.CreateCommand.PaperContents =
@@ -184,7 +192,7 @@ class PaperController(
         }
 
         data class ResourceDefinitionDTO(
-            @NotBlank
+            @field:NotBlank
             val label: String,
             val classes: Set<ThingId>?
         ) {
@@ -196,7 +204,7 @@ class PaperController(
         }
 
         data class LiteralDefinitionDTO(
-            @NotBlank
+            @field:NotBlank
             val label: String,
             @JsonProperty("data_type")
             val dataType: String?
@@ -209,9 +217,9 @@ class PaperController(
         }
 
         data class PredicateDefinitionDTO(
-            @NotBlank
+            @field:NotBlank
             val label: String,
-            @Size(min = 1)
+            @field:NotBlank
             val description: String?
         ) {
             fun toCreateCommand(): CreatePaperUseCase.CreateCommand.PredicateDefinition =
@@ -222,7 +230,7 @@ class PaperController(
         }
 
         data class ListDefinitionDTO(
-            @NotBlank
+            @field:NotBlank
             val label: String,
             val elements: List<String>
         ) {
@@ -234,10 +242,11 @@ class PaperController(
         }
 
         data class ContributionDTO(
-            @NotBlank
+            @field:NotBlank
             val label: String,
             val classes: Set<ThingId>?,
-            @Size(min = 1)
+            @field:Valid
+            @field:Size(min = 1)
             val statements: Map<String, List<StatementObjectDefinitionDTO>>
         ) {
             fun toCreateCommand(): CreatePaperUseCase.CreateCommand.Contribution =
@@ -250,7 +259,8 @@ class PaperController(
 
         data class StatementObjectDefinitionDTO(
             val id: String,
-            @Size(min = 1)
+            @field:Valid
+            @field:Size(min = 1)
             val statements: Map<String, List<StatementObjectDefinitionDTO>>?
         ) {
             fun toCreateCommand(): CreatePaperUseCase.CreateCommand.StatementObjectDefinition =
@@ -276,10 +286,15 @@ class PaperController(
     }
 
     data class CreateContributionRequest(
+        @field:Valid
         val resources: Map<String, CreatePaperRequest.ResourceDefinitionDTO>?,
+        @field:Valid
         val literals: Map<String, CreatePaperRequest.LiteralDefinitionDTO>?,
+        @field:Valid
         val predicates: Map<String, CreatePaperRequest.PredicateDefinitionDTO>?,
+        @field:Valid
         val lists: Map<String, CreatePaperRequest.ListDefinitionDTO>?,
+        @field:Valid
         val contribution: CreatePaperRequest.ContributionDTO
     ) {
         fun toCreateCommand(contributorId: ContributorId, paperId: ThingId): CreateContributionUseCase.CreateCommand =
@@ -295,9 +310,9 @@ class PaperController(
     }
 
     data class PublishRequest(
-        @NotBlank
+        @field:NotBlank
         val subject: String,
-        @NotBlank
+        @field:NotBlank
         val description: String
     )
 }

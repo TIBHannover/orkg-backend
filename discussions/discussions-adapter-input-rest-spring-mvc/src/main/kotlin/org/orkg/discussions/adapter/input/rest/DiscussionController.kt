@@ -93,7 +93,7 @@ class DiscussionController(
     }
 
     data class CreateCommentRequest(
-        @NotBlank
+        @field:NotBlank
         @JsonProperty("message")
         val message: String
     )

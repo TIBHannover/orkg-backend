@@ -131,7 +131,7 @@ data class VisualizationRepresentation(
 
 data class AuthorDTO(
     val id: ThingId?,
-    @NotBlank
+    @field:NotBlank
     val name: String,
     val identifiers: Map<String, String>?,
     val homepage: URI?

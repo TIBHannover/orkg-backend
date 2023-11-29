@@ -43,6 +43,7 @@ import org.orkg.mediastorage.testing.fixtures.testImage
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -232,12 +233,16 @@ internal class OrganizationControllerUnitTest {
         val body = mapOf(
             "name" to "irrelevant"
         )
+        val exception = InvalidMimeType("irrelevant")
 
-        every { organizationService.update(any(), any()) } throws InvalidMimeType("irrelevant")
+        every { organizationService.update(any(), any()) } throws exception
 
         patchMultipart("/api/organizations/$id") {
             json("properties", body)
-        }.andExpect(status().isForbidden)
+        }.andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/organizations/$id"))
+            .andExpect(jsonPath("$.message").value(exception.message))
 
         verify(exactly = 1) { organizationService.update(any(), any()) }
     }
@@ -249,12 +254,16 @@ internal class OrganizationControllerUnitTest {
         val body = mapOf(
             "name" to "irrelevant"
         )
+        val exception = InvalidImageData()
 
-        every { organizationService.update(any(), any()) } throws InvalidImageData()
+        every { organizationService.update(any(), any()) } throws exception
 
         patchMultipart("/api/organizations/$id") {
             json("properties", body)
-        }.andExpect(status().isForbidden)
+        }.andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/organizations/$id"))
+            .andExpect(jsonPath("$.message").value(exception.message))
 
         verify(exactly = 1) { organizationService.update(any(), any()) }
     }

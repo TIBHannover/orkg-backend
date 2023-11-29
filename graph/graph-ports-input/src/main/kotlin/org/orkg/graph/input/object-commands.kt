@@ -9,14 +9,14 @@ import org.orkg.graph.domain.ExtractionMethod
 interface CreateObjectUseCase {
 
     fun createObject(
-        request: CreateObjectUseCase.CreateObjectRequest,
+        request: CreateObjectRequest,
         existingThingId: ThingId? = null,
         userUUID: UUID,
     ): ThingId
 
     data class CreateObjectRequest(
         val predicates: List<HashMap<String, String>>?,
-        val resource: CreateObjectUseCase.NamedObject
+        val resource: NamedObject
     ) {
         /**
          * Check if the object has a set
@@ -29,11 +29,10 @@ interface CreateObjectUseCase {
     data class NamedObject(
         val name: String,
         val classes: List<String>?,
-        val values: HashMap<String, List<CreateObjectUseCase.ObjectStatement>>?,
+        val values: HashMap<String, List<ObjectStatement>>?,
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
         val observatoryId: ObservatoryId = ObservatoryId.createUnknownObservatory(),
         val organizationId: OrganizationId = OrganizationId.createUnknownOrganization()
-
     ) {
         /**
          * Check if the object has a set
@@ -57,7 +56,7 @@ interface CreateObjectUseCase {
         val text: String?,
         val datatype: String?,
         val label: String?,
-        val values: HashMap<String, List<CreateObjectUseCase.ObjectStatement>>?
+        val values: HashMap<String, List<ObjectStatement>>?
     ) {
 
         /**

@@ -14,7 +14,7 @@ import org.orkg.graph.input.PaperCountPerResearchProblemRepresentation
 import org.orkg.graph.input.ResourceRepresentation
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.TemplateRepository
+import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
@@ -37,7 +37,7 @@ class ResearchFieldController(
     private val service: RetrieveResearchFieldUseCase,
     private val resourceService: ResourceUseCases,
     override val statementService: StatementUseCases,
-    override val templateRepository: TemplateRepository,
+    override val formattedLabelRepository: FormattedLabelRepository,
     override val flags: FeatureFlagService
 ) : ResourceRepresentationAdapter, PaperCountPerResearchProblemRepresentationAdapter {
     /**

@@ -20,7 +20,7 @@ import org.orkg.contenttypes.input.ResearchFieldHierarchyUseCases
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.TemplateRepository
+import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectResearchFieldHierarchyEntry
@@ -48,7 +48,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
-    private lateinit var templateRepository: TemplateRepository
+    private lateinit var formattedLabelRepository: FormattedLabelRepository
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
@@ -68,7 +68,7 @@ internal class ResearchFieldHierarchyControllerUnitTest : RestDocsTest("research
 
     @AfterEach
     fun verifyMocks() {
-        confirmVerified(statementService, templateRepository, flags, service)
+        confirmVerified(statementService, formattedLabelRepository, flags, service)
     }
 
     @Test

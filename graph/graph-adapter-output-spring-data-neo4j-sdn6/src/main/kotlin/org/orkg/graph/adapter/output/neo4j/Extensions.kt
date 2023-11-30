@@ -46,7 +46,7 @@ private val reservedClassIds = setOf(
     "Resource"
 )
 
-internal data class StatementMapper(
+data class StatementMapper(
     val predicateRepository: PredicateRepository,
     val subject: String = "sub",
     val relation: String = "rel",
@@ -76,17 +76,17 @@ internal data class StatementMapper(
     }
 }
 
-internal data class LiteralMapper(val name: String) : BiFunction<TypeSystem, Record, Literal> {
+data class LiteralMapper(val name: String) : BiFunction<TypeSystem, Record, Literal> {
     constructor(symbolicName: SymbolicName) : this(symbolicName.value)
     override fun apply(typeSystem: TypeSystem, record: Record) = record[name].asNode().toLiteral()
 }
 
-internal data class ResourceMapper(val name: String) : BiFunction<TypeSystem, Record, Resource> {
+data class ResourceMapper(val name: String) : BiFunction<TypeSystem, Record, Resource> {
     constructor(symbolicName: SymbolicName) : this(symbolicName.value)
     override fun apply(typeSystem: TypeSystem, record: Record) = record[name].asNode().toResource()
 }
 
-internal data class ListMapper(val name: String, val elements: String) : BiFunction<TypeSystem, Record, List> {
+data class ListMapper(val name: String, val elements: String) : BiFunction<TypeSystem, Record, List> {
     constructor(name: SymbolicName, elements: SymbolicName) : this(name.value, elements.value)
     override fun apply(typeSystem: TypeSystem, record: Record): List {
         val node = record[name]
@@ -100,12 +100,12 @@ internal data class ListMapper(val name: String, val elements: String) : BiFunct
     }
 }
 
-internal data class PredicateMapper(val name: String) : BiFunction<TypeSystem, Record, Predicate> {
+data class PredicateMapper(val name: String) : BiFunction<TypeSystem, Record, Predicate> {
     constructor(symbolicName: SymbolicName) : this(symbolicName.value)
     override fun apply(typeSystem: TypeSystem, record: Record) = record[name].asNode().toPredicate()
 }
 
-internal data class ClassMapper(val name: String) : BiFunction<TypeSystem, Record, Class> {
+data class ClassMapper(val name: String) : BiFunction<TypeSystem, Record, Class> {
     constructor(symbolicName: SymbolicName) : this(symbolicName.value)
     override fun apply(typeSystem: TypeSystem, record: Record) = record[name].asNode().toClass()
 }

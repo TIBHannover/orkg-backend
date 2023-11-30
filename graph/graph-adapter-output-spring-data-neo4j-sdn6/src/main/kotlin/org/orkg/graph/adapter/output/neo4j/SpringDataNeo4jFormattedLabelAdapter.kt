@@ -1,18 +1,18 @@
 package org.orkg.graph.adapter.output.neo4j
 
 import dev.forkhandles.values.ofOrNull
-import java.util.*
 import org.orkg.common.ThingId
-import org.orkg.graph.adapter.output.neo4j.internal.Neo4jTemplateRepository
+import org.orkg.graph.adapter.output.neo4j.internal.Neo4jFormattedLabelRepository
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.TemplatedResource
-import org.orkg.graph.output.TemplateRepository
 import org.springframework.stereotype.Component
+import java.util.*
+import org.orkg.graph.output.FormattedLabelRepository
 
 @Component
-class SpringDataNeo4jTemplateAdapter(
-    private val neo4jRepository: Neo4jTemplateRepository
-) : TemplateRepository {
+class SpringDataNeo4jFormattedLabelAdapter(
+    private val neo4jRepository: Neo4jFormattedLabelRepository
+) : FormattedLabelRepository {
 
     override fun findTemplateSpecs(id: ThingId): Optional<TemplatedResource> =
         neo4jRepository.findTemplateSpecs(id)

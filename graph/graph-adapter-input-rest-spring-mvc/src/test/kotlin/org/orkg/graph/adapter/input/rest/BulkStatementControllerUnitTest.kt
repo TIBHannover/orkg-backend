@@ -22,7 +22,7 @@ import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.TemplateRepository
+import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
@@ -55,7 +55,7 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
-    private lateinit var templateRepository: TemplateRepository
+    private lateinit var formattedLabelRepository: FormattedLabelRepository
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
@@ -72,7 +72,7 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
 
     @AfterEach
     fun verifyMocks() {
-        confirmVerified(statementService, templateRepository, flags, userRepository)
+        confirmVerified(statementService, formattedLabelRepository, flags, userRepository)
     }
 
     @Test

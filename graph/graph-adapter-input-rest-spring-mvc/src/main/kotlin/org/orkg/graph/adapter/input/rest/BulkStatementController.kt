@@ -9,7 +9,7 @@ import org.orkg.graph.domain.StatementId
 import org.orkg.graph.input.StatementRepresentation
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateStatementUseCase
-import org.orkg.graph.output.TemplateRepository
+import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/statements", produces = [MediaType.APPLICATION_JSON_VALUE])
 class BulkStatementController(
     override val statementService: StatementUseCases,
-    override val templateRepository: TemplateRepository,
+    override val formattedLabelRepository: FormattedLabelRepository,
     override val flags: FeatureFlagService
 ) : BaseController(), StatementRepresentationAdapter {
 

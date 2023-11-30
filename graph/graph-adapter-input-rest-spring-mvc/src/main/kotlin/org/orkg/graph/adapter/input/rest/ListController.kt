@@ -12,7 +12,7 @@ import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.ThingRepresentation
 import org.orkg.graph.input.UpdateListUseCase.UpdateCommand
-import org.orkg.graph.output.TemplateRepository
+import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
@@ -35,7 +35,7 @@ import org.springframework.web.util.UriComponentsBuilder
 class ListController(
     private val service: ListUseCases,
     override val statementService: StatementUseCases,
-    override val templateRepository: TemplateRepository,
+    override val formattedLabelRepository: FormattedLabelRepository,
     override val flags: FeatureFlagService,
 ) : BaseController(), ListRepresentationAdapter, ThingRepresentationAdapter {
 

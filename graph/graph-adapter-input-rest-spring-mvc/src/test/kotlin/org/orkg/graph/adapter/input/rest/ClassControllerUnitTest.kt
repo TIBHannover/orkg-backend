@@ -28,7 +28,7 @@ import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateClassUseCase.ReplaceCommand
 import org.orkg.graph.input.UpdateNotAllowed
-import org.orkg.graph.output.TemplateRepository
+import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -80,7 +80,7 @@ internal class ClassControllerUnitTest {
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
-    private lateinit var templateRepository: TemplateRepository
+    private lateinit var formattedLabelRepository: FormattedLabelRepository
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean

@@ -25,7 +25,7 @@ import org.orkg.graph.domain.StatementPredicateNotFound
 import org.orkg.graph.domain.StatementSubjectNotFound
 import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.TemplateRepository
+import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
@@ -63,7 +63,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
-    private lateinit var templateRepository: TemplateRepository
+    private lateinit var formattedLabelRepository: FormattedLabelRepository
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean

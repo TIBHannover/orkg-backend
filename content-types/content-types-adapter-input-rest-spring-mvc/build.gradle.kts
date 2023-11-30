@@ -40,6 +40,7 @@ dependencies {
     testFixturesImplementation(project(":content-types:content-types-core-services"))
     testFixturesImplementation(project(":content-types:content-types-ports-input"))
     testFixturesImplementation(project(":content-types:content-types-ports-output"))
+    testFixturesImplementation(libs.forkhandles.values4k)
 }
 
 testing {

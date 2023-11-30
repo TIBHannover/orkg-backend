@@ -22,6 +22,9 @@ class ComparisonRelatedFigureNotFound(id: ThingId) :
 class VisualizationNotFound(id: ThingId) :
     SimpleMessageException(HttpStatus.NOT_FOUND, """Visualization "$id" not found.""")
 
+class TemplateNotFound(id: ThingId) :
+    SimpleMessageException(HttpStatus.NOT_FOUND, """Template "$id" not found.""")
+
 class OnlyOneResearchFieldAllowed :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Ony one research field is allowed.""")
 

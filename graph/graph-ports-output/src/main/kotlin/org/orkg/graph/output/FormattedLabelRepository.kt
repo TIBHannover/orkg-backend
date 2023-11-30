@@ -5,7 +5,7 @@ import org.orkg.common.ThingId
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.TemplatedResource
 
-interface TemplateRepository {
+interface FormattedLabelRepository {
 
     fun findTemplateSpecs(id: ThingId): Optional<TemplatedResource>
 

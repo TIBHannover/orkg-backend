@@ -14,7 +14,7 @@ import org.orkg.graph.input.BundleRepresentation
 import org.orkg.graph.input.StatementRepresentation
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateStatementUseCase
-import org.orkg.graph.output.TemplateRepository
+import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -41,7 +41,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/statements", produces = [MediaType.APPLICATION_JSON_VALUE])
 class StatementController(
     override val statementService: StatementUseCases,
-    override val templateRepository: TemplateRepository,
+    override val formattedLabelRepository: FormattedLabelRepository,
     override val flags: FeatureFlagService
 ) : BaseController(), StatementRepresentationAdapter, BundleRepresentationAdapter {
 

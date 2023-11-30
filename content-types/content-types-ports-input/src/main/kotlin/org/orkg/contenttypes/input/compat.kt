@@ -8,6 +8,8 @@ interface ComparisonUseCases : RetrieveComparisonUseCase, CreateComparisonUseCas
 
 interface VisualizationUseCases : RetrieveVisualizationUseCase
 
+interface TemplateUseCases : RetrieveTemplateUseCase
+
 interface ContentTypeResourcesUseCase :
     LoadPaperPort,
     GetPaperFlagQuery,

@@ -24,7 +24,7 @@ import org.orkg.graph.input.ResourceRepresentation
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
-import org.orkg.graph.output.TemplateRepository
+import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -53,7 +53,7 @@ class ResourceController(
     private val service: ResourceUseCases,
     private val contributorService: RetrieveContributorUseCase,
     override val statementService: StatementUseCases,
-    override val templateRepository: TemplateRepository,
+    override val formattedLabelRepository: FormattedLabelRepository,
     override val flags: FeatureFlagService
 ) : BaseController(), ResourceRepresentationAdapter {
 

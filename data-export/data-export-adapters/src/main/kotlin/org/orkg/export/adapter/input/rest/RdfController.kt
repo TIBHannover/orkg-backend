@@ -10,7 +10,7 @@ import org.orkg.graph.input.ThingRepresentation
 import org.orkg.graph.output.ClassRepository
 import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
-import org.orkg.graph.output.TemplateRepository
+import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -28,7 +28,7 @@ class RdfController(
     private val predicateRepository: PredicateRepository,
     private val classRepository: ClassRepository,
     override val statementService: StatementUseCases,
-    override val templateRepository: TemplateRepository,
+    override val formattedLabelRepository: FormattedLabelRepository,
     override val flags: FeatureFlagService
 ) : ResourceRepresentationAdapter, PredicateRepresentationAdapter, ClassRepresentationAdapter {
     @GetMapping(DUMP_ENDPOINT, produces = ["application/n-triples"])

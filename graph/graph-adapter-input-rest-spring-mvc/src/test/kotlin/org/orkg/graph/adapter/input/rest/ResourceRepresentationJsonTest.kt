@@ -12,7 +12,7 @@ import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.input.ResourceRepresentation
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.TemplateRepository
+import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.json.JsonTest
 import org.springframework.boot.test.json.JacksonTester
@@ -30,7 +30,7 @@ class ResourceRepresentationJsonTest {
 
     private val resourceRepresentationAdapter: ResourceRepresentationAdapter = object : ResourceRepresentationAdapter {
         override val statementService: StatementUseCases = mockk()
-        override val templateRepository: TemplateRepository = mockk()
+        override val formattedLabelRepository: FormattedLabelRepository = mockk()
         override val flags: FeatureFlagService = mockk()
     }
 

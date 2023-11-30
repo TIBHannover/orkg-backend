@@ -21,7 +21,7 @@ import org.orkg.graph.domain.ListElementNotFound
 import org.orkg.graph.domain.ListNotFound
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.TemplateRepository
+import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createClass
 import org.orkg.graph.testing.fixtures.createList
 import org.orkg.graph.testing.fixtures.createLiteral
@@ -70,7 +70,7 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean
-    private lateinit var templateRepository: TemplateRepository
+    private lateinit var formattedLabelRepository: FormattedLabelRepository
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean

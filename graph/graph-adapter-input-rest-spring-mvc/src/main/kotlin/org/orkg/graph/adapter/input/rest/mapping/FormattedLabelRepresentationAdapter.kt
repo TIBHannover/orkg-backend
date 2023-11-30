@@ -5,11 +5,11 @@ import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.TemplateRepository
+import org.orkg.graph.output.FormattedLabelRepository
 
 interface FormattedLabelRepresentationAdapter {
     val statementService: StatementUseCases
-    val templateRepository: TemplateRepository
+    val formattedLabelRepository: FormattedLabelRepository
     val flags: FeatureFlagService
 
     fun countsFor(resources: List<Resource>): Map<ThingId, Long> {
@@ -19,6 +19,6 @@ interface FormattedLabelRepresentationAdapter {
 
     fun formatLabelFor(resources: List<Resource>): Map<ThingId, FormattedLabel?> =
         if (flags.isFormattedLabelsEnabled())
-            resources.associate { it.id to templateRepository.formattedLabelFor(it.id, it.classes) }
+            resources.associate { it.id to formattedLabelRepository.formattedLabelFor(it.id, it.classes) }
         else emptyMap()
 }

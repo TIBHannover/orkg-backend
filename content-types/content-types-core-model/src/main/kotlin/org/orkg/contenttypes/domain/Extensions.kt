@@ -20,6 +20,9 @@ fun List<GeneralStatement>.objectIdsAndLabel(): List<ObjectIdAndLabel> =
     map { ObjectIdAndLabel(it.`object`.id, it.`object`.label) }
         .sortedBy { it.id }
 
+fun GeneralStatement?.objectIdAndLabel(): ObjectIdAndLabel? =
+    this?.let { ObjectIdAndLabel(it.`object`.id, it.`object`.label) }
+
 fun List<GeneralStatement>.objects() = map { it.`object` }
 
 fun List<GeneralStatement>.firstObjectLabel(): String? = firstOrNull()?.`object`?.label

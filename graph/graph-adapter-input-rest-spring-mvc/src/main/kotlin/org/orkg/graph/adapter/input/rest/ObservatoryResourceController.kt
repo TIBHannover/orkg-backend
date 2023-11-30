@@ -8,7 +8,7 @@ import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.ResourceRepresentation
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.TemplateRepository
+import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController
 class ObservatoryResourceController(
     private val resourceService: ResourceUseCases,
     override val statementService: StatementUseCases,
-    override val templateRepository: TemplateRepository,
+    override val formattedLabelRepository: FormattedLabelRepository,
     override val flags: FeatureFlagService
 ) : ResourceRepresentationAdapter {
 

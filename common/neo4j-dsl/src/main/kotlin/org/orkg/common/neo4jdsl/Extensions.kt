@@ -6,12 +6,12 @@ import org.orkg.common.ContributorId
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 
-fun String.sortedWith(sort: Sort): String =
+fun String.sortedWith(sort: Sort, index: Int = lastIndexOf("SKIP")): String =
     if (sort.isUnsorted) {
         this
     } else {
         StringBuilder(this)
-            .insert(lastIndexOf("SKIP"),"ORDER BY ${sort.toNeo4jSnippet()} ")
+            .insert(index, "ORDER BY ${sort.toNeo4jSnippet()} ")
             .toString()
     }
 

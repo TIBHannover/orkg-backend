@@ -1,0 +1,26 @@
+= Templates
+
+Templates represent a collection of concepts in the knowledge graph and can be seen as a collection of <<Resources,resources>>, <<Literals,literals>> and <<Predicates,predicates>>.
+They can be used to define structures to research contribution data and can help illustrate what kind of data is needed to make the paper comparable.
+The provided endpoints aggregate these concepts into a template representation.
+
+NOTE: The following endpoints use content negotiation, meaning that the contents of the response json depend on the specified `Accept` and `Content-Type` headers of each request.
+
+[[templates-fetch]]
+== Fetching a template
+
+A `GET` request provides information about a template.
+
+operation::templates-get-single[snippets='curl-request,response-fields']
+
+[[templates-list]]
+== Listing templates
+
+A `GET` request returns a <<sorting-and-pagination,paged>> list of <<templates-fetch,templates>>.
+If no paging request parameters are provided, the default values will be used.
+
+operation::templates-get-paged[snippets='curl-request']
+
+The following list of request parameters are supported:
+
+operation::templates-get-paged[snippets='request-parameters']

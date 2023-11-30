@@ -10,7 +10,7 @@ import org.orkg.graph.adapter.input.rest.BaseController
 import org.orkg.graph.adapter.input.rest.mapping.AuthorRepresentationAdapter
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.output.TemplateRepository
+import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -29,7 +29,7 @@ class LegacyComparisonController(
     private val resourceService: ResourceUseCases,
     private val authorService: RetrieveAuthorUseCase,
     override val statementService: StatementUseCases,
-    override val templateRepository: TemplateRepository,
+    override val formattedLabelRepository: FormattedLabelRepository,
     override val flags: FeatureFlagService
 ) : BaseController(), AuthorRepresentationAdapter {
     @GetMapping("/metadata/featured", params = ["featured=true"])

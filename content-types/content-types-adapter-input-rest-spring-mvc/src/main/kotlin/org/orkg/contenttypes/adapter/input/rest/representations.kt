@@ -1,5 +1,7 @@
 package org.orkg.contenttypes.adapter.input.rest
 
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonInclude.Include
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.net.URI
 import java.time.OffsetDateTime
@@ -9,7 +11,9 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
+import org.orkg.contenttypes.domain.ObjectIdAndLabel
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Visibility
 
 data class PaperRepresentation(
@@ -144,3 +148,77 @@ data class AuthorDTO(
             homepage = homepage
         )
 }
+
+data class TemplateRepresentation(
+    val id: ThingId,
+    val label: String,
+    val description: String?,
+    @get:JsonProperty("formatted_label")
+    val formattedLabel: FormattedLabel?,
+    @get:JsonProperty("target_class")
+    val targetClass: ThingId,
+    val relations: TemplateRelationRepresentation,
+    val properties: List<TemplatePropertyRepresentation>,
+    @get:JsonProperty("is_closed")
+    val isClosed: Boolean,
+    @get:JsonProperty("created_at")
+    val createdAt: OffsetDateTime,
+    @get:JsonProperty("created_by")
+    val createdBy: ContributorId,
+    val observatories: List<ObservatoryId>,
+    val organizations: List<OrganizationId>,
+    val visibility: Visibility,
+    @get:JsonInclude(Include.NON_NULL)
+    @get:JsonProperty("unlisted_by")
+    val unlistedBy: ContributorId?
+)
+
+data class TemplateRelationRepresentation(
+    @get:JsonProperty("research_fields")
+    val researchFields: List<ObjectIdAndLabel>,
+    @get:JsonProperty("research_problems")
+    val researchProblems: List<ObjectIdAndLabel>,
+    val predicate: ObjectIdAndLabel?,
+)
+
+sealed interface TemplatePropertyRepresentation {
+    val id: ThingId
+    val label: String
+    val order: Long
+    @get:JsonProperty("min_count")
+    val minCount: Int?
+    @get:JsonProperty("max_count")
+    val maxCount: Int?
+    val pattern: String?
+    val path: ObjectIdAndLabel
+    @get:JsonProperty("created_at")
+    val createdAt: OffsetDateTime
+    @get:JsonProperty("created_by")
+    val createdBy: ContributorId
+}
+
+data class LiteralTemplatePropertyRepresentation(
+    override val id: ThingId,
+    override val label: String,
+    override val order: Long,
+    override val minCount: Int?,
+    override val maxCount: Int?,
+    override val pattern: String?,
+    override val path: ObjectIdAndLabel,
+    override val createdAt: OffsetDateTime,
+    override val createdBy: ContributorId,
+    val datatype: ObjectIdAndLabel
+) : TemplatePropertyRepresentation
+
+data class ResourceTemplatePropertyRepresentation(
+    override val id: ThingId,
+    override val label: String,
+    override val order: Long,
+    override val minCount: Int?,
+    override val maxCount: Int?,
+    override val pattern: String?,
+    override val path: ObjectIdAndLabel,
+    override val createdAt: OffsetDateTime,
+    override val createdBy: ContributorId,
+    val `class`: ObjectIdAndLabel
+) : TemplatePropertyRepresentation

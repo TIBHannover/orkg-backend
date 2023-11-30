@@ -18,65 +18,58 @@ operation::rdf-hints-legacy-redirect-to-dump[snippets='curl-request,http-respons
 [[resolvable-vocab]]
 == Resolvable Vocabulary
 
-ORKG entities in RDF format are resolvable. Each URI refers to the description of the corresponding entity in some RDF serialization.
+ORKG entities in RDF format are resolvable.
+Each URI refers to the description of the corresponding entity in some RDF serialization.
+
+An RDF format media type can be provided via the `Accept` header field.
+For a list of supported media types, see <<vocab-accept>> below.
 
 [[vocab-resource]]
 === Resolve a resource
 
 A `GET` request to get the description of an ORKG resource.
 
-NOTE: a HTTP `Accept` header should be provided with one of the values from the table below. Otherwise, the request will be redirected to the frontend UI to see the HTML description page.
-
-operation::vocab-controller-test-resource[snippets='curl-request,http-response']
-
+// operation::vocab-controller-test-resource[snippets='curl-request,http-response']
+include::{snippets}/rdf-vocab-resolve-resource/curl-request.adoc[]
+include::{snippets}/rdf-vocab-resolve-resource/http-response.adoc[]
 
 [[vocab-predicate]]
 === Resolve a predicate
 
 A `GET` request to get the description of an ORKG predicate.
 
-NOTE: a HTTP `Accept` header should be provided with one of the values from the table below. Otherwise, the request will be redirected to the frontend UI to see the HTML description page.
-
-operation::vocab-controller-test-predicate[snippets='curl-request,http-response']
+// operation::vocab-controller-test-predicate[snippets='curl-request,http-response']
+include::{snippets}/rdf-vocab-resolve-predicate/curl-request.adoc[]
+include::{snippets}/rdf-vocab-resolve-predicate/http-response.adoc[]
 
 [[vocab-class]]
 === Resolve a class
 
 A `GET` request to get the description of an ORKG class.
 
-NOTE: a HTTP `Accept` header should be provided with one of the values from the table below. Otherwise, the request will be redirected to the frontend UI to see the HTML description page.
-
-operation::vocab-controller-test-clazz[snippets='curl-request,http-response']
+// operation::vocab-controller-test-clazz[snippets='curl-request,http-response']
+include::{snippets}/rdf-vocab-resolve-class/curl-request.adoc[]
+include::{snippets}/rdf-vocab-resolve-class/http-response.adoc[]
 
 [[vocab-accept]]
-=== Allowed accept headers
+=== Supported media types
 
-This collection of HTTP `Accept` headers are allowed by the system and the corresponding serialization format.
+Serialization to the following RDF media types is supported:
 
-[cols="e,m"]
-.HTTP RDF serialization accept headers
+[cols="m,"]
+.Supported RDF media types
 [options="header"]
-|=======================
-|Header  |Format
-|application/n-triples   | N-Triples
-|application/rdf+xml    | RDF XML
-|text/n3    | N3
-|application/json   | JSON-LD
-|application/trig    | TriG
-|application/x-trig    | TriG
-|application/n-quads  | N-Quads
-|text/x-nquads    | N-Quads
-|text/nquads  | N-Quads
-|application/turtle    | Turtle
-|text/turtle  | Turtle
-|=======================
-
-== RDF Hints
-
-Resource information can be obtained from the `/api/rdf/hints` endpoint.
-It supports the following request parameters:
-
-include::{snippets}/rdf-hints-test-filter-resources/request-parameters.adoc[]
-
-NOTE: The `type` parameter differs from the conventions used in this document.
-`property` refers to <<predicates,predicates>>, `item` to <<resources,resources>>.
+|===
+| Media Type            | Format
+| application/n-triples | N-Triples
+| application/rdf+xml   | RDF XML
+| text/n3               | N3
+| application/json      | JSON-LD
+| application/trig      | TriG
+| application/x-trig    | TriG
+| application/n-quads   | N-Quads
+| text/x-nquads         | N-Quads
+| text/nquads           | N-Quads
+| application/turtle    | Turtle
+| text/turtle           | Turtle
+|===

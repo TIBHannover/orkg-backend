@@ -3,35 +3,51 @@ package org.orkg.contenttypes.adapter.input.rest
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.verify
+import java.net.URI
 import java.util.*
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.auth.input.AuthUseCase
+import org.orkg.common.ObservatoryId
+import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.common.json.CommonJacksonModule
+import org.orkg.contenttypes.domain.AmbiguousAuthor
+import org.orkg.contenttypes.domain.Author
+import org.orkg.contenttypes.domain.AuthorNotFound
+import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
+import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 import org.orkg.contenttypes.domain.VisualizationNotFound
 import org.orkg.contenttypes.input.VisualizationUseCases
 import org.orkg.contenttypes.testing.fixtures.createDummyVisualization
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectVisualization
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
+import org.orkg.testing.spring.restdocs.documentedPostRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -237,4 +253,167 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
             )
         }
     }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @DisplayName("Given a create visualization request, when service succeeds, it creates and returns the visualization")
+    fun create() {
+        val id = ThingId("R123")
+        every { visualizationService.create(any()) } returns id
+
+        documentedPostRequestTo("/api/visualizations")
+            .content(createVisualizationRequest())
+            .accept(VISUALIZATION_JSON_V2)
+            .contentType(VISUALIZATION_JSON_V2)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", Matchers.endsWith("/api/visualizations/$id")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the newly created resource can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("title").description("The title of the visualization."),
+                        fieldWithPath("description").description("The description of the visualization."),
+                        fieldWithPath("authors").description("The list of authors that originally contributed to the visualization."),
+                        fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].name").description("The name of the author."),
+                        fieldWithPath("authors[].identifiers").description("The unique identifiers of the author."),
+                        fieldWithPath("authors[].identifiers.orcid").description("The ORCID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.google_scholar").type("String").description("The Google Scholar ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.research_gate").type("String").description("The ResearchGate ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.linked_in").type("String").description("The LinkedIn ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.wikidata").type("String").description("The Wikidata ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.web_of_science").type("String").description("The Web of Science id of the author. (optional)").optional(),
+                        fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
+                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the visualization belongs to."),
+                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the visualization belongs to."),
+                        fieldWithPath("extraction_method").description("""The method used to extract the visualization resource. Can be one of "unknown", "manual" or "automatic".""")
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { visualizationService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a create visualization request, when service reports only one organization allowed, then status is 400 BAD REQUEST`() {
+        val exception = OnlyOneOrganizationAllowed()
+        every { visualizationService.create(any()) } throws exception
+
+        post("/api/visualizations", createVisualizationRequest())
+            .accept(VISUALIZATION_JSON_V2)
+            .contentType(VISUALIZATION_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/visualizations"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { visualizationService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a create visualization request, when service reports only one observatory allowed, then status is 400 BAD REQUEST`() {
+        val exception = OnlyOneObservatoryAllowed()
+        every { visualizationService.create(any()) } throws exception
+
+        post("/api/visualizations", createVisualizationRequest())
+            .accept(VISUALIZATION_JSON_V2)
+            .contentType(VISUALIZATION_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/visualizations"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { visualizationService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a create visualization request, when service reports author not found, then status is 404 NOT FOUND`() {
+        val exception = AuthorNotFound(ThingId("R123"))
+        every { visualizationService.create(any()) } throws exception
+
+        post("/api/visualizations", createVisualizationRequest())
+            .accept(VISUALIZATION_JSON_V2)
+            .contentType(VISUALIZATION_JSON_V2)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.path").value("/api/visualizations"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { visualizationService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a create visualization request, when service reports ambiguous author, then status is 400 BAD REQUEST`() {
+        val exception = AmbiguousAuthor(
+            Author(
+                id = ThingId("R123"),
+                name = "author",
+                identifiers = mapOf("orcid" to "0000-1111-2222-3333")
+            )
+        )
+        every { visualizationService.create(any()) } throws exception
+
+        post("/api/visualizations", createVisualizationRequest())
+            .accept(VISUALIZATION_JSON_V2)
+            .contentType(VISUALIZATION_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/visualizations"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { visualizationService.create(any()) }
+    }
+
+    private fun createVisualizationRequest() =
+        VisualizationController.CreateVisualizationRequest(
+            title = "test",
+            description = "visualization description",
+            authors = listOf(
+                AuthorDTO(
+                    id = ThingId("R123"),
+                    name = "Author with id",
+                    identifiers = null,
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author with orcid",
+                    identifiers = mapOf("orcid" to "0000-1111-2222-3333"),
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = ThingId("R456"),
+                    name = "Author with id and orcid",
+                    identifiers = mapOf("orcid" to "1111-2222-3333-4444"),
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author with homepage",
+                    identifiers = null,
+                    homepage = URI.create("http://example.org/author")
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author that just has a name",
+                    identifiers = null,
+                    homepage = null
+                )
+            ),
+            observatories = listOf(ObservatoryId("eeb1ab0f-0ef5-4bee-aba2-2d5cea2f0174")),
+            organizations = listOf(OrganizationId("f9965b2a-5222-45e1-8ef8-dbd8ce1f57bc")),
+            extractionMethod = ExtractionMethod.UNKNOWN
+        )
 }

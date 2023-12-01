@@ -1,21 +1,34 @@
 package org.orkg.contenttypes.adapter.input.rest
 
+import com.fasterxml.jackson.annotation.JsonProperty
+import javax.validation.Valid
+import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Size
 import org.orkg.common.ContributorId
+import org.orkg.common.ObservatoryId
+import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.contenttypes.adapter.input.rest.mapping.VisualizationRepresentationAdapter
 import org.orkg.contenttypes.domain.VisualizationNotFound
+import org.orkg.contenttypes.input.CreateVisualizationUseCase
 import org.orkg.contenttypes.input.VisualizationUseCases
 import org.orkg.graph.adapter.input.rest.BaseController
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.noContent
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.util.UriComponentsBuilder
 
 const val VISUALIZATION_JSON_V2 = "application/vnd.orkg.visualization.v2+json"
 
@@ -59,4 +72,44 @@ class VisualizationController(
     ): Page<VisualizationRepresentation> =
         service.findAllByResearchFieldAndVisibility(researchField, visibility, includeSubfields, pageable)
             .mapToVisualizationRepresentation()
+
+    @PostMapping(consumes = [VISUALIZATION_JSON_V2], produces = [VISUALIZATION_JSON_V2])
+    fun create(
+        @RequestBody @Valid request: CreateVisualizationRequest,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<Any> {
+        val userId = ContributorId(authenticatedUserId())
+        val id = service.create(request.toCreateCommand(userId))
+        val location = uriComponentsBuilder
+            .path("api/visualizations/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return noContent().location(location).build()
+    }
+
+    data class CreateVisualizationRequest(
+        @NotBlank
+        val title: String,
+        @NotBlank
+        val description: String,
+        @Size(min = 1, max = 1)
+        val authors: List<AuthorDTO>,
+        @Size(max = 1)
+        val observatories: List<ObservatoryId>,
+        @Size(max = 1)
+        val organizations: List<OrganizationId>,
+        @JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
+    ) {
+        fun toCreateCommand(contributorId: ContributorId): CreateVisualizationUseCase.CreateCommand =
+            CreateVisualizationUseCase.CreateCommand(
+                contributorId = contributorId,
+                title = title,
+                description = description,
+                authors = authors.map { it.toCreateCommand() },
+                observatories = observatories,
+                organizations = organizations,
+                extractionMethod = extractionMethod
+            )
+    }
 }

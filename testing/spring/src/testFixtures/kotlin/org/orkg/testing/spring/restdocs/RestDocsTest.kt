@@ -12,6 +12,7 @@ import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler
 import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest
 import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse
 import org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.ResultHandler
@@ -23,6 +24,7 @@ import org.springframework.web.context.WebApplicationContext
 
 
 @ExtendWith(RestDocumentationExtension::class)
+@TestPropertySource(properties = ["spring.jackson.mapper.sort-properties-alphabetically=true"])
 abstract class RestDocsTest(private val prefix: String) {
 
     @Autowired

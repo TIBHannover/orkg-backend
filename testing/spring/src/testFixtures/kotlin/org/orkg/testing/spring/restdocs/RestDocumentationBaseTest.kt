@@ -24,6 +24,7 @@ import org.springframework.restdocs.request.ParameterDescriptor
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
 import org.springframework.restdocs.request.RequestParametersSnippet
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -39,6 +40,7 @@ import org.springframework.web.context.WebApplicationContext
  */
 @Neo4jContainerIntegrationTest
 @ExtendWith(RestDocumentationExtension::class)
+@TestPropertySource(properties = ["spring.jackson.mapper.sort-properties-alphabetically=true"])
 @Deprecated("To be replaced with RestDocsTest")
 abstract class RestDocumentationBaseTest {
 

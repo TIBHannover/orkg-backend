@@ -2,6 +2,7 @@ package org.orkg.contenttypes.domain.actions.paper
 
 import org.orkg.contenttypes.domain.actions.CreatePaperCommand
 import org.orkg.contenttypes.domain.actions.ResearchFieldCreator
+import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 
 class PaperResearchFieldCreator(

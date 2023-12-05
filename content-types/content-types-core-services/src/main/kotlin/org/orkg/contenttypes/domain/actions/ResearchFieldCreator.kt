@@ -8,12 +8,17 @@ import org.orkg.graph.input.StatementUseCases
 abstract class ResearchFieldCreator(
     private val statementService: StatementUseCases,
 ) {
-    internal fun create(contributorId: ContributorId, researchFields: List<ThingId>, subjectId: ThingId) {
+    internal fun create(
+        contributorId: ContributorId,
+        researchFields: List<ThingId>,
+        subjectId: ThingId,
+        predicateId: ThingId = Predicates.hasResearchField
+    ) {
         researchFields.distinct().forEach {
             statementService.add(
                 userId = contributorId,
                 subject = subjectId,
-                predicate = Predicates.hasResearchField,
+                predicate = predicateId,
                 `object` = it
             )
         }

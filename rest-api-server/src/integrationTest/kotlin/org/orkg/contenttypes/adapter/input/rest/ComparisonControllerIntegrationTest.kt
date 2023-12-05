@@ -86,7 +86,7 @@ class ComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
 
         listOf(
             Predicates.hasAuthors,
-            Predicates.hasResearchField,
+            Predicates.hasSubject,
             Predicates.comparesContribution,
             Predicates.hasResearchProblem,
             Predicates.hasEvaluation,

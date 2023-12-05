@@ -14,8 +14,6 @@ class ComparisonAuthorCreator(
     literalService: LiteralUseCases,
     listService: ListUseCases
 ) : AuthorCreator(resourceService, statementService, literalService, listService), ComparisonAction {
-    override operator fun invoke(command: CreateComparisonCommand, state: State): State {
-        create(command.contributorId, command.authors, state.comparisonId!!)
-        return state
-    }
+    override operator fun invoke(command: CreateComparisonCommand, state: State): State =
+        state.apply { create(command.contributorId, command.authors, state.comparisonId!!) }
 }

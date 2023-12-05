@@ -7,12 +7,12 @@ import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationReposi
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.contenttypes.domain.actions.CreateTemplateCommand
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyCommand
+import org.orkg.contenttypes.domain.actions.ObservatoryValidator
+import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.TemplatePropertyState
 import org.orkg.contenttypes.domain.actions.TemplateState
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.actions.template.TemplateMetadataCreator
-import org.orkg.contenttypes.domain.actions.template.TemplateObservatoryValidator
-import org.orkg.contenttypes.domain.actions.template.TemplateOrganizationValidator
 import org.orkg.contenttypes.domain.actions.template.TemplatePropertiesCreator
 import org.orkg.contenttypes.domain.actions.template.TemplatePropertiesValidator
 import org.orkg.contenttypes.domain.actions.template.TemplateRelationsValidator
@@ -79,8 +79,8 @@ class TemplateService(
             TemplateTargetClassValidator(classRepository, statementRepository),
             TemplateRelationsValidator(resourceRepository, predicateRepository),
             TemplatePropertiesValidator(predicateRepository, classRepository),
-            TemplateOrganizationValidator(organizationRepository),
-            TemplateObservatoryValidator(observatoryRepository),
+            OrganizationValidator(organizationRepository) { it.organizations },
+            ObservatoryValidator(observatoryRepository) { it.observatories },
             TemplateResourceCreator(resourceService),
             TemplateMetadataCreator(literalService, statementService),
             TemplatePropertiesCreator(resourceService, literalService, statementService)

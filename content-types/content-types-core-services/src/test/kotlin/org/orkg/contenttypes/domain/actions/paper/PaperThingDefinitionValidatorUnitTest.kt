@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.orkg.common.Either
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.actions.PaperState
+import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.testing.fixtures.dummyCreatePaperCommand
 import org.orkg.graph.output.ThingRepository
@@ -39,7 +39,7 @@ class PaperThingDefinitionValidatorUnitTest {
     @Test
     fun `Given a paper create command, when validating its thing definitions, it returns success`() {
         val command = dummyCreatePaperCommand()
-        val state = PaperState()
+        val state = CreatePaperState()
 
         val `class` = createClass(ThingId("R2000"))
 
@@ -71,7 +71,7 @@ class PaperThingDefinitionValidatorUnitTest {
                 )
             )
         }
-        val state = PaperState()
+        val state = CreatePaperState()
 
         val result = paperThingDefinitionValidator(command, state)
 

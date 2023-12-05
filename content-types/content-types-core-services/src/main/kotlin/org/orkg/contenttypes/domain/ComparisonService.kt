@@ -8,16 +8,16 @@ import org.orkg.common.ThingId
 import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.contenttypes.domain.actions.CreateComparisonCommand
+import org.orkg.contenttypes.domain.actions.ObservatoryValidator
+import org.orkg.contenttypes.domain.actions.OrganizationValidator
+import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
 import org.orkg.contenttypes.domain.actions.comparison.ComparisonAction
 import org.orkg.contenttypes.domain.actions.comparison.ComparisonAuthorCreator
 import org.orkg.contenttypes.domain.actions.comparison.ComparisonAuthorValidator
 import org.orkg.contenttypes.domain.actions.comparison.ComparisonContributionCreator
 import org.orkg.contenttypes.domain.actions.comparison.ComparisonContributionValidator
 import org.orkg.contenttypes.domain.actions.comparison.ComparisonDescriptionCreator
-import org.orkg.contenttypes.domain.actions.comparison.ComparisonObservatoryValidator
-import org.orkg.contenttypes.domain.actions.comparison.ComparisonOrganizationValidator
 import org.orkg.contenttypes.domain.actions.comparison.ComparisonResearchFieldCreator
-import org.orkg.contenttypes.domain.actions.comparison.ComparisonResearchFieldValidator
 import org.orkg.contenttypes.domain.actions.comparison.ComparisonResourceCreator
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.input.ComparisonUseCases
@@ -134,9 +134,9 @@ class ComparisonService(
     override fun create(command: CreateComparisonCommand): ThingId {
         val steps = listOf(
             ComparisonContributionValidator(resourceRepository),
-            ComparisonResearchFieldValidator(resourceRepository),
-            ComparisonObservatoryValidator(observatoryRepository),
-            ComparisonOrganizationValidator(organizationRepository),
+            ResearchFieldValidator(resourceRepository) { it.researchFields },
+            ObservatoryValidator(observatoryRepository) { it.observatories },
+            OrganizationValidator(organizationRepository) { it.organizations },
             ComparisonAuthorValidator(resourceRepository, statementRepository),
             ComparisonResourceCreator(resourceService),
             ComparisonDescriptionCreator(literalService, statementService),

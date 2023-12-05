@@ -20,7 +20,7 @@ import org.orkg.graph.testing.fixtures.createResource
 class ResearchFieldValidatorUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
 
-    private val researchFieldValidator = object : ResearchFieldValidator(resourceRepository) {}
+    private val researchFieldValidator = ResearchFieldValidator<List<ThingId>, Unit>(resourceRepository) { it }
 
     @BeforeEach
     fun resetState() {
@@ -39,7 +39,7 @@ class ResearchFieldValidatorUnitTest {
 
         every { resourceRepository.findById(researchField.id) } returns Optional.of(researchField)
 
-        researchFieldValidator.validate(listOf(id))
+        researchFieldValidator(listOf(id), Unit)
 
         verify(exactly = 1) { resourceRepository.findById(researchField.id) }
     }
@@ -50,7 +50,7 @@ class ResearchFieldValidatorUnitTest {
 
         every { resourceRepository.findById(id) } returns Optional.empty()
 
-        assertThrows<ResearchFieldNotFound> { researchFieldValidator.validate(listOf(id)) }
+        assertThrows<ResearchFieldNotFound> { researchFieldValidator(listOf(id), Unit) }
 
         verify(exactly = 1) { resourceRepository.findById(id) }
     }
@@ -62,7 +62,7 @@ class ResearchFieldValidatorUnitTest {
 
         every { resourceRepository.findById(researchField.id) } returns Optional.of(researchField)
 
-        assertThrows<ResearchFieldNotFound> { researchFieldValidator.validate(listOf(id)) }
+        assertThrows<ResearchFieldNotFound> { researchFieldValidator(listOf(id), Unit) }
 
         verify(exactly = 1) { resourceRepository.findById(researchField.id) }
     }
@@ -70,6 +70,6 @@ class ResearchFieldValidatorUnitTest {
     @Test
     fun `Given a list of research fields, when more than one research field is specified, it throws an exception`() {
         val ids = listOf(ThingId("R12"), ThingId("R11"))
-        assertThrows<OnlyOneResearchFieldAllowed> { researchFieldValidator.validate(ids) }
+        assertThrows<OnlyOneResearchFieldAllowed> { researchFieldValidator(ids, Unit) }
     }
 }

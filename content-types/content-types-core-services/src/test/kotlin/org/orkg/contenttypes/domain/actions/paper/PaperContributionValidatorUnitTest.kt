@@ -17,7 +17,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.EmptyContribution
 import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.domain.actions.BakedStatement
-import org.orkg.contenttypes.domain.actions.PaperState
+import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.testing.fixtures.dummyCreatePaperCommand
 import org.orkg.graph.domain.Predicates
@@ -46,7 +46,7 @@ class PaperContributionValidatorUnitTest {
     fun `Given a paper create command, when validating its contributions, it returns success`() {
         val command = dummyCreatePaperCommand()
         val resource = createResource(id = ThingId("R3003"))
-        val state = PaperState(
+        val state = CreatePaperState(
             tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4"),
             validatedIds = mapOf(
                 "R3003" to Either.right(resource),
@@ -106,7 +106,7 @@ class PaperContributionValidatorUnitTest {
     fun `Given a paper create command, when class of contribution does not exist, it throws an exception`() {
         val command = dummyCreatePaperCommand()
         val resource = createResource(id = ThingId("R3003"))
-        val state = PaperState(
+        val state = CreatePaperState(
             tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4"),
             validatedIds = mapOf(
                 "R3003" to Either.right(resource),
@@ -129,7 +129,7 @@ class PaperContributionValidatorUnitTest {
     fun `Given a paper create command, when class of contribution is not a class, it throws an exception`() {
         val command = dummyCreatePaperCommand()
         val resource = createResource(id = ThingId("R3003"))
-        val state = PaperState(
+        val state = CreatePaperState(
             tempIds = setOf("#temp1", "#temp2", "#temp3", "#temp4"),
             validatedIds = mapOf(
                 "R3003" to Either.right(resource),
@@ -160,7 +160,7 @@ class PaperContributionValidatorUnitTest {
                 )
             )
         )
-        val state = PaperState()
+        val state = CreatePaperState()
         val exception = EmptyContribution()
 
         assertThrows<EmptyContribution> {

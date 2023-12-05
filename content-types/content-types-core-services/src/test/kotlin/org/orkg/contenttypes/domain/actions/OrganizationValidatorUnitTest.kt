@@ -20,7 +20,7 @@ import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 class OrganizationValidatorUnitTest {
     private val organizationRepository: PostgresOrganizationRepository = mockk()
 
-    private val organizationValidator = object : OrganizationValidator(organizationRepository) {}
+    private val organizationValidator = OrganizationValidator<List<OrganizationId>, Unit>(organizationRepository) { it }
 
     @BeforeEach
     fun resetState() {
@@ -39,7 +39,7 @@ class OrganizationValidatorUnitTest {
 
         every { organizationRepository.findById(organization.id!!) } returns Optional.of(organization)
 
-        organizationValidator.validate(listOf(id))
+        organizationValidator(listOf(id), Unit)
 
         verify(exactly = 1) { organizationRepository.findById(organization.id!!) }
     }
@@ -50,7 +50,7 @@ class OrganizationValidatorUnitTest {
 
         every { organizationRepository.findById(id.value) } returns Optional.empty()
 
-        assertThrows<OrganizationNotFound> { organizationValidator.validate(listOf(id)) }
+        assertThrows<OrganizationNotFound> { organizationValidator(listOf(id), Unit) }
 
         verify(exactly = 1) { organizationRepository.findById(id.value) }
     }
@@ -58,6 +58,6 @@ class OrganizationValidatorUnitTest {
     @Test
     fun `Given a list of organizations, when more than one organization is specified, it throws an exception`() {
         val ids = listOf(OrganizationId(UUID.randomUUID()), OrganizationId(UUID.randomUUID()))
-        assertThrows<OnlyOneOrganizationAllowed> { organizationValidator.validate(ids) }
+        assertThrows<OnlyOneOrganizationAllowed> { organizationValidator(ids, Unit) }
     }
 }

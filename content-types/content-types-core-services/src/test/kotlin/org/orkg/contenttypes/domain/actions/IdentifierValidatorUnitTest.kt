@@ -1,0 +1,146 @@
+package org.orkg.contenttypes.domain.actions
+
+import io.kotest.matchers.shouldBe
+import io.mockk.clearAllMocks
+import io.mockk.confirmVerified
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.identifiers.InvalidIdentifier
+import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.Predicates
+import org.orkg.graph.output.StatementRepository
+import org.orkg.graph.testing.fixtures.createLiteral
+import org.orkg.graph.testing.fixtures.createPredicate
+import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.graph.testing.fixtures.createStatement
+import org.orkg.testing.pageOf
+import org.springframework.data.domain.Page
+
+class IdentifierValidatorUnitTest {
+    private val statementRepository: StatementRepository = mockk()
+
+    private val identifierCreateValidator = object : IdentifierValidator(statementRepository) {}
+
+    @BeforeEach
+    fun resetState() {
+        clearAllMocks()
+    }
+
+    @AfterEach
+    fun verifyMocks() {
+        confirmVerified(statementRepository)
+    }
+
+    @Test
+    fun `Given a map of identifiers, when searching for existing resources, it returns success`() {
+        val doi = "10.1234/56789"
+        val identifiers = mapOf("doi" to doi)
+
+        every {
+            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+                predicateId = Predicates.hasDOI,
+                literal = doi,
+                subjectClass = Classes.paper,
+                pageable = any()
+            )
+        } returns Page.empty()
+
+        identifierCreateValidator.validate(identifiers, Classes.paper, null) { AssertionError() }
+
+        verify(exactly = 1) {
+            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+                predicateId = Predicates.hasDOI,
+                literal = doi,
+                subjectClass = Classes.paper,
+                pageable = any()
+            )
+        }
+    }
+
+    @Test
+    fun `Given a map of identifiers, when searching for existing resources, and identifier matches, it throws an exception`() {
+        val doi = "10.1234/56789"
+        val identifiers = mapOf("doi" to doi)
+        val statement = createStatement(
+            subject = createResource(),
+            predicate = createPredicate(Predicates.hasDOI),
+            `object` = createLiteral(label = doi)
+        )
+        val expected = AssertionError(doi)
+
+        every {
+            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+                predicateId = Predicates.hasDOI,
+                literal = doi,
+                subjectClass = Classes.paper,
+                pageable = any()
+            )
+        } returns pageOf(statement)
+
+        val result = assertThrows<AssertionError> {
+            identifierCreateValidator.validate(identifiers, Classes.paper, null) { AssertionError(it) }
+        }
+        result.message shouldBe expected.message
+
+        verify(exactly = 1) {
+            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+                predicateId = Predicates.hasDOI,
+                literal = doi,
+                subjectClass = Classes.paper,
+                pageable = any()
+            )
+        }
+    }
+
+    @Test
+    fun `Given a map of identifiers, when searching for existing resources, and identifier matches, but matched resource is expected, it returns success`() {
+        val doi = "10.1234/56789"
+        val identifiers = mapOf("doi" to doi)
+        val subjectId = ThingId("R123")
+        val statement = createStatement(
+            subject = createResource(subjectId),
+            predicate = createPredicate(Predicates.hasDOI),
+            `object` = createLiteral(label = doi)
+        )
+
+        every {
+            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+                predicateId = Predicates.hasDOI,
+                literal = doi,
+                subjectClass = Classes.paper,
+                pageable = any()
+            )
+        } returns pageOf(statement)
+
+        identifierCreateValidator.validate(identifiers, Classes.paper, subjectId) { AssertionError(it) }
+
+        verify(exactly = 1) {
+            statementRepository.findAllByPredicateIdAndLabelAndSubjectClass(
+                predicateId = Predicates.hasDOI,
+                literal = doi,
+                subjectClass = Classes.paper,
+                pageable = any()
+            )
+        }
+    }
+
+    @Test
+    fun `Given a paper create command, when paper identifier is structurally invalid, it throws an exception`() {
+        val identifiers = mapOf("doi" to "invalid")
+        val result = assertThrows<InvalidIdentifier> {
+            identifierCreateValidator.validate(
+                identifiers = identifiers,
+                `class` = Classes.paper,
+                subjectId = null,
+                exceptionFactory = ::AssertionError
+            )
+        }
+        result.property shouldBe "doi"
+    }
+}

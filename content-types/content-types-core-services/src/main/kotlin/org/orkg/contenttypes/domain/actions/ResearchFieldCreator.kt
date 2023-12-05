@@ -6,7 +6,7 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 
 abstract class ResearchFieldCreator(
-    private val statementService: StatementUseCases,
+    protected val statementService: StatementUseCases,
 ) {
     internal fun create(
         contributorId: ContributorId,

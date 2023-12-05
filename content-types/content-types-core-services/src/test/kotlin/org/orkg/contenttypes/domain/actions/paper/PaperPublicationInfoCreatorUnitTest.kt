@@ -19,7 +19,8 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.PublicationInfo
-import org.orkg.contenttypes.domain.actions.PaperState
+import org.orkg.contenttypes.domain.actions.CreatePaperState
+import org.orkg.contenttypes.domain.actions.paper.PaperPublicationInfoCreator
 import org.orkg.contenttypes.testing.fixtures.dummyCreatePaperCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
@@ -65,7 +66,7 @@ class PaperPublicationInfoCreatorUnitTest {
         val command = dummyCreatePaperCommand().copy(
             publicationInfo = null
         )
-        val state = PaperState(
+        val state = CreatePaperState(
             paperId = paperId
         )
 
@@ -92,7 +93,7 @@ class PaperPublicationInfoCreatorUnitTest {
                 url = null
             )
         )
-        val state = PaperState(
+        val state = CreatePaperState(
             paperId = paperId
         )
         val monthLiteral = createLiteral(label = month.toString())
@@ -152,7 +153,7 @@ class PaperPublicationInfoCreatorUnitTest {
                 url = null
             )
         )
-        val state = PaperState(
+        val state = CreatePaperState(
             paperId = paperId
         )
         val yearLiteral = createLiteral(label = year.toString())
@@ -212,7 +213,7 @@ class PaperPublicationInfoCreatorUnitTest {
                 url = null
             )
         )
-        val state = PaperState(
+        val state = CreatePaperState(
             paperId = paperId
         )
         val venueResource = createResource(label = venue)
@@ -275,7 +276,7 @@ class PaperPublicationInfoCreatorUnitTest {
                 url = null
             )
         )
-        val state = PaperState(
+        val state = CreatePaperState(
             paperId = paperId
         )
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
@@ -345,7 +346,7 @@ class PaperPublicationInfoCreatorUnitTest {
                 url = url
             )
         )
-        val state = PaperState(
+        val state = CreatePaperState(
             paperId = paperId
         )
         val urlLiteral = createLiteral(label = url.toString())

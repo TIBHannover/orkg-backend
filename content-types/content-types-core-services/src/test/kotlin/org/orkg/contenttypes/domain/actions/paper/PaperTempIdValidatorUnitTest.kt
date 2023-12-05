@@ -3,7 +3,7 @@ package org.orkg.contenttypes.domain.actions.paper
 import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
-import org.orkg.contenttypes.domain.actions.PaperState
+import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.testing.fixtures.dummyCreatePaperCommand
 
 class PaperTempIdValidatorUnitTest {
@@ -12,7 +12,7 @@ class PaperTempIdValidatorUnitTest {
     @Test
     fun `Given a paper create command, when validating its temp ids, it returns success`() {
         val command = dummyCreatePaperCommand()
-        val state = PaperState()
+        val state = CreatePaperState()
 
         val result = paperTempIdValidator(command, state)
 
@@ -28,7 +28,7 @@ class PaperTempIdValidatorUnitTest {
     @Test
     fun `Given a paper create command, when it has no contributions, it returns success`() {
         val command = dummyCreatePaperCommand().copy(contents = null)
-        val state = PaperState()
+        val state = CreatePaperState()
 
         val result = paperTempIdValidator(command, state)
 

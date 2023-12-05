@@ -10,8 +10,6 @@ class ComparisonDescriptionCreator(
     literalService: LiteralUseCases,
     statementService: StatementUseCases
 ) : DescriptionCreator(literalService, statementService), ComparisonAction {
-    override fun invoke(command: CreateComparisonCommand, state: State): State {
-        create(command.contributorId, state.comparisonId!!, command.description)
-        return state
-    }
+    override fun invoke(command: CreateComparisonCommand, state: State): State =
+        state.apply { create(command.contributorId, state.comparisonId!!, command.description) }
 }

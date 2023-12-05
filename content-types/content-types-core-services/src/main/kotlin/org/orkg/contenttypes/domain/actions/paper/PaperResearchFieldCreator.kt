@@ -1,15 +1,14 @@
 package org.orkg.contenttypes.domain.actions.paper
 
 import org.orkg.contenttypes.domain.actions.CreatePaperCommand
+import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.domain.actions.ResearchFieldCreator
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.StatementUseCases
 
 class PaperResearchFieldCreator(
     statementService: StatementUseCases
-) : ResearchFieldCreator(statementService), PaperAction {
-    override operator fun invoke(command: CreatePaperCommand, state: PaperAction.State): PaperAction.State {
-        create(command.contributorId, command.researchFields, state.paperId!!)
-        return state
-    }
+) : ResearchFieldCreator(statementService), CreatePaperAction {
+    override operator fun invoke(command: CreatePaperCommand, state: CreatePaperState): CreatePaperState =
+        state.apply { create(command.contributorId, command.researchFields, state.paperId!!) }
 }

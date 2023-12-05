@@ -7,27 +7,28 @@ import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import org.orkg.community.output.ObservatoryRepository
+import org.orkg.contenttypes.domain.actions.CreatePaperState
+import org.orkg.contenttypes.domain.actions.ObservatoryValidator
+import org.orkg.contenttypes.domain.actions.OrganizationValidator
+import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
 import org.orkg.contenttypes.domain.actions.contribution.ContributionContentsCreator
 import org.orkg.contenttypes.domain.actions.contribution.ContributionContentsValidator
 import org.orkg.contenttypes.domain.actions.contribution.ContributionPaperExistenceValidator
 import org.orkg.contenttypes.domain.actions.contribution.ContributionTempIdValidator
 import org.orkg.contenttypes.domain.actions.contribution.ContributionThingDefinitionValidator
 import org.orkg.contenttypes.domain.actions.execute
-import org.orkg.contenttypes.domain.actions.paper.PaperAction
+import org.orkg.contenttypes.domain.actions.paper.PaperAuthorCreateValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperAuthorCreator
-import org.orkg.contenttypes.domain.actions.paper.PaperAuthorValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperContributionCreator
 import org.orkg.contenttypes.domain.actions.paper.PaperContributionValidator
-import org.orkg.contenttypes.domain.actions.paper.PaperExistenceValidator
+import org.orkg.contenttypes.domain.actions.paper.PaperIdentifierCreateValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperIdentifierCreator
-import org.orkg.contenttypes.domain.actions.paper.PaperObservatoryValidator
-import org.orkg.contenttypes.domain.actions.paper.PaperOrganizationValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperPublicationInfoCreator
 import org.orkg.contenttypes.domain.actions.paper.PaperResearchFieldCreator
-import org.orkg.contenttypes.domain.actions.paper.PaperResearchFieldValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperResourceCreator
 import org.orkg.contenttypes.domain.actions.paper.PaperTempIdValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperThingDefinitionValidator
+import org.orkg.contenttypes.domain.actions.paper.PaperTitleValidator
 import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.graph.domain.Classes
@@ -116,11 +117,12 @@ class PaperService(
     override fun create(command: CreatePaperCommand): ThingId {
         val steps = listOf(
             PaperTempIdValidator(),
-            PaperExistenceValidator(resourceService, statementRepository),
-            PaperResearchFieldValidator(resourceRepository),
-            PaperObservatoryValidator(observatoryRepository),
-            PaperOrganizationValidator(organizationRepository),
-            PaperAuthorValidator(resourceRepository, statementRepository),
+            PaperTitleValidator(resourceService),
+            PaperIdentifierCreateValidator(statementRepository),
+            ResearchFieldValidator(resourceRepository) { it.researchFields },
+            ObservatoryValidator(observatoryRepository) { it.observatories },
+            OrganizationValidator(organizationRepository) { it.organizations },
+            PaperAuthorCreateValidator(resourceRepository, statementRepository),
             PaperThingDefinitionValidator(thingRepository),
             PaperContributionValidator(thingRepository),
             PaperResourceCreator(resourceService),
@@ -130,7 +132,7 @@ class PaperService(
             PaperPublicationInfoCreator(resourceService, resourceRepository, statementService, literalService),
             PaperContributionCreator(resourceService, statementService, literalService, predicateService, statementRepository, listService)
         )
-        return steps.execute(command, PaperAction.State()).paperId!!
+        return steps.execute(command, CreatePaperState()).paperId!!
     }
 
     override fun createContribution(command: CreateContributionCommand): ThingId {

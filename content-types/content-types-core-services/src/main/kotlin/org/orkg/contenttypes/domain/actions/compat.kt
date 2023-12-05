@@ -2,7 +2,7 @@ package org.orkg.contenttypes.domain.actions
 
 import org.orkg.contenttypes.domain.actions.comparison.ComparisonAction
 import org.orkg.contenttypes.domain.actions.contribution.ContributionAction
-import org.orkg.contenttypes.domain.actions.paper.PaperAction
+import org.orkg.contenttypes.domain.actions.paper.CreatePaperAction
 import org.orkg.contenttypes.domain.actions.template.TemplateAction
 import org.orkg.contenttypes.domain.actions.template.property.TemplatePropertyAction
 import org.orkg.contenttypes.domain.actions.visualization.VisualizationAction
@@ -22,7 +22,8 @@ internal typealias CreateVisualizationCommand = CreateVisualizationUseCase.Creat
 internal typealias CreateTemplateCommand = CreateTemplateUseCase.CreateCommand
 internal typealias CreateTemplatePropertyCommand = CreateTemplatePropertyUseCase.CreateCommand
 
-internal typealias PaperState = PaperAction.State
+internal typealias CreatePaperState = CreatePaperAction.State
+
 internal typealias ContributionState = ContributionAction.State
 internal typealias ComparisonState = ComparisonAction.State
 internal typealias VisualizationState = VisualizationAction.State

@@ -1,24 +1,20 @@
 package org.orkg.contenttypes.domain
 
-import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
-import org.orkg.community.output.ObservatoryRepository
-import org.orkg.contenttypes.domain.actions.CreateVisualizationCommand
-import org.orkg.contenttypes.domain.actions.VisualizationState
-import org.orkg.graph.input.ListUseCases
-import org.orkg.graph.input.LiteralUseCases
-import org.orkg.graph.input.ResourceUseCases
-import org.orkg.graph.input.StatementUseCases
-import org.orkg.contenttypes.domain.actions.visualization.VisualizationAuthorCreator
-import org.orkg.contenttypes.domain.actions.visualization.VisualizationAuthorValidator
-import org.orkg.contenttypes.domain.actions.visualization.VisualizationDescriptionCreator
-import org.orkg.contenttypes.domain.actions.visualization.VisualizationObservatoryValidator
-import org.orkg.contenttypes.domain.actions.visualization.VisualizationOrganizationValidator
-import org.orkg.contenttypes.domain.actions.visualization.VisualizationResourceCreator
 import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
+import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
+import org.orkg.community.output.ObservatoryRepository
+import org.orkg.contenttypes.domain.actions.CreateVisualizationCommand
+import org.orkg.contenttypes.domain.actions.ObservatoryValidator
+import org.orkg.contenttypes.domain.actions.OrganizationValidator
+import org.orkg.contenttypes.domain.actions.VisualizationState
 import org.orkg.contenttypes.domain.actions.execute
+import org.orkg.contenttypes.domain.actions.visualization.VisualizationAuthorCreator
+import org.orkg.contenttypes.domain.actions.visualization.VisualizationAuthorValidator
+import org.orkg.contenttypes.domain.actions.visualization.VisualizationDescriptionCreator
+import org.orkg.contenttypes.domain.actions.visualization.VisualizationResourceCreator
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.contenttypes.input.VisualizationUseCases
 import org.orkg.graph.domain.Classes
@@ -27,6 +23,10 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.input.ListUseCases
+import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.authors
@@ -81,8 +81,8 @@ class VisualizationService(
 
     override fun create(command: CreateVisualizationCommand): ThingId {
         val steps = listOf(
-            VisualizationObservatoryValidator(observatoryRepository),
-            VisualizationOrganizationValidator(organizationRepository),
+            ObservatoryValidator(observatoryRepository) { it.observatories },
+            OrganizationValidator(organizationRepository) { it.organizations },
             VisualizationAuthorValidator(resourceRepository, statementRepository),
             VisualizationResourceCreator(resourceService),
             VisualizationDescriptionCreator(literalService, statementService),

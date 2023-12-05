@@ -2,7 +2,7 @@ package org.orkg.contenttypes.domain.actions.paper
 
 import org.orkg.contenttypes.domain.actions.ContributionCreator
 import org.orkg.contenttypes.domain.actions.CreatePaperCommand
-import org.orkg.contenttypes.domain.actions.PaperState
+import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.PredicateUseCases
@@ -24,8 +24,8 @@ class PaperContributionCreator(
     predicateService = predicateService,
     statementRepository = statementRepository,
     listService = listService
-), PaperAction {
-    override operator fun invoke(command: CreatePaperCommand, state: PaperState): PaperState {
+), CreatePaperAction {
+    override operator fun invoke(command: CreatePaperCommand, state: CreatePaperState): CreatePaperState {
         if (command.contents != null) {
             create(
                 paperId = state.paperId!!,

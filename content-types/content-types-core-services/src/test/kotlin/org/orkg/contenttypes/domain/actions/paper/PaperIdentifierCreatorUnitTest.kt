@@ -11,7 +11,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.actions.PaperState
+import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.testing.fixtures.dummyCreatePaperCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
@@ -23,7 +23,7 @@ class PaperIdentifierCreatorUnitTest {
     private val statementService: StatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()
 
-    private val paperResourceCreator = PaperIdentifierCreator(statementService, literalService)
+    private val paperIdentifierCreator = PaperIdentifierCreator(statementService, literalService)
 
     @BeforeEach
     fun resetState() {
@@ -39,15 +39,15 @@ class PaperIdentifierCreatorUnitTest {
     fun `Given a paper create command, it crates new paper identifiers`() {
         val command = dummyCreatePaperCommand()
         val paperId = ThingId("Paper")
-        val state = PaperState(paperId = paperId)
+        val state = CreatePaperState(paperId = paperId)
 
         val doi = command.identifiers["doi"]!!
         val doiLiteral = createLiteral(label = doi)
 
         every { literalService.create(doi) } returns doiLiteral
-        every { statementService.create(paperId, Predicates.hasDOI, doiLiteral.id) } returns StatementId("S435")
+        every { statementService.create(command.contributorId, paperId, Predicates.hasDOI, doiLiteral.id) } returns StatementId("S435")
 
-        val result = paperResourceCreator(command, state)
+        val result = paperIdentifierCreator(command, state)
 
         result.asClue {
             it.tempIds.size shouldBe 0
@@ -58,7 +58,7 @@ class PaperIdentifierCreatorUnitTest {
         }
 
         verify(exactly = 1) { literalService.create(doi) }
-        verify(exactly = 1) { statementService.create(paperId, Predicates.hasDOI, doiLiteral.id) }
+        verify(exactly = 1) { statementService.create(command.contributorId, paperId, Predicates.hasDOI, doiLiteral.id) }
     }
 
     @Test
@@ -67,9 +67,9 @@ class PaperIdentifierCreatorUnitTest {
             identifiers = mapOf("unknown" to "value")
         )
         val paperId = ThingId("Paper")
-        val state = PaperState(paperId = paperId)
+        val state = CreatePaperState(paperId = paperId)
 
-        val result = paperResourceCreator(command, state)
+        val result = paperIdentifierCreator(command, state)
 
         result.asClue {
             it.tempIds.size shouldBe 0
@@ -80,6 +80,6 @@ class PaperIdentifierCreatorUnitTest {
         }
 
         verify(exactly = 0) { literalService.create(any()) }
-        verify(exactly = 0) { statementService.create(paperId, any(), any()) }
+        verify(exactly = 0) { statementService.create(any(), paperId, any(), any()) }
     }
 }

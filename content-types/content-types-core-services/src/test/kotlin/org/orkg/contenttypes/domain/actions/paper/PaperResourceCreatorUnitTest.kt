@@ -11,7 +11,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.actions.PaperState
+import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.testing.fixtures.dummyCreatePaperCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.CreateResourceUseCase
@@ -35,7 +35,7 @@ class PaperResourceCreatorUnitTest {
     @Test
     fun `Given a paper create command, it crates a new paper resource`() {
         val command = dummyCreatePaperCommand()
-        val state = PaperState()
+        val state = CreatePaperState()
 
         val resourceCreateCommand = CreateResourceUseCase.CreateCommand(
             label = command.title,

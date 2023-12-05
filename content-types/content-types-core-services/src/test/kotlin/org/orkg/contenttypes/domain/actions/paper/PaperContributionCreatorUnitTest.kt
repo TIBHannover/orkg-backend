@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.Either
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.BakedStatement
-import org.orkg.contenttypes.domain.actions.PaperState
+import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.testing.fixtures.dummyCreatePaperCommand
 import org.orkg.graph.domain.Classes
@@ -39,7 +39,7 @@ class PaperContributionCreatorUnitTest {
     private val predicateService: PredicateUseCases = mockk()
     private val listService: ListUseCases = mockk()
 
-    private val paperContentsCreatorCreator = PaperContributionCreator(
+    private val paperContributionCreator = PaperContributionCreator(
         resourceService = resourceService,
         statementService = statementService,
         literalService = literalService,
@@ -89,7 +89,7 @@ class PaperContributionCreatorUnitTest {
                 contributions = listOf(contributionDefinition)
             )
         )
-        val state = PaperState(
+        val state = CreatePaperState(
             tempIds = setOf("#temp1"),
             validatedIds = mapOf(
                 "#temp1" to Either.left("#temp1"),
@@ -138,7 +138,7 @@ class PaperContributionCreatorUnitTest {
             )
         } just runs
 
-        val result = paperContentsCreatorCreator(command, state)
+        val result = paperContributionCreator(command, state)
 
         result.asClue {
             it.tempIds shouldBe state.tempIds

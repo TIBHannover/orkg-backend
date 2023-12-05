@@ -49,13 +49,36 @@ class AuthorCreatorUnitTest {
     fun `Given a list of authors, when linking an existing author to the subject resource, it returns success`() {
         val subjectId = ThingId("R123")
         val authorId = ThingId("R456")
+        val orcid = "0000-1111-2222-3333"
         val author = Author(
             id = authorId,
-            name = "Author"
+            name = "Author",
+            identifiers = mapOf(
+                "orcid" to orcid
+            )
         )
         val authorListId = ThingId("R1456")
         val contributorId = ContributorId(UUID.randomUUID())
+        val orcidLiteral = createLiteral(
+            id = ThingId(UUID.randomUUID().toString()),
+            label = author.name
+        )
 
+        every {
+            literalService.create(
+                userId = contributorId,
+                label = orcid,
+                datatype = Literals.XSD.STRING.prefixedUri
+            )
+        } returns orcidLiteral
+        every {
+            statementService.add(
+                userId = contributorId,
+                subject = authorId,
+                predicate = Predicates.hasORCID,
+                `object` = orcidLiteral.id
+            )
+        } just runs
         every {
             listService.create(
                 CreateListUseCase.CreateCommand(
@@ -76,6 +99,21 @@ class AuthorCreatorUnitTest {
 
         authorCreator.create(contributorId, listOf(author), subjectId)
 
+        verify(exactly = 1) {
+            literalService.create(
+                userId = contributorId,
+                label = orcid,
+                datatype = Literals.XSD.STRING.prefixedUri
+            )
+        }
+        verify(exactly = 1) {
+            statementService.add(
+                userId = contributorId,
+                subject = authorId,
+                predicate = Predicates.hasORCID,
+                `object` = orcidLiteral.id
+            )
+        }
         verify(exactly = 1) {
             listService.create(
                 CreateListUseCase.CreateCommand(

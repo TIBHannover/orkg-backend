@@ -9,8 +9,6 @@ import org.orkg.graph.input.StatementUseCases
 class ComparisonResearchFieldCreator(
     statementService: StatementUseCases
 ) : ResearchFieldCreator(statementService), ComparisonAction {
-    override operator fun invoke(command: CreateComparisonCommand, state: State): State {
-        create(command.contributorId, command.researchFields, state.comparisonId!!, Predicates.hasSubject)
-        return state
-    }
+    override operator fun invoke(command: CreateComparisonCommand, state: State): State =
+        state.apply { create(command.contributorId, command.researchFields, state.comparisonId!!, Predicates.hasSubject) }
 }

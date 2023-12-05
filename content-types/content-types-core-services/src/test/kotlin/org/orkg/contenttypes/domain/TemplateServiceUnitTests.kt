@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
+import org.orkg.community.output.ObservatoryRepository
 import org.orkg.contenttypes.output.TemplateRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
@@ -18,6 +20,11 @@ import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
+import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.output.ClassRepository
+import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.testing.fixtures.createClass
@@ -30,9 +37,27 @@ import org.springframework.data.domain.Sort
 class TemplateServiceUnitTests {
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
+    private val classRepository: ClassRepository = mockk()
+    private val predicateRepository: PredicateRepository = mockk()
+    private val resourceService: ResourceUseCases = mockk()
+    private val literalService: LiteralUseCases = mockk()
+    private val statementService: StatementUseCases = mockk()
+    private val observatoryRepository: ObservatoryRepository = mockk()
+    private val organizationRepository: PostgresOrganizationRepository = mockk()
     private val templateRepository: TemplateRepository = mockk()
 
-    private val service = TemplateService(resourceRepository, statementRepository, templateRepository)
+    private val service = TemplateService(
+        resourceRepository = resourceRepository,
+        statementRepository = statementRepository,
+        classRepository = classRepository,
+        predicateRepository = predicateRepository,
+        resourceService = resourceService,
+        literalService = literalService,
+        statementService = statementService,
+        observatoryRepository = observatoryRepository,
+        organizationRepository = organizationRepository,
+        templateRepository = templateRepository
+    )
 
     @Test
     fun `Given a template exists, when fetching it by id, then it is returned`() {

@@ -29,4 +29,5 @@ dependencies {
     testFixturesImplementation(project(":content-types:content-types-core-model"))
     testFixturesImplementation(project(":content-types:content-types-core-services"))
     testFixturesImplementation(project(":content-types:content-types-ports-input"))
+    testFixturesImplementation(libs.forkhandles.values4k)
 }

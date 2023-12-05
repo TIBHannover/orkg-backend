@@ -87,3 +87,21 @@ class DoiAlreadyRegistered(id: ThingId) :
 
 class UnpublishableThing(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Thing "$id" cannot be published.""")
+
+class TemplateAlreadyExistsForClass(classId: ThingId, templateId: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Class "$classId" already has template "$templateId".""")
+
+class InvalidMinCount(count: Int) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Invalid min count "$count". Must be at least 0.""")
+
+class InvalidMaxCount(count: Int) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Invalid max count "$count". Must be at least 0.""")
+
+class InvalidCardinality(min: Int, max: Int) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Invalid cardinality. Min count must be less than max count. Found: min: "$min", max: "$max".""")
+
+class InvalidRegexPattern(pattern: String, cause: Throwable) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Invalid regex pattern "$pattern".""", cause)
+
+class TemplateClosed(id: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Template "$id" is closed.""")

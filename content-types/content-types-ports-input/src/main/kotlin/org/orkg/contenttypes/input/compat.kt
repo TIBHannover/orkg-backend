@@ -10,7 +10,7 @@ interface ComparisonUseCases : RetrieveComparisonUseCase, CreateComparisonUseCas
 
 interface VisualizationUseCases : RetrieveVisualizationUseCase, CreateVisualizationUseCase
 
-interface TemplateUseCases : RetrieveTemplateUseCase
+interface TemplateUseCases : RetrieveTemplateUseCase, CreateTemplateUseCase, CreateTemplatePropertyUseCase
 
 interface ContentTypeResourcesUseCase :
     LoadPaperPort,

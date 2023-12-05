@@ -24,3 +24,21 @@ operation::templates-get-paged[snippets='curl-request']
 The following list of request parameters are supported:
 
 operation::templates-get-paged[snippets='request-parameters']
+
+[[templates-create]]
+== Creating templates
+
+A `POST` request creates a new template with all the given parameters.
+The response will be `201 Created` when successful.
+The template (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::templates-create[snippets='request-fields,curl-request,http-response']
+
+[[templates-create-properties]]
+== Creating template properties
+
+A `POST` request creates a new template property with all the given parameters.
+The response will be `201 Created` when successful.
+The updated template (object) can be retrieved by following the URI in the `Location` header field.
+
+operation::templates-create-property[snippets='request-fields,curl-request,http-response']

@@ -1,15 +1,15 @@
 package org.orkg.contenttypes.testing.fixtures
 
-import org.orkg.contenttypes.domain.LiteralTemplateProperty
-import org.orkg.contenttypes.domain.ResourceTemplateProperty
-import org.orkg.contenttypes.domain.Template
-import org.orkg.contenttypes.domain.TemplateRelation
 import java.time.OffsetDateTime
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.contenttypes.domain.LiteralTemplateProperty
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
+import org.orkg.contenttypes.domain.ResourceTemplateProperty
+import org.orkg.contenttypes.domain.Template
+import org.orkg.contenttypes.domain.TemplateRelation
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Visibility
 
@@ -49,10 +49,10 @@ fun createDummyLiteralTemplateProperty() = LiteralTemplateProperty(
     minCount = 1,
     maxCount = 2,
     pattern = """\d+""",
-    path = ObjectIdAndLabel(ThingId("R24"), "literal property path label"),
     createdAt = OffsetDateTime.parse("2023-11-02T14:57:05.959539600+01:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
-    datatype = ObjectIdAndLabel(ThingId("R25"), "literal property class label")
+    path = ObjectIdAndLabel(ThingId("P24"), "literal property path label"),
+    datatype = ObjectIdAndLabel(ThingId("C25"), "literal property class label")
 )
 
 fun createDummyResourceTemplateProperty() = ResourceTemplateProperty(
@@ -62,8 +62,8 @@ fun createDummyResourceTemplateProperty() = ResourceTemplateProperty(
     minCount = 3,
     maxCount = 4,
     pattern = """\w+""",
-    path = ObjectIdAndLabel(ThingId("R27"), "resource property path label"),
+    path = ObjectIdAndLabel(ThingId("P27"), "resource property path label"),
     createdAt = OffsetDateTime.parse("2023-11-02T15:57:25.959539600+02:00"),
     createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620"),
-    `class` = ObjectIdAndLabel(ThingId("R28"), "resource property class label")
+    `class` = ObjectIdAndLabel(ThingId("C28"), "resource property class label")
 )

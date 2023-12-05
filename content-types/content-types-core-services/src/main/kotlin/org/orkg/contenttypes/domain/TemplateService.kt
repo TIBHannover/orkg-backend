@@ -3,6 +3,25 @@ package org.orkg.contenttypes.domain
 import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
+import org.orkg.community.output.ObservatoryRepository
+import org.orkg.contenttypes.domain.actions.CreateTemplateCommand
+import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyCommand
+import org.orkg.contenttypes.domain.actions.TemplatePropertyState
+import org.orkg.contenttypes.domain.actions.TemplateState
+import org.orkg.contenttypes.domain.actions.execute
+import org.orkg.contenttypes.domain.actions.template.TemplateMetadataCreator
+import org.orkg.contenttypes.domain.actions.template.TemplateObservatoryValidator
+import org.orkg.contenttypes.domain.actions.template.TemplateOrganizationValidator
+import org.orkg.contenttypes.domain.actions.template.TemplatePropertiesCreator
+import org.orkg.contenttypes.domain.actions.template.TemplatePropertiesValidator
+import org.orkg.contenttypes.domain.actions.template.TemplateRelationsValidator
+import org.orkg.contenttypes.domain.actions.template.TemplateResourceCreator
+import org.orkg.contenttypes.domain.actions.template.TemplateTargetClassValidator
+import org.orkg.contenttypes.domain.actions.template.property.TemplatePropertyExistenceValidator
+import org.orkg.contenttypes.domain.actions.template.property.TemplatePropertyTemplateValidator
+import org.orkg.contenttypes.domain.actions.template.property.TemplatePropertyValueCreator
+import org.orkg.contenttypes.domain.actions.template.property.TemplatePropertyValueValidator
 import org.orkg.contenttypes.input.TemplateUseCases
 import org.orkg.contenttypes.output.TemplateRepository
 import org.orkg.graph.domain.BundleConfiguration
@@ -13,6 +32,11 @@ import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.input.LiteralUseCases
+import org.orkg.graph.input.ResourceUseCases
+import org.orkg.graph.input.StatementUseCases
+import org.orkg.graph.output.ClassRepository
+import org.orkg.graph.output.PredicateRepository
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.output.StatementRepository
 import org.springframework.data.domain.Page
@@ -24,6 +48,13 @@ import org.springframework.stereotype.Component
 class TemplateService(
     private val resourceRepository: ResourceRepository,
     private val statementRepository: StatementRepository,
+    private val classRepository: ClassRepository,
+    private val predicateRepository: PredicateRepository,
+    private val resourceService: ResourceUseCases,
+    private val literalService: LiteralUseCases,
+    private val statementService: StatementUseCases,
+    private val observatoryRepository: ObservatoryRepository,
+    private val organizationRepository: PostgresOrganizationRepository,
     private val templateRepository: TemplateRepository
 ) : TemplateUseCases {
     override fun findById(id: ThingId): Optional<Template> =
@@ -42,6 +73,30 @@ class TemplateService(
     ): Page<Template> =
         templateRepository.findAll(searchString, visibility, createdBy, researchField, researchProblem, targetClass, pageable)
             .pmap { it.toTemplate() }
+
+    override fun create(command: CreateTemplateCommand): ThingId {
+        val steps = listOf(
+            TemplateTargetClassValidator(classRepository, statementRepository),
+            TemplateRelationsValidator(resourceRepository, predicateRepository),
+            TemplatePropertiesValidator(predicateRepository, classRepository),
+            TemplateOrganizationValidator(organizationRepository),
+            TemplateObservatoryValidator(observatoryRepository),
+            TemplateResourceCreator(resourceService),
+            TemplateMetadataCreator(literalService, statementService),
+            TemplatePropertiesCreator(resourceService, literalService, statementService)
+        )
+        return steps.execute(command, TemplateState()).templateId!!
+    }
+
+    override fun createTemplateProperty(command: CreateTemplatePropertyCommand): ThingId {
+        val steps = listOf(
+            TemplatePropertyExistenceValidator(resourceRepository),
+            TemplatePropertyTemplateValidator(statementRepository),
+            TemplatePropertyValueValidator(predicateRepository, classRepository),
+            TemplatePropertyValueCreator(resourceService, literalService, statementService)
+        )
+        return steps.execute(command, TemplatePropertyState()).templatePropertyId!!
+    }
 
     private fun Resource.toTemplate(): Template {
         val statements = statementRepository.fetchAsBundle(

@@ -3,6 +3,7 @@ package org.orkg.contenttypes.domain
 import java.net.URI
 import java.time.Clock
 import java.time.OffsetDateTime
+import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.identifiers.DOI
@@ -47,23 +48,31 @@ class PublishingService(
             )
         )
         statementService.create(
+            userId = command.contributorId,
             subject = command.id,
             predicate = Predicates.hasDOI,
-            `object` = literalService.create(label = doi.value).id
+            `object` = literalService.create(
+                userId = command.contributorId,
+                label = doi.value
+            ).id
         )
         val now = OffsetDateTime.now(clock)
         statementService.create(
+            userId = command.contributorId,
             subject = command.id,
             predicate = Predicates.yearPublished,
             `object` = literalService.create(
+                userId = command.contributorId,
                 label = now.year.toString(),
                 datatype = Literals.XSD.INT.prefixedUri
             ).id
         )
         statementService.create(
+            userId = command.contributorId,
             subject = command.id,
             predicate = Predicates.monthPublished,
             `object` = literalService.create(
+                userId = command.contributorId,
                 label = now.monthValue.toString(),
                 datatype = Literals.XSD.INT.prefixedUri
             ).id
@@ -74,6 +83,7 @@ class PublishingService(
     data class PublishCommand(
         val id: ThingId,
         val title: String,
+        val contributorId: ContributorId,
         val subject: String,
         val description: String,
         val url: URI,

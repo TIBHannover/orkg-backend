@@ -54,8 +54,10 @@ import org.orkg.graph.domain.DOIServiceUnavailable
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.andExpectPaper
+import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.documentedPostRequestTo
@@ -376,6 +378,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     }
 
     @Test
+    @TestWithMockUser
     @DisplayName("Given a paper, when publishing, then status 204 NO CONTENT")
     fun publish() {
         val id = ThingId("R123")
@@ -383,8 +386,9 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             "subject" to "paper subject",
             "description" to "paper description"
         )
+        val contributorId = ContributorId(MockUserId.USER)
 
-        every { paperService.publish(id, any(), any()) } just runs
+        every { paperService.publish(id, contributorId, any(), any()) } just runs
 
         documentedPostRequestTo("/api/papers/{id}/publish", id)
             .content(request)
@@ -406,19 +410,21 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { paperService.publish(id, any(), any()) }
+        verify(exactly = 1) { paperService.publish(id, contributorId, any(), any()) }
     }
 
     @Test
+    @TestWithMockUser
     fun `Given a paper, when publishing but service reports missing paper, then status is 404 NOT FOUND`() {
         val id = ThingId("R123")
         val request = mapOf(
             "subject" to "paper subject",
             "description" to "paper description"
         )
+        val contributorId = ContributorId(MockUserId.USER)
         val exception = PaperNotFound(id)
 
-        every { paperService.publish(id, any(), any()) } throws exception
+        every { paperService.publish(id, contributorId, any(), any()) } throws exception
 
         post("/api/papers/$id/publish")
             .accept(MediaType.APPLICATION_JSON)
@@ -430,19 +436,21 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers/$id/publish"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.publish(id, any(), any()) }
+        verify(exactly = 1) { paperService.publish(id, contributorId, any(), any()) }
     }
 
     @Test
+    @TestWithMockUser
     fun `Given a paper, when publishing but service reports doi service unavailable, then status is 503 SERVICE UNAVAILABLE`() {
         val id = ThingId("R123")
         val request = mapOf(
             "subject" to "paper subject",
             "description" to "paper description"
         )
+        val contributorId = ContributorId(MockUserId.USER)
         val exception = DOIServiceUnavailable(500, "Internal error")
 
-        every { paperService.publish(id, any(), any()) } throws exception
+        every { paperService.publish(id, contributorId, any(), any()) } throws exception
 
         post("/api/papers/$id/publish")
             .accept(MediaType.APPLICATION_JSON)
@@ -454,7 +462,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .andExpect(jsonPath("$.path").value("/api/papers/$id/publish"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { paperService.publish(id, any(), any()) }
+        verify(exactly = 1) { paperService.publish(id, contributorId, any(), any()) }
     }
 
     @Test

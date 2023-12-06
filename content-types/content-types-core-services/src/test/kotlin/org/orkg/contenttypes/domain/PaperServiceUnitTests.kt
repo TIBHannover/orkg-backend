@@ -15,6 +15,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
@@ -276,6 +277,7 @@ class PaperServiceUnitTests {
         val description = "Fancy paper description"
         val resourceAuthorId = ThingId("R132564")
         val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
+        val contributorId = ContributorId(UUID.randomUUID())
 
         every { resourceRepository.findPaperById(paper.id) } returns Optional.of(paper)
         every { statementRepository.findAllBySubject(paper.id, PageRequests.ALL) } returns pageOf(
@@ -311,7 +313,7 @@ class PaperServiceUnitTests {
         )
         every { publishingService.publish(any()) } returns DOI.of("10.1234/56789")
 
-        service.publish(paper.id, subject, description)
+        service.publish(paper.id, contributorId, subject, description)
 
         verify(exactly = 1) { resourceRepository.findPaperById(paper.id) }
         verify(exactly = 1) { statementRepository.findAllBySubject(paper.id, PageRequests.ALL) }
@@ -320,6 +322,7 @@ class PaperServiceUnitTests {
                 withArg {
                     it.id shouldBe paper.id
                     it.title shouldBe paper.label
+                    it.contributorId shouldBe contributorId
                     it.subject shouldBe subject
                     it.description shouldBe description
                     it.url shouldBe URI.create("https://orkg.org/paper/${paper.id}")
@@ -351,11 +354,12 @@ class PaperServiceUnitTests {
     @Test
     fun `Given a paper, when publishing but service reports missing paper, it throws an exception`() {
         val id = ThingId("Missing")
+        val contributorId = ContributorId(UUID.randomUUID())
 
         every { resourceRepository.findPaperById(id) } returns Optional.empty()
 
         shouldThrow<PaperNotFound> {
-            service.publish(id, "Paper subject", "Fancy paper description")
+            service.publish(id, contributorId, "Paper subject", "Fancy paper description")
         }
 
         verify(exactly = 1) { resourceRepository.findPaperById(id) }

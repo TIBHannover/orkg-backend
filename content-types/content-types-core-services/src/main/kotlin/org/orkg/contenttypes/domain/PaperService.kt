@@ -146,12 +146,13 @@ class PaperService(
         return steps.execute(command, ContributionState()).contributionId!!
     }
 
-    override fun publish(id: ThingId, subject: String, description: String) {
+    override fun publish(id: ThingId, contributorId: ContributorId, subject: String, description: String) {
         val paper = findById(id).orElseThrow { PaperNotFound(id) }
         publishingService.publish(
             PublishingService.PublishCommand(
                 id = id,
                 title = paper.title,
+                contributorId = contributorId,
                 subject = subject,
                 description = description,
                 url = URI.create("$paperPublishBaseUri/").resolve(id.value),

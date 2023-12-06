@@ -169,7 +169,8 @@ class ComparisonController(
         @RequestBody @Valid request: PublishRequest,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<Any> {
-        service.publish(id, request.subject, request.description)
+        val contributorId = ContributorId(authenticatedUserId())
+        service.publish(id, contributorId, request.subject, request.description)
         val location = uriComponentsBuilder
             .path("api/comparisons/{id}")
             .buildAndExpand(id)

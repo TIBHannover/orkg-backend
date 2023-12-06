@@ -40,10 +40,10 @@ annotation class TestContainersJpaTest
 
 @Retention(RUNTIME)
 @WithMockUser(
-    username = MockUserId.ANONYMOUS,
+    username = MockUserId.UNKNOWN,
     authorities = ["ROLE_ANONYMOUS"]
 )
-annotation class TestWithMockAnonymousUser
+annotation class TestWithUnknownUser
 
 @Retention(RUNTIME)
 @WithMockUser(

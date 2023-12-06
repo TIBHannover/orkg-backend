@@ -1,6 +1,7 @@
 package org.orkg.contenttypes.testing.fixtures
 
 import java.net.URI
+import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.PublishingService
@@ -10,6 +11,7 @@ fun dummyPublishCommand(): PublishingService.PublishCommand =
     PublishingService.PublishCommand(
         id = ThingId("R123"),
         title = "Paper title",
+        contributorId = ContributorId("257d6a0e-92c2-4a91-8c44-5d33366df441"),
         subject = "Paper subject",
         description = "Description of the paper",
         url = URI.create("https://example.org"),

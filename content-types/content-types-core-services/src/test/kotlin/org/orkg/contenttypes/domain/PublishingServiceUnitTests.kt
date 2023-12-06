@@ -79,12 +79,12 @@ class PublishingServiceUnitTests {
         every { resourceRepository.findById(id) } returns Optional.of(resource)
         every { statementService.findAllBySubjectAndPredicate(id, Predicates.hasDOI, PageRequests.SINGLE) } returns pageOf()
         every { doiService.register(any()) } returns doi
-        every { literalService.create(doi.value) } returns literal
-        every { statementService.create(id, Predicates.hasDOI, literal.id) } returns StatementId("S123")
-        every { literalService.create(label = "2023", datatype = Literals.XSD.INT.prefixedUri) } returns year
-        every { statementService.create(id, Predicates.yearPublished, year.id) } returns StatementId("S465")
-        every { literalService.create(label = "9", datatype = Literals.XSD.INT.prefixedUri) } returns month
-        every { statementService.create(id, Predicates.monthPublished, month.id) } returns StatementId("S789")
+        every { literalService.create(command.contributorId, doi.value) } returns literal
+        every { statementService.create(command.contributorId, id, Predicates.hasDOI, literal.id) } returns StatementId("S123")
+        every { literalService.create(command.contributorId, label = "2023", datatype = Literals.XSD.INT.prefixedUri) } returns year
+        every { statementService.create(command.contributorId, id, Predicates.yearPublished, year.id) } returns StatementId("S465")
+        every { literalService.create(command.contributorId, label = "9", datatype = Literals.XSD.INT.prefixedUri) } returns month
+        every { statementService.create(command.contributorId, id, Predicates.monthPublished, month.id) } returns StatementId("S789")
 
         val result = service.publish(command)
         result shouldBe doi
@@ -106,12 +106,12 @@ class PublishingServiceUnitTests {
                 }
             )
         }
-        verify(exactly = 1) { literalService.create(doi.value) }
-        verify(exactly = 1) { statementService.create(id, Predicates.hasDOI, literal.id) }
-        verify(exactly = 1) { literalService.create(label = "2023", datatype = Literals.XSD.INT.prefixedUri) }
-        verify(exactly = 1) { statementService.create(id, Predicates.yearPublished, year.id) }
-        verify(exactly = 1) { literalService.create(label = "9", datatype = Literals.XSD.INT.prefixedUri) }
-        verify(exactly = 1) { statementService.create(id, Predicates.monthPublished, month.id) }
+        verify(exactly = 1) { literalService.create(command.contributorId, doi.value) }
+        verify(exactly = 1) { statementService.create(command.contributorId, id, Predicates.hasDOI, literal.id) }
+        verify(exactly = 1) { literalService.create(command.contributorId, label = "2023", datatype = Literals.XSD.INT.prefixedUri) }
+        verify(exactly = 1) { statementService.create(command.contributorId, id, Predicates.yearPublished, year.id) }
+        verify(exactly = 1) { literalService.create(command.contributorId, label = "9", datatype = Literals.XSD.INT.prefixedUri) }
+        verify(exactly = 1) { statementService.create(command.contributorId, id, Predicates.monthPublished, month.id) }
     }
 
     @Test
@@ -143,7 +143,7 @@ class PublishingServiceUnitTests {
     fun `Given a publish command, when resource already has a doi, an exception is thrown`() {
         val command = dummyPublishCommand()
         val id = command.id
-        val resource = createResource(id = id).copy(classes = setOf(Classes.paper))
+        val resource = createResource(id = id, classes = setOf(Classes.paper))
 
         every { resourceRepository.findById(id) } returns Optional.of(resource)
         every { statementService.findAllBySubjectAndPredicate(id, Predicates.hasDOI, PageRequests.SINGLE) } returns pageOf(

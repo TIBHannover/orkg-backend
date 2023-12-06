@@ -83,7 +83,7 @@ interface CreateContributionUseCase {
 }
 
 interface PublishPaperUseCase {
-    fun publish(id: ThingId, subject: String, description: String)
+    fun publish(id: ThingId, contributorId: ContributorId, subject: String, description: String)
 }
 
 interface LegacyCreatePaperUseCase {

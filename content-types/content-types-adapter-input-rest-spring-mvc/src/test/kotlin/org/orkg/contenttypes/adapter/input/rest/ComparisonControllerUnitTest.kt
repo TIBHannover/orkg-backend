@@ -12,6 +12,7 @@ import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.auth.input.AuthUseCase
+import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -37,10 +38,12 @@ import org.orkg.graph.domain.DOIServiceUnavailable
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ResearchFieldNotFound
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectComparison
 import org.orkg.testing.andExpectComparisonRelatedFigure
 import org.orkg.testing.andExpectComparisonRelatedResource
 import org.orkg.testing.andExpectPage
+import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
@@ -485,6 +488,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
     }
 
     @Test
+    @TestWithMockUser
     @DisplayName("Given a comparison, when publishing, then status 204 NO CONTENT")
     fun publish() {
         val id = ThingId("R123")
@@ -492,8 +496,9 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             "subject" to "comparison subject",
             "description" to "comparison description"
         )
+        val contributorId = ContributorId(MockUserId.USER)
 
-        every { comparisonService.publish(id, any(), any()) } just runs
+        every { comparisonService.publish(id, contributorId, any(), any()) } just runs
 
         documentedPostRequestTo("/api/comparisons/{id}/publish", id)
             .content(request)
@@ -515,19 +520,21 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             )
             .andDo(generateDefaultDocSnippets())
 
-        verify(exactly = 1) { comparisonService.publish(id, any(), any()) }
+        verify(exactly = 1) { comparisonService.publish(id, contributorId, any(), any()) }
     }
 
     @Test
+    @TestWithMockUser
     fun `Given a comparison, when publishing but service reports missing comparison, then status is 404 NOT FOUND`() {
         val id = ThingId("R123")
         val request = mapOf(
             "subject" to "comparison subject",
             "description" to "comparison description"
         )
+        val contributorId = ContributorId(MockUserId.USER)
         val exception = ComparisonNotFound(id)
 
-        every { comparisonService.publish(id, any(), any()) } throws exception
+        every { comparisonService.publish(id, contributorId, any(), any()) } throws exception
 
         post("/api/comparisons/$id/publish")
             .content(request)
@@ -539,19 +546,21 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andExpect(jsonPath("$.path").value("/api/comparisons/$id/publish"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { comparisonService.publish(id, any(), any()) }
+        verify(exactly = 1) { comparisonService.publish(id, contributorId, any(), any()) }
     }
 
     @Test
+    @TestWithMockUser
     fun `Given a comparison, when publishing but service reports doi service unavailable, then status is 503 SERVICE UNAVAILABLE`() {
         val id = ThingId("R123")
         val request = mapOf(
             "subject" to "comparison subject",
             "description" to "comparison description"
         )
+        val contributorId = ContributorId(MockUserId.USER)
         val exception = DOIServiceUnavailable(500, "Internal error")
 
-        every { comparisonService.publish(id, any(), any()) } throws exception
+        every { comparisonService.publish(id, contributorId, any(), any()) } throws exception
 
         post("/api/comparisons/$id/publish")
             .content(request)
@@ -563,7 +572,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .andExpect(jsonPath("$.path").value("/api/comparisons/$id/publish"))
             .andExpect(jsonPath("$.message").value(exception.message))
 
-        verify(exactly = 1) { comparisonService.publish(id, any(), any()) }
+        verify(exactly = 1) { comparisonService.publish(id, contributorId, any(), any()) }
     }
 
     @Test

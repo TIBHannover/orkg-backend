@@ -263,6 +263,7 @@ class ComparisonServiceUnitTests {
         val resourceAuthorId = ThingId("R132564")
         val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
         val relatedDoi = "10.1472/58369"
+        val contributorId = ContributorId(UUID.randomUUID())
 
         every { resourceRepository.findById(comparison.id) } returns Optional.of(comparison)
         every { statementRepository.findAllBySubject(comparison.id, any()) } returns pageOf(
@@ -314,7 +315,7 @@ class ComparisonServiceUnitTests {
         every { statementRepository.findAllDOIsRelatedToComparison(comparison.id) } returns listOf(relatedDoi)
         every { publishingService.publish(any()) } returns DOI.of("10.1234/56789")
 
-        service.publish(comparison.id, "Research Field 1", "comparison description")
+        service.publish(comparison.id, contributorId, "Research Field 1", "comparison description")
 
         verify(exactly = 1) { resourceRepository.findById(comparison.id) }
         verify(exactly = 1) { statementRepository.findAllBySubject(comparison.id, PageRequests.ALL) }
@@ -332,6 +333,7 @@ class ComparisonServiceUnitTests {
                 withArg {
                     it.id shouldBe comparison.id
                     it.title shouldBe comparison.label
+                    it.contributorId shouldBe contributorId
                     it.subject shouldBe "Research Field 1"
                     it.description shouldBe "comparison description"
                     it.url shouldBe URI.create("https://orkg.org/comparison/${comparison.id}")
@@ -361,10 +363,11 @@ class ComparisonServiceUnitTests {
     @Test
     fun `Given a comparison, when publishing but service reports missing paper, it throws an exception`() {
         val id = ThingId("Missing")
+        val contributorId = ContributorId(UUID.randomUUID())
 
         every { resourceRepository.findById(id) } returns Optional.empty()
 
-        shouldThrow<ComparisonNotFound> { service.publish(id, "Comparison subject", "Fancy comparison description") }
+        shouldThrow<ComparisonNotFound> { service.publish(id, contributorId, "Comparison subject", "Fancy comparison description") }
 
         verify(exactly = 1) { resourceRepository.findById(id) }
     }

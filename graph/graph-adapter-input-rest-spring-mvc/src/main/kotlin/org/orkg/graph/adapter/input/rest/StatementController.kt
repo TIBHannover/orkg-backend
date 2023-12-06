@@ -2,7 +2,6 @@ package org.orkg.graph.adapter.input.rest
 
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.common.annotations.PreAuthorizeCurator
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.BundleRepresentationAdapter
@@ -159,7 +158,7 @@ class StatementController(
         return statementService.findById(id).mapToStatementRepresentation().map(::ok).get()
     }
 
-    @PreAuthorizeCurator
+    @PreAuthorizeUser
     @DeleteMapping("/{id}")
     fun delete(
         @PathVariable id: StatementId

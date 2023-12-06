@@ -214,12 +214,13 @@ class ComparisonService(
         return figureId
     }
 
-    override fun publish(id: ThingId, subject: String, description: String) {
+    override fun publish(id: ThingId, contributorId: ContributorId, subject: String, description: String) {
         val comparison = findById(id).orElseThrow { ComparisonNotFound(id) }
         publishingService.publish(
-            org.orkg.contenttypes.domain.PublishingService.PublishCommand(
+            PublishingService.PublishCommand(
                 id = id,
                 title = comparison.title,
+                contributorId = contributorId,
                 subject = subject,
                 description = description,
                 url = URI.create("$comparisonPublishBaseUri/").resolve(id.value),

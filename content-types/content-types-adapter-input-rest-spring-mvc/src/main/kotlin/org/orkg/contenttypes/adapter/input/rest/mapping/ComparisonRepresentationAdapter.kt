@@ -35,6 +35,7 @@ interface ComparisonRepresentationAdapter : AuthorRepresentationAdapter, Labeled
             createdBy = createdBy,
             previousVersion = previousVersion,
             isAnonymized = isAnonymized,
-            visibility = visibility
+            visibility = visibility,
+            unlistedBy = unlistedBy
         )
 }

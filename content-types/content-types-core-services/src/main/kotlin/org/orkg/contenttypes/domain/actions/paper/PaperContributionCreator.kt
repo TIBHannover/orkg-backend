@@ -30,6 +30,7 @@ class PaperContributionCreator(
             create(
                 paperId = state.paperId!!,
                 contributorId = command.contributorId,
+                extractionMethod = command.extractionMethod,
                 contents = command.contents!!,
                 validatedIds = state.validatedIds,
                 bakedStatements = state.bakedStatements

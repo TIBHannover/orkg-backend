@@ -102,7 +102,8 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
                         timestampFieldWithPath("created_at", "the visualization resource was created"),
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this visualization."),
-                        fieldWithPath("visibility").description("""Visibility of the visualization. Can be one of "default", "featured", "unlisted" or "deleted".""")
+                        fieldWithPath("visibility").description("""Visibility of the visualization. Can be one of "default", "featured", "unlisted" or "deleted"."""),
+                        fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this visualization.").optional()
                     )
                 )
             )

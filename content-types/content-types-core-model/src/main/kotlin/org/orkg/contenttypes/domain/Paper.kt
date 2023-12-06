@@ -22,5 +22,6 @@ data class Paper(
     val createdAt: OffsetDateTime,
     val createdBy: ContributorId,
     val verified: Boolean,
-    val visibility: Visibility
+    val visibility: Visibility,
+    val unlistedBy: ContributorId? = null
 )

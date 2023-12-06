@@ -119,12 +119,16 @@ fun createDummyComparisonRelatedResource() = ComparisonRelatedResource(
     label = "Comparison Related Resource",
     image = "https://example.org/image.png",
     url = "https://orkg.org",
-    description = "Description of a Comparison Related Resource"
+    description = "Description of a Comparison Related Resource",
+    createdAt = OffsetDateTime.parse("2023-09-12T16:05:05.959539600+02:00"),
+    createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620")
 )
 
 fun createDummyComparisonRelatedFigure() = ComparisonRelatedFigure(
     id = ThingId("R5476"),
     label = "Comparison Related Figure",
     image = "https://example.org/image.png",
-    description = "Description of a Comparison Related Figure"
+    description = "Description of a Comparison Related Figure",
+    createdAt = OffsetDateTime.parse("2023-10-12T16:05:05.959539600+02:00"),
+    createdBy = ContributorId("dca4080c-e23f-489d-b900-af8bfc2b0620")
 )

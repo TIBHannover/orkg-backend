@@ -105,6 +105,7 @@ class VisualizationServiceUnitTests {
             visualization.createdAt shouldBe expected.createdAt
             visualization.createdBy shouldBe expected.createdBy
             visualization.visibility shouldBe Visibility.DEFAULT
+            visualization.unlistedBy shouldBe expected.unlistedBy
         }
 
         verify(exactly = 1) { resourceRepository.findById(expected.id) }

@@ -22,6 +22,7 @@ import org.orkg.contenttypes.domain.actions.ContributionState
 import org.orkg.contenttypes.input.CreateContributionUseCase
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.testing.fixtures.dummyCreateContributionCommand
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.output.ThingRepository
@@ -151,6 +152,7 @@ class ContributionValidatorUnitTest {
     fun `Given a contribution create command, when contribution does not contain any statements, it throws an exception`() {
         val command = CreateContributionUseCase.CreateCommand(
             contributorId = ContributorId(UUID.randomUUID()),
+            extractionMethod = ExtractionMethod.MANUAL,
             paperId = ThingId("R123"),
             contribution = CreatePaperUseCase.CreateCommand.Contribution(
                 label = "Contribution",

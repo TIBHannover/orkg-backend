@@ -33,7 +33,6 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
-import org.orkg.graph.domain.Thing
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.graph.input.CreateResourceUseCase
@@ -96,20 +95,20 @@ class ComparisonService(
     override fun findRelatedResourceById(comparisonId: ThingId, id: ThingId): Optional<ComparisonRelatedResource> =
         statementRepository.findBySubjectIdAndPredicateIdAndObjectId(comparisonId, Predicates.hasRelatedFigure, id)
             .filter { it.`object` is Resource && Classes.comparisonRelatedResource in (it.`object` as Resource).classes }
-            .map { it.`object`.toComparisonRelatedResource() }
+            .map { (it.`object` as Resource).toComparisonRelatedResource() }
 
     override fun findAllRelatedResources(comparisonId: ThingId, pageable: Pageable): Page<ComparisonRelatedResource> =
         statementRepository.findAllBySubjectAndPredicate(comparisonId, Predicates.hasRelatedFigure, pageable)
-            .map { it.`object`.toComparisonRelatedResource() }
+            .map { (it.`object` as Resource).toComparisonRelatedResource() }
 
     override fun findRelatedFigureById(comparisonId: ThingId, id: ThingId): Optional<ComparisonRelatedFigure> =
         statementRepository.findBySubjectIdAndPredicateIdAndObjectId(comparisonId, Predicates.hasRelatedFigure, id)
             .filter { it.`object` is Resource && Classes.comparisonRelatedFigure in (it.`object` as Resource).classes }
-            .map { it.`object`.toComparisonRelatedFigure() }
+            .map { (it.`object` as Resource).toComparisonRelatedFigure() }
 
     override fun findAllRelatedFigures(comparisonId: ThingId, pageable: Pageable): Page<ComparisonRelatedFigure> =
         statementRepository.findAllBySubjectAndPredicate(comparisonId, Predicates.hasRelatedFigure, pageable)
-            .map { it.`object`.toComparisonRelatedFigure() }
+            .map { (it.`object` as Resource).toComparisonRelatedFigure() }
 
     override fun findAllCurrentListedAndUnpublishedComparisons(pageable: Pageable): Page<Comparison> =
         statementRepository.findAllCurrentListedAndUnpublishedComparisons(pageable)
@@ -231,7 +230,7 @@ class ComparisonService(
         )
     }
 
-    private fun Thing.toComparisonRelatedResource(): ComparisonRelatedResource {
+    private fun Resource.toComparisonRelatedResource(): ComparisonRelatedResource {
         val statements = statementRepository.findAllBySubject(id, PageRequests.ALL)
             .content
             .withoutObjectsWithBlankLabels()
@@ -240,11 +239,13 @@ class ComparisonService(
             label = this@toComparisonRelatedResource.label,
             image = statements.wherePredicate(Predicates.hasImage).firstObjectLabel(),
             url = statements.wherePredicate(Predicates.hasURL).firstObjectLabel(),
-            description = statements.wherePredicate(Predicates.description).firstObjectLabel()
+            description = statements.wherePredicate(Predicates.description).firstObjectLabel(),
+            createdAt = this@toComparisonRelatedResource.createdAt,
+            createdBy = this@toComparisonRelatedResource.createdBy
         )
     }
 
-    private fun Thing.toComparisonRelatedFigure(): ComparisonRelatedFigure {
+    private fun Resource.toComparisonRelatedFigure(): ComparisonRelatedFigure {
         val statements = statementRepository.findAllBySubject(id, PageRequests.ALL)
             .content
             .withoutObjectsWithBlankLabels()
@@ -252,7 +253,9 @@ class ComparisonService(
             id = this@toComparisonRelatedFigure.id,
             label = this@toComparisonRelatedFigure.label,
             image = statements.wherePredicate(Predicates.hasImage).firstObjectLabel(),
-            description = statements.wherePredicate(Predicates.description).firstObjectLabel()
+            description = statements.wherePredicate(Predicates.description).firstObjectLabel(),
+            createdAt = this@toComparisonRelatedFigure.createdAt,
+            createdBy = this@toComparisonRelatedFigure.createdBy
         )
     }
 
@@ -286,7 +289,8 @@ class ComparisonService(
             isAnonymized = statements.wherePredicate(Predicates.isAnonymized)
                 .firstOrNull { it.`object` is Literal && (it.`object` as Literal).datatype == Literals.XSD.BOOLEAN.prefixedUri }
                 ?.`object`?.label.toBoolean(),
-            visibility = visibility
+            visibility = visibility,
+            unlistedBy = unlistedBy
         )
     }
 }

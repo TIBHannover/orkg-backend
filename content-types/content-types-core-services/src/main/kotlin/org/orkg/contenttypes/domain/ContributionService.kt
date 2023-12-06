@@ -34,7 +34,11 @@ class ContributionService(
             label = this@toContribution.label,
             classes = this@toContribution.classes,
             properties = statements.toContributionSubGraph(),
-            visibility = this@toContribution.visibility
+            extractionMethod = extractionMethod,
+            createdAt = createdAt,
+            createdBy = createdBy,
+            visibility = this@toContribution.visibility,
+            unlistedBy = unlistedBy
         )
     }
 }

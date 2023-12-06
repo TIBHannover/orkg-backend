@@ -182,7 +182,8 @@ class PaperService(
             createdAt = createdAt,
             createdBy = createdBy,
             verified = verified ?: false,
-            visibility = visibility
+            visibility = visibility,
+            unlistedBy = unlistedBy
         )
     }
 }

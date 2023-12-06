@@ -37,7 +37,10 @@ data class PaperRepresentation(
     @get:JsonProperty("created_by")
     val createdBy: ContributorId,
     val verified: Boolean,
-    val visibility: Visibility
+    val visibility: Visibility,
+    @get:JsonInclude(Include.NON_NULL)
+    @get:JsonProperty("unlisted_by")
+    val unlistedBy: ContributorId?
 )
 
 data class PublicationInfoRepresentation(
@@ -67,7 +70,16 @@ data class ContributionRepresentation(
     val label: String,
     val classes: Set<ThingId>,
     val properties: Map<ThingId, List<ThingId>>,
-    val visibility: Visibility
+    @get:JsonProperty("extraction_method")
+    val extractionMethod: ExtractionMethod,
+    @get:JsonProperty("created_at")
+    val createdAt: OffsetDateTime,
+    @get:JsonProperty("created_by")
+    val createdBy: ContributorId,
+    val visibility: Visibility,
+    @get:JsonInclude(Include.NON_NULL)
+    @get:JsonProperty("unlisted_by")
+    val unlistedBy: ContributorId?
 )
 
 data class ComparisonRepresentation(
@@ -99,7 +111,10 @@ data class ComparisonRepresentation(
     val previousVersion: ThingId?,
     @get:JsonProperty("is_anonymized")
     val isAnonymized: Boolean,
-    val visibility: Visibility
+    val visibility: Visibility,
+    @get:JsonInclude(Include.NON_NULL)
+    @get:JsonProperty("unlisted_by")
+    val unlistedBy: ContributorId?
 )
 
 data class ComparisonRelatedResourceRepresentation(
@@ -107,14 +122,22 @@ data class ComparisonRelatedResourceRepresentation(
     val label: String,
     val image: String?,
     val url: String?,
-    val description: String?
+    val description: String?,
+    @get:JsonProperty("created_at")
+    val createdAt: OffsetDateTime,
+    @get:JsonProperty("created_by")
+    val createdBy: ContributorId
 )
 
 data class ComparisonRelatedFigureRepresentation(
     val id: ThingId,
     val label: String,
     val image: String?,
-    val description: String?
+    val description: String?,
+    @get:JsonProperty("created_at")
+    val createdAt: OffsetDateTime,
+    @get:JsonProperty("created_by")
+    val createdBy: ContributorId
 )
 
 data class VisualizationRepresentation(
@@ -130,7 +153,10 @@ data class VisualizationRepresentation(
     val createdAt: OffsetDateTime,
     @get:JsonProperty("created_by")
     val createdBy: ContributorId,
-    val visibility: Visibility
+    val visibility: Visibility,
+    @get:JsonInclude(Include.NON_NULL)
+    @get:JsonProperty("unlisted_by")
+    val unlistedBy: ContributorId?
 )
 
 data class AuthorDTO(

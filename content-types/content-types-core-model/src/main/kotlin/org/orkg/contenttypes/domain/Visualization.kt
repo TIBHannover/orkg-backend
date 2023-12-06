@@ -18,5 +18,6 @@ data class Visualization(
     val extractionMethod: ExtractionMethod,
     val createdAt: OffsetDateTime,
     val createdBy: ContributorId,
-    val visibility: Visibility
+    val visibility: Visibility,
+    val unlistedBy: ContributorId? = null
 )

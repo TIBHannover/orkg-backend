@@ -10,15 +10,15 @@ import org.orkg.auth.input.AuthUseCase
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
-import org.orkg.contenttypes.domain.Contribution
 import org.orkg.contenttypes.domain.ContributionNotFound
 import org.orkg.contenttypes.input.ContributionUseCases
-import org.orkg.graph.domain.Visibility
+import org.orkg.contenttypes.testing.fixtures.createDummyContribution
 import org.orkg.testing.andExpectContribution
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.pageOf
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
+import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpStatus
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
@@ -65,7 +65,12 @@ internal class ContributionControllerUnitTest : RestDocsTest("contributions") {
                         fieldWithPath("label").description("The label of the contribution."),
                         fieldWithPath("classes").description("The classes of the contribution resource."),
                         subsectionWithPath("properties").description("A map of predicate ids to lists of thing ids, that represent the statements that this contribution consists of."),
-                        fieldWithPath("visibility").description("""Visibility of the contribution. Can be one of "default", "featured", "unlisted" or "deleted".""")
+                        fieldWithPath("extraction_method").description("""The method used to extract the contribution resource. Can be one of "unknown", "manual" or "automatic"."""),
+                        timestampFieldWithPath("created_at", "the contribution resource was created"),
+                        // TODO: Add links to documentation of special user UUIDs.
+                        fieldWithPath("created_by").description("The UUID of the user or service who created this contribution."),
+                        fieldWithPath("visibility").description("""Visibility of the contribution. Can be one of "default", "featured", "unlisted" or "deleted"."""),
+                        fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this contribution.").optional()
                     )
                 )
             )
@@ -110,18 +115,5 @@ internal class ContributionControllerUnitTest : RestDocsTest("contributions") {
     private fun get(string: String) = mockMvc.perform(
         MockMvcRequestBuilders.get(string)
             .accept("application/vnd.orkg.contribution.v2+json")
-    )
-
-    private fun createDummyContribution() = Contribution(
-        id = ThingId("R8199"),
-        label = "ORKG System",
-        classes = setOf(ThingId("C123")),
-        properties = mapOf(
-            ThingId("R456") to listOf(
-                ThingId("R789"),
-                ThingId("R147")
-            )
-        ),
-        visibility = Visibility.DEFAULT
     )
 }

@@ -1,7 +1,5 @@
 package org.orkg.contenttypes.input
 
-import org.orkg.contenttypes.input.CreateVisualizationUseCase
-
 interface PaperUseCases : RetrievePaperUseCase, CreatePaperUseCase, CreateContributionUseCase, PublishPaperUseCase
 
 interface ContributionUseCases : RetrieveContributionUseCase

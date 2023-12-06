@@ -29,6 +29,7 @@ interface PaperRepresentationAdapter : AuthorRepresentationAdapter, LabeledObjec
             createdAt = createdAt,
             createdBy = createdBy,
             verified = verified,
-            visibility = visibility
+            visibility = visibility,
+            unlistedBy = unlistedBy
         )
 }

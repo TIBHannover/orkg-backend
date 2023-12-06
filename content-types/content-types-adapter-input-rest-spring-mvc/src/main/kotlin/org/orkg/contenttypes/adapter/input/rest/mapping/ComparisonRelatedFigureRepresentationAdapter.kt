@@ -16,5 +16,5 @@ interface ComparisonRelatedFigureRepresentationAdapter : AuthorRepresentationAda
         map { it.toComparisonRelatedFigureRepresentation() }
 
     fun ComparisonRelatedFigure.toComparisonRelatedFigureRepresentation() : ComparisonRelatedFigureRepresentation =
-        ComparisonRelatedFigureRepresentation(id, label, image, description)
+        ComparisonRelatedFigureRepresentation(id, label, image, description, createdAt, createdBy)
 }

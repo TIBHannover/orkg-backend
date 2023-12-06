@@ -160,7 +160,8 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         // TODO: Add links to documentation of special user UUIDs.
                         fieldWithPath("created_by").description("The UUID of the user or service who created this paper."),
                         fieldWithPath("verified").description("Determines if the paper was verified by a curator."),
-                        fieldWithPath("visibility").description("""Visibility of the paper. Can be one of "default", "featured", "unlisted" or "deleted".""")
+                        fieldWithPath("visibility").description("""Visibility of the paper. Can be one of "default", "featured", "unlisted" or "deleted"."""),
+                        fieldWithPath("unlisted_by").type("String").description("The UUID of the user or service who unlisted this paper.").optional()
                     )
                 )
             )
@@ -822,6 +823,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
                         headerWithName("Location").description("The uri path where the newly created resource can be fetched from.")
                     ),
                     requestFields(
+                        fieldWithPath("extraction_method").description("""The method used to extract the contribution resource. Can be one of "unknown", "manual" or "automatic". (default: "unknown")""").optional(),
                         fieldWithPath("resources").description("Definition of resources that need to be created."),
                         fieldWithPath("resources.*.label").description("The label of the resource."),
                         fieldWithPath("resources.*.classes").description("The list of classes of the resource."),

@@ -3,16 +3,16 @@ package org.orkg.contenttypes.testing.fixtures
 import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.domain.Contribution
 import org.orkg.contenttypes.input.CreateContributionUseCase
 import org.orkg.contenttypes.input.CreatePaperUseCase
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
-import org.orkg.graph.domain.Visibility
 
 fun dummyCreateContributionCommand() = CreateContributionUseCase.CreateCommand(
     contributorId = ContributorId(UUID.fromString("5342d678-c54a-45ec-bc79-977c79dfff7d")),
     paperId = ThingId("R123"),
+    extractionMethod = ExtractionMethod.MANUAL,
     resources = mapOf(
         "#temp1" to CreatePaperUseCase.CreateCommand.ResourceDefinition(
             label = "MOTO",

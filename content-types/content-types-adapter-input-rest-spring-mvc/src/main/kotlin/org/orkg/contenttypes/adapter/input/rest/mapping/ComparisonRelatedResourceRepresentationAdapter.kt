@@ -16,5 +16,5 @@ interface ComparisonRelatedResourceRepresentationAdapter : AuthorRepresentationA
         map { it.toComparisonRelatedResourceRepresentation() }
 
     fun ComparisonRelatedResource.toComparisonRelatedResourceRepresentation() : ComparisonRelatedResourceRepresentation =
-        ComparisonRelatedResourceRepresentation(id, label, image, url, description)
+        ComparisonRelatedResourceRepresentation(id, label, image, url, description, createdAt, createdBy)
 }

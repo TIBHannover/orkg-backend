@@ -239,6 +239,7 @@ class ComparisonServiceUnitTests {
             comparison.previousVersion shouldBe previousVersion
             comparison.isAnonymized shouldBe true
             comparison.visibility shouldBe Visibility.DEFAULT
+            comparison.unlistedBy shouldBe expected.unlistedBy
         }
 
         verify(exactly = 1) { resourceRepository.findById(expected.id) }

@@ -19,6 +19,7 @@ import org.orkg.contenttypes.domain.actions.ContributionState
 import org.orkg.contenttypes.domain.actions.CreateContributionCommand
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.testing.fixtures.dummyCreateContributionCommand
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.ThingRepository
 import org.orkg.graph.testing.fixtures.createClass
@@ -65,6 +66,7 @@ class ContributionThingDefinitionValidatorUnitTest {
         val command = CreateContributionCommand(
             contributorId = ContributorId(UUID.randomUUID()),
             paperId = ThingId("R123"),
+            extractionMethod = ExtractionMethod.MANUAL,
             resources = emptyMap(),
             literals = emptyMap(),
             predicates = emptyMap(),

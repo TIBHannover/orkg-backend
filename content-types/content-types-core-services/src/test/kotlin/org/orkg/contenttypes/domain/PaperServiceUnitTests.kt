@@ -235,6 +235,7 @@ class PaperServiceUnitTests {
             paper.createdBy shouldBe expected.createdBy
             paper.verified shouldBe false
             paper.visibility shouldBe Visibility.DEFAULT
+            paper.unlistedBy shouldBe expected.unlistedBy
         }
 
         verify(exactly = 1) { resourceRepository.findPaperById(expected.id) }

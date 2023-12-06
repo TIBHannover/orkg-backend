@@ -18,6 +18,7 @@ import org.orkg.common.Either
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -97,6 +98,7 @@ class ContributionCreatorUnitTest {
         val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
+            extractionMethod = ExtractionMethod.MANUAL,
             contents = contents,
             validatedIds = mapOf("#temp1" to Either.left("#temp1")),
             bakedStatements = emptySet()
@@ -136,6 +138,7 @@ class ContributionCreatorUnitTest {
         val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
+            extractionMethod = ExtractionMethod.MANUAL,
             contents = contents,
             validatedIds = emptyMap(),
             bakedStatements = emptySet()
@@ -171,6 +174,7 @@ class ContributionCreatorUnitTest {
         val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
+            extractionMethod = ExtractionMethod.MANUAL,
             contents = contents,
             validatedIds = mapOf("#temp1" to Either.left("#temp1")),
             bakedStatements = emptySet()
@@ -205,6 +209,7 @@ class ContributionCreatorUnitTest {
         val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
+            extractionMethod = ExtractionMethod.MANUAL,
             contents = contents,
             validatedIds = emptyMap(),
             bakedStatements = emptySet()
@@ -239,6 +244,7 @@ class ContributionCreatorUnitTest {
         val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
+            extractionMethod = ExtractionMethod.MANUAL,
             contents = contents,
             validatedIds = mapOf("#temp1" to Either.left("#temp1")),
             bakedStatements = emptySet()
@@ -299,6 +305,7 @@ class ContributionCreatorUnitTest {
         val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
+            extractionMethod = ExtractionMethod.MANUAL,
             contents = contents,
             validatedIds = mapOf("#temp1" to Either.left("#temp1")),
             bakedStatements = emptySet()
@@ -347,6 +354,7 @@ class ContributionCreatorUnitTest {
         val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
+            extractionMethod = ExtractionMethod.MANUAL,
             contents = contents,
             validatedIds = emptyMap(),
             bakedStatements = emptySet()
@@ -392,6 +400,7 @@ class ContributionCreatorUnitTest {
         val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
+            extractionMethod = ExtractionMethod.MANUAL,
             contents = contents,
             validatedIds = mapOf("#temp1" to Either.left("#temp1")),
             bakedStatements = emptySet()
@@ -439,6 +448,7 @@ class ContributionCreatorUnitTest {
         val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
+            extractionMethod = ExtractionMethod.MANUAL,
             contents = contents,
             validatedIds = emptyMap(),
             bakedStatements = emptySet()
@@ -465,7 +475,8 @@ class ContributionCreatorUnitTest {
                 CreateResourceUseCase.CreateCommand(
                     label = contributionDefinition.label,
                     classes = setOf(Classes.contribution),
-                    contributorId = contributorId
+                    contributorId = contributorId,
+                    extractionMethod = ExtractionMethod.MANUAL
                 )
             )
         } returns contributionId
@@ -481,6 +492,7 @@ class ContributionCreatorUnitTest {
         val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
+            extractionMethod = ExtractionMethod.MANUAL,
             contents = contents,
             validatedIds = emptyMap(),
             bakedStatements = emptySet()
@@ -493,7 +505,8 @@ class ContributionCreatorUnitTest {
                 CreateResourceUseCase.CreateCommand(
                     label = contributionDefinition.label,
                     classes = setOf(Classes.contribution),
-                    contributorId = contributorId
+                    contributorId = contributorId,
+                    extractionMethod = ExtractionMethod.MANUAL
                 )
             )
         }
@@ -574,6 +587,7 @@ class ContributionCreatorUnitTest {
         val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
+            extractionMethod = ExtractionMethod.MANUAL,
             contents = contents,
             validatedIds = mapOf(
                 "#temp1" to Either.left("#temp1"),
@@ -646,6 +660,7 @@ class ContributionCreatorUnitTest {
         val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
+            extractionMethod = ExtractionMethod.MANUAL,
             contents = contents,
             validatedIds = emptyMap(),
             bakedStatements = setOf(BakedStatement("R1000", "R2000", "R3000")),
@@ -695,6 +710,7 @@ class ContributionCreatorUnitTest {
         val result = contributionContentsCreatorCreator.create(
             paperId = paperId,
             contributorId = contributorId,
+            extractionMethod = ExtractionMethod.MANUAL,
             contents = contents,
             validatedIds = emptyMap(),
             bakedStatements = setOf(BakedStatement("R1000", "R2000", "R3000")),

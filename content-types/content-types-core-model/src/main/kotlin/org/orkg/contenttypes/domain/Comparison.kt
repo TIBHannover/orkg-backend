@@ -28,7 +28,8 @@ data class Comparison(
     val createdBy: ContributorId,
     val previousVersion: ThingId?,
     val isAnonymized: Boolean,
-    val visibility: Visibility
+    val visibility: Visibility,
+    val unlistedBy: ContributorId? = null
 )
 
 data class ComparisonRelatedResource(
@@ -36,12 +37,16 @@ data class ComparisonRelatedResource(
     val label: String,
     val image: String?,
     val url: String?,
-    val description: String?
+    val description: String?,
+    val createdAt: OffsetDateTime,
+    val createdBy: ContributorId
 )
 
 data class ComparisonRelatedFigure(
     val id: ThingId,
     val label: String,
     val image: String?,
-    val description: String?
+    val description: String?,
+    val createdAt: OffsetDateTime,
+    val createdBy: ContributorId
 )

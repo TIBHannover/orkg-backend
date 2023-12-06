@@ -73,6 +73,7 @@ interface CreateContributionUseCase {
     class CreateCommand(
         val contributorId: ContributorId,
         val paperId: ThingId,
+        val extractionMethod: ExtractionMethod,
         resources: Map<String, CreatePaperUseCase.CreateCommand.ResourceDefinition> = emptyMap(),
         literals: Map<String, CreatePaperUseCase.CreateCommand.LiteralDefinition> = emptyMap(),
         predicates: Map<String, CreatePaperUseCase.CreateCommand.PredicateDefinition> = emptyMap(),
@@ -84,6 +85,7 @@ interface CreateContributionUseCase {
 interface PublishPaperUseCase {
     fun publish(id: ThingId, subject: String, description: String)
 }
+
 interface LegacyCreatePaperUseCase {
     fun addPaperContent(
         request: LegacyCreatePaperRequest,

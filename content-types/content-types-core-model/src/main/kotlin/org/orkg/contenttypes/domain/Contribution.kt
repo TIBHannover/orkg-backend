@@ -1,6 +1,9 @@
 package org.orkg.contenttypes.domain
 
+import java.time.OffsetDateTime
+import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Visibility
 
@@ -11,7 +14,11 @@ data class Contribution(
     val label: String,
     val classes: Set<ThingId>,
     val properties: ContributionSubGraph,
-    val visibility: Visibility
+    val extractionMethod: ExtractionMethod,
+    val createdAt: OffsetDateTime,
+    val createdBy: ContributorId,
+    val visibility: Visibility,
+    val unlistedBy: ContributorId? = null
 )
 
 fun Iterable<GeneralStatement>.toContributionSubGraph(): ContributionSubGraph = this

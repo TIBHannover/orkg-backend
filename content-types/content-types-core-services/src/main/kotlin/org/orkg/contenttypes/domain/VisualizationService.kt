@@ -109,7 +109,8 @@ class VisualizationService(
             extractionMethod = extractionMethod,
             createdAt = createdAt,
             createdBy = createdBy,
-            visibility = visibility
+            visibility = visibility,
+            unlistedBy = unlistedBy
         )
     }
 }

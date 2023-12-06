@@ -21,6 +21,7 @@ import org.orkg.contenttypes.domain.actions.ContributionState
 import org.orkg.contenttypes.domain.actions.CreateContributionCommand
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.CreateResourceUseCase
@@ -86,6 +87,7 @@ class ContributionContentsCreatorUnitTest {
         val command = CreateContributionCommand(
             paperId = paperId,
             contributorId = contributorId,
+            extractionMethod = ExtractionMethod.MANUAL,
             predicates = mapOf("#temp1" to temp1),
             contribution = contributionDefinition
         )
@@ -115,7 +117,8 @@ class ContributionContentsCreatorUnitTest {
                 CreateResourceUseCase.CreateCommand(
                     label = contributionDefinition.label,
                     classes = setOf(Classes.contribution),
-                    contributorId = command.contributorId
+                    contributorId = command.contributorId,
+                    extractionMethod = command.extractionMethod
                 )
             )
         } returns contributionId
@@ -158,7 +161,8 @@ class ContributionContentsCreatorUnitTest {
                 CreateResourceUseCase.CreateCommand(
                     label = contributionDefinition.label,
                     classes = setOf(Classes.contribution),
-                    contributorId = command.contributorId
+                    contributorId = command.contributorId,
+                    extractionMethod = command.extractionMethod
                 )
             )
         }

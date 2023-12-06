@@ -19,6 +19,7 @@ import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.testing.fixtures.dummyCreatePaperCommand
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.CreateResourceUseCase
@@ -117,7 +118,8 @@ class PaperContributionCreatorUnitTest {
                 CreateResourceUseCase.CreateCommand(
                     label = contributionDefinition.label,
                     classes = setOf(Classes.contribution, ThingId("C123")),
-                    contributorId = command.contributorId
+                    contributorId = command.contributorId,
+                    extractionMethod = ExtractionMethod.MANUAL
                 )
             )
         } returns contributionId
@@ -161,7 +163,8 @@ class PaperContributionCreatorUnitTest {
                 CreateResourceUseCase.CreateCommand(
                     label = contributionDefinition.label,
                     classes = setOf(Classes.contribution, ThingId("C123")),
-                    contributorId = command.contributorId
+                    contributorId = command.contributorId,
+                    extractionMethod = ExtractionMethod.MANUAL
                 )
             )
         }

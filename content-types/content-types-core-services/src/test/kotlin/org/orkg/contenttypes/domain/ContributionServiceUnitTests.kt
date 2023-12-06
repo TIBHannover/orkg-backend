@@ -39,7 +39,10 @@ class ContributionServiceUnitTests {
             contribution.label shouldBe expected.label
             contribution.properties shouldNotBe null
             contribution.properties shouldBe emptyMap()
+            contribution.createdAt shouldBe expected.createdAt
+            contribution.createdBy shouldBe expected.createdBy
             contribution.visibility shouldBe Visibility.DEFAULT
+            contribution.unlistedBy shouldBe expected.unlistedBy
         }
 
         verify(exactly = 1) { resourceRepository.findById(expected.id) }

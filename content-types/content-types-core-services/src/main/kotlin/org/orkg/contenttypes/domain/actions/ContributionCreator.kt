@@ -5,6 +5,7 @@ import org.orkg.common.Either
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.graph.domain.Classes
+import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Thing
@@ -30,6 +31,7 @@ abstract class ContributionCreator(
     internal fun create(
         paperId: ThingId,
         contributorId: ContributorId,
+        extractionMethod: ExtractionMethod,
         contents: CreatePaperUseCase.CreateCommand.PaperContents,
         validatedIds: Map<String, Either<String, Thing>>,
         bakedStatements: Set<BakedStatement>
@@ -103,7 +105,8 @@ abstract class ContributionCreator(
                 CreateResourceUseCase.CreateCommand(
                     label = contribution.label,
                     classes = contribution.classes + Classes.contribution,
-                    contributorId = contributorId
+                    contributorId = contributorId,
+                    extractionMethod = extractionMethod
                 )
             )
             lookup["^$index"] = contributionId

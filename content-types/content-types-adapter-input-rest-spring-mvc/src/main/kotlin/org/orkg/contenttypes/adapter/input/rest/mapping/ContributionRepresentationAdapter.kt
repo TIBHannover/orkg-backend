@@ -14,5 +14,5 @@ interface ContributionRepresentationAdapter {
         map { it.toContributionRepresentation() }
 
     fun Contribution.toContributionRepresentation() : ContributionRepresentation =
-        ContributionRepresentation(id, label, classes, properties, visibility)
+        ContributionRepresentation(id, label, classes, properties, extractionMethod, createdAt, createdBy, visibility, unlistedBy)
 }

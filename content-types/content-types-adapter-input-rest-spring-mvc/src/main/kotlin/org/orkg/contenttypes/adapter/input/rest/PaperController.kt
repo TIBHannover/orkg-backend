@@ -295,12 +295,15 @@ class PaperController(
         @field:Valid
         val lists: Map<String, CreatePaperRequest.ListDefinitionDTO>?,
         @field:Valid
-        val contribution: CreatePaperRequest.ContributionDTO
+        val contribution: CreatePaperRequest.ContributionDTO,
+        @JsonProperty("extraction_method")
+        val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN
     ) {
         fun toCreateCommand(contributorId: ContributorId, paperId: ThingId): CreateContributionUseCase.CreateCommand =
             CreateContributionUseCase.CreateCommand(
                 contributorId = contributorId,
                 paperId = paperId,
+                extractionMethod = extractionMethod,
                 resources = resources?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 literals = literals?.mapValues { it.value.toCreateCommand() }.orEmpty(),
                 predicates = predicates?.mapValues { it.value.toCreateCommand() }.orEmpty(),

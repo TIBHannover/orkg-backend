@@ -19,7 +19,8 @@ testing {
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation(testFixtures(project(":media-storage:media-storage-core-model")))
-                implementation(testFixtures(project(":content-types:content-types-core-model")))
+                implementation(project(":content-types:content-types-core-model"))
+                implementation(testFixtures(project(":content-types:content-types-core-services")))
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")

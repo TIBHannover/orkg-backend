@@ -10,6 +10,7 @@ dependencies {
     implementation(project(":common"))
 
     implementation("org.springframework:spring-context")
+    implementation("org.springframework.boot:spring-boot-autoconfigure")
     implementation(libs.jackson.databind)
     implementation(libs.jackson.kotlin)
 }

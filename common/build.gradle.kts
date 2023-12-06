@@ -22,6 +22,7 @@ dependencies {
     implementation("org.springframework:spring-webmvc")
 
     implementation(libs.jackson.databind)
+    implementation(libs.jackson.kotlin)
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310") // for timestamp serialization
 }
 
@@ -31,6 +32,7 @@ testing {
             useJUnitJupiter()
             dependencies {
                 //implementation(testFixtures(project(":graph:graph-core-model")))
+                implementation(project(":common:serialization"))
                 implementation(testFixtures(project(":testing:spring")))
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")

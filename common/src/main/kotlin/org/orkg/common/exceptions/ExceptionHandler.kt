@@ -1,5 +1,9 @@
 package org.orkg.common.exceptions
 
+import com.fasterxml.jackson.core.JsonParseException
+import com.fasterxml.jackson.databind.JsonMappingException
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException
 import java.time.OffsetDateTime
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletRequestWrapper
@@ -11,6 +15,7 @@ import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -32,6 +37,61 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
         ex.bindingResult.fieldErrors.map {
             FieldValidationError(field = it.field.toSnakeCase(), message = it?.defaultMessage)
         }
+    }
+
+    override fun handleHttpMessageNotReadable(
+        ex: HttpMessageNotReadableException,
+        headers: HttpHeaders,
+        status: HttpStatus,
+        request: WebRequest
+    ): ResponseEntity<Any> =
+        when (val cause = ex.cause) {
+            is UnrecognizedPropertyException -> {
+                val payload = MessageErrorResponse(
+                    status = BAD_REQUEST.value(),
+                    error = BAD_REQUEST.reasonPhrase,
+                    message = """Unknown field "${cause.fieldPath}".""",
+                    path = request.requestURI,
+                )
+                ResponseEntity(payload, BAD_REQUEST)
+            }
+            is MismatchedInputException -> {
+                val payload = MessageErrorResponse(
+                    status = BAD_REQUEST.value(),
+                    error = BAD_REQUEST.reasonPhrase,
+                    message = """Field "${cause.fieldPath}" is either missing, "null", of invalid type, or contains "null" values.""",
+                    path = request.requestURI,
+                )
+                ResponseEntity(payload, BAD_REQUEST)
+            }
+            is JsonParseException -> {
+                val payload = MessageErrorResponse(
+                    status = BAD_REQUEST.value(),
+                    error = BAD_REQUEST.reasonPhrase,
+                    message = cause.originalMessage,
+                    path = request.requestURI,
+                )
+                ResponseEntity(payload, BAD_REQUEST)
+            }
+            else -> super.handleHttpMessageNotReadable(ex, headers, status, request)
+        }
+
+    override fun handleExceptionInternal(
+        ex: Exception,
+        body: Any?,
+        headers: HttpHeaders,
+        status: HttpStatus,
+        request: WebRequest
+    ): ResponseEntity<Any> {
+        if (status == INTERNAL_SERVER_ERROR) {
+            logException(ex, request)
+        }
+        val payload = ErrorResponse(
+            status = status.value(),
+            error = status.reasonPhrase,
+            path = request.requestURI
+        )
+        return ResponseEntity(payload, status)
     }
 
     @ExceptionHandler(PropertyValidationException::class)
@@ -238,3 +298,6 @@ private fun HttpServletRequestWrapper.unwrapPath(visited: Set<HttpServletRequest
         is HttpServletRequestWrapper -> javaClass.name + ";" + r.unwrapPath(visited + r)
         else -> javaClass.name
     }
+
+private val JsonMappingException.fieldPath: String get() =
+    path.joinToString(separator = ".") { it.fieldName }

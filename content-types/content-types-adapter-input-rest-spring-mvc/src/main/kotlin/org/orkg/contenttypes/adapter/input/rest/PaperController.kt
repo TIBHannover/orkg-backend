@@ -11,6 +11,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.contenttypes.adapter.input.rest.mapping.ContributionRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.PaperRepresentationAdapter
@@ -86,6 +87,7 @@ class PaperController(
         service.findAllByResearchFieldAndVisibility(researchField, visibility, includeSubfields, pageable)
             .mapToPaperRepresentation()
 
+    @PreAuthorizeUser
     @PostMapping(consumes = [PAPER_JSON_V2])
     fun create(
         @RequestBody @Valid request: CreatePaperRequest,
@@ -100,6 +102,7 @@ class PaperController(
         return noContent().location(location).build()
     }
 
+    @PreAuthorizeUser
     @PostMapping("/{id}/contributions", produces = [CONTRIBUTION_JSON_V2], consumes = [CONTRIBUTION_JSON_V2])
     fun createContribution(
         @PathVariable("id") paperId: ThingId,
@@ -115,6 +118,7 @@ class PaperController(
         return noContent().location(location).build()
     }
 
+    @PreAuthorizeUser
     @PostMapping("/{id}/publish", produces = [MediaType.APPLICATION_JSON_VALUE], consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun publish(
         @PathVariable id: ThingId,

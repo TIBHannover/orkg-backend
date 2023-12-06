@@ -8,3 +8,6 @@ annotation class PreAuthorizeCurator
 
 @PreAuthorize("hasAuthority('ROLE_ADMIN')")
 annotation class PreAuthorizeAdmin
+
+@PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
+annotation class PreAuthorizeUser

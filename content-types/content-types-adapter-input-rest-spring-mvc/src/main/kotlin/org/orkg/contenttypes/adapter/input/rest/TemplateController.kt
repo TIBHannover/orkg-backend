@@ -11,6 +11,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.contenttypes.adapter.input.rest.mapping.TemplateRepresentationAdapter
 import org.orkg.contenttypes.domain.TemplateNotFound
 import org.orkg.contenttypes.input.CreateTemplatePropertyUseCase
@@ -72,6 +73,7 @@ class TemplateController(
             pageable = pageable
         ).mapToTemplateRepresentation()
 
+    @PreAuthorizeUser
     @PostMapping(consumes = [TEMPLATE_JSON_V1])
     fun create(
         @RequestBody @Valid request: CreateTemplateRequest,
@@ -86,6 +88,7 @@ class TemplateController(
         return noContent().location(location).build()
     }
 
+    @PreAuthorizeUser
     @PostMapping("/{id}/properties", consumes = [TEMPLATE_PROPERTY_JSON_V1], produces = [TEMPLATE_PROPERTY_JSON_V1])
     fun createTemplateProperty(
         @PathVariable id: ThingId,

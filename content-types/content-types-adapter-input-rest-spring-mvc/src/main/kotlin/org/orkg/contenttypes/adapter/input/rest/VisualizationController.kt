@@ -8,6 +8,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.contenttypes.adapter.input.rest.mapping.VisualizationRepresentationAdapter
 import org.orkg.contenttypes.domain.VisualizationNotFound
@@ -73,6 +74,7 @@ class VisualizationController(
         service.findAllByResearchFieldAndVisibility(researchField, visibility, includeSubfields, pageable)
             .mapToVisualizationRepresentation()
 
+    @PreAuthorizeUser
     @PostMapping(consumes = [VISUALIZATION_JSON_V2], produces = [VISUALIZATION_JSON_V2])
     fun create(
         @RequestBody @Valid request: CreateVisualizationRequest,

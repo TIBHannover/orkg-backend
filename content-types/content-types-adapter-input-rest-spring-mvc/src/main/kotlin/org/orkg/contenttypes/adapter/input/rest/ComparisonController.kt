@@ -8,6 +8,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
+import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.contenttypes.adapter.input.rest.mapping.ComparisonRelatedFigureRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.ComparisonRelatedResourceRepresentationAdapter
@@ -80,6 +81,7 @@ class ComparisonController(
         service.findAllByResearchFieldAndVisibility(researchField, visibility, includeSubfields, pageable)
             .mapToComparisonRepresentation()
 
+    @PreAuthorizeUser
     @PostMapping(consumes = [COMPARISON_JSON_V2], produces = [COMPARISON_JSON_V2])
     fun create(
         @RequestBody @Valid request: CreateComparisonRequest,
@@ -111,6 +113,7 @@ class ComparisonController(
         service.findAllRelatedResources(id, pageable)
             .mapToComparisonRelatedResourceRepresentation()
 
+    @PreAuthorizeUser
     @PostMapping("/{comparisonId}/related-resources", consumes = [COMPARISON_JSON_V2], produces = [COMPARISON_JSON_V2])
     fun create(
         @PathVariable("comparisonId") comparisonId: ThingId,
@@ -143,6 +146,7 @@ class ComparisonController(
         service.findAllRelatedFigures(id, pageable)
             .mapToComparisonRelatedFigureRepresentation()
 
+    @PreAuthorizeUser
     @PostMapping("/{comparisonId}/related-figures", consumes = [COMPARISON_JSON_V2], produces = [COMPARISON_JSON_V2])
     fun create(
         @PathVariable("comparisonId") comparisonId: ThingId,
@@ -158,6 +162,7 @@ class ComparisonController(
         return noContent().location(location).build()
     }
 
+    @PreAuthorizeUser
     @PostMapping("/{id}/publish", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun publish(
         @PathVariable id: ThingId,

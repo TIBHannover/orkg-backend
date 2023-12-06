@@ -30,4 +30,5 @@ dependencies {
     testFixturesImplementation(libs.spring.mockk)
     testFixturesImplementation(libs.spring.restdocs)
     testFixturesImplementation("org.springframework.security:spring-security-core")
+    testFixturesImplementation("org.springframework.security:spring-security-test")
 }

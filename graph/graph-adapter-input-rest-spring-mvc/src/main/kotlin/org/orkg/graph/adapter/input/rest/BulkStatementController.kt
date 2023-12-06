@@ -1,8 +1,8 @@
 package org.orkg.graph.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.security.Principal
 import org.orkg.common.ThingId
+import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.StatementRepresentationAdapter
 import org.orkg.graph.domain.StatementId
@@ -12,7 +12,6 @@ import org.orkg.graph.input.UpdateStatementUseCase
 import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.noContent
@@ -56,17 +55,16 @@ class BulkStatementController(
             )
         }
 
+    @PreAuthorizeUser
     @DeleteMapping("/")
     fun delete(
-        @RequestParam("ids") statementsIds: Set<StatementId>,
-        principal: Principal?
+        @RequestParam("ids") statementsIds: Set<StatementId>
     ): ResponseEntity<Unit> {
-        if (principal?.name == null)
-            return ResponseEntity(HttpStatus.FORBIDDEN)
         statementService.delete(statementsIds)
         return noContent().build()
     }
 
+    @PreAuthorizeUser
     @PutMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun edit(
         @RequestParam("ids") statementsIds: List<StatementId>,

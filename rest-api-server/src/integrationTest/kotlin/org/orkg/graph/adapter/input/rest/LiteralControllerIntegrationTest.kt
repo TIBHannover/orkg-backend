@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.testing.MockUserDetailsService
+import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -17,7 +18,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
-import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -119,7 +119,7 @@ class LiteralControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun add() {
         val input = mapOf("label" to "foo", "datatype" to "xs:foo")
 
@@ -139,6 +139,7 @@ class LiteralControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @TestWithMockUser
     fun edit() {
         val resource = service.create("foo", "dt:old").id
 

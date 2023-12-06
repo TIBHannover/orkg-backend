@@ -27,6 +27,7 @@ import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.input.UpdateResourceUseCase
 import org.orkg.graph.output.FormattedLabelRepository
 import org.orkg.graph.testing.fixtures.createResource
+import org.orkg.testing.annotations.TestWithMockUser
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
@@ -158,7 +159,7 @@ internal class ResourceControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `When creating a resource, and service reports invalid class collection, then status is 400 BAD REQUEST`() {
         val command = CreateResourceRequest(
             id = null,
@@ -186,7 +187,7 @@ internal class ResourceControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `When updating a resource, and service reports invalid class collection, then status is 400 BAD REQUEST`() {
         val resource = createResource()
         val command = UpdateResourceUseCase.UpdateCommand(

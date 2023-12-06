@@ -25,6 +25,7 @@ import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserDetailsService
+import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -34,7 +35,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
-import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -96,7 +96,7 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun add() {
         val paper = mapOf(
             "paper" to mapOf(
@@ -173,7 +173,7 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
         )
 
     @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun `shouldn't merge if DOI is empty`() {
         val originalPaper = createDummyPaperObject(doi = "")
 
@@ -219,7 +219,7 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun `merge papers that exists on title`() {
         val originalPaper = createDummyPaperObject()
 
@@ -265,7 +265,7 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun `merge papers that exists on doi`() {
         val originalPaper = createDummyPaperObject()
 
@@ -311,7 +311,7 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun `merge papers if both title and DOI exist`() {
         val originalPaper = createDummyPaperObject()
 
@@ -357,7 +357,7 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun `when research field is blank, 400 BAD REQUEST is returned`() {
         val paperWithNoResearchField = mapOf(
             "paper" to mapOf(
@@ -377,7 +377,7 @@ class LegacyPaperControllerTest : RestDocumentationBaseTest() {
     @Test
     @Tag("regression")
     @Tag("issue:292")
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun `creating a paper twice works as expected`() {
         resourceService.createResource(
             id = "R106",

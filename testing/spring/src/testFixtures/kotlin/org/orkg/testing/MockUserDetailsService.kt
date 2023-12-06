@@ -10,8 +10,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 class MockUserDetailsService : UserDetailsService {
     override fun loadUserByUsername(username: String?): UserDetails {
         return when (username) {
-            "user" -> activeUserWithId("b7c81eed-52e1-4f7a-93bf-e6d331b8df7b")
-            "admin" -> activeAdminWithId("bc27c4c2-1d03-11eb-adc1-0242ac120002")
+            "user" -> activeUserWithId(MockUserId.USER)
+            "admin" -> activeAdminWithId(MockUserId.ADMIN)
             else -> throw UsernameNotFoundException("No test user defined with name \"$username\". Feel free to add it.")
         }
     }

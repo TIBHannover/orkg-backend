@@ -6,6 +6,7 @@ import java.net.URI
 import javax.validation.Valid
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ClassRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
@@ -108,6 +109,7 @@ class ClassController(
             else -> service.findAllByLabel(SearchString.of(string, exactMatch), pageable)
         }.mapToClassRepresentation()
 
+    @PreAuthorizeUser
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(CREATED)
     fun add(
@@ -136,6 +138,7 @@ class ClassController(
         return created(location).body(service.findById(id).mapToClassRepresentation().get())
     }
 
+    @PreAuthorizeUser
     @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun replace(
         @PathVariable id: ThingId,
@@ -155,6 +158,7 @@ class ClassController(
         return service.findById(id).mapToClassRepresentation().get()
     }
 
+    @PreAuthorizeUser
     @PatchMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,

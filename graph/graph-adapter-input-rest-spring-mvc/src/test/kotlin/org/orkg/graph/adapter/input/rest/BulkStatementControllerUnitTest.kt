@@ -5,10 +5,8 @@ import io.mockk.clearAllMocks
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.just
-import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.security.Principal
 import java.util.*
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.AfterEach
@@ -267,13 +265,11 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
     fun delete() {
         val s1 = StatementId("S1")
         val s2 = StatementId("S2")
-        val principal: Principal = mockk()
 
         every { statementService.delete(setOf(s1, s2)) } just runs
-        every { principal.name } returns "user"
 
         mockMvc
-            .perform(documentedDeleteRequestTo("/api/statements/?ids={ids}", "$s1,$s2").principal(principal))
+            .perform(documentedDeleteRequestTo("/api/statements/?ids={ids}", "$s1,$s2"))
             .andExpect(status().isNoContent)
             .andDo(
                 documentationHandler.document(
@@ -283,8 +279,5 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
             .andDo(generateDefaultDocSnippets())
 
         verify(exactly = 1) { statementService.delete(setOf(s1, s2)) }
-        verify(exactly = 2) { principal.name }
-
-        confirmVerified(principal)
     }
 }

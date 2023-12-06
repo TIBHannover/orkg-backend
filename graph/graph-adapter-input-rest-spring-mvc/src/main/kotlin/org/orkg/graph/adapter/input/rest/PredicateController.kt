@@ -4,6 +4,7 @@ import dev.forkhandles.values.ofOrNull
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeCurator
+import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.graph.adapter.input.rest.mapping.PredicateRepresentationAdapter
 import org.orkg.graph.domain.InvalidLabel
 import org.orkg.graph.domain.Label
@@ -16,7 +17,6 @@ import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.UpdatePredicateUseCase.ReplaceCommand
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
@@ -53,8 +52,8 @@ class PredicateController(
             else -> service.findAllByLabel(SearchString.of(string, exactMatch), pageable)
         }.mapToPredicateRepresentation()
 
+    @PreAuthorizeUser
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @ResponseStatus(CREATED)
     fun add(
         @RequestBody predicate: CreatePredicateRequest,
         uriComponentsBuilder: UriComponentsBuilder
@@ -75,6 +74,7 @@ class PredicateController(
         return created(location).body(service.findById(id).mapToPredicateRepresentation().get())
     }
 
+    @PreAuthorizeUser
     @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,

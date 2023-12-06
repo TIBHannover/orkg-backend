@@ -13,6 +13,7 @@ import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserDetailsService
+import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -22,7 +23,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.requestBody
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath
-import org.springframework.security.test.context.support.WithUserDetails
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -232,7 +233,7 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun addWithResource() {
         val r1 = resourceService.create("one")
         val r2 = resourceService.create("two")
@@ -256,7 +257,7 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun addWithLiteral() {
         val r = resourceService.create("one")
         val p = predicateService.create("has symbol")
@@ -281,6 +282,7 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @WithMockUser
     fun editResourceStatement() {
         val s = resourceService.create("ORKG")
         val p = predicateService.create("created by")
@@ -308,6 +310,7 @@ class StatementControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @WithMockUser
     fun editLiteralStatement() {
         val s = resourceService.create("ORKG")
         val p = predicateService.create("based in")

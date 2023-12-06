@@ -1,8 +1,9 @@
 package org.orkg.graph.adapter.input.rest
 
-import java.security.Principal
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.annotations.PreAuthorizeCurator
+import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.BundleRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.StatementRepresentationAdapter
@@ -18,8 +19,6 @@ import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
-import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -33,7 +32,6 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
@@ -118,8 +116,8 @@ class StatementController(
     ): Page<StatementRepresentation> =
         statementService.findAllByObjectAndPredicate(objectId, predicateId, pageable).mapToStatementRepresentation()
 
+    @PreAuthorizeUser
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @ResponseStatus(CREATED)
     fun add(
         @RequestBody statement: CreateStatement,
         uriComponentsBuilder: UriComponentsBuilder
@@ -138,6 +136,7 @@ class StatementController(
         return created(location).body(statementService.findById(id).mapToStatementRepresentation().get())
     }
 
+    @PreAuthorizeUser
     @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun edit(
         @PathVariable id: StatementId,
@@ -160,13 +159,11 @@ class StatementController(
         return statementService.findById(id).mapToStatementRepresentation().map(::ok).get()
     }
 
+    @PreAuthorizeCurator
     @DeleteMapping("/{id}")
     fun delete(
-        @PathVariable id: StatementId,
-        principal: Principal?
+        @PathVariable id: StatementId
     ): ResponseEntity<Unit> {
-        if (principal?.name == null)
-            return ResponseEntity(HttpStatus.FORBIDDEN)
         statementService.delete(id)
         return ResponseEntity.noContent().build()
     }

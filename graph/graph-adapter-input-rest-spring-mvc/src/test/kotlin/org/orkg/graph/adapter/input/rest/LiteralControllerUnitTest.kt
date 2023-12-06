@@ -29,7 +29,9 @@ import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.withCustomMappings
 import org.orkg.graph.testing.fixtures.withLiteralIds
+import org.orkg.testing.MockUserId
 import org.orkg.testing.andExpectPage
+import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.annotations.UsesMocking
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
@@ -118,7 +120,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
     }
 
     @Test
-    @WithMockUser(username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun whenPOST_AndLabelIsEmptyString_ThenSucceed() {
         val literal = createCreateRequestWithEmptyLabel()
         val mockResult = Literal(
@@ -136,7 +138,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             .andExpect(header().string("Location", matchesPattern("https?://.+/api/literals/L1")))
 
         verify(exactly = 1) {
-            literalService.create(ContributorId("f2d66c90-3cbf-4d4f-951f-0fc470f682c4"), "", "xsd:string")
+            literalService.create(ContributorId(MockUserId.USER), "", "xsd:string")
         }
     }
 
@@ -188,7 +190,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
     }
 
     @Test
-    @WithMockUser(username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun whenPOST_AndLabelIsTooLong_ThenFailValidation() {
         val literal = LiteralCreateRequest(
             label = "a".repeat(MAX_LABEL_LENGTH + 1)
@@ -224,7 +226,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
     }
 
     @Test
-    @WithMockUser(username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun whenPOST_AndRequestIsValid_ThenSucceed() {
         val literal = LiteralCreateRequest(
             label = "irrelevant",
@@ -245,7 +247,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             .andExpect(header().string("Location", matchesPattern("https?://.+/api/literals/L1")))
 
         verify(exactly = 1) {
-            literalService.create(ContributorId("f2d66c90-3cbf-4d4f-951f-0fc470f682c4"), "irrelevant", "irrelevant")
+            literalService.create(ContributorId(MockUserId.USER), "irrelevant", "irrelevant")
         }
     }
 

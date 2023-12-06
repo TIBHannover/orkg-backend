@@ -21,6 +21,7 @@ import org.orkg.graph.input.PredicateUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.testing.MockUserDetailsService
+import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -32,6 +33,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -165,7 +167,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun add() {
         val resource = mapOf("label" to "foo")
 
@@ -187,7 +189,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun addButClassDoesNotExist() {
         val resource = mapOf(
             "label" to "foo",
@@ -200,6 +202,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @WithMockUser
     fun addWithExistingIds() {
         val resource = mapOf("label" to "bar", "id" to "Test")
 
@@ -211,6 +214,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @WithMockUser
     fun edit() {
         val oldClass = classService.createClass(label = "class")
         val resource = service.createResource(classes = setOf(oldClass.value), label = "foo")
@@ -235,6 +239,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @WithMockUser
     fun editResourceClass() {
         val oldClass = classService.createClass(label = "class")
         val resource = service.createResource(classes = setOf(oldClass.value), label = "test")
@@ -261,6 +266,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @WithMockUser
     fun editResourceClassesIsEmpty() {
         val oldClass = classService.createClass(label = "class")
         val resource = service.createResource(classes = setOf(oldClass.value), label = "test")
@@ -274,6 +280,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @WithMockUser
     fun editResourceClassesAreInvalid() {
         val oldClass = classService.createClass(label = "class")
         val resource = service.createResource(classes = setOf(oldClass.value), label = "test")
@@ -286,6 +293,7 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @WithMockUser
     fun excludeByClass() {
         val id = classService.createClass(label = "research contribution")
         service.createResource(classes = setOf(id.value), label = "Contribution 1")

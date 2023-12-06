@@ -7,6 +7,7 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeCurator
+import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
@@ -28,7 +29,6 @@ import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -89,8 +89,8 @@ class ResourceController(
             }
         }.mapToResourceRepresentation()
 
+    @PreAuthorizeUser
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @ResponseStatus(CREATED)
     fun add(
         @RequestBody resource: CreateResourceRequest,
         uriComponentsBuilder: UriComponentsBuilder
@@ -126,6 +126,7 @@ class ResourceController(
         return created(location).body(service.findById(id).mapToResourceRepresentation().get())
     }
 
+    @PreAuthorizeUser
     @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,

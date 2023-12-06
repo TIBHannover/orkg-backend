@@ -2,6 +2,7 @@ package org.orkg.graph.adapter.input.rest
 
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ListRepresentationAdapter
 import org.orkg.graph.adapter.input.rest.mapping.ThingRepresentationAdapter
@@ -15,7 +16,6 @@ import org.orkg.graph.input.UpdateListUseCase.UpdateCommand
 import org.orkg.graph.output.FormattedLabelRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
@@ -47,8 +46,8 @@ class ListController(
     fun findAllElementsById(@PathVariable id: ThingId, pageable: Pageable): Page<ThingRepresentation> =
         service.findAllElementsById(id, pageable).mapToThingRepresentation()
 
+    @PreAuthorizeUser
     @PostMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @ResponseStatus(CREATED)
     fun add(
         @RequestBody request: CreateListRequest,
         uriComponentsBuilder: UriComponentsBuilder
@@ -61,6 +60,7 @@ class ListController(
         return created(location).body(findById(id))
     }
 
+    @PreAuthorizeUser
     @PatchMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,

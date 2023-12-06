@@ -4,6 +4,7 @@ import javax.validation.Valid
 import javax.validation.constraints.NotBlank
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.graph.adapter.input.rest.mapping.LiteralRepresentationAdapter
 import org.orkg.graph.domain.LiteralNotFound
 import org.orkg.graph.domain.PropertyIsBlank
@@ -12,7 +13,6 @@ import org.orkg.graph.input.LiteralRepresentation
 import org.orkg.graph.input.LiteralUseCases
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.created
@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
 
@@ -50,8 +49,8 @@ class LiteralController(
             else -> service.findAllByLabel(SearchString.of(searchString, exactMatch), pageable)
         }.mapToLiteralRepresentation()
 
+    @PreAuthorizeUser
     @PostMapping("/", consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @ResponseStatus(CREATED)
     fun add(
         @RequestBody @Valid literal: LiteralCreateRequest,
         uriComponentsBuilder: UriComponentsBuilder
@@ -66,6 +65,7 @@ class LiteralController(
         return created(location).body(service.findById(id).mapToLiteralRepresentation().get())
     }
 
+    @PreAuthorizeUser
     @PutMapping("/{id}", consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun update(
         @PathVariable id: ThingId,

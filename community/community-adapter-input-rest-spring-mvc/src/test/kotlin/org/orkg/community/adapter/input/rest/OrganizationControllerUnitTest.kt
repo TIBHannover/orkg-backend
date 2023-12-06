@@ -40,6 +40,7 @@ import org.orkg.mediastorage.testing.fixtures.loadEncodedImage
 import org.orkg.mediastorage.testing.fixtures.loadImage
 import org.orkg.mediastorage.testing.fixtures.loadRawImage
 import org.orkg.mediastorage.testing.fixtures.testImage
+import org.orkg.testing.annotations.TestWithMockUser
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.HttpMethod
@@ -210,7 +211,7 @@ internal class OrganizationControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given an organization is updated, when service reports organization not found, then status is 404 NOT FOUND`() {
         val id = OrganizationId(UUID.randomUUID())
         val body = mapOf(
@@ -227,7 +228,7 @@ internal class OrganizationControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given an organization is updated, when service reports invalid mime type for the logo, then status is 400 BAD REQUEST`() {
         val id = OrganizationId(UUID.randomUUID())
         val body = mapOf(
@@ -248,7 +249,7 @@ internal class OrganizationControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given an organization is updated, when service reports invalid image data for the logo, then status is 400 BAD REQUEST`() {
         val id = OrganizationId(UUID.randomUUID())
         val body = mapOf(
@@ -269,7 +270,7 @@ internal class OrganizationControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given an organization is updated, when service succeeds, then status is 204 NO CONTENT`() {
         val id = OrganizationId(UUID.randomUUID())
         val body = mapOf(
@@ -287,7 +288,7 @@ internal class OrganizationControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given an organization is updated, when name is invalid, then status is 400 BAD REQUEST`() {
         val id = OrganizationId(UUID.randomUUID())
         val body = mapOf(
@@ -302,7 +303,7 @@ internal class OrganizationControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given an organization is updated, when url is invalid, then status is 400 BAD REQUEST`() {
         val id = OrganizationId(UUID.randomUUID())
         val body = mapOf(
@@ -317,7 +318,7 @@ internal class OrganizationControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given an organization is updated, when payload contains json and logo, then status is 204 NO CONTENT`() {
         val id = OrganizationId(UUID.randomUUID())
         val image = loadRawImage(testImage)
@@ -338,7 +339,7 @@ internal class OrganizationControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given an organization is updated, when payload contains logo only, then status is 204 NO CONTENT`() {
         val id = OrganizationId(UUID.randomUUID())
         val image = loadRawImage(testImage)
@@ -353,7 +354,7 @@ internal class OrganizationControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given an organization is updated, when payload contains json only, then status is 204 NO CONTENT`() {
         val id = OrganizationId(UUID.randomUUID())
         val body = mapOf(
@@ -372,7 +373,7 @@ internal class OrganizationControllerUnitTest {
     }
 
     @Test
-    @WithMockUser(username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @TestWithMockUser
     fun `Given an organization is updated, when payload is empty, then status is 204 NO CONTENT`() {
         val id = OrganizationId(UUID.randomUUID())
 

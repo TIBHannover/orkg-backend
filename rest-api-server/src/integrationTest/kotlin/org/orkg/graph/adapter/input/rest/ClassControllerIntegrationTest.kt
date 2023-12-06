@@ -14,6 +14,7 @@ import org.orkg.createResource
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.testing.MockUserDetailsService
+import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocumentationBaseTest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Import
@@ -25,7 +26,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.payload.ResponseFieldsSnippet
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParameters
-import org.springframework.security.test.context.support.WithUserDetails
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
@@ -123,7 +124,7 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun add() {
         val `class` = mapOf("label" to "foo", "uri" to "http://example.org/bar")
 
@@ -146,7 +147,7 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun addExistingId() {
         val id = service.createClass(label = "foo")
         val duplicateClass = mapOf("label" to "bar", "id" to "$id")
@@ -166,7 +167,7 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun addExistingURI() {
         service.createClass(
             label = "foo",
@@ -192,7 +193,7 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
-    @WithUserDetails("user", userDetailsServiceBeanName = "mockUserDetailsService")
+    @TestWithMockUser
     fun addReservedId() {
         val reservedClass = mapOf("label" to "bar", "id" to "Resource")
 
@@ -306,6 +307,7 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
     internal fun List<String>.toJSONArray(): JSONArray = JSONArray().apply { addAll(this@toJSONArray) }
 
     @Test
+    @WithMockUser
     fun replaceLabel() {
         val classId = service.createClass(label = "foo", uri = URI("https://example.org/foo"))
         val newLabel = "bar"
@@ -328,6 +330,7 @@ class ClassControllerIntegrationTest : RestDocumentationBaseTest() {
     }
 
     @Test
+    @WithMockUser
     fun replaceLabelAndURI() {
         val classId = service.createClass(label = "foo")
         val newLabel = "new label"

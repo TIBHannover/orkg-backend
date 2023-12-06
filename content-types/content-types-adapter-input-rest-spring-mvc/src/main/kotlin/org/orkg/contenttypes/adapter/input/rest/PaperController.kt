@@ -143,6 +143,7 @@ class PaperController(
         val identifiers: Map<String, String>?,
         @JsonProperty("publication_info")
         val publicationInfo: PublicationInfoDTO?,
+        @field:Valid
         val authors: List<AuthorDTO>,
         @field:Size(max = 1)
         val observatories: List<ObservatoryId>,

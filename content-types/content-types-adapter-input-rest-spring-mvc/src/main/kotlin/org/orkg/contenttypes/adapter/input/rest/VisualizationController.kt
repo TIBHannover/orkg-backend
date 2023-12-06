@@ -88,15 +88,15 @@ class VisualizationController(
     }
 
     data class CreateVisualizationRequest(
-        @NotBlank
+        @field:NotBlank
         val title: String,
-        @NotBlank
+        @field:NotBlank
         val description: String,
-        @Size(min = 1, max = 1)
+        @field:Valid
         val authors: List<AuthorDTO>,
-        @Size(max = 1)
+        @field:Size(max = 1)
         val observatories: List<ObservatoryId>,
-        @Size(max = 1)
+        @field:Size(max = 1)
         val organizations: List<OrganizationId>,
         @JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN

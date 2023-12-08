@@ -30,7 +30,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.configuration.DataCiteConfiguration
 import org.orkg.contenttypes.domain.identifiers.DOI
-import org.orkg.contenttypes.testing.fixtures.dummyRegisterDoiCommand
+import org.orkg.contenttypes.output.testing.fixtures.dummyRegisterDoiCommand
 import org.orkg.graph.domain.DOIServiceUnavailable
 import org.springframework.http.MediaType
 

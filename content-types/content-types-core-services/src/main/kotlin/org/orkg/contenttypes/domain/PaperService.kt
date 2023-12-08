@@ -7,10 +7,15 @@ import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import org.orkg.community.output.ObservatoryRepository
+import org.orkg.contenttypes.domain.actions.ContributionState
+import org.orkg.contenttypes.domain.actions.CreateContributionCommand
+import org.orkg.contenttypes.domain.actions.CreatePaperCommand
 import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
 import org.orkg.contenttypes.domain.actions.OrganizationValidator
 import org.orkg.contenttypes.domain.actions.ResearchFieldValidator
+import org.orkg.contenttypes.domain.actions.UpdatePaperCommand
+import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.domain.actions.contribution.ContributionContentsCreator
 import org.orkg.contenttypes.domain.actions.contribution.ContributionContentsValidator
 import org.orkg.contenttypes.domain.actions.contribution.ContributionPaperExistenceValidator
@@ -19,13 +24,21 @@ import org.orkg.contenttypes.domain.actions.contribution.ContributionThingDefini
 import org.orkg.contenttypes.domain.actions.execute
 import org.orkg.contenttypes.domain.actions.paper.PaperAuthorCreateValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperAuthorCreator
+import org.orkg.contenttypes.domain.actions.paper.PaperAuthorUpdateValidator
+import org.orkg.contenttypes.domain.actions.paper.PaperAuthorUpdater
 import org.orkg.contenttypes.domain.actions.paper.PaperContributionCreator
 import org.orkg.contenttypes.domain.actions.paper.PaperContributionValidator
+import org.orkg.contenttypes.domain.actions.paper.PaperExistenceValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperIdentifierCreateValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperIdentifierCreator
+import org.orkg.contenttypes.domain.actions.paper.PaperIdentifierUpdateValidator
+import org.orkg.contenttypes.domain.actions.paper.PaperIdentifierUpdater
 import org.orkg.contenttypes.domain.actions.paper.PaperPublicationInfoCreator
+import org.orkg.contenttypes.domain.actions.paper.PaperPublicationInfoUpdater
 import org.orkg.contenttypes.domain.actions.paper.PaperResearchFieldCreator
+import org.orkg.contenttypes.domain.actions.paper.PaperResearchFieldUpdater
 import org.orkg.contenttypes.domain.actions.paper.PaperResourceCreator
+import org.orkg.contenttypes.domain.actions.paper.PaperResourceUpdater
 import org.orkg.contenttypes.domain.actions.paper.PaperTempIdValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperThingDefinitionValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperTitleValidator
@@ -50,9 +63,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
-import org.orkg.contenttypes.domain.actions.contribution.ContributionAction.State as ContributionState
-import org.orkg.contenttypes.input.CreateContributionUseCase.CreateCommand as CreateContributionCommand
-import org.orkg.contenttypes.input.CreatePaperUseCase.CreateCommand as CreatePaperCommand
 
 @Service
 class PaperService(
@@ -144,6 +154,23 @@ class PaperService(
             ContributionContentsCreator(resourceService, statementService, literalService, predicateService, statementRepository, listService)
         )
         return steps.execute(command, ContributionState()).contributionId!!
+    }
+
+    override fun update(command: UpdatePaperCommand) {
+        val steps = listOf(
+            PaperExistenceValidator(this),
+            ResearchFieldValidator(resourceRepository) { it.researchFields },
+            ObservatoryValidator(observatoryRepository) { it.observatories },
+            OrganizationValidator(organizationRepository) { it.organizations },
+            PaperIdentifierUpdateValidator(statementRepository),
+            PaperAuthorUpdateValidator(resourceRepository, statementRepository),
+            PaperResourceUpdater(resourceService),
+            PaperIdentifierUpdater(statementService, literalService),
+            PaperAuthorUpdater(resourceService, statementService, literalService, listService),
+            PaperResearchFieldUpdater(statementService),
+            PaperPublicationInfoUpdater(resourceService, resourceRepository, statementService, literalService)
+        )
+        steps.execute(command, UpdatePaperState())
     }
 
     override fun publish(id: ThingId, contributorId: ContributorId, subject: String, description: String) {

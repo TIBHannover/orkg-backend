@@ -3,7 +3,7 @@ package org.orkg.contenttypes.adapter.output.neo4j
 import io.kotest.core.spec.style.DescribeSpec
 import org.orkg.contenttypes.adapter.output.neo4j.configuration.ContentTypesNeo4jConfiguration
 import org.orkg.contenttypes.output.RankingService
-import org.orkg.contenttypes.testing.fixtures.rankingServiceContract
+import org.orkg.contenttypes.output.testing.fixtures.rankingServiceContract
 import org.orkg.graph.adapter.output.facade.ListAdapter
 import org.orkg.graph.adapter.output.neo4j.SpringDataNeo4jClassAdapter
 import org.orkg.graph.adapter.output.neo4j.SpringDataNeo4jLiteralAdapter

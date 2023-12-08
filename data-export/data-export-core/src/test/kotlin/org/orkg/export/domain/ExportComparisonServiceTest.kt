@@ -10,7 +10,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.orkg.contenttypes.input.ComparisonUseCases
-import org.orkg.contenttypes.testing.fixtures.createDummyComparison
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparison
 import org.orkg.export.testing.fixtures.verifyThatDirectoryExistsAndIsEmpty
 import org.orkg.graph.output.StatementRepository
 import org.orkg.testing.pageOf

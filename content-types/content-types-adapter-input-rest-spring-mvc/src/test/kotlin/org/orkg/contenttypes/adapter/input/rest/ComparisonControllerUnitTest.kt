@@ -31,9 +31,9 @@ import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 import org.orkg.contenttypes.domain.OnlyOneResearchFieldAllowed
 import org.orkg.contenttypes.domain.RequiresAtLeastTwoContributions
 import org.orkg.contenttypes.input.ComparisonUseCases
-import org.orkg.contenttypes.testing.fixtures.createDummyComparison
-import org.orkg.contenttypes.testing.fixtures.createDummyComparisonRelatedFigure
-import org.orkg.contenttypes.testing.fixtures.createDummyComparisonRelatedResource
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparison
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparisonRelatedFigure
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyComparisonRelatedResource
 import org.orkg.graph.domain.DOIServiceUnavailable
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ResearchFieldNotFound

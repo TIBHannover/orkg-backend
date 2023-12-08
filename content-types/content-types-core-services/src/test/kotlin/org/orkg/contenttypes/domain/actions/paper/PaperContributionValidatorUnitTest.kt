@@ -19,7 +19,7 @@ import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.domain.actions.BakedStatement
 import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.input.CreatePaperUseCase
-import org.orkg.contenttypes.testing.fixtures.dummyCreatePaperCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.ThingNotFound
 import org.orkg.graph.output.ThingRepository

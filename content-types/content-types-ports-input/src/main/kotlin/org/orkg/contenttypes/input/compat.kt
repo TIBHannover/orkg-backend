@@ -1,6 +1,6 @@
 package org.orkg.contenttypes.input
 
-interface PaperUseCases : RetrievePaperUseCase, CreatePaperUseCase, CreateContributionUseCase, PublishPaperUseCase
+interface PaperUseCases : RetrievePaperUseCase, CreatePaperUseCase, CreateContributionUseCase, UpdatePaperUseCase, PublishPaperUseCase
 
 interface ContributionUseCases : RetrieveContributionUseCase
 

@@ -18,8 +18,8 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.orkg.contenttypes.domain.TemplateNotFound
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyCommand
 import org.orkg.contenttypes.domain.actions.TemplatePropertyState
-import org.orkg.contenttypes.testing.fixtures.dummyCreateLiteralTemplatePropertyCommand
-import org.orkg.contenttypes.testing.fixtures.dummyCreateResourceTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateResourceTemplatePropertyCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource

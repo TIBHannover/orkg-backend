@@ -4,7 +4,7 @@ import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.CreatePaperState
-import org.orkg.contenttypes.testing.fixtures.dummyCreatePaperCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
 
 class PaperTempIdValidatorUnitTest {
     private val paperTempIdValidator = PaperTempIdValidator()

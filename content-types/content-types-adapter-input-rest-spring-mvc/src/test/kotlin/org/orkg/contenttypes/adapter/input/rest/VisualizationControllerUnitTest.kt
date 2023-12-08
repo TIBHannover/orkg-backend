@@ -22,8 +22,8 @@ import org.orkg.contenttypes.domain.AuthorNotFound
 import org.orkg.contenttypes.domain.OnlyOneObservatoryAllowed
 import org.orkg.contenttypes.domain.OnlyOneOrganizationAllowed
 import org.orkg.contenttypes.domain.VisualizationNotFound
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyVisualization
 import org.orkg.contenttypes.input.VisualizationUseCases
-import org.orkg.contenttypes.testing.fixtures.createDummyVisualization
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.VisibilityFilter
 import org.orkg.testing.andExpectPage

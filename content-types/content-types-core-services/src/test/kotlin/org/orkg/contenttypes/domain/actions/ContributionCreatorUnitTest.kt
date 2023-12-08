@@ -44,7 +44,7 @@ class ContributionCreatorUnitTest {
     private val predicateService: PredicateUseCases = mockk()
     private val listService: ListUseCases = mockk()
 
-    private val contributionContentsCreatorCreator = object : ContributionCreator(
+    private val contributionCreator = object : ContributionCreator(
         resourceService = resourceService,
         statementService = statementService,
         literalService = literalService,
@@ -95,7 +95,7 @@ class ContributionCreatorUnitTest {
             )
         } returns ThingId("R456")
 
-        val result = contributionContentsCreatorCreator.create(
+        val result = contributionCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
@@ -135,7 +135,7 @@ class ContributionCreatorUnitTest {
             contributions = emptyList()
         )
 
-        val result = contributionContentsCreatorCreator.create(
+        val result = contributionCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
@@ -171,7 +171,7 @@ class ContributionCreatorUnitTest {
             )
         } returns literal
 
-        val result = contributionContentsCreatorCreator.create(
+        val result = contributionCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
@@ -206,7 +206,7 @@ class ContributionCreatorUnitTest {
             contributions = emptyList()
         )
 
-        val result = contributionContentsCreatorCreator.create(
+        val result = contributionCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
@@ -241,7 +241,7 @@ class ContributionCreatorUnitTest {
             )
         } returns ThingId("R456")
 
-        val result = contributionContentsCreatorCreator.create(
+        val result = contributionCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
@@ -302,7 +302,7 @@ class ContributionCreatorUnitTest {
             )
         } just runs
 
-        val result = contributionContentsCreatorCreator.create(
+        val result = contributionCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
@@ -351,7 +351,7 @@ class ContributionCreatorUnitTest {
             contributions = emptyList()
         )
 
-        val result = contributionContentsCreatorCreator.create(
+        val result = contributionCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
@@ -397,7 +397,7 @@ class ContributionCreatorUnitTest {
             )
         } just runs
 
-        val result = contributionContentsCreatorCreator.create(
+        val result = contributionCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
@@ -445,7 +445,7 @@ class ContributionCreatorUnitTest {
             contributions = emptyList()
         )
 
-        val result = contributionContentsCreatorCreator.create(
+        val result = contributionCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
@@ -489,7 +489,7 @@ class ContributionCreatorUnitTest {
             )
         } just runs
 
-        val result = contributionContentsCreatorCreator.create(
+        val result = contributionCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
@@ -584,7 +584,7 @@ class ContributionCreatorUnitTest {
             )
         } just runs
 
-        val result = contributionContentsCreatorCreator.create(
+        val result = contributionCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
@@ -657,7 +657,7 @@ class ContributionCreatorUnitTest {
             )
         } just runs
 
-        val result = contributionContentsCreatorCreator.create(
+        val result = contributionCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,
@@ -707,7 +707,7 @@ class ContributionCreatorUnitTest {
             )
         } returns Optional.of(statement)
 
-        val result = contributionContentsCreatorCreator.create(
+        val result = contributionCreator.create(
             paperId = paperId,
             contributorId = contributorId,
             extractionMethod = ExtractionMethod.MANUAL,

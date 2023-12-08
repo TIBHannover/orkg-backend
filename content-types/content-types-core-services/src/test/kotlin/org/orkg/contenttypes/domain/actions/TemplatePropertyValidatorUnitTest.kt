@@ -15,8 +15,8 @@ import org.orkg.contenttypes.domain.InvalidCardinality
 import org.orkg.contenttypes.domain.InvalidMaxCount
 import org.orkg.contenttypes.domain.InvalidMinCount
 import org.orkg.contenttypes.domain.InvalidRegexPattern
-import org.orkg.contenttypes.testing.fixtures.dummyCreateLiteralTemplatePropertyCommand
-import org.orkg.contenttypes.testing.fixtures.dummyCreateResourceTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateResourceTemplatePropertyCommand
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.PredicateNotFound
 import org.orkg.graph.output.ClassRepository

@@ -5,13 +5,17 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.net.URI
 import java.time.OffsetDateTime
+import javax.validation.constraints.Max
+import javax.validation.constraints.Min
 import javax.validation.constraints.NotBlank
+import javax.validation.constraints.Size
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.ObjectIdAndLabel
+import org.orkg.contenttypes.domain.PublicationInfo
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.FormattedLabel
 import org.orkg.graph.domain.Visibility
@@ -166,12 +170,33 @@ data class AuthorDTO(
     val identifiers: Map<String, String>?,
     val homepage: URI?
 ) {
-    fun toCreateCommand(): Author =
+    fun toAuthor(): Author =
         Author(
             id = id,
             name = name,
             identifiers = identifiers,
             homepage = homepage
+        )
+}
+
+data class PublicationInfoDTO(
+    @field:Min(1)
+    @field:Max(12)
+    @JsonProperty("published_month")
+    val publishedMonth: Int?,
+    @JsonProperty("published_year")
+    val publishedYear: Long?,
+    @field:Size(min = 1)
+    @JsonProperty("published_in")
+    val publishedIn: String?,
+    val url: URI?
+) {
+    fun toPublicationInfo(): PublicationInfo =
+        PublicationInfo(
+            publishedMonth = publishedMonth,
+            publishedYear = publishedYear,
+            publishedIn = publishedIn,
+            url = url
         )
 }
 

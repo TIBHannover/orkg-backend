@@ -4,7 +4,7 @@ import io.kotest.assertions.asClue
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import org.orkg.contenttypes.domain.actions.ContributionState
-import org.orkg.contenttypes.testing.fixtures.dummyCreateContributionCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateContributionCommand
 
 class ContributionTempIdValidatorUnitTest {
     private val contributionTempIdValidator = ContributionTempIdValidator()

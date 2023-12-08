@@ -21,6 +21,7 @@ import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.community.domain.ObservatoryNotFound
 import org.orkg.community.domain.OrganizationNotFound
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyTemplate
 import org.orkg.contenttypes.domain.InvalidCardinality
 import org.orkg.contenttypes.domain.InvalidMaxCount
 import org.orkg.contenttypes.domain.InvalidMinCount
@@ -29,7 +30,6 @@ import org.orkg.contenttypes.domain.TemplateAlreadyExistsForClass
 import org.orkg.contenttypes.domain.TemplateClosed
 import org.orkg.contenttypes.domain.TemplateNotFound
 import org.orkg.contenttypes.input.TemplateUseCases
-import org.orkg.contenttypes.testing.fixtures.createDummyTemplate
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.PredicateNotFound

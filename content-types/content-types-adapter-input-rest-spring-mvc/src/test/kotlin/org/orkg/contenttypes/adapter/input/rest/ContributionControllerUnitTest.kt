@@ -11,8 +11,8 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
 import org.orkg.contenttypes.domain.ContributionNotFound
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyContribution
 import org.orkg.contenttypes.input.ContributionUseCases
-import org.orkg.contenttypes.testing.fixtures.createDummyContribution
 import org.orkg.testing.andExpectContribution
 import org.orkg.testing.andExpectPage
 import org.orkg.testing.pageOf

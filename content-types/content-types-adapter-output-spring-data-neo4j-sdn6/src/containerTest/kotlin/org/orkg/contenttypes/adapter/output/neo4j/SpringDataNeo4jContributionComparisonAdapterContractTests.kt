@@ -3,7 +3,7 @@ package org.orkg.contenttypes.adapter.output.neo4j
 import io.kotest.core.spec.style.DescribeSpec
 import org.orkg.contenttypes.adapter.output.neo4j.configuration.ContentTypesNeo4jConfiguration
 import org.orkg.contenttypes.output.ContributionComparisonRepository
-import org.orkg.contenttypes.testing.fixtures.contributionComparisonRepositoryContract
+import org.orkg.contenttypes.output.testing.fixtures.contributionComparisonRepositoryContract
 import org.orkg.graph.adapter.output.neo4j.SpringDataNeo4jClassAdapter
 import org.orkg.graph.adapter.output.neo4j.SpringDataNeo4jLiteralAdapter
 import org.orkg.graph.adapter.output.neo4j.SpringDataNeo4jPredicateAdapter

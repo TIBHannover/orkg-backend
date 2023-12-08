@@ -14,8 +14,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.TemplatePropertyState
-import org.orkg.contenttypes.testing.fixtures.dummyCreateLiteralTemplatePropertyCommand
-import org.orkg.contenttypes.testing.fixtures.dummyCreateResourceTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateResourceTemplatePropertyCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates

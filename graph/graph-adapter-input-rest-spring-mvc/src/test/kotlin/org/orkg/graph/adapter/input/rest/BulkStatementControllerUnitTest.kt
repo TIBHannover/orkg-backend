@@ -234,7 +234,7 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
         every { flags.isFormattedLabelsEnabled() } returns false
 
         mockMvc
-            .perform(documentedPutRequestTo("/api/statements/?ids={ids}", "${s1.id},${s2.id}", body = payload))
+            .perform(documentedPutRequestTo("/api/statements/?ids={ids}", "${s1.id},${s2.id}").content(payload))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$").isArray)
             .andExpect(jsonPath("$", hasSize<Int>(2)))

@@ -108,7 +108,7 @@ class VisualizationController(
                 contributorId = contributorId,
                 title = title,
                 description = description,
-                authors = authors.map { it.toCreateCommand() },
+                authors = authors.map { it.toAuthor() },
                 observatories = observatories,
                 organizations = organizations,
                 extractionMethod = extractionMethod

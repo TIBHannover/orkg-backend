@@ -205,7 +205,7 @@ class ComparisonController(
                 title = title,
                 description = description,
                 researchFields = researchFields,
-                authors = authors.map { it.toCreateCommand() },
+                authors = authors.map { it.toAuthor() },
                 contributions = contributions,
                 references = references,
                 observatories = observatories,

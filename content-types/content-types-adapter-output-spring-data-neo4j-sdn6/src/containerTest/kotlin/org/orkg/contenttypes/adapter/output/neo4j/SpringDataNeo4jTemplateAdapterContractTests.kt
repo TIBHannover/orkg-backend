@@ -4,7 +4,7 @@ import ac.simons.neo4j.migrations.springframework.boot.autoconfigure.MigrationsA
 import io.kotest.core.spec.style.DescribeSpec
 import org.orkg.contenttypes.adapter.output.neo4j.configuration.ContentTypesNeo4jConfiguration
 import org.orkg.contenttypes.output.TemplateRepository
-import org.orkg.contenttypes.testing.fixtures.templateRepositoryContract
+import org.orkg.contenttypes.output.testing.fixtures.templateRepositoryContract
 import org.orkg.graph.adapter.output.neo4j.SpringDataNeo4jClassAdapter
 import org.orkg.graph.adapter.output.neo4j.SpringDataNeo4jLiteralAdapter
 import org.orkg.graph.adapter.output.neo4j.SpringDataNeo4jPredicateAdapter

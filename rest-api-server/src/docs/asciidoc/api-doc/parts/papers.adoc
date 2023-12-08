@@ -44,6 +44,19 @@ The paper (object) can be retrieved by following the URI in the `Location` heade
 
 operation::papers-create[snippets='request-fields,curl-request,http-response']
 
+[[papers-edit]]
+=== Editing a paper
+
+A `PUT` request updates an existing paper with all the given parameters.
+The response will be `204 No Content` when successful.
+The updated paper (object) can be retrieved by following the URI in the `Location` header field.
+
+NOTE: All fields at the top level in the request can be omitted or `null`, meaning that the corresponding fields should not be updated.
+
+WARNING: Author names will not be updated if a resource id is specified for a given author.
+
+operation::papers-update[snippets='request-fields,curl-request,http-response']
+
 [[papers-publish]]
 === Publishing papers
 

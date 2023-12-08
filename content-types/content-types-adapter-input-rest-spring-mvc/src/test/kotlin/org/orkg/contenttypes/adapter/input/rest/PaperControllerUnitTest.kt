@@ -23,15 +23,16 @@ import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.common.json.CommonJacksonModule
+import org.orkg.contenttypes.adapter.input.rest.PaperController.CreateContributionRequest
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.ContributionDTO
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.ListDefinitionDTO
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.LiteralDefinitionDTO
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.PaperContentsDTO
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.PredicateDefinitionDTO
-import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.PublicationInfoDTO
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.ResourceDefinitionDTO
 import org.orkg.contenttypes.adapter.input.rest.PaperController.CreatePaperRequest.StatementObjectDefinitionDTO
+import org.orkg.contenttypes.adapter.input.rest.PaperController.UpdatePaperRequest
 import org.orkg.contenttypes.domain.AmbiguousAuthor
 import org.orkg.contenttypes.domain.Author
 import org.orkg.contenttypes.domain.AuthorNotFound
@@ -47,9 +48,9 @@ import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.ThingIsNotAClass
 import org.orkg.contenttypes.domain.ThingIsNotAPredicate
 import org.orkg.contenttypes.domain.ThingNotDefined
+import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
 import org.orkg.contenttypes.input.ContributionUseCases
 import org.orkg.contenttypes.input.PaperUseCases
-import org.orkg.contenttypes.testing.fixtures.createDummyPaper
 import org.orkg.graph.domain.DOIServiceUnavailable
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.ThingNotFound
@@ -61,6 +62,7 @@ import org.orkg.testing.annotations.TestWithMockUser
 import org.orkg.testing.spring.restdocs.RestDocsTest
 import org.orkg.testing.spring.restdocs.documentedGetRequestTo
 import org.orkg.testing.spring.restdocs.documentedPostRequestTo
+import org.orkg.testing.spring.restdocs.documentedPutRequestTo
 import org.orkg.testing.spring.restdocs.timestampFieldWithPath
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.data.domain.PageImpl
@@ -80,6 +82,7 @@ import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -467,7 +470,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    @DisplayName("Given a paper request, when service succeeds, it creates and returns the paper")
+    @DisplayName("Given a paper create request, when service succeeds, it creates and returns the paper")
     fun create() {
         val id = ThingId("R123")
         every { paperService.create(any()) } returns id
@@ -536,7 +539,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    fun `Given a paper request, when service reports only one research field allowed, then status is 400 BAD REQUEST`() {
+    fun `Given a paper create request, when service reports only one research field allowed, then status is 400 BAD REQUEST`() {
         val exception = OnlyOneResearchFieldAllowed()
         every { paperService.create(any()) } throws exception
 
@@ -554,7 +557,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    fun `Given a paper request, when service reports only one organization allowed, then status is 400 BAD REQUEST`() {
+    fun `Given a paper create request, when service reports only one organization allowed, then status is 400 BAD REQUEST`() {
         val exception = OnlyOneOrganizationAllowed()
         every { paperService.create(any()) } throws exception
 
@@ -572,7 +575,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    fun `Given a paper request, when service reports only one observatory allowed, then status is 400 BAD REQUEST`() {
+    fun `Given a paper create request, when service reports only one observatory allowed, then status is 400 BAD REQUEST`() {
         val exception = OnlyOneObservatoryAllowed()
         every { paperService.create(any()) } throws exception
 
@@ -590,7 +593,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    fun `Given a paper request, when service reports thing not defined, then status is 400 BAD REQUEST`() {
+    fun `Given a paper create request, when service reports thing not defined, then status is 400 BAD REQUEST`() {
         val exception = ThingNotDefined("R123")
         every { paperService.create(any()) } throws exception
 
@@ -608,7 +611,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    fun `Given a paper request, when service reports author not found, then status is 404 NOT FOUND`() {
+    fun `Given a paper create request, when service reports author not found, then status is 404 NOT FOUND`() {
         val exception = AuthorNotFound(ThingId("R123"))
         every { paperService.create(any()) } throws exception
 
@@ -626,7 +629,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    fun `Given a paper request, when service reports duplicate temp ids, then status is 400 BAD REQUEST`() {
+    fun `Given a paper create request, when service reports duplicate temp ids, then status is 400 BAD REQUEST`() {
         val exception = DuplicateTempIds(mapOf("#temp1" to 2))
         every { paperService.create(any()) } throws exception
 
@@ -644,7 +647,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    fun `Given a paper request, when service reports invalid temp id, then status is 400 BAD REQUEST`() {
+    fun `Given a paper create request, when service reports invalid temp id, then status is 400 BAD REQUEST`() {
         val exception = InvalidTempId("invalid")
         every { paperService.create(any()) } throws exception
 
@@ -662,7 +665,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    fun `Given a paper request, when service reports paper already exists with title, then status is 400 BAD REQUEST`() {
+    fun `Given a paper create request, when service reports paper already exists with title, then status is 400 BAD REQUEST`() {
         val exception = PaperAlreadyExists.withTitle("paper title")
         every { paperService.create(any()) } throws exception
 
@@ -680,7 +683,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    fun `Given a paper request, when service reports paper already exists with identifier, then status is 400 BAD REQUEST`() {
+    fun `Given a paper create request, when service reports paper already exists with identifier, then status is 400 BAD REQUEST`() {
         val exception = PaperAlreadyExists.withIdentifier("paper title")
         every { paperService.create(any()) } throws exception
 
@@ -698,7 +701,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    fun `Given a paper request, when service reports ambiguous author, then status is 400 BAD REQUEST`() {
+    fun `Given a paper create request, when service reports ambiguous author, then status is 400 BAD REQUEST`() {
         val exception = AmbiguousAuthor(
             Author(
                 id = ThingId("R123"),
@@ -722,7 +725,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    fun `Given a paper request, when service reports thing id is not a class, then status is 400 BAD REQUEST`() {
+    fun `Given a paper create request, when service reports thing id is not a class, then status is 400 BAD REQUEST`() {
         val exception = ThingIsNotAClass(ThingId("R123"))
         every { paperService.create(any()) } throws exception
 
@@ -740,7 +743,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    fun `Given a paper request, when service reports thing id is not a predicate, then status is 400 BAD REQUEST`() {
+    fun `Given a paper create request, when service reports thing id is not a predicate, then status is 400 BAD REQUEST`() {
         val exception = ThingIsNotAPredicate("R123")
         every { paperService.create(any()) } throws exception
 
@@ -758,7 +761,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    fun `Given a paper request, when service reports invalid statement subject, then status is 400 BAD REQUEST`() {
+    fun `Given a paper create request, when service reports invalid statement subject, then status is 400 BAD REQUEST`() {
         val exception = InvalidStatementSubject("R123")
         every { paperService.create(any()) } throws exception
 
@@ -776,7 +779,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    fun `Given a paper request, when service reports thing not found, then status is 404 NOT FOUND`() {
+    fun `Given a paper create request, when service reports thing not found, then status is 404 NOT FOUND`() {
         val exception = ThingNotFound("R123")
         every { paperService.create(any()) } throws exception
 
@@ -794,7 +797,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @Test
     @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
-    fun `Given a paper request, when service reports empty contributions, then status is 400 BAD REQUEST`() {
+    fun `Given a paper create request, when service reports empty contributions, then status is 400 BAD REQUEST`() {
         val exception = EmptyContribution(0)
         every { paperService.create(any()) } throws exception
 
@@ -808,6 +811,222 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .andExpect(jsonPath("$.message").value(exception.message))
 
         verify(exactly = 1) { paperService.create(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    @DisplayName("Given a paper update request, when service succeeds, it updates the paper")
+    fun update() {
+        val id = ThingId("R123")
+        every { paperService.update(any()) } just runs
+
+        documentedPutRequestTo("/api/papers/{id}", id)
+            .content(updatePaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isNoContent)
+            .andExpect(header().string("Location", endsWith("/api/papers/$id")))
+            .andDo(
+                documentationHandler.document(
+                    responseHeaders(
+                        headerWithName("Location").description("The uri path where the updated resource can be fetched from.")
+                    ),
+                    requestFields(
+                        fieldWithPath("title").description("The title of the paper. (optional)"),
+                        fieldWithPath("research_fields").description("The list of research fields the paper will be assigned to. (optional)"),
+                        fieldWithPath("identifiers").description("The unique identifiers of the paper. (optional)"),
+                        fieldWithPath("identifiers.doi").description("The DOI of the paper. (optional)").optional(),
+                        fieldWithPath("publication_info").description("The publication info of the paper. (optional)").optional(),
+                        fieldWithPath("publication_info.published_month").description("The month in which the paper was published. (optional)").optional(),
+                        fieldWithPath("publication_info.published_year").description("The year in which the paper was published. (optional)").optional(),
+                        fieldWithPath("publication_info.published_in").description("The venue where the paper was published. (optional)").optional(),
+                        fieldWithPath("publication_info.url").description("The URL to the original paper. (optional)").optional(),
+                        fieldWithPath("authors").description("The list of authors that originally contributed to the paper."),
+                        fieldWithPath("authors[].id").description("The ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].name").description("The name of the author."),
+                        fieldWithPath("authors[].identifiers").description("The unique identifiers of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.orcid").description("The ORCID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.google_scholar").type("String").description("The Google Scholar ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.research_gate").type("String").description("The ResearchGate ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.linked_in").type("String").description("The LinkedIn ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.wikidata").type("String").description("The Wikidata ID of the author. (optional)").optional(),
+                        fieldWithPath("authors[].identifiers.web_of_science").type("String").description("The Web of Science id of the author. (optional)").optional(),
+                        fieldWithPath("authors[].homepage").description("The homepage of the author. (optional)").optional(),
+                        fieldWithPath("organizations[]").description("The list of IDs of the organizations the paper belongs to. (optional)").optional(),
+                        fieldWithPath("observatories[]").description("The list of IDs of the observatories the paper belongs to. (optional)").optional()
+                    )
+                )
+            )
+            .andDo(generateDefaultDocSnippets())
+
+        verify(exactly = 1) { paperService.update(any()) }
+    }
+    
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper update request, when service reports paper already exists with title, then status is 400 BAD REQUEST`() {
+        val id = ThingId("R123")
+        val exception = PaperAlreadyExists.withTitle("paper title")
+        every { paperService.update(any()) } throws exception
+
+        put("/api/papers/{id}", id)
+            .content(updatePaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers/$id"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.update(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper update request, when service reports paper already exists with identifier, then status is 400 BAD REQUEST`() {
+        val id = ThingId("R123")
+        val exception = PaperAlreadyExists.withIdentifier("paper title")
+        every { paperService.update(any()) } throws exception
+
+        put("/api/papers/{id}", id)
+            .content(updatePaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers/$id"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.update(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper update request, when service reports ambiguous author, then status is 400 BAD REQUEST`() {
+        val id = ThingId("R123")
+        val exception = AmbiguousAuthor(
+            Author(
+                id = ThingId("R123"),
+                name = "author",
+                identifiers = mapOf("orcid" to "0000-1111-2222-3333")
+            )
+        )
+        every { paperService.update(any()) } throws exception
+
+        put("/api/papers/{id}", id)
+            .content(updatePaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers/$id"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.update(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper update request, when service reports author not found, then status is 404 NOT FOUND`() {
+        val id = ThingId("R123")
+        val exception = AuthorNotFound(ThingId("R123"))
+        every { paperService.update(any()) } throws exception
+
+        put("/api/papers/{id}", id)
+            .content(updatePaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers/$id"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.update(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper update request, when service reports only one research field allowed, then status is 400 BAD REQUEST`() {
+        val id = ThingId("R123")
+        val exception = OnlyOneResearchFieldAllowed()
+        every { paperService.update(any()) } throws exception
+
+        put("/api/papers/{id}", id)
+            .content(updatePaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers/$id"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.update(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper update request, when service reports only one organization allowed, then status is 400 BAD REQUEST`() {
+        val id = ThingId("R123")
+        val exception = OnlyOneOrganizationAllowed()
+        every { paperService.update(any()) } throws exception
+
+        put("/api/papers/{id}", id)
+            .content(updatePaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers/$id"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.update(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper update request, when service reports only one observatory allowed, then status is 400 BAD REQUEST`() {
+        val id = ThingId("R123")
+        val exception = OnlyOneObservatoryAllowed()
+        every { paperService.update(any()) } throws exception
+
+        put("/api/papers/{id}", id)
+            .content(updatePaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers/$id"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.update(any()) }
+    }
+
+    @Test
+    @WithMockUser("user", username = "f2d66c90-3cbf-4d4f-951f-0fc470f682c4")
+    fun `Given a paper update request, when service reports paper not found, then status is 404 NOT FOUND`() {
+        val id = ThingId("R123")
+        val exception = PaperNotFound(id)
+        every { paperService.update(any()) } throws exception
+
+        put("/api/papers/{id}", id)
+            .content(updatePaperRequest())
+            .accept(PAPER_JSON_V2)
+            .contentType(PAPER_JSON_V2)
+            .perform()
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+            .andExpect(jsonPath("$.path").value("/api/papers/$id"))
+            .andExpect(jsonPath("$.message").value(exception.message))
+
+        verify(exactly = 1) { paperService.update(any()) }
     }
 
     @Test
@@ -1151,8 +1370,59 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             extractionMethod = ExtractionMethod.MANUAL
         )
 
+    private fun updatePaperRequest() =
+        UpdatePaperRequest(
+            title = "example paper",
+            researchFields = listOf(ThingId("R14")),
+            identifiers = mapOf("doi" to "10.48550/arXiv.2304.05327"),
+            publicationInfo = PublicationInfoDTO(
+                publishedMonth = 5,
+                publishedYear = 2015,
+                publishedIn = "conference",
+                url = URI.create("https://www.example.org")
+            ),
+            authors = listOf(
+                AuthorDTO(
+                    id = ThingId("R123"),
+                    name = "Author with id",
+                    identifiers = null,
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author with orcid",
+                    identifiers = mapOf("orcid" to "0000-1111-2222-3333"),
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = ThingId("R456"),
+                    name = "Author with id and orcid",
+                    identifiers = mapOf("orcid" to "1111-2222-3333-4444"),
+                    homepage = null
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author with homepage",
+                    identifiers = null,
+                    homepage = URI.create("http://example.org/author")
+                ),
+                AuthorDTO(
+                    id = null,
+                    name = "Author that just has a name",
+                    identifiers = null,
+                    homepage = null
+                )
+            ),
+            observatories = listOf(
+                ObservatoryId("1afefdd0-5c09-4c9c-b718-2b35316b56f3")
+            ),
+            organizations = listOf(
+                OrganizationId("edc18168-c4ee-4cb8-a98a-136f748e912e")
+            )
+        )
+
     private fun createContributionRequest() =
-        PaperController.CreateContributionRequest(
+        CreateContributionRequest(
             resources = mapOf(
                 "#temp1" to ResourceDefinitionDTO(
                     label = "MOTO",

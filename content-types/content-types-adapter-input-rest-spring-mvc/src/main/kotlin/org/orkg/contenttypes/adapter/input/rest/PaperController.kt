@@ -1,10 +1,7 @@
 package org.orkg.contenttypes.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.net.URI
 import javax.validation.Valid
-import javax.validation.constraints.Max
-import javax.validation.constraints.Min
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 import org.orkg.common.ContributorId
@@ -16,10 +13,10 @@ import org.orkg.common.exceptions.TooManyParameters
 import org.orkg.contenttypes.adapter.input.rest.mapping.ContributionRepresentationAdapter
 import org.orkg.contenttypes.adapter.input.rest.mapping.PaperRepresentationAdapter
 import org.orkg.contenttypes.domain.PaperNotFound
-import org.orkg.contenttypes.domain.PublicationInfo
 import org.orkg.contenttypes.input.CreateContributionUseCase
 import org.orkg.contenttypes.input.CreatePaperUseCase
 import org.orkg.contenttypes.input.PaperUseCases
+import org.orkg.contenttypes.input.UpdatePaperUseCase
 import org.orkg.graph.adapter.input.rest.BaseController
 import org.orkg.graph.domain.ExtractionMethod
 import org.orkg.graph.domain.Literals
@@ -32,6 +29,7 @@ import org.springframework.http.ResponseEntity.noContent
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -103,6 +101,22 @@ class PaperController(
     }
 
     @PreAuthorizeUser
+    @PutMapping("/{id}", consumes = [PAPER_JSON_V2])
+    fun update(
+        @PathVariable id: ThingId,
+        @RequestBody @Valid request: UpdatePaperRequest,
+        uriComponentsBuilder: UriComponentsBuilder
+    ): ResponseEntity<PaperRepresentation> {
+        val userId = ContributorId(authenticatedUserId())
+        service.update(request.toUpdateCommand(id, userId))
+        val location = uriComponentsBuilder
+            .path("api/papers/{id}")
+            .buildAndExpand(id)
+            .toUri()
+        return noContent().location(location).build()
+    }
+
+    @PreAuthorizeUser
     @PostMapping("/{id}/contributions", produces = [CONTRIBUTION_JSON_V2], consumes = [CONTRIBUTION_JSON_V2])
     fun createContribution(
         @PathVariable("id") paperId: ThingId,
@@ -154,26 +168,6 @@ class PaperController(
         @JsonProperty("extraction_method")
         val extractionMethod: ExtractionMethod = ExtractionMethod.UNKNOWN,
     ) {
-        data class PublicationInfoDTO(
-            @field:Min(1)
-            @field:Max(12)
-            @JsonProperty("published_month")
-            val publishedMonth: Int?,
-            @JsonProperty("published_year")
-            val publishedYear: Long?,
-            @field:NotBlank
-            @JsonProperty("published_in")
-            val publishedIn: String?,
-            val url: URI?
-        ) {
-            fun toCreateCommand(): PublicationInfo =
-                PublicationInfo(
-                    publishedMonth = publishedMonth,
-                    publishedYear = publishedYear,
-                    publishedIn = publishedIn,
-                    url = url
-                )
-        }
 
         data class PaperContentsDTO(
             @field:Valid
@@ -282,12 +276,43 @@ class PaperController(
                 title = title,
                 researchFields = researchFields,
                 identifiers = identifiers.orEmpty(),
-                publicationInfo = publicationInfo?.toCreateCommand(),
-                authors = authors.map { it.toCreateCommand() },
+                publicationInfo = publicationInfo?.toPublicationInfo(),
+                authors = authors.map { it.toAuthor() },
                 observatories = observatories,
                 organizations = organizations,
                 contents = contents?.toCreateCommand(),
                 extractionMethod = extractionMethod
+            )
+    }
+
+    data class UpdatePaperRequest(
+        @field:Size(min = 1)
+        val title: String?,
+        @field:Size(min = 1, max = 1)
+        @JsonProperty("research_fields")
+        val researchFields: List<ThingId>?,
+        val identifiers: Map<String, String>?,
+        @field:Valid
+        @JsonProperty("publication_info")
+        val publicationInfo: PublicationInfoDTO?,
+        @field:Valid
+        val authors: List<AuthorDTO>?,
+        @field:Size(max = 1)
+        val observatories: List<ObservatoryId>?,
+        @field:Size(max = 1)
+        val organizations: List<OrganizationId>?
+    ) {
+        fun toUpdateCommand(paperId: ThingId, contributorId: ContributorId): UpdatePaperUseCase.UpdateCommand =
+            UpdatePaperUseCase.UpdateCommand(
+                paperId = paperId,
+                contributorId = contributorId,
+                title = title,
+                researchFields = researchFields,
+                identifiers = identifiers,
+                publicationInfo = publicationInfo?.toPublicationInfo(),
+                authors = authors?.map { it.toAuthor() },
+                observatories = observatories,
+                organizations = organizations
             )
     }
 

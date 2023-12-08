@@ -19,6 +19,7 @@ import org.orkg.createOrganization
 import org.orkg.createPredicate
 import org.orkg.createResource
 import org.orkg.createUser
+import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.ClassUseCases
 import org.orkg.graph.input.LiteralUseCases
@@ -34,6 +35,7 @@ import org.springframework.security.test.context.support.WithUserDetails
 import org.springframework.test.web.servlet.RequestBuilder
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.transaction.annotation.Transactional
 
@@ -104,7 +106,12 @@ class PaperControllerIntegrationTest : RestDocumentationBaseTest() {
         resourceService.createResource(
             id = "R12",
             label = "Computer Science",
-            classes = setOf("ResearchField")
+            classes = setOf(Classes.researchField.value)
+        )
+        resourceService.createResource(
+            id = "R194",
+            label = "Engineering",
+            classes = setOf(Classes.researchField.value)
         )
 
         // Example specific entities
@@ -154,9 +161,22 @@ class PaperControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Test
     @WithUserDetails(userDetailsServiceBeanName = "mockUserDetailsService")
-    fun create() {
-        post("/api/papers")
+    fun createAndUpdate() {
+        val id = post("/api/papers")
             .content(createPaperJson)
+            .accept("application/vnd.orkg.paper.v2+json")
+            .contentType("application/vnd.orkg.paper.v2+json")
+            .characterEncoding("utf-8")
+            .perform()
+            .andExpect(status().isNoContent)
+            .andReturn()
+            .response
+            .getHeaderValue("Location")!!
+            .toString()
+            .substringAfterLast("/")
+
+        put("/api/papers/{id}", id)
+            .content(updatePaperJson)
             .accept("application/vnd.orkg.paper.v2+json")
             .contentType("application/vnd.orkg.paper.v2+json")
             .characterEncoding("utf-8")
@@ -297,6 +317,54 @@ private const val createPaperJson = """{
     ]
   },
   "extraction_method": "MANUAL"
+}"""
+
+private const val updatePaperJson = """{
+  "title": "updated paper title",
+  "research_fields": [
+    "R194"
+  ],
+  "identifiers": {
+    "doi": "10.48550/arXiv.2304.05328"
+  },
+  "publication_info": {
+    "published_month": 6,
+    "published_year": 2016,
+    "published_in": "other conference",
+    "url": "https://www.conference.org"
+  },
+  "authors": [
+    {
+      "name": "Author with id",
+      "id": "R123"
+    },
+    {
+      "name": "Author with orcid",
+      "identifiers": {
+        "orcid": "0000-1111-2222-3333"
+      }
+    },
+    {
+      "name": "Author with id and orcid",
+      "id": "R456",
+      "identifiers": {
+        "orcid": "4444-3333-2222-1111"
+      }
+    },
+    {
+      "name": "Author with homepage",
+      "homepage": "http://example.org/author"
+    },
+    {
+      "name": "Another author that just has a name"
+    }
+  ],
+  "observatories": [
+    "1afefdd0-5c09-4c9c-b718-2b35316b56f3"
+  ],
+  "organizations": [
+    "edc18168-c4ee-4cb8-a98a-136f748e912e"
+  ]
 }"""
 
 private const val createContributionJson = """{

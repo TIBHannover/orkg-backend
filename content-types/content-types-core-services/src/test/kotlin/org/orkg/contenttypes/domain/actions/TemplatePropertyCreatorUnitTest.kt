@@ -7,13 +7,12 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
-import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
-import org.orkg.contenttypes.testing.fixtures.dummyCreateLiteralTemplatePropertyCommand
-import org.orkg.contenttypes.testing.fixtures.dummyCreateResourceTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateResourceTemplatePropertyCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates

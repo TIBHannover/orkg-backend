@@ -14,14 +14,12 @@ import io.mockk.verify
 import java.net.URI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.PublicationInfo
 import org.orkg.contenttypes.domain.actions.CreatePaperState
-import org.orkg.contenttypes.domain.actions.paper.PaperPublicationInfoCreator
-import org.orkg.contenttypes.testing.fixtures.dummyCreatePaperCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.Literals
@@ -36,7 +34,6 @@ import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.testing.pageOf
 import org.springframework.data.domain.Page
 
-@Nested
 class PaperPublicationInfoCreatorUnitTest {
     private val resourceRepository: ResourceRepository = mockk()
     private val resourceService: ResourceUseCases = mockk()

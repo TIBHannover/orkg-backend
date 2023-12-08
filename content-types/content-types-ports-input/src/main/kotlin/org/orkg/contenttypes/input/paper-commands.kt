@@ -82,6 +82,22 @@ interface CreateContributionUseCase {
     ) : CreatePaperUseCase.CreateCommand.PaperContents(resources, literals, predicates, lists, listOf(contribution))
 }
 
+interface UpdatePaperUseCase {
+    fun update(command: UpdateCommand)
+
+    data class UpdateCommand(
+        val paperId: ThingId,
+        val contributorId: ContributorId,
+        val title: String?,
+        val researchFields: List<ThingId>?,
+        val identifiers: Map<String, String>?,
+        val publicationInfo: PublicationInfo?,
+        val authors: List<Author>?,
+        val observatories: List<ObservatoryId>?,
+        val organizations: List<OrganizationId>?
+    )
+}
+
 interface PublishPaperUseCase {
     fun publish(id: ThingId, contributorId: ContributorId, subject: String, description: String)
 }

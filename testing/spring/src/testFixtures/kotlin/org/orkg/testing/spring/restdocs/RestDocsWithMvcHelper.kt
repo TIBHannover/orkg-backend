@@ -43,14 +43,12 @@ fun documentedPostRequestTo(
 
 fun documentedPutRequestTo(
     urlTemplate: String,
-    vararg uriValues: Any,
-    body: String
+    vararg uriValues: Any
 ): MockHttpServletRequestBuilder =
     RestDocumentationRequestBuilders.put(urlTemplate, *uriValues)
         .accept(MediaType.APPLICATION_JSON_VALUE)
         .contentType(MediaType.APPLICATION_JSON_VALUE)
         .characterEncoding(Charsets.UTF_8.name())
-        .content(body)
 
 fun documentedPatchRequestTo(
     urlTemplate: String,

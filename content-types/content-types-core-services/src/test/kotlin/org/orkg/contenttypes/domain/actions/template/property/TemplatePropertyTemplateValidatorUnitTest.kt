@@ -18,8 +18,8 @@ import org.orkg.common.PageRequests
 import org.orkg.contenttypes.domain.TemplateClosed
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyCommand
 import org.orkg.contenttypes.domain.actions.TemplatePropertyState
-import org.orkg.contenttypes.testing.fixtures.dummyCreateLiteralTemplatePropertyCommand
-import org.orkg.contenttypes.testing.fixtures.dummyCreateResourceTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateLiteralTemplatePropertyCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateResourceTemplatePropertyCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates

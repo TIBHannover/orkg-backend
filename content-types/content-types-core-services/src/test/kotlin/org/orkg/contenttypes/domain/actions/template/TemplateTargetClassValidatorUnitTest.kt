@@ -15,7 +15,7 @@ import org.junit.jupiter.api.assertThrows
 import org.orkg.common.PageRequests
 import org.orkg.contenttypes.domain.TemplateAlreadyExistsForClass
 import org.orkg.contenttypes.domain.actions.TemplateState
-import org.orkg.contenttypes.testing.fixtures.dummyCreateTemplateCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTemplateCommand
 import org.orkg.graph.domain.ClassNotFound
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.output.ClassRepository

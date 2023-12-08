@@ -20,7 +20,7 @@ import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.output.DoiService
-import org.orkg.contenttypes.testing.fixtures.dummyPublishCommand
+import org.orkg.contenttypes.domain.testing.fixtures.dummyPublishCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates

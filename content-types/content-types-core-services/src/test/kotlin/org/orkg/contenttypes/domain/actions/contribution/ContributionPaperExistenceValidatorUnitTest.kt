@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.orkg.contenttypes.domain.PaperNotFound
 import org.orkg.contenttypes.domain.actions.ContributionState
-import org.orkg.contenttypes.testing.fixtures.dummyCreateContributionCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateContributionCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.output.ResourceRepository

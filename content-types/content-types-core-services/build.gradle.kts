@@ -43,6 +43,7 @@ testing {
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":testing:spring")))
                 implementation(testFixtures(project(":community:community-core-model")))
+                implementation(testFixtures(project(":content-types:content-types-core-model")))
                 implementation(testFixtures(project(":content-types:content-types-ports-input")))
                 implementation(project(":media-storage:media-storage-core-model"))
                 implementation("org.assertj:assertj-core")

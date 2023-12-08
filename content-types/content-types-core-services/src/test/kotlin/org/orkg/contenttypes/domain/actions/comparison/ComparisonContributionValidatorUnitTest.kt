@@ -16,7 +16,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.ContributionNotFound
 import org.orkg.contenttypes.domain.RequiresAtLeastTwoContributions
 import org.orkg.contenttypes.domain.actions.ComparisonState
-import org.orkg.contenttypes.testing.fixtures.dummyCreateComparisonCommand
+import org.orkg.contenttypes.input.testing.fixtures.dummyCreateComparisonCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.output.ResourceRepository
 import org.orkg.graph.testing.fixtures.createResource

@@ -8,10 +8,10 @@ plugins {
 
 dependencies {
     api(platform(project(":platform")))
+
+    api(project(":discussions:discussions-core-model"))
+
     implementation(project(":common"))
-    implementation(project(":graph:graph-core-model"))
-    implementation(project(":graph:graph-core-services"))
-    implementation(project(":discussions:discussions-core-model"))
 
     implementation("org.springframework.data:spring-data-commons")
     implementation(libs.jackson.core)

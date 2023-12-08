@@ -8,6 +8,7 @@ plugins {
 
 dependencies {
     api(platform(project(":platform")))
+
     implementation(project(":common"))
 
     implementation("org.springframework:spring-context")
@@ -19,7 +20,6 @@ dependencies {
 
     testFixturesImplementation(project(":common"))
     testFixturesImplementation(project(":graph:graph-ports-input"))
-    testFixturesImplementation(project(":identity-management:idm-core-model"))
     testFixturesImplementation(project(":community:community-ports-input"))
     testFixturesImplementation(libs.javax.activation)
     testFixturesImplementation("org.springframework:spring-web")

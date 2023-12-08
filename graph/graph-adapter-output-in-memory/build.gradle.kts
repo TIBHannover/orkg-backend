@@ -20,9 +20,9 @@ testing {
 }
 
 dependencies {
+    implementation(project(":graph:graph-ports-output"))
+
     implementation(project(":common"))
-    implementation(project(":graph:graph-core-model"))
-    implementation(project(":graph:graph-core-services"))
     implementation("org.springframework.data:spring-data-commons")
     implementation(libs.forkhandles.values4k)
 }

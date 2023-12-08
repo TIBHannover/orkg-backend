@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import org.orkg.auth.input.AuthUseCase
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -67,10 +66,6 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
 
     @MockkBean
     private lateinit var templateService: TemplateUseCases
-
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
-    @MockkBean
-    private lateinit var userRepository: AuthUseCase
 
     @Test
     @DisplayName("Given a template, when it is fetched by id and service succeeds, then status is 200 OK and template is returned")

@@ -8,15 +8,14 @@ plugins {
 
 dependencies {
     api(platform(project(":platform")))
+
+    api(project(":discussions:discussions-ports-input"))
+    api(project(":discussions:discussions-ports-output"))
+
     implementation(project(":common"))
     implementation(project(":graph:graph-core-model"))
     implementation(project(":graph:graph-ports-output"))
-    implementation(project(":discussions:discussions-core-model"))
-    implementation(project(":discussions:discussions-ports-input"))
-    implementation(project(":discussions:discussions-ports-output"))
-    implementation(project(":identity-management:idm-core-model"))
-    implementation(project(":identity-management:idm-ports-input"))
-    implementation(project(":identity-management:idm-ports-output"))
+    implementation(project(":community:community-ports-output"))
 
     implementation("org.springframework.data:spring-data-commons")
     implementation("org.springframework:spring-web")
@@ -28,7 +27,7 @@ testing {
             useJUnitJupiter()
             dependencies {
                 implementation(testFixtures(project(":graph:graph-core-model")))
-                implementation(testFixtures(project(":identity-management:idm-core-model")))
+                implementation(testFixtures(project(":community:community-core-model")))
                 implementation(libs.spring.mockk)
                 implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
             }

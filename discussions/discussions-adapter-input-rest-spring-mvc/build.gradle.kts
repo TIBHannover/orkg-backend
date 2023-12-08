@@ -17,9 +17,6 @@ testing {
             dependencies {
                 implementation(testFixtures(project(":testing:spring")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
-                implementation(project(":identity-management:idm-ports-input"))
-                implementation(project(":identity-management:idm-ports-output"))
-                implementation(testFixtures(project(":identity-management:idm-core-model")))
                 implementation(testFixtures(project(":community:community-core-model")))
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
@@ -38,15 +35,12 @@ testing {
 dependencies {
     api(platform(project(":platform")))
 
-    testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
+    implementation(project(":discussions:discussions-ports-input"))
 
     implementation(project(":common"))
     implementation(project(":common:serialization"))
     implementation(project(":graph:graph-core-model"))
     implementation(project(":graph:graph-core-services"))
-    implementation(project(":discussions:discussions-core-model"))
-    implementation(project(":discussions:discussions-core-services"))
-    implementation(project(":discussions:discussions-ports-input"))
     implementation(project(":community:community-ports-output"))
     implementation(project(":community:community-core-model"))
 
@@ -59,4 +53,6 @@ dependencies {
 
     implementation(libs.forkhandles.result4k)
     implementation(libs.forkhandles.values4k)
+
+    testApi(enforcedPlatform(libs.junit5.bom)) // TODO: can be removed after upgrade to Spring Boot 2.7
 }

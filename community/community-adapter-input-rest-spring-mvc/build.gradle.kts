@@ -5,7 +5,6 @@ plugins {
     id("org.orkg.kotlin-conventions")
     id("org.orkg.neo4j-conventions")
     id("org.orkg.jackson-conventions")
-    //id("org.orkg.spring-restdocs-producer")
     alias(libs.plugins.spring.boot) apply false
     kotlin("plugin.spring")
 }
@@ -40,13 +39,13 @@ dependencies {
 
     implementation(project(":community:community-ports-input"))
     implementation(project(":community:community-ports-output")) // uses repository directly
+    implementation(project(":community:community-adapter-output-spring-data-jpa")) // for User.toContributor, TODO: break dependency
 
     implementation(project(":common"))
     implementation(project(":common:serialization"))
     implementation(project(":graph:graph-core-model"))
     implementation(project(":graph:graph-core-services"))
     implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
-    implementation(project(":identity-management:idm-core-model")) // for exception, TODO: break dependency
     implementation(project(":identity-management:idm-ports-input")) // in legacy controller, TODO: break dependency
     implementation(project(":media-storage:media-storage-core-model"))
     implementation(project(":media-storage:media-storage-ports-input"))

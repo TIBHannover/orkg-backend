@@ -6,7 +6,6 @@ import io.mockk.verify
 import java.util.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.auth.output.UserRepository
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
@@ -39,10 +38,6 @@ class StatsControllerUnitTest : RestDocsTest("stats") {
 
     @MockkBean
     private lateinit var statisticsService: RetrieveStatisticsUseCase
-
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
-    @MockkBean
-    private lateinit var userRepository: UserRepository
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean

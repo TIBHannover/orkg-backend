@@ -1,15 +1,18 @@
 package org.orkg.auth.adapter.input.rest
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import javax.validation.Valid
+import javax.validation.constraints.Email
+import javax.validation.constraints.NotBlank
 import org.orkg.auth.domain.UserNotFound
 import org.orkg.auth.input.AuthUseCase
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.annotations.PreAuthorizeCurator
+import org.orkg.community.adapter.output.jpa.internal.toContributor
 import org.orkg.community.domain.UserIsAlreadyMemberOfObservatory
 import org.orkg.community.domain.UserIsAlreadyMemberOfOrganization
-import org.orkg.community.domain.toContributor
 import org.orkg.community.input.ObservatoryAuthUseCases
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -19,9 +22,6 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import javax.validation.Valid
-import javax.validation.constraints.Email
-import javax.validation.constraints.NotBlank
 
 /**
  * This controller provides some deprecated API endpoints to manage observatories for backwards-compatibility.
@@ -44,11 +44,9 @@ class LegacyUserController(
             throw UserIsAlreadyMemberOfOrganization(userObservatory.organizationId)
         }
         return ResponseEntity.ok(
-            observatoryAuthUseCases.addUserObservatory(
-                userObservatory.observatoryId.value,
-                userObservatory.organizationId.value,
-                user
-            ).toContributor()
+            observatoryAuthUseCases
+                .addUserObservatory(userObservatory.observatoryId.value, userObservatory.organizationId.value, user)
+                .toContributor()
         )
     }
 

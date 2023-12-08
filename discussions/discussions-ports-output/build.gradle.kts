@@ -9,8 +9,10 @@ plugins {
 
 dependencies {
     api(platform(project(":platform")))
+
+    api(project(":discussions:discussions-core-model"))
+
     implementation(project(":common"))
-    implementation(project(":discussions:discussions-core-model"))
 
     implementation("org.springframework.data:spring-data-commons:2.7.16") // TODO: drop version after upgrade
 
@@ -19,10 +21,7 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin")
     }
     testFixturesImplementation(project(":common"))
-    testFixturesImplementation(testFixtures(project(":identity-management:idm-core-model")))
     testFixturesImplementation(project(":graph:graph-core-model"))
-    testFixturesImplementation(project(":identity-management:idm-ports-output"))
-    testFixturesImplementation(project(":identity-management:idm-core-model"))
     testFixturesImplementation(project(":discussions:discussions-core-model"))
     testFixturesImplementation("org.springframework.data:spring-data-commons:2.7.16")  // TODO: drop version after upgrade
 }

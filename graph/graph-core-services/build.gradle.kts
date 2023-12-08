@@ -11,20 +11,16 @@ plugins {
 
 dependencies {
     api(platform(project(":platform")))
-    implementation(project(":common"))
-    implementation(project(":graph:graph-core-model"))
+
     api(project(":graph:graph-ports-input"))
     api(project(":graph:graph-ports-output"))
+
+    implementation(project(":common"))
     implementation(project(":content-types:content-types-core-model")) // TODO: move to correct module
     implementation(project(":community:community-core-model"))
     implementation(project(":community:community-ports-input"))
     implementation(project(":community:community-ports-output"))
     implementation(project(":community:community-adapter-output-spring-data-jpa")) // TODO: break dependency
-    implementation(project(":identity-management:idm-ports-input"))
-    implementation(project(":identity-management:idm-ports-output"))
-    implementation(project(":identity-management:idm-core-model"))
-    implementation(project(":identity-management:idm-core-services"))
-    implementation(project(":identity-management:idm-adapter-output-spring-data-jpa")) // for JpaUserRepository in observatories
 
     implementation("org.springframework.data:spring-data-commons")
     implementation("org.springframework:spring-core") // Spring MimeType
@@ -57,7 +53,6 @@ testing {
             useJUnitJupiter()
             dependencies {
                 implementation(testFixtures(project(":graph:graph-core-model")))
-                implementation(testFixtures(project(":identity-management:idm-core-model")))
                 implementation(project(":media-storage:media-storage-core-model"))
                 implementation(testFixtures(project(":media-storage:media-storage-core-model")))
                 implementation(project(":media-storage:media-storage-ports-input"))

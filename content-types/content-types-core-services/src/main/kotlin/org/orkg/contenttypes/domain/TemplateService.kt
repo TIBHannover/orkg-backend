@@ -3,8 +3,8 @@ package org.orkg.contenttypes.domain
 import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
-import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import org.orkg.community.output.ObservatoryRepository
+import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.CreateTemplateCommand
 import org.orkg.contenttypes.domain.actions.CreateTemplatePropertyCommand
 import org.orkg.contenttypes.domain.actions.ObservatoryValidator
@@ -54,7 +54,7 @@ class TemplateService(
     private val literalService: LiteralUseCases,
     private val statementService: StatementUseCases,
     private val observatoryRepository: ObservatoryRepository,
-    private val organizationRepository: PostgresOrganizationRepository,
+    private val organizationRepository: OrganizationRepository,
     private val templateRepository: TemplateRepository
 ) : TemplateUseCases {
     override fun findById(id: ThingId): Optional<Template> =

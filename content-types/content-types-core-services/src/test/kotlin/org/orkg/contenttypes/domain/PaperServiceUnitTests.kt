@@ -20,8 +20,8 @@ import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
-import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import org.orkg.community.output.ObservatoryRepository
+import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.graph.domain.Classes
@@ -46,7 +46,7 @@ class PaperServiceUnitTests {
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val observatoryRepository: ObservatoryRepository = mockk()
-    private val organizationRepository: PostgresOrganizationRepository = mockk()
+    private val organizationRepository: OrganizationRepository = mockk()
     private val thingRepository: ThingRepository = mockk()
     private val resourceService: ResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()

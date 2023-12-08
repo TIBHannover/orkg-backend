@@ -8,12 +8,11 @@ plugins {
 dependencies {
     api(platform(project(":platform")))
 
-    compileOnly(project(":common"))
-    compileOnly(project(":graph:graph-core-model"))
-    implementation(project(":identity-management:idm-core-model"))
+    api(project(":graph:graph-core-model"))
+
+    implementation(project(":common"))
     implementation(project(":community:community-core-model"))
     implementation(project(":media-storage:media-storage-core-model"))
-    // for PageRequests object
 
     implementation("org.springframework.data:spring-data-commons")
     implementation(libs.jackson.core)

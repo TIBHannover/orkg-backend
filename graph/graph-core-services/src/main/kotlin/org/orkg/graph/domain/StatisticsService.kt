@@ -3,7 +3,6 @@ package org.orkg.graph.domain
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.collections.List
-import org.orkg.auth.output.UserRepository
 import org.orkg.common.ObservatoryId
 import org.orkg.common.ThingId
 import org.orkg.community.adapter.output.jpa.internal.PostgresObservatoryRepository
@@ -24,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class StatisticsService(
     private val statsRepository: StatsRepository,
-    private val userRepository: UserRepository,
     private val contributorRepository: ContributorRepository,
     private val observatoryRepository: PostgresObservatoryRepository,
     private val organizationRepository: PostgresOrganizationRepository,
@@ -48,7 +46,7 @@ class StatisticsService(
         val fieldsCount = extractValue(labels, "ResearchField")
         val relationsTypes = metadata.first()["relTypesCount"] as Map<*, *>
         val statementsCount = extractValue(relationsTypes, "RELATED")
-        val userCount = userRepository.count()
+        val userCount = contributorRepository.countActiveUsers()
         val observatoriesCount = observatoryRepository.count()
         val organizationsCount = organizationRepository.count()
         val orphanedNodesCount = statsRepository.getOrphanedNodesCount()

@@ -8,7 +8,8 @@ plugins {
 
 dependencies {
     api(platform(project(":platform")))
-    implementation(project(":media-storage:media-storage-core-model"))
+
+    api(project(":media-storage:media-storage-core-model"))
 
     testFixturesImplementation(project(":common"))
     testFixturesImplementation(testFixtures(project(":media-storage:media-storage-core-model")))

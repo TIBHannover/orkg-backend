@@ -17,8 +17,6 @@ import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-typealias StatementCounts = Map<ThingId, Long>
-
 @Service
 @Transactional
 class StatementService(

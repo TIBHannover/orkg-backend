@@ -10,7 +10,6 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.orkg.auth.output.UserRepository
 import org.orkg.common.ThingId
 import org.orkg.community.adapter.output.jpa.internal.PostgresObservatoryRepository
 import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
@@ -22,7 +21,6 @@ import org.orkg.graph.testing.fixtures.createResource
 class StatisticsServiceUnitTests {
 
     private val statsRepository: StatsRepository = mockk()
-    private val userRepository: UserRepository = mockk()
     private val contributorRepository: ContributorRepository = mockk()
     private val observatoryRepository: PostgresObservatoryRepository = mockk()
     private val organizationRepository: PostgresOrganizationRepository = mockk()
@@ -30,7 +28,6 @@ class StatisticsServiceUnitTests {
 
     private val service = StatisticsService(
         statsRepository,
-        userRepository,
         contributorRepository,
         observatoryRepository,
         organizationRepository,
@@ -46,7 +43,6 @@ class StatisticsServiceUnitTests {
     fun verifyMocks() {
         confirmVerified(
             statsRepository,
-            userRepository,
             contributorRepository,
             observatoryRepository,
             organizationRepository,

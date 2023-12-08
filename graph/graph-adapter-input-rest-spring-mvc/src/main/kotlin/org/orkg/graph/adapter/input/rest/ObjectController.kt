@@ -4,8 +4,8 @@ import org.orkg.common.ThingId
 import org.orkg.common.annotations.PreAuthorizeUser
 import org.orkg.featureflags.output.FeatureFlagService
 import org.orkg.graph.adapter.input.rest.mapping.ResourceRepresentationAdapter
-import org.orkg.graph.domain.ObjectService
 import org.orkg.graph.domain.ResourceNotFound
+import org.orkg.graph.input.CreateObjectUseCase
 import org.orkg.graph.input.CreateObjectUseCase.CreateObjectRequest
 import org.orkg.graph.input.ResourceRepresentation
 import org.orkg.graph.input.ResourceUseCases
@@ -25,7 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/api/objects/", produces = [MediaType.APPLICATION_JSON_VALUE])
 class ObjectController(
     private val resourceService: ResourceUseCases,
-    private val service: ObjectService,
+    private val objectService: CreateObjectUseCase,
     override val statementService: StatementUseCases,
     override val formattedLabelRepository: FormattedLabelRepository,
     override val flags: FeatureFlagService,
@@ -37,7 +37,7 @@ class ObjectController(
         @RequestBody obj: CreateObjectRequest,
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<ResourceRepresentation> {
-        val id = service.createObject(obj, null, authenticatedUserId())
+        val id = objectService.createObject(obj, null, authenticatedUserId())
         val location = uriComponentsBuilder
             .path("api/objects/")
             .buildAndExpand(id)
@@ -55,7 +55,7 @@ class ObjectController(
         resourceService
             .findById(id)
             .orElseThrow { ResourceNotFound.withId(id) }
-        service.createObject(obj, id, authenticatedUserId())
+        objectService.createObject(obj, id, authenticatedUserId())
         val location = uriComponentsBuilder
             .path("api/objects/")
             .buildAndExpand(id)

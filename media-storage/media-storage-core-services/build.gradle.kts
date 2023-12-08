@@ -7,11 +7,11 @@ plugins {
 
 dependencies {
     api(platform(project(":platform")))
-    implementation(project(":common"))
-    implementation(project(":identity-management:idm-core-model"))
+
     implementation(project(":media-storage:media-storage-ports-input"))
     implementation(project(":media-storage:media-storage-ports-output"))
-    implementation(project(":media-storage:media-storage-core-model"))
+
+    implementation(project(":common"))
 
     implementation("org.springframework:spring-context")
     implementation(libs.javax.activation)

@@ -1,4 +1,4 @@
-package org.orkg.auth.domain
+package org.orkg.community.domain
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName

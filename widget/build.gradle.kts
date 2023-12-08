@@ -4,6 +4,7 @@ plugins {
     id("org.orkg.kotlin-conventions")
     id("org.orkg.spring-restdocs-producer")
     id("org.orkg.jackson-conventions")
+    alias(libs.plugins.spotless)
 }
 
 dependencies {
@@ -34,7 +35,6 @@ testing {
                 implementation(libs.kotest.framework.datatest)
 
                 implementation(testFixtures(project(":testing:spring")))
-                implementation(project(":graph:graph-adapter-input-rest-spring-mvc")) // because of ExceptionHandler
                 implementation("com.fasterxml.jackson.module:jackson-module-kotlin") // to (de)serialize data classes
                 implementation("org.springframework.boot:spring-boot-starter-web")
                 implementation("org.springframework.boot:spring-boot-starter-test") {

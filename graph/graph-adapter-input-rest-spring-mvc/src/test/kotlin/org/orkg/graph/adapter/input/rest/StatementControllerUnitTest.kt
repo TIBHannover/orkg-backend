@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.orkg.auth.input.AuthUseCase
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
@@ -53,10 +52,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @UsesMocking
 internal class StatementControllerUnitTest : RestDocsTest("statements") {
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
-    @MockkBean
-    private lateinit var userRepository: AuthUseCase
-
     @MockkBean
     private lateinit var statementService: StatementUseCases
 
@@ -70,7 +65,7 @@ internal class StatementControllerUnitTest : RestDocsTest("statements") {
 
     @AfterEach
     fun verifyMockedCalls() {
-        confirmVerified(userRepository, statementService)
+        confirmVerified(statementService)
         clearAllMocks()
     }
 

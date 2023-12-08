@@ -298,13 +298,10 @@ class ObjectService(
      * Constants companion object
      */
     companion object Constants {
-        // IDs of predicates
-        const val ID_DOI_PREDICATE = "P26"
         private const val ID_AUTHORS_PREDICATE = "hasAuthors"
         private const val ID_PUBDATE_MONTH_PREDICATE = "P28"
         private const val ID_PUBDATE_YEAR_PREDICATE = "P29"
         private const val ID_RESEARCH_FIELD_PREDICATE = "P30"
-        const val ID_CONTRIBUTION_PREDICATE = "P31"
         private const val ID_URL_PREDICATE = "url"
         private const val ID_ORCID_PREDICATE = "HAS_ORCID"
         private const val ID_VENUE_PREDICATE = "HAS_VENUE"
@@ -322,8 +319,6 @@ class ObjectService(
             "^\\s*(?:(?:https?://)?orcid.org/)?([0-9]{4})-?([0-9]{4})-?([0-9]{4})-?(([0-9]{4})|([0-9]{3}X))\\s*\$"
 
         // Properties
-        val ContributionPredicate = ThingId(ID_CONTRIBUTION_PREDICATE)
-        val DoiPredicate = ThingId(ID_DOI_PREDICATE)
         val hasAuthorsPredicate = ThingId(ID_AUTHORS_PREDICATE)
         val PublicationMonthPredicate = ThingId(ID_PUBDATE_MONTH_PREDICATE)
         val PublicationYearPredicate = ThingId(ID_PUBDATE_YEAR_PREDICATE)

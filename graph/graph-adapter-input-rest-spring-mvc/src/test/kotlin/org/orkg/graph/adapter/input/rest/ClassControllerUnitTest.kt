@@ -13,7 +13,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.orkg.auth.input.AuthUseCase
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
@@ -69,10 +68,6 @@ internal class ClassControllerUnitTest {
     @Suppress("unused") // required by ClassController but not used in the test (yet)
     @MockkBean
     private lateinit var resourceService: ResourceUseCases
-
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
-    @MockkBean
-    private lateinit var userRepository: AuthUseCase
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean

@@ -40,7 +40,6 @@ reporting {
             testType.set(TestSuiteType.UNIT_TEST)
         }
     }
-
 }
 
 val testCodeCoverageReport by tasks.getting(JacocoReport::class) {

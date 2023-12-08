@@ -15,7 +15,6 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.auth.input.AuthUseCase
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -99,10 +98,6 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
     @MockkBean
     private lateinit var contributionService: ContributionUseCases
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
-    @MockkBean
-    private lateinit var userRepository: AuthUseCase
-
     @BeforeEach
     fun resetState() {
         clearAllMocks()
@@ -110,7 +105,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
 
     @AfterEach
     fun verifyMocks() {
-        confirmVerified(paperService, contributionService, userRepository)
+        confirmVerified(paperService, contributionService)
     }
 
     @Test

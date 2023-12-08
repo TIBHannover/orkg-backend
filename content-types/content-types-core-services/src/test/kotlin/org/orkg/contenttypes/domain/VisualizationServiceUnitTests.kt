@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import org.orkg.community.output.ObservatoryRepository
+import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
@@ -33,7 +33,7 @@ class VisualizationServiceUnitTests {
     private val resourceRepository: ResourceRepository = mockk()
     private val statementRepository: StatementRepository = mockk()
     private val observatoryRepository: ObservatoryRepository = mockk()
-    private val organizationRepository: PostgresOrganizationRepository = mockk()
+    private val organizationRepository: OrganizationRepository = mockk()
     private val resourceService: ResourceUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val literalService: LiteralUseCases = mockk()

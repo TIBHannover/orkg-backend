@@ -4,7 +4,6 @@
 plugins {
     id("org.orkg.kotlin-conventions")
     id("org.orkg.neo4j-conventions")
-    //kotlin("jvm") // TODO: remove on upgrade
     alias(libs.plugins.spring.boot) apply false
     kotlin("plugin.spring")
     alias(libs.plugins.spotless)
@@ -27,8 +26,7 @@ testing {
                 implementation(project())
                 implementation(testFixtures(project(":testing:spring")))
                 implementation(testFixtures(project(":graph:graph-core-model")))
-                implementation(project(":graph:graph-core-model"))
-                implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6"))
+                implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6")) // for SDN adapters, TODO: refactor?
                 implementation(project(":graph:graph-core-services"))
                 implementation(project(":graph:graph-ports-output"))
                 implementation(project(":migrations:liquibase"))
@@ -62,14 +60,14 @@ testing {
 
 dependencies {
     api(platform(project(":platform")))
-    implementation(project(":graph:graph-core-model"))
+
+    implementation(project(":content-types:content-types-ports-output"))
+
     implementation(project(":graph:graph-core-services"))
-    implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6"))
+    implementation(project(":graph:graph-adapter-output-spring-data-neo4j-sdn6")) // for Neo4jLiteral, TODO: break dependency
 
     implementation(project(":common"))
     implementation(project(":common:neo4j-dsl"))
-    implementation(project(":content-types:content-types-core-model"))
-    implementation(project(":content-types:content-types-ports-output"))
 
     // Pagination (e.g. Page, Pageable, etc.)
     implementation("org.springframework.data:spring-data-commons")

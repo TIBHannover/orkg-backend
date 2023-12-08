@@ -15,14 +15,12 @@ val implementation: Configuration by configurations.getting {
 
 dependencies {
     api(platform(project(":platform")))
+
+    implementation(project(":discussions:discussions-ports-output"))
+
     implementation(project(":common"))
     implementation(project(":graph:graph-core-model"))
     implementation(project(":graph:graph-core-services"))
-    implementation(project(":discussions:discussions-core-model"))
-    implementation(project(":discussions:discussions-ports-output"))
-
-
-    // TODO: needed? -> yes, because not all components moved
 
     implementation("org.springframework:spring-context")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -42,15 +40,8 @@ testing {
             useJUnitJupiter()
             dependencies {
                 implementation(project())
-                //implementation(libs.kotest.extensions.spring)
-                //implementation(libs.spring.boot.starter.neo4j.migrations)
                 implementation(testFixtures(project(":testing:spring")))
-                implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":discussions:discussions-ports-output")))
-                //implementation(testFixtures(project(":graph:graph-core-services")))
-                implementation(project(":discussions:discussions-ports-output"))
-                implementation(project(":identity-management:idm-ports-output"))
-                implementation(project(":identity-management:idm-adapter-output-spring-data-jpa")) // TODO: break dependency
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")

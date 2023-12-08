@@ -9,7 +9,6 @@ import org.hamcrest.Matchers
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.auth.input.AuthUseCase
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
@@ -58,10 +57,6 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
 
     @MockkBean
     private lateinit var visualizationService: VisualizationUseCases
-
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
-    @MockkBean
-    private lateinit var userRepository: AuthUseCase
 
     @Test
     @DisplayName("Given a visualization, when it is fetched by id and service succeeds, then status is 200 OK and visualization is returned")

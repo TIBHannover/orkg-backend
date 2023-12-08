@@ -11,7 +11,6 @@ import org.hamcrest.CoreMatchers.endsWith
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.auth.input.AuthUseCase
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
@@ -59,10 +58,6 @@ internal class ListControllerUnitTest : RestDocsTest("lists") {
 
     @MockkBean
     private lateinit var listService: ListUseCases
-
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
-    @MockkBean
-    private lateinit var userRepository: AuthUseCase
 
     @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
     @MockkBean

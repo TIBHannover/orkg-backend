@@ -1,10 +1,10 @@
-package org.orkg.auth.domain
+package org.orkg.community.domain
 
 import java.math.BigInteger
 import java.security.MessageDigest
 
 /**
- * A ID that can be used to obtain data from Gravatar.
+ * An ID that can be used to obtain data from Gravatar.
  *
  * Implemented as described in the section "[Creating the Hash](https://en.gravatar.com/site/implement/hash/)" in the
  * Gravatar documentation.

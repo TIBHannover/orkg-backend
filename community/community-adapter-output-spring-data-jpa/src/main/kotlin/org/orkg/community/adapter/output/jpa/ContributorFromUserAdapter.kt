@@ -18,4 +18,6 @@ class ContributorFromUserAdapter(
 
     override fun findAllByIds(ids: List<ContributorId>): List<Contributor> =
         ids.mapNotNull { userRepository.findById(it.value).map(User::toContributor).orElse(null) }
+
+    override fun countActiveUsers(): Long = userRepository.count()
 }

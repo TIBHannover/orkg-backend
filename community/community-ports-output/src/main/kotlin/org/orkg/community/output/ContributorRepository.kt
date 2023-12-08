@@ -8,4 +8,6 @@ interface ContributorRepository {
     fun findById(id: ContributorId): Optional<Contributor>
 
     fun findAllByIds(ids: List<ContributorId>): List<Contributor>
+
+    fun countActiveUsers(): Long
 }

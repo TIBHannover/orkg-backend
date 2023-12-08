@@ -13,17 +13,15 @@ plugins {
 dependencies {
     api(platform(project(":platform")))
 
+    api(project(":content-types:content-types-ports-input"))
+    api(project(":content-types:content-types-ports-output"))
+
     implementation(project(":common"))
     implementation(project(":graph:graph-core-model"))
     implementation(project(":graph:graph-ports-input"))
     implementation(project(":graph:graph-ports-output"))
-    implementation(project(":community:community-core-model"))
-    implementation(project(":community:community-ports-input"))
+    implementation(project(":community:community-ports-input")) // used in LegacyPaperService
     implementation(project(":community:community-ports-output"))
-    implementation(project(":community:community-adapter-output-spring-data-jpa"))
-    implementation(project(":content-types:content-types-core-model"))
-    implementation(project(":content-types:content-types-ports-input"))
-    implementation(project(":content-types:content-types-ports-output"))
 
     implementation("org.springframework.data:spring-data-commons")
     implementation("org.springframework.data:spring-data-jpa")

@@ -3,7 +3,6 @@ package org.orkg.community.domain
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.OffsetDateTime
-import org.orkg.auth.domain.GravatarId
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId

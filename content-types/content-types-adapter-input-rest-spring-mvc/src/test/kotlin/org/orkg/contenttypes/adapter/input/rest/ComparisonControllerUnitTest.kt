@@ -11,7 +11,6 @@ import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.auth.input.AuthUseCase
 import org.orkg.common.ContributorId
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
@@ -77,10 +76,6 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
 
     @MockkBean
     private lateinit var comparisonService: ComparisonUseCases
-
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
-    @MockkBean
-    private lateinit var userRepository: AuthUseCase
 
     @Test
     @DisplayName("Given a comparison, when it is fetched by id and service succeeds, then status is 200 OK and comparison is returned")

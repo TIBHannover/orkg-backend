@@ -16,9 +16,6 @@ import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.junit.jupiter.api.assertThrows
-import org.orkg.auth.domain.UserService
-import org.orkg.auth.testing.fixtures.createAdminUser
-import org.orkg.auth.testing.fixtures.createUser
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.graph.input.UpdateStatementUseCase
@@ -35,7 +32,6 @@ import org.springframework.data.domain.Sort
 class StatementServiceUnitTest : DescribeSpec({
 
     val statementRepository: StatementRepository = mockk()
-    val userService: UserService = mockk()
     val literalRepository: LiteralRepository = mockk()
     val thingRepository: ThingRepository = mockk()
 
@@ -48,7 +44,7 @@ class StatementServiceUnitTest : DescribeSpec({
 
     afterEach {
         // Confirm all calls. This is a protection against false-positive test results.
-        confirmVerified(statementRepository, userService, literalRepository)
+        confirmVerified(statementRepository, literalRepository)
     }
 
     context("creating a statement") {
@@ -189,11 +185,9 @@ class StatementServiceUnitTest : DescribeSpec({
                 `object` = `object`,
                 createdBy = contributorId
             )
-            val user = createUser(contributorId.value)
             every { statementRepository.findByStatementId(statementId) } returns Optional.of(statement)
 
             it("deletes the statement") {
-                every { userService.findById(contributorId.value) } returns Optional.of(user)
                 every { statementRepository.deleteByStatementId(any()) } just Runs
 
                 withContext(Dispatchers.IO) {
@@ -202,7 +196,6 @@ class StatementServiceUnitTest : DescribeSpec({
 
                 verify(exactly = 1) {
                     statementRepository.findByStatementId(statementId)
-                    userService.findById(contributorId.value)
                     statementRepository.deleteByStatementId(statementId)
                 }
             }
@@ -226,8 +219,6 @@ class StatementServiceUnitTest : DescribeSpec({
             contributorId.value shouldNotBe statement.createdBy
 
             it("deletes the statement if the user is a curator") {
-                val user = createAdminUser(contributorId.value)
-                every { userService.findById(contributorId.value) } returns Optional.of(user)
                 every { statementRepository.deleteByStatementId(any()) } just Runs
 
                 withContext(Dispatchers.IO) {
@@ -235,7 +226,6 @@ class StatementServiceUnitTest : DescribeSpec({
                 }
 
                 verify(exactly = 1) { statementRepository.findByStatementId(statementId) }
-                verify(exactly = 1) { userService.findById(contributorId.value) }
                 verify(exactly = 1) { statementRepository.deleteByStatementId(statementId) }
             }
         }
@@ -289,12 +279,10 @@ class StatementServiceUnitTest : DescribeSpec({
         xcontext("all statements are owned by contributor") {
             val statementIds = (1..4).map { StatementId("S$it") }.toSet()
             val contributorId = randomContributorId()
-            val user = createUser(contributorId.value)
             val fakeResult = statementIds.map { OwnershipInfo(it, contributorId) }.toSet()
             every { statementRepository.determineOwnership(statementIds) } returns fakeResult
 
             it("deletes the statements") {
-                every { userService.findById(contributorId.value) } returns Optional.of(user)
                 every { statementRepository.deleteByStatementIds(any()) } just Runs
 
                 withContext(Dispatchers.IO) {
@@ -303,7 +291,6 @@ class StatementServiceUnitTest : DescribeSpec({
 
                 verify(exactly = 1) {
                     statementRepository.determineOwnership(statementIds)
-                    userService.findById(contributorId.value)
                     statementRepository.deleteByStatementIds(statementIds)
                 }
             }
@@ -319,20 +306,14 @@ class StatementServiceUnitTest : DescribeSpec({
             every { statementRepository.determineOwnership(allStatementIds) } returns fakeResult
 
             it("deletes no statements, but does not complain") {
-                val user = createUser(contributorId.value)
-                every { userService.findById(contributorId.value) } returns Optional.of(user)
-
                 withContext(Dispatchers.IO) {
 //                    service.delete(allStatementIds, contributorId)
                 }
 
                 verify(exactly = 1) { statementRepository.determineOwnership(allStatementIds) }
-                verify(exactly = 1) { userService.findById(contributorId.value) }
             }
 
             it("deletes all statements if the user is a curator") {
-                val user = createAdminUser(contributorId.value)
-                every { userService.findById(contributorId.value) } returns Optional.of(user)
                 every { statementRepository.deleteByStatementIds(allStatementIds) } just Runs
 
                 withContext(Dispatchers.IO) {
@@ -340,7 +321,6 @@ class StatementServiceUnitTest : DescribeSpec({
                 }
 
                 verify(exactly = 1) { statementRepository.determineOwnership(allStatementIds) }
-                verify(exactly = 1) { userService.findById(contributorId.value) }
                 verify(exactly = 1) { statementRepository.deleteByStatementIds(allStatementIds) }
             }
         }

@@ -9,10 +9,9 @@ plugins {
 dependencies {
     api(platform(project(":platform")))
 
-    compileOnly(project(":common"))
-    compileOnly(project(":graph:graph-core-model"))
-    compileOnly(project(":identity-management:idm-core-model"))
+    api(project(":graph:graph-core-model"))
 
+    implementation(project(":common"))
     implementation(project(":content-types:content-types-core-model"))
 
     // for PageRequests object
@@ -20,9 +19,7 @@ dependencies {
 
     testFixturesImplementation(project(":common"))
     testFixturesImplementation(testFixtures(project(":testing:spring")))
-    testFixturesImplementation(project(":graph:graph-core-model"))
     testFixturesImplementation(testFixtures(project(":graph:graph-core-model")))
-    testFixturesImplementation(project(":identity-management:idm-core-model"))
 
     testFixturesImplementation(project(":content-types:content-types-core-model"))
 

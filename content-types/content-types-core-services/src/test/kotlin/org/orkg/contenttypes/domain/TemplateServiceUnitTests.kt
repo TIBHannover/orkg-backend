@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ObservatoryId
 import org.orkg.common.OrganizationId
 import org.orkg.common.ThingId
-import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import org.orkg.community.output.ObservatoryRepository
+import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.output.TemplateRepository
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
@@ -43,7 +43,7 @@ class TemplateServiceUnitTests {
     private val literalService: LiteralUseCases = mockk()
     private val statementService: StatementUseCases = mockk()
     private val observatoryRepository: ObservatoryRepository = mockk()
-    private val organizationRepository: PostgresOrganizationRepository = mockk()
+    private val organizationRepository: OrganizationRepository = mockk()
     private val templateRepository: TemplateRepository = mockk()
 
     private val service = TemplateService(

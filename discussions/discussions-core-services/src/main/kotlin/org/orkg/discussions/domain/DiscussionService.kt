@@ -4,9 +4,10 @@ import java.time.Clock
 import java.time.OffsetDateTime
 import java.util.*
 import java.util.regex.Pattern
-import org.orkg.auth.input.FindUserUseCases
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.community.output.AdminRepository
+import org.orkg.community.output.ContributorRepository
 import org.orkg.discussions.input.CreateDiscussionCommentUseCase
 import org.orkg.discussions.input.DiscussionUseCases
 import org.orkg.discussions.output.DiscussionCommentRepository
@@ -24,7 +25,8 @@ private val urlPattern = Pattern.compile("""https?://.*|www\..+""")
 class DiscussionService(
     private val repository: DiscussionCommentRepository,
     private val thingRepository: ThingRepository,
-    private val userService: FindUserUseCases,
+    private val contributorRepository: ContributorRepository,
+    private val adminRepository: AdminRepository,
     private val clock: Clock = Clock.systemDefaultZone(),
 ) : DiscussionUseCases {
     override fun create(command: CreateDiscussionCommentUseCase.CreateCommand): DiscussionCommentId {
@@ -52,10 +54,10 @@ class DiscussionService(
             .orElseThrow { TopicNotFound(topic) }
 
     override fun delete(contributorId: ContributorId, topic: ThingId, id: DiscussionCommentId) {
-        val user = userService.findById(contributorId.value)
+        val contributor = contributorRepository.findById(contributorId)
             .orElseThrow { UserNotFound(contributorId.value) }
         repository.findById(id).ifPresent { comment ->
-            if (!comment.isOwnedBy(ContributorId(user.id)) && !user.isAdmin) {
+            if (!comment.isOwnedBy(contributor.id) && !adminRepository.hasAdminPriviledges(contributor.id)) {
                 throw Unauthorized()
             }
             repository.deleteById(id)

@@ -8,7 +8,6 @@ import java.net.URI
 import java.util.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.auth.input.AuthUseCase
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
@@ -51,10 +50,6 @@ internal class DOIControllerUnitTest : RestDocsTest("dois") {
 
     @MockkBean
     private lateinit var literalService: LiteralUseCases
-
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
-    @MockkBean
-    private lateinit var userRepository: AuthUseCase
 
     @Test
     @DisplayName("correctly registers a doi")

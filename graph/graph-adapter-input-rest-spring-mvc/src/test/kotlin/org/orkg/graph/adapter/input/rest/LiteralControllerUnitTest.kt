@@ -14,7 +14,6 @@ import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.matchesPattern
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.auth.input.AuthUseCase
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
@@ -60,10 +59,6 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
 
     @MockkBean
     private lateinit var literalService: LiteralUseCases
-
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
-    @MockkBean
-    private lateinit var userRepository: AuthUseCase
 
     @Test
     @DisplayName("correctly serializes an existing literal")

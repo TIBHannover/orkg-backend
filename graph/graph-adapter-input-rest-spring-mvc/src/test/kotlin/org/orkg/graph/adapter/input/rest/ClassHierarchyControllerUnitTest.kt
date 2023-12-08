@@ -9,7 +9,6 @@ import org.hamcrest.Matchers.endsWith
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.orkg.auth.output.UserRepository
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
@@ -60,10 +59,6 @@ internal class ClassHierarchyControllerUnitTest {
     @Suppress("unused") // required by ClassController but not used in the test (yet)
     @MockkBean
     private lateinit var resourceService: ResourceUseCases
-
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
-    @MockkBean
-    private lateinit var userRepository: UserRepository
 
     @MockkBean
     private lateinit var classHierarchyService: ClassHierarchyUseCases

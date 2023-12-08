@@ -45,7 +45,6 @@ import org.orkg.graph.adapter.output.neo4j.internal.Neo4jStatementIdGenerator
 import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literal
-import org.orkg.graph.domain.ObjectService
 import org.orkg.graph.domain.PredicateUsageCount
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
@@ -539,9 +538,9 @@ class SpringDataNeo4jStatementAdapter(
             val relations = node("Resource")
                 .withProperties("id", parameter("id"))
                 .relationshipFrom(paperNode(), RELATED)
-                .withProperties("predicate_id", literalOf<String>(ObjectService.ID_CONTRIBUTION_PREDICATE))
+                .withProperties("predicate_id", literalOf<String>(Predicates.hasContribution.value))
                 .relationshipTo(node("Literal").named(doi), RELATED)
-                .properties("predicate_id", literalOf<String>(ObjectService.ID_DOI_PREDICATE))
+                .properties("predicate_id", literalOf<String>(Predicates.hasDOI.value))
             match(relations).returning(doi)
         }
         .withParameters("id" to id.value)
@@ -602,7 +601,7 @@ class SpringDataNeo4jStatementAdapter(
             val l = name("l")
             match(
                 p.relationshipTo(node("Literal").named(l), RELATED)
-                    .withProperties("predicate_id", literalOf<String>(ObjectService.ID_DOI_PREDICATE))
+                    .withProperties("predicate_id", literalOf<String>(Predicates.hasDOI.value))
             ).where(
                 toUpper(l.property("label")).eq(toUpper(parameter("doi")))
             ).returning(p)
@@ -620,7 +619,7 @@ class SpringDataNeo4jStatementAdapter(
                 val l = name("l")
                 match(
                     resource.relationshipTo(node("Literal").named(l), RELATED)
-                        .withProperties("predicate_id", literalOf<String>(ObjectService.ID_DOI_PREDICATE))
+                        .withProperties("predicate_id", literalOf<String>(Predicates.hasDOI.value))
                 ).where(
                     resource.hasLabels(subjectClass.value)
                         .and(toUpper(l.property("label")).eq(toUpper(parameter("doi"))))

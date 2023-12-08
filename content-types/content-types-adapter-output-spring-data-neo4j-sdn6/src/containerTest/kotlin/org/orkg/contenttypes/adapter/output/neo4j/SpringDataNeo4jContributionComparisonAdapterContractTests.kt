@@ -19,7 +19,6 @@ import org.orkg.testing.Neo4jContainerInitializer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest
 import org.springframework.cache.annotation.EnableCaching
-import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories
 import org.springframework.test.context.ContextConfiguration
 
 @DataNeo4jTest

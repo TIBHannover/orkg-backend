@@ -7,8 +7,10 @@ plugins {
 
 dependencies {
     api(platform(project(":platform")))
+
+    api(project(":media-storage:media-storage-core-model"))
+
     implementation(project(":common"))
-    implementation(project(":media-storage:media-storage-core-model"))
 
     api(libs.javax.activation) // uses MimeType in public API
 }

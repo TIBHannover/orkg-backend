@@ -6,6 +6,7 @@ plugins {
 
 dependencies {
     api(platform(project(":platform")))
+
     implementation(project(":common"))
     implementation(project(":graph:graph-core-model"))
 

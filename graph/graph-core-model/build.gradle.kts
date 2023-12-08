@@ -10,9 +10,6 @@ dependencies {
     api(platform(project(":platform")))
 
     implementation(project(":common"))
-    implementation(project(":identity-management:idm-core-model"))
-    implementation(project(":identity-management:idm-core-services"))
-    // FIXME: break dependency; for User
 
     implementation(libs.jackson.core) // TODO
     implementation("org.springframework:spring-core") // Spring MimeType
@@ -29,7 +26,6 @@ dependencies {
     }
     testFixturesImplementation(project(":common"))
     testFixturesImplementation(testFixtures(project(":testing:spring")))
-    "testFixturesImplementation"(project(":graph:graph-core-services")) // only Asciidoc helpers
     testFixturesImplementation("org.springframework:spring-core")
     testFixturesImplementation("org.springframework.data:spring-data-commons") // TODO: does not work?
     testFixturesImplementation("org.springframework.boot:spring-boot-starter-data-jpa") // org.springframework.data.domain.Page

@@ -64,6 +64,7 @@ fun ObservatoryEntity.toObservatory() =
         displayId = displayId!!
     )
 
+// TODO: should be internal, but is used by input adapter (legacy controller)
 fun User.toContributor() =
     Contributor(
         id = ContributorId(this.id),

@@ -13,17 +13,16 @@ plugins {
 dependencies {
     api(platform(project(":platform")))
 
-    implementation(project(":common"))
-    implementation(project(":common:serialization"))
-    implementation(project(":graph:graph-core-model"))
-    implementation(project(":graph:graph-ports-input"))
-    implementation(project(":graph:graph-ports-output"))
-    implementation(project(":graph:graph-adapter-input-rest-spring-mvc"))
-    implementation(project(":community:community-core-model"))
-    implementation(project(":community:community-ports-input"))
-    implementation(project(":content-types:content-types-core-model"))
     implementation(project(":content-types:content-types-ports-input"))
     implementation(project(":content-types:content-types-ports-output"))
+
+    implementation(project(":common"))
+    implementation(project(":common:serialization"))
+    implementation(project(":graph:graph-ports-input"))
+    implementation(project(":graph:graph-ports-output"))
+    implementation(project(":graph:graph-adapter-input-rest-spring-mvc")) // for BaseController, TODO: break dependency
+    implementation(project(":community:community-core-model"))
+    implementation(project(":community:community-ports-input"))
     implementation(project(":feature-flags:feature-flags-ports"))
 
     implementation("org.springframework.data:spring-data-commons")
@@ -42,7 +41,6 @@ testing {
                 implementation(testFixtures(project(":graph:graph-core-model")))
                 implementation(testFixtures(project(":content-types:content-types-core-model")))
                 implementation(project(":community:community-ports-input"))
-                implementation(project(":identity-management:idm-ports-input"))
                 implementation("org.springframework.boot:spring-boot-starter-test")
                 implementation("org.springframework.boot:spring-boot-starter-security")
                 implementation("org.springframework.security:spring-security-test")

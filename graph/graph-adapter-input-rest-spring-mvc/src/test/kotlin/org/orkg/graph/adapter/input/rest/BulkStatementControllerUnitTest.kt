@@ -12,7 +12,6 @@ import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.orkg.auth.input.AuthUseCase
 import org.orkg.common.ThingId
 import org.orkg.common.exceptions.ExceptionHandler
 import org.orkg.common.json.CommonJacksonModule
@@ -59,10 +58,6 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
     @MockkBean
     private lateinit var flags: FeatureFlagService
 
-    @Suppress("unused") // Required to properly initialize ApplicationContext, but not used in the test.
-    @MockkBean
-    private lateinit var userRepository: AuthUseCase
-
     @BeforeEach
     fun resetState() {
         clearAllMocks()
@@ -70,7 +65,7 @@ internal class BulkStatementControllerUnitTest : RestDocsTest("bulk-statements")
 
     @AfterEach
     fun verifyMocks() {
-        confirmVerified(statementService, formattedLabelRepository, flags, userRepository)
+        confirmVerified(statementService, formattedLabelRepository, flags)
     }
 
     @Test

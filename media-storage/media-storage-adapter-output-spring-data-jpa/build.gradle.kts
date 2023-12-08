@@ -6,11 +6,12 @@ plugins {
 
 dependencies {
     api(platform(project(":platform")))
-    implementation(project(":common"))
-    implementation(project(":graph:graph-core-model"))
-    implementation(project(":graph:graph-core-services"))
+
     implementation(project(":media-storage:media-storage-core-model"))
     implementation(project(":media-storage:media-storage-ports-output"))
+
+    implementation(project(":common"))
+    implementation(project(":graph:graph-core-model"))
 
     implementation("org.springframework:spring-context")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -32,10 +33,7 @@ testing {
                 implementation(libs.kotest.extensions.spring)
                 implementation(libs.spring.boot.starter.neo4j.migrations)
                 implementation(testFixtures(project(":testing:spring")))
-                implementation(project(":media-storage:media-storage-ports-output"))
                 implementation(testFixtures(project(":media-storage:media-storage-ports-output")))
-                implementation(project(":media-storage:media-storage-adapter-output-spring-data-jpa"))
-                implementation(project(":identity-management:idm-adapter-output-spring-data-jpa"))
                 implementation("org.springframework.boot:spring-boot-starter-test") {
                     exclude(group = "junit", module = "junit")
                     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")

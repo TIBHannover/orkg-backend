@@ -13,11 +13,12 @@ plugins {
 dependencies {
     api(platform(project(":platform")))
 
+    api(project(":content-types:content-types-core-model"))
+
     implementation(project(":common"))
     implementation(project(":graph:graph-core-model"))
     implementation(project(":graph:graph-ports-input"))
     implementation(project(":community:community-core-model"))
-    implementation(project(":content-types:content-types-core-model"))
 
     implementation("org.springframework.data:spring-data-commons")
     implementation(libs.jackson.core)

@@ -13,11 +13,11 @@ plugins {
 dependencies {
     api(platform(project(":platform")))
 
+    implementation(project(":content-types:content-types-ports-output"))
+
     implementation(project(":common"))
     implementation(project(":graph:graph-core-model"))
     implementation(project(":community:community-core-model"))
-    implementation(project(":content-types:content-types-core-model"))
-    implementation(project(":content-types:content-types-ports-output"))
 
     implementation("org.springframework.data:spring-data-commons")
     implementation("org.springframework:spring-web")

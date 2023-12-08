@@ -13,11 +13,11 @@ import java.util.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
-import org.orkg.auth.domain.Role
-import org.orkg.auth.input.FindUserUseCases
-import org.orkg.auth.testing.fixtures.createUser
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.community.output.AdminRepository
+import org.orkg.community.output.ContributorRepository
+import org.orkg.community.testing.fixtures.createContributor
 import org.orkg.discussions.input.CreateDiscussionCommentUseCase
 import org.orkg.discussions.output.DiscussionCommentRepository
 import org.orkg.graph.domain.UserNotFound
@@ -31,10 +31,12 @@ import org.springframework.data.domain.PageRequest
 class DiscussionServiceTest {
     private val repository: DiscussionCommentRepository = mockk()
     private val thingRepository: ThingRepository = mockk()
-    private val userService: FindUserUseCases = mockk()
+    private val contributorRepository: ContributorRepository = mockk()
+    private val adminRepository: AdminRepository = mockk()
     private val fixedTime = OffsetDateTime.of(2022, 11, 14, 14, 9, 23, 12345, ZoneOffset.ofHours(1))
     private val staticClock = Clock.fixed(Instant.from(fixedTime), ZoneId.systemDefault())
-    private val service = DiscussionService(repository, thingRepository, userService, staticClock)
+    private val service =
+        DiscussionService(repository, thingRepository, contributorRepository, adminRepository, staticClock)
 
     @Test
     fun `given a discussion comment is created, then it gets an id and is saved to the repository`() {
@@ -385,21 +387,21 @@ class DiscussionServiceTest {
     @Test
     fun `given a discussion comment is deleted, then it returns success`() {
         val topic = ThingId("C123")
-        val userId = ContributorId(UUID.randomUUID())
+        val contributorId = ContributorId(UUID.randomUUID())
         val comment = DiscussionComment(
             id = DiscussionCommentId(UUID.randomUUID()),
             topic = topic,
             message = "Some comment",
-            createdBy = userId,
+            createdBy = contributorId,
             createdAt = OffsetDateTime.now(staticClock),
         )
-        val user = createUser(id = userId.value)
+        val contributor = createContributor(id = contributorId)
 
-        every { userService.findById(userId.value) } returns Optional.of(user)
+        every { contributorRepository.findById(contributorId) } returns Optional.of(contributor)
         every { repository.findById(comment.id) } returns Optional.of(comment)
         every { repository.deleteById(comment.id) } returns Unit
 
-        service.delete(userId, topic, comment.id)
+        service.delete(contributorId, topic, comment.id)
 
         verify(exactly = 1) { repository.deleteById(comment.id) }
     }
@@ -407,22 +409,22 @@ class DiscussionServiceTest {
     @Test
     fun `given a discussion comment is deleted, when the topic is not found, then it returns success`() {
         val topic = ThingId("C123")
-        val userId = ContributorId(UUID.randomUUID())
+        val contributorId = ContributorId(UUID.randomUUID())
         val id = DiscussionCommentId(UUID.randomUUID())
         val comment = DiscussionComment(
             id = DiscussionCommentId(UUID.randomUUID()),
             topic = topic,
             message = "Some comment",
-            createdBy = userId,
+            createdBy = contributorId,
             createdAt = OffsetDateTime.now(staticClock),
         )
-        val user = createUser(id = userId.value)
+        val contributor = createContributor(id = contributorId)
 
         every { repository.findById(any()) } returns Optional.of(comment)
-        every { userService.findById(userId.value) } returns Optional.of(user)
+        every { contributorRepository.findById(contributorId) } returns Optional.of(contributor)
         every { repository.findById(any()) } returns Optional.empty()
 
-        service.delete(userId, topic, id)
+        service.delete(contributorId, topic, id)
 
         verify(exactly = 0) { repository.deleteById(id) }
     }
@@ -430,20 +432,20 @@ class DiscussionServiceTest {
     @Test
     fun `given a discussion comment is deleted, when the user is not found, then an exception is thrown`() {
         val topic = ThingId("C123")
-        val userId = ContributorId(UUID.randomUUID())
+        val contributorId = ContributorId(UUID.randomUUID())
         val comment = DiscussionComment(
             id = DiscussionCommentId(UUID.randomUUID()),
             topic = topic,
             message = "Some comment",
-            createdBy = userId,
+            createdBy = contributorId,
             createdAt = OffsetDateTime.now(staticClock),
         )
 
         every { repository.findById(any()) } returns Optional.of(comment)
-        every { userService.findById(userId.value) } returns Optional.empty()
+        every { contributorRepository.findById(contributorId) } returns Optional.empty()
 
         shouldThrow<UserNotFound> {
-            service.delete(userId, topic, comment.id)
+            service.delete(contributorId, topic, comment.id)
         }
 
         verify(exactly = 0) { repository.deleteById(comment.id) }
@@ -452,14 +454,14 @@ class DiscussionServiceTest {
     @Test
     fun `given a discussion comment is deleted, when the comment is not found, then it returns success`() {
         val topic = ThingId("C123")
-        val userId = ContributorId(UUID.randomUUID())
+        val contributorId = ContributorId(UUID.randomUUID())
         val id = DiscussionCommentId(UUID.randomUUID())
-        val user = createUser(id = userId.value)
+        val contributor = createContributor(id = contributorId)
 
-        every { userService.findById(userId.value) } returns Optional.of(user)
+        every { contributorRepository.findById(contributorId) } returns Optional.of(contributor)
         every { repository.findById(id) } returns Optional.empty()
 
-        service.delete(userId, topic, id)
+        service.delete(contributorId, topic, id)
 
         verify(exactly = 0) { repository.deleteById(id) }
     }
@@ -467,7 +469,7 @@ class DiscussionServiceTest {
     @Test
     fun `given a discussion comment is deleted, when the user did not author the comment, then an exception is thrown`() {
         val topic = ThingId("C123")
-        val userId = ContributorId(UUID.randomUUID())
+        val contributorId = ContributorId(UUID.randomUUID())
         val comment = DiscussionComment(
             id = DiscussionCommentId(UUID.randomUUID()),
             topic = topic,
@@ -475,14 +477,15 @@ class DiscussionServiceTest {
             createdBy = ContributorId(UUID.randomUUID()),
             createdAt = OffsetDateTime.now(staticClock),
         )
-        val user = createUser(id = userId.value)
+        val contributor = createContributor(id = contributorId)
 
-        every { userService.findById(userId.value) } returns Optional.of(user)
+        every { contributorRepository.findById(contributorId) } returns Optional.of(contributor)
+        every { adminRepository.hasAdminPriviledges(contributorId) } returns false // should not be required, but is?!
         every { repository.findById(comment.id) } returns Optional.of(comment)
         every { repository.deleteById(comment.id) } returns Unit
 
         shouldThrow<Unauthorized> {
-            service.delete(userId, topic, comment.id)
+            service.delete(contributorId, topic, comment.id)
         }
 
         verify(exactly = 0) { repository.deleteById(comment.id) }
@@ -491,7 +494,7 @@ class DiscussionServiceTest {
     @Test
     fun `given a discussion comment is deleted, when the user did not author the comment but is an admin, then it returns success`() {
         val topic = ThingId("C123")
-        val userId = ContributorId(UUID.randomUUID())
+        val contributorId = ContributorId(UUID.randomUUID())
         val comment = DiscussionComment(
             id = DiscussionCommentId(UUID.randomUUID()),
             topic = topic,
@@ -499,13 +502,14 @@ class DiscussionServiceTest {
             createdBy = ContributorId(UUID.randomUUID()),
             createdAt = OffsetDateTime.now(staticClock),
         )
-        val user = createUser(id = userId.value).copy(roles = setOf(Role("ROLE_ADMIN")))
+        val contributor = createContributor(id = contributorId)
 
-        every { userService.findById(userId.value) } returns Optional.of(user)
+        every { contributorRepository.findById(contributorId) } returns Optional.of(contributor)
+        every { adminRepository.hasAdminPriviledges(contributorId) } returns true
         every { repository.findById(comment.id) } returns Optional.of(comment)
         every { repository.deleteById(comment.id) } returns Unit
 
-        service.delete(userId, topic, comment.id)
+        service.delete(contributorId, topic, comment.id)
 
         verify(exactly = 1) { repository.deleteById(comment.id) }
     }

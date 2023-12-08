@@ -5,20 +5,18 @@ import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import java.time.OffsetDateTime
+import java.time.temporal.ChronoUnit
 import java.util.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
-import org.orkg.auth.output.UserRepository
-import org.orkg.auth.testing.fixtures.createUser
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.discussions.domain.DiscussionComment
 import org.orkg.discussions.domain.DiscussionCommentId
 import org.springframework.data.domain.PageRequest
 
-interface DiscussionCommentRepositoryContractTest {
-    val repository: DiscussionCommentRepository
-    val userRepository: UserRepository
+abstract class DiscussionCommentRepositoryContractTest {
+    abstract val repository: DiscussionCommentRepository
 
     @Test
     fun `successfully save and load a comment`() {
@@ -27,9 +25,8 @@ interface DiscussionCommentRepositoryContractTest {
             topic = ThingId("C1234"),
             message = "Some comment",
             createdBy = ContributorId(UUID.randomUUID()),
-            createdAt = OffsetDateTime.now()
+            createdAt = OffsetDateTime.now().truncatedTo(ChronoUnit.MILLIS) // There seems to be limitation in Postgres.
         )
-        userRepository.save(createUser(comment.createdBy.value))
         repository.save(comment)
 
         val result = repository.findById(comment.id)
@@ -65,7 +62,6 @@ interface DiscussionCommentRepositoryContractTest {
             createdBy = ContributorId(UUID.randomUUID()),
             createdAt = OffsetDateTime.now()
         )
-        userRepository.save(createUser(comment.createdBy.value))
         repository.save(comment)
         repository.findById(comment.id).isPresent shouldBe true
 
@@ -93,15 +89,7 @@ interface DiscussionCommentRepositoryContractTest {
                 createdAt = OffsetDateTime.now()
             )
         )
-        comments.forEachIndexed { index, it ->
-            userRepository.save(
-                createUser(it.createdBy.value).copy(
-                    // Make each email unique to satisfy db constraints
-                    email = "user$index@example.org"
-                )
-            )
-            repository.save(it)
-        }
+        comments.forEach(repository::save)
 
         val result = repository.findAllByTopic(ThingId("C1234"), PageRequest.of(0, 5))
 
@@ -122,7 +110,7 @@ interface DiscussionCommentRepositoryContractTest {
         }
     }
 
-    fun cleanUpAfterEach()
+    abstract fun cleanUpAfterEach()
 
     @AfterEach
     fun cleanUp() {

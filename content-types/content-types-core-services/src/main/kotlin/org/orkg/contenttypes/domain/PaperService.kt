@@ -5,8 +5,8 @@ import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
-import org.orkg.community.adapter.output.jpa.internal.PostgresOrganizationRepository
 import org.orkg.community.output.ObservatoryRepository
+import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.actions.ContributionState
 import org.orkg.contenttypes.domain.actions.CreateContributionCommand
 import org.orkg.contenttypes.domain.actions.CreatePaperCommand
@@ -69,7 +69,7 @@ class PaperService(
     private val resourceRepository: ResourceRepository,
     private val statementRepository: StatementRepository,
     private val observatoryRepository: ObservatoryRepository,
-    private val organizationRepository: PostgresOrganizationRepository,
+    private val organizationRepository: OrganizationRepository,
     private val thingRepository: ThingRepository,
     private val resourceService: ResourceUseCases,
     private val statementService: StatementUseCases,

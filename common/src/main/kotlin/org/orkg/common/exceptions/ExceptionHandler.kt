@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException
 import java.time.OffsetDateTime
 import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletRequestWrapper
 import org.neo4j.driver.exceptions.Neo4jException
 import org.orkg.common.toSnakeCase
 import org.springframework.http.HttpHeaders
@@ -25,6 +24,7 @@ import org.springframework.web.context.request.WebRequest
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import org.springframework.web.util.ContentCachingRequestWrapper
+import org.springframework.web.util.WebUtils
 
 @ControllerAdvice
 class ExceptionHandler : ResponseEntityExceptionHandler() {
@@ -223,19 +223,14 @@ class ExceptionHandler : ResponseEntityExceptionHandler() {
             append(request.headerMap)
 
             if (request is ServletWebRequest) {
-                val nativeRequest: HttpServletRequest = request.request
+                val servletRequest: HttpServletRequest = request.request
                 insert(0, " ")
-                insert(0, nativeRequest.method)
+                insert(0, servletRequest.method)
+                val nativeRequest = WebUtils.getNativeRequest(servletRequest, ContentCachingRequestWrapper::class.java)
 
-                val body: String = when (nativeRequest) {
-                    is ContentCachingRequestWrapper -> String(nativeRequest.contentAsByteArray)
-                    is HttpServletRequestWrapper -> nativeRequest.unwrapPath() // HeaderWriterFilter$HeaderWriterRequest
-                    else -> "Unknown request class"
-                }
-
-                if (body.isNotEmpty()) {
+                if (nativeRequest != null) {
                     append(", Payload: ")
-                    append(body)
+                    append(String(nativeRequest.contentAsByteArray))
                 }
             }
         }
@@ -291,13 +286,6 @@ private fun <K, V> Map<K, Array<V>>.toParameterString() = when {
     entries.isNotEmpty() -> entries.joinToString(separator = "&", prefix = "?") { "${it.key}=${it.value.joinToString(separator = ",")}" }
     else -> String()
 }
-
-private fun HttpServletRequestWrapper.unwrapPath(visited: Set<HttpServletRequestWrapper> = emptySet()): String =
-    when (val r = request) {
-        in visited -> javaClass.name
-        is HttpServletRequestWrapper -> javaClass.name + ";" + r.unwrapPath(visited + r)
-        else -> javaClass.name
-    }
 
 private val JsonMappingException.fieldPath: String get() =
     path.joinToString(separator = ".") { it.fieldName }

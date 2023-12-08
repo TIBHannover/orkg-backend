@@ -3,7 +3,6 @@ package org.orkg.contenttypes.domain
 import java.net.URI
 import java.util.*
 import org.orkg.common.ContributorId
-import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -44,6 +43,7 @@ import org.orkg.contenttypes.domain.actions.paper.PaperThingDefinitionValidator
 import org.orkg.contenttypes.domain.actions.paper.PaperTitleValidator
 import org.orkg.contenttypes.input.PaperUseCases
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
+import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
@@ -62,6 +62,7 @@ import org.orkg.graph.output.authors
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 
 @Service
@@ -191,19 +192,27 @@ class PaperService(
     }
 
     private fun Resource.toPaper(): Paper {
-        val statements = statementRepository.findAllBySubject(id, PageRequests.ALL)
-            .content
-            .withoutObjectsWithBlankLabels()
+        val statements = statementRepository.fetchAsBundle(
+            id = id,
+            configuration = BundleConfiguration(
+                minLevel = null,
+                maxLevel = 3,
+                blacklist = listOf(Classes.researchField, Classes.contribution, Classes.venue),
+                whitelist = emptyList()
+            ),
+            sort = Sort.unsorted()
+        ).groupBy { it.subject.id }
+        val directStatements = statements[id].orEmpty()
         return Paper(
             id = id,
             title = label,
-            researchFields = statements.wherePredicate(Predicates.hasResearchField)
+            researchFields = directStatements.wherePredicate(Predicates.hasResearchField)
                 .objectIdsAndLabel()
                 .sortedBy { it.id },
-            identifiers = statements.associateIdentifiers(Identifiers.paper),
-            publicationInfo = PublicationInfo.from(statements),
-            authors = statements.authors(statementRepository),
-            contributions = statements.wherePredicate(Predicates.hasContribution).objectIdsAndLabel(),
+            identifiers = directStatements.associateIdentifiers(Identifiers.paper),
+            publicationInfo = PublicationInfo.from(directStatements),
+            authors = statements.authors(id),
+            contributions = directStatements.wherePredicate(Predicates.hasContribution).objectIdsAndLabel(),
             observatories = listOf(observatoryId),
             organizations = listOf(organizationId),
             extractionMethod = extractionMethod,

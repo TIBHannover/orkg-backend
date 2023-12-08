@@ -24,6 +24,7 @@ import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
+import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -41,6 +42,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
+import org.springframework.data.domain.Sort
 
 class PaperServiceUnitTests {
     private val resourceRepository: ResourceRepository = mockk()
@@ -109,9 +111,22 @@ class PaperServiceUnitTests {
         val publishedIn = "Conference"
         val publishedUrl = "https://example.org/conference"
         val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
+        val resourceAuthor = createResource(id = resourceAuthorId, label = "Author 2", classes = setOf(Classes.author))
+        val bundleConfiguration = BundleConfiguration(
+            minLevel = null,
+            maxLevel = 3,
+            blacklist = listOf(Classes.researchField, Classes.contribution, Classes.venue),
+            whitelist = emptyList()
+        )
 
         every { resourceRepository.findPaperById(expected.id) } returns Optional.of(expected)
-        every { statementRepository.findAllBySubject(expected.id, any()) } returns pageOf(
+        every {
+            statementRepository.fetchAsBundle(
+                id = expected.id,
+                configuration = bundleConfiguration,
+                sort = Sort.unsorted()
+            )
+        } returns pageOf(
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasResearchField),
@@ -159,28 +174,24 @@ class PaperServiceUnitTests {
                     label = "Contribution",
                     id = ThingId("Contribution123")
                 )
-            )
-        )
-        every { statementRepository.findAllBySubjectAndPredicate(authorList.id, Predicates.hasListElement, any()) } returns pageOf(
+            ),
             createStatement(
-                subject = expected,
+                subject = authorList,
                 predicate = createPredicate(Predicates.hasListElement),
                 `object` = createLiteral(label = "Author 1")
             ),
             createStatement(
-                subject = expected,
+                subject = authorList,
                 predicate = createPredicate(Predicates.hasListElement),
-                `object` = createResource(id = resourceAuthorId, label = "Author 2", classes = setOf(Classes.author))
-            )
-        )
-        every { statementRepository.findAllBySubject(resourceAuthorId, any()) } returns pageOf(
+                `object` = resourceAuthor
+            ),
             createStatement(
-                subject = expected,
+                subject = resourceAuthor,
                 predicate = createPredicate(Predicates.hasORCID),
                 `object` = createLiteral(label = "0000-1111-2222-3333")
             ),
             createStatement(
-                subject = expected,
+                subject = resourceAuthor,
                 predicate = createPredicate(Predicates.hasWebsite),
                 `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri)
             )
@@ -240,9 +251,13 @@ class PaperServiceUnitTests {
         }
 
         verify(exactly = 1) { resourceRepository.findPaperById(expected.id) }
-        verify(exactly = 1) { statementRepository.findAllBySubject(expected.id, any()) }
-        verify(exactly = 1) { statementRepository.findAllBySubjectAndPredicate(authorList.id, Predicates.hasListElement, any()) }
-        verify(exactly = 1) { statementRepository.findAllBySubject(resourceAuthorId, any()) }
+        verify(exactly = 1) {
+            statementRepository.fetchAsBundle(
+                id = expected.id,
+                configuration = bundleConfiguration,
+                sort = Sort.unsorted()
+            )
+        }
     }
 
     @Test
@@ -277,36 +292,45 @@ class PaperServiceUnitTests {
         val description = "Fancy paper description"
         val resourceAuthorId = ThingId("R132564")
         val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
+        val resourceAuthor = createResource(id = resourceAuthorId, label = "Author 2", classes = setOf(Classes.author))
+        val bundleConfiguration = BundleConfiguration(
+            minLevel = null,
+            maxLevel = 3,
+            blacklist = listOf(Classes.researchField, Classes.contribution, Classes.venue),
+            whitelist = emptyList()
+        )
         val contributorId = ContributorId(UUID.randomUUID())
 
         every { resourceRepository.findPaperById(paper.id) } returns Optional.of(paper)
-        every { statementRepository.findAllBySubject(paper.id, PageRequests.ALL) } returns pageOf(
+        every {
+            statementRepository.fetchAsBundle(
+                id = paper.id,
+                configuration = bundleConfiguration,
+                sort = Sort.unsorted()
+            )
+        } returns pageOf(
             createStatement(
                 subject = paper,
                 predicate = createPredicate(Predicates.hasAuthors),
                 `object` = authorList
-            )
-        )
-        every { statementRepository.findAllBySubjectAndPredicate(authorList.id, Predicates.hasListElement, any()) } returns pageOf(
+            ),
             createStatement(
-                subject = paper,
+                subject = authorList,
                 predicate = createPredicate(Predicates.hasListElement),
                 `object` = createLiteral(label = "Author 1")
             ),
             createStatement(
-                subject = paper,
+                subject = authorList,
                 predicate = createPredicate(Predicates.hasListElement),
-                `object` = createResource(id = resourceAuthorId, label = "Author 2", classes = setOf(Classes.author))
-            )
-        )
-        every { statementRepository.findAllBySubject(resourceAuthorId, any()) } returns pageOf(
+                `object` = resourceAuthor
+            ),
             createStatement(
-                subject = paper,
+                subject = resourceAuthor,
                 predicate = createPredicate(Predicates.hasORCID),
                 `object` = createLiteral(label = "0000-1111-2222-3333")
             ),
             createStatement(
-                subject = paper,
+                subject = resourceAuthor,
                 predicate = createPredicate(Predicates.hasWebsite),
                 `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri)
             )
@@ -316,7 +340,13 @@ class PaperServiceUnitTests {
         service.publish(paper.id, contributorId, subject, description)
 
         verify(exactly = 1) { resourceRepository.findPaperById(paper.id) }
-        verify(exactly = 1) { statementRepository.findAllBySubject(paper.id, PageRequests.ALL) }
+        verify(exactly = 1) {
+            statementRepository.fetchAsBundle(
+                id = paper.id,
+                configuration = bundleConfiguration,
+                sort = Sort.unsorted()
+            )
+        }
         verify(exactly = 1) {
             publishingService.publish(
                 withArg {
@@ -347,8 +377,6 @@ class PaperServiceUnitTests {
                 }
             )
         }
-        verify(exactly = 1) { statementRepository.findAllBySubjectAndPredicate(authorList.id, Predicates.hasListElement, any()) }
-        verify(exactly = 1) { statementRepository.findAllBySubject(resourceAuthorId, any()) }
     }
 
     @Test

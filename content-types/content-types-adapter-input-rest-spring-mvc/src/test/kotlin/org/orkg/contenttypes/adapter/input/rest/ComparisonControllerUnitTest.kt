@@ -582,7 +582,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
-            .andExpect(status().isNoContent)
+            .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/comparisons/$id")))
             .andDo(
                 documentationHandler.document(
@@ -781,7 +781,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
-            .andExpect(status().isNoContent)
+            .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/comparisons/$comparisonId/related-resources/$id")))
             .andDo(
                 documentationHandler.document(
@@ -836,7 +836,7 @@ internal class ComparisonControllerUnitTest : RestDocsTest("comparisons") {
             .accept(COMPARISON_JSON_V2)
             .contentType(COMPARISON_JSON_V2)
             .perform()
-            .andExpect(status().isNoContent)
+            .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/comparisons/$comparisonId/related-figures/$id")))
             .andDo(
                 documentationHandler.document(

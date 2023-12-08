@@ -475,7 +475,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .accept(PAPER_JSON_V2)
             .contentType(PAPER_JSON_V2)
             .perform()
-            .andExpect(status().isNoContent)
+            .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/papers/$id")))
             .andDo(
                 documentationHandler.document(
@@ -1037,7 +1037,7 @@ internal class PaperControllerUnitTest : RestDocsTest("papers") {
             .accept(CONTRIBUTION_JSON_V2)
             .contentType(CONTRIBUTION_JSON_V2)
             .perform()
-            .andExpect(status().isNoContent)
+            .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/contributions/$contributionId")))
             .andDo(
                 documentationHandler.document(

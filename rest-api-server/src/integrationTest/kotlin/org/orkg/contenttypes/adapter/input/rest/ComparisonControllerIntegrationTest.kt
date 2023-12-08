@@ -161,7 +161,7 @@ class ComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
             .contentType("application/vnd.orkg.comparison.v2+json")
             .characterEncoding("utf-8")
             .perform()
-            .andExpect(status().isNoContent)
+            .andExpect(status().isCreated)
     }
 
     private fun RequestBuilder.perform(): ResultActions = mockMvc.perform(this)

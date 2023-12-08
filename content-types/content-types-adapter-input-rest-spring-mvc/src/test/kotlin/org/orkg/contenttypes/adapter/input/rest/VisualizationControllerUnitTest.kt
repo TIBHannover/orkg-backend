@@ -262,7 +262,7 @@ internal class VisualizationControllerUnitTest : RestDocsTest("visualizations") 
             .accept(VISUALIZATION_JSON_V2)
             .contentType(VISUALIZATION_JSON_V2)
             .perform()
-            .andExpect(status().isNoContent)
+            .andExpect(status().isCreated)
             .andExpect(header().string("Location", Matchers.endsWith("/api/visualizations/$id")))
             .andDo(
                 documentationHandler.document(

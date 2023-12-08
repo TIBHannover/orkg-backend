@@ -1,4 +1,4 @@
-package org.orkg.graph.adapter.input.rest
+package org.orkg.contenttypes.adapter.input.rest
 
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.hasSize

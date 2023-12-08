@@ -25,7 +25,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.http.ResponseEntity.noContent
+import org.springframework.http.ResponseEntity.*
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -93,7 +93,7 @@ class ComparisonController(
             .path("api/comparisons/{id}")
             .buildAndExpand(id)
             .toUri()
-        return noContent().location(location).build()
+        return created(location).build()
     }
 
     @GetMapping("/{id}/related-resources/{resourceId}", produces = [COMPARISON_JSON_V2])
@@ -126,7 +126,7 @@ class ComparisonController(
             .path("api/comparisons/{comparisonId}/related-resources/{id}")
             .buildAndExpand(comparisonId, id)
             .toUri()
-        return noContent().location(location).build()
+        return created(location).build()
     }
 
     @GetMapping("/{id}/related-figures/{figureId}", produces = [COMPARISON_JSON_V2])
@@ -159,7 +159,7 @@ class ComparisonController(
             .path("api/comparisons/{comparisonId}/related-figures/{id}")
             .buildAndExpand(comparisonId, id)
             .toUri()
-        return noContent().location(location).build()
+        return created(location).build()
     }
 
     @PreAuthorizeUser

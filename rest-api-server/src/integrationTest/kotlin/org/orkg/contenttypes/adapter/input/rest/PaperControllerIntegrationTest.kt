@@ -168,7 +168,7 @@ class PaperControllerIntegrationTest : RestDocumentationBaseTest() {
             .contentType("application/vnd.orkg.paper.v2+json")
             .characterEncoding("utf-8")
             .perform()
-            .andExpect(status().isNoContent)
+            .andExpect(status().isCreated)
             .andReturn()
             .response
             .getHeaderValue("Location")!!
@@ -199,7 +199,7 @@ class PaperControllerIntegrationTest : RestDocumentationBaseTest() {
             .contentType("application/vnd.orkg.contribution.v2+json")
             .characterEncoding("utf-8")
             .perform()
-            .andExpect(status().isNoContent)
+            .andExpect(status().isCreated)
     }
 
     private fun RequestBuilder.perform(): ResultActions = mockMvc.perform(this)

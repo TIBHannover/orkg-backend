@@ -25,7 +25,7 @@ import org.orkg.graph.domain.VisibilityFilter
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
-import org.springframework.http.ResponseEntity.noContent
+import org.springframework.http.ResponseEntity.*
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -85,7 +85,7 @@ class TemplateController(
             .path("api/templates/{id}")
             .buildAndExpand(id)
             .toUri()
-        return noContent().location(location).build()
+        return created(location).build()
     }
 
     @PreAuthorizeUser
@@ -101,7 +101,7 @@ class TemplateController(
             .path("api/templates/{id}")
             .buildAndExpand(id)
             .toUri()
-        return noContent().location(location).build()
+        return created(location).build()
     }
 
     data class CreateTemplateRequest(

@@ -154,7 +154,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             .contentType("application/vnd.orkg.template.v1+json")
             .characterEncoding("utf-8")
             .perform()
-            .andExpect(MockMvcResultMatchers.status().isNoContent)
+            .andExpect(MockMvcResultMatchers.status().isCreated)
     }
 
     @Test
@@ -171,7 +171,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             .contentType("application/vnd.orkg.template.property.v1+json")
             .characterEncoding("utf-8")
             .perform()
-            .andExpect(MockMvcResultMatchers.status().isNoContent)
+            .andExpect(MockMvcResultMatchers.status().isCreated)
     }
 
     @Test
@@ -188,7 +188,7 @@ class TemplateControllerIntegrationTest : RestDocumentationBaseTest() {
             .contentType("application/vnd.orkg.template.property.v1+json")
             .characterEncoding("utf-8")
             .perform()
-            .andExpect(MockMvcResultMatchers.status().isNoContent)
+            .andExpect(MockMvcResultMatchers.status().isCreated)
     }
 
     private fun RequestBuilder.perform(): ResultActions = mockMvc.perform(this)

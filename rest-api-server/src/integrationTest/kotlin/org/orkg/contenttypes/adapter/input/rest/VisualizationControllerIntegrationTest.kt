@@ -1,4 +1,4 @@
-package org.orkg.graph.adapter.input.rest
+package org.orkg.contenttypes.adapter.input.rest
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -151,7 +151,7 @@ class VisualizationControllerIntegrationTest : RestDocumentationBaseTest() {
             .contentType("application/vnd.orkg.visualization.v2+json")
             .characterEncoding("utf-8")
             .perform()
-            .andExpect(status().isNoContent)
+            .andExpect(status().isCreated)
     }
 
     private fun RequestBuilder.perform(): ResultActions = mockMvc.perform(this)

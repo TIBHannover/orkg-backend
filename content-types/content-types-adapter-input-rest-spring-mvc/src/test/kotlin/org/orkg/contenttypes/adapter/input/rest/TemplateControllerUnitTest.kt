@@ -232,7 +232,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
             .accept(TEMPLATE_JSON_V1)
             .contentType(TEMPLATE_JSON_V1)
             .perform()
-            .andExpect(status().isNoContent)
+            .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/templates/$id")))
             .andDo(
                 documentationHandler.document(
@@ -496,7 +496,7 @@ internal class TemplateControllerUnitTest : RestDocsTest("templates") {
             .accept(TEMPLATE_PROPERTY_JSON_V1)
             .contentType(TEMPLATE_PROPERTY_JSON_V1)
             .perform()
-            .andExpect(status().isNoContent)
+            .andExpect(status().isCreated)
             .andExpect(header().string("Location", endsWith("/api/templates/$templateId")))
             .andDo(
                 documentationHandler.document(

@@ -53,7 +53,7 @@ internal class ExceptionHandlerTest : RestDocsTest("errors") {
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status", `is`(400)))
             .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.message", `is`("""Field "nested.field" is either missing, "null", of invalid type, or contains "null" values.""")))
+            .andExpect(jsonPath("$.message", `is`("""Field "$.nested.field" is either missing, "null", of invalid type, or contains "null" values.""")))
             .andExpect(jsonPath("$.path", `is`("/errors/json")))
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
@@ -66,7 +66,7 @@ internal class ExceptionHandlerTest : RestDocsTest("errors") {
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status", `is`(400)))
             .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.message", `is`("""Unknown field "nested.unknown".""")))
+            .andExpect(jsonPath("$.message", `is`("""Unknown field "$.nested.unknown".""")))
             .andExpect(jsonPath("$.path", `is`("/errors/json")))
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
@@ -79,7 +79,20 @@ internal class ExceptionHandlerTest : RestDocsTest("errors") {
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status", `is`(400)))
             .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.message", `is`("""Field "nested.field" is either missing, "null", of invalid type, or contains "null" values.""")))
+            .andExpect(jsonPath("$.message", `is`("""Field "$.nested.field" is either missing, "null", of invalid type, or contains "null" values.""")))
+            .andExpect(jsonPath("$.path", `is`("/errors/json")))
+            .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
+    }
+
+    @Test
+    fun jsonTypeMismatchArrayException() {
+        post("/errors/json", """{"field": "abc", "array": [{"unknown": 1}] "nested": {"field": "def", "list": []}}""")
+            .contentType(MediaType.APPLICATION_JSON)
+            .perform()
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.status", `is`(400)))
+            .andExpect(jsonPath("$.error", `is`("Bad Request")))
+            .andExpect(jsonPath("$.message", `is`("""Field "$.array[0].field" is either missing, "null", of invalid type, or contains "null" values.""")))
             .andExpect(jsonPath("$.path", `is`("/errors/json")))
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
@@ -92,7 +105,7 @@ internal class ExceptionHandlerTest : RestDocsTest("errors") {
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status", `is`(400)))
             .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.message", `is`("""Field "nested.list" is either missing, "null", of invalid type, or contains "null" values.""")))
+            .andExpect(jsonPath("$.message", `is`("""Field "$.nested.list" is either missing, "null", of invalid type, or contains "null" values.""")))
             .andExpect(jsonPath("$.path", `is`("/errors/json")))
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
@@ -105,7 +118,7 @@ internal class ExceptionHandlerTest : RestDocsTest("errors") {
             .andExpect(status().isBadRequest)
             .andExpect(jsonPath("$.status", `is`(400)))
             .andExpect(jsonPath("$.error", `is`("Bad Request")))
-            .andExpect(jsonPath("$.message", `is`("""Field "field" is either missing, "null", of invalid type, or contains "null" values.""")))
+            .andExpect(jsonPath("$.message", `is`("""Field "$.field" is either missing, "null", of invalid type, or contains "null" values.""")))
             .andExpect(jsonPath("$.path", `is`("/errors/json")))
             .andExpect(jsonPath("$.timestamp", `is`(notNullValue())))
     }
@@ -134,7 +147,8 @@ internal class ExceptionHandlerTest : RestDocsTest("errors") {
 
         data class JsonRequest(
             val field: String,
-            val nested: Nested
+            val nested: Nested,
+            val array: Array<Nested>
         ) {
             data class Nested(
                 val field: String,

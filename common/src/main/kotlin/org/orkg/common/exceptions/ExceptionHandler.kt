@@ -288,4 +288,12 @@ private fun <K, V> Map<K, Array<V>>.toParameterString() = when {
 }
 
 private val JsonMappingException.fieldPath: String get() =
-    path.joinToString(separator = ".") { it.fieldName }
+    path.joinToString(prefix = "$", separator = "") {
+        with(it) {
+            when {
+                fieldName != null -> ".$fieldName"
+                index >= 0 -> "[$index]"
+                else -> ".?"
+            }
+        }
+    }

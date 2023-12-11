@@ -26,6 +26,7 @@ import org.orkg.contenttypes.input.CreateComparisonUseCase.CreateComparisonRelat
 import org.orkg.contenttypes.input.RetrieveComparisonContributionsUseCase
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.contenttypes.output.ContributionComparisonRepository
+import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.ContributionInfo
 import org.orkg.graph.domain.Literal
@@ -47,6 +48,7 @@ import org.orkg.graph.output.authors
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -287,22 +289,36 @@ class ComparisonService(
     }
 
     private fun Resource.toComparison(): Comparison {
-        val statements = statementRepository.findAllBySubject(id, PageRequests.ALL)
-            .content
-            .withoutObjectsWithBlankLabels()
+        val statements = statementRepository.fetchAsBundle(
+            id = id,
+            configuration = BundleConfiguration(
+                minLevel = null,
+                maxLevel = 3,
+                blacklist = listOf(
+                    Classes.researchField,
+                    Classes.contribution,
+                    Classes.visualization,
+                    Classes.comparisonRelatedFigure,
+                    Classes.comparisonRelatedResource
+                ),
+                whitelist = emptyList()
+            ),
+            sort = Sort.unsorted()
+        ).groupBy { it.subject.id }
+        val directStatements = statements[id].orEmpty()
         return Comparison(
             id = id,
             title = label,
-            description = statements.wherePredicate(Predicates.description).firstObjectLabel(),
-            researchFields = statements.wherePredicate(Predicates.hasSubject).objectIdsAndLabel(),
-            identifiers = statements.associateIdentifiers(Identifiers.comparison),
-            publicationInfo = PublicationInfo.from(statements),
-            authors = statements.authors(statementRepository),
-            contributions = statements.wherePredicate(Predicates.comparesContribution).objectIdsAndLabel(),
-            visualizations = statements.wherePredicate(Predicates.hasVisualization).objectIdsAndLabel(),
-            relatedFigures = statements.wherePredicate(Predicates.hasRelatedFigure).objectIdsAndLabel(),
-            relatedResources = statements.wherePredicate(Predicates.hasRelatedResource).objectIdsAndLabel(),
-            references = statements.wherePredicate(Predicates.reference)
+            description = directStatements.wherePredicate(Predicates.description).firstObjectLabel(),
+            researchFields = directStatements.wherePredicate(Predicates.hasSubject).objectIdsAndLabel(),
+            identifiers = directStatements.associateIdentifiers(Identifiers.comparison),
+            publicationInfo = PublicationInfo.from(directStatements),
+            authors = statements.authors(id),
+            contributions = directStatements.wherePredicate(Predicates.comparesContribution).objectIdsAndLabel(),
+            visualizations = directStatements.wherePredicate(Predicates.hasVisualization).objectIdsAndLabel(),
+            relatedFigures = directStatements.wherePredicate(Predicates.hasRelatedFigure).objectIdsAndLabel(),
+            relatedResources = directStatements.wherePredicate(Predicates.hasRelatedResource).objectIdsAndLabel(),
+            references = directStatements.wherePredicate(Predicates.reference)
                 .withoutObjectsWithBlankLabels()
                 .objects()
                 .filterIsInstance<Literal>()
@@ -312,8 +328,8 @@ class ComparisonService(
             extractionMethod = extractionMethod,
             createdAt = createdAt,
             createdBy = createdBy,
-            previousVersion = statements.wherePredicate(Predicates.hasPreviousVersion).firstObjectId(),
-            isAnonymized = statements.wherePredicate(Predicates.isAnonymized)
+            previousVersion = directStatements.wherePredicate(Predicates.hasPreviousVersion).firstObjectId(),
+            isAnonymized = directStatements.wherePredicate(Predicates.isAnonymized)
                 .firstOrNull { it.`object` is Literal && (it.`object` as Literal).datatype == Literals.XSD.BOOLEAN.prefixedUri }
                 ?.`object`?.label.toBoolean(),
             visibility = visibility,

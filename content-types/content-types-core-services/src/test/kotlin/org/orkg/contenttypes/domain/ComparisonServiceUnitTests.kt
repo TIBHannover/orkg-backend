@@ -23,6 +23,7 @@ import org.orkg.contenttypes.domain.identifiers.DOI
 import org.orkg.contenttypes.input.CreateComparisonUseCase
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.contenttypes.output.ContributionComparisonRepository
+import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
@@ -40,6 +41,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
+import org.springframework.data.domain.Sort
 
 class ComparisonServiceUnitTests {
     private val contributionComparisonRepository: ContributionComparisonRepository = mockk()
@@ -83,9 +85,27 @@ class ComparisonServiceUnitTests {
         val publicationMonth = 1
         val reference = "https://orkg.org"
         val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
+        val bundleConfiguration = BundleConfiguration(
+            minLevel = null,
+            maxLevel = 3,
+            blacklist = listOf(
+                Classes.researchField,
+                Classes.contribution,
+                Classes.visualization,
+                Classes.comparisonRelatedFigure,
+                Classes.comparisonRelatedResource
+            ),
+            whitelist = emptyList()
+        )
 
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
-        every { statementRepository.findAllBySubject(expected.id, any()) } returns pageOf(
+        every {
+            statementRepository.fetchAsBundle(
+                id = expected.id,
+                configuration = bundleConfiguration,
+                sort = Sort.unsorted()
+            )
+        } returns pageOf(
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasSubject),
@@ -168,17 +188,9 @@ class ComparisonServiceUnitTests {
                 subject = expected,
                 predicate = createPredicate(Predicates.hasPreviousVersion),
                 `object` = createResource(id = previousVersion)
-            )
-        )
-        every {
-            statementRepository.findAllBySubjectAndPredicate(
-                authorList.id,
-                Predicates.hasListElement,
-                any()
-            )
-        } returns pageOf(
+            ),
             createStatement(
-                subject = expected,
+                subject = authorList,
                 predicate = createPredicate(Predicates.hasListElement),
                 `object` = createLiteral(label = "Author 1")
             )
@@ -244,12 +256,11 @@ class ComparisonServiceUnitTests {
         }
 
         verify(exactly = 1) { resourceRepository.findById(expected.id) }
-        verify(exactly = 1) { statementRepository.findAllBySubject(expected.id, any()) }
         verify(exactly = 1) {
-            statementRepository.findAllBySubjectAndPredicate(
-                authorList.id,
-                Predicates.hasListElement,
-                any()
+            statementRepository.fetchAsBundle(
+                id = expected.id,
+                configuration = bundleConfiguration,
+                sort = Sort.unsorted()
             )
         }
     }
@@ -263,11 +274,30 @@ class ComparisonServiceUnitTests {
         )
         val resourceAuthorId = ThingId("R132564")
         val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
+        val resourceAuthor = createResource(id = resourceAuthorId, label = "Author 2", classes = setOf(Classes.author))
         val relatedDoi = "10.1472/58369"
         val contributorId = ContributorId(UUID.randomUUID())
+        val bundleConfiguration = BundleConfiguration(
+            minLevel = null,
+            maxLevel = 3,
+            blacklist = listOf(
+                Classes.researchField,
+                Classes.contribution,
+                Classes.visualization,
+                Classes.comparisonRelatedFigure,
+                Classes.comparisonRelatedResource
+            ),
+            whitelist = emptyList()
+        )
 
         every { resourceRepository.findById(comparison.id) } returns Optional.of(comparison)
-        every { statementRepository.findAllBySubject(comparison.id, any()) } returns pageOf(
+        every {
+            statementRepository.fetchAsBundle(
+                id = comparison.id,
+                configuration = bundleConfiguration,
+                sort = Sort.unsorted()
+            )
+        } returns pageOf(
             createStatement(
                 subject = comparison,
                 predicate = createPredicate(Predicates.hasAuthors),
@@ -281,34 +311,24 @@ class ComparisonServiceUnitTests {
                     label = "Contribution",
                     id = ThingId("Contribution")
                 )
-            )
-        )
-        every {
-            statementRepository.findAllBySubjectAndPredicate(
-                authorList.id,
-                Predicates.hasListElement,
-                any()
-            )
-        } returns pageOf(
+            ),
             createStatement(
-                subject = comparison,
+                subject = authorList,
                 predicate = createPredicate(Predicates.hasListElement),
                 `object` = createLiteral(label = "Author 1")
             ),
             createStatement(
-                subject = comparison,
+                subject = authorList,
                 predicate = createPredicate(Predicates.hasListElement),
-                `object` = createResource(id = resourceAuthorId, label = "Author 2", classes = setOf(Classes.author))
-            )
-        )
-        every { statementRepository.findAllBySubject(resourceAuthorId, any()) } returns pageOf(
+                `object` = resourceAuthor
+            ),
             createStatement(
-                subject = comparison,
+                subject = resourceAuthor,
                 predicate = createPredicate(Predicates.hasORCID),
                 `object` = createLiteral(label = "0000-1111-2222-3333")
             ),
             createStatement(
-                subject = comparison,
+                subject = resourceAuthor,
                 predicate = createPredicate(Predicates.hasWebsite),
                 `object` = createLiteral(label = "https://example.org", datatype = Literals.XSD.URI.prefixedUri)
             )
@@ -319,15 +339,13 @@ class ComparisonServiceUnitTests {
         service.publish(comparison.id, contributorId, "Research Field 1", "comparison description")
 
         verify(exactly = 1) { resourceRepository.findById(comparison.id) }
-        verify(exactly = 1) { statementRepository.findAllBySubject(comparison.id, PageRequests.ALL) }
         verify(exactly = 1) {
-            statementRepository.findAllBySubjectAndPredicate(
-                authorList.id,
-                Predicates.hasListElement,
-                any()
+            statementRepository.fetchAsBundle(
+                id = comparison.id,
+                configuration = bundleConfiguration,
+                sort = Sort.unsorted()
             )
         }
-        verify(exactly = 1) { statementRepository.findAllBySubject(resourceAuthorId, any()) }
         verify(exactly = 1) { statementRepository.findAllDOIsRelatedToComparison(comparison.id) }
         verify(exactly = 1) {
             publishingService.publish(

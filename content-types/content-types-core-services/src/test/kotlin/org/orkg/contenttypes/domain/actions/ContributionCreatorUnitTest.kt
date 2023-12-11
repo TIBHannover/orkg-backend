@@ -23,6 +23,7 @@ import org.orkg.graph.domain.GeneralStatement
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateListUseCase
+import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ListUseCases
@@ -161,15 +162,16 @@ class ContributionCreatorUnitTest {
             ),
             contributions = emptyList()
         )
-        val literal = createLiteral(label = literalDefinition.label)
 
         every {
             literalService.create(
-                userId = contributorId,
-                label = literalDefinition.label,
-                datatype = literalDefinition.dataType
+                CreateCommand(
+                    contributorId = contributorId,
+                    label = literalDefinition.label,
+                    datatype = literalDefinition.dataType
+                )
             )
-        } returns literal
+        } returns ThingId("L1")
 
         val result = contributionCreator.create(
             paperId = paperId,
@@ -184,9 +186,11 @@ class ContributionCreatorUnitTest {
 
         verify(exactly = 1) {
             literalService.create(
-                userId = contributorId,
-                label = literalDefinition.label,
-                datatype = literalDefinition.dataType
+                CreateCommand(
+                    contributorId = contributorId,
+                    label = literalDefinition.label,
+                    datatype = literalDefinition.dataType
+                )
             )
         }
     }
@@ -277,7 +281,7 @@ class ContributionCreatorUnitTest {
             contributions = emptyList()
         )
         val predicateId = ThingId("R456")
-        val literal = createLiteral(label = predicateDefinition.label)
+        val literal = ThingId("L1")
 
         every {
             predicateService.create(
@@ -289,8 +293,10 @@ class ContributionCreatorUnitTest {
         } returns predicateId
         every {
             literalService.create(
-                userId = contributorId,
-                label = predicateDefinition.label
+                CreateCommand(
+                    contributorId = contributorId,
+                    label = predicateDefinition.label
+                )
             )
         } returns literal
         every {
@@ -298,7 +304,7 @@ class ContributionCreatorUnitTest {
                 userId = contributorId,
                 subject = predicateId,
                 predicate = Predicates.description,
-                `object` = literal.id
+                `object` = literal
             )
         } just runs
 
@@ -323,8 +329,10 @@ class ContributionCreatorUnitTest {
         }
         verify(exactly = 1) {
             literalService.create(
-                userId = contributorId,
-                label = predicateDefinition.label
+                CreateCommand(
+                    contributorId = contributorId,
+                    label = predicateDefinition.label
+                )
             )
         }
         verify(exactly = 1) {
@@ -332,7 +340,7 @@ class ContributionCreatorUnitTest {
                 userId = contributorId,
                 subject = predicateId,
                 predicate = Predicates.description,
-                `object` = literal.id
+                `object` = literal
             )
         }
     }
@@ -549,7 +557,7 @@ class ContributionCreatorUnitTest {
         )
         val resourceId = ThingId("R456")
         val predicateId = ThingId("R789")
-        val literal = createLiteral(label = literalDefinition.label)
+        val literal = ThingId("L1")
 
         every {
             resourceService.create(
@@ -570,9 +578,11 @@ class ContributionCreatorUnitTest {
         } returns predicateId
         every {
             literalService.create(
-                userId = contributorId,
-                label = literalDefinition.label,
-                datatype = literalDefinition.dataType
+                CreateCommand(
+                    contributorId = contributorId,
+                    label = literalDefinition.label,
+                    datatype = literalDefinition.dataType
+                )
             )
         } returns literal
         every {
@@ -580,7 +590,7 @@ class ContributionCreatorUnitTest {
                 userId = contributorId,
                 subject = resourceId,
                 predicate = predicateId,
-                `object` = literal.id
+                `object` = literal
             )
         } just runs
 
@@ -618,9 +628,11 @@ class ContributionCreatorUnitTest {
         }
         verify(exactly = 1) {
             literalService.create(
-                userId = contributorId,
-                label = literalDefinition.label,
-                datatype = literalDefinition.dataType
+                CreateCommand(
+                    contributorId = contributorId,
+                    label = literalDefinition.label,
+                    datatype = literalDefinition.dataType
+                )
             )
         }
         verify(exactly = 1) {
@@ -628,7 +640,7 @@ class ContributionCreatorUnitTest {
                 userId = contributorId,
                 subject = resourceId,
                 predicate = predicateId,
-                `object` = literal.id
+                `object` = literal
             )
         }
     }

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.createClass
 import org.orkg.createClasses
+import org.orkg.createLiteral
 import org.orkg.createPredicate
 import org.orkg.createPredicates
 import org.orkg.createResource
@@ -73,10 +74,10 @@ class StatsControllerTest : RestDocumentationBaseTest() {
         )
         predicateService.createPredicate(label = "DOI")
         predicateService.createPredicate(label = "yields")
-        literalService.create("Springer")
-        literalService.create("ORKG rocks")
-        literalService.create("Out of this world")
-        literalService.create("We are crazy")
+        literalService.createLiteral(label = "Springer")
+        literalService.createLiteral(label = "ORKG rocks")
+        literalService.createLiteral(label = "Out of this world")
+        literalService.createLiteral(label = "We are crazy")
 
         mockMvc.perform(getRequestTo("/api/stats/")).andExpect(status().isOk).andDo(
             document(
@@ -103,6 +104,7 @@ class StatsControllerTest : RestDocumentationBaseTest() {
         fieldWithPath("observatories").description("The number of observatories"),
         fieldWithPath("organizations").description("The number of organizations"),
         fieldWithPath("orphaned_nodes").description("The number of orphaned nodes"),
-        fieldWithPath("extras").description("A dictionary with on-the-fly classes and their corresponding numbers").optional(),
+        fieldWithPath("extras").description("A dictionary with on-the-fly classes and their corresponding numbers")
+            .optional(),
     )
 }

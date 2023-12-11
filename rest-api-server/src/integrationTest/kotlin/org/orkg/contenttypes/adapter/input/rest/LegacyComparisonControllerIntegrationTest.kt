@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.createClasses
 import org.orkg.createList
+import org.orkg.createLiteral
 import org.orkg.createPredicate
 import org.orkg.createResource
 import org.orkg.graph.adapter.input.rest.ResourceControllerIntegrationTest.RestDoc.resourceResponseFields
@@ -74,9 +75,9 @@ class LegacyComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
     @Test
     fun getTopAuthorsOfComparison() {
         // create authors
-        val author1 = literalService.create("Duplicate Author").id
-        val author2 = literalService.create("Duplicate Author").id
-        val authorNotNeeded = literalService.create("Ignore me").id
+        val author1 = literalService.createLiteral(label = "Duplicate Author")
+        val author2 = literalService.createLiteral(label = "Duplicate Author")
+        val authorNotNeeded = literalService.createLiteral(label = "Ignore me")
         val authorResource = resourceService.createResource(label = "Famous author", classes = setOf("Author"))
         // create papers
         val paper1 = resourceService.createResource(label = "Paper 1", classes = setOf("Paper"))
@@ -85,7 +86,7 @@ class LegacyComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
         val paper4 = resourceService.createResource(label = "Paper 4", classes = setOf("Paper"))
 
         // create year
-        val year = literalService.create("2018").id
+        val year = literalService.createLiteral(label = "2018")
 
         // create contributions
         val cont1 = resourceService.createResource(label = "Contribution of Paper 1", classes = setOf("Contribution"))
@@ -124,7 +125,12 @@ class LegacyComparisonControllerIntegrationTest : RestDocumentationBaseTest() {
             .andExpect(jsonPath("$.content", hasSize<Int>(2)))
             .andExpect(jsonPath("$.totalElements").value(2))
             .andExpect(jsonPath("$.content[0].info[?(@.paper_id == '$paper1')].paper_year").value(2018))
-            .andExpect(jsonPath("$.content[0].info[?(@.paper_id == '$paper2')][0].paper_year", anyOf(nullValue(), `is`<List<Int?>>(emptyList()))))
+            .andExpect(
+                jsonPath(
+                    "$.content[0].info[?(@.paper_id == '$paper2')][0].paper_year",
+                    anyOf(nullValue(), `is`<List<Int?>>(emptyList()))
+                )
+            )
             .andDo(
                 document(
                     snippet,

@@ -11,6 +11,7 @@ import org.orkg.contenttypes.output.DoiService
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.ResourceNotFound
+import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.ResourceRepository
@@ -52,9 +53,11 @@ class PublishingService(
             subject = command.id,
             predicate = Predicates.hasDOI,
             `object` = literalService.create(
-                userId = command.contributorId,
-                label = doi.value
-            ).id
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = doi.value
+                )
+            )
         )
         val now = OffsetDateTime.now(clock)
         statementService.create(
@@ -62,20 +65,24 @@ class PublishingService(
             subject = command.id,
             predicate = Predicates.yearPublished,
             `object` = literalService.create(
-                userId = command.contributorId,
-                label = now.year.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
-            ).id
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = now.year.toString(),
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
+            )
         )
         statementService.create(
             userId = command.contributorId,
             subject = command.id,
             predicate = Predicates.monthPublished,
             `object` = literalService.create(
-                userId = command.contributorId,
-                label = now.monthValue.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
-            ).id
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = now.monthValue.toString(),
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
+            )
         )
         return doi
     }

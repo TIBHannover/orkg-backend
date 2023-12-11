@@ -24,6 +24,7 @@ import org.orkg.graph.adapter.input.rest.json.GraphJacksonModule
 import org.orkg.graph.domain.InvalidLiteralLabel
 import org.orkg.graph.domain.Literal
 import org.orkg.graph.domain.MAX_LABEL_LENGTH
+import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.testing.fixtures.createLiteral
 import org.orkg.graph.testing.fixtures.withCustomMappings
@@ -44,7 +45,6 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
@@ -122,19 +122,23 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             id = ThingId("L1"),
             label = literal.label,
             datatype = literal.datatype,
-            createdAt = OffsetDateTime.now()
+            createdAt = OffsetDateTime.now(),
+            createdBy = ContributorId(MockUserId.USER)
+        )
+        val command = CreateCommand(
+            contributorId = ContributorId(MockUserId.USER),
+            label = "",
+            datatype = "xsd:string"
         )
         every { literalService.findById(any()) } returns Optional.of(mockResult)
-        every { literalService.create(any(), any(), any()) } returns mockResult
+        every { literalService.create(command) } returns mockResult.id
 
         mockMvc
             .perform(creationOf(literal))
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", matchesPattern("https?://.+/api/literals/L1")))
 
-        verify(exactly = 1) {
-            literalService.create(ContributorId(MockUserId.USER), "", "xsd:string")
-        }
+        verify(exactly = 1) { literalService.create(command) }
     }
 
     @Test
@@ -190,7 +194,7 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
         val literal = LiteralCreateRequest(
             label = "a".repeat(MAX_LABEL_LENGTH + 1)
         )
-        every { literalService.create(any(), any(), any()) } throws InvalidLiteralLabel()
+        every { literalService.create(any()) } throws InvalidLiteralLabel()
 
         mockMvc
             .perform(creationOf(literal))
@@ -199,6 +203,8 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             .andExpect(jsonPath("\$.errors.length()").value(1))
             .andExpect(jsonPath("\$.errors[0].field").value("label"))
             .andExpect(jsonPath("\$.errors[0].message").value("A literal must be at most $MAX_LABEL_LENGTH characters long."))
+
+        verify(exactly = 1) { literalService.create(any()) }
     }
 
     @Test
@@ -231,19 +237,23 @@ internal class LiteralControllerUnitTest : RestDocsTest("literals") {
             id = ThingId("L1"),
             label = literal.label,
             datatype = literal.datatype,
-            createdAt = OffsetDateTime.now()
+            createdAt = OffsetDateTime.now(),
+            createdBy = ContributorId(MockUserId.USER)
+        )
+        val command = CreateCommand(
+            contributorId = ContributorId(MockUserId.USER),
+            label = literal.label,
+            datatype = literal.datatype
         )
         every { literalService.findById(any()) } returns Optional.of(mockResult)
-        every { literalService.create(any(), any(), any()) } returns mockResult
+        every { literalService.create(command) } returns mockResult.id
 
         mockMvc
             .perform(creationOf(literal))
             .andExpect(status().isCreated)
             .andExpect(header().string("Location", matchesPattern("https?://.+/api/literals/L1")))
 
-        verify(exactly = 1) {
-            literalService.create(ContributorId(MockUserId.USER), "irrelevant", "irrelevant")
-        }
+        verify(exactly = 1) { literalService.create(command) }
     }
 
     private fun creationOf(literal: LiteralCreateRequest) =

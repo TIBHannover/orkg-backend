@@ -9,6 +9,7 @@ import org.orkg.graph.adapter.input.rest.mapping.LiteralRepresentationAdapter
 import org.orkg.graph.domain.LiteralNotFound
 import org.orkg.graph.domain.PropertyIsBlank
 import org.orkg.graph.domain.SearchString
+import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralRepresentation
 import org.orkg.graph.input.LiteralUseCases
 import org.springframework.data.domain.Page
@@ -56,7 +57,13 @@ class LiteralController(
         uriComponentsBuilder: UriComponentsBuilder
     ): ResponseEntity<LiteralRepresentation> {
         val userId = authenticatedUserId()
-        val id = service.create(ContributorId(userId), literal.label, literal.datatype).id
+        val id = service.create(
+            CreateCommand(
+                contributorId = ContributorId(userId),
+                label = literal.label,
+                datatype = literal.datatype
+            )
+        )
         val location = uriComponentsBuilder
             .path("api/literals/{id}")
             .buildAndExpand(id)

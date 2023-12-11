@@ -9,6 +9,7 @@ import org.orkg.common.ThingId
 import org.orkg.community.domain.Contributor
 import org.orkg.community.input.RetrieveContributorUseCase
 import org.orkg.graph.input.ClassUseCases
+import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.CreateObjectUseCase
 import org.orkg.graph.input.CreateObjectUseCase.CreateObjectRequest
 import org.orkg.graph.input.CreateObjectUseCase.ObjectStatement
@@ -167,8 +168,12 @@ class ObjectService(
                     }
                     jsonObject.isNewLiteral() -> { // create new literal
                         val newLiteral = literalService.create(
-                            userId, jsonObject.text!!, jsonObject.datatype ?: "xsd:string"
-                        ).id
+                            CreateCommand(
+                                contributorId = userId,
+                                label = jsonObject.text!!,
+                                datatype = jsonObject.datatype ?: "xsd:string"
+                            )
+                        )
                         if (jsonObject.`@temp` != null) {
                             tempResources[jsonObject.`@temp`!!] = newLiteral
                         }

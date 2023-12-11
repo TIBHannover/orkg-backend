@@ -84,6 +84,9 @@ class ResourceAlreadyExists(id: ThingId) :
 class PredicateAlreadyExists(id: ThingId) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """Predicate "$id" already exists.""")
 
+class LiteralAlreadyExists(id: ThingId) :
+    SimpleMessageException(HttpStatus.BAD_REQUEST, """Literal "$id" already exists.""")
+
 class InvalidClassCollection(ids: Iterable<ThingId>) :
     SimpleMessageException(HttpStatus.BAD_REQUEST, """The collection of classes "$ids" contains one or more invalid classes.""")
 

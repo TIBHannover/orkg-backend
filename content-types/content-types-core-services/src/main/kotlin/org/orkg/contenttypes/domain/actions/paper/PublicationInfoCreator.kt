@@ -9,6 +9,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.SearchString
+import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
@@ -41,16 +42,18 @@ abstract class PublicationInfoCreator(
         subjectId: ThingId,
         publishedMonth: Int
     ) {
-        val publishedIn = literalService.create(
-            userId = contributorId,
-            label = publishedMonth.toString(),
-            datatype = Literals.XSD.INT.prefixedUri
-        ).id
+        val monthLiteralId = literalService.create(
+            CreateCommand(
+                contributorId = contributorId,
+                label = publishedMonth.toString(),
+                datatype = Literals.XSD.INT.prefixedUri
+            )
+        )
         statementService.add(
             userId = contributorId,
             subject = subjectId,
             predicate = Predicates.monthPublished,
-            `object` = publishedIn
+            `object` = monthLiteralId
         )
     }
 
@@ -59,16 +62,18 @@ abstract class PublicationInfoCreator(
         subjectId: ThingId,
         publishedYear: Long
     ) {
-        val publishedIn = literalService.create(
-            userId = contributorId,
-            label = publishedYear.toString(),
-            datatype = Literals.XSD.INT.prefixedUri
-        ).id
+        val yearLiteralId = literalService.create(
+            CreateCommand(
+                contributorId = contributorId,
+                label = publishedYear.toString(),
+                datatype = Literals.XSD.INT.prefixedUri
+            )
+        )
         statementService.add(
             userId = contributorId,
             subject = subjectId,
             predicate = Predicates.yearPublished,
-            `object` = publishedIn
+            `object` = yearLiteralId
         )
     }
 
@@ -101,16 +106,18 @@ abstract class PublicationInfoCreator(
         subjectId: ThingId,
         url: URI
     ) {
-        val publishedIn = literalService.create(
-            userId = contributorId,
-            label = url.toString(),
-            datatype = Literals.XSD.URI.prefixedUri // TODO: Is this correct?
-        ).id
+        val urlLiteralId = literalService.create(
+            CreateCommand(
+                contributorId = contributorId,
+                label = url.toString(),
+                datatype = Literals.XSD.URI.prefixedUri // TODO: Is this correct?
+            )
+        )
         statementService.add(
             userId = contributorId,
             subject = subjectId,
             predicate = Predicates.hasURL,
-            `object` = publishedIn
+            `object` = urlLiteralId
         )
     }
 }

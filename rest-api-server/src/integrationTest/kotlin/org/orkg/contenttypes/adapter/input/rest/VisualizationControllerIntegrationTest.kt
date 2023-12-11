@@ -14,6 +14,7 @@ import org.orkg.common.ThingId
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.createClasses
+import org.orkg.createLiteral
 import org.orkg.createObservatory
 import org.orkg.createOrganization
 import org.orkg.createPredicate
@@ -106,15 +107,23 @@ class VisualizationControllerIntegrationTest : RestDocumentationBaseTest() {
         resourceService.createResource(id = "R123", label = "Author with id", classes = setOf("Author"))
 
         statementService.create(
-            subject = resourceService.createResource(id = "R456", label = "Author with id and orcid", classes = setOf("Author")),
+            subject = resourceService.createResource(
+                id = "R456",
+                label = "Author with id and orcid",
+                classes = setOf("Author")
+            ),
             predicate = Predicates.hasORCID,
-            `object` = literalService.create("1111-2222-3333-4444").id
+            `object` = literalService.createLiteral(label = "1111-2222-3333-4444")
         )
 
         statementService.create(
-            subject = resourceService.createResource(id = "R456", label = "Author with orcid", classes = setOf("Author")),
+            subject = resourceService.createResource(
+                id = "R456",
+                label = "Author with orcid",
+                classes = setOf("Author")
+            ),
             predicate = Predicates.hasORCID,
-            `object` = literalService.create("0000-1111-2222-3333").id
+            `object` = literalService.createLiteral(label = "0000-1111-2222-3333")
         )
 
         val userId = userService.createUser()

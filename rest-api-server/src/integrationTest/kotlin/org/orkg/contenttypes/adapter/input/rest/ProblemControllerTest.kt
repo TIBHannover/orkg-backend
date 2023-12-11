@@ -9,6 +9,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.createClasses
 import org.orkg.createList
+import org.orkg.createLiteral
 import org.orkg.createPredicate
 import org.orkg.createResource
 import org.orkg.graph.adapter.input.rest.ResourceControllerIntegrationTest.RestDoc.resourceResponseFields
@@ -117,7 +118,7 @@ class ProblemControllerTest : RestDocumentationBaseTest() {
     fun getAuthorsPerProblem() {
         // Create authors
         val author1 = resourceService.createResource(setOf("Author"), label = "Author A")
-        val author2 = literalService.create("Author B").id
+        val author2 = literalService.createLiteral(label = "Author B")
         // Create papers
         val paper1 = resourceService.createResource(setOf("Paper"), label = "Paper 1")
         val paper2 = resourceService.createResource(setOf("Paper"), label = "Paper 2")

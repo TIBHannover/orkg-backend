@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.orkg.common.ThingId
 import org.orkg.createClasses
+import org.orkg.createLiteral
 import org.orkg.createPredicates
 import org.orkg.createResource
 import org.orkg.graph.input.ClassUseCases
@@ -76,8 +77,8 @@ class ContributionComparisonControllerIntegrationTest : RestDocumentationBaseTes
         val paper1 = resourceService.createResource(setOf("Paper"), label = "Paper 1")
         val paper2 = resourceService.createResource(setOf("Paper"), label = "Paper 2")
 
-        val year1 = literalService.create("2022").id
-        val year2 = literalService.create("2023").id
+        val year1 = literalService.createLiteral(label = "2022")
+        val year2 = literalService.createLiteral(label = "2023")
 
         statementService.create(paper1, ThingId("P31"), cont1)
         statementService.create(paper2, ThingId("P31"), cont2)
@@ -106,7 +107,7 @@ class ContributionComparisonControllerIntegrationTest : RestDocumentationBaseTes
 
         val paper1 = resourceService.createResource(setOf("Paper"), label = "Paper 1")
 
-        val year1 = literalService.create("2022").id
+        val year1 = literalService.createLiteral(label = "2022")
 
         statementService.create(paper1, ThingId("P31"), cont1)
 

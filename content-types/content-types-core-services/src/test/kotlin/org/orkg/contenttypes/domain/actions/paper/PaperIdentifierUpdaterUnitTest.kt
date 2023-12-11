@@ -13,12 +13,14 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.orkg.common.PageRequests
+import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.actions.UpdatePaperState
 import org.orkg.contenttypes.domain.testing.fixtures.createDummyPaper
 import org.orkg.contenttypes.input.testing.fixtures.dummyUpdatePaperCommand
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createLiteral
@@ -53,10 +55,17 @@ class PaperIdentifierUpdaterUnitTest {
         val state = UpdatePaperState(paper = paper)
 
         val doi = command.identifiers!!["doi"]!!
-        val doiLiteral = createLiteral(label = doi)
+        val doiLiteralId = ThingId("L1")
 
-        every { literalService.create(doi) } returns doiLiteral
-        every { statementService.create(command.contributorId, paperId, Predicates.hasDOI, doiLiteral.id) } returns StatementId("S435")
+        every {
+            literalService.create(
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = doi
+                )
+            )
+        } returns doiLiteralId
+        every { statementService.create(command.contributorId, paperId, Predicates.hasDOI, doiLiteralId) } returns StatementId("S435")
 
         val result = paperIdentifierUpdater(command, state)
 
@@ -65,8 +74,15 @@ class PaperIdentifierUpdaterUnitTest {
             it.authors.size shouldBe 0
         }
 
-        verify(exactly = 1) { literalService.create(doi) }
-        verify(exactly = 1) { statementService.create(command.contributorId, paperId, Predicates.hasDOI, doiLiteral.id) }
+        verify(exactly = 1) {
+            literalService.create(
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = doi
+                )
+            )
+        }
+        verify(exactly = 1) { statementService.create(command.contributorId, paperId, Predicates.hasDOI, doiLiteralId) }
     }
 
     @Test
@@ -82,8 +98,8 @@ class PaperIdentifierUpdaterUnitTest {
         val paperId = paper.id
         val state = UpdatePaperState(paper = paper)
 
-        val oldDoiLiteral = createLiteral(label = oldDoi)
-        val newDoiLiteral = createLiteral(label = newDoi)
+        val oldDoiLiteral = createLiteral(ThingId("L1"), label = oldDoi)
+        val newDoiLiteral = createLiteral(ThingId("L2"), label = newDoi)
         val statementId = StatementId("S1")
 
         every {
@@ -101,7 +117,14 @@ class PaperIdentifierUpdaterUnitTest {
             )
         )
         every { statementService.delete(statementId) } just runs
-        every { literalService.create(newDoi) } returns newDoiLiteral
+        every {
+            literalService.create(
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = newDoi
+                )
+            )
+        } returns newDoiLiteral.id
         every { statementService.create(command.contributorId, paperId, Predicates.hasDOI, newDoiLiteral.id) } returns StatementId("S435")
 
         val result = paperIdentifierUpdater(command, state)
@@ -119,7 +142,14 @@ class PaperIdentifierUpdaterUnitTest {
             )
         }
         verify(exactly = 1) { statementService.delete(statementId) }
-        verify(exactly = 1) { literalService.create(newDoi) }
+        verify(exactly = 1) {
+            literalService.create(
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = newDoi
+                )
+            )
+        }
         verify(exactly = 1) { statementService.create(command.contributorId, paperId, Predicates.hasDOI, newDoiLiteral.id) }
     }
 

@@ -26,6 +26,7 @@ import org.orkg.graph.domain.ExactSearchString
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
@@ -184,21 +185,23 @@ class PaperPublicationInfoUpdaterUnitTest {
         val state = UpdatePaperState(
             paper = paper
         )
-        val monthLiteral = createLiteral(label = month.toString())
+        val monthLiteralId = ThingId("L132")
 
         every {
             literalService.create(
-                userId = command.contributorId,
-                label = month.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = month.toString(),
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
             )
-        } returns monthLiteral
+        } returns monthLiteralId
         every {
             statementService.add(
                 userId = command.contributorId,
                 subject = command.paperId,
                 predicate = Predicates.monthPublished,
-                `object` = monthLiteral.id
+                `object` = monthLiteralId
             )
         } just runs
 
@@ -211,9 +214,11 @@ class PaperPublicationInfoUpdaterUnitTest {
 
         verify(exactly = 1) {
             literalService.create(
-                userId = command.contributorId,
-                label = month.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = month.toString(),
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
             )
         }
         verify(exactly = 1) {
@@ -221,7 +226,7 @@ class PaperPublicationInfoUpdaterUnitTest {
                 userId = command.contributorId,
                 subject = command.paperId,
                 predicate = Predicates.monthPublished,
-                `object` = monthLiteral.id
+                `object` = monthLiteralId
             )
         }
     }
@@ -251,10 +256,7 @@ class PaperPublicationInfoUpdaterUnitTest {
             label = paper.publicationInfo.publishedMonth.toString(),
             datatype = Literals.XSD.INT.prefixedUri
         )
-        val newMonthLiteral = createLiteral(
-            label = command.publicationInfo!!.publishedMonth.toString(),
-            datatype = Literals.XSD.INT.prefixedUri
-        )
+        val newMonthLiteralId = ThingId("L534")
         val statementId = StatementId("S1")
 
         every {
@@ -274,17 +276,19 @@ class PaperPublicationInfoUpdaterUnitTest {
         every { statementService.delete(statementId) } just runs
         every {
             literalService.create(
-                userId = command.contributorId,
-                label = newMonthLiteral.label,
-                datatype = Literals.XSD.INT.prefixedUri
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.publicationInfo!!.publishedMonth.toString(),
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
             )
-        } returns newMonthLiteral
+        } returns newMonthLiteralId
         every {
             statementService.add(
                 userId = command.contributorId,
                 subject = command.paperId,
                 predicate = Predicates.monthPublished,
-                `object` = newMonthLiteral.id
+                `object` = newMonthLiteralId
             )
         } just runs
 
@@ -305,9 +309,11 @@ class PaperPublicationInfoUpdaterUnitTest {
         verify(exactly = 1) { statementService.delete(statementId) }
         verify(exactly = 1) {
             literalService.create(
-                userId = command.contributorId,
-                label = newMonthLiteral.label,
-                datatype = Literals.XSD.INT.prefixedUri
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.publicationInfo!!.publishedMonth.toString(),
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
             )
         }
         verify(exactly = 1) {
@@ -315,7 +321,7 @@ class PaperPublicationInfoUpdaterUnitTest {
                 userId = command.contributorId,
                 subject = command.paperId,
                 predicate = Predicates.monthPublished,
-                `object` = newMonthLiteral.id
+                `object` = newMonthLiteralId
             )
         }
     }
@@ -425,21 +431,23 @@ class PaperPublicationInfoUpdaterUnitTest {
         val state = UpdatePaperState(
             paper = paper
         )
-        val yearLiteral = createLiteral(label = year.toString())
+        val yearLiteralId = ThingId("L645")
 
         every {
             literalService.create(
-                userId = command.contributorId,
-                label = year.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.publicationInfo!!.publishedYear.toString(),
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
             )
-        } returns yearLiteral
+        } returns yearLiteralId
         every {
             statementService.add(
                 userId = command.contributorId,
                 subject = command.paperId,
                 predicate = Predicates.yearPublished,
-                `object` = yearLiteral.id
+                `object` = yearLiteralId
             )
         } just runs
 
@@ -452,9 +460,11 @@ class PaperPublicationInfoUpdaterUnitTest {
 
         verify(exactly = 1) {
             literalService.create(
-                userId = command.contributorId,
-                label = year.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.publicationInfo!!.publishedYear.toString(),
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
             )
         }
         verify(exactly = 1) {
@@ -462,7 +472,7 @@ class PaperPublicationInfoUpdaterUnitTest {
                 userId = command.contributorId,
                 subject = command.paperId,
                 predicate = Predicates.yearPublished,
-                `object` = yearLiteral.id
+                `object` = yearLiteralId
             )
         }
     }
@@ -492,10 +502,7 @@ class PaperPublicationInfoUpdaterUnitTest {
             label = paper.publicationInfo.publishedYear.toString(),
             datatype = Literals.XSD.INT.prefixedUri
         )
-        val newYearLiteral = createLiteral(
-            label = command.publicationInfo!!.publishedYear.toString(),
-            datatype = Literals.XSD.INT.prefixedUri
-        )
+        val newYearLiteralId = ThingId("L4351")
         val statementId = StatementId("S1")
 
         every {
@@ -515,17 +522,19 @@ class PaperPublicationInfoUpdaterUnitTest {
         every { statementService.delete(statementId) } just runs
         every {
             literalService.create(
-                userId = command.contributorId,
-                label = newYearLiteral.label,
-                datatype = Literals.XSD.INT.prefixedUri
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.publicationInfo!!.publishedYear.toString(),
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
             )
-        } returns newYearLiteral
+        } returns newYearLiteralId
         every {
             statementService.add(
                 userId = command.contributorId,
                 subject = command.paperId,
                 predicate = Predicates.yearPublished,
-                `object` = newYearLiteral.id
+                `object` = newYearLiteralId
             )
         } just runs
 
@@ -546,9 +555,11 @@ class PaperPublicationInfoUpdaterUnitTest {
         verify(exactly = 1) { statementService.delete(statementId) }
         verify(exactly = 1) {
             literalService.create(
-                userId = command.contributorId,
-                label = newYearLiteral.label,
-                datatype = Literals.XSD.INT.prefixedUri
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.publicationInfo!!.publishedYear.toString(),
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
             )
         }
         verify(exactly = 1) {
@@ -556,7 +567,7 @@ class PaperPublicationInfoUpdaterUnitTest {
                 userId = command.contributorId,
                 subject = command.paperId,
                 predicate = Predicates.yearPublished,
-                `object` = newYearLiteral.id
+                `object` = newYearLiteralId
             )
         }
     }
@@ -904,21 +915,23 @@ class PaperPublicationInfoUpdaterUnitTest {
         val state = UpdatePaperState(
             paper = paper
         )
-        val urlLiteral = createLiteral(label = url.toString())
+        val urlLiteralId = ThingId("L4356")
 
         every {
             literalService.create(
-                userId = command.contributorId,
-                label = url.toString(),
-                datatype = Literals.XSD.URI.prefixedUri
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = url.toString(),
+                    datatype = Literals.XSD.URI.prefixedUri
+                )
             )
-        } returns urlLiteral
+        } returns urlLiteralId
         every {
             statementService.add(
                 userId = command.contributorId,
                 subject = command.paperId,
                 predicate = Predicates.hasURL,
-                `object` = urlLiteral.id
+                `object` = urlLiteralId
             )
         } just runs
 
@@ -931,9 +944,11 @@ class PaperPublicationInfoUpdaterUnitTest {
 
         verify(exactly = 1) {
             literalService.create(
-                userId = command.contributorId,
-                label = url.toString(),
-                datatype = Literals.XSD.URI.prefixedUri
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = url.toString(),
+                    datatype = Literals.XSD.URI.prefixedUri
+                )
             )
         }
         verify(exactly = 1) {
@@ -941,7 +956,7 @@ class PaperPublicationInfoUpdaterUnitTest {
                 userId = command.contributorId,
                 subject = command.paperId,
                 predicate = Predicates.hasURL,
-                `object` = urlLiteral.id
+                `object` = urlLiteralId
             )
         }
     }
@@ -967,14 +982,11 @@ class PaperPublicationInfoUpdaterUnitTest {
         val state = UpdatePaperState(
             paper = paper
         )
-        val oldYearLiteral = createLiteral(
+        val oldUrlLiteral = createLiteral(
             label = paper.publicationInfo.url.toString(),
             datatype = Literals.XSD.URI.prefixedUri
         )
-        val newYearLiteral = createLiteral(
-            label = command.publicationInfo!!.url.toString(),
-            datatype = Literals.XSD.URI.prefixedUri
-        )
+        val newUrlLiteralId = ThingId("L15436")
         val statementId = StatementId("S1")
 
         every {
@@ -988,23 +1000,25 @@ class PaperPublicationInfoUpdaterUnitTest {
                 id = statementId,
                 subject = createResource(command.paperId),
                 predicate = createPredicate(Predicates.hasURL),
-                `object` = oldYearLiteral
+                `object` = oldUrlLiteral
             )
         )
         every { statementService.delete(statementId) } just runs
         every {
             literalService.create(
-                userId = command.contributorId,
-                label = newYearLiteral.label,
-                datatype = Literals.XSD.URI.prefixedUri
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.publicationInfo!!.url.toString(),
+                    datatype = Literals.XSD.URI.prefixedUri
+                )
             )
-        } returns newYearLiteral
+        } returns newUrlLiteralId
         every {
             statementService.add(
                 userId = command.contributorId,
                 subject = command.paperId,
                 predicate = Predicates.hasURL,
-                `object` = newYearLiteral.id
+                `object` = newUrlLiteralId
             )
         } just runs
 
@@ -1025,9 +1039,11 @@ class PaperPublicationInfoUpdaterUnitTest {
         verify(exactly = 1) { statementService.delete(statementId) }
         verify(exactly = 1) {
             literalService.create(
-                userId = command.contributorId,
-                label = newYearLiteral.label,
-                datatype = Literals.XSD.URI.prefixedUri
+                CreateLiteralUseCase.CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.publicationInfo!!.url.toString(),
+                    datatype = Literals.XSD.URI.prefixedUri
+                )
             )
         }
         verify(exactly = 1) {
@@ -1035,7 +1051,7 @@ class PaperPublicationInfoUpdaterUnitTest {
                 userId = command.contributorId,
                 subject = command.paperId,
                 predicate = Predicates.hasURL,
-                `object` = newYearLiteral.id
+                `object` = newUrlLiteralId
             )
         }
     }

@@ -35,6 +35,7 @@ import org.orkg.graph.domain.Resource
 import org.orkg.graph.domain.SearchString
 import org.orkg.graph.domain.Visibility
 import org.orkg.graph.domain.VisibilityFilter
+import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
@@ -162,7 +163,12 @@ class ComparisonService(
                 userId = command.contributorId,
                 subject = resourceId,
                 predicate = Predicates.hasImage,
-                `object` = literalService.create(command.contributorId, command.image!!).id
+                `object` = literalService.create(
+                    CreateCommand(
+                        contributorId = command.contributorId,
+                        label = command.image!!
+                    )
+                )
             )
         }
         if (command.url != null) {
@@ -170,7 +176,12 @@ class ComparisonService(
                 userId = command.contributorId,
                 subject = resourceId,
                 predicate = Predicates.hasURL,
-                `object` = literalService.create(command.contributorId, command.url!!).id
+                `object` = literalService.create(
+                    CreateCommand(
+                        contributorId = command.contributorId,
+                        label = command.url!!
+                    )
+                )
             )
         }
         if (command.description != null) {
@@ -178,7 +189,12 @@ class ComparisonService(
                 userId = command.contributorId,
                 subject = resourceId,
                 predicate = Predicates.description,
-                `object` = literalService.create(command.contributorId, command.description!!).id
+                `object` = literalService.create(
+                    CreateCommand(
+                        contributorId = command.contributorId,
+                        label = command.description!!
+                    )
+                )
             )
         }
         return resourceId
@@ -200,7 +216,12 @@ class ComparisonService(
                 userId = command.contributorId,
                 subject = figureId,
                 predicate = Predicates.hasImage,
-                `object` = literalService.create(command.contributorId, command.image!!).id
+                `object` = literalService.create(
+                    CreateCommand(
+                        contributorId = command.contributorId,
+                        label = command.image!!
+                    )
+                )
             )
         }
         if (command.description != null) {
@@ -208,7 +229,12 @@ class ComparisonService(
                 userId = command.contributorId,
                 subject = figureId,
                 predicate = Predicates.description,
-                `object` = literalService.create(command.contributorId, command.description!!).id
+                `object` = literalService.create(
+                    CreateCommand(
+                        contributorId = command.contributorId,
+                        label = command.description!!
+                    )
+                )
             )
         }
         return figureId

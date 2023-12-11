@@ -5,6 +5,7 @@ import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.orkg.createLiteral
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.testing.MockUserDetailsService
 import org.orkg.testing.annotations.TestWithMockUser
@@ -39,8 +40,8 @@ class LiteralControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Test
     fun index() {
-        service.create("research contribution")
-        service.create("programming language")
+        service.createLiteral(label = "research contribution")
+        service.createLiteral(label = "programming language")
 
         mockMvc
             .perform(getRequestTo("/api/literals/"))
@@ -59,9 +60,9 @@ class LiteralControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookup() {
-        service.create("research contribution")
-        service.create("programming language")
-        service.create("research topic")
+        service.createLiteral(label = "research contribution")
+        service.createLiteral(label = "programming language")
+        service.createLiteral(label = "research topic")
 
         mockMvc
             .perform(getRequestTo("/api/literals/?q=research"))
@@ -82,9 +83,9 @@ class LiteralControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Test
     fun lookupWithSpecialChars() {
-        service.create("research contribution")
-        service.create("programming language (PL)")
-        service.create("research topic")
+        service.createLiteral(label = "research contribution")
+        service.createLiteral(label = "programming language (PL)")
+        service.createLiteral(label = "research topic")
 
         mockMvc
             .perform(getRequestTo("/api/literals/?q=PL)"))
@@ -105,7 +106,7 @@ class LiteralControllerIntegrationTest : RestDocumentationBaseTest() {
 
     @Test
     fun fetch() {
-        val id = service.create("research contribution").id
+        val id = service.createLiteral(label = "research contribution")
 
         mockMvc
             .perform(getRequestTo("/api/literals/$id"))
@@ -141,7 +142,10 @@ class LiteralControllerIntegrationTest : RestDocumentationBaseTest() {
     @Test
     @TestWithMockUser
     fun edit() {
-        val resource = service.create("foo", "dt:old").id
+        val resource = service.createLiteral(
+            label = "foo",
+            datatype = "dt:old"
+        )
 
         val update = mapOf("label" to "bar", "datatype" to "dt:new")
 

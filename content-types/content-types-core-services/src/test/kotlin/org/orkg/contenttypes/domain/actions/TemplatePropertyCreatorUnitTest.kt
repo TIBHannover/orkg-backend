@@ -16,11 +16,11 @@ import org.orkg.contenttypes.input.testing.fixtures.dummyCreateResourceTemplateP
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.ResourceUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.testing.fixtures.createLiteral
 
 class TemplatePropertyCreatorUnitTest {
     private val resourceService: ResourceUseCases = mockk()
@@ -45,10 +45,10 @@ class TemplatePropertyCreatorUnitTest {
         val property = dummyCreateLiteralTemplatePropertyCommand()
         val order = 5
         val propertyId = ThingId("R1325")
-        val minLiteral = ThingId("L123")
-        val maxLiteral = ThingId("L124")
-        val patternLiteral = ThingId("L125")
-        val orderLiteral = ThingId("L126")
+        val minLiteralId = ThingId("L123")
+        val maxLiteralId = ThingId("L124")
+        val patternLiteralId = ThingId("L125")
+        val orderLiteralId = ThingId("L126")
         
         every {
             resourceService.create(
@@ -61,46 +61,52 @@ class TemplatePropertyCreatorUnitTest {
         } returns propertyId
         every {
             literalService.create(
-                userId = property.contributorId,
-                label = property.minCount.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                CreateCommand(
+                    contributorId = property.contributorId,
+                    label = property.minCount.toString(),
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
             )
-        } returns createLiteral(minLiteral)
+        } returns minLiteralId
         every {
             statementService.add(
                 userId = property.contributorId,
                 subject = propertyId,
                 predicate = Predicates.shMinCount,
-                `object` = minLiteral
+                `object` = minLiteralId
             )
         } just runs
         every {
             literalService.create(
-                userId = property.contributorId,
-                label = property.maxCount.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                CreateCommand(
+                    contributorId = property.contributorId,
+                    label = property.maxCount.toString(),
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
             )
-        } returns createLiteral(maxLiteral)
+        } returns maxLiteralId
         every {
             statementService.add(
                 userId = property.contributorId,
                 subject = propertyId,
                 predicate = Predicates.shMaxCount,
-                `object` = maxLiteral
+                `object` = maxLiteralId
             )
         } just runs
         every {
             literalService.create(
-                userId = property.contributorId,
-                label = property.pattern.toString()
+                CreateCommand(
+                    contributorId = property.contributorId,
+                    label = property.pattern.toString()
+                )
             )
-        } returns createLiteral(patternLiteral)
+        } returns patternLiteralId
         every {
             statementService.add(
                 userId = property.contributorId,
                 subject = propertyId,
                 predicate = Predicates.shPattern,
-                `object` = patternLiteral
+                `object` = patternLiteralId
             )
         } just runs
         every {
@@ -121,17 +127,19 @@ class TemplatePropertyCreatorUnitTest {
         } just runs
         every {
             literalService.create(
-                userId = property.contributorId,
-                label = order.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                CreateCommand(
+                    contributorId = property.contributorId,
+                    label = order.toString(),
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
             )
-        } returns createLiteral(orderLiteral)
+        } returns orderLiteralId
         every {
             statementService.add(
                 userId = property.contributorId,
                 subject = propertyId,
                 predicate = Predicates.shOrder,
-                `object` = orderLiteral
+                `object` = orderLiteralId
             )
         } just runs
         every {
@@ -156,9 +164,11 @@ class TemplatePropertyCreatorUnitTest {
         }
         verify(exactly = 1) {
             literalService.create(
-                userId = property.contributorId,
-                label = property.minCount.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                CreateCommand(
+                    contributorId = property.contributorId,
+                    label = property.minCount.toString(),
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
             )
         }
         verify(exactly = 1) {
@@ -166,14 +176,16 @@ class TemplatePropertyCreatorUnitTest {
                 userId = property.contributorId,
                 subject = propertyId,
                 predicate = Predicates.shMinCount,
-                `object` = minLiteral
+                `object` = minLiteralId
             )
         }
         verify(exactly = 1) {
             literalService.create(
-                userId = property.contributorId,
-                label = property.maxCount.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                CreateCommand(
+                    contributorId = property.contributorId,
+                    label = property.maxCount.toString(),
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
             )
         }
         verify(exactly = 1) {
@@ -181,13 +193,15 @@ class TemplatePropertyCreatorUnitTest {
                 userId = property.contributorId,
                 subject = propertyId,
                 predicate = Predicates.shMaxCount,
-                `object` = maxLiteral
+                `object` = maxLiteralId
             )
         }
         verify(exactly = 1) {
             literalService.create(
-                userId = property.contributorId,
-                label = property.pattern.toString()
+                CreateCommand(
+                    contributorId = property.contributorId,
+                    label = property.pattern.toString()
+                )
             )
         }
         verify(exactly = 1) {
@@ -195,7 +209,7 @@ class TemplatePropertyCreatorUnitTest {
                 userId = property.contributorId,
                 subject = propertyId,
                 predicate = Predicates.shPattern,
-                `object` = patternLiteral
+                `object` = patternLiteralId
             )
         }
         verify(exactly = 1) {
@@ -216,9 +230,11 @@ class TemplatePropertyCreatorUnitTest {
         }
         verify(exactly = 1) {
             literalService.create(
-                userId = property.contributorId,
-                label = order.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                CreateCommand(
+                    contributorId = property.contributorId,
+                    label = order.toString(),
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
             )
         }
         verify(exactly = 1) {
@@ -226,7 +242,7 @@ class TemplatePropertyCreatorUnitTest {
                 userId = property.contributorId,
                 subject = propertyId,
                 predicate = Predicates.shOrder,
-                `object` = orderLiteral
+                `object` = orderLiteralId
             )
         }
         verify(exactly = 1) {
@@ -244,10 +260,10 @@ class TemplatePropertyCreatorUnitTest {
         val property = dummyCreateResourceTemplatePropertyCommand()
         val order = 5
         val propertyId = ThingId("R1325")
-        val minLiteral = ThingId("L123")
-        val maxLiteral = ThingId("L124")
-        val patternLiteral = ThingId("L125")
-        val orderLiteral = ThingId("L126")
+        val minLiteralId = ThingId("L123")
+        val maxLiteralId = ThingId("L124")
+        val patternLiteralId = ThingId("L125")
+        val orderLiteralId = ThingId("L126")
 
         every {
             resourceService.create(
@@ -260,46 +276,52 @@ class TemplatePropertyCreatorUnitTest {
         } returns propertyId
         every {
             literalService.create(
-                userId = property.contributorId,
-                label = property.minCount.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                CreateCommand(
+                    contributorId = property.contributorId,
+                    label = property.minCount.toString(),
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
             )
-        } returns createLiteral(minLiteral)
+        } returns minLiteralId
         every {
             statementService.add(
                 userId = property.contributorId,
                 subject = propertyId,
                 predicate = Predicates.shMinCount,
-                `object` = minLiteral
+                `object` = minLiteralId
             )
         } just runs
         every {
             literalService.create(
-                userId = property.contributorId,
-                label = property.maxCount.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                CreateCommand(
+                    contributorId = property.contributorId,
+                    label = property.maxCount.toString(),
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
             )
-        } returns createLiteral(maxLiteral)
+        } returns maxLiteralId
         every {
             statementService.add(
                 userId = property.contributorId,
                 subject = propertyId,
                 predicate = Predicates.shMaxCount,
-                `object` = maxLiteral
+                `object` = maxLiteralId
             )
         } just runs
         every {
             literalService.create(
-                userId = property.contributorId,
-                label = property.pattern.toString()
+                CreateCommand(
+                    contributorId = property.contributorId,
+                    label = property.pattern.toString()
+                )
             )
-        } returns createLiteral(patternLiteral)
+        } returns patternLiteralId
         every {
             statementService.add(
                 userId = property.contributorId,
                 subject = propertyId,
                 predicate = Predicates.shPattern,
-                `object` = patternLiteral
+                `object` = patternLiteralId
             )
         } just runs
         every {
@@ -320,17 +342,19 @@ class TemplatePropertyCreatorUnitTest {
         } just runs
         every {
             literalService.create(
-                userId = property.contributorId,
-                label = order.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                CreateCommand(
+                    contributorId = property.contributorId,
+                    label = order.toString(),
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
             )
-        } returns createLiteral(orderLiteral)
+        } returns orderLiteralId
         every {
             statementService.add(
                 userId = property.contributorId,
                 subject = propertyId,
                 predicate = Predicates.shOrder,
-                `object` = orderLiteral
+                `object` = orderLiteralId
             )
         } just runs
         every {
@@ -355,9 +379,11 @@ class TemplatePropertyCreatorUnitTest {
         }
         verify(exactly = 1) {
             literalService.create(
-                userId = property.contributorId,
-                label = property.minCount.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                CreateCommand(
+                    contributorId = property.contributorId,
+                    label = property.minCount.toString(),
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
             )
         }
         verify(exactly = 1) {
@@ -365,14 +391,16 @@ class TemplatePropertyCreatorUnitTest {
                 userId = property.contributorId,
                 subject = propertyId,
                 predicate = Predicates.shMinCount,
-                `object` = minLiteral
+                `object` = minLiteralId
             )
         }
         verify(exactly = 1) {
             literalService.create(
-                userId = property.contributorId,
-                label = property.maxCount.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                CreateCommand(
+                    contributorId = property.contributorId,
+                    label = property.maxCount.toString(),
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
             )
         }
         verify(exactly = 1) {
@@ -380,13 +408,15 @@ class TemplatePropertyCreatorUnitTest {
                 userId = property.contributorId,
                 subject = propertyId,
                 predicate = Predicates.shMaxCount,
-                `object` = maxLiteral
+                `object` = maxLiteralId
             )
         }
         verify(exactly = 1) {
             literalService.create(
-                userId = property.contributorId,
-                label = property.pattern.toString()
+                CreateCommand(
+                    contributorId = property.contributorId,
+                    label = property.pattern.toString()
+                )
             )
         }
         verify(exactly = 1) {
@@ -394,7 +424,7 @@ class TemplatePropertyCreatorUnitTest {
                 userId = property.contributorId,
                 subject = propertyId,
                 predicate = Predicates.shPattern,
-                `object` = patternLiteral
+                `object` = patternLiteralId
             )
         }
         verify(exactly = 1) {
@@ -415,9 +445,11 @@ class TemplatePropertyCreatorUnitTest {
         }
         verify(exactly = 1) {
             literalService.create(
-                userId = property.contributorId,
-                label = order.toString(),
-                datatype = Literals.XSD.INT.prefixedUri
+                CreateCommand(
+                    contributorId = property.contributorId,
+                    label = order.toString(),
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
             )
         }
         verify(exactly = 1) {
@@ -425,7 +457,7 @@ class TemplatePropertyCreatorUnitTest {
                 userId = property.contributorId,
                 subject = propertyId,
                 predicate = Predicates.shOrder,
-                `object` = orderLiteral
+                `object` = orderLiteralId
             )
         }
         verify(exactly = 1) {

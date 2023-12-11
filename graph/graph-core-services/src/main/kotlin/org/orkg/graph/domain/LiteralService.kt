@@ -3,8 +3,8 @@ package org.orkg.graph.domain
 import java.net.URI
 import java.time.OffsetDateTime
 import java.util.*
-import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.StatementRepository
@@ -19,27 +19,26 @@ class LiteralService(
     private val repository: LiteralRepository,
     private val statementRepository: StatementRepository,
 ) : LiteralUseCases {
-    override fun create(label: String, datatype: String): Literal =
-        create(ContributorId.createUnknownContributor(), label, datatype)
-
-    override fun create(userId: ContributorId, label: String, datatype: String): Literal {
-        if (label.length > MAX_LABEL_LENGTH) {
+    override fun create(command: CreateLiteralUseCase.CreateCommand): ThingId {
+        if (command.label.length > MAX_LABEL_LENGTH) {
             throw InvalidLiteralLabel()
         }
         // Note: "xsd:foo" is a valid URI, so is everything starting with a letter followed by a colon.
         // There is no easy way around that, because other valid URIs use "prefix-like" structures, such as URNs.
-        if (datatype.startsWith("xsd:").not() && datatype.toUriOrNull() == null)
+        if (command.datatype.startsWith("xsd:").not() && command.datatype.toUriOrNull() == null)
             throw InvalidLiteralDatatype()
-        val literalId = repository.nextIdentity()
-        val newLiteral = Literal(
-            label = label,
-            id = literalId,
-            datatype = datatype,
-            createdBy = userId,
+        val id = command.id
+            ?.also { id -> repository.findById(id).ifPresent { throw LiteralAlreadyExists(id) } }
+            ?: repository.nextIdentity()
+        val literal = Literal(
+            label = command.label,
+            id = id,
+            datatype = command.datatype,
+            createdBy = command.contributorId,
             createdAt = OffsetDateTime.now(),
         )
-        repository.save(newLiteral)
-        return newLiteral
+        repository.save(literal)
+        return id
     }
 
     @Transactional(readOnly = true)

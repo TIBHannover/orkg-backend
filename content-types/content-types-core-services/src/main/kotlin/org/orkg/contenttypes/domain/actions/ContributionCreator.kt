@@ -10,6 +10,7 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Thing
 import org.orkg.graph.input.CreateListUseCase
+import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ListUseCases
@@ -51,10 +52,12 @@ abstract class ContributionCreator(
         contents.literals.forEach {
             if (it.key.isTempId && it.key in validatedIds) {
                 lookup[it.key] = literalService.create(
-                    userId = contributorId,
-                    label = it.value.label,
-                    datatype = it.value.dataType
-                ).id
+                    CreateCommand(
+                        contributorId = contributorId,
+                        label = it.value.label,
+                        datatype = it.value.dataType
+                    )
+                )
             }
         }
         contents.predicates.forEach {
@@ -68,10 +71,11 @@ abstract class ContributionCreator(
                 lookup[it.key] = predicate
                 if (it.value.description != null) {
                     val description = literalService.create(
-                        userId = contributorId,
-                        label = it.value.label,
-                        datatype = Literals.XSD.STRING.prefixedUri
-                    ).id
+                        CreateCommand(
+                            contributorId = contributorId,
+                            label = it.value.label
+                        )
+                    )
                     statementService.add(
                         userId = contributorId,
                         subject = predicate,

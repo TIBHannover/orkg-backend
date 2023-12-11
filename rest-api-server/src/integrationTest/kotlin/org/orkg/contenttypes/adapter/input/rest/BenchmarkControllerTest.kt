@@ -12,6 +12,7 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.output.LabelAndClassService
 import org.orkg.createClass
 import org.orkg.createClasses
+import org.orkg.createLiteral
 import org.orkg.createPredicate
 import org.orkg.createPredicates
 import org.orkg.createResource
@@ -182,7 +183,9 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         val dataset1 = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "Dataset 1")
         val dataset2 = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "Dataset 2")
 
-        val codes = (1..5).map { literalService.create("https://some-code-$it.cool") }
+        val codes = (1..5).map {
+            literalService.createLiteral(label = "https://some-code-$it.cool")
+        }
 
         val problem1 = resourceService.createResource(setOf("Problem"), label = "Problem 1")
         val problem2 = resourceService.createResource(setOf("Problem"), label = "Problem 2")
@@ -195,7 +198,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(benchCont, ThingId(labelsAndClasses.benchmarkPredicate), benchmark)
 
         codes.forEach {
-            statementService.create(benchCont, ThingId(labelsAndClasses.sourceCodePredicate), it.id)
+            statementService.create(benchCont, ThingId(labelsAndClasses.sourceCodePredicate), it)
         }
 
         statementService.create(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset1)
@@ -238,7 +241,9 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         val dataset1 = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "Dataset 1")
         val dataset2 = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "Dataset 2")
 
-        val codes = (1..5).map { literalService.create("https://some-code-$it.cool") }
+        val codes = (1..5).map {
+            literalService.createLiteral(label = "https://some-code-$it.cool")
+        }
 
         val problem1 = resourceService.createResource(setOf("Problem"), label = "Problem 1")
         val problem2 = resourceService.createResource(setOf("Problem"), label = "Problem 2")
@@ -251,7 +256,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(benchCont, ThingId(labelsAndClasses.benchmarkPredicate), benchmark)
 
         codes.forEach {
-            statementService.create(benchCont, ThingId(labelsAndClasses.sourceCodePredicate), it.id)
+            statementService.create(benchCont, ThingId(labelsAndClasses.sourceCodePredicate), it)
         }
 
         statementService.create(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset1)
@@ -295,7 +300,9 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         val dataset1 = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "Dataset 1")
         val dataset2 = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "Dataset 2")
 
-        val codes = (1..5).map { literalService.create("https://some-code-$it.cool") }
+        val codes = (1..5).map {
+            literalService.createLiteral(label = "https://some-code-$it.cool")
+        }
 
         val problem1 = resourceService.createResource(setOf("Problem"), label = "Problem 1")
         val problem2 = resourceService.createResource(setOf("Problem"), label = "Problem 2")
@@ -316,7 +323,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(field1, ThingId("P36"), field2)
 
         codes.forEach {
-            statementService.create(benchCont, ThingId(labelsAndClasses.sourceCodePredicate), it.id)
+            statementService.create(benchCont, ThingId(labelsAndClasses.sourceCodePredicate), it)
         }
 
         statementService.create(benchmark, ThingId(labelsAndClasses.datasetPredicate), dataset1)
@@ -414,7 +421,9 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         val benchmark1 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark P1")
         val benchmark2 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark P2")
 
-        val codes = (1..3).map { literalService.create("https://some-code-$it.cool") }
+        val codes = (1..3).map {
+            literalService.createLiteral(label = "https://some-code-$it.cool")
+        }
         val models = (1..4).map { resourceService.createResource(setOf(labelsAndClasses.modelClass), label = "Model $it") }
 
         val dataset1 = resourceService.createResource(setOf(labelsAndClasses.datasetClass), label = "Dataset 1")
@@ -433,7 +442,7 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
             statementService.create(contributionOfPaper1, ThingId(labelsAndClasses.modelPredicate), it)
         }
         codes.forEach {
-            statementService.create(contributionOfPaper2, ThingId(labelsAndClasses.sourceCodePredicate), it.id)
+            statementService.create(contributionOfPaper2, ThingId(labelsAndClasses.sourceCodePredicate), it)
         }
 
         statementService.create(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset1)
@@ -473,15 +482,19 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         val benchmark1 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark 1")
         val benchmark2 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark 2")
 
-        val codes1 = (1..3).map { literalService.create("https://some-code-$it.cool") }
-        val codes2 = (1..2).map { literalService.create("https://some-code-$it-$it.cool") }
+        val codes1 = (1..3).map {
+            literalService.createLiteral(label = "https://some-code-$it.cool")
+        }
+        val codes2 = (1..2).map {
+            literalService.createLiteral(label = "https://some-code-$it-$it.cool")
+        }
 
         val model1 = resourceService.createResource(setOf(labelsAndClasses.modelClass), label = "Model 1")
         val model2 = resourceService.createResource(setOf(labelsAndClasses.modelClass), label = "Model 2")
 
-        val scoreOfM1B1E1 = literalService.create("2.55")
-        val scoreOfM1B1E2 = literalService.create("4548")
-        val scoreOfM1B2E1 = literalService.create("3M")
+        val scoreOfM1B1E1 = literalService.createLiteral(label = "2.55")
+        val scoreOfM1B1E2 = literalService.createLiteral(label = "4548")
+        val scoreOfM1B2E1 = literalService.createLiteral(label = "3M")
 
         val quantityB1E1 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 1")
         val quantityB1E2 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 2")
@@ -515,9 +528,9 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(quantityB1E2, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E2)
         statementService.create(quantityB2E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB2E1)
 
-        statementService.create(quantityValueB1E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E1.id)
-        statementService.create(quantityValueB1E2, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E2.id)
-        statementService.create(quantityValueB2E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B2E1.id)
+        statementService.create(quantityValueB1E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E1)
+        statementService.create(quantityValueB1E2, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E2)
+        statementService.create(quantityValueB2E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B2E1)
 
         statementService.create(paper, ThingId("P31"), contribution1)
         statementService.create(paper, ThingId("P31"), contribution2)
@@ -526,10 +539,10 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(contribution2, ThingId(labelsAndClasses.benchmarkPredicate), benchmark2)
 
         codes1.forEach {
-            statementService.create(contribution1, ThingId(labelsAndClasses.sourceCodePredicate), it.id)
+            statementService.create(contribution1, ThingId(labelsAndClasses.sourceCodePredicate), it)
         }
         codes2.forEach {
-            statementService.create(contribution2, ThingId(labelsAndClasses.sourceCodePredicate), it.id)
+            statementService.create(contribution2, ThingId(labelsAndClasses.sourceCodePredicate), it)
         }
 
         statementService.create(contribution1, ThingId("P32"), problem1)
@@ -569,12 +582,16 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         val benchmark1 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark 1")
         val benchmark2 = resourceService.createResource(setOf(labelsAndClasses.benchmarkClass), label = "Benchmark 2")
 
-        val codes1 = (1..3).map { literalService.create("https://some-code-$it.cool") }
-        val codes2 = (1..2).map { literalService.create("https://some-code-$it-$it.cool") }
+        val codes1 = (1..3).map {
+            literalService.createLiteral(label = "https://some-code-$it.cool")
+        }
+        val codes2 = (1..2).map {
+            literalService.createLiteral(label = "https://some-code-$it-$it.cool")
+        }
 
-        val scoreOfM1B1E1 = literalService.create("2.55")
-        val scoreOfM1B1E2 = literalService.create("4548")
-        val scoreOfM1B2E1 = literalService.create("3.2B")
+        val scoreOfM1B1E1 = literalService.createLiteral(label = "2.55")
+        val scoreOfM1B1E2 = literalService.createLiteral(label = "4548")
+        val scoreOfM1B2E1 = literalService.createLiteral(label = "3.2B")
 
         val quantityB1E1 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 1")
         val quantityB1E2 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 2")
@@ -605,9 +622,9 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(quantityB1E2, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E2)
         statementService.create(quantityB2E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB2E1)
 
-        statementService.create(quantityValueB1E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E1.id)
-        statementService.create(quantityValueB1E2, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E2.id)
-        statementService.create(quantityValueB2E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B2E1.id)
+        statementService.create(quantityValueB1E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E1)
+        statementService.create(quantityValueB1E2, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E2)
+        statementService.create(quantityValueB2E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B2E1)
 
         statementService.create(paper, ThingId("P31"), contribution1)
         statementService.create(paper, ThingId("P31"), contribution2)
@@ -619,10 +636,10 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(contribution2, ThingId(labelsAndClasses.benchmarkPredicate), benchmark2)
 
         codes1.forEach {
-            statementService.create(contribution1, ThingId(labelsAndClasses.sourceCodePredicate), it.id)
+            statementService.create(contribution1, ThingId(labelsAndClasses.sourceCodePredicate), it)
         }
         codes2.forEach {
-            statementService.create(contribution2, ThingId(labelsAndClasses.sourceCodePredicate), it.id)
+            statementService.create(contribution2, ThingId(labelsAndClasses.sourceCodePredicate), it)
         }
 
         statementService.create(benchmark1, ThingId(labelsAndClasses.datasetPredicate), dataset)
@@ -661,9 +678,9 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         val model1 = resourceService.createResource(setOf(labelsAndClasses.modelClass), label = "Model 1")
         val model2 = resourceService.createResource(setOf(labelsAndClasses.modelClass), label = "Model 2")
 
-        val scoreOfM1B1E1 = literalService.create("2.55")
-        val scoreOfM1B1E2 = literalService.create("4548")
-        val scoreOfM1B2E1 = literalService.create("3M")
+        val scoreOfM1B1E1 = literalService.createLiteral(label = "2.55")
+        val scoreOfM1B1E2 = literalService.createLiteral(label = "4548")
+        val scoreOfM1B2E1 = literalService.createLiteral(label = "3M")
 
         val quantityB1E1 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 1")
         val quantityB1E2 = resourceService.createResource(setOf(labelsAndClasses.quantityClass), label = "Quantity 2")
@@ -697,9 +714,9 @@ class BenchmarkControllerTest : RestDocumentationBaseTest() {
         statementService.create(quantityB1E2, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB1E2)
         statementService.create(quantityB2E1, ThingId(labelsAndClasses.quantityValuePredicate), quantityValueB2E1)
 
-        statementService.create(quantityValueB1E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E1.id)
-        statementService.create(quantityValueB1E2, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E2.id)
-        statementService.create(quantityValueB2E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B2E1.id)
+        statementService.create(quantityValueB1E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E1)
+        statementService.create(quantityValueB1E2, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B1E2)
+        statementService.create(quantityValueB2E1, ThingId(labelsAndClasses.numericValuePredicate), scoreOfM1B2E1)
 
         statementService.create(paper, ThingId("P31"), contribution1)
         statementService.create(paper, ThingId("P31"), contribution2)

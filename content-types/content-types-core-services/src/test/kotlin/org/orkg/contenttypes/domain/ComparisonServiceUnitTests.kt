@@ -27,6 +27,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
+import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
@@ -384,9 +385,9 @@ class ComparisonServiceUnitTests {
         )
         val resourceId = ThingId("R456")
         val comparison = createResource(classes = setOf(Classes.comparison))
-        val image = createLiteral(ThingId("L1"))
-        val url = createLiteral(ThingId("L2"))
-        val description = createLiteral(ThingId("L3"))
+        val imageLiteralId = ThingId("L1")
+        val urlLiteralId = ThingId("L2")
+        val descriptionLiteralId = ThingId("L3")
 
         every { resourceRepository.findById(command.comparisonId) } returns Optional.of(comparison)
         every {
@@ -398,15 +399,36 @@ class ComparisonServiceUnitTests {
                 )
             )
         } returns resourceId
-        every { literalService.create(command.contributorId, command.image!!) } returns image
-        every { literalService.create(command.contributorId, command.url!!) } returns url
-        every { literalService.create(command.contributorId, command.description!!) } returns description
+        every {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.image!!
+                )
+            )
+        } returns imageLiteralId
+        every {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.url!!
+                )
+            )
+        } returns urlLiteralId
+        every {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.description!!
+                )
+            )
+        } returns descriptionLiteralId
         every {
             statementService.add(
                 userId = command.contributorId,
                 subject = resourceId,
                 predicate = Predicates.hasImage,
-                `object` = image.id
+                `object` = imageLiteralId
             )
         } just runs
         every {
@@ -414,7 +436,7 @@ class ComparisonServiceUnitTests {
                 userId = command.contributorId,
                 subject = resourceId,
                 predicate = Predicates.hasURL,
-                `object` = url.id
+                `object` = urlLiteralId
             )
         } just runs
         every {
@@ -422,7 +444,7 @@ class ComparisonServiceUnitTests {
                 userId = command.contributorId,
                 subject = resourceId,
                 predicate = Predicates.description,
-                `object` = description.id
+                `object` = descriptionLiteralId
             )
         } just runs
 
@@ -438,15 +460,36 @@ class ComparisonServiceUnitTests {
                 )
             )
         }
-        verify(exactly = 1) { literalService.create(command.contributorId, command.image!!) }
-        verify(exactly = 1) { literalService.create(command.contributorId, command.url!!) }
-        verify(exactly = 1) { literalService.create(command.contributorId, command.description!!) }
+        verify(exactly = 1) {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.image!!
+                )
+            )
+        }
+        verify(exactly = 1) {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.url!!
+                )
+            )
+        }
+        verify(exactly = 1) {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.description!!
+                )
+            )
+        }
         verify(exactly = 1) {
             statementService.add(
                 userId = command.contributorId,
                 subject = resourceId,
                 predicate = Predicates.hasImage,
-                `object` = image.id
+                `object` = imageLiteralId
             )
         }
         verify(exactly = 1) {
@@ -454,7 +497,7 @@ class ComparisonServiceUnitTests {
                 userId = command.contributorId,
                 subject = resourceId,
                 predicate = Predicates.hasURL,
-                `object` = url.id
+                `object` = urlLiteralId
             )
         }
         verify(exactly = 1) {
@@ -462,7 +505,7 @@ class ComparisonServiceUnitTests {
                 userId = command.contributorId,
                 subject = resourceId,
                 predicate = Predicates.description,
-                `object` = description.id
+                `object` = descriptionLiteralId
             )
         }
     }
@@ -509,8 +552,22 @@ class ComparisonServiceUnitTests {
                 )
             )
         } returns figureId
-        every { literalService.create(command.contributorId, command.image!!) } returns image
-        every { literalService.create(command.contributorId, command.description!!) } returns description
+        every {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.image!!
+                )
+            )
+        } returns image.id
+        every {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.description!!
+                )
+            )
+        } returns description.id
         every {
             statementService.add(
                 userId = command.contributorId,
@@ -540,8 +597,22 @@ class ComparisonServiceUnitTests {
                 )
             )
         }
-        verify(exactly = 1) { literalService.create(command.contributorId, command.image!!) }
-        verify(exactly = 1) { literalService.create(command.contributorId, command.description!!) }
+        verify(exactly = 1) {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.image!!
+                )
+            )
+        }
+        verify(exactly = 1) {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.description!!
+                )
+            )
+        }
         verify(exactly = 1) {
             statementService.add(
                 userId = command.contributorId,

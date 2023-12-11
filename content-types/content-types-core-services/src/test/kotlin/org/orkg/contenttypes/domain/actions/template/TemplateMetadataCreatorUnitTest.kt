@@ -17,9 +17,9 @@ import org.orkg.contenttypes.domain.actions.TemplateState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreateTemplateCommand
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.testing.fixtures.createLiteral
 
 class TemplateMetadataCreatorUnitTest {
     private val literalService: LiteralUseCases = mockk()
@@ -44,36 +44,40 @@ class TemplateMetadataCreatorUnitTest {
         val state = TemplateState(
             templateId = templateId
         )
-        val description = ThingId("R124")
-        val closed = ThingId("R125")
+        val descriptionLiteralId = ThingId("R124")
+        val closedLiteralId = ThingId("R125")
 
         every {
             literalService.create(
-                userId = command.contributorId,
-                label = command.description!!
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.description!!
+                )
             )
-        } returns createLiteral(description)
+        } returns descriptionLiteralId
         every {
             statementService.add(
                 userId = command.contributorId,
                 subject = state.templateId!!,
                 predicate = Predicates.description,
-                `object` = description
+                `object` = descriptionLiteralId
             )
         } just runs
         every {
             literalService.create(
-                userId = command.contributorId,
-                label = "true",
-                datatype = Literals.XSD.BOOLEAN.prefixedUri
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = "true",
+                    datatype = Literals.XSD.BOOLEAN.prefixedUri
+                )
             )
-        } returns createLiteral(closed)
+        } returns closedLiteralId
         every {
             statementService.add(
                 userId = command.contributorId,
                 subject = state.templateId!!,
                 predicate = Predicates.shClosed,
-                `object` = closed
+                `object` = closedLiteralId
             )
         } just runs
 
@@ -85,8 +89,10 @@ class TemplateMetadataCreatorUnitTest {
 
         verify(exactly = 1) {
             literalService.create(
-                userId = command.contributorId,
-                label = command.description!!
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = command.description!!
+                )
             )
         }
         verify(exactly = 1) {
@@ -94,14 +100,16 @@ class TemplateMetadataCreatorUnitTest {
                 userId = command.contributorId,
                 subject = state.templateId!!,
                 predicate = Predicates.description,
-                `object` = description
+                `object` = descriptionLiteralId
             )
         }
         verify(exactly = 1) {
             literalService.create(
-                userId = command.contributorId,
-                label = "true",
-                datatype = Literals.XSD.BOOLEAN.prefixedUri
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = "true",
+                    datatype = Literals.XSD.BOOLEAN.prefixedUri
+                )
             )
         }
         verify(exactly = 1) {
@@ -109,7 +117,7 @@ class TemplateMetadataCreatorUnitTest {
                 userId = command.contributorId,
                 subject = state.templateId!!,
                 predicate = Predicates.shClosed,
-                `object` = closed
+                `object` = closedLiteralId
             )
         }
     }

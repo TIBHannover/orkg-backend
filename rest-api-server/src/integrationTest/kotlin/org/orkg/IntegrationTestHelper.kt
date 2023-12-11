@@ -12,8 +12,10 @@ import org.orkg.community.input.CreateObservatoryUseCase
 import org.orkg.community.input.ObservatoryUseCases
 import org.orkg.community.input.OrganizationUseCases
 import org.orkg.graph.domain.ExtractionMethod
+import org.orkg.graph.domain.Literals
 import org.orkg.graph.input.CreateClassUseCase
 import org.orkg.graph.input.CreateListUseCase
+import org.orkg.graph.input.CreateLiteralUseCase
 import org.orkg.graph.input.CreatePredicateUseCase
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ListUseCases
@@ -93,6 +95,22 @@ fun CreateResourceUseCase.createResource(
     )
 )
 
+// Literals
+
+fun CreateLiteralUseCase.createLiteral(
+    id: ThingId? = null,
+    label: String? = null,
+    datatype: String? = null,
+    contributorId: ContributorId? = null,
+): ThingId = create(
+    CreateLiteralUseCase.CreateCommand(
+        id = id,
+        label = label ?: "label",
+        datatype = datatype ?: Literals.XSD.STRING.prefixedUri,
+        contributorId = contributorId ?: ContributorId.createUnknownContributor()
+    )
+)
+
 // Users
 
 fun AuthUseCase.createUser(
@@ -132,6 +150,8 @@ fun ObservatoryUseCases.createObservatory(
         displayId = displayId
     )
 )
+
+// Lists
 
 fun ListUseCases.createList(
     label: String,

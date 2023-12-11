@@ -1,12 +1,19 @@
 package org.orkg.graph.input
 
 import org.orkg.common.ContributorId
+import org.orkg.common.ThingId
 import org.orkg.graph.domain.Literal
+import org.orkg.graph.domain.Literals
 
 interface CreateLiteralUseCase {
-    // legacy methods:
-    fun create(label: String, datatype: String = "xsd:string"): Literal
-    fun create(userId: ContributorId, label: String, datatype: String = "xsd:string"): Literal
+    fun create(command: CreateCommand): ThingId
+
+    data class CreateCommand(
+        val id: ThingId? = null,
+        val contributorId: ContributorId,
+        val label: String,
+        val datatype: String = Literals.XSD.STRING.prefixedUri
+    )
 }
 
 interface UpdateLiteralUseCase {

@@ -14,9 +14,9 @@ import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.Identifiers
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.testing.fixtures.createLiteral
 
 class IdentifierCreatorUnitTest {
     private val statementService: StatementUseCases = mockk()
@@ -40,15 +40,29 @@ class IdentifierCreatorUnitTest {
         val contributorId = ContributorId(UUID.randomUUID())
         val doi = "10.1234/56789"
         val identifiers = mapOf("doi" to doi)
-        val doiLiteral = createLiteral(label = doi)
+        val doiLiteralId = ThingId("L1")
 
-        every { literalService.create(doi) } returns doiLiteral
-        every { statementService.create(contributorId, paperId, Predicates.hasDOI, doiLiteral.id) } returns StatementId("S435")
+        every {
+            literalService.create(
+                CreateCommand(
+                    contributorId = contributorId,
+                    label = doi
+                )
+            )
+        } returns doiLiteralId
+        every { statementService.create(contributorId, paperId, Predicates.hasDOI, doiLiteralId) } returns StatementId("S435")
 
         identifierCreator.create(contributorId, identifiers, Identifiers.paper, paperId)
 
-        verify(exactly = 1) { literalService.create(doi) }
-        verify(exactly = 1) { statementService.create(contributorId, paperId, Predicates.hasDOI, doiLiteral.id) }
+        verify(exactly = 1) {
+            literalService.create(
+                CreateCommand(
+                    contributorId = contributorId,
+                    label = doi
+                )
+            )
+        }
+        verify(exactly = 1) { statementService.create(contributorId, paperId, Predicates.hasDOI, doiLiteralId) }
     }
 
     @Test

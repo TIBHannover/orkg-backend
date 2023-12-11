@@ -19,6 +19,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateListUseCase
+import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
@@ -66,11 +67,12 @@ class AuthorCreatorUnitTest {
 
         every {
             literalService.create(
-                userId = contributorId,
-                label = orcid,
-                datatype = Literals.XSD.STRING.prefixedUri
+                CreateCommand(
+                    contributorId = contributorId,
+                    label = orcid
+                )
             )
-        } returns orcidLiteral
+        } returns orcidLiteral.id
         every {
             statementService.add(
                 userId = contributorId,
@@ -101,9 +103,10 @@ class AuthorCreatorUnitTest {
 
         verify(exactly = 1) {
             literalService.create(
-                userId = contributorId,
-                label = orcid,
-                datatype = Literals.XSD.STRING.prefixedUri
+                CreateCommand(
+                    contributorId = contributorId,
+                    label = orcid
+                )
             )
         }
         verify(exactly = 1) {
@@ -146,11 +149,12 @@ class AuthorCreatorUnitTest {
 
         every {
             literalService.create(
-                userId = contributorId,
-                label = author.name,
-                datatype = Literals.XSD.STRING.prefixedUri
+                CreateCommand(
+                    contributorId = contributorId,
+                    label = author.name
+                )
             )
-        } returns literal
+        } returns literal.id
         every {
             listService.create(
                 CreateListUseCase.CreateCommand(
@@ -173,9 +177,10 @@ class AuthorCreatorUnitTest {
 
         verify(exactly = 1) {
             literalService.create(
-                userId = contributorId,
-                label = author.name,
-                datatype = Literals.XSD.STRING.prefixedUri
+                CreateCommand(
+                    contributorId = contributorId,
+                    label = author.name
+                )
             )
         }
         verify(exactly = 1) {
@@ -215,45 +220,42 @@ class AuthorCreatorUnitTest {
             classes = setOf(Classes.author),
             contributorId = contributorId
         )
-        val orcidLiteral = createLiteral(
-            id = ThingId(UUID.randomUUID().toString()),
-            label = author.name
-        )
-        val homepageLiteral = createLiteral(
-            id = ThingId(UUID.randomUUID().toString()),
-            label = author.homepage.toString()
-        )
+        val orcidLiteralId = ThingId("L65412")
+        val homepageLiteralId = ThingId("L13254")
         val authorListId = ThingId("R1456")
 
         every { resourceService.create(resourceCreateCommand) } returns authorId
         every {
             literalService.create(
-                userId = contributorId,
-                label = orcid,
-                datatype = Literals.XSD.STRING.prefixedUri
+                CreateCommand(
+                    contributorId = contributorId,
+                    label = orcid
+                )
             )
-        } returns orcidLiteral
+        } returns orcidLiteralId
         every {
             statementService.add(
                 userId = contributorId,
                 subject = authorId,
                 predicate = Predicates.hasORCID,
-                `object` = orcidLiteral.id
+                `object` = orcidLiteralId
             )
         } just runs
         every {
             literalService.create(
-                userId = contributorId,
-                label = author.homepage.toString(),
-                datatype = Literals.XSD.URI.prefixedUri
+                CreateCommand(
+                    contributorId = contributorId,
+                    label = author.homepage.toString(),
+                    datatype = Literals.XSD.URI.prefixedUri
+                )
             )
-        } returns homepageLiteral
+        } returns homepageLiteralId
         every {
             statementService.add(
                 userId = contributorId,
                 subject = authorId,
                 predicate = Predicates.hasWebsite,
-                `object` = homepageLiteral.id
+                `object` = homepageLiteralId
             )
         } just runs
         every {
@@ -279,9 +281,10 @@ class AuthorCreatorUnitTest {
         verify(exactly = 1) { resourceService.create(resourceCreateCommand) }
         verify(exactly = 1) {
             literalService.create(
-                userId = contributorId,
-                label = orcid,
-                datatype = Literals.XSD.STRING.prefixedUri
+                CreateCommand(
+                    contributorId = contributorId,
+                    label = orcid
+                )
             )
         }
         verify(exactly = 1) {
@@ -289,14 +292,16 @@ class AuthorCreatorUnitTest {
                 userId = contributorId,
                 subject = authorId,
                 predicate = Predicates.hasORCID,
-                `object` = orcidLiteral.id
+                `object` = orcidLiteralId
             )
         }
         verify(exactly = 1) {
             literalService.create(
-                userId = contributorId,
-                label = author.homepage.toString(),
-                datatype = Literals.XSD.URI.prefixedUri
+                CreateCommand(
+                    contributorId = contributorId,
+                    label = author.homepage.toString(),
+                    datatype = Literals.XSD.URI.prefixedUri
+                )
             )
         }
         verify(exactly = 1) {
@@ -304,7 +309,7 @@ class AuthorCreatorUnitTest {
                 userId = contributorId,
                 subject = authorId,
                 predicate = Predicates.hasWebsite,
-                `object` = homepageLiteral.id
+                `object` = homepageLiteralId
             )
         }
         verify(exactly = 1) {

@@ -26,6 +26,7 @@ import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.ResourceNotFound
 import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.output.ResourceRepository
@@ -61,30 +62,42 @@ class PublishingServiceUnitTests {
         val id = command.id
         val doi = DOI.of("10.123/$id")
         val resource = createResource(id = id).copy(classes = setOf(Classes.paper))
-        val literal = createLiteral(
-            id = ThingId("L1"),
-            label = doi.value
-        )
-        val year = createLiteral(
-            id = ThingId("L2"),
-            label = "2023",
-            datatype = Literals.XSD.INT.prefixedUri
-        )
-        val month = createLiteral(
-            id = ThingId("L3"),
-            label = "9",
-            datatype = Literals.XSD.INT.prefixedUri
-        )
+        val doiLiteralId = ThingId("L1")
+        val yearLiteralId = ThingId("L2")
+        val monthLiteralId = ThingId("L3")
 
         every { resourceRepository.findById(id) } returns Optional.of(resource)
         every { statementService.findAllBySubjectAndPredicate(id, Predicates.hasDOI, PageRequests.SINGLE) } returns pageOf()
         every { doiService.register(any()) } returns doi
-        every { literalService.create(command.contributorId, doi.value) } returns literal
-        every { statementService.create(command.contributorId, id, Predicates.hasDOI, literal.id) } returns StatementId("S123")
-        every { literalService.create(command.contributorId, label = "2023", datatype = Literals.XSD.INT.prefixedUri) } returns year
-        every { statementService.create(command.contributorId, id, Predicates.yearPublished, year.id) } returns StatementId("S465")
-        every { literalService.create(command.contributorId, label = "9", datatype = Literals.XSD.INT.prefixedUri) } returns month
-        every { statementService.create(command.contributorId, id, Predicates.monthPublished, month.id) } returns StatementId("S789")
+        every {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = doi.value
+                )
+            )
+        } returns doiLiteralId
+        every { statementService.create(command.contributorId, id, Predicates.hasDOI, doiLiteralId) } returns StatementId("S123")
+        every {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = "2023",
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
+            )
+        } returns yearLiteralId
+        every { statementService.create(command.contributorId, id, Predicates.yearPublished, yearLiteralId) } returns StatementId("S465")
+        every {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = "9",
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
+            )
+        } returns monthLiteralId
+        every { statementService.create(command.contributorId, id, Predicates.monthPublished, monthLiteralId) } returns StatementId("S789")
 
         val result = service.publish(command)
         result shouldBe doi
@@ -106,12 +119,35 @@ class PublishingServiceUnitTests {
                 }
             )
         }
-        verify(exactly = 1) { literalService.create(command.contributorId, doi.value) }
-        verify(exactly = 1) { statementService.create(command.contributorId, id, Predicates.hasDOI, literal.id) }
-        verify(exactly = 1) { literalService.create(command.contributorId, label = "2023", datatype = Literals.XSD.INT.prefixedUri) }
-        verify(exactly = 1) { statementService.create(command.contributorId, id, Predicates.yearPublished, year.id) }
-        verify(exactly = 1) { literalService.create(command.contributorId, label = "9", datatype = Literals.XSD.INT.prefixedUri) }
-        verify(exactly = 1) { statementService.create(command.contributorId, id, Predicates.monthPublished, month.id) }
+        verify(exactly = 1) {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = doi.value
+                )
+            )
+        }
+        verify(exactly = 1) { statementService.create(command.contributorId, id, Predicates.hasDOI, doiLiteralId) }
+        verify(exactly = 1) {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = "2023",
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
+            )
+        }
+        verify(exactly = 1) { statementService.create(command.contributorId, id, Predicates.yearPublished, yearLiteralId) }
+        verify(exactly = 1) {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = "9",
+                    datatype = Literals.XSD.INT.prefixedUri
+                )
+            )
+        }
+        verify(exactly = 1) { statementService.create(command.contributorId, id, Predicates.monthPublished, monthLiteralId) }
     }
 
     @Test

@@ -1,6 +1,5 @@
 package org.orkg.graph.domain
 
-import io.kotest.assertions.asClue
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
@@ -12,8 +11,10 @@ import io.mockk.verify
 import java.util.*
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
+import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.output.LiteralRepository
 import org.orkg.graph.output.StatementRepository
+import org.orkg.graph.testing.fixtures.createLiteral
 
 class LiteralServiceUnitTest : DescribeSpec({
     val literalRepository: LiteralRepository = mockk()
@@ -31,20 +32,54 @@ class LiteralServiceUnitTest : DescribeSpec({
         context("invalid inputs") {
             it("fails when the datatype is an invalid URI") {
                 shouldThrowExactly<InvalidLiteralDatatype> {
-                    service.create(ContributorId(UUID.randomUUID()), "irrelevant", datatype = "%§&invalid$§/")
+                    service.create(
+                        CreateCommand(
+                            contributorId = ContributorId(UUID.randomUUID()),
+                            label = "irrelevant",
+                            datatype = "%§&invalid$§/"
+                        )
+                    )
                 }
             }
             xit("fails when the datatype has an invalid prefix") {
                 shouldThrowExactly<InvalidLiteralDatatype> {
                     // This cannot be tested easily, since foo:string is a valid URI.
-                    service.create(ContributorId(UUID.randomUUID()), "irrelevant", datatype = "foo:string")
+                    service.create(
+                        CreateCommand(
+                            contributorId = ContributorId(UUID.randomUUID()),
+                            label = "irrelevant",
+                            datatype = "foo:string"
+                        )
+                    )
                 }
             }
             it("fails if the label is longer than the allowed length") {
                 val tooLong = "x".repeat(MAX_LABEL_LENGTH + 1)
                 shouldThrowExactly<InvalidLiteralLabel> {
-                    service.create(ContributorId(UUID.randomUUID()), label = tooLong)
+                    service.create(
+                        CreateCommand(
+                            contributorId = ContributorId(UUID.randomUUID()),
+                            label = tooLong
+                        )
+                    )
                 }
+            }
+            it("fails when literal id is already taken") {
+                val id = ThingId("taken")
+
+                every { literalRepository.findById(id) } returns Optional.of(createLiteral(id))
+                
+                shouldThrowExactly<LiteralAlreadyExists> {
+                    service.create(
+                        CreateCommand(
+                            id = id,
+                            contributorId = ContributorId(UUID.randomUUID()),
+                            label = "value"
+                        )
+                    )
+                }
+
+                verify(exactly = 1) { literalRepository.findById(id) }
             }
         }
         context("all inputs are valid") {
@@ -54,16 +89,25 @@ class LiteralServiceUnitTest : DescribeSpec({
                 every { literalRepository.nextIdentity() } returns randomId
                 every { literalRepository.save(any()) } returns Unit
 
-                val result = service.create(contributorId, "3.141593", "xsd:float")
+                val result = service.create(
+                    CreateCommand(
+                        contributorId = contributorId,
+                        label = "3.141593",
+                        datatype = "xsd:float"
+                    )
+                )
 
-                result.asClue {
-                    it.id shouldBe randomId
-                    it.createdBy shouldBe contributorId
-                    it.datatype shouldBe "xsd:float"
-                    it.label shouldBe "3.141593"
-                }
+                result shouldBe randomId
+
                 verify(exactly = 1) { literalRepository.nextIdentity() }
-                verify(exactly = 1) { literalRepository.save(any()) }
+                verify(exactly = 1) {
+                    literalRepository.save(withArg {
+                        it.id shouldBe randomId
+                        it.createdBy shouldBe contributorId
+                        it.datatype shouldBe "xsd:float"
+                        it.label shouldBe "3.141593"
+                    })
+                }
             }
         }
     }

@@ -12,6 +12,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.input.LegacyPaperUseCases
 import org.orkg.createClass
+import org.orkg.createLiteral
 import org.orkg.createPredicate
 import org.orkg.createResource
 import org.orkg.featureflags.output.FeatureFlagService
@@ -526,8 +527,8 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
             classes = setOf(nodeShapeClass.value),
             label = "Throw-way template"
         )
-        val labelFormat = literalService.create("xx{${throwAwayProperty.id}}xx")
-        statementService.create(template, templateLabelPredicate, labelFormat.id)
+        val labelFormat = literalService.createLiteral(label = "xx{${throwAwayProperty.id}}xx")
+        statementService.create(template, templateLabelPredicate, labelFormat)
         statementService.create(template, targetClassPredicate, throwAwayClass)
         val templateComponent = service.createResource(
             classes = setOf(propertyShapeClass.value),
@@ -540,8 +541,8 @@ class ResourceControllerIntegrationTest : RestDocumentationBaseTest() {
             classes = setOf(throwAwayClass.value),
             label = "Fancy resource"
         )
-        val someValue = literalService.create(value)
-        statementService.create(templatedResource, throwAwayProperty.id, someValue.id)
+        val someValue = literalService.createLiteral(label = value)
+        statementService.create(templatedResource, throwAwayProperty.id, someValue)
         return templatedResource
     }
 

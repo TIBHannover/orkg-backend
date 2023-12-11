@@ -9,6 +9,7 @@ import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.input.CreateListUseCase
+import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.CreateResourceUseCase
 import org.orkg.graph.input.ListUseCases
 import org.orkg.graph.input.LiteralUseCases
@@ -31,9 +32,11 @@ abstract class AuthorCreator(
                     }
                     author.id!!
                 }
+
                 author.homepage == null && author.identifiers.isNullOrEmpty() -> {
                     createLiteralAuthor(author, contributorId)
                 }
+
                 else -> createResourceAuthor(author, contributorId)
             }
         }
@@ -54,10 +57,11 @@ abstract class AuthorCreator(
 
     private fun createLiteralAuthor(author: Author, contributorId: ContributorId): ThingId =
         literalService.create(
-            userId = contributorId,
-            label = author.name,
-            datatype = Literals.XSD.STRING.prefixedUri
-        ).id
+            CreateCommand(
+                contributorId = contributorId,
+                label = author.name
+            )
+        )
 
     private fun createResourceAuthor(author: Author, contributorId: ContributorId): ThingId {
         val authorId = resourceService.create(
@@ -74,10 +78,12 @@ abstract class AuthorCreator(
 
         if (author.homepage != null) {
             val homepage = literalService.create(
-                userId = contributorId,
-                label = author.homepage.toString(),
-                datatype = Literals.XSD.URI.prefixedUri // TODO: is this correct?
-            ).id
+                CreateCommand(
+                    contributorId = contributorId,
+                    label = author.homepage.toString(),
+                    datatype = Literals.XSD.URI.prefixedUri // TODO: is this correct?
+                )
+            )
             statementService.add(
                 userId = contributorId,
                 subject = authorId,
@@ -89,14 +95,19 @@ abstract class AuthorCreator(
         return authorId
     }
 
-    private fun createIdentifiers(authorId: ThingId, missingIdentifiers: Map<String, String>, contributorId: ContributorId) {
+    private fun createIdentifiers(
+        authorId: ThingId,
+        missingIdentifiers: Map<String, String>,
+        contributorId: ContributorId
+    ) {
         val identifiers = Identifiers.author.parse(missingIdentifiers, validate = false)
         identifiers.forEach { (identifier, value) ->
             val literalId = literalService.create(
-                userId = contributorId,
-                label = value,
-                datatype = Literals.XSD.STRING.prefixedUri
-            ).id
+                CreateCommand(
+                    contributorId = contributorId,
+                    label = value
+                )
+            )
             statementService.add(
                 userId = contributorId,
                 subject = authorId,

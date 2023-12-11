@@ -4,6 +4,7 @@ import org.orkg.contenttypes.domain.actions.CreateTemplateCommand
 import org.orkg.contenttypes.domain.actions.template.TemplateAction.State
 import org.orkg.graph.domain.Literals
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
@@ -18,9 +19,11 @@ class TemplateMetadataCreator(
                 subject = state.templateId!!,
                 predicate = Predicates.description,
                 `object` = literalService.create(
-                    userId = command.contributorId,
-                    label = description
-                ).id
+                    CreateCommand(
+                        contributorId = command.contributorId,
+                        label = description
+                    )
+                )
             )
         }
         if (command.isClosed) {
@@ -29,10 +32,12 @@ class TemplateMetadataCreator(
                 subject = state.templateId!!,
                 predicate = Predicates.shClosed,
                 `object` = literalService.create(
-                    userId = command.contributorId,
-                    label = "true",
-                    datatype = Literals.XSD.BOOLEAN.prefixedUri
-                ).id
+                    CreateCommand(
+                        contributorId = command.contributorId,
+                        label = "true",
+                        datatype = Literals.XSD.BOOLEAN.prefixedUri
+                    )
+                )
             )
         }
         return state

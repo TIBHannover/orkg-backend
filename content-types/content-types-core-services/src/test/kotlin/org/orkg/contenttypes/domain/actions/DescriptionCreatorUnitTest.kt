@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test
 import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.graph.domain.Predicates
+import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 import org.orkg.graph.testing.fixtures.createLiteral
@@ -42,12 +43,14 @@ class DescriptionCreatorUnitTest {
         val subjectId = ThingId("R123")
         val contributorId = ContributorId(UUID.randomUUID())
         val description = "some description"
-        val literal = createLiteral()
+        val literal = ThingId("L1")
 
         every {
             literalService.create(
-                userId = contributorId,
-                label = description
+                CreateCommand(
+                    contributorId = contributorId,
+                    label = description
+                )
             )
         } returns literal
         every {
@@ -55,7 +58,7 @@ class DescriptionCreatorUnitTest {
                 userId = contributorId,
                 subject = subjectId,
                 predicate = Predicates.description,
-                `object` = literal.id
+                `object` = literal
             )
         } just runs
 
@@ -63,8 +66,10 @@ class DescriptionCreatorUnitTest {
 
         verify(exactly = 1) {
             literalService.create(
-                userId = contributorId,
-                label = description
+                CreateCommand(
+                    contributorId = contributorId,
+                    label = description
+                )
             )
         }
         verify(exactly = 1) {
@@ -72,7 +77,7 @@ class DescriptionCreatorUnitTest {
                 userId = contributorId,
                 subject = subjectId,
                 predicate = Predicates.description,
-                `object` = literal.id
+                `object` = literal
             )
         }
     }

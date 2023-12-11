@@ -4,6 +4,7 @@ import org.orkg.common.ContributorId
 import org.orkg.common.ThingId
 import org.orkg.contenttypes.domain.identifiers.Identifier
 import org.orkg.contenttypes.domain.identifiers.parse
+import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
 
@@ -19,7 +20,17 @@ abstract class IdentifierCreator(
     ) {
         val parsedIdentifiers = identifierDefinitions.parse(identifiers, validate = false)
         parsedIdentifiers.forEach { (identifier, value) ->
-            statementService.create(contributorId, subjectId, identifier.predicateId, literalService.create(value).id)
+            statementService.create(
+                contributorId,
+                subjectId,
+                identifier.predicateId,
+                literalService.create(
+                    CreateCommand(
+                        contributorId = contributorId,
+                        label = value
+                    )
+                )
+            )
         }
     }
 }

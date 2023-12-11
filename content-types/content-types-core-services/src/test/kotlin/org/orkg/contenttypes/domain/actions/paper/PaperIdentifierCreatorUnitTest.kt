@@ -15,9 +15,9 @@ import org.orkg.contenttypes.domain.actions.CreatePaperState
 import org.orkg.contenttypes.input.testing.fixtures.dummyCreatePaperCommand
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.StatementId
+import org.orkg.graph.input.CreateLiteralUseCase.CreateCommand
 import org.orkg.graph.input.LiteralUseCases
 import org.orkg.graph.input.StatementUseCases
-import org.orkg.graph.testing.fixtures.createLiteral
 
 class PaperIdentifierCreatorUnitTest {
     private val statementService: StatementUseCases = mockk()
@@ -42,10 +42,17 @@ class PaperIdentifierCreatorUnitTest {
         val state = CreatePaperState(paperId = paperId)
 
         val doi = command.identifiers["doi"]!!
-        val doiLiteral = createLiteral(label = doi)
+        val doiLiteralId = ThingId("L1")
 
-        every { literalService.create(doi) } returns doiLiteral
-        every { statementService.create(command.contributorId, paperId, Predicates.hasDOI, doiLiteral.id) } returns StatementId("S435")
+        every {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = doi
+                )
+            )
+        } returns doiLiteralId
+        every { statementService.create(command.contributorId, paperId, Predicates.hasDOI, doiLiteralId) } returns StatementId("S435")
 
         val result = paperIdentifierCreator(command, state)
 
@@ -57,8 +64,15 @@ class PaperIdentifierCreatorUnitTest {
             it.paperId shouldBe state.paperId
         }
 
-        verify(exactly = 1) { literalService.create(doi) }
-        verify(exactly = 1) { statementService.create(command.contributorId, paperId, Predicates.hasDOI, doiLiteral.id) }
+        verify(exactly = 1) {
+            literalService.create(
+                CreateCommand(
+                    contributorId = command.contributorId,
+                    label = doi
+                )
+            )
+        }
+        verify(exactly = 1) { statementService.create(command.contributorId, paperId, Predicates.hasDOI, doiLiteralId) }
     }
 
     @Test

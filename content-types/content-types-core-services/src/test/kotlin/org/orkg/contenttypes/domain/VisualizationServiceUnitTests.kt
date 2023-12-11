@@ -14,6 +14,7 @@ import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
+import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Visibility
@@ -28,6 +29,7 @@ import org.orkg.graph.testing.fixtures.createPredicate
 import org.orkg.graph.testing.fixtures.createResource
 import org.orkg.graph.testing.fixtures.createStatement
 import org.orkg.testing.pageOf
+import org.springframework.data.domain.Sort
 
 class VisualizationServiceUnitTests {
     private val resourceRepository: ResourceRepository = mockk()
@@ -61,9 +63,21 @@ class VisualizationServiceUnitTests {
         )
         val description = "Description of a visualization"
         val authorList = createResource(classes = setOf(Classes.list), id = ThingId("R536456"))
+        val bundleConfiguration = BundleConfiguration(
+            minLevel = null,
+            maxLevel = 3,
+            blacklist = listOf(Classes.researchField),
+            whitelist = emptyList()
+        )
 
         every { resourceRepository.findById(expected.id) } returns Optional.of(expected)
-        every { statementRepository.findAllBySubject(expected.id, any()) } returns pageOf(
+        every {
+            statementRepository.fetchAsBundle(
+                id = expected.id,
+                configuration = bundleConfiguration,
+                sort = Sort.unsorted()
+            )
+        } returns pageOf(
             createStatement(
                 subject = expected,
                 predicate = createPredicate(Predicates.hasAuthors),
@@ -73,11 +87,9 @@ class VisualizationServiceUnitTests {
                 subject = expected,
                 predicate = createPredicate(Predicates.description),
                 `object` = createLiteral(label = description)
-            )
-        )
-        every { statementRepository.findAllBySubjectAndPredicate(authorList.id, Predicates.hasListElement, any()) } returns pageOf(
+            ),
             createStatement(
-                subject = expected,
+                subject = authorList,
                 predicate = createPredicate(Predicates.hasListElement),
                 `object` = createLiteral(label = "Author 1")
             )
@@ -109,7 +121,12 @@ class VisualizationServiceUnitTests {
         }
 
         verify(exactly = 1) { resourceRepository.findById(expected.id) }
-        verify(exactly = 1) { statementRepository.findAllBySubject(expected.id, any()) }
-        verify(exactly = 1) { statementRepository.findAllBySubjectAndPredicate(authorList.id, Predicates.hasListElement, any()) }
+        verify(exactly = 1) {
+            statementRepository.fetchAsBundle(
+                id = expected.id,
+                configuration = bundleConfiguration,
+                sort = Sort.unsorted()
+            )
+        }
     }
 }

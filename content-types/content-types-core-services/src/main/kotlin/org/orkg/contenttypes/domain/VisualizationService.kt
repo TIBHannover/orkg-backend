@@ -2,7 +2,6 @@ package org.orkg.contenttypes.domain
 
 import java.util.*
 import org.orkg.common.ContributorId
-import org.orkg.common.PageRequests
 import org.orkg.common.ThingId
 import org.orkg.community.output.ObservatoryRepository
 import org.orkg.community.output.OrganizationRepository
@@ -17,6 +16,7 @@ import org.orkg.contenttypes.domain.actions.visualization.VisualizationDescripti
 import org.orkg.contenttypes.domain.actions.visualization.VisualizationResourceCreator
 import org.orkg.contenttypes.input.RetrieveResearchFieldUseCase
 import org.orkg.contenttypes.input.VisualizationUseCases
+import org.orkg.graph.domain.BundleConfiguration
 import org.orkg.graph.domain.Classes
 import org.orkg.graph.domain.Predicates
 import org.orkg.graph.domain.Resource
@@ -32,6 +32,7 @@ import org.orkg.graph.output.StatementRepository
 import org.orkg.graph.output.authors
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -96,14 +97,22 @@ class VisualizationService(
             .pmap { it.toVisualization() }
 
     private fun Resource.toVisualization(): Visualization {
-        val statements = statementRepository.findAllBySubject(id, PageRequests.ALL)
-            .content
-            .withoutObjectsWithBlankLabels()
+        val statements = statementRepository.fetchAsBundle(
+            id = id,
+            configuration = BundleConfiguration(
+                minLevel = null,
+                maxLevel = 3,
+                blacklist = listOf(Classes.researchField),
+                whitelist = emptyList()
+            ),
+            sort = Sort.unsorted()
+        ).groupBy { it.subject.id }
+        val directStatements = statements[id].orEmpty()
         return Visualization(
             id = id,
             title = label,
-            description = statements.wherePredicate(Predicates.description).firstObjectLabel(),
-            authors = statements.authors(statementRepository),
+            description = directStatements.wherePredicate(Predicates.description).firstObjectLabel(),
+            authors = statements.authors(id),
             observatories = listOf(observatoryId),
             organizations = listOf(organizationId),
             extractionMethod = extractionMethod,
